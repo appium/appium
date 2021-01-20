@@ -69,21 +69,29 @@ Your plugin can do one or more of 3 basic things:
 
 #### Updating the server
 
-You probably don't normally need to update the Appium server object (which is an Express server having already been configured in a variety of ways). But, for example, you could add new Express middleware to the server to support your plugin's requirements. To update the server you must do two things:
+You probably don't normally need to update the Appium server object (which is an Express server having already been configured in a variety of ways). But, for example, you could add new Express middleware to the server to support your plugin's requirements. To update the server you must implement the `async updateServer` method in your class. This method takes two parameters:
 
-1. Set the class variable `updatesServer` to `true`, so that Appium knows your plugin needs to update the server before launch.
-1. Implement the `async updateServer` method in your class. This method takes two parameters, `expressApp` and `httpServer`, which are the Express app object and the Node HTTP server object respectively. You can do whatever you want with them inside the `updateServer` method.
+* `expressApp`: the Express app object
+* `httpServer`: the Node HTTP server object
+
+You can do whatever you want with them inside the `updateServer` method. You might want to reference how these objects are created and worked with in the BaseDriver code, so that you know you're not undoing or overriding anything standard and important. But if you insist, you can, with results you'll need to test!
 
 ### Handling Appium commands
 
-This is the most normal behavior for Appium plugins -- to modify or replace the execution of one or more commands. There are two things you must do to override the default command handling:
+This is the most normal behavior for Appium plugins -- to modify or replace the execution of one or more commands. To override the default command handling, you need to implement `async` methods in your class with the same name as the Appium commands to be handled (just exactly how drivers themselves are implemented). Curious what command names there are? They are defined in the Appium base driver's [routes.js](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js) file, and of course you can add more as defined in the next section.
 
-1. Set the `commands` class variable to either `true` (meaning all commands will be handled by this plugin), or to an array of command names, signifying that your plugin should only handle those particular command names. Curious what command names there are? They are defined in the Appium base driver's [routes.js](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js) file.
-1. Implement the `async handle` method. Whatever you return from this method will be what is sent back to the Appium client for the particular command being handled. This method is sent the following arguments:
-  1. `next`: This is an async method which encapsulates the chain of behaviors which would take place if this plugin were not handling the command. You can choose to call it (`await next()`), or not. If you don't, it means the normal behavior (or any plugins registered after this one) won't be run.
-  1. `driver`: This is the object representing the driver handling the current session. You have access to it for any work you need to do.
-  1. `cmdName`: A string representing the current command being handled (if your plugin handles multiple commands, you can use this to figure out which internal behavior to run).
-  1. `...args`: A spread array with any arguments that have been applied to the command by the user.
+Each command method is sent the following arguments:
+
+1. `next`: This is a reference to an `async` function which encapsulates the chain of behaviors which would take place if this plugin were not handling the command. You can choose to call the next behavior in the chain at any point in your logic (by making sure to include `await next()` somewhere), or not. If you don't, it means the default behavior (or any plugins registered after this one) won't be run.
+1. `driver`: This is the object representing the driver handling the current session. You have access to it for any work you need to do, for example calling other driver methods, checking capabilities or settings, etc...
+1. `...args`: A spread array with any arguments that have been applied to the command by the user.
+
+You might find yourself in a position where you want to handle *all* commands, in order to inspect payloads to determine whether or not to act in some way. If so, you can implement `async handle`, and any command that is not handled by one of your named methods will be handled by this method instead. It takes the following parameters (with all the same semantics as above):
+
+1. `next`
+1. `driver`
+1. `cmdName` - string representing the command being run
+1. `...args`
 
 ### Adding new routes/commands
 

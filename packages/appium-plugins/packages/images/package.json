@@ -39,5 +39,6 @@
     "test:unit": "mocha ./build/test/unit/*-specs.js",
     "test:e2e": "mocha -t 160000 ./build/test/e2e/*-specs.js",
     "copyfiles": "copyfiles ./test/fixtures/*.png ./build"
-  }
+  },
+  "gitHead": "6bada81cddda35d888a883396fef1843608c271b"
 }

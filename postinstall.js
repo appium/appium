@@ -14,7 +14,8 @@ async function main () {
   try {
     extension = require('./build/lib/cli/extension');
   } catch (e) {
-    throw new Error(`Could not load extension CLI file; has the project been transpiled? (${e})`);
+    throw new Error(`Could not load extension CLI file; has the project been transpiled? ` +
+                    `(${e.message})`);
   }
 
   const {DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE} = require('./build/lib/extension-config');
@@ -25,26 +26,39 @@ async function main () {
   for (const [type, extEnv] of specs) {
     if (extEnv) {
       for (const ext of extEnv.split(',')) {
-        const extList = await runExtensionCommand({
-          appiumHome,
-          [`${type}Command`]: 'list',
-          showInstalled: true,
-          suppressOutput: true,
-        }, type);
-        if (extList[ext]) {
-          console.log(`The ${type} ${ext} was already installed, skipping...`);
-          continue;
+        try {
+          await checkAndInstallExtension({runExtensionCommand, appiumHome, type, ext});
+        } catch (e) {
+          console.log(`There was an error checking and installing ${type} ${ext}: ${e.message}`);
         }
-        console.log(`Installing the ${type} ${ext}...`);
-        await runExtensionCommand({
-          appiumHome,
-          [`${type}Command`]: 'install',
-          [type]: ext,
-          suppressOutput: true,
-        }, type);
       }
     }
   }
+}
+
+async function checkAndInstallExtension ({
+  runExtensionCommand,
+  appiumHome,
+  type,
+  ext,
+}) {
+  const extList = await runExtensionCommand({
+    appiumHome,
+    [`${type}Command`]: 'list',
+    showInstalled: true,
+    suppressOutput: true,
+  }, type);
+  if (extList[ext]) {
+    console.log(`The ${type} ${ext} was already installed, skipping...`);
+    return;
+  }
+  console.log(`Installing the ${type} ${ext}...`);
+  await runExtensionCommand({
+    appiumHome,
+    [`${type}Command`]: 'install',
+    [type]: ext,
+    suppressOutput: true,
+  }, type);
 }
 
 if (require.main === module) {

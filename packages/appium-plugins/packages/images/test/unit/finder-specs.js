@@ -19,10 +19,10 @@ class PluginDriver extends BaseDriver {
   async getWindowSize () {}
   async getScreenshot () {}
   findElement (strategy, selector) {
-    return plugin.handle(_.noop, this, 'findElement', strategy, selector);
+    return plugin.findElement(_.noop, this, strategy, selector);
   }
   findElements (strategy, selector) {
-    return plugin.handle(_.noop, this, 'findElements', strategy, selector);
+    return plugin.findElements(_.noop, this, strategy, selector);
   }
 
 }

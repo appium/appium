@@ -44,7 +44,7 @@ describe('fake plugin', function () {
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    await p.handle(() => ({el: 'fakeEl'}), {}, 'findElement', 'arg1', 'arg2').should.eventually.eql({
+    await p.findElement(() => ({el: 'fakeEl'}), {}, 'arg1', 'arg2').should.eventually.eql({
       el: 'fakeEl',
       fake: true,
     });
@@ -52,21 +52,21 @@ describe('fake plugin', function () {
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await p.handle(() => {}, {}, 'getPageSource', 'arg1', 'arg2').should.eventually.eql(
+    await p.getPageSource(() => {}, {}, 'arg1', 'arg2').should.eventually.eql(
       '<Fake>["arg1","arg2"]</Fake>'
     );
   });
 
   it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
-    await p.handle(() => {}, {fakeSessionData: 'hi'}, 'getFakeSessionData').should.eventually.eql('hi');
-    await p.handle(() => {}, {}, 'getFakeSessionData').should.eventually.eql(null);
+    await p.getFakeSessionData(() => {}, {fakeSessionData: 'hi'}).should.eventually.eql('hi');
+    await p.getFakeSessionData(() => {}, {}).should.eventually.eql(null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {};
-    await p.handle(() => {}, driver, 'setFakeSessionData', 'foobar').should.eventually.eql(null);
-    await p.handle(() => {}, driver, 'getFakeSessionData').should.eventually.eql('foobar');
+    await p.setFakeSessionData(() => {}, driver, 'foobar').should.eventually.eql(null);
+    await p.getFakeSessionData(() => {}, driver).should.eventually.eql('foobar');
   });
 });

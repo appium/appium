@@ -15,21 +15,21 @@ describe('ImageElementPlugin#handle', function () {
   const p = new ImageElementPlugin();
   describe('compareImages', function () {
     it('should compare images via match features mode', async function () {
-      const res = await p.handle(next, driver, 'compareImages', MATCH_FEATURES_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
+      const res = await p.compareImages(next, driver, MATCH_FEATURES_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
       res.count.should.eql(0);
     });
     it('should compare images via get similarity mode', async function () {
-      const res = await p.handle(next, driver, 'compareImages', GET_SIMILARITY_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
+      const res = await p.compareImages(next, driver, GET_SIMILARITY_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
       res.score.should.be.above(0.2);
     });
     it('should compare images via match template mode', async function () {
-      const res = await p.handle(next, driver, 'compareImages', MATCH_TEMPLATE_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
+      const res = await p.compareImages(next, driver, MATCH_TEMPLATE_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
       res.rect.height.should.be.above(0);
       res.rect.width.should.be.above(0);
       res.score.should.be.above(0.2);
     });
     it('should throw an error if comparison mode is not supported', async function () {
-      await p.handle(next, driver, 'compareImages', 'some mode', '', '')
+      await p.compareImages(next, driver, 'some mode', '', '')
         .should.eventually.be.rejectedWith(/comparison mode is unknown/);
     });
   });
@@ -45,15 +45,15 @@ describe('ImageElementPlugin#handle', function () {
     });
     it('should defer execution to regular command if it is a find command but a different strategy', async function () {
       const next = () => true;
-      await p.handle(next, driver, 'findElement', 'xpath', '//foo/bar').should.eventually.become(true);
-      await p.handle(next, driver, 'findElements', 'xpath', '//foo/bar').should.eventually.become(true);
+      await p.findElement(next, driver, 'xpath', '//foo/bar').should.eventually.become(true);
+      await p.findElements(next, driver, 'xpath', '//foo/bar').should.eventually.become(true);
     });
     it('should find an image element inside a screenshot', async function () {
-      const el = await p.handle(next, driver, 'findElement', IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       el[W3C_ELEMENT_KEY].should.include('appium-image-element');
     });
     it('should find image elements inside a screenshot', async function () {
-      const els = await p.handle(next, driver, 'findElements', IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const els = await p.findElements(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       els.should.have.length(1);
       els[0][W3C_ELEMENT_KEY].should.include('appium-image-element');
     });
@@ -66,7 +66,7 @@ describe('ImageElementPlugin#handle', function () {
       driver.isW3CProtocol = () => true;
       driver.getScreenshot = () => TEST_IMG_2_B64;
       driver.getWindowSize = () => ({width: 64, height: 64});
-      const el = await p.handle(next, driver, 'findElement', IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       elId = el[W3C_ELEMENT_KEY];
     });
     it('should click on the screen coords of the middle of the element', async function () {
@@ -115,7 +115,7 @@ describe('ImageElementPlugin#handle', function () {
       driver.settings = {getSettings: () => ({
         getMatchedImageResult: true,
       })};
-      const el = await p.handle(next, driver, 'findElement', IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
+      const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       elId = el[W3C_ELEMENT_KEY];
       await p.handle(next, driver, 'getAttribute', 'visual', elId).should.eventually.include('iVBOR');
     });

@@ -17,28 +17,12 @@ describe('base plugin', function () {
     const p = new BasePlugin('foo');
     should.exist(p.logger);
   });
-  it('should define no server updates', function () {
+  it('should define no server update method', function () {
     const p = new BasePlugin('foo');
-    p.updatesServer.should.eql(false);
-  });
-  it('should define a default list of no commands handled', function () {
-    const p = new BasePlugin('foo');
-    p.commands.should.eql(false);
+    should.not.exist(p.updateServer);
   });
   it('should define a default list of no new methods', function () {
     const p = new BasePlugin('foo');
     p.newMethodMap.should.eql({});
-  });
-  it('should do nothing by default in the updateServer function', async function () {
-    const p = new BasePlugin('foo');
-    const app = {};
-    const server = {};
-    await p.updateServer(app, server);
-    app.should.eql({});
-    server.should.eql({});
-  });
-  it('should just run the inner command by default in the handle function', async function () {
-    const p = new BasePlugin('foo');
-    await p.handle(() => 'wrapped').should.eventually.eql('wrapped');
   });
 });

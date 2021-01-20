@@ -16,10 +16,10 @@ const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.resolve(APPIUM_HOME, 'appium-fake-driver', 'node_modules', 'appium-fake-driver', 'test', 'fixtures',
                                    'app.xml');
 const TEST_CAPS = {
-  automationName: 'Fake',
   platformName: 'Fake',
-  deviceName: 'Fake',
-  app: TEST_FAKE_APP
+  'appium:automationName': 'Fake',
+  'appium:deviceName': 'Fake',
+  'appium:app': TEST_FAKE_APP
 };
 const WDIO_OPTS = {
   hostname: TEST_HOST,

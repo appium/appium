@@ -24,10 +24,6 @@ export default class ImageElementPlugin extends BasePlugin {
     this.finder = new ImageElementFinder();
   }
 
-  // say that we handle all commands since we want to be on the lookout for anything with an image
-  // element in the payload
-  commands = true;
-
   // this plugin supports a non-standard 'compare images' command
   newMethodMap = {
     '/session/:sessionId/appium/compare_images': {
@@ -41,12 +37,31 @@ export default class ImageElementPlugin extends BasePlugin {
     },
   };
 
-  async handle (next, driver, cmdName, ...args) {
-    // if we want to compare images, do that
-    if (cmdName === 'compareImages') {
-      return await compareImages(...args);
+  async compareImages (next, driver, ...args) {
+    return await compareImages(...args);
+  }
+
+  async findElement (next, driver, ...args) {
+    return await this._find(false, next, driver, ...args);
+  }
+
+  async findElements (next, driver, ...args) {
+    return await this._find(true, next, driver, ...args);
+  }
+
+  async _find (multiple, next, driver, ...args) {
+    const [strategy, selector] = args;
+
+    // if we're not actually finding by image, just do the normal thing
+    if (strategy !== IMAGE_STRATEGY) {
+      return await next();
     }
 
+    this.finder.setDriver(driver);
+    return await this.finder.findByImage(selector, {multiple});
+  }
+
+  async handle (next, driver, cmdName, ...args) {
     // if we have a command that involves an image element id, attempt to find the image element
     // and execute the command on it
     const imgElId = getImgElFromArgs(args);
@@ -58,18 +73,8 @@ export default class ImageElementPlugin extends BasePlugin {
       return await ImageElement.execute(driver, imgEl, cmdName, ...args);
     }
 
-    // otherwise, if we have any other command except a find command, or if we have a find command
-    // that has nothing to do with image elements, just defer to the regular behavior
-    const [strategy, selector] = args;
-    if ((cmdName !== 'findElement' && cmdName !== 'findElements') || strategy !== IMAGE_STRATEGY) {
-      return await next();
-    }
-
-    const multiple = cmdName === 'findElements';
-
-    // finally, if we want to find image elements, do that!
-    this.finder.setDriver(driver);
-    return await this.finder.findByImage(selector, {multiple});
+    // otherwise just do the normal thing
+    return await next();
   }
 }
 

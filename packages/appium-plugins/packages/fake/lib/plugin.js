@@ -6,10 +6,6 @@ import B from 'bluebird';
 
 export default class FakePlugin extends BasePlugin {
 
-  updatesServer = true;
-
-  commands = ['getPageSource', 'findElement', 'getFakeSessionData', 'setFakeSessionData'];
-
   newMethodMap = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData'},
@@ -27,24 +23,27 @@ export default class FakePlugin extends BasePlugin {
     expressApp.all('/fake', this.fakeRoute.bind(this));
   }
 
-  async handle (next, driver, cmdName, ...args) {
-    switch (cmdName) {
-      case 'getPageSource':
-        await B.delay(10);
-        return `<Fake>${JSON.stringify(args)}</Fake>`;
-      case 'findElement':
-        this.logger.info(`Before the command ${cmdName} is run with args ${JSON.stringify(args)}`);
-        const originalRes = await next();
-        this.logger.info(`After the command ${cmdName} is run`);
-        originalRes.fake = true;
-        return originalRes;
-      case 'getFakeSessionData':
-        return driver.fakeSessionData || null;
-      case 'setFakeSessionData':
-        driver.fakeSessionData = args[0];
-        return null;
-      default:
-        throw new Error(`Don't know how to handle command ${cmdName}`);
-    }
+  async getPageSource (next, driver, ...args) {
+    await B.delay(10);
+    return `<Fake>${JSON.stringify(args)}</Fake>`;
+  }
+
+  async findElement (next, driver, ...args) {
+    this.logger.info(`Before findElement is run with args ${JSON.stringify(args)}`);
+    const originalRes = await next();
+    this.logger.info(`After findElement is run`);
+    originalRes.fake = true;
+    return originalRes;
+  }
+
+  async getFakeSessionData (next, driver) {
+    await B.delay(1);
+    return driver.fakeSessionData || null;
+  }
+
+  async setFakeSessionData (next, driver, ...args) {
+    await B.delay(1);
+    driver.fakeSessionData = args[0];
+    return null;
   }
 }

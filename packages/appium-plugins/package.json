@@ -30,8 +30,8 @@
     "watch": "lerna run copyfiles && node ./scripts/build.js --watch",
     "bootstrap": "lerna bootstrap --no-ci",
     "test:lint": "lerna exec --stream -- npx eslint .",
-    "test:unit": "lerna run test:unit",
-    "test:e2e": "lerna run test:e2e",
+    "test:unit": "lerna run --stream test:unit",
+    "test:e2e": "lerna run --stream test:e2e",
     "precommit:msg": "echo 'Running pre-commit checks...' && exit 0",
     "precommit:test": "npm run test:lint && npm run test:unit"
   },

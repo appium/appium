@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Plugin for working with images and image elements in Appium",
   "main": "./build/index.js",
   "repository": {
@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/appium/appium-plugins#readme",
   "dependencies": {
-    "@appium/base-plugin": "^1.5.0",
+    "@appium/base-plugin": "^1.6.0",
     "appium-base-driver": "^8.0.0-beta.0",
     "lru-cache": "^6.0.0"
   },
@@ -33,6 +33,5 @@
     "test:unit": "mocha ./build/test/unit/*-specs.js",
     "test:e2e": "mocha -t 160000 ./build/test/e2e/*-specs.js",
     "copyfiles": "copyfiles ./test/fixtures/*.png ./build"
-  },
-  "devDependencies": {}
+  }
 }

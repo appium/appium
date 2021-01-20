@@ -4,7 +4,7 @@
   "tags": [
     "appium"
   ],
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Appium <maintainers@appium.io>",
   "license": "Apache-2.0",
   "repository": {
@@ -31,14 +31,12 @@
     "build"
   ],
   "dependencies": {
-    "@appium/base-plugin": "^1.5.0",
+    "@appium/base-plugin": "^1.6.0",
     "appium-support": "2.x",
     "bluebird": "^3.7.2",
     "lodash": "^4.17.11"
   },
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js"
-  },
-  "devDependencies": {
   }
 }

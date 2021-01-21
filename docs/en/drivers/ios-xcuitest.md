@@ -144,3 +144,12 @@ Over Appium 1.14.0, Appium configures keyboard preferences by default to make te
 - Turn `Predictive` in _Keyboards_ off
 - Mark keyboard tutorial as complete
 - (Only for Simulator) Toggle software keyboard on
+
+### Tune accessibility preference
+
+In some cases, below preference helps to make accessibilities available in views.
+Appium does not modify them because they could affect the application under test condition.
+Please coordinate them by hand.
+
+- Turn `Spoken Content` in _Settings > Accessibility_ on
+- Turn `Speak Selection` in _Settings > Accessibility_ on

@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.20.2 (FROM 1.20.1)
+===================================
+
+Appium 1.20.2 is a patch release
+
+### Android(UIAutomator2)
+* Fix element caching performance [appium-uiautomator2-server#406](https://github.com/appium/appium-uiautomator2-server/pull/406)
+
 CHANGES IN VERSION 1.20.1 (FROM 1.20.0)
 ===================================
 

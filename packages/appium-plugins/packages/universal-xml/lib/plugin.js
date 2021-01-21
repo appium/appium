@@ -1,7 +1,9 @@
 /* eslint-disable no-case-declarations */
 
 import BasePlugin from '@appium/base-plugin';
+import { errors } from 'appium-base-driver';
 import { transformSourceXml } from './source';
+import { transformQuery } from './xpath';
 import log from './logger';
 
 
@@ -10,29 +12,59 @@ export default class UniversalXMLPlugin extends BasePlugin {
   commands = ['getPageSource', 'findElement', 'findElements', 'findElementFromElement',
     'findElementsFromElement'];
 
-  async handle (next, driver, cmdName/*, ...args*/) {
-    if (cmdName === 'getPageSource') {
-      const source = await driver.getPageSource();
-      const transformMetadata = {appPackage: driver.opts.appPackage};
-      const {platformName} = driver.caps;
-      const {xml, unknowns} = transformSourceXml(source,
-        platformName.toLowerCase(), transformMetadata);
-      if (unknowns.nodes.length) {
-        log.warn(`The XML mapper found ${unknowns.nodes.length} node(s) / ` +
-                 `tag name(s) that it didn't know about. These should be ` +
-                 `reported to improve the quality of the plugin: ` +
-                 unknowns.nodes.join(', '));
-      }
-      if (unknowns.attrs.length) {
-        log.warn(`The XML mapper found ${unknowns.attrs.length} attributes ` +
-                 `that it didn't know about. These should be reported to ` +
-                 `improve the quality of the plugin: ` +
-                 unknowns.attrs.join(', '));
-      }
-      return xml;
+  async getPageSource (next, driver, addIndexPath) {
+    const source = await driver.getPageSource();
+    const metadata = {};
+    const {platformName} = driver.caps;
+    if (platformName.toLowerCase() === 'android') {
+      metadata.appPackage = driver.opts.appPackage;
     }
-    return await next();
+    const {xml, unknowns} = transformSourceXml(source,
+      platformName.toLowerCase(), {metadata, addIndexPath});
+    if (unknowns.nodes.length) {
+      log.warn(`The XML mapper found ${unknowns.nodes.length} node(s) / ` +
+               `tag name(s) that it didn't know about. These should be ` +
+               `reported to improve the quality of the plugin: ` +
+               unknowns.nodes.join(', '));
+    }
+    if (unknowns.attrs.length) {
+      log.warn(`The XML mapper found ${unknowns.attrs.length} attributes ` +
+               `that it didn't know about. These should be reported to ` +
+               `improve the quality of the plugin: ` +
+               unknowns.attrs.join(', '));
+    }
+    return xml;
   }
+
+  async findElement (...args) {
+    return await this._find(false, ...args);
+  }
+
+  async findElements (...args) {
+    return await this._find(true, ...args);
+  }
+
+  async _find (multiple, next, driver, strategy, selector) {
+    if (strategy.toLowerCase() !== 'xpath') {
+      return await next();
+    }
+    const xml = await this.getPageSource(null, driver, true);
+    const newSelector = transformQuery(selector, xml, multiple);
+
+    // if the selector was not able to be transformed, that means no elements were found that
+    // matched, so do the appropriate thing based on element vs elements
+    if (newSelector === null) {
+      if (multiple) {
+        return [];
+      }
+      throw new errors.NoSuchElementError();
+    }
+
+    // otherwise just run the transformed query!
+    const finder = multiple ? 'findElements' : 'findElement';
+    return await driver[finder](strategy, newSelector);
+  }
+
 }
 
 export { UniversalXMLPlugin };

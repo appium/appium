@@ -4,7 +4,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "appium": "^2.0.0-beta.8",
+    "appium": "^2.0.0-beta.9",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "copyfiles": "^2.4.1",

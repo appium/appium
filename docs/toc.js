@@ -399,5 +399,11 @@ module.exports = {
       ['如何编写文档', 'how-to-write-docs.md'],
       ['Appium 包结构', 'appium-packages.md'],
       ['鸣谢', 'credits.md']]]
+  ],
+  ja: [
+    ['ホーム', 'about-appium/intro.md'],
+    ['概要', ['about-appium',
+      ['はじめに', 'intro.md'],
+    ]]
   ]
 };

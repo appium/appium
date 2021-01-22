@@ -404,6 +404,7 @@ module.exports = {
     ['ホーム', 'about-appium/intro.md'],
     ['概要', ['about-appium',
       ['イントロ', 'intro.md'],
+      ['Appium クライアント', 'appium-clients.md'],
       ['はじめに', 'getting-started.md'],
     ]]
   ]

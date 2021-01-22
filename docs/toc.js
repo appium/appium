@@ -406,6 +406,7 @@ module.exports = {
       ['イントロ', 'intro.md'],
       ['Appium クライアント', 'appium-clients.md'],
       ['はじめに', 'getting-started.md'],
+      ['サポートプラットフォーム', 'platform-support.md'],
     ]]
   ]
 };

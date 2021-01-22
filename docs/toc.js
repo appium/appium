@@ -403,7 +403,8 @@ module.exports = {
   ja: [
     ['ホーム', 'about-appium/intro.md'],
     ['概要', ['about-appium',
-      ['はじめに', 'intro.md'],
+      ['イントロ', 'intro.md'],
+      ['はじめに', 'getting-started.md'],
     ]]
   ]
 };

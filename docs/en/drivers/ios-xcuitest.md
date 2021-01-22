@@ -145,11 +145,11 @@ Over Appium 1.14.0, Appium configures keyboard preferences by default to make te
 - Mark keyboard tutorial as complete
 - (Only for Simulator) Toggle software keyboard on
 
-### Tune accessibility preference
+### Accessibility preferences fine-tuning
 
-In some cases, below preference helps to make accessibilities available in views.
-Appium does not modify them because they could affect the application under test condition.
-Please coordinate them by hand.
+In some cases, enabling of the below preferences helps to make some view elements accessible.
+Appium does not modify these settings automatically, since they could affect the way your application under test performs.
+Please change them manually if needed
 
 - Turn `Spoken Content` in _Settings > Accessibility_ on
 - Turn `Speak Selection` in _Settings > Accessibility_ on

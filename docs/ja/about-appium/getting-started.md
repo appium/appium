@@ -271,4 +271,4 @@ Appium でできることについては、まだ表面上のことに過ぎま�
 - [サンプルコード](https://github.com/appium/appium/tree/master/sample-code) ディレクトリには、他にもたくさんのコードサンプルがあります
 
 - [discuss.appium.io](https://discuss.appium.io) - これは Appium コミュニティのフォーラムです。バグに遭遇したかもしれないと思った場合、または始めるための助けを得るために最初に行くのに最適な場所です
-- Appium [課題トラッカー](https://github.com/appium/appium/issues) - バグを見つけたと思ったら、Appium メンテナに知らせてください
+- Appium [不具合トラッカー](https://github.com/appium/appium/issues) - バグを見つけたと思ったら、Appium メンテナに知らせてください

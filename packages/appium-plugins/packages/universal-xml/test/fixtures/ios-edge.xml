@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AppiumAUT>
+  <XCUIElementTypeApplication type="XCUIElementTypeApplication" name="TheApp" label="TheApp" enabled="true" visible="true" x="0" y="0" width="414" height="896" index="0">
+    <SomeRandoElement type="blah" oddAttribute="odd" />
+    <SomeRandoElement type="blah" oddAttribute="odd" />
+    <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0">
+      <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="alice" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0"/>
+      <XCUIElementTypeTab type="XCUIElementTypeTab" name="fakeTab" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="1"/>
+      <XCUIElementTypeTab type="XCUIElementTypeTab" name="fakeTab" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="2"/>
+      <XCUIElementTypeKey type="XCUIElementTypeKey" name="fakeKey" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="3">
+        <XCUIElementTypeOther type="XCUIElementTypeOther" name="fakeOther" label="" enabled="" visible="true" x="1" y="2" width="3" height="4" index="0"/>
+      </XCUIElementTypeKey>
+      <XCUIElementTypeKey type="XCUIElementTypeKey" name="fakeKey" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="4"/>
+    </XCUIElementTypeOther>
+  </XCUIElementTypeApplication>
+</AppiumAUT>

@@ -17,6 +17,8 @@
                         <Element visible="true" x="50" y="183" width="314" height="40" axId="username" text="username">
                           <Element visible="true" x="50" y="185" width="314" height="51" axId="username" text="username">
                             <TextInput value="alice" visible="true" x="50" y="185" width="314" height="51" axId="username" text="username"></TextInput>
+                            <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeTab" text=""></Button>
+                            <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeKey" text=""></Button>
                           </Element>
                         </Element>
                       </Element>

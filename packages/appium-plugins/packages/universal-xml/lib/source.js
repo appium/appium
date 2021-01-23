@@ -22,7 +22,7 @@ export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 const isAttr = (k) => k.substring(0, 2) === ATTR_PREFIX;
 const isNode = (k) => !isAttr(k);
 
-export function transformSourceXml (xmlStr, platform, {metadata, addIndexPath = false}) {
+export function transformSourceXml (xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
@@ -46,15 +46,15 @@ function getUniversalName (nameMap, name, platform) {
   return null;
 }
 
-function getUniversalNodeName (nodeName, platform) {
+export function getUniversalNodeName (nodeName, platform) {
   return getUniversalName(NODE_MAP, nodeName, platform);
 }
 
-function getUniversalAttrName (attrName, platform) {
+export function getUniversalAttrName (attrName, platform) {
   return getUniversalName(ATTR_MAP, attrName, platform);
 }
 
-function transformNode (nodeObj, platform, {metadata, addIndexPath, parentPath}) {
+export function transformNode (nodeObj, platform, {metadata, addIndexPath, parentPath}) {
   const unknownNodes = [];
   const unknownAttrs = [];
   if (_.isPlainObject(nodeObj)) {
@@ -74,10 +74,11 @@ function transformNode (nodeObj, platform, {metadata, addIndexPath, parentPath})
 
     TRANSFORMS[platform]?.(nodeObj, metadata);
     unknownAttrs.push(...transformAttrs(nodeObj, attrs, platform));
-    unknownNodes.push(...transformChildNodes(nodeObj, childNodeNames, platform, {
+    const unknowns = transformChildNodes(nodeObj, childNodeNames, platform, {
       metadata, addIndexPath, parentPath: thisIndexPath
-    }));
-
+    });
+    unknownAttrs.push(...unknowns.attrs);
+    unknownNodes.push(...unknowns.nodes);
   } else if (_.isArray(nodeObj)) {
     for (const childObj of nodeObj) {
       const {nodes, attrs} = transformNode(childObj, platform, {
@@ -93,11 +94,14 @@ function transformNode (nodeObj, platform, {metadata, addIndexPath, parentPath})
   };
 }
 
-function transformChildNodes (nodeObj, childNodeNames, platform, {metadata, addIndexPath, parentPath}) {
+export function transformChildNodes (nodeObj, childNodeNames, platform, {metadata, addIndexPath, parentPath}) {
   const unknownNodes = [];
+  const unknownAttrs = [];
   for (const nodeName of childNodeNames) {
     // before modifying the name of this child node, recurse down and modify the subtree
-    transformNode(nodeObj[nodeName], platform, {metadata, addIndexPath, parentPath});
+    const {nodes, attrs} = transformNode(nodeObj[nodeName], platform, {metadata, addIndexPath, parentPath});
+    unknownNodes.push(...nodes);
+    unknownAttrs.push(...attrs);
 
     // now translate the node name and replace the subtree with this node
     const universalName = getUniversalNodeName(nodeName, platform);
@@ -105,13 +109,24 @@ function transformChildNodes (nodeObj, childNodeNames, platform, {metadata, addI
       unknownNodes.push(nodeName);
       continue;
     }
-    nodeObj[universalName] = nodeObj[nodeName];
+
+    // since multiple child node names could map to the same new transformed node name, we can't
+    // simply assign nodeObj[universalName] = nodeObj[nodeName]; we need to be sensitive to the
+    // situation where the end result is an array of children having the same node name
+    if (nodeObj[universalName]) {
+      // if we already have a node with the universal name, that means we are mapping a second
+      // original node name to the same universal node name, so we just push all its children into
+      // the list
+      nodeObj[universalName].push(...nodeObj[nodeName]);
+    } else {
+      nodeObj[universalName] = nodeObj[nodeName];
+    }
     delete nodeObj[nodeName];
   }
-  return unknownNodes;
+  return {nodes: unknownNodes, attrs: unknownAttrs};
 }
 
-function transformAttrs (nodeObj, attrs, platform) {
+export function transformAttrs (nodeObj, attrs, platform) {
   const unknownAttrs = [];
   for (const attr of attrs) {
     const cleanAttr = attr.substring(2);

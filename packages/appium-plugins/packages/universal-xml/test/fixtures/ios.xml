@@ -16,6 +16,8 @@
                       <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="183" width="314" height="40" index="0">
                         <XCUIElementTypeOther type="XCUIElementTypeOther" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0">
                           <XCUIElementTypeTextField type="XCUIElementTypeTextField" value="alice" name="username" label="username" enabled="true" visible="true" x="50" y="185" width="314" height="51" index="0"/>
+                          <XCUIElementTypeTab type="XCUIElementTypeTab" name="fakeTab" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="1"/>
+                          <XCUIElementTypeKey type="XCUIElementTypeKey" name="fakeKey" label="" enabled="" visible="true" x="50" y="185" width="314" height="51" index="2"/>
                         </XCUIElementTypeOther>
                       </XCUIElementTypeOther>
                     </XCUIElementTypeOther>

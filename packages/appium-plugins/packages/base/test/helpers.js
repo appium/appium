@@ -26,7 +26,7 @@ function e2eSetup (opts = {}) {
     let {stdout} = await exec('npx', listArgs);
     let installed = JSON.parse(stdout);
 
-    if (!installed[driverName]) {
+    if (!installed[driverName]?.installed) {
       console.log('Not installed, installing...');
       const driverArgs = ['appium', 'driver', 'install', '--home', appiumHome, '--source', driverSource, driverSpec];
       if (driverPackage) {
@@ -41,7 +41,7 @@ function e2eSetup (opts = {}) {
     ({stdout} = await exec('npx', listArgs));
     installed = JSON.parse(stdout);
 
-    if (!installed[pluginName]) {
+    if (!installed[pluginName]?.installed) {
       console.log('Installing the local version of this plugin');
       const pluginArgs = ['appium', 'plugin', 'install', '--home', appiumHome, '--source', pluginSource, pluginSpec];
       if (pluginPackage) {

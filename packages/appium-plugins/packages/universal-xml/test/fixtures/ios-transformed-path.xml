@@ -1,0 +1,53 @@
+<UI indexPath="/0">
+  <App visible="true" x="0" y="0" width="414" height="896" indexPath="/0/0" axId="TheApp" text="TheApp">
+    <Window visible="true" x="0" y="0" width="414" height="896" indexPath="/0/0/0">
+      <Element visible="true" x="0" y="0" width="414" height="896" indexPath="/0/0/0/0">
+        <Nav visible="true" x="0" y="48" width="414" height="44" indexPath="/0/0/0/0/0" axId="RCCView">
+          <Button visible="true" x="0" y="48" width="96" height="44" indexPath="/0/0/0/0/0/0" axId="The App" text="The App"></Button>
+        </Nav>
+        <Element visible="true" x="0" y="0" width="414" height="896" indexPath="/0/0/0/0/1">
+          <Element visible="true" x="0" y="0" width="414" height="896" indexPath="/0/0/0/0/1/0">
+            <Element visible="true" x="0" y="92" width="414" height="804" indexPath="/0/0/0/0/1/0/0">
+              <Element visible="true" x="0" y="92" width="414" height="804" indexPath="/0/0/0/0/1/0/0/0" axId="Login username password loginBtn" text="Login username password loginBtn">
+                <Element visible="true" x="0" y="92" width="414" height="804" indexPath="/0/0/0/0/1/0/0/0/0" axId="Login username password loginBtn" text="Login username password loginBtn">
+                  <Element visible="true" x="0" y="92" width="414" height="804" indexPath="/0/0/0/0/1/0/0/0/0/0" axId="Login username password loginBtn" text="Login username password loginBtn">
+                    <Element visible="true" x="0" y="92" width="414" height="273" indexPath="/0/0/0/0/1/0/0/0/0/0/0" axId="Login username password loginBtn" text="Login username password loginBtn">
+                      <Text value="Login" visible="true" x="157" y="132" width="101" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/0" axId="Login" text="Login"></Text>
+                      <Element visible="true" x="50" y="183" width="314" height="40" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1" axId="username" text="username">
+                        <Element visible="true" x="50" y="183" width="314" height="40" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1/0" axId="username" text="username">
+                          <Element visible="true" x="50" y="185" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1/0/0" axId="username" text="username">
+                            <TextInput value="alice" visible="true" x="50" y="185" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1/0/0/0" axId="username" text="username"></TextInput>
+                            <Button visible="true" x="50" y="185" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1/0/0/1" axId="fakeTab" text=""></Button>
+                            <Button visible="true" x="50" y="185" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/1/0/0/2" axId="fakeKey" text=""></Button>
+                          </Element>
+                        </Element>
+                      </Element>
+                      <Element visible="true" x="50" y="223" width="314" height="40" indexPath="/0/0/0/0/1/0/0/0/0/0/0/2" axId="password" text="password">
+                        <Element visible="true" x="50" y="223" width="314" height="40" indexPath="/0/0/0/0/1/0/0/0/0/0/0/2/0" axId="password" text="password">
+                          <Element visible="true" x="50" y="225" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/2/0/0" axId="password" text="password">
+                            <TextInput value="•••••••••" visible="true" x="50" y="225" width="314" height="51" indexPath="/0/0/0/0/1/0/0/0/0/0/0/2/0/0/0" axId="password" text="password"></TextInput>
+                          </Element>
+                        </Element>
+                      </Element>
+                      <Element visible="true" x="177" y="263" width="60" height="102" indexPath="/0/0/0/0/1/0/0/0/0/0/0/3" axId="loginBtn" text="loginBtn">
+                        <Element visible="true" x="177" y="327" width="60" height="38" indexPath="/0/0/0/0/1/0/0/0/0/0/0/3/0" axId="loginBtn" text="loginBtn"></Element>
+                      </Element>
+                    </Element>
+                  </Element>
+                </Element>
+              </Element>
+            </Element>
+          </Element>
+        </Element>
+      </Element>
+    </Window>
+    <Window visible="false" x="0" y="0" width="414" height="896" indexPath="/0/0/1">
+      <Element visible="false" x="0" y="0" width="414" height="896" indexPath="/0/0/1/0">
+        <Element visible="false" x="0" y="0" width="414" height="896" indexPath="/0/0/1/0/0"></Element>
+        <Element visible="false" x="0" y="896" width="414" height="71" indexPath="/0/0/1/0/1">
+          <Element visible="false" x="0" y="896" width="414" height="71" indexPath="/0/0/1/0/1/0"></Element>
+        </Element>
+      </Element>
+    </Window>
+  </App>
+</UI>

@@ -166,7 +166,7 @@ Desired Capabilities の詳細と、
 Appium で使用できるすべての機能のリストについては、
 [Capabilities doc](/docs/en/writing-running-appium/caps.md)を参照してください。
 
-ここでは、テストファイルでセッションを構築する方法を説明します:
+ここでは、以下のテストファイルでセッションを構築する方法を説明します:
 
 ```js
 // javascript

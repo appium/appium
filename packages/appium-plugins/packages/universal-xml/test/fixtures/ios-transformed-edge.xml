@@ -1,0 +1,15 @@
+<UI>
+  <App visible="true" x="0" y="0" width="414" height="896" axId="TheApp" text="TheApp">
+    <SomeRandoElement oddAttribute="odd"></SomeRandoElement>
+    <SomeRandoElement oddAttribute="odd"></SomeRandoElement>
+    <Element visible="true" x="50" y="185" width="314" height="51" axId="username" text="username">
+      <TextInput value="alice" visible="true" x="50" y="185" width="314" height="51" axId="username" text="username"></TextInput>
+      <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeTab" text=""></Button>
+      <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeTab" text=""></Button>
+      <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeKey" text="">
+        <Element visible="true" x="1" y="2" width="3" height="4" axId="fakeOther" text=""></Element>
+      </Button>
+      <Button visible="true" x="50" y="185" width="314" height="51" axId="fakeKey" text=""></Button>
+    </Element>
+  </App>
+</UI>

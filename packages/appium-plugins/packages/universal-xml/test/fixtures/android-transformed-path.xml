@@ -1,0 +1,38 @@
+<UI width="1080" height="1920" indexPath="/0">
+  <View text="" indexPath="/0/0" x="0" y="0" width="1080" height="1920" visible="true">
+    <View text="" indexPath="/0/0/0" x="0" y="0" width="1080" height="1920" visible="true">
+      <View text="" indexPath="/0/0/0/0" x="0" y="72" width="1080" height="1848" visible="true">
+        <View text="" indexPath="/0/0/0/0/0" x="0" y="72" width="1080" height="1848" id="action_bar_root" visible="true">
+          <View text="" indexPath="/0/0/0/0/0/0" x="0" y="72" width="1080" height="1848" id="android:id/content" visible="true">
+            <View text="" indexPath="/0/0/0/0/0/0/0" x="0" y="72" width="1080" height="1848" visible="true">
+              <View text="" indexPath="/0/0/0/0/0/0/0/0" x="0" y="72" width="1080" height="1848" visible="true"></View>
+              <View text="" indexPath="/0/0/0/0/0/0/0/1" x="0" y="72" width="1080" height="1848" visible="true">
+                <View text="" indexPath="/0/0/0/0/0/0/0/1/0" x="0" y="72" width="1080" height="168" visible="true">
+                  <View text="" indexPath="/0/0/0/0/0/0/0/1/0/0" x="0" y="72" width="1080" height="168" visible="true">
+                    <View text="" indexPath="/0/0/0/0/0/0/0/1/0/0/0" x="0" y="72" width="1080" height="168" visible="true">
+                      <Button text="" indexPath="/0/0/0/0/0/0/0/1/0/0/0/0" x="0" y="72" width="168" height="168" visible="true"></Button>
+                    </View>
+                  </View>
+                </View>
+                <View text="" indexPath="/0/0/0/0/0/0/0/1/1" x="0" y="240" width="1080" height="1680" visible="true">
+                  <Text text="Login" indexPath="/0/0/0/0/0/0/0/1/1/0" x="413" y="360" width="255" height="136" visible="true"></Text>
+                  <View text="" indexPath="/0/0/0/0/0/0/0/1/1/1" x="150" y="496" width="780" height="120" visible="true">
+                    <TextInput text="alice" indexPath="/0/0/0/0/0/0/0/1/1/1/0" x="150" y="504" width="780" height="112" axId="username" visible="true"></TextInput>
+                  </View>
+                  <View text="" indexPath="/0/0/0/0/0/0/0/1/1/2" x="150" y="616" width="780" height="120" visible="true">
+                    <TextInput text="•••••••••" indexPath="/0/0/0/0/0/0/0/1/1/2/0" x="150" y="624" width="780" height="112" axId="password" visible="true"></TextInput>
+                  </View>
+                  <View text="" indexPath="/0/0/0/0/0/0/0/1/1/3" x="456" y="736" width="168" height="113" visible="true">
+                    <View text="" indexPath="/0/0/0/0/0/0/0/1/1/3/0" x="456" y="736" width="168" height="113" axId="loginBtn" visible="true">
+                      <Text text="Login" indexPath="/0/0/0/0/0/0/0/1/1/3/0/0" x="456" y="736" width="168" height="113" visible="true"></Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</UI>

@@ -153,7 +153,7 @@ const wdio = require("webdriverio");
 それらを使って `wdio.remote()` を呼び出します。
 Desired Capabilities は、セッションの初期化中に Appium サーバーに送信されるキーと値のセットで、
 どのようなことを自動化したいかを Appium に伝えます。
-どのような Appium ドライバでも、必要な能力の最小セットには以下のものが含まれているはずです。
+どのような Appium ドライバでも、以下の項目が必要な capabilities の最小セットになります。
 
 - `platformName`: 自動化するプラットフォームの名前
 - `platformVersion`: 自動化するプラットフォームのバージョン

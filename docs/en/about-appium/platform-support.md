@@ -79,3 +79,11 @@ Windows automation is supported with below drivers.
 
 * The [WinAppDriver](/docs/en/drivers/windows.md)
 * The [geckodriver](/docs/en/drivers/gecko.md) for Firefox
+
+### You.i Engine Support
+
+* The [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
+
+### Flutter Support
+
+* The [Flutter Driver](https://github.com/truongsinh/appium-flutter-driver)

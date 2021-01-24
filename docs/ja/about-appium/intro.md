@@ -96,10 +96,10 @@ Appium サーバーに送られるキーと値のセット (すなわち、マ�
 また、自動化中にサーバーの動作を変更できる様々な機能があります。
 例えば、Android や Windows のセッションではなく、
 iOS のセッションが必要であることを Appium に伝えるために、
-`platformName` ケイパビリティを `iOS` に設定することができます。
+`platformName` capability を `iOS` に設定することができます。
 また、Safari の自動化セッション中に JavaScript を使用して新しいウィンドウを開くことができるようにするために、
-`safariAllowPopups` のケイパビリティを `true` に設定することもできます。
-Appium で利用可能な機能の完全なリストについては、[ケイパビリティのドキュメント](/docs/en/writing-running-appium/caps.md) を参照してください。
+`safariAllowPopups` の capability を `true` に設定することもできます。
+Appium で利用可能な機能の完全なリストについては、[capabilities のドキュメント](/docs/en/writing-running-appium/caps.md) を参照してください。
 
 #### **Appium サーバー**
 Appium は Node.js で書かれたサーバーです。

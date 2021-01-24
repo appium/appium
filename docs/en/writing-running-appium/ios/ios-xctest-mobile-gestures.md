@@ -243,24 +243,29 @@ params.put("element", ((RemoteWebElement) element).getId());
 js.executeScript("mobile: selectPickerWheelValue", params);
 ```
 
+### mobile: rotateElement
 
-### mobile: alert
-
-Performs operations on NSAlert instance.
+Performs [rotate](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate?language=objc) gesture on the given element.
 
 #### Supported arguments
 
- * _action_: The following actions are supported: _accept_, _dismiss_ and _getButtons_.
- Mandatory parameter
- * _buttonLabel_: The label text of an existing alert button to click on. This is an
- optional parameter and is only valid in combination with _accept_ and _dismiss_
- actions.
+ * _element_: Internal element id (as hexadecimal hash string) to perform
+ rotation on. Mandatory parameter
+ * _rotation_: The rotation of the gesture in radians. Mandatory parameter
+ * _velocity_: The velocity of the rotation gesture in radians per second. Mandatory parameter
 
 #### Usage examples
 
-```python
-# Python
-driver.execute_script('mobile: alert', {'action': 'accept', 'buttonLabel': 'My Cool Alert Button'});
+```java
+// Java
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("mobile: rotateElement", ImmutableMap.of(
+    // rotate clockwise, 90 degrees
+    "rotation", -Math.PI / 2,
+    // in approximately two seconds
+    "velocity", Math.PI / 4,
+    "element", ((RemoteWebElement) element).getId()
+));
 ```
 
 ### mobile: tapWithNumberOfTaps

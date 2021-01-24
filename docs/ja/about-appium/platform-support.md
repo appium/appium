@@ -19,7 +19,7 @@ iOS の自動化は2つのドライバーでサポートされています:
   または正しく署名された .ipa (実機) を使用しています。
   基本的なサポートは、Apple の [XCUITest](https://developer.apple.com/reference/xctest) (古いバージョンでは [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)) フレームワークによって
   提供されています
-* モバイル Web のサポート: はい、モバイルの Safari の自動化を経由して実行できます。
+* モバイル Web のサポート: はい、モバイル Safari の自動化機構を経由できます。
   実機では `ios-webkit-remote-debugger` が必要で、Safari インターフェースのネイティブな部分の自動化はできません。
   手順については、[モバイル Web ドキュメント](/docs/en/writing-running-appium/web/mobile-web.md)を参照してください
 * ハイブリッドサポート: はい。実機の場合は ios-webkit-remote-debugger が必要です。

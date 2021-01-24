@@ -49,7 +49,7 @@ Android の自動化は2つのドライバーでサポートされています:
 * モバイル Web のサポート: はい。自動化は、バンドルされている [Chromedriver](http://chromedriver.chromium.org) サーバを
   プロキシとして使用して行われます。
   4.3 では、公式の Chrome ブラウザまたは Chromium 上でのみ自動化が動作します。
-  4.4 以上では、自動化は内蔵の「ブラウザ」アプリでも動作します。
+  4.4 以上では、自動化は標準の「ブラウザ」アプリでも動作します。
   Chrome / Chromium / Browser がテスト対象のデバイスに既にインストールされている必要があります。
   手順については、[モバイル Web ドキュメント](/docs/en/writing-running-appium/web/mobile-web.md)を参照してください
 * ハイブリッドサポート: はい。[ハイブリッドドキュメント](/docs/en/writing-running-appium/web/hybrid.md)を参照してください

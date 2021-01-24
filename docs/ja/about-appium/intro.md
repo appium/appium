@@ -3,7 +3,7 @@
 Appium は、iOS モバイル、Android モバイル、Windows デスクトッププラットフォーム上の
 ネイティブ、モバイル Web、ハイブリッドアプリケーションを自動化するためのオープンソースツールです。
 **ネイティブアプリ**とは、iOS、Android、または Windows SDK を使用して開発されたアプリのことです。
-**モバイル Web アプリ**は、モバイルブラウザを使用してアクセスする Web アプリです (Appium は、iOS では Safari、Android では Chrome または内蔵の Browser アプリをサポートしています)。
+**モバイル Web アプリ**は、モバイルブラウザを使用してアクセスする Web アプリです (Appium は、iOS では Safari、Android では Chrome または標準の Browser アプリをサポートしています)。
 **ハイブリッドアプリ**は、Web コンテンツとのインタラクションを可能にする標準的な仕組みである「WebView」のラッパーを持っています。
 [Apache Cordova](https://cordova.apache.org) や [Phonegap](http://phonegap.com/) のようなプロジェクトでは、
 Web 技術を使用してアプリを簡単に構築することができ、

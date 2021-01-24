@@ -46,7 +46,7 @@ Android の自動化は2つのドライバーでサポートされています:
     UiAutomator はデフォルトのドライバーです
 * デバイス: Android エミュレータと実機の Android 端末
 * ネイティブアプリのサポート: はい
-* モバイル Web のサポート: はい。自動化は、バンドルされている [Chromedriver](http://chromedriver.chromium.org) サーバを
+* モバイル Web のサポート: はい。自動化は、バンドルされている [Chromedriver](http://chromedriver.chromium.org) サーバーを
   プロキシとして使用して行われます。
   4.3 では、公式の Chrome ブラウザまたは Chromium 上でのみ自動化が動作します。
   4.4 以上では、自動化は標準の「ブラウザ」アプリでも動作します。
@@ -56,10 +56,10 @@ Android の自動化は2つのドライバーでサポートされています:
   * デフォルトの Appium オートメーションバックエンドを使用した場合: バージョン 4.4 以降
 * 1つのセッションで複数のアプリの自動化をサポート: はい
 * 複数のデバイスの同時自動化のサポート: はい。
-  ただし、Appium はサーバパラメータ `--port`、`--bootstrap-port` や `--chromedriver-port` に対して
+  ただし、Appium はサーバーパラメータ `--port`、`--bootstrap-port` や `--chromedriver-port` に対して
   異なるポートを使用して起動しなければなりません。
   これらのパラメータの詳細については
-  [サーバ引数のドキュメント](/docs/en/writing-running-appium/server-args.md) を参照してください
+  [サーバー引数のドキュメント](/docs/en/writing-running-appium/server-args.md) を参照してください
 * ベンダー提供またはサードパーティ製アプリの自動化をサポート: はい
 * カスタムの非標準 UI コントロールの自動化のサポート: いいえ
 

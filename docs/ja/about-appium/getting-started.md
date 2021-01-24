@@ -100,7 +100,7 @@ Appium は、実行している Appium のバージョンとどのポートを�
 このポート情報は重要です。
 ポートを変更したい場合は、
 Appium を起動する際に `-p` フラグを使用して変更することができます
-([サーバパラメータ](/docs/en/writing-running-appium/server-args.md)の全リストを確認してください)。
+([サーバーパラメータ](/docs/en/writing-running-appium/server-args.md)の全リストを確認してください)。
 
 ### 最初のテストの実行
 
@@ -149,7 +149,7 @@ const wdio = require("webdriverio");
 ```
 
 次にやるべきことは、Appium セッションを開始することです。
-これを行うには、サーバオプションと Desired Capabilities のセットを定義し、
+これを行うには、サーバーオプションと Desired Capabilities のセットを定義し、
 それらを使って `wdio.remote()` を呼び出します。
 Desired Capabilities は、セッションの初期化中に Appium サーバーに送信されるキーと値の集合で、
 どのようなことを自動化したいかを Appium に伝えます。

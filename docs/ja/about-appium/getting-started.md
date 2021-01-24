@@ -151,7 +151,7 @@ const wdio = require("webdriverio");
 次にやるべきことは、Appium セッションを開始することです。
 これを行うには、サーバオプションと Desired Capabilities のセットを定義し、
 それらを使って `wdio.remote()` を呼び出します。
-Desired Capabilities は、セッションの初期化中に Appium サーバーに送信されるキーと値のセットで、
+Desired Capabilities は、セッションの初期化中に Appium サーバーに送信されるキーと値の集合で、
 どのようなことを自動化したいかを Appium に伝えます。
 どのような Appium ドライバでも、以下の項目が必要な capabilities の最小セットになります。
 

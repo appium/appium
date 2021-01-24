@@ -45,7 +45,7 @@ Appium は、次の4つの信条によって概説された理念に従って、
 * Windows: Microsoft の [WinAppDriver](http://github.com/microsoft/winappdriver)
 
 ベンダーが提供するフレームワークを
-[WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API という1つの API でラップすることで要件2を満たしています。
+[WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API という1つの API でラップすることで要件 2 を満たしています。
 WebDriver (別名 "Selenium WebDriver") は、([JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html) として知られる) 
 クライアント - サーバープロトコルを指定します。
 このクライアント - サーバーアーキテクチャを考えると、任意の言語で書かれたクライアントを使用して、
@@ -59,14 +59,14 @@ WebDriver (別名 "Selenium WebDriver") は、([JSON Wire Protocol](https://w3c.
 テスト環境を
 好きなように管理することができます。
 
-同様に要件3を満たしています。
+同様に要件 3 を満たしています。
 WebDriver は、Web ブラウザを自動化するためのデファクトスタンダードとなっており、
 [W3C のワーキングドラフト](https://dvcs.w3.org/hg/webdriver/raw-file/tip/webdriver-spec.html)です。
 なぜモバイル用に全く違うことをするのでしょうか?
 その代わりに、モバイルの自動化に役立つ API メソッドを追加して
 [プロトコルを拡張](https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md)しました。
 
-要件4が与えられたものであることは明らかなはずです。
+要件 4 が与えられたものであることは明らかなはずです。
 あなたがこれを読んでいるのは、[Appium がオープンソース](https://github.com/appium/appium)だからです。
 
 ### Appium の概念

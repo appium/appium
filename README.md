@@ -19,18 +19,9 @@ started](/docs/en/about-appium/getting-started.md) doc.
 
 Appium supports app automation across a variety of platforms, like iOS,
 Android, and Windows. Each platform is supported by one or more "drivers",
-which know how to automate that particular platform. Choose a driver below for
-specific information about how that driver works and how to set it up:
+which know how to automate that particular platform.
 
-* iOS
-    * The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
-    * (DEPRECATED) The [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
-* Android
-    * The [Espresso Driver](/docs/en/drivers/android-espresso.md)
-    * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
-    * (DEPRECATED) The [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
-* The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
-* The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
+Please refer to [Appium Platform Support](/docs/en/about-appium/platform-support.md) for more details.
 
 ### Why Appium?
 

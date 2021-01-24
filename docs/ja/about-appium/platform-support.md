@@ -16,7 +16,7 @@ iOS の自動化は2つのドライバーでサポートされています:
 * バージョン: 12.2 以上 (原則として、Appium は iOS の最新バージョン2つをサポートしています)
 * デバイス: iPhone、iPad、tvOS 用のシミュレータと実機
 * ネイティブアプリのサポート: はい、デバッグバージョンの .app (シミュレータ)
-  または正しく署名された .ipa (実デバイス) を使用しています。
+  または正しく署名された .ipa (実機) を使用しています。
   基本的なサポートは、Apple の [XCUITest](https://developer.apple.com/reference/xctest) (古いバージョンでは [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)) フレームワークによって
   提供されています
 * モバイル Web のサポート: はい、モバイルの Safari の自動化を経由して実行できます。

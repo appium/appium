@@ -2,7 +2,12 @@
 
 Appium supports a variety of platforms and testing modalities (native,
 hybrid, web, real devices, simulators, etc...). This document is designed to
-make explicit the level of support and requirements for each of these.
+make explicit the level of support and requirements for each of these,
+or guide each driver to proper page.
+
+## Appium team support
+
+This section lists drivers that are supported by Appium team.
 
 ### iOS Support
 
@@ -10,6 +15,7 @@ iOS automation is supported with two drivers:
 
 * The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
 * The (deprecated) [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
+* The [safaridriver](/docs/en/drivers/safari.md) for Apple's [safaridriver](https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari?language=objc)
 
 Please refer to these driver docs for setup instructions.
 
@@ -19,15 +25,11 @@ Please refer to these driver docs for setup instructions.
   or correctly-signed .ipa (real devices). Underlying support is provided by
   Apple's [XCUITest](https://developer.apple.com/reference/xctest) (or [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/) for older versions)
   framework.
-* Mobile web support: Yes, via automation of mobile Safari. For real devices,
-  `ios-webkit-remote-debugger` is required, and automation of native aspects of
-  the Safari interface is not possible. See the [mobile web doc](/docs/en/writing-running-appium/web/mobile-web.md) for instructions.
-* Hybrid support: Yes. For real devices, ios-webkit-remote-debugger is
-  required. See the [hybrid doc](/docs/en/writing-running-appium/web/hybrid.md) for instructions.
+* Mobile web support: Yes, via automation of mobile Safari. See the [mobile web doc](/docs/en/writing-running-appium/web/mobile-web.md) for instructions.
+* Hybrid support: Yes. See the [hybrid doc](/docs/en/writing-running-appium/web/hybrid.md) for instructions.
 * Support for automating multiple apps in one session: No
-* Support for automating multiple devices simultaneously: No
-* Support for automating vendor-provided or third-party apps: Only
-  vendor-provided apps (Preferences, Maps, etc...), and only on the simulator. For iOS 10+, you can automate the home screen as well.
+* Support for automating multiple devices simultaneously: Yes
+* Support for automating vendor-provided or third-party apps: Yes, apps which are already installed on the device
 * Support for automating custom, non-standard UI controls: Minimal. You need to
   set accessibility information on the control which enables some basic
   automation.
@@ -37,7 +39,9 @@ Please refer to these driver docs for setup instructions.
 Android automation is supported with two drivers:
 
 * The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
+* The [Espresso Driver](/docs/en/drivers/android-espresso.md)
 * The (deprecated) [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* The [geckodriver](/docs/en/drivers/gecko.md) for Firefox and [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView)
 
 Please refer to these driver docs for setup instructions.
 
@@ -63,6 +67,28 @@ Please refer to these driver docs for setup instructions.
 * Support for automating vendor-provided or third-party apps: Yes
 * Support for automating custom, non-standard UI controls: No
 
+### macOS Support
+
+macOS automation is supported with below drivers.
+
+* The [Mac2Driver](/docs/en/drivers/mac2.md) is for macOS 10.15 or later
+* The (deprecated) [MacDriver](/docs/en/drivers/mac.md) is for lower macOS versions
+
 ### Windows Desktop Support
 
-See the [Windows Driver](/docs/en/drivers/windows.md) doc for details
+Windows automation is supported with below drivers.
+
+* The [WinAppDriver](/docs/en/drivers/windows.md)
+* The [geckodriver](/docs/en/drivers/gecko.md) for Firefox and [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView)
+
+## Vendors/Community based drivers
+
+This section lists drivers that are supported by vendors and community.
+
+### You.i Engine Support
+
+* The [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
+
+### Flutter Support
+
+* The [Flutter Driver](https://github.com/truongsinh/appium-flutter-driver)

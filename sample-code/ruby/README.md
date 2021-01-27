@@ -1,10 +1,13 @@
 # Ruby Sample Code
 
+iOS tests are written by `ruby_lib_core`.
+Android tests are written by `ruby_lib`
+
 ## Setup
 
-* Install `ruby` and `rspec`
+* Install `ruby`
 * Run `bundle install` from this directory
 
 ## Running Tests
 
-* `rspec spec/<name_of_test>_spec.rb`
+* `ruby spec/<name_of_test>_spec.rb`

@@ -3,26 +3,27 @@ require 'spec_helper'
 desired_caps = {
   caps: {
     platformName:  'iOS',
-    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '11.4',
-    deviceName:    ENV["IOS_DEVICE_NAME"] || 'iPhone 6s',
+    platformVersion: ENV["IOS_PLATFORM_VERSION"] || '14.2',
+    deviceName:    ENV["IOS_DEVICE_NAME"] || 'iPhone 12',
     automationName: 'XCUITest',
     browserName: 'Safari',
   },
   appium_lib: {
-    sauce_username:   ENV['SAUCE_LABS'] ? ENV['SAUCE_USERNAME'] : nil,
-    sauce_access_key: ENV['SAUCE_LABS'] ? ENV['SAUCE_ACCESS_KEY'] : nil,
     wait: 60
   }
 }
 
 describe 'Create Safari session' do
   it 'should create and destroy IOS Safari session' do
-    @driver = Appium::Driver.new(desired_caps, false).start_driver
+    @driver = Appium::Core.for(desired_caps).start_driver
 
     @driver.get 'https://www.google.com'
-    expect(@driver.title).to eql 'Google'
+    expect(@driver.title).to eq 'Google'
 
     @driver.quit
-    expect { @driver.title }.to raise_error(Selenium::WebDriver::Error::InvalidSessionIdError, 'A session is either terminated or not started')
+    expect {
+      @driver.title
+    }.to raise_error(Selenium::WebDriver::Error::InvalidSessionIdError,
+                     'A session is either terminated or not started')
   end
 end

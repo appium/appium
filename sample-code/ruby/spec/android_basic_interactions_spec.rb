@@ -23,7 +23,7 @@ describe 'Basic Android interactions' do
   end
 
   after(:all) do
-    @driver.quit
+    @driver&.quit
   end
 
   it 'should send keys to search box and then check the value' do

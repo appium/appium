@@ -5,9 +5,11 @@ Android tests are written by `ruby_lib`.
 
 ## Setup
 
-* Install `ruby`
-* Run `bundle install` from this directory
+1. Install Ruby
+2. `gem install rspec`
+3. `bundle install`
 
 ## Running Tests
 
-* `ruby spec/<name_of_test>_spec.rb`
+* `rspec`
+* `rspec spec/<name_of_test>_spec.rb`

@@ -1,29 +1,16 @@
 require 'spec_helper'
-
-desired_caps = {
-  caps: {
-    platformName:  'Android',
-    platformVersion: ENV['SAUCE_LABS'] ? (ENV["ANDROID_PLATFORM_VERSION"] || '7.1') : ENV["ANDROID_PLATFORM_VERSION"],
-    deviceName:    ENV["ANDROID_DEVICE_VERSION"] || 'Android',
-    app:           ANDROID_APP,
-    automationName: 'UIAutomator2',
-    appActivity: '.app.SearchInvoke'
-  },
-  appium_lib: {
-    sauce_username:   ENV['SAUCE_LABS'] ? ENV['SAUCE_USERNAME'] : nil,
-    sauce_access_key: ENV['SAUCE_LABS'] ? ENV['SAUCE_ACCESS_KEY'] : nil,
-    wait: 60
-  }
-}
+require 'appium_lib'
 
 describe 'Basic Android interactions' do
 
   before(:all) do
-    @driver = Appium::Driver.new(desired_caps, false).start_driver
+    caps = android_caps
+    caps[:caps][:appActivity] = '.app.SearchInvoke'
+    @driver = Appium::Driver.new(caps, false).start_driver
   end
 
   after(:all) do
-    @driver.quit
+    @driver&.quit
   end
 
   it 'should send keys to search box and then check the value' do

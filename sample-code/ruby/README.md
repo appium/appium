@@ -1,7 +1,7 @@
 # Ruby Sample Code
 
 iOS tests are written by `ruby_lib_core`.
-Android tests are written by `ruby_lib`
+Android tests are written by `ruby_lib`.
 
 ## Setup
 

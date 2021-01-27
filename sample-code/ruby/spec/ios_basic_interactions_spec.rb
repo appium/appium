@@ -1,22 +1,9 @@
 require 'spec_helper'
+require 'appium_lib_core'
 
-desired_caps = {
-  caps: {
-    platformName:  'iOS',
-    platformVersion: ENV['IOS_PLATFORM_VERSION'] || '14.2',
-    deviceName:    ENV['IOS_DEVICE_NAME'] || 'iPhone 12',
-    app:           IOS_APP,
-    automationName: 'XCUITest',
-  },
-  appium_lib: {
-    wait: 60
-  }
-}
-
-# Start the driver
 describe 'IOS Basic Interactions' do
   before(:all) do
-    @driver = Appium::Core.for(desired_caps).start_driver
+    @driver = Appium::Core.for(ios_caps).start_driver
   end
 
   after(:all) do

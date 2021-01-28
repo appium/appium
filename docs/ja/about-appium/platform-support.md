@@ -3,6 +3,11 @@
 Appium は、さまざまなプラットフォームとテストの様式
 (ネイティブ、ハイブリッド、Web、リアルデバイス、シミュレータなど) をサポートしています。
 このドキュメントは、これらのそれぞれのサポートレベルと要件を明示するように設計されています。
+もしくは、それぞれの適切なページへ案内します。
+
+## Appium team support
+
+以下はAppiumの開発チームによりサポートされるドライバーです。
 
 ### iOS のサポート
 
@@ -10,6 +15,7 @@ iOS の自動化は2つのドライバーでサポートされています:
 
 * [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
 * (非推奨) [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
+* [safaridriver](/docs/en/drivers/safari.md) は Apple の [safaridriver](https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari?language=objc)
 
 設定方法については、これらのドライバーのドキュメントを参照してください。
 
@@ -20,14 +26,12 @@ iOS の自動化は2つのドライバーでサポートされています:
   基本的なサポートは、Apple の [XCUITest](https://developer.apple.com/reference/xctest) (古いバージョンでは [UIAutomation](https://web.archive.org/web/20160904214108/https://developer.apple.com/library/ios/documentation/DeveloperTools/Reference/UIAutomationRef/)) フレームワークによって
   提供されています
 * モバイル Web のサポート: はい、モバイル Safari の自動化機構を経由できます。
-  実機では `ios-webkit-remote-debugger` が必要で、Safari インターフェースのネイティブな部分の自動化はできません。
   手順については、[モバイル Web ドキュメント](/docs/en/writing-running-appium/web/mobile-web.md)を参照してください
-* ハイブリッドサポート: はい。実機の場合は ios-webkit-remote-debugger が必要です。
+* ハイブリッドサポート: はい。
   手順については、[ハイブリッドドキュメント](/docs/en/writing-running-appium/web/hybrid.md)を参照してください
 * 1つのセッションで複数のアプリの自動化をサポート: いいえ
-* 複数のデバイスの同時自動化のサポート: いいえ
-* ベンダー提供またはサードパーティ製アプリの自動化をサポート: ベンダー提供のアプリ (環境設定、マップなど) のみ、シミュレータ上でのみ。
-  iOS 10+ では、ホーム画面も自動化できます
+* 複数のデバイスの同時自動化のサポート: はい
+* ベンダー提供またはサードパーティ製アプリの自動化をサポート: はい。予め端末にインストールされている必要があります。
 * カスタムの非標準 UI コントロールの自動化のサポート: 最小限の設定です。
   基本的な自動化を可能にするコントロールに
   アクセシビリティ情報を設定する必要があります
@@ -37,7 +41,9 @@ iOS の自動化は2つのドライバーでサポートされています:
 Android の自動化は2つのドライバーでサポートされています:
 
 * [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
+* [Espresso Driver](/docs/en/drivers/android-espresso.md)
 * (非推奨) [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
+* Firefox や [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView) 向けの [geckodriver](/docs/en/drivers/gecko.md)
 
 設定方法については、これらのドライバーのドキュメントを参照してください。
 
@@ -63,6 +69,29 @@ Android の自動化は2つのドライバーでサポートされています:
 * ベンダー提供またはサードパーティ製アプリの自動化をサポート: はい
 * カスタムの非標準 UI コントロールの自動化のサポート: いいえ
 
+
+### macOS サポート
+
+macOS の自動化は以下のドライバーによってサポートされます。
+
+* macOS 10.15 以上 [Mac2Driver](/docs/en/drivers/mac2.md)
+* macOS 10.15 未満 (非推奨) [MacDriver](/docs/en/drivers/mac.md)
+
 ### Windows デスクトップのサポート
 
-詳細は [Windows Driver](/docs/en/drivers/windows.md) のドキュメントを参照してください。
+Windows の自動化は以下のドライバーによってサポートされます。
+
+* [WinAppDriver](/docs/en/drivers/windows.md)
+* Firefox と [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView) は [geckodriver](/docs/en/drivers/gecko.md)
+
+## ベンダー/コミュニティー
+
+以下はベンダーやコミュニティーによってサポートされるドライバーです。
+
+### You.i Engine Support
+
+* [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
+
+### Flutter Support
+
+* [Flutter Driver](https://github.com/truongsinh/appium-flutter-driver)

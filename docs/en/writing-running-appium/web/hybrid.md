@@ -118,7 +118,7 @@ webview = driver.contexts.last
 driver.switch_to.context(webview)
 
 # do some webby stuff
-driver.find_element(:css, ".green_button").click
+driver.find_element(By.CSS, ".green_button").click
 
 # switch back to native view
 driver.switch_to.context(driver.contexts.first)

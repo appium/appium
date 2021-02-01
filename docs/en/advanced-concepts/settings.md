@@ -1,6 +1,6 @@
 ## Settings
 
-Settings are a new concept introduced by appium. They are currently not a part of the Mobile JSON Wire Protocol, or the Webdriver spec.
+Settings are a new concept introduced by Appium. They are currently not a part of the Mobile JSON Wire Protocol, or the Webdriver spec.
 
 Settings are a way to specify the behavior of the appium server.
 

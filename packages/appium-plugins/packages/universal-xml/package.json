@@ -1,6 +1,6 @@
 {
   "name": "@appium/universal-xml-plugin",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.1",
   "description": "Appium plugin for making XML source and XPath queries the same across iOS and Android",
   "main": "./build/index.js",
   "repository": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/appium/appium-plugins#readme",
   "dependencies": {
-    "@appium/base-plugin": "^1.5.0",
+    "@appium/base-plugin": "^1.6.2",
     "appium-base-driver": "^8.0.0-beta.4",
     "fast-xml-parser": "^3.17.6",
     "xmldom": "^0.4.0",
@@ -33,6 +33,5 @@
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js",
     "copyfiles": "copyfiles ./test/fixtures/*.xml ./build"
-  },
-  "devDependencies": {}
+  }
 }

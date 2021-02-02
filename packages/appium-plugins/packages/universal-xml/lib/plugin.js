@@ -6,13 +6,20 @@ import { transformSourceXml } from './source';
 import { transformQuery } from './xpath';
 import log from './logger';
 
+const SOURCE_URL_RE = new RegExp('/session/[^/]+/source');
 
 export default class UniversalXMLPlugin extends BasePlugin {
 
   commands = ['getPageSource', 'findElement', 'findElements', 'findElementFromElement',
     'findElementsFromElement'];
 
-  async getPageSource (next, driver, addIndexPath) {
+  // we don't want the UIA2 driver to proxy source requests directly to the UIA2 server, since we
+  // want to handle the source command ourselves
+  shouldAvoidProxy (method, url) {
+    return method === 'GET' && SOURCE_URL_RE.test(url);
+  }
+
+  async getPageSource (next, driver, sessId, addIndexPath = false) {
     const source = await driver.getPageSource();
     const metadata = {};
     const {platformName} = driver.caps;
@@ -49,7 +56,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
     if (strategy.toLowerCase() !== 'xpath') {
       return await next();
     }
-    const xml = await this.getPageSource(null, driver, true);
+    const xml = await this.getPageSource(null, driver, null, true);
     let newSelector = transformQuery(selector, xml, multiple);
 
     // if the selector was not able to be transformed, that means no elements were found that

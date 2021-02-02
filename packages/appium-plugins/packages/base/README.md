@@ -93,6 +93,14 @@ You might find yourself in a position where you want to handle *all* commands, i
 1. `cmdName` - string representing the command being run
 1. `...args`
 
+There is a bit of a gotcha with handling Appium commands. Appium drivers have the ability to turn on a special 'proxy' mode, wherein the Appium server process takes a look at incoming URLs, and decides whether to forward them on to some upstream WebDriver server. It could happen that a command which a plugin wants to handle is designated as a command which is being proxied to an upstream server. In this case, we run into a problem, because the plugin never gets a chance to handle that command! For this reason, plugins can implement a special member function called `shouldAvoidProxy`, which takes the following parameters:
+
+1. `method`
+2. `url`
+3. `body`
+
+These parameters define an incoming request. If you want to handle a command in your plugin which would normally be proxied directly through a driver, you could disable or 'avoid' proxying the request, and instead have the request fall into the typical Appium command execution flow (and thereby your own command function). To avoid proxying a request, just return `true` from `shouldAvoidProxy`. Some examples of how this method is used are in the [Universal XML plugin](../universal-xml/lib/plugin.js) (where we want to avoid proxying the `getPageSource` command, or in the [Images plugin](../images/lib/plugin.js) (where we want to conditionally avoid proxying any command if it looks like it contains an image element).
+
 ### Adding new routes/commands
 
 You might decide that you want to add some new routes or commands to the Appium server, which could be called by clients. To do this, you should assign the `newMethodMap` class variable to an object containing a set of routes and command names and arguments. The format of this object should exactly match the format of the `METHOD_MAP` object in Appium's [routes definition](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js). Of course, just adding commands here does not implement them: you will also need to check for any new command names in your `handle` method to handle them, since by default there will be no implementation of commands added via `newMethodMap`.

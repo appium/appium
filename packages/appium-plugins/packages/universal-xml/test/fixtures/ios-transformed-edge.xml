@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <UI>
   <App visible="true" x="0" y="0" width="414" height="896" axId="TheApp" text="TheApp">
     <SomeRandoElement oddAttribute="odd"></SomeRandoElement>

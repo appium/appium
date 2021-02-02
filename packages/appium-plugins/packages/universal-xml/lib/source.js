@@ -29,7 +29,8 @@ export function transformSourceXml (xmlStr, platform, {metadata = {}, addIndexPa
   const xmlObj = parser.parse(xmlStr, PARSE_OPTS);
   const unknowns = transformNode(xmlObj, platform, {metadata, addIndexPath, parentPath: ''});
   const jParser = new j2xParser(GEN_OPTS);
-  const transformedXml = jParser.parse(xmlObj).trim();
+  let transformedXml = jParser.parse(xmlObj).trim();
+  transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
   return {xml: transformedXml, unknowns};
 }
 

@@ -33,7 +33,7 @@ describe('UniversalXMLPlugin', function () {
       driver.caps = {platformName: 'iOS'};
       // mock out the findElement function to just return an xml node from the fixture
       driver.findElement = (strategy, selector) => {
-        const nodes = runQuery(selector, XML_IOS);
+        const nodes = runQuery(selector, XML_IOS.replace(/<\/?AppiumAUT>/, ''));
         return nodes[0];
       };
       const node = await p.findElement(next, driver, 'xpath', '//TextInput[@axId="username"]');

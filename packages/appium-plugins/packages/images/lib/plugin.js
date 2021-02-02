@@ -47,12 +47,12 @@ export default class ImageElementPlugin extends BasePlugin {
     },
   };
 
-  shouldAvoidProxy (method, url, body) {
+  shouldAvoidProxy (method, route, body) {
     // if it looks like we have an image element in the url (as a route
     // parameter), never proxy. Just look for our image element prefix in allowed
     // positions (either after an 'element' or 'screenshot' path segment), and
     // ensure the prefix is followed by something
-    if (IMG_EL_URL_RE.test(url)) {
+    if (IMG_EL_URL_RE.test(route)) {
       return true;
     }
 

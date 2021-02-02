@@ -95,9 +95,9 @@ You might find yourself in a position where you want to handle *all* commands, i
 
 There is a bit of a gotcha with handling Appium commands. Appium drivers have the ability to turn on a special 'proxy' mode, wherein the Appium server process takes a look at incoming URLs, and decides whether to forward them on to some upstream WebDriver server. It could happen that a command which a plugin wants to handle is designated as a command which is being proxied to an upstream server. In this case, we run into a problem, because the plugin never gets a chance to handle that command! For this reason, plugins can implement a special member function called `shouldAvoidProxy`, which takes the following parameters:
 
-1. `method`
-2. `url`
-3. `body`
+1. `method` - string denoting HTTP method (`GET`, `POST`, etc...)
+2. `route` - string denoting the requested resource, for example `/session/8b3d9aa8-a0ca-47b9-9ab7-446e818ec4fc/source`
+3. `body` - optional value of any type representing the WebDriver request body
 
 These parameters define an incoming request. If you want to handle a command in your plugin which would normally be proxied directly through a driver, you could disable or 'avoid' proxying the request, and instead have the request fall into the typical Appium command execution flow (and thereby your own command function). To avoid proxying a request, just return `true` from `shouldAvoidProxy`. Some examples of how this method is used are in the [Universal XML plugin](../universal-xml/lib/plugin.js) (where we want to avoid proxying the `getPageSource` command, or in the [Images plugin](../images/lib/plugin.js) (where we want to conditionally avoid proxying any command if it looks like it contains an image element).
 

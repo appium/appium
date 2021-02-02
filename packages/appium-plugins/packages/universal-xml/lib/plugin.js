@@ -15,8 +15,8 @@ export default class UniversalXMLPlugin extends BasePlugin {
 
   // we don't want the UIA2 driver to proxy source requests directly to the UIA2 server, since we
   // want to handle the source command ourselves
-  shouldAvoidProxy (method, url) {
-    return method === 'GET' && SOURCE_URL_RE.test(url);
+  shouldAvoidProxy (method, route) {
+    return method === 'GET' && SOURCE_URL_RE.test(route);
   }
 
   async getPageSource (next, driver, sessId, addIndexPath = false) {

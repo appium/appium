@@ -31,7 +31,8 @@
     "build"
   ],
   "dependencies": {
-    "@appium/base-plugin": "^1.6.3"
+    "@appium/base-plugin": "^1.6.3",
+    "lodash": "^4.17.20"
   },
   "scripts": {
     "test:unit": "mocha ./build/test/unit/*-specs.js"

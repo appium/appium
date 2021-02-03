@@ -1,0 +1,39 @@
+{
+  "name": "@appium/relaxed-caps-plugin",
+  "description": "An Appium 2.0 plugin that loosens requirements for vendor prefixes on caps",
+  "tags": [
+    "appium"
+  ],
+  "version": "1.0.0-beta.0",
+  "author": "Appium <maintainers@appium.io>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium-relaxed-caps-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium-relaxed-caps-plugin/issues"
+  },
+  "engines": {
+    "node": ">=10",
+    "npm": ">=6"
+  },
+  "appium": {
+    "pluginName": "relaxed-caps",
+    "mainClass": "RelaxedCapsPlugin"
+  },
+  "main": "./build/index.js",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "lib",
+    "build"
+  ],
+  "dependencies": {
+    "@appium/base-plugin": "^1.6.3"
+  },
+  "scripts": {
+    "test:unit": "mocha ./build/test/unit/*-specs.js"
+  }
+}

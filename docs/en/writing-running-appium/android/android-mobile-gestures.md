@@ -37,6 +37,35 @@ driver.execute_script('mobile: longClickGesture', {'x': 100, 'y': 100, 'duration
 ```
 
 
+### mobile: doubleClickGesture
+
+This gesture performs double click action on the given element/coordinates.
+Available since Appium v1.21
+
+#### Supported arguments
+
+ * _elementId_: The id of the element to be clicked.
+  If the element is missing then both click offset coordinates must be provided.
+  If both the element id and offset are provided then the coordinates
+  are parsed as relative offsets from the top left corner of the element.
+ * _x_: The x-offset coordinate
+ * _y_: The y-offset coordinate
+
+#### Usage examples
+
+```java
+// Java
+((JavascriptExecutor) driver).executeScript("mobile: doubleClickGesture", ImmutableMap.of(
+    "elementId", ((RemoteWebElement) element).getId()
+));
+```
+
+```python
+# Python
+driver.execute_script('mobile: doubleClickGesture', {'x': 100, 'y': 100})
+```
+
+
 ### mobile: dragGesture
 
 This gesture performs drag action from the given element/coordinates to the given point.

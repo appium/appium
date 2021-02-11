@@ -45,11 +45,11 @@
     "appium-base-driver": "^7.0.0",
     "appium-espresso-driver": "^1.0.0",
     "appium-fake-driver": "^1.x",
-    "appium-flutter-driver": "^0",
-    "appium-geckodriver": "^0.3.0",
+    "appium-flutter-driver": "^0.x",
+    "appium-geckodriver": "^0.x",
     "appium-ios-driver": "4.x",
     "appium-mac-driver": "1.x",
-    "appium-mac2-driver": "^0",
+    "appium-mac2-driver": "^0.x",
     "appium-safari-driver": "^2.1.0",
     "appium-support": "2.x",
     "appium-tizen-driver": "^1.1.1-beta.4",
@@ -60,7 +60,7 @@
     "argparse": "^2.0.1",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",
-    "axios": "^0.21.0",
+    "axios": "^0.x",
     "bluebird": "3.x",
     "continuation-local-storage": "3.x",
     "find-root": "^1.1.0",
@@ -68,7 +68,7 @@
     "longjohn": "^0.2.12",
     "npmlog": "4.x",
     "semver": "^7.0.0",
-    "source-map-support": "0.x",
+    "source-map-support": "^0.x",
     "teen_process": "1.x",
     "winston": "3.x",
     "word-wrap": "^1.2.3"
@@ -114,6 +114,6 @@
     "sinon": "^9.0.0",
     "validate.js": "^0.13.0",
     "wd": "^1.10.0",
-    "yaml-js": "^0.2.0"
+    "yaml-js": "^0.x"
   }
 }

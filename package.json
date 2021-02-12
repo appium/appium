@@ -22,8 +22,8 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=8",
-    "npm": ">=6"
+    "node": ">=12",
+    "npm": ">=6.9"
   },
   "main": "./build/lib/main.js",
   "bin": {

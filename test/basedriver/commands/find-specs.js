@@ -74,7 +74,9 @@ describe('finding elements by image', function () {
     });
     it('should find image elements happypath', async function () {
       const d = new TestDriver();
-      basicStub(d);
+      const {compareStub} = basicStub(d);
+      compareStub.returns([{rect, score}]);
+
       const els = await d.findByImage(template, {multiple: true});
       els.should.have.length(1);
       basicImgElVerify(els[0], d);

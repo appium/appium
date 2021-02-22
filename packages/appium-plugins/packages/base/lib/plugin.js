@@ -11,7 +11,7 @@ export default class BasePlugin {
   //      POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
   //   }
   // }
-  newMethodMap = {};
+  static newMethodMap = {};
 
   constructor (pluginName) {
     this.name = pluginName;
@@ -28,13 +28,10 @@ export default class BasePlugin {
    * In order to add a new route to Appium with this plugin. Or, you could add new listeners to the
    * httpServer object.
    *
-   * This method does nothing in BasePlugin, and should be overridden, with this.updatesServer set
-   * to true in the constructor, in a final class.
-   *
    * @param {object} expressApp - the Express 'app' object used by Appium for route handling
    * @param {http.Server} httpServer - the node HTTP server that hosts the app
    */
-  /*async updateServer (expressApp, httpServer) {
+  /*static async updateServer (expressApp, httpServer) {
   }*/
 
   /**

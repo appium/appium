@@ -18,11 +18,9 @@ describe('base plugin', function () {
     should.exist(p.logger);
   });
   it('should define no server update method', function () {
-    const p = new BasePlugin('foo');
-    should.not.exist(p.updateServer);
+    should.not.exist(BasePlugin.updateServer);
   });
   it('should define a default list of no new methods', function () {
-    const p = new BasePlugin('foo');
-    p.newMethodMap.should.eql({});
+    BasePlugin.newMethodMap.should.eql({});
   });
 });

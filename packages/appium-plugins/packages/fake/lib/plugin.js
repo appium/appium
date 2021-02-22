@@ -6,21 +6,19 @@ import B from 'bluebird';
 
 export default class FakePlugin extends BasePlugin {
 
-  newMethodMap = {
+  static newMethodMap = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData'},
       POST: {command: 'setFakeSessionData', payloadParams: {required: ['data']}}
     },
   };
 
-  fakeRoute (req, res) {
-    this.logger.debug('Sending fake route response');
+  static fakeRoute (req, res) {
     res.send(JSON.stringify({fake: 'fakeResponse'}));
   }
 
-  async updateServer (expressApp/*, httpServer*/) { // eslint-disable-line require-await
-    this.logger.debug('Updating server');
-    expressApp.all('/fake', this.fakeRoute.bind(this));
+  static async updateServer (expressApp/*, httpServer*/) { // eslint-disable-line require-await
+    expressApp.all('/fake', FakePlugin.fakeRoute);
   }
 
   async getPageSource (next, driver, ...args) {

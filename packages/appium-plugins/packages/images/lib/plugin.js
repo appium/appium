@@ -35,7 +35,7 @@ export default class ImageElementPlugin extends BasePlugin {
   }
 
   // this plugin supports a non-standard 'compare images' command
-  newMethodMap = {
+  static newMethodMap = {
     '/session/:sessionId/appium/compare_images': {
       POST: {
         command: 'compareImages',

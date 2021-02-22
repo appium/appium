@@ -69,7 +69,7 @@ Your plugin can do one or more of 3 basic things:
 
 #### Updating the server
 
-You probably don't normally need to update the Appium server object (which is an Express server having already been configured in a variety of ways). But, for example, you could add new Express middleware to the server to support your plugin's requirements. To update the server you must implement the `async updateServer` method in your class. This method takes two parameters:
+You probably don't normally need to update the Appium server object (which is an Express server having already been configured in a variety of ways). But, for example, you could add new Express middleware to the server to support your plugin's requirements. To update the server you must implement the `static async updateServer` method in your class. This method takes two parameters:
 
 * `expressApp`: the Express app object
 * `httpServer`: the Node HTTP server object
@@ -103,7 +103,7 @@ These parameters define an incoming request. If you want to handle a command in 
 
 ### Adding new routes/commands
 
-You might decide that you want to add some new routes or commands to the Appium server, which could be called by clients. To do this, you should assign the `newMethodMap` class variable to an object containing a set of routes and command names and arguments. The format of this object should exactly match the format of the `METHOD_MAP` object in Appium's [routes definition](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js). Of course, just adding commands here does not implement them: you will also need to check for any new command names in your `handle` method to handle them, since by default there will be no implementation of commands added via `newMethodMap`.
+You might decide that you want to add some new routes or commands to the Appium server, which could be called by clients. To do this, you should assign the static `newMethodMap` class variable to an object containing a set of routes and command names and arguments. The format of this object should exactly match the format of the `METHOD_MAP` object in Appium's [routes definition](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js). Of course, just adding commands here does not implement them: you will also need to check for any new command names in your `handle` method to handle them, since by default there will be no implementation of commands added via `newMethodMap`.
 
 ## Tips
 

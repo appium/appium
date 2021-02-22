@@ -35,10 +35,9 @@ describe('fake plugin', function () {
   });
 
   it('should update an express app with a fake route', async function () {
-    const p = new FakePlugin('fake');
     const app = new FakeExpress();
     await app.get('/fake').should.eventually.be.rejected;
-    p.updateServer(app);
+    FakePlugin.updateServer(app);
     await app.get('/fake').should.eventually.eql(JSON.stringify({fake: 'fakeResponse'}));
   });
 

@@ -38,9 +38,6 @@ describe('FakeDriver - via HTTP', function () {
   let FakeDriver = null;
   const baseUrl = `${TEST_SERVER}/session`;
   before(async function () {
-    const config = new DriverConfig(appiumHome);
-    await config.read();
-    FakeDriver = config.require('fake');
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,
@@ -56,6 +53,10 @@ describe('FakeDriver - via HTTP', function () {
       }, DRIVER_TYPE);
     }
 
+    const config = new DriverConfig(appiumHome);
+    await config.read();
+    FakeDriver = config.require('fake');
+
     // then start server if we need to
     if (shouldStartServer) {
       let args = {port: TEST_PORT, host: TEST_HOST, appiumHome};
@@ -67,6 +68,13 @@ describe('FakeDriver - via HTTP', function () {
     if (server) {
       await server.close();
     }
+  });
+
+  describe('server updating', function () {
+    it('should allow drivers to update the server in arbitrary ways', async function () {
+      const {data} = await axios.get(`${TEST_SERVER}/fakedriver`);
+      data.should.eql({fakedriver: 'fakeResponse'});
+    });
   });
 
   describe('session handling', function () {
@@ -265,6 +273,17 @@ describe('FakeDriver - via HTTP', function () {
       data.value.message.should.match(/older capabilities/);
 
       createSessionStub.restore();
+    });
+
+    it('should allow drivers to update the method map with new routes and commands', async function () {
+      let driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        await axios.post(`${baseUrl}/${sessionId}/fakedriver`, {thing: {yes: 'lolno'}});
+        (await axios.get(`${baseUrl}/${sessionId}/fakedriver`)).data.value.should.eql({yes: 'lolno'});
+      } finally {
+        await driver.deleteSession();
+      }
     });
   });
 });

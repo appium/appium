@@ -20,7 +20,11 @@
   },
   "appium": {
     "pluginName": "fake",
-    "mainClass": "FakePlugin"
+    "mainClass": "FakePlugin",
+    "scripts": {
+      "fake-error": "./build/lib/scripts/fake-error.js",
+      "fake-success": "./build/lib/scripts/fake-success.js"
+    }
   },
   "main": "./build/index.js",
   "directories": {

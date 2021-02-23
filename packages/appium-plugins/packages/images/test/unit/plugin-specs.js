@@ -14,6 +14,7 @@ describe('ImageElementPlugin#handle', function () {
   const driver = new BaseDriver();
   const p = new ImageElementPlugin();
   describe('compareImages', function () {
+    this.timeout(6000);
     it('should compare images via match features mode', async function () {
       const res = await p.compareImages(next, driver, MATCH_FEATURES_MODE, TEST_IMG_1_B64, TEST_IMG_2_B64, {});
       res.count.should.eql(0);

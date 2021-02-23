@@ -20,3 +20,19 @@ For information and documentation about each plugin hosted in this repo, head to
 * [Base plugin](packages/base) - A plugin designed to facilitate the building of other plugins--not to be installed directly by end users
 * [Images plugin](packages/images) - A plugin containing image-related functionality, such as the ability to compare images or to find screen regions based on image templates
 * [Fake plugin](package/fake) - A minimal plugin that does nothing useful but demonstrates how plugins are built. Mostly used for testing.
+
+# Developer
+
+To run:
+
+```
+npm run clean
+```
+
+or
+
+```
+npm run bootstrap
+npm install
+npm run build
+```

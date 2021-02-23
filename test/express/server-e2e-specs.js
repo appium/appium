@@ -116,11 +116,10 @@ describe('server plugins', function () {
     hwServer = await server({
       routeConfiguringFunction: _.noop,
       port: 8181,
-      plugins: [{
-        updateServer: updaterWithGetRoute('plugin1', 'res from plugin1 route'),
-      }, {
-        updateServer: updaterWithGetRoute('plugin2', 'res from plugin2 route'),
-      }]
+      serverUpdaters: [
+        updaterWithGetRoute('plugin1', 'res from plugin1 route'),
+        updaterWithGetRoute('plugin2', 'res from plugin2 route'),
+      ]
     });
     let {data} = await axios.get('http://localhost:8181/plugin1');
     data.should.eql('res from plugin1 route');
@@ -133,9 +132,7 @@ describe('server plugins', function () {
     await server({
       routeConfiguringFunction: _.noop,
       port: 8181,
-      plugins: [{
-        updateServer: () => { throw new Error('ugh'); }
-      }]
+      serverUpdaters: [() => { throw new Error('ugh');}]
     }).should.eventually.be.rejectedWith(/ugh/);
   });
 });

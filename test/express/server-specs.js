@@ -25,21 +25,17 @@ function fakeApp () {
   return app;
 }
 
-function fakePlugin () {
-  return {
-    name: 'fake',
-    newMethodMap: {
-      '/session/:sessionId/fake': {
-        GET: {command: 'fakeGet'},
-        POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}}
-      },
-    },
-    updateServer: (app, httpServer) => {
-      app.updated = true;
-      httpServer.updated = true;
-    }
-  };
-}
+const newMethodMap = {
+  '/session/:sessionId/fake': {
+    GET: {command: 'fakeGet'},
+    POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}}
+  },
+};
+
+const updateServer = (app, httpServer) => {
+  app.updated = true;
+  httpServer.updated = true;
+};
 
 function fakeDriver () {
   return {sessionExists: () => {}, executeCommand: () => {}};
@@ -60,7 +56,7 @@ describe('server configuration', function () {
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver);
     configureServer({app: app1, addRoutes});
-    configureServer({app: app2, addRoutes, plugins: [fakePlugin()]});
+    configureServer({app: app2, addRoutes, extraMethodMap: newMethodMap});
     app2.totalCount().should.eql(app1.totalCount() + 2);
   });
 
@@ -69,20 +65,18 @@ describe('server configuration', function () {
     const app2 = fakeApp();
     const driver = fakeDriver();
     const addRoutes = routeConfiguringFunction(driver);
-    const plugin = fakePlugin();
-    plugin.newMethodMap = [];
     configureServer({app: app1, addRoutes});
-    configureServer({app: app2, addRoutes, plugins: [plugin]});
+    configureServer({app: app2, addRoutes, extraMethodMap: []});
     app2.totalCount().should.eql(app1.totalCount());
   });
 
   it('should allow plugins to update the server', async function () {
-    const plugins = [fakePlugin()];
     const driver = fakeDriver();
     const _server = await server({
       routeConfiguringFunction: routeConfiguringFunction(driver),
       port: 8181,
-      plugins,
+      extraMethodMap: newMethodMap,
+      serverUpdaters: [updateServer]
     });
     try {
       _server.updated.should.be.true;

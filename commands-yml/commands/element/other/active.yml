@@ -65,7 +65,7 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /session/:session_id/element/active
-  method: 'POST'
+  method: 'GET' (W3C), 'POST' (JSONWP)
   response:
     - name: ELEMENT
       type: object

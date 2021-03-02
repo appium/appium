@@ -7,6 +7,9 @@
     "test": "mocha test/basic",
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
+  "mocha": {
+    "timeout": "1800000"
+  },
   "author": "Daniel Graham",
   "license": "Apache-2.0",
   "devDependencies": {

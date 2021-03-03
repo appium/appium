@@ -130,10 +130,12 @@ installed, and is _not_ recommended):
 ```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent` project
     will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent`.
-*  (Only for lower than Appium 1.20) Open a terminal and go to that location, then run the following in order to
-    set the project up:
+    Open a terminal and got to the location, then run the next script.
 ```
     mkdir -p Resources/WebDriverAgent.bundle
+```
+*  (Only for Appium version below 1.20) Run the next script on the same terminal.
+```
     ./Scripts/bootstrap.sh -d
 ```
 *   Open `WebDriverAgent.xcodeproj` in Xcode. For **both** the `WebDriverAgentLib`

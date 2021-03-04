@@ -130,11 +130,11 @@ installed, and is _not_ recommended):
 ```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent` project
     will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent`.
-    Open a terminal and got to the location, then run the next script.
+    Open a terminal and go to the location, then run the next script.
 ```
     mkdir -p Resources/WebDriverAgent.bundle
 ```
-*  (Only for Appium version below 1.20) Run the next script on the same terminal.
+*  (Only for Appium versions below 1.20) Run the next script on the same terminal.
 ```
     ./Scripts/bootstrap.sh -d
 ```

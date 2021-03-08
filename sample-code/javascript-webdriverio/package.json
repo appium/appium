@@ -16,6 +16,6 @@
     "assert": "^2.0.0",
     "chai": "^4.1.2",
     "mocha": "^8.0.1",
-    "webdriverio": "^6.0.5"
+    "webdriverio": "^7.1.0"
   }
 }

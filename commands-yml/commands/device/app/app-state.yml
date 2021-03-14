@@ -73,7 +73,7 @@ client_support:
 # Information about the HTTP endpoints
 endpoint:
   url: /session/:session_id/appium/device/app_state
-  method: GET
+  method: POST
   url_parameters:
     - name: session_id
       description: ID of the session to route the command to

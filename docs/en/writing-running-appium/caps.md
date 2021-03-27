@@ -48,7 +48,6 @@ These Capabilities span multiple drivers.
 |`newCommandTimeout`|How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session|e.g. `60`|
 |`language`| Language to set for iOS (XCUITest driver only) and Android. |e.g. `fr`|
 |`locale`| Locale to set for iOS (XCUITest driver only) and Android. `fr_CA` format for iOS. `CA` format (country name abbreviation) for Android |e.g. `fr_CA`, `CA` |
-|`udid`| Unique device identifier of the connected physical device|e.g. `1ae203187fc012g`|
 |`orientation`| (Sim/Emu-only) start in a certain orientation|`LANDSCAPE` or `PORTRAIT`|
 |`autoWebview`| Move directly into Webview context. Default `false`|`true`, `false`|
 |`noReset`| Don't reset app state before this session. See [here](/docs/en/writing-running-appium/other/reset-strategies.md) for more details  |`true`, `false`|

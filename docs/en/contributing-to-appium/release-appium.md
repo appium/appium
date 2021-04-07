@@ -21,3 +21,20 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
 1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
 1. Begin process of releasing `appium-desktop`.
 1. Notify @jlipps to so he can tweet a link to the discuss post.
+
+# Troubleshooting
+
+## When you publish a version in wrong channel
+
+For example, you accidentally pusbed `rc` version in `latest` channel.
+Then, you can make the version `deprecate`, and re-tag the previous stable version in order to keep the stable one via `npm install`.
+`dist-tag` helps it.
+
+```
+$ npm deprecate appium@1.21.0-rc.0 "this release should be in rc channel" --tag=lates
+$ npm dist-tag add appium@1.20.2 latest
+```
+
+You can confirm if the above step works with calling `npm install -g appium`.
+Once you can install `appium@1.20.2`, the above step worked.
+(You may need to wait for a few minutes because of npm caching.)

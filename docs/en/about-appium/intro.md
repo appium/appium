@@ -7,7 +7,7 @@ applications on iOS mobile, Android mobile, and Windows desktop platforms.
 supports Safari on iOS and Chrome or the built-in 'Browser' app on Android).
 **Hybrid apps** have a wrapper around a "webview" -- a native control that
 enables interaction with web content. Projects like [Apache Cordova](https://cordova.apache.org)
-make sit easy to build apps using web technologies that are then bundled
+make it easy to build apps using web technologies that are then bundled
 into a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against

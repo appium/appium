@@ -31,7 +31,7 @@ Then, you can make the version `deprecate`, and re-tag the previous stable versi
 `dist-tag` helps it.
 
 ```
-$ npm deprecate appium@1.21.0-rc.0 "this release should be in rc channel" --tag=lates
+$ npm deprecate appium@1.21.0-rc.0 "this release should be in rc channel" --tag=latest
 $ npm dist-tag add appium@1.20.2 latest
 ```
 

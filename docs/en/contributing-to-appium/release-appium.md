@@ -24,17 +24,17 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
 
 # Troubleshooting
 
-## When you publish a version in wrong channel
+## When you publish a version to a wrong channel
 
-For example, you accidentally pusbed `rc` version in `latest` channel.
-Then, you can make the version `deprecate`, and re-tag the previous stable version in order to keep the stable one via `npm install`.
-`dist-tag` helps it.
+For example, you accidentally pusbed `rc` version into the `latest` channel.
+Then, you could add the `deprecated` label to this version , and re-tag the previous stable version in order to keep the stable one via `npm install`.
+`dist-tag` command helps to achieve that.
 
 ```
 $ npm deprecate appium@1.21.0-rc.0 "this release should be in rc channel" --tag=latest
 $ npm dist-tag add appium@1.20.2 latest
 ```
 
-You can confirm if the above step works with calling `npm install -g appium`.
+You can confirm if the above step works by calling `npm install -g appium`.
 Once you can install `appium@1.20.2`, the above step worked.
 (You may need to wait for a few minutes because of npm caching.)

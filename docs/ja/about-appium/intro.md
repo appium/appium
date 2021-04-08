@@ -5,7 +5,7 @@ Appium は、iOS モバイル、Android モバイル、Windows デスクトッ�
 **ネイティブアプリ**とは、iOS、Android、または Windows SDK を使用して開発されたアプリのことです。
 **モバイル Web アプリ**は、モバイルブラウザを使用してアクセスする Web アプリです (Appium は、iOS では Safari、Android では Chrome または標準の Browser アプリをサポートしています)。
 **ハイブリッドアプリ**は、Web コンテンツとのインタラクションを可能にする標準的な仕組みである「WebView」のラッパーを持っています。
-[Apache Cordova](https://cordova.apache.org) や [Phonegap](http://phonegap.com/) のようなプロジェクトでは、
+[Apache Cordova](https://cordova.apache.org) のようなプロジェクトでは、
 Web 技術を使用してアプリを簡単に構築することができ、
 それをネイティブのラッパーにバンドルしてハイブリッドアプリを作成することができます。
 
@@ -46,7 +46,7 @@ Appium は、次の4つの信条によって概説された理念に従って、
 
 ベンダーが提供するフレームワークを
 [WebDriver](http://docs.seleniumhq.org/projects/webdriver/) API という1つの API でラップすることで要件 2 を満たしています。
-WebDriver (別名 "Selenium WebDriver") は、([JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html) として知られる) 
+WebDriver (別名 "Selenium WebDriver") は、([JSON Wire Protocol](https://w3c.github.io/webdriver/webdriver-spec.html) として知られる)
 クライアント - サーバープロトコルを指定します。
 このクライアント - サーバーアーキテクチャを考えると、任意の言語で書かれたクライアントを使用して、
 適切な HTTP リクエストをサーバーに送信することができます。
@@ -80,7 +80,7 @@ Appium は、REST API を公開する Web サーバーです。
 HTTP クライアントの API を持つどの言語でもテストコードを書くことができますが、
 [Appium クライアントライブラリ](http://appium.io/downloads)の 1 つを使用する方が簡単です。
 テストが実行されているマシンとは別のマシンにサーバーを置くことができます。
-テストコードを書き、コマンドを受信して解釈するために 
+テストコードを書き、コマンドを受信して解釈するために
 [Sauce Labs](https://saucelabs.com/products/mobile-app-testing) や [LambdaTest](https://www.lambdatest.com/feature) のようなクラウドサービスに頼ることもできます。
 
 #### **セッション**
@@ -113,7 +113,7 @@ $ appium
 
 Appium の `ベータ版` は `npm install -g appium@beta` で NPM 経由で公開されています。
 開発版なので、変更点があるかもしれません。
-新しいバージョンをインストールする前に 
+新しいバージョンをインストールする前に
 `appium@beta` をアンインストールしてください (`npm uninstall -g appium@beta`)。
 
 #### **Appium クライアント**
@@ -132,7 +132,7 @@ Node について心配する必要はありません。
 
 ### はじめに
 
-おめでとうございます! 
+おめでとうございます!
 これで、Appium の使用を開始するのに十分な知識が身につきました。
 より詳細な要件と指示のために、
 [始め方のドキュメント](/docs/en/about-appium/getting-started.md) をご覧になってみてはいかがでしょうか?

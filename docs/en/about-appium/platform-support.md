@@ -96,7 +96,9 @@ This section lists drivers that are supported by vendors and community.
 ### Roku Support
 
 - The [Roku Driver](https://github.com/cbuelvasc/appium-roku-driver)
+  - Note that the link and `appium-roku-driver` package in npm are unavailable
 
 ### WebOS Support
 
 - The [WebOS Driver](https://github.com/cbuelvasc/appium-webos-driver)
+  - Note that the link and `appium-webos-driver` package in npm are unvailable

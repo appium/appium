@@ -1137,9 +1137,9 @@
       }
     },
     "@babel/runtime": {
-      "version": "7.13.10",
-      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.13.10.tgz",
-      "integrity": "sha512-4QPkjJq6Ns3V/RgpEahRk+AGfL0eO6RHHtTWoNNr5mO49G6B5+X6d6THgWEAvTrznU5xYpbAlVKRYcsCgh/Akw==",
+      "version": "7.13.17",
+      "resolved": "https://registry.npmjs.org/@babel/runtime/-/runtime-7.13.17.tgz",
+      "integrity": "sha512-NCdgJEelPTSh+FEFylhnP1ylq848l1z9t9N0j1Lfbcw0+KXGjsTvUmkxy+voLLXB5SOKMbLLx4jxYliGrYQseA==",
       "requires": {
         "regenerator-runtime": "^0.13.4"
       }
@@ -2394,9 +2394,9 @@
       }
     },
     "appium-android-driver": {
-      "version": "4.43.0",
-      "resolved": "https://registry.npmjs.org/appium-android-driver/-/appium-android-driver-4.43.0.tgz",
-      "integrity": "sha512-5QQyMZhqB081tnJZ5h5axedNSKwQnFmQMyLfD+fFXtDoSgXNOJbPr4DyjMkcpzWG3f2nP88QtsvhbJpdnbx4qg==",
+      "version": "4.43.1",
+      "resolved": "https://registry.npmjs.org/appium-android-driver/-/appium-android-driver-4.43.1.tgz",
+      "integrity": "sha512-mv/UqVyQCvRcxq7vk851Quc9xuVXO/y1epcav30B/xztpQArFiZVuACxAdkGSr6EfKh4nCguIe+bZ2dtBrj4NA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-adb": "^8.11.0",
@@ -2472,9 +2472,9 @@
       }
     },
     "appium-espresso-driver": {
-      "version": "1.43.1",
-      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.43.1.tgz",
-      "integrity": "sha512-8hg6xw7nJDVRER2wfk+CsvXK9kN+XpMMQSJiOQYYeKqqlmmXD3z2z+9EEpmpUzVqJr3hSV5/RVIWsDrfIFkidg==",
+      "version": "1.44.0",
+      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.44.0.tgz",
+      "integrity": "sha512-yqWTpNOacUU6h9AtIwPAxAM2wJKoogWQ2Fz+CdbDMi7HykDpfRBHAW5wECUVGxSeJnVVTyE4EqDe7u3DqjzgMA==",
       "requires": {
         "@babel/runtime": "^7.4.3",
         "appium-adb": "^8.9.0",
@@ -3135,14 +3135,15 @@
       }
     },
     "appium-mac2-driver": {
-      "version": "0.12.0",
-      "resolved": "https://registry.npmjs.org/appium-mac2-driver/-/appium-mac2-driver-0.12.0.tgz",
-      "integrity": "sha512-Wsu1GFnBOoOAEM5EDdcrwo5Z286M+kkoocYHr5CwRqjETbwJhkKayjeRF9t9BqtPEoF6WtP9xJoeV3MP0uCZvA==",
+      "version": "0.13.0",
+      "resolved": "https://registry.npmjs.org/appium-mac2-driver/-/appium-mac2-driver-0.13.0.tgz",
+      "integrity": "sha512-a3qgH8kGOOGIJ5MM9sDEiPIBbLLmrX8VZEjY03rN6ouXKZNXjEo3LpPCliV5tIjVBdEL72cKX8oaTT/0YBbBqw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.1.0",
         "appium-support": "^2.46.0",
         "asyncbox": "^2.0.2",
+        "axios": "^0.x",
         "bluebird": "^3.5.1",
         "lodash": "^4.17.4",
         "portscanner": "2.2.0",
@@ -3977,9 +3978,9 @@
       }
     },
     "appium-uiautomator2-driver": {
-      "version": "1.64.0",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-1.64.0.tgz",
-      "integrity": "sha512-j0C2UKpj4RZGL7WcRHV2XrG7U6V9I1GYiqWRuyV+iNSyHF45j9n5f9vCVBhk7sEYe7vxVbXjykjtk/HLMqMXog==",
+      "version": "1.65.0",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-driver/-/appium-uiautomator2-driver-1.65.0.tgz",
+      "integrity": "sha512-hOHhEFZ5Y98ugye60aaMn7d6FyY3avIetnEd1oxcgtEEUIBwNYkivRHa3a7t/mxK497hIv9j8z0aCnpY2WPsOQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-adb": "^8.10.0",
@@ -4000,14 +4001,14 @@
       }
     },
     "appium-uiautomator2-server": {
-      "version": "4.21.0",
-      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-4.21.0.tgz",
-      "integrity": "sha512-U7OZ6/Y0zQ0/fki/U5Y8qSs0SmsdGBZSV99o0yoYV9j8X85ayyTH876H+GtfyYRxAbCgf1FJY3NtJc2H+j5FIQ=="
+      "version": "4.21.1",
+      "resolved": "https://registry.npmjs.org/appium-uiautomator2-server/-/appium-uiautomator2-server-4.21.1.tgz",
+      "integrity": "sha512-gYcQFezpUS7+bWXL5/lNATWeOaCs8QqrWWOGI8QrfXrDrVXQU3xPKWOw1WxDNl6Febnd6u5+wdaaqww8c++KVQ=="
     },
     "appium-webdriveragent": {
-      "version": "3.7.1",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.7.1.tgz",
-      "integrity": "sha512-mWKt4QyiqMDYD0ikt9rDNVZh/ER5tDLrxNkQmy4kReuBR7W9IPdjQ1YLBxVq9eir/y5/K/Q5ka6alhNGSdVzgg==",
+      "version": "3.8.0",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.8.0.tgz",
+      "integrity": "sha512-AZXX6kLyu8ZBpIg+LseRzROlI1z3712+UiJRVxxztcHuAxDGedlWCFMmPGApvzJAL3tgfc5ANSRcgsDs6QdWKw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4056,9 +4057,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.42.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.42.0.tgz",
-      "integrity": "sha512-mbaby5zP4K0T7fQ9JYX1oX+s9tz5nGK63enCEYhw3bKDvgg7r4JwTaN/vLpYXbe4TBqSjeEabN0paBbbioeqEg==",
+      "version": "3.43.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.43.0.tgz",
+      "integrity": "sha512-e6dwRv+4Lamk/xn3F35jEOB9XFPQ+NMBuUTuIcqBJTyjH0TPf9/d+W1tseNMZjy0fuQU0IFKt0MSgdWeE+emWw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4068,7 +4069,7 @@
         "appium-ios-simulator": "^3.25.1",
         "appium-remote-debugger": "^8.13.2",
         "appium-support": "^2.47.1",
-        "appium-webdriveragent": "^3.7.0",
+        "appium-webdriveragent": "^3.8.0",
         "appium-xcode": "^3.8.0",
         "async-lock": "^1.0.0",
         "asyncbox": "^2.3.1",

@@ -1,3 +1,31 @@
+CHANGES IN VERSION 1.21.0 (FROM 1.20.2)
+===================================
+
+Appium 1.21.0 is a minor release
+
+### General
+
+* Minimum NodeJS version moved to 12
+
+### Android General
+
+### Android(UIAutomator2)
+
+### Android(Espresso)
+
+### iOS General
+
+* Xcode 12.5 support
+
+### iOS(XCUITest)
+
+### iOS(Safari)
+
+### Mac2
+
+### Gecko
+
+
 CHANGES IN VERSION 1.20.2 (FROM 1.20.1)
 ===================================
 

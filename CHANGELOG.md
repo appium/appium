@@ -19,6 +19,23 @@ Appium 1.21.0 is a minor release
 
 ### iOS(XCUITest)
 
+* Add capabilities:
+    * `appium:includeDeviceCapsToSessionInfo` to skip adding the screen information in order to improve [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/) API. `mobile:viewportRect` and `mobile:deviceScreenInfo` help to get these information when this capability is `false`. [appium-xcuitest-driver#1278](https://github.com/appium/appium-xcuitest-driver/pull/1278)
+    * `appium:disableAutomaticScreenshots` to handle automatic screenshot by XCTest. Defaults to `true` [appium-xcuitest-driver#1288](https://github.com/appium/appium-xcuitest-driver/pull/1288)
+    * `appium:shouldTerminateApp` to handle if Appium terminates the application under test process on the session end. Defaults to `true` [appium-xcuitest-driver#1290](https://github.com/appium/appium-xcuitest-driver/pull/1290), [WebDriverAgent#486/](https://github.com/appium/WebDriverAgent/pull/486/)
+* Add `mobile:` functions:
+    * `mobile:viewportRect` returns the screen viewport information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/)
+    * `mobile:deviceScreenInfo` returns the screen information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/), [WebDriverAgent#483](https://github.com/appium/WebDriverAgent/pull/483)
+    * `mobile:pushNotification` to simulator push notification on simulator by `xcrun simctl push` command. It requires Xcode 11.4+. Please read [mobile:pushNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) for mroe details. [appium-xcuitest-driver#1286](https://github.com/appium/appium-xcuitest-driver/pull/1286/)
+    * `mobile:expectNotification` to wait for a notification on the device under test. Please read [mobile:expectNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) to see how to use it. [appium-xcuitest-driver#1287](https://github.com/appium/appium-xcuitest-driver/pull/1287) [WebDriverAgent#480](https://github.com/appium/WebDriverAgent/pull/480)
+    * `mobile:performIoHidEvent` to emulate low-level IO HID device event. Read [mobile:performIoHidEvent](https://github.com/appium/appium-xcuitest-driver#mobile-performiohidevent) for more details. [appium-xcuitest-driver#1291](https://github.com/appium/appium-xcuitest-driver/pull/1291), [WebDriverAgent#494](https://github.com/appium/WebDriverAgent/pull/494)
+* Support css selector [appium-xcuitest-driver#1274](https://github.com/appium/appium-xcuitest-driver/pull/1274)
+* Support [Get Geolocation](https://appium.io/docs/en/commands/session/geolocation/get-geolocation/) API [appium-xcuitest-driver#1266](https://github.com/appium/appium-xcuitest-driver/pull/1266)
+    * _Allow Location Access_ in _Location Services_ for _WebDriverAgent-Runner_ must be **Always**
+* Add `isAccessible` field in the page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493)
+* Improve performance of the keyboard dismissal logic [appium-xcuitest-driver#1267](https://github.com/appium/appium-xcuitest-driver/pull/1267), [WebDriverAgent#458](https://github.com/appium/WebDriverAgent/pull/458)
+* Fix performance degration of interaction in `nativeWebTap: true` [appium-xcuitest-driver/pull/1265](https://github.com/appium/appium-xcuitest-driver#1265)
+
 ### iOS(Safari)
 
 ### Mac2

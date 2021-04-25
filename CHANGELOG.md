@@ -14,7 +14,7 @@ Appium 1.21.0 is a minor release
 * Improve to detect screen lock status [appium/appium-adb#564](https://github.com/appium/appium-adb/pull/564)
 * Add `speed` poptional arameter to mock location [appium-android-driver#681](https://github.com/appium/appium-android-driver/pull/681)
 * Fix `autoLaunch` to install applications by `app` and `otherApps` capabilities, but does not launch them as same as iOS [appium-uiautomator2-driver#440](https://github.com/appium/appium-uiautomator2-driver/pull/440), [appium-espresso-driver#654](https://github.com/appium/appium-espresso-driver/pull/654), [appium-android-driver#676](https://github.com/appium/appium-android-driver/pull/676)
-* Fix to handle special charactors by `mobile:type` [appium-adb#567](https://github.com/appium/appium-adb/pull/567)
+* Fix to handle special characters by `mobile:type` [appium-adb#567](https://github.com/appium/appium-adb/pull/567)
 * Fix to switch to Web Views with same package name, but different process names [appium-android-driver#687](https://github.com/appium/appium-android-driver/pull/687)
 
 ### Android(UIAutomator2)
@@ -258,7 +258,7 @@ Appium 1.18.0 is a minor release
   * e.g. Clients can send `/session/:sessionId/goog/cdp/execute` command to Chromedriver
 * Fix socket leak by handling connections in a shared pool [appium-base-driver#416](https://github.com/appium/appium-base-driver/pull/416)
 * Fix to encode filenames with UTF-8 while extracting `.ipa` packages [appium-base-driver#419](https://github.com/appium/appium-base-driver/pull/419)
-  * The change fixes `.ipa` packages deployment that contain file names containing non-ASCII charactors like [this issue](https://github.com/appium/appium/issues/14100)
+  * The change fixes `.ipa` packages deployment that contain file names containing non-ASCII characters like [this issue](https://github.com/appium/appium/issues/14100)
 
 #### Android General
 * Add capabilities:

@@ -10,8 +10,17 @@ Appium 1.21.0 is a minor release
 
 ### Android General
 
+* Fix `autoLaunch` to install applications by `app` and `otherApps` capabilities, but does not launch them as same as iOS [appium-uiautomator2-driver#440](https://github.com/appium/appium-uiautomator2-driver/pull/440), [appium-espresso-driver#654](https://github.com/appium/appium-espresso-driver/pull/654), [appium-android-driver#676](https://github.com/appium/appium-android-driver/pull/676)
+* Fix to handle special charactors by `mobile:type` [appium-adb#567](https://github.com/appium/appium-adb/pull/567)
+* Disable to send of Google analytics data by instruments [https://github.com/appium/appium-uiautomator2-driver/pull/452](appium-uiautomator2-driver#452), [appium-espresso-driver#666](https://github.com/appium/appium-espresso-driver/pull/666)
 
 ### Android(UIAutomator2)
+
+* Add `mobile:` functions:
+    * `mobile:doubleClickGesture` for double click guesture [appium-uiautomator2-driver#441](https://github.com/appium/appium-uiautomator2-driver/pull/441), [appium-uiautomator2-server#415](https://github.com/appium/appium-uiautomator2-server/pull/415)
+    * `mobile:installMultipleApks` to install multiple apks via `adb install-multiple` command. Please read [mobile:installMultipleApks](https://github.com/appium/appium-uiautomator2-driver/blob/master/README.md#mobile-installmultipleapks) for more details
+* Fix XPath lookup for queries which has `@*` attribute pattern [appium-uiautomator2-server#417](https://github.com/appium/appium-uiautomator2-server/pull/417)
+* Fix to stop screen recording after a session is closed [appium-uiautomator2-driver#439](https://github.com/appium/appium-uiautomator2-driver/pull/439)
 
 ### Android(Espresso)
 

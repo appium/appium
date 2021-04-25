@@ -6,8 +6,10 @@ Appium 1.21.0 is a minor release
 ### General
 
 * Minimum NodeJS version moved to 12
+* Support multiple image matches for [Finding and Interacting with Image Elements](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#449](https://github.com/appium/appium-base-driver/pull/449)
 
 ### Android General
+
 
 ### Android(UIAutomator2)
 
@@ -32,7 +34,7 @@ Appium 1.21.0 is a minor release
 * Support css selector [appium-xcuitest-driver#1274](https://github.com/appium/appium-xcuitest-driver/pull/1274)
 * Support [Get Geolocation](https://appium.io/docs/en/commands/session/geolocation/get-geolocation/) API [appium-xcuitest-driver#1266](https://github.com/appium/appium-xcuitest-driver/pull/1266)
     * _Allow Location Access_ in _Location Services_ for _WebDriverAgent-Runner_ must be **Always**
-* Add `isAccessible` field in the page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493)
+* Add `accessible` field in the XML page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493)
 * Improve performance of the keyboard dismissal logic [appium-xcuitest-driver#1267](https://github.com/appium/appium-xcuitest-driver/pull/1267), [WebDriverAgent#458](https://github.com/appium/WebDriverAgent/pull/458)
 * Fix performance degration of interaction in `nativeWebTap: true` [appium-xcuitest-driver/pull/1265](https://github.com/appium/appium-xcuitest-driver#1265)
 

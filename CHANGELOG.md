@@ -69,7 +69,7 @@ The version is `1.2.8`
 
 ### Community based drivers
 
-Adde the ability to load `appium-roku-driver` [appium#15227](https://github.com/appium/appium/pull/15227) and `appium-webos-driver`[appium#15260](https://github.com/appium/appium/pull/15260) by @cbuelvasc
+Add the ability to load `appium-roku-driver`([appium#15227](https://github.com/appium/appium/pull/15227)) and `appium-webos-driver`([appium#15260](https://github.com/appium/appium/pull/15260)) by @cbuelvasc
 
 CHANGES IN VERSION 1.20.2 (FROM 1.20.1)
 ===================================

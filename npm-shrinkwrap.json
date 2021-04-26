@@ -2374,9 +2374,9 @@
       }
     },
     "appium-adb": {
-      "version": "8.12.1",
-      "resolved": "https://registry.npmjs.org/appium-adb/-/appium-adb-8.12.1.tgz",
-      "integrity": "sha512-9lReHGcgA8RwtyV9aWWc2IJNCAuQpTKZqN+gyaJhHlamNF6ylCyaMLALyG/vSOlluBQ55xdW2CnApdYGsWnx5w==",
+      "version": "8.12.3",
+      "resolved": "https://registry.npmjs.org/appium-adb/-/appium-adb-8.12.3.tgz",
+      "integrity": "sha512-sHfCOuaxH8g/n/DmIfrSEE6lalVB1aqPQmJB2Nnq54NMLEb4MIlr5eI2Rt0Xx/LtkN/SWDtLwS6LyEyBUlECzA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "adbkit-apkreader": "^3.1.2",

@@ -12,10 +12,11 @@ Appium 1.21.0 is a minor release
 
 * Disable sending of Google analytics data by instruments [appium-uiautomator2-driver#452](https://github.com/appium/appium-uiautomator2-driver/pull/452), [appium-espresso-driver#666](https://github.com/appium/appium-espresso-driver/pull/666)
 * Improve detection of screen lock status [appium/appium-adb#564](https://github.com/appium/appium-adb/pull/564)
-* Add `speed` poptional arameter to mock location [appium-android-driver#681](https://github.com/appium/appium-android-driver/pull/681) (@salabogdan)
+* Add `speed` poptional arameter to mock location [appium-android-driver#681](https://github.com/appium/appium-android-driver/pull/681) (Thanks to @salabogdan)
 * Fix `autoLaunch` to install applications by `app` and `otherApps` capabilities, but does not launch them as same as iOS [appium-uiautomator2-driver#440](https://github.com/appium/appium-uiautomator2-driver/pull/440), [appium-espresso-driver#654](https://github.com/appium/appium-espresso-driver/pull/654), [appium-android-driver#676](https://github.com/appium/appium-android-driver/pull/676)
 * Fix to handle special characters by `mobile:type` [appium-adb#567](https://github.com/appium/appium-adb/pull/567)
 * Fix to switch to Web Views with same package name, but different process names [appium-android-driver#687](https://github.com/appium/appium-android-driver/pull/687)
+* Fix to stop screen recording after a session is closed [appium-android-driver#675](https://github.com/appium/appium-android-driver/pull/675) and each driver
 
 ### Android(UIAutomator2)
 
@@ -23,13 +24,12 @@ Appium 1.21.0 is a minor release
     * `mobile:doubleClickGesture` for double click guesture [appium-uiautomator2-driver#441](https://github.com/appium/appium-uiautomator2-driver/pull/441), [appium-uiautomator2-server#415](https://github.com/appium/appium-uiautomator2-server/pull/415)
     * `mobile:installMultipleApks` to install multiple apks via `adb install-multiple` command. Please read [mobile:installMultipleApks](https://github.com/appium/appium-uiautomator2-driver/blob/master/README.md#mobile-installmultipleapks) for more details
 * Fix XPath lookup for queries which have `@*` attribute pattern [appium-uiautomator2-server#417](https://github.com/appium/appium-uiautomator2-server/pull/417)
-* Fix to stop screen recording after a session is closed [appium-uiautomator2-driver#439](https://github.com/appium/appium-uiautomator2-driver/pull/439)
 
 ### Android(Espresso)
 
 * Fix to raise an error in [Reset App](http://appium.io/docs/en/commands/device/app/reset-app/). It must quit the session and create a new one in Espresso driver. [appium-espresso-driver#649](https://github.com/appium/appium-espresso-driver/pull/649)
 * Fix to reset instrumentation state before starting a new instance [appium-espresso-driver#662](https://github.com/appium/appium-espresso-driver/pull/662)
-* Gradle wrapper has been rewritten using Kotlin DSL [appium-espresso-driver#658](https://github.com/appium/appium-espresso-driver/pull/658), [appium-espresso-driver#659](https://github.com/appium/appium-espresso-driver/pull/659) (@misa)
+* Gradle wrapper has been rewritten using Kotlin DSL [appium-espresso-driver#658](https://github.com/appium/appium-espresso-driver/pull/658), [appium-espresso-driver#659](https://github.com/appium/appium-espresso-driver/pull/659) (Thanks to @misa)
 
 ### iOS General
 
@@ -40,7 +40,7 @@ Appium 1.21.0 is a minor release
 * Add capabilities:
     * `appium:includeDeviceCapsToSessionInfo` to skip adding the screen information in order to improve [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/) API. `mobile:viewportRect` and `mobile:deviceScreenInfo` help to get these information when this capability is `false`. [appium-xcuitest-driver#1278](https://github.com/appium/appium-xcuitest-driver/pull/1278)
     * `appium:disableAutomaticScreenshots` to handle automatic screenshot by XCTest. Defaults to `true` [appium-xcuitest-driver#1288](https://github.com/appium/appium-xcuitest-driver/pull/1288) (@mrmacete)
-    * `appium:shouldTerminateApp` to handle if Appium terminates the application under test process on the session end. Defaults to `true` [appium-xcuitest-driver#1290](https://github.com/appium/appium-xcuitest-driver/pull/1290), [WebDriverAgent#486/](https://github.com/appium/WebDriverAgent/pull/486/) (@mrmacete)
+    * `appium:shouldTerminateApp` to handle if Appium terminates the application under test process on the session end. Defaults to `true` [appium-xcuitest-driver#1290](https://github.com/appium/appium-xcuitest-driver/pull/1290), [WebDriverAgent#486/](https://github.com/appium/WebDriverAgent/pull/486/) (Thanks to @mrmacete)
 * Add `mobile:` extensions:
     * `mobile:viewportRect` returns the screen viewport information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/)
     * `mobile:deviceScreenInfo` returns the screen information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/), [WebDriverAgent#483](https://github.com/appium/WebDriverAgent/pull/483)
@@ -51,7 +51,7 @@ Appium 1.21.0 is a minor release
     * `css selector` selector will be converted to `-ios class chain` selector
 * Support [Get Geolocation](https://appium.io/docs/en/commands/session/geolocation/get-geolocation/) API [appium-xcuitest-driver#1266](https://github.com/appium/appium-xcuitest-driver/pull/1266)
     * _Allow Location Access_ in _Location Services_ for _WebDriverAgent-Runner_ must be set to **Always**
-* Add `accessible` attribute field into the XML page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493) (@TheDarkestDay)
+* Add `accessible` attribute field into the XML page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493) (Thanks to @TheDarkestDay)
 * Improve performance of the keyboard dismissal logic [appium-xcuitest-driver#1267](https://github.com/appium/appium-xcuitest-driver/pull/1267), [WebDriverAgent#458](https://github.com/appium/WebDriverAgent/pull/458)
 * Fix performance degradation of interaction in `nativeWebTap:true` [appium-xcuitest-driver/pull/1265](https://github.com/appium/appium-xcuitest-driver#1265)
 

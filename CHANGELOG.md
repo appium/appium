@@ -6,20 +6,20 @@ Appium 1.21.0 is a minor release
 ### General
 
 * Minimum NodeJS version moved to 12
-* Support multiple image matches for [Finding and Interacting with Image Elements](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#449](https://github.com/appium/appium-base-driver/pull/449)
+* Support multiple image matches for [Finding and Interacting with Image Elements](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#449](https://github.com/appium/appium-base-driver/pull/449) (@khaong)
 
 ### Android General
 
-* Disable to sending of Google analytics data by instruments [https://github.com/appium/appium-uiautomator2-driver/pull/452](appium-uiautomator2-driver#452), [appium-espresso-driver#666](https://github.com/appium/appium-espresso-driver/pull/666)
-* Improve to detect screen lock status [appium/appium-adb#564](https://github.com/appium/appium-adb/pull/564)
-* Add `speed` poptional arameter to mock location [appium-android-driver#681](https://github.com/appium/appium-android-driver/pull/681)
+* Disable sending of Google analytics data by instruments [appium-uiautomator2-driver#452](https://github.com/appium/appium-uiautomator2-driver/pull/452), [appium-espresso-driver#666](https://github.com/appium/appium-espresso-driver/pull/666)
+* Improve detection of screen lock status [appium/appium-adb#564](https://github.com/appium/appium-adb/pull/564)
+* Add `speed` poptional arameter to mock location [appium-android-driver#681](https://github.com/appium/appium-android-driver/pull/681) (@salabogdan)
 * Fix `autoLaunch` to install applications by `app` and `otherApps` capabilities, but does not launch them as same as iOS [appium-uiautomator2-driver#440](https://github.com/appium/appium-uiautomator2-driver/pull/440), [appium-espresso-driver#654](https://github.com/appium/appium-espresso-driver/pull/654), [appium-android-driver#676](https://github.com/appium/appium-android-driver/pull/676)
 * Fix to handle special characters by `mobile:type` [appium-adb#567](https://github.com/appium/appium-adb/pull/567)
 * Fix to switch to Web Views with same package name, but different process names [appium-android-driver#687](https://github.com/appium/appium-android-driver/pull/687)
 
 ### Android(UIAutomator2)
 
-* Add `mobile:` functions:
+* Add `mobile:` extensions:
     * `mobile:doubleClickGesture` for double click guesture [appium-uiautomator2-driver#441](https://github.com/appium/appium-uiautomator2-driver/pull/441), [appium-uiautomator2-server#415](https://github.com/appium/appium-uiautomator2-server/pull/415)
     * `mobile:installMultipleApks` to install multiple apks via `adb install-multiple` command. Please read [mobile:installMultipleApks](https://github.com/appium/appium-uiautomator2-driver/blob/master/README.md#mobile-installmultipleapks) for more details
 * Fix XPath lookup for queries which have `@*` attribute pattern [appium-uiautomator2-server#417](https://github.com/appium/appium-uiautomator2-server/pull/417)
@@ -29,8 +29,7 @@ Appium 1.21.0 is a minor release
 
 * Fix to raise an error in [Reset App](http://appium.io/docs/en/commands/device/app/reset-app/). It must quit the session and create a new one in Espresso driver. [appium-espresso-driver#649](https://github.com/appium/appium-espresso-driver/pull/649)
 * Fix to reset instrumentation state before starting a new instance [appium-espresso-driver#662](https://github.com/appium/appium-espresso-driver/pull/662)
-* Gradle wrapper has been rewritten using Kotlin DSL [appium-espresso-driver#658](https://github.com/appium/appium-espresso-driver/pull/658), [appium-espresso-driver#659](https://github.com/appium/appium-espresso-driver/pull/659)
-
+* Gradle wrapper has been rewritten using Kotlin DSL [appium-espresso-driver#658](https://github.com/appium/appium-espresso-driver/pull/658), [appium-espresso-driver#659](https://github.com/appium/appium-espresso-driver/pull/659) (@misa)
 
 ### iOS General
 
@@ -40,27 +39,37 @@ Appium 1.21.0 is a minor release
 
 * Add capabilities:
     * `appium:includeDeviceCapsToSessionInfo` to skip adding the screen information in order to improve [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/) API. `mobile:viewportRect` and `mobile:deviceScreenInfo` help to get these information when this capability is `false`. [appium-xcuitest-driver#1278](https://github.com/appium/appium-xcuitest-driver/pull/1278)
-    * `appium:disableAutomaticScreenshots` to handle automatic screenshot by XCTest. Defaults to `true` [appium-xcuitest-driver#1288](https://github.com/appium/appium-xcuitest-driver/pull/1288)
-    * `appium:shouldTerminateApp` to handle if Appium terminates the application under test process on the session end. Defaults to `true` [appium-xcuitest-driver#1290](https://github.com/appium/appium-xcuitest-driver/pull/1290), [WebDriverAgent#486/](https://github.com/appium/WebDriverAgent/pull/486/)
-* Add `mobile:` functions:
+    * `appium:disableAutomaticScreenshots` to handle automatic screenshot by XCTest. Defaults to `true` [appium-xcuitest-driver#1288](https://github.com/appium/appium-xcuitest-driver/pull/1288) (@mrmacete)
+    * `appium:shouldTerminateApp` to handle if Appium terminates the application under test process on the session end. Defaults to `true` [appium-xcuitest-driver#1290](https://github.com/appium/appium-xcuitest-driver/pull/1290), [WebDriverAgent#486/](https://github.com/appium/WebDriverAgent/pull/486/) (@mrmacete)
+* Add `mobile:` extensions:
     * `mobile:viewportRect` returns the screen viewport information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/)
     * `mobile:deviceScreenInfo` returns the screen information which is part of [Get Session Capabilities](http://appium.io/docs/en/commands/session/get/), [WebDriverAgent#483](https://github.com/appium/WebDriverAgent/pull/483)
-    * `mobile:pushNotification` to simulator push notification on simulator by `xcrun simctl push` command. It requires Xcode 11.4+. Please read [mobile:pushNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) for mroe details. [appium-xcuitest-driver#1286](https://github.com/appium/appium-xcuitest-driver/pull/1286/)
-    * `mobile:expectNotification` to wait for a notification on the device under test. Please read [mobile:expectNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) to see how to use it. [appium-xcuitest-driver#1287](https://github.com/appium/appium-xcuitest-driver/pull/1287) [WebDriverAgent#480](https://github.com/appium/WebDriverAgent/pull/480)
-    * `mobile:performIoHidEvent` to emulate low-level IO HID device event. Read [mobile:performIoHidEvent](https://github.com/appium/appium-xcuitest-driver#mobile-performiohidevent) for more details. [appium-xcuitest-driver#1291](https://github.com/appium/appium-xcuitest-driver/pull/1291), [WebDriverAgent#494](https://github.com/appium/WebDriverAgent/pull/494)
-* Support css selector [appium-xcuitest-driver#1274](https://github.com/appium/appium-xcuitest-driver/pull/1274)
+    * `mobile:pushNotification` to simulator push notification on simulator by `xcrun simctl push` command. It requires Xcode 11.4+. Please read [mobile:pushNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) for mroe details to trigger a push notification. [appium-xcuitest-driver#1286](https://github.com/appium/appium-xcuitest-driver/pull/1286/)
+    * `mobile:expectNotification` to wait for a notification on the device under test. Please read [mobile:expectNotification](https://github.com/appium/appium-xcuitest-driver#mobile-pushnotification) for more information on how to use it. [appium-xcuitest-driver#1287](https://github.com/appium/appium-xcuitest-driver/pull/1287) [WebDriverAgent#480](https://github.com/appium/WebDriverAgent/pull/480)
+    * `mobile:performIoHidEvent` to emulate low-level IO HID device events. Read [mobile:performIoHidEvent](https://github.com/appium/appium-xcuitest-driver#mobile-performiohidevent) for more details. [appium-xcuitest-driver#1291](https://github.com/appium/appium-xcuitest-driver/pull/1291), [WebDriverAgent#494](https://github.com/appium/WebDriverAgent/pull/494)
+* Add css selector support [appium-xcuitest-driver#1274](https://github.com/appium/appium-xcuitest-driver/pull/1274)
+    * `css selector` selector will be converted to `-ios class chain` selector
 * Support [Get Geolocation](https://appium.io/docs/en/commands/session/geolocation/get-geolocation/) API [appium-xcuitest-driver#1266](https://github.com/appium/appium-xcuitest-driver/pull/1266)
-    * _Allow Location Access_ in _Location Services_ for _WebDriverAgent-Runner_ must be **Always**
-* Add `accessible` field in the XML page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493)
+    * _Allow Location Access_ in _Location Services_ for _WebDriverAgent-Runner_ must be set to **Always**
+* Add `accessible` attribute field into the XML page source [WebDriverAgent#493](https://github.com/appium/WebDriverAgent/pull/493) (@TheDarkestDay)
 * Improve performance of the keyboard dismissal logic [appium-xcuitest-driver#1267](https://github.com/appium/appium-xcuitest-driver/pull/1267), [WebDriverAgent#458](https://github.com/appium/WebDriverAgent/pull/458)
-* Fix performance degration of interaction in `nativeWebTap: true` [appium-xcuitest-driver/pull/1265](https://github.com/appium/appium-xcuitest-driver#1265)
-
-### iOS(Safari)
+* Fix performance degradation of interaction in `nativeWebTap:true` [appium-xcuitest-driver/pull/1265](https://github.com/appium/appium-xcuitest-driver#1265)
 
 ### Mac2
 
-### Gecko
+* Add capabilities:
+    * `appium:webDriverAgentMacUrl` to allow Appium to connect to a running WebDriverAgentMac instance at this URL [appium-mac2-driver#41](https://github.com/appium/appium-mac2-driver/pull/41)
+* Add a possibility to provide key names for `macos:keys` extension [appium-mac2-driver#60](https://github.com/appium/appium-mac2-driver/pull/60)
+* Add `hittable` attribute field into the XML page source [appium-mac2-driver#65](https://github.com/appium/appium-mac2-driver/pull/65)
+* More fine-grained handling of orphaned xcodebuild processes [appium-mac2-driver#73](https://github.com/appium/appium-mac2-driver/pull/73)
 
+### You.i Engine Driver
+
+The version is `1.2.8`
+
+### Community based drivers
+
+Adde the ability to load `appium-roku-driver` [appium#15227](https://github.com/appium/appium/pull/15227) and `appium-webos-driver`[appium#15260](https://github.com/appium/appium/pull/15260) by @cbuelvasc
 
 CHANGES IN VERSION 1.20.2 (FROM 1.20.1)
 ===================================

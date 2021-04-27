@@ -68,6 +68,11 @@ Appium 1.21.0 is a minor release
 The version is `1.2.8`
 
 ### Community based drivers
+#### Flutter driver
+
+The version is `0.0.28`
+
+#### New drivers
 
 Add the ability to load `appium-roku-driver`([appium#15227](https://github.com/appium/appium/pull/15227)) and `appium-webos-driver`([appium#15260](https://github.com/appium/appium/pull/15260)) by @cbuelvasc
 

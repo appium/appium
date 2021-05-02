@@ -15,9 +15,11 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
 
 ## Publish to GA
 1. Checkout the release branch (e.g.: `git checkout releases/1.21 && git pull origin releases/1.21`)
-1. `bash ./scripts/release.sh latest`
+1. `bash ./scripts/release-latest.sh 1.21.0`
+    - The `1.21.0` must be proper version name
 1. Update the site docs by going to https://github.com/appium/appium.io/pulls and merging the latest pull request that was opened by the Triager bot. Close any other pull requests opened by Triager bot.
 1. Create a new release on GitHub: go to `https://github.com/appium/appium/releases/tag/v<VERSION>` and hit "Edit Tag". Make the release name `<VERSION>` (e.g., `2.0.5`), then paste in the changelog (but not the changelog header for this version). If it's a beta release, mark as pre-release.
+    - Please check _Create a discussion for this release_ and select _Release_ category
 1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
 1. Begin process of releasing `appium-desktop`.
 1. Notify @jlipps to so he can tweet a link to the discuss post.

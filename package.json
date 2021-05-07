@@ -1,17 +1,8 @@
 {
-  "name": "appium",
+  "name": "appium-monorepo",
   "description": "Automation for Apps.",
-  "tags": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
-  ],
-  "version": "2.0.0-beta.12",
+  "version": "0.0.0",
+  "private": true,
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -25,68 +16,12 @@
     "node": ">=12",
     "npm": ">=6"
   },
-  "main": "./build/lib/main.js",
-  "bin": {
-    "appium": "./build/lib/main.js"
-  },
-  "directories": {
-    "lib": "./lib",
-    "doc": "./docs"
-  },
-  "files": [
-    "bin",
-    "lib",
-    "build/lib",
-    "npm-shrinkwrap.json",
-    "postinstall.js"
-  ],
-  "dependencies": {
-    "@appium/base-plugin": "^1.0.0",
-    "@babel/runtime": "^7.6.0",
-    "appium-base-driver": "^8.0.0-beta.6",
-    "appium-support": "2.x",
-    "argparse": "^2.0.1",
-    "async-lock": "^1.0.0",
-    "asyncbox": "2.x",
-    "axios": "^0.21.0",
-    "bluebird": "3.x",
-    "continuation-local-storage": "3.x",
-    "find-root": "^1.1.0",
-    "lodash": "^4.17.11",
-    "longjohn": "^0.2.12",
-    "npmlog": "4.x",
-    "ora": "^4.0.4",
-    "semver": "^7.0.0",
-    "source-map-support": "0.x",
-    "teen_process": "1.x",
-    "winston": "3.x",
-    "word-wrap": "^1.2.3",
-    "yaml": "^1.7.2"
-  },
   "scripts": {
-    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "prepare": "gulp prepublish",
-    "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
-    "postpublish": "npm run restore-shrinkwrap",
-    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap && npm install --only=dev --no-shrinkwrap)",
-    "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
-    "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
-    "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
-    "postinstall": "node ./postinstall.js",
-    "test": "gulp once",
-    "e2e-test": "gulp e2e-test",
-    "watch": "gulp watch",
-    "build": "gulp transpile",
-    "mocha": "mocha",
+    "clean": "lerna clean -y && rm -rf node_modules && rm -f package-lock.json && npm install",
+    "postinstall": "lerna bootstrap",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "precommit-test": "REPORTER=dot gulp once",
-    "lint": "gulp lint",
-    "lint:fix": "gulp lint --fix",
-    "coverage": "gulp coveralls",
-    "generate-docs": "node ./build/commands-yml/parse.js",
-    "zip": "zip -qr appium.zip .",
-    "upload": "gulp github-upload",
-    "zip-and-upload": "npm run zip && npm run upload"
+    "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
+    "test": "lerna run test"
   },
   "pre-commit": [
     "precommit-msg",
@@ -102,6 +37,7 @@
     "fancy-log": "^1.3.2",
     "gulp": "^4.0.0",
     "handlebars": "^4.2.0",
+    "lerna": "^4.0.0",
     "mocha": "^8.0.1",
     "pre-commit": "1.x",
     "sinon": "^9.0.0",

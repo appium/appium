@@ -36,7 +36,6 @@ gulp.task('fixShrinkwrap', function fixShrinkwrap (done) {
 
 boilerplate({
   build: 'appium',
-  projectRoot: __dirname,
   files: [
     '*.js',
     'lib/**/*.js',

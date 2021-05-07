@@ -1,0 +1,91 @@
+{
+  "name": "appium",
+  "version": "2.0.0-beta.12",
+  "description": "Automation for Apps.",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "main": "./build/lib/main.js",
+  "bin": {
+    "appium": "./build/lib/main.js"
+  },
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "build/lib",
+    "npm-shrinkwrap.json",
+    "postinstall.js"
+  ],
+  "scripts": {
+    "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
+    "build": "gulp transpile",
+    "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
+    "coverage": "gulp coveralls",
+    "e2e-test": "gulp e2e-test",
+    "generate-docs": "node ./build/commands-yml/parse.js",
+    "postinstall": "node ./postinstall.js",
+    "lint": "gulp lint",
+    "lint:fix": "gulp lint --fix",
+    "mocha": "mocha",
+    "prepare": "gulp prepublish",
+    "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
+    "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap)",
+    "postpublish": "npm run restore-shrinkwrap",
+    "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
+    "test": "gulp once",
+    "upload": "gulp github-upload",
+    "watch": "gulp watch",
+    "zip": "zip -qr appium.zip .",
+    "zip-and-upload": "npm run zip && npm run upload"
+  },
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ],
+  "dependencies": {
+    "@appium/base-plugin": "^1.0.0",
+    "@babel/runtime": "^7.6.0",
+    "appium-base-driver": "^8.0.0-beta.6",
+    "appium-support": "2.x",
+    "argparse": "^2.0.1",
+    "async-lock": "^1.0.0",
+    "asyncbox": "2.x",
+    "axios": "^0.21.0",
+    "bluebird": "3.x",
+    "continuation-local-storage": "3.x",
+    "find-root": "^1.1.0",
+    "lodash": "^4.17.11",
+    "longjohn": "^0.2.12",
+    "npmlog": "4.x",
+    "ora": "^4.0.4",
+    "semver": "^7.0.0",
+    "source-map-support": "0.x",
+    "teen_process": "1.x",
+    "winston": "3.x",
+    "word-wrap": "^1.2.3",
+    "yaml": "^1.7.2"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  }
+}

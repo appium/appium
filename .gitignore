@@ -41,8 +41,6 @@ old
 coverage
 docs/mkdocs.yml
 sample-code/javascript-wd/node_modules
-sample-code/php/vendor
-sample-code/php/composer.lock
 sample-code/java/out/
 sample-code/ruby/Gemfile.lock
 sample-code/python/test/results/

@@ -31,11 +31,6 @@ driver.lock(3)
 driver.LockDevice(3);
 ```
 
-```objectivec
-// objective c
-[driver lockDeviceScreen:3];
-```
-
 ### Background app
 
 Send the currently active app to the background, and either return after a certain amount of time, or leave the app deactivated.
@@ -77,12 +72,6 @@ driver.BackgroundApp(5);
 driver.BackgroundApp(-1);
 ```
 
-```objectivec
-// objective c
-[driver runAppInBackground:3];
-[driver runAppInBackground:-1];
-```
-
 ### Hide Keyboard
 
 Hide the keyboard. *Note*: on iOS, this helper function is not guaranteed to
@@ -119,11 +108,6 @@ driver.hideKeyboard()
 driver.HideKeyboard("Done");
 ```
 
-```objectivec
-// objective c
-[driver hideKeyboard];
-```
-
 ### Start Activity
 
 Open an activity in the current app or start a new app and open an activity *Android only*
@@ -153,11 +137,6 @@ start_activity app_package: 'io.appium.android.apis', app_activity: '.accessibil
 driver.StartActivity("com.example.android.apis", ".Foo");
 ```
 
-```objectivec
-// objective c
-[driver startActivity:@"com.example.android.apis" package:@".Foo"];
-```
-
 ### Open Notifications
 
 Open the notification shade *Android only*
@@ -185,11 +164,6 @@ open_notifications
 ```csharp
 // c#
 driver.OpenNotifications();
-```
-
-```objectivec
-// objective c
-[driver openNotifications];
 ```
 
 ### Is installed
@@ -222,11 +196,6 @@ driver.isAppInstalled("com.example.android.apis")
 driver.IsAppInstalled("com.example.android.apis-");
 ```
 
-```objectivec
-// objective c
-[driver isAppInstalled:@"com.example.android.apis-"];
-```
-
 ### Install App
 
 Install an app to the device.
@@ -254,11 +223,6 @@ driver.installApp("path/to/my.apk")
 ```csharp
 // c#
 driver.InstallApp("path/to/my.apk");
-```
-
-```objectivec
-// objective c
-[driver installAppAtPath:@"path/to/my.apk"];
 ```
 
 ### Remove App
@@ -290,11 +254,6 @@ driver.removeApp("com.example.android.apis")
 driver.RemoveApp("com.example.android.apis");
 ```
 
-```objectivec
-// objective c
-[driver removeApp:@"com.example.android.apis"];
-```
-
 ### Shake
 
 Simulate the device shaking.
@@ -324,11 +283,6 @@ driver.shake()
 driver.ShakeDevice();
 ```
 
-```objectivec
-// objective c
-[driver shakeDevice];
-```
-
 ### Close app
 
 Close the app
@@ -356,11 +310,6 @@ driver.closeApp()
 ```csharp
 // c#
 driver.CloseApp();
-```
-
-```objectivec
-// objective c
-[driver closeApp];
 ```
 
 ### Launch
@@ -396,11 +345,6 @@ driver.launchApp()
 driver.LaunchApp();
 ```
 
-```objectivec
-// objective c
-[driver launchApp];
-```
-
 ### Reset
 
 Reset the app.
@@ -430,11 +374,6 @@ driver.resetApp()
 driver.ResetApp();
 ```
 
-```objectivec
-// objective c
-[driver resetApp];
-```
-
 ### Available Contexts
 
 List all available contexts
@@ -462,11 +401,6 @@ driver.contexts().then(function (contexts) { /*...*/ })
 ```csharp
 // c#
 driver.GetContexts()
-```
-
-```objectivec
-// objective c
-NSArray *contexts = driver.allContexts;
 ```
 
 ### Current context
@@ -499,11 +433,6 @@ driver.currentContext().then(function (context) { /*...*/ })
 driver.GetContext()
 ```
 
-```objectivec
-// objective c
-NSString *context = driver.context;
-```
-
 ### Switch to default context
 
 Change the context to the default.
@@ -531,11 +460,6 @@ driver.context()
 ```csharp
 // c#
 driver.SetContext();
-```
-
-```objectivec
-// objective c
-[driver setContext:nil];
 ```
 
 ### App Strings
@@ -567,12 +491,6 @@ driver.getAppStrings().then(function (appStrings) { /*...*/ })
 driver.GetAppStrings();
 ```
 
-```objectivec
-// objective c
-[driver appStrings];
-[driver appStringsForLanguage:"@ru"];
-```
-
 ### Key Event
 
 Send a key event to the device.
@@ -602,12 +520,6 @@ driver.deviceKeyEvent(wd.SPECIAL_KEYS.Home)
 driver.KeyEvent("176");
 ```
 
-```objectivec
-// objective c
-NSError *err;
-[driver triggerKeyEvent:176 metastate:0 error:&err];
-```
-
 ### Current Activity
 
 Android only. Get the current activity.
@@ -635,12 +547,6 @@ driver.getCurrentActivity().then(function (activity) { /*...*/ })
 ```csharp
 // c#
 driver.GetCurrentActivity();
-```
-
-```objectivec
-// objective c
-NSError *err;
-[driver currentActivity];
 ```
 
 ### Current Package

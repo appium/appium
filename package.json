@@ -21,7 +21,8 @@
     "postinstall": "lerna bootstrap",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "e2e-test": "lerna run e2e-test"
   },
   "pre-commit": [
     "precommit-msg",

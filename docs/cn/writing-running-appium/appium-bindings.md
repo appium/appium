@@ -9,14 +9,12 @@ Appium 支持以下语言的客户端类库：
 | [Java][maven]                 | [GitHub](https://github.com/appium/java-client) |
 | [JavaScript][npm]             | [GitHub](https://github.com/admc/wd) |
 | [C#][nuget]                   | [GitHub](https://github.com/appium/appium-dotnet-driver) |
-| [Objective-C][cocoapods]      | [GitHub](https://github.com/appium/selenium-objective-c) |
 
 [rubygems]:       http://rubygems.org/gems/appium_lib
 [pypi]:           https://pypi.python.org/pypi/Appium-Python-Client
 [maven]:          https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.appium%22%20AND%20a%3A%22java-client%22
 [npm]:            https://www.npmjs.org/package/wd
 [nuget]:          https://www.nuget.org/packages/Appium.WebDriver/
-[cocoapods]:      https://github.com/appium/selenium-objective-c
 
 
 注意，一些方法类似 `endTestCoverage()` 目前并不能完全支持。当[这个问题](https://github.com/appium/appium/issues/2448)被解决后，覆盖率支持才会被添加。如果你仍然想使用这些方法，请参考 GitHub 上关于 bindings 的文档。

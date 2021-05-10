@@ -50,20 +50,6 @@
 }
 ```
 
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'iOS',
-            'platformVersion' => '7.1',
-            'deviceName' => 'iPhone Simulator',
-            'app' => $myApp
-        )
-    )
-);
-```
-
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -142,20 +128,6 @@ Activity 可以通过以下方式指定：
 }
 ```
 
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'Android',
-            'platformVersion' => '4.4',
-            'deviceName' => 'Android Emulator',
-            'app' => $myApp
-        )
-    )
-);
-```
-
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -203,23 +175,6 @@ Android 设备在 4.3  版本（API 级别 17）之前没有安装谷歌的 [UiA
     'appPackage': 'com.mycompany.package',
     'appActivity': '.MainActivity'
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'automationName' => 'Selendroid',
-            'platformName' => 'Android',
-            'platformVersion' => '2.3',
-            'deviceName' => 'Android Emulator',
-            'app' => $myApp,
-            'appPackage' => 'com.mycompany.package',
-            'appActivity'=> '.MainActivity'
-        )
-    )
-);
 ```
 
 ```java

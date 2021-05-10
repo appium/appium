@@ -24,9 +24,6 @@ example_usage:
   ruby_core:
     |
       @driver.toggle_data
-  php:
-    |
-      // TODO
   csharp:
     |
       // TODO
@@ -37,7 +34,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2771"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Device#toggle_data-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Device#toggle_data-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
 # Driver support by platform
@@ -57,7 +53,6 @@ client_support:
   java: true
   python: false
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

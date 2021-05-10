@@ -23,10 +23,6 @@ example_usage:
   ruby_core:
     |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").displayed?
-  php:
-    |
-      $el = $this->byAccessibilityId('SomeAccessibilityID');
-      $isDisplayed = $el->displayed();
   csharp:
     |
       var element = driver.FindElementByAccessibilityId("SomeAccessibilityID");
@@ -39,7 +35,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1370"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FElement:displayed%3F"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # TODO: Confirm support for these per platform
@@ -59,7 +54,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

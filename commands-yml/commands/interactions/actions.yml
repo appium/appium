@@ -138,9 +138,6 @@ example_usage:
       f2.create_pointer_up(:left)
 
       @driver.perform_actions [f1, f2]
-  php:
-    |
-      // TODO
   csharp:
     |
       var inputDevice = new PointerInputDevice(PointerKind.Touch);
@@ -160,7 +157,6 @@ client_docs:
   #javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L44"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/W3CActionBuilder"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/W3CActionBuilder"
-  php: "https://github.com/jupeter/selenium-php-webdriver/blob/master/Webdriver/Common/ActionChains.php"
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
 # Driver support by platform
@@ -180,7 +176,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

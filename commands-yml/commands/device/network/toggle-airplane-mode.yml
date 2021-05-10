@@ -18,9 +18,6 @@ example_usage:
   ruby_core:
     |
       @driver.toggle_flight_mode
-  php:
-    |
-      // TODO
   csharp:
     |
       // TODO
@@ -31,7 +28,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2712"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#toggle_flight_mode-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO
 
 # Driver support by platform
@@ -51,7 +47,6 @@ client_support:
   java: true
   python: false
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

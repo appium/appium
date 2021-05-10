@@ -31,9 +31,6 @@ example_usage:
   ruby_core:
     |
       @driver.manage.timeouts.implicit_wait = 5 # Ruby translates it to seconds
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
@@ -46,7 +43,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L681"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts:implicit_wait="
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts:implicit_wait="
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/ITimeouts.cs"
 
 # Driver support by platform
@@ -66,7 +62,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

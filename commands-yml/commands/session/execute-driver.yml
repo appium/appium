@@ -78,9 +78,6 @@ example_usage:
       return status;
       SCRIPT
       @driver.execute_driver script: script
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       // TODO C# sample
@@ -92,7 +89,6 @@ client_docs:
   javascript_wd: ""
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib/master/Appium/Driver#execute_driver-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Base/Driver#execute_driver-instance_method"
-  php: "" # TODO PHP documentation link
   csharp: "" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -112,7 +108,6 @@ client_support:
   java: true
   python: false
   ruby: false
-  php: false
   csharp: false
   javascript_wd: false
   javascript_wdio: false

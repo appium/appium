@@ -173,10 +173,8 @@ Performs tap gesture by coordinates on the given element or on the screen.
 
 #### Usage examples
 
-```php
-// PHP
-$params = array(array('x' => 100.0, 'y' => 50.0, 'element' => element.GetAttribute("id")));
-$driver->executeScript("mobile: tap", $params);
+```
+// FIXME: add an example
 ```
 
 

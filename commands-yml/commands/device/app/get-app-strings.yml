@@ -20,9 +20,6 @@ example_usage:
   ruby_core:
     |
       @driver.app_strings("en")
-  php:
-    |
-      $strings = $driver->appStrings();
   csharp:
     |
       Dictionary<string, object> appStrings = driver.GetAppStringDictionary("end", "/path/to/file");
@@ -34,7 +31,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L2916"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#app_strings-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#app_strings-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumDriver.cs"
 
 # Driver support by platform
@@ -54,7 +50,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

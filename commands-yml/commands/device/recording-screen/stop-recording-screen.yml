@@ -24,9 +24,6 @@ example_usage:
   python:
     |
       self.driver.stop_recording_screen()
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.StopRecordingScreen();
@@ -38,7 +35,6 @@ client_docs:
   javascript_wdio: "https://webdriver.io/docs/api/appium.html#stoprecordingscreen"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#stop_recording_screen-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#stop_recording_screen-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumDriver.cs"
 
 # Driver support by platform
@@ -58,7 +54,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: false
   csharp: false
   javascript_wd: true
   javascript_wdio: true

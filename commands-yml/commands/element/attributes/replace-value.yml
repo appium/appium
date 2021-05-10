@@ -27,9 +27,6 @@ example_usage:
     |
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       @driver.replace_value element, 'some'
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       // TODO C# sample
@@ -41,7 +38,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1832" # TODO JAvaScript documentation link
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#replace_value-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#replace_value-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -61,7 +57,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

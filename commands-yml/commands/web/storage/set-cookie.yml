@@ -24,9 +24,6 @@ example_usage:
   ruby_core:
     |
       @driver.manage.add_cookie(:name => 'foo', :value => 'bar')
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.Manage().Cookies.AddCookie(new Cookie("foo", "bar"));
@@ -38,7 +35,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1971"
   ruby: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#add-cookie"
   ruby_core: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#add-cookie"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteCookieJar.cs"
 
 # Driver support by platform
@@ -58,7 +54,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

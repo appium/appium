@@ -128,34 +128,6 @@ driver.switch_to.context(driver.contexts.first)
 driver.quit()
 ```
 
-```php
-// php
-// assuming we have an initialized `driver` object in an AppiumTestCase
-
-public function testThings()
-{
-        $expected_contexts = array(
-                0 => 'NATIVE_APP',
-                1 => 'WEBVIEW_1'
-        );
-
-        $contexts = $this->contexts();
-        $this->assertEquals($expected_contexts, $contexts);
-
-        $this->context($contexts[1]);
-        $context = $this->context();
-        $this->assertEquals('WEBVIEW_1', $context);
-
-        // do webby stuff
-
-        $this->context('NATIVE_APP');
-
-        // do mobile stuff
-}
-```
-
-
-
 ### Automating hybrid Android apps
 
 Appium comes with [built-in hybrid support via Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md),

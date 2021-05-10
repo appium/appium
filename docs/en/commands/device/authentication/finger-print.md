@@ -38,9 +38,7 @@ finger_print 1
 ```
 
 ```php
-# PHP
-// PHP Code here
-
+// Not supported
 ```
 
 ```csharp

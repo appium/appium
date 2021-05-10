@@ -42,6 +42,7 @@
     "coverage": "gulp coveralls",
     "e2e-test": "gulp e2e-test",
     "generate-docs": "node ./build/commands-yml/parse.js",
+    "install-fake-driver": "node . driver install --source=npm appium-fake-driver",
     "postinstall": "node ./postinstall.js",
     "lint": "gulp lint",
     "lint:fix": "gulp lint --fix",

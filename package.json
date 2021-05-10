@@ -18,7 +18,7 @@
   },
   "scripts": {
     "clean": "lerna clean -y && rm -rf node_modules && rm -f package-lock.json && npm install",
-    "postinstall": "lerna bootstrap",
+    "postinstall": "lerna bootstrap --no-ci",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
     "test": "lerna run test",

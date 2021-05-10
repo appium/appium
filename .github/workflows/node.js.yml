@@ -18,8 +18,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: bahmutov/npm-install@v1.6.0
-      - run: node . driver install --source=npm appium-fake-driver
+      - run: npm install
+      - run: lerna run --scope=appium install-fake-driver
       - run: npm test
       - run: npm run e2e-test
 
@@ -33,4 +33,5 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
+      - run: npm install
       - run: npm run generate-docs

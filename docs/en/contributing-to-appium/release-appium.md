@@ -23,6 +23,10 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
 1. Create a new post on discuss.appium.io announcing the release. Post it in the "News" category. Paste in the changelog and any choice comments. Pin it and unpin the previous release post.
 1. Begin process of releasing `appium-desktop`.
 1. Notify @jlipps to so he can tweet a link to the discuss post.
+1. Create the next beta
+    1. Bump the `version` name in `package.json` for the next beta on the main branch. e.g. `1.22.0-beta.0`
+    2. Commit the change without a tag,
+    3. Push the version as `npm publish --tag beta`.
 
 # Troubleshooting
 

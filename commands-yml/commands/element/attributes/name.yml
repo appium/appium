@@ -23,9 +23,6 @@ example_usage:
   ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID').tag_name
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       var element = driver.FindElementByAccessibilityId("SomeAccessibilityID");
@@ -38,7 +35,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1336"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#tag_name-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # TODO: Confirm if all the drivers support this
@@ -58,7 +54,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

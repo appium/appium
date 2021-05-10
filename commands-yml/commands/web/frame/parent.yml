@@ -22,9 +22,6 @@ example_usage:
   ruby_core:
     |
       @driver.parent_frame
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.SwitchTo().ParentFrame();
@@ -35,7 +32,6 @@ client_docs:
   javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#switchtoparentframe"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TargetLocator:parent_frame"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/TargetLocator:parent_frame"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteTargetLocator.cs"
 
 # Driver support by platform
@@ -55,7 +51,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

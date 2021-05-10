@@ -1,28 +1,6 @@
 ## Appium Client Libraries
 
-Appium has libraries for:
-
-| Language | Source |
-|:---------|-------:|
-| [Ruby][rubygems]              | [GitHub](https://github.com/appium/ruby_lib) |
-| [Python][pypi]                | [GitHub](https://github.com/appium/python-client) |
-| [Java][maven]                 | [GitHub](https://github.com/appium/java-client) |
-| [JavaScript][npm]             | [GitHub](https://github.com/admc/wd) |
-| [PHP][php]                    | [GitHub](https://github.com/appium/php-client) |
-| [C#][nuget]                   | [GitHub](https://github.com/appium/appium-dotnet-driver) |
-| [Objective-C][cocoapods]      | [GitHub](https://github.com/appium/selenium-objective-c) |
-
-[rubygems]:       http://rubygems.org/gems/appium_lib
-[pypi]:           https://pypi.python.org/pypi/Appium-Python-Client
-[maven]:          https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22io.appium%22%20AND%20a%3A%22java-client%22
-[npm]:            https://www.npmjs.org/package/wd
-[php]:            https://github.com/appium/php-client
-[nuget]:          https://www.nuget.org/packages/Appium.WebDriver/
-[cocoapods]:      https://github.com/appium/selenium-objective-c
-
-Note that some methods such as `endTestCoverage()` are
-not generally useful. Proper coverage support will be added once [this issue](https://github.com/appium/appium/issues/2448)
-is resolved. If you want to use them anyway, consult the documentation for the bindings on GitHub.
+Please read [List of client libraries with Appium server support](/docs/en/about-appium/appium-clients.md) about clients.
 
 ### Lock
 
@@ -46,11 +24,6 @@ driver.lockScreen(3);
 ```javascript
 // javascript
 driver.lock(3)
-```
-
-```php
-// php
-$this->lock(3);
 ```
 
 ```csharp
@@ -98,12 +71,6 @@ driver.backgroundApp(-1); // deactivate app
 driver.backgroundApp({timeout: null}); // deactivate app
 ```
 
-```php
-// php
-$this->backgroundApp(5);
-$this->backgroundApp(-1);
-```
-
 ```csharp
 // c#
 driver.BackgroundApp(5);
@@ -147,12 +114,6 @@ driver.hideKeyboard();
 driver.hideKeyboard()
 ```
 
-```php
-// php
-$this->hideKeyboard();
-$this->hideKeyboard(array('strategy' => 'pressKey', 'key' => 'Done'));
-```
-
 ```csharp
 // c#
 driver.HideKeyboard("Done");
@@ -192,12 +153,6 @@ start_activity app_package: 'io.appium.android.apis', app_activity: '.accessibil
 driver.StartActivity("com.example.android.apis", ".Foo");
 ```
 
-```php
-// php
-$this->startActivity(array("appPackage" => "com.example.android.apis",
-                            "appActivity" => ".Foo"));
-```
-
 ```objectivec
 // objective c
 [driver startActivity:@"com.example.android.apis" package:@".Foo"];
@@ -232,11 +187,6 @@ open_notifications
 driver.OpenNotifications();
 ```
 
-```php
-// php
-$this->openNotifications();
-```
-
 ```objectivec
 // objective c
 [driver openNotifications];
@@ -265,11 +215,6 @@ driver.isAppInstalled("com.example.android.apis")
 // javascript
 driver.isAppInstalled("com.example.android.apis")
   .then(function (isAppInstalled) { /*...*/ })
-```
-
-```php
-// php
-$this->isAppInstalled('com.example.android.apis');
 ```
 
 ```csharp
@@ -306,11 +251,6 @@ driver.installApp("path/to/my.apk")
 driver.installApp("path/to/my.apk")
 ```
 
-```php
-// php
-$this->installApp('path/to/my.apk');
-```
-
 ```csharp
 // c#
 driver.InstallApp("path/to/my.apk");
@@ -343,11 +283,6 @@ driver.removeApp("com.example.android.apis")
 ```javascript
 // javascript
 driver.removeApp("com.example.android.apis")
-```
-
-```php
-// php
-$this->removeApp('com.example.android.apis');
 ```
 
 ```csharp
@@ -384,11 +319,6 @@ driver.shake()
 driver.shake()
 ```
 
-```php
-// php
-$this->shake();
-```
-
 ```csharp
 // c#
 driver.ShakeDevice();
@@ -421,11 +351,6 @@ driver.closeApp()
 ```javascript
 // javascript
 driver.closeApp()
-```
-
-```php
-// php
-$this->closeApp();
 ```
 
 ```csharp
@@ -466,11 +391,6 @@ driver.launchApp()
 driver.launchApp()
 ```
 
-```php
-// php
-$this->launchApp();
-```
-
 ```csharp
 // c#
 driver.LaunchApp();
@@ -505,11 +425,6 @@ driver.resetApp()
 driver.resetApp()
 ```
 
-```php
-// php
-$this->reset();
-```
-
 ```csharp
 // c#
 driver.ResetApp();
@@ -542,11 +457,6 @@ driver.getContextHandles()
 ```javascript
 // javascript
 driver.contexts().then(function (contexts) { /*...*/ })
-```
-
-```php
-// php
-$this->contexts();
 ```
 
 ```csharp
@@ -584,11 +494,6 @@ driver.getContext()
 driver.currentContext().then(function (context) { /*...*/ })
 ```
 
-```php
-// php
-$this->context();
-```
-
 ```csharp
 // c#
 driver.GetContext()
@@ -623,11 +528,6 @@ driver.context();
 driver.context()
 ```
 
-```php
-// php
-$this->context(NULL);
-```
-
 ```csharp
 // c#
 driver.SetContext();
@@ -660,12 +560,6 @@ driver.getAppStrings();
 ```javascript
 // javascript
 driver.getAppStrings().then(function (appStrings) { /*...*/ })
-```
-
-```php
-// php
-$this->appStrings();
-$this->appStrings('ru');
 ```
 
 ```csharp
@@ -703,11 +597,6 @@ driver.sendKeyEvent(AndroidKeyCode.HOME);
 driver.deviceKeyEvent(wd.SPECIAL_KEYS.Home)
 ```
 
-```php
-// php
-$this->keyEvent('176');
-```
-
 ```csharp
 // c#
 driver.KeyEvent("176");
@@ -743,11 +632,6 @@ driver.currentActivity();
 driver.getCurrentActivity().then(function (activity) { /*...*/ })
 ```
 
-```php
-// php
-$this->currentActivity();
-```
-
 ```csharp
 // c#
 driver.GetCurrentActivity();
@@ -781,11 +665,6 @@ driver.getCurrentPackage();
 ```javascript
 // javascript
 driver.getCurrentPackage().then(function (package) { /*...*/ })
-```
-
-```php
-// php
-$this->currentPackage();
 ```
 
 ```csharp
@@ -826,33 +705,6 @@ action
   .tap({el: el, x: 10, y: 10})
   .release();
 return action.perform(); // returns a promise
-```
-
-```php
-// php
-$action = $this->initiateTouchAction();
-               ->press(array('element' => $el))
-               ->release()
-               ->perform();
-
-$action1 = $this->initiateTouchAction();
-$action1->press(array('element' => $els[0]))
-        ->moveTo(array('x' => 10, 'y' => 0))
-        ->moveTo(array('x' => 10, 'y' => -75))
-        ->moveTo(array('x' => 10, 'y' => -600))
-        ->release();
-
-$action2 = $this->initiateTouchAction();
-$action2->press(array('element' => $els[1]))
-        ->moveTo(array('x' => 10, 'y' => 10))
-        ->moveTo(array('x' => 10, 'y' => -300))
-        ->moveTo(array('x' => 10, 'y' => -600))
-        ->release();
-
-$multiAction = $this->initiateMultiAction();
-$multiAction->add($action1);
-$multiAction->add($action2);
-$multiAction->perform();
 ```
 
 ```csharp
@@ -896,11 +748,6 @@ wd.addPromiseChainMethod('swipe', swipe);
 // ...
 return driver.swipe({ startX: 75, startY: 500,
   endX: 75,  endY: 0, duration: 800 });
-```
-
-```php
-// php
-$this->swipe(75, 500, 75, 0, 800);
 ```
 
 ```csharp
@@ -959,10 +806,6 @@ return driver.pinch(el);
 return el.pinch();
 ```
 
-```php
-$this->pinch($el);
-```
-
 ```csharp
 // c#
 driver.Pinch(25, 25)
@@ -1019,11 +862,6 @@ return driver.zoom(el);
 return el.zoom();
 ```
 
-```php
-// php
-$this->zoom($el);
-```
-
 ```csharp
 // c#
 driver.Zoom(100, 200);
@@ -1060,12 +898,6 @@ return driver.elementByAccessibilityId().then(function (el) {
 });
 ```
 
-```php
-// php
-$els = $this->elements($this->using('class name')->value('android.widget.TextView'));
-$this->scroll($els[count($els) - 1], $els[0]);
-```
-
 ```csharp
 // c#
 Dictionary<string, string> scrollObject = new Dictionary<string, string>();
@@ -1097,11 +929,6 @@ driver.pullFile("Library/AddressBook/AddressBook.sqlitedb");
 // javascript
 driver.pullFile("Library/AddressBook/AddressBook.sqlitedb")
   .then(function (base64File) { /*...*/ })
-```
-
-```php
-// php
-$this->pullFile('Library/AddressBook/AddressBook.sqlitedb');
 ```
 
 ```csharp
@@ -1139,13 +966,6 @@ driver.pushFile(path, data)
 driver.pushFile(path, data)
 ```
 
-```php
-// php
-$path = 'data/local/tmp/test_push_file.txt';
-$data = 'This is the contents of the file to push to the device.';
-$this->pushFile($path, base64_encode($data));
-```
-
 ```csharp
 // c#
 driver.PushFile("/data/local/tmp/file.txt", "some data for the file");
@@ -1181,12 +1001,6 @@ driver.ignoreUnimportantViews(true);
 // javascript
 var settings = driver.settings();
 browser.updateSettings({'someSetting': true});
-```
-
-```php
-// php
-$settings = $this->getSettings();
-$this->updateSettings(array('cyberdelia' => "open"));
 ```
 
 ```csharp

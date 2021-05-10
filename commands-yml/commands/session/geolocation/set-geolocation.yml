@@ -21,9 +21,6 @@ example_usage:
   ruby_core:
     |
       @driver.set_location(121.21, 11.56, 94.23)
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.Location.Altitude = 94.23;
@@ -37,7 +34,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L407"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FDriverExtensions%2FHasLocation:set_location"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -57,7 +53,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

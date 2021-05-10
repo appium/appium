@@ -141,11 +141,6 @@ scrollObject.Add("direction", "down");
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
 ```
 
-```php
-$params = array(array('direction' => 'down'));
-$driver->executeScript("mobile: scroll", $params);
-```
-
 Sample to scroll using direction and element.
 
 ```javascript
@@ -178,11 +173,6 @@ Dictionary<string, string> scrollObject = new Dictionary<string, string>();
 scrollObject.Add("direction", "down");
 scrollObject.Add("element", <element_id>);
 ((IJavaScriptExecutor)driver).ExecuteScript("mobile: scroll", scrollObject));
-```
-
-```php
-$params = array(array('direction' => 'down', 'element' => element.GetAttribute("id")));
-$driver->executeScript("mobile: scroll", $params);
 ```
 
 **Swiping**

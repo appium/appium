@@ -39,21 +39,6 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 }
 ```
 
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'iOS',
-            'platformVersion' => '13.2',
-            'automationName' => 'XCUITest',
-            'browserName' => 'Safari',
-            'deviceName' => 'iPhone 11'
-        )
-    )
-);
-```
-
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -160,35 +145,6 @@ driver.find_element_by_id('comments').send_keys('My comment')
 driver.quit()
 ```
 
-```php
-// php
-class ContextTests extends PHPUnit_Extensions_AppiumTestCase
-{
-    public static $browsers = array(
-        array(
-            'desiredCapabilities' => array(
-                'platformName' => 'iOS',
-                'platformVersion' => '7.1',
-                'automationName' => 'XCUITest',
-                'browserName' => 'Safari',
-                'deviceName' => 'iPhone 11'
-            )
-        )
-    );
-
-    public function testThings()
-    {
-        $this->get('http://saucelabs.com/test/guinea-pig');
-
-        $div = $this->byId('i_am_an_id');
-        $this->assertEquals('I am a div', $div->text());
-
-        $this->byId('comments')->sendKeys('My comment');
-    }
-}
-```
-
-
 ### Android mobile web automation
 
 Appium supports automating the Chrome browser both real and emulated Android
@@ -225,21 +181,6 @@ these to run your test in Chrome:
   'automationName': 'UIAutomator2',
   'browserName': 'Chrome'
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'Android',
-            'platformVersion' => '9.0',
-            'browserName' => 'Chrome',
-            'automationName' => 'UIAutomator2',
-            'deviceName' => 'Android Emulator'
-        )
-    )
-);
 ```
 
 ```java

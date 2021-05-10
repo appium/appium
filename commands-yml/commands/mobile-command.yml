@@ -44,9 +44,6 @@
     ruby_core:
       |
         @driver.execute_script("mobile: scroll", { "direction" => "down"})
-    php:
-      |
-        // TODO PHP sample
     csharp:
       |
        driver.ExecuteScript("mobile:scroll", new Dictionary<string, string> { { "direction", "down" } });
@@ -58,7 +55,6 @@
     javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L102"
     ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
     ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script"
-    php: "https://github.com/appium/php-client/" # TODO PHP documentation link
     csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
   # Driver support by platform
@@ -78,7 +74,6 @@
     java: true
     python: true
     ruby: true
-    php: true
     csharp: true
     javascript_wd: true
     javascript_wdio: true

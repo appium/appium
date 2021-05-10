@@ -21,9 +21,6 @@ example_usage:
   ruby_core:
     |
       @driver.switch_to.active_element
-  php:
-    |
-      // TODO PHP example
   csharp:
     |
       IWebElement currentElement = driver.SwitchTo().ActiveElement();
@@ -36,7 +33,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1934"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/TargetLocator#active_element-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteTargetLocator.cs"
 
 # Driver support by platform
@@ -56,7 +52,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

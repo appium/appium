@@ -29,9 +29,6 @@ example_usage:
   ruby_core:
     |
       @driver.screenshot_as(:base64)
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       Screenshot screenshot = driver.GetScreenshot();
@@ -43,7 +40,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1089"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/TakeScreenshot#screenshot_as-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/TakeScreenshot#screenshot_as-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -63,7 +59,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

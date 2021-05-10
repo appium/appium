@@ -75,9 +75,6 @@ example_usage:
   ruby_core:
     |
       ::Appium::Core.for(desired_caps).start_driver
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       AppiumOptions capabilities = new AppiumOptions();
@@ -96,7 +93,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -116,7 +112,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

@@ -154,7 +154,7 @@ describe('Driver CLI', function () {
       const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, 'fake-success', '--json']));
-      out.errors.should.eql({});
+      out.errors[driverName].should.eql({});
       out.scripts[driverName].success.should.equal(true);
     });
     it('should run a valid driver, valid script that causes an error, and results in error', async function () {

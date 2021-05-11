@@ -98,12 +98,9 @@ function addExtensionsToParser (sharedArgs, subParsers, debug = false) {
        help: `Uninstall a ${type}`},
       {command: 'update', args: extensionArgs[type].update,
        help: `Update installed ${type}s to the latest version`},
+      {command: 'run', args: extensionArgs[type].run,
+       help: `Run a script (cached inside the ${type}s package.json under the “scripts” field inside the “appium” field) against an installed ${type}`}
     ];
-
-    if (type === DRIVER_TYPE) {
-      parserSpecs.push({command: 'run', args: extensionArgs[type].run,
-                        help: `Run a script (cached inside the ${type}s package.json under the “scripts” field inside the “appium” field) against an installed ${type}`});
-    }
 
     for (const {command, args, help} of parserSpecs) {
       const parser = extSubParsers.add_parser(command, {help});

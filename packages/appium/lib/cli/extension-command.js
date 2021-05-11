@@ -5,7 +5,7 @@ import NPM from './npm';
 import path from 'path';
 import { fs, util } from 'appium-support';
 import { log, spinWith } from './utils';
-import { exec } from 'teen_process';
+import { SubProcess} from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
          INSTALL_TYPE_LOCAL } from '../extension-config';
 
@@ -495,38 +495,52 @@ export default class ExtensionCommand {
    * @param {string} scriptName - name of the script to run
    */
   async run ({ext, scriptName}) {
-    const installedNames = Object.keys(this.config.installedExtensions);
-
     const errors = {};
     const scripts = {};
 
-    if (!(installedNames.includes(ext))) {
-      const msg = `Could not resolve ${ext}; are you sure it's installed? ` +
-                  `if not please install the driver first using the "install" command`;
+    if (!_.has(this.config.installedExtensions, ext)) {
+      const msg = `please install the ${this.type} first`;
       throw new Error(msg);
     }
 
-    let driverConfig = this.config.installedExtensions[ext];
+    const driverConfig = this.config.installedExtensions[ext];
 
-    if (!('scripts' in driverConfig)) {
-      throw new Error(`The ${this.type} named '${ext}' does not contain the "scripts" field underneath "appium" field in its package.json`);
+    if (!_.has(driverConfig, 'scripts')) {
+      throw new Error(`The ${this.type} named '${ext}' does not contain the "scripts" field underneath the "appium" field in its package.json`);
     }
 
-    let driverScripts = driverConfig.scripts;
+    const driverScripts = driverConfig.scripts;
 
     if (!(scriptName in driverScripts)) {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
 
-    log(this.isJsonOutput, 'Run report:');
+    let execOutput = new SubProcess(`node`, [driverScripts[scriptName]], {cwd: this.config.getExtensionRequirePath(ext)});
+
+    execOutput.on('exit', (code, signal) => {
+      if (code === 0 || signal === 'SIGTERM') {
+        scripts[ext].success = true;
+        errors[ext] = {};
+      } else {
+        scripts[ext].success = false;
+        errors[ext].code = code;
+      }
+    });
+
+    execOutput.on('output', (stdout, stderr) => {
+      scripts[ext] = {ran: scriptName, output: stdout, success: true};
+      errors[ext] = {stdout, stderr};
+    });
+
+    execOutput.on('stream-line', (line) => {
+      log(this.isJsonOutput, line);
+    });
+
+    await execOutput.start();
     try {
-      let execOutput = await exec(`node`, [driverScripts[scriptName]], {cwd: this.config.getExtensionRequirePath(ext)});
-      scripts[ext] = {ran: scriptName, output: execOutput.stderr, success: true};
-      log(this.isJsonOutput, `- ${this.type} ${ext} successfully ran: "${scriptName}"\n- run with --json to see details`.green);
+      await execOutput.join();
     } catch (err) {
-      scripts[ext] = {ran: scriptName, success: false};
-      errors[ext] = err;
-      log(this.isJsonOutput, `- ${this.type} ${ext} failed to run script: "${scriptName}"\n- run with --json to see details`.red);
+      log(this.isJsonOutput, `${err}`.red);
     }
 
     return {scripts, errors};

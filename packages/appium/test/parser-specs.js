@@ -194,9 +194,6 @@ describe('Driver Parser', function () {
     it('should not allow an empty argument list', function () {
       (() => p.parse_args(['driver', 'run'])).should.throw();
     });
-    it('should not allow plugins', function () {
-      (() => p.parse_args(['plugin', 'run', 'foo', 'bar'])).should.throw();
-    });
     it('should not allow no scriptName', function () {
       (() => p.parse_args(['driver', 'run', 'foo'])).should.throw();
     });

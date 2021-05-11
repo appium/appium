@@ -38,7 +38,7 @@
   "scripts": {
     "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
     "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
-    "generate-docs": "node ./build/commands-yml/parse.js",
+    "generate-docs": "gulp transpile && node ./build/commands-yml/parse.js",
     "postinstall": "node ./postinstall.js",
     "install-fake-driver": "node . driver install --source=npm appium-fake-driver",
     "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",

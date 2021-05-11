@@ -8,8 +8,7 @@ import { asyncify } from 'asyncbox';
 import { validator, CLIENT_URL_TYPES } from './validator';
 import url from 'url';
 import log from 'fancy-log';
-import findRoot from 'find-root';
-
+import findUp from 'find-up';
 
 // What range of platforms do the driver's support
 const platformRanges = {
@@ -31,7 +30,8 @@ const appiumRanges = {
   mac: ['1.6.4'],
 };
 
-const rootFolder = findRoot(__dirname);
+const rootFolder = path.dirname(findUp.sync('.git', {type: 'directory'}));
+const appiumDir = path.join(rootFolder, 'packages', 'appium');
 
 // Create Handlebars helper that shows a version range
 Handlebars.registerHelper('versions', function versionHelper (object, name, driverName) {
@@ -137,7 +137,7 @@ Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
 });
 
 async function registerSpecUrlHelper () {
-  const routesFile = await fs.readFile(path.resolve(rootFolder, 'node_modules', 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
+  const routesFile = await fs.readFile(require.resolve('appium-base-driver/lib/protocol/routes'), 'utf8');
   const routesFileLines = routesFile.split('\n');
 
   Handlebars.registerHelper('spec_url', function specUrl (specUrl, endpoint) {
@@ -178,16 +178,16 @@ async function registerSpecUrlHelper () {
 async function generateCommands () {
   await registerSpecUrlHelper();
 
-  const commands = path.resolve(rootFolder, 'commands-yml', 'commands/**/*.yml');
+  const commands = path.resolve(appiumDir, 'commands-yml', 'commands/**/*.yml');
   log('Traversing YML files', commands);
   await fs.rimraf(path.resolve(rootFolder, 'docs', 'en', 'commands'));
 
   // get the template from which the md files will be created
-  const template = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'template.md'), 'utf8'), {noEscape: true, strict: true});
+  const template = Handlebars.compile(await fs.readFile(path.resolve(appiumDir, 'commands-yml', 'template.md'), 'utf8'), {noEscape: true, strict: true});
 
   let fileCount = 0;
   for (const filename of await fs.glob(commands)) {
-    const relativeFilename = path.relative(path.resolve(rootFolder, 'commands-yml'), filename);
+    const relativeFilename = path.relative(path.resolve(appiumDir, 'commands-yml'), filename);
     log(`Rendering file: ${filename} ${relativeFilename}`);
 
     // Translate the YML specs to JSON
@@ -242,7 +242,7 @@ async function generateCommandIndex () {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
-  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(appiumDir, 'commands-yml', 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
 
   async function writeIndex (index, commands, indexPath) {
     log(`Creating API index '${index}'`);

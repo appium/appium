@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import path from 'path';
-import { mkdirp, fs, system } from 'appium-support';
+import { mkdirp, system } from 'appium-support';
 import axios from 'axios';
 import { exec } from 'teen_process';
 import { rootDir } from './utils';
@@ -9,7 +9,7 @@ import semver from 'semver';
 import {
   StoreDeprecatedDefaultCapabilityAction, DEFAULT_CAPS_ARG,
 } from './cli/argparse-actions';
-
+import findUp from 'find-up';
 
 const npmPackage = require(path.resolve(rootDir, 'package.json'));
 const APPIUM_VER = npmPackage.version;
@@ -44,11 +44,23 @@ async function updateBuildInfo (useGithubApiFallback = false) {
   }
 }
 
+/**
+ * Finds the Git metadata dir (see `GIT_META_ROOT`)
+ *
+ * This is needed because Appium cannot assume `package.json` and `.git` are in the same
+ * directory.  Monorepos, see?
+ * @returns {string|void} Path to dir or `undefined` if not found
+ */
+async function findGitRoot () {
+  return await findUp(GIT_META_ROOT, {cwd: rootDir, type: 'directory'});
+}
+
 async function getGitRev (useGithubApiFallback = false) {
-  if (await fs.exists(path.resolve(rootDir, GIT_META_ROOT))) {
+  const gitRoot = await findGitRoot();
+  if (gitRoot) {
     try {
       const {stdout} = await exec(GIT_BINARY, ['rev-parse', 'HEAD'], {
-        cwd: rootDir
+        cwd: gitRoot
       });
       return stdout.trim();
     } catch (ign) {}
@@ -76,10 +88,11 @@ async function getGitRev (useGithubApiFallback = false) {
 }
 
 async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
-  if (await fs.exists(path.resolve(rootDir, GIT_META_ROOT))) {
+  const gitRoot = await findGitRoot();
+  if (gitRoot) {
     try {
       const {stdout} = await exec(GIT_BINARY, ['show', '-s', '--format=%ci', commitSha], {
-        cwd: rootDir
+        cwd: gitRoot
       });
       return stdout.trim();
     } catch (ign) {}

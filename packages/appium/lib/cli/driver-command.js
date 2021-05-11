@@ -24,6 +24,10 @@ export default class DriverCommand extends ExtensionCommand {
     return await super.update({ext: driver, unsafe});
   }
 
+  async run ({driver, scriptName}) {
+    return await super.run({ext: driver, scriptName});
+  }
+
   getPostInstallText ({extName, extData}) {
     return `Driver ${extName}@${extData.version} successfully installed\n`.green +
            `- automationName: ${extData.automationName.green}\n` +

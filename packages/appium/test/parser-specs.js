@@ -190,4 +190,28 @@ describe('Driver Parser', function () {
       args.appiumHome.should.eql('/foo/bar');
     });
   });
+  describe('run', function () {
+    it('should not allow an empty argument list', function () {
+      (() => p.parse_args(['driver', 'run'])).should.throw();
+    });
+    it('should not allow plugins', function () {
+      (() => p.parse_args(['plugin', 'run', 'foo', 'bar'])).should.throw();
+    });
+    it('should not allow no scriptName', function () {
+      (() => p.parse_args(['driver', 'run', 'foo'])).should.throw();
+    });
+    it('should take a driverName and scriptName to run', function () {
+      const args = p.parse_args(['driver', 'run', 'foo', 'bar']);
+      args.subcommand.should.eql('driver');
+      args.driverCommand.should.eql('run');
+      args.driver.should.eql('foo');
+      args.scriptName.should.eql('bar');
+      args.appiumHome.should.eql(DEFAULT_APPIUM_HOME);
+      args.json.should.eql(false);
+    });
+    it('should allow json format', function () {
+      const args = p.parse_args(['driver', 'run', 'foo', 'bar', '--json']);
+      args.json.should.eql(true);
+    });
+  });
 });

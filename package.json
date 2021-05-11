@@ -30,6 +30,7 @@
   ],
   "devDependencies": {
     "@appium/fake-plugin": "^1.0.0",
+    "@babel/register": "^7.13.16",
     "appium-fake-driver": "^2.0.1",
     "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",

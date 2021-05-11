@@ -1,46 +1,50 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Debug",
-            "type": "node",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "args": [
-                "."
-            ]
-        },
-        {
-            "name": "Attach Debug",
-            "type": "node",
-            "request": "attach",
-            "cwd": "${workspaceFolder}",
-            "port": 9229
-        },
-        {
-            "name": "Test All",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/node_modules/.bin/_mocha",
-            "args": [
-                "--require", "babel-core/register",
-                "--timeout", "999999",
-                "--colors",
-                "${workspaceFolder}/test"
-            ]
-        },
-        {
-            "name": "Test Current File",
-            "type": "node",
-            "request": "launch",
-            "program": "${workspaceFolder}/node_modules/.bin/_mocha",
-            "args": [
-                "--require", "babel-core/register",
-                "--timeout", "999999",
-                "--colors",
-                "${file}"
-            ]
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "args": [
+        "--require",
+        "@babel/register",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${file}"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Test - Current File",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
+      "name": "Debug",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "args": ["."]
+    },
+    {
+      "name": "Attach Debug",
+      "type": "node",
+      "request": "attach",
+      "cwd": "${workspaceFolder}",
+      "port": 9229
+    },
+    {
+      "name": "Test All",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/.bin/_mocha",
+      "args": [
+        "--require",
+        "@babel/register",
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceFolder}/packages/appium/test"
+      ]
+    }
+  ]
 }

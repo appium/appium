@@ -142,4 +142,37 @@ describe('Driver CLI', function () {
       await fs.exists(installPath).should.eventually.be.false;
     });
   });
+
+  describe('run', function () {
+    it('should run a valid driver, valid script, and result in success', async function () {
+      await clear();
+      const driverName = 'fake';
+      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+      const out = JSON.parse(await run('run', [driverName, 'fake-success', '--json']));
+      out.errors.should.eql({});
+      out.scripts[driverName].success.should.equal(true);
+    });
+    it('should run a valid driver, valid script that causes an error, and results in error', async function () {
+      await clear();
+      const driverName = 'fake';
+      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+      const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
+      out.scripts[driverName].success.should.equal(false);
+      out.errors[driverName].code.should.equal(1);
+    });
+    it('should take a valid driver, invalid script, and throw an error', async function () {
+      await clear();
+      const driverName = 'fake';
+      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+      await chai.expect(run('run', [driverName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
+    });
+    it('should take an invalid driver, invalid script, and throw an error', async function () {
+      await clear();
+      const driverName = 'foo';
+      await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
+    });
+  });
 });

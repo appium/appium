@@ -1,28 +1,30 @@
 {
   "name": "appium-monorepo",
-  "description": "Automation for Apps.",
   "version": "0.0.0",
   "private": true,
-  "author": "https://github.com/appium",
-  "license": "Apache-2.0",
+  "description": "Automation for Apps.",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
   },
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
-  },
-  "engines": {
-    "node": ">=12",
-    "npm": ">=6"
-  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "scripts": {
+    "build": "lerna exec gulp transpile",
     "clean": "lerna clean -y && rm -rf node_modules && rm -f package-lock.json && npm install",
+    "coverage": "lerna exec gulp coveralls",
+    "e2e-test": "lerna exec gulp e2e-test",
     "postinstall": "lerna bootstrap --no-ci",
+    "lint": "lerna exec gulp lint",
+    "lint:fix": "lerna exec lint --fix",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
-    "test": "lerna run test",
-    "e2e-test": "lerna run e2e-test"
+    "prepare": "lerna exec gulp prepublish",
+    "test": "lerna exec gulp once",
+    "watch": "lerna exec watch"
   },
   "pre-commit": [
     "precommit-msg",
@@ -31,7 +33,6 @@
   "devDependencies": {
     "@appium/fake-plugin": "^1.0.0",
     "@babel/register": "^7.13.16",
-    "appium-fake-driver": "^2.0.1",
     "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",
@@ -44,7 +45,12 @@
     "pre-commit": "1.x",
     "sinon": "^9.0.0",
     "validate.js": "^0.13.0",
+    "wd": "^1.14.0",
     "webdriverio": "^6.12.0",
     "yaml-js": "^0.2.0"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
   }
 }

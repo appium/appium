@@ -1,0 +1,62 @@
+{
+  "name": "@appium/fake-driver",
+  "version": "2.2.0",
+  "description": "Description goes here.",
+  "keywords": [
+    "appium"
+  ],
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "license": "Apache-2.0",
+  "author": "appium",
+  "main": "./build/index.js",
+  "bin": {
+    "appium-fake-driver": "./build/index.js"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build/index.js",
+    "build/lib",
+    "test/fixtures",
+    "screen.png"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.0.0",
+    "appium-base-driver": "^7.0.0",
+    "appium-support": "^2.11.1",
+    "asyncbox": "^2.3.2",
+    "bluebird": "^3.5.1",
+    "lodash": "^4.17.4",
+    "source-map-support": "^0.x",
+    "xmldom": "^0.x",
+    "xpath": "^0.x"
+  },
+  "engines": {
+    "node": ">=12.x"
+  },
+  "access": "public",
+  "appium": {
+    "driverName": "fake",
+    "automationName": "Fake",
+    "platformNames": [
+      "Fake"
+    ],
+    "mainClass": "FakeDriver",
+    "scripts": {
+      "fake-error": "./build/lib/scripts/fake-error.js",
+      "fake-success": "./build/lib/scripts/fake-success.js"
+    }
+  },
+  "greenkeeper": {
+    "ignore": []
+  }
+}

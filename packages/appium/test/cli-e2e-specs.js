@@ -4,10 +4,18 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { tempDir, fs, mkdirp, util } from 'appium-support';
 import { KNOWN_DRIVERS } from '../lib/drivers';
+import findUp from 'find-up';
 
 chai.should();
 chai.use(chaiAsPromised);
-const cwd = path.resolve(__dirname, '..', '..');
+
+// monorepo root.  this cannot be hardcoded because:
+// 1. we may be in 'build/test' or 'test', depending on our config
+// 2. Node.js does not support `__dirname` in an ESM context & Babel doesn't fake it well
+const cwd = path.dirname(findUp.sync('.git', {type: 'directory'}));
+// cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
+// could also derive it from the `package.json` if we wanted
+const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');
 
 describe('Driver CLI', function () {
   let appiumHome;
@@ -27,7 +35,7 @@ describe('Driver CLI', function () {
 
   async function run (driverCmd, args = [], raw = false) {
     args = [...args, '--appium-home', appiumHome];
-    const ret = await exec('node', ['.', 'driver', driverCmd, ...args], {cwd});
+    const ret = await exec('node', [executable, 'driver', driverCmd, ...args], {cwd});
     if (raw) {
       return ret;
     }
@@ -118,9 +126,9 @@ describe('Driver CLI', function () {
       await clear();
       // take advantage of the fact that we know we have fake driver installed as a dependency in
       // this module, so we know its local path on disk
-      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+      const localFakeDriverPath = path.resolve(cwd, 'packages', 'fake-driver');
       const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
-      ret.fake.pkgName.should.eql('appium-fake-driver');
+      ret.fake.pkgName.should.eql('@appium/fake-driver');
       ret.fake.installType.should.eql('local');
       ret.fake.installSpec.should.eql(localFakeDriverPath);
       const list = JSON.parse(await run('list', ['--installed', '--json']));

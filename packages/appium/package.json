@@ -37,24 +37,15 @@
   ],
   "scripts": {
     "backup-shrinkwrap": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
-    "build": "gulp transpile",
     "check-pruned-shrinkwrap": "node check-pruned-shrinkwrap.js",
-    "coverage": "gulp coveralls",
-    "e2e-test": "gulp e2e-test",
     "generate-docs": "node ./build/commands-yml/parse.js",
-    "install-fake-driver": "node . driver install --source=npm appium-fake-driver",
     "postinstall": "node ./postinstall.js",
-    "lint": "gulp lint",
-    "lint:fix": "gulp lint --fix",
-    "mocha": "mocha",
-    "prepare": "gulp prepublish",
+    "install-fake-driver": "node . driver install --source=npm appium-fake-driver",
     "prepublishOnly": "npm run prune-shrinkwrap && gulp fixShrinkwrap",
     "prune-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap)",
     "postpublish": "npm run restore-shrinkwrap",
     "restore-shrinkwrap": "!(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
-    "test": "gulp once",
     "upload": "gulp github-upload",
-    "watch": "gulp watch",
     "zip": "zip -qr appium.zip .",
     "zip-and-upload": "npm run zip && npm run upload"
   },
@@ -89,5 +80,8 @@
   "engines": {
     "node": ">=12",
     "npm": ">=6"
+  },
+  "devDependencies": {
+    "@appium/fake-driver": "^2.2.0"
   }
 }

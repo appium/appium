@@ -10,11 +10,14 @@ import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE, PLUGIN_TYPE } from '../lib/extension-config';
 import { W3C_PREFIXED_CAPS, TEST_HOST, TEST_PORT } from './helpers';
 import { runExtensionCommand } from '../lib/cli/extension';
+import findUp from 'find-up';
 
 chai.should();
 chai.use(chaiAsPromised);
-const FAKE_PLUGIN_DIR = path.resolve(__dirname, '..', '..', 'node_modules', '@appium', 'fake-plugin');
-const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+const root = path.dirname(findUp.sync('.git', {type: 'directory'}));
+// TODO: update when fake-plugin pulled in to monorepo
+const FAKE_PLUGIN_DIR = path.join(root, 'node_modules', '@appium', 'fake-plugin');
+const FAKE_DRIVER_DIR = path.join(root, 'packages', 'fake-driver');
 const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
 
 const wdOpts = {

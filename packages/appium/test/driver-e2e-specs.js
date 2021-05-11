@@ -19,7 +19,7 @@ import sinon from 'sinon';
 chai.use(chaiAsPromised);
 
 const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
-const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
 
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';

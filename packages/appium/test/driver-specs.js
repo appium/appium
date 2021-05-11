@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { AppiumDriver } from '../lib/appium';
-import { FakeDriver } from 'appium-fake-driver';
+import { FakeDriver } from '@appium/fake-driver';
 import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
 import _ from 'lodash';
 import sinon from 'sinon';

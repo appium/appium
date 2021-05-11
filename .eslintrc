@@ -1,3 +1,6 @@
 {
-  "extends": "appium"
+  "extends": "appium",
+  "overrides": [
+    { "files": "packages/fake-driver/**/*", "rules": { "require-await": 0 } }
+  ]
 }

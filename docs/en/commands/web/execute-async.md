@@ -59,7 +59,7 @@ The executed script is assumed to be asynchronous and must signal that is done b
 
 Asynchronous script commands may not span page loads. If an unload event is fired while waiting for a script result, an error should be returned to the client.
 
-The script argument defines the script to execute in teh form of a function body. The function will be invoked with the provided args array and the values may be accessed via the arguments object in the order specified. The final argument will always be a callback function that must be invoked to signal that the script has finished.
+The script argument defines the script to execute in the form of a function body. The function will be invoked with the provided args array and the values may be accessed via the arguments object in the order specified. The final argument will always be a callback function that must be invoked to signal that the script has finished.
 
 Arguments may be any JSON-primitive, array, or JSON object. JSON objects that define a WebElement reference will be converted to the corresponding DOM element. Likewise, any WebElements in the script result will be returned to the client as WebElement JSON objects.
 

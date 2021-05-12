@@ -437,12 +437,14 @@ function makeRunArgs (type) {
     ...globalExtensionArgs,
     [[type], {
       type: 'str',
-      help: `Name of the ${type} to run a script from, for example: ` + type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE,
+      help: `Name of the ${type} to run a script from, for example: ` +
+            type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE,
     }],
     [['scriptName'], {
       default: null,
       type: 'str',
-      help: `Name of the script to run from the ${type}. The script name must be cached inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`
+      help: `Name of the script to run from the ${type}. The script name must be cached ` +
+            `inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`
     }],
   ];
 }

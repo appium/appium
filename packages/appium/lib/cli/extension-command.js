@@ -489,60 +489,47 @@ export default class ExtensionCommand {
   }
 
   /**
-   * Runs a script cached inside the "scripts" field under "appium" inside of the driver's "package.json" file
+   * Runs a script cached inside the "scripts" field under "appium"
+   * inside of the driver/plugins "package.json" file
    *
-   * @param {string} ext - name of the driver to run a script against
+   * @param {string} ext - name of the extension to run a script from
    * @param {string} scriptName - name of the script to run
    */
   async run ({ext, scriptName}) {
-    const errors = {};
-    const scripts = {};
-
     if (!_.has(this.config.installedExtensions, ext)) {
       const msg = `please install the ${this.type} first`;
       throw new Error(msg);
     }
 
-    const driverConfig = this.config.installedExtensions[ext];
+    const extConfig = this.config.installedExtensions[ext];
 
-    if (!_.has(driverConfig, 'scripts')) {
-      throw new Error(`The ${this.type} named '${ext}' does not contain the "scripts" field underneath the "appium" field in its package.json`);
+    if (!_.has(extConfig, 'scripts')) {
+      throw new Error(`The ${this.type} named '${ext}' does not contain the ` +
+                      `"scripts" field underneath the "appium" field in its package.json`);
     }
 
-    const driverScripts = driverConfig.scripts;
+    const extScripts = extConfig.scripts;
 
-    if (!(scriptName in driverScripts)) {
+    if (!(scriptName in extScripts)) {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
 
-    let execOutput = new SubProcess(`node`, [driverScripts[scriptName]], {cwd: this.config.getExtensionRequirePath(ext)});
+    const runner = new SubProcess(`node`, [extScripts[scriptName]],
+                                  {cwd: this.config.getExtensionRequirePath(ext)});
 
-    execOutput.on('exit', (code, signal) => {
-      if (code === 0 || signal === 'SIGTERM') {
-        scripts[ext].success = true;
-        errors[ext] = {};
-      } else {
-        scripts[ext].success = false;
-        errors[ext].code = code;
-      }
-    });
-
-    execOutput.on('output', (stdout, stderr) => {
-      scripts[ext] = {ran: scriptName, output: stdout, success: true};
-      errors[ext] = {stdout, stderr};
-    });
-
-    execOutput.on('stream-line', (line) => {
+    runner.on('stream-line', (line) => {
       log(this.isJsonOutput, line);
     });
 
-    await execOutput.start();
-    try {
-      await execOutput.join();
-    } catch (err) {
-      log(this.isJsonOutput, `${err}`.red);
-    }
+    await runner.start();
 
-    return {scripts, errors};
+    try {
+      await runner.join();
+      log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
+      return {scriptName};
+    } catch (err) {
+      log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
+      return {error: err.message};
+    }
   }
 }

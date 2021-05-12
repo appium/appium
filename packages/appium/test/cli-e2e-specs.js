@@ -151,20 +151,19 @@ describe('Driver CLI', function () {
     it('should run a valid driver, valid script, and result in success', async function () {
       await clear();
       const driverName = 'fake';
+      const scriptName = 'fake-success';
       const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
-      const out = JSON.parse(await run('run', [driverName, 'fake-success', '--json']));
-      out.errors[driverName].should.eql({});
-      out.scripts[driverName].success.should.equal(true);
+      const out = JSON.parse(await run('run', [driverName, scriptName, '--json']));
+      out.scriptName.should.equal(scriptName);
     });
-    it('should run a valid driver, valid script that causes an error, and results in error', async function () {
+    it('should run a valid driver, valid error prone script, and return error in json', async function () {
       await clear();
       const driverName = 'fake';
       const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
-      out.scripts[driverName].success.should.equal(false);
-      out.errors[driverName].code.should.equal(1);
+      out.should.have.key('error');
     });
     it('should take a valid driver, invalid script, and throw an error', async function () {
       await clear();
@@ -177,6 +176,10 @@ describe('Driver CLI', function () {
       await clear();
       const driverName = 'foo';
       await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
+    });
+    it('should take an invalid plugin, invalid script, and throw an error', async function () {
+      await clear();
+      await chai.expect(run('run', ['plugin', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
     });
   });
 });

@@ -18,7 +18,7 @@ Basically just set up the `boilerplate` plugin as follows:
 
 ```js
 let gulp = require('gulp'),
-    boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
+    boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 
 boilerplate({build: "My Project Name"});
 ```

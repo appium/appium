@@ -58,5 +58,8 @@
   },
   "greenkeeper": {
     "ignore": []
+  },
+  "devDependencies": {
+    "@appium/gulp-plugins": "^5.5.0"
   }
 }

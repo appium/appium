@@ -82,6 +82,7 @@
     "npm": ">=6"
   },
   "devDependencies": {
-    "@appium/fake-driver": "^2.2.0"
+    "@appium/fake-driver": "^2.2.0",
+    "@appium/gulp-plugins": "^5.5.0"
   }
 }

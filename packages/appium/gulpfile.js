@@ -7,7 +7,7 @@
 process.env._FORCE_LOGS = '1';
 
 const gulp = require('gulp');
-const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
+const boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 const path = require('path');
 const fs = require('fs');
 const log = require('fancy-log');

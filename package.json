@@ -33,8 +33,8 @@
   ],
   "devDependencies": {
     "@appium/fake-plugin": "^1.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/register": "^7.13.16",
-    "appium-gulp-plugins": "^5.2.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",
     "eslint-config-appium": "^4.0.1",

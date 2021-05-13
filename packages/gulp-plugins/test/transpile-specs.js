@@ -7,11 +7,12 @@ import fs from 'fs';
 import _ from 'lodash';
 import log from 'fancy-log';
 
-
 chai.should();
 
-const GULP = './node_modules/.bin/gulp';
-const MOCHA = './node_modules/.bin/mocha';
+// XXX: this behavior is unsupported by Node.js (but is supported by Babel).
+// fix if dropping babel
+const GULP = require.resolve('gulp/bin/gulp');
+const MOCHA = require.resolve('mocha/bin/mocha');
 
 const readFile = B.promisify(fs.readFile);
 

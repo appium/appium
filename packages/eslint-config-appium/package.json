@@ -26,10 +26,8 @@
   "author": "appium",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/core": "^7.21.1",
-    "@babel/eslint-parser": "^7.12.1"
-  },
-  "peerDependencies": {
+    "@babel/core": "^7.12.1",
+    "@babel/eslint-parser": "^7.12.1",
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-mocha": "^8.0.0",

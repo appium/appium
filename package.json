@@ -25,6 +25,10 @@
     "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
     "prepare": "lerna exec gulp prepublish",
     "test": "lerna exec gulp once",
+    "test:appium": "lerna exec gulp once --scope appium",
+    "test:doctor": "lerna exec gulp once --scope @appium/doctor",
+    "test:fake-driver": "lerna exec gulp once --scope @appium/fake-driver",
+    "test:gulp-plugins": "lerna exec gulp once --scope @appium/gulp-plugins",
     "watch": "lerna exec watch"
   },
   "pre-commit": [

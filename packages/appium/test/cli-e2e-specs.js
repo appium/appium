@@ -12,6 +12,9 @@ chai.use(chaiAsPromised);
 // cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
 // could also derive it from the `package.json` if we wanted
 const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');
+const cwd = path.resolve(__dirname, '..', '..');
+const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+const fakePluginDir = path.resolve(__dirname, '..', '..', 'node_modules', '@appium', 'fake-plugin');
 
 describe('Driver CLI', function () {
   let appiumHome;
@@ -152,23 +155,20 @@ describe('Driver CLI', function () {
       await clear();
       const driverName = 'fake';
       const scriptName = 'fake-success';
-      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, scriptName, '--json']));
-      out.scriptName.should.equal(scriptName);
+      out.should.not.include.key('error');
     });
     it('should run a valid driver, valid error prone script, and return error in json', async function () {
       await clear();
       const driverName = 'fake';
-      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
-      out.should.have.key('error');
+      out.should.include.key('error');
     });
     it('should take a valid driver, invalid script, and throw an error', async function () {
       await clear();
       const driverName = 'fake';
-      const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
       await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       await chai.expect(run('run', [driverName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
     });
@@ -177,9 +177,59 @@ describe('Driver CLI', function () {
       const driverName = 'foo';
       await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
     });
+  });
+});
+
+describe('Plugin CLI', function () {
+  let appiumHome;
+
+  before(async function () {
+    appiumHome = await tempDir.openDir();
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+  });
+
+  async function clear () {
+    await fs.rimraf(appiumHome);
+    await mkdirp(appiumHome);
+  }
+
+  async function run (pluginCmd, args = [], raw = false) {
+    args = [...args, '--appium-home', appiumHome];
+    const ret = await exec('node', ['.', 'plugin', pluginCmd, ...args], {cwd});
+    if (raw) {
+      return ret;
+    }
+    return ret.stdout;
+  }
+
+  describe('run', function () {
+    it('should run a valid plugin, valid script, and result in success', async function () {
+      await clear();
+      const pluginName = 'fake';
+      const scriptName = 'fake-success';
+      await run('install', [fakePluginDir, '--source', 'local', '--json']);
+      const out = JSON.parse(await run('run', [pluginName, scriptName, '--json']));
+      out.should.not.include.key('error');
+    });
+    it('should run a valid plugin, valid error prone script, and return error in json', async function () {
+      await clear();
+      const pluginName = 'fake';
+      await run('install', [fakePluginDir, '--source', 'local', '--json']);
+      const out = JSON.parse(await run('run', [pluginName, 'fake-error', '--json']));
+      out.should.include.key('error');
+    });
+    it('should take a valid plugin, invalid script, and throw an error', async function () {
+      await clear();
+      const pluginName = 'fake';
+      await run('install', [fakePluginDir, '--source', 'local', '--json']);
+      await chai.expect(run('run', [pluginName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
+    });
     it('should take an invalid plugin, invalid script, and throw an error', async function () {
       await clear();
-      await chai.expect(run('run', ['plugin', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
+      await chai.expect(run('run', ['foo', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
     });
   });
 });

@@ -497,8 +497,7 @@ export default class ExtensionCommand {
    */
   async run ({ext, scriptName}) {
     if (!_.has(this.config.installedExtensions, ext)) {
-      const msg = `please install the ${this.type} first`;
-      throw new Error(msg);
+      throw new Error(`please install the ${this.type} first`);
     }
 
     const extConfig = this.config.installedExtensions[ext];
@@ -510,14 +509,17 @@ export default class ExtensionCommand {
 
     const extScripts = extConfig.scripts;
 
-    if (!(scriptName in extScripts)) {
+    if (!_.has(extScripts, scriptName)) {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
 
     const runner = new SubProcess(`node`, [extScripts[scriptName]],
                                   {cwd: this.config.getExtensionRequirePath(ext)});
 
+    const output = [];
+
     runner.on('stream-line', (line) => {
+      output.push(line);
       log(this.isJsonOutput, line);
     });
 
@@ -526,10 +528,10 @@ export default class ExtensionCommand {
     try {
       await runner.join();
       log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
-      return {scriptName};
+      return {output};
     } catch (err) {
       log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
-      return {error: err.message};
+      return {error: err.message, output};
     }
   }
 }

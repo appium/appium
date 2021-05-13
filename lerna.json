@@ -7,7 +7,11 @@
     "bootstrap": {
       "npmClientArgs": [
         "--no-package-lock"
-      ]
+      ],
+      "ci": false
+    },
+    "exec": {
+      "ignore": "@appium/eslint-config-appium"
     }
   },
   "changelog": {

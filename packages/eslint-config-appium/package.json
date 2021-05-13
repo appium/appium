@@ -1,0 +1,38 @@
+{
+  "name": "@appium/eslint-config-appium",
+  "version": "4.7.0",
+  "description": "Shared config for Appium's eslint style",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "eslint:find:current-rules": "eslint-find-rules -c",
+    "eslint:find:all-rules": "eslint-find-rules -a",
+    "eslint:find:plugin-rules": "eslint-find-rules -p",
+    "eslint:find:unused-rules": "eslint-find-rules -u -n",
+    "lint": "eslint index.js"
+  },
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "appium",
+    "es2015"
+  ],
+  "author": "appium",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/core": "^7.21.1",
+    "@babel/eslint-parser": "^7.12.1"
+  },
+  "peerDependencies": {
+    "eslint": "^7.16.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.0.0",
+    "eslint-plugin-promise": "^4.1.1"
+  }
+}

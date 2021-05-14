@@ -2,29 +2,32 @@
   "name": "@appium/eslint-config-appium",
   "version": "4.7.0",
   "description": "Shared config for Appium's eslint style",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/appium/appium.git"
-  },
-  "main": "index.js",
-  "files": [
-    "index.js"
-  ],
-  "scripts": {
-    "eslint:find:current-rules": "eslint-find-rules -c",
-    "eslint:find:all-rules": "eslint-find-rules -a",
-    "eslint:find:plugin-rules": "eslint-find-rules -p",
-    "eslint:find:unused-rules": "eslint-find-rules -u -n",
-    "lint": "eslint index.js"
-  },
   "keywords": [
     "eslint",
     "eslintconfig",
     "appium",
     "es2015"
   ],
-  "author": "appium",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
   "license": "Apache-2.0",
+  "author": "appium",
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "eslint:find:all-rules": "eslint-find-rules -a",
+    "eslint:find:current-rules": "eslint-find-rules -c",
+    "eslint:find:plugin-rules": "eslint-find-rules -p",
+    "eslint:find:unused-rules": "eslint-find-rules -u -n",
+    "lint": "eslint index.js"
+  },
   "dependencies": {
     "@babel/core": "^7.12.1",
     "@babel/eslint-parser": "^7.12.1",

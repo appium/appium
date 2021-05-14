@@ -11,10 +11,11 @@ request; for more information on how to run tests, keep reading!
 Appium is written in JavaScript, and run with the [Node.js](https://nodejs.org/) engine. Currently
 version 6+ is supported. While Node.js can be installed globally on the system,
 a version manager is _highly_ recommended.
+
 * NVM - [https://github.com/creationix/nvm](https://github.com/creationix/nvm)
 * N - [https://github.com/tj/n](https://github.com/tj/n)
 
-Your Node.js installation will include the [NPM](https://www.npmjs.com/) package manager, which Appium
+Your Node.js installation will include the [npm](https://www.npmjs.com/) package manager, which Appium
 will need in order to manage dependencies. Appiums supports NPM version 3+.
 
 ### Setting up Appium from Source
@@ -26,39 +27,42 @@ instance of an Appium server, and then run your test.
 
 The quick way to get started:
 
-```
+```bash
 git clone https://github.com/appium/appium.git
 cd appium
 npm install
-npm run build
-node .
+npm start
 ```
 
 ### Hacking on Appium
 
-Install the [appium-doctor](https://github.com/appium/appium-doctor) tool, and run it to verify all of the
-dependencies are set up correctly (since dependencies for building Appium
-are different from those for simply running it):
-```
-npm install -g appium-doctor
-appium-doctor --dev
-```
-Install the Node.js dependencies:
-```
+First, run
+
+```bash
 npm install
 ```
 
-When pulling new code from GitHub, if there are changes to `package.json` it
-is necessary to remove the old dependencies and re-run `npm install`:
+Now, you can run [`appium-doctor`](https://npmjs.com/@appium/doctor) to verify
+the prerequisites are present (since prerequisites for _building_ Appium
+are different from those for simply _running_ it).  `@appium/doctor` (and its
+command-line executable, `appium-doctor`) lives in the Appium core monorepo,
+and can be run via:
 
+```bash
+npm run doctor -- --dev
 ```
-rm -rf node_modules && rm -rf package-lock.json && npm install
+
+The `@appium/doctor` package can also be installed globally and used that way:
+
+```bash
+npm install --global @appium/doctor
+appium-doctor --dev
 ```
 
 At this point, you will be able to start the Appium server:
 
-```
-node .
+```bash
+npm start
 ```
 
 See [the server documentation](/docs/en/writing-running-appium/server-args.md)
@@ -71,67 +75,45 @@ and added to system `PATH` environment variable. Also you would need the
 android-19+ sdk installed.
 From your local repo's command prompt, install/run the following:
 
-Set up Appium by running:
-
-```
-rm -rf node_modules && rm -rf package-lock.json && npm install
+```bash
+npm run reinstall
 ```
 
 Make sure you have one and only one Android emulator or device running, e.g.,
 by running this command in another process (assuming the `emulator` command is
 on your path):
 
-```
+```bash
 emulator -avd <MyAvdName>
 ```
 
-Now you are ready to run the Appium server via `node .`.
+Now you are ready to run the Appium server via `npm start`.
 
 #### Making sure you're up to date
 
 Since Appium uses dev versions of some packages, it often becomes necessary to
-install new `npm` packages or update various things. Running `npm install` will
+install new packages or update various things. Running `npm install` will
 update everything necessary. You will also need to do this when Appium bumps
 its version up. Prior to running `npm install` it is recommended to remove
 all the old dependencies in the `node_modules` directory:
 
+```bash
+npm run clean
 ```
-rm -rf node_modules && rm -rf package-lock.json && npm install
+
+To automatically reinstall, use:
+
+```bash
+npm run reinstall
 ```
 
 ### Different packages
 
-Appium is made up of a number of different packages. While it is often possible
-to work in a single package, it is also often the case that work, whether fixing
-a bug or adding a new feature, requires working on multiple packages simultaneously.
-
-Unfortunately the dependencies installed when running `npm install` are those that
-have already been published, so some work is needed to link together local development
-versions of the packages that are being worked on.
-
-In the case where one package, `A`, depends on another package, `B`, the following steps
-are necessary to link the two:
-1. In one terminal, enter into package `B`
-    ```
-    cd B
-    ```
-2. Use [NPM link](https://docs.npmjs.com/cli/link) to create symbolic link to this package
-    ```
-    npm link
-    ```
-3. In another terminal, enter into package `A`
-    ```
-    cd A
-    ```
-4. Use [NPM link](https://docs.npmjs.com/cli/link) to link the dependent package `B` to the development version
-    ```
-    npm link B
-    ```
-
-Now the version of `B` that `A` uses will be your local version. Remember, however, that
-changes made to the JavaScript will only be available when they have been transpiled, so
-when you are going to test from package `A`, run `npm run build` in the directory for
-package `B`.
+Appium is made up of a number of different packages.  As of v2.0, the core packages
+live in a [_monorepo_](https://github.com/appium/appium) (including this documentation).
+The packages themselves live in the `packages` subdirectory.  Running `npm install` 
+will automatically install all dependencies for all packages in this directory by way of
+[Lerna](https://lerna.js.org).
 
 ### Running Tests
 
@@ -142,14 +124,14 @@ system is set up properly for the platforms you desire to test on.
 Once your system is set up and your code is up to date, you can run unit tests
 with:
 
-```
+```bash
 npm run test
 ```
 
 You can run functional tests for all supported platforms (after ensuring that
-Appium is running in another window with `node .`) with:
+Appium is running in another window with `npm start`) with:
 
-```
+```bash
 npm run e2e-test
 ```
 
@@ -174,4 +156,4 @@ the commit from occurring.
 
 Once code is committed and a [pull request](https://help.github.com/articles/about-pull-requests/)
 is made to the correct Appium respository on [GitHub](https://github.com/), Appium build system
-will run all of the functional tests.
+will run all of the functional tests. 

@@ -1,6 +1,7 @@
 {
   "extends": "@appium/eslint-config-appium",
   "overrides": [
-    { "files": "packages/fake-driver/**/*", "rules": { "require-await": 0 } }
+    { "files": "packages/fake-driver/**/*", "rules": { "require-await": 0 } },
+    { "files": "packages/support/**/*", "globals": { "BigInt": "readonly" } }
   ]
 }

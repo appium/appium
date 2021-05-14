@@ -30,15 +30,18 @@
     "screen.png"
   ],
   "dependencies": {
+    "@appium/support": "^2.11.1",
     "@babel/runtime": "^7.0.0",
     "appium-base-driver": "^7.0.0",
-    "appium-support": "^2.11.1",
     "asyncbox": "^2.3.2",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.4",
     "source-map-support": "^0.x",
     "xmldom": "^0.x",
     "xpath": "^0.x"
+  },
+  "devDependencies": {
+    "@appium/gulp-plugins": "^5.5.0"
   },
   "engines": {
     "node": ">=12.x"
@@ -58,8 +61,5 @@
   },
   "greenkeeper": {
     "ignore": []
-  },
-  "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.0"
   }
 }

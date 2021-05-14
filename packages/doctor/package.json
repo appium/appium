@@ -1,23 +1,19 @@
 {
   "name": "@appium/doctor",
+  "version": "1.16.0",
   "description": "Test environment for fitness to run Appium",
   "keywords": [
     "appium"
   ],
-  "version": "1.16.0",
-  "author": "appium",
-  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
   },
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
-  },
-  "engines": {
-    "node": ">=10",
-    "npm": ">=6"
-  },
+  "license": "Apache-2.0",
+  "author": "appium",
   "main": "./appium-doctor.js",
   "bin": {
     "appium-doctor": "./appium-doctor.js"
@@ -34,10 +30,14 @@
     "build/index.js",
     "build/lib"
   ],
+  "pre-commit": [
+    "precommit-msg",
+    "precommit-test"
+  ],
   "dependencies": {
+    "@appium/support": "^2.5.0",
     "@babel/runtime": "^7.0.0",
     "appium-adb": "^8.4.0",
-    "appium-support": "^2.5.0",
     "authorize-ios": "^1.0.3",
     "bluebird": "^3.5.1",
     "colors": "^1.1.2",
@@ -47,11 +47,11 @@
     "teen_process": "^1.3.1",
     "yargs": "^17.0.0"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ],
   "devDependencies": {
     "@appium/gulp-plugins": "^5.1.1"
+  },
+  "engines": {
+    "node": ">=10",
+    "npm": ">=6"
   }
 }

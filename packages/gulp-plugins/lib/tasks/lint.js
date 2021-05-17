@@ -23,7 +23,7 @@ const configure = function configure (gulp, opts) {
       };
     }
     return gulp
-      .src(['**/*.js', '!node_modules/**', '!**/node_modules/**', '!build/**'])
+      .src(['**/*.js', '!node_modules/**', '!**/node_modules/**', '!build/**', '!**/*.min.js'])
       .pipe(gulpIf(verbose, debug()))
       .pipe(eslint(opts))
       .pipe(eslint.format())

@@ -2,3 +2,5 @@ coverage
 node_modules
 sample-code/javascript-wd
 packages/*/build/**/*
+**/*.min.js
+

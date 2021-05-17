@@ -30,10 +30,6 @@
     "build/index.js",
     "build/lib"
   ],
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ],
   "dependencies": {
     "@appium/support": "^2.5.0",
     "@babel/runtime": "^7.0.0",

@@ -49,10 +49,6 @@
     "zip": "zip -qr appium.zip .",
     "zip-and-upload": "npm run zip && npm run upload"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ],
   "dependencies": {
     "@appium/base-plugin": "^1.0.0",
     "@babel/runtime": "^7.6.0",

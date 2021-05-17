@@ -23,8 +23,8 @@
     "install-fake-driver": "lerna run --scope=appium install-fake-driver",
     "lint": "lerna exec --parallel gulp lint && lerna run --scope=@appium/eslint-config-appium lint",
     "lint:fix": "lerna exec --parallel gulp lint -- --fix",
+    "precommit-lint": "lint-staged",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
-    "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",
     "reinstall": "npm run clean && npm install",
     "start": "node ./packages/appium",
     "test": "lerna exec gulp once",
@@ -42,8 +42,11 @@
   },
   "pre-commit": [
     "precommit-msg",
-    "precommit-test"
+    "precommit-lint"
   ],
+  "lint-staged": {
+    "*.js": "eslint --fix"
+  },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",
     "@appium/fake-plugin": "^1.0.0",
@@ -71,6 +74,7 @@
     "gulp": "^4.0.0",
     "handlebars": "^4.2.0",
     "lerna": "^4.0.0",
+    "lint-staged": "^11.0.0",
     "mjpeg-server": "^0.3.0",
     "mocha": "^8.0.1",
     "pre-commit": "1.x",

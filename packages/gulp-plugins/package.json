@@ -87,9 +87,5 @@
   },
   "peerDependencies": {
     "gulp": "^4.0.0"
-  },
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ]
+  }
 }

@@ -46,8 +46,7 @@ boilerplate({
   test: {
     files: ['${testDir}/**/*-specs.js']
   },
-  testTimeout: 160000,
-  preCommitTasks: ['eslint', 'once'],
+  testTimeout: 160000
 });
 
 // generates server arguments readme

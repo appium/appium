@@ -25,10 +25,6 @@
     "build/index.js",
     "build/lib"
   ],
-  "pre-commit": [
-    "precommit-msg",
-    "precommit-test"
-  ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
     "archiver": "^5.0.0",

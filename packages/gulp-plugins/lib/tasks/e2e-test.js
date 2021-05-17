@@ -19,6 +19,7 @@ const configure = function configure (gulp, opts, env) {
       timeout: opts.testTimeout,
       'require': opts.testRequire || [],
       exit: true,
+      color: true,
       traceWarnings: opts.e2eTest.traceWarnings,
       traceDeprecation: opts.e2eTest.traceWarnings,
     };

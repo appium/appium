@@ -12,9 +12,9 @@ const configure = function configure (gulp, opts, env) {
     const mochaOpts = {
       reporter: utils.getTestReporter(opts),
       timeout: opts.testTimeout,
-      exit: true,
       traceWarnings: opts.test.traceWarnings,
       traceDeprecation: opts.test.traceWarnings,
+      color: true
     };
     // set env so our code knows when it's being run in a test env
     process.env._TESTING = 1;

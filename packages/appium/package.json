@@ -52,7 +52,7 @@
   "dependencies": {
     "@appium/base-plugin": "^1.0.0",
     "@babel/runtime": "^7.6.0",
-    "appium-base-driver": "^8.0.0-beta.6",
+    "@appium/base-driver": "^8.0.0-beta.6",
     "@appium/support": "2.x",
     "argparse": "^2.0.1",
     "async-lock": "^1.0.0",

@@ -1,9 +1,10 @@
 import path from 'path';
 import {insertAppiumPrefixes} from '../lib/utils';
 import findUp from 'find-up';
+import getPort from 'get-port';
 
-const TEST_HOST = 'localhost';
-const TEST_PORT = 4723;
+const TEST_HOST = '0.0.0.0';
+const TEST_PORT = getPort.sync();
 
 // monorepo root.  this cannot be hardcoded because:
 // 1. we may be in 'build/test' or 'test', depending on our config

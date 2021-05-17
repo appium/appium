@@ -4,15 +4,11 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { tempDir, fs, mkdirp, util } from 'appium-support';
 import { KNOWN_DRIVERS } from '../lib/drivers';
-import findUp from 'find-up';
+import { PROJECT_ROOT as cwd } from './helpers';
 
 chai.should();
 chai.use(chaiAsPromised);
 
-// monorepo root.  this cannot be hardcoded because:
-// 1. we may be in 'build/test' or 'test', depending on our config
-// 2. Node.js does not support `__dirname` in an ESM context & Babel doesn't fake it well
-const cwd = path.dirname(findUp.sync('.git', {type: 'directory'}));
 // cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
 // could also derive it from the `package.json` if we wanted
 const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');

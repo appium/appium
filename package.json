@@ -21,6 +21,7 @@
     "generate-docs": "lerna run generate-docs --scope appium",
     "postinstall": "lerna bootstrap && lerna exec gulp prepublish",
     "lint": "lerna exec --parallel gulp lint && lerna run lint --scope @appium/eslint-config-appium",
+    "install-fake-driver": "lerna run --scope=appium install-fake-driver",
     "lint:fix": "lerna exec --parallel gulp lint -- --fix",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "precommit-test": "REPORTER=dot gulp -f packages/appium/gulpfile.js once",

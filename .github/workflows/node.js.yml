@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: lerna run --scope=appium install-fake-driver
       - run: npm test
+      - run: npm run install-fake-driver
       - run: npm run e2e-test
 
   generate_docs:

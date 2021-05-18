@@ -67,7 +67,7 @@ function findMatchingDriver (config, {automationName, platformName}) {
     if (!driver) {
       throw new Error(`MainClass ${mainClass} did not result in a driver object`);
     }
-    return {driver, version};
+    return {driver, version, driverName};
   } catch (err) {
     const msg = `Could not find a driver for automationName ` +
                 `'${automationName}' and platformName ${platformName}'. ` +

@@ -338,6 +338,28 @@ const serverArgs = [
           'enabled even if also listed in --allow-insecure, and even if --relaxed-security ' +
           'is turned on. For example: execute_driver_script,adb_shell',
   }],
+
+  [['--driver-args'], {
+    dest: 'driverArgs',
+    default: {},
+    type: parseDefaultCaps,
+    required: false,
+    help: 'Set the default desired client arguments for a driver, which will ' +
+          'For example: ' +
+          '[ \'{"xcuitest": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
+          '| /path/to/driverArgs.json ]'
+  }],
+
+  [['--plugin-args'], {
+    dest: 'pluginArgs',
+    default: {},
+    type: parseDefaultCaps,
+    required: false,
+    help: 'Set the default desired client arguments for a plugin ' +
+          'For example: ' +
+          '[ \'{"images": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
+          '| /path/to/pluginArgs.json ]'
+  }],
 ];
 
 // this set of args works for both drivers and plugins ('extensions')

@@ -1,5 +1,4 @@
 // transpile:mocha
-
 import _ from 'lodash';
 import path from 'path';
 import chai from 'chai';
@@ -14,6 +13,8 @@ import { runExtensionCommand } from '../lib/cli/extension';
 chai.should();
 chai.use(chaiAsPromised);
 
+const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
+const FAKE_PLUGIN_ARGS = `{"fake": ${FAKE_ARGS}}`;
 const wdOpts = {
   hostname: TEST_HOST,
   port: null,
@@ -151,4 +152,80 @@ describe('FakePlugin', function () {
       });
     });
   }
+
+  describe('cli args handling for plugin args', function () {
+    let server = null;
+    before(async function () {
+      // then start server if we need to
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: FAKE_PLUGIN_ARGS};
+      server = await appiumServer(args);
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
+
+    it('should recieve user cli args for plugin if passed in', async function () {
+      const driver = await wdio(wdOpts);
+      const {sessionId} = driver;
+
+      try {
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
+        JSON.stringify(data.value).should.eql(FAKE_ARGS);
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+  describe('cli args handling for empty plugin args', function () {
+    let server = null;
+    before(async function () {
+      // then start server if we need to
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake']};
+      server = await appiumServer(args);
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
+
+    it('should recieve user cli args for plugin if passed in', async function () {
+      const driver = await wdio(wdOpts);
+      const {sessionId} = driver;
+
+      try {
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
+        JSON.stringify(data.value).should.eql('{}');
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+  describe('cli args handling for plugin args of a different driver', function () {
+    let server = null;
+    before(async function () {
+      // then start server if we need to
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: `{"images": ${FAKE_ARGS}}`};
+      server = await appiumServer(args);
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
+
+    it('should recieve user cli args for plugin if passed in', async function () {
+      const driver = await wdio(wdOpts);
+      const {sessionId} = driver;
+
+      try {
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
+        JSON.stringify(data.value).should.eql('{}');
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
 });

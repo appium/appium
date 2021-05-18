@@ -2,6 +2,7 @@ import _ from 'lodash';
 import logger from './logger';
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import findRoot from 'find-root';
+import { parseDefaultCaps } from './cli/parser-helpers';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -31,6 +32,11 @@ function inspectObject (args) {
       logger.info(val);
     }
   }
+}
+
+function parseDriverPluginArgsForInnerDriverPlugin (driverPluginArgs, driverPluginName) {
+  const parsedDriverPluginArgs = _.isString(driverPluginArgs) ? parseDefaultCaps(driverPluginArgs) : {};
+  return _.has(parsedDriverPluginArgs, driverPluginName) ? parsedDriverPluginArgs[driverPluginName] : {};
 }
 
 /**
@@ -220,5 +226,5 @@ const rootDir = findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes,
+  getPackageVersion, pullSettings, removeAppiumPrefixes, parseDriverPluginArgsForInnerDriverPlugin,
 };

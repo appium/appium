@@ -83,6 +83,27 @@ describe('Server Parser', function () {
     parsed.allowInsecure.should.eql(['feature1', 'feature2', 'feature3']);
     parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
   });
+  it('should parse default driver args correctly from a string', function () {
+    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
+    let fakeDriverName = `fake`;
+    let fakeDriverArgs = `{"${fakeDriverName}": ${fakeArgs}}`;
+    let args = p.parse_args(['--driver-args', fakeDriverArgs]);
+    args.driverArgs.should.eql(JSON.parse(fakeDriverArgs));
+  });
+  it('should parse default driver args correctly from a file', function () {
+    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
+    let fakeDriverName = `fake`;
+    let fakeDriverArgs = `{"${fakeDriverName}": ${fakeArgs}}`;
+    let args = p.parse_args(['--driver-args', 'test/fixtures/driverArgs.json']);
+    args.driverArgs.should.eql(JSON.parse(fakeDriverArgs));
+  });
+  it('should parse default plugin args correctly from a string', function () {
+    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
+    let fakePluginName = `fake`;
+    let fakePluginArgs = `{"${fakePluginName}": ${fakeArgs}}`;
+    let args = p.parse_args(['--plugin-args', fakePluginArgs]);
+    args.pluginArgs.should.eql(JSON.parse(fakePluginArgs));
+  });
 });
 
 describe('Driver Parser', function () {

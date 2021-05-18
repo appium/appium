@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS } from 'appium-base-driver';
+import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import findRoot from 'find-root';
 
 const W3C_APPIUM_PREFIX = 'appium';

@@ -8,7 +8,7 @@ import { remote as wdio } from 'webdriverio';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE, PLUGIN_TYPE } from '../lib/extension-config';
-import { W3C_PREFIXED_CAPS, TEST_HOST, TEST_PORT, PROJECT_ROOT } from './helpers';
+import { W3C_PREFIXED_CAPS, TEST_HOST, getTestPort, PROJECT_ROOT } from './helpers';
 import { runExtensionCommand } from '../lib/cli/extension';
 
 chai.should();
@@ -17,19 +17,23 @@ chai.use(chaiAsPromised);
 // TODO: update when fake-plugin pulled in to monorepo
 const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake-plugin');
 const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
-const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
+let TEST_SERVER;
+let TEST_PORT;
 
 const wdOpts = {
   hostname: TEST_HOST,
-  port: TEST_PORT,
+  port: null,
   connectionRetryCount: 0,
   capabilities: W3C_PREFIXED_CAPS,
 };
 
 describe('FakePlugin', function () {
   const appiumHome = DEFAULT_APPIUM_HOME;
-  const baseUrl = `${TEST_SERVER}/session`;
+  let baseUrl;
   before(async function () {
+    wdOpts.port = TEST_PORT = await getTestPort();
+    TEST_SERVER = `http://${TEST_HOST}:${wdOpts.port}`;
+    baseUrl = `${TEST_SERVER}/session`;
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,

@@ -9,8 +9,8 @@ import axios from 'axios';
 import { remote as wdio } from 'webdriverio';
 import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE } from '../lib/extension-config';
-import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, TEST_PORT } from './helpers';
-import { BaseDriver } from 'appium-base-driver';
+import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort} from './helpers';
+import { BaseDriver } from '@appium/base-driver';
 import DriverConfig from '../lib/driver-config';
 import { runExtensionCommand } from '../lib/cli/extension';
 import { removeAppiumPrefixes } from '../lib/utils';
@@ -18,7 +18,8 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
-const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
+let TEST_SERVER;
+let TEST_PORT;
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
 
 const should = chai.should();
@@ -26,7 +27,7 @@ const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const wdOpts = {
   hostname: TEST_HOST,
-  port: TEST_PORT,
+  port: null,
   connectionRetryCount: 0,
 };
 
@@ -36,8 +37,11 @@ describe('FakeDriver - via HTTP', function () {
   // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
   // actually going to be required by Appium
   let FakeDriver = null;
-  const baseUrl = `${TEST_SERVER}/session`;
+  let baseUrl;
   before(async function () {
+    wdOpts.port = TEST_PORT = await getTestPort();
+    TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
+    baseUrl = `${TEST_SERVER}/session`;
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,

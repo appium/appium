@@ -1,4 +1,4 @@
-import { DEFAULT_BASE_PATH } from 'appium-base-driver';
+import { DEFAULT_BASE_PATH } from '@appium/base-driver';
 import {
   parseSecurityFeatures, parseDefaultCaps,
   parsePluginNames, parseInstallTypes, parseDriverNames

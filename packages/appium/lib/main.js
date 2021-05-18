@@ -4,7 +4,7 @@
 import { init as logsinkInit } from './logsink';
 import logger from './logger'; // logger needs to remain first of imports
 import _ from 'lodash';
-import { server as baseServer, routeConfiguringFunction as makeRouter } from 'appium-base-driver';
+import { server as baseServer, routeConfiguringFunction as makeRouter } from '@appium/base-driver';
 import { asyncify } from 'asyncbox';
 import { default as getParser, getDefaultServerArgs } from './cli/parser';
 import { USE_ALL_PLUGINS } from './cli/args';

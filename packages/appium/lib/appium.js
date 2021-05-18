@@ -2,7 +2,7 @@ import _ from 'lodash';
 import log from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
-import { BaseDriver, errors, isSessionCommand } from 'appium-base-driver';
+import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';

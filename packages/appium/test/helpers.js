@@ -3,8 +3,7 @@ import {insertAppiumPrefixes} from '../lib/utils';
 import findUp from 'find-up';
 import getPort from 'get-port';
 
-const TEST_HOST = '0.0.0.0';
-const TEST_PORT = getPort.sync();
+const TEST_HOST = 'localhost';
 
 // monorepo root.  this cannot be hardcoded because:
 // 1. we may be in 'build/test' or 'test', depending on our config
@@ -24,4 +23,13 @@ const W3C_CAPS = {
   firstMatch: [{}],
 };
 
-export { TEST_FAKE_APP, TEST_HOST, TEST_PORT, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT };
+let TEST_PORT;
+/**
+ * Returns a free port; one per process
+ * @returns {Promise<number>} a free port
+ */
+async function getTestPort () {
+  return await (TEST_PORT || getPort());
+}
+
+export { TEST_FAKE_APP, TEST_HOST, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT, getTestPort };

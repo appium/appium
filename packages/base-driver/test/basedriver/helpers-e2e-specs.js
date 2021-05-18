@@ -15,6 +15,7 @@ chai.should();
 chai.use(chaiAsPromised);
 
 function getFixture (file) {
+  // XXX: __dirname disallowed in native ESM
   return path.resolve(__dirname, '..', '..', '..', 'test', 'basedriver', 'fixtures', file);
 }
 

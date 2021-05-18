@@ -6,6 +6,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import WebSocket from 'ws';
 import B from 'bluebird';
+import getPort from 'get-port';
 
 chai.use(chaiAsPromised);
 
@@ -14,11 +15,12 @@ describe('Websockets (e2e)', function () {
   let driver;
   const SESSION_ID = 'foo';
   const WS_DATA = 'Hello';
-  const PORT = 8181;
+  let PORT;
 
   before(async function () {
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
+    PORT = await getPort();
     baseServer = await server({
       routeConfiguringFunction: routeConfiguringFunction(driver),
       port: PORT,

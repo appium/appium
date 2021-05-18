@@ -5,7 +5,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { FakeDriver } from '..';
 import { DEFAULT_CAPS } from './helpers';
-import { baseDriverUnitTests } from '@appium/base-driver/build/test/basedriver';
+import { baseDriverUnitTests } from 'appium-base-driver/build/test/basedriver';
 
 
 chai.use(chaiAsPromised);

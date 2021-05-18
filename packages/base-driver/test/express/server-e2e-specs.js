@@ -7,6 +7,7 @@ import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
+import getPort from 'get-port';
 
 chai.should();
 chai.use(chaiAsPromised);
@@ -14,7 +15,9 @@ chai.use(chaiAsPromised);
 describe('server', function () {
   let hwServer;
   let errorStub;
+  let port;
   before(async function () {
+    port = await getPort();
     errorStub = sinon.stub(console, 'error');
     function configureRoutes (app) {
       app.get('/', (req, res) => {
@@ -35,7 +38,7 @@ describe('server', function () {
     }
     hwServer = await server({
       routeConfiguringFunction: configureRoutes,
-      port: 8181,
+      port,
     });
   });
   after(async function () {
@@ -44,12 +47,12 @@ describe('server', function () {
   });
 
   it('should start up with our middleware', async function () {
-    const {data} = await axios.get('http://localhost:8181/');
+    const {data} = await axios.get(`http://localhost:${port}/`);
     data.should.eql('Hello World!');
   });
   it('should fix broken context type', async function () {
     const {data} = await axios({
-      url: 'http://localhost:8181/python',
+      url: `http://localhost:${port}/python`,
       headers: {
         'user-agent': 'Python',
         'content-type': 'application/x-www-form-urlencoded'
@@ -58,16 +61,16 @@ describe('server', function () {
     data.should.eql('application/json; charset=utf-8');
   });
   it('should catch errors in the catchall', async function () {
-    await axios.get('http://localhost:8181/error').should.be.rejected;
+    await axios.get(`http://localhost:${port}/error`).should.be.rejected;
   });
   it('should error if we try to start again on a port that is used', async function () {
     await server({
       routeConfiguringFunction () {},
-      port: 8181,
+      port,
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get('http://localhost:8181/pause').catch(() => {});
+    let bodyPromise = axios.get(`http://localhost:${port}/pause`).catch(() => {});
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -83,12 +86,12 @@ describe('server', function () {
     this.timeout(60000);
     await server({
       routeConfiguringFunction: _.noop,
-      port: 8181,
+      port,
       hostname: 'lolcathost',
     }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
     await server({
       routeConfiguringFunction: _.noop,
-      port: 8181,
+      port,
       hostname: '1.1.1.1',
     }).should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
@@ -96,6 +99,12 @@ describe('server', function () {
 
 describe('server plugins', function () {
   let hwServer;
+  let port;
+
+  before(async function () {
+    port = await getPort();
+  });
+
   afterEach(async function () {
     try {
       await hwServer.close();
@@ -115,15 +124,15 @@ describe('server plugins', function () {
   it('should allow one or more plugins to update the server', async function () {
     hwServer = await server({
       routeConfiguringFunction: _.noop,
-      port: 8181,
+      port,
       serverUpdaters: [
         updaterWithGetRoute('plugin1', 'res from plugin1 route'),
         updaterWithGetRoute('plugin2', 'res from plugin2 route'),
       ]
     });
-    let {data} = await axios.get('http://localhost:8181/plugin1');
+    let {data} = await axios.get(`http://localhost:${port}/plugin1`);
     data.should.eql('res from plugin1 route');
-    ({data} = await axios.get('http://localhost:8181/plugin2'));
+    ({data} = await axios.get(`http://localhost:${port}/plugin2`));
     data.should.eql('res from plugin2 route');
     hwServer._updated_plugin1.should.be.true;
     hwServer._updated_plugin2.should.be.true;
@@ -131,7 +140,7 @@ describe('server plugins', function () {
   it('should pass on errors from the plugin updateServer method', async function () {
     await server({
       routeConfiguringFunction: _.noop,
-      port: 8181,
+      port,
       serverUpdaters: [() => { throw new Error('ugh');}]
     }).should.eventually.be.rejectedWith(/ugh/);
   });

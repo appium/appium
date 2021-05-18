@@ -7,21 +7,26 @@ import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
+import getPort from 'get-port';
 
 const should = chai.should();
 const DEFAULT_ARGS = {
   address: 'localhost',
-  port: 8181
+  port: null
 };
 chai.use(chaiAsPromised);
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
+  let port;
   describe('BaseDriver (e2e)', function () {
-    let baseServer, d = new DriverClass(DEFAULT_ARGS);
+    let baseServer, d;
     before(async function () {
+      port = await getPort();
+      DEFAULT_ARGS.port = port;
+      d = new DriverClass(DEFAULT_ARGS);
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
-        port: DEFAULT_ARGS.port,
+        port
       });
     });
     after(async function () {
@@ -30,7 +35,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
     async function startSession (caps) {
       return (await axios({
-        url: 'http://localhost:8181/session',
+        url: `http://localhost:${port}/session`,
         method: 'POST',
         data: {capabilities: {alwaysMatch: caps, firstMatch: [{}]}},
       })).data.value;
@@ -38,7 +43,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
     async function endSession (id) {
       return (await axios({
-        url: `http://localhost:8181/session/${id}`,
+        url: `http://localhost:${port}/session/${id}`,
         method: 'DELETE',
         validateStatus: null,
       })).data.value;
@@ -46,7 +51,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
     async function getSession (id) {
       return (await axios({
-        url: `http://localhost:8181/session/${id}`,
+        url: `http://localhost:${port}/session/${id}`,
       })).data.value;
     }
 
@@ -56,7 +61,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         let times = 0;
         do {
           const {sessionId} = (await axios({
-            url: 'http://localhost:8181/session',
+            url: `http://localhost:${port}/session`,
             headers: {
               'X-Idempotency-Key': '123456',
             },
@@ -72,7 +77,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         _.uniq(sessionIds).length.should.equal(1);
 
         const {status, data} = await axios({
-          url: `http://localhost:8181/session/${sessionIds[0]}`,
+          url: `http://localhost:${port}/session/${sessionIds[0]}`,
           method: 'DELETE',
         });
         status.should.equal(200);
@@ -84,7 +89,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         let times = 0;
         do {
           reqs.push(axios({
-            url: 'http://localhost:8181/session',
+            url: `http://localhost:${port}/session`,
             headers: {
               'X-Idempotency-Key': '12345',
             },
@@ -97,7 +102,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         _.uniq(sessionIds).length.should.equal(1);
 
         const {status, data} = await axios({
-          url: `http://localhost:8181/session/${sessionIds[0]}`,
+          url: `http://localhost:${port}/session/${sessionIds[0]}`,
           method: 'DELETE',
         });
         status.should.equal(200);
@@ -106,7 +111,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
       it('should create session and retrieve a session id, then delete it', async function () {
         let {status, data} = await axios({
-          url: 'http://localhost:8181/session',
+          url: `http://localhost:${port}/session`,
           method: 'POST',
           data: {capabilities: {alwaysMatch: defaultCaps, firstMatch: [{}]}},
         });
@@ -117,7 +122,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         data.value.capabilities.deviceName.should.equal('Delorean');
 
         ({status, data} = await axios({
-          url: `http://localhost:8181/session/${d.sessionId}`,
+          url: `http://localhost:${port}/session/${d.sessionId}`,
           method: 'DELETE',
         }));
 
@@ -167,13 +172,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         let newSession = await startTimeoutSession(0.25);
 
         await axios({
-          url: `http://localhost:8181/session/${d.sessionId}/element`,
+          url: `http://localhost:${port}/session/${d.sessionId}/element`,
           method: 'POST',
           data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
         const {data} = await axios({
-          url: `http://localhost:8181/session/${d.sessionId}`,
+          url: `http://localhost:${port}/session/${d.sessionId}`,
           validateStatus: null,
         });
         should.equal(data.value.error, 'invalid session id');
@@ -186,7 +191,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         let newSession = await startTimeoutSession(0.1);
         let start = Date.now();
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${d.sessionId}/elements`,
+          url: `http://localhost:${port}/session/${d.sessionId}/elements`,
           method: 'POST',
           data: {using: 'name', value: 'foo'},
         })).data;
@@ -200,13 +205,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         let newSession = await startTimeoutSession(0);
 
         await axios({
-          url: `http://localhost:8181/session/${d.sessionId}/element`,
+          url: `http://localhost:${port}/session/${d.sessionId}/element`,
           method: 'POST',
           data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${d.sessionId}`,
+          url: `http://localhost:${port}/session/${d.sessionId}`,
         })).data;
         value.platformName.should.equal('iOS');
         const resp = await endSession(newSession.sessionId);
@@ -218,13 +223,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should not timeout if its just the command taking awhile', async function () {
         let newSession = await startTimeoutSession(0.25);
         await axios({
-          url: `http://localhost:8181/session/${d.sessionId}/element`,
+          url: `http://localhost:${port}/session/${d.sessionId}/element`,
           method: 'POST',
           data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${d.sessionId}`,
+          url: `http://localhost:${port}/session/${d.sessionId}`,
           validateStatus: null,
         })).data;
         value.error.should.equal('invalid session id');
@@ -269,7 +274,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
             await B.delay(5000);
           }.bind(d);
           const reqPromise = axios({
-            url: 'http://localhost:8181/status',
+            url: `http://localhost:${port}/status`,
             validateStatus: null,
           });
           // make sure that the request gets to the server before our shutdown
@@ -342,7 +347,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           d.allowInsecure = [];
           const script = `return 'foo'`;
           await axios({
-            url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+            url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
             method: 'POST',
             data: {script, type: 'wd'},
           }).should.eventually.be.rejected;
@@ -359,7 +364,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return [timeouts, status];
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script, type: 'webdriverio'},
         })).data;
@@ -371,7 +376,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should fail with any script type other than webdriverio currently', async function () {
         const script = `return 'foo'`;
         await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script, type: 'wd'},
         }).should.eventually.be.rejected;
@@ -382,7 +387,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return await driver.$("~amazing");
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script},
         })).data;
@@ -398,7 +403,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return {element: el, elements: [el, el]};
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script},
         })).data;
@@ -418,7 +423,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return null;
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script},
         })).data;
@@ -430,7 +435,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return typeof driver.lock;
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           data: {script},
         })).data;
@@ -442,7 +447,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return await driver.$("~notfound");
         `;
         const {data} = await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           validateStatus: null,
           data: {script},
@@ -459,7 +464,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return {;
         `;
         const {data} = await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           validateStatus: null,
           data: {script},
@@ -474,7 +479,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           return true;
         `;
         const {value} = (await axios({
-          url: `http://localhost:8181/session/${sessionId}/appium/execute_driver`,
+          url: `http://localhost:${port}/session/${sessionId}/appium/execute_driver`,
           method: 'POST',
           validateStatus: null,
           data: {script, timeout: 50},

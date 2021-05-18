@@ -33,6 +33,7 @@
     "test:doctor": "lerna exec --scope=@appium/doctor gulp once",
     "test:e2e:appium": "lerna exec --scope=appium gulp e2e-test",
     "test:e2e:base-driver": "lerna exec --scope=@appium/base-driver gulp e2e-test",
+    "test:e2e:fake-driver": "lerna exec --scope=@appium/fake-driver gulp e2e-test",
     "test:e2e:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins gulp e2e-test",
     "test:e2e:support": "lerna exec --scope=@appium/support gulp e2e-test",
     "test:fake-driver": "lerna exec --scope=@appium/fake-driver gulp once",

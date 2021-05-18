@@ -344,7 +344,7 @@ const serverArgs = [
     default: {},
     type: parseDefaultCaps,
     required: false,
-    help: 'Set the default desired client arguments for a driver, which will ' +
+    help: 'Set the default desired client arguments for a driver, ' +
           'For example: ' +
           '[ \'{"xcuitest": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
           '| /path/to/driverArgs.json ]'
@@ -355,7 +355,7 @@ const serverArgs = [
     default: {},
     type: parseDefaultCaps,
     required: false,
-    help: 'Set the default desired client arguments for a plugin ' +
+    help: 'Set the default desired client arguments for a plugin, ' +
           'For example: ' +
           '[ \'{"images": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
           '| /path/to/pluginArgs.json ]'

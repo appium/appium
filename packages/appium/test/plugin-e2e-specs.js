@@ -14,7 +14,6 @@ import { runExtensionCommand } from '../lib/cli/extension';
 chai.should();
 chai.use(chaiAsPromised);
 
-// TODO: update when fake-plugin pulled in to monorepo
 const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake-plugin');
 const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
 let TEST_SERVER;

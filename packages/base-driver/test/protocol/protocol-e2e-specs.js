@@ -14,15 +14,19 @@ import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
 } from '../../lib/constants';
 import qs from 'querystring';
-
+import getPort from 'get-port';
 
 let should = chai.should();
 chai.use(chaiAsPromised);
-
-const serverPort = 8181;
-const baseUrl = `http://localhost:${serverPort}`;
+let port;
+let baseUrl;
 
 describe('Protocol', function () {
+
+  before(async function () {
+    port = await getPort();
+    baseUrl = `http://localhost:${port}`;
+  });
 
   //TODO: more tests!:
   // Unknown commands should return 404
@@ -43,7 +47,7 @@ describe('Protocol', function () {
       driver.sessionId = 'foo';
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
-        port: serverPort,
+        port,
       });
     });
 
@@ -567,8 +571,12 @@ describe('Protocol', function () {
         });
 
         describe('jwproxy', function () {
-          const port = 56562;
+          let port;
           let server, jwproxy, app;
+
+          before(async function () {
+            port = await getPort();
+          });
 
           beforeEach(function () {
             const res = createProxyServer(sessionId, port);
@@ -783,7 +791,7 @@ describe('Protocol', function () {
     before(async function () {
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
-        port: serverPort,
+        port,
       });
     });
 
@@ -895,7 +903,7 @@ describe('Protocol', function () {
 
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
-        port: serverPort,
+        port,
       });
     });
 

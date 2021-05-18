@@ -14,7 +14,7 @@ import log from '../lib/logger';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { withMocks, withSandbox, stubLog } from 'appium-test-support';
+import { withMocks, withSandbox, stubLog } from '@appium/test-support';
 import {removeColors} from './helper';
 
 chai.should();
@@ -28,12 +28,12 @@ describe('ios', function () {
     });
     it('diagnose - success', async function () {
       // xcrun
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''}));
+      mocks.tp.expects('exec').once().resolves(
+        {stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''});
       // xcode-select
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
-      mocks.fs.expects('exists').once().returns(B.resolve(true));
+      mocks.fs.expects('exists').once().resolves(true);
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: false,
@@ -46,7 +46,7 @@ describe('ios', function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: 'usage: simctl [--set <path>] [--profiles <path>] <subcommand> ...', stderr: ''}));
       // xcode-select
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('Something wrong!')));
+      mocks.tp.expects('exec').once().rejects(new Error('Something wrong!'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
@@ -61,7 +61,7 @@ describe('ios', function () {
       // xcode-select
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '/a/b/c/d\n', stderr: ''}));
-      mocks.fs.expects('exists').once().returns(B.resolve(false));
+      mocks.fs.expects('exists').once().resolves(false);
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
@@ -71,7 +71,7 @@ describe('ios', function () {
     });
     it('diagnose - failure - xcrun does not work', async function () {
       // xcrun
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('xcrun: error: unable to find utility "simctl", not a developer tool or in PATH')));
+      mocks.tp.expects('exec').once().rejects(new Error('xcrun: error: unable to find utility "simctl", not a developer tool or in PATH'));
       // no xcode-select
       (await check.diagnose()).should.deep.equal({
         ok: false,
@@ -121,7 +121,7 @@ describe('ios', function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       S.mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '', stderr: ''}));
-      S.mocks.prompter.expects('fixIt').once().returns(B.resolve('yes'));
+      S.mocks.prompter.expects('fixIt').once().resolves('yes');
       await check.fix();
       S.verify();
       logStub.output.should.equal([
@@ -131,7 +131,7 @@ describe('ios', function () {
     it('fix - no', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       S.mocks.tp.expects('exec').never();
-      S.mocks.prompter.expects('fixIt').once().returns(B.resolve('no'));
+      S.mocks.prompter.expects('fixIt').once().resolves('no');
       await check.fix().should.be.rejectedWith(FixSkippedError);
       S.verify();
       logStub.output.should.equal([
@@ -145,7 +145,7 @@ describe('ios', function () {
     it('fix - yes', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       S.mocks.utils.expects('authorizeIos').once();
-      S.mocks.prompter.expects('fixIt').once().returns(B.resolve('yes'));
+      S.mocks.prompter.expects('fixIt').once().resolves('yes');
       await fixes.authorizeIosFix();
       S.verify();
       logStub.output.should.equal([
@@ -155,7 +155,7 @@ describe('ios', function () {
     it('fix - no', async function () {
       let logStub = stubLog(S.sandbox, log, {stripColors: true});
       S.mocks.utils.expects('authorizeIos').never();
-      S.mocks.prompter.expects('fixIt').once().returns(B.resolve('no'));
+      S.mocks.prompter.expects('fixIt').once().resolves('no');
       await fixes.authorizeIosFix().should.be.rejectedWith(FixSkippedError);
       S.verify();
       logStub.output.should.equal([
@@ -180,7 +180,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - failure - DevToolsSecurity crash', async function () {
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('Something wrong!')));
+      mocks.tp.expects('exec').once().rejects(new Error('Something wrong!'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
@@ -220,7 +220,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - failure', async function () {
-      mocks.tp.expects('exec').once().returns(B.reject(new Error('Oh No!')));
+      mocks.tp.expects('exec').once().rejects(new Error('Oh No!'));
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,
@@ -240,7 +240,7 @@ describe('ios', function () {
       check.autofix.should.not.be.ok;
     });
     it('diagnose - success', async function () {
-      mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: 'Please update to the latest Carthage version: 0.33.0. You currently are on 0.32.0\n0.32.0\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -251,7 +251,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - success - one line carthage version', async function () {
-      mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '0.32.0\n', stderr: ''}));
       (await check.diagnose()).should.deep.equal({
@@ -262,7 +262,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - success - but error happens', async function () {
-      mocks.CarthageDetector.expects('detect').once().returns(B.resolve('/usr/local/bin/carthage'));
+      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
       mocks.tp.expects('exec').once().throws(new Error());
       (await check.diagnose()).should.deep.equal({
         ok: true,
@@ -272,7 +272,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('diagnose - failure', async function () {
-      mocks.CarthageDetector.expects('detect').once().returns(B.resolve(null));
+      mocks.CarthageDetector.expects('detect').once().resolves(null);
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: false,

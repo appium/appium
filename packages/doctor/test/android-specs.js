@@ -6,7 +6,7 @@ import * as adb from 'appium-adb';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import chai from 'chai';
-import { withMocks, stubEnv } from 'appium-test-support';
+import { withMocks, stubEnv } from '@appium/test-support';
 import B from 'bluebird';
 import {removeColors} from './helper';
 

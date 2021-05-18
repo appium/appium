@@ -5,7 +5,7 @@ import { fs, system } from 'appium-support';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
 import B from 'bluebird';
-import { withSandbox } from 'appium-test-support';
+import { withSandbox } from '@appium/test-support';
 import { EOL } from 'os';
 
 

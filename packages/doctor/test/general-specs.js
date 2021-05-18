@@ -7,7 +7,7 @@ import * as utils from '../lib/utils';
 import NodeDetector from '../lib/node-detector';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { withMocks } from 'appium-test-support';
+import { withMocks } from '@appium/test-support';
 import B from 'bluebird';
 import { removeColors } from './helper';
 

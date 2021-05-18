@@ -3,7 +3,7 @@
 import chai from 'chai';
 import { fixIt, clear } from '../lib/prompt';
 import { inquirer } from '../lib/utils';
-import { withMocks } from 'appium-test-support';
+import { withMocks } from '@appium/test-support';
 import B from 'bluebird';
 
 

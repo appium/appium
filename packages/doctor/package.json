@@ -44,7 +44,8 @@
     "yargs": "^17.0.0"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.1.1"
+    "@appium/gulp-plugins": "^5.1.1",
+    "@appium/test-support": "^1.3.3"
   },
   "engines": {
     "node": ">=10",

@@ -8,7 +8,7 @@ import * as tp from 'teen_process';
 import * as prompt from '../lib/prompt';
 import log from '../lib/logger';
 import { FixSkippedError } from '../lib/doctor';
-import { withMocks, withSandbox, stubLog } from 'appium-test-support';
+import { withMocks, withSandbox, stubLog } from '@appium/test-support';
 import B from 'bluebird';
 
 

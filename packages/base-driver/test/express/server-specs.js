@@ -5,7 +5,7 @@ import { configureServer, normalizeBasePath } from '../../lib/express/server';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
-
+import getPort from 'get-port';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
@@ -72,9 +72,10 @@ describe('server configuration', function () {
 
   it('should allow plugins to update the server', async function () {
     const driver = fakeDriver();
+    const port = await getPort();
     const _server = await server({
       routeConfiguringFunction: routeConfiguringFunction(driver),
-      port: 8181,
+      port,
       extraMethodMap: newMethodMap,
       serverUpdaters: [updateServer]
     });
@@ -89,9 +90,10 @@ describe('server configuration', function () {
     const configureRoutes = () => {
       throw new Error('I am Mr. MeeSeeks look at me!');
     };
+    const port = await getPort();
     await server({
       routeConfiguringFunction: configureRoutes,
-      port: 8181,
+      port,
     }).should.be.rejectedWith('MeeSeeks');
   });
 

@@ -151,29 +151,26 @@ describe('Driver CLI', function () {
   });
 
   describe('run', function () {
-    it('should run a valid driver, valid script, and result in success', async function () {
+    before(async function () {
       await clear();
+      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+    });
+    it('should run a valid driver, valid script, and result in success', async function () {
       const driverName = 'fake';
       const scriptName = 'fake-success';
-      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, scriptName, '--json']));
       out.should.not.include.key('error');
     });
     it('should run a valid driver, valid error prone script, and return error in json', async function () {
-      await clear();
       const driverName = 'fake';
-      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
       out.should.include.key('error');
     });
     it('should take a valid driver, invalid script, and throw an error', async function () {
-      await clear();
       const driverName = 'fake';
-      await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       await chai.expect(run('run', [driverName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
     });
     it('should take an invalid driver, invalid script, and throw an error', async function () {
-      await clear();
       const driverName = 'foo';
       await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
     });
@@ -206,29 +203,26 @@ describe('Plugin CLI', function () {
   }
 
   describe('run', function () {
-    it('should run a valid plugin, valid script, and result in success', async function () {
+    before(async function () {
       await clear();
+      await run('install', [fakePluginDir, '--source', 'local', '--json']);
+    });
+    it('should run a valid plugin, valid script, and result in success', async function () {
       const pluginName = 'fake';
       const scriptName = 'fake-success';
-      await run('install', [fakePluginDir, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [pluginName, scriptName, '--json']));
       out.should.not.include.key('error');
     });
     it('should run a valid plugin, valid error prone script, and return error in json', async function () {
-      await clear();
       const pluginName = 'fake';
-      await run('install', [fakePluginDir, '--source', 'local', '--json']);
       const out = JSON.parse(await run('run', [pluginName, 'fake-error', '--json']));
       out.should.include.key('error');
     });
     it('should take a valid plugin, invalid script, and throw an error', async function () {
-      await clear();
       const pluginName = 'fake';
-      await run('install', [fakePluginDir, '--source', 'local', '--json']);
       await chai.expect(run('run', [pluginName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
     });
     it('should take an invalid plugin, invalid script, and throw an error', async function () {
-      await clear();
       await chai.expect(run('run', ['foo', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
     });
   });

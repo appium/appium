@@ -5,11 +5,22 @@ import B from 'bluebird';
 
 
 export default class FakePlugin extends BasePlugin {
+  constructor (pluginName, opts = {}) {
+    super(pluginName, opts);
+  }
+
+  async getFakePluginArgs () {
+    await B.delay(1);
+    return this.opts.pluginArgs;
+  }
 
   static newMethodMap = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData'},
       POST: {command: 'setFakeSessionData', payloadParams: {required: ['data']}}
+    },
+    '/session/:sessionId/fakepluginargs': {
+      GET: {command: 'getFakePluginArgs'}
     },
   };
 

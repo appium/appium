@@ -2,12 +2,14 @@
 
 import { getParser } from '../lib/cli/parser';
 import { INSTALL_TYPES, DEFAULT_APPIUM_HOME } from '../lib/extension-config';
+import path from 'path';
 import chai from 'chai';
 
 const should = chai.should();
 
 const ALLOW_FIXTURE = 'test/fixtures/allow-feat.txt';
 const DENY_FIXTURE = 'test/fixtures/deny-feat.txt';
+const FAKE_DRIVER_ARGS_PATH = path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'driverArgs.json');
 
 describe('Main Parser', function () {
   let p = getParser(true);
@@ -84,25 +86,19 @@ describe('Server Parser', function () {
     parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
   });
   it('should parse default driver args correctly from a string', function () {
-    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
-    let fakeDriverName = `fake`;
-    let fakeDriverArgs = `{"${fakeDriverName}": ${fakeArgs}}`;
-    let args = p.parse_args(['--driver-args', fakeDriverArgs]);
-    args.driverArgs.should.eql(JSON.parse(fakeDriverArgs));
+    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--driver-args', JSON.stringify(fakeDriverArgs)]);
+    args.driverArgs.should.eql(fakeDriverArgs);
   });
   it('should parse default driver args correctly from a file', function () {
-    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
-    let fakeDriverName = `fake`;
-    let fakeDriverArgs = `{"${fakeDriverName}": ${fakeArgs}}`;
-    let args = p.parse_args(['--driver-args', 'test/fixtures/driverArgs.json']);
-    args.driverArgs.should.eql(JSON.parse(fakeDriverArgs));
+    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--driver-args', FAKE_DRIVER_ARGS_PATH]);
+    args.driverArgs.should.eql(fakeDriverArgs);
   });
   it('should parse default plugin args correctly from a string', function () {
-    let fakeArgs = `{"sillyWebServerPort":1234,"host":"hey"}`;
-    let fakePluginName = `fake`;
-    let fakePluginArgs = `{"${fakePluginName}": ${fakeArgs}}`;
-    let args = p.parse_args(['--plugin-args', fakePluginArgs]);
-    args.pluginArgs.should.eql(JSON.parse(fakePluginArgs));
+    let fakePluginArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--plugin-args', JSON.stringify(fakePluginArgs)]);
+    args.pluginArgs.should.eql(fakePluginArgs);
   });
 });
 

@@ -17,11 +17,19 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
+<<<<<<< HEAD:packages/appium/test/driver-e2e-specs.js
 let TEST_SERVER;
 let TEST_PORT;
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
 const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
 const FAKE_DRIVER_ARGS = `{"fake": ${FAKE_ARGS}}`;
+=======
+const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
+const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
+const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
+const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
+
+>>>>>>> cf51e210 (fix: make changes based on feedback):test/driver-e2e-specs.js
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
@@ -89,12 +97,12 @@ describe('FakeDriver - via HTTP', function () {
   });
 
   describe('cli args handling', function () {
-    it('should recieve user cli args for driver if passed in', async function () {
+    it('should not recieve user cli args if no cli args passed in', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql('{}');
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
+        data.value.should.eql({});
       } finally {
         await driver.deleteSession();
       }
@@ -102,7 +110,7 @@ describe('FakeDriver - via HTTP', function () {
   });
 
   describe('cli args handling for empty args', function () {
-    it('should recieve empty user cli args from a driver if no arguments were passed in', async function () {
+    it('should recieve user cli args from a driver if arguments were passed in', async function () {
       await serverClose();
       let args = {port: TEST_PORT, host: TEST_HOST, appiumHome, driverArgs: FAKE_DRIVER_ARGS};
       await serverStart(args);
@@ -110,8 +118,8 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql(FAKE_ARGS);
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
+        data.value.should.eql(FAKE_ARGS);
       } finally {
         await driver.deleteSession();
       }
@@ -121,14 +129,14 @@ describe('FakeDriver - via HTTP', function () {
   describe('cli args handling for different driver', function () {
     it('should recieve empty user cli args from a driver if cli arguments created for a different driver', async function () {
       await serverClose();
-      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome, driverArgs: `{"xcuitest": ${FAKE_ARGS}}`};
+      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome, driverArgs: `{"xcuitest": ${JSON.stringify(FAKE_ARGS)}}`};
       await serverStart(args);
 
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql('{}');
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
+        data.value.should.eql({});
       } finally {
         await driver.deleteSession();
       }

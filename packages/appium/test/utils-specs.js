@@ -3,7 +3,7 @@ import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, parseDriverPluginArgsForInnerDriverPlugin,
+  removeAppiumPrefixes, parseExtensionArgs,
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
@@ -219,9 +219,9 @@ describe('utils', function () {
     });
   });
 
-  describe('parseDriverPluginArgsForInnerDriverPlugin()', function () {
+  describe('parseExtensionArgs()', function () {
     it('should take a valid json string with a driver name and return a valid json object for that driver', function () {
-      parseDriverPluginArgsForInnerDriverPlugin(
+      parseExtensionArgs(
         FAKE_DRIVER_ARGS,
         FAKE_DRIVER_NAME,
       ).should.eql(JSON.parse(FAKE_DRIVER_ARGS)[FAKE_DRIVER_NAME]);
@@ -229,7 +229,7 @@ describe('utils', function () {
     it('should take a valid json string with an invalid driver name and return an empty object', function () {
       const fakeDriverArgs = `{"xcuitest": ${FAKE_ARGS}}`;
 
-      parseDriverPluginArgsForInnerDriverPlugin(
+      parseExtensionArgs(
         fakeDriverArgs,
         FAKE_DRIVER_NAME,
       ).should.eql({});
@@ -237,7 +237,7 @@ describe('utils', function () {
     it('should take an empty json object and return an empty object', function () {
       const fakeDriverArgs = {};
 
-      parseDriverPluginArgsForInnerDriverPlugin(
+      parseExtensionArgs(
         fakeDriverArgs,
         FAKE_DRIVER_NAME,
       ).should.eql({});
@@ -245,15 +245,19 @@ describe('utils', function () {
     it('should take an invalid json string and throw an error', function () {
       const fakeDriverArgs = `blah`;
 
-      (() => parseDriverPluginArgsForInnerDriverPlugin(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
+      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
     });
     it('should take a valid json file with a driver name and return a valid json object for that driver', function () {
       const fakeDriverArgsPath = `${cwd}/test/fixtures/driverArgs.json`;
 
-      parseDriverPluginArgsForInnerDriverPlugin(
+      parseExtensionArgs(
         fakeDriverArgsPath,
         FAKE_DRIVER_NAME,
       ).should.eql(JSON.parse(FAKE_DRIVER_ARGS)[FAKE_DRIVER_NAME]);
+    });
+    it('should throw an error if arg is not a plain object', function () {
+      const fakeDriverArgs = '{"fake": 1234}';
+      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME,)).should.throw();
     });
   });
 });

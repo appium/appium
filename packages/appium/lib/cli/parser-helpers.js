@@ -58,7 +58,7 @@ function parsePluginNames (names) {
   }
 }
 
-function parseDefaultCaps (capsOrPath) {
+function parseJsonStringOrFile (capsOrPath) {
   let caps = capsOrPath;
   let loadedFromFile = false;
   try {
@@ -99,7 +99,7 @@ function parseInstallTypes (source) {
 
 export {
   parseSecurityFeatures,
-  parseDefaultCaps,
+  parseJsonStringOrFile,
   parseInstallTypes,
   parsePluginNames,
   parseDriverNames,

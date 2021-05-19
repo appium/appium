@@ -2,7 +2,7 @@ import _ from 'lodash';
 import logger from './logger';
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import findRoot from 'find-root';
-import { parseDefaultCaps } from './cli/parser-helpers';
+import { parseJsonStringOrFile } from './cli/parser-helpers';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -34,9 +34,13 @@ function inspectObject (args) {
   }
 }
 
-function parseDriverPluginArgsForInnerDriverPlugin (driverPluginArgs, driverPluginName) {
-  const parsedDriverPluginArgs = _.isString(driverPluginArgs) ? parseDefaultCaps(driverPluginArgs) : {};
-  return _.has(parsedDriverPluginArgs, driverPluginName) ? parsedDriverPluginArgs[driverPluginName] : {};
+function parseExtensionArgs (extensionArgs, extensionName) {
+  const parsedExtensionArgs = _.isString(extensionArgs) ? parseJsonStringOrFile(extensionArgs) : {};
+  const extensionSpecificArgs = _.has(parsedExtensionArgs, extensionName) ? parsedExtensionArgs[extensionName] : {};
+  if (!_.isPlainObject(extensionSpecificArgs)) {
+    throw new Error(`The passed in extension argument is not a plain object.`);
+  }
+  return extensionSpecificArgs;
 }
 
 /**
@@ -226,5 +230,5 @@ const rootDir = findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes, parseDriverPluginArgsForInnerDriverPlugin,
+  getPackageVersion, pullSettings, removeAppiumPrefixes, parseExtensionArgs,
 };

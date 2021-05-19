@@ -5,7 +5,7 @@ import { findMatchingDriver } from './drivers';
 import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
-import { parseDriverPluginArgsForInnerDriverPlugin, parseCapsForInnerDriver, pullSettings } from './utils';
+import { parseExtensionArgs, parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from 'appium-support';
 
 const desiredCapabilityConstraints = {
@@ -165,9 +165,9 @@ class AppiumDriver extends BaseDriver {
       }
 
       let runningDriversData, otherPendingDriversData;
-      const parsedInnerDriverArgs = parseDriverPluginArgsForInnerDriverPlugin(this.args.driverArgs, driverName);
+      const parsedInnerDriverArgs = parseExtensionArgs(this.args.driverArgs, driverName);
 
-      const d = new InnerDriver(this.args, parsedInnerDriverArgs);
+      const d = new InnerDriver(this.args, true, parsedInnerDriverArgs);
       // We want to assign security values directly on the driver. The driver
       // should not read security values from `this.opts` because those values
       // could have been set by a malicious user via capabilities, whereas we
@@ -407,8 +407,9 @@ class AppiumDriver extends BaseDriver {
     sessionId = _.truncate(sessionId, {length: 11});
     return this.pluginClasses.map((PluginClass) => {
       const name = `${PluginClass.pluginName} (${sessionId})`;
-      const parsedInnerPluginArgs = parseDriverPluginArgsForInnerDriverPlugin(this.args.pluginArgs, PluginClass.pluginName);
-      return new PluginClass(name, parsedInnerPluginArgs);
+      const opts = {};
+      opts.pluginArgs = parseExtensionArgs(this.args.pluginArgs, PluginClass.pluginName);
+      return new PluginClass(name, opts);
     });
   }
 

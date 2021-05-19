@@ -294,7 +294,7 @@ const serverArgs = [
   [['-dc', DEFAULT_CAPS_ARG], {
     dest: 'defaultCapabilities',
     default: {},
-    type: parseDefaultCaps,
+    type: parseJsonStringOrFile,
     required: false,
     help: 'Set the default desired capabilities, which will be set on each ' +
           'session unless overridden by received capabilities. For example: ' +
@@ -342,7 +342,7 @@ const serverArgs = [
   [['--driver-args'], {
     dest: 'driverArgs',
     default: {},
-    type: parseDefaultCaps,
+    type: parseJsonStringOrFile,
     required: false,
     help: 'Set the default desired client arguments for a driver, ' +
           'For example: ' +
@@ -353,7 +353,7 @@ const serverArgs = [
   [['--plugin-args'], {
     dest: 'pluginArgs',
     default: {},
-    type: parseDefaultCaps,
+    type: parseJsonStringOrFile,
     required: false,
     help: 'Set the default desired client arguments for a plugin, ' +
           'For example: ' +

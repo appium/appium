@@ -13,8 +13,8 @@ import { runExtensionCommand } from '../lib/cli/extension';
 chai.should();
 chai.use(chaiAsPromised);
 
-const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
-const FAKE_PLUGIN_ARGS = `{"fake": ${FAKE_ARGS}}`;
+const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
+const FAKE_PLUGIN_ARGS = JSON.stringify({'fake': FAKE_ARGS});
 const wdOpts = {
   hostname: TEST_HOST,
   port: null,
@@ -171,8 +171,8 @@ describe('FakePlugin', function () {
       const {sessionId} = driver;
 
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql(FAKE_ARGS);
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakepluginargs`);
+        data.value.should.eql(FAKE_ARGS);
       } finally {
         await driver.deleteSession();
       }
@@ -191,13 +191,13 @@ describe('FakePlugin', function () {
       }
     });
 
-    it('should recieve user cli args for plugin if passed in', async function () {
+    it('should not recieve user cli args for plugin if none were passed in', async function () {
       const driver = await wdio(wdOpts);
       const {sessionId} = driver;
 
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql('{}');
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakepluginargs`);
+        data.value.should.eql({});
       } finally {
         await driver.deleteSession();
       }
@@ -207,7 +207,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: `{"images": ${FAKE_ARGS}}`};
+      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: `{"images": ${JSON.stringify(FAKE_ARGS)}}`};
       server = await appiumServer(args);
     });
     after(async function () {
@@ -216,13 +216,13 @@ describe('FakePlugin', function () {
       }
     });
 
-    it('should recieve user cli args for plugin if passed in', async function () {
+    it('should not recieve user cli args for plugin if none were passed in for that plugin', async function () {
       const driver = await wdio(wdOpts);
       const {sessionId} = driver;
 
       try {
-        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakecliargs`);
-        JSON.stringify(data.value).should.eql('{}');
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakepluginargs`);
+        data.value.should.eql({});
       } finally {
         await driver.deleteSession();
       }

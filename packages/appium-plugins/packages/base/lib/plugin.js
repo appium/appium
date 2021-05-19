@@ -1,5 +1,6 @@
 import { logger } from 'appium-support';
 
+
 export default class BasePlugin {
 
   // plugins can define new methods for the Appium server to map to command names, of the same
@@ -13,9 +14,12 @@ export default class BasePlugin {
   // }
   static newMethodMap = {};
 
-  constructor (pluginName) {
+  constructor (pluginName, opts = {}) {
     this.name = pluginName;
     this.logger = logger.getLogger(`Plugin [${pluginName}]`);
+
+    // allow for args to be used by plugins
+    this.opts = opts;
   }
 
 

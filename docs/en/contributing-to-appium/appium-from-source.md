@@ -156,4 +156,4 @@ the commit from occurring.
 
 Once code is committed and a [pull request](https://help.github.com/articles/about-pull-requests/)
 is made to the correct Appium respository on [GitHub](https://github.com/), Appium build system
-will run all of the functional tests. 
+will run all of the functional tests.

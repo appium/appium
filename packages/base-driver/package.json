@@ -53,9 +53,12 @@
     "validate.js": "^0.13.0",
     "webdriverio": "^6.0.2",
     "ws": "^7.0.0"
-  },  
+  },
   "devDependencies": {
     "@appium/gulp-plugins": "^5.4.0",
     "@appium/eslint-config-appium": "^4.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

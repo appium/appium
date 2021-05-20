@@ -1,30 +1,23 @@
 {
+  "ci": false,
+  "command": {
+    "exec": {
+      "ignore": "@appium/eslint-config-appium"
+    },
+    "version": {
+      "push": false,
+      "conventionalCommits": true
+    }
+  },
+  "ignoreChanges": [
+    "**/test/**",
+    "**/*.md"
+  ],
+  "npmClientArgs": [
+    "--no-package-lock"
+  ],
   "packages": [
     "packages/*"
   ],
-  "version": "2.0.0-beta.1",
-  "command": {
-    "bootstrap": {
-      "npmClientArgs": [
-        "--no-package-lock"
-      ],
-      "ci": false
-    },
-    "exec": {
-      "ignore": "@appium/eslint-config-appium"
-    }
-  },
-  "changelog": {
-    "repo": "appium/appium",
-    "cacheDir": ".changelog",
-    "labels": {
-      "PR: Spec Compliancy :eyeglasses:": ":eyeglasses: Spec Compliancy",
-      "PR: Breaking Change :boom:": ":boom: Breaking Change",
-      "PR: New Feature :rocket:": ":rocket: New Feature",
-      "PR: Bug Fix :bug:": ":bug: Bug Fix",
-      "PR: Polish :nail_care:": ":nail_care: Polish",
-      "PR: Docs :memo:": ":memo: Documentation",
-      "PR: Internal :house:": ":house: Internal"
-    }
-  }
+  "version": "independent"
 }

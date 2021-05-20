@@ -61,5 +61,8 @@
   },
   "greenkeeper": {
     "ignore": []
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

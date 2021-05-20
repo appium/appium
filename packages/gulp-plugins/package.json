@@ -87,5 +87,8 @@
   },
   "peerDependencies": {
     "gulp": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

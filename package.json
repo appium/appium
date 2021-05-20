@@ -3,6 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "description": "Automation for Apps.",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -27,6 +38,10 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "reinstall": "npm run clean && npm install",
     "start": "node ./packages/appium",
+    "sync-pkgs": "npm run sync-pkgs:appium-readme && npm run sync-pkgs:common-fields && npm run sync-pkgs:keywords",
+    "sync-pkgs:appium-readme": "sync-monorepo-packages --force --no-package-json --packages=packages/appium README.md",
+    "sync-pkgs:common-fields": "sync-monorepo-packages --fields=author,license,repository,bugs,homepage,engines",
+    "sync-pkgs:keywords": "sync-monorepo-packages --field=keywords --packages='packages/*' --packages='!packages/eslint-config-appium'",
     "test": "lerna exec gulp once",
     "test:appium": "lerna exec --scope=appium gulp once",
     "test:base-driver": "lerna exec --scope=@appium/base-driver gulp once",
@@ -40,6 +55,7 @@
     "test:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins gulp once",
     "test:support": "lerna exec --scope=@appium/support gulp once",
     "test:test-support": "lerna exec --scope=@appium/test-support gulp once",
+    "preversion": "npm run sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
     "watch": "lerna exec watch"
   },
   "pre-commit": [
@@ -86,6 +102,7 @@
     "querystring": "^0.2.0",
     "serve-static": "^1.13.1",
     "sinon": "^9.0.0",
+    "sync-monorepo-packages": "^0.3.2",
     "validate.js": "^0.13.0",
     "wd": "^1.14.0",
     "webdriverio": "^6.12.0",
@@ -94,5 +111,8 @@
   "engines": {
     "node": ">=12",
     "npm": ">=6"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

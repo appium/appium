@@ -16,7 +16,7 @@ a version manager is _highly_ recommended.
 * N - [https://github.com/tj/n](https://github.com/tj/n)
 
 Your Node.js installation will include the [npm](https://www.npmjs.com/) package manager, which Appium
-will need in order to manage dependencies. Appiums supports NPM version 3+.
+will need in order to manage dependencies. Appiums supports npm version 6+.
 
 ### Setting up Appium from Source
 

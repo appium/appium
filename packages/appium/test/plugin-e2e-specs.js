@@ -14,11 +14,6 @@ import { runExtensionCommand } from '../lib/cli/extension';
 chai.should();
 chai.use(chaiAsPromised);
 
-const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake-plugin');
-const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
-let TEST_SERVER;
-let TEST_PORT;
-
 const wdOpts = {
   hostname: TEST_HOST,
   port: null,
@@ -27,12 +22,17 @@ const wdOpts = {
 };
 
 describe('FakePlugin', function () {
+  const fakePluginDir = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake-plugin');
+  const fakeDriverDir = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
   const appiumHome = DEFAULT_APPIUM_HOME;
+  let testServer;
+  let testPort;
   let baseUrl;
+
   before(async function () {
-    wdOpts.port = TEST_PORT = await getTestPort();
-    TEST_SERVER = `http://${TEST_HOST}:${wdOpts.port}`;
-    baseUrl = `${TEST_SERVER}/session`;
+    wdOpts.port = testPort = await getTestPort();
+    testServer = `http://${TEST_HOST}:${testPort}`;
+    baseUrl = `${testServer}/session`;
     // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,
@@ -43,7 +43,7 @@ describe('FakePlugin', function () {
       await runExtensionCommand({
         appiumHome,
         driverCommand: 'install',
-        driver: FAKE_DRIVER_DIR,
+        driver: fakeDriverDir,
         installType: INSTALL_TYPE_LOCAL,
       }, DRIVER_TYPE);
     }
@@ -57,7 +57,7 @@ describe('FakePlugin', function () {
       await runExtensionCommand({
         appiumHome,
         pluginCommand: 'install',
-        plugin: FAKE_PLUGIN_DIR,
+        plugin: fakePluginDir,
         installType: INSTALL_TYPE_LOCAL,
       }, PLUGIN_TYPE);
     }
@@ -67,7 +67,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['other1', 'other2']};
+      const args = {port: testPort, host: TEST_HOST, appiumHome, plugins: ['other1', 'other2']};
       server = await appiumServer(args);
     });
     after(async function () {
@@ -76,7 +76,7 @@ describe('FakePlugin', function () {
       }
     });
     it('should not update the server if plugin is not activated', async function () {
-      await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`).should.eventually.be.rejectedWith(/404/);
+      await axios.post(`http://${TEST_HOST}:${testPort}/fake`).should.eventually.be.rejectedWith(/404/);
     });
     it('should not update method map if plugin is not activated', async function () {
       const driver = await wdio(wdOpts);
@@ -105,7 +105,7 @@ describe('FakePlugin', function () {
       before(async function () {
         // then start server if we need to
         const plugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
-        const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins};
+        const args = {port: testPort, host: TEST_HOST, appiumHome, plugins};
         server = await appiumServer(args);
       });
       after(async function () {
@@ -115,7 +115,7 @@ describe('FakePlugin', function () {
       });
       it('should update the server', async function () {
         const res = {fake: 'fakeResponse'};
-        (await axios.post(`http://${TEST_HOST}:${TEST_PORT}/fake`)).data.should.eql(res);
+        (await axios.post(`http://${TEST_HOST}:${testPort}/fake`)).data.should.eql(res);
       });
 
       it('should modify the method map with new commands', async function () {

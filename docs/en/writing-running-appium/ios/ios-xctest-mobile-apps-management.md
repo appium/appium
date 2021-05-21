@@ -3,7 +3,7 @@
 Since Xcode9 there is a possibility to manage multiple applications in scope of
 a single session. It makes it possible to open iOS preferences and change values
 there while the application under test is in background and then restore it back
-to foreground or check scenarious, where the application under test is
+to foreground or check scenarios, where the application under test is
 terminated and then started again. Appium for iOS has special set of `mobile:`
 subcommands, which provides user interface to such features.
 

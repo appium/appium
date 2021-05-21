@@ -13,7 +13,7 @@ Map<String, Object> settings = driver.getSettings();
 
 ```python
 # Python
-self.driver.get_settings
+self.driver.get_settings()
 
 ```
 

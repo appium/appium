@@ -59,11 +59,6 @@ describe('Server Parser', function () {
     (() => {p.parse_args(['-dc', 'null']);}).should.throw();
     (() => {p.parse_args(['-dc', 'does/not/exist.json']);}).should.throw();
   });
-  it('should parse args that are caps into default capabilities', function () {
-    let defaultCapabilities = {chromedriverExecutable: '/my/dir'};
-    let args = p.parse_args(['--chromedriver-executable', '/my/dir']);
-    args.defaultCapabilities.should.eql(defaultCapabilities);
-  });
   it('should parse --allow-insecure correctly', function () {
     p.parse_args([]).allowInsecure.should.eql([]);
     p.parse_args(['--allow-insecure', '']).allowInsecure.should.eql([]);

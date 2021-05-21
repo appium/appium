@@ -69,13 +69,6 @@ const serverArgs = [
     dest: 'allowCors',
   }],
 
-  [['--reboot'], {
-    default: false,
-    dest: 'reboot',
-    action: StoreDeprecatedDefaultCapabilityAction,
-    required: false,
-    help: '(Android-only) reboot emulator after each session and kill it at the end',
-  }],
 
   [['-a', '--address'], {
     default: '0.0.0.0',
@@ -190,23 +183,6 @@ const serverArgs = [
     help: 'Configuration JSON file to register appium with selenium grid',
   }],
 
-  [['--chromedriver-port'], {
-    default: null,
-    dest: 'chromeDriverPort',
-    required: false,
-    action: StoreDeprecatedDefaultCapabilityAction,
-    type: 'int',
-    help: 'Port upon which ChromeDriver will run. If not given, Android driver will pick a random available port.',
-  }],
-
-  [['--chromedriver-executable'], {
-    default: null,
-    dest: 'chromedriverExecutable',
-    action: StoreDeprecatedDefaultCapabilityAction,
-    required: false,
-    help: 'ChromeDriver executable full path',
-  }],
-
   [['--show-config'], {
     default: false,
     dest: 'showConfig',
@@ -257,13 +233,6 @@ const serverArgs = [
     help: 'Add exaggerated spacing in logs to help with visual inspection',
   }],
 
-  [['--suppress-adb-kill-server'], {
-    dest: 'suppressKillServer',
-    default: false,
-    action: 'store_true',
-    required: false,
-    help: '(Android-only) If set, prevents Appium from killing the adb server instance',
-  }],
 
   [['--long-stacktrace'], {
     dest: 'longStacktrace',
@@ -273,23 +242,6 @@ const serverArgs = [
     help: 'Add long stack traces to log entries. Recommended for debugging only.',
   }],
 
-  [['--webkit-debug-proxy-port'], {
-    default: 27753,
-    dest: 'webkitDebugProxyPort',
-    action: StoreDeprecatedDefaultCapabilityAction,
-    required: false,
-    type: 'int',
-    help: '(IOS-only) Local port used for communication with ios-webkit-debug-proxy'
-  }],
-
-  [['--webdriveragent-port'], {
-    default: 8100,
-    dest: 'wdaLocalPort',
-    action: StoreDeprecatedDefaultCapabilityAction,
-    required: false,
-    type: 'int',
-    help: '(IOS-only, XCUITest-only) Local port used for communication with WebDriverAgent'
-  }],
 
   [['-dc', DEFAULT_CAPS_ARG], {
     dest: 'defaultCapabilities',

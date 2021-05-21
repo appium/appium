@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app width="400" height="852">
+    <MockNavBar id="nav" top="1" left="1" width="100" height="100">
+        <MockTextField id="Mock App" />
+    </MockNavBar>
+    <MockWebView id="wv" top="10" left="10.57" width="20.8" height="20.5">
+        <html>
+            <head>
+              <title value="webview title">Test Webview</title>
+            </head>
+            <body style="background-color: #000">
+              <h1>Hello</h1>
+              <iframe id="iframe1">
+                <html>
+                  <head>
+                    <title value="iframe title">Test iFrame</title>
+                  </head>
+                  <body>
+                    <h1 style="font-family: 'comic sans'">I'm an iFrame</h1>
+                  </body>
+                </html>
+              </iframe>  
+            </body>
+        </html>
+    </MockWebView>
+    <MockListView id="lv" top="15.3" left="20.8" width="30.5" height="2">
+        <MockListItem id="li" />
+        <MockListItem id="li" />
+        <MockListItem />
+    </MockListView>
+    <MockInputField id="input" name="TypeMe" />
+    <MockButton id="Button1" visible="false" enabled="false" />
+    <MockButton id="Button2" selected="true" />
+    <MockButton id="AlertButton" showAlert="alert1" />
+    <MockButton id="AlertButton2" showAlert="alert2" />
+    <alert id="alert1" text="Fake Alert" hasPrompt="true" />
+    <alert id="alert2" text="Fake Alert 2" hasPrompt="false" />
+</app>

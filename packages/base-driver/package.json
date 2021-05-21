@@ -1,0 +1,61 @@
+{
+  "name": "@appium/base-driver",
+  "description": "Base driver class for Appium drivers",
+  "keywords": [
+    "appium"
+  ],
+  "version": "8.0.0-beta.6",
+  "author": "appium",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "main": "./build/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "static",
+    "test/basedriver",
+    "!test/basedriver/fixtures",
+    "build/index.js",
+    "build/lib",
+    "build/test/basedriver",
+    "!build/test/basedriver/fixtures"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.0.0",
+    "@appium/support": "^2.48.0",
+    "async-lock": "^1.0.0",
+    "asyncbox": "^2.3.1",
+    "axios": "^0.21.0",
+    "bluebird": "^3.5.3",
+    "body-parser": "^1.18.2",
+    "colors": "^1.1.2",
+    "es6-error": "^4.1.1",
+    "express": "^4.16.2",
+    "http-status-codes": "^2.1.1",
+    "lodash": "^4.0.0",
+    "lru-cache": "^6.0.0",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.0",
+    "serve-favicon": "^2.4.5",
+    "source-map-support": "^0.5.5",
+    "validate.js": "^0.13.0",
+    "webdriverio": "^6.0.2",
+    "ws": "^7.0.0"
+  },  
+  "devDependencies": {
+    "@appium/gulp-plugins": "^5.4.0",
+    "@appium/eslint-config-appium": "^4.7.0"
+  }
+}

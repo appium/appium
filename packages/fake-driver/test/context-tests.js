@@ -42,7 +42,7 @@ function contextTests () {
     });
     it('should go back to native context', async function () {
       await driver.context('NATIVE_APP').elementByXPath('//*').getTagName()
-              .should.eventually.become('app');
+              .should.eventually.become('AppiumAUT');
     });
     it('should not set a frame in a native context', async function () {
       await driver.frame('iframe1').should.eventually.be.rejectedWith(/36/);

@@ -59,6 +59,7 @@
     "@appium/eslint-config-appium": "^4.7.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "beta"
   }
 }

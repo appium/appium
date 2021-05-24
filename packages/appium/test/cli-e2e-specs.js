@@ -12,12 +12,10 @@ chai.use(chaiAsPromised);
 // cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
 // could also derive it from the `package.json` if we wanted
 const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');
-const cwd = path.resolve(__dirname, '..', '..');
-const localFakeDriverPath = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
-const fakePluginDir = path.resolve(__dirname, '..', '..', 'node_modules', '@appium', 'fake-plugin');
 
 describe('Driver CLI', function () {
   let appiumHome;
+  const localFakeDriverPath = path.resolve(cwd, 'packages', 'fake-driver');
 
   before(async function () {
     appiumHome = await tempDir.openDir();
@@ -125,7 +123,6 @@ describe('Driver CLI', function () {
       await clear();
       // take advantage of the fact that we know we have fake driver installed as a dependency in
       // this module, so we know its local path on disk
-      const localFakeDriverPath = path.resolve(cwd, 'packages', 'fake-driver');
       const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
       ret.fake.pkgName.should.eql('@appium/fake-driver');
       ret.fake.installType.should.eql('local');
@@ -179,7 +176,7 @@ describe('Driver CLI', function () {
 
 describe('Plugin CLI', function () {
   let appiumHome;
-
+  const fakePluginDir = path.resolve(cwd, 'node_modules', '@appium', 'fake-plugin');
   before(async function () {
     appiumHome = await tempDir.openDir();
   });
@@ -193,9 +190,9 @@ describe('Plugin CLI', function () {
     await mkdirp(appiumHome);
   }
 
-  async function run (pluginCmd, args = [], raw = false) {
+  async function run (driverCmd, args = [], raw = false) {
     args = [...args, '--appium-home', appiumHome];
-    const ret = await exec('node', ['.', 'plugin', pluginCmd, ...args], {cwd});
+    const ret = await exec('node', [executable, 'plugin', driverCmd, ...args], {cwd});
     if (raw) {
       return ret;
     }

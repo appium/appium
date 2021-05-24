@@ -156,7 +156,7 @@ class AppiumDriver extends BaseDriver {
       const {
         driver: InnerDriver,
         version: driverVersion,
-        driverName: driverName
+        driverName
       } = this._findMatchingDriver(this.driverConfig, desiredCaps);
       this.printNewSessionAnnouncement(InnerDriver.name, driverVersion, InnerDriver.baseVersion);
 

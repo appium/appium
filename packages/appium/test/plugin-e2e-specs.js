@@ -157,7 +157,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: FAKE_PLUGIN_ARGS};
+      const args = {port: testPort, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: FAKE_PLUGIN_ARGS};
       server = await appiumServer(args);
     });
     after(async function () {
@@ -182,7 +182,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake']};
+      const args = {port: testPort, host: testServer, appiumHome, plugins: ['fake']};
       server = await appiumServer(args);
     });
     after(async function () {
@@ -207,7 +207,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: TEST_PORT, host: TEST_HOST, appiumHome, plugins: ['fake'], pluginArgs: `{"images": ${JSON.stringify(FAKE_ARGS)}}`};
+      const args = {port: testPort, host: testServer, appiumHome, plugins: ['fake'], pluginArgs: `{"images": ${JSON.stringify(FAKE_ARGS)}}`};
       server = await appiumServer(args);
     });
     after(async function () {

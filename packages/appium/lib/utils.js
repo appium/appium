@@ -35,10 +35,13 @@ function inspectObject (args) {
 }
 
 function parseExtensionArgs (extensionArgs, extensionName) {
-  const parsedExtensionArgs = _.isString(extensionArgs) ? parseJsonStringOrFile(extensionArgs) : {};
-  const extensionSpecificArgs = _.has(parsedExtensionArgs, extensionName) ? parsedExtensionArgs[extensionName] : {};
+  if (!_.isString(extensionArgs)) {
+    return {};
+  }
+  const parsedExtensionArgs = parseJsonStringOrFile(extensionArgs);
+  const extensionSpecificArgs = parsedExtensionArgs[extensionName] ? parsedExtensionArgs[extensionName] : {};
   if (!_.isPlainObject(extensionSpecificArgs)) {
-    throw new Error(`The passed in extension argument is not a plain object.`);
+    throw new Error(`Driver or plugin arguments must be plain objects`);
   }
   return extensionSpecificArgs;
 }

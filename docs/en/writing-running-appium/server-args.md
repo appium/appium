@@ -40,8 +40,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
 |`-ra`, `--robot-address`|0.0.0.0|IP Address of robot|`--robot-address 0.0.0.0`|
 |`-rp`, `--robot-port`|-1|port for robot|`--robot-port 4242`|
-|`--driver-args '{"uiautomator2": {"chromedriver-port": 9515}}`|9515|Port upon which ChromeDriver will run|`--driver-args '{"uiautomator2": {"chromedriver-port": 9515}}`|
-|`--driver-args '{"uiautomator2": {"chromedriver-executable": '/path/to/file'}}`|null|ChromeDriver executable full path||
+
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--no-perms-check`|false|Bypass Appium's checks to ensure we can read/write necessary files||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
@@ -49,11 +48,10 @@ All flags are optional, but some are required in conjunction with certain others
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
 |`--trace-dir`|null|Absolute path to directory Appium use to save ios instruments traces, defaults to <tmp dir>/appium-instruments||
 |`--debug-log-spacing`|false|Add exaggerated spacing in logs to help with visual inspection||
-|`--driver-args '{"uiautomator2": {"suppress-adb-kill-server": false}}'`|false|(Android-only) If set, prevents Appium from killing the adb server instance||
+
 |`--async-trace`|false|Add long stack traces to log entries. Recommended for debugging only.||
-|`--driver-args '{"xcuitest": {"webkit-debug-proxy-port": 27753}}`|27753|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--driver-args '{"xcuitest": {"webkit-debug-proxy-port": 27753}}`|
+
 |`-dc`, `--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]`|
-|`--driver-args '{"uiautomator2": {"reboot": false}}'`|false| - (Android-only) reboot emulator after each session and kill it at the end||
 |`--command-timeout`|60|[DEPRECATED] No effect. This used to be the default command timeout for the server to use for all sessions (in seconds and should be less than 2147483). Use newCommandTimeout cap instead||
 |`-k`, `--keep-artifacts`|false|[DEPRECATED] - no effect, trace is now in tmp dir by default and is cleared before each run. Please also refer to the --trace-dir flag.||
 |`--platform-name`|null|[DEPRECATED] - Name of the mobile platform: iOS, Android, or FirefoxOS|`--platform-name iOS`|

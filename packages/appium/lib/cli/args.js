@@ -1,6 +1,6 @@
 import { DEFAULT_BASE_PATH } from '@appium/base-driver';
 import {
-  parseSecurityFeatures, parseDefaultCaps,
+  parseSecurityFeatures, parseJsonStringOrFile,
   parsePluginNames, parseInstallTypes, parseDriverNames
 } from './parser-helpers';
 import {
@@ -8,7 +8,7 @@ import {
   DRIVER_TYPE, PLUGIN_TYPE
 } from '../extension-config';
 import {
-  DEFAULT_CAPS_ARG, StoreDeprecatedDefaultCapabilityAction
+  DEFAULT_CAPS_ARG
 } from './argparse-actions';
 
 const DRIVER_EXAMPLE = 'xcuitest';

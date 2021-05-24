@@ -1,0 +1,68 @@
+{
+  "name": "@appium/support",
+  "version": "2.53.0",
+  "description": "Support libs used across appium packages",
+  "keywords": [
+    "appium"
+  ],
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "license": "Apache-2.0",
+  "author": "appium",
+  "main": "./build/index.js",
+  "bin": {},
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build/index.js",
+    "build/lib"
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.0.0",
+    "archiver": "^5.0.0",
+    "axios": "^0.x",
+    "base64-stream": "^1.0.0",
+    "bluebird": "^3.5.1",
+    "bplist-creator": "^0",
+    "bplist-parser": "^0.x",
+    "form-data": "^4.0.0",
+    "get-stream": "^6.0.0",
+    "glob": "^7.1.2",
+    "jimp": "^0.x",
+    "jsftp": "^2.1.2",
+    "klaw": "^3.0.0",
+    "lockfile": "^1.0.4",
+    "lodash": "^4.2.1",
+    "mkdirp": "^1.0.0",
+    "moment": "^2.24.0",
+    "mv": "^2.1.1",
+    "ncp": "^2.0.0",
+    "npmlog": "^4.1.2",
+    "plist": "^3.0.1",
+    "pluralize": "^8.0.0",
+    "pngjs": "^6.0.0",
+    "rimraf": "^3.0.0",
+    "sanitize-filename": "^1.6.1",
+    "semver": "^7.0.0",
+    "shell-quote": "^1.7.2",
+    "source-map-support": "^0.5.5",
+    "teen_process": "^1.5.1",
+    "uuid": "^8.0.0",
+    "which": "^2.0.0",
+    "yauzl": "^2.7.0"
+  },
+  "devDependencies": {
+    "@appium/gulp-plugins": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=12"
+  }
+}

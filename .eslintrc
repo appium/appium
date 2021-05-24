@@ -1,3 +1,14 @@
 {
-  "extends": "appium"
+  "extends": "@appium/eslint-config-appium",
+  "overrides": [
+    {
+      "files": "packages/fake-driver/**/*",
+      "rules": { "require-await": "off" }
+    },
+    { "files": "packages/support/**/*", "globals": { "BigInt": "readonly" } },
+    {
+      "files": "packages/*/test/**/*",
+      "rules": { "func-names": "off" }
+    }
+  ]
 }

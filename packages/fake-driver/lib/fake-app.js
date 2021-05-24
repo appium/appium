@@ -64,7 +64,7 @@ class FakeApp {
   }
 
   setDims () {
-    const nodes = this.xpathQuery('/app');
+    const nodes = this.xpathQuery('//app');
     const app = new FakeElement(nodes[0], this);
     this._width = parseInt(app.nodeAttrs.width, 10);
     this._height = parseInt(app.nodeAttrs.height, 10);
@@ -75,6 +75,9 @@ class FakeApp {
     let data = await readFile(appPath);
     log.info('Parsing Mock app XML');
     this.rawXml = data.toString();
+    this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
+    this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
+    this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
     this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml);
     this.activeDom = this.dom;
   }

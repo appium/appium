@@ -17,19 +17,11 @@ import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 
-<<<<<<< HEAD:packages/appium/test/driver-e2e-specs.js
 let TEST_SERVER;
 let TEST_PORT;
 const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
 const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
 const FAKE_DRIVER_ARGS = `{"fake": ${FAKE_ARGS}}`;
-=======
-const TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
-const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'appium-fake-driver');
-const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
-const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
-
->>>>>>> cf51e210 (fix: make changes based on feedback):test/driver-e2e-specs.js
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;

@@ -52,24 +52,30 @@ async function spinWith (json, msg, fn) {
   }
 }
 
-let createRingBuffer = function (length) {
-
-  let pointer = 0, buffer = [];
-
-  return {
-    getBuf () {return buffer;},
-    get (key) {return buffer[key];},
-    push (item) {
-      buffer[pointer] = item;
-      pointer = (length + pointer + 1) % length;
+class RingBuffer {
+  constructor (size = 50) {
+    this.size = size;
+    this.pointer = 0;
+    this.buffer = [];
+  }
+  getBuff () {
+    return this.buffer;
+  }
+  dequeue () {
+    this.buffer.shift();
+  }
+  enqueue (item) {
+    if (this.buffer.length === this.size) {
+      this.dequeue();
     }
-  };
-};
+    this.buffer.push(item);
+  }
+}
 
 export {
   errAndQuit,
   log,
   spinWith,
   JSON_SPACES,
-  createRingBuffer
+  RingBuffer
 };

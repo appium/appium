@@ -4,7 +4,7 @@ import _ from 'lodash';
 import NPM from './npm';
 import path from 'path';
 import { fs, util } from 'appium-support';
-import { log, spinWith, createRingBuffer } from './utils';
+import { log, spinWith, RingBuffer } from './utils';
 import { SubProcess} from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
          INSTALL_TYPE_LOCAL } from '../extension-config';
@@ -490,7 +490,7 @@ export default class ExtensionCommand {
 
   /**
    * @typedef RunOutput
-   * @property {string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
+   * @property {?string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
    * @property {array} output - script output
    */
   /**
@@ -520,7 +520,7 @@ export default class ExtensionCommand {
     const extScripts = extConfig.scripts;
 
     if (!_.isPlainObject(extScripts)) {
-      throw new Error(`"scripts" field must be a plain object`);
+      throw new Error(`The ${this.type} named '${ext}' "scripts" field must be a plain object`);
     }
 
     if (!_.has(extScripts, scriptName)) {
@@ -530,28 +530,22 @@ export default class ExtensionCommand {
     const runner = new SubProcess(`node`, [extScripts[scriptName]],
                                   {cwd: this.config.getExtensionRequirePath(ext)});
 
-    const output = createRingBuffer(50);
+    const output = new RingBuffer(50);
 
     runner.on('stream-line', (line) => {
-      output.push(line);
+      output.enqueue(line);
       log(this.isJsonOutput, line);
     });
 
-    try {
-      // start and wait 5 seconds before throwing an error
-      await runner.start(null, 5 * 1000);
-    } catch (err) {
-      log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
-      return {error: err.message, output};
-    }
+    await runner.start(0);
 
     try {
       await runner.join();
       log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
-      return {output: output.getBuf()};
+      return {output: output.getBuff()};
     } catch (err) {
-      log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
-      return {error: err.message, output: output.getBuf()};
+      log(this.isJsonOutput, `Encountered an error when running '${scriptName}': ${err.message}`.red);
+      return {error: err.message, output: output.getBuff()};
     }
   }
 }

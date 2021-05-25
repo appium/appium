@@ -3,7 +3,7 @@
 import { JWProxy } from '../..';
 import request from './mock-request';
 import { isErrorType, errors } from '../../lib/protocol/errors';
-
+import { getTestPort, TEST_HOST } from '../helpers';
 
 function buildReqRes (url, method, body) {
   let req = {originalUrl: url, method, body};
@@ -23,19 +23,27 @@ function buildReqRes (url, method, body) {
   return [req, res];
 }
 
-function mockProxy (opts = {}) {
-  let proxy = new JWProxy(opts);
-  proxy.request = async function (...args) {
-    return await request(...args);
-  };
-  return proxy;
-}
-
 describe('proxy', function () {
+  let port;
+
+  function mockProxy (opts = {}) {
+    // sets default server/port
+    opts = {server: TEST_HOST, port, ...opts};
+    let proxy = new JWProxy(opts);
+    proxy.request = async function (...args) {
+      return await request(...args);
+    };
+    return proxy;
+  }
+
+  before(async function () {
+    port = await getTestPort();
+  });
+
   it('should override default params', function () {
-    let j = mockProxy({server: '127.0.0.2'});
+    let j = mockProxy({server: '127.0.0.2', port});
     j.server.should.equal('127.0.0.2');
-    j.port.should.equal(4444);
+    j.port.should.equal(port);
   });
   it('should save session id on session creation', async function () {
     let j = mockProxy();
@@ -48,29 +56,29 @@ describe('proxy', function () {
     it('should modify session id, host, and port', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/session/456/element/200/value')
-       .should.eql('http://localhost:4444/session/123/element/200/value');
+       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
     });
     it('should prepend scheme, host and port if not provided', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('/session/456/element/200/value')
-       .should.eql('http://localhost:4444/session/123/element/200/value');
+       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
     });
     it('should respect nonstandard incoming request base path', function () {
       let j = mockProxy({sessionId: '123', reqBasePath: ''});
       j.getUrlForProxy('/session/456/element/200/value')
-       .should.eql('http://localhost:4444/session/123/element/200/value');
+       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
 
       j = mockProxy({sessionId: '123', reqBasePath: '/my/base/path'});
       j.getUrlForProxy('/my/base/path/session/456/element/200/value')
-       .should.eql('http://localhost:4444/session/123/element/200/value');
+       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
     });
     it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});
       j.getUrlForProxy('http://host.com:1234/session')
-       .should.eql('http://localhost:4444/session');
+       .should.eql(`http://${TEST_HOST}:${port}/session`);
 
       let newUrl = j.getUrlForProxy('/session');
-      newUrl.should.eql('http://localhost:4444/session');
+      newUrl.should.eql(`http://${TEST_HOST}:${port}/session`);
     });
     it('should throw an error if url requires a sessionId but its null', function () {
       let j = mockProxy();

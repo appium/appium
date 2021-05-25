@@ -2,7 +2,7 @@ import path from 'path';
 import {insertAppiumPrefixes} from '../lib/utils';
 import getPort from 'get-port';
 
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 
 const fakeDriverPath = path.dirname(require.resolve('@appium/fake-driver/package.json'));
 const PROJECT_ROOT = path.join(fakeDriverPath, '..', '..');

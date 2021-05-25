@@ -5,7 +5,7 @@ import axios from 'axios';
 import sinon from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
-import getPort from 'get-port';
+import {TEST_HOST, getTestPort} from '../helpers';
 
 
 describe('server', function () {
@@ -13,7 +13,7 @@ describe('server', function () {
   let errorStub;
   let port;
   before(async function () {
-    port = await getPort();
+    port = await getTestPort(true);
     errorStub = sinon.stub(console, 'error');
     function configureRoutes (app) {
       app.get('/', (req, res) => {
@@ -43,12 +43,12 @@ describe('server', function () {
   });
 
   it('should start up with our middleware', async function () {
-    const {data} = await axios.get(`http://localhost:${port}/`);
+    const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
     data.should.eql('Hello World!');
   });
   it('should fix broken context type', async function () {
     const {data} = await axios({
-      url: `http://localhost:${port}/python`,
+      url: `http://${TEST_HOST}:${port}/python`,
       headers: {
         'user-agent': 'Python',
         'content-type': 'application/x-www-form-urlencoded'
@@ -57,7 +57,7 @@ describe('server', function () {
     data.should.eql('application/json; charset=utf-8');
   });
   it('should catch errors in the catchall', async function () {
-    await axios.get(`http://localhost:${port}/error`).should.be.rejected;
+    await axios.get(`http://${TEST_HOST}:${port}/error`).should.be.rejected;
   });
   it('should error if we try to start again on a port that is used', async function () {
     await server({
@@ -66,7 +66,7 @@ describe('server', function () {
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get(`http://localhost:${port}/pause`).catch(() => {});
+    let bodyPromise = axios.get(`http://${TEST_HOST}:${port}/pause`).catch(() => {});
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -98,7 +98,7 @@ describe('server plugins', function () {
   let port;
 
   before(async function () {
-    port = await getPort();
+    port = await getTestPort(true);
   });
 
   afterEach(async function () {
@@ -126,9 +126,9 @@ describe('server plugins', function () {
         updaterWithGetRoute('plugin2', 'res from plugin2 route'),
       ]
     });
-    let {data} = await axios.get(`http://localhost:${port}/plugin1`);
+    let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
     data.should.eql('res from plugin1 route');
-    ({data} = await axios.get(`http://localhost:${port}/plugin2`));
+    ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
     data.should.eql('res from plugin2 route');
     hwServer._updated_plugin1.should.be.true;
     hwServer._updated_plugin2.should.be.true;

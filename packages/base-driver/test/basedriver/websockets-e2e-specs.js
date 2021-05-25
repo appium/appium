@@ -4,23 +4,23 @@ import { server, routeConfiguringFunction,
 import { FakeDriver } from '../protocol/fake-driver';
 import WebSocket from 'ws';
 import B from 'bluebird';
-import getPort from 'get-port';
+import {TEST_HOST, getTestPort} from '../helpers';
 
 
 describe('Websockets (e2e)', function () {
   let baseServer;
   let driver;
+  let port;
   const SESSION_ID = 'foo';
   const WS_DATA = 'Hello';
-  let PORT;
 
   before(async function () {
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
-    PORT = await getPort();
+    port = await getTestPort();
     baseServer = await server({
       routeConfiguringFunction: routeConfiguringFunction(driver),
-      port: PORT,
+      port,
     });
   });
   after(async function () {
@@ -44,7 +44,7 @@ describe('Websockets (e2e)', function () {
       baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
-        const client = new WebSocket(`ws://localhost:${PORT}${endpoint}`);
+        const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('connection', (ws, req) => {
           ws.should.not.be.empty;
           req.connection.remoteAddress.should.not.be.empty;
@@ -61,7 +61,7 @@ describe('Websockets (e2e)', function () {
       (await baseServer.removeWebSocketHandler(endpoint)).should.be.true;
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(0);
       await new B((resolve, reject) => {
-        const client = new WebSocket(`ws://localhost:${PORT}${endpoint}`);
+        const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>
           reject(new Error(`No websocket messages are expected after the handler ` +
                            `has been removed. '${data}' is received instead. `))

@@ -7,7 +7,7 @@ import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 import contentDisposition from 'content-disposition';
 import B from 'bluebird';
-
+import {TEST_HOST, getTestPort} from '../helpers';
 
 
 function getFixture (file) {
@@ -54,8 +54,13 @@ describe('app download and configuration', function () {
         .should.be.rejectedWith(/did not have extension/);
     });
     describe('should download an app from the web', function () {
-      const port = 8000;
-      const serverUrl = `http://localhost:${port}`;
+      let port;
+      let serverUrl;
+
+      before(async function () {
+        port = await getTestPort(true);
+        serverUrl = `http://${TEST_HOST}:${port}`;
+      });
 
       describe('server not available', function () {
         it('should handle server not available', async function () {
@@ -142,7 +147,7 @@ describe('app download and configuration', function () {
         it('should handle invalid protocol', async function () {
           await configureApp('file://C:/missing/FakeIOSApp.app.zip', '.app')
             .should.eventually.be.rejectedWith(/is not supported/);
-          await configureApp('ftp://localhost:8000/missing/FakeIOSApp.app.zip', '.app')
+          await configureApp(`ftp://${TEST_HOST}:${port}/missing/FakeIOSApp.app.zip`, '.app')
             .should.eventually.be.rejectedWith(/is not supported/);
         });
         it('should handle missing file in Windows path format', async function () {

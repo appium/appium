@@ -52,9 +52,24 @@ async function spinWith (json, msg, fn) {
   }
 }
 
+let createRingBuffer = function (length) {
+
+  let pointer = 0, buffer = [];
+
+  return {
+    getBuf () {return buffer;},
+    get (key) {return buffer[key];},
+    push (item) {
+      buffer[pointer] = item;
+      pointer = (length + pointer + 1) % length;
+    }
+  };
+};
+
 export {
   errAndQuit,
   log,
   spinWith,
-  JSON_SPACES
+  JSON_SPACES,
+  createRingBuffer
 };

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import NPM from './npm';
 import path from 'path';
 import { fs, util } from 'appium-support';
-import { log, spinWith } from './utils';
+import { log, spinWith, createRingBuffer } from './utils';
 import { SubProcess} from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
          INSTALL_TYPE_LOCAL } from '../extension-config';
@@ -489,11 +489,21 @@ export default class ExtensionCommand {
   }
 
   /**
+   * @typedef RunOutput
+   * @property {string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
+   * @property {array} output - script output
+   */
+  /**
    * Runs a script cached inside the "scripts" field under "appium"
-   * inside of the driver/plugins "package.json" file
+   * inside of the driver/plugins "package.json" file. Will throw
+   * an error if the driver/plugin does not contain a "scripts" field
+   * underneath the "appium" field in its package.json, if the
+   * "scripts" field is not a plain object, or if the scriptName is
+   * not found within "scripts" object.
    *
    * @param {string} ext - name of the extension to run a script from
    * @param {string} scriptName - name of the script to run
+   * @return {RunOutput}
    */
   async run ({ext, scriptName}) {
     if (!_.has(this.config.installedExtensions, ext)) {
@@ -509,6 +519,10 @@ export default class ExtensionCommand {
 
     const extScripts = extConfig.scripts;
 
+    if (!_.isPlainObject(extScripts)) {
+      throw new Error(`"scripts" field must be a plain object`);
+    }
+
     if (!_.has(extScripts, scriptName)) {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
@@ -516,22 +530,28 @@ export default class ExtensionCommand {
     const runner = new SubProcess(`node`, [extScripts[scriptName]],
                                   {cwd: this.config.getExtensionRequirePath(ext)});
 
-    const output = [];
+    const output = createRingBuffer(50);
 
     runner.on('stream-line', (line) => {
       output.push(line);
       log(this.isJsonOutput, line);
     });
 
-    await runner.start();
+    try {
+      // start and wait 5 seconds before throwing an error
+      await runner.start(null, 5 * 1000);
+    } catch (err) {
+      log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
+      return {error: err.message, output};
+    }
 
     try {
       await runner.join();
       log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
-      return {output};
+      return {output: output.getBuf()};
     } catch (err) {
       log(this.isJsonOutput, `Encountered an error when running the script: ${err.message}`.red);
-      return {error: err.message, output};
+      return {error: err.message, output: output.getBuf()};
     }
   }
 }

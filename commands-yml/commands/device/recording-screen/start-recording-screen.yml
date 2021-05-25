@@ -9,10 +9,10 @@ example_usage:
       driver.startRecordingScreen(new BaseStartScreenRecordingOptions(....));
   javascript_wd:
     |
-      await driver.startRecordingScreen();
+      **NOT AVAILABLE**
   javascript_wdio:
     |
-      driver.startRecordingScreen();
+      **NOT AVAILABLE**
   ruby:
     |
       start_recording_screen
@@ -37,8 +37,8 @@ example_usage:
 client_docs:
   java: "https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-"
   python: "https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.screen_record.ScreenRecord.start_recording_screen"
-  javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3412"
-  javascript_wdio: "https://webdriver.io/docs/api/appium.html#startrecordingscreen"
+  javascript_wd: **NOT AVAILABLE**
+  javascript_wdio: **NOT AVAILABLE**
   ruby:
     - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method"
       ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method"

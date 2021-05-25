@@ -5,7 +5,7 @@ import {
 } from '../../lib/constants';
 import axios from 'axios';
 import B from 'bluebird';
-import getPort from 'get-port';
+import {TEST_HOST, getTestPort} from '../helpers';
 import { PREFIXED_APPIUM_OPTS_CAP } from '../../lib/basedriver/capabilities';
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
@@ -15,15 +15,18 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
   describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer, d;
+
     before(async function () {
-      port = port ?? await getPort();
+      port = port ?? await getTestPort();
       defaultCaps = {...defaultCaps, 'appium:port': port};
       d = new DriverClass({port, address});
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
-        port
+        port,
+        hostname: TEST_HOST
       });
     });
+
     after(async function () {
       await baseServer.close();
     });

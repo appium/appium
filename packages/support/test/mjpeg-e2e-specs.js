@@ -3,14 +3,13 @@ import { mjpeg } from '..';
 import B from 'bluebird';
 import http from 'http';
 import mJpegServer from 'mjpeg-server';
+import getPort from 'get-port';
 
 const {MJpegStream} = mjpeg;
 
 const TEST_IMG_JPG = '/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAAeAAD/4QOBaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjYtYzE0MCA3OS4xNjA0NTEsIDIwMTcvMDUvMDYtMDE6MDg6MjEgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6NGY5ODc1OTctZGE2My00Y2M0LTkzNDMtNGYyNjgzMGUwNjk3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjlDMzI3QkY0N0Q3NTExRThCMTlDOTVDMDc2RDE5MDY5IiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjlDMzI3QkYzN0Q3NTExRThCMTlDOTVDMDc2RDE5MDY5IiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDQyAyMDE4IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NGY5ODc1OTctZGE2My00Y2M0LTkzNDMtNGYyNjgzMGUwNjk3IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjRmOTg3NTk3LWRhNjMtNGNjNC05MzQzLTRmMjY4MzBlMDY5NyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pv/uAA5BZG9iZQBkwAAAAAH/2wCEABALCwsMCxAMDBAXDw0PFxsUEBAUGx8XFxcXFx8eFxoaGhoXHh4jJSclIx4vLzMzLy9AQEBAQEBAQEBAQEBAQEABEQ8PERMRFRISFRQRFBEUGhQWFhQaJhoaHBoaJjAjHh4eHiMwKy4nJycuKzU1MDA1NUBAP0BAQEBAQEBAQEBAQP/AABEIACAAIAMBIgACEQEDEQH/xABgAAEAAwEAAAAAAAAAAAAAAAAABAUHCAEBAAAAAAAAAAAAAAAAAAAAABAAAQMCAgsAAAAAAAAAAAAAAAECBBEDEgYhMRODo7PTVAUWNhEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Az8AAdAAAAAAI8+fE8dEuTZtzZR7VMb6OdTE5GJoYirrUp/e8qd9wb3TGe/lJ2551sx8D/9k=';
 
-const MJPEG_SERVER_PORT = 8589;
-const MJPEG_SERVER_URL = `http://localhost:${MJPEG_SERVER_PORT}`;
-
+const MJPEG_HOST = '127.0.0.1';
 
 /**
  * Start an mjpeg server for the purpose of testing, which just sends the same
@@ -40,6 +39,7 @@ function initMJpegServer (port, intMs = 300, times = 20) {
 
 describe('MJpeg Stream (e2e)', function () {
   let mJpegServer, stream;
+  let serverUrl, port;
 
   before(async function () {
     // TODO: remove when buffertools can handle v12
@@ -47,7 +47,9 @@ describe('MJpeg Stream (e2e)', function () {
       return this.skip();
     }
 
-    mJpegServer = await initMJpegServer(MJPEG_SERVER_PORT);
+    port = await getPort();
+    serverUrl = `http://${MJPEG_HOST}:${port}`;
+    mJpegServer = await initMJpegServer(port);
   });
 
   after(function () {
@@ -60,7 +62,7 @@ describe('MJpeg Stream (e2e)', function () {
   });
 
   it('should update mjpeg stream based on new data from mjpeg server', async function () {
-    stream = new MJpegStream(MJPEG_SERVER_URL, _.noop);
+    stream = new MJpegStream(serverUrl, _.noop);
     should.not.exist(stream.lastChunk);
     await stream.start();
     should.exist(stream.lastChunk);
@@ -96,7 +98,7 @@ describe('MJpeg Stream (e2e)', function () {
   });
 
   it('should error out if the server does not send any images before a timeout', async function () {
-    stream = new MJpegStream(MJPEG_SERVER_URL, _.noop);
+    stream = new MJpegStream(serverUrl, _.noop);
     await stream.start(0).should.eventually.be.rejectedWith(/never sent/);
   });
 

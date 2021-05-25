@@ -1,13 +1,13 @@
 import B from 'bluebird';
 import _ from 'lodash';
-import { BaseDriver, errors } from 'appium-base-driver';
+import { BaseDriver, errors } from '@appium/base-driver';
 import { FakeApp } from './fake-app';
 import commands from './commands';
 
 class FakeDriver extends BaseDriver {
 
-  constructor () {
-    super();
+  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
+    super(opts, shouldValidateCaps, driverArgs);
     this.appModel = null;
     this.curContext = 'NATIVE_APP';
     this.elMap = {};
@@ -65,10 +65,18 @@ class FakeDriver extends BaseDriver {
     return null;
   }
 
+  async getFakeDriverArgs () {
+    await B.delay(1);
+    return this.driverArgs;
+  }
+
   static newMethodMap = {
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},
       POST: {command: 'setFakeThing', payloadParams: {required: ['thing']}}
+    },
+    '/session/:sessionId/fakedriverargs': {
+      GET: {command: 'getFakeDriverArgs'}
     },
   };
 

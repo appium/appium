@@ -491,7 +491,7 @@ export default class ExtensionCommand {
   /**
    * @typedef RunOutput
    * @property {?string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
-   * @property {string[]|Array<string>} output - script output
+   * @property {string[]} output - script output
    */
   /**
    * Runs a script cached inside the "scripts" field under "appium"
@@ -527,8 +527,9 @@ export default class ExtensionCommand {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
 
-    const runner = new SubProcess(`node`, [extScripts[scriptName]],
-                                  {cwd: this.config.getExtensionRequirePath(ext)});
+    const runner = new SubProcess(`node`, [extScripts[scriptName]], {
+      cwd: this.config.getExtensionRequirePath(ext)
+    });
 
     const output = new RingBuffer(50);
 

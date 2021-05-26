@@ -65,7 +65,7 @@ class RingBuffer {
     this.buffer.shift();
   }
   enqueue (item) {
-    if (this.buffer.length === this.size) {
+    if (this.buffer.length >= this.size) {
       this.dequeue();
     }
     this.buffer.push(item);

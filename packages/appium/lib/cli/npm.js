@@ -36,14 +36,7 @@ export default class NPM {
       args.push('-json');
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
-    let runner;
-    try {
-      runner = async () => await exec(npmCmd, args, execOpts);
-    } catch (err) {
-      /* eslint-disable no-console */
-      console.log(err);
-      /* eslint-enable no-console */
-    }
+    let runner = async () => await exec(npmCmd, args, execOpts);
     if (lockFile) {
       const acquireLock = util.getLockFileGuard(path.resolve(cwd, lockFile));
       const _runner = runner;

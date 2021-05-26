@@ -55,7 +55,6 @@ async function spinWith (json, msg, fn) {
 class RingBuffer {
   constructor (size = 50) {
     this.size = size;
-    this.pointer = 0;
     this.buffer = [];
   }
   getBuff () {

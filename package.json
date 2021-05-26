@@ -111,7 +111,7 @@
     "handlebars": "^4.2.0",
     "mocha": "^8.0.1",
     "pre-commit": "1.x",
-    "sinon": "^10.0.0",
+    "sinon": "^11.1.0",
     "validate.js": "^0.13.0",
     "wd": "^1.10.0",
     "yaml-js": "^0.x"

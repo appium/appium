@@ -150,7 +150,13 @@ describe('CLI', function () {
     describe('run', function () {
       before(async function () {
         await clear();
-        await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+        try {
+          await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+        } catch (err) {
+          /* eslint-disable no-console */
+          console.log(err);
+          /* eslint-enable no-console */
+        }
       });
       it('should run a valid driver, valid script, and result in success', async function () {
         const driverName = 'fake';

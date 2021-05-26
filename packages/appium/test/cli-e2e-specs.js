@@ -149,6 +149,7 @@ describe('CLI', function () {
 
     describe('run', function () {
       before(async function () {
+        await clear();
         try {
           await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
         } catch (err) {

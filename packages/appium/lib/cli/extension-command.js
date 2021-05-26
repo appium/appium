@@ -491,7 +491,7 @@ export default class ExtensionCommand {
   /**
    * @typedef RunOutput
    * @property {?string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
-   * @property {array} output - script output
+   * @property {string[]|Array<string>} output - script output
    */
   /**
    * Runs a script cached inside the "scripts" field under "appium"

@@ -39,6 +39,39 @@ describe('CLI', function () {
   }
   describe('Driver CLI', function () {
     const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+
+    describe('run', function () {
+      before(async function () {
+        await clear();
+        try {
+          await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
+        } catch (err) {
+          /* eslint-disable no-console */
+          console.log(err);
+          /* eslint-enable no-console */
+        }
+      });
+      it('should run a valid driver, valid script, and result in success', async function () {
+        const driverName = 'fake';
+        const scriptName = 'fake-success';
+        const out = JSON.parse(await run('run', [driverName, scriptName, '--json']));
+        out.should.not.include.key('error');
+      });
+      it('should run a valid driver, valid error prone script, and return error in json', async function () {
+        const driverName = 'fake';
+        const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
+        out.should.include.key('error');
+      });
+      it('should take a valid driver, invalid script, and throw an error', async function () {
+        const driverName = 'fake';
+        await chai.expect(run('run', [driverName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
+      });
+      it('should take an invalid driver, invalid script, and throw an error', async function () {
+        const driverName = 'foo';
+        await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
+      });
+    });
+
     describe('list', function () {
       it('should list available drivers', async function () {
         const stdout = await run('list');
@@ -144,38 +177,6 @@ describe('CLI', function () {
         const uninstall = JSON.parse(await run('uninstall', ['fake', '--json']));
         uninstall.should.not.have.key('fake');
         await fs.exists(installPath).should.eventually.be.false;
-      });
-    });
-
-    describe('run', function () {
-      before(async function () {
-        await clear();
-        try {
-          await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
-        } catch (err) {
-          /* eslint-disable no-console */
-          console.log(err);
-          /* eslint-enable no-console */
-        }
-      });
-      it('should run a valid driver, valid script, and result in success', async function () {
-        const driverName = 'fake';
-        const scriptName = 'fake-success';
-        const out = JSON.parse(await run('run', [driverName, scriptName, '--json']));
-        out.should.not.include.key('error');
-      });
-      it('should run a valid driver, valid error prone script, and return error in json', async function () {
-        const driverName = 'fake';
-        const out = JSON.parse(await run('run', [driverName, 'fake-error', '--json']));
-        out.should.include.key('error');
-      });
-      it('should take a valid driver, invalid script, and throw an error', async function () {
-        const driverName = 'fake';
-        await chai.expect(run('run', [driverName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
-      });
-      it('should take an invalid driver, invalid script, and throw an error', async function () {
-        const driverName = 'foo';
-        await chai.expect(run('run', [driverName, 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
       });
     });
   });

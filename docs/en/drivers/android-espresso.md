@@ -39,3 +39,16 @@ capabilities](/docs/en/writing-running-appium/caps.md#android-only).
 Setup for the Espresso driver basically entails getting the Android SDK and
 build tools ready to go. You can follow the instructions at the [UiAutomator2
 Driver doc](android-uiautomator2.md#basic-setup), since the steps are the same.
+
+
+### Server Arguments
+
+Usage: `node . --driver-args='{"espresso": {[argName]: [argValue]}}'`
+
+<expand_table>
+
+|Argument|Default|Description|Example|
+|----|-------|-----------|-------|
+
+|`"reboot"`|false|reboot emulator after each session and kill it at the end|`--driver-args='{"espresso": {"reboot": true}}'`|
+|`"suppressKillServer"`|false| If set, prevents Appium from killing the adb server instance|`--driver-args='{"espresso": {"suppressKillServer": true}}'`|

@@ -144,3 +144,25 @@ Over Appium 1.14.0, Appium configures keyboard preferences by default to make te
 - Turn `Predictive` in _Keyboards_ off
 - Mark keyboard tutorial as complete
 - (Only for Simulator) Toggle software keyboard on
+
+
+### Server Arguments
+
+Usage: `node . --driver-args='{"xcuitest": {[argNames]: [argValues]}}'`
+
+'webkitDebugProxyPort': {
+    default: 27753,
+    type: 'int',
+  },
+  'wdaLocalPort': {
+    default: 8100,
+    type: 'int',
+  }
+
+<expand_table>
+
+|Argument|Default|Description|Example|
+|----|-------|-----------|-------|
+
+|`"webkitDebugProxyPort"`|27753|Local port used for communication with ios-webkit-debug-proxy|`--driver-args='{"xcuitest": {"webkitDebugProxyPort": 27753}}'`|
+|`"wdaLocalPort"`|8100| Local port used for communication with ios-web-driver-agent|`--driver-args='{"xcuitest": {"wdaLocalPort": 8100}}'`|

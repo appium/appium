@@ -39,7 +39,7 @@ function parseExtensionArgs (extensionArgs, extensionName) {
     return {};
   }
   const parsedExtensionArgs = parseJsonStringOrFile(extensionArgs);
-  const extensionSpecificArgs = parsedExtensionArgs[extensionName] ? parsedExtensionArgs[extensionName] : {};
+  const extensionSpecificArgs = parsedExtensionArgs[extensionName];
   if (!_.isPlainObject(extensionSpecificArgs)) {
     throw new Error(`Driver or plugin arguments must be plain objects`);
   }

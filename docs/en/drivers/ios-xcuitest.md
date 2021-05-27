@@ -150,15 +150,6 @@ Over Appium 1.14.0, Appium configures keyboard preferences by default to make te
 
 Usage: `node . --driver-args='{"xcuitest": {[argNames]: [argValues]}}'`
 
-'webkitDebugProxyPort': {
-    default: 27753,
-    type: 'int',
-  },
-  'wdaLocalPort': {
-    default: 8100,
-    type: 'int',
-  }
-
 <expand_table>
 
 |Argument|Default|Description|Example|

@@ -5,8 +5,8 @@
       "ignore": "@appium/eslint-config-appium"
     },
     "version": {
-      "push": false,
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "createRelease": true
     }
   },
   "ignoreChanges": [

@@ -15,7 +15,6 @@ const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js
 
 describe('CLI', function () {
   let appiumHome;
-
   before(async function () {
     appiumHome = await tempDir.openDir();
   });
@@ -23,7 +22,6 @@ describe('CLI', function () {
   after(async function () {
     await fs.rimraf(appiumHome);
   });
-
   async function clear () {
     await fs.rimraf(appiumHome);
     await mkdirp(appiumHome);
@@ -39,17 +37,14 @@ describe('CLI', function () {
   }
   describe('Driver CLI', function () {
     const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
-
     describe('run', function () {
+      after(async function () {
+        await fs.rimraf(appiumHome);
+      });
       before(async function () {
+        appiumHome = await tempDir.openDir();
         await clear();
-        try {
-          await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
-        } catch (err) {
-          /* eslint-disable no-console */
-          console.log(err);
-          /* eslint-enable no-console */
-        }
+        await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       });
       it('should run a valid driver, valid script, and result in success', async function () {
         const driverName = 'fake';
@@ -73,6 +68,12 @@ describe('CLI', function () {
     });
 
     describe('list', function () {
+      before(async function () {
+        appiumHome = await tempDir.openDir();
+      });
+      after(async function () {
+        await fs.rimraf(appiumHome);
+      });
       it('should list available drivers', async function () {
         const stdout = await run('list');
         for (const d of Object.keys(KNOWN_DRIVERS)) {
@@ -100,6 +101,12 @@ describe('CLI', function () {
     });
 
     describe('install', function () {
+      before(async function () {
+        appiumHome = await tempDir.openDir();
+      });
+      after(async function () {
+        await fs.rimraf(appiumHome);
+      });
       it('should install a driver from the list of known drivers', async function () {
         await clear();
         const ret = JSON.parse(await run('install', ['uiautomator2', '--json']));
@@ -167,6 +174,12 @@ describe('CLI', function () {
     });
 
     describe('uninstall', function () {
+      before(async function () {
+        appiumHome = await tempDir.openDir();
+      });
+      after(async function () {
+        await fs.rimraf(appiumHome);
+      });
       it('should uninstall a driver based on its driver name', async function () {
         await clear();
         const ret = JSON.parse(await run('install', ['appium-fake-driver', '--source', 'npm', '--json']));

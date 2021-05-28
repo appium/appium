@@ -1,12 +1,10 @@
-import B from 'bluebird';
-import fs from 'fs';
+import {readFile} from 'fs/promises';
+import {readFileSync} from 'fs';
 import path from 'path';
 import XMLDom from 'xmldom';
 import xpath from 'xpath';
 import log from './logger';
 import { FakeElement } from './fake-element';
-
-const readFile = B.promisify(fs.readFile);
 
 const SCREENSHOT = path.resolve(__dirname, '..', '..', 'screen.png');
 
@@ -71,7 +69,7 @@ class FakeApp {
   }
 
   async loadApp (appPath) {
-    log.info('Loading Mock app model');
+    log.info(`Loading Mock app model at ${appPath}`);
     let data = await readFile(appPath);
     log.info('Parsing Mock app XML');
     this.rawXml = data.toString();
@@ -151,7 +149,7 @@ class FakeApp {
   }
 
   getScreenshot () {
-    return fs.readFileSync(SCREENSHOT, 'base64');
+    return readFileSync(SCREENSHOT, 'base64');
   }
 
 }

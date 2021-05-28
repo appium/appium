@@ -18,7 +18,9 @@ chai.use(chaiAsPromised);
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   let port;
-  describe('BaseDriver (e2e)', function () {
+  const className = DriverClass.name || '(unknown driver)';
+
+  describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer, d;
     before(async function () {
       port = await getPort();

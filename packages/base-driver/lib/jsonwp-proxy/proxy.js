@@ -41,7 +41,6 @@ class JWProxy {
       keepAlive: opts.keepAlive ?? true,
       maxSockets: 10,
       maxFreeSockets: 5,
-      timeout: 60000,
     };
     this.httpAgent = new http.Agent(agentOpts);
     this.httpsAgent = new https.Agent(agentOpts);

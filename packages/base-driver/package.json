@@ -34,10 +34,10 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.0.0",
-    "@appium/support": "^2.48.0",
+    "@appium/support": "^2.52.0",
     "async-lock": "^1.0.0",
     "asyncbox": "^2.3.1",
-    "axios": "^0.21.0",
+    "axios": "^0.x",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.2",
     "colors": "^1.1.2",
@@ -49,7 +49,7 @@
     "method-override": "^3.0.0",
     "morgan": "^1.9.0",
     "serve-favicon": "^2.4.5",
-    "source-map-support": "^0.5.5",
+    "source-map-support": "^0.x",
     "validate.js": "^0.13.0",
     "webdriverio": "^6.0.2",
     "ws": "^7.0.0"

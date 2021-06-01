@@ -130,18 +130,6 @@ describe('CLI', function () {
         delete list.fake.installed;
         list.should.eql(ret);
       });
-      it('should install a driver from a local npm module', async function () {
-        await clear(localFakeDriverPath);
-        // take advantage of the fact that we know we have fake driver installed as a dependency in
-        // this module, so we know its local path on disk
-        const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
-        ret.fake.pkgName.should.eql('@appium/fake-driver');
-        ret.fake.installType.should.eql('local');
-        ret.fake.installSpec.should.eql(localFakeDriverPath);
-        const list = JSON.parse(await run('list', ['--installed', '--json']));
-        delete list.fake.installed;
-        list.should.eql(ret);
-      });
     });
 
     describe('uninstall', function () {
@@ -222,5 +210,43 @@ describe('CLI', function () {
         await chai.expect(run('run', ['foo', 'bar', '--json'], false, ext)).to.eventually.be.rejectedWith(Error);
       });
     });
+  });
+});
+
+describe('test', function () {
+  let appiumHome;
+  const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+  before(async function () {
+    appiumHome = await tempDir.openDir();
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+  });
+  async function clear (localPath) {
+    await exec('npm', ['unlink', localPath], {cwd});
+    await fs.rimraf(appiumHome);
+    await mkdirp(appiumHome);
+  }
+
+  async function run (driverCmd, args = [], raw = false, ext = 'driver') {
+    args = [...args, '--appium-home', appiumHome];
+    const ret = await exec('node', [executable, ext, driverCmd, ...args], {cwd});
+    if (raw) {
+      return ret;
+    }
+    return ret.stdout;
+  }
+  it('should install a driver from a local npm module', async function () {
+    await clear(localFakeDriverPath);
+    // take advantage of the fact that we know we have fake driver installed as a dependency in
+    // this module, so we know its local path on disk
+    const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
+    ret.fake.pkgName.should.eql('@appium/fake-driver');
+    ret.fake.installType.should.eql('local');
+    ret.fake.installSpec.should.eql(localFakeDriverPath);
+    const list = JSON.parse(await run('list', ['--installed', '--json']));
+    delete list.fake.installed;
+    list.should.eql(ret);
   });
 });

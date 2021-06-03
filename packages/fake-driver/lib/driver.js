@@ -15,6 +15,7 @@ class FakeDriver extends BaseDriver {
     this.maxElId = 0;
     this.caps = {};
     this.fakeThing = null;
+    this.driverArgs = driverArgs;
 
     this.desiredCapConstraints = {
       app: {

@@ -120,6 +120,16 @@ class FakeApp {
     return this.xpathQuery(`//${className}`, ctx);
   }
 
+  cssQuery (css, ctx) {
+    if (css.startsWith('#')) {
+      return this.idQuery(css.slice(1), ctx);
+    }
+    if (css.startsWith('.')) {
+      return this.classQuery(css.slice(1), ctx);
+    }
+    return this.classQuery(css, ctx);
+  }
+
   hasAlert () {
     return this.activeAlert !== null;
   }

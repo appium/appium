@@ -32,7 +32,8 @@ helpers.findElOrEls = async function findElOrEls (strategy, selector, mult, ctx)
     'id': 'idQuery',
     'accessibility id': 'idQuery',
     'class name': 'classQuery',
-    'tag name': 'classQuery'
+    'tag name': 'classQuery',
+    'css selector': 'cssQuery'
   };
   // TODO this error checking should probably be part of MJSONWP?
   if (!_.includes(_.keys(qMap), strategy)) {

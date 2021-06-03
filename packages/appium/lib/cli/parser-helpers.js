@@ -82,8 +82,8 @@ function parseJsonStringOrFile (capsOrPath) {
     return result;
   } catch (e) {
     const msg = loadedFromFile
-      ? `Passed in argument '${capsOrPath}' must be a valid JSON`
-      : `Passed in argument must be a valid JSON`;
+      ? `The provided value of '${capsOrPath}' must be a valid JSON`
+      : `The provided value must be a valid JSON`;
     throw new TypeError(`${msg}. Original error: ${e.message}`);
   }
 }

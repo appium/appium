@@ -226,13 +226,9 @@ describe('utils', function () {
         FAKE_DRIVER_NAME,
       ).should.eql(JSON.parse(FAKE_DRIVER_ARGS)[FAKE_DRIVER_NAME]);
     });
-    it('should take a valid json string with an invalid driver name and return an empty object', function () {
+    it('should take a valid json string with an invalid driver name and throw an error', function () {
       const fakeDriverArgs = `{"xcuitest": ${FAKE_ARGS}}`;
-
-      parseExtensionArgs(
-        fakeDriverArgs,
-        FAKE_DRIVER_NAME,
-      ).should.eql({});
+      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
     });
     it('should take an empty json object and return an empty object', function () {
       const fakeDriverArgs = {};

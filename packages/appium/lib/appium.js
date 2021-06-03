@@ -407,8 +407,9 @@ class AppiumDriver extends BaseDriver {
     sessionId = _.truncate(sessionId, {length: 11});
     return this.pluginClasses.map((PluginClass) => {
       const name = `${PluginClass.pluginName} (${sessionId})`;
-      const opts = {};
-      opts.pluginArgs = parseExtensionArgs(this.args.pluginArgs, PluginClass.pluginName);
+      const opts = {
+        pluginArgs: parseExtensionArgs(this.args.pluginArgs, PluginClass.pluginName),
+      };
       return new PluginClass(name, opts);
     });
   }

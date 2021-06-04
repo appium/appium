@@ -1,12 +1,13 @@
 import {readFile} from 'fs/promises';
-import {readFileSync} from 'fs';
+import {readFileSync, existsSync} from 'fs';
 import path from 'path';
 import XMLDom from 'xmldom';
 import xpath from 'xpath';
 import log from './logger';
 import { FakeElement } from './fake-element';
 
-const SCREENSHOT = path.resolve(__dirname, '..', '..', 'screen.png');
+const screenShotPath = path.join(__dirname, '..', 'screen.png');
+const SCREENSHOT = existsSync(screenShotPath) ? screenShotPath : path.join(__dirname, '..', '..', 'screen.png');
 
 class FakeApp {
   constructor () {

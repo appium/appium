@@ -29,7 +29,7 @@ function generalTests () {
       should.exist(geo.longitude);
     });
     it('should get app source', async function () {
-      let source = await driver.source();
+      let source = await driver.getPageSource();
       source.should.contain('<MockNavBar id="nav"');
     });
     // TODO do we want to test driver.pageIndex? probably not
@@ -58,28 +58,28 @@ function generalTests () {
     });
 
     it('should set implicit wait timeout', async function () {
-      await driver.setImplicitWaitTimeout(1000);
+      await driver.setTimeout({implicit: 1000});
     });
     it('should not set invalid implicit wait timeout', async function () {
-      await driver.setImplicitWaitTimeout('foo')
-              .should.eventually.be.rejectedWith(/ms/);
+      await driver.setTimeout({implicit: 'foo'})
+              .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     // skip these until basedriver supports these timeouts
     it.skip('should set async script timeout', async function () {
-      await driver.setAsyncScriptTimeout(1000);
+      await driver.setTimeout({script: 1000});
     });
     it.skip('should not set invalid async script timeout', async function () {
-      await driver.setAsyncScriptTimeout('foo')
-              .should.eventually.be.rejectedWith(/ms/);
+      await driver.setTimeout({script: 'foo'})
+              .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     it.skip('should set page load timeout', async function () {
-      await driver.setPageLoadTimeout(1000);
+      await driver.setTimeout({pageLoad: 1000});
     });
     it.skip('should not set page load script timeout', async function () {
-      await driver.setPageLoadTimeout('foo')
-              .should.eventually.be.rejectedWith(/ms/);
+      await driver.setTimeout({pageLoad: 'foo'})
+              .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     it('should allow performing actions that do nothing but save them', async function () {

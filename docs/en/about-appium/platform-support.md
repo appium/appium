@@ -100,3 +100,7 @@ This section lists drivers that are supported by vendors and community.
 ### WebOS Support
 
 - The [WebOS Driver](https://github.com/sharkyStudy/appium-webos-driver)
+
+### AWTK Support
+
+- The [AWTK Driver](https://github.com/ufbycd/appium-awtk-driver)

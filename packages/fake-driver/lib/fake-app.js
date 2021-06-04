@@ -1,4 +1,4 @@
-import {readFile} from 'fs/promises';
+import {fs} from '@appium/support';
 import {readFileSync, existsSync} from 'fs';
 import path from 'path';
 import XMLDom from 'xmldom';
@@ -71,7 +71,7 @@ class FakeApp {
 
   async loadApp (appPath) {
     log.info(`Loading Mock app model at ${appPath}`);
-    let data = await readFile(appPath);
+    let data = await fs.readFile(appPath);
     log.info('Parsing Mock app XML');
     this.rawXml = data.toString();
     this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');

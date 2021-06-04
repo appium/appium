@@ -1,5 +1,7 @@
 import chai from 'chai';
-import { initSession, deleteSession, DEFAULT_CAPS } from './helpers';
+import chaiWebdriverIOAsync from 'chai-webdriverio-async';
+
+import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
 
 const should = chai.should();
 
@@ -7,114 +9,93 @@ function elementTests () {
   describe('element interaction and introspection', function () {
     let driver;
     before (async function () {
-      driver = await initSession(DEFAULT_CAPS);
+      driver = await initSession(W3C_PREFIXED_CAPS);
+      chai.use(chaiWebdriverIOAsync(driver));
     });
     after(async function () {
-      await deleteSession();
+      return await deleteSession(driver);
     });
 
-    it('should not send keys to an invalid element', async function () {
-      await driver.elementByXPath('//MockListItem').sendKeys('test value')
-              .should.eventually.be.rejectedWith(/12/);
+    it('should not set value on an invalid element', async function () {
+      const el = await driver.$('//MockListItem');
+      await el.setValue('test value').should.eventually.be.rejectedWith(/invalid state/);
     });
-    it('should send keys to an element and retrieve text', async function () {
-      let el = await driver.elementByXPath('//MockInputField');
-      await el.sendKeys('test value');
-      (await el.text()).should.eql('test value');
+    it('should set value on an element and retrieve text', async function () {
+      let el = await driver.$('//MockInputField');
+      await el.setValue('test value');
+      await el.should.have.text('test value');
     });
     it('should not clear an invalid element', async function () {
-      await driver.elementByXPath('//MockListItem').clear()
-              .should.eventually.be.rejectedWith(/12/);
+      await (await driver.$('//MockListItem')).clearValue()
+              .should.eventually.be.rejectedWith(/invalid state/);
     });
     it('should clear an element', async function () {
-      let el = driver.elementByXPath('//MockInputField');
-      (await el.text()).should.not.eql('');
-      await el.clear();
-      (await el.text()).should.eql('');
+      let el = await driver.$('//MockInputField');
+      await el.setValue('test value');
+      await el.should.not.have.text('');
+      await el.clearValue();
+      await el.should.have.text('');
     });
     it('should not click an invisible element', async function () {
-      await driver.elementById('Button1').click()
-              .should.eventually.be.rejectedWith(/12/);
+      await (await driver.$('#Button1')).click()
+              .should.eventually.be.rejectedWith(/invalid state/);
     });
     it('should click an element and get its attributes', async function () {
-      let el = driver.elementById('Button2');
+      let el = await driver.$('#Button2');
       await el.click();
       await el.click();
       await el.click();
       (await el.getAttribute('clicks')).should.equal(3);
     });
     it('should get the name of an element', async function () {
-      let el = await driver.elementByClassName('MockInputField');
+      let el = await driver.$('MockInputField');
       (await el.getTagName()).should.equal('MockInputField');
-      el = await driver.elementById('wv');
+      el = await driver.$('#wv');
       (await el.getTagName()).should.equal('MockWebView');
     });
     it('should detect whether an element is displayed', async function () {
-      let el = driver.elementById('Button1');
-      (await el.isDisplayed()).should.equal(false);
-      el = driver.elementById('Button2');
-      (await el.isDisplayed()).should.equal(true);
+      await driver.$('#Button1').should.not.be.displayed();
+      await driver.$('#Button2').should.be.displayed();
     });
     it('should detect whether an element is enabled', async function () {
-      let el = driver.elementById('Button1');
-      (await el.isEnabled()).should.equal(false);
-      el = driver.elementById('Button2');
-      (await el.isEnabled()).should.equal(true);
+      await driver.$('#Button1').should.not.be.enabled();
+      await driver.$('#Button2').should.be.enabled();
     });
     it('should detect whether an element is selected', async function () {
-      let el = driver.elementById('Button1');
-      (await el.isSelected()).should.equal(false);
-      el = driver.elementById('Button2');
-      (await el.isSelected()).should.equal(true);
+      await driver.$('#Button1').should.not.be.selected();
+      await driver.$('#Button2').should.be.selected();
     });
-    it('should get the location on screen of an element', async function () {
-      let el = driver.elementById('nav');
-      (await el.getLocation()).should.eql({x: 1, y: 1});
+    it('should get the rect of an element', async function () {
+      let {elementId} = await driver.$('#nav');
+      (await driver.getElementRect(elementId)).should.eql({x: 1, y: 1, width: 100, height: 100});
     });
-    it('should get the location on screen of an element with float vals', async function () {
-      let el = driver.elementById('lv');
-      (await el.getLocation()).should.eql({x: 20.8, y: 15.3});
-    });
-    it('should get the location in view of an element', async function () {
-      let el = driver.elementById('nav');
-      (await el.getLocationInView()).should.eql({x: 1, y: 1});
-    });
-    it('should get the location in view of an element with float vals', async function () {
-      let el = driver.elementById('lv');
-      (await el.getLocationInView()).should.eql({x: 20.8, y: 15.3});
-    });
-
-    it('should get the size of an element', async function () {
-      let el = await driver.elementById('nav');
-      (await el.getSize()).should.eql({width: 100, height: 100});
-    });
-    it('should get the size of an element with float vals', async function () {
-      let el = await driver.elementById('wv');
-      (await el.getSize()).should.eql({width: 20.8, height: 20.5});
+    it('should get the rect of an element with float vals', async function () {
+      let {elementId} = await driver.$('#lv');
+      (await driver.getElementRect(elementId)).should.eql({x: 20.8, y: 15.3, height: 2, width: 30.5});
     });
     it('should determine element equality', async function () {
-      let el1 = await driver.elementById('wv');
-      let el2 = await driver.elementById('wv');
-      (await el1.equals(el2)).should.equal(true);
+      let el1 = await driver.$('#wv');
+      let el2 = await driver.$('#wv');
+      (await el1.isEqual(el2)).should.equal(true);
     });
     it('should determine element inequality', async function () {
-      let el1 = await driver.elementById('wv');
-      let el2 = await driver.elementById('lv');
-      (await el1.equals(el2)).should.equal(false);
+      let el1 = await driver.$('#wv');
+      let el2 = await driver.$('#lv');
+      (await el1.isEqual(el2)).should.equal(false);
     });
 
     it('should not get the css property of an element when not in a webview', async function () {
-      await driver.elementById('Button1').getComputedCss('height')
-              .should.eventually.be.rejectedWith(/36/);
+      const {elementId} = await driver.$('#Button1');
+      await driver.getElementCSSValue(elementId, 'height').should.eventually.be.rejectedWith({code: 36});
     });
     it('should get the css property of an element when in a webview', async function () {
-      await driver.context('WEBVIEW_1');
-      let el = await driver.elementByTagName('body');
-      (await el.getComputedCss('background-color')).should.equal('#000');
+      await driver.switchContext('WEBVIEW_1');
+      let {elementId} = await driver.$('body');
+      (await driver.getElementCSSValue(elementId, 'background-color')).should.equal('#000');
     });
     it('should return null for an unspecified css property', async function () {
-      let el = await driver.elementByTagName('body');
-      should.equal(await el.getComputedCss('font-size'), null);
+      let {elementId} = await driver.$('body');
+      should.equal(await driver.getElementCSSValue(elementId, 'font-size'), null);
     });
   });
 }

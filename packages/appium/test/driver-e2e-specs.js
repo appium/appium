@@ -20,7 +20,6 @@ chai.use(chaiAsPromised);
 
 let TEST_SERVER;
 let TEST_PORT;
-const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
 const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
 const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
 const should = chai.should();
@@ -39,6 +38,7 @@ describe('FakeDriver - via HTTP', function () {
   // actually going to be required by Appium
   let FakeDriver = null;
   let baseUrl;
+  const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
   before(async function () {
     wdOpts.port = TEST_PORT = await getTestPort();
     TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;

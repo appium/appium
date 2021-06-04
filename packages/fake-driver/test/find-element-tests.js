@@ -25,26 +25,6 @@ function findElementTests () {
       it('should find multiple elements', async function () {
         await driver.$$('//MockListItem').should.have.count(3);
       });
-      it('should not find multiple elements that are not there', async function () {
-        await driver.$$('//dontexist').should.have.count(0);
-      });
-    });
-
-    describe('by id', function () {
-      it('should find a single element by id', async function () {
-        await driver.$('#wv').should.be.existing();
-      });
-
-      it('should not find a single element by id that is not there', async function () {
-        await driver.$('#dontexist').should.not.be.existing();
-      });
-
-      it('should find multiple elements by id', async function () {
-        await driver.$$('#li').should.have.count(2);
-      });
-      it('should not find multiple elements by id that are not there', async function () {
-        await driver.$$('#dontexist').should.have.count(0);
-      });
     });
 
     describe('by classname', function () {

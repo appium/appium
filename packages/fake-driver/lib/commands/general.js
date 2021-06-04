@@ -56,6 +56,9 @@ commands.performActions = async function performActions (actions) {
   this.appModel.actionLog.push(actions);
 };
 
+commands.releaseActions = async function releaseActions () {
+};
+
 commands.getLog = async function getLog (type) {
   switch (type) {
     case 'actions':

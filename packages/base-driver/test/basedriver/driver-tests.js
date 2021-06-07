@@ -12,7 +12,10 @@ chai.use(chaiAsPromised);
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
-  describe('BaseDriver', function () {
+  // to display the driver under test in report
+  const className = DriverClass.name || '(unknown driver)';
+
+  describe(`BaseDriver (as ${className})`, function () {
     let d, w3cCaps;
 
     beforeEach(function () {
@@ -75,12 +78,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       let sessions = await d.getSessions();
 
       sessions.length.should.equal(1);
-      sessions[0].should.eql({
-        id: d.sessionId,
-        capabilities: {
-          'deviceName': 'Commodore 64',
-          'platformName': 'Fake'
-        }
+      sessions[0].should.include({
+        id: d.sessionId
+      });
+      sessions[0].capabilities.should.include({
+        deviceName: 'Commodore 64',
+        platformName: 'Fake'
       });
     });
 
@@ -393,7 +396,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       beforeEach(async function () {
         beforeStartTime = Date.now();
         d.shouldValidateCaps = false;
-        await d.executeCommand('createSession', null, null, defaultCaps);
+        await d.executeCommand('createSession', null, null, {alwaysMatch: {...defaultCaps}, firstMatch: [{}]});
       });
       describe('#eventHistory', function () {
         it('should have an eventHistory property', function () {

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 import { FakeElement } from '../fake-element';
 
 let commands = {}, helpers = {}, extensions = {};
@@ -32,7 +32,8 @@ helpers.findElOrEls = async function findElOrEls (strategy, selector, mult, ctx)
     'id': 'idQuery',
     'accessibility id': 'idQuery',
     'class name': 'classQuery',
-    'tag name': 'classQuery'
+    'tag name': 'classQuery',
+    'css selector': 'cssQuery'
   };
   // TODO this error checking should probably be part of MJSONWP?
   if (!_.includes(_.keys(qMap), strategy)) {

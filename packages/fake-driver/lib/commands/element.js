@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 
 let commands = {}, helpers = {}, extensions = {};
 
@@ -72,9 +72,9 @@ commands.getAttribute = async function getAttribute (attr, elementId) {
   return el.getAttr(attr);
 };
 
-commands.getLocation = function getLocation (elementId) {
+commands.getElementRect = function getElementRect (elementId) {
   let el = this.getElement(elementId);
-  return el.getLocation();
+  return el.getElementRect();
 };
 
 commands.getSize = function getSize (elementId) {

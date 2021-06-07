@@ -30,9 +30,9 @@
     "screen.png"
   ],
   "dependencies": {
+    "@appium/base-driver": "^8.0.0-beta.6",
     "@appium/support": "^2.11.1",
     "@babel/runtime": "^7.0.0",
-    "appium-base-driver": "^7.6.0",
     "asyncbox": "^2.3.2",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.4",

@@ -1,13 +1,12 @@
 import { fs } from '@appium/support';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import path from 'path';
 import XMLDom from 'xmldom';
 import xpath from 'xpath';
 import log from './logger';
 import { FakeElement } from './fake-element';
 
-const screenShotPath = path.join(__dirname, '..', 'screen.png');
-const SCREENSHOT = existsSync(screenShotPath) ? screenShotPath : path.join(__dirname, '..', '..', 'screen.png');
+const SCREENSHOT = path.join(__dirname, '..', 'screen.png');
 
 class FakeApp {
   constructor () {

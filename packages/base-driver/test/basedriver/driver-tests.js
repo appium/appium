@@ -82,8 +82,8 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         id: d.sessionId
       });
       sessions[0].capabilities.should.include({
-        'deviceName': 'Commodore 64',
-        'platformName': 'Fake'
+        deviceName: 'Commodore 64',
+        platformName: 'Fake'
       });
     });
 

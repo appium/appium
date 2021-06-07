@@ -1,14 +1,10 @@
 import path from 'path';
-import {remote as wdio} from 'webdriverio';
-import {existsSync} from 'fs';
+import { remote as wdio } from 'webdriverio';
 
 const TEST_HOST = '127.0.0.1';
 const TEST_PORT = 4774;
 
-// XXX: what dir are we in? it depends on how we're running this test. the .xml file doesn't move, but we do!
-// we may be running with @babel/register; otherwise, we're probably in `build/test/` which _does not_ contain the xml file.
-const appFixturePath = path.join(__dirname, 'fixtures', 'app.xml');
-const TEST_APP = existsSync(appFixturePath) ? appFixturePath : path.join(__dirname, '..', '..', 'test', 'fixtures', 'app.xml');
+const TEST_APP = path.join(__dirname, 'fixtures', 'app.xml');
 
 const BASE_CAPS = {
   platformName: 'Fake',

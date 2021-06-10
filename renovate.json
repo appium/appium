@@ -2,5 +2,6 @@
   "extends": [
     "config:base"
   ],
-  "baseBranches": ["2.0"]
+  "baseBranches": ["2.0"],
+  "ignorePaths": ["sample-code"]
 }

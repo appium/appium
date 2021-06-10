@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "baseBranches": ["2.0"],
+  "ignorePaths": ["sample-code"],
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "{{parentDir}}",
+  "schedule": ["after 10pm and before 5:00am"],
+  "timezone": "America/Vancouver",
+  "rangeStrategy": "auto"
+}

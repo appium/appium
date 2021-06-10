@@ -8,5 +8,6 @@
   "semanticCommitScope": "{{parentDir}}",
   "semanticCommitType": "chore",
   "schedule": ["after 10pm and before 5:00am"],
+  "timezone": "America/Vancouver",
   "rangeStrategy": "auto"
 }

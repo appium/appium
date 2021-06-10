@@ -3,5 +3,6 @@
     "config:base"
   ],
   "baseBranches": ["2.0"],
-  "ignorePaths": ["sample-code"]
+  "ignorePaths": ["sample-code"],
+  "semanticCommitScope": "{{parentDir}}"
 }

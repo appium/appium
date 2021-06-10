@@ -6,5 +6,6 @@
   "ignorePaths": ["sample-code"],
   "semanticCommitScope": "{{parentDir}}",
   "semanticCommitType": "chore",
-  "schedule": ["after 10pm and before 5:00am"]
+  "schedule": ["after 10pm and before 5:00am"],
+  "rangeStrategy": "auto"
 }

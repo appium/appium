@@ -4,6 +4,7 @@
   ],
   "baseBranches": ["2.0"],
   "ignorePaths": ["sample-code"],
+  "semanticCommits": "enabled",
   "semanticCommitScope": "{{parentDir}}",
   "semanticCommitType": "chore",
   "schedule": ["after 10pm and before 5:00am"],

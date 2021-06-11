@@ -102,7 +102,7 @@
     "pre-commit": "1.x",
     "querystring": "^0.2.0",
     "serve-static": "^1.13.1",
-    "sinon": "^9.0.0",
+    "sinon": "11.1.1",
     "sync-monorepo-packages": "^0.3.2",
     "validate.js": "^0.13.0",
     "wd": "^1.14.0",

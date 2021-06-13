@@ -24,6 +24,16 @@ const sharedArgs = [
     dest: 'appiumHome',
   }],
 
+  [['-aph', '--appium-plugin-home'], {
+    required: false,
+    default: null,
+    help: 'The path to the directory where Appium will keep installed plugins. ' +
+          '"--appium-home" is more general configuration. ' +
+          'This argument can be used when you want to manage plugins separately. ' +
+          'Then, plugins are stored in this argument rather than "--appium-home"',
+    dest: 'appiumPluginHome',
+  }],
+
   [['--log-filters'], {
     dest: 'logFilters',
     default: null,

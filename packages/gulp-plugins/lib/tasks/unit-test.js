@@ -14,7 +14,8 @@ const configure = function configure (gulp, opts, env) {
       timeout: opts.testTimeout,
       traceWarnings: opts.test.traceWarnings,
       traceDeprecation: opts.test.traceWarnings,
-      color: true
+      color: true,
+      exit: Boolean(opts.test.exit)
     };
     // set env so our code knows when it's being run in a test env
     process.env._TESTING = 1;

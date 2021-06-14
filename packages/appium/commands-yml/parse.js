@@ -1,6 +1,6 @@
 import path from 'path';
 import yaml from 'yaml-js';
-import { fs, mkdirp, util } from 'appium-support';
+import { fs, mkdirp, util } from '@appium/support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import _ from 'lodash';

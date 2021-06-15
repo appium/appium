@@ -103,7 +103,7 @@
     "querystring": "^0.2.0",
     "serve-static": "^1.13.1",
     "sinon": "11.1.1",
-    "sync-monorepo-packages": "^0.3.2",
+    "sync-monorepo-packages": "^0.3.4",
     "validate.js": "^0.13.0",
     "wd": "^1.14.0",
     "webdriverio": "^6.12.0",

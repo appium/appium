@@ -56,7 +56,7 @@ const createAppiumURL = curry(
    * createURLWithPath('appium/execute')
    */
   (address, port, session, pathname) => {
-    if (!address.startsWith('http://')) {
+    if (!/^https?:\/\//.test(address)) {
       address = `http://${address}`;
     }
     let path = session ? `session/${session}` : '';

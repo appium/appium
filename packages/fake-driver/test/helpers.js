@@ -30,7 +30,8 @@ const W3C_CAPS = {
 const WD_OPTS = {
   hostname: TEST_HOST,
   port: TEST_PORT,
-  connectionRetryCount: 0
+  connectionRetryCount: 0,
+  logLevel: 'error'
 };
 
 async function initSession (w3cPrefixedCaps) {

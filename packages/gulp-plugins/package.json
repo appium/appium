@@ -46,7 +46,7 @@
     "@octokit/rest": "^18.0.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "^15.0.1",
-    "ansi-red": "^0.x",
+    "ansi-red": "^0.1",
     "axios": "^0.x",
     "babel-eslint": "^10.0.3",
     "babel-plugin-istanbul": "^6.0.0",

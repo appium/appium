@@ -86,7 +86,7 @@
     "yargs": "^17.0.0"
   },
   "peerDependencies": {
-    "gulp": "^4.0.0"
+    "gulp": "^4.0.2"
   },
   "publishConfig": {
     "access": "public"

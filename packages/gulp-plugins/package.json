@@ -82,7 +82,7 @@
     "shell-quote": "^1.6.1",
     "source-map-support": "^0.5.3",
     "through2": "^4.0.2",
-    "vinyl-paths": "^3.0.0",
+    "vinyl-paths": "^3.0.1",
     "yargs": "^17.0.1"
   },
   "peerDependencies": {

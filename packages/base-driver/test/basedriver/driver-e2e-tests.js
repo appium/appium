@@ -5,12 +5,12 @@ import {
 } from '../../lib/constants';
 import axios from 'axios';
 import B from 'bluebird';
-import {DEFAULT_TEST_HOST, getTestPort, createAppiumURL, METHODS} from '../helpers';
+import {TEST_HOST, getTestPort, createAppiumURL, METHODS} from '../helpers';
 import { PREFIXED_APPIUM_OPTS_CAP } from '../../lib/basedriver/capabilities';
 const {POST, DELETE} = METHODS;
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
-  let address = defaultCaps['appium:address'] ?? DEFAULT_TEST_HOST;
+  let address = defaultCaps['appium:address'] ?? TEST_HOST;
   let port = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
@@ -42,7 +42,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
         port,
-        hostname: DEFAULT_TEST_HOST
+        hostname: TEST_HOST
       });
       createAppiumTestURL = createAppiumURL(address, port);
       newSessionURL = createAppiumTestURL('', 'session');

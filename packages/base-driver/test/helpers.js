@@ -1,7 +1,7 @@
 import getPort from 'get-port';
 import {curry} from 'lodash';
 
-const DEFAULT_TEST_HOST = '127.0.0.1';
+const TEST_HOST = '127.0.0.1';
 
 /**
  * Some HTTP methods, for your pleasure
@@ -69,4 +69,4 @@ const createAppiumURL = curry(
   4,
 );
 
-export {DEFAULT_TEST_HOST, METHODS, getTestPort, createAppiumURL};
+export {TEST_HOST, METHODS, getTestPort, createAppiumURL};

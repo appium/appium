@@ -330,7 +330,7 @@ module.exports = {
       // ['API 文档', 'api.md'],
     ]],
     ['驱动程序', ['drivers',
-      // ['XCUITest (iOS)', 'ios-xcuitest.md'],
+      ['XCUITest (iOS)', 'ios-xcuitest.md'],
       // ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
       // ['UIAutomation (iOS)', 'ios-uiautomation.md'],
       // ['UIAutomation Safari Launcher (iOS)', 'ios-uiautomation-safari-launcher.md'],

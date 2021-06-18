@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",
-    "@appium/fake-plugin": "^1.0.0",
+    "@appium/fake-plugin": "^1.2.0",
     "@babel/core": "^7.0.0",
     "@babel/eslint-parser": "^7.14.3",
     "@babel/plugin-proposal-class-properties": "^7.0.0",

@@ -36,7 +36,7 @@
     "asyncbox": "^2.3.2",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.4",
-    "source-map-support": "^0.x",
+    "source-map-support": "^0.5",
     "xmldom": "^0.x",
     "xpath": "^0.0"
   },

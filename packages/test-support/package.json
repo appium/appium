@@ -36,7 +36,7 @@
     "lodash": "^4.17.5",
     "loud-rejection": "^2.0.0",
     "sinon": "^11.0.0",
-    "source-map-support": "^0.5.9"
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "^4.7.0",

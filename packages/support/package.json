@@ -56,7 +56,7 @@
     "source-map-support": "^0.5.5",
     "teen_process": "^1.5.1",
     "uuid": "^8.0.0",
-    "which": "^2.0.0",
+    "which": "^2.0.2",
     "yauzl": "^2.7.0"
   },
   "devDependencies": {

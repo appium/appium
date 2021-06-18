@@ -50,7 +50,7 @@
     "pluralize": "^8.0.0",
     "pngjs": "^6.0.0",
     "rimraf": "^3.0.0",
-    "sanitize-filename": "^1.6.1",
+    "sanitize-filename": "^1.6.3",
     "semver": "^7.0.0",
     "shell-quote": "^1.7.2",
     "source-map-support": "^0.5.5",

@@ -1,13 +1,13 @@
-## Android 的 UiAutomator2 引擎
+## Android 的 UiAutomator2 驱动
 
 Appium 目前官方推荐使用 `UiAutomator2` 作为安卓app在自动化测试中的驱动。
  _(如果你是Appium新手? 可以参阅 [introduction to Appium drivers（TODO）](#TODO))_.
  这个驱动使用了谷歌的 [UiAutomator2](https://developer.android.com/training/testing/ui-automator.html) 技术，让自动化测试可以更方便地在安卓真机或者模拟器上运行。
 
-UiAutomator2 引擎的开发过程，记录在了[appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) 代码仓库中。
+UiAutomator2 驱动的开发过程，记录在了[appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) 代码仓库中。
 
-在更早期的安卓设备引擎中，包括了以下引擎：
-* [UiAutomator 引擎](/docs/en/drivers/android-uiautomator.md)
+在更早期的安卓设备驱动中，包括了以下驱动：
+* [UiAutomator 驱动](/docs/en/drivers/android-uiautomator.md)
 
 
 ### 需求与依赖
@@ -18,19 +18,19 @@ UiAutomator2 引擎的开发过程，记录在了[appium-uiautomator2-driver](ht
 * 在 Mac，Windows 或者 Linux OS 设备上，需要安装好 Android SDK
    * Android SDK 中 Build Tools 的版本需要大于等于 24
 
-此外，UiAutomator2 引擎是不支持对 Android 5.0 （Lollipop, API level 21）以下的设备进行自动化测试的，如果对这类版本的设备进行自动化测试，建议使用：[UiAutomator 引擎](/docs/en/drivers/android-uiautomator.md)；
+此外，UiAutomator2 驱动是不支持对 Android 5.0 （Lollipop, API level 21）以下的设备进行自动化测试的，如果对这类版本的设备进行自动化测试，建议使用：[UiAutomator 驱动](/docs/en/drivers/android-uiautomator.md)；
 
 
 ### 使用方式
 
-通过 UiAutomator2 引擎启动一个测试任务时，需要传递一个`automationName` [capability] 的参数在 [新会话的请求](#TODO) 中，并且 `automationName` 的值需要是：`UiAutomator2`。当然，你至少也需要再传递这些参数：`platformName` (=`Android`), `platformVersion`, `deviceName`, 与 `app`。
+通过 UiAutomator2 驱动启动一个测试任务时，需要传递一个`automationName` [capability] 的参数在 [新会话的请求](#TODO) 中，并且 `automationName` 的值需要是：`UiAutomator2`。当然，你至少也需要再传递这些参数：`platformName` (=`Android`), `platformVersion`, `deviceName`, 与 `app`。
 
 同时，强烈建议您传递：`appPackage` 与 `appActivity` 这两个参数，以便让 Appium 知道您想要拉起哪个 App 和哪个 activity。如果没有的话，Appium 将会自己从 App 的 manifest 文件中自动去查找。
 
 
 ### 功能参数
 
-UiAutomator2 引擎支持许多通用的功能参数：[Appium
+UiAutomator2 驱动支持许多通用的功能参数：[Appium
 capabilities](/docs/en/writing-running-appium/caps.md)，同时，有许多特有的功能参数，可以参考这篇文档查找这些功能参数：[Android
 section](/docs/en/writing-running-appium/caps.md#android-only)。
 
@@ -40,7 +40,7 @@ Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md) 兼容。
 
 ### 命令
 
-如果需要查看 Appium 支持的命令，及它们是如何映射到 UiAutomator2 引擎的，可以参考：[API
+如果需要查看 Appium 支持的命令，及它们是如何映射到 UiAutomator2 驱动的，可以参考：[API
 Reference](#TODO).
 
 

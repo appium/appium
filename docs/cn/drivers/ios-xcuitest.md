@@ -1,8 +1,8 @@
-## iOS 的 XCUITest 引擎
+## iOS 的 XCUITest 驱动
 
-iOS 应用的自动化测试，Appium 主要通过 `XCUITest` 引擎进行驱动。_(如果您是 Appium 新手？ 可以参阅： [introduction to Appium drivers](#TODO))_。这个驱动通过苹果公司的 [XCUITest](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/09-ui_testing.html) 库，让自动化测试可以更方便地执行 App 自动化测试。它是通过 [WebDriverAgent](https://github.com/facebook/webdriveragent) 服务对 XCUITest 进行访问。WebDriverAgent（也称之为 “ WDA ”）是 Facebook 公司的一个项目，Appium 的核心团队为其做出了许多贡献。WDA 是一个 WebDriver兼容的服务，服务可以运行在 iOS 模拟器或真机上，并且调用 XCUITest API。WDA 作为 Appium 的 XCUITest 驱动管理器，对用户而言是一个黑盒进程，通过 WDA 对往来的通信进行代理，并提供许多额外的能力（举个例子：如管理模拟器等方法）。
+iOS 应用的自动化测试，Appium 主要通过 `XCUITest` 驱动进行驱动。_(如果您是 Appium 新手？ 可以参阅： [introduction to Appium drivers](#TODO))_。这个驱动通过苹果公司的 [XCUITest](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/testing_with_xcode/chapters/09-ui_testing.html) 库，让自动化测试可以更方便地执行 App 自动化测试。它是通过 [WebDriverAgent](https://github.com/facebook/webdriveragent) 服务对 XCUITest 进行访问。WebDriverAgent（也称之为 “ WDA ”）是 Facebook 公司的一个项目，Appium 的核心团队为其做出了许多贡献。WDA 是一个 WebDriver兼容的服务，服务可以运行在 iOS 模拟器或真机上，并且调用 XCUITest API。WDA 作为 Appium 的 XCUITest 驱动管理器，对用户而言是一个黑盒进程，通过 WDA 对往来的通信进行代理，并提供许多额外的能力（举个例子：如管理模拟器等方法）。
 
-XCUITest 引擎的开发过程，记录在了 [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) 仓库中。
+XCUITest 驱动的开发过程，记录在了 [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) 仓库中。
 
 
 ### 需求与依赖
@@ -15,14 +15,14 @@ XCUITest 引擎的开发过程，记录在了 [appium-xcuitest-driver](https://g
 * XCUITest 驱动从 Appium 1.6 开始在 Appium 中可用。
 * 为了驱动使用正确，附加的系统库是必需的（请参阅下面的安装部分）。
 
-### 迁移自 UIAutomation 引擎
+### 迁移自 UIAutomation 驱动
 
 如果您正在从 Appium 的旧驱动程序：[UIAutomation-based driver](/docs/en/drivers/ios-uiautomation.md) 迁移到XCUITest驱动，您可能想知道这个：[迁移指南](/docs/en/advanced-concepts/migrating-to-xcuitest.md)。
 
 
 ### 使用
 
-在使用 XCUITest 引擎来创建一个会话链接时，需要包含 `automationName` [capability](#TODO) 参数在您的 [创建新会话请求](#TODO)中，且其值应该是：`XCUITest`。当然，您也至少传递这些必传参数：`platformName`, `platformVersion`, `deviceName` 与 `app`。
+在使用 XCUITest 驱动来创建一个会话链接时，需要包含 `automationName` [capability](#TODO) 参数在您的 [创建新会话请求](#TODO)中，且其值应该是：`XCUITest`。当然，您也至少传递这些必传参数：`platformName`, `platformVersion`, `deviceName` 与 `app`。
 
 在 iPhone 与 iPad 设备上，参数 `platformName` 需要是 `iOS`。在 tvOS 设备上，参数 `platformName` 需要是 `tvOS`。
 
@@ -49,7 +49,7 @@ XCUITest 引擎的开发过程，记录在了 [appium-xcuitest-driver](https://g
 
 ### 功能参数
 
-XCUITest 引擎支持许多通用的功能参数 [Appium
+XCUITest 驱动支持许多通用的功能参数 [Appium
 capabilities](/docs/en/writing-running-appium/caps.md), 同时，有许多特有的功能参数，可以参考这篇文档查找这些功能参数：[appium-xcuitest-driver
 README](https://github.com/appium/appium-xcuitest-driver#desired-capabilities).
 
@@ -58,7 +58,7 @@ README](https://github.com/appium/appium-xcuitest-driver#desired-capabilities).
 
 ### 命令
 
-如果需要查看 Appium 支持的命令，及它们是如何映射到 XCUITest 引擎的，可以参考：[API
+如果需要查看 Appium 支持的命令，及它们是如何映射到 XCUITest 驱动的，可以参考：[API
 Reference](#TODO).
 
 

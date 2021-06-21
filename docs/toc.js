@@ -331,7 +331,7 @@ module.exports = {
     ]],
     ['驱动程序', ['drivers',
       ['XCUITest (iOS)', 'ios-xcuitest.md'],
-      // ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
+      ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
       // ['UIAutomation (iOS)', 'ios-uiautomation.md'],
       // ['UIAutomation Safari Launcher (iOS)', 'ios-uiautomation-safari-launcher.md'],
       // ['UIAutomator (Android)', 'android-uiautomator.md'],

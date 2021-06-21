@@ -41,7 +41,7 @@ Chromedriver](/docs/en/writing-running-appium/web/chromedriver.md) 兼容。
 ### 命令
 
 如果需要查看 Appium 支持的命令，及它们是如何映射到 UiAutomator2 驱动的，可以参考：[API
-Reference](#TODO).
+Reference](#TODO)。
 
 
 ### 基础设置

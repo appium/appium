@@ -1,5 +1,7 @@
-appium-base-driver
-===================
+# appium-base-driver
+
+> **NOTE: `appium-base-driver` for Appium 2.x has moved to the [`2.0` branch of `appium/appium`](https://github.com/appium/appium/tree/2.0/packages/base-driver)**
+
 [![NPM version](http://img.shields.io/npm/v/appium-base-driver.svg)](https://npmjs.org/package/appium-base-driver)
 [![Downloads](http://img.shields.io/npm/dm/appium-base-driver.svg)](https://npmjs.org/package/appium-base-driver)
 [![Dependency Status](https://david-dm.org/appium/appium-base-driver.svg)](https://david-dm.org/appium/appium-base-driver)

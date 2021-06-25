@@ -200,9 +200,12 @@ class OptionalIdbCommandCheck extends DoctorCheck {
   }
 
   async fix () { // eslint-disable-line require-await
-    return `Why ${'idb'.bold} is needed and how to install it: https://github.com/appium/appium-idb`;
+    return `Why ${'idb'.bold} is needed and how to install it: ${OptionalIdbCommandCheck.idbReadmeURL}`;
   }
 }
+// link to idb README.md
+// https://github.com/appium/appium-ios/blob/main/packages/idb/README.md
+OptionalIdbCommandCheck.idbReadmeURL = 'https://git.io/JnxQc';
 checks.push(new OptionalIdbCommandCheck());
 
 class OptionalApplesimutilsCommandCheck extends DoctorCheck {

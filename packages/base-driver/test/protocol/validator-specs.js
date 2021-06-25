@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { validators } from '../../lib/protocol/validators';
+import { validators } from '../../lib/protocol/validators.js';
 import chai from 'chai';
 
 

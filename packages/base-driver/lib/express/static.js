@@ -1,15 +1,15 @@
 import path from 'path';
-import log from './logger';
+import log from './logger.js';
 import _ from 'lodash';
 import { fs } from 'appium-support';
 import B from 'bluebird';
 
-
-let STATIC_DIR = path.resolve(__dirname, '..', '..', '..', 'static');
-if (_.isNull(path.resolve(__dirname).match(/build[/\\]lib[/\\]express$/))) {
+const {pathname: filepath} = new URL(import.meta.url);
+let {pathname: STATIC_DIR} = new URL('../../../static', import.meta.url);
+if (_.isNull(filepath.match(/build[/\\]lib[/\\]express$/))) {
   // in some contexts we are not in the build directory,
   // so we don't want to go back the extra level
-  STATIC_DIR = path.resolve(__dirname, '..', '..', 'static');
+  STATIC_DIR = new URL('../../static', import.meta.url).pathname;
 }
 
 async function guineaPigTemplate (req, res, page) {

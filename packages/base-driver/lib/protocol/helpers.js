@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { duplicateKeys } from '../basedriver/helpers';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS } from '../constants';
+import { duplicateKeys } from '../basedriver/helpers.js';
+import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS } from '../constants.js';
 
 const JSONWP_SUCCESS_STATUS_CODE = 0;
 const JSONWP_UNKNOWN_ERROR_STATUS_CODE = 13;

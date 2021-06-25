@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import { logger, util } from 'appium-support';
 import axios from 'axios';
-import { getSummaryByCode } from '../jsonwp-status/status';
+import { getSummaryByCode } from '../jsonwp-status/status.js';
 import {
   errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode
-} from '../protocol/errors';
-import { routeToCommandName } from '../protocol';
-import { MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS } from '../constants';
-import ProtocolConverter from './protocol-converter';
-import { formatResponseValue, formatStatus } from '../protocol/helpers';
-import SESSIONS_CACHE from '../protocol/sessions-cache';
+} from '../protocol/errors.js';
+import { routeToCommandName } from '../protocol/index.js';
+import { MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS } from '../constants.js';
+import ProtocolConverter from './protocol-converter.js';
+import { formatResponseValue, formatStatus } from '../protocol/helpers.js';
+import SESSIONS_CACHE from '../protocol/sessions-cache.js';
 import http from 'http';
 import https from 'https';
 

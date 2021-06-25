@@ -1,4 +1,4 @@
-import logCommands from '../../../lib/basedriver/commands/log';
+import logCommands from '../../../lib/basedriver/commands/log.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';

@@ -2,17 +2,17 @@
 
 import {
   server, routeConfiguringFunction, errors, JWProxy, BaseDriver
-} from '../..';
-import { FakeDriver } from './fake-driver';
+} from '../../index.js';
+import { FakeDriver } from './fake-driver.js';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
-import { createProxyServer } from './helpers';
+import { createProxyServer } from './helpers.js';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
-} from '../../lib/constants';
+} from '../../lib/constants.js';
 import qs from 'querystring';
 import getPort from 'get-port';
 

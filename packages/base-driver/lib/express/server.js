@@ -5,21 +5,21 @@ import http from 'http';
 import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import log from './logger';
-import { startLogFormatter, endLogFormatter } from './express-logging';
+import log from './logger.js';
+import { startLogFormatter, endLogFormatter } from './express-logging.js';
 import {
   allowCrossDomain, fixPythonContentType, defaultToJSONContentType,
   catchAllHandler, allowCrossDomainAsyncExecute, handleIdempotency,
   catch404Handler,
-} from './middleware';
-import { guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR } from './static';
-import { produceError, produceCrash } from './crash';
+} from './middleware.js';
+import { guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR } from './static.js';
+import { produceError, produceCrash } from './crash.js';
 import {
   addWebSocketHandler, removeWebSocketHandler, removeAllWebSocketHandlers,
   getWebSocketHandlers
-} from './websocket';
+} from './websocket.js';
 import B from 'bluebird';
-import { DEFAULT_BASE_PATH } from '../constants';
+import { DEFAULT_BASE_PATH } from '../constants.js';
 import { EventEmitter } from 'events';
 
 

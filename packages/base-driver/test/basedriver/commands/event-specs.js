@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { BaseDriver } from '../../..';
+import { BaseDriver } from '../../../index.js';
 
 
 chai.use(chaiAsPromised);

@@ -1,4 +1,4 @@
-import { isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
+import { isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

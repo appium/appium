@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import cp from 'child_process';
-import log from '../logger';
+import log from '../logger.js';
 import B from 'bluebird';
 
 const FEAT_FLAG = 'execute_driver_script';

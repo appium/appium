@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import log from './logger';
+import log from './logger.js';
 
 class DeviceSettings {
 

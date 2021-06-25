@@ -1,7 +1,7 @@
-import { default as BaseDriver, errors } from '../..';
+import { default as BaseDriver, errors } from '../../index.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import logger from '../../lib/basedriver/logger';
+import logger from '../../lib/basedriver/logger.js';
 import sinon from 'sinon';
 
 const should = chai.should();

@@ -1,9 +1,12 @@
 'use strict';
 
-const boilerplate = require('./index').boilerplate.use(require('gulp'));
-
+const gulp = require('gulp');
+const path = require('path');
+const boilerplate = require('./index').boilerplate.use(gulp);
 
 require('./test/gulpfile-js');
+
+gulp.task('copy-babelrc', () => gulp.src(path.resolve(__dirname, '.babelrc')).pipe(gulp.dest('./build/')));
 
 boilerplate({
   transpile: true,
@@ -17,5 +20,6 @@ boilerplate({
   },
   build: 'Appium Gulp Plugins',
   extraDefaultTasks: ['e2e-test', 'test-transpile-lots-of-files'],
-  testReporter: 'dot'
+  testReporter: 'dot',
+  postTranspile: ['copy-babelrc']
 });

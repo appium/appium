@@ -1,4 +1,4 @@
-import log from './logger';
+import log from './logger.js';
 import LRU from 'lru-cache';
 import { fs, util } from 'appium-support';
 import os from 'os';

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { util } from 'appium-support';
-import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
+import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants.js';
 
 
 const SET_ALERT_TEXT_PAYLOAD_PARAMS = {

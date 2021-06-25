@@ -1,8 +1,8 @@
-import log from '../logger';
+import log from '../logger.js';
 import { waitForCondition } from 'asyncbox';
 import _ from 'lodash';
 import { util } from 'appium-support';
-import { errors } from '../../protocol';
+import { errors } from '../../protocol/index.js';
 
 
 let commands = {}, helpers = {}, extensions = {};

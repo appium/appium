@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { validator } from './desired-caps';
+import { validator } from './desired-caps.js';
 import { util } from 'appium-support';
-import log from './logger';
-import { errors } from '../protocol/errors';
+import log from './logger.js';
+import { errors } from '../protocol/errors.js';
 
 // Takes primary caps object and merges it into a secondary caps object.
 // (see https://www.w3.org/TR/webdriver/#dfn-merging-capabilities)

@@ -2,14 +2,14 @@
 
 import {
   Protocol, isSessionCommand, routeConfiguringFunction, determineProtocol
-} from './protocol';
+} from './protocol.js';
 import {
   NO_SESSION_ID_COMMANDS, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName
-} from './routes';
+} from './routes.js';
 import {
   errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode
-} from './errors';
+} from './errors.js';
 
 export {
   Protocol, routeConfiguringFunction, errors, isErrorType,

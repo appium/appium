@@ -2,7 +2,7 @@ import _ from 'lodash';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
-import { DeviceSettings } from '../..';
+import { DeviceSettings } from '../../index.js';
 import sinon from 'sinon';
 
 

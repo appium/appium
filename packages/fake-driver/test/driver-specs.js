@@ -5,7 +5,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { FakeDriver } from '..';
 import { W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
-import { baseDriverUnitTests } from '@appium/base-driver/build/test/basedriver';
+import { baseDriverUnitTests } from '@appium/base-driver/test';
 
 chai.use(chaiAsPromised);
 chai.should();

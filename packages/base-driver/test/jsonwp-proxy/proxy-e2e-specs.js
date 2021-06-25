@@ -1,7 +1,7 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { JWProxy, server, routeConfiguringFunction } from '../..';
-import { FakeDriver } from '../protocol/fake-driver';
+import { JWProxy, server, routeConfiguringFunction } from '../../index.js';
+import { FakeDriver } from '../protocol/fake-driver.js';
 
 const should = chai.should();
 chai.use(chaiAsPromised);

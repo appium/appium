@@ -1,17 +1,17 @@
 import _ from 'lodash';
 import { util } from 'appium-support';
-import { validators } from './validators';
+import { validators } from './validators.js';
 import {
   errors, isErrorType, getResponseForW3CError, getResponseForJsonwpError,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
-} from './errors';
-import { METHOD_MAP, NO_SESSION_ID_COMMANDS } from './routes';
+} from './errors.js';
+import { METHOD_MAP, NO_SESSION_ID_COMMANDS } from './routes.js';
 import B from 'bluebird';
 import {
   formatResponseValue, formatStatus,
-} from './helpers';
-import { MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
-import SESSIONS_CACHE from './sessions-cache';
+} from './helpers.js';
+import { MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH } from '../constants.js';
+import SESSIONS_CACHE from './sessions-cache.js';
 
 
 const CREATE_SESSION_COMMAND = 'createSession';

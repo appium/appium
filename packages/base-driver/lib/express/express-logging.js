@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import 'colors';
 import morgan from 'morgan';
-import log from './logger';
-import { MAX_LOG_BODY_LENGTH } from '../constants';
+import log from './logger.js';
+import { MAX_LOG_BODY_LENGTH } from '../constants.js';
 
 
 // Copied the morgan compile function over so that cooler formats

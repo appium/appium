@@ -1,4 +1,4 @@
-import log from './logger';
+import log from './logger.js';
 import validator from 'validate.js';
 import B from 'bluebird';
 

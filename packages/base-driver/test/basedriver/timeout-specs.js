@@ -1,6 +1,6 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import BaseDriver from '../..';
+import BaseDriver from '../../index.js';
 import sinon from 'sinon';
 
 

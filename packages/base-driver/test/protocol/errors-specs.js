@@ -1,7 +1,7 @@
 import {
   errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType
-} from '../..';
-import { getResponseForW3CError } from '../../lib/protocol/errors';
+} from '../../index.js';
+import { getResponseForW3CError } from '../../lib/protocol/errors.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';

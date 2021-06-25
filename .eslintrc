@@ -9,6 +9,9 @@
     {
       "files": "packages/*/test/**/*",
       "rules": { "func-names": "off" }
-    }
-  ]
+    },
+  ],
+  "rules": {
+    "import/no-unresolved": "off"
+  } 
 }

@@ -4,13 +4,14 @@
       "@babel/preset-env",
       {
         "targets": {
-          "node": "10"
+          "node": "12"
         }
       }
     ]
   ],
   "plugins": [
     "source-map-support",
+    "babel-plugin-transform-import-meta",
     "@babel/plugin-transform-runtime",
     "@babel/plugin-syntax-bigint",
     "@babel/plugin-proposal-nullish-coalescing-operator",

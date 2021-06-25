@@ -1,7 +1,7 @@
 // transpile:mocha
 
-import { _ } from 'lodash';
-import { METHOD_MAP, routeToCommandName } from '../../lib/protocol';
+import _ from 'lodash';
+import { METHOD_MAP, routeToCommandName } from '../../lib/protocol/index.js';
 import crypto from 'crypto';
 import chai from 'chai';
 

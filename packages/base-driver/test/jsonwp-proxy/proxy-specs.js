@@ -1,10 +1,10 @@
 // transpile:mocha
 
-import { JWProxy } from '../..';
-import request from './mock-request';
+import { JWProxy } from '../../index.js';
+import request from './mock-request.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { isErrorType, errors } from '../../lib/protocol/errors';
+import { isErrorType, errors } from '../../lib/protocol/errors.js';
 
 
 const should = chai.should();

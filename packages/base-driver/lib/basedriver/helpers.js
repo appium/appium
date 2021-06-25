@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import url from 'url';
-import logger from './logger';
+import logger from './logger.js';
 import { tempDir, fs, util, zip, net, timing } from 'appium-support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';

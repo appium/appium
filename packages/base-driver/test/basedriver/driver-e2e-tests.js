@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { server, routeConfiguringFunction, DeviceSettings, errors } from '../..';
+import { server, routeConfiguringFunction, DeviceSettings, errors } from '../../index.js';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
-} from '../../lib/constants';
+} from '../../lib/constants.js';
 import axios from 'axios';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

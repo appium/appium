@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { welcome } from '../../lib/express/static';
+import { welcome } from '../../lib/express/static.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';

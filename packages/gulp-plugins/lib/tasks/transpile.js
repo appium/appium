@@ -12,7 +12,7 @@ const JSON_SOURCES = [
 ];
 
 const configure = function configure (gulp, opts, env) {
-  gulp.task('transpile', function () {
+  gulp.task('transpile', gulp.series([function reallyTranspile () {
     // json files can be copied as is, they don't need to be transpiled
     const firstPath = gulp.src(JSON_SOURCES, {base: './'})
       .pipe(gulp.dest(opts.transpileOut));
@@ -21,8 +21,9 @@ const configure = function configure (gulp, opts, env) {
       .pipe(new Transpiler(opts).stream())
       .on('error', env.spawnWatcher.handleError.bind(env.spawnWatcher))
       .pipe(gulp.dest(opts.transpileOut));
-    return merge(firstPath, secondPath);
-  });
+    const thirdPath = gulp.src('./templates/package.json', {cwd: __dirname}).pipe(gulp.dest(opts.transpileOut));
+    return merge(firstPath, secondPath, thirdPath);
+  }, ...(opts.postTranspile || [])]));
 };
 
 module.exports = {

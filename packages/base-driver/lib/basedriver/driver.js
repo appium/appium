@@ -1,26 +1,27 @@
 import {
   Protocol, errors, determineProtocol
-} from '../protocol';
-import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
+} from '../protocol/index.js';
+import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants.js';
 import os from 'os';
-import path from 'path';
-import commands from './commands';
-import * as helpers from './helpers';
-import log from './logger';
-import DeviceSettings from './device-settings';
-import { desiredCapabilityConstraints } from './desired-caps';
-import { validateCaps } from './capabilities';
+import commands from './commands/index.js';
+import * as helpers from './helpers.js';
+import log from './logger.js';
+import DeviceSettings from './device-settings.js';
+import { desiredCapabilityConstraints } from './desired-caps.js';
+import { validateCaps } from './capabilities.js';
 import B from 'bluebird';
 import _ from 'lodash';
 import AsyncLock from 'async-lock';
 import { EventEmitter } from 'events';
-
+import {readFileSync} from 'fs';
 
 B.config({
   cancellation: true,
 });
 
-const BASEDRIVER_VER = require(path.resolve(__dirname, '..', '..', '..', 'package.json')).version;
+const META_URL = import.meta.url;
+const pkgJson = JSON.parse(readFileSync(new URL('../../package.json', META_URL)));
+const BASEDRIVER_VER = pkgJson.version ? pkgJson.version : JSON.parse(readFileSync(new URL('../../../package.json', META_URL))).version;
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';

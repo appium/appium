@@ -3,7 +3,7 @@ import path from 'path';
 import url from 'url';
 import chaiAsPromised from 'chai-as-promised';
 import { fs } from 'appium-support';
-import { configureApp } from '../../lib/basedriver/helpers';
+import { configureApp } from '../../lib/basedriver/helpers.js';
 import http from 'http';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';

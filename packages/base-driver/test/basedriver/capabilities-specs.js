@@ -1,8 +1,8 @@
-import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps } from '../../lib/basedriver/capabilities';
+import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps } from '../../lib/basedriver/capabilities.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
-import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps';
+import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps.js';
 
 chai.use(chaiAsPromised);
 const should = chai.should();

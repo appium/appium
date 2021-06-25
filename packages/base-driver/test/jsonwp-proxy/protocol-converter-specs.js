@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { PROTOCOLS } from '../../lib/constants';
-import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter';
+import { PROTOCOLS } from '../../lib/constants.js';
+import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import vm from 'vm';
-import log from '../logger';
+import log from '../logger.js';
 import { attach } from 'webdriverio';
 
 // duplicate defining these keys here so we don't need to re-load a huge appium

@@ -1,4 +1,4 @@
-import { errors } from '../protocol';
+import { errors } from '../protocol/index.js';
 
 
 function produceError () {

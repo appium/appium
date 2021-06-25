@@ -63,7 +63,13 @@ const boilerplate = function (gulp, opts) {
 
   const spawnWatcher = require('./spawn-watcher').use(gulp, opts);
   const rootDir = opts.transpile ? opts.transpileOut : '.';
-  const fileAliases = {
+
+  // ensures ESM code gets run in test, etc. for hybrid-module mode
+  const fileAliases = opts.hybridModule ? {
+    rootDir,
+    testDir: 'test',
+    libDir: 'lib',
+  } : {
     rootDir,
     testDir: `${rootDir}/test`,
     libDir: `${rootDir}/lib`,

@@ -1,10 +1,10 @@
-import sessionCmds from './session';
-import settingsCmds from './settings';
-import timeoutCmds from './timeout';
-import findCmds from './find';
-import logCmds from './log';
-import executeCmds from './execute';
-import eventCmds from './event';
+import sessionCmds from './session.js';
+import settingsCmds from './settings.js';
+import timeoutCmds from './timeout.js';
+import findCmds from './find.js';
+import logCmds from './log.js';
+import executeCmds from './execute.js';
+import eventCmds from './event.js';
 
 
 let commands = {};

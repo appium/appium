@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import log from './logger';
-import { errors } from '../protocol';
-import { handleIdempotency } from './idempotency';
+import log from './logger.js';
+import { errors } from '../protocol/index.js';
+import { handleIdempotency } from './idempotency.js';
 
 function allowCrossDomain (req, res, next) {
   try {

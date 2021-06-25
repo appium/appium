@@ -1,9 +1,9 @@
 /* eslint-disable require-await */
 import _ from 'lodash';
-import log from '../logger';
-import { errors } from '../../protocol';
+import log from '../logger.js';
+import { errors } from '../../protocol/index.js';
 import { util } from 'appium-support';
-import { processCapabilities } from '../capabilities';
+import { processCapabilities } from '../capabilities.js';
 
 let commands = {};
 

@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { server, routeConfiguringFunction } from '../../index.js';
-import { configureServer, normalizeBasePath } from '../../lib/express/server';
+import { configureServer, normalizeBasePath } from '../../lib/express/server.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';

@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { JWProxy } from '../..';
+import { JWProxy } from '../../index.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 

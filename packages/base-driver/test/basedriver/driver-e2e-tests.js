@@ -13,14 +13,14 @@ const should = chai.should();
 chai.use(chaiAsPromised);
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
-  let address = defaultCaps['appium:address'] ?? '127.0.0.1';
+  let address = defaultCaps['appium:address'] || '127.0.0.1';
   let port = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
   describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer, d;
     before(async function () {
-      port = port ?? await getPort();
+      port = port || await getPort();
       defaultCaps = {...defaultCaps, 'appium:port': port};
       d = new DriverClass({port, address});
       baseServer = await server({

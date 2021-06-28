@@ -33,12 +33,13 @@ class JWProxy {
       reqBasePath: DEFAULT_BASE_PATH,
       sessionId: null,
       timeout: DEFAULT_REQUEST_TIMEOUT,
+      keepAlive: true
     });
     this.scheme = this.scheme.toLowerCase();
     this._activeRequests = [];
     this._downstreamProtocol = null;
     const agentOpts = {
-      keepAlive: opts.keepAlive ?? true,
+      keepAlive: opts.keepAlive,
       maxSockets: 10,
       maxFreeSockets: 5,
     };
@@ -224,7 +225,7 @@ class JWProxy {
           log.info(e.stack);
         }
       }
-      throw new errors.ProxyRequestError(proxyErrorMsg, e.response?.data, e.response?.status);
+      throw new errors.ProxyRequestError(proxyErrorMsg, e.response && e.response.data, e.response && e.response.status);
     }
   }
 

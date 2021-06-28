@@ -67,7 +67,7 @@ function cacheResponse (key, req, res) {
     }
   });
   responseListener.once('close', () => {
-    if (res.socket?.write === patchedWriter) {
+    if (res.socket && res.socket.write === patchedWriter) {
       res.socket.write = originalSocketWriter;
     }
 

@@ -11,7 +11,7 @@ body:
     attributes:
       label: The problem
       description: Briefly describe the issue you are experiencing (or the feature you want to see added to Appium). Tell us what you were trying to do and what happened instead. Remember, this is _not_ a place to ask questions. For that, go to http://discuss.appium.io!
-      placeholder: ex. email@example.com
+      placeholder: ex. describe your issue
     validations:
       required: true
   - type: input

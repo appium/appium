@@ -359,28 +359,6 @@ function isPackageOrBundle (app) {
   return (/^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/).test(app);
 }
 
-function getCoordDefault (val) {
-  // going the long way and checking for undefined and null since
-  // we can't be assured `elId` is a string and not an int. Same
-  // thing with destElement below.
-  return util.hasValue(val) ? val : 0.5;
-}
-
-function getSwipeTouchDuration (waitGesture) {
-  // the touch action api uses ms, we want seconds
-  // 0.8 is the default time for the operation
-  let duration = 0.8;
-  if (typeof waitGesture.options.ms !== 'undefined' && waitGesture.options.ms) {
-    duration = waitGesture.options.ms / 1000;
-    if (duration === 0) {
-      // set to a very low number, since they wanted it fast
-      // but below 0.1 becomes 0 steps, which causes errors
-      duration = 0.1;
-    }
-  }
-  return duration;
-}
-
 /**
  * Finds all instances 'firstKey' and create a duplicate with the key 'secondKey',
  * Do the same thing in reverse. If we find 'secondKey', create a duplicate with the key 'firstKey'.
@@ -443,5 +421,5 @@ function parseCapsArray (cap) {
 }
 
 export {
-  configureApp, isPackageOrBundle, getCoordDefault, getSwipeTouchDuration, duplicateKeys, parseCapsArray
+  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray
 };

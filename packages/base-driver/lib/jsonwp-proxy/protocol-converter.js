@@ -190,6 +190,10 @@ class ProtocolConverter {
       : await this.proxyFunc(url, method, body);
   }
 
+  async proxyReleaseActions (url, method) {
+    return await this.proxyFunc(url, method);
+  }
+
   /**
    * Handle "crossing" endpoints for the case
    * when upstream and downstream drivers operate different protocols
@@ -218,6 +222,8 @@ class ProtocolConverter {
         return await this.proxySetValue(url, method, body);
       case 'performActions':
         return await this.proxyPerformActions(url, method, body);
+      case 'releaseActions':
+        return await this.proxyReleaseActions(url, method, body);
       case 'setFrame':
         return await this.proxySetFrame(url, method, body);
       default:

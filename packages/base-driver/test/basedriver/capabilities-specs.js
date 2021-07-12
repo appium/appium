@@ -99,7 +99,7 @@ describe('caps', function () {
     });
   });
 
-  // Tests based on: https://www.w3.org/TR/webdriver/#processing-caps
+  // Tests based on: https://www.w3.org/TR/webdriver/#processing-capabilities
   describe('#parseCaps', function () {
     let caps;
 

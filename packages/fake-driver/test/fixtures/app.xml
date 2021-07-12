@@ -10,7 +10,7 @@
             </head>
             <body style="background-color: #000">
               <h1>Hello</h1>
-              <iframe id="iframe1">
+              <iframe id="1">
                 <html>
                   <head>
                     <title value="iframe title">Test iFrame</title>

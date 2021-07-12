@@ -360,7 +360,7 @@ describe('ios', function () {
       mocks.verify();
     });
     it('fix', async function () {
-      removeColors(await check.fix()).should.equal('Why idb is needed and how to install it: https://github.com/appium/appium-idb');
+      removeColors(await check.fix()).should.equal('Why idb is needed and how to install it: https://git.io/JnxQc');
     });
   }));
 

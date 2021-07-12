@@ -1,31 +1,46 @@
 import path from 'path';
-import wd from 'wd';
+import { remote as wdio } from 'webdriverio';
 
-
-const TEST_HOST = 'localhost';
+const TEST_HOST = '127.0.0.1';
 const TEST_PORT = 4774;
-const TEST_APP = path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'app.xml');
 
-const DEFAULT_CAPS = {
+const TEST_APP = path.join(__dirname, 'fixtures', 'app.xml');
+
+const BASE_CAPS = {
   platformName: 'Fake',
-  deviceName: 'Fake',
+  deviceName: 'Commodore 64',
   app: TEST_APP,
-  address: 'localhost',
+  address: TEST_HOST,
   port: 8181,
 };
 
-let driver;
+const W3C_PREFIXED_CAPS = {
+  'appium:deviceName': BASE_CAPS.deviceName,
+  'appium:app': BASE_CAPS.app,
+  'appium:address': BASE_CAPS.address,
+  'appium:port': BASE_CAPS.port,
+  platformName: BASE_CAPS.platformName
+};
 
-async function initSession (caps) {
-  driver = wd.promiseChainRemote({host: TEST_HOST, port: TEST_PORT});
-  await driver.init(caps);
-  return driver;
+const W3C_CAPS = {
+  alwaysMatch: {...W3C_PREFIXED_CAPS},
+  firstMatch: [{}],
+};
+
+const WD_OPTS = {
+  hostname: TEST_HOST,
+  port: TEST_PORT,
+  connectionRetryCount: 0
+};
+
+async function initSession (w3cPrefixedCaps) {
+  return await wdio({...WD_OPTS, capabilities: w3cPrefixedCaps});
 }
 
-async function deleteSession () {
+async function deleteSession (driver) {
   try {
-    await driver.quit();
+    await driver.deleteSession();
   } catch (ign) {}
 }
 
-export { initSession, deleteSession, TEST_APP, TEST_HOST, TEST_PORT, DEFAULT_CAPS };
+export { initSession, deleteSession, TEST_APP, TEST_HOST, TEST_PORT, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS, WD_OPTS };

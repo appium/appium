@@ -527,7 +527,7 @@ export default class ExtensionCommand {
       throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
     }
 
-    const runner = new SubProcess(`node`, [extScripts[scriptName]], {
+    const runner = new SubProcess(process.execPath, [extScripts[scriptName]], {
       cwd: this.config.getExtensionRequirePath(ext)
     });
 

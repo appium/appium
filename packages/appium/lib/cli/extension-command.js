@@ -174,9 +174,10 @@ export default class ExtensionCommand {
           await this.npm.linkPackage(installSpec))
         );
       } catch (err) {
-        log(this.isJsonOutput, `${err}`);
+        /* eslint-disable no-console */
+        console.log(err);
+        /* eslint-enable no-console */
       }
-
       extData = this.getExtensionFields(pkgJsonData);
       extData.installPath = extData.pkgName;
     } else if (installType === INSTALL_TYPE_GITHUB) {

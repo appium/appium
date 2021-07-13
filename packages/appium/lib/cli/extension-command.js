@@ -174,7 +174,7 @@ export default class ExtensionCommand {
           await this.npm.linkPackage(installSpec))
         );
       } catch (err) {
-        throw new Error(`${err}`);
+        log(this.isJsonOutput, `${err}`);
       }
 
       extData = this.getExtensionFields(pkgJsonData);

@@ -173,6 +173,9 @@ describe('CLI', function () {
       before(async function () {
         appiumHome = await tempDir.openDir();
         await clear(localFakeDriverPath);
+        //await exec('npm', ['unlink', localPath], {cwd});
+        //await exec('npm', ['cache', 'clean'], {cwd});
+        await exec('npm', ['cache', 'verify'], {cwd});
         await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       });
       it('should run a valid driver, valid script, and result in success', async function () {

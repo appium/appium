@@ -130,6 +130,19 @@ describe('CLI', function () {
         delete list.fake.installed;
         list.should.eql(ret);
       });
+      it('should install a driver from a local npm module', async function () {
+        await clear();
+        // take advantage of the fact that we know we have fake driver installed as a dependency in
+        // this module, so we know its local path on disk
+        const localFakeDriverPath = path.resolve(cwd, 'packages', 'fake-driver');
+        const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
+        ret.fake.pkgName.should.eql('@appium/fake-driver');
+        ret.fake.installType.should.eql('local');
+        ret.fake.installSpec.should.eql(localFakeDriverPath);
+        const list = JSON.parse(await run('list', ['--installed', '--json']));
+        delete list.fake.installed;
+        list.should.eql(ret);
+      });
     });
 
     describe('uninstall', function () {

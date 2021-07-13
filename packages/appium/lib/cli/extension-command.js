@@ -169,15 +169,13 @@ export default class ExtensionCommand {
     if (installType === INSTALL_TYPE_LOCAL) {
       const msg = `Linking ${this.type} from local path`;
       let pkgJsonData;
-      /* eslint-disable no-console */
-      console.log('please work');
-      /* eslint-enable no-console */
       try {
         pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
           await this.npm.linkPackage(installSpec))
         );
       } catch (err) {
         /* eslint-disable no-console */
+        console.log({message: 'please work'});
         console.log(err);
         /* eslint-enable no-console */
       }

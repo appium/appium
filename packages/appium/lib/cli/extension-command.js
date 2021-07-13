@@ -168,9 +168,15 @@ export default class ExtensionCommand {
 
     if (installType === INSTALL_TYPE_LOCAL) {
       const msg = `Linking ${this.type} from local path`;
-      const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
-        await this.npm.linkPackage(installSpec))
-      );
+      let pkgJsonData;
+      try {
+        pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
+          await this.npm.linkPackage(installSpec))
+        );
+      } catch (err) {
+        throw new Error(`${err}`);
+      }
+
       extData = this.getExtensionFields(pkgJsonData);
       extData.installPath = extData.pkgName;
     } else if (installType === INSTALL_TYPE_GITHUB) {

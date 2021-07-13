@@ -15,6 +15,7 @@ const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js
 
 describe('CLI', function () {
   let appiumHome;
+
   before(async function () {
     appiumHome = await tempDir.openDir();
   });
@@ -22,6 +23,7 @@ describe('CLI', function () {
   after(async function () {
     await fs.rimraf(appiumHome);
   });
+
   async function clear (localPath) {
     await exec('npm', ['unlink', localPath], {cwd});
     await fs.rimraf(appiumHome);
@@ -131,10 +133,9 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from a local npm module', async function () {
-        await clear();
+        await clear(localFakeDriverPath);
         // take advantage of the fact that we know we have fake driver installed as a dependency in
         // this module, so we know its local path on disk
-        const localFakeDriverPath = path.resolve(cwd, 'packages', 'fake-driver');
         const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
         ret.fake.pkgName.should.eql('@appium/fake-driver');
         ret.fake.installType.should.eql('local');

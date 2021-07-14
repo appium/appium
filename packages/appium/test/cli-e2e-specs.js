@@ -1,3 +1,4 @@
+
 import path from 'path';
 import { exec } from 'teen_process';
 import chai from 'chai';
@@ -24,8 +25,7 @@ describe('CLI', function () {
     await fs.rimraf(appiumHome);
   });
 
-  async function clear (localPath) {
-    await exec('npm', ['unlink', localPath], {cwd});
+  async function clear () {
     await fs.rimraf(appiumHome);
     await mkdirp(appiumHome);
   }
@@ -41,12 +41,6 @@ describe('CLI', function () {
   describe('Driver CLI', function () {
     const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
     describe('list', function () {
-      before(async function () {
-        appiumHome = await tempDir.openDir();
-      });
-      after(async function () {
-        await fs.rimraf(appiumHome);
-      });
       it('should list available drivers', async function () {
         const stdout = await run('list');
         for (const d of Object.keys(KNOWN_DRIVERS)) {
@@ -64,7 +58,7 @@ describe('CLI', function () {
         JSON.parse(out).should.eql({});
       });
       it('should show updates for installed drivers with --updates', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         await run('install', ['appium-fake-driver@0.9.0', '--source', 'npm', '--json']);
         const {fake} = JSON.parse(await run('list', ['--updates', '--json']));
         util.compareVersions(fake.updateVersion, '>', '0.9.0').should.be.true;
@@ -74,14 +68,8 @@ describe('CLI', function () {
     });
 
     describe('install', function () {
-      before(async function () {
-        appiumHome = await tempDir.openDir();
-      });
-      after(async function () {
-        await fs.rimraf(appiumHome);
-      });
       it('should install a driver from the list of known drivers', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['uiautomator2', '--json']));
         ret.uiautomator2.pkgName.should.eql('appium-uiautomator2-driver');
         ret.uiautomator2.installType.should.eql('npm');
@@ -91,7 +79,7 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from npm', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['appium-fake-driver', '--source', 'npm', '--json']));
         ret.fake.pkgName.should.eql('appium-fake-driver');
         ret.fake.installType.should.eql('npm');
@@ -101,7 +89,7 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from npm with a specific version/tag', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['appium-fake-driver@0.9.0', '--source', 'npm', '--json']));
         ret.fake.pkgName.should.eql('appium-fake-driver');
         ret.fake.installType.should.eql('npm');
@@ -111,7 +99,7 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from github', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['appium/appium-fake-driver', '--source',
           'github', '--package', 'appium-fake-driver', '--json']));
         ret.fake.pkgName.should.eql('appium-fake-driver');
@@ -122,7 +110,7 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from git', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['git+https://github.com/appium/appium-fake-driver.git',
           '--source', 'git', '--package', 'appium-fake-driver', '--json']));
         ret.fake.pkgName.should.eql('appium-fake-driver');
@@ -133,7 +121,7 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from a local npm module', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         // take advantage of the fact that we know we have fake driver installed as a dependency in
         // this module, so we know its local path on disk
         const ret = JSON.parse(await run('install', [localFakeDriverPath, '--source', 'local', '--json']));
@@ -147,14 +135,8 @@ describe('CLI', function () {
     });
 
     describe('uninstall', function () {
-      before(async function () {
-        appiumHome = await tempDir.openDir();
-      });
-      after(async function () {
-        await fs.rimraf(appiumHome);
-      });
       it('should uninstall a driver based on its driver name', async function () {
-        await clear(localFakeDriverPath);
+        await clear();
         const ret = JSON.parse(await run('install', ['appium-fake-driver', '--source', 'npm', '--json']));
         const installPath = path.resolve(appiumHome, ret.fake.installPath);
         await fs.exists(installPath).should.eventually.be.true;
@@ -167,15 +149,8 @@ describe('CLI', function () {
     });
 
     describe('run', function () {
-      after(async function () {
-        await fs.rimraf(appiumHome);
-      });
       before(async function () {
-        appiumHome = await tempDir.openDir();
-        await clear(localFakeDriverPath);
-        //await exec('npm', ['unlink', localPath], {cwd});
-        //await exec('npm', ['cache', 'clean'], {cwd});
-        await exec('npm', ['cache', 'verify'], {cwd});
+        await clear();
         await run('install', [localFakeDriverPath, '--source', 'local', '--json']);
       });
       it('should run a valid driver, valid script, and result in success', async function () {
@@ -205,7 +180,7 @@ describe('CLI', function () {
     const ext = 'plugin';
     describe('run', function () {
       before(async function () {
-        await clear(fakePluginDir);
+        await clear();
         await run('install', [fakePluginDir, '--source', 'local', '--json'], false, ext);
       });
       it('should run a valid plugin, valid script, and result in success', async function () {

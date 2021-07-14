@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { asyncify } = require('asyncbox');
-const { fs, logger } = require('appium-support');
+const { fs, logger } = require('@appium/support');
 const path = require('path');
 
 const log = new logger.getLogger('ShrinkwrapValidator');

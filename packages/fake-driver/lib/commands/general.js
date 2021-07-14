@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { errors } from 'appium-base-driver';
+import { errors } from '@appium/base-driver';
 
 let commands = {}, helpers = {}, extensions = {};
 
@@ -54,6 +54,9 @@ commands.getWindowRect = async function getWindowRect () {
 
 commands.performActions = async function performActions (actions) {
   this.appModel.actionLog.push(actions);
+};
+
+commands.releaseActions = async function releaseActions () {
 };
 
 commands.getLog = async function getLog (type) {

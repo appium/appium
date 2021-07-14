@@ -8,6 +8,12 @@ description:
 
     (For iOS real devices)
     Apple security preferences require the WebDriverAgentRunner application to be in [foreground](https://github.com/appium/WebDriverAgent/issues/330) in order to be able to receive the system clipboard content. Otherwise an empty string is always returned. Consider using [Activate App](/docs/en/commands/device/app/activate-app.md) and [Background App](/docs/en/commands/device/app/background-app.md) to change the foreground application.
+    Activate App command cannot launch the WebDriverAgent properly on some environments. It depends on XCTest framework by Apple. Then, you should launch the WebDriverAgent using its Springboard's application icon. Follow the example below.
+
+    1. Open springboard, `@driver.activate_app 'com.apple.springboard'`.
+    2. Find the WDA icon with `@driver.find_element :accessibility_id, 'WebDriverAgentRunner-Runner'` (It should be visible on the screen) and click it.
+    3. Call the get clipboard API.
+    4. Open the application under test with the [Activate App](/docs/en/commands/device/app/activate-app.md).
 
 example_usage:
   java:

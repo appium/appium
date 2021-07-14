@@ -1,14 +1,12 @@
-import B from 'bluebird';
-import fs from 'fs';
+import { fs } from '@appium/support';
+import { readFileSync } from 'fs';
 import path from 'path';
 import XMLDom from 'xmldom';
 import xpath from 'xpath';
 import log from './logger';
 import { FakeElement } from './fake-element';
 
-const readFile = B.promisify(fs.readFile);
-
-const SCREENSHOT = path.resolve(__dirname, '..', '..', 'screen.png');
+const SCREENSHOT = path.join(__dirname, '..', 'screen.png');
 
 class FakeApp {
   constructor () {
@@ -64,17 +62,20 @@ class FakeApp {
   }
 
   setDims () {
-    const nodes = this.xpathQuery('/app');
+    const nodes = this.xpathQuery('//app');
     const app = new FakeElement(nodes[0], this);
     this._width = parseInt(app.nodeAttrs.width, 10);
     this._height = parseInt(app.nodeAttrs.height, 10);
   }
 
   async loadApp (appPath) {
-    log.info('Loading Mock app model');
-    let data = await readFile(appPath);
+    log.info(`Loading Mock app model at ${appPath}`);
+    let data = await fs.readFile(appPath);
     log.info('Parsing Mock app XML');
     this.rawXml = data.toString();
+    this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
+    this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
+    this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
     this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml);
     this.activeDom = this.dom;
   }
@@ -119,6 +120,16 @@ class FakeApp {
     return this.xpathQuery(`//${className}`, ctx);
   }
 
+  cssQuery (css, ctx) {
+    if (css.startsWith('#')) {
+      return this.idQuery(css.slice(1), ctx);
+    }
+    if (css.startsWith('.')) {
+      return this.classQuery(css.slice(1), ctx);
+    }
+    return this.classQuery(css, ctx);
+  }
+
   hasAlert () {
     return this.activeAlert !== null;
   }
@@ -148,7 +159,7 @@ class FakeApp {
   }
 
   getScreenshot () {
-    return fs.readFileSync(SCREENSHOT, 'base64');
+    return readFileSync(SCREENSHOT, 'base64');
   }
 
 }

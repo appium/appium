@@ -1,51 +1,52 @@
-import { initSession, deleteSession, DEFAULT_CAPS } from './helpers';
+import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
 
 function contextTests () {
   describe('contexts, webviews, frames', function () {
     let driver;
     before (async function () {
-      driver = await initSession(DEFAULT_CAPS);
+      driver = await initSession(W3C_PREFIXED_CAPS);
     });
     after(async function () {
-      await deleteSession();
+      return await deleteSession(driver);
     });
     it('should get current context', async function () {
-      await driver.currentContext()
+      await driver.getContext()
               .should.eventually.become('NATIVE_APP');
     });
     it('should get contexts', async function () {
-      await driver.contexts()
+      await driver.getContexts()
               .should.eventually.become(['NATIVE_APP', 'WEBVIEW_1']);
     });
     it('should not set context that is not there', async function () {
-      await driver.context('WEBVIEW_FOO')
-              .should.eventually.be.rejectedWith(/35/);
+      await driver.switchContext('WEBVIEW_FOO')
+              .should.eventually.be.rejectedWith(/No such context found/);
     });
     it('should set context', async function () {
-      await driver.context('WEBVIEW_1').currentContext()
-              .should.eventually.become('WEBVIEW_1');
+      await driver.switchContext('WEBVIEW_1');
+      await driver.getContext().should.eventually.become('WEBVIEW_1');
     });
     it('should find webview elements in a webview', async function () {
-      await driver.elementByXPath('//*').getTagName()
+      await (await driver.$('//*')).getTagName()
               .should.eventually.become('html');
     });
     it('should not switch to a frame that is not there', async function () {
-      await driver.frame('foo').should.eventually.be.rejectedWith(/8/);
+      await driver.switchToFrame(2).should.eventually.be.rejectedWith(/frame could not be found/);
     });
     it('should switch to an iframe', async function () {
-      await driver.frame('iframe1').title()
-              .should.eventually.become('Test iFrame');
+      await driver.switchToFrame(1);
+      await driver.getTitle().should.eventually.become('Test iFrame');
     });
     it('should switch back to default frame', async function () {
-      await driver.frame(null).title()
-              .should.eventually.become('Test Webview');
+      await driver.switchToFrame(null);
+      await driver.getTitle().should.eventually.become('Test Webview');
     });
     it('should go back to native context', async function () {
-      await driver.context('NATIVE_APP').elementByXPath('//*').getTagName()
-              .should.eventually.become('app');
+      await driver.switchContext('NATIVE_APP');
+      await (await driver.$('//*')).getTagName().should.eventually.become('AppiumAUT');
     });
     it('should not set a frame in a native context', async function () {
-      await driver.frame('iframe1').should.eventually.be.rejectedWith(/36/);
+      await driver.switchContext('NATIVE_APP');
+      await driver.switchToFrame(1).should.eventually.be.rejectedWith(/could not be executed in the current context/);
     });
   });
 }

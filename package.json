@@ -3,6 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "description": "Automation for Apps.",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -27,6 +38,10 @@
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "reinstall": "npm run clean && npm install",
     "start": "node ./packages/appium",
+    "sync-pkgs": "npm run sync-pkgs:appium-readme && npm run sync-pkgs:common-fields && npm run sync-pkgs:keywords",
+    "sync-pkgs:appium-readme": "sync-monorepo-packages --force --no-package-json --packages=packages/appium README.md",
+    "sync-pkgs:common-fields": "sync-monorepo-packages --fields=author,license,repository,bugs,homepage,engines",
+    "sync-pkgs:keywords": "sync-monorepo-packages --field=keywords --packages='packages/*' --packages='!packages/eslint-config-appium'",
     "test": "lerna exec gulp once",
     "test:appium": "lerna exec --scope=appium gulp once",
     "test:base-driver": "lerna exec --scope=@appium/base-driver gulp once",
@@ -40,6 +55,7 @@
     "test:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins gulp once",
     "test:support": "lerna exec --scope=@appium/support gulp once",
     "test:test-support": "lerna exec --scope=@appium/test-support gulp once",
+    "preversion": "npm run sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
     "watch": "lerna exec watch"
   },
   "pre-commit": [
@@ -51,7 +67,7 @@
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",
-    "@appium/fake-plugin": "^1.0.0",
+    "@appium/fake-plugin": "^1.2.0",
     "@babel/core": "^7.0.0",
     "@babel/eslint-parser": "^7.14.3",
     "@babel/plugin-proposal-class-properties": "^7.0.0",
@@ -71,28 +87,32 @@
     "babel-plugin-source-map-support": "^2.0.1",
     "chai": "4.x",
     "chai-as-promised": "7.x",
+    "chai-webdriverio-async": "^2.6.0",
     "colors": "^1.4.0",
     "eslint-find-rules": "^3.6.1",
-    "fancy-log": "^1.3.2",
-    "finalhandler": "^1.1.1",
+    "fancy-log": "^1.3.3",
+    "finalhandler": "^1.1.2",
     "get-port": "^5.1.1",
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.2",
     "handlebars": "^4.2.0",
     "lerna": "^4.0.0",
     "lint-staged": "^11.0.0",
     "mjpeg-server": "^0.3.0",
-    "mocha": "^8.0.1",
+    "mocha": "9.0.1",
     "pre-commit": "1.x",
-    "querystring": "^0.2.0",
+    "querystring": "^0.2.1",
     "serve-static": "^1.13.1",
-    "sinon": "^9.0.0",
+    "sinon": "11.1.1",
+    "sync-monorepo-packages": "^0.3.4",
     "validate.js": "^0.13.0",
-    "wd": "^1.14.0",
     "webdriverio": "^6.12.0",
-    "yaml-js": "^0.2.0"
+    "yaml-js": "^0.2.3"
   },
   "engines": {
     "node": ">=12",
     "npm": ">=6"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

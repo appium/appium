@@ -58,6 +58,10 @@ class FakeElement {
     };
   }
 
+  getElementRect () {
+    return {...this.getLocation(), ...this.getSize()};
+  }
+
   getSize () {
     return {
       width: parseFloat(this.nodeAttrs.width || 0),

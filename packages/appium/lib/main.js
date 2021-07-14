@@ -200,14 +200,13 @@ async function main (args = null) {
   appiumDriver.driverConfig = driverConfig;
   const pluginConfig = new PluginConfig(args.appiumHome);
   await preflightChecks({parser, args, driverConfig, pluginConfig, throwInsteadOfExit});
+  const pluginClasses = getActivePlugins(args, pluginConfig);
+  // set the active plugins on the umbrella driver so it can use them for commands
+  appiumDriver.pluginClasses = pluginClasses;
   await logStartupInfo(parser, args);
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
   const driverClasses = getActiveDrivers(args, driverConfig);
-  const pluginClasses = getActivePlugins(args, pluginConfig);
-  // set the active plugins on the umbrella driver so it can use them for commands
-  appiumDriver.pluginClasses = pluginClasses;
-
   const serverUpdaters = getServerUpdaters(driverClasses, pluginClasses);
   const extraMethodMap = getExtraMethodMap(driverClasses, pluginClasses);
 

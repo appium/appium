@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import _ from 'lodash';
-import { BaseDriver, errors } from 'appium-base-driver';
+import { BaseDriver, errors } from '@appium/base-driver';
 import { FakeApp } from './fake-app';
 import commands from './commands';
 
@@ -18,14 +18,14 @@ class FakeDriver extends BaseDriver {
     this.driverArgs = driverArgs;
 
     this.desiredCapConstraints = {
-      app: {
+      'app': {
         presence: true,
         isString: true
       }
     };
   }
 
-  async createSession (desiredCaps, requiredCaps, capabilities, otherSessionData = []) {
+  async createSession (jsonwpDesiredCapabilities, jsonwpRequiredCaps, w3cCapabilities, otherSessionData = []) {
 
     // TODO add validation on caps.app that we will get for free from
     // BaseDriver
@@ -39,7 +39,7 @@ class FakeDriver extends BaseDriver {
       }
     }
 
-    let [sessionId, caps] = await super.createSession(desiredCaps, requiredCaps, capabilities, otherSessionData);
+    let [sessionId, caps] = await super.createSession(jsonwpDesiredCapabilities, jsonwpRequiredCaps, w3cCapabilities, otherSessionData);
     this.appModel = new FakeApp();
     if (_.isArray(caps) === true && caps.length === 1) {
       caps = caps[0];

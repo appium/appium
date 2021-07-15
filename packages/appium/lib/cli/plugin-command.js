@@ -24,6 +24,10 @@ export default class PluginCommand extends ExtensionCommand {
     return await super.update({ext: plugin, unsafe});
   }
 
+  async run ({plugin, scriptName}) {
+    return await super.run({ext: plugin, scriptName});
+  }
+
   getPostInstallText ({extName, extData}) {
     return `Plugin ${extName}@${extData.version} successfully installed`.green;
   }

@@ -99,7 +99,7 @@ function addExtensionsToParser (sharedArgs, subParsers, debug = false) {
       {command: 'update', args: extensionArgs[type].update,
        help: `Update installed ${type}s to the latest version`},
       {command: 'run', args: extensionArgs[type].run,
-       help: `Run a script (cached inside the ${type}s package.json under the ` +
+       help: `Run a script (defined inside the ${type}'s package.json under the ` +
              `“scripts” field inside the “appium” field) from an installed ${type}`}
     ];
 

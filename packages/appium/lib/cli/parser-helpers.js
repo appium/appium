@@ -58,7 +58,7 @@ function parsePluginNames (names) {
   }
 }
 
-function parseDefaultCaps (capsOrPath) {
+function parseJsonStringOrFile (capsOrPath) {
   let caps = capsOrPath;
   let loadedFromFile = false;
   try {
@@ -82,8 +82,8 @@ function parseDefaultCaps (capsOrPath) {
     return result;
   } catch (e) {
     const msg = loadedFromFile
-      ? `Default capabilities in '${capsOrPath}' must be a valid JSON`
-      : `Default capabilities must be a valid JSON`;
+      ? `The provided value of '${capsOrPath}' must be a valid JSON`
+      : `The provided value must be a valid JSON`;
     throw new TypeError(`${msg}. Original error: ${e.message}`);
   }
 }
@@ -99,7 +99,7 @@ function parseInstallTypes (source) {
 
 export {
   parseSecurityFeatures,
-  parseDefaultCaps,
+  parseJsonStringOrFile,
   parseInstallTypes,
   parsePluginNames,
   parseDriverNames,

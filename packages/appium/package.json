@@ -38,7 +38,7 @@
   "scripts": {
     "generate-docs": "gulp transpile && node ./build/commands-yml/parse.js",
     "postinstall": "node ./postinstall.js",
-    "install-fake-driver": "node . driver install --source=npm appium-fake-driver",
+    "install-fake-driver": "node . driver install --source=local ../fake-driver",
     "prepublishOnly": "npm run shrinkwrap:prune && npm run shrinkwrap:fix",
     "postpublish": "npm run shrinkwrap:restore",
     "shrinkwrap:backup": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",

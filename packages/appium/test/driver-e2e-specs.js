@@ -20,8 +20,8 @@ chai.use(chaiAsPromised);
 
 let TEST_SERVER;
 let TEST_PORT;
-const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
-
+const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
+const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
@@ -38,6 +38,7 @@ describe('FakeDriver - via HTTP', function () {
   // actually going to be required by Appium
   let FakeDriver = null;
   let baseUrl;
+  const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
   before(async function () {
     wdOpts.port = TEST_PORT = await getTestPort();
     TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
@@ -60,24 +61,60 @@ describe('FakeDriver - via HTTP', function () {
     const config = new DriverConfig(appiumHome);
     await config.read();
     FakeDriver = config.require('fake');
-
     // then start server if we need to
-    if (shouldStartServer) {
-      let args = {port: TEST_PORT, host: TEST_HOST, appiumHome};
-      server = await appiumServer(args);
-    }
+    await serverStart();
   });
 
   after(async function () {
+    await serverClose();
+  });
+
+  async function serverStart (args = {}) {
+    args = {port: TEST_PORT, host: TEST_HOST, appiumHome, ...args};
+    if (shouldStartServer) {
+      server = await appiumServer(args);
+    }
+  }
+
+  async function serverClose () {
     if (server) {
       await server.close();
     }
-  });
+  }
 
   describe('server updating', function () {
     it('should allow drivers to update the server in arbitrary ways', async function () {
       const {data} = await axios.get(`${TEST_SERVER}/fakedriver`);
       data.should.eql({fakedriver: 'fakeResponse'});
+    });
+  });
+
+  describe('cli args handling for empty args', function () {
+    it('should not recieve user cli args if none passed in', async function () {
+      let driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
+        data.value.should.eql({});
+      } finally {
+        await driver.deleteSession();
+      }
+    });
+  });
+
+  describe('cli args handling for passed in args', function () {
+    it('should recieve user cli args from a driver if arguments were passed in', async function () {
+      await serverClose();
+      const args = {driverArgs: FAKE_DRIVER_ARGS};
+      await serverStart(args);
+      let driver = await wdio({...wdOpts, capabilities: caps});
+      const {sessionId} = driver;
+      try {
+        const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
+        data.value.should.eql(FAKE_ARGS);
+      } finally {
+        await driver.deleteSession();
+      }
     });
   });
 

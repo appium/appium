@@ -159,6 +159,10 @@ export default class NPM {
                       `provided: ${pkgPath}`);
     }
 
+    // this is added to handle commands with relative paths
+    // ie: "node . driver install --source=local ../fake-driver"
+    pkgPath = path.resolve(process.cwd(), pkgPath);
+
     const pkgHome = path.resolve(this.appiumHome, pkgName);
 
     // call link with --no-package-lock to ensure no corruption while installing local packages

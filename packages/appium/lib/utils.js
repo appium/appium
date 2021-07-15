@@ -2,6 +2,7 @@ import _ from 'lodash';
 import logger from './logger';
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import findRoot from 'find-root';
+import { parseJsonStringOrFile } from './cli/parser-helpers';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -31,6 +32,18 @@ function inspectObject (args) {
       logger.info(val);
     }
   }
+}
+
+function parseExtensionArgs (extensionArgs, extensionName) {
+  if (!_.isString(extensionArgs)) {
+    return {};
+  }
+  const parsedExtensionArgs = parseJsonStringOrFile(extensionArgs);
+  const extensionSpecificArgs = parsedExtensionArgs[extensionName];
+  if (!_.isPlainObject(extensionSpecificArgs)) {
+    throw new Error(`Driver or plugin arguments must be plain objects`);
+  }
+  return extensionSpecificArgs;
 }
 
 /**
@@ -220,5 +233,5 @@ const rootDir = findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes,
+  getPackageVersion, pullSettings, removeAppiumPrefixes, parseExtensionArgs,
 };

@@ -2,12 +2,14 @@
 
 import { getParser } from '../lib/cli/parser';
 import { INSTALL_TYPES, DEFAULT_APPIUM_HOME } from '../lib/extension-config';
+import path from 'path';
 import chai from 'chai';
 
 const should = chai.should();
 
 const ALLOW_FIXTURE = 'test/fixtures/allow-feat.txt';
 const DENY_FIXTURE = 'test/fixtures/deny-feat.txt';
+const FAKE_DRIVER_ARGS_PATH = path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'driverArgs.json');
 
 describe('Main Parser', function () {
   let p = getParser(true);
@@ -57,11 +59,6 @@ describe('Server Parser', function () {
     (() => {p.parse_args(['-dc', 'null']);}).should.throw();
     (() => {p.parse_args(['-dc', 'does/not/exist.json']);}).should.throw();
   });
-  it('should parse args that are caps into default capabilities', function () {
-    let defaultCapabilities = {chromedriverExecutable: '/my/dir'};
-    let args = p.parse_args(['--chromedriver-executable', '/my/dir']);
-    args.defaultCapabilities.should.eql(defaultCapabilities);
-  });
   it('should parse --allow-insecure correctly', function () {
     p.parse_args([]).allowInsecure.should.eql([]);
     p.parse_args(['--allow-insecure', '']).allowInsecure.should.eql([]);
@@ -82,6 +79,21 @@ describe('Server Parser', function () {
     ]);
     parsed.allowInsecure.should.eql(['feature1', 'feature2', 'feature3']);
     parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
+  });
+  it('should parse default driver args correctly from a string', function () {
+    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--driver-args', JSON.stringify(fakeDriverArgs)]);
+    args.driverArgs.should.eql(fakeDriverArgs);
+  });
+  it('should parse default driver args correctly from a file', function () {
+    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--driver-args', FAKE_DRIVER_ARGS_PATH]);
+    args.driverArgs.should.eql(fakeDriverArgs);
+  });
+  it('should parse default plugin args correctly from a string', function () {
+    let fakePluginArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let args = p.parse_args(['--plugin-args', JSON.stringify(fakePluginArgs)]);
+    args.pluginArgs.should.eql(fakePluginArgs);
   });
 });
 

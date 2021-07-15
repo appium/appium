@@ -6,8 +6,8 @@ import commands from './commands';
 
 class FakeDriver extends BaseDriver {
 
-  constructor () {
-    super();
+  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
+    super(opts, shouldValidateCaps, driverArgs);
     this.appModel = null;
     this.curContext = 'NATIVE_APP';
     this.elMap = {};
@@ -15,6 +15,8 @@ class FakeDriver extends BaseDriver {
     this.maxElId = 0;
     this.caps = {};
     this.fakeThing = null;
+    // TODO: remove this line once we're relying completely on basedriver from appium 2.0
+    this.driverArgs = driverArgs;
 
     this.desiredCapConstraints = {
       'app': {
@@ -65,10 +67,18 @@ class FakeDriver extends BaseDriver {
     return null;
   }
 
+  async getFakeDriverArgs () {
+    await B.delay(1);
+    return this.driverArgs;
+  }
+
   static newMethodMap = {
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},
       POST: {command: 'setFakeThing', payloadParams: {required: ['thing']}}
+    },
+    '/session/:sessionId/fakedriverargs': {
+      GET: {command: 'getFakeDriverArgs'}
     },
   };
 

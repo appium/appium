@@ -37,7 +37,7 @@ class BaseDriver extends Protocol {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  constructor (opts = {}, shouldValidateCaps = true) {
+  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
     super();
 
     // setup state
@@ -46,6 +46,9 @@ class BaseDriver extends Protocol {
     this.caps = null;
     this.originalCaps = null; // To give the original capabilities to reset
     this.helpers = helpers;
+
+    // allow for cli args to be used by drivers
+    this.driverArgs = driverArgs;
 
     // basePath is used for several purposes, for example in setting up
     // proxying to other drivers, since we need to know what the base path

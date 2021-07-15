@@ -56,18 +56,6 @@ describe('FakeDriver - via HTTP', function () {
         driver: FAKE_DRIVER_DIR,
         installType: INSTALL_TYPE_LOCAL,
       }, DRIVER_TYPE);
-    } else {
-      await runExtensionCommand({
-        appiumHome,
-        driverCommand: 'uninstall',
-        driver: 'fake',
-      }, DRIVER_TYPE);
-      await runExtensionCommand({
-        appiumHome,
-        driverCommand: 'install',
-        driver: FAKE_DRIVER_DIR,
-        installType: INSTALL_TYPE_LOCAL,
-      }, DRIVER_TYPE);
     }
 
     const config = new DriverConfig(appiumHome);

@@ -15,6 +15,7 @@ class FakeDriver extends BaseDriver {
     this.maxElId = 0;
     this.caps = {};
     this.fakeThing = null;
+    // TODO: remove this line once we're relying completely on basedriver from appium 2.0
     this.driverArgs = driverArgs;
 
     this.desiredCapConstraints = {

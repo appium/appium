@@ -43,7 +43,7 @@ describe('FakeDriver - via HTTP', function () {
     wdOpts.port = TEST_PORT = await getTestPort();
     TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
     baseUrl = `${TEST_SERVER}/session`;
-    // Makesure we install and use packages/fake-driver and not appium-fake-driver
+    // first ensure we have fakedriver installed
     const driverList = await runExtensionCommand({
       appiumHome,
       driverCommand: 'list',

@@ -21,6 +21,7 @@ jobs:
       - run: |
           npm install
           npm test
+          npm run install-fake-driver
           npm run e2e-test
 
   generate_docs:

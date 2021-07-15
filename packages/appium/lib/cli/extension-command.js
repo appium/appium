@@ -4,7 +4,8 @@ import _ from 'lodash';
 import NPM from './npm';
 import path from 'path';
 import { fs, util } from 'appium-support';
-import { log, spinWith } from './utils';
+import { log, spinWith, RingBuffer } from './utils';
+import { SubProcess} from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
          INSTALL_TYPE_LOCAL } from '../extension-config';
 
@@ -485,5 +486,67 @@ export default class ExtensionCommand {
     await this.installViaNpm({ext, pkgName, pkgVer: version});
     this.config.installedExtensions[ext].version = version;
     await this.config.write();
+  }
+
+  /**
+   * @typedef RunOutput
+   * @property {?string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
+   * @property {string[]} output - script output
+   */
+  /**
+   * Runs a script cached inside the "scripts" field under "appium"
+   * inside of the driver/plugins "package.json" file. Will throw
+   * an error if the driver/plugin does not contain a "scripts" field
+   * underneath the "appium" field in its package.json, if the
+   * "scripts" field is not a plain object, or if the scriptName is
+   * not found within "scripts" object.
+   *
+   * @param {string} ext - name of the extension to run a script from
+   * @param {string} scriptName - name of the script to run
+   * @return {RunOutput}
+   */
+  async run ({ext, scriptName}) {
+    if (!_.has(this.config.installedExtensions, ext)) {
+      throw new Error(`please install the ${this.type} first`);
+    }
+
+    const extConfig = this.config.installedExtensions[ext];
+
+    if (!_.has(extConfig, 'scripts')) {
+      throw new Error(`The ${this.type} named '${ext}' does not contain the ` +
+                      `"scripts" field underneath the "appium" field in its package.json`);
+    }
+
+    const extScripts = extConfig.scripts;
+
+    if (!_.isPlainObject(extScripts)) {
+      throw new Error(`The ${this.type} named '${ext}' "scripts" field must be a plain object`);
+    }
+
+    if (!_.has(extScripts, scriptName)) {
+      throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
+    }
+
+    const runner = new SubProcess(process.execPath, [extScripts[scriptName]], {
+      cwd: this.config.getExtensionRequirePath(ext)
+    });
+
+    const output = new RingBuffer(50);
+
+    runner.on('stream-line', (line) => {
+      output.enqueue(line);
+      log(this.isJsonOutput, line);
+    });
+
+    await runner.start(0);
+
+    try {
+      await runner.join();
+      log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
+      return {output: output.getBuff()};
+    } catch (err) {
+      log(this.isJsonOutput, `Encountered an error when running '${scriptName}': ${err.message}`.red);
+      return {error: err.message, output: output.getBuff()};
+    }
   }
 }

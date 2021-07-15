@@ -52,9 +52,29 @@ async function spinWith (json, msg, fn) {
   }
 }
 
+class RingBuffer {
+  constructor (size = 50) {
+    this.size = size;
+    this.buffer = [];
+  }
+  getBuff () {
+    return this.buffer;
+  }
+  dequeue () {
+    this.buffer.shift();
+  }
+  enqueue (item) {
+    if (this.buffer.length >= this.size) {
+      this.dequeue();
+    }
+    this.buffer.push(item);
+  }
+}
+
 export {
   errAndQuit,
   log,
   spinWith,
-  JSON_SPACES
+  JSON_SPACES,
+  RingBuffer
 };

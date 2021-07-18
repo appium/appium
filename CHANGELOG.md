@@ -1,3 +1,46 @@
+CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
+===================================
+
+Appium 1.22.0 is a minor release
+
+This release is the finial release for Appium 1.x seriese.
+We're going to move Appium 2.x [TODO: link to documentation].
+Appium 1.x will have patch releases, but it no longer get minor releases.
+
+### General
+
+### Android General
+
+### Android(UIAutomator2)
+
+### Android(Espresso)
+
+### iOS General
+
+* Xcode 13 and iOS 15 support
+
+### iOS(XCUITest)
+
+
+### Mac2
+* Add `macos:` extensions:
+  - Add support [swift guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
+- Add `language` option in `macos: appleScript` to support other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
+- Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
+- Fix handling libxml2 client to prevent memroy leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
+
+### Community/Company based drivers
+#### You.i Engine Driver
+
+The version is `1.2.9`
+
+#### Flutter driver
+
+The version is `0.0.29`
+
+#### New drivers
+
+
 CHANGES IN VERSION 1.21.0 (FROM 1.20.2)
 ===================================
 

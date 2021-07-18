@@ -24,10 +24,10 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### Mac2
 * Add `macos:` extensions:
-  - Add support [swift guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
-- Add `language` option in `macos: appleScript` to support other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
+  - Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
+- Add `language` option in `macos: appleScript` to be able to use other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
 - Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
-- Fix handling libxml2 client to prevent memroy leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
+- Fix handling of libxml2 client to prevent memory leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
 
 ### Community/Company based drivers
 #### You.i Engine Driver

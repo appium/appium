@@ -9,6 +9,9 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### General
 
+- Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
+- Add [Release Actions](https://www.w3.org/TR/webdriver1/#dfn-release-actions) endpoint [appium-base-driver#501](https://github.com/appium/appium-base-driver/pull/501)
+
 ### Android General
 
 ### Android(UIAutomator2)
@@ -24,10 +27,15 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### Mac2
 * Add `macos:` extensions:
-  - Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
-- Add `language` option in `macos: appleScript` to be able to use other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
-- Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
-- Fix handling of libxml2 client to prevent memory leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
+  * Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
+* Add `language` option in `macos: appleScript` to be able to use other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
+* Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
+* Fix handling of libxml2 client to prevent memory leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
+
+## Windows
+* Add `windows:` extensions:
+  * [`deleteFile`](https://github.com/appium/appium-windows-driver#windows-deletefile) and [`deleteFolder`](https://github.com/appium/appium-windows-driver#windows-deletefolder) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
+* Add [push_file](https://appium.io/docs/en/commands/device/files/push-file/), [pull_file](https://appium.io/docs/en/commands/device/files/pull-file/), [pull_folder](https://appium.io/docs/en/commands/device/files/pull-folder/) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
 
 ### Community/Company based drivers
 #### You.i Engine Driver

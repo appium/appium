@@ -3,9 +3,9 @@ CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
 
 Appium 1.22.0 is a minor release
 
-This release is the finial release for Appium 1.x seriese.
-We're going to move Appium 2.x [TODO: link to documentation].
-Appium 1.x will have patch releases, but it no longer get minor releases.
+This release is the **finial** release for Appium 1.x seriese.
+We're going to move to Appium 2.x [TODO: link to documentation].
+Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### General
 

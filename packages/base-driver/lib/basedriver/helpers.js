@@ -6,7 +6,7 @@ import { tempDir, fs, util, zip, net, timing } from 'appium-support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
-import { validateCaps } from './capabilities';
+
 
 const IPA_EXT = '.ipa';
 const ZIP_EXTS = ['.zip', IPA_EXT];
@@ -420,44 +420,6 @@ function parseCapsArray (cap) {
   throw new Error(`must provide a string or JSON Array; received ${cap}`);
 }
 
-function parseKnownArgs (serverArgs, knownArgNames, argsConstraints) {
-  return _.toPairs(serverArgs).reduce((acc, [argName, argValue]) => {
-    if (knownArgNames.includes(argName)) {
-      acc[argName] = argValue;
-    } else {
-      const knownArgs = Object.keys(argsConstraints);
-      throw new Error(`"${argName}" is not a recognized key are you sure it's in the list ` +
-                      `of supported keys? ${JSON.stringify(knownArgs)}`);
-    }
-    return acc;
-  }, {});
-}
-
-/**
- * Takes in a set of opts, server args passed in by user, arg names to parse for,
- * arg constraints for the arg names, and returns a combined object containing opts
- * and parsed server args
- *
- * @param {object} opts - driver opts
- * @param {object} serverArgs - serverArgs
- * @param {Array<String>} knownArgNames - argNames to parse for
- * @param {object} argsConstraints - Constraints for argNames
- * @return {object}
- */
-
-function parseServerArgs (opts, serverArgs, knownArgNames, argsConstraints) {
-  let acc = parseKnownArgs(serverArgs, knownArgNames, argsConstraints);
-  acc = validateCaps(acc, argsConstraints);
-  for (let arg in argsConstraints) {
-    if (!_.has(acc, arg)) {
-      if (_.has(opts, arg)) {
-        acc[arg] = opts[arg];
-      }
-    }
-  }
-  return _.assign(opts, acc);
-}
-
 export {
-  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, parseServerArgs
+  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray
 };

@@ -61,7 +61,7 @@ import * as ws from './lib/express/websocket';
 const { DEFAULT_WS_PATHNAME_PREFIX } = ws;
 export { DEFAULT_WS_PATHNAME_PREFIX };
 
-// Helpers
-import * as helpers from './lib/basedriver/helpers';
-const { parseServerArgs } = helpers;
+// Arguments
+import * as args from './lib/basedriver/arguments';
+const { parseServerArgs } = args;
 export { parseServerArgs };

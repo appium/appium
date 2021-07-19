@@ -56,7 +56,7 @@
     "appium-uiautomator2-driver": "^1.37.1",
     "appium-windows-driver": "1.x",
     "appium-xcuitest-driver": "^3.27.6",
-    "appium-youiengine-driver": "^1.2.8",
+    "appium-youiengine-driver": "^1.2.9",
     "argparse": "^2.0.1",
     "async-lock": "^1.0.0",
     "asyncbox": "2.x",

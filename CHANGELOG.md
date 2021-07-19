@@ -23,18 +23,24 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 * Xcode 13 and iOS 15 support
 
 ### iOS(XCUITest)
-
+* Add capabilities:
+    * `appium:useNativeCachingStrategy` to reduce a potential stale element error. Please read the capability in [XCUITest capabilities](https://github.com/appium/appium-xcuitest-driver#webdriveragent). Defaults to `true` [appium-xcuitest-driver#1317](https://github.com/appium/appium-xcuitest-driver/pull/1317)
+* Add `mobile:` extension:
+    * `appium:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
+    * `appium:forceAppLaunch` to launch the application under test forcefully with `appium:bundleId`. Defaults to `true` unless `noReset` capability is set to `true`. [appium-xcuitest-driver#1314](https://github.com/appium/appium-xcuitest-driver/pull/1314)
+* Add  `durationSeconds` argument in `mobile: pressButton` for tvOS
+* Add `getProperty` command to support [Get Element Property](https://www.w3.org/TR/webdriver/#dfn-get-element-property) endpoint. In native context, the command is equal to [Get Element Attribute](https://www.w3.org/TR/webdriver/#get-element-attribute) [appium-xcuitest-driver#1313](https://github.com/appium/appium-xcuitest-driver/pull/1313)
 
 ### Mac2
 * Add `macos:` extensions:
-  * Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
+    * Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
 * Add `language` option in `macos: appleScript` to be able to use other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
 * Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
 * Fix handling of libxml2 client to prevent memory leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
 
 ## Windows
 * Add `windows:` extensions:
-  * [`deleteFile`](https://github.com/appium/appium-windows-driver#windows-deletefile) and [`deleteFolder`](https://github.com/appium/appium-windows-driver#windows-deletefolder) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
+    * [`deleteFile`](https://github.com/appium/appium-windows-driver#windows-deletefile) and [`deleteFolder`](https://github.com/appium/appium-windows-driver#windows-deletefolder) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
 * Add [push_file](https://appium.io/docs/en/commands/device/files/push-file/), [pull_file](https://appium.io/docs/en/commands/device/files/pull-file/), [pull_folder](https://appium.io/docs/en/commands/device/files/pull-folder/) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
 
 ### Community/Company based drivers

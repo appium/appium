@@ -9,13 +9,21 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### General
 
-- Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
+* Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
+* `appium:enableWebviewDetailsCollection` capability defaults to `true` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
 
 ### Android General
 
+* Add `pinWithKeyEvent` option as `unlockType` in [unlock action](https://github.com/appium/appium-android-driver/blob/master/docs/UNLOCK.md) to send the pin code as keyevent [appium-android-driver#691](https://github.com/appium/appium-android-driver/pull/691)
+* Allow to establish a chrome session with its `beta`, `dev` and `canary` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
+
 ### Android(UIAutomator2)
+* Add `mobile:` extensions:
+    * `mobile:startActivity` to launch an activity more flexible. Please read [mobile: startActivity](https://github.com/appium/appium-uiautomator2-driver#mobile-startactivity) for more details [appium-android-driver#701](https://github.com/appium/appium-android-driver/pull/701)
+* Add active element support [appium-uiautomator2-driver#457](https://github.com/appium/appium-uiautomator2-driver/pull/457) [appium-uiautomator2-server#424](https://github.com/appium/appium-uiautomator2-server/pull/424) (Thanks @vane and @jzaleski)
 
 ### Android(Espresso)
+* The default Kotlin plugin version is 1.4.32 [appium-espresso-driver#663](https://github.com/appium/appium-espresso-driver/pull/663)
 
 ### iOS General
 
@@ -24,9 +32,10 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 ### iOS(XCUITest)
 * Add capabilities:
     * `appium:useNativeCachingStrategy` to reduce a potential stale element error. Please read the capability in [XCUITest capabilities](https://github.com/appium/appium-xcuitest-driver#webdriveragent). Defaults to `true` [appium-xcuitest-driver#1317](https://github.com/appium/appium-xcuitest-driver/pull/1317)
-* Add `mobile:` extension:
-    * `appium:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
     * `appium:forceAppLaunch` to launch the application under test forcefully with `appium:bundleId`. Defaults to `true` unless `noReset` capability is set to `true`. [appium-xcuitest-driver#1314](https://github.com/appium/appium-xcuitest-driver/pull/1314)
+* Add `mobile:` extensions:
+    * `mobile:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
+
 * Add `durationSeconds` argument in `mobile: pressButton` for tvOS
 * Add `getProperty` command to support [Get Element Property](https://www.w3.org/TR/webdriver/#dfn-get-element-property) endpoint. In native context, the command is equal to [Get Element Attribute](https://www.w3.org/TR/webdriver/#get-element-attribute) [appium-xcuitest-driver#1313](https://github.com/appium/appium-xcuitest-driver/pull/1313)
 

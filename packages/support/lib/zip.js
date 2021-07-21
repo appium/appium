@@ -12,6 +12,7 @@ import { toReadableSizeString, GiB } from './util';
 import Timer from './timing';
 import log from './logger';
 import getStream from 'get-stream';
+import { exec } from 'teen_process';
 
 const openZip = B.promisify(yauzl.open);
 const pipeline = B.promisify(stream.pipeline);
@@ -179,6 +180,8 @@ class ZipExtractor {
  * @property {?number} defaultFileMode [0o644] The default permissions for extracted files. It is only
  * applied when the extractor is unable to retrieve this value for a file from the archive
  * metadata.
+ * @property {?boolean} useSystemUnzip [false] If true, attempt to use system unzip; if this fails,
+ * fallback to the JS unzip implementation.
  */
 
 /**
@@ -194,11 +197,39 @@ async function extractAllTo (zipFilePath, destDir, opts = {}) {
   }
 
   await fs.mkdir(destDir, {recursive: true});
+  const dir = await fs.realpath(destDir);
+  if (opts.useSystemUnzip) {
+    try {
+      await extractWithSystemUnzip(zipFilePath, dir);
+      return;
+    } catch (err) {
+      log.warn('unzip failed; falling back to JS: %s', err.stderr || err.message);
+    }
+  }
   const extractor = new ZipExtractor(zipFilePath, {
     ...opts,
-    dir: await fs.realpath(destDir),
+    dir,
   });
   await extractor.extract();
+}
+
+/**
+ * Executes system unzip (e.g., `/usr/bin/unzip`).  If available, it is
+ * significantly faster than the JS implementation.
+ * This function will reject on win32.
+ * @param {string} zipFilePath The full path to the source ZIP file
+ * @param {string} destDir The full path to the destination folder
+ */
+async function extractWithSystemUnzip (zipFilePath, destDir) {
+  const unzipExecutablePath = await assertSystemUnzip();
+  // -q means quiet (no stdout)
+  // -o means overwrite
+  // -d is the dest dir
+  await exec(unzipExecutablePath, [
+    '-q',
+    '-o', zipFilePath,
+    '-d', destDir
+  ]);
 }
 
 /**
@@ -479,6 +510,23 @@ async function toArchive (dstPath, src = {}, opts = {}) {
     archive.finalize();
   });
 }
+
+/**
+ * Finds a system `unzip` executable. Rejects if it is not found.
+ */
+const assertSystemUnzip = _.memoize(
+  /**
+   * @returns {B<string>} Path to unzip executable
+   */
+  async () => {
+    try {
+      const unzipPath = await fs.which('unzip');
+      log.debug('found system unzip at %s', unzipPath);
+      return unzipPath;
+    } catch {
+      throw new Error('Could not find system unzip');
+    }
+  });
 
 export { extractAllTo, readEntries, toInMemoryZip, _extractEntryTo,
   assertValidZip, toArchive };

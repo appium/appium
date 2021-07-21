@@ -11,6 +11,7 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 * Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
 * `appium:enableWebviewDetailsCollection` capability defaults to `true` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
+* Support `satellites` option in `setGeoLocation` command as [geo command on emulators](https://developer.android.com/studio/run/emulator-console) [appium-adb#571](https://github.com/appium/appium-adb/pull/571)
 
 ### Android General
 

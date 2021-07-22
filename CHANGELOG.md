@@ -17,6 +17,7 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 * Add `pinWithKeyEvent` option as `unlockType` in [unlock action](https://github.com/appium/appium-android-driver/blob/master/docs/UNLOCK.md) to send the pin code as keyevent [appium-android-driver#691](https://github.com/appium/appium-android-driver/pull/691)
 * Allow to establish a chrome session with its `beta`, `dev` and `canary` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
+* Optimize error handling in certificate validation [appium-adb#572](https://github.com/appium/appium-adb/pull/572)
 
 ### Android(UIAutomator2)
 * Add `mobile:` extensions:

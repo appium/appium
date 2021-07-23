@@ -66,7 +66,7 @@
     "find-root": "^1.1.0",
     "lodash": "^4.17.11",
     "longjohn": "^0.2.12",
-    "npmlog": "4.x",
+    "npmlog": "5.x",
     "semver": "^7.0.0",
     "source-map-support": "^0.x",
     "teen_process": "1.x",

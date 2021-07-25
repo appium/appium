@@ -249,5 +249,5 @@ for this).
     - `com.apple.mobile.installation_proxy` service to manage Apps on the device [does not work](https://github.com/appium/appium-desktop/issues/1447)
 1. Make sure the provisioning profile has [_iOS Distribution_ certificate](https://developer.apple.com/support/certificates/)
     - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design. The certificate affects the limitation ([issue](https://github.com/appium/appium/issues/14577#issuecomment-660997827))
-1. Make sure your keyboard is Apple official one and English to send texts to `XCUIElementTypeSecureTextField`
+1. Make sure keyboard preference in the device under test is Apple official one and English to send texts to `XCUIElementTypeSecureTextField`
     - Non-official or non-English keyboad may not be able to send keys to `XCUIElementTypeSecureTextField`. e.g. [issues#15647](https://github.com/appium/appium/issues/15647)

@@ -551,9 +551,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     describe('driver args passed in', function () {
       const driver = new DriverClass({}, true, driverArgs, ARGS_CONSTRAINTS);
       it('should set passed in driver args to opts', function () {
-        /* eslint-disable no-console */
-        console.log(driver);
-        /* eslint-enable no-console */
         driver.opts.webkitDebugProxyPort.should.eql(webkitDebugProxyPort);
         driver.opts.wdaLocalPort.should.eql(wdaLocalPort);
       });

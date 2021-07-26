@@ -6,8 +6,8 @@ import commands from './commands';
 
 class FakeDriver extends BaseDriver {
 
-  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
-    super(opts, shouldValidateCaps, driverArgs);
+  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}, argsConstraints = {}) {
+    super(opts, shouldValidateCaps, driverArgs, argsConstraints);
     this.appModel = null;
     this.curContext = 'NATIVE_APP';
     this.elMap = {};

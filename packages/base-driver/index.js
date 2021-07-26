@@ -62,6 +62,5 @@ const { DEFAULT_WS_PATHNAME_PREFIX } = ws;
 export { DEFAULT_WS_PATHNAME_PREFIX };
 
 // Arguments
-import * as args from './lib/basedriver/arguments';
-const { parseServerArgs } = args;
+import { parseServerArgs } from './lib/basedriver/arguments';
 export { parseServerArgs };

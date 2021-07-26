@@ -14,6 +14,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import AsyncLock from 'async-lock';
 import { EventEmitter } from 'events';
+import { parseServerArgs } from './arguments';
 
 
 B.config({
@@ -37,12 +38,12 @@ class BaseDriver extends Protocol {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
+  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}, argsConstraints = {}) {
     super();
 
     // setup state
     this.sessionId = null;
-    this.opts = opts;
+    this.opts = parseServerArgs(opts, driverArgs, argsConstraints);
     this.caps = null;
     this.originalCaps = null; // To give the original capabilities to reset
     this.helpers = helpers;

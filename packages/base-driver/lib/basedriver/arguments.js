@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { validateCaps } from './capabilities';
 
-function parseKnownArgs (serverArgs, knownArgNames, argsConstraints) {
+function parseKnownArgs (serverArgs, argsConstraints) {
+  const knownArgNames = Object.keys(argsConstraints);
   return _.toPairs(serverArgs).reduce((args, [argName, argValue]) => {
     if (knownArgNames.includes(argName)) {
       args[argName] = argValue;
@@ -15,25 +16,24 @@ function parseKnownArgs (serverArgs, knownArgNames, argsConstraints) {
 }
 
 /**
- * Takes in a set of opts, server args passed in by user, arg names to parse for,
- * arg constraints for the arg names, and returns a combined object containing opts
- * and parsed server args
+ * Takes in a set of opts, server args passed in by user, and arg constraints
+ * to parse for, and returns a combined object containing opts
+ * and parsed server args. If serverArgs or argsConstraints is empty, opts is returned
+ * back
  *
  * @param {object} opts - driver opts
  * @param {object} serverArgs - serverArgs
- * @param {Array<String>} knownArgNames - argNames to parse for
- * @param {object} argsConstraints - Constraints for argNames
+ * @param {object} argsConstraints - Constraints for arguments
  * @return {object}
 */
-function parseServerArgs (opts, serverArgs, knownArgNames, argsConstraints) {
-  let args = parseKnownArgs(serverArgs, knownArgNames, argsConstraints);
-  args = validateCaps(args, argsConstraints);
-  for (let arg in argsConstraints) {
-    if (!_.has(args, arg) && _.has(opts, arg)) {
-      args[arg] = opts[arg];
-    }
+function parseServerArgs (opts, serverArgs, argsConstraints) {
+  if (_.isEmpty(serverArgs) || _.isEmpty(argsConstraints)) {
+    return opts;
+  } else {
+    let args = parseKnownArgs(serverArgs, argsConstraints);
+    args = validateCaps(args, argsConstraints);
+    return _.assign(opts, args);
   }
-  return _.assign(opts, args);
 }
 
 export {

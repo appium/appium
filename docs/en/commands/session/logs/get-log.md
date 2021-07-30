@@ -13,7 +13,7 @@ LogEntries logEntries = driver.manage().logs().get("driver");
 
 ```python
 # Python
-logs = driver.get_log('driver');
+logs = driver.get_log('driver')
 
 ```
 

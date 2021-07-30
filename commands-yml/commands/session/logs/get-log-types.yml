@@ -1,6 +1,6 @@
 ---
 name: Get available log types
-short_description: Get the log for a given log type. Log buffer is reset after each request
+short_description: Get available log types as a list of strings
 
 example_usage:
   java:

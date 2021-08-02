@@ -55,9 +55,7 @@ so you'll see the icon of WebDriverAgentRunner application on the springboard.
 
 WebDriverAgent application acts as a REST server, which proxies external API requests to native XCTest calls
 for your application under test. The server address will be _localhost_ if you run your tests on Simulator
-or the actual phone IP address in case of real device.
-
-Appium uses [appium-ios-device](https://github.com/appium/appium-ios-device) to route network requests
+or the actual phone IP address in case of real device. Appium uses [appium-ios-device](https://github.com/appium/appium-ios-device) to route network requests
 to a real device from _localhost_ via USB, which means one can use this tool to unify WDA network
 address for Simulator and for real device.
 

@@ -61,7 +61,7 @@ address for Simulator and for real device.
 
 You can use [appium-ios-device](https://github.com/appium/appium-ios-device) to connect to
 a remote device requiring the module from your JavaScript code as same as Appium.
-Alternatively, you can also use [iproxy](https://github.com/libimobiledevice/libusbmuxd#iproxy), [go-ios](https://github.com/danielpaulus/go-ios) or [tidevice](https://github.com/alibaba/taobao-iphone-device) to handle WebDriverAgent process outside Appium. For instance, `iproxy` launches a WebDriverAgent process via `node install -g iproxy`.
+Alternatively, you can also use [iproxy](https://github.com/libimobiledevice/libusbmuxd#iproxy), [go-ios](https://github.com/danielpaulus/go-ios) or [tidevice](https://github.com/alibaba/taobao-iphone-device) to handle WebDriverAgent process outside Appium. For instance, `iproxy` could be installed using npm: `node install -g iproxy`.
 
 This helper class written in Java illustrates the main implementation details
 wit _iproxy_:

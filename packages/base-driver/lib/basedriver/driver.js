@@ -37,7 +37,28 @@ class BaseDriver extends Protocol {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
+  /**
+   * Override this getter in child driver classes
+   * if you'd like to expose any command line arguments.
+   * These arguments take precedence over any opts.
+   *
+   * @returns {Object} The map which represents constraints over
+   * supported command line arguments. The map should look similar
+   * to the desired capabilities constraints one, for example:
+   * {
+   *   webkitDebugProxyPort: {
+   *     isNumber: true
+   *   },
+   *   wdaLocalPort: {
+   *     isNumber: true
+   *   },
+   * }
+   */
+  static get argsConstraints () {
+    return {};
+  }
+
+  constructor (opts = {}, shouldValidateCaps = true) {
     super();
 
     // setup state
@@ -46,9 +67,6 @@ class BaseDriver extends Protocol {
     this.caps = null;
     this.originalCaps = null; // To give the original capabilities to reset
     this.helpers = helpers;
-
-    // allow for cli args to be used by drivers
-    this.driverArgs = driverArgs;
 
     // basePath is used for several purposes, for example in setting up
     // proxying to other drivers, since we need to know what the base path

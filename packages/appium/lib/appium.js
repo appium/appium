@@ -166,8 +166,14 @@ class AppiumDriver extends BaseDriver {
 
       let runningDriversData, otherPendingDriversData;
       const parsedInnerDriverArgs = parseExtensionArgs(this.args.driverArgs, driverName);
+      if (!_.isEmpty(parsedInnerDriverArgs) && _.isFunction(InnerDriver.argsConstraints)) {
+        const driverArgsConstraints = InnerDriver.argsConstraints();
+        if (!_.isEmpty(driverArgsConstraints)) {
+          // TODO: parse/verify CLI args and merge them to this.args if OK or throw an exception
+        }
+      }
 
-      const d = new InnerDriver(this.args, true, parsedInnerDriverArgs);
+      const driverInstance = new InnerDriver(this.args, true);
       // We want to assign security values directly on the driver. The driver
       // should not read security values from `this.opts` because those values
       // could have been set by a malicious user via capabilities, whereas we
@@ -176,23 +182,23 @@ class AppiumDriver extends BaseDriver {
         log.info(`Applying relaxed security to '${InnerDriver.name}' as per ` +
                  `server command line argument. All insecure features will be ` +
                  `enabled unless explicitly disabled by --deny-insecure`);
-        d.relaxedSecurityEnabled = true;
+        driverInstance.relaxedSecurityEnabled = true;
       }
 
       if (!_.isEmpty(this.args.denyInsecure)) {
         log.info('Explicitly preventing use of insecure features:');
         this.args.denyInsecure.map((a) => log.info(`    ${a}`));
-        d.denyInsecure = this.args.denyInsecure;
+        driverInstance.denyInsecure = this.args.denyInsecure;
       }
 
       if (!_.isEmpty(this.args.allowInsecure)) {
         log.info('Explicitly enabling use of insecure features:');
         this.args.allowInsecure.map((a) => log.info(`    ${a}`));
-        d.allowInsecure = this.args.allowInsecure;
+        driverInstance.allowInsecure = this.args.allowInsecure;
       }
 
       // This assignment is required for correct web sockets functionality inside the driver
-      d.server = this.server;
+      driverInstance.server = this.server;
       try {
         runningDriversData = await this.curSessionDataForDriver(InnerDriver);
       } catch (e) {
@@ -201,43 +207,43 @@ class AppiumDriver extends BaseDriver {
       await pendingDriversGuard.acquire(AppiumDriver.name, () => {
         this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
         otherPendingDriversData = this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData);
-        this.pendingDrivers[InnerDriver.name].push(d);
+        this.pendingDrivers[InnerDriver.name].push(driverInstance);
       });
 
       try {
-        [innerSessionId, dCaps] = await d.createSession(
+        [innerSessionId, dCaps] = await driverInstance.createSession(
           processedJsonwpCapabilities,
           reqCaps,
           processedW3CCapabilities,
           [...runningDriversData, ...otherPendingDriversData]
         );
-        protocol = d.protocol;
+        protocol = driverInstance.protocol;
         await sessionsListGuard.acquire(AppiumDriver.name, () => {
-          this.sessions[innerSessionId] = d;
+          this.sessions[innerSessionId] = driverInstance;
         });
       } finally {
         await pendingDriversGuard.acquire(AppiumDriver.name, () => {
-          _.pull(this.pendingDrivers[InnerDriver.name], d);
+          _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
         });
       }
 
-      this.attachUnexpectedShutdownHandler(d, innerSessionId);
+      this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
 
       log.info(`New ${InnerDriver.name} session created successfully, session ` +
               `${innerSessionId} added to master session list`);
 
       // set the New Command Timeout for the inner driver
-      d.startNewCommandTimeout();
+      driverInstance.startNewCommandTimeout();
 
       // apply initial values to Appium settings (if provided)
-      if (d.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
+      if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
         log.info(`Applying the initial values to Appium settings parsed from W3C caps: ` +
           JSON.stringify(w3cSettings));
-        await d.updateSettings(w3cSettings);
-      } else if (d.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
+        await driverInstance.updateSettings(w3cSettings);
+      } else if (driverInstance.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
         log.info(`Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
           JSON.stringify(jwpSettings));
-        await d.updateSettings(jwpSettings);
+        await driverInstance.updateSettings(jwpSettings);
       }
     } catch (error) {
       return {

@@ -166,7 +166,7 @@ class AppiumDriver extends BaseDriver {
 
       let runningDriversData, otherPendingDriversData;
       const parsedInnerDriverArgs = parseExtensionArgs(this.args.driverArgs, driverName);
-      if (!_.isEmpty(parsedInnerDriverArgs) && _.has(InnerDriver.argsConstraints)) {
+      if (!_.isEmpty(parsedInnerDriverArgs) && _.has(InnerDriver, 'argsConstraints')) {
         const driverArgsConstraints = InnerDriver.argsConstraints;
         if (!_.isEmpty(driverArgsConstraints)) {
           // TODO: parse/verify CLI args and merge them to this.args if OK or throw an exception

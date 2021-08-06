@@ -1,6 +1,6 @@
 import { DoctorCheck } from './doctor';
 import { ok, nok, okOptional, nokOptional, resolveExecutablePath } from './utils';
-import { system, fs } from 'appium-support';
+import { system, fs } from '@appium/support';
 import path from 'path';
 import EnvVarAndPathCheck from './env';
 import 'colors';

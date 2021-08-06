@@ -4,6 +4,7 @@ import chaiAsPromised from 'chai-as-promised';
 import { BaseDriver } from '../../..';
 
 
+chai.should();
 chai.use(chaiAsPromised);
 
 describe('logging custom events', function () {

@@ -3,7 +3,7 @@ import path from 'path';
 import { exec } from 'teen_process';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { tempDir, fs, mkdirp, util } from 'appium-support';
+import { tempDir, fs, mkdirp, util } from '@appium/support';
 import { KNOWN_DRIVERS } from '../lib/drivers';
 import { PROJECT_ROOT as cwd } from './helpers';
 

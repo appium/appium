@@ -1,7 +1,7 @@
 import log from '../logger';
 import { waitForCondition } from 'asyncbox';
 import _ from 'lodash';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { errors } from '../../protocol';
 
 

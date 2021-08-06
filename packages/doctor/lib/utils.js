@@ -3,15 +3,20 @@ import path from 'path';
 import _inquirer from 'inquirer';
 import log from '../lib/logger';
 import authorize from 'authorize-ios';
-import { fs, system } from 'appium-support';
+import { fs, system } from '@appium/support';
 import { exec } from 'teen_process';
 import { isFunction } from 'lodash';
 
 // rename to make more sense
 const authorizeIos = authorize;
 
-const pkgRoot = process.env.NO_PRECOMPILE ?
-  path.resolve(__dirname, '..') : path.resolve(__dirname, '..', '..');
+// test support
+let pkgRoot;
+try {
+  pkgRoot = path.dirname(require.resolve('../package.json'));
+} catch {
+  pkgRoot = path.dirname(require.resolve('../../package.json'));
+}
 
 function ok (message) {
   return {ok: true, optional: false, message};
@@ -32,8 +37,10 @@ const inquirer = {
   })
 };
 
+let actualLog;
+
 function configureBinaryLog (opts) {
-  let actualLog = log.unwrap().log;
+  actualLog = log.unwrap().log;
   log.unwrap().log = function (level, prefix, msg) {
     let l = this.levels[level];
     if (l < this.levels[this.level]) return; // eslint-disable-line curly
@@ -44,6 +51,15 @@ function configureBinaryLog (opts) {
     }
   };
   log.level = opts.debug ? 'debug' : 'info';
+}
+
+/**
+ * If {@link configureBinaryLog} was called, this will restore the original `log` function.
+ */
+function resetLog () {
+  if (actualLog) {
+    log.unwrap().log = actualLog;
+  }
 }
 
 /**
@@ -106,4 +122,4 @@ async function getNpmPackageInfo (packageName) {
 }
 
 export { pkgRoot, ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
-  authorizeIos, resolveExecutablePath, getNpmPackageInfo};
+  authorizeIos, resolveExecutablePath, getNpmPackageInfo, resetLog };

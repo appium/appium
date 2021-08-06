@@ -5,7 +5,7 @@
     "appium"
   ],
   "version": "8.0.0-beta.6",
-  "author": "appium",
+  "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,7 +15,8 @@
     "url": "https://github.com/appium/appium/issues"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=12",
+    "npm": ">=6"
   },
   "main": "./build/index.js",
   "directories": {
@@ -61,5 +62,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "beta"
-  }
+  },
+  "homepage": "https://appium.io"
 }

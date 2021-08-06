@@ -13,7 +13,7 @@
     "url": "https://github.com/appium/appium.git"
   },
   "license": "Apache-2.0",
-  "author": "appium",
+  "author": "https://github.com/appium",
   "main": "./appium-doctor.js",
   "bin": {
     "appium-doctor": "./appium-doctor.js"
@@ -44,14 +44,15 @@
     "yargs": "^17.0.1"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.1.1",
+    "@appium/gulp-plugins": "^5.5.0",
     "@appium/test-support": "^1.3.3"
   },
   "engines": {
-    "node": ">=10",
+    "node": ">=12",
     "npm": ">=6"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "homepage": "https://appium.io"
 }

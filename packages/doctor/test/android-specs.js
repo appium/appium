@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck, OptionalGstreamerCheck } from '../lib/android';
-import { fs } from 'appium-support';
+import { fs } from '@appium/support';
 import * as adb from 'appium-adb';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';

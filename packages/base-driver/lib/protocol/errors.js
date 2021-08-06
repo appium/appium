@@ -1,6 +1,6 @@
 import ES6Error from 'es6-error';
 import _ from 'lodash';
-import { util, logger } from 'appium-support';
+import { util, logger } from '@appium/support';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 
 const mjsonwpLog = logger.getLogger('MJSONWP');

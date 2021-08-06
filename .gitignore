@@ -54,3 +54,5 @@ sample-code/csharp/test/bin
 sample-code/csharp/packages
 appium.zip
 .vscode/settings.json
+.nyc_output
+*.lerna_backup

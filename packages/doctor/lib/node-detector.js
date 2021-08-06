@@ -1,4 +1,4 @@
-import { fs, system } from 'appium-support';
+import { fs, system } from '@appium/support';
 import { exec } from 'teen_process';
 import log from './logger';
 import path from 'path';

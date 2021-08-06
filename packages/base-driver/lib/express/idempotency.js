@@ -1,6 +1,6 @@
 import log from './logger';
 import LRU from 'lru-cache';
-import { fs, util } from 'appium-support';
+import { fs, util } from '@appium/support';
 import os from 'os';
 import path from 'path';
 import { EventEmitter } from 'events';

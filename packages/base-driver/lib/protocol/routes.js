@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
 
 

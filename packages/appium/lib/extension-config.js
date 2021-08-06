@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import log from './logger';
-import { fs, mkdirp } from 'appium-support';
+import { fs, mkdirp } from '@appium/support';
 import path from 'path';
 import os from 'os';
 import YAML from 'yaml';

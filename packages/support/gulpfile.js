@@ -3,8 +3,11 @@
 const gulp = require('gulp');
 const boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 
+gulp.task('copy-files', () =>
+  gulp.src('./test/assets/*').pipe(gulp.dest('./build/test/assets/')));
+
 boilerplate({
-  build: 'appium-support',
+  build: '@appium/support',
   coverage: {
     files: [
       './build/test/**/*-specs.js',
@@ -14,4 +17,5 @@ boilerplate({
     ],
     verbose: true,
   },
+  postTranspile: ['copy-files']
 });

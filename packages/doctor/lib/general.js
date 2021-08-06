@@ -2,7 +2,7 @@ import { ok, nok, okOptional, nokOptional, resolveExecutablePath, getNpmPackageI
 import { exec } from 'teen_process';
 import { DoctorCheck } from './doctor';
 import NodeDetector from './node-detector';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { EOL } from 'os';
 import 'colors';
 

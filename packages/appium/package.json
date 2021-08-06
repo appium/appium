@@ -85,5 +85,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
-  }
+  },
+  "homepage": "https://appium.io"
 }

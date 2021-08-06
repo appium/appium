@@ -1,6 +1,6 @@
 import npmlog from 'npmlog';
 import { createLogger, format, transports } from 'winston';
-import { fs, logger } from 'appium-support';
+import { fs, logger } from '@appium/support';
 import _ from 'lodash';
 
 

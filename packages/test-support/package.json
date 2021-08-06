@@ -13,7 +13,7 @@
     "url": "https://github.com/appium/appium.git"
   },
   "license": "Apache-2.0",
-  "author": "appium",
+  "author": "https://github.com/appium",
   "main": "./build/index.js",
   "bin": {
     "android-emu-travis-post": "./bin/android-emu-travis-post.sh",
@@ -30,8 +30,8 @@
     "build/lib"
   ],
   "dependencies": {
+    "@appium/support": "^2.53.0",
     "@babel/runtime": "^7.0.0",
-    "appium-support": "^2.5.0",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.5",
     "loud-rejection": "^2.0.0",
@@ -43,12 +43,14 @@
     "@appium/gulp-plugins": "^5.4.0"
   },
   "engines": {
-    "node": ">=12.x"
+    "node": ">=12",
+    "npm": ">=6"
   },
   "greenkeeper": {
     "ignore": []
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "homepage": "https://appium.io"
 }

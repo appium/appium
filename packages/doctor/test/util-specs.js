@@ -1,7 +1,7 @@
 // transpile:mocha
 
-import { pkgRoot, configureBinaryLog } from '../lib/utils';
-import { fs } from 'appium-support';
+import { pkgRoot, configureBinaryLog, resetLog } from '../lib/utils';
+import { fs } from '@appium/support';
 import chai from 'chai';
 import path from 'path';
 import { Doctor } from '../lib/doctor';
@@ -22,14 +22,18 @@ describe('utils', function () {
       'notwow.txt'))).should.not.be.ok;
   });
 
-  it('Should handle logs through onLogMessage callback', function () {
+  it('Should handle logs through onLogMessage callback', async function () {
     function onLogMessage (level, prefix, msg) {
       `${level} ${prefix} ${msg}`.should.include('AppiumDoctor');
     }
 
     configureBinaryLog({ onLogMessage });
     let doctor = new Doctor();
-    doctor.run();
+    try {
+      await doctor.run();
+    } finally {
+      resetLog();
+    }
   });
 
 });

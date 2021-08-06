@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import chai from 'chai';
-import { fs, system } from 'appium-support';
+import { fs, system } from '@appium/support';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
 import B from 'bluebird';

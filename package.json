@@ -25,7 +25,7 @@
   "author": "https://github.com/appium",
   "scripts": {
     "build": "lerna exec gulp transpile",
-    "clean": "lerna clean -y && rm -rf node_modules && rm -f package-lock.json && rm -rf packages/*/build",
+    "clean": "lerna clean -y && npx rimraf node_modules package-lock.json \"packages/*/build\"",
     "coverage": "lerna exec gulp coveralls",
     "doctor": "node ./packages/doctor",
     "e2e-test": "lerna exec gulp e2e-test",

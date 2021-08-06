@@ -1,7 +1,7 @@
 import path from 'path';
 import log from './logger';
 import _ from 'lodash';
-import { fs } from 'appium-support';
+import { fs } from '@appium/support';
 import B from 'bluebird';
 
 

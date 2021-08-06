@@ -1,4 +1,4 @@
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 // The default maximum length of a single log record
 // containing http request/response body

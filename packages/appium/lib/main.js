@@ -8,7 +8,7 @@ import { server as baseServer, routeConfiguringFunction as makeRouter } from '@a
 import { asyncify } from 'asyncbox';
 import { default as getParser, getDefaultServerArgs } from './cli/parser';
 import { USE_ALL_PLUGINS } from './cli/args';
-import { logger as logFactory, util } from 'appium-support';
+import { logger as logFactory, util } from '@appium/support';
 import {
   showConfig, checkNodeOk, validateServerArgs,
   warnNodeDeprecations, validateTmpDir, getNonDefaultArgs,

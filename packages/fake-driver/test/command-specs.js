@@ -6,6 +6,9 @@ import findCommands from '../lib/commands/find';
 import generalCommands from '../lib/commands/general';
 import exportedCommands from '../lib/commands';
 
+import chai from 'chai';
+
+chai.should();
 
 describe('Driver commands', function () {
   let allCommands = [
@@ -14,7 +17,7 @@ describe('Driver commands', function () {
     _.keys(findCommands),
     _.keys(generalCommands)
   ];
-  let totalCommands = _.sum(allCommands.map(c => c.length));
+  let totalCommands = _.sum(allCommands.map((c) => c.length));
   it('should not overlap between files', function () {
     _.union(...allCommands).length.should.equal(totalCommands);
   });

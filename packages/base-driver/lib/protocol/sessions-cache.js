@@ -1,5 +1,5 @@
 import LRU from 'lru-cache';
-import { logger } from 'appium-support';
+import { logger } from '@appium/support';
 import { PROTOCOLS } from '../constants';
 
 

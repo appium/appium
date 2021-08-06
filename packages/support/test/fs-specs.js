@@ -14,9 +14,6 @@ describe('fs', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   const existingPath = path.resolve(__dirname, 'fs-specs.js');
-  it('should exist', function () {
-    should.exist(fs);
-  });
   it('should have expected methods', function () {
     should.exist(fs.open);
     should.exist(fs.close);

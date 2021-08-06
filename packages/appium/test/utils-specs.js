@@ -1,5 +1,4 @@
 import chai from 'chai';
-import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
@@ -10,7 +9,7 @@ import _ from 'lodash';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
-const cwd = path.resolve(__dirname, '..', '..');
+
 const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
 const FAKE_DRIVER_NAME = `fake`;
 const FAKE_DRIVER_ARGS = `{"${FAKE_DRIVER_NAME}": ${FAKE_ARGS}}`;
@@ -244,7 +243,7 @@ describe('utils', function () {
       (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
     });
     it('should take a valid json file with a driver name and return a valid json object for that driver', function () {
-      const fakeDriverArgsPath = `${cwd}/test/fixtures/driverArgs.json`;
+      const fakeDriverArgsPath = require.resolve('./fixtures/driverArgs.json');
 
       parseExtensionArgs(
         fakeDriverArgsPath,

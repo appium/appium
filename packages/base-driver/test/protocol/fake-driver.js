@@ -1,7 +1,7 @@
 /* eslint-disable require-await */
 import { errors, BaseDriver, determineProtocol } from '../..';
 import { PROTOCOLS } from '../../lib/constants';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 
 class FakeDriver extends BaseDriver {

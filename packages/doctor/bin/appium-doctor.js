@@ -4,7 +4,7 @@ import yargs from 'yargs';
 import newDoctor from '../lib/factory';
 import { configureBinaryLog } from '../lib/utils';
 import { configure as configurePrompt } from '../lib/prompt';
-import { system } from 'appium-support';
+import { system } from '@appium/support';
 
 
 yargs

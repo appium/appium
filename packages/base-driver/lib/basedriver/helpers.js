@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import { system, tempDir, fs, util, zip, net, timing } from 'appium-support';
+import { system, tempDir, fs, util, zip, net, timing } from '@appium/support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
@@ -326,7 +326,7 @@ async function unzipApp (zipPath, dstRoot, supportedAppExtensions) {
      * Attempt to use use the system `unzip` (e.g., `/usr/bin/unzip`) due
      * to the significant performance improvement it provides over the native
      * JS "unzip" implementation.
-     * @type {import('appium-support/lib/zip').ExtractAllOptions}
+     * @type {import('@appium/support/lib/zip').ExtractAllOptions}
      */
     const extractionOpts = {
       useSystemUnzip: !system.isWindows(),

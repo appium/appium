@@ -1,8 +1,14 @@
 import 'colors';
 import _ from 'lodash';
 import log from './logger';
-import { version } from '../../package.json'; // eslint-disable-line import/no-unresolved
 
+// for test compat
+let version;
+try {
+  version = require('../../package.json').version;
+} catch {
+  version = require('../package.json').version;
+}
 
 class FixSkippedError extends Error {
 }

@@ -13,7 +13,7 @@
     "url": "https://github.com/appium/appium.git"
   },
   "license": "Apache-2.0",
-  "author": "appium",
+  "author": "https://github.com/appium",
   "main": "./build/index.js",
   "bin": {},
   "directories": {
@@ -63,9 +63,11 @@
     "@appium/gulp-plugins": "^5.4.0"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=12",
+    "npm": ">=6"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "homepage": "https://appium.io"
 }

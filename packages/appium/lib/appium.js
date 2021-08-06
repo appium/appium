@@ -6,7 +6,7 @@ import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
 import { parseExtensionArgs, parseCapsForInnerDriver, pullSettings } from './utils';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -27,7 +27,7 @@ class AppiumDriver extends BaseDriver {
     // It is necessary to set `--tmp` here since it should be set to
     // process.env.APPIUM_TMP_DIR once at an initial point in the Appium lifecycle.
     // The process argument will be referenced by BaseDriver.
-    // Please call appium-support.tempDir module to apply this benefit.
+    // Please call @appium/support.tempDir module to apply this benefit.
     if (args.tmpDir) {
       process.env.APPIUM_TMP_DIR = args.tmpDir;
     }

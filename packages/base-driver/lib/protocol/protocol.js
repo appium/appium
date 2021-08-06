@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { validators } from './validators';
 import {
   errors, isErrorType, getResponseForW3CError, getResponseForJsonwpError,

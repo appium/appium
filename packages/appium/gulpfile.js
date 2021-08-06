@@ -12,6 +12,8 @@ const path = require('path');
 const fs = require('fs');
 const log = require('fancy-log');
 
+gulp.task('copy-fixtures', () => gulp.src('./test/fixtures/*').pipe(gulp.dest('./build/test/fixtures/')));
+
 // remove 'fsevents' from shrinkwrap, since it causes errors on non-Mac hosts
 // see https://github.com/npm/npm/issues/2679
 
@@ -46,7 +48,8 @@ boilerplate({
   test: {
     files: ['${testDir}/**/*-specs.js']
   },
-  testTimeout: 160000
+  testTimeout: 160000,
+  postTranspile: ['copy-fixtures']
 });
 
 // generates server arguments readme

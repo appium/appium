@@ -7,9 +7,11 @@ import chai from 'chai';
 
 const should = chai.should();
 
-const ALLOW_FIXTURE = 'test/fixtures/allow-feat.txt';
-const DENY_FIXTURE = 'test/fixtures/deny-feat.txt';
-const FAKE_DRIVER_ARGS_PATH = path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'driverArgs.json');
+const FIXTURE_DIR = path.join(__dirname, 'fixtures');
+const ALLOW_FIXTURE = path.join(FIXTURE_DIR, 'allow-feat.txt');
+const DENY_FIXTURE = path.join(FIXTURE_DIR, 'deny-feat.txt');
+const FAKE_DRIVER_ARGS_FIXTURE = path.join(FIXTURE_DIR, 'driverArgs.json');
+const CAPS_FIXTURE = path.join(FIXTURE_DIR, 'caps.json');
 
 describe('Main Parser', function () {
   let p = getParser(true);
@@ -50,7 +52,7 @@ describe('Server Parser', function () {
   });
   it('should parse default capabilities correctly from a file', function () {
     let defaultCapabilities = {a: 'b'};
-    let args = p.parse_args(['--default-capabilities', 'test/fixtures/caps.json']);
+    let args = p.parse_args(['--default-capabilities', CAPS_FIXTURE]);
     args.defaultCapabilities.should.eql(defaultCapabilities);
   });
   it('should throw an error with invalid arg to default capabilities', function () {
@@ -87,7 +89,7 @@ describe('Server Parser', function () {
   });
   it('should parse default driver args correctly from a file', function () {
     let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
-    let args = p.parse_args(['--driver-args', FAKE_DRIVER_ARGS_PATH]);
+    let args = p.parse_args(['--driver-args', FAKE_DRIVER_ARGS_FIXTURE]);
     args.driverArgs.should.eql(fakeDriverArgs);
   });
   it('should parse default plugin args correctly from a string', function () {

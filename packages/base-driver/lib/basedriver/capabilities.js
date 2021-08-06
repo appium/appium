@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { validator } from './desired-caps';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import log from './logger';
 import { errors } from '../protocol/errors';
 

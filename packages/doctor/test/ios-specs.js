@@ -4,7 +4,7 @@ import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
          AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck,
          OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck,
          OptionalLyftCommandCheck } from '../lib/ios';
-import { fs, system } from 'appium-support';
+import { fs, system } from '@appium/support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';

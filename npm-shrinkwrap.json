@@ -4010,9 +4010,9 @@
       "integrity": "sha512-v91EN8KvLo3YS7OS0j21dYxZjDt5Z9n0AsMf731IKmOosRKQ1mX1ayfYu7wtkWFX+E15Oy/y0t4giRdx3fo/BA=="
     },
     "appium-webdriveragent": {
-      "version": "3.12.0",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.12.0.tgz",
-      "integrity": "sha512-kXXSi3qzPJvAORdLvDrBjqH29B+DbgNKnd8RjVkJtadiefOorpxx1qn2hUOnHyoXOP3VohwgiBxQw+pYLhNxYw==",
+      "version": "3.12.2",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.12.2.tgz",
+      "integrity": "sha512-/YMcPhbUpXYSteTOnPQVv7tBpGn/57152ICgwxWNfmMKmUw1U9p/lp8AlMQg9VOSig1qW12COLuBq+T8HRX6iw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4060,9 +4060,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.50.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.50.0.tgz",
-      "integrity": "sha512-6cIc59bOjId60gl1CaYsOctTRHla3Fpg7g5AAo6BOqeg4LO3B76PIEhFGcNY26AT1Mt52aLj4CceYt3BDbbu+A==",
+      "version": "3.51.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.51.0.tgz",
+      "integrity": "sha512-DZm0iLm4Phqy4JPj6G7zwtZhdsKNB78PDgBaCaPb58Z5PANhV39XhXBn1FCa0vTy+CzCMSyZPKp91VZcDlQUQg==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4079,6 +4079,7 @@
         "css-selector-parser": "^1.4.1",
         "js2xmlparser2": "^0.2.0",
         "lodash": "^4.17.10",
+        "lru-cache": "^6.0.0",
         "moment": "^2.24.0",
         "moment-timezone": "^0.x",
         "node-simctl": "^6.4.0",
@@ -4086,8 +4087,15 @@
         "semver": "^7.0.0",
         "source-map-support": "^0.5.5",
         "teen_process": "^1.14.0",
-        "ws": "^7.0.0",
+        "ws": "^8.0.0",
         "xmldom": "^0.x"
+      },
+      "dependencies": {
+        "ws": {
+          "version": "8.0.0",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-8.0.0.tgz",
+          "integrity": "sha512-6AcSIXpBlS0QvCVKk+3cWnWElLsA6SzC0lkQ43ciEglgXJXiCWK3/CGFEJ+Ybgp006CMibamAsqOlxE9s4AvYA=="
+        }
       }
     },
     "appium-youiengine-driver": {

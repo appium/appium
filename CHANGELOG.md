@@ -37,9 +37,15 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
     * `appium:forceAppLaunch` to launch the application under test forcefully with `appium:bundleId`. Defaults to `true` unless `noReset` capability is set to `true`. [appium-xcuitest-driver#1314](https://github.com/appium/appium-xcuitest-driver/pull/1314)
 * Add `mobile:` extensions:
     * `mobile:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
-
 * Add `durationSeconds` argument in `mobile: pressButton` for tvOS
 * Add `getProperty` command to support [Get Element Property](https://www.w3.org/TR/webdriver/#dfn-get-element-property) endpoint. In native context, the command is equal to [Get Element Attribute](https://www.w3.org/TR/webdriver/#get-element-attribute) [appium-xcuitest-driver#1313](https://github.com/appium/appium-xcuitest-driver/pull/1313)
+* Update parsing logic to parse `:wdc:` element id by Safari Web inspector in WebView context [appium-xcuitest-driver#1324](https://github.com/appium/appium-xcuitest-driver/pull/1324) [appium#15230](https://github.com/appium/appium/issues/15230)
+    * Probably the host macOS should have Safari 14.1
+* Improve alert checking logic in Web contect [appium-xcuitest-driver#1320](https://github.com/appium/appium-xcuitest-driver/pull/1320)
+* Fix coordinate offset with `absoluteWebLocations` capability in Web context
+[appium-xcuitest-driver#1322](https://github.com/appium/appium-xcuitest-driver/pull/1322)
+* Fix element identification logic for over iOS 13 [WebDriverAgent#523](https://github.com/appium/WebDriverAgent/pull/523) (Thanks @Dan-Maor)
+    * This fix may improve page source results in some environment
 
 ### Mac2
 * Add `macos:` extensions:

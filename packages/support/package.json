@@ -33,6 +33,7 @@
     "bluebird": "^3.5.1",
     "bplist-creator": "^0",
     "bplist-parser": "^0.x",
+    "find-root": "^1.1.0",
     "form-data": "^4.0.0",
     "get-stream": "^6.0.1",
     "glob": "^7.1.7",

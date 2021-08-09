@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import logger from './logger';
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
-import findRoot from 'find-root';
 import { parseJsonStringOrFile } from './cli/parser-helpers';
+import { fs } from '@appium/support';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -229,7 +229,7 @@ function pullSettings (caps) {
   return result;
 }
 
-const rootDir = findRoot(__dirname);
+const rootDir = fs.findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,

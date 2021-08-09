@@ -160,6 +160,14 @@ export default class ExtensionConfig {
     await this.write();
   }
 
+  async updateExtension (extName, extData) {
+    this.installedExtensions[extName] = {
+      ...this.installedExtensions[extName],
+      ...extData,
+    };
+    await this.write();
+  }
+
   async removeExtension (extName) {
     delete this.installedExtensions[extName];
     await this.write();

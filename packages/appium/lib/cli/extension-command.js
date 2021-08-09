@@ -483,9 +483,9 @@ export default class ExtensionCommand {
    */
   async updateExtension (ext, version) {
     const {pkgName} = this.config.installedExtensions[ext];
-    await this.installViaNpm({ext, pkgName, pkgVer: version});
-    this.config.installedExtensions[ext].version = version;
-    await this.config.write();
+    const extData = await this.installViaNpm({ext, pkgName, pkgVer: version});
+    delete extData[`${this.type}Name`];
+    await this.config.updateExtension(ext, extData);
   }
 
   /**

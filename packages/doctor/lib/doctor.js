@@ -1,14 +1,9 @@
 import 'colors';
 import _ from 'lodash';
 import log from './logger';
+import { fs } from '@appium/support';
 
-// for test compat
-let version;
-try {
-  version = require('../../package.json').version;
-} catch {
-  version = require('../package.json').version;
-}
+const {version} = fs.readPackageJsonFrom(__dirname);
 
 class FixSkippedError extends Error {
 }

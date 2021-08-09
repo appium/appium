@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { pkgRoot, configureBinaryLog, resetLog } from '../lib/utils';
+import { configureBinaryLog, resetLog } from '../lib/utils';
 import { fs } from '@appium/support';
 import chai from 'chai';
 import path from 'path';
@@ -11,14 +11,14 @@ chai.should();
 describe('utils', function () {
 
   it('fs.readFile', async function () {
-    (await fs.readFile(path.resolve(pkgRoot, 'test', 'fixtures',
+    (await fs.readFile(path.resolve(__dirname, 'fixtures',
       'wow.txt'), 'utf8')).should.include('WOW');
   });
 
   it('fs.exists', async function () {
-    (await fs.exists(path.resolve(pkgRoot, 'test', 'fixtures',
+    (await fs.exists(path.resolve(__dirname, 'fixtures',
       'wow.txt'))).should.be.ok;
-    (await fs.exists(path.resolve(pkgRoot, 'test', 'fixtures',
+    (await fs.exists(path.resolve(__dirname, 'fixtures',
       'notwow.txt'))).should.not.be.ok;
   });
 

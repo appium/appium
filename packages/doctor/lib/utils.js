@@ -1,5 +1,4 @@
 import B from 'bluebird';
-import path from 'path';
 import _inquirer from 'inquirer';
 import log from '../lib/logger';
 import authorize from 'authorize-ios';
@@ -9,14 +8,6 @@ import { isFunction } from 'lodash';
 
 // rename to make more sense
 const authorizeIos = authorize;
-
-// test support
-let pkgRoot;
-try {
-  pkgRoot = path.dirname(require.resolve('../package.json'));
-} catch {
-  pkgRoot = path.dirname(require.resolve('../../package.json'));
-}
 
 function ok (message) {
   return {ok: true, optional: false, message};
@@ -121,5 +112,5 @@ async function getNpmPackageInfo (packageName) {
   return null;
 }
 
-export { pkgRoot, ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
+export { ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
   authorizeIos, resolveExecutablePath, getNpmPackageInfo, resetLog };

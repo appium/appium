@@ -4,7 +4,9 @@ import path from 'path';
 import { exec } from 'teen_process';
 import B from 'bluebird';
 import _ from 'lodash';
+import chaiAsPromised from 'chai-as-promised';
 
+chai.use(chaiAsPromised);
 
 const should = chai.should();
 
@@ -14,6 +16,7 @@ describe('fs', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   const existingPath = path.resolve(__dirname, 'fs-specs.js');
+
   it('should have expected methods', function () {
     should.exist(fs.open);
     should.exist(fs.close);
@@ -149,8 +152,8 @@ describe('fs', function () {
     });
   });
   it('glob', async function () {
-    let glob = 'test/*-specs.js';
-    let tests = await fs.glob(glob);
+    let glob = '*-specs.js';
+    let tests = await fs.glob(glob, {cwd: __dirname});
     tests.should.be.an('array');
     tests.should.have.length.above(2);
   });
@@ -193,6 +196,74 @@ describe('fs', function () {
     it('should traverse non-recursively', async function () {
       const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));
       _.isNil(filePath).should.be.true;
+    });
+  });
+
+  describe('findRoot()', function () {
+    describe('when not provided an argument', function () {
+      it('should throw', function () {
+        (() => fs.findRoot()).should.throw(TypeError);
+      });
+    });
+
+    describe('when provided a relative path', function () {
+      it('should throw', function () {
+        (() => fs.findRoot('./foo')).should.throw(TypeError);
+      });
+    });
+
+    describe('when provided an empty string', function () {
+      it('should throw', function () {
+        (() => fs.findRoot('')).should.throw(TypeError);
+      });
+    });
+
+    describe('when provided an absolute path', function () {
+      describe('when the path has a parent `package.json`', function () {
+        it('should locate the dir with the closest `package.json`', function () {
+          fs.findRoot(__dirname).should.be.a('string');
+        });
+      });
+
+      describe('when the path does not have a parent `package.json`', function () {
+        it('should throw', function () {
+          (() => fs.findRoot('/')).should.throw(Error);
+        });
+      });
+    });
+  });
+
+  describe('readPackageJsonFrom()', function () {
+    describe('when not provided an argument', function () {
+      it('should throw', function () {
+        (() => fs.readPackageJsonFrom()).should.throw(TypeError, /non-empty, absolute path/);
+      });
+    });
+
+    describe('when provided a relative path', function () {
+      it('should throw', function () {
+        (() => fs.readPackageJsonFrom('./foo')).should.throw(TypeError);
+      });
+    });
+
+    describe('when provided an empty string', function () {
+      it('should throw', function () {
+        (() => fs.readPackageJsonFrom('')).should.throw(TypeError);
+      });
+    });
+
+    describe('when provided an absolute path', function () {
+      describe('when the path does not have a parent `package.json`', function () {
+        it('should throw', function () {
+          (() => fs.readPackageJsonFrom('/')).should.throw(Error);
+        });
+      });
+
+      describe('when the path has a parent `package.json`', function () {
+        it('should read the `package.json` found in the root dir', function () {
+          fs.readPackageJsonFrom(__dirname).should.be.an('object');
+        });
+      });
     });
   });
 });

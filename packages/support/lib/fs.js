@@ -1,4 +1,6 @@
 // jshint ignore: start
+import _ from 'lodash';
+import path from 'path';
 import _fs from 'fs';
 import rimraf from 'rimraf';
 import ncp from 'ncp';
@@ -9,12 +11,14 @@ import glob from 'glob';
 import crypto from 'crypto';
 import klaw from 'klaw';
 import sanitize from 'sanitize-filename';
+import findRoot from 'find-root';
 import { pluralize } from './util';
 import log from './logger';
 import Timer from './timing';
 
 const mkdirAsync = B.promisify(_fs.mkdir);
 const ncpAsync = B.promisify(ncp);
+const findRootCached = _.memoize(findRoot);
 
 const fs = {
   async hasAccess (path) {
@@ -141,6 +145,39 @@ const fs = {
         walker.destroy();
       }
     });
+  },
+  /**
+   * Reads the closest `package.json` file from absolute path `dir`.
+   * @param {string} dir - Directory to search from
+   * @throws {TypeError} If `dir` is not a nonempty string or relative path
+   * @throws {Error} If there were problems finding or reading a `package.json` file
+   * @returns {object} A parsed `package.json`
+   */
+  readPackageJsonFrom (dir) {
+    const root = fs.findRoot(dir);
+    try {
+      return JSON.parse(_fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+    } catch (err) {
+      err.message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${err.message}`;
+      throw err;
+    }
+  },
+  /**
+   * Finds the project root directory from `dir`.
+   * @param {string} dir - Directory to search from
+   * @throws {TypeError} If `dir` is not a nonempty string or relative path
+   * @throws {Error} If there were problems finding the project root
+   * @returns {string} The closeset parent dir containing `package.json`
+   */
+  findRoot (dir) {
+    if (!dir || !path.isAbsolute(dir)) {
+      throw new TypeError('`findRoot()` must be provided a non-empty, absolute path');
+    }
+    const result = findRootCached(dir);
+    if (!result) {
+      throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
+    }
+    return result;
   }
 };
 

@@ -1,7 +1,8 @@
-import { isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
+import { zip, fs, tempDir } from 'appium-support';
+import { configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-
+import sinon from 'sinon';
 
 chai.use(chaiAsPromised);
 const should = chai.should();
@@ -90,6 +91,31 @@ describe('helpers', function () {
         0
       ];
       duplicateKeys(input, 'foo', 'FOO').should.deep.equal(expectedOutput);
+    });
+  });
+
+  describe('#configureApp', function () {
+    let sandbox;
+
+    beforeEach(function () {
+      sandbox = sinon.createSandbox();
+      sandbox.stub(zip, 'extractAllTo').resolves();
+      sandbox.stub(zip, 'assertValidZip').resolves();
+      sandbox.stub(fs, 'mv').resolves();
+      sandbox.stub(fs, 'exists').resolves(true);
+      sandbox.stub(fs, 'hash').resolves('0xDEADBEEF');
+      sandbox.stub(fs, 'glob').resolves(['/path/to/an.apk']);
+      sandbox.stub(fs, 'rimraf').resolves();
+      sandbox.stub(tempDir, 'openDir').resolves('/some/dir');
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should pass "useSystemUnzip" flag through to appium-support', async function () {
+      await configureApp('/path/to/an.apk.zip', '.apk');
+      zip.extractAllTo.getCall(0).lastArg.useSystemUnzip.should.be.true;
     });
   });
 });

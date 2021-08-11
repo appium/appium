@@ -4,6 +4,12 @@
     ":semanticCommitTypeAll(chore)",
     ":preserveSemverRanges"
   ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ],
   "baseBranches": ["2.0"],
   "ignorePaths": ["sample-code"],
   "semanticCommits": "enabled",

@@ -94,7 +94,7 @@
     "finalhandler": "^1.1.2",
     "get-port": "^5.1.1",
     "gulp": "^4.0.2",
-    "handlebars": "^4.2.0",
+    "handlebars": "^4.7.7",
     "lerna": "^4.0.0",
     "lint-staged": "^11.0.0",
     "mjpeg-server": "^0.3.0",

@@ -483,6 +483,7 @@ export default class ExtensionCommand {
    */
   async updateExtension (ext, version) {
     const {pkgName} = this.config.installedExtensions[ext];
+    await fs.rimraf(this.config.getInstallPath(ext));
     const extData = await this.installViaNpm({ext, pkgName, pkgVer: version});
     delete extData[`${this.type}Name`];
     await this.config.updateExtension(ext, extData);

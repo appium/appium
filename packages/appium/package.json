@@ -56,7 +56,7 @@
     "@appium/support": "2.x",
     "@babel/runtime": "^7.6.0",
     "argparse": "^2.0.1",
-    "async-lock": "^1.0.0",
+    "async-lock": "^1.3.0",
     "asyncbox": "2.x",
     "axios": "^0.21.0",
     "bluebird": "3.x",

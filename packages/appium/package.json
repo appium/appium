@@ -71,7 +71,7 @@
     "teen_process": "1.x",
     "winston": "3.x",
     "word-wrap": "^1.2.3",
-    "yaml": "^1.7.2"
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@appium/fake-driver": "^2.2.0",

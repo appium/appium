@@ -1,12 +1,8 @@
 // transpile:mocha
 
 import { JWProxy } from '../..';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('proxying full urls', function () {
   it('should translate host and port', function () {

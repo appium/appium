@@ -2,13 +2,8 @@
 
 import { server, routeConfiguringFunction } from '../../index.js';
 import { configureServer, normalizeBasePath } from '../../lib/express/server';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import getPort from 'get-port';
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 function fakeApp () {
   const app = {

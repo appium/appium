@@ -1,8 +1,6 @@
 
 import AppiumSupport from '../index.js';
-import chai from 'chai';
 
-chai.should();
 let { system, tempDir, util } = AppiumSupport;
 
 describe('index', function () {

@@ -1,8 +1,6 @@
 // transpile:mocha
 import _ from 'lodash';
 import path from 'path';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { remote as wdio } from 'webdriverio';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
@@ -10,8 +8,6 @@ import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE, PLUGIN_TYPE } fro
 import { W3C_PREFIXED_CAPS, TEST_HOST, getTestPort, PROJECT_ROOT } from './helpers';
 import { runExtensionCommand } from '../lib/cli/extension';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
 const FAKE_PLUGIN_ARGS = JSON.stringify({'fake': FAKE_ARGS});

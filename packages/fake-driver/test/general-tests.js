@@ -1,10 +1,5 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
 import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 function generalTests () {
   describe('generic actions', function () {

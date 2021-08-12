@@ -1,14 +1,9 @@
 import { fs, tempDir } from '../index.js';
-import chai from 'chai';
 import path from 'path';
 import { exec } from 'teen_process';
 import B from 'bluebird';
 import _ from 'lodash';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.use(chaiAsPromised);
-
-const should = chai.should();
 
 const MOCHA_TIMEOUT = 20000;
 

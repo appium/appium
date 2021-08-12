@@ -24,6 +24,10 @@ module.exports = {
     'mocha',
     'promise'
   ],
+  globals: {
+    chai: true,
+    should: true
+  },
   rules: {
     'no-console': 2,
     semi: [2, 'always'],

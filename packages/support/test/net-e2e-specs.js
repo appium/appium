@@ -1,10 +1,7 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import { downloadFile } from '../lib/net';
 import { tempDir, fs } from '../index';
 
-chai.use(chaiAsPromised);
 
 describe('#net', function () {
   let tmpRoot;

@@ -1,11 +1,7 @@
 import { default as BaseDriver, errors } from '../..';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import logger from '../../lib/basedriver/logger';
 import sinon from 'sinon';
 
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('Desired Capabilities', function () {
   let d;

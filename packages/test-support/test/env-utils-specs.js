@@ -1,10 +1,8 @@
 // transpile:mocha
 
 import { stubEnv } from '..';
-import chai from 'chai';
 
 
-chai.should();
 const expect = chai.expect;
 
 describe('env-utils', function () {

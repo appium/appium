@@ -1,9 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import chai from 'chai';
 import { A } from '../lib/a';
 
 
-chai.should();
 
 describe('a', function () {
   it('should be able to get text', function () {

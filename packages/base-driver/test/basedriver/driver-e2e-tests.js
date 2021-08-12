@@ -4,13 +4,8 @@ import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
 } from '../../lib/constants';
 import axios from 'axios';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import getPort from 'get-port';
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   let address = defaultCaps['appium:address'] ?? '127.0.0.1';

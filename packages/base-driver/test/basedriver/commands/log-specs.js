@@ -1,12 +1,8 @@
 import logCommands from '../../../lib/basedriver/commands/log';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import _ from 'lodash';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const FIRST_LOGS = ['first', 'logs'];

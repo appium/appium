@@ -1,12 +1,8 @@
 import B from 'bluebird';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import * as util from '../lib/util';
 import { tempDir, fs } from '../index';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('#util', function () {
   let tmpRoot;

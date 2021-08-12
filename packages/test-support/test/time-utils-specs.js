@@ -2,11 +2,9 @@
 
 import { fakeTime } from '..';
 
-import chai from 'chai';
 import sinon from 'sinon';
 import B from 'bluebird';
 
-chai.should();
 
 function doSomething () {
   return new B.Promise((resolve) => {

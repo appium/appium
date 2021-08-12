@@ -2,11 +2,9 @@
 
 import { configureBinaryLog, resetLog } from '../lib/utils';
 import { fs } from '@appium/support';
-import chai from 'chai';
 import path from 'path';
 import { Doctor } from '../lib/doctor';
 
-chai.should();
 
 describe('utils', function () {
 

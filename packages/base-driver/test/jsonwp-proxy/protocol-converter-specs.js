@@ -1,12 +1,9 @@
 import _ from 'lodash';
 import { PROTOCOLS } from '../../lib/constants';
 import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../lib/jsonwp-proxy/protocol-converter';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
-chai.use(chaiAsPromised);
 
 describe('Protocol Converter', function () {
   describe('getTimeoutRequestObjects', function () {

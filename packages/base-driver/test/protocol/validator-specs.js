@@ -1,10 +1,8 @@
 // transpile:mocha
 
 import { validators } from '../../lib/protocol/validators';
-import chai from 'chai';
 
 
-chai.should();
 
 describe('Protocol', function () {
   describe('direct to driver', function () {

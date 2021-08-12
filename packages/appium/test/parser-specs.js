@@ -3,9 +3,6 @@
 import { getParser } from '../lib/cli/parser';
 import { INSTALL_TYPES, DEFAULT_APPIUM_HOME } from '../lib/extension-config';
 import path from 'path';
-import chai from 'chai';
-
-const should = chai.should();
 
 const FIXTURE_DIR = path.join(__dirname, 'fixtures');
 const ALLOW_FIXTURE = path.join(FIXTURE_DIR, 'allow-feat.txt');

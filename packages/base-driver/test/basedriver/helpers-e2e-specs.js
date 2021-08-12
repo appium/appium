@@ -1,7 +1,5 @@
-import chai from 'chai';
 import path from 'path';
 import url from 'url';
-import chaiAsPromised from 'chai-as-promised';
 import { fs } from '@appium/support';
 import { configureApp } from '../../lib/basedriver/helpers';
 import http from 'http';
@@ -11,8 +9,6 @@ import contentDisposition from 'content-disposition';
 import B from 'bluebird';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 
 function getFixture (file) {
   // XXX: __dirname disallowed in native ESM

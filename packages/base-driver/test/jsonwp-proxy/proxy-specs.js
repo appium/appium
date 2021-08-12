@@ -2,13 +2,8 @@
 
 import { JWProxy } from '../..';
 import request from './mock-request';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { isErrorType, errors } from '../../lib/protocol/errors';
 
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 function buildReqRes (url, method, body) {
   let req = {originalUrl: url, method, body};

@@ -1,9 +1,7 @@
 // transpile:mocha
 
 import newDoctor from '../lib/factory';
-import chai from 'chai';
 
-chai.should();
 
 describe('factory', function () {
   function getTest (config) {

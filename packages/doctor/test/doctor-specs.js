@@ -1,13 +1,11 @@
 // transpile:mocha
 
 import { Doctor, DoctorCheck, FixSkippedError } from '../lib/doctor';
-import chai from 'chai';
 import { withSandbox, stubLog } from '@appium/test-support';
 import log from '../lib/logger';
 import B from 'bluebird';
 
 
-chai.should();
 
 describe('doctor', function () {
   it('register', function () {

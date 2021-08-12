@@ -1,11 +1,7 @@
 import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps } from '../../lib/basedriver/capabilities';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps';
 
-chai.use(chaiAsPromised);
-const should = chai.should();
 
 describe('caps', function () {
 

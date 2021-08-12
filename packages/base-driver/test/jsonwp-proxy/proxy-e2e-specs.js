@@ -1,10 +1,5 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { JWProxy, server, routeConfiguringFunction } from '../..';
 import { FakeDriver } from '../protocol/fake-driver';
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('proxy', function () {
   const jwproxy = new JWProxy();

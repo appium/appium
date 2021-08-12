@@ -1,4 +1,3 @@
-import chai from 'chai';
 import { fs } from '../index';
 import os from 'os';
 import path from 'path';
@@ -8,7 +7,6 @@ import { SecureValuesPreprocessor } from '../lib/log-internal';
 const CONFIG_PATH = path.resolve(os.tmpdir(), 'rules.json');
 
 
-chai.should();
 
 
 describe('Log Internals', function () {

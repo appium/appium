@@ -1,13 +1,9 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import * as teenProcess from 'teen_process';
 import sinon from 'sinon';
 import { process } from '../index.js';
 import { retryInterval } from 'asyncbox';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const SubProcess = teenProcess.SubProcess;
 

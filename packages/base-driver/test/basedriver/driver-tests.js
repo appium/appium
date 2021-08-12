@@ -1,13 +1,8 @@
 import _ from 'lodash';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { DeviceSettings } from '../..';
 import sinon from 'sinon';
 
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations

@@ -1,11 +1,11 @@
-# Sample Code
+# Examples
 
-Sample Appium code written in multiple client languages
+> Appium examples code written in multiple client languages!
 
 ## Running sample code
 
 * Follow the [Appium setup guide](https://github.com/appium/appium/blob/master/docs/en/about-appium/getting-started.md) to install Appium locally.
-* Choose the client library that you wish to run and then follow the guide in `sample-code/<client-language>/README.md` (e.g.: `sample-code/java/README.md`)
+* Choose the client library that you wish to run and then follow the guide in `examples/<client-language>/README.md` (e.g.: `examples/java/README.md`)
 
 ## Environment variables
 

@@ -28,6 +28,6 @@ If you are reporting a bug, _always_ include Appium logs!
 
 Please remember that with sample code it's easier to reproduce the bug and it's much faster to fix it.
 
-Please git clone https://github.com/appium/appium and from the `sample-code` directory, use one of your favourite languages and sample apps to reproduce the issue.
+Please git clone https://github.com/appium/appium and from the `examples` directory, use one of your favourite languages and sample apps to reproduce the issue.
 
-In case a similar scenario is missing in sample-code, please submit a PR with one of the sample apps provided.
+In case a similar scenario is missing in examples, please submit a PR with one of the sample apps provided.

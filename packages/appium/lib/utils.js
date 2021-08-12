@@ -67,8 +67,8 @@ function parseKnownArgs (driverPluginArgs, argsConstraints) {
  * and parsed driver/plugin args. If driverPluginArgs or argsConstraints is empty, args is returned
  * back
  *
- * @param {object} args - args
- * @param {object} driverPluginArgs - driverPluginArgs
+ * @param {object} args - Args
+ * @param {object} driverPluginArgs - Driver or Plugin args
  * @param {object} argsConstraints - Constraints for arguments
  * @return {object}
 */

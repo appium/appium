@@ -3,7 +3,7 @@ import path from 'path';
 import chaiAsPromised from 'chai-as-promised';
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, parseExtensionArgs,
+  removeAppiumPrefixes, parseExtensionArgs, parseDriverPluginArgs
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
@@ -254,6 +254,48 @@ describe('utils', function () {
     it('should throw an error if arg is not a plain object', function () {
       const fakeDriverArgs = '{"fake": 1234}';
       (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME,)).should.throw();
+    });
+  });
+
+  describe('parseDriverPluginArgs', function () {
+    const webkitDebugProxyPort = 22222;
+    const wdaLocalPort = 8000;
+    const driverArgs = { wdaLocalPort, webkitDebugProxyPort };
+    const opts = {'foo': 'bar', 'foobar': 'foobar'};
+    const ARGS_CONSTRAINTS = {
+      webkitDebugProxyPort: {
+        isNumber: true
+      },
+      wdaLocalPort: {
+        isNumber: true
+      },
+    };
+
+    it('should return driver args if passed in', function () {
+      parseDriverPluginArgs({}, driverArgs, ARGS_CONSTRAINTS).should.eql(driverArgs);
+    });
+    it('should assign driver args to opts if passed in', function () {
+      parseDriverPluginArgs(opts, driverArgs, ARGS_CONSTRAINTS).should.eql(_.assign(opts, driverArgs));
+    });
+    it('should use opts args if driver args not passed in', function () {
+      parseDriverPluginArgs(_.assign(opts, driverArgs), {}, ARGS_CONSTRAINTS).should.eql(_.assign(opts, driverArgs));
+    });
+    it('should return empty object if no args were passed in', function () {
+      parseDriverPluginArgs({}, {}, ARGS_CONSTRAINTS).should.eql({});
+    });
+    describe('wdaLocalPort arg', function () {
+      it('should return empty obj if driverArgs is empty', function () {
+        parseDriverPluginArgs({}, {}, ARGS_CONSTRAINTS).should.eql({});
+      });
+      it(`should throw error if value of 'wdaLocalPort' is not an int`, function () {
+        (() => parseDriverPluginArgs({}, {'wdaLocalPort': 'foo'}, ARGS_CONSTRAINTS)).should.throw();
+      });
+      it(`should throw if unreconized key is passed`, function () {
+        (() => parseDriverPluginArgs({}, {'foo': 'bar'}, ARGS_CONSTRAINTS)).should.throw();
+      });
+      it('should return passed in driver arg value', function () {
+        parseDriverPluginArgs({}, {wdaLocalPort}, ARGS_CONSTRAINTS).wdaLocalPort.should.equal(wdaLocalPort);
+      });
     });
   });
 });

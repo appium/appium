@@ -8,7 +8,6 @@ import sinon from 'sinon';
 
 const should = chai.should();
 chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
@@ -532,45 +531,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       d.isFeatureEnabled('foo').should.be.false;
       d.isFeatureEnabled('bar').should.be.false;
       d.isFeatureEnabled('baz').should.be.true;
-    });
-  });
-
-  describe('parseServerArgs', function () {
-    const webkitDebugProxyPort = 22222;
-    const wdaLocalPort = 8000;
-    const driverArgs = { wdaLocalPort, webkitDebugProxyPort };
-    const ARGS_CONSTRAINTS = {
-      webkitDebugProxyPort: {
-        isNumber: true
-      },
-      wdaLocalPort: {
-        isNumber: true
-      },
-    };
-
-    describe('driver args passed in', function () {
-      const driver = new DriverClass({}, true, driverArgs, ARGS_CONSTRAINTS);
-      it('should set passed in driver args to opts', function () {
-        driver.opts.webkitDebugProxyPort.should.eql(webkitDebugProxyPort);
-        driver.opts.wdaLocalPort.should.eql(wdaLocalPort);
-      });
-    });
-    describe('driver args with opts', function () {
-      const opts = _.assign({'foo': 'bar', 'foobar': 'foobar'}, driverArgs);
-      const driver = new DriverClass(opts, true, {}, ARGS_CONSTRAINTS);
-      it('should set passed in driver args in opts to opts', function () {
-        driver.opts.foo.should.eql('bar');
-        driver.opts.foobar.should.eql('foobar');
-        driver.opts.webkitDebugProxyPort.should.eql(webkitDebugProxyPort);
-        driver.opts.wdaLocalPort.should.eql(wdaLocalPort);
-      });
-    });
-    describe('no driver args passed in', function () {
-      const driver = new DriverClass();
-      it('driver args should not exist if none passed in', function () {
-        expect(typeof driver.opts.webkitDebugProxyPort === 'undefined').to.be.true;
-        expect(typeof driver.opts.wdaLocalPort === 'undefined').to.be.true;
-      });
     });
   });
 }

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
+import { processCapabilities, PROTOCOLS, validateCaps } from '@appium/base-driver';
 import findRoot from 'find-root';
 import { parseJsonStringOrFile } from './cli/parser-helpers';
 
@@ -45,6 +45,43 @@ function parseExtensionArgs (extensionArgs, extensionName) {
   }
   return extensionSpecificArgs;
 }
+
+
+function parseKnownArgs (driverPluginArgs, argsConstraints) {
+  const knownArgNames = Object.keys(argsConstraints);
+  return _.toPairs(driverPluginArgs).reduce((args, [argName, argValue]) => {
+    if (knownArgNames.includes(argName)) {
+      args[argName] = argValue;
+    } else {
+      const knownArgs = Object.keys(argsConstraints);
+      throw new Error(`"${argName}" is not a recognized key are you sure it's in the list ` +
+                      `of supported keys? ${JSON.stringify(knownArgs)}`);
+    }
+    return args;
+  }, {});
+}
+
+/**
+ * Takes in a set of args, driver/plugin args passed in by user, and arg constraints
+ * to parse for, and returns a combined object containing args
+ * and parsed driver/plugin args. If driverPluginArgs or argsConstraints is empty, args is returned
+ * back
+ *
+ * @param {object} args - args
+ * @param {object} driverPluginArgs - driverPluginArgs
+ * @param {object} argsConstraints - Constraints for arguments
+ * @return {object}
+*/
+function parseDriverPluginArgs (args, driverPluginArgs, argsConstraints) {
+  if (_.isEmpty(driverPluginArgs) || _.isEmpty(argsConstraints)) {
+    return args;
+  } else {
+    let parsedArgs = parseKnownArgs(driverPluginArgs, argsConstraints);
+    parsedArgs = validateCaps(parsedArgs, argsConstraints);
+    return _.assign(args, parsedArgs);
+  }
+}
+
 
 /**
  * Takes the caps that were provided in the request and translates them
@@ -234,4 +271,5 @@ const rootDir = findRoot(__dirname);
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
   getPackageVersion, pullSettings, removeAppiumPrefixes, parseExtensionArgs,
+  parseDriverPluginArgs
 };

@@ -20,7 +20,9 @@ chai.use(chaiAsPromised);
 
 let TEST_SERVER;
 let TEST_PORT;
-const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
+const sillyWebServerPort = 1234;
+const sillyWebServerHost = 'hey';
+const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
 const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
 const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
@@ -95,7 +97,8 @@ describe('FakeDriver - via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
-        data.value.should.eql({});
+        should.not.exist(data.value.sillyWebServerPort);
+        should.not.exist(data.value.sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }
@@ -111,7 +114,8 @@ describe('FakeDriver - via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
-        data.value.should.eql(FAKE_ARGS);
+        data.value.sillyWebServerPort.should.eql(sillyWebServerPort);
+        data.value.sillyWebServerHost.should.eql(sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }

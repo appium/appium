@@ -33,7 +33,7 @@
   "dependencies": {
     "@appium/support": "^2.5.0",
     "@babel/runtime": "^7.0.0",
-    "appium-adb": "^8.4.0",
+    "appium-adb": "^8.13.2",
     "authorize-ios": "^1.0.3",
     "bluebird": "^3.5.1",
     "colors": "^1.1.2",

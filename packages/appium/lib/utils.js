@@ -53,9 +53,8 @@ function parseKnownArgs (driverPluginArgs, argsConstraints) {
     if (knownArgNames.includes(argName)) {
       args[argName] = argValue;
     } else {
-      const knownArgs = Object.keys(argsConstraints);
-      throw new Error(`"${argName}" is not a recognized key are you sure it's in the list ` +
-                      `of supported keys? ${JSON.stringify(knownArgs)}`);
+      throw new Error(`"${argName}" is not a recognized key. Are you sure it's in the list ` +
+                      `of supported keys? ${JSON.stringify(knownArgNames)}`);
     }
     return args;
   }, {});
@@ -73,13 +72,12 @@ function parseKnownArgs (driverPluginArgs, argsConstraints) {
  * @return {object}
 */
 function parseDriverPluginArgs (args, driverPluginArgs, argsConstraints) {
-  if (_.isEmpty(driverPluginArgs) || _.isEmpty(argsConstraints)) {
-    return args;
-  } else {
-    let parsedArgs = parseKnownArgs(driverPluginArgs, argsConstraints);
-    parsedArgs = validateCaps(parsedArgs, argsConstraints);
+  if (!_.isEmpty(driverPluginArgs) && !_.isEmpty(argsConstraints)) {
+    const parsedArgs = parseKnownArgs(driverPluginArgs, argsConstraints);
+    validateCaps(parsedArgs, argsConstraints);
     return _.assign(args, parsedArgs);
   }
+  return args;
 }
 
 

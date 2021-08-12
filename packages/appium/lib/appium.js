@@ -6,7 +6,7 @@ import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
 import { parseExtensionArgs, parseCapsForInnerDriver, pullSettings, parseDriverPluginArgs } from './utils';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -167,10 +167,10 @@ class AppiumDriver extends BaseDriver {
       let runningDriversData, otherPendingDriversData;
       const parsedInnerDriverArgs = parseExtensionArgs(this.args.driverArgs, driverName);
 
-      if (_.has(InnerDriver, 'argsConstraints')) {
-        const driverArgsConstraints = InnerDriver.argsConstraints;
+      if (!_.isEmpty(parsedInnerDriverArgs) && _.has(InnerDriver, 'argsConstraints')) {
         // parse/verify CLI args and merge them to this.args if OK or throw an exception
-        parseDriverPluginArgs(this.args, parsedInnerDriverArgs, driverArgsConstraints);
+        this.args = parseDriverPluginArgs(this.args, parsedInnerDriverArgs, InnerDriver.argsConstraints);
+        log.debug(`Parsed arguments: ${parsedInnerDriverArgs} with constraints: ${Object.keys(InnerDriver.argsConstraints)}`);
       }
 
       const driverInstance = new InnerDriver(this.args, true);

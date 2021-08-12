@@ -6,9 +6,7 @@ import findCommands from '../lib/commands/find';
 import generalCommands from '../lib/commands/general';
 import exportedCommands from '../lib/commands';
 
-import chai from 'chai';
 
-chai.should();
 
 describe('Driver commands', function () {
   let allCommands = [

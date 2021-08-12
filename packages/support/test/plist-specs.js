@@ -1,9 +1,7 @@
-import chai from 'chai';
 import path from 'path';
 import { plist, tempDir, fs } from '../index.js';
 
 
-chai.should();
 
 const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');
 const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');

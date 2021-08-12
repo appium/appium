@@ -2,15 +2,11 @@
 
 import { server } from '../..';
 import axios from 'axios';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
 import getPort from 'get-port';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('server', function () {
   let hwServer;

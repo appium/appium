@@ -1,10 +1,6 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { node } from '..';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('node utilities', function () {
   describe('requirePackage', function () {

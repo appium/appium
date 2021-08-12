@@ -1,11 +1,7 @@
 import { zip, fs, tempDir } from '@appium/support';
 import { configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-chai.use(chaiAsPromised);
-const should = chai.should();
 
 describe('helpers', function () {
   describe('#isPackageOrBundle', function () {

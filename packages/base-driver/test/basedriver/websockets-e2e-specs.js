@@ -2,13 +2,10 @@ import _ from 'lodash';
 import { server, routeConfiguringFunction,
          DEFAULT_WS_PATHNAME_PREFIX } from '../..';
 import { FakeDriver } from '../protocol/fake-driver';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import WebSocket from 'ws';
 import B from 'bluebird';
 import getPort from 'get-port';
 
-chai.use(chaiAsPromised);
 
 describe('Websockets (e2e)', function () {
   let baseServer;

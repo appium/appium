@@ -1,4 +1,3 @@
-import chai from 'chai';
 import sinon from 'sinon';
 import {
   getGitRev,
@@ -9,7 +8,6 @@ import {
 import axios from 'axios';
 import { fs } from '@appium/support';
 
-const should = chai.should();
 
 describe('Config', function () {
   describe('getGitRev', function () {

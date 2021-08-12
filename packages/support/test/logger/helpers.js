@@ -1,10 +1,8 @@
-import chai from 'chai';
 import sinon from 'sinon';
 import _ from 'lodash';
 import { logger } from '../..';
 
 
-chai.should();
 
 function setupWriters () {
   return {'stdout': sinon.spy(process.stdout, 'write'),

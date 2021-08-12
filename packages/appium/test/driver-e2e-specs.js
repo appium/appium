@@ -3,8 +3,6 @@
 import _ from 'lodash';
 import path from 'path';
 import B from 'bluebird';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import axios from 'axios';
 import { remote as wdio } from 'webdriverio';
 import { main as appiumServer } from '../lib/main';
@@ -16,13 +14,11 @@ import { runExtensionCommand } from '../lib/cli/extension';
 import { removeAppiumPrefixes } from '../lib/utils';
 import sinon from 'sinon';
 
-chai.use(chaiAsPromised);
 
 let TEST_SERVER;
 let TEST_PORT;
 const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
 const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
-const should = chai.should();
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const wdOpts = {

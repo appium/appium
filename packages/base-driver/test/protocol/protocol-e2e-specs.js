@@ -5,8 +5,6 @@ import {
 } from '../..';
 import { FakeDriver } from './fake-driver';
 import axios from 'axios';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 import { createProxyServer } from './helpers';
@@ -16,8 +14,6 @@ import {
 import qs from 'querystring';
 import getPort from 'get-port';
 
-let should = chai.should();
-chai.use(chaiAsPromised);
 let port;
 let baseUrl;
 

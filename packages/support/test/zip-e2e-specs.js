@@ -1,11 +1,8 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import path from 'path';
 import * as zip from '../lib/zip';
 import { tempDir, fs } from '../index';
 import { MockReadWriteStream } from './helpers';
 
-chai.use(chaiAsPromised);
 
 describe('#zip', function () {
 

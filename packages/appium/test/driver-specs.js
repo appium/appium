@@ -5,13 +5,9 @@ import { FakeDriver } from '@appium/fake-driver';
 import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
 import _ from 'lodash';
 import sinon from 'sinon';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { sleep } from 'asyncbox';
 import { insertAppiumPrefixes, removeAppiumPrefixes } from '../lib/utils';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 const SESSION_ID = 1;
 

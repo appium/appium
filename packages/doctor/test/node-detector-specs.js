@@ -1,6 +1,5 @@
 // transpile:mocha
 
-import chai from 'chai';
 import { fs, system } from '@appium/support';
 import * as tp from 'teen_process';
 import NodeDetector from '../lib/node-detector';
@@ -9,7 +8,6 @@ import { withSandbox } from '@appium/test-support';
 import { EOL } from 'os';
 
 
-chai.should();
 let expect = chai.expect;
 
 describe('NodeDetector', withSandbox({mocks: {fs, tp, system}}, (S) => {

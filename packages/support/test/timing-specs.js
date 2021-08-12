@@ -1,10 +1,8 @@
 import _ from 'lodash';
-import chai from 'chai';
 import sinon from 'sinon';
 import { timing } from '..';
 
 
-chai.should();
 const expect = chai.expect;
 
 describe('timing', function () {

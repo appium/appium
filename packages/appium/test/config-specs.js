@@ -1,17 +1,12 @@
 // transpile:mocha
 
 import _ from 'lodash';
-import chai from 'chai';
 import sinon from 'sinon';
-import chaiAsPromised from 'chai-as-promised';
 import { getBuildInfo, checkNodeOk, warnNodeDeprecations,
          getNonDefaultArgs, validateServerArgs,
          validateTmpDir, showConfig, checkValidPort } from '../lib/config';
 import getParser from '../lib/cli/parser';
 import logger from '../lib/logger';
-
-let should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('Config', function () {
   describe('Appium config', function () {

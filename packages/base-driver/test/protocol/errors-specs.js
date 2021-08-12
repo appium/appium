@@ -2,13 +2,9 @@ import {
   errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType
 } from '../..';
 import { getResponseForW3CError } from '../../lib/protocol/errors';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import _ from 'lodash';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 
-chai.use(chaiAsPromised);
-chai.should();
 
 // Error codes and messages have been added according to JsonWireProtocol see
 // https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes

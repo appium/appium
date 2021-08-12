@@ -37,6 +37,10 @@ module.exports = (wallaby) => {
         instrument: false,
         pattern: './packages/gulp-plugins/build/**/*',
       },
+      {
+        instrument: false,
+        pattern: './test/setup.js'
+      }
     ],
     testFramework: 'mocha',
     tests: [
@@ -49,5 +53,8 @@ module.exports = (wallaby) => {
     workers: {
       restart: true,
     },
+    setup() {
+      require('./test/setup');
+    }
   };
 };

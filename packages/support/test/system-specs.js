@@ -1,12 +1,10 @@
 
 import { system } from '../index.js';
-import chai from 'chai';
 import os from 'os';
 import sinon from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';
 
-chai.should();
 
 let sandbox, tpMock, osMock = null;
 let SANDBOX = Symbol();

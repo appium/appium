@@ -1,7 +1,5 @@
 // transpile:mocha
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import axios from 'axios';
 import { baseDriverE2ETests } from '@appium/base-driver/build/test/basedriver';
 import { FakeDriver, startServer } from '../index.js';
@@ -13,8 +11,6 @@ import alertTests from './alert-tests';
 import generalTests from './general-tests';
 
 
-const should = chai.should();
-chai.use(chaiAsPromised);
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 
 

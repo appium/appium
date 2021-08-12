@@ -3,10 +3,8 @@
 import { _ } from 'lodash';
 import { METHOD_MAP, routeToCommandName } from '../../lib/protocol';
 import crypto from 'crypto';
-import chai from 'chai';
 
 
-chai.should();
 
 describe('Protocol', function () {
 

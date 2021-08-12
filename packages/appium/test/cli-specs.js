@@ -1,14 +1,10 @@
 // transpile:mocha
 
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { DEFAULT_APPIUM_HOME } from '../lib/extension-config';
 import DriverConfig from '../lib/driver-config';
 import DriverCommand from '../lib/cli/driver-command';
 import sinon from 'sinon';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('DriverCommand', function () {
   const config = new DriverConfig(DEFAULT_APPIUM_HOME);

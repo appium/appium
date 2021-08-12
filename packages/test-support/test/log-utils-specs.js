@@ -5,10 +5,8 @@ import log from '../lib/logger';
 import sinon from 'sinon';
 import 'colors';
 
-import chai from 'chai';
 
 
-chai.should();
 
 describe('log-utils', function () {
   describe('stubLog', function () {

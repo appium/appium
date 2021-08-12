@@ -1,14 +1,9 @@
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
   removeAppiumPrefixes, parseExtensionArgs,
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
-
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
 const FAKE_DRIVER_NAME = `fake`;

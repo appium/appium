@@ -1,10 +1,8 @@
 // transpile:mocha
 
 import { withSandbox, verifySandbox } from '..';
-import chai from 'chai';
 
 
-chai.should();
 const expect = chai.expect;
 
 let funcs = {

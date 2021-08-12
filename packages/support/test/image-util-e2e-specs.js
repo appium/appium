@@ -5,12 +5,8 @@ import {
 } from '../lib/image-util';
 import path from 'path';
 import _ from 'lodash';
-import chai from 'chai';
 import { fs } from '..';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.use(chaiAsPromised);
-chai.should();
 
 const FIXTURES_ROOT = path.resolve(__dirname, '..', '..', 'test', 'images');
 

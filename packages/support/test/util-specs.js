@@ -1,7 +1,5 @@
 
 import { util, fs, tempDir } from '..';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import sinon from 'sinon';
 import os from 'os';
@@ -11,8 +9,6 @@ import _ from 'lodash';
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 
-const should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('util', function () {
   describe('hasValue', function () {

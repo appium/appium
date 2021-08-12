@@ -2,12 +2,10 @@
 
 import B from 'bluebird';
 import cp from 'child_process';
-import chai from 'chai';
 import fs from 'fs';
 import _ from 'lodash';
 import log from 'fancy-log';
 
-chai.should();
 
 // XXX: this behavior is unsupported by Node.js (but is supported by Babel).
 // fix if dropping babel

@@ -1,14 +1,10 @@
 
 import path from 'path';
 import { exec } from 'teen_process';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { tempDir, fs, mkdirp, util } from '@appium/support';
 import { KNOWN_DRIVERS } from '../lib/drivers';
 import { PROJECT_ROOT as cwd } from './helpers';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 // cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
 // could also derive it from the `package.json` if we wanted

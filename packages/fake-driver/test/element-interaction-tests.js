@@ -1,9 +1,6 @@
-import chai from 'chai';
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
 
 import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
-
-const should = chai.should();
 
 function elementTests () {
   describe('element interaction and introspection', function () {

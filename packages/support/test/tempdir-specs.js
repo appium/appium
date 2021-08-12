@@ -1,10 +1,6 @@
 
 import { tempDir, fs } from '../index.js';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
-chai.use(chaiAsPromised);
-chai.should();
 
 describe('tempdir', function () {
   afterEach(function () {

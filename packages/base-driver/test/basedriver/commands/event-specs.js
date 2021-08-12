@@ -1,11 +1,7 @@
 import _ from 'lodash';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import { BaseDriver } from '../../..';
 
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('logging custom events', function () {
   it('should allow logging of events', async function () {

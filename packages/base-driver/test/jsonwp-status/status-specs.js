@@ -1,9 +1,7 @@
 import _ from 'lodash';
 import { statusCodes, getSummaryByCode } from '../..';
-import chai from 'chai';
 
 
-const should = chai.should();
 
 describe('jsonwp-status', function () {
   describe('codes', function () {

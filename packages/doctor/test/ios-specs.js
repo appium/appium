@@ -11,14 +11,10 @@ import * as prompter from '../lib/prompt';
 import CarthageDetector from '../lib/carthage-detector';
 import FixSkippedError from '../lib/doctor';
 import log from '../lib/logger';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import B from 'bluebird';
 import { withMocks, withSandbox, stubLog } from '@appium/test-support';
 import {removeColors} from './helper';
 
-chai.should();
-chai.use(chaiAsPromised);
 
 describe('ios', function () {
   describe('XcodeCheck', withMocks({tp, fs}, (mocks) => {

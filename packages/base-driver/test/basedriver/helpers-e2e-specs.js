@@ -2,7 +2,7 @@ import chai from 'chai';
 import path from 'path';
 import url from 'url';
 import chaiAsPromised from 'chai-as-promised';
-import { fs } from 'appium-support';
+import { fs } from '@appium/support';
 import { configureApp } from '../../lib/basedriver/helpers';
 import http from 'http';
 import finalhandler from 'finalhandler';

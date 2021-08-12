@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import NPM from './npm';
 import path from 'path';
-import { fs, util } from 'appium-support';
+import { fs, util } from '@appium/support';
 import { log, spinWith, RingBuffer } from './utils';
 import { SubProcess} from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,

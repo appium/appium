@@ -5,9 +5,14 @@ const unitTest = require('./unit-test');
 
 
 const configure = function configure (gulp, opts, env) {
-  const testEnv = Object.assign({
-    testDeps: opts.transpile ? ['transpile'] : []
-  }, env);
+  const testEnv = {
+    testDeps: opts.transpile ? ['transpile'] : [],
+    ...env
+  };
+
+  if (opts.postTranspile) {
+    testEnv.testDeps.push(...opts.postTranspile);
+  }
 
   let testTasks = [];
   if (opts.test) {

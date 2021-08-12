@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { fs } from 'appium-support';
+import { fs } from '@appium/support';
 import logger from './logger';
 import _ from 'lodash';
 

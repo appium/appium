@@ -1,9 +1,9 @@
 import {
   Protocol, errors, determineProtocol
 } from '../protocol';
+import { fs } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
 import os from 'os';
-import path from 'path';
 import commands from './commands';
 import * as helpers from './helpers';
 import log from './logger';
@@ -15,12 +15,13 @@ import _ from 'lodash';
 import AsyncLock from 'async-lock';
 import { EventEmitter } from 'events';
 
+// for compat with running tests transpiled and in-place
+const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 
 B.config({
   cancellation: true,
 });
 
-const BASEDRIVER_VER = require(path.resolve(__dirname, '..', '..', '..', 'package.json')).version;
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const EVENT_SESSION_INIT = 'newSessionRequested';

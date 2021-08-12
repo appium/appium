@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { logger, util } from 'appium-support';
+import { logger, util } from '@appium/support';
 import axios from 'axios';
 import { getSummaryByCode } from '../jsonwp-status/status';
 import {

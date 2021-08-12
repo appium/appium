@@ -61,9 +61,8 @@
     "axios": "^0.21.0",
     "bluebird": "3.x",
     "continuation-local-storage": "3.x",
-    "find-root": "^1.1.0",
     "find-up": "^5.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "longjohn": "^0.2.12",
     "npmlog": "4.x",
     "ora": "^5.0.0",
@@ -85,5 +84,6 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
-  }
+  },
+  "homepage": "https://appium.io"
 }

@@ -2,7 +2,7 @@
 
 import { init as logsinkInit, clear as logsinkClear } from '../lib/logsink';
 import sinon from 'sinon';
-import { logger } from 'appium-support';
+import { logger } from '@appium/support';
 
 
 // temporarily turn on logging to stdio, so we can catch and query

@@ -1,8 +1,9 @@
 import 'colors';
 import _ from 'lodash';
 import log from './logger';
-import { version } from '../../package.json'; // eslint-disable-line import/no-unresolved
+import { fs } from '@appium/support';
 
+const {version} = fs.readPackageJsonFrom(__dirname);
 
 class FixSkippedError extends Error {
 }

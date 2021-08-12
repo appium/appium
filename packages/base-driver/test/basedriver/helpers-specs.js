@@ -1,4 +1,4 @@
-import { zip, fs, tempDir } from 'appium-support';
+import { zip, fs, tempDir } from '@appium/support';
 import { configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray } from '../../lib/basedriver/helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
@@ -113,7 +113,7 @@ describe('helpers', function () {
       sandbox.restore();
     });
 
-    it('should pass "useSystemUnzip" flag through to appium-support', async function () {
+    it('should pass "useSystemUnzip" flag through to @appium/support', async function () {
       await configureApp('/path/to/an.apk.zip', '.apk');
       zip.extractAllTo.getCall(0).lastArg.useSystemUnzip.should.be.true;
     });

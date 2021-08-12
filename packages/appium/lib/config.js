@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import path from 'path';
-import { mkdirp, system } from 'appium-support';
+import { mkdirp, system, fs } from '@appium/support';
 import axios from 'axios';
 import { exec } from 'teen_process';
 import { rootDir } from './utils';
@@ -11,7 +10,8 @@ import {
 } from './cli/argparse-actions';
 import findUp from 'find-up';
 
-const npmPackage = require(path.resolve(rootDir, 'package.json'));
+const npmPackage = fs.readPackageJsonFrom(__dirname);
+
 const APPIUM_VER = npmPackage.version;
 const MIN_NODE_VERSION = npmPackage.engines.node;
 

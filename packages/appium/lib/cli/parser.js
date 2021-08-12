@@ -4,6 +4,7 @@ import { ArgumentParser } from 'argparse';
 import { sharedArgs, serverArgs, extensionArgs } from './args';
 import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
 import { rootDir } from '../utils';
+import { fs } from '@appium/support';
 
 
 function makeDebugParser (parser) {
@@ -23,7 +24,7 @@ function getParser (debug = false) {
   }
   parser.add_argument('-v', '--version', {
     action: 'version',
-    version: require(path.resolve(rootDir, 'package.json')).version
+    version: fs.readPackageJsonFrom(rootDir).version
   });
   const subParsers = parser.add_subparsers({dest: 'subcommand'});
 

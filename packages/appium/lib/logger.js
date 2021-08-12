@@ -1,4 +1,4 @@
-import { logger } from 'appium-support';
+import { logger } from '@appium/support';
 
 
 let log = logger.getLogger('Appium');

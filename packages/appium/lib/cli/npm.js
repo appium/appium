@@ -1,7 +1,7 @@
 import path from 'path';
 import semver from 'semver';
 import { exec } from 'teen_process';
-import { fs, mkdirp, util, system } from 'appium-support';
+import { fs, mkdirp, util, system } from '@appium/support';
 
 const INSTALL_LOCKFILE = '.appium.install.lock';
 const LINK_LOCKFILE = '.appium.link.lock';

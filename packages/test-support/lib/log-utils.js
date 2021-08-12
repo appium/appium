@@ -1,4 +1,4 @@
-// TODO move that to appium-support
+// TODO move that to @appium/support
 function stripColors (msg) {
   let code = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
   msg = ('' + msg).replace(code, '');

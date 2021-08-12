@@ -1,5 +1,5 @@
 import { ok, nok, okOptional, nokOptional, authorizeIos, resolveExecutablePath } from './utils'; // eslint-disable-line
-import { fs, util } from 'appium-support';
+import { fs, util } from '@appium/support';
 import { exec } from 'teen_process';
 import { DoctorCheck, FixSkippedError } from './doctor';
 import log from './logger';

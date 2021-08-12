@@ -5,8 +5,8 @@ import { plist, tempDir, fs } from '../index.js';
 
 chai.should();
 
-const binaryPlistPath = path.resolve('test', 'assets', 'sample_binary.plist');
-const textPlistPath = path.resolve('test', 'assets', 'sample_text.plist');
+const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');
+const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');
 
 describe('plist', function () {
   it('should parse plist file as binary', async function () {

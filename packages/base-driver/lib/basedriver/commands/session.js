@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import log from '../logger';
 import { errors } from '../../protocol';
-import { util } from 'appium-support';
+import { util } from '@appium/support';
 import { processCapabilities } from '../capabilities';
 
 let commands = {};

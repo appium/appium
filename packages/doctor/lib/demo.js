@@ -1,7 +1,7 @@
 // demo rule to test the gui
 
 import { ok, nok } from './utils';
-import { fs } from 'appium-support';
+import { fs } from '@appium/support';
 import { exec } from 'teen_process';
 import { DoctorCheck, FixSkippedError } from './doctor';
 import log from './logger';

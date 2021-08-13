@@ -34,7 +34,7 @@
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-mocha": "^9.0.0",
-    "eslint-plugin-promise": "^5.0.0"
+    "eslint-plugin-promise": "^5.1.0"
   },
   "publishConfig": {
     "access": "public"

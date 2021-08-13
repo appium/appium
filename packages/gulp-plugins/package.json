@@ -41,7 +41,7 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/runtime": "^7.15.3",
-    "@octokit/rest": "^18.0.0",
+    "@octokit/rest": "^18.9.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "^15.0.1",
     "ansi-red": "^0.1",

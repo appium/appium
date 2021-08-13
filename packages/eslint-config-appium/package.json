@@ -29,8 +29,8 @@
     "lint": "eslint index.js"
   },
   "dependencies": {
-    "@babel/core": "^7.12.1",
-    "@babel/eslint-parser": "^7.12.1",
+    "@babel/core": "^7.15.0",
+    "@babel/eslint-parser": "^7.15.0",
     "eslint": "^7.16.0",
     "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-mocha": "^9.0.0",

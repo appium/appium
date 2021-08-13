@@ -26,7 +26,7 @@
     "build/lib"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.15.3",
     "archiver": "^5.0.0",
     "axios": "^0.x",
     "base64-stream": "^1.0.0",

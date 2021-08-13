@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "@appium/support": "^2.5.0",
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.15.3",
     "appium-adb": "^8.13.2",
     "authorize-ios": "^1.2.1",
     "bluebird": "^3.5.1",

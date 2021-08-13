@@ -54,7 +54,7 @@
     "@appium/base-driver": "^8.0.0-beta.6",
     "@appium/base-plugin": "^1.7.0",
     "@appium/support": "2.x",
-    "@babel/runtime": "^7.6.0",
+    "@babel/runtime": "^7.15.3",
     "argparse": "^2.0.1",
     "async-lock": "^1.3.0",
     "asyncbox": "2.x",

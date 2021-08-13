@@ -34,7 +34,7 @@
     "!build/test/basedriver/fixtures"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.0.0",
+    "@babel/runtime": "^7.15.3",
     "@appium/support": "^2.52.0",
     "async-lock": "^1.3.0",
     "asyncbox": "^2.8.0",

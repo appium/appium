@@ -36,7 +36,7 @@
     "appium-adb": "^8.13.2",
     "authorize-ios": "^1.2.1",
     "bluebird": "^3.5.1",
-    "colors": "^1.1.2",
+    "colors": "^1.4.0",
     "inquirer": "^8.0.0",
     "lodash": "^4.17.21",
     "source-map-support": "^0.5.19",

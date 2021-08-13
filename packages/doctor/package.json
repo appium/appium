@@ -34,7 +34,7 @@
     "@appium/support": "^2.5.0",
     "@babel/runtime": "^7.0.0",
     "appium-adb": "^8.13.2",
-    "authorize-ios": "^1.0.3",
+    "authorize-ios": "^1.2.1",
     "bluebird": "^3.5.1",
     "colors": "^1.1.2",
     "inquirer": "^8.0.0",

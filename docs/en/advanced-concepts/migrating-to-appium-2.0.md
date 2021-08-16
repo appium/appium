@@ -14,7 +14,7 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 
 Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases/tag/v2.0.0-beta) for a more comprehensive list of changes. Here we call out the breaking changes and what you need to do do account for them.
 
-#### Installing drivers during setup
+#### :bangbang: Installing drivers during setup
 
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../drivers/driver-cli.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 
@@ -32,7 +32,7 @@ npm install -g appium --drivers=xcuitest,uiautomator2
 
 This will install Appium and the two drivers for you in one go.
 
-#### Driver updates
+#### :bangbang: Driver updates
 
 In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:
 
@@ -48,13 +48,13 @@ appium driver update xcuitest
 
 To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 
-#### Protocol changes
+#### :bangbang: Protocol changes
 
 Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/), and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MSJONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.
 
 Up until Appium 2.0, Appium supported both protocols, so that older Selenium/Appium clients could still communicate with newer Appium servers. Moving forward, support for older protocols will be removed.
 
-*Capabilities*
+:bangbang: *Capabilities*
 
 One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities), and includes a few commonly used capabilities such as `browserName` and `platformName`.
 
@@ -84,7 +84,7 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 
 (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object.
 
-*Removed Commands*
+:bangbang: *Removed Commands*
 
 Commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
 
@@ -92,7 +92,7 @@ Commands which were a part of the old JSON Wire Protocol and not a part of the W
 
 If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.
 
-#### Image analysis features moved to plugin
+#### :bangbang: Image analysis features moved to plugin
 
 One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](#TODO). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium-plugins/tree/master/packages/images).
 
@@ -103,19 +103,19 @@ If you use these image-related methods, to continue accessing them you will need
 
 Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.
 
-#### Old drivers removed
+#### :bangbang: Old drivers removed
 
 The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.
 
-#### Internal packages renamed
+#### :warning: Internal packages renamed
 
 Some Appium-internal NPM packages have been renamed (for example, `appium-base-driver` is now `@appium/base-driver`). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.
 
-#### "WD" JavaScript client library no longer supported
+#### :warning: "WD" JavaScript client library no longer supported
 
 For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend [WebdriverIO](https://webdriver.io).
 
-#### Appium Inspector split out from Appium Desktop
+#### :warning: Appium Inspector split out from Appium Desktop
 
 The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it.
 
@@ -127,19 +127,129 @@ Apart from the breaking changes mentioned above, in this section is a list of so
 
 #### Plugins
 
-*Server Plugins*
+:tada: *Server Plugins*
 
 TODO
 
-*Client Plugins*
+:tada: *Client Plugins*
 
 TODO
 
-#### Install drivers and plugins from anywhere
+#### :tada: Install drivers and plugins from anywhere
 
 TODO
 
-#### Driver and Plugin CLI args
+#### :tada: Driver and Plugin CLI args
 
 TODO
 
+## Special Notes for Cloud Providers
+
+The rest of this document has applied to Appium generally, but some of the architectural changes in Appium 2.0 will constitute breaking changes for Appium-related service providers, whether a cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium server is responsible for installing and making available the various Appium drivers and plugins that end users may wish to use.
+
+With Appium 2.0, we enter a new era where end users may wish to target various independent versions of drivers and plugins. With Appium 1.x, this was never the case, since any given version of Appium would contain one and only one version of each driver. It is of course up to each service provider how they wish to implement the discovery, installation, and availability of any official or third party drivers or plugins. But the Appium team wants to make a recommendation in terms of the capabilities service providers support, for consistency across the industry. This is a recommendation only, and not a standard, but adopting it will help users to navigate the increased complexity that working with Appium 2.0 in a cloud environment may bring.
+
+### Suggested capabilities
+
+In addition to the standard `platformName`, `appium:deviceName`, `appium:automationName`, and `appium:platformVersion`, we recommend adopting the capability `$cloud:appiumOptions`, where the label `$cloud` is not meant to be interpreted literally but instead should be replaced by your vendor prefix (so for HeadSpin it would be `headspin`, Sauce Labs it would be `sauce`, and BrowserStack it would be `browserstack`, to name just a few examples). The `$cloud:appiumOptions` capability would itself be a JSON object, with the following internal keys:
+
+|Capability|Used for|Example|
+|----------|-------|-------|
+|`version`|Designating which version of the Appium server is used to host and manage drivers. If ommitted, behavior left up to the provider, but the recommendation would be to provide the latest official version.|`2.0.0`|
+|`automationVersion`|Designating which version of the specified driver should be used.|`1.55.2`|
+|`automation`|Designating a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`|`{"name": "org/custom-driver", "source": "github", "package": "custom-driver"}`|
+|`plugins`|Designating the list of plugins (and potentially versions of plugins) to be activated (see below for more info).|`["images", "universal-xml"]`|
+
+### Basic example
+
+Appium extensions (drivers and plugins) have a set of properties that specify where they can be installed from. Cloud providers are obviously under no obligation to provide support for arbitrarily specified extensions, seeing as these may represent untrusted code running in a managed environment. In the case where arbitrary extensions are not supported, the `appium:automationName`, `$cloud:automationVersion`, and `$cloud:appiumPlugins` capabilities should be sufficient. See the following JSON object representing capabilities for a session:
+
+```json
+{
+    "platformName": "iOS",
+    "appium:platformVersion": "14.4",
+    "appium:deviceName": "iPhone 11",
+    "appium:app": "Some-App.app.zip",
+    "appium:automationName": "XCUITest",
+    "$cloud:appiumOptions": {
+        "appiumVersion": "2.0.0",
+        "automationVersion": "3.52.0",
+        "plugins": ["images"],
+    }
+}
+```
+
+This set of capabilities requests an Appium 2.0 server supporting the XCUITest driver at version `3.52.0`, and the `images` plugin active. This set is easy for a cloud provider to verify. The cloud provider can obviously do anything it wants in response to these capabilities, including downloading Appium and driver and plugin packages on the fly, or erroring out if the versions requested are not in a supported set, or if the plugin is not supported, etc...
+
+### Basic example with `appium:options`
+
+The previous example still looks a bit disorganized, so of course we also recommend that cloud providers support the `appium:options` capability as detailed above, which could turn the previous set of capabilities into the following:
+
+```json
+{
+    "platformName": "iOS",
+    "appium:options": {
+        "platformVersion": "14.4",
+        "deviceName": "iPhone 11",
+        "app": "Some-App.app.zip",
+        "automationName": "XCUITest",
+    },
+    "$cloud:appiumOptions": {
+        "appiumVersion": "2.0.0",
+        "automationVersion": "3.52.0",
+        "plugins": ["images"],
+    }
+}
+```
+
+### Extension objects
+
+Some service providers may wish to dynamically allow access to all of the features of the Appium 2.0 CLI, including downloading arbitrary drivers and plugins. To represent these extensions, we can define special JSON "extension objects", with the following keys:
+
+* `name`: the name of the extension. This would be an NPM package name (if downloading from NPM), or a git or GitHub spec (if downloading from a git server or GitHub).
+* `version`: the version of the extension, e.g., the NPM package version or Git SHA.
+* (optional) `source`: a denotation of where the extension can be downloaded from. Recommended to support the following values: `appium`, `npm`, `git`, `github`. Here, `appium` means "Appium's own official list", and should be the default value if this key is not included.
+* (optional) `package`: when downloading extensions from git or github, the NPM package name of the extension must also be provided. This is optional for non-git sources.
+
+Since each session is handled by a single driver, the `$cloud:appiumOptions`/`$automation` capability could be used with an extension object value to denote this driver, for example:
+
+```json
+{
+    ...,
+    "$cloud:appiumOptions": {
+        ...,
+        "automation": {
+            "name": "git+https://some-git-host.com/custom-driver-project.git",
+            "version": "some-git-sha",
+            "source": "git",
+            "package": "driver-npm-package-name"
+        },
+        ...
+    },
+    ...
+}
+```
+
+And since sessions can handle multiple plugins, each value in the list of `$cloud:appiumPlugins` could also be an extension object rather than a string, so that specific versions could be requested:
+
+```json
+{
+    ...,
+    "$cloud:appiumOptions": {
+        ...,
+        "plugins": [{
+            "name": "images",
+            "version": "1.1.0"
+        }, {
+            "name": "my-github-org/my-custom-plugin",
+            "version": "a83f2e",
+            "source": "github",
+            "package": "custom-plugin"
+        }],
+        ...,
+    }
+    ...
+}
+```
+
+These serve as illustrative examples for the recommendations here. Of course it is up to the service providers to implement the handling of these capabilities at their front end / load balancer, to perform any error checking, or to actually run any of the `appium driver` or `appium plugin` CLI commands that support the end user's request. This section is merely a suggestion as to how service providers might design their user-facing capabilities API in a way which in principle supports all of the capabilities Appium itself would provide to the end user if they were running Appium on their own.

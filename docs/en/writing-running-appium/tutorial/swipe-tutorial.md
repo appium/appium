@@ -21,6 +21,10 @@ differences.
 2. [Element swipe](swipe/simple-element.md)
 3. [Partial Screen swipe](swipe/simple-partial-screen.md)
 
+[W3C Actions](https://appium.io/docs/en/commands/interactions/actions/)
+help to build advanced gestures.
+
+
 ### Android: 'UIScrollable' swipe
 
 1. [Simple example](swipe/android-simple.md)
@@ -42,4 +46,3 @@ differences.
 ### Swipe troubleshoot guide
 
 1. [Swipe troubleshoot guide](swipe/swipe-troubleshoot-guide.md)
-

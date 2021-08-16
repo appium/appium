@@ -1,9 +1,16 @@
 {
   "name": "@appium/fake-driver",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Description goes here.",
   "keywords": [
-    "appium"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -30,8 +37,8 @@
     "screen.png"
   ],
   "dependencies": {
-    "@appium/base-driver": "^8.0.0-beta.6",
-    "@appium/support": "^2.11.1",
+    "@appium/base-driver": "^8.0.0-beta.7",
+    "@appium/support": "^2.54.0",
     "@babel/runtime": "^7.15.3",
     "asyncbox": "^2.8.0",
     "bluebird": "^3.5.1",
@@ -41,7 +48,7 @@
     "xpath": "^0.0"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.0"
+    "@appium/gulp-plugins": "^5.5.1"
   },
   "engines": {
     "node": ">=12",

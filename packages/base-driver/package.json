@@ -2,9 +2,16 @@
   "name": "@appium/base-driver",
   "description": "Base driver class for Appium drivers",
   "keywords": [
-    "appium"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
-  "version": "8.0.0-beta.6",
+  "version": "8.0.0-beta.7",
   "author": "https://github.com/appium",
   "license": "Apache-2.0",
   "repository": {
@@ -34,8 +41,8 @@
     "!build/test/basedriver/fixtures"
   ],
   "dependencies": {
+    "@appium/support": "^2.54.0",
     "@babel/runtime": "^7.15.3",
-    "@appium/support": "^2.52.0",
     "async-lock": "^1.3.0",
     "asyncbox": "^2.8.0",
     "axios": "^0.x",
@@ -56,8 +63,8 @@
     "ws": "^7.5.3"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.4.0",
-    "@appium/eslint-config-appium": "^4.7.0"
+    "@appium/eslint-config-appium": "^4.7.1",
+    "@appium/gulp-plugins": "^5.5.1"
   },
   "publishConfig": {
     "access": "public",

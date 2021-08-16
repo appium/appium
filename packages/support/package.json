@@ -1,9 +1,16 @@
 {
   "name": "@appium/support",
-  "version": "2.53.0",
+  "version": "2.54.0",
   "description": "Support libs used across appium packages",
   "keywords": [
-    "appium"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -61,7 +68,7 @@
     "yauzl": "^2.7.0"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.4.0"
+    "@appium/gulp-plugins": "^5.5.1"
   },
   "engines": {
     "node": ">=12",

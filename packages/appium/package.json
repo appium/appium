@@ -85,5 +85,7 @@
     "access": "public",
     "tag": "next"
   },
-  "homepage": "https://appium.io"
+  "homepage": "https://appium.io",
+  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+
 }

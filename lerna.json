@@ -6,7 +6,7 @@
     },
     "version": {
       "conventionalCommits": true,
-      "createRelease": true
+      "createRelease": "github"
     }
   },
   "ignoreChanges": [

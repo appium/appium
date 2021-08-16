@@ -21,8 +21,9 @@ differences.
 2. [Element swipe](swipe/simple-element.md)
 3. [Partial Screen swipe](swipe/simple-partial-screen.md)
 
-[W3C Actions](https://appium.io/docs/en/commands/interactions/actions/) helps
-to build swipe actions using W3C actions.
+[W3C Actions](https://appium.io/docs/en/commands/interactions/actions/)
+help to build advanced gestures.
+
 
 ### Android: 'UIScrollable' swipe
 

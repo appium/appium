@@ -12,7 +12,7 @@ jobs:
     - task: NodeTool@0
       inputs:
         versionSpec: '12.x'
-    - script: npm ci || npm install # "npm ci" if shrinkwrap is present
+    - script: npm install
       displayName: Install NPM Dependencies
     - script: npm run build
       displayName: npm run build

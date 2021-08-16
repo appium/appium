@@ -32,20 +32,12 @@
     "bin",
     "lib",
     "build/lib",
-    "npm-shrinkwrap.json",
     "postinstall.js"
   ],
   "scripts": {
     "generate-docs": "gulp transpile && node ./build/commands-yml/parse.js",
     "postinstall": "node ./postinstall.js",
     "install-fake-driver": "node . driver install --source=local ../fake-driver",
-    "prepublishOnly": "npm run shrinkwrap:prune && npm run shrinkwrap:fix",
-    "postpublish": "npm run shrinkwrap:restore",
-    "shrinkwrap:backup": "mv npm-shrinkwrap.json npm-shrinkwrap-backup.json",
-    "shrinkwrap:check-pruned": "node check-pruned-shrinkwrap.js",
-    "shrinkwrap:fix": "gulp fixShrinkwrap",
-    "shrinkwrap:prune": "!(test -e npm-shrinkwrap.json) || (npm ci --production --ignore-scripts && npm run backup-shrinkwrap && npm shrinkwrap)",
-    "shrinkwrap:restore": "(test -e npm-shrinkwrap.json) || (mv npm-shrinkwrap-backup.json npm-shrinkwrap.json)",
     "upload": "gulp github-upload",
     "zip": "zip -qr appium.zip .",
     "zip-and-upload": "npm run zip && npm run upload"

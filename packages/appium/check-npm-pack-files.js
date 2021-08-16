@@ -5,7 +5,6 @@ const res = JSON.parse(childProcess.execSync('npm pack --dry-run --json --ignore
 
 // List of files we are testing to make sure they are included in package
 const testFiles = [
-  'npm-shrinkwrap.json', // Check that npm-shrinkwrap.json is being packed
   'LICENSE', // Check that license is included
   'build/lib/appium.js', // Sanity check that build files are being included by testing just one file
 ];

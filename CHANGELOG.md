@@ -3,15 +3,15 @@ CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
 
 Appium 1.22.0 is a minor release
 
-This release is the **finial** release for Appium 1.x seriese.
-We're going to move to Appium 2.x [TODO: link to documentation].
-Appium 1.x will have patch releases, but it will no longer get minor releases.
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking updates in XCTest or critical bugs before the EOL.
 
 ### General
 
 * Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
 * `appium:enableWebviewDetailsCollection` capability defaults to `true` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
 * Support `satellites` option in `setGeoLocation` command as [geo command on emulators](https://developer.android.com/studio/run/emulator-console) [appium-adb#571](https://github.com/appium/appium-adb/pull/571)
+* Use system unzip to unzip compressed files by default. It fallbacks to JS implementation. [appium-support#226](https://github.com/appium/appium-support/pull/226) [appium-support#227](https://github.com/appium/appium-support/pull/227)
 
 ### Android General
 
@@ -26,6 +26,7 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 
 ### Android(Espresso)
 * The default Kotlin plugin version is 1.4.32 [appium-espresso-driver#663](https://github.com/appium/appium-espresso-driver/pull/663)
+* Fix typecast error in build config [appium-espresso-driver#683](https://github.com/appium/appium-espresso-driver/pull/683)
 
 ### iOS General
 
@@ -35,13 +36,14 @@ Appium 1.x will have patch releases, but it will no longer get minor releases.
 * Add capabilities:
     * `appium:useNativeCachingStrategy` to reduce a potential stale element error. Please read the capability in [XCUITest capabilities](https://github.com/appium/appium-xcuitest-driver#webdriveragent). Defaults to `true` [appium-xcuitest-driver#1317](https://github.com/appium/appium-xcuitest-driver/pull/1317)
     * `appium:forceAppLaunch` to launch the application under test forcefully with `appium:bundleId`. Defaults to `true` unless `noReset` capability is set to `true`. [appium-xcuitest-driver#1314](https://github.com/appium/appium-xcuitest-driver/pull/1314)
+    * `appium:forceSimulatorSoftwareKeyboardPresence` to make force enabling simulator keyboard optional for simulator. Please read the section in [capabilities](https://github.com/appium/appium-xcuitest-driver#simulator) for more details. [appium-xcuitest-driver#1327](https://github.com/appium/appium-xcuitest-driver/pull/1327)
 * Add `mobile:` extensions:
     * `mobile:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
 * Add `durationSeconds` argument in `mobile: pressButton` for tvOS
 * Add `getProperty` command to support [Get Element Property](https://www.w3.org/TR/webdriver/#dfn-get-element-property) endpoint. In native context, the command is equal to [Get Element Attribute](https://www.w3.org/TR/webdriver/#get-element-attribute) [appium-xcuitest-driver#1313](https://github.com/appium/appium-xcuitest-driver/pull/1313)
 * Update parsing logic to parse `:wdc:` element id by Safari Web inspector in WebView context [appium-xcuitest-driver#1324](https://github.com/appium/appium-xcuitest-driver/pull/1324) [appium#15230](https://github.com/appium/appium/issues/15230)
     * Probably the host macOS should have Safari 14.1
-* Improve alert checking logic in Web contect [appium-xcuitest-driver#1320](https://github.com/appium/appium-xcuitest-driver/pull/1320)
+* Improve alert checking logic in Web context [appium-xcuitest-driver#1320](https://github.com/appium/appium-xcuitest-driver/pull/1320)
 * Fix coordinate offset with `absoluteWebLocations` capability in Web context
 [appium-xcuitest-driver#1322](https://github.com/appium/appium-xcuitest-driver/pull/1322)
 * Fix element identification logic for over iOS 13 [WebDriverAgent#523](https://github.com/appium/WebDriverAgent/pull/523) (Thanks @Dan-Maor)

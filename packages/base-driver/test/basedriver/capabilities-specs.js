@@ -1,4 +1,5 @@
-import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps } from '../../lib/basedriver/capabilities';
+import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps,
+         promoteAppiumOptions, APPIUM_OPTS_CAP, stripAppiumPrefixes } from '../../lib/basedriver/capabilities';
 import _ from 'lodash';
 import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps';
 
@@ -432,6 +433,73 @@ describe('caps', function () {
         {nonStandardThree: 'non-standard', nonStandardFour: 'non-standard', nonStandardFive: 'non-standard', browserVersion: 'whateva'},
       ];
       findNonPrefixedCaps({alwaysMatch, firstMatch}).should.eql(['nonStandardOne', 'nonStandardTwo', 'nonStandardThree', 'nonStandardFour', 'nonStandardFive']);
+    });
+  });
+
+  describe('#promoteAppiumOptions', function () {
+    const appiumCaps = {
+      'appium:platformVersion': '14.4',
+      'appium:deviceName': 'iPhone 11',
+      'appium:app': '/foo/bar.app.zip',
+      'appium:automationName': 'XCUITest',
+    };
+    const nonAppiumCaps = {
+      platformName: 'iOS',
+    };
+    const appiumUnprefixedCaps = _.clone(appiumCaps);
+    stripAppiumPrefixes(appiumUnprefixedCaps);
+    const simpleCaps = {
+      ...nonAppiumCaps,
+      ...appiumUnprefixedCaps,
+    };
+    it('should do nothing to caps that dont include the options', function () {
+      promoteAppiumOptions(simpleCaps).should.eql(simpleCaps);
+    });
+    it('should promote options', function () {
+      const caps = {
+        ...nonAppiumCaps,
+        [APPIUM_OPTS_CAP]: {
+          ...appiumUnprefixedCaps,
+        }
+      };
+      promoteAppiumOptions(caps).should.eql(simpleCaps);
+    });
+    it('should get rid of prefixes if caps inside options are prefixed', function () {
+      const caps = {
+        ...nonAppiumCaps,
+        [APPIUM_OPTS_CAP]: {
+          ...appiumCaps,
+        }
+      };
+      promoteAppiumOptions(caps).should.eql(simpleCaps);
+    });
+    it('should preserve non-appium vendor prefixes', function () {
+      const googCaps = {'goog:chromeOptions': {foo: 'bar'}};
+      const caps = {
+        ...nonAppiumCaps,
+        [APPIUM_OPTS_CAP]: {
+          ...appiumCaps,
+          ...googCaps,
+        },
+      };
+      promoteAppiumOptions(caps).should.eql({
+        ...simpleCaps,
+        ...googCaps,
+      });
+    });
+    it('should overwrite caps found on the top level', function () {
+      const caps = {
+        ...nonAppiumCaps,
+        foo: 'bar',
+        [APPIUM_OPTS_CAP]: {
+          ...appiumCaps,
+          foo: 'baz',
+        }
+      };
+      promoteAppiumOptions(caps).should.eql({
+        ...simpleCaps,
+        foo: 'baz',
+      });
     });
   });
 });

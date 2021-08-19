@@ -4,6 +4,10 @@ import { util } from '@appium/support';
 import log from './logger';
 import { errors } from '../protocol/errors';
 
+const APPIUM_VENDOR_PREFIX = 'appium:';
+const APPIUM_OPTS_CAP = 'options';
+const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}${APPIUM_OPTS_CAP}`;
+
 // Takes primary caps object and merges it into a secondary caps object.
 // (see https://www.w3.org/TR/webdriver/#dfn-merging-capabilities)
 function mergeCaps (primary = {}, secondary = {}) {
@@ -221,8 +225,48 @@ function processCapabilities (caps, constraints = {}, shouldValidateCaps = true)
   return matchedCaps;
 }
 
+/**
+ * Return a copy of a capabilities object which has taken everything within the 'options'
+ * capability and promoted it to the top level. Note that this function is assumed to be run after
+ * all vendor prefixes have already been stripped from the top level. So we are dealing with e.g.
+ * 'options' and not 'appium:options' at this point. Any prefixes _inside_ the 'options' capability
+ * will themselves be stripped. This is designed as an internal function, not one to operate on
+ * user-constructed capabilities.
+ *
+ * @param {object} originalCaps - the capabilities to analyze and promote from 'options'
+ * @return {object} - the capabilities with 'options' promoted if necessary
+ */
+function promoteAppiumOptions (originalCaps) {
+  const appiumOptions = originalCaps[APPIUM_OPTS_CAP];
+  if (!appiumOptions) {
+    return originalCaps;
+  }
+
+  let caps = _.cloneDeep(originalCaps);
+  if (!_.isPlainObject(appiumOptions)) {
+    throw new errors.SessionNotCreatedError(`The ${APPIUM_OPTS_CAP} capability must be an object`);
+  }
+
+  // first get rid of any prefixes inside appium:options
+  stripAppiumPrefixes(appiumOptions);
+
+  // warn if we are going to overwrite any keys on the base caps object
+  const overwrittenKeys = _.intersection(Object.keys(caps), Object.keys(appiumOptions));
+  if (overwrittenKeys.length > 0) {
+    log.warn(`Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
+             `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`);
+  }
+
+  // now just apply them to the main caps object
+  caps = {...caps, ...appiumOptions};
+
+  // and remove all traces of the options cap
+  delete caps[APPIUM_OPTS_CAP];
+  return caps;
+}
+
 
 export {
-  parseCaps, processCapabilities, validateCaps, mergeCaps,
-  findNonPrefixedCaps, isStandardCap
+  parseCaps, processCapabilities, validateCaps, mergeCaps, APPIUM_VENDOR_PREFIX, APPIUM_OPTS_CAP,
+  findNonPrefixedCaps, isStandardCap, stripAppiumPrefixes, promoteAppiumOptions, PREFIXED_APPIUM_OPTS_CAP,
 };

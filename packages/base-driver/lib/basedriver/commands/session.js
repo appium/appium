@@ -3,7 +3,7 @@ import _ from 'lodash';
 import log from '../logger';
 import { errors } from '../../protocol';
 import { util } from '@appium/support';
-import { processCapabilities } from '../capabilities';
+import { processCapabilities, promoteAppiumOptions, APPIUM_OPTS_CAP, PREFIXED_APPIUM_OPTS_CAP } from '../capabilities';
 
 let commands = {};
 
@@ -31,10 +31,15 @@ commands.createSession = async function createSession (jsonwpDesiredCapabilities
   this.originalCaps = _.cloneDeep(w3cCapabilities);
   log.debug(`Creating session with W3C capabilities: ${JSON.stringify(w3cCapabilities, null, 2)}`);
 
+
   let caps;
   try {
-    const _capabilities = processCapabilities(w3cCapabilities, this.desiredCapConstraints, this.shouldValidateCaps);
-    caps = fixCaps(_capabilities, this.desiredCapConstraints);
+    caps = processCapabilities(w3cCapabilities, this.desiredCapConstraints, this.shouldValidateCaps);
+    if (caps[APPIUM_OPTS_CAP]) {
+      log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
+      caps = promoteAppiumOptions(caps);
+    }
+    caps = fixCaps(caps, this.desiredCapConstraints);
   } catch (e) {
     throw new errors.SessionNotCreatedError(e.message);
   }
@@ -146,3 +151,4 @@ function fixCaps (originalCaps, desiredCapConstraints = {}) {
 }
 
 export default commands;
+export { promoteAppiumOptions };

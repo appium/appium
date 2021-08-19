@@ -1,11 +1,12 @@
 import _ from 'lodash';
-import { server, routeConfiguringFunction, DeviceSettings, errors } from '../..';
+import { BaseDriver, server, routeConfiguringFunction, DeviceSettings, errors } from '../..';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
 } from '../../lib/constants';
 import axios from 'axios';
 import B from 'bluebird';
 import getPort from 'get-port';
+import { PREFIXED_APPIUM_OPTS_CAP } from '../../lib/basedriver/capabilities';
 
 function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   let address = defaultCaps['appium:address'] ?? '127.0.0.1';
@@ -481,6 +482,26 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         value.message.should.match(/.+50.+timeout.+/);
       });
     });
+
+    if (DriverClass === BaseDriver) {
+      // only run this test on basedriver, not other drivers which also use these tests, since we
+      // don't want them to try and start sessions with these random capabilities that are
+      // necessary to test the appium options logic
+      describe('special appium:options capability', function () {
+        it('should be able to start a session with caps held in appium:options', async function () {
+          const ret = await startSession({
+            platformName: 'iOS',
+            [PREFIXED_APPIUM_OPTS_CAP]: {
+              platformVersion: '11.4',
+              'appium:deviceName': 'iPhone 11',
+            }
+          });
+          d.opts.platformVersion.should.eql('11.4');
+          d.opts.deviceName.should.eql('iPhone 11');
+          await endSession(ret.sessionId);
+        });
+      });
+    }
   });
 }
 

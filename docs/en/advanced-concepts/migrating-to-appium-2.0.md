@@ -68,6 +68,22 @@ This requirement may or may not be a breaking change for your test suites when t
 
 On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).
 
+To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, `appium:options`. You can bundle together anything that you would normally put an `appium:` prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`:
+
+```json
+{
+    "platformName": "iOS",
+    "browserName": "Safari",
+    "appium:options": {
+        "platformVersion": "14.4",
+        "deviceName": "iPhone 11",
+        "automationName": "XCUITest"
+    }
+}
+```
+
+(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object.
+
 *Removed Commands*
 
 Commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:

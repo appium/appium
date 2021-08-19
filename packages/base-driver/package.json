@@ -67,8 +67,7 @@
     "@appium/gulp-plugins": "^5.5.1"
   },
   "publishConfig": {
-    "access": "public",
-    "tag": "beta"
+    "access": "public"
   },
   "homepage": "https://appium.io",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"

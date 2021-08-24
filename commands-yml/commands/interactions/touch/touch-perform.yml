@@ -39,6 +39,7 @@ example_usage:
     |
       driver.touchPerform([
         { action: 'press', options: { x: 100, y: 250 }},
+        { action: 'wait', options: { ms: 100 }},
         { action: 'moveTo', options: { x: 300, y: 100 }},
         { action: 'release' }
       ]);

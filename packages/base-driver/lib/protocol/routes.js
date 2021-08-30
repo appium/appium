@@ -316,9 +316,19 @@ const METHOD_MAP = {
   '/session/:sessionId/session_storage/size': {
     GET: {}
   },
+  // Selenium 4 clients
+  '/session/:sessionId/se/log': {
+    POST: {command: 'getLog', payloadParams: {required: ['type']}}
+  },
+  // Selenium 4 clients
+  '/session/:sessionId/se/log/types': {
+    GET: {command: 'getLogTypes'}
+  },
+  // mjsonwire, appium clients
   '/session/:sessionId/log': {
     POST: {command: 'getLog', payloadParams: {required: ['type']}}
   },
+  // mjsonwire, appium clients
   '/session/:sessionId/log/types': {
     GET: {command: 'getLogTypes'}
   },

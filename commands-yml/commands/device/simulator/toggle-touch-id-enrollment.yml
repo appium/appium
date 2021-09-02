@@ -7,6 +7,8 @@ description:
     To enable this feature, the `allowTouchIdEnroll` desired capability must be set to true. When `allowTouchIdEnroll` is set to true
     the Simulator will be enrolled by default, and the 'Toggle Touch ID Enrollment' changes the enrollment state.
 
+    Another way to enable touch id is by using `mobile: enrollBiometric`. More info [here](https://github.com/appium/appium-xcuitest-driver#mobile-enrollbiometric).
+
     This call will only work if the Appium process or its parent application (e.g., Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
 example_usage:

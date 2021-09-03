@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS, validateCaps } from '@appium/base-driver';
+import { processCapabilities, PROTOCOLS, validateCaps as validateArgs } from '@appium/base-driver';
 import { fs } from '@appium/support';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -46,11 +46,10 @@ function getExtensionArgs (extensionArgs, extensionName) {
 
 function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
   const knownArgNames = Object.keys(argsConstraints);
-  for (const argName of Object.keys(extensionArgs)) {
-    if (!knownArgNames.includes(argName)) {
-      throw new Error(`"${argName}" is not a recognized arg. Are you sure it's in the list ` +
-                      `of supported args? ${JSON.stringify(knownArgNames)}`);
-    }
+  const unknownArgs = _.difference(Object.keys(extensionArgs), Object.keys(argsConstraints));
+  if (unknownArgs.length > 0) {
+    throw new Error(`Some arguments were not recognized: ${JSON.stringify(unknownArgs)}. ` +
+                    `Are you sure they are in the list of supported args? ${JSON.stringify(knownArgNames)}`);
   }
 }
 
@@ -64,7 +63,7 @@ function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
 function validateExtensionArgs (extensionArgs, argsConstraints) {
   if (!_.isEmpty(extensionArgs) && !_.isEmpty(argsConstraints)) {
     ensureNoUnknownArgs(extensionArgs, argsConstraints);
-    validateCaps(extensionArgs, argsConstraints);
+    validateArgs(extensionArgs, argsConstraints);
   }
 }
 

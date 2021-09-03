@@ -178,7 +178,7 @@ describe('AppiumDriver', function () {
         const args = {driverArgs: {fake: {diffArg: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, DiffArgsDriver);
         const {error} = await appium.createSession(undefined, undefined, W3C_CAPS);
-        error.should.match(/not a recognized arg/);
+        error.should.match(/arguments were not recognized/);
       });
       it('should validate args and put them on driver.cliArgs', async function () {
         class ArgsDriver extends BaseDriver {
@@ -195,7 +195,6 @@ describe('AppiumDriver', function () {
         const {value} = await appium.createSession(undefined, undefined, W3C_CAPS);
         try {
           mockFakeDriver._fakeDriver.cliArgs.should.eql({randomArg: 1234});
-          should.not.exist(appium.args.driverArgs);
         } finally {
           await appium.deleteSession(value[0]);
         }
@@ -307,6 +306,49 @@ describe('AppiumDriver', function () {
         await sleep(1);
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
+    });
+  });
+  describe('#createPluginInstances', function () {
+    class NoArgsPlugin {}
+    NoArgsPlugin.pluginName = 'noargs';
+
+    class ArgsPlugin {
+      static get argsConstraints () {
+        return {
+          randomArg: {
+            isNumber: true,
+          }
+        };
+      }
+    }
+    ArgsPlugin.pluginName = 'args';
+    it('should not set CLI args if none are sent', function () {
+      const appium = new AppiumDriver({});
+      appium.pluginClasses = [NoArgsPlugin, ArgsPlugin];
+      for (const plugin of appium.createPluginInstances()) {
+        should.not.exist(plugin.cliArgs);
+      }
+    });
+    it('should throw if a plugin arg is sent but the plugin doesnt support args', function () {
+      const appium = new AppiumDriver({pluginArgs: {noargs: {foo: 'bar'}}});
+      appium.pluginClasses = [NoArgsPlugin];
+      should.throw(() => appium.createPluginInstances(), /does not define any/);
+    });
+    it('should throw if a plugin arg is sent but the plugin doesnt know about it', function () {
+      const appium = new AppiumDriver({pluginArgs: {args: {foo: 'bar'}}});
+      appium.pluginClasses = [ArgsPlugin];
+      should.throw(() => appium.createPluginInstances(), /arguments were not recognized/);
+    });
+    it('should throw if a plugin arg is sent of the wrong type', function () {
+      const appium = new AppiumDriver({pluginArgs: {args: {randomArg: 'bar'}}});
+      appium.pluginClasses = [ArgsPlugin];
+      should.throw(() => appium.createPluginInstances(), /must be of type number/);
+    });
+    it('should add cliArgs to the plugin once validated', function () {
+      const appium = new AppiumDriver({pluginArgs: {args: {randomArg: 1234}}});
+      appium.pluginClasses = [ArgsPlugin];
+      const plugin = appium.createPluginInstances()[0];
+      plugin.cliArgs.should.eql({randomArg: 1234});
     });
   });
 });

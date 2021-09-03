@@ -202,7 +202,6 @@ class AppiumDriver extends BaseDriver {
         // parse/verify CLI args and merge them to this.args if OK or throw an exception
         validateExtensionArgs(driverCliArgs, InnerDriver.argsConstraints);
         driverInstance.cliArgs = driverCliArgs;
-        delete this.args.driverArgs;
         log.debug(`Set CLI arguments on ${driverName} driver instance: ${JSON.stringify(driverCliArgs)}`);
       }
 
@@ -422,11 +421,21 @@ class AppiumDriver extends BaseDriver {
     }
     sessionId = _.truncate(sessionId, {length: 11});
     return this.pluginClasses.map((PluginClass) => {
-      const name = `${PluginClass.pluginName} (${sessionId})`;
-      const opts = {
-        pluginArgs: getExtensionArgs(this.args.pluginArgs, PluginClass.pluginName),
-      };
-      return new PluginClass(name, opts);
+      const generalName = PluginClass.pluginName;
+      const name = `${generalName} (${sessionId})`;
+      const plugin = new PluginClass(name);
+      const pluginCliArgs = getExtensionArgs(this.args.pluginArgs, generalName);
+      if (!_.isEmpty(pluginCliArgs)) {
+        if (!_.has(PluginClass, 'argsConstraints')) {
+          throw new Error(`You sent in CLI args for the ${generalName} plugin, but the plugin ` +
+                          `does not define any`);
+        }
+        validateExtensionArgs(pluginCliArgs, PluginClass.argsConstraints);
+        plugin.cliArgs = pluginCliArgs;
+        log.debug(`Set CLI arguments on ${name} plugin for session '${sessionId}': ` +
+                  JSON.stringify(pluginCliArgs));
+      }
+      return plugin;
     });
   }
 

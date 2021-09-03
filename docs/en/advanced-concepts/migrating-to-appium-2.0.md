@@ -32,6 +32,28 @@ npm install -g appium --drivers=xcuitest,uiautomator2
 
 This will install Appium and the two drivers for you in one go.
 
+#### :bangbang: Driver-specific command line options
+
+With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
+
+With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, we use a single CLI param called `--driver-args`, whose value is a JSON string or a path to a JSON file, which when parsed is an object of the following form:
+
+```json
+{
+    "<driver-name>": {
+        "<arg-name>": <arg-value>,
+        ...
+    },
+    ...
+}
+```
+
+In other words, you can construct an object with parameters for one or more drivers by their name. The parameters which are available to use this way will be documented by the driver itself. So to see what has become of `--chromedriver-executable`, you can head to the UiAutomator2 driver documentation. In this case, we'd start Appium like this:
+
+```
+appium --driver-args='{"uiautomator2": {"chromedriverExecutable": "/path/to/chromedriver/binary"}}'
+```
+
 #### :bangbang: Driver updates
 
 In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:

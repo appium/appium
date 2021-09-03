@@ -1,13 +1,11 @@
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, parseExtensionArgs,
+  removeAppiumPrefixes, getExtensionArgs, validateExtensionArgs
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
 
-const FAKE_ARGS = `{"sillyWebServerPort":1234,"host":"hey"}`;
 const FAKE_DRIVER_NAME = `fake`;
-const FAKE_DRIVER_ARGS = `{"${FAKE_DRIVER_NAME}": ${FAKE_ARGS}}`;
 
 describe('utils', function () {
   describe('parseCapsForInnerDriver()', function () {
@@ -213,41 +211,47 @@ describe('utils', function () {
     });
   });
 
-  describe('parseExtensionArgs()', function () {
-    it('should take a valid json string with a driver name and return a valid json object for that driver', function () {
-      parseExtensionArgs(
-        FAKE_DRIVER_ARGS,
-        FAKE_DRIVER_NAME,
-      ).should.eql(JSON.parse(FAKE_DRIVER_ARGS)[FAKE_DRIVER_NAME]);
+  describe('getExtensionArgs()', function () {
+    it('should return an empty object if extension not in args', function () {
+      getExtensionArgs({foo: {bar: 1234}}, FAKE_DRIVER_NAME).should.eql({});
     });
-    it('should take a valid json string with an invalid driver name and throw an error', function () {
-      const fakeDriverArgs = `{"xcuitest": ${FAKE_ARGS}}`;
-      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
-    });
-    it('should take an empty json object and return an empty object', function () {
-      const fakeDriverArgs = {};
-
-      parseExtensionArgs(
-        fakeDriverArgs,
-        FAKE_DRIVER_NAME,
-      ).should.eql({});
-    });
-    it('should take an invalid json string and throw an error', function () {
-      const fakeDriverArgs = `blah`;
-
-      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME)).should.throw();
-    });
-    it('should take a valid json file with a driver name and return a valid json object for that driver', function () {
-      const fakeDriverArgsPath = require.resolve('./fixtures/driverArgs.json');
-
-      parseExtensionArgs(
-        fakeDriverArgsPath,
-        FAKE_DRIVER_NAME,
-      ).should.eql(JSON.parse(FAKE_DRIVER_ARGS)[FAKE_DRIVER_NAME]);
+    it('should return the args for an extension', function () {
+      getExtensionArgs({foo: {bar: 1234}}, 'foo').should.eql({bar: 1234});
     });
     it('should throw an error if arg is not a plain object', function () {
-      const fakeDriverArgs = '{"fake": 1234}';
-      (() => parseExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME,)).should.throw();
+      const fakeDriverArgs = {fake: 1234};
+      (() => getExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME,)).should.throw();
+    });
+  });
+
+  describe('validateExtensionArgs', function () {
+    const webkitDebugProxyPort = 22222;
+    const wdaLocalPort = 8000;
+    const driverArgs = {wdaLocalPort, webkitDebugProxyPort};
+    const ARGS_CONSTRAINTS = {
+      webkitDebugProxyPort: {
+        isNumber: true
+      },
+      wdaLocalPort: {
+        isNumber: true
+      },
+    };
+
+    it('should not throw if args are valid', function () {
+      validateExtensionArgs(driverArgs, ARGS_CONSTRAINTS);
+    });
+    it('should not throw if unrequired args are not included', function () {
+      validateExtensionArgs({webkitDebugProxyPort}, ARGS_CONSTRAINTS);
+    });
+    it('should throw if an arg is of the wrong type', function () {
+      should.throw(() =>
+        validateExtensionArgs({webkitDebugProxyPort, wdaLocalPort: 'abcd'}, ARGS_CONSTRAINTS)
+      );
+    });
+    it('should throw if an unrecognized arg is included', function () {
+      should.throw(() =>
+        validateExtensionArgs({webkitDebugProxyPort, foo: '1234'}, ARGS_CONSTRAINTS)
+      );
     });
   });
 });

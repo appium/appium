@@ -18,7 +18,7 @@ All params are optional, but some are required in conjunction with certain other
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-pa`, `--base-path`|null|Initial path segment where the Appium/WebDriver API will be hosted. Every endpoint will be behind this segment.|`--base-path /wd/hub`|
 |`--driver-args`|`{}`|JSON object string (or path to JSON file) consiting of CLI arguments to send to specific drivers. Should be of the form `{"[driverName]": {"[driverArg1Name]": [driverArg1Value], ...}}`|`--driver-args '{"xcuitest": {"webkitDebugProxyPort": 1234}}'|
-|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server.||
+|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server. The main use of this flag is to allow connections from, e.g., the [web based version](https://inspector.appiumpro.com) of [Appium Inspector](https://github.com/appium/appium-inspector).||
 |`-ca`, `--callback-address`|null|callback IP Address (default: same as --address)|`--callback-address 127.0.0.1`|
 |`-cp`, `--callback-port`|null|callback port (default: same as port)|`--callback-port 4723`|
 |`--session-override`|false|Enables session override (clobbering)||

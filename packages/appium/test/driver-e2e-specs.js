@@ -17,8 +17,10 @@ import sinon from 'sinon';
 
 let TEST_SERVER;
 let TEST_PORT;
-const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
-const FAKE_DRIVER_ARGS = JSON.stringify({'fake': FAKE_ARGS});
+const sillyWebServerPort = 1234;
+const sillyWebServerHost = 'hey';
+const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
+const FAKE_DRIVER_ARGS = {fake: FAKE_ARGS};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const wdOpts = {
@@ -91,7 +93,8 @@ describe('FakeDriver - via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
-        data.value.should.eql({});
+        should.not.exist(data.value.sillyWebServerPort);
+        should.not.exist(data.value.sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }
@@ -99,15 +102,22 @@ describe('FakeDriver - via HTTP', function () {
   });
 
   describe('cli args handling for passed in args', function () {
-    it('should recieve user cli args from a driver if arguments were passed in', async function () {
+    before(async function () {
       await serverClose();
       const args = {driverArgs: FAKE_DRIVER_ARGS};
       await serverStart(args);
+    });
+    after(async function () {
+      await serverClose();
+      await serverStart();
+    });
+    it('should receive user cli args from a driver if arguments were passed in', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${baseUrl}/${sessionId}/fakedriverargs`);
-        data.value.should.eql(FAKE_ARGS);
+        data.value.sillyWebServerPort.should.eql(sillyWebServerPort);
+        data.value.sillyWebServerHost.should.eql(sillyWebServerHost);
       } finally {
         await driver.deleteSession();
       }

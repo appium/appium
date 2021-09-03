@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
-import { parseJsonStringOrFile } from './cli/parser-helpers';
+import { processCapabilities, PROTOCOLS, validateCaps } from '@appium/base-driver';
 import { fs } from '@appium/support';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -34,17 +33,41 @@ function inspectObject (args) {
   }
 }
 
-function parseExtensionArgs (extensionArgs, extensionName) {
-  if (!_.isString(extensionArgs)) {
+function getExtensionArgs (extensionArgs, extensionName) {
+  if (!_.has(extensionArgs, extensionName)) {
     return {};
   }
-  const parsedExtensionArgs = parseJsonStringOrFile(extensionArgs);
-  const extensionSpecificArgs = parsedExtensionArgs[extensionName];
-  if (!_.isPlainObject(extensionSpecificArgs)) {
+  if (!_.isPlainObject(extensionArgs[extensionName])) {
     throw new Error(`Driver or plugin arguments must be plain objects`);
   }
-  return extensionSpecificArgs;
+  return extensionArgs[extensionName];
 }
+
+
+function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
+  const knownArgNames = Object.keys(argsConstraints);
+  for (const argName of Object.keys(extensionArgs)) {
+    if (!knownArgNames.includes(argName)) {
+      throw new Error(`"${argName}" is not a recognized arg. Are you sure it's in the list ` +
+                      `of supported args? ${JSON.stringify(knownArgNames)}`);
+    }
+  }
+}
+
+/**
+ * Takes in a set of driver/plugin args passed in by user, and arg constraints
+ * and throws an error if any arg is unknown or of the incorrect type
+ *
+ * @param {object} extensionArgs - Driver or Plugin specific args
+ * @param {object} argsConstraints - Constraints for arguments
+*/
+function validateExtensionArgs (extensionArgs, argsConstraints) {
+  if (!_.isEmpty(extensionArgs) && !_.isEmpty(argsConstraints)) {
+    ensureNoUnknownArgs(extensionArgs, argsConstraints);
+    validateCaps(extensionArgs, argsConstraints);
+  }
+}
+
 
 /**
  * Takes the caps that were provided in the request and translates them
@@ -233,5 +256,6 @@ const rootDir = fs.findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes, parseExtensionArgs,
+  getPackageVersion, pullSettings, removeAppiumPrefixes, getExtensionArgs,
+  validateExtensionArgs
 };

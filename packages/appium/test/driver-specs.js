@@ -1,6 +1,7 @@
 // transpile:mocha
 
 import { AppiumDriver } from '../lib/appium';
+import { BaseDriver } from '@appium/base-driver';
 import { FakeDriver } from '@appium/fake-driver';
 import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
 import _ from 'lodash';
@@ -13,16 +14,24 @@ const SESSION_ID = 1;
 
 describe('AppiumDriver', function () {
   describe('AppiumDriver', function () {
-    function getDriverAndFakeDriver () {
-      const appium = new AppiumDriver({});
-      const fakeDriver = new FakeDriver();
+    function getDriverAndFakeDriver (appiumArgs = {}, DriverClass = FakeDriver) {
+      const appium = new AppiumDriver(appiumArgs);
+      const fakeDriver = new DriverClass();
       const mockFakeDriver = sinon.mock(fakeDriver);
+      mockFakeDriver._fakeDriver = fakeDriver;
+      const mockedDriverReturnerClass = function Driver () {
+        return fakeDriver;
+      };
+      // need to specially assign args constraints since that is a static class method and won't
+      // make it through to appium otherwise with our mocked driver returner
+      if (!_.isUndefined(DriverClass.argsConstraints)) {
+        mockedDriverReturnerClass.argsConstraints = DriverClass.argsConstraints;
+      }
       appium._findMatchingDriver = function () {
         return {
-          driver: function Driver () {
-            return fakeDriver;
-          },
+          driver: mockedDriverReturnerClass,
           version: '1.2.3',
+          driverName: 'fake',
         };
       };
       return [appium, mockFakeDriver];
@@ -148,6 +157,48 @@ describe('AppiumDriver', function () {
         mockFakeDriver.expects('createSession').never();
         await appium.createSession(jsonwpCaps, undefined, w3cCaps);
         mockFakeDriver.verify();
+      });
+      it('should error if you include driver args for a driver that doesnt define any', async function () {
+        class NoArgsDriver {}
+        const args = {driverArgs: {fake: {webkitDebugProxyPort: 1234}}};
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(args, NoArgsDriver);
+        const {error} = await appium.createSession(undefined, undefined, W3C_CAPS);
+        error.should.match(/does not define any/);
+      });
+      it('should error if you include driver args a driver doesnt support', async function () {
+        class DiffArgsDriver extends BaseDriver {
+          static get argsConstraints () {
+            return {
+              randomArg: {
+                isNumber: true
+              }
+            };
+          }
+        }
+        const args = {driverArgs: {fake: {diffArg: 1234}}};
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(args, DiffArgsDriver);
+        const {error} = await appium.createSession(undefined, undefined, W3C_CAPS);
+        error.should.match(/not a recognized arg/);
+      });
+      it('should validate args and put them on driver.cliArgs', async function () {
+        class ArgsDriver extends BaseDriver {
+          static get argsConstraints () {
+            return {
+              randomArg: {
+                isNumber: true
+              }
+            };
+          }
+        }
+        const args = {driverArgs: {fake: {randomArg: 1234}}};
+        [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver);
+        const {value} = await appium.createSession(undefined, undefined, W3C_CAPS);
+        try {
+          mockFakeDriver._fakeDriver.cliArgs.should.eql({randomArg: 1234});
+          should.not.exist(appium.args.driverArgs);
+        } finally {
+          await appium.deleteSession(value[0]);
+        }
       });
     });
     describe('deleteSession', function () {

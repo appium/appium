@@ -1,23 +1,24 @@
 # Appium server arguments
 
-Since Appium 1.5, many server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
+Since Appium 1.5, many server arguments have been removed in favor of the [--default-capabilities param](/docs/en/writing-running-appium/default-capabilities-arg.md).
 
-Usage: `node . [flags]`
+Since Appium 2.0, all driver-specific params have been made accessible via `--driver-args` instead of as their own separate params. See below for details on `--driver-args`.
 
-## Server flags
-All flags are optional, but some are required in conjunction with certain others.
+Usage: `appium [params]` (or `appium server [params]` to be explicit)
 
+## Server params
 
+All params are optional, but some are required in conjunction with certain others.
 
 <expand_table>
 
-|Flag|Default|Description|Example|
+|Param|Default|Description|Example|
 |----|-------|-----------|-------|
-|`--shell`|null|Enter REPL mode||
-|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server.||
 |`-a`, `--address`|0.0.0.0|IP Address to listen on|`--address 0.0.0.0`|
 |`-p`, `--port`|4723|port to listen on|`--port 4723`|
 |`-pa`, `--base-path`|null|Initial path segment where the Appium/WebDriver API will be hosted. Every endpoint will be behind this segment.|`--base-path /wd/hub`|
+|`--driver-args`|`{}`|JSON object string (or path to JSON file) consiting of CLI arguments to send to specific drivers. Should be of the form `{"[driverName]": {"[driverArg1Name]": [driverArg1Value], ...}}`|`--driver-args '{"xcuitest": {"webkitDebugProxyPort": 1234}}'|
+|`--allow-cors`|false|Turn on CORS compatibility mode, which will allow connections to the Appium server from within websites hosted on any domain. Be careful when enabling this feature, since there is a potential security risk if you visit a website that uses a cross-domain request to initiate or introspect sessions on your running Appium server.||
 |`-ca`, `--callback-address`|null|callback IP Address (default: same as --address)|`--callback-address 127.0.0.1`|
 |`-cp`, `--callback-port`|null|callback port (default: same as port)|`--callback-port 4723`|
 |`--session-override`|false|Enables session override (clobbering)||
@@ -28,14 +29,12 @@ All flags are optional, but some are required in conjunction with certain others
 |`--log-no-colors`|false|Do not use colors in console output||
 |`-G`, `--webhook`|null|Also send log output to this HTTP listener|`--webhook localhost:9876`|
 |`--nodeconfig`|null|Configuration JSON file to register appium with selenium grid|`--nodeconfig /abs/path/to/nodeconfig.json`|
-
 |`--show-config`|false|Show info about the appium server configuration and exit||
 |`--no-perms-check`|false|Bypass Appium's checks to ensure we can read/write necessary files||
 |`--strict-caps`|false|Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device||
 |`--tmp`|null|Absolute path to directory Appium can use to manage temporary files, like built-in iOS apps it needs to move around. On *nix/Mac defaults to /tmp, on Windows defaults to C:\Windows\Temp||
 |`--trace-dir`|null|Absolute path to directory Appium use to save ios instruments traces, defaults to <tmp dir>/appium-instruments||
 |`--debug-log-spacing`|false|Add exaggerated spacing in logs to help with visual inspection||
-
 |`-dc`, `--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]`|
 |`--relaxed-security`|false|Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it is not the case if a client could potentially break out of the session sandbox. Can override enabling of specific features with --deny-insecure. See also the [security doc](/docs/en/writing-running-appium/security.md)||
 |`--allow-insecure`|[]|Allow a list of features which are considered insecure and must be turned on explicitly by system administrators. Feature names are documented by the relevant server/driver. Should be a comma-separated list, or a path to a filename containing one feature name per line. Features listed in --deny-insecure will override anything listed here. Does not make sense to use in conjunction with --relaxed-security. See also the [security doc](/docs/en/writing-running-appium/security.md)|`--allow-insecure=foo,bar`|

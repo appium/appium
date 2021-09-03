@@ -5,9 +5,19 @@ import { FakeApp } from './fake-app';
 import commands from './commands';
 
 class FakeDriver extends BaseDriver {
+  static get argsConstraints () {
+    return {
+      sillyWebServerPort: {
+        isNumber: true
+      },
+      sillyWebServerHost: {
+        isString: true
+      }
+    };
+  }
 
-  constructor (opts = {}, shouldValidateCaps = true, driverArgs = {}) {
-    super(opts, shouldValidateCaps, driverArgs);
+  constructor (opts = {}, shouldValidateCaps = true) {
+    super(opts, shouldValidateCaps);
     this.appModel = null;
     this.curContext = 'NATIVE_APP';
     this.elMap = {};
@@ -15,8 +25,7 @@ class FakeDriver extends BaseDriver {
     this.maxElId = 0;
     this.caps = {};
     this.fakeThing = null;
-    // TODO: remove this line once we're relying completely on basedriver from appium 2.0
-    this.driverArgs = driverArgs;
+    this.cliArgs = {};
 
     this.desiredCapConstraints = {
       'app': {
@@ -69,7 +78,7 @@ class FakeDriver extends BaseDriver {
 
   async getFakeDriverArgs () {
     await B.delay(1);
-    return this.driverArgs;
+    return this.cliArgs;
   }
 
   static newMethodMap = {

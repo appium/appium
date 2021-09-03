@@ -80,17 +80,17 @@ describe('Server Parser', function () {
     parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
   });
   it('should parse default driver args correctly from a string', function () {
-    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let fakeDriverArgs = {fake: {sillyWebServerPort: 1234, host: 'hey'}};
     let args = p.parse_args(['--driver-args', JSON.stringify(fakeDriverArgs)]);
     args.driverArgs.should.eql(fakeDriverArgs);
   });
   it('should parse default driver args correctly from a file', function () {
-    let fakeDriverArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let fakeDriverArgs = {fake: {sillyWebServerPort: 1234, host: 'hey'}};
     let args = p.parse_args(['--driver-args', FAKE_DRIVER_ARGS_FIXTURE]);
     args.driverArgs.should.eql(fakeDriverArgs);
   });
   it('should parse default plugin args correctly from a string', function () {
-    let fakePluginArgs = {'fake': {'sillyWebServerPort': 1234, 'host': 'hey'}};
+    let fakePluginArgs = {fake: {sillyWebServerPort: 1234, host: 'hey'}};
     let args = p.parse_args(['--plugin-args', JSON.stringify(fakePluginArgs)]);
     args.pluginArgs.should.eql(fakePluginArgs);
   });

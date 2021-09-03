@@ -9,8 +9,8 @@ import { W3C_PREFIXED_CAPS, TEST_HOST, getTestPort, PROJECT_ROOT } from './helpe
 import { runExtensionCommand } from '../lib/cli/extension';
 
 
-const FAKE_ARGS = {'sillyWebServerPort': 1234, 'host': 'hey'};
-const FAKE_PLUGIN_ARGS = JSON.stringify({'fake': FAKE_ARGS});
+const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
+const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
 
 const wdOpts = {
   hostname: TEST_HOST,
@@ -164,7 +164,7 @@ describe('FakePlugin', function () {
       }
     });
 
-    it('should recieve user cli args for plugin if passed in', async function () {
+    it('should receive user cli args for plugin if passed in', async function () {
       const driver = await wdio(wdOpts);
       const {sessionId} = driver;
       try {
@@ -187,12 +187,12 @@ describe('FakePlugin', function () {
       }
     });
 
-    it('should not recieve user cli args for plugin if none were passed in', async function () {
+    it('should not receive user cli args for plugin if none were passed in', async function () {
       const driver = await wdio(wdOpts);
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${baseUrl}/${sessionId}/fakepluginargs`);
-        data.value.should.eql({});
+        should.not.exist(data.value);
       } finally {
         await driver.deleteSession();
       }

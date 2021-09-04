@@ -2492,9 +2492,9 @@
       }
     },
     "appium-base-driver": {
-      "version": "7.9.1",
-      "resolved": "https://registry.npmjs.org/appium-base-driver/-/appium-base-driver-7.9.1.tgz",
-      "integrity": "sha512-KDG+yYbFRCS5Eee0Zv5q5A3Q4rQ5MVW7ZGuqNYWCtmXcuG06QAMAiyXJ9QfYtL3qCN6YNZWQaDLxR35/SaUiAQ==",
+      "version": "7.10.0",
+      "resolved": "https://registry.npmjs.org/appium-base-driver/-/appium-base-driver-7.10.0.tgz",
+      "integrity": "sha512-JHc/QHt57eLY3pIzDTr6BLgDmTvDw+zGljaHN1UJ71Q1epo9TNYKp5UUuPbCvoTruIEtKVkeqNhO1m2BnptR6g==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-support": "^2.54.1",
@@ -2519,9 +2519,9 @@
       },
       "dependencies": {
         "ws": {
-          "version": "8.1.0",
-          "resolved": "https://registry.npmjs.org/ws/-/ws-8.1.0.tgz",
-          "integrity": "sha512-0UWlCD2s3RSclw8FN+D0zDTUyMO+1kHwJQQJzkgUh16S8d3NYON0AKCEQPffE0ez4JyRFu76QDA9KR5bOG/7jw=="
+          "version": "8.2.1",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-8.2.1.tgz",
+          "integrity": "sha512-XkgWpJU3sHU7gX8f13NqTn6KQ85bd1WU7noBHTT8fSohx7OS1TPY8k+cyRPCzFkia7C4mM229yeHr1qK9sM4JQ=="
         }
       }
     },
@@ -2547,9 +2547,9 @@
       }
     },
     "appium-espresso-driver": {
-      "version": "1.45.2",
-      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.45.2.tgz",
-      "integrity": "sha512-p2xodUp/5iC6F54hmQXnfBiCrQ5nSwEYVGNaJECLJ1460wTJgV5O9qXgXg89le+h091Zsb6f4+Ado72rs1ZGIg==",
+      "version": "1.45.3",
+      "resolved": "https://registry.npmjs.org/appium-espresso-driver/-/appium-espresso-driver-1.45.3.tgz",
+      "integrity": "sha512-CzWOsCD4z/67XmIfZzptiWYfHjGwjSOiltXwgTEi6WAL4WzBtz0tORu4+oYXNssen8EZ/ljgckcIA8GPB+5aKA==",
       "requires": {
         "@babel/runtime": "^7.4.3",
         "appium-adb": "^8.9.0",
@@ -2581,9 +2581,9 @@
       }
     },
     "appium-flutter-driver": {
-      "version": "0.0.29",
-      "resolved": "https://registry.npmjs.org/appium-flutter-driver/-/appium-flutter-driver-0.0.29.tgz",
-      "integrity": "sha512-A8576c438wxWhPxtDVKy9nFuRHqaCSYidszoWkBxPzJdNQ4OEBAGeT1IkBW/hvPw6Fv0DX92mSqxoEl4YFGAtw==",
+      "version": "0.0.31",
+      "resolved": "https://registry.npmjs.org/appium-flutter-driver/-/appium-flutter-driver-0.0.31.tgz",
+      "integrity": "sha512-dpsaAqT3c2FVX/cebBAbgqio1lBmj04CXrfeFr1iMyxlBQdbDD3N3Qt8KprYhFlc7HE7kHUOYEyY4DoaM3eP0w==",
       "requires": {
         "appium-adb": "^8.8.0",
         "appium-base-driver": "^7.4.1",
@@ -3318,9 +3318,9 @@
       }
     },
     "appium-mac2-driver": {
-      "version": "0.14.0",
-      "resolved": "https://registry.npmjs.org/appium-mac2-driver/-/appium-mac2-driver-0.14.0.tgz",
-      "integrity": "sha512-9ZsvJPue5L9J5Mhc5PktUObwwtP1Ru6swDW69qaNDDZTRWU8jp30Q/HkSxZO/qhceJeZKTO3ZaMDABngZOWm8g==",
+      "version": "0.14.1",
+      "resolved": "https://registry.npmjs.org/appium-mac2-driver/-/appium-mac2-driver-0.14.1.tgz",
+      "integrity": "sha512-gq7A0Q2w7cUF3ZTC+jWSSGEjRhF2ifFr/3IcOMxLwXY6LmgD7eavPdVYZ+DYw8a7dRkUZdnSWuWcyfSCCxplQQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.1.0",
@@ -4046,9 +4046,9 @@
       "integrity": "sha512-v91EN8KvLo3YS7OS0j21dYxZjDt5Z9n0AsMf731IKmOosRKQ1mX1ayfYu7wtkWFX+E15Oy/y0t4giRdx3fo/BA=="
     },
     "appium-webdriveragent": {
-      "version": "3.13.0",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.13.0.tgz",
-      "integrity": "sha512-Mbns88QfuHN/zf+MshlPeIUJ4VCsGZ5ExNLju6Nv9fud1yPs+CTB732l2eOReEolIH0FZL9YTe4twwTEFGISKw==",
+      "version": "3.13.3",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.13.3.tgz",
+      "integrity": "sha512-Ig9k+XuAnD3doTHKp6D4YUSN35V45Epwz+YUt5rhW3esJRfACN/1fB5UfJ7Lm15JMQnvw6chx8B+JCBb//Ynlw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4065,15 +4065,16 @@
       }
     },
     "appium-windows-driver": {
-      "version": "1.19.0",
-      "resolved": "https://registry.npmjs.org/appium-windows-driver/-/appium-windows-driver-1.19.0.tgz",
-      "integrity": "sha512-T9O1V8kSWwEaiQakHuaUIBT9JX7L2hQ/Bpi7zHkUswFxRVNMSImotbe8Nwc6qzxk83TT1UfQRCjwmj+kDrAxAg==",
+      "version": "1.19.1",
+      "resolved": "https://registry.npmjs.org/appium-windows-driver/-/appium-windows-driver-1.19.1.tgz",
+      "integrity": "sha512-iZW51z88VQKPA851IshZaWyogfoI05QKqH9ltzuKHkHgdvWm/DLnAXmeQHfJi+nUaBy+D92PLiyHnAvJJTRB/Q==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
         "appium-support": "^2.49.0",
         "asyncbox": "^2.3.1",
         "bluebird": "^3.5.1",
+        "es6-error": "^4.1.1",
         "lodash": "^4.6.1",
         "portscanner": "2.2.0",
         "source-map-support": "^0.5.5",
@@ -4096,9 +4097,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.52.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.52.0.tgz",
-      "integrity": "sha512-IQ5eC+kaFYXsNL8/nt8JCSqzfe33h7vrJP9gLXz8rm3tSz0CdWGNQFmT2+RpRW8bNRMLZxtNw+omdiezMWEJ1g==",
+      "version": "3.52.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.52.1.tgz",
+      "integrity": "sha512-8GKUnu1O+LjNaaEE1MdFpr1UxYIN2UqfqKcVN4ji8klQ5seFKDoHmDFraqxelErQmMuZ7i3esnjEKcdnIWdhZA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4128,9 +4129,9 @@
       },
       "dependencies": {
         "ws": {
-          "version": "8.1.0",
-          "resolved": "https://registry.npmjs.org/ws/-/ws-8.1.0.tgz",
-          "integrity": "sha512-0UWlCD2s3RSclw8FN+D0zDTUyMO+1kHwJQQJzkgUh16S8d3NYON0AKCEQPffE0ez4JyRFu76QDA9KR5bOG/7jw=="
+          "version": "8.2.1",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-8.2.1.tgz",
+          "integrity": "sha512-XkgWpJU3sHU7gX8f13NqTn6KQ85bd1WU7noBHTT8fSohx7OS1TPY8k+cyRPCzFkia7C4mM229yeHr1qK9sM4JQ=="
         }
       }
     },
@@ -13249,9 +13250,9 @@
       }
     },
     "resolve-alpn": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/resolve-alpn/-/resolve-alpn-1.2.0.tgz",
-      "integrity": "sha512-e4FNQs+9cINYMO5NMFc6kOUCdohjqFPSgMuwuZAOUWqrfWsen+Yjy5qZFkV5K7VO7tFSLKcUL97olkED7sCBHA=="
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/resolve-alpn/-/resolve-alpn-1.2.1.tgz",
+      "integrity": "sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g=="
     },
     "resolve-dir": {
       "version": "1.0.1",

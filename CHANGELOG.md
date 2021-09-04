@@ -48,6 +48,9 @@ Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking 
 [appium-xcuitest-driver#1322](https://github.com/appium/appium-xcuitest-driver/pull/1322)
 * Fix element identification logic for over iOS 13 [WebDriverAgent#523](https://github.com/appium/WebDriverAgent/pull/523) (Thanks @Dan-Maor)
     * This fix may improve page source results in some environment
+* Fix visibility handling in `mobile:scroll` with `toVisible` argument [WebDriverAgent#528](https://github.com/appium/WebDriverAgent/pull/528) (Thanks @Dan-Maor)
+* Fix `velocity` argument in `mobile:swipe` [appium-xcuitest-driver#1329](https://github.com/appium/appium-xcuitest-driver/pull/1329)
+
 
 ### Mac2
 * Add `macos:` extensions:
@@ -60,6 +63,7 @@ Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking 
 * Add `windows:` extensions:
     * [`deleteFile`](https://github.com/appium/appium-windows-driver#windows-deletefile) and [`deleteFolder`](https://github.com/appium/appium-windows-driver#windows-deletefolder) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
 * Add [push_file](https://appium.io/docs/en/commands/device/files/push-file/), [pull_file](https://appium.io/docs/en/commands/device/files/pull-file/), [pull_folder](https://appium.io/docs/en/commands/device/files/pull-folder/) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
+* Tune WAD install path lookup [appium-windows-driver#111](https://github.com/appium/appium-windows-driver/pull/111) (Thanks to notice us @blakee1)
 
 ### Community/Company based drivers
 #### You.i Engine Driver
@@ -68,9 +72,7 @@ The version is `1.2.9`
 
 #### Flutter driver
 
-The version is `0.0.29`
-
-#### New drivers
+The version is `0.0.31`
 
 
 CHANGES IN VERSION 1.21.0 (FROM 1.20.2)

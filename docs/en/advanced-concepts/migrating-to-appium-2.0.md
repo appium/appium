@@ -89,6 +89,7 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 Commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
 
 * TODO (these commands are being identified and removed and will be updated here when complete)
+- autoLaunch
 
 If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.
 

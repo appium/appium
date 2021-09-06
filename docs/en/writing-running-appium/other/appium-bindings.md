@@ -440,11 +440,8 @@ driver.CloseApp();
 
 ### Launch
 
-Launch the session for the desired capabilities. Note that this is the
-companion to the autoLaunch=false capability. This is not for launching
-arbitrary apps/activities---for that use `start_activity`. This is for
-continuing the initialization ("launch") process if you have used
-autoLaunch=false.
+Launch the session for the desired capabilities. This is not for launching
+arbitrary apps/activities---for that use `start_activity`.
 
 ```ruby
 # ruby

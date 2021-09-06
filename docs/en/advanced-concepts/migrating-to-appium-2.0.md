@@ -84,12 +84,18 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 
 (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object.
 
+:bangbang: *Removed Capabilities*
+
+- autoLaunch
+
 :bangbang: *Removed Commands*
 
 Commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
 
 * TODO (these commands are being identified and removed and will be updated here when complete)
-- autoLaunch
+- launchApp()
+- closeApp()
+- resetApp()
 
 If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.
 

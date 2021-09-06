@@ -20,9 +20,6 @@ let desiredCapabilityConstraints = {
   automationName: {
     isString: true
   },
-  autoLaunch: {
-    isBoolean: true
-  },
   udid: {
     isString: true
   },

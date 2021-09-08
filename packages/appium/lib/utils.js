@@ -33,20 +33,33 @@ function inspectObject (args) {
   }
 }
 
+/**
+ * Given a set of CLI args and the name of a driver or plugin, extract those args for that plugin
+ * @param {Object} extensionArgs - arguments of the form {[extName]: {[argName]: [argValue]}}
+ * @param {string} extensionName - the name of the extension
+ * @return {Object} the arg object for that extension alone
+ */
 function getExtensionArgs (extensionArgs, extensionName) {
   if (!_.has(extensionArgs, extensionName)) {
     return {};
   }
   if (!_.isPlainObject(extensionArgs[extensionName])) {
-    throw new Error(`Driver or plugin arguments must be plain objects`);
+    throw new TypeError(`Driver or plugin arguments must be plain objects`);
   }
   return extensionArgs[extensionName];
 }
 
 
+/**
+ * Given a set of args and a set of constraints, throw an error if any args are not mentioned in
+ * the set of constraints
+ * @param {Object} extensionArgs the args
+ * @param {Object} argsConstraints the constraints object
+ * @throws {Error} if any args were not recognized
+ */
 function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
   const knownArgNames = Object.keys(argsConstraints);
-  const unknownArgs = _.difference(Object.keys(extensionArgs), Object.keys(argsConstraints));
+  const unknownArgs = _.difference(Object.keys(extensionArgs), knownArgNames);
   if (unknownArgs.length > 0) {
     throw new Error(`Some arguments were not recognized: ${JSON.stringify(unknownArgs)}. ` +
                     `Are you sure they are in the list of supported args? ${JSON.stringify(knownArgNames)}`);
@@ -59,6 +72,7 @@ function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
  *
  * @param {object} extensionArgs - Driver or Plugin specific args
  * @param {object} argsConstraints - Constraints for arguments
+ * @throws {Error} if any args are not recognized or are of an invalid type
 */
 function validateExtensionArgs (extensionArgs, argsConstraints) {
   if (!_.isEmpty(extensionArgs) && !_.isEmpty(argsConstraints)) {

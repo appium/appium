@@ -112,6 +112,26 @@ class AppiumDriver extends BaseDriver {
   }
 
   /**
+   * Validate and assign CLI args for a driver or plugin
+   * @param {string} extType 'driver' or 'plugin'
+   * @param {string} extName the name of the extension
+   * @param {ObjectConstructor} extClass the class of the extension
+   * @param {Object} extInstance the driver or plugin instance
+   */
+  assignCliArgsToExtension (extType, extName, extClass, extInstance) {
+    const cliArgs = getExtensionArgs(this.args[`${extType}Args`], extName);
+    if (!_.isEmpty(cliArgs)) {
+      if (!_.has(extClass, 'argsConstraints')) {
+        throw new Error(`You sent in CLI args for the ${extName} ${extType}, but it ` +
+                        `does not define any`);
+      }
+      validateExtensionArgs(cliArgs, extClass.argsConstraints);
+      extInstance.cliArgs = cliArgs;
+      log.debug(`Set CLI arguments on ${extName} ${extType} instance: ${JSON.stringify(cliArgs)}`);
+    }
+  }
+
+  /**
    * Create a new session
    * @param {Object} jsonwpCaps JSONWP formatted desired capabilities
    * @param {Object} reqCaps Required capabilities (JSONWP standard)
@@ -193,17 +213,7 @@ class AppiumDriver extends BaseDriver {
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
-      const driverCliArgs = getExtensionArgs(this.args.driverArgs, driverName);
-      if (!_.isEmpty(driverCliArgs)) {
-        if (!_.has(InnerDriver, 'argsConstraints')) {
-          throw new Error(`You sent in CLI args for the ${driverName} driver, but the driver ` +
-                          `does not define any`);
-        }
-        // parse/verify CLI args and merge them to this.args if OK or throw an exception
-        validateExtensionArgs(driverCliArgs, InnerDriver.argsConstraints);
-        driverInstance.cliArgs = driverCliArgs;
-        log.debug(`Set CLI arguments on ${driverName} driver instance: ${JSON.stringify(driverCliArgs)}`);
-      }
+      this.assignCliArgsToExtension('driver', driverName, InnerDriver, driverInstance);
 
 
       // This assignment is required for correct web sockets functionality inside the driver
@@ -424,17 +434,7 @@ class AppiumDriver extends BaseDriver {
       const generalName = PluginClass.pluginName;
       const name = `${generalName} (${sessionId})`;
       const plugin = new PluginClass(name);
-      const pluginCliArgs = getExtensionArgs(this.args.pluginArgs, generalName);
-      if (!_.isEmpty(pluginCliArgs)) {
-        if (!_.has(PluginClass, 'argsConstraints')) {
-          throw new Error(`You sent in CLI args for the ${generalName} plugin, but the plugin ` +
-                          `does not define any`);
-        }
-        validateExtensionArgs(pluginCliArgs, PluginClass.argsConstraints);
-        plugin.cliArgs = pluginCliArgs;
-        log.debug(`Set CLI arguments on ${name} plugin for session '${sessionId}': ` +
-                  JSON.stringify(pluginCliArgs));
-      }
+      this.assignCliArgsToExtension('plugin', generalName, PluginClass, plugin);
       return plugin;
     });
   }

@@ -41,7 +41,7 @@
     "@babel/runtime": "^7.15.3",
     "bluebird": "^3.5.1",
     "lodash": "^4.17.21",
-    "loud-rejection": "^2.0.0",
+    "loud-rejection": "^2.2.0",
     "sinon": "^11.0.0",
     "source-map-support": "^0.5.19"
   },

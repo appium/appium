@@ -74,7 +74,7 @@
     "lodash": "^4.17.21",
     "merge-stream": "^2.0.0",
     "mocha": "^9.0.1",
-    "moment": "^2.12.0",
+    "moment": "^2.29.1",
     "node-notifier": "^10.0.0",
     "nyc": "^15.0.0",
     "plugin-error": "^1.0.1",

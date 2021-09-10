@@ -65,7 +65,7 @@
     "teen_process": "^1.5.1",
     "uuid": "^8.0.0",
     "which": "^2.0.2",
-    "yauzl": "^2.7.0"
+    "yauzl": "^2.10.0"
   },
   "devDependencies": {
     "@appium/gulp-plugins": "^5.5.1"

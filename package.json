@@ -80,7 +80,7 @@
     "@babel/preset-env": "^7.15.0",
     "@babel/register": "^7.15.3",
     "@babel/runtime": "^7.15.3",
-    "appium-base-driver": "^7.9.0",
+    "appium-base-driver": "^7.10.0",
     "asyncbox": "^2.8.0",
     "babel-eslint": "^10.1.0",
     "babel-plugin-istanbul": "^6.0.0",

@@ -2,7 +2,7 @@
   "extends": [
     "config:base",
     ":semanticCommitTypeAll(chore)",
-    ":preserveSemverRanges"
+    ":pinAllExceptPeerDependencies"
   ],
   "packageRules": [
     {
@@ -15,6 +15,5 @@
   "semanticCommits": "enabled",
   "semanticCommitScope": "{{parentDir}}",
   "schedule": ["after 10pm and before 5:00am"],
-  "timezone": "America/Vancouver",
-  "rangeStrategy": "bump"
+  "timezone": "America/Vancouver"
 }

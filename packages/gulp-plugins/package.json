@@ -81,7 +81,7 @@
     "replace-in-file": "^6.0.0",
     "rimraf": "^3.0.2",
     "semver": "^7.0.0",
-    "shell-quote": "^1.6.1",
+    "shell-quote": "^1.7.2",
     "source-map-support": "^0.5.19",
     "through2": "^4.0.2",
     "vinyl-paths": "^3.0.1",

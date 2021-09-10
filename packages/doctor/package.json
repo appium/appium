@@ -47,7 +47,7 @@
     "inquirer": "^8.1.2",
     "lodash": "^4.17.21",
     "source-map-support": "^0.5.19",
-    "teen_process": "^1.3.1",
+    "teen_process": "^1.16.0",
     "yargs": "^17.0.1"
   },
   "devDependencies": {

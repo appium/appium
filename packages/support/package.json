@@ -34,7 +34,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.15.3",
-    "archiver": "^5.0.0",
+    "archiver": "^5.3.0",
     "axios": "^0.x",
     "base64-stream": "^1.0.0",
     "bluebird": "^3.5.1",

@@ -2581,9 +2581,9 @@
       }
     },
     "appium-flutter-driver": {
-      "version": "0.0.31",
-      "resolved": "https://registry.npmjs.org/appium-flutter-driver/-/appium-flutter-driver-0.0.31.tgz",
-      "integrity": "sha512-dpsaAqT3c2FVX/cebBAbgqio1lBmj04CXrfeFr1iMyxlBQdbDD3N3Qt8KprYhFlc7HE7kHUOYEyY4DoaM3eP0w==",
+      "version": "0.0.32",
+      "resolved": "https://registry.npmjs.org/appium-flutter-driver/-/appium-flutter-driver-0.0.32.tgz",
+      "integrity": "sha512-Hl00luaY9duDQbg/LSXxJDYX/CXL+ZZxtiQ7Ms1F4GEt6SF6v9J4yd3vo6MWR8/nJmksP0XbyqaGRdrUOlMu8g==",
       "requires": {
         "appium-adb": "^8.8.0",
         "appium-base-driver": "^7.4.1",
@@ -4097,9 +4097,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.52.1",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.52.1.tgz",
-      "integrity": "sha512-8GKUnu1O+LjNaaEE1MdFpr1UxYIN2UqfqKcVN4ji8klQ5seFKDoHmDFraqxelErQmMuZ7i3esnjEKcdnIWdhZA==",
+      "version": "3.53.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.53.0.tgz",
+      "integrity": "sha512-HtN9nph3opiFRTeCnwwPl3otJ6qAep4ZDtAqfhEliZbRp/dpXBgYgzyGfGUztbi0N5kp0YiiGK0hU2re9PVcVw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4129,9 +4129,9 @@
       },
       "dependencies": {
         "ws": {
-          "version": "8.2.1",
-          "resolved": "https://registry.npmjs.org/ws/-/ws-8.2.1.tgz",
-          "integrity": "sha512-XkgWpJU3sHU7gX8f13NqTn6KQ85bd1WU7noBHTT8fSohx7OS1TPY8k+cyRPCzFkia7C4mM229yeHr1qK9sM4JQ=="
+          "version": "8.2.2",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-8.2.2.tgz",
+          "integrity": "sha512-Q6B6H2oc8QY3llc3cB8kVmQ6pnJWVQbP7Q5algTcIxx7YEpc0oU4NBVHlztA7Ekzfhw2r0rPducMUiCGWKQRzw=="
         }
       }
     },

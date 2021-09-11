@@ -42,7 +42,7 @@
     "@babel/runtime": "^7.15.3",
     "asyncbox": "^2.8.0",
     "bluebird": "^3.5.1",
-    "lodash": "^4.17.21",
+    "lodash": "4.17.21",
     "source-map-support": "^0.5",
     "xmldom": "^0.6",
     "xpath": "^0.0"

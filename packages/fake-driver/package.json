@@ -39,13 +39,13 @@
   "dependencies": {
     "@appium/base-driver": "^8.0.0-beta.7",
     "@appium/support": "^2.54.0",
-    "@babel/runtime": "^7.15.3",
-    "asyncbox": "^2.8.0",
-    "bluebird": "^3.5.1",
-    "lodash": "^4.17.21",
-    "source-map-support": "^0.5",
-    "xmldom": "^0.6",
-    "xpath": "^0.0"
+    "@babel/runtime": "7.15.4",
+    "asyncbox": "2.8.0",
+    "bluebird": "3.7.2",
+    "lodash": "4.17.21",
+    "source-map-support": "0.5.20",
+    "xmldom": "0.6.0",
+    "xpath": "0.0.32"
   },
   "devDependencies": {
     "@appium/gulp-plugins": "^5.5.1"

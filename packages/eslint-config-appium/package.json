@@ -29,12 +29,12 @@
     "lint": "eslint index.js"
   },
   "dependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/eslint-parser": "^7.15.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-import": "^2.24.0",
-    "eslint-plugin-mocha": "^9.0.0",
-    "eslint-plugin-promise": "^5.1.0"
+    "@babel/core": "7.15.5",
+    "@babel/eslint-parser": "7.15.4",
+    "eslint": "7.32.0",
+    "eslint-plugin-import": "2.24.2",
+    "eslint-plugin-mocha": "9.0.0",
+    "eslint-plugin-promise": "5.1.0"
   },
   "publishConfig": {
     "access": "public"

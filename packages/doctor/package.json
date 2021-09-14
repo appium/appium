@@ -1,6 +1,6 @@
 {
   "name": "@appium/doctor",
-  "version": "1.16.1",
+  "version": "1.16.2",
   "description": "Test environment for fitness to run Appium",
   "keywords": [
     "automation",
@@ -38,7 +38,7 @@
     "build/lib"
   ],
   "dependencies": {
-    "@appium/support": "^2.54.0",
+    "@appium/support": "^2.54.1",
     "@babel/runtime": "7.15.4",
     "appium-adb": "8.14.0",
     "authorize-ios": "1.2.1",
@@ -51,8 +51,8 @@
     "yargs": "17.1.1"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.1",
-    "@appium/test-support": "^1.3.4"
+    "@appium/gulp-plugins": "^5.5.2",
+    "@appium/test-support": "^1.3.5"
   },
   "engines": {
     "node": ">=12",
@@ -63,5 +63,4 @@
   },
   "homepage": "https://appium.io",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
-
 }

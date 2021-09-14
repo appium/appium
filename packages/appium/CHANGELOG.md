@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.14](https://github.com/appium/appium/compare/appium@2.0.0-beta.13...appium@2.0.0-beta.14) (2021-09-14)
+
+
+### Features
+
+* **appium:** support plugin-specific args via --plugin-args ([c8f12d1](https://github.com/appium/appium/commit/c8f12d1e95b84e225def500a05fddf440df8991a))
+
+
+
+
+
 # [2.0.0-beta.13](https://github.com/appium/appium/compare/appium@2.0.0-beta.12...appium@2.0.0-beta.13) (2021-08-16)
 
 

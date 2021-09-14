@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "A collection of test utilities used across Appium packages",
   "keywords": [
     "automation",
@@ -37,7 +37,7 @@
     "build/lib"
   ],
   "dependencies": {
-    "@appium/support": "^2.54.0",
+    "@appium/support": "^2.54.1",
     "@babel/runtime": "7.15.4",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "^4.7.1",
-    "@appium/gulp-plugins": "^5.5.1"
+    "@appium/gulp-plugins": "^5.5.2"
   },
   "engines": {
     "node": ">=12",

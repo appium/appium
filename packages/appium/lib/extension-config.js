@@ -203,7 +203,13 @@ export default class ExtensionConfig {
 
   require (extName) {
     const {mainClass} = this.installedExtensions[extName];
-    return require(this.getExtensionRequirePath(extName))[mainClass];
+    const reqPath = this.getExtensionRequirePath(extName);
+    const reqResolved = require.resolve(reqPath);
+    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[reqResolved]) {
+      log.debug(`Removing ${reqResolved} from require cache`);
+      delete require.cache[reqResolved];
+    }
+    return require(reqPath)[mainClass];
   }
 
   isInstalled (extName) {

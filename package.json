@@ -102,7 +102,7 @@
     "pre-commit": "1.2.2",
     "querystring": "0.2.1",
     "serve-static": "1.14.1",
-    "sinon": "11.1.1",
+    "sinon": "11.1.2",
     "sync-monorepo-packages": "0.3.4",
     "validate.js": "0.13.1",
     "webdriverio": "6.12.1",

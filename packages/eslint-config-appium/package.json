@@ -1,6 +1,6 @@
 {
   "name": "@appium/eslint-config-appium",
-  "version": "4.7.1",
+  "version": "4.7.2",
   "description": "Shared config for Appium's eslint style",
   "keywords": [
     "eslint",
@@ -45,5 +45,4 @@
     "npm": ">=6"
   },
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
-
 }

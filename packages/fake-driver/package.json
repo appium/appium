@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Description goes here.",
   "keywords": [
     "automation",
@@ -37,8 +37,8 @@
     "screen.png"
   ],
   "dependencies": {
-    "@appium/base-driver": "^8.0.1",
-    "@appium/support": "^2.54.1",
+    "@appium/base-driver": "^8.0.2",
+    "@appium/support": "^2.54.2",
     "@babel/runtime": "7.15.4",
     "asyncbox": "2.8.0",
     "bluebird": "3.7.2",
@@ -48,7 +48,7 @@
     "xpath": "0.0.32"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.2"
+    "@appium/gulp-plugins": "^5.5.3"
   },
   "engines": {
     "node": ">=12",

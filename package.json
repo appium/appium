@@ -81,7 +81,7 @@
     "@babel/register": "7.15.3",
     "@babel/runtime": "7.15.4",
     "appium-base-driver": "7.10.0",
-    "asyncbox": "2.8.0",
+    "asyncbox": "2.9.1",
     "babel-eslint": "10.1.0",
     "babel-plugin-istanbul": "6.0.0",
     "babel-plugin-source-map-support": "2.1.3",

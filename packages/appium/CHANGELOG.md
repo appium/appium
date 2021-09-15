@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.16](https://github.com/appium/appium/compare/appium@2.0.0-beta.15...appium@2.0.0-beta.16) (2021-09-15)
+
+
+### Features
+
+* **appium:** add env var to trigger reloading of extensions ([ff3bb4f](https://github.com/appium/appium/commit/ff3bb4f4b538ee5136fdc6356ca00e09fcdc5533))
+
+
+
+
+
 # [2.0.0-beta.15](https://github.com/appium/appium/compare/appium@2.0.0-beta.14...appium@2.0.0-beta.15) (2021-09-14)
 
 **Note:** Version bump only for package appium

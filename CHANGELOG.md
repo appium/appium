@@ -52,7 +52,7 @@ Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking 
     * This fix may improve page source results in some environment
 * Fix visibility handling in `mobile:scroll` with `toVisible` argument [WebDriverAgent#528](https://github.com/appium/WebDriverAgent/pull/528) (Thanks @Dan-Maor)
 * Fix `velocity` argument in `mobile:swipe` [appium-xcuitest-driver#1329](https://github.com/appium/appium-xcuitest-driver/pull/1329)
-
+* Fix: `customSSLCert` capability logic [appium-xcuitest-driver#1334](https://github.com/appium/appium-xcuitest-driver/pull/1334)
 
 ### Mac2
 * Add `macos:` extensions:

@@ -105,6 +105,8 @@ These parameters define an incoming request. If you want to handle a command in 
 
 You might decide that you want to add some new routes or commands to the Appium server, which could be called by clients. To do this, you should assign the static `newMethodMap` class variable to an object containing a set of routes and command names and arguments. The format of this object should exactly match the format of the `METHOD_MAP` object in Appium's [routes definition](https://github.com/appium/appium-base-driver/blob/master/lib/protocol/routes.js). Of course, just adding commands here does not implement them: you will also need to check for any new command names in your `handle` method to handle them, since by default there will be no implementation of commands added via `newMethodMap`.
 
+Note that the information about avoiding proxying above also applies to new commands that you've added. But to make life easy, instead of implementing `shouldAvoidProxy` for these cases, you can simply add the `neverProxy: true` field to your command specifier (see examples in the Fake Plugin class).
+
 ## Tips
 
 All of this is a lot to digest, and it's often easier to have a look at examples. The various plugins inside this monorepo are a good way to get familiar with what plugins can do!

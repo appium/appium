@@ -6,6 +6,12 @@ import { util } from '@appium/support';
 
 class FakeDriver extends BaseDriver {
 
+  static newMethodMap = {
+    '/session/:sessionId/noproxy': {
+      GET: {command: 'notProxiedCommand', neverProxy: true}
+    }
+  };
+
   constructor () {
     super();
     this.protocol = PROTOCOLS.MJSONWP;
@@ -130,6 +136,10 @@ class FakeDriver extends BaseDriver {
 
   canProxy (/*sessionId*/) {
     return false;
+  }
+
+  async notProxiedCommand () {
+    return 'This was not proxied';
   }
 }
 

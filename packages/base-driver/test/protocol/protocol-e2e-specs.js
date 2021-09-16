@@ -900,6 +900,7 @@ describe('Protocol', function () {
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
         port,
+        extraMethodMap: FakeDriver.newMethodMap
       });
     });
 
@@ -1053,5 +1054,20 @@ describe('Protocol', function () {
       should.not.exist(driver.sessionId);
       driver.jwpProxyActive.should.be.false;
     });
+
+    it('should avoid proxying when command spec specifies neverProxy', async function () {
+      const {status, data} = await axios({
+        url: `${baseUrl}/session/${sessionId}/noproxy`,
+        method: 'GET',
+      });
+
+      status.should.equal(200);
+      data.should.eql({
+        status: 0,
+        value: 'This was not proxied',
+        sessionId
+      });
+    });
+
   });
 });

@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(chore)",
+    ":pinAllExceptPeerDependencies"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "{{parentDir}}"
+}

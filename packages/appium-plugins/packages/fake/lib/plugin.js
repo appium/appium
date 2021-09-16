@@ -16,11 +16,11 @@ export default class FakePlugin extends BasePlugin {
 
   static newMethodMap = {
     '/session/:sessionId/fake_data': {
-      GET: {command: 'getFakeSessionData'},
-      POST: {command: 'setFakeSessionData', payloadParams: {required: ['data']}}
+      GET: {command: 'getFakeSessionData', neverProxy: true},
+      POST: {command: 'setFakeSessionData', payloadParams: {required: ['data']}, neverProxy: true}
     },
     '/session/:sessionId/fakepluginargs': {
-      GET: {command: 'getFakePluginArgs'}
+      GET: {command: 'getFakePluginArgs', neverProxy: true}
     },
   };
 

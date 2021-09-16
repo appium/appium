@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Description goes here.",
   "keywords": [
     "automation",
@@ -37,7 +37,7 @@
     "screen.png"
   ],
   "dependencies": {
-    "@appium/base-driver": "^8.0.3",
+    "@appium/base-driver": "^8.1.0",
     "@appium/support": "^2.54.2",
     "@babel/runtime": "7.15.4",
     "asyncbox": "2.9.1",

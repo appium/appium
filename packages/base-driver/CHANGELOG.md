@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/appium/appium/compare/@appium/base-driver@8.0.3...@appium/base-driver@8.1.0) (2021-09-16)
+
+
+### Features
+
+* **base-driver:** allow drivers, and plugins to declare that certain routes must never be proxied ([3e5aec9](https://github.com/appium/appium/commit/3e5aec945bc0493dbd14d0759e5e35749e974aac))
+
+
+
+
+
 ## [8.0.3](https://github.com/appium/appium/compare/@appium/base-driver@8.0.2...@appium/base-driver@8.0.3) (2021-09-15)
 
 **Note:** Version bump only for package @appium/base-driver

@@ -231,13 +231,15 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
         throw new errors.NoSuchDriverError();
       }
 
-      // if the driver is currently proxying commands to another JSONWP
-      // server, bypass all our checks and assume the upstream server knows
-      // what it's doing. But keep this in the try/catch block so if proxying
-      // itself fails, we give a message to the client. Of course we only
-      // want to do these when we have a session command; the Appium driver
-      // must be responsible for start/stop session, etc...
-      if (isSessCmd && driverShouldDoJwpProxy(driver, req, spec.command)) {
+      // if the driver is currently proxying commands to another JSONWP server, bypass all our
+      // checks and assume the upstream server knows what it's doing. But keep this in the
+      // try/catch block so if proxying itself fails, we give a message to the client. Of course we
+      // only want to do these when we have a session command; the Appium driver must be
+      // responsible for start/stop session, etc... We also allow the command spec to declare that
+      // this command should never be proxied (which is useful for plugin developers who add
+      // commands and generally would not want that command to be proxied instead of handled by the
+      // plugin)
+      if (isSessCmd && !spec.neverProxy && driverShouldDoJwpProxy(driver, req, spec.command)) {
         await doJwpProxy(driver, req, res);
         return;
       }

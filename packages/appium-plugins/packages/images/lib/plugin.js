@@ -43,6 +43,7 @@ export default class ImageElementPlugin extends BasePlugin {
           required: ['mode', 'firstImage', 'secondImage'],
           optional: ['options']
         },
+        neverProxy: true,
       }
     },
   };

@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Node Setup
-        uses: actions/setup-node@v2.1.2
+        uses: actions/setup-node@v2.4.0
 
         # this is required for Appium's internal 'npm link' to work, given that 'npm link' always
         # uses the global node modules folder as an intermediary

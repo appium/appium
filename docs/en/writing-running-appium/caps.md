@@ -225,8 +225,8 @@ Please refer to the documentation on the You.i Engine driver [repository](https:
 
 ### WinAppDriver Only
 
-Please refer to the documentation on the Appium Windows Diver [repository](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) about its available capabilities.
+Please refer to the documentation on the Appium Windows Driver [repository](https://github.com/appium/appium-windows-driver#windowsdriver-specific-capabilities) about its available capabilities.
 
 ### Flutter driver only
 
-Please refer to the documentation on the Flutter Diver [repository](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) about its available capabilities.
+Please refer to the documentation on the Flutter Driver [repository](https://github.com/truongsinh/appium-flutter-driver#desired-capabilities-for-flutter-driver-only) about its available capabilities.

@@ -22,6 +22,8 @@ Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking 
 ### Android(UIAutomator2)
 * Add `mobile:` extensions:
     * `mobile:startActivity` to launch an activity more flexible. Please read [mobile: startActivity](https://github.com/appium/appium-uiautomator2-driver#mobile-startactivity) for more details [appium-android-driver#701](https://github.com/appium/appium-android-driver/pull/701)
+    * `mobile: broadcast` to a send broadcast intent. Please read [mobile: broadcast](https://github.com/appium/appium-uiautomator2-driver#mobile-broadcast) for more details [appium-uiautomator2-driver/471](https://github.com/appium/appium-uiautomator2-driver/pull/471)
+    * `mobile: clearApp` to delete a package data via `adb shell pm clear` [appium-uiautomator2-driver#472](https://github.com/appium/appium-uiautomator2-driver/pull/472)
 * Add active element support [appium-uiautomator2-driver#457](https://github.com/appium/appium-uiautomator2-driver/pull/457) [appium-uiautomator2-server#424](https://github.com/appium/appium-uiautomator2-server/pull/424) (Thanks @vane and @jzaleski)
 
 ### Android(Espresso)

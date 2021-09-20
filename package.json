@@ -106,7 +106,7 @@
     "sync-monorepo-packages": "0.3.4",
     "validate.js": "0.13.1",
     "webdriverio": "6.12.1",
-    "yaml-js": "0.2.3"
+    "yaml-js": "0.3.1"
   },
   "engines": {
     "node": ">=12",

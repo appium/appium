@@ -4,6 +4,12 @@ short_description: Get the content of the system clipboard
 description:
   >
     Get the content of the system clipboard
+    
+    (For Android)
+    Over Android 11 requires Appium Settings app to be foreground to get the content like the below:
+    
+    1. Bring `io.appium.settings.Settings` activity in `io.appium.settings` package foreground.
+    2. Call the get clipboard API.
 
 
     (For iOS real devices)

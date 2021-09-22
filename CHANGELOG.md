@@ -1,3 +1,84 @@
+CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
+===================================
+
+Appium 1.22.0 is a minor release
+
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking updates in XCTest or critical bugs before the EOL.
+
+### General
+
+* Add `imageMatchMethod` to be able to customize image mathcing method in [find element by image](http://appium.io/docs/en/advanced-concepts/image-elements/) [appium-base-driver#480](https://github.com/appium/appium-base-driver/pull/480) [appium-support#222](https://github.com/appium/appium-support/pull/222)
+* `appium:enableWebviewDetailsCollection` capability defaults to `true` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
+* Support `satellites` option in `setGeoLocation` command as [geo command on emulators](https://developer.android.com/studio/run/emulator-console) [appium-adb#571](https://github.com/appium/appium-adb/pull/571)
+* Use system unzip to unzip compressed files by default. It fallbacks to JS implementation. [appium-support#226](https://github.com/appium/appium-support/pull/226) [appium-support#227](https://github.com/appium/appium-support/pull/227)
+
+### Android General
+
+* Add `pinWithKeyEvent` option as `unlockType` in [unlock action](https://github.com/appium/appium-android-driver/blob/master/docs/UNLOCK.md) to send the pin code as keyevent [appium-android-driver#691](https://github.com/appium/appium-android-driver/pull/691)
+* Allow to establish a chrome session with its `beta`, `dev` and `canary` [appium-android-driver#699](https://github.com/appium/appium-android-driver/pull/699) (Thanks @mwakizaka)
+* Optimize error handling in certificate validation [appium-adb#572](https://github.com/appium/appium-adb/pull/572)
+
+### Android(UIAutomator2)
+* Add `mobile:` extensions:
+    * `mobile:startActivity` to launch an activity more flexible. Please read [mobile: startActivity](https://github.com/appium/appium-uiautomator2-driver#mobile-startactivity) for more details [appium-android-driver#701](https://github.com/appium/appium-android-driver/pull/701)
+    * `mobile: broadcast` to a send broadcast intent. Please read [mobile: broadcast](https://github.com/appium/appium-uiautomator2-driver#mobile-broadcast) for more details [appium-uiautomator2-driver/471](https://github.com/appium/appium-uiautomator2-driver/pull/471)
+    * `mobile: clearApp` to delete a package data via `adb shell pm clear` [appium-uiautomator2-driver#472](https://github.com/appium/appium-uiautomator2-driver/pull/472)
+* Add active element support [appium-uiautomator2-driver#457](https://github.com/appium/appium-uiautomator2-driver/pull/457) [appium-uiautomator2-server#424](https://github.com/appium/appium-uiautomator2-server/pull/424) (Thanks @vane and @jzaleski)
+
+### Android(Espresso)
+* The default Kotlin plugin version is 1.4.32 [appium-espresso-driver#663](https://github.com/appium/appium-espresso-driver/pull/663)
+* Fix typecast error in build config [appium-espresso-driver#683](https://github.com/appium/appium-espresso-driver/pull/683)
+
+### iOS General
+
+* Xcode 13 and iOS 15 support
+
+### iOS(XCUITest)
+* Add capabilities:
+    * `appium:useNativeCachingStrategy` to reduce a potential stale element error. Please read the capability in [XCUITest capabilities](https://github.com/appium/appium-xcuitest-driver#webdriveragent). Defaults to `true` [appium-xcuitest-driver#1317](https://github.com/appium/appium-xcuitest-driver/pull/1317)
+    * `appium:forceAppLaunch` to launch the application under test forcefully with `appium:bundleId`. Defaults to `true` unless `noReset` capability is set to `true`. [appium-xcuitest-driver#1314](https://github.com/appium/appium-xcuitest-driver/pull/1314)
+    * `appium:forceSimulatorSoftwareKeyboardPresence` to make force enabling simulator keyboard optional for simulator. Please read the section in [capabilities](https://github.com/appium/appium-xcuitest-driver#simulator) for more details. [appium-xcuitest-driver#1327](https://github.com/appium/appium-xcuitest-driver/pull/1327)
+    * `appium:resetLocationService` to reset the location service in the session deletion on real device. [appium-xcuitest-driver#1333](https://github.com/appium/appium-xcuitest-driver/pull/1333)
+* Add `mobile:` extensions:
+    * `mobile:configureLocalization` to change localization settings on the currently booted simulator. Please read [configurelocalization](https://github.com/appium/appium-xcuitest-driver#mobile-configurelocalization) for more details [appium-xcuitest-driver#1300](https://github.com/appium/appium-xcuitest-driver/pull/1300)
+    * `mobile:resetLocationService` to reset the location service. [appium-xcuitest-driver#1333](https://github.com/appium/appium-xcuitest-driver/pull/1333)
+* Add `durationSeconds` argument in `mobile: pressButton` for tvOS
+* Add `getProperty` command to support [Get Element Property](https://www.w3.org/TR/webdriver/#dfn-get-element-property) endpoint. In native context, the command is equal to [Get Element Attribute](https://www.w3.org/TR/webdriver/#get-element-attribute) [appium-xcuitest-driver#1313](https://github.com/appium/appium-xcuitest-driver/pull/1313)
+* Update parsing logic to parse `:wdc:` element id by Safari Web inspector in WebView context [appium-xcuitest-driver#1324](https://github.com/appium/appium-xcuitest-driver/pull/1324) [appium#15230](https://github.com/appium/appium/issues/15230)
+    * Probably the host macOS should have Safari 14.1
+* Improve alert checking logic in Web context [appium-xcuitest-driver#1320](https://github.com/appium/appium-xcuitest-driver/pull/1320)
+* Fix coordinate offset with `absoluteWebLocations` capability in Web context
+[appium-xcuitest-driver#1322](https://github.com/appium/appium-xcuitest-driver/pull/1322)
+* Fix element identification logic for over iOS 13 [WebDriverAgent#523](https://github.com/appium/WebDriverAgent/pull/523) (Thanks @Dan-Maor)
+    * This fix may improve page source results in some environment
+* Fix visibility handling in `mobile:scroll` with `toVisible` argument [WebDriverAgent#528](https://github.com/appium/WebDriverAgent/pull/528) (Thanks @Dan-Maor)
+* Fix `velocity` argument in `mobile:swipe` [appium-xcuitest-driver#1329](https://github.com/appium/appium-xcuitest-driver/pull/1329)
+* Fix: `customSSLCert` capability logic [appium-xcuitest-driver#1334](https://github.com/appium/appium-xcuitest-driver/pull/1334)
+
+### Mac2
+* Add `macos:` extensions:
+    * Add support [swipe guestures](https://github.com/appium/appium-mac2-driver#mobile-swipe) [appium-mac2-driver#85](https://github.com/appium/appium-mac2-driver/pull/85)
+* Add `language` option in `macos: appleScript` to be able to use other languages supported by `osascript` [appium-mac2-driver#89](https://github.com/appium/appium-mac2-driver/pull/89)
+* Add support of touch bar interaction [appium-mac2-driver#87](https://github.com/appium/appium-mac2-driver/pull/87)
+* Fix handling of libxml2 client to prevent memory leaks [appium-mac2-driver#86](https://github.com/appium/appium-mac2-driver/pull/86)
+
+## Windows
+* Add `windows:` extensions:
+    * [`deleteFile`](https://github.com/appium/appium-windows-driver#windows-deletefile) and [`deleteFolder`](https://github.com/appium/appium-windows-driver#windows-deletefolder) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
+* Add [push_file](https://appium.io/docs/en/commands/device/files/push-file/), [pull_file](https://appium.io/docs/en/commands/device/files/pull-file/), [pull_folder](https://appium.io/docs/en/commands/device/files/pull-folder/) [appium-windows-driver#107](https://github.com/appium/appium-windows-driver/pull/107) (Thanks @ggaller)
+* Tune WAD install path lookup [appium-windows-driver#111](https://github.com/appium/appium-windows-driver/pull/111) (Thanks to notice us @blakee1)
+
+### Community/Company based drivers
+#### You.i Engine Driver
+
+The version is `1.2.9`
+
+#### Flutter driver
+
+The version is `0.0.32`
+
+
 CHANGES IN VERSION 1.21.0 (FROM 1.20.2)
 ===================================
 

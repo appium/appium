@@ -137,7 +137,7 @@ Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
 });
 
 async function registerSpecUrlHelper () {
-  const routesFile = await fs.readFile(path.resolve(rootFolder, '..', 'appium-base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
+  const routesFile = await fs.readFile(path.resolve(rootFolder, '..', 'base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
   const routesFileLines = routesFile.split('\n');
 
   Handlebars.registerHelper('spec_url', function specUrl (specUrl, endpoint) {

@@ -21,9 +21,6 @@ example_usage:
   ruby_core:
     |
       @driver.navigate.refresh
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       driver.Navigate().Refresh();
@@ -35,7 +32,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L503"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Navigation:refresh"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteNavigator.cs"
 
 # Driver support by platform
@@ -55,7 +51,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

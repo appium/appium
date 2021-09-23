@@ -25,9 +25,6 @@ example_usage:
     |
       @driver.window_size
       @driver.window_size("handleName")
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       Size windowSize = driver.Manage().Window.Size;
@@ -39,7 +36,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L546"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Remote/W3C/Bridge:window_size"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWindow.cs"
 
 # Driver support by platform
@@ -59,7 +55,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

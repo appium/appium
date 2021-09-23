@@ -30,9 +30,6 @@ example_usage:
     |
       @driver.terminate_app('com.apple.Preferences')
       @driver.terminate_app('io.appium.android.apis')
-  php:
-    |
-      // Supports only `mobile: queryAppState` for iOS, XCUITest
   csharp:
     |
       // Supports only `mobile: queryAppState` for iOS, XCUITest
@@ -44,7 +41,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js" # TODO wd documentation link
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#terminate_app-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Base/Driver#terminate_app-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -64,7 +60,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

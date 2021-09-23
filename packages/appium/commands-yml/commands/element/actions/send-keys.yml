@@ -28,10 +28,6 @@ example_usage:
   ruby_core:
     |
       @driver.find_element(:accessibility_id, "SomeAccessibilityID").send_keys("Hello World!")
-  php:
-    |
-      $el = $this->byAccessibilityId('SomeAccessibilityID');
-      $el->setText('Hello world!');
   csharp:
     |
       MobileElement el = driver.FindElement(MobileByAccessibilityID("Some ID");
@@ -48,7 +44,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1700"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#send_keys-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -68,7 +63,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

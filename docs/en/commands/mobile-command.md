@@ -37,12 +37,6 @@ execute_script("mobile: scroll", { "direction" => "down"})
 
 ```
 
-```php
-# PHP
-// TODO PHP sample
-
-```
-
 ```csharp
 // C#
 driver.ExecuteScript("mobile:scroll", new Dictionary<string, string> { { "direction", "down" } });
@@ -58,124 +52,19 @@ Syntax is `execute("mobile: <commandName>", <JSON serializable argument>)`
 (see [Execute Script](/docs/en/commands/web/execute.md) for more details
 on syntax).
 
-List of available commands:
+## Android
+### UiAutomator2
 
-### IOS
-| Command | Description | Argument | Argument Example |
-| ------- | ----------- | -------- | ---------------- |
-| mobile:viewportScreenshot | Like [screenshot](/docs/en/commands/session/screenshot.md) but only includes contents of viewport | <none> | <none> |
+Please refer to [mobile commands](https://github.com/appium/appium-uiautomator2-driver#platform-specific-extensions) section in UiAutomator2 driver repository.
 
-### IOS (XCUITest Only)
-| Command | Description | Argument | Argument Example |
-| ------- | ----------- | -------- | ---------------- |
-| mobile:startPerfRecord | Starts performance profiling for the device under test | <none> | |
-| mobile:stopPerfRecord | Stops performance profiling for the device under test | <none> | |
-| mobile:startLogsBroadcast | Starts iOS system logs broadcast websocket on the same host and port where Appium server is running at `/ws/session/:sessionId:/appium/device/syslog` endpoint. | <none> | |
-| mobile:stopLogsBroadcast | Stops the iOS system logs broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | |
-| mobile:swipe | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-swipe)  | | |
-| mobile:scroll | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-scroll)  | | |
-| mobile:pinch | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-pinch)  | | |
-| mobile:doubleTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-doubleTap)  | | |
-| mobile:touchAndHold | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-touchAndHold)  | | |
-| mobile:twoFingerTap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-twoFingerTap)  |  | |
-| mobile:tapWithNumberOfTaps | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-tapWithNumberOfTaps)  |  | |
-| mobile:tap | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-tap)  | | |
-| mobile:dragFromToForDuration | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-dragFromToForDuration)  | | |
-| mobile:selectPickerWheelValue | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-selectPickerWheelValue)  | | |
-| mobile:alert | refer to [Automating Mobile Gestures For iOS With WebDriverAgent/XCTest Backend](/docs/en/writing-running-appium/ios/ios-xctest-mobile-gestures.md#mobile-alert)  | | |
-| mobile:installApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-installapp)  | | |
-| mobile:removeApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-removeapp)  | | |
-| mobile:isAppInstalled | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-isappinstalled)  | | |
-| mobile:launchApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-launchapp)  | | |
-| mobile:terminateApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-terminateapp)  | | |
-| mobile:activateApp | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-activateapp)  | | |
-| mobile:queryAppState | refer to [XCUITest Mobile App Managemenet](/docs/en/writing-running-appium/ios/ios-xctest-mobile-apps-management.md#mobile-queryappstate)  | | |
-| mobile:setPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-setpasteboard)  | | |
-| mobile:getPasteboard | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-pasteboard.md#mobile-getpasteboard)  | | |
-| mobile:installCertificate | refer to [IOS Pasteboard Guide](/docs/en/writing-running-appium/ios/ios-xctest-install-certificate.md)  | | |
-| mobile:getContexts | Retrieve available contexts, along with the url and title associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)). If `waitForWebviewMs` is provided, Appium will wait for available WebViews up to the number since Appium 1.17.0.  | `{waitForWebviewMs}` | `{waitForWebviewMs: 5000}` |
-| mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
-| mobile:pressButton | Press a physical button. The available button options are: _home_, _volumeup_ and _volumedown_. Real devices support all three buttons whereas simulator only supports _home_. | `{name}` | `{name: "home"}` |
-| mobile:enrollBiometric | Enroll (or unenroll) an iOS Simulator to use [biometrics](https://developer.apple.com/design/human-interface-guidelines/ios/user-interaction/authentication/#face-id-and-touch-id) | `{isEnabled}` | `{isEnabled: true}` |
-| mobile:sendBiometricMatch | Send a matching or non-matching biometric input to an iOS Simulator. 'type' must be `touchId` or `faceId`. Match is a boolean indicating if it's a matching or non-matching input | `{type, match}` | `{type: "touchId", match: true}` |
-| mobile:isBiometricEnrolled | Check if an iOS Simulator is enrolled or not. Returns `true` if enrolled, `false` if not enrolled. |||
-| mobile:clearKeychains | Clear the keychains for an iOS Simulator |||
-| mobile:siriCommand| Sends a command to Siri | `{text}` | `{text: "What time is it?"}` |
-| mobile:source | This endpoint allows to retrieve the current native page source from WDA as a string (also being in a web context). Possible output formats are: `xml` (same output as for `getPageSource` command, the default value), `json` (the same tree structure as for the `xml` format, but represented as JSON) and `description` (native `debugDescription` output generated by XCTest). An optional `excludedAttributes` array allows to provide attributes names, which are going to be excluded from the resulting xml tree. This might significantly improve the performance of page source retrieval, especially if the `visible` attribute gets excluded. | `{format, excludedAttributes}` | `{format: 'description'}` `{format: 'xml', excludedAttributes: ['visible']}` |
-| mobile:activeAppInfo | Gets current active application's information such as bundleId and process arguments | <none> | <none> |
-| mobile:deviceInfo | Gets device information like locale and timezone. The timezone is TZ database format like `America/New_York` by default, fallback to Apple name like `US/New_York` | <none> | <none> |
-| mobile:rotateElement | Sends a rotation gesture with two touches to the given element. See [rotate:withVelocity:](https://developer.apple.com/documentation/xctest/xcuielement/1618665-rotate) for more details.  | `{element, rotation, velocity}` | `{element: 2, rotation: π/2, velocity: 1.5}` |
-| mobile:deleteFile | Delete a file on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial. | `{remotePath}` | `{remotePath: 'path/to/file'}` |
-| mobile:deleteFolder | Delete a folder on the device under test. The remote path value should comply to [Pushing/Pulling Files](/docs/en/writing-running-appium/ios/ios-xctest-file-movement.md) tutorial.  | `{remotePath}` | `{remotePath: '@io.appium.example:documents/path/to/folder'}` |
-| mobile:getPermission | Gets application permission state on a simulator. It requires https://github.com/wix/AppleSimulatorUtils |||
-| mobile:setPermission | Set a permission for the given bundleId via `xcrun simctl privacy` which is available since Xcode 11.4. `key` is 'service' in the list of `xcrun simctl privacy`. `value` is `yes`(grant), `no`(revoke) or `unset`(reset). It works on simulator. | `{bundleId, {key: value}}`| `{bundleId: 'io.appium.example', {'location-always': 'yes', calendar: 'no'}` |
-| mobile:getAppearance | Get the device's UI appearance style via `xcrun simctl ui`. It returns `light`, `dark`, `unknown` or `unsupported` (below iOS 12). |||
-| mobile:setAppearance | Set the device's UI appearance style via `xcrun simctl ui` or Siri command. | `{style}` | `{style: 'dark'}` |
-| mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format specifiers. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
-| mobile:startAudioRecording | Start recording audio stream. Read [Audio Capture From iOS Simulators and Real Devices](/docs/en/writing-running-appium/ios/audio-capture.md) for more details | | |
-| mobile:stopAudioRecording | Stop and store the recording audio stream. Read [Audio Capture From iOS Simulators and Real Devices](/docs/en/writing-running-appium/ios/audio-capture.md) for more details | | |
+### Espresso
 
-### Android
-| Command | Description | Argument | Argument Example |
-| ------- | ----------- | -------- | ---------------- |
-| mobile:shell | Execute [ADB shell](https://developer.android.com/studio/command-line/adb#shellcommands) commands (requires [insecure feature](/docs/en/writing-running-appium/security.md) `adb_shell` to be enabled) | Read [this page](/docs/en/writing-running-appium/android/android-shell.md) | `{'command': 'echo', 'args': ['arg1', 'arg2']}` |
-| mobile:startLogsBroadcast |  Starts Android logcat broadcast websocket on the same host and port where Appium is running at `/ws/session/:sessionId:/appium/device/logcat` endpoint | <none> | <none> |
-| mobile:stopLogsBroadcast |  Stops the logcat broadcasting websocket server started by `mobile:startLogsBroadcast` | <none> | <none> |
-| mobile:performEditorAction | Performs the given editor action on the focused input field. The following action names are supported: `normal, unspecified, none, go, search, send, next, done, previous`.   | `{action}` | `{action: "previous"}`|
-| mobile:getPermissions | Gets a list of permissions which are `denied`, `granted` or `requested`. | `{type, appPackage}` | `{type: "granted", appPackage: "io.appium.android.apis"}`|
-| mobile:changePermissions | Grants or revokes permissions. | `{action, appPackage, permissions}` |  `{action: "grant", appPackage: "io.appium.android.apis", permissions: "android.permission.READ_CONTACTS"}`, `{action: "revoke", appPackage: "io.appium.android.apis", permissions: ["android.permission.READ_CONTACTS", "android.permission.CAMERA"]}` |
-| mobile:getNotifications | Get the list of items as JSON format in the status bar notifications. Please turn 'Notification access' on via _Settings > App & notifications > Special app access_ (the actual path depends on the device model). Please read [Appium Pro](https://appiumpro.com/editions/106-retrieving-status-bar-notifications-for-android-devices) for more details. | <none> | <none> |
-| mobile: listSms | Get the list of SMS messages as [JSON format](https://github.com/appium/io.appium.settings#sms). |  <none> | <none> |
-| mobile:type | Send Unicode text to a focused element. | `{text}` |  `{text: "happy testing"}` |
-| mobile:getDeviceTime | Get time of the device under test. https://momentjs.com/docs/ is the full list of supported datetime format. Defaults to `YYYY-MM-DDTHH:mm:ssZ` which is  ISO-8601. | `{format}` |  `{format: 'YYYY-MM'}` |
-| mobile:deleteFile | Delete a file on the device under test. The remote path value should be the full path or a file inside an application bundle.  | `{remotePath}` | `{remotePath: '@io.appium.example/path/in/bundle'}`, `{remotePath: '/tmp/data/file'}` |
-| mobile:startService | Starts the given service by calling `am start-service` or `am start-foreground-service` under the hood since Appium 1.18.0. The `intent` argument is mandatory. `user` is the ID of the user the service should be started for (the current user ID is used by default). If `foreground` is set to `true` then the service will be started in foreground. | `{intent, user, foreground}` | `{intent: 'my.app/my.activity', foreground: true}` |
-| mobile:stopService | Stops the given service by calling `am stop-service` under the hood since Appium 1.18.0. The `intent` argument is mandatory. `user` is the ID of the user the service should be stopped for (the current user ID is used by default). | `{intent, user}` | `{intent: 'my.app/my.activity'}` |
-| mobile:getContexts | Retrieve available contexts, along with details associated with each webview (see [get contexts](/docs/en/commands/context/get-contexts.md)) in JSON structure. The details of each webview includes such as android package name and its window handles details (see [get handles](/docs/en/commands/web/window/get-handles.md)). The details of each window handle (which donated as `pages` in the JSON) contains such as url, title and id. The id is part of a window handle name. Therefore, by concatenating a string like "CDwindow-" + id, you can use the string for switching to window (see [set window](/docs/en/commands/web/window/set-window.md).) | | |
+Please refer to [mobile commands](https://github.com/appium/appium-espresso-driver#platform-specific-extensions) section in Espresso driver repository.
 
-### Android (UiAutomator2 only)
-| Command | Description | Argument | Argument Example |
-| ------- | ----------- | -------- | ---------------- |
-| mobile:batteryInfo | Reads the battery information from the device under test | <none> | <none> |
-| mobile:acceptAlert | Accepts an on-screen alert | Optional button label to click on | <none> |
-| mobile:dismissAlert | Dismisses an on-screen alert | Optional button label to click on | <none> |
-| mobile:scrollBackTo | Scroll from one element to another | `{elementId, elementToId}` | `{elementId: 2, elementToId: 1}` |
-| mobile:scroll | Scroll the given scrollable element until the element identifier by `strategy` and `selector` becomes visible since Appium 1.18.0. An optional `maxSwipes` property can limit the number of scroll actions. It accepts an optional `element` property which should be the element identifier and scrollable. Without this property, Appium will select the first currently available scrollable container. Please read `mobileScroll` section in [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver/blob/master/lib/commands/general.js) for more details. | `{element, strategy, selector, maxSwipes}` | `{strategy: 'accessibility id', selector: 'target content description'}` |
-| mobile:viewportScreenshot | Like [screenshot](/commands/session/screenshot/) but only includes contents of viewport | <none> | <none> |
-| mobile:viewportRect | Returns the coordinates and size of the viewports since Appium 1.18.0. The return type is Rectangle defined in [general.js](https://github.com/appium/appium-uiautomator2-driver/blob/master/lib/commands/general.js).| <none> | <none> |
-| mobile:deepLink | Opens a deep-link URL for testing [Instant Apps](https://support.google.com/googleplay/answer/7240211?hl=en) | `{url, package}` | `{url: "https://www.site.com/", package: "com.site.SomeAndroidPackage"}` |
-| mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-uiautomator2-server/blob/master/app/src/main/java/io/appium/uiautomator2/handler/GetDeviceInfo.java) for more details. | <none> | <none> |
-| mobile:type | Types the given Unicode string into focused field. The combination of `unicodeKeyboard` capability and the [send keys](https://appium.io/docs/en/commands/element/actions/send-keys/) works as _replacing_ the text field content. The send key in W3C action works only for ASCII. This command helps such cases to append unicode text content against the focused field. | `{text}` | `{text: 'happy testing'}` |
-| mobile:longClickGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-longclickgesture) since Appium 1.19.0 |  | |
-| mobile:dragGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-draggesture) since Appium 1.19.0 |  | |
-| mobile:flingGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-flinggesture) since Appium 1.19.0 |  | |
-| mobile:pinchOpenGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-pinchopengesture) since Appium 1.19.0 |  | |
-| mobile:pinchCloseGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-pinchclosegesture) since Appium 1.19.0 |  | |
-| mobile:swipeGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-swipegesture) since Appium 1.19.0 |  | |
-| mobile:scrollGesture | Refer to [Automating Mobile Gestures With UiAutomator2 Backend](/docs/en/writing-running-appium/android/android-mobile-gestures.md##mobile-scrollgesture) since Appium 1.19.0 |  | |
+## IOS
+### XCUITest
 
-### Android (Espresso only)
-| Command | Description | Argument | Argument Example |
-| ------- | ----------- | -------- | ---------------- |
-| mobile:swipe | Perform the ["swipe" view action](https://developer.android.com/reference/android/support/test/espresso/action/ViewActions.html#swipeDown()) | `{element, direction}` | `{element: 2, direction: "down|up|left|right"}` |
-| mobile:swipe | Perform ["GeneralSwipeAction"](https://developer.android.com/reference/androidx/test/espresso/action/GeneralSwipeAction) | `{element, swiper, startCoordinates, endCoordinates, precisionDescriber}` | `{element: 3, swiper: "FAST|SLOW", startCoordinates: 'BOTTOM_RIGHT', endCoordinates: 'TOP_RIGHT', precisionDescriber: 'FINGER'}` |
-| mobile:clickAction | Perform ["ClickAction"](https://developer.android.com/reference/androidx/test/espresso/action/GeneralClickAction) | `{element, tapper, coordinatesProvider, precisionDescriber, inputDevice, buttonState}` | `{element: 2, tapper: 'Long', coordinatesProvider: 'BOTTOM_RIGHT', precisionDescriber: 'Thumb', inputDevice: 0, buttonState: 0}` |
-| mobile:isToastVisible | Check whether a toast message is visible. `text` is the mandatory argument. `isRegexp` is optional. `text` will be parsed as a regular expression pattern if `isRegexp` is `true`. `isRegexp` is `false` by default. It returns `true` if the `text` exists, or `false` otherwise. | `{text, isRegexp}` | `{ text: 'A toast' }`, `{ text: '^regex$', isRegexp: true } `|
-| mobile:openDrawer | Open drawer by [DrawerAction](https://developer.android.com/reference/android/support/test/espresso/contrib/DrawerActions) with [gravity](https://developer.android.com/reference/android/view/Gravity). `gravity` is option. The default is [GravityCompat.START](https://developer.android.com/reference/android/support/v4/view/GravityCompat.html#START). This method blocks until the drawer is fully open. No operation if the drawer is already open. | `{element, gravity}` | `{ element: element_id }`, `{ element: element_id, gravity: 3 }` |
-| mobile:closeDrawer | Close drawer by [DrawerAction](https://developer.android.com/reference/android/support/test/espresso/contrib/DrawerActions) with [gravity](https://developer.android.com/reference/android/view/Gravity). `gravity` is option. The default is [GravityCompat.START](https://developer.android.com/reference/android/support/v4/view/GravityCompat.html#START). This method blocks until the drawer is fully closed. No operation if the drawer is already closed. | `{element, gravity}` | `{ element: element_id }`, `{ element: elementId, gravity: 3 }` |
-| mobile:setDate | Set date by [PickerActions#setDate](https://developer.android.com/reference/android/support/test/espresso/contrib/PickerActions.html#setDate(int,%20int,%20int)) for [DataPicker](https://developer.android.com/reference/android/widget/DatePicker). | `{element, year, monthOfYear, dayOfMonth}` | `{element: elementId, year: 2018, monthOfYear: 12, dayOfMonth: 1}` |
-| mobile:setTime | Set time by [PickerActions#setTime](https://developer.android.com/reference/android/support/test/espresso/contrib/PickerActions.html#setTime(int,%20int)) for [TimePicker](https://developer.android.com/reference/android/widget/TimePicker). | `{element, hours, minutes}` | `{element: elementId, hours: 12, minutes: 10}` |
-| mobile:navigateTo | Action to [NavigationView](https://developer.android.com/reference/android/support/design/widget/NavigationView) by [NavigationViewActions#navigateTo](https://developer.android.com/reference/android/support/test/espresso/contrib/NavigationViewActions.html#navigateTo(int)). The view must be a child of a DrawerLayout, of type NavigationView, visible on screen and displayed on screen. `com.google.android.material:material` as `additionalAndroidTestDependencies` capability is necessary. | `{element, menuItemId}` | `{element: elementId, menuItemId: 1}` |
-| mobile:scrollToPage | Action to [ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) by [ViewPagerActions](https://developer.android.com/reference/android/support/test/espresso/contrib/ViewPagerActions). `scrollTo` must be one of `first`, `last`, `left`, `right`. `scrollTo` is used by default if `scrollTo` and `scrollToPage` are provided. | `{scrollTo, scrollToPage, smoothScroll}` | `{element: elementId, scrollTo: 'left', smoothScroll: true}`, `{element: elementId, scrollToPage: 2}`|
-| mobile:backdoor | Invoke arbitrary methods defined in Android app. The methods must be `public` in Java and must be `open` in Kotlin. `target` is `activity`, `application` or `element`. `methods` are methods you would like to invoke. `element` is mandatory if `target` is `element`. Read docstring of _mobileBackdoor_ method [here](https://github.com/appium/appium-espresso-driver/blob/master/lib/commands/general.js) for more details | `{target, methods, element}` | `{target: 'activity', methods: [{name: 'method1'}, {name: 'method2', args: [{value: 'hello appium', type: 'java.lang.String'}] }] }`, `{target: 'element', element: elementId, [{name: 'getTypeface'}, {name: 'isItalic'}]}` |
-| mobile:flashElement | Flashes an element on the screen to visually confirm you are operating on the correct element. Can optionally set `durationMillis` (in ms) and `repeatCount` of animation| `{element, durationMillis, repeatCount}` | `{element: "1234-abcd-5678", durationMillis: 1000, repeatCount: 10}` |
-| mobile:uiautomator | Drive areas which are not part of App Under Test, using uiautomator2 APIs. `strategy` can be one of: "clazz", "res", "text", "textContains", "textEndsWith", "textStartsWith","desc", "descContains", "descEndsWith", "descStartsWith" and "pkg", taken from uiautomator [By class](https://developer.android.com/reference/androidx/test/uiautomator/By). `action` can be one of: "click", "longClick", "getText", "getContentDescription", "getClassName","getResourceName", "getVisibleBounds", "getVisibleCenter", "getApplicationPackage","getChildCount", "clear", "isCheckable", "isChecked", "isClickable", "isEnabled","isFocusable", "isFocused", "isLongClickable", "isScrollable" and "isSelected", taken from uiautomator [UiObject2](https://developer.android.com/reference/androidx/test/uiautomator/UiObject2). `index` is optional, if not given, will return all matching results  | `{strategy, locator, index, action}` | `{strategy: 'clazz', locator: 'android.widget.TextView', index: 2, action: "getText"}` |
-| mobile:webAtoms | Runs a chain of [webatoms](https://developer.android.com/training/testing/espresso/web). `withElement` and `perform` are basic chain items. Please refer [issue](https://github.com/appium/appium-espresso-driver/pull/380) and [Sample test code](https://github.com/appium/ruby_lib_core/blob/c9062c4b744263d790c7de17263cbd4645cdefc6/test/functional/android/android/mobile_commands_test.rb#L196-L239) as references. | `{webviewElement, forceJavascriptEnabled, methodChain}` | (webdriverio) `{ webviewElement: webviewEl.value, forceJavascriptEnabled: true, methodChain: [...]}`  |
-| mobile:dismissAutofill | Disable autofill dialog in Android O+ | `{element}` | `{element: elementId}` |
-| mobile:deviceInfo | Gets device information like manufacturer, model, timezone and locale. Read [GetDeviceInfo](https://github.com/appium/appium-espresso-driver/blob/master/espresso-server/app/src/androidTest/java/io/appium/espressoserver/lib/handlers/GetDeviceInfo.kt) for more details. | <none> | <none> |
-| mobile:registerIdlingResources | Registers one or more idling resources. Read [idling-resources.js](https://github.com/appium/appium-espresso-driver/blob/master/lib/commands/idling-resources.js) for more details. | `{classNames}` | `{classNames: 'com.package.MyIdlingResource1, com.package.MyIdlingResource2'}` |
-| mobile:unregisterIdlingResources | Unregisters one or more idling resources. Read [idling-resources.js](https://github.com/appium/appium-espresso-driver/blob/master/lib/commands/idling-resources.js) for more details. | `{classNames}` | `{classNames: 'com.package.MyIdlingResource1, com.package.MyIdlingResource2'}` |
-| mobile:listIdlingResources | Returns the list of canonical class names of currently registered idling resources. Read [idling-resources.js](https://github.com/appium/appium-espresso-driver/blob/master/lib/commands/idling-resources.js) for more details. | <none> | <none> |
+Please refer to [mobile commands](https://github.com/appium/appium-xcuitest-driver#platform-specific-extensions) section in XCUITest driver repository.
 
 
 [//]: # (DO NOT EDIT THIS FILE! This is an auto-generated file. Editing for this document happens in /commands-yml/commands/mobile-command.yml)
@@ -205,7 +94,6 @@ List of available commands:
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
 |[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [github.com](https://github.com/admc/wd/blob/master/lib/commands.js#L102) |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [www.rubydoc.info](https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Driver:execute_script) |
-|[PHP](https://github.com/appium/php-client/releases/latest)| All | [github.com](https://github.com/appium/php-client/) |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| All | [github.com](https://github.com/appium/appium-dotnet-driver/) |
 
 [//]: # (DO NOT EDIT THIS FILE! This is an auto-generated file. Editing for this document happens in /commands-yml/commands/mobile-command.yml)

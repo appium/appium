@@ -1,6 +1,6 @@
 import path from 'path';
 import yaml from 'yaml-js';
-import { fs, mkdirp, util } from '@appium/support';
+import { fs, mkdirp, util } from 'appium-support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import _ from 'lodash';
@@ -8,7 +8,8 @@ import { asyncify } from 'asyncbox';
 import { validator, CLIENT_URL_TYPES } from './validator';
 import url from 'url';
 import log from 'fancy-log';
-import findUp from 'find-up';
+import findRoot from 'find-root';
+
 
 // What range of platforms do the driver's support
 const platformRanges = {
@@ -30,8 +31,7 @@ const appiumRanges = {
   mac: ['1.6.4'],
 };
 
-const rootFolder = path.dirname(findUp.sync('.git', {type: 'directory'}));
-const appiumDir = path.join(rootFolder, 'packages', 'appium');
+const rootFolder = findRoot(__dirname);
 
 // Create Handlebars helper that shows a version range
 Handlebars.registerHelper('versions', function versionHelper (object, name, driverName) {
@@ -137,7 +137,7 @@ Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
 });
 
 async function registerSpecUrlHelper () {
-  const routesFile = await fs.readFile(require.resolve('appium-base-driver/lib/protocol/routes'), 'utf8');
+  const routesFile = await fs.readFile(path.resolve(rootFolder, '..', 'base-driver', 'lib', 'protocol', 'routes.js'), 'utf8');
   const routesFileLines = routesFile.split('\n');
 
   Handlebars.registerHelper('spec_url', function specUrl (specUrl, endpoint) {
@@ -178,16 +178,16 @@ async function registerSpecUrlHelper () {
 async function generateCommands () {
   await registerSpecUrlHelper();
 
-  const commands = path.resolve(appiumDir, 'commands-yml', 'commands/**/*.yml');
+  const commands = path.resolve(rootFolder, 'commands-yml', 'commands/**/*.yml');
   log('Traversing YML files', commands);
   await fs.rimraf(path.resolve(rootFolder, 'docs', 'en', 'commands'));
 
   // get the template from which the md files will be created
-  const template = Handlebars.compile(await fs.readFile(path.resolve(appiumDir, 'commands-yml', 'template.md'), 'utf8'), {noEscape: true, strict: true});
+  const template = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'template.md'), 'utf8'), {noEscape: true, strict: true});
 
   let fileCount = 0;
   for (const filename of await fs.glob(commands)) {
-    const relativeFilename = path.relative(path.resolve(appiumDir, 'commands-yml'), filename);
+    const relativeFilename = path.relative(path.resolve(rootFolder, 'commands-yml'), filename);
     log(`Rendering file: ${filename} ${relativeFilename}`);
 
     // Translate the YML specs to JSON
@@ -235,14 +235,14 @@ async function generateCommandIndex () {
 
   // parse the toc.js file and get the commands into the form of
   //   {commands: [{name: '', path: ''}, {name: '', commands: [...]}]}
-  const toc = require(path.resolve(rootFolder, 'docs', 'toc.js'));
+  const toc = require(path.resolve(rootFolder, '../..', 'docs', 'toc.js'));
   const commandToc = _.find(toc.en, (value) => value.indexOf('Commands') === 0);
   const commands = [];
   for (let el of commandToc[1].slice(1)) {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
-  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(appiumDir, 'commands-yml', 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(rootFolder, 'commands-yml', 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
 
   async function writeIndex (index, commands, indexPath) {
     log(`Creating API index '${index}'`);
@@ -253,7 +253,7 @@ async function generateCommandIndex () {
     await fs.writeFile(index, commandMarkdown, 'utf8');
   }
 
-  const apiIndex = path.resolve(rootFolder, 'docs', 'en', 'about-appium', 'api.md');
+  const apiIndex = path.resolve(rootFolder, '../..', 'docs', 'en', 'about-appium', 'api.md');
   await writeIndex(apiIndex, commands);
   log(`Done writing main API index`);
 
@@ -275,7 +275,7 @@ async function generateCommandIndex () {
   }
 
   // go through the full tree and generate readme files
-  const index = path.resolve(rootFolder, 'docs', 'en', 'commands', 'README.md');
+  const index = path.resolve(rootFolder, '../..', 'docs', 'en', 'commands', 'README.md');
   await writeIndex(index, commands);
   for (const el of commands) {
     await writeIndividualIndexes(el);

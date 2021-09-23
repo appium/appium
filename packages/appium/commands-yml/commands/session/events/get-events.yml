@@ -25,9 +25,6 @@ example_usage:
       @driver.logs.events
       @driver.logs.events('event')
       @driver.logs.events(['event1', 'event2'])
-  php:
-    |
-      // PHP Code here
   csharp:
     |
       // csharp code here
@@ -40,7 +37,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/releases"
   ruby: "https://www.rubydoc.info/gems/appium_lib/Appium/Driver#log_event-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/appium_lib_core/Appium/Core/Logs#events-instance_method"
-  php: "https://github.com/appium/php-client/releases/latest"
   csharp: "https://github.com/appium/appium" # TODO
 
 # Driver support by platform
@@ -67,7 +63,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: false
   csharp: false
   javascript_wd: false
   javascript_wdio: false

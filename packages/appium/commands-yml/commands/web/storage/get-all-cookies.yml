@@ -21,9 +21,6 @@ example_usage:
   ruby_core:
     |
       @driver.manage.all_cookies
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       IEnumerable<Cookie> allCookies = driver.Manage().Cookies.AllCookies;
@@ -33,9 +30,8 @@ client_docs:
   python: "http://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver.get_cookies"
   javascript_wdio: "https://webdriver.io/docs/api/browser/getCookies.html"
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1957"
-  ruby: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#get-all-cookies"
-  ruby_core: "https://www.selenium.dev/documentation/en/support_packages/working_with_cookies/#get-all-cookies"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
+  ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Manager#all_cookies-instance_method"
+  ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Manager#all_cookies-instance_method"
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteCookieJar.cs"
 
 # Driver support by platform
@@ -55,7 +51,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

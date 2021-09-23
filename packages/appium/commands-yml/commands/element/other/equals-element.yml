@@ -33,9 +33,6 @@ example_usage:
       element1 = @driver.find_element :class_name, "someClass"
       element2 = @driver.find_element :class_name, "someOtherClass"
       element1 == element2
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       var elementOne = driver.FindElementByClassName("SomeClassName");
@@ -49,7 +46,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1463"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/0.0.28/Selenium/WebDriver/Element#==-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Remote/RemoteWebElement.cs"
 
 # TODO: Confirm support for these per platform
@@ -69,7 +65,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

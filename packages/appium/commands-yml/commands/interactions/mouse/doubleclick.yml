@@ -29,9 +29,6 @@ example_usage:
   ruby_core:
     |
       @driver.action.move_to(element).double_click.perform
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       Actions action = new Actions(driver);
@@ -46,7 +43,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1686"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/ActionBuilder:double_click"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/Actions.cs"
 
 # Driver support by platform
@@ -66,7 +62,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

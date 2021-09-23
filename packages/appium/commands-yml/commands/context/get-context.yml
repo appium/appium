@@ -32,9 +32,6 @@ example_usage:
       context = current_context
   ruby_core:
       context = @driver.current_context
-  php:
-    |
-      $context = $driver->context();
   csharp:
     |
        string Context = driver.Context;
@@ -46,7 +43,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/doc/api.md"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#current_context-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -66,7 +62,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

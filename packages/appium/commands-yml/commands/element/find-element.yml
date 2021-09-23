@@ -26,9 +26,6 @@ example_usage:
   ruby_core:
     |
       @driver.find_element(:accessibility_id, 'SomeAccessibilityID')
-  php:
-    |
-      $el = $this->byAccessibilityId('SomeAccessibilityID');
   csharp:
     |
       AndroidElement elementOne = driver.FindElementByAccessibilityID("Some ID");
@@ -41,7 +38,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L745"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/SearchContext:find_element"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -61,7 +57,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

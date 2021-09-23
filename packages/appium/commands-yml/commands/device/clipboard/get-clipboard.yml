@@ -36,9 +36,6 @@ example_usage:
   ruby_core:
     |
       @driver.get_clipboard
-  php:
-    |
-      // PHP Code here
   csharp:
     |
       // CSharp Code here
@@ -54,7 +51,6 @@ client_docs:
   ruby_core:
     - android: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#get_clipboard-instance_method"
     - ios: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#get_clipboard-instance_method"
-  php: "https://github.com/appium/php-client/releases/latest"
   csharp: "https://github.com/appium/appium" # TODO
 
 # Driver support by platform
@@ -74,7 +70,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: false
   csharp: false
   javascript_wd: true
   javascript_wdio: true

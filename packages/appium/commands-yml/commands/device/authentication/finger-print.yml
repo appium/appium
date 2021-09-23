@@ -28,9 +28,6 @@ example_usage:
   ruby_core:
     |
       @driver.finger_print 1
-  php:
-    |
-      // PHP Code here
   csharp:
     |
       // CSharp Code here
@@ -42,7 +39,6 @@ client_docs:
   javascript_wd: "https://github.com/appium/appium-android-driver/blob/d16c7161d92ab6f6c9cec3f22218219ac3659716/lib/commands/actions.js#L260"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device#finger_print-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/master/Appium/Core/Android/Device#finger_print-instance_method"
-  php:
   csharp:
 
 # Driver support by platform
@@ -62,7 +58,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: false
   csharp: false
   javascript_wd: true
   javascript_wdio: true

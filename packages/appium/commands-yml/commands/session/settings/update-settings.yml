@@ -13,13 +13,22 @@ example_usage:
       driver.updateSettings({nativeWebTap: true});
   ruby:
     |
-      update_settings(sample: 'value')
+      update_settings({'nativeWebTap' => true, 'allowInvisibleElements' => true})
   ruby_core:
     |
-      @driver.update_settings(sample: 'value')
+      @driver.update_settings({'nativeWebTap' => true, 'allowInvisibleElements' => true})
+      @driver.settings.update({'nativeWebTap' => true, 'allowInvisibleElements' => true})
+      @driver.settings = {'nativeWebTap' => true, 'allowInvisibleElements' => true}
   python:
     |
       self.driver.update_settings({"sample": "value"}))
+  csharp:
+    |
+      driver.Settings = new Dictionary<string, object>() {
+          [AutomatorSetting.KeyInjectionDelay] = 1500,
+          ["nativeWebTap"] = true
+      };
+
 
 client_docs:
   java: "https://appium.github.io/java-client/io/appium/java_client/HasSettings.html#setSetting-io.appium.java_client.Setting-java.lang.Object-"
@@ -28,6 +37,7 @@ client_docs:
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#update_settings-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Device#update_settings-instance_method"
   python: "https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.settings.Settings.update_settings"
+  csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/Android/Interfaces/IHasSettings.cs"
 
 # Driver support by platform
 driver_support:
@@ -44,10 +54,9 @@ driver_support:
     windows: true
 client_support:
   java: true
-  python: false
-  ruby: false
-  php: false
-  csharp: false
+  python: true
+  ruby: true
+  csharp: true
   javascript_wd: true
   javascript_wdio: true
 

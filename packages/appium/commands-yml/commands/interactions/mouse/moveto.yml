@@ -32,9 +32,6 @@ example_usage:
     |
       @driver.mouse.move_to(element)
       @driver.mouse.move_to(element, 5, 5)
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       Actions action = new Actions(driver);
@@ -50,7 +47,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1600"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:move_to"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Mouse:move_to"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -70,7 +66,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

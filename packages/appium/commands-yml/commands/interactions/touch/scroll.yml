@@ -28,9 +28,6 @@ example_usage:
   ruby_core:
     |
       @driver.touch_actions.scroll(element, 10, 100).perform
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       TouchActions action = new TouchActions(driver);
@@ -44,7 +41,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L425"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:scroll"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs"
 
 # Driver support by platform
@@ -64,7 +60,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

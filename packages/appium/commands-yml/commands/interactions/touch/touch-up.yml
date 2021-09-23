@@ -36,9 +36,6 @@ example_usage:
   ruby_core:
     |
       @driver.touch_action.down(element).up(50, 50).perform
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       TouchActions action = new TouchActions(driver);
@@ -53,7 +50,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1546"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium%2FWebDriver%2FTouchActionBuilder:up"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/SeleniumHQ/selenium/blob/master/dotnet/src/webdriver/Interactions/TouchActions.cs"
 
 # Driver support by platform
@@ -73,7 +69,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

@@ -7,6 +7,8 @@ description:
     To enable this feature, the `allowTouchIdEnroll` desired capability must be set to true. When `allowTouchIdEnroll` is set to true
     the Simulator will be enrolled by default, and the 'Toggle Touch ID Enrollment' changes the enrollment state.
 
+    Another way to enable touch id is by using `mobile: enrollBiometric`. More info [here](https://github.com/appium/appium-xcuitest-driver#mobile-enrollbiometric).
+
     This call will only work if the Appium process or its parent application (e.g., Terminal.app or Appium.app) has access to Mac OS accessibility in System Preferences > Security & Privacy > Privacy > Accessibility list
 
 example_usage:
@@ -28,9 +30,6 @@ example_usage:
   ruby_core:
     |
       @driver.toggle_touch_id_enrollment
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       // TODO C# sample
@@ -42,7 +41,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L3150"
   ruby: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#toggle_touch_id_enrollment-instance_method"
   ruby_core: "https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Device#toggle_touch_id_enrollment-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -62,7 +60,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

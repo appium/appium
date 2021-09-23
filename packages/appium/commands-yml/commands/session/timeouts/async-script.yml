@@ -1,6 +1,6 @@
 ---
 name: Set Script Timeout
-short_description: Set the amount of time, in milliseconds, that asynchronous scripts executed by [execute async](/docs/en/commands/session/timeouts/async-script.md) are permitted to run before they are aborted (Web context only)
+short_description: Set the amount of time, in milliseconds, that asynchronous scripts executed by [execute async](/docs/en/commands/web/execute-async.md) are permitted to run before they are aborted (Web context only)
 
 example_usage:
   java:
@@ -22,9 +22,6 @@ example_usage:
   ruby_core:
     |
       @driver.script_timeout(5) # Ruby translates it to seconds
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       // TODO C# sample
@@ -36,7 +33,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L699"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts#script_timeout="
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Timeouts#script_timeout="
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -56,7 +52,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

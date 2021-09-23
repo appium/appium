@@ -27,9 +27,6 @@ example_usage:
     |
       element = @driver.find_element :accessibility_id, "SomeAccessibilityID"
       element.rect
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       var element = driver.FindElementByAccessibilityId("SomeAccessibilityID");
@@ -40,7 +37,6 @@ client_docs:
   javascript_wdio: "https://webdriver.io/docs/api/webdriver.html#getelementrect"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#rect-instance_method"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver/Element#rect-instance_method"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/blob/master/src/Appium.Net/Appium/AppiumWebElement.cs"
 
 # TODO: Confirm if all the drivers support this
@@ -60,7 +56,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

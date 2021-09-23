@@ -19,7 +19,7 @@ example_usage:
         desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
         desiredCapabilities.setCapability(MobileCapabilityType.APP, "/path/to/ios/app.zip");
 
-        URL url = new URL("http://127.0.0.1:4723");
+        URL url = new URL("http://127.0.0.1:4723/wd/hub");
 
         IOSDriver driver = new IOSDriver(url, desiredCapabilities);
         String sessionId = driver.getSessionId().toString();
@@ -33,7 +33,7 @@ example_usage:
         'automationName': 'UiAutomator2',
         'app': PATH('/path/to/app')
       }
-      self.driver = webdriver.Remote('http://127.0.0.1:4723', desired_caps)
+      self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
   javascript_wd:
     |
       let driver = await wd.promiseChainRemote({
@@ -75,9 +75,6 @@ example_usage:
   ruby_core:
     |
       ::Appium::Core.for(desired_caps).start_driver
-  php:
-    |
-      // TODO PHP sample
   csharp:
     |
       AppiumOptions capabilities = new AppiumOptions();
@@ -87,7 +84,7 @@ example_usage:
       appiumOptions.AddAdditionalCapability("appPackage", "com.instagram.android");
       appiumOptions.AddAdditionalCapability("appActivity", "com.instagram.android.activity.MainTabActivity");
 
-      AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723"), appiumOptions);
+      AndroidDriver<AndroidElement> driver = new AndroidDriver<AndroidElement>(new Uri("http://127.0.0.1:4723/wd/hub"), appiumOptions);
 
 client_docs:
   java: "https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/WebDriver.html"
@@ -96,7 +93,6 @@ client_docs:
   javascript_wd: "https://github.com/admc/wd/blob/master/lib/commands.js#L1780"
   ruby: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
   ruby_core: "https://www.rubydoc.info/gems/selenium-webdriver/Selenium/WebDriver"
-  php: "https://github.com/appium/php-client/" # TODO PHP documentation link
   csharp: "https://github.com/appium/appium-dotnet-driver/" # TODO Dotnet documentation link
 
 # Driver support by platform
@@ -116,7 +112,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: true
   csharp: true
   javascript_wd: true
   javascript_wdio: true

@@ -47,7 +47,6 @@ client_support:
   java: true
   python: true
   ruby: true
-  php: false
   csharp: false
   javascript_wd: true
   javascript_wdio: false

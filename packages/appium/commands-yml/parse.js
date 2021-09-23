@@ -235,7 +235,7 @@ async function generateCommandIndex () {
 
   // parse the toc.js file and get the commands into the form of
   //   {commands: [{name: '', path: ''}, {name: '', commands: [...]}]}
-  const toc = require(path.resolve(rootFolder, 'docs', 'toc.js'));
+  const toc = require(path.resolve(rootFolder, '../..', 'docs', 'toc.js'));
   const commandToc = _.find(toc.en, (value) => value.indexOf('Commands') === 0);
   const commands = [];
   for (let el of commandToc[1].slice(1)) {

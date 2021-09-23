@@ -7,6 +7,7 @@ import path from 'path';
 import { mkdirp } from '../lib/mkdirp';
 import stream from 'stream';
 import fs from './fs';
+import { isWindows } from './system';
 import { Base64Encode } from 'base64-stream';
 import { toReadableSizeString, GiB } from './util';
 import Timer from './timing';
@@ -173,13 +174,7 @@ class ZipExtractor {
  * For ZIP archives created on MacOS it is usually expected to be `utf8`.
  * By default it is autodetected based on the entry metadata and is only needed to be set explicitly
  * if the particular archive does not comply to the standards, which leads to corrupted file names
- * after extraction.
- * @property {?number} defaultDirMode [0o755] The default permissions for extracted folders. It is only
- * applied when the extractor is unable to retrieve this value for a directory from the archive
- * metadata.
- * @property {?number} defaultFileMode [0o644] The default permissions for extracted files. It is only
- * applied when the extractor is unable to retrieve this value for a file from the archive
- * metadata.
+ * after extraction. Only applicable if system unzip binary is NOT being used.
  * @property {?boolean} useSystemUnzip [false] If true, attempt to use system unzip; if this fails,
  * fallback to the JS unzip implementation.
  */
@@ -214,22 +209,43 @@ async function extractAllTo (zipFilePath, destDir, opts = {}) {
 }
 
 /**
- * Executes system unzip (e.g., `/usr/bin/unzip`).  If available, it is
+ * Executes system unzip (e.g., `/usr/bin/unzip`). If available, it is
  * significantly faster than the JS implementation.
- * This function will reject on win32.
+ * By default all files in the destDir get overridden if already exist.
+ *
  * @param {string} zipFilePath The full path to the source ZIP file
- * @param {string} destDir The full path to the destination folder
+ * @param {string} destDir The full path to the destination folder.
+ * This folder is expected to already exist before extracting the archive.
  */
 async function extractWithSystemUnzip (zipFilePath, destDir) {
-  const unzipExecutablePath = await assertSystemUnzip();
-  // -q means quiet (no stdout)
-  // -o means overwrite
-  // -d is the dest dir
-  await exec(unzipExecutablePath, [
-    '-q',
-    '-o', zipFilePath,
-    '-d', destDir
-  ]);
+  const isWindowsHost = isWindows();
+  let executablePath;
+  try {
+    executablePath = await getExecutablePath(
+      isWindowsHost ? 'powershell.exe' : 'unzip'
+    );
+  } catch (e) {
+    throw new Error('Could not find system unzip');
+  }
+
+  if (isWindowsHost) {
+    // on Windows we use PowerShell to unzip files
+    await exec(executablePath, [
+      '-command', 'Expand-Archive',
+      '-LiteralPath', zipFilePath,
+      '-DestinationPath', destDir,
+      '-Force'
+    ]);
+  } else {
+    // -q means quiet (no stdout)
+    // -o means overwrite
+    // -d is the dest dir
+    await exec(executablePath, [
+      '-q',
+      '-o', zipFilePath,
+      '-d', destDir
+    ]);
+  }
 }
 
 /**
@@ -512,21 +528,19 @@ async function toArchive (dstPath, src = {}, opts = {}) {
 }
 
 /**
- * Finds a system `unzip` executable. Rejects if it is not found.
+ * Finds and memoizes the full path to the given executable.
+ * Rejects if it is not found.
  */
-const assertSystemUnzip = _.memoize(
+const getExecutablePath = _.memoize(
   /**
-   * @returns {B<string>} Path to unzip executable
+   * @returns {B<string>} Full Path to the executable
    */
-  async () => {
-    try {
-      const unzipPath = await fs.which('unzip');
-      log.debug('found system unzip at %s', unzipPath);
-      return unzipPath;
-    } catch {
-      throw new Error('Could not find system unzip');
-    }
-  });
+  async function getExecutablePath (binaryName) {
+    const fullPath = await fs.which(binaryName);
+    log.debug(`Found '%s' at '%s'`, binaryName, fullPath);
+    return fullPath;
+  }
+);
 
 export { extractAllTo, readEntries, toInMemoryZip, _extractEntryTo,
   assertValidZip, toArchive };

@@ -48,7 +48,7 @@
     "lodash": "4.17.21",
     "source-map-support": "0.5.20",
     "teen_process": "1.16.0",
-    "yargs": "17.1.1"
+    "yargs": "17.2.0"
   },
   "devDependencies": {
     "@appium/gulp-plugins": "^5.5.3",

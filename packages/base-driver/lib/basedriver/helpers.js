@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import { system, tempDir, fs, util, zip, net, timing } from '@appium/support';
+import { tempDir, fs, util, zip, net, timing } from '@appium/support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
@@ -329,7 +329,7 @@ async function unzipApp (zipPath, dstRoot, supportedAppExtensions) {
      * @type {import('@appium/support/lib/zip').ExtractAllOptions}
      */
     const extractionOpts = {
-      useSystemUnzip: !system.isWindows(),
+      useSystemUnzip: true,
     };
     // https://github.com/appium/appium/issues/14100
     if (path.extname(zipPath) === IPA_EXT) {

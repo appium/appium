@@ -98,7 +98,7 @@
     "lerna": "4.0.0",
     "lint-staged": "11.1.2",
     "mjpeg-server": "0.3.1",
-    "mocha": "9.1.1",
+    "mocha": "9.1.2",
     "pre-commit": "1.2.2",
     "querystring": "0.2.1",
     "serve-static": "1.14.1",

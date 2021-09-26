@@ -9,6 +9,7 @@ import Timer from './timing';
 import axios from 'axios';
 import FormData from 'form-data';
 
+const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
 function toAxiosAuth (auth) {
   if (!_.isPlainObject(auth)) {
@@ -25,7 +26,7 @@ function toAxiosAuth (auth) {
 async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = {}) {
   const {
     method = 'POST',
-    timeout = 5000,
+    timeout = DEFAULT_TIMEOUT_MS,
     headers,
     auth,
     fileFieldName = 'file',
@@ -128,7 +129,7 @@ async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = {}) 
  * (e.g. timings and speed)
  * @property {string} method [POST] - The HTTP method used for file upload
  * @property {AuthCredentials} auth
- * @property {number} timeout [5000] - The actual request timeout in milliseconds
+ * @property {number} timeout [240000] - The actual request timeout in milliseconds
  * @property {Object} headers - Additional request headers mapping
  * @property {?string} fileFieldName [file] - The name of the form field containing the file
  * content to be uploaded. Any falsy value make the request to use non-multipart upload
@@ -186,7 +187,7 @@ async function uploadFile (localPath, remoteUri, uploadOptions = {}) {
  * @property {boolean} isMetered [true] - Whether to log the actual download performance
  * (e.g. timings and speed)
  * @property {AuthCredentials} auth
- * @property {number} timeout [5000] - The actual request timeout in milliseconds
+ * @property {number} timeout [240000] - The actual request timeout in milliseconds
  * @property {Object} headers - Request headers mapping
  */
 
@@ -202,7 +203,7 @@ async function downloadFile (remoteUrl, dstPath, downloadOptions = {}) {
   const {
     isMetered = true,
     auth,
-    timeout = 5000,
+    timeout = DEFAULT_TIMEOUT_MS,
     headers,
   } = downloadOptions;
 

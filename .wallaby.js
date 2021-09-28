@@ -16,6 +16,7 @@ module.exports = (wallaby) => {
       '!./packages/**/test/**/*-specs.js',
       '!./packages/*/node_modules/**',
       '!./packages/*/gulpfile.js',
+      './packages/*/test/**/fixtures/**/*',
       // below this are fixtures
       {
         binary: true,
@@ -24,10 +25,6 @@ module.exports = (wallaby) => {
       {
         instrument: false,
         pattern: './packages/support/test/assets/sample_text.plist',
-      },
-      {
-        instrument: false,
-        pattern: './packages/*/test/**/fixtures/**/*',
       },
       {
         instrument: false,

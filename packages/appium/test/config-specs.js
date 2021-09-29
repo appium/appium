@@ -1,18 +1,13 @@
 // transpile:mocha
 
 import _ from 'lodash';
-import chai from 'chai';
 import sinon from 'sinon';
-import chaiAsPromised from 'chai-as-promised';
 import { getBuildInfo, checkNodeOk, warnNodeDeprecations,
          getNonDefaultServerArgs, validateServerArgs,
          validateTmpDir, showConfig, checkValidPort } from '../lib/config';
 import getParser from '../lib/cli/parser';
 import logger from '../lib/logger';
 import { getDefaultsFromSchema, reset } from '../lib/schema';
-
-let should = chai.should();
-chai.use(chaiAsPromised);
 
 describe('Config', function () {
   describe('Appium config', function () {
@@ -106,19 +101,18 @@ describe('Config', function () {
     });
 
     beforeEach(function () {
-      // give all the defaults
-      args = getDefaultsFromSchema({propPath: 'server'});
+      // get all the defaults
+      args = getDefaultsFromSchema();
     });
     describe('getNonDefaultServerArgs', function () {
       it('should show none if we have all the defaults', function () {
         let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
-        _.keys(nonDefaultArgs).length.should.equal(0);
+        nonDefaultArgs.should.be.empty;
       });
       it('should catch a non-default argument', function () {
         args.allowCors = true;
         let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
-        _.keys(nonDefaultArgs).length.should.equal(1);
-        should.exist(nonDefaultArgs.allowCors);
+        nonDefaultArgs.should.eql({allowCors: true});
       });
     });
 

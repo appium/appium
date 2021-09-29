@@ -2,13 +2,12 @@
 import path from 'path';
 import { exec } from 'teen_process';
 import { tempDir, fs, mkdirp, util } from '@appium/support';
-import { KNOWN_DRIVERS } from '../lib/drivers';
-import { PROJECT_ROOT as cwd } from './helpers';
+import { KNOWN_DRIVERS } from '../../lib/drivers';
+import { PROJECT_ROOT } from '../helpers';
 
 
-// cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
-// could also derive it from the `package.json` if we wanted
-const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');
+// the ESM `main.js` is not executable as-is
+const executable = path.join(PROJECT_ROOT, 'packages', 'appium', 'build', 'lib', 'main.js');
 
 describe('CLI', function () {
   let appiumHome;
@@ -27,15 +26,20 @@ describe('CLI', function () {
   }
 
   async function run (driverCmd, args = [], raw = false, ext = 'driver') {
-    args = [...args, '--appium-home', appiumHome];
-    const ret = await exec('node', [executable, ext, driverCmd, ...args], {cwd});
-    if (raw) {
-      return ret;
+    try {
+      const ret = await exec(process.execPath, [executable, ext, driverCmd, ...args], {cwd: PROJECT_ROOT, env: {APPIUM_HOME: appiumHome}});
+      if (raw) {
+        return ret;
+      }
+      return ret.stdout;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      throw err;
     }
-    return ret.stdout;
   }
   describe('Driver CLI', function () {
-    const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+    const localFakeDriverPath = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
     describe('list', function () {
       it('should list available drivers', async function () {
         const stdout = await run('list');
@@ -172,7 +176,7 @@ describe('CLI', function () {
   });
 
   describe('Plugin CLI', function () {
-    const fakePluginDir = path.resolve(__dirname, '..', '..', '..', '..', 'node_modules', '@appium', 'fake-plugin');
+    const fakePluginDir = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
     const ext = 'plugin';
     describe('run', function () {
       before(async function () {

@@ -1,0 +1,5 @@
+{
+  "server": {
+    "allow-insecure": "./packages/appium/test/fixtures/config/allow-insecure.txt"
+  }
+}

@@ -1,12 +1,18 @@
 // transpile:mocha
 
 import _ from 'lodash';
+import chai from 'chai';
 import sinon from 'sinon';
+import chaiAsPromised from 'chai-as-promised';
 import { getBuildInfo, checkNodeOk, warnNodeDeprecations,
-         getNonDefaultArgs, validateServerArgs,
+         getNonDefaultServerArgs, validateServerArgs,
          validateTmpDir, showConfig, checkValidPort } from '../lib/config';
 import getParser from '../lib/cli/parser';
 import logger from '../lib/logger';
+import { getDefaultsFromSchema, reset } from '../lib/schema';
+
+let should = chai.should();
+chai.use(chaiAsPromised);
 
 describe('Config', function () {
   describe('Appium config', function () {
@@ -91,23 +97,26 @@ describe('Config', function () {
   });
 
   describe('server arguments', function () {
-    let parser = getParser();
-    parser.debug = true; // throw instead of exit on error; pass as option instead?
-    let args = {};
+    let parser;
+    let args;
+
+    before(async function () {
+      parser = await getParser();
+      parser.debug = true;
+    });
+
     beforeEach(function () {
       // give all the defaults
-      for (let rawArg of parser.rawArgs) {
-        args[rawArg[1].dest] = rawArg[1].default;
-      }
+      args = getDefaultsFromSchema({propPath: 'server'});
     });
-    describe('getNonDefaultArgs', function () {
+    describe('getNonDefaultServerArgs', function () {
       it('should show none if we have all the defaults', function () {
-        let nonDefaultArgs = getNonDefaultArgs(parser, args);
+        let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
         _.keys(nonDefaultArgs).length.should.equal(0);
       });
       it('should catch a non-default argument', function () {
         args.allowCors = true;
-        let nonDefaultArgs = getNonDefaultArgs(parser, args);
+        let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
         _.keys(nonDefaultArgs).length.should.equal(1);
         should.exist(nonDefaultArgs.allowCors);
       });
@@ -149,32 +158,42 @@ describe('Config', function () {
       argv1 = process.argv[1];
     });
 
+    beforeEach(function () {
+      reset();
+    });
+
     after(function () {
       process.argv[1] = argv1;
     });
 
-    it('should not fail if process.argv[1] is undefined', function () {
+    it('should not fail if process.argv[1] is undefined', async function () {
       process.argv[1] = undefined;
-      let args = getParser();
+      let args = await getParser();
       args.prog.should.be.equal('appium');
     });
 
-    it('should set "prog" to process.argv[1]', function () {
+    it('should set "prog" to process.argv[1]', async function () {
       process.argv[1] = 'Hello World';
-      let args = getParser();
+      let args = await getParser();
       args.prog.should.be.equal('Hello World');
     });
   });
 
   describe('validateServerArgs', function () {
-    let parser = getParser();
-    parser.debug = true; // throw instead of exit on error; pass as option instead?
+    let parser;
     const defaultArgs = {};
-    // give all the defaults
-    for (let rawArg of parser.rawArgs) {
-      defaultArgs[rawArg[1].dest] = rawArg[1].default;
-    }
     let args = {};
+
+    before(async function () {
+      parser = await getParser();
+      parser.debug = true; // throw instead of exit on error; pass as option instead?
+      const defaultArgs = {};
+      // give all the defaults
+      for (let rawArg of parser.rawArgs) {
+        defaultArgs[rawArg[1].dest] = rawArg[1].default;
+      }
+    });
+
     beforeEach(function () {
       args = _.clone(defaultArgs);
     });

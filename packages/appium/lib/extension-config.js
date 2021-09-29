@@ -8,6 +8,7 @@ import YAML from 'yaml';
 const DRIVER_TYPE = 'driver';
 const PLUGIN_TYPE = 'plugin';
 const DEFAULT_APPIUM_HOME = path.resolve(os.homedir(), '.appium');
+const APPIUM_HOME = process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME;
 
 const CONFIG_FILE_NAME = 'extensions.yaml';
 const CONFIG_SCHEMA_REV = 2;
@@ -22,6 +23,12 @@ const INSTALL_TYPES = [
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM
 ];
+/**
+ * The field of the unique (within the extension type) identifier for an extension.  This field will be
+ * camel-cased and used as the property name in the config file.
+ * XXX: This doesn't work for plugins, so I need to figure something else out.
+ */
+const SCHEMA_ID_EXTENSION_PROPERTY = 'automationName';
 
 
 export default class ExtensionConfig {
@@ -220,4 +227,5 @@ export default class ExtensionConfig {
 export {
   INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
   INSTALL_TYPES, DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE,
+  SCHEMA_ID_EXTENSION_PROPERTY, APPIUM_HOME
 };

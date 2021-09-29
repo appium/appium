@@ -1,8 +1,8 @@
 // transpile:mocha
 
-import { DEFAULT_APPIUM_HOME } from '../lib/extension-config';
-import DriverConfig from '../lib/driver-config';
-import DriverCommand from '../lib/cli/driver-command';
+import { DEFAULT_APPIUM_HOME } from '../../lib/extension-config';
+import DriverConfig from '../../lib/driver-config';
+import DriverCommand from '../../lib/cli/driver-command';
 import sinon from 'sinon';
 
 

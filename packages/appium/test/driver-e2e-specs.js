@@ -7,7 +7,7 @@ import axios from 'axios';
 import { remote as wdio } from 'webdriverio';
 import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE } from '../lib/extension-config';
-import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort} from './helpers';
+import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT } from './helpers';
 import { BaseDriver } from '@appium/base-driver';
 import DriverConfig from '../lib/driver-config';
 import { runExtensionCommand } from '../lib/cli/extension';
@@ -36,7 +36,7 @@ describe('FakeDriver - via HTTP', function () {
   // actually going to be required by Appium
   let FakeDriver = null;
   let baseUrl;
-  const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+  const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
   before(async function () {
     wdOpts.port = TEST_PORT = await getTestPort();
     TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;

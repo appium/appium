@@ -24,8 +24,8 @@ export default {
     // the prop name will always be normalized to camelCase
     'silly-web-server-port': {
       type: 'integer',
-      min: 1,
-      max: 65535,
+      minimum: 1,
+      maximum: 65535,
       description: 'The port to use for the fake web server',
     },
     sillyWebServerHost: {

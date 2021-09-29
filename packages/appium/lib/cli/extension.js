@@ -6,6 +6,7 @@ import DriverConfig from '../driver-config';
 import PluginConfig from '../plugin-config';
 import { DRIVER_TYPE } from '../extension-config';
 import { errAndQuit, log, JSON_SPACES } from './utils';
+import { APPIUM_HOME } from './args';
 
 /**
  * Run a subcommand of the 'appium driver' type. Each subcommand has its own set of arguments which
@@ -14,7 +15,7 @@ import { errAndQuit, log, JSON_SPACES } from './utils';
  * @param {Object} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
  */
-async function runExtensionCommand (args, type) {
+async function runExtensionCommand (args, type, configObject) {
   // TODO driver config file should be locked while any of these commands are
   // running to prevent weird situations
   let jsonResult = null;
@@ -22,14 +23,20 @@ async function runExtensionCommand (args, type) {
   if (!extCmd) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
   }
-  let {json, suppressOutput, appiumHome} = args;
+  let {json, suppressOutput} = args;
   if (suppressOutput) {
     json = true;
   }
   const logFn = (msg) => log(json, msg);
-  const ConfigClass = type === DRIVER_TYPE ? DriverConfig : PluginConfig;
+  let config;
+  if (!configObject) {
+    const ConfigClass = type === DRIVER_TYPE ? DriverConfig : PluginConfig;
+    config = new ConfigClass(APPIUM_HOME, logFn);
+  } else {
+    config = configObject;
+    config.log = logFn;
+  }
   const CommandClass = type === DRIVER_TYPE ? DriverCommand : PluginCommand;
-  const config = new ConfigClass(appiumHome, logFn);
   const cmd = new CommandClass({config, json});
   try {
     await config.read();

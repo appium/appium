@@ -1,11 +1,12 @@
 import path from 'path';
 import _ from 'lodash';
 import { ArgumentParser } from 'argparse';
-import { sharedArgs, serverArgs, extensionArgs } from './args';
+import { getServerArgs, getExtensionArgs, driverConfig, pluginConfig } from './args';
 import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
 import { rootDir } from '../utils';
+import {finalize, parseArgName} from '../schema';
 import { fs } from '@appium/support';
-
+import B from 'bluebird';
 
 function makeDebugParser (parser) {
   parser.exit = (status, message = undefined) => {
@@ -13,7 +14,26 @@ function makeDebugParser (parser) {
   };
 }
 
-function getParser (debug = false) {
+/**
+ * Given an object full of arguments as returned by `argparser.parse_args`, expand the ones for extensions
+ * into a nested object structure.
+ *
+ * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
+ * @param {object} args
+ * @returns {object}
+ */
+function unpackExtensionArgDests (args) {
+  return _.reduce(args, (unpacked, value, key) => {
+    const {extensionName, extensionType, argName} = parseArgName(key);
+    const keyPath = extensionName && extensionType
+      ? `${extensionType}.${extensionName}.${argName}`
+      : argName;
+    _.set(unpacked, keyPath, value);
+    return unpacked;
+  }, {});
+}
+
+async function getParser (debug = false) {
   const parser = new ArgumentParser({
     add_help: true,
     description: 'A webdriver-compatible server for use with native and hybrid iOS and Android applications.',
@@ -28,31 +48,36 @@ function getParser (debug = false) {
   });
   const subParsers = parser.add_subparsers({dest: 'subcommand'});
 
+  await B.all([driverConfig.read(), pluginConfig.read()]);
+  finalize();
   // add the 'server' subcommand, and store the raw arguments on the parser
   // object as a way for other parts of the code to work with the arguments
   // conceptually rather than just through argparse
-  const serverArgs = addServerToParser(sharedArgs, subParsers, debug);
+  const serverArgs = await addServerToParser([], subParsers, debug);
   parser.rawArgs = serverArgs;
 
   // add the 'driver' and 'plugin' subcommands
-  addExtensionsToParser(sharedArgs, subParsers, debug);
+  addExtensionCommandsToParser([], subParsers, debug);
 
   // modify the parse_args function to insert the 'server' subcommand if the
   // user hasn't specified a subcommand or the global help command
   parser._parse_args = parser.parse_args.bind(parser);
   parser.parse_args = function (args, namespace) {
     if (_.isUndefined(args)) {
-      args = [...process.argv.slice(2)];
+      args = process.argv.slice(2);
     }
     if (!_.includes([DRIVER_TYPE, PLUGIN_TYPE, 'server', '-h', '--help', '-v', '--version'], args[0])) {
       args.splice(0, 0, 'server');
     }
-    return this._parse_args(args, namespace);
+    let result = this._parse_args(args, namespace);
+
+    result = unpackExtensionArgDests(result);
+    return result;
   }.bind(parser);
   return parser;
 }
 
-function addServerToParser (sharedArgs, subParsers, debug = false) {
+async function addServerToParser (sharedArgs, subParsers, debug = false) {
   const serverParser = subParsers.add_parser('server', {
     add_help: true,
     help: 'Run an Appium server',
@@ -62,6 +87,7 @@ function addServerToParser (sharedArgs, subParsers, debug = false) {
     makeDebugParser(serverParser);
   }
 
+  const serverArgs = await getServerArgs();
   for (const [flagsOrNames, opts] of [...sharedArgs, ...serverArgs]) {
     // add_argument mutates arguments so make copies
     serverParser.add_argument(...flagsOrNames, {...opts});
@@ -70,15 +96,7 @@ function addServerToParser (sharedArgs, subParsers, debug = false) {
   return serverArgs;
 }
 
-function getDefaultServerArgs () {
-  let defaults = {};
-  for (let [, arg] of serverArgs) {
-    defaults[arg.dest] = arg.default;
-  }
-  return defaults;
-}
-
-function addExtensionsToParser (sharedArgs, subParsers, debug = false) {
+function addExtensionCommandsToParser (sharedArgs, subParsers, debug = false) {
   for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
     const extParser = subParsers.add_parser(type, {
       add_help: true,
@@ -90,6 +108,7 @@ function addExtensionsToParser (sharedArgs, subParsers, debug = false) {
     const extSubParsers = extParser.add_subparsers({
       dest: `${type}Command`,
     });
+    const extensionArgs = getExtensionArgs();
     const parserSpecs = [
       {command: 'list', args: extensionArgs[type].list,
        help: `List available and installed ${type}s`},
@@ -118,4 +137,4 @@ function addExtensionsToParser (sharedArgs, subParsers, debug = false) {
 }
 
 export default getParser;
-export { getParser, getDefaultServerArgs };
+export { getParser };

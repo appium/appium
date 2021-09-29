@@ -155,9 +155,10 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  * const options = {}; // config object
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
+ * @returns {Promise<{parser: import('argparse').ArgumentParser, appiumDriver?: AppiumDriver}>}
  */
 async function init (args = null) {
-  let parser = await getParser();
+  const parser = await getParser();
   let throwInsteadOfExit = false;
   if (args) {
     // if we have a containing package instead of running as a CLI process,
@@ -204,7 +205,7 @@ async function init (args = null) {
   // but instead pass control to the driver CLI
   if (args.subcommand === DRIVER_TYPE || args.subcommand === PLUGIN_TYPE) {
     await runExtensionCommand(args, args.subcommand, driverConfig);
-    return;
+    return {parser};
   }
 
   if (args.logFilters) {
@@ -221,16 +222,20 @@ async function init (args = null) {
   }
 
 
-  let appiumDriver = new AppiumDriver(args);
+  const appiumDriver = new AppiumDriver(args);
   // set the config on the umbrella driver so it can match drivers to caps
   appiumDriver.driverConfig = driverConfig;
   await preflightChecks({parser, args, driverConfig, pluginConfig, throwInsteadOfExit});
 
-  return {parser, appiumDriver, driverConfig};
+  return {parser, appiumDriver};
 }
 
 async function main (args = null) {
-  const {parser, appiumDriver, driverConfig} = await init(args);
+  const {parser, appiumDriver} = await init(args);
+
+  if (!appiumDriver) {
+    return;
+  }
 
   const pluginClasses = getActivePlugins(args, pluginConfig);
   // set the active plugins on the umbrella driver so it can use them for commands

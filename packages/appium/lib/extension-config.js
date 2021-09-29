@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import log from './logger';
 import { fs, mkdirp } from '@appium/support';
@@ -30,21 +32,38 @@ const INSTALL_TYPES = [
  */
 const SCHEMA_ID_EXTENSION_PROPERTY = 'automationName';
 
-
 export default class ExtensionConfig {
-  constructor (appiumHome, extensionType, logFn = null) {
-    if (logFn === null) {
+  /**
+   *
+   * @param {string} appiumHome - `APPIUM_HOME`
+   * @param {'driver'|'plugin'} extensionType - Type of extension
+   * @param {(...args: any[])=>void} [logFn]
+   */
+  constructor (appiumHome, extensionType, logFn) {
+    if (!_.isFunction(logFn)) {
       logFn = log.error.bind(log);
     }
     this.appiumHome = appiumHome;
+    /** @type {string} */
     this.configFile = path.resolve(this.appiumHome, CONFIG_FILE_NAME);
+    /**
+     * @type {Record<string,object>}
+     */
     this.installedExtensions = {};
     this.extensionType = extensionType;
+    /** @type {'drivers'|'plugins'} */
     this.configKey = `${extensionType}s`;
     this.yamlData = {[`${DRIVER_TYPE}s`]: {}, [`${PLUGIN_TYPE}s`]: {}};
-    this.log = logFn;
+
+    this.log = /** @type {(...args: any[])=>void} */(logFn);
   }
 
+  /**
+   * Checks extensions for problems
+   * @template T
+   * @param {T} exts - Array of extData objects
+   * @returns {T}
+   */
   validate (exts) {
     const foundProblems = {};
     for (const [extName, extData] of _.toPairs(exts)) {
@@ -80,8 +99,12 @@ export default class ExtensionConfig {
     return exts;
   }
 
-  getGenericConfigProblems (ext) {
-    const {version, pkgName, installSpec, installType, installPath, mainClass} = ext;
+  /**
+   * @param {object} extData
+   * @returns {Problem[]}
+   */
+  getGenericConfigProblems (extData) {
+    const {version, pkgName, installSpec, installType, installPath, mainClass} = extData;
     const problems = [];
 
     if (!_.isString(version)) {
@@ -111,11 +134,19 @@ export default class ExtensionConfig {
     return problems;
   }
 
-  getConfigProblems (/*ext*/) {
+  /**
+   * @param {object} extData
+   * @returns {Problem[]}
+   */
+  // eslint-disable-next-line no-unused-vars
+  getConfigProblems (extData) {
     // shoud override this method if special validation is necessary for this extension type
     return [];
   }
 
+  /**
+   * @returns {void}
+   */
   applySchemaMigrations () {
     if (this.yamlData.schemaRev < 2 && _.isUndefined(this.yamlData[PLUGIN_TYPE])) {
       // at schema revision 2, we started including plugins as well as drivers in the file,
@@ -124,6 +155,9 @@ export default class ExtensionConfig {
     }
   }
 
+  /**
+   * @returns {Promise<typeof this.installedExtensions>}
+   */
   async read () {
     await mkdirp(this.appiumHome); // ensure appium home exists
     try {
@@ -131,7 +165,8 @@ export default class ExtensionConfig {
       this.applySchemaMigrations();
 
       // set the list of drivers the user has installed
-      this.installedExtensions = this.validate(this.yamlData[this.configKey]);
+      // if the config file gets corrupted, we still need to ensure `installedExtensions` is an object.
+      this.installedExtensions = this.validate(this.yamlData[this.configKey]) ?? {};
     } catch (err) {
       if (await fs.exists(this.configFile)) {
         // if the file exists and we couldn't parse it, that's a problem
@@ -152,7 +187,9 @@ export default class ExtensionConfig {
     return this.installedExtensions;
   }
 
-
+  /**
+   * @returns {Promise<void>}
+   */
   async write () {
     const newYamlData = {
       ...this.yamlData,
@@ -162,11 +199,21 @@ export default class ExtensionConfig {
     await fs.writeFile(this.configFile, YAML.stringify(newYamlData), 'utf8');
   }
 
+  /**
+   * @param {string} extName
+   * @param {object} extData
+   * @returns {Promise<void>}
+   */
   async addExtension (extName, extData) {
     this.installedExtensions[extName] = extData;
     await this.write();
   }
 
+  /**
+   * @param {string} extName
+   * @param {object} extData
+   * @returns {Promise<void>}
+   */
   async updateExtension (extName, extData) {
     this.installedExtensions[extName] = {
       ...this.installedExtensions[extName],
@@ -175,6 +222,10 @@ export default class ExtensionConfig {
     await this.write();
   }
 
+  /**
+   * @param {string} extName
+   * @returns {Promise<void>}
+   */
   async removeExtension (extName) {
     delete this.installedExtensions[extName];
     await this.write();
@@ -194,20 +245,41 @@ export default class ExtensionConfig {
     }
   }
 
-  extensionDesc () {
-    throw new Error('This must be implemented in a final class');
+  /**
+   * Returns a string describing the extension. Subclasses must implement.
+   * @param {string} extName - Extension name
+   * @param {object} extData - Extension data
+   * @returns {string}
+   * @abstract
+   */
+  // eslint-disable-next-line no-unused-vars
+  extensionDesc (extName, extData) {
+    throw new Error('This must be implemented in a subclass');
   }
 
+  /**
+   * @param {string} extName
+   * @returns {string}
+   */
   getExtensionRequirePath (extName) {
     const {pkgName, installPath} = this.installedExtensions[extName];
     return path.resolve(this.appiumHome, installPath, 'node_modules', pkgName);
   }
 
+  /**
+   * @param {string} extName
+   * @returns {string}
+   */
   getInstallPath (extName) {
     const {installPath} = this.installedExtensions[extName];
     return path.resolve(this.appiumHome, installPath);
   }
 
+  /**
+   * Loads extension and returns its main class
+   * @param {string} extName
+   * @returns {(...args: any[]) => object }
+   */
   require (extName) {
     const {mainClass} = this.installedExtensions[extName];
     const reqPath = this.getExtensionRequirePath(extName);
@@ -219,6 +291,10 @@ export default class ExtensionConfig {
     return require(reqPath)[mainClass];
   }
 
+  /**
+   * @param {string} extName
+   * @returns {boolean}
+   */
   isInstalled (extName) {
     return _.includes(Object.keys(this.installedExtensions), extName);
   }
@@ -229,3 +305,9 @@ export {
   INSTALL_TYPES, DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE,
   SCHEMA_ID_EXTENSION_PROPERTY, APPIUM_HOME
 };
+
+/**
+ * @typedef {Object} Problem
+ * @property {string} err - Error message
+ * @property {any} val - Associated value
+ */

@@ -68,7 +68,7 @@ async function searchConfigFile (lc) {
   log.debug('No config file specified; searching...');
   const result = await lc.search();
   if (!result?.filepath) {
-    log.debug('Could not find a config file');
+    log.debug('Could not find an Appium server config file');
   }
   return result;
 }

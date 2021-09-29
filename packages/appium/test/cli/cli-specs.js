@@ -9,7 +9,7 @@ import sinon from 'sinon';
 describe('DriverCommand', function () {
   const config = new DriverConfig(DEFAULT_APPIUM_HOME);
   const driver = 'fake';
-  const pkgName = 'appium-fake-driver';
+  const pkgName = '@appium/fake-driver';
   config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
   const dc = new DriverCommand({config, json: true});
 

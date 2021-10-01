@@ -50,7 +50,7 @@
     "@types/mocha": "9.0.0",
     "@types/node": "15.14.9",
     "ansi-red": "0.1.1",
-    "axios": "0.21.4",
+    "axios": "0.22.0",
     "babel-eslint": "10.1.0",
     "babel-plugin-istanbul": "6.0.0",
     "babel-plugin-source-map-support": "2.1.3",

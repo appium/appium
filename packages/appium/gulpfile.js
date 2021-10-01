@@ -38,11 +38,11 @@ function writeAppiumConfigJsonSchema (file, enc, done) {
 // non-JS files that should be copied into the build dir (since babel does not compile them)
 gulp.task('copy-files', gulp.parallel(
   function copyTestFixtures () {
-    return gulp.src('./test/fixtures/*.txt')
+    return gulp.src('./test/fixtures/*.{txt,yaml,json}')
       .pipe(gulp.dest('./build/test/fixtures'));
   },
   function copyTestConfigFixtures () {
-    return gulp.src('./test/fixtures/config/*.txt')
+    return gulp.src('./test/fixtures/config/*.{txt,yaml,json}')
       .pipe(gulp.dest('./build/test/fixtures/config'));
   }
 ));

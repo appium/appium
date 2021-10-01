@@ -1,4 +1,4 @@
-import rewiremock from 'rewiremock/node';
+import {rewiremock} from '../helpers';
 import sinon from 'sinon';
 import flattenedSchema from '../fixtures/flattened-schema';
 import argsForSchema from '../fixtures/args-for-schema';

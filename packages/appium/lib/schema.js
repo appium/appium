@@ -62,6 +62,18 @@ export function registerSchema (extensionType, extensionName, schema) {
  */
 const registeredSchemas = new Map();
 
+
+/**
+ * Returns `true` if the extension has registered a schema.
+ * @param {'driver'|'plugin'} extensionType
+ * @param {string} extensionName
+ * @returns {boolean}
+ */
+export function hasRegisteredSchema (extensionType, extensionName) {
+  return registeredSchemas.has(extensionType) &&
+  /** @type {Map<string,import('ajv').SchemaObject>} */(registeredSchemas.get(extensionType)).has(extensionName);
+}
+
 /**
  * After all potential schemas have been registered, combine and finalize the schema, then add it to the ajv instance.
  *

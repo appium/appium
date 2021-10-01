@@ -34,23 +34,6 @@ function inspectObject (args) {
 }
 
 /**
- * Given a set of CLI args and the name of a driver or plugin, extract those args for that plugin
- * @param {Object} extensionArgs - arguments of the form {[extName]: {[argName]: [argValue]}}
- * @param {string} extensionName - the name of the extension
- * @return {Object} the arg object for that extension alone
- */
-function getExtensionArgs (extensionArgs, extensionName) {
-  if (!_.has(extensionArgs, extensionName)) {
-    return {};
-  }
-  if (!_.isPlainObject(extensionArgs[extensionName])) {
-    throw new TypeError(`Driver or plugin arguments must be plain objects`);
-  }
-  return extensionArgs[extensionName];
-}
-
-
-/**
  * Given a set of args and a set of constraints, throw an error if any args are not mentioned in
  * the set of constraints
  * @param {Object} extensionArgs the args
@@ -269,6 +252,6 @@ const rootDir = fs.findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes, getExtensionArgs,
+  getPackageVersion, pullSettings, removeAppiumPrefixes,
   validateExtensionArgs
 };

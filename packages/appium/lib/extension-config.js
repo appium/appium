@@ -1,19 +1,13 @@
 // @ts-check
 
 import _ from 'lodash';
-import log from './logger';
-import { fs, mkdirp } from '@appium/support';
-import path from 'path';
 import os from 'os';
-import YAML from 'yaml';
+import path from 'path';
+import { getExtConfigIOInstance } from './ext-config-io';
+import log from './logger';
 
-const DRIVER_TYPE = 'driver';
-const PLUGIN_TYPE = 'plugin';
 const DEFAULT_APPIUM_HOME = path.resolve(os.homedir(), '.appium');
 const APPIUM_HOME = process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME;
-
-const CONFIG_FILE_NAME = 'extensions.yaml';
-const CONFIG_SCHEMA_REV = 2;
 
 const INSTALL_TYPE_NPM = 'npm';
 const INSTALL_TYPE_LOCAL = 'local';
@@ -44,17 +38,14 @@ export default class ExtensionConfig {
       logFn = log.error.bind(log);
     }
     this.appiumHome = appiumHome;
-    /** @type {string} */
-    this.configFile = path.resolve(this.appiumHome, CONFIG_FILE_NAME);
     /**
      * @type {Record<string,object>}
      */
     this.installedExtensions = {};
+    this.io = getExtConfigIOInstance(appiumHome);
     this.extensionType = extensionType;
     /** @type {'drivers'|'plugins'} */
     this.configKey = `${extensionType}s`;
-    this.yamlData = {[`${DRIVER_TYPE}s`]: {}, [`${PLUGIN_TYPE}s`]: {}};
-
     this.log = /** @type {(...args: any[])=>void} */(logFn);
   }
 
@@ -90,7 +81,7 @@ export default class ExtensionConfig {
 
     if (!_.isEmpty(problemSummaries)) {
       this.log(`Appium encountered one or more errors while validating ` +
-               `the ${this.configKey} extension file (${this.configFile}):`);
+               `the ${this.configKey} extension file (${this.io.filepath}):`);
       for (const summary of problemSummaries) {
         this.log(summary);
       }
@@ -145,58 +136,17 @@ export default class ExtensionConfig {
   }
 
   /**
-   * @returns {void}
-   */
-  applySchemaMigrations () {
-    if (this.yamlData.schemaRev < 2 && _.isUndefined(this.yamlData[PLUGIN_TYPE])) {
-      // at schema revision 2, we started including plugins as well as drivers in the file,
-      // so make sure we at least have an empty section for it
-      this.yamlData[PLUGIN_TYPE] = {};
-    }
-  }
-
-  /**
    * @returns {Promise<typeof this.installedExtensions>}
    */
   async read () {
-    await mkdirp(this.appiumHome); // ensure appium home exists
-    try {
-      this.yamlData = YAML.parse(await fs.readFile(this.configFile, 'utf8'));
-      this.applySchemaMigrations();
-
-      // set the list of drivers the user has installed
-      // if the config file gets corrupted, we still need to ensure `installedExtensions` is an object.
-      this.installedExtensions = this.validate(this.yamlData[this.configKey]) ?? {};
-    } catch (err) {
-      if (await fs.exists(this.configFile)) {
-        // if the file exists and we couldn't parse it, that's a problem
-        throw new Error(`Appium had trouble loading the extension installation ` +
-                        `cache file (${this.configFile}). Ensure it exists and is ` +
-                        `readable. Specific error: ${err.message}`);
-      }
-
-      // if the config file doesn't exist, try to write an empty one, to make
-      // sure we actually have write privileges, and complain if we don't
-      try {
-        await this.write();
-      } catch {
-        throw new Error(`Appium could not read or write from the Appium Home directory ` +
-                        `(${this.appiumHome}). Please ensure it is writable.`);
-      }
-    }
-    return this.installedExtensions;
+    return (this.installedExtensions = await this.io.read(this.extensionType));
   }
 
   /**
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>}
    */
   async write () {
-    const newYamlData = {
-      ...this.yamlData,
-      schemaRev: CONFIG_SCHEMA_REV,
-      [this.configKey]: this.installedExtensions
-    };
-    await fs.writeFile(this.configFile, YAML.stringify(newYamlData), 'utf8');
+    return await this.io.write();
   }
 
   /**
@@ -300,14 +250,15 @@ export default class ExtensionConfig {
   }
 }
 
-export {
-  INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
-  INSTALL_TYPES, DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE,
-  SCHEMA_ID_EXTENSION_PROPERTY, APPIUM_HOME
-};
 
 /**
  * @typedef {Object} Problem
  * @property {string} err - Error message
  * @property {any} val - Associated value
  */
+
+export { DRIVER_TYPE, PLUGIN_TYPE } from './ext-config-io';
+export {
+  INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
+  INSTALL_TYPES, DEFAULT_APPIUM_HOME, SCHEMA_ID_EXTENSION_PROPERTY, APPIUM_HOME
+};

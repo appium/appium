@@ -1,12 +1,12 @@
-import path from 'path';
-import _ from 'lodash';
-import { ArgumentParser } from 'argparse';
-import { getServerArgs, getExtensionArgs, driverConfig, pluginConfig } from './args';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
-import { rootDir } from '../utils';
-import {finalize, parseArgName} from '../schema';
 import { fs } from '@appium/support';
+import { ArgumentParser } from 'argparse';
 import B from 'bluebird';
+import _ from 'lodash';
+import path from 'path';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
+import { finalize, parseArgName } from '../schema';
+import { rootDir } from '../utils';
+import { driverConfig, getExtensionArgs, getServerArgs, pluginConfig } from './args';
 
 function makeDebugParser (parser) {
   parser.exit = (status, message = undefined) => {
@@ -53,11 +53,11 @@ async function getParser (debug = false) {
   // add the 'server' subcommand, and store the raw arguments on the parser
   // object as a way for other parts of the code to work with the arguments
   // conceptually rather than just through argparse
-  const serverArgs = await addServerToParser([], subParsers, debug);
+  const serverArgs = addServerToParser(subParsers, debug);
   parser.rawArgs = serverArgs;
 
   // add the 'driver' and 'plugin' subcommands
-  addExtensionCommandsToParser([], subParsers, debug);
+  addExtensionCommandsToParser(subParsers, debug);
 
   // modify the parse_args function to insert the 'server' subcommand if the
   // user hasn't specified a subcommand or the global help command
@@ -77,7 +77,7 @@ async function getParser (debug = false) {
   return parser;
 }
 
-async function addServerToParser (sharedArgs, subParsers, debug = false) {
+function addServerToParser (subParsers, debug = false) {
   const serverParser = subParsers.add_parser('server', {
     add_help: true,
     help: 'Run an Appium server',
@@ -87,8 +87,8 @@ async function addServerToParser (sharedArgs, subParsers, debug = false) {
     makeDebugParser(serverParser);
   }
 
-  const serverArgs = await getServerArgs();
-  for (const [flagsOrNames, opts] of [...sharedArgs, ...serverArgs]) {
+  const serverArgs = getServerArgs();
+  for (const [flagsOrNames, opts] of serverArgs) {
     // add_argument mutates arguments so make copies
     serverParser.add_argument(...flagsOrNames, {...opts});
   }
@@ -96,7 +96,7 @@ async function addServerToParser (sharedArgs, subParsers, debug = false) {
   return serverArgs;
 }
 
-function addExtensionCommandsToParser (sharedArgs, subParsers, debug = false) {
+function addExtensionCommandsToParser (subParsers, debug = false) {
   for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
     const extParser = subParsers.add_parser(type, {
       add_help: true,
@@ -128,7 +128,7 @@ function addExtensionCommandsToParser (sharedArgs, subParsers, debug = false) {
       if (debug) {
         makeDebugParser(parser);
       }
-      for (const [flagsOrNames, opts] of [...sharedArgs, ...args]) {
+      for (const [flagsOrNames, opts] of args) {
         // add_argument mutates params so make sure to send in copies instead
         parser.add_argument(...flagsOrNames, {...opts});
       }

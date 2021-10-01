@@ -1,11 +1,9 @@
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, getExtensionArgs, validateExtensionArgs
+  removeAppiumPrefixes, validateExtensionArgs
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
-
-const FAKE_DRIVER_NAME = `fake`;
 
 describe('utils', function () {
   describe('parseCapsForInnerDriver()', function () {
@@ -208,19 +206,6 @@ describe('utils', function () {
       const settings = pullSettings(caps);
       settings.should.eql({});
       caps.should.eql({});
-    });
-  });
-
-  describe('getExtensionArgs()', function () {
-    it('should return an empty object if extension not in args', function () {
-      getExtensionArgs({foo: {bar: 1234}}, FAKE_DRIVER_NAME).should.eql({});
-    });
-    it('should return the args for an extension', function () {
-      getExtensionArgs({foo: {bar: 1234}}, 'foo').should.eql({bar: 1234});
-    });
-    it('should throw an error if arg is not a plain object', function () {
-      const fakeDriverArgs = {fake: 1234};
-      (() => getExtensionArgs(fakeDriverArgs, FAKE_DRIVER_NAME,)).should.throw();
     });
   });
 

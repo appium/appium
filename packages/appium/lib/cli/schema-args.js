@@ -1,10 +1,12 @@
 // @ts-check
 
-// This module concerns functions which convert schema definitions to `argparse`-compatible data structures,
-// for deriving CLI arguments from a schema.
-
 import _ from 'lodash';
-import { flattenSchema, parseArgName} from '../schema';
+import { flattenSchema, parseArgName } from '../schema';
+
+/**
+ * This module concerns functions which convert schema definitions to `argparse`-compatible data structures,
+ * for deriving CLI arguments from a schema.
+ */
 
 /**
  * Options with alias lengths less than this will be considered "short" flags.
@@ -31,10 +33,8 @@ function aliasToFlag (alias) {
  */
 function aliasToDest (alias, {appiumCliDest} = {}) {
   const {extensionName, extensionType, argName} = parseArgName(alias);
-  if (extensionName && extensionType) {
-    return `${extensionType}-${extensionName}-${_.camelCase(appiumCliDest ?? argName)}`;
-  }
-  return _.camelCase(appiumCliDest ?? argName);
+  const baseArgName = _.camelCase(appiumCliDest ?? argName);
+  return extensionName && extensionType ? `${extensionType}-${extensionName}-${baseArgName}` : baseArgName;
 }
 
 /**

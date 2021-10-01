@@ -139,8 +139,7 @@ function makeRunArgs (type) {
   ];
 }
 
-
-const getServerArgs = function getServerArgs () {
+function getServerArgs () {
   return [
     ...toParserArgs({
       overrides: {
@@ -169,7 +168,7 @@ const getServerArgs = function getServerArgs () {
     }),
     ...serverArgsDisallowedInConfig,
   ];
-};
+}
 
 /**
  * These don't make sense in the context of a config file for obvious reasons.

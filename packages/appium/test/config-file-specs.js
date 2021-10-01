@@ -1,14 +1,8 @@
 // @ts-check
 
-import rewiremock from 'rewiremock/node';
+import {rewiremock} from './helpers';
 import sinon from 'sinon';
-import chai from 'chai';
-import sinonChai from 'sinon-chai';
-import chaiAsPromised from 'chai-as-promised';
 import appiumConfigSchema from '../lib/appium-config-schema';
-
-chai.use(chaiAsPromised).use(sinonChai);
-chai.should();
 
 describe('config-file', function () {
   /**

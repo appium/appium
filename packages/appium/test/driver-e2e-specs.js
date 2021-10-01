@@ -20,7 +20,7 @@ let TEST_PORT;
 const sillyWebServerPort = 1234;
 const sillyWebServerHost = 'hey';
 const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
-const FAKE_DRIVER_ARGS = {fake: FAKE_ARGS};
+const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const wdOpts = {
@@ -104,8 +104,7 @@ describe('FakeDriver - via HTTP', function () {
   describe('cli args handling for passed in args', function () {
     before(async function () {
       await serverClose();
-      const args = {driverArgs: FAKE_DRIVER_ARGS};
-      await serverStart(args);
+      await serverStart(FAKE_DRIVER_ARGS);
     });
     after(async function () {
       await serverClose();

@@ -1,3 +1,4 @@
+import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
 import path from 'path';
 import {insertAppiumPrefixes} from '../lib/utils';
 import getPort from 'get-port';
@@ -29,4 +30,8 @@ async function getTestPort () {
   return await (TEST_PORT || getPort());
 }
 
-export { TEST_FAKE_APP, TEST_HOST, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT, getTestPort };
+overrideEntryPoint(module);
+addPlugin(plugins.nodejs);
+addPlugin(plugins.childOnly);
+
+export { TEST_FAKE_APP, TEST_HOST, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT, getTestPort, rewiremock };

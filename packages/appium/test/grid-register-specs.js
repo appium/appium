@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import rewiremock from 'rewiremock/node';
+import {rewiremock} from './helpers';
 
 describe('grid-register', function () {
   let sandbox;

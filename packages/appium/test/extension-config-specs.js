@@ -48,6 +48,7 @@ describe('ExtensionConfig', function () {
 
       describe('when provided no arguments', function () {
         it('should throw', function () {
+          // @ts-ignore
           (() => driverConfig.getConfigProblems()).should.throw();
         });
       });

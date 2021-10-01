@@ -27,7 +27,13 @@ describe('CLI', function () {
 
   async function run (driverCmd, args = [], raw = false, ext = 'driver') {
     try {
-      const ret = await exec(process.execPath, [executable, ext, driverCmd, ...args], {cwd: PROJECT_ROOT, env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH}});
+      const ret = await exec(process.execPath, [executable, ext, driverCmd, ...args], {
+        cwd: PROJECT_ROOT,
+        env: {
+          APPIUM_HOME: appiumHome,
+          PATH: process.env.PATH
+        }
+      });
       if (raw) {
         return ret;
       }
@@ -100,11 +106,11 @@ describe('CLI', function () {
       });
       it('should install a driver from github', async function () {
         await clear();
-        const ret = JSON.parse(await run('install', ['appium/@appium/fake-driver', '--source',
-          'github', '--package', '@appium/fake-driver', '--json']));
-        ret.fake.pkgName.should.eql('@appium/fake-driver');
+        const ret = JSON.parse(await run('install', ['appium/appium-fake-driver', '--source',
+          'github', '--package', 'appium-fake-driver', '--json']));
+        ret.fake.pkgName.should.eql('appium-fake-driver');
         ret.fake.installType.should.eql('github');
-        ret.fake.installSpec.should.eql('appium/@appium/fake-driver');
+        ret.fake.installSpec.should.eql('appium/appium-fake-driver');
         const list = JSON.parse(await run('list', ['--installed', '--json']));
         delete list.fake.installed;
         list.should.eql(ret);
@@ -122,11 +128,11 @@ describe('CLI', function () {
       });
       it('should install a driver from a remote git repo', async function () {
         await clear();
-        const ret = JSON.parse(await run('install', [localFakeDriverPath,
+        const ret = JSON.parse(await run('install', ['git+https://github.com/appium/appium-fake-driver.git',
           '--source', 'git', '--package', 'appium-fake-driver', '--json']));
         ret.fake.pkgName.should.eql('appium-fake-driver');
         ret.fake.installType.should.eql('git');
-        ret.fake.installSpec.should.eql(localFakeDriverPath);
+        ret.fake.installSpec.should.eql('git+https://github.com/appium/appium-fake-driver');
         const list = JSON.parse(await run('list', ['--installed', '--json']));
         delete list.fake.installed;
         list.should.eql(ret);

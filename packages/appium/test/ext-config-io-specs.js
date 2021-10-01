@@ -230,7 +230,29 @@ describe('ExtensionConfigIO', function () {
         });
       });
 
+      describe('when the config file could not be written', function () {
+        beforeEach(function () {
+          mocks['@appium/support'].fs.writeFile = sandbox.stub().rejects(new Error());
+          io._dirty = true;
+        });
+
+        it('should reject', async function () {
+          await expect(io.write()).to.be.rejectedWith(Error, /Appium could not parse or write/i);
+        });
+      });
+
     });
 
+    describe('when called before `read()`', function () {
+      it('should return `false`', async function () {
+        expect(await io.write()).to.be.false;
+      });
+
+      describe('when called with `force: true`', function () {
+        it('should reject', async function () {
+          await expect(io.write(true)).to.be.rejectedWith(ReferenceError, 'No data to write. Call `read()` first');
+        });
+      });
+    });
   });
 });

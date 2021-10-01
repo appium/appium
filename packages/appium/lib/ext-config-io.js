@@ -184,7 +184,7 @@ class ExtConfigIO {
       await fs.writeFile(this.filepath, YAML.stringify(dataToWrite), 'utf8');
     } catch {
       throw new Error(
-        `Appium could not read or write from the Appium Home directory ` +
+        `Appium could not parse or write from the Appium Home directory ` +
           `(${this._appiumHome}). Please ensure it is writable.`,
       );
     }

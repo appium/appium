@@ -131,7 +131,9 @@ class AppiumDriver extends BaseDriver {
       validateExtensionArgs(cliArgs, extClass.argsConstraints);
       log.debug(`Set CLI arguments on ${extName} ${extType} instance: ${JSON.stringify(cliArgs)}`);
     }
-    extInstance.cliArgs = cliArgs;
+    if (!_.isEmpty(cliArgs)) {
+      extInstance.cliArgs = cliArgs;
+    }
   }
 
   /**

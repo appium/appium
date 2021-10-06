@@ -44,7 +44,7 @@
     "authorize-ios": "1.2.1",
     "bluebird": "3.7.2",
     "colors": "1.4.0",
-    "inquirer": "8.1.5",
+    "inquirer": "8.2.0",
     "lodash": "4.17.21",
     "source-map-support": "0.5.20",
     "teen_process": "1.16.0",

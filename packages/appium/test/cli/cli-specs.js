@@ -1,15 +1,15 @@
 // transpile:mocha
 
-import { DEFAULT_APPIUM_HOME } from '../lib/extension-config';
-import DriverConfig from '../lib/driver-config';
-import DriverCommand from '../lib/cli/driver-command';
+import { DEFAULT_APPIUM_HOME } from '../../lib/extension-config';
+import DriverConfig from '../../lib/driver-config';
+import DriverCommand from '../../lib/cli/driver-command';
 import sinon from 'sinon';
 
 
 describe('DriverCommand', function () {
   const config = new DriverConfig(DEFAULT_APPIUM_HOME);
   const driver = 'fake';
-  const pkgName = 'appium-fake-driver';
+  const pkgName = '@appium/fake-driver';
   config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
   const dc = new DriverCommand({config, json: true});
 

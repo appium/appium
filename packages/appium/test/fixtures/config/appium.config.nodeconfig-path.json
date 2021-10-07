@@ -1,0 +1,5 @@
+{
+  "server": {
+    "nodeconfig": "./packages/appium/test/fixtures/config/nodeconfig.json"
+  }
+}

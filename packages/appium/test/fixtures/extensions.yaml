@@ -1,0 +1,27 @@
+drivers:
+  fake:
+    automationName: Fake
+    platformNames:
+      - Fake
+    mainClass: FakeDriver
+    schema: ./build/lib/fake-driver-schema.js
+    scripts:
+      fake-error: ./build/lib/scripts/fake-error.js
+      fake-success: ./build/lib/scripts/fake-success.js
+    pkgName: '@appium/fake-driver'
+    version: 3.0.5
+    installPath: '@appium/fake-driver'
+    installType: local
+    installSpec: /Users/alice/projects/appium/packages/fake-driver
+plugins:
+  fake:
+    mainClass: FakePlugin
+    scripts:
+      fake-error: ./build/lib/scripts/fake-error.js
+      fake-success: ./build/lib/scripts/fake-success.js
+    pkgName: '@appium/fake-plugin'
+    version: 1.2.2
+    installPath: '@appium/fake-plugin'
+    installType: local
+    installSpec: /Users/alice/projects/appium/node_modules/@appium/fake-plugin
+schemaRev: 2

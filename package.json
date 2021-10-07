@@ -31,6 +31,8 @@
     "doctor": "node ./packages/doctor",
     "e2e-test": "lerna exec \"gulp e2e-test\"",
     "generate-docs": "lerna run --scope=appium generate-docs",
+    "pregenerate-schema-declarations": "lerna exec --scope=appium \"gulp transpile\"",
+    "generate-schema-declarations": "node ./scripts/generate-schema-declarations.js",
     "postinstall": "lerna bootstrap && lerna exec --parallel \"gulp prepublish\"",
     "install-fake-driver": "lerna run --scope=appium install-fake-driver",
     "lint": "lerna exec --parallel \"gulp lint\" && lerna run --scope=@appium/eslint-config-appium lint",
@@ -56,7 +58,7 @@
     "test:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins \"gulp once\"",
     "test:support": "lerna exec --scope=@appium/support \"gulp once\"",
     "test:test-support": "lerna exec --scope=@appium/test-support \"gulp once\"",
-    "preversion": "npm run sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
+    "preversion": "npm run sync-pkgs && npm run generate-schema-declarations && git add -A packages/appium/README.md packages/*/package.json",
     "watch": "lerna exec watch"
   },
   "pre-commit": [
@@ -64,7 +66,8 @@
     "precommit-lint"
   ],
   "lint-staged": {
-    "*.js": "eslint --fix"
+    "*.js": "eslint --fix",
+    "packages/appium/lib/appium-config-schema.js": "npm run generate-schema-declarations && git add -A ./packages/appium/types/appium-config.d.ts"
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",
@@ -101,6 +104,7 @@
     "get-port": "5.1.1",
     "gulp": "4.0.2",
     "handlebars": "4.7.7",
+    "json-schema-to-typescript": "10.1.4",
     "lerna": "4.0.0",
     "lint-staged": "11.2.6",
     "mjpeg-server": "0.3.1",
@@ -112,6 +116,7 @@
     "sinon": "11.1.2",
     "sinon-chai": "3.7.0",
     "sync-monorepo-packages": "0.3.4",
+    "through2": "4.0.2",
     "type-fest": "2.5.2",
     "validate.js": "0.13.1",
     "webdriverio": "6.12.1",

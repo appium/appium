@@ -4,16 +4,21 @@ import { INSTALL_TYPES } from '../extension-config';
 
 // serverArgs will be added to the `server` (default) subcommand
 function parseSecurityFeatures (features) {
+  let parsedFeatures;
   const splitter = (splitOn, str) => `${str}`.split(splitOn)
     .map((s) => s.trim())
     .filter(Boolean);
-  let parsedFeatures;
-  try {
-    parsedFeatures = splitter(',', features);
-  } catch (err) {
-    throw new TypeError('Could not parse value of --allow/deny-insecure. Should be ' +
-      'a list of strings separated by commas, or a path to a file ' +
-      'listing one feature name per line.');
+  if (_.isString(features)) {
+    try {
+      parsedFeatures = splitter(',', features);
+    } catch (err) {
+      throw new TypeError('Could not parse value of --allow/deny-insecure. Should be ' +
+        'a list of strings separated by commas, or a path to a file ' +
+        'listing one feature name per line.');
+    }
+  } else {
+    // it's an array
+    parsedFeatures = features;
   }
 
   if (parsedFeatures.length === 1 && fs.existsSync(parsedFeatures[0])) {

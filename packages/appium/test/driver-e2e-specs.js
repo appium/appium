@@ -7,7 +7,7 @@ import axios from 'axios';
 import { remote as wdio } from 'webdriverio';
 import { main as appiumServer } from '../lib/main';
 import { DEFAULT_APPIUM_HOME, INSTALL_TYPE_LOCAL, DRIVER_TYPE } from '../lib/extension-config';
-import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort} from './helpers';
+import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT } from './helpers';
 import { BaseDriver } from '@appium/base-driver';
 import DriverConfig from '../lib/driver-config';
 import { runExtensionCommand } from '../lib/cli/extension';
@@ -20,7 +20,7 @@ let TEST_PORT;
 const sillyWebServerPort = 1234;
 const sillyWebServerHost = 'hey';
 const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
-const FAKE_DRIVER_ARGS = {fake: FAKE_ARGS};
+const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const wdOpts = {
@@ -36,7 +36,7 @@ describe('FakeDriver - via HTTP', function () {
   // actually going to be required by Appium
   let FakeDriver = null;
   let baseUrl;
-  const FAKE_DRIVER_DIR = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+  const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
   before(async function () {
     wdOpts.port = TEST_PORT = await getTestPort();
     TEST_SERVER = `http://${TEST_HOST}:${TEST_PORT}`;
@@ -104,8 +104,7 @@ describe('FakeDriver - via HTTP', function () {
   describe('cli args handling for passed in args', function () {
     before(async function () {
       await serverClose();
-      const args = {driverArgs: FAKE_DRIVER_ARGS};
-      await serverStart(args);
+      await serverStart(FAKE_DRIVER_ARGS);
     });
     after(async function () {
       await serverClose();

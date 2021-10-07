@@ -155,7 +155,7 @@ describe('FakePlugin', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {...baseArgs, pluginArgs: FAKE_PLUGIN_ARGS};
+      const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
       server = await appiumServer(args);
     });
     after(async function () {

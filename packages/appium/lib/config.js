@@ -9,6 +9,7 @@ import {
   StoreDeprecatedDefaultCapabilityAction, DEFAULT_CAPS_ARG,
 } from './cli/argparse-actions';
 import findUp from 'find-up';
+import { getDefaultsFromSchema } from './schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 
@@ -156,9 +157,74 @@ async function showConfig () {
   console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
 }
 
-function getNonDefaultArgs (parser, args) {
-  return parser.rawArgs.reduce((acc, [, {dest, default: defaultValue}]) => {
-    if (args[dest] && args[dest] !== defaultValue) {
+function getNonDefaultServerArgs (parser, args) {
+  // hopefully these function names are descriptive enough
+
+  function typesDiffer (dest) {
+    return typeof args[dest] !== typeof defaultsFromSchema[dest];
+  }
+
+  function defaultValueIsArray (dest) {
+    return _.isArray(defaultsFromSchema[dest]);
+  }
+
+  function argsValueIsArray (dest) {
+    return _.isArray(args[dest]);
+  }
+
+  function arraysDiffer (dest) {
+    return _.difference(args[dest], defaultsFromSchema[dest]).length > 0;
+  }
+
+  function valuesUnequal (dest) {
+    return args[dest] !== defaultsFromSchema[dest];
+  }
+
+  function defaultIsDefined (dest) {
+    return !_.isUndefined(defaultsFromSchema[dest]);
+  }
+
+  // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
+
+  const argValueNotArrayOrArraysDiffer = _.overSome([
+    _.negate(argsValueIsArray),
+    arraysDiffer
+  ]);
+
+  const defaultValueNotArrayAndValuesUnequal = _.overEvery([
+    _.negate(defaultValueIsArray), valuesUnequal
+  ]);
+
+  /**
+   * This used to be a hideous conditional, but it's broken up into a hideous function instead.
+   * hopefully this makes things a little more understandable.
+   * - checks if the default value is defined
+   * - if so, and the default is not an array:
+   *   - ensures the types are the same
+   *   - ensures the values are equal
+   * - if so, and the default is an array:
+   *   - ensures the args value is an array
+   *   - ensures the args values do not differ from the default values
+   * @param {string} dest - argument name (`dest` value)
+   * @returns {boolean}
+   */
+  const isNotDefault = _.overEvery([
+    defaultIsDefined,
+    _.overSome([
+      typesDiffer,
+      _.overEvery([
+        defaultValueIsArray,
+        argValueNotArrayOrArraysDiffer
+      ]),
+      defaultValueNotArrayAndValuesUnequal
+    ])
+  ]);
+
+  // this is a merge of top-level defaults and server defaults.
+  const defaultsFromSchema = getDefaultsFromSchema();
+
+  return parser.rawArgs.reduce((acc, [, {dest}]) => {
+    if (isNotDefault(dest)) {
       acc[dest] = args[dest];
     }
     return acc;
@@ -182,56 +248,6 @@ function getDeprecatedArgs (parser, args) {
   }, {});
 }
 
-function checkValidPort (port, portName) {
-  if (port > 0 && port < 65536) return true; // eslint-disable-line curly
-  logger.error(`Port '${portName}' must be greater than 0 and less than 65536. Currently ${port}`);
-  return false;
-}
-
-function validateServerArgs (parser, args) {
-  // arguments that cannot both be set
-  let exclusives = [
-    ['noReset', 'fullReset'],
-    ['ipa', 'safari'],
-    ['app', 'safari'],
-    ['forceIphone', 'forceIpad'],
-    ['deviceName', 'defaultDevice']
-  ];
-
-  for (let exSet of exclusives) {
-    let numFoundInArgs = 0;
-    for (let opt of exSet) {
-      if (_.has(args, opt) && args[opt]) {
-        numFoundInArgs++;
-      }
-    }
-    if (numFoundInArgs > 1) {
-      throw new Error(`You can't pass in more than one argument from the ` +
-                      `set ${JSON.stringify(exSet)}, since they are ` +
-                      `mutually exclusive`);
-    }
-  }
-
-  const validations = {
-    port: checkValidPort,
-    callbackPort: checkValidPort,
-    bootstrapPort: checkValidPort,
-    chromedriverPort: checkValidPort,
-    robotPort: checkValidPort,
-    backendRetries: (r) => r >= 0,
-  };
-
-  const nonDefaultArgs = getNonDefaultArgs(parser, args);
-
-  for (let [arg, validator] of _.toPairs(validations)) {
-    if (_.has(nonDefaultArgs, arg)) {
-      if (!validator(args[arg], arg)) {
-        throw new Error(`Invalid argument for param ${arg}: ${args[arg]}`);
-      }
-    }
-  }
-}
-
 async function validateTmpDir (tmpDir) {
   try {
     await mkdirp(tmpDir);
@@ -242,8 +258,8 @@ async function validateTmpDir (tmpDir) {
 }
 
 export {
-  getBuildInfo, validateServerArgs, checkNodeOk, showConfig,
-  warnNodeDeprecations, validateTmpDir, getNonDefaultArgs,
-  getGitRev, checkValidPort, APPIUM_VER, updateBuildInfo,
-  getDeprecatedArgs,
+  getBuildInfo, checkNodeOk, showConfig,
+  warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
+  getGitRev, APPIUM_VER, updateBuildInfo,
+  getDeprecatedArgs
 };

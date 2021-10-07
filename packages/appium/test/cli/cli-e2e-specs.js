@@ -2,13 +2,12 @@
 import path from 'path';
 import { exec } from 'teen_process';
 import { tempDir, fs, mkdirp, util } from '@appium/support';
-import { KNOWN_DRIVERS } from '../lib/drivers';
-import { PROJECT_ROOT as cwd } from './helpers';
+import { KNOWN_DRIVERS } from '../../lib/drivers';
+import { PROJECT_ROOT } from '../helpers';
 
 
-// cannot use `require.resolve()` here (w/o acrobatics) due to the ESM context.
-// could also derive it from the `package.json` if we wanted
-const executable = path.join(cwd, 'packages', 'appium', 'build', 'lib', 'main.js');
+// the ESM `main.js` is not executable as-is
+const executable = path.join(PROJECT_ROOT, 'packages', 'appium', 'build', 'lib', 'main.js');
 
 describe('CLI', function () {
   let appiumHome;
@@ -27,15 +26,26 @@ describe('CLI', function () {
   }
 
   async function run (driverCmd, args = [], raw = false, ext = 'driver') {
-    args = [...args, '--appium-home', appiumHome];
-    const ret = await exec('node', [executable, ext, driverCmd, ...args], {cwd});
-    if (raw) {
-      return ret;
+    try {
+      const ret = await exec(process.execPath, [executable, ext, driverCmd, ...args], {
+        cwd: PROJECT_ROOT,
+        env: {
+          APPIUM_HOME: appiumHome,
+          PATH: process.env.PATH
+        }
+      });
+      if (raw) {
+        return ret;
+      }
+      return ret.stdout;
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      throw err;
     }
-    return ret.stdout;
   }
   describe('Driver CLI', function () {
-    const localFakeDriverPath = path.resolve(__dirname, '..', '..', '..', 'fake-driver');
+    const localFakeDriverPath = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
     describe('list', function () {
       it('should list available drivers', async function () {
         const stdout = await run('list');
@@ -55,9 +65,9 @@ describe('CLI', function () {
       });
       it('should show updates for installed drivers with --updates', async function () {
         await clear();
-        await run('install', ['appium-fake-driver@0.9.0', '--source', 'npm', '--json']);
+        await run('install', ['@appium/fake-driver@3.0.4', '--source', 'npm', '--json']);
         const {fake} = JSON.parse(await run('list', ['--updates', '--json']));
-        util.compareVersions(fake.updateVersion, '>', '0.9.0').should.be.true;
+        util.compareVersions(fake.updateVersion, '>', '3.0.4').should.be.true;
         const stdout = await run('list', ['--updates']);
         stdout.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
       });
@@ -76,20 +86,20 @@ describe('CLI', function () {
       });
       it('should install a driver from npm', async function () {
         await clear();
-        const ret = JSON.parse(await run('install', ['appium-fake-driver', '--source', 'npm', '--json']));
-        ret.fake.pkgName.should.eql('appium-fake-driver');
+        const ret = JSON.parse(await run('install', ['@appium/fake-driver', '--source', 'npm', '--json']));
+        ret.fake.pkgName.should.eql('@appium/fake-driver');
         ret.fake.installType.should.eql('npm');
-        ret.fake.installSpec.should.eql('appium-fake-driver');
+        ret.fake.installSpec.should.eql('@appium/fake-driver');
         const list = JSON.parse(await run('list', ['--installed', '--json']));
         delete list.fake.installed;
         list.should.eql(ret);
       });
       it('should install a driver from npm with a specific version/tag', async function () {
         await clear();
-        const ret = JSON.parse(await run('install', ['appium-fake-driver@0.9.0', '--source', 'npm', '--json']));
-        ret.fake.pkgName.should.eql('appium-fake-driver');
+        const ret = JSON.parse(await run('install', ['@appium/fake-driver@3.0.5', '--source', 'npm', '--json']));
+        ret.fake.pkgName.should.eql('@appium/fake-driver');
         ret.fake.installType.should.eql('npm');
-        ret.fake.installSpec.should.eql('appium-fake-driver@0.9.0');
+        ret.fake.installSpec.should.eql('@appium/fake-driver@3.0.5');
         const list = JSON.parse(await run('list', ['--installed', '--json']));
         delete list.fake.installed;
         list.should.eql(ret);
@@ -105,7 +115,18 @@ describe('CLI', function () {
         delete list.fake.installed;
         list.should.eql(ret);
       });
-      it('should install a driver from git', async function () {
+      it('should install a driver from a local git repo', async function () {
+        await clear();
+        const ret = JSON.parse(await run('install', [localFakeDriverPath,
+          '--source', 'git', '--package', '@appium/fake-driver', '--json']));
+        ret.fake.pkgName.should.eql('@appium/fake-driver');
+        ret.fake.installType.should.eql('git');
+        ret.fake.installSpec.should.eql(localFakeDriverPath);
+        const list = JSON.parse(await run('list', ['--installed', '--json']));
+        delete list.fake.installed;
+        list.should.eql(ret);
+      });
+      it('should install a driver from a remote git repo', async function () {
         await clear();
         const ret = JSON.parse(await run('install', ['git+https://github.com/appium/appium-fake-driver.git',
           '--source', 'git', '--package', 'appium-fake-driver', '--json']));
@@ -133,7 +154,7 @@ describe('CLI', function () {
     describe('uninstall', function () {
       it('should uninstall a driver based on its driver name', async function () {
         await clear();
-        const ret = JSON.parse(await run('install', ['appium-fake-driver', '--source', 'npm', '--json']));
+        const ret = JSON.parse(await run('install', ['@appium/fake-driver', '--source', 'npm', '--json']));
         const installPath = path.resolve(appiumHome, ret.fake.installPath);
         await fs.exists(installPath).should.eventually.be.true;
         let list = JSON.parse(await run('list', ['--installed', '--json']));
@@ -172,7 +193,7 @@ describe('CLI', function () {
   });
 
   describe('Plugin CLI', function () {
-    const fakePluginDir = path.resolve(__dirname, '..', '..', '..', '..', 'node_modules', '@appium', 'fake-plugin');
+    const fakePluginDir = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
     const ext = 'plugin';
     describe('run', function () {
       before(async function () {

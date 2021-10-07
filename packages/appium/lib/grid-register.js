@@ -9,20 +9,31 @@ const hubUri = (config) => {
   return `${protocol}://${config.hubHost}:${config.hubPort}`;
 };
 
-async function registerNode (configFile, addr, port, basePath) {
-  let data;
-  try {
-    data = await fs.readFile(configFile, 'utf-8');
-  } catch (err) {
-    logger.error(`Unable to load node configuration file to register with grid: ${err.message}`);
-    return;
+/**
+ * Registers a new node with a selenium grid
+ * @param {string|object} data - Path or object representing selenium grid node config file
+ * @param {string} addr - Bind to this address
+ * @param {number} port - Bind to this port
+ * @param {string} basePath - Base path for the grid
+ */
+async function registerNode (data, addr, port, basePath) {
+  let configFilePath;
+  if (typeof data === 'string') {
+    configFilePath = data;
+    try {
+      data = await fs.readFile(data, 'utf-8');
+    } catch (err) {
+      logger.error(`Unable to load node configuration file ${configFilePath} to register with grid: ${err.message}`);
+      return;
+    }
+    try {
+      data = JSON.parse(data);
+    } catch (err) {
+      logger.errorAndThrow(`Syntax error in node configuration file ${configFilePath}: ${err.message}`);
+      return;
+    }
   }
 
-  // Check presence of data before posting  it to the selenium grid
-  if (!data) {
-    logger.error('No data found in the node configuration file to send to the grid');
-    return;
-  }
   postRequest(data, addr, port, basePath);
 }
 
@@ -39,15 +50,7 @@ async function registerToGrid (postOptions, configHolder) {
   }
 }
 
-function postRequest (data, addr, port, basePath) {
-  // parse json to get hub host and port
-  let configHolder;
-  try {
-    configHolder = JSON.parse(data);
-  } catch (err) {
-    logger.errorAndThrow(`Syntax error in node configuration file: ${err.message}`);
-  }
-
+function postRequest (configHolder, addr, port, basePath) {
   // Move Selenium 3 configuration properties to configuration object
   if (!_.has(configHolder, 'configuration')) {
     let configuration = {};

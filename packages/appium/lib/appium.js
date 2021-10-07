@@ -5,8 +5,9 @@ import { findMatchingDriver } from './drivers';
 import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
-import { getExtensionArgs, parseCapsForInnerDriver, pullSettings, validateExtensionArgs } from './utils';
+import { parseCapsForInnerDriver, pullSettings, validateExtensionArgs } from './utils';
 import { util } from '@appium/support';
+import { hasRegisteredSchema } from './schema';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -113,21 +114,25 @@ class AppiumDriver extends BaseDriver {
 
   /**
    * Validate and assign CLI args for a driver or plugin
-   * @param {string} extType 'driver' or 'plugin'
+   *
+   * If the extension has provided a schema, validation has already happened.
+   * @param {'driver'|'plugin'} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {ObjectConstructor} extClass the class of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
   assignCliArgsToExtension (extType, extName, extClass, extInstance) {
-    const cliArgs = getExtensionArgs(this.args[`${extType}Args`], extName);
-    if (!_.isEmpty(cliArgs)) {
+    const cliArgs = this.args[extType]?.[extName];
+    if (!hasRegisteredSchema(extType, extName) && !_.isEmpty(cliArgs)) {
       if (!_.has(extClass, 'argsConstraints')) {
-        throw new Error(`You sent in CLI args for the ${extName} ${extType}, but it ` +
-                        `does not define any`);
+        throw new Error(`You sent in CLI args for the ${extName} "${extType}", but it ` +
+                          `does not define any`);
       }
       validateExtensionArgs(cliArgs, extClass.argsConstraints);
-      extInstance.cliArgs = cliArgs;
       log.debug(`Set CLI arguments on ${extName} ${extType} instance: ${JSON.stringify(cliArgs)}`);
+    }
+    if (!_.isEmpty(cliArgs)) {
+      extInstance.cliArgs = cliArgs;
     }
   }
 

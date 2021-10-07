@@ -1,0 +1,44 @@
+server:
+  drivers:
+  - foo
+  - bar
+  plugins:
+  - baz
+  - quux
+  allow-cors: true
+  address: 127.0.0.1
+  port: 4723
+  base-path: "/"
+  keep-alive-timeout: 600
+  callback-address: 127.0.0.1
+  callback-port: 4723
+  session-override: false
+  log: "/tmp/appium.log"
+  log-level: info
+  log-timestamp: true
+  local-timezone: true
+  log-no-colors: false
+  webhook: https://some-url.com
+  nodeconfig:
+    key: value
+  no-perms-check: false
+  strict-caps: true
+  tmp: "/tmp"
+  trace-dir: "/tmp/appium-instruments"
+  debug-log-spacing: true
+  long-stacktrace: false
+  default-capabilities:
+    key: value
+  relaxed-security: false
+  allow-insecure:
+  - foo
+  - bar
+  deny-insecure:
+  - baz
+  - quux
+driver:
+  xcuitest:
+    key: value
+plugin:
+  images:
+    key: value

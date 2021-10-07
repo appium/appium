@@ -1,6 +1,0 @@
-{
-    "fake":{
-       "sillyWebServerPort":1234,
-       "host":"hey"
-    }
- }

@@ -1,0 +1,29 @@
+server:
+  address: '0.0.0.0'
+  port: 31337
+  allow-cors: false
+  allow-insecure: []
+  base-path: /
+  callback-address: '0.0.0.0'
+  callback-port: 31337
+  log-level: info
+  log-timestamp: false
+  debug-log-spacing: false
+  default-capabilities: {}
+  deny-insecure: []
+  drivers: []
+  keep-alive-timeout: 600
+  local-timezone: false
+  log: /tmp/appium.log
+  log-no-colors: false
+  long-stacktrace: false
+  no-perms-check: false
+  nodeconfig:
+    foo: bar
+  plugins: all
+  relaxed-security: false
+  session-override: false
+  strict-caps: false
+  tmp: /tmp
+  trace-dir: /tmp/appium-instruments
+  webhook: 'http://0.0.0.0/hook'

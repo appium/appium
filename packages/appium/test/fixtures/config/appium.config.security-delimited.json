@@ -1,0 +1,5 @@
+{
+  "server": {
+    "allow-insecure": "foo,bar,baz"
+  }
+}

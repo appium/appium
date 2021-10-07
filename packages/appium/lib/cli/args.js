@@ -1,318 +1,20 @@
 import { DEFAULT_BASE_PATH } from '@appium/base-driver';
+import _ from 'lodash';
+import DriverConfig from '../driver-config';
+import { APPIUM_HOME, DRIVER_TYPE, INSTALL_TYPES, PLUGIN_TYPE } from '../extension-config';
+import PluginConfig from '../plugin-config';
 import {
-  parseSecurityFeatures, parseJsonStringOrFile,
-  parsePluginNames, parseInstallTypes, parseDriverNames
+  parseDriverNames, parseInstallTypes, parseJsonStringOrFile,
+  parsePluginNames, parseSecurityFeatures
 } from './parser-helpers';
-import {
-  INSTALL_TYPES, DEFAULT_APPIUM_HOME,
-  DRIVER_TYPE, PLUGIN_TYPE
-} from '../extension-config';
-import {
-  DEFAULT_CAPS_ARG
-} from './argparse-actions';
+import { toParserArgs } from './schema-args';
 
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'find_by_image';
 const USE_ALL_PLUGINS = 'all';
 
-// sharedArgs will be added to every subcommand
-const sharedArgs = [
-  [['-ah', '--home', '--appium-home'], {
-    required: false,
-    default: process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME,
-    help: 'The path to the directory where Appium will keep installed drivers, plugins, and any other metadata necessary for its operation',
-    dest: 'appiumHome',
-  }],
-
-  [['--log-filters'], {
-    dest: 'logFilters',
-    default: null,
-    required: false,
-    action: 'store_true',
-    help: 'Set the full path to a JSON file containing one or more log filtering rules',
-  }],
-];
-
-const serverArgs = [
-  [['--shell'], {
-    required: false,
-    default: null,
-    help: 'Enter REPL mode',
-    action: 'store_true',
-    dest: 'shell',
-  }],
-
-  [['--drivers'], {
-    required: false,
-    default: [],
-    help: `A comma-separated list of installed driver names that should be active for this ` +
-          `server. All drivers will be active by default.`,
-    type: parseDriverNames,
-    dest: 'drivers',
-  }],
-
-  [['--plugins'], {
-    required: false,
-    default: [],
-    help: `A comma-separated list of installed plugin names that should be active for this ` +
-          `server. To activate all plugins, you can use the single string "${USE_ALL_PLUGINS}" ` +
-          `as the value (e.g. --plugins=${USE_ALL_PLUGINS})`,
-    type: parsePluginNames,
-    dest: 'plugins',
-  }],
-
-  [['--allow-cors'], {
-    required: false,
-    default: false,
-    action: 'store_true',
-    help: 'Whether the Appium server should allow web browser connections from any host',
-    dest: 'allowCors',
-  }],
-
-
-  [['-a', '--address'], {
-    default: '0.0.0.0',
-    required: false,
-    help: 'IP Address to listen on',
-    dest: 'address',
-  }],
-
-  [['-p', '--port'], {
-    default: 4723,
-    required: false,
-    type: 'int',
-    help: 'port to listen on',
-    dest: 'port',
-  }],
-
-  [['-pa', '--base-path'], {
-    required: false,
-    default: DEFAULT_BASE_PATH,
-    dest: 'basePath',
-    help: 'Base path to use as the prefix for all webdriver routes running ' +
-          `on this server`
-  }],
-
-  [['-ka', '--keep-alive-timeout'], {
-    required: false,
-    default: null,
-    dest: 'keepAliveTimeout',
-    type: 'int',
-    help: 'Number of seconds the Appium server should apply as both the keep-alive timeout ' +
-          'and the connection timeout for all requests. Defaults to 600 (10 minutes).'
-  }],
-
-  [['-ca', '--callback-address'], {
-    required: false,
-    dest: 'callbackAddress',
-    default: null,
-    help: 'callback IP Address (default: same as --address)',
-  }],
-
-  [['-cp', '--callback-port'], {
-    required: false,
-    dest: 'callbackPort',
-    default: null,
-    type: 'int',
-    help: 'callback port (default: same as port)',
-  }],
-
-  [['--session-override'], {
-    default: false,
-    dest: 'sessionOverride',
-    action: 'store_true',
-    required: false,
-    help: 'Enables session override (clobbering)',
-  }],
-
-  [['-g', '--log'], {
-    default: null,
-    dest: 'logFile',
-    required: false,
-    help: 'Also send log output to this file',
-  }],
-
-  [['--log-level'], {
-    choices: [
-      'info', 'info:debug', 'info:info', 'info:warn', 'info:error',
-      'warn', 'warn:debug', 'warn:info', 'warn:warn', 'warn:error',
-      'error', 'error:debug', 'error:info', 'error:warn', 'error:error',
-      'debug', 'debug:debug', 'debug:info', 'debug:warn', 'debug:error',
-    ],
-    default: 'debug',
-    dest: 'loglevel',
-    required: false,
-    help: 'log level; default (console[:file]): debug[:debug]',
-  }],
-
-  [['--log-timestamp'], {
-    default: false,
-    required: false,
-    help: 'Show timestamps in console output',
-    action: 'store_true',
-    dest: 'logTimestamp',
-  }],
-
-  [['--local-timezone'], {
-    default: false,
-    required: false,
-    help: 'Use local timezone for timestamps',
-    action: 'store_true',
-    dest: 'localTimezone',
-  }],
-
-  [['--log-no-colors'], {
-    default: false,
-    required: false,
-    help: 'Do not use colors in console output',
-    action: 'store_true',
-    dest: 'logNoColors',
-  }],
-
-  [['-G', '--webhook'], {
-    default: null,
-    required: false,
-    dest: 'webhook',
-    help: 'Also send log output to this HTTP listener, for example localhost:9876',
-  }],
-
-  [['--nodeconfig'], {
-    required: false,
-    default: null,
-    dest: 'nodeconfig',
-    help: 'Configuration JSON file to register appium with selenium grid',
-  }],
-
-  [['--show-config'], {
-    default: false,
-    dest: 'showConfig',
-    action: 'store_true',
-    required: false,
-    help: 'Show info about the appium server configuration and exit',
-  }],
-
-  [['--no-perms-check'], {
-    default: false,
-    dest: 'noPermsCheck',
-    action: 'store_true',
-    required: false,
-    help: 'Bypass Appium\'s checks to ensure we can read/write necessary files',
-  }],
-
-  [['--strict-caps'], {
-    default: false,
-    dest: 'enforceStrictCaps',
-    action: 'store_true',
-    required: false,
-    help: 'Cause sessions to fail if desired caps are sent in that Appium ' +
-          'does not recognize as valid for the selected device',
-  }],
-
-  [['--tmp'], {
-    default: null,
-    dest: 'tmpDir',
-    required: false,
-    help: 'Absolute path to directory Appium can use to manage temporary ' +
-          'files, like built-in iOS apps it needs to move around. On *nix/Mac ' +
-          'defaults to /tmp, on Windows defaults to C:\\Windows\\Temp',
-  }],
-
-  [['--trace-dir'], {
-    default: null,
-    dest: 'traceDir',
-    required: false,
-    help: 'Absolute path to directory Appium use to save ios instruments ' +
-          'traces, defaults to <tmp dir>/appium-instruments',
-  }],
-
-  [['--debug-log-spacing'], {
-    dest: 'debugLogSpacing',
-    default: false,
-    action: 'store_true',
-    required: false,
-    help: 'Add exaggerated spacing in logs to help with visual inspection',
-  }],
-
-
-  [['--long-stacktrace'], {
-    dest: 'longStacktrace',
-    default: false,
-    required: false,
-    action: 'store_true',
-    help: 'Add long stack traces to log entries. Recommended for debugging only.',
-  }],
-
-
-  [['-dc', DEFAULT_CAPS_ARG], {
-    dest: 'defaultCapabilities',
-    default: {},
-    type: parseJsonStringOrFile,
-    required: false,
-    help: 'Set the default desired capabilities, which will be set on each ' +
-          'session unless overridden by received capabilities. For example: ' +
-          '[ \'{"app": "myapp.app", "deviceName": "iPhone Simulator"}\' ' +
-          '| /path/to/caps.json ]'
-  }],
-
-  [['--relaxed-security'], {
-    default: false,
-    dest: 'relaxedSecurityEnabled',
-    action: 'store_true',
-    required: false,
-    help: 'Disable additional security checks, so it is possible to use some advanced features, provided ' +
-          'by drivers supporting this option. Only enable it if all the ' +
-          'clients are in the trusted network and it\'s not the case if a client could potentially ' +
-          'break out of the session sandbox. Specific features can be overridden by ' +
-          'using the --deny-insecure flag',
-  }],
-
-  [['--allow-insecure'], {
-    dest: 'allowInsecure',
-    default: [],
-    type: parseSecurityFeatures,
-    required: false,
-    help: 'Set which insecure features are allowed to run in this server\'s sessions. ' +
-          'Features are defined on a driver level; see documentation for more details. ' +
-          'This should be either a comma-separated list of feature names, or a path to ' +
-          'a file where each feature name is on a line. Note that features defined via ' +
-          '--deny-insecure will be disabled, even if also listed here.',
-  }],
-
-  [['--deny-insecure'], {
-    dest: 'denyInsecure',
-    default: [],
-    type: parseSecurityFeatures,
-    required: false,
-    help: 'Set which insecure features are not allowed to run in this server\'s sessions. ' +
-          'Features are defined on a driver level; see documentation for more details. ' +
-          'This should be either a comma-separated list of feature names, or a path to ' +
-          'a file where each feature name is on a line. Features listed here will not be ' +
-          'enabled even if also listed in --allow-insecure, and even if --relaxed-security ' +
-          'is turned on. For example: execute_driver_script,adb_shell',
-  }],
-
-  [['--driver-args'], {
-    dest: 'driverArgs',
-    default: {},
-    type: parseJsonStringOrFile,
-    required: false,
-    help: 'Set the default desired client arguments for a driver, ' +
-          'For example: ' +
-          '[ \'{"xcuitest": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
-          '| /path/to/driverArgs.json ]'
-  }],
-
-  [['--plugin-args'], {
-    dest: 'pluginArgs',
-    default: {},
-    type: parseJsonStringOrFile,
-    required: false,
-    help: 'Set the default desired client arguments for a plugin, ' +
-          'For example: ' +
-          '[ \'{"images": {"foo1": "bar1", "foo2": "bar2"}}\' ' +
-          '| /path/to/pluginArgs.json ]'
-  }],
-];
+const driverConfig = new DriverConfig(APPIUM_HOME);
+const pluginConfig = new PluginConfig(APPIUM_HOME);
 
 // this set of args works for both drivers and plugins ('extensions')
 const globalExtensionArgs = [
@@ -325,8 +27,25 @@ const globalExtensionArgs = [
   }]
 ];
 
-const extensionArgs = {[DRIVER_TYPE]: {}, [PLUGIN_TYPE]: {}};
+const getExtensionArgs = _.once(function getExtensionArgs () {
+  const extensionArgs = {[DRIVER_TYPE]: {}, [PLUGIN_TYPE]: {}};
+  for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
+    extensionArgs[type] = {
+      list: makeListArgs(type),
+      install: makeInstallArgs(type),
+      uninstall: makeUninstallArgs(type),
+      update: makeUpdateArgs(type),
+      run: makeRunArgs(type),
+    };
+  }
+  return extensionArgs;
+});
 
+/**
+ *
+ * @param {ExtensionType} type
+ * @returns
+ */
 function makeListArgs (type) {
   return [
     ...globalExtensionArgs,
@@ -423,17 +142,87 @@ function makeRunArgs (type) {
   ];
 }
 
-for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
-  extensionArgs[type].list = makeListArgs(type);
-  extensionArgs[type].install = makeInstallArgs(type);
-  extensionArgs[type].uninstall = makeUninstallArgs(type);
-  extensionArgs[type].update = makeUpdateArgs(type);
-  extensionArgs[type].run = makeRunArgs(type);
+function getServerArgs () {
+  return [
+    ...toParserArgs({
+      overrides: {
+        allowInsecure: {
+          type: parseSecurityFeatures
+        },
+        basePath: {
+          default: DEFAULT_BASE_PATH
+        },
+        defaultCapabilities: {
+          type: parseJsonStringOrFile
+        },
+        denyInsecure: {
+          type: parseSecurityFeatures
+        },
+        drivers: {
+          type: parseDriverNames
+        },
+        nodeconfig: {
+          type: parseJsonStringOrFile
+        },
+        plugins: {
+          type: parsePluginNames
+        }
+      }
+    }),
+    ...serverArgsDisallowedInConfig,
+  ];
 }
 
+/**
+ * These don't make sense in the context of a config file for obvious reasons.
+ */
+const serverArgsDisallowedInConfig = [
+  [
+    ['--shell'],
+    {
+      required: false,
+      default: null,
+      help: 'Enter REPL mode',
+      action: 'store_true',
+      dest: 'shell',
+    },
+  ],
+  [
+    ['--show-config'],
+    {
+      default: false,
+      dest: 'showConfig',
+      action: 'store_true',
+      required: false,
+      help: 'Show info about the appium server configuration and exit',
+    },
+  ],
+  [
+    ['--config'],
+    {
+      dest: 'configFile',
+      type: 'string',
+      required: false,
+      help: 'Explicit path to Appium configuration file',
+    },
+  ],
+];
+
 export {
-  sharedArgs,
-  serverArgs,
-  extensionArgs,
+  getServerArgs,
+  getExtensionArgs,
   USE_ALL_PLUGINS,
+  driverConfig,
+  pluginConfig,
+  APPIUM_HOME
 };
+
+/**
+ * Alias
+ * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ */
+
+/**
+ * A tuple of argument aliases and argument options
+ * @typedef {[string[], import('argparse').ArgumentOptions]} ArgumentDefinition
+ */

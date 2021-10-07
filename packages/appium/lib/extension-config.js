@@ -1,16 +1,14 @@
+// @ts-check
+
 import _ from 'lodash';
-import log from './logger';
-import { fs, mkdirp } from '@appium/support';
-import path from 'path';
 import os from 'os';
-import YAML from 'yaml';
+import path from 'path';
+import { getExtConfigIOInstance } from './ext-config-io';
+import log from './logger';
+import { ALLOWED_SCHEMA_EXTENSIONS, readExtensionSchema } from './schema';
 
-const DRIVER_TYPE = 'driver';
-const PLUGIN_TYPE = 'plugin';
 const DEFAULT_APPIUM_HOME = path.resolve(os.homedir(), '.appium');
-
-const CONFIG_FILE_NAME = 'extensions.yaml';
-const CONFIG_SCHEMA_REV = 2;
+const APPIUM_HOME = process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME;
 
 const INSTALL_TYPE_NPM = 'npm';
 const INSTALL_TYPE_LOCAL = 'local';
@@ -23,27 +21,42 @@ const INSTALL_TYPES = [
   INSTALL_TYPE_NPM
 ];
 
-
 export default class ExtensionConfig {
-  constructor (appiumHome, extensionType, logFn = null) {
-    if (logFn === null) {
+  /**
+   *
+   * @param {string} appiumHome - `APPIUM_HOME`
+   * @param {ExtensionType} extensionType - Type of extension
+   * @param {(...args: any[]) => void} [logFn]
+   */
+  constructor (appiumHome, extensionType, logFn) {
+    if (!_.isFunction(logFn)) {
       logFn = log.error.bind(log);
     }
     this.appiumHome = appiumHome;
-    this.configFile = path.resolve(this.appiumHome, CONFIG_FILE_NAME);
+    /**
+     * @type {Record<string,object>}
+     */
     this.installedExtensions = {};
+    this.io = getExtConfigIOInstance(appiumHome);
     this.extensionType = extensionType;
+    /** @type {'drivers'|'plugins'} */
     this.configKey = `${extensionType}s`;
-    this.yamlData = {[`${DRIVER_TYPE}s`]: {}, [`${PLUGIN_TYPE}s`]: {}};
-    this.log = logFn;
+    this.log = /** @type {(...args: any[])=>void} */(logFn);
   }
 
+  /**
+   * Checks extensions for problems
+   * @template ExtData
+   * @param {ExtData[]} exts - Array of extData objects
+   * @returns {ExtData[]}
+   */
   validate (exts) {
     const foundProblems = {};
     for (const [extName, extData] of _.toPairs(exts)) {
       foundProblems[extName] = [
-        ...this.getGenericConfigProblems(extData),
-        ...this.getConfigProblems(extData)
+        ...this.getGenericConfigProblems(extData, extName),
+        ...this.getConfigProblems(extData, extName),
+        ...this.getSchemaProblems(extData, extName)
       ];
     }
 
@@ -64,7 +77,7 @@ export default class ExtensionConfig {
 
     if (!_.isEmpty(problemSummaries)) {
       this.log(`Appium encountered one or more errors while validating ` +
-               `the ${this.configKey} extension file (${this.configFile}):`);
+               `the ${this.configKey} extension file (${this.io.filepath}):`);
       for (const summary of problemSummaries) {
         this.log(summary);
       }
@@ -73,8 +86,47 @@ export default class ExtensionConfig {
     return exts;
   }
 
-  getGenericConfigProblems (ext) {
-    const {version, pkgName, installSpec, installType, installPath, mainClass} = ext;
+  /**
+   * @param {object} extData
+   * @param {string} extName
+   * @returns {Problem[]}
+   */
+  getSchemaProblems (extData, extName) {
+    const problems = [];
+    const {schema: argSchemaPath} = extData;
+    if (!_.isUndefined(argSchemaPath)) {
+      if (!_.isString(argSchemaPath)) {
+        problems.push({
+          err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+          val: argSchemaPath
+        });
+      } else {
+        const argSchemaPathFileExtName = path.extname(argSchemaPath);
+        if (!ALLOWED_SCHEMA_EXTENSIONS.has(argSchemaPathFileExtName)) {
+          problems.push({
+            err: `Schema file has unsupported extension. Allowed: ${[...ALLOWED_SCHEMA_EXTENSIONS].join(', ')}`,
+            val: argSchemaPath
+          });
+        } else {
+          try {
+            readExtensionSchema(this.extensionType, extName, extData);
+          } catch (err) {
+            problems.push({err: `Unable to register schema at path ${argSchemaPath}`, val: argSchemaPath});
+          }
+        }
+      }
+    }
+    return problems;
+  }
+
+  /**
+   * @param {object} extData
+   * @param {string} extName
+   * @returns {Problem[]}
+   */
+  // eslint-disable-next-line no-unused-vars
+  getGenericConfigProblems (extData, extName) {
+    const {version, pkgName, installSpec, installType, installPath, mainClass} = extData;
     const problems = [];
 
     if (!_.isString(version)) {
@@ -104,62 +156,46 @@ export default class ExtensionConfig {
     return problems;
   }
 
-  getConfigProblems (/*ext*/) {
+  /**
+   * @param {object} extData
+   * @param {string} extName
+   * @returns {Problem[]}
+   */
+  // eslint-disable-next-line no-unused-vars
+  getConfigProblems (extData, extName) {
     // shoud override this method if special validation is necessary for this extension type
     return [];
   }
 
-  applySchemaMigrations () {
-    if (this.yamlData.schemaRev < 2 && _.isUndefined(this.yamlData[PLUGIN_TYPE])) {
-      // at schema revision 2, we started including plugins as well as drivers in the file,
-      // so make sure we at least have an empty section for it
-      this.yamlData[PLUGIN_TYPE] = {};
-    }
-  }
-
+  /**
+   * @returns {Promise<typeof this.installedExtensions>}
+   */
   async read () {
-    await mkdirp(this.appiumHome); // ensure appium home exists
-    try {
-      this.yamlData = YAML.parse(await fs.readFile(this.configFile, 'utf8'));
-      this.applySchemaMigrations();
-
-      // set the list of drivers the user has installed
-      this.installedExtensions = this.validate(this.yamlData[this.configKey]);
-    } catch (err) {
-      if (await fs.exists(this.configFile)) {
-        // if the file exists and we couldn't parse it, that's a problem
-        throw new Error(`Appium had trouble loading the extension installation ` +
-                        `cache file (${this.configFile}). Ensure it exists and is ` +
-                        `readable. Specific error: ${err.message}`);
-      }
-
-      // if the config file doesn't exist, try to write an empty one, to make
-      // sure we actually have write privileges, and complain if we don't
-      try {
-        await this.write();
-      } catch {
-        throw new Error(`Appium could not read or write from the Appium Home directory ` +
-                        `(${this.appiumHome}). Please ensure it is writable.`);
-      }
-    }
-    return this.installedExtensions;
+    return (this.installedExtensions = await this.io.read(this.extensionType));
   }
 
-
+  /**
+   * @returns {Promise<boolean>}
+   */
   async write () {
-    const newYamlData = {
-      ...this.yamlData,
-      schemaRev: CONFIG_SCHEMA_REV,
-      [this.configKey]: this.installedExtensions
-    };
-    await fs.writeFile(this.configFile, YAML.stringify(newYamlData), 'utf8');
+    return await this.io.write();
   }
 
+  /**
+   * @param {string} extName
+   * @param {object} extData
+   * @returns {Promise<void>}
+   */
   async addExtension (extName, extData) {
     this.installedExtensions[extName] = extData;
     await this.write();
   }
 
+  /**
+   * @param {string} extName
+   * @param {object} extData
+   * @returns {Promise<void>}
+   */
   async updateExtension (extName, extData) {
     this.installedExtensions[extName] = {
       ...this.installedExtensions[extName],
@@ -168,6 +204,10 @@ export default class ExtensionConfig {
     await this.write();
   }
 
+  /**
+   * @param {string} extName
+   * @returns {Promise<void>}
+   */
   async removeExtension (extName) {
     delete this.installedExtensions[extName];
     await this.write();
@@ -187,20 +227,41 @@ export default class ExtensionConfig {
     }
   }
 
-  extensionDesc () {
-    throw new Error('This must be implemented in a final class');
+  /**
+   * Returns a string describing the extension. Subclasses must implement.
+   * @param {string} extName - Extension name
+   * @param {object} extData - Extension data
+   * @returns {string}
+   * @abstract
+   */
+  // eslint-disable-next-line no-unused-vars
+  extensionDesc (extName, extData) {
+    throw new Error('This must be implemented in a subclass');
   }
 
+  /**
+   * @param {string} extName
+   * @returns {string}
+   */
   getExtensionRequirePath (extName) {
     const {pkgName, installPath} = this.installedExtensions[extName];
     return path.resolve(this.appiumHome, installPath, 'node_modules', pkgName);
   }
 
+  /**
+   * @param {string} extName
+   * @returns {string}
+   */
   getInstallPath (extName) {
     const {installPath} = this.installedExtensions[extName];
     return path.resolve(this.appiumHome, installPath);
   }
 
+  /**
+   * Loads extension and returns its main class
+   * @param {string} extName
+   * @returns {(...args: any[]) => object }
+   */
   require (extName) {
     const {mainClass} = this.installedExtensions[extName];
     const reqPath = this.getExtensionRequirePath(extName);
@@ -212,12 +273,30 @@ export default class ExtensionConfig {
     return require(reqPath)[mainClass];
   }
 
+  /**
+   * @param {string} extName
+   * @returns {boolean}
+   */
   isInstalled (extName) {
     return _.includes(Object.keys(this.installedExtensions), extName);
   }
 }
 
+
+/**
+ * Config problem
+ * @typedef {Object} Problem
+ * @property {string} err - Error message
+ * @property {any} val - Associated value
+ */
+
+/**
+ * Alias
+ * @typedef {import('./ext-config-io').ExtensionType} ExtensionType
+ */
+
+export { DRIVER_TYPE, PLUGIN_TYPE } from './ext-config-io';
 export {
   INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
-  INSTALL_TYPES, DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE,
+  INSTALL_TYPES, DEFAULT_APPIUM_HOME, APPIUM_HOME
 };

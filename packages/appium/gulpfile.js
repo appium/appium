@@ -1,3 +1,4 @@
+// @ts-check
 /* eslint no-console:0 */
 /* eslint-disable promise/prefer-await-to-callbacks */
 'use strict';
@@ -11,8 +12,47 @@ const boilerplate = require('@appium/gulp-plugins').boilerplate.use(gulp);
 const path = require('path');
 const fs = require('fs');
 const log = require('fancy-log');
+const {obj: through} = require('through2');
 
-gulp.task('copy-fixtures', () => gulp.src('./test/fixtures/*').pipe(gulp.dest('./build/test/fixtures/')));
+const APPIUM_CONFIG_SCHEMA_BASENAME = 'appium-config.schema.json';
+
+/**
+ * Expects a single file (as defined by `APPIUM_CONFIG_SCHEMA_PATH`) and converts
+ * that file to JSON.
+ * @param {import('vinyl')} file - Vinyl file object
+ * @param {BufferEncoding} enc - Encoding
+ * @param {import('through2').TransformCallback} done - Callback
+ */
+function writeAppiumConfigJsonSchema (file, enc, done) {
+  try {
+    const {default: schema} = require(file.path);
+    // @ts-ignore
+    file.contents = Buffer.from(JSON.stringify(schema, null, 2));
+    file.basename = APPIUM_CONFIG_SCHEMA_BASENAME;
+    done(null, file);
+  } catch (err) {
+    done(err);
+  }
+}
+
+// non-JS files that should be copied into the build dir (since babel does not compile them)
+gulp.task('copy-files', gulp.parallel(
+  function copyTestFixtures () {
+    return gulp.src('./test/fixtures/*.{txt,yaml,json}')
+      .pipe(gulp.dest('./build/test/fixtures'));
+  },
+  function copyTestConfigFixtures () {
+    return gulp.src('./test/fixtures/config/*.{txt,yaml,json}')
+      .pipe(gulp.dest('./build/test/fixtures/config'));
+  }
+));
+
+gulp.task('generate-appium-schema-json', function () {
+  // don't care about file contents as text, so `read: false`
+  return gulp.src('./build/lib/appium-config-schema.js', {read: false})
+    .pipe(through(writeAppiumConfigJsonSchema))
+    .pipe(gulp.dest('./build/lib/'));
+});
 
 boilerplate({
   build: 'appium',
@@ -27,11 +67,12 @@ boilerplate({
     files: ['${testDir}/**/*-specs.js']
   },
   testTimeout: 160000,
-  postTranspile: ['copy-fixtures']
+  postTranspile: ['copy-files', 'generate-appium-schema-json']
 });
 
 // generates server arguments readme
-gulp.task('docs', gulp.series(['transpile']), function parseDocs () {
+gulp.task('docs', gulp.series(['transpile', function parseDocs () {
+  // @ts-ignore
   const parser = require('./build/lib/parser.js');
   const appiumArguments = parser.getParser().rawArgs;
   const docFile = path.resolve(__dirname, 'docs/en/writing-running-appium/server-args.md');
@@ -76,4 +117,4 @@ gulp.task('docs', gulp.series(['transpile']), function parseDocs () {
       log('New docs written! Do not forget to commit and push');
     }
   });
-});
+}]));

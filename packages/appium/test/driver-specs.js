@@ -4,6 +4,7 @@ import { AppiumDriver } from '../lib/appium';
 import { BaseDriver } from '@appium/base-driver';
 import { FakeDriver } from '@appium/fake-driver';
 import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
+import {resetSchema} from '../lib/schema';
 import _ from 'lodash';
 import sinon from 'sinon';
 import { sleep } from 'asyncbox';
@@ -13,6 +14,9 @@ import { insertAppiumPrefixes, removeAppiumPrefixes } from '../lib/utils';
 const SESSION_ID = 1;
 
 describe('AppiumDriver', function () {
+  beforeEach(function () {
+    resetSchema();
+  });
   describe('AppiumDriver', function () {
     function getDriverAndFakeDriver (appiumArgs = {}, DriverClass = FakeDriver) {
       const appium = new AppiumDriver(appiumArgs);
@@ -160,7 +164,7 @@ describe('AppiumDriver', function () {
       });
       it('should error if you include driver args for a driver that doesnt define any', async function () {
         class NoArgsDriver {}
-        const args = {driverArgs: {fake: {webkitDebugProxyPort: 1234}}};
+        const args = {driver: {fake: {webkitDebugProxyPort: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, NoArgsDriver);
         const {error} = await appium.createSession(undefined, undefined, W3C_CAPS);
         error.should.match(/does not define any/);
@@ -175,7 +179,7 @@ describe('AppiumDriver', function () {
             };
           }
         }
-        const args = {driverArgs: {fake: {diffArg: 1234}}};
+        const args = {driver: {fake: {diffArg: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, DiffArgsDriver);
         const {error} = await appium.createSession(undefined, undefined, W3C_CAPS);
         error.should.match(/arguments were not recognized/);
@@ -190,7 +194,7 @@ describe('AppiumDriver', function () {
             };
           }
         }
-        const args = {driverArgs: {fake: {randomArg: 1234}}};
+        const args = {driver: {fake: {randomArg: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver);
         const {value} = await appium.createSession(undefined, undefined, W3C_CAPS);
         try {
@@ -330,22 +334,22 @@ describe('AppiumDriver', function () {
       }
     });
     it('should throw if a plugin arg is sent but the plugin doesnt support args', function () {
-      const appium = new AppiumDriver({pluginArgs: {noargs: {foo: 'bar'}}});
+      const appium = new AppiumDriver({plugin: {noargs: {foo: 'bar'}}});
       appium.pluginClasses = [NoArgsPlugin];
       should.throw(() => appium.createPluginInstances(), /does not define any/);
     });
     it('should throw if a plugin arg is sent but the plugin doesnt know about it', function () {
-      const appium = new AppiumDriver({pluginArgs: {args: {foo: 'bar'}}});
+      const appium = new AppiumDriver({plugin: {args: {foo: 'bar'}}});
       appium.pluginClasses = [ArgsPlugin];
       should.throw(() => appium.createPluginInstances(), /arguments were not recognized/);
     });
     it('should throw if a plugin arg is sent of the wrong type', function () {
-      const appium = new AppiumDriver({pluginArgs: {args: {randomArg: 'bar'}}});
+      const appium = new AppiumDriver({plugin: {args: {randomArg: 'bar'}}});
       appium.pluginClasses = [ArgsPlugin];
       should.throw(() => appium.createPluginInstances(), /must be of type number/);
     });
     it('should add cliArgs to the plugin once validated', function () {
-      const appium = new AppiumDriver({pluginArgs: {args: {randomArg: 1234}}});
+      const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}});
       appium.pluginClasses = [ArgsPlugin];
       const plugin = appium.createPluginInstances()[0];
       plugin.cliArgs.should.eql({randomArg: 1234});

@@ -1,0 +1,150 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "npm: build",
+      "detail": "lerna exec gulp transpile"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/fake-driver",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/fake-driver",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=appium",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: appium",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/support",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/support",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/test-support",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/test-support",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/gulp-plugins",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/gulp-plugins",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/doctor",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/doctor",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "exec",
+        "--",
+        "lerna",
+        "exec",
+        "--scope=@appium/base-driver",
+        "--",
+        "gulp",
+        "transpile"
+      ],
+      "label": "transpile: @appium/base-driver",
+      "problemMatcher": []
+    },
+    {
+      "type": "shell",
+      "command": "node_modules/.bin/mocha",
+      "args": [
+        "--bail",
+        "-r",
+        "@babel/register",
+        "-t",
+        "20s",
+        "packages/appium/test/*e2e-specs.js"
+      ],
+      "label": "appium: E2E",
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "label": "npm: dev",
+      "detail": "lerna exec --parallel gulp dev"
+    }
+  ]
+}

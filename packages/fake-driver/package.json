@@ -62,6 +62,7 @@
       "Fake"
     ],
     "mainClass": "FakeDriver",
+    "schema": "./build/lib/fake-driver-schema.js",
     "scripts": {
       "fake-error": "./build/lib/scripts/fake-error.js",
       "fake-success": "./build/lib/scripts/fake-success.js"

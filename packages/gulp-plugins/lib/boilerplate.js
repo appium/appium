@@ -86,9 +86,6 @@ const boilerplate = function (gulp, opts) {
   if (opts.transpile && !opts.test) {
     defaultSequence.push('transpile');
   }
-  if (opts.postTranspile) {
-    defaultSequence.push(...opts.postTranspile);
-  }
   if (opts.test) {
     if (opts.watchE2E) {
       defaultSequence.push('test');
@@ -113,8 +110,8 @@ const boilerplate = function (gulp, opts) {
     spawnWatcher.configure('watch', opts.files, watchSequence);
   }
 
+  spawnWatcher.configure('dev', opts.files, ['transpile']);
   gulp.task('once', gulp.series(...defaultSequence));
-
   gulp.task('default', gulp.series(opts.watch ? 'watch' : 'once'));
 };
 

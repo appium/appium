@@ -10,10 +10,6 @@ const configure = function configure (gulp, opts, env) {
     ...env
   };
 
-  if (opts.postTranspile) {
-    testEnv.testDeps.push(...opts.postTranspile);
-  }
-
   let testTasks = [];
   if (opts.test) {
     unitTest.configure(gulp, opts, testEnv);

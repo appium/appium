@@ -2,20 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "args": [
-        "--require",
-        "@babel/register",
-        "--timeout",
-        "999999",
-        "--colors",
-        "${file}"
-      ],
+      "args": ["--colors", "--timeout", "0", "${file}"],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Test - Current File",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "runtimeArgs": ["-r", "@babel/register"],
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
-      "type": "pwa-node"
+      "type": "pwa-node",
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
+      "outfiles": [],
+      "env": {
+        "NODE_ENV": "test"
+      }
     },
     {
       "name": "Debug",

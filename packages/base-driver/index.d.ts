@@ -296,7 +296,12 @@ declare type LogType = {
 
 // WebDriver
 
-declare type Rect = Size & Position;
+declare type Rect = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+};
 
 declare type Cookie = {
     name: string;
@@ -347,15 +352,9 @@ declare type ScreenRecordOptions = {
 
 // JSONWP
 
-declare type Size = {
-    width: number;
-    height: number;
-};
+declare type Size = Pick<Rect, 'width' | 'height'>;
 
-declare type Position = {
-    x: number;
-    y: number;
-};
+declare type Position = Pick<Rect, 'x' | 'y'>;
 
 declare type Location = {
     latitude: number;

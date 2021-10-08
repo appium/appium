@@ -8,7 +8,7 @@ import _ from 'lodash';
 import { AppiumDriver } from './appium';
 import { driverConfig, pluginConfig, USE_ALL_PLUGINS } from './cli/args';
 import { runExtensionCommand } from './cli/extension';
-import { default as getParser } from './cli/parser';
+import { default as getParser, SERVER_SUBCOMMAND } from './cli/parser';
 import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from './config';
 import { readConfigFile } from './config-file';
 import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
@@ -95,7 +95,7 @@ function logServerPort (address, port) {
  */
 function getActivePlugins (args, pluginConfig) {
   return Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
-    _.includes(args.plugins ?? [], pluginName) ||
+    _.includes(args.plugins, pluginName) ||
     (args.plugins.length === 1 && args.plugins[0] === USE_ALL_PLUGINS)
   ).map((pluginName) => {
     try {
@@ -188,7 +188,7 @@ async function init (args = null) {
   // 2. config file
   // 3. defaults from config file.
   // if no "subcommand" specified (e.g., `args` came from not-`parser.parse_args()`), assume we want a server.
-  if (args.subcommand === 'server' || !args.subcommand) {
+  if (args.subcommand === SERVER_SUBCOMMAND || !args.subcommand) {
     args = _.defaultsDeep(
       args,
       configResult.config?.server,

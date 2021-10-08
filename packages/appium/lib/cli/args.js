@@ -28,7 +28,7 @@ const globalExtensionArgs = [
 ];
 
 const getExtensionArgs = _.once(function getExtensionArgs () {
-  const extensionArgs = {[DRIVER_TYPE]: {}, [PLUGIN_TYPE]: {}};
+  const extensionArgs = {};
   for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
     extensionArgs[type] = {
       list: makeListArgs(type),

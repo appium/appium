@@ -18,7 +18,7 @@ const hubUri = (config) => {
  */
 async function registerNode (data, addr, port, basePath) {
   let configFilePath;
-  if (typeof data === 'string') {
+  if (_.isString(data)) {
     configFilePath = data;
     try {
       data = await fs.readFile(data, 'utf-8');

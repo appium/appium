@@ -14,6 +14,8 @@ import { APPIUM_HOME } from './args';
  *
  * @param {Object} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
+ * @param {import('../ext-config-io').ExtensionType} type - Extension type
+ * @oaram {ExtensionConfig} [configObject] - Extension config object, if we have one
  */
 async function runExtensionCommand (args, type, configObject) {
   // TODO driver config file should be locked while any of these commands are
@@ -29,12 +31,12 @@ async function runExtensionCommand (args, type, configObject) {
   }
   const logFn = (msg) => log(json, msg);
   let config;
-  if (!configObject) {
-    const ConfigClass = type === DRIVER_TYPE ? DriverConfig : PluginConfig;
-    config = new ConfigClass(APPIUM_HOME, logFn);
-  } else {
+  if (configObject) {
     config = configObject;
     config.log = logFn;
+  } else {
+    const ConfigClass = type === DRIVER_TYPE ? DriverConfig : PluginConfig;
+    config = new ConfigClass(APPIUM_HOME, logFn);
   }
   const CommandClass = type === DRIVER_TYPE ? DriverCommand : PluginCommand;
   const cmd = new CommandClass({config, json});

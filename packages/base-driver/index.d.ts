@@ -109,7 +109,7 @@ declare class BaseDriver {
     setCookie?(cookie: Cookie): Promise<void>;
     deleteCookie?(name: string): Promise<void>;
     deleteCookies?(): Promise<void>;
-    performActions?(actions: Actions): Promise<void>;
+    performActions?(actions: Actions[]): Promise<void>;
     releaseActions?(): Promise<void>;
     postDismissAlert?(): Promise<void>;
     postAcceptAlert?(): Promise<void>;

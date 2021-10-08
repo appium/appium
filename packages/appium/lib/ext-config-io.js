@@ -5,12 +5,23 @@
  */
 
 import _ from 'lodash';
-import { fs, mkdirp } from '@appium/support';
+import {fs, mkdirp} from '@appium/support';
 import path from 'path';
 import YAML from 'yaml';
 
 const CONFIG_FILE_NAME = 'extensions.yaml';
+
+/**
+ * Current configuration schema revision!
+ */
 const CONFIG_SCHEMA_REV = 2;
+
+/**
+ * This schema revision adds the `plugins` property.
+ *
+ * See {@link ExtConfigIO._applySchemaMigrations} for more details.
+ */
+const CONFIG_SCHEMA_REV_2 = 2;
 
 export const DRIVER_TYPE = 'driver';
 export const PLUGIN_TYPE = 'plugin';
@@ -112,7 +123,11 @@ class ExtConfigIO {
    */
   async read (extensionType) {
     if (!VALID_EXT_TYPES.has(extensionType)) {
-      throw new TypeError(`Invalid extension type: ${extensionType}. Valid values are: ${[...VALID_EXT_TYPES].join(', ')}`);
+      throw new TypeError(
+        `Invalid extension type: ${extensionType}. Valid values are: ${[
+          ...VALID_EXT_TYPES,
+        ].join(', ')}`,
+      );
     }
     if (this._extensionTypeData.has(extensionType)) {
       return this._extensionTypeData.get(extensionType);
@@ -194,18 +209,26 @@ class ExtConfigIO {
   }
 
   /**
-   * Normalizes the file, even if it was created with `schemaRev` < 2
-   * At schema revision 2, we started including plugins as well as drivers in the file,
+   * Normalizes the file, even if it was created with `schemaRev` < {@link CONFIG_SCHEMA_REV_2}.
+   * At {@link CONFIG_SCHEMA_REV_2}, we started including plugins as well as drivers in the file,
    * so make sure we at least have an empty section for it.
+   *
    * Returns a shallow copy of `yamlData`.
    * @param {Readonly<object>} yamlData - Parsed contents of YAML `extensions.yaml`
    * @private
    * @returns {object} A shallow copy of `yamlData`
    */
   _applySchemaMigrations (yamlData) {
-    if (yamlData.schemaRev < 2 && yamlData[CONFIG_DATA_PLUGIN_KEY] === undefined) {
+    if (
+      yamlData.schemaRev < CONFIG_SCHEMA_REV_2 &&
+      yamlData[CONFIG_DATA_PLUGIN_KEY] === undefined
+    ) {
       this._dirty = true;
-      return {...yamlData, [CONFIG_DATA_PLUGIN_KEY]: {}, schemaRev: 2};
+      return {
+        ...yamlData,
+        [CONFIG_DATA_PLUGIN_KEY]: {},
+        schemaRev: CONFIG_SCHEMA_REV,
+      };
     }
     return {...yamlData};
   }
@@ -218,12 +241,13 @@ class ExtConfigIO {
  * @param {string} appiumHome - `APPIUM_HOME`
  * @returns {ExtConfigIO}
  */
-export const getExtConfigIOInstance = _.memoize((appiumHome) => new ExtConfigIO(appiumHome));
+export const getExtConfigIOInstance = _.memoize(
+  (appiumHome) => new ExtConfigIO(appiumHome),
+);
 
 /**
  * @typedef {ExtConfigIO} ExtensionConfigIO
  */
-
 
 /**
  * @typedef {typeof DRIVER_TYPE | typeof PLUGIN_TYPE} ExtensionType

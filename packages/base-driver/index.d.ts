@@ -62,13 +62,11 @@ declare class BaseDriver {
     getLog(logType: string): Promise<{}[]>;
 
     // WebDriver
-    // https://www.w3.org/TR/webdriver/
-
     createSession(jwpCaps: {}, jwpReqCaps: {}, w3cCaps: {}): Promise<[string, {}]>;
     deleteSession(): Promise<void>;
     getSessions(): Promise<{ id: string; capabilities: {} }[]>;
     getSession(): Promise<{}>;
-    getTimeouts(): Promise<{ command: number; implicit: number }>;
+    getTimeouts(): Promise<Record<string, number>>;
     timeouts(type: string, ms: number, script: number, pageLoad: number, implicit: number): Promise<void>;
     setUrl?(url: string): Promise<void>;
     getUrl?(): Promise<string>;
@@ -121,7 +119,6 @@ declare class BaseDriver {
     getElementScreenshot?(elementId: string): Promise<string>;
 
     // Appium W3C WebDriver Extension
-
     mobileShake?(): Promise<void>;
     getDeviceTime?(format?: string): Promise<string>;
     lock?(seconds?: number): Promise<void>;
@@ -184,7 +181,6 @@ declare class BaseDriver {
     getClipboard?(contentType?: string): Promise<string>;
 
     // JSONWP
-
     asyncScriptTimeout?(ms: number): Promise<void>;
     implicitWait(ms: number): Promise<void>;
     getWindowSize?(): Promise<Size>;
@@ -215,7 +211,6 @@ declare class BaseDriver {
     setGeoLocation?(location: Partial<Location>): Promise<void>;
 
     // MJSONWIRE
-
     getCurrentContext?(): Promise<string | null>;
     setContext?(name: string): Promise<void>;
     getContexts?(): Promise<string[]>;
@@ -228,13 +223,9 @@ declare class BaseDriver {
     setRotation?(x: number, y: number, z: number): Promise<void>;
 
     // Chromium DevTools
-    // https://chromium.googlesource.com/chromium/src/+/master/chrome/test/chromedriver/server/http_handler.cc
-
     executeCdp?(cmd: string, params: unknown): Promise<unknown>;
 
     // Web Authentication
-    // https://www.w3.org/TR/webauthn-2/#sctn-automation-add-virtual-authenticator
-
     addVirtualAuthenticator?(protocol: string, transport: string, hasResidentKey?: boolean, hasUserVerification?: boolean, isUserConsenting?: boolean, isUserVerified?: boolean): Promise<void>;
     removeVirtualAuthenticator?(): Promise<void>;
     addAuthCredential?(credentialId: string, isResidentCredential: boolean, rpId: string, privateKey: string, userHandle?: string, signCount?: number): Promise<void>;
@@ -248,10 +239,13 @@ declare type MethodMap = {
     [path: string]: {
         [method: string]: {
             command?: string;
+            neverProxy?: boolean;
             payloadParams?: {
+                wrap?: string;
+                unwrap?: string;
                 required?: string[] | string[][];
                 optional?: string[] | string[][];
-                validate?: (obj: any) => any;
+                validate?: (obj: any, protocol: string) => any;
                 makeArgs?: (obj: any) => any;
             };
         };

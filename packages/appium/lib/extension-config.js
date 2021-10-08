@@ -94,26 +94,26 @@ export default class ExtensionConfig {
   getSchemaProblems (extData, extName) {
     const problems = [];
     const {schema: argSchemaPath} = extData;
-    if (!_.isUndefined(argSchemaPath)) {
-      if (!_.isString(argSchemaPath)) {
-        problems.push({
-          err: 'Incorrectly formatted schema field; must be a path to a schema file.',
-          val: argSchemaPath
-        });
-      } else {
+    if (argSchemaPath) {
+      if (_.isString(argSchemaPath)) {
         const argSchemaPathFileExtName = path.extname(argSchemaPath);
-        if (!ALLOWED_SCHEMA_EXTENSIONS.has(argSchemaPathFileExtName)) {
-          problems.push({
-            err: `Schema file has unsupported extension. Allowed: ${[...ALLOWED_SCHEMA_EXTENSIONS].join(', ')}`,
-            val: argSchemaPath
-          });
-        } else {
+        if (ALLOWED_SCHEMA_EXTENSIONS.has(argSchemaPathFileExtName)) {
           try {
             readExtensionSchema(this.extensionType, extName, extData);
           } catch (err) {
             problems.push({err: `Unable to register schema at path ${argSchemaPath}`, val: argSchemaPath});
           }
+        } else {
+          problems.push({
+            err: `Schema file has unsupported extension. Allowed: ${[...ALLOWED_SCHEMA_EXTENSIONS].join(', ')}`,
+            val: argSchemaPath
+          });
         }
+      } else {
+        problems.push({
+          err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+          val: argSchemaPath
+        });
       }
     }
     return problems;

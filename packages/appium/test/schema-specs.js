@@ -200,9 +200,8 @@ describe('schema', function () {
       beforeEach(function () {
         schema.resetSchema();
         schema.finalizeSchema();
-        expect(schema.hasRegisteredSchema('driver', 'stuff')).to.be.false;
         // sanity check
-        // expect(schema.getSchema().properties.driver.properties).to.be.empty;
+        expect(schema.getSchema().properties.driver.properties).to.be.empty;
       });
 
       it('should flatten a schema', function () {
@@ -221,7 +220,6 @@ describe('schema', function () {
         schema.readExtensionSchema('driver', 'fake', {
           installPath: 'derp',
           schema: 'herp',
-          automationName: 'Fake',
           pkgName: '@appium/fake-driver',
         });
         schema.finalizeSchema();
@@ -257,7 +255,6 @@ describe('schema', function () {
     const extName = 'stuff';
 
     describe('driver', function () {
-
       beforeEach(function () {
         extData = {
           installPath: 'fixtures',
@@ -269,42 +266,12 @@ describe('schema', function () {
         );
       });
 
-      describe('error conditions', function () {
-        describe('when the extension data is missing `installPath`', function () {
-          it('should throw', function () {
-            // @ts-ignore
-            delete extData.installPath;
-            expect(() =>
-              schema.readExtensionSchema('driver', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the extension data is missing `pkgName`', function () {
-          it('should throw', function () {
-            // @ts-ignore
-            delete extData.pkgName;
-            expect(() =>
-              schema.readExtensionSchema('driver', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the extension data is missing `schema`', function () {
-          it('should throw', function () {
-            delete extData.schema;
-            expect(() =>
-              schema.readExtensionSchema('driver', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the `extName` was not provided', function () {
-          it('should throw', function () {
-            expect(() =>
-              schema.readExtensionSchema('driver', undefined, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
+      describe('when the extension data is missing `schema`', function () {
+        it('should throw', function () {
+          delete extData.schema;
+          expect(() =>
+            schema.readExtensionSchema('driver', extName, extData),
+          ).to.throw(TypeError, /why is this function being called/i);
         });
       });
 
@@ -343,42 +310,12 @@ describe('schema', function () {
         );
       });
 
-      describe('error conditions', function () {
-        describe('when the extension data is missing `installPath`', function () {
-          it('should throw', function () {
-            // @ts-ignore
-            delete extData.installPath;
-            expect(() =>
-              schema.readExtensionSchema('plugin', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the extension data is missing `pkgName`', function () {
-          it('should throw', function () {
-            // @ts-ignore
-            delete extData.pkgName;
-            expect(() =>
-              schema.readExtensionSchema('plugin', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the extension data is missing `schema`', function () {
-          it('should throw', function () {
-            delete extData.schema;
-            expect(() =>
-              schema.readExtensionSchema('plugin', extName, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
-        });
-
-        describe('when the `extName` was not provided', function () {
-          it('should throw', function () {
-            expect(() =>
-              schema.readExtensionSchema('plugin', undefined, extData),
-            ).to.throw(Error, 'Incomplete extension data');
-          });
+      describe('when the extension data is missing `schema`', function () {
+        it('should throw', function () {
+          delete extData.schema;
+          expect(() =>
+            schema.readExtensionSchema('plugin', extName, extData),
+          ).to.throw(TypeError, /why is this function being called/i);
         });
       });
 

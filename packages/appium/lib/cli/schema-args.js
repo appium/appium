@@ -4,7 +4,6 @@ import _ from 'lodash';
 import {flattenSchema, getFormatter} from '../schema';
 import {ArgumentTypeError} from 'argparse';
 
-
 /**
  * This module concerns functions which convert schema definitions to
  * `argparse`-compatible data structures, for deriving CLI arguments from a
@@ -12,11 +11,31 @@ import {ArgumentTypeError} from 'argparse';
  */
 
 /**
+ * Given an CLI arg for an extension, parse it into parts.
+ * @example
+ * const arg = '--driver-foo-bar-baz';
+ * const matches = arg.match(CLI_ARG_PARSER_REGEXP);
+ * matches.groups; // {extensionName: 'foo', extensionType: 'driver', argName: 'bar-baz'}
+ */
+const CLI_ARG_PARSER_REGEXP = /^(?<extensionType>.+?)-(?<extensionName>.+?)-(?<argName>.+)$/;
+
+/**
+ * Options with alias lengths less than this will be considered "short" flags.
+ */
+const SHORT_ARG_CUTOFF = 3;
+
+/**
  * Namespace for {@link ArgValidator}s.
  *
- * These functions perform validation on arguments. Arguments and validators are derived from the schema.  In some cases, we can simply use what `ajv` provides, but otherwise we will need to implement our own validators.
+ * These functions perform validation on arguments. Arguments and validators are
+ * derived from the schema.  In some cases, we can simply use what `ajv`
+ * provides, but otherwise we will need to implement our own validators.
  *
- * Unfortunately, re-use of Ajv to validate the arguments is painful, because of differences in structure and naming (e.g., kebab-case for args and schema vs camelCase for object keys).  Further, during validation, there's an assumption that we're working with a _file_ (e.g., a JSON document) instead of just a JS object, which has implications for how errors are displayed.
+ * Unfortunately, re-use of Ajv to validate the arguments is painful, because of
+ * differences in structure and naming (e.g., kebab-case for args and schema vs
+ * camelCase for object keys).  Further, during validation, there's an
+ * assumption that we're working with a _file_ (e.g., a JSON document) instead
+ * of just a JS object, which has implications for how errors are displayed.
  * @type {Record<string,ArgValidator<unknown,unknown>>}
  */
 const argValidators = {
@@ -101,22 +120,22 @@ const argValidators = {
 };
 
 /**
- * A function which given some `T` and optionally `info` (for use in error
- * messages) and returns a validation function that returns the validated value
- * (`U`) or throws if the value is invalid.
+ * A function which given some `ComparisonValue` and optionally `info` (for use
+ * in error messages) and returns a validation function that returns the
+ * validated value (`ArgTYpe`) or throws if the value is invalid.
+ *
+ * `ComparisonValue` can be anything, but that thing must be used somehow
+ * validate the `value`.  In the case of e.g., `maxmimum`, `ComparisonValue` is
+ * a number. In the case that we're e.g., working with a formatter,
+ * `ComparisonValue` is a string which is used to look up the formatter in
+ * `ajv.formats`.
  *
  * A "formatter" in JSON schema parlance is sort of a "sub-validator".  So,
  * e.g., the `type` must be a `string`, but that `string` also must match a
  * `RegExp`.
  * @template ComparisonValue,ArgType
- * @typedef {(cmpValue: ComparisonValue, info?: string) => (value: any) => ArgType}
- * ArgValidator<T,U>
+ * @typedef {(cmpValue: ComparisonValue, info?: string) => (value: any) => ArgType} ArgValidator<ComparisonValue,ArgType>
  */
-
-/**
- * Options with alias lengths less than this will be considered "short" flags.
- */
-const SHORT_ARG_CUTOFF = 3;
 
 /**
  * Convert an alias (`foo`) to a flag (`--foo`) or a short flag (`-f`).
@@ -125,7 +144,7 @@ const SHORT_ARG_CUTOFF = 3;
  */
 function aliasToFlag (alias) {
   const isShort = alias.length < SHORT_ARG_CUTOFF;
-  return !isShort ? `--${_.kebabCase(alias)}` : `-${alias}`;
+  return isShort ? `-${alias}` : `--${_.kebabCase(alias)}`;
 }
 
 /**
@@ -156,9 +175,7 @@ function subSchemaToArgDef (name, subSchema, opts = {}) {
   const {overrides = {}} = opts;
   const aliases = [
     aliasToFlag(name),
-    .../** @type {string[]} */ (subSchema.appiumCliAliases ?? []).map((name) =>
-      aliasToFlag(name),
-    ),
+    .../** @type {string[]} */ (subSchema.appiumCliAliases ?? []).map(aliasToFlag),
   ];
 
   let argOpts = {
@@ -193,11 +210,11 @@ function subSchemaToArgDef (name, subSchema, opts = {}) {
         // respectively.  if we have any specialness (max, min, formats), the type becomes a validator
         // function.  otherwise, `number` becomes `float` and `integer` becomes `int`.
         // `_.flow()` creates a "chain" of funcs, each passing the output to the next.
-        argOpts.type = validators.length
-          ? _.flow(validators)
-          : type === 'number'
-            ? 'float'
-            : 'int';
+        if (validators.length) {
+          argOpts.type = _.flow(validators);
+        } else {
+          argOpts.type = type === 'number' ? 'float' : 'int';
+        }
         break;
       }
 
@@ -248,13 +265,14 @@ export function toParserArgs (opts = {}) {
 }
 
 /**
- * Given an arg/dest name like `<extension>-<name>-<arg>` then return the parts.
+ * Given an arg/dest name like `<extension>-<name>-<arg>` (provided by
+ * {@link CLI_ARG_PARSER_REGEXP}) then return the parts.
  * @param {string} aliasOrDest - Alias to parse
  * @returns {{extensionType?: string, extensionName?: string, argName: string}}
  */
 export function parseArgName (aliasOrDest) {
   const matches = aliasOrDest.match(
-    /^(?<extensionType>.+?)-(?<extensionName>.+?)-(?<argName>.+)$/,
+    CLI_ARG_PARSER_REGEXP
   );
   const groups = matches?.groups;
   return groups?.argName

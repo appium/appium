@@ -10,6 +10,8 @@ import appiumConfigSchema from './appium-config-schema';
 
 export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
 
+const SERVER_PROP_NAME = 'server';
+
 /**
  * Singleton Ajv instance.  A single instance can manage multiple schemas
  */
@@ -257,7 +259,7 @@ export const flattenSchema = _.memoize(() => {
       if (value.properties) {
         stack.push({
           props: value.properties,
-          prefix: key === 'server' ? [] : [...prefix, key],
+          prefix: key === SERVER_PROP_NAME ? [] : [...prefix, key],
           ref: `#${ref}/${key}/properties`,
         });
       } else {
@@ -272,16 +274,20 @@ export const flattenSchema = _.memoize(() => {
 
 /**
  * Given an `ExtensionConfig`, read a schema from disk and register it.
- * @param {import('./ext-config-io').ExtensionType} type
- * @param {string} extName - Extension name (unique to its type)
- * @param {ExtData} extData - Extension config
- * @returns {SchemaObject|undefined}
  */
 export const readExtensionSchema = _.memoize(
-  (type, extName, extData) => {
+  /**
+   * @param {import('./ext-config-io').ExtensionType} extType
+   * @param {string} extName - Extension name (unique to its type)
+   * @param {ExtData} extData - Extension config
+   * @returns {SchemaObject|undefined}
+   */
+  (extType, extName, extData) => {
     const {installPath, pkgName, schema: argSchemaPath} = extData;
-    if (!installPath || !pkgName || !argSchemaPath || !extName) {
-      throw new TypeError('Incomplete extension data');
+    if (!argSchemaPath) {
+      throw new TypeError(
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
+      );
     }
     if (argSchemaPath) {
       const schemaPath = resolveFrom(
@@ -294,11 +300,11 @@ export const readExtensionSchema = _.memoize(
       const schema = moduleObject.__esModule
         ? moduleObject.default
         : moduleObject;
-      registerSchema(type, extName, schema);
+      registerSchema(extType, extName, schema);
       return schema;
     }
   },
-  (type, extData, extName) => `${type}-${extName}`,
+  (extType, extData, extName) => `${extType}-${extName}`,
 );
 
 /**
@@ -310,7 +316,7 @@ export const readExtensionSchema = _.memoize(
  * There is some disagreement between these types and the type of the values in
  * {@link ajv.formats}, which is why we need this.  I guess.
  * @typedef {import('ajv/dist/types').FormatValidator<string>|import('ajv/dist/types').FormatDefinition<string>|import('ajv/dist/types').FormatValidator<number>|import('ajv/dist/types').FormatDefinition<number>|RegExp} AjvFormatter
-*/
+ */
 
 /**
  * Extension data (pulled from config YAML)

@@ -15,6 +15,8 @@ import {
 } from './args';
 import {handle, CLIError} from '@oclif/errors';
 
+export const SERVER_SUBCOMMAND = 'server';
+
 const version = fs.readPackageJsonFrom(rootDir).version;
 
 /**
@@ -26,9 +28,7 @@ const version = fs.readPackageJsonFrom(rootDir).version;
  */
 class ArgParser {
   constructor (debug = false) {
-    const prog = (this.prog = process.argv[1]
-      ? path.basename(process.argv[1])
-      : 'appium');
+    const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
     const parser = new ArgumentParser({
       add_help: true,
       description:
@@ -39,8 +39,22 @@ class ArgParser {
 
     ArgParser._patchExit(parser);
 
+    /**
+     * Program name (typically `appium`)
+     * @type {string}
+     */
+    this.prog = prog;
+
+    /**
+     * If `true`, throw an error on parse failure instead of printing help
+     * @type {boolean}
+     */
     this.debug = debug;
 
+    /**
+     * Wrapped `ArgumentParser` instance
+     * @type {ArgumentParser}
+     */
     this.parser = parser;
 
     parser.add_argument('-v', '--version', {
@@ -72,16 +86,14 @@ class ArgParser {
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
    * @returns {object} - The parsed arguments
    */
-  parseArgs (args) {
-    args = args ?? process.argv.slice(2);
-
+  parseArgs (args = process.argv.slice(2)) {
     if (
       !_.includes(
-        [DRIVER_TYPE, PLUGIN_TYPE, 'server', '-h', '--help', '-v', '--version'],
+        [DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'],
         args[0],
       )
     ) {
-      args.splice(0, 0, 'server');
+      args.splice(0, 0, SERVER_SUBCOMMAND);
     }
 
     try {

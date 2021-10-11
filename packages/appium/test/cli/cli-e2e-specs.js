@@ -64,10 +64,11 @@ describe('CLI', function () {
         JSON.parse(out).should.eql({});
       });
       it('should show updates for installed drivers with --updates', async function () {
+        const penultimateFakeDriverVersionAsOfRightNow = '3.0.4';
         await clear();
-        await run('install', ['@appium/fake-driver@3.0.4', '--source', 'npm', '--json']);
+        await run('install', [`@appium/fake-driver@${penultimateFakeDriverVersionAsOfRightNow}`, '--source', 'npm', '--json']);
         const {fake} = JSON.parse(await run('list', ['--updates', '--json']));
-        util.compareVersions(fake.updateVersion, '>', '3.0.4').should.be.true;
+        util.compareVersions(fake.updateVersion, '>', penultimateFakeDriverVersionAsOfRightNow).should.be.true;
         const stdout = await run('list', ['--updates']);
         stdout.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
       });

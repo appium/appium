@@ -6,28 +6,36 @@ import sinon from 'sinon';
 
 describe('ExtensionConfig', function () {
   describe('DriverConfig', function () {
-
     /**
      * @type {typeof import('../lib/driver-config').default}
      */
     let DriverConfig;
     let mocks;
-
+    /** @type {import('sinon').SinonSandbox} */
+    let sandbox;
     beforeEach(function () {
       mocks = {
-        'resolve-from': sinon.stub().callsFake((cwd, id) => path.join(cwd, id))
+        'resolve-from': sinon.stub().callsFake((cwd, id) => path.join(cwd, id)),
       };
 
       DriverConfig = rewiremock.proxy(
         () => require('../lib/driver-config'),
         mocks,
       ).default;
+
+      sandbox = sinon.createSandbox();
     });
 
-    describe('extensionDesc', function () {
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
         const config = new DriverConfig('/tmp/');
-        config.extensionDesc('foo', {version: '1.0', automationName: 'bar'}).should.equal(`foo@1.0 (automationName 'bar')`);
+        config
+          .extensionDesc('foo', {version: '1.0', automationName: 'bar'})
+          .should.equal(`foo@1.0 (automationName 'bar')`);
       });
     });
 
@@ -111,7 +119,6 @@ describe('ExtensionConfig', function () {
                 val: 'foo',
               });
           });
-
         });
       });
     });
@@ -127,10 +134,12 @@ describe('ExtensionConfig', function () {
       });
       describe('when provided an object with a defined non-string `schema` property', function () {
         it('should return an array with an associated problem', function () {
-          driverConfig.getSchemaProblems({schema: []}, 'foo').should.deep.include({
-            err: 'Incorrectly formatted schema field; must be a path to a schema file.',
-            val: [],
-          });
+          driverConfig
+            .getSchemaProblems({schema: []}, 'foo')
+            .should.deep.include({
+              err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+              val: [],
+            });
         });
       });
 
@@ -149,12 +158,14 @@ describe('ExtensionConfig', function () {
         describe('when the property contains a supported extension', function () {
           describe('when the property as a path cannot be found', function () {
             it('should return an array with an associated problem', function () {
-              const problems = driverConfig
-                .getSchemaProblems({
+              const problems = driverConfig.getSchemaProblems(
+                {
                   installPath: '/usr/bin/derp',
                   pkgName: 'doop',
                   schema: 'herp.json',
-                }, 'foo');
+                },
+                'foo',
+              );
               problems.should.deep.include({
                 err: `Unable to register schema at path herp.json`,
                 val: 'herp.json',
@@ -164,17 +175,37 @@ describe('ExtensionConfig', function () {
 
           describe('when the property as a path  is found', function () {
             it('should return an empty array', function () {
-              const problems = driverConfig.getSchemaProblems({
-                pkgName: 'fixtures', // just corresponds to a directory name relative to `installPath` `(__dirname)`
-                installPath: __dirname,
-                schema: 'driver.schema.js',
-                platformNames: ['foo'], // to avoid problem
-                automationName: 'fake' // to avoid problem
-              }, 'foo');
+              const problems = driverConfig.getSchemaProblems(
+                {
+                  pkgName: 'fixtures', // just corresponds to a directory name relative to `installPath` `(__dirname)`
+                  installPath: __dirname,
+                  schema: 'driver.schema.js',
+                  platformNames: ['foo'], // to avoid problem
+                  automationName: 'fake', // to avoid problem
+                },
+                'foo',
+              );
               problems.should.be.empty;
             });
           });
         });
+      });
+    });
+
+    describe('read()', function () {
+      /**
+       * @type {InstanceType<DriverConfig>}
+       */
+      let driverConfig;
+
+      beforeEach(function () {
+        driverConfig = new DriverConfig('/tmp/');
+        sandbox.spy(driverConfig, 'validate');
+      });
+
+      it('should validate the extension', async function () {
+        await driverConfig.read();
+        driverConfig.validate.should.have.been.calledOnce;
       });
     });
   });

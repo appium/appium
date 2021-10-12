@@ -171,7 +171,9 @@ export default class ExtensionConfig {
    * @returns {Promise<typeof this.installedExtensions>}
    */
   async read () {
-    return (this.installedExtensions = await this.io.read(this.extensionType));
+    const extensions = await this.io.read(this.extensionType);
+    this.installedExtensions = this.validate(extensions);
+    return this.installedExtensions;
   }
 
   /**

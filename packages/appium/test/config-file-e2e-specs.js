@@ -1,12 +1,9 @@
 // @ts-check
 
-import { logger } from '@appium/support';
 import { readConfigFile } from '../lib/config-file';
 import { finalizeSchema, registerSchema, resetSchema } from '../lib/schema/schema';
 import extSchema from './fixtures/driver.schema.js';
 import { resolveFixture } from './helpers';
-
-const log = logger.log;
 
 describe('config file behavior', function () {
   const GOOD_FILEPATH = resolveFixture('config', 'appium.config.good.json');
@@ -40,23 +37,12 @@ describe('config file behavior', function () {
     'appium.config.ext-good.json',
   );
 
-  let oldLogLevel;
-  before(function () {
-    // canonical way to do this?
-    oldLogLevel = log.level;
-    log.level = 'error';
-  });
-
   beforeEach(function () {
     finalizeSchema();
   });
 
   afterEach(function () {
     resetSchema();
-  });
-
-  after(function () {
-    log.level = oldLogLevel;
   });
 
   describe('when provided a path to a config file', function () {
@@ -254,7 +240,7 @@ describe('config file behavior', function () {
             });
           });
           it('should return an object containing errors', function () {
-            result.errors.should.eql([
+            result.should.have.deep.property('errors', [
               {
                 instancePath: '/driver/fake',
                 schemaPath:

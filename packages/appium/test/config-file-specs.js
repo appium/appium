@@ -1,10 +1,10 @@
 // @ts-check
 
-import {rewiremock, resolveFixture} from './helpers';
-import YAML from 'yaml';
 import fs from 'fs';
 import sinon from 'sinon';
+import YAML from 'yaml';
 import * as schema from '../lib/schema/schema';
+import { resolveFixture, rewiremock } from './helpers';
 
 const expect = chai.expect;
 
@@ -56,7 +56,7 @@ describe('config-file', function () {
   before(function () {
     // generally called via the CLI parser, this needs to be done manually in tests.
     // we don't need to do this before _each_ test, because we're not changing the schema.
-    // if we did change the schema, this would need ot be in `beforeEach()` and `afterEach()`
+    // if we did change the schema, this would need to be in `beforeEach()` and `afterEach()`
     // would need to call `schema.reset()`.
     schema.finalizeSchema();
   });

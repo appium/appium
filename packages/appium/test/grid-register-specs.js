@@ -1,5 +1,7 @@
+// @ts-check
+
 import sinon from 'sinon';
-import {rewiremock} from './helpers';
+import { rewiremock } from './helpers';
 
 describe('grid-register', function () {
   let sandbox;
@@ -24,12 +26,6 @@ describe('grid-register', function () {
           },
         },
         axios: sandbox.stub().resolves({data: '', status: 200}),
-        '../lib/logger': {
-          error: sandbox.stub(),
-          errorAndThrow: sandbox.stub().throws(),
-          debug: sandbox.stub(),
-          warn: sandbox.stub(),
-        },
       };
 
       registerNode = rewiremock.proxy(

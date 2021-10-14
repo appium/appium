@@ -21,7 +21,7 @@
     "long-stacktrace": false,
     "no-perms-check": false,
     "nodeconfig": {},
-    "plugins": "all",
+    "plugins": ["all"],
     "relaxed-security": false,
     "session-override": false,
     "strict-caps": false,

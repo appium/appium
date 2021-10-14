@@ -490,11 +490,6 @@ export default class ExtensionCommand {
   }
 
   /**
-   * @typedef RunOutput
-   * @property {?string|undefined} error - error message if script ran unsuccessfuly, otherwise undefined
-   * @property {string[]} output - script output
-   */
-  /**
    * Runs a script cached inside the "scripts" field under "appium"
    * inside of the driver/plugins "package.json" file. Will throw
    * an error if the driver/plugin does not contain a "scripts" field
@@ -543,7 +538,7 @@ export default class ExtensionCommand {
 
     try {
       await runner.join();
-      log(this.isJsonOutput, `${scriptName} successfuly ran`.green);
+      log(this.isJsonOutput, `${scriptName} successfully ran`.green);
       return {output: output.getBuff()};
     } catch (err) {
       log(this.isJsonOutput, `Encountered an error when running '${scriptName}': ${err.message}`.red);
@@ -551,3 +546,9 @@ export default class ExtensionCommand {
     }
   }
 }
+
+/**
+ * @typedef {Object} RunOutput
+ * @property {string|undefined} error - error message if script ran unsuccessfully, otherwise undefined
+ * @property {string[]} output - script output
+ */

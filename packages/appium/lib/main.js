@@ -15,7 +15,7 @@ import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
 import registerNode from './grid-register';
 import logger from './logger'; // logger needs to remain first of imports
 import { init as logsinkInit } from './logsink';
-import { getDefaultsFromSchema, validate } from './schema';
+import { getDefaultsFromSchema, validate } from './schema/schema';
 import { inspectObject } from './utils';
 
 async function preflightChecks ({args, throwInsteadOfExit = false}) {
@@ -205,8 +205,12 @@ async function init (args = null) {
 
   // if the user has requested the 'driver' CLI, don't run the normal server,
   // but instead pass control to the driver CLI
-  if (args.subcommand === DRIVER_TYPE || args.subcommand === PLUGIN_TYPE) {
+  if (args.subcommand === DRIVER_TYPE) {
     await runExtensionCommand(args, args.subcommand, driverConfig);
+    return {parser};
+  }
+  if (args.subcommand === PLUGIN_TYPE) {
+    await runExtensionCommand(args, args.subcommand, pluginConfig);
     return {parser};
   }
 
@@ -320,5 +324,5 @@ if (require.main === module) {
 // everything below here is intended to be a public API.
 export { main, init };
 export { APPIUM_HOME } from './extension-config';
-export { getSchema, getValidator, finalizeSchema as finalize } from './schema';
+export { getSchema, validate as validateOption, finalizeSchema } from './schema/schema';
 export { readConfigFile, validateConfig } from './config-file';

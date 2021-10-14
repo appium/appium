@@ -72,6 +72,18 @@ class ExtConfigIO {
   _appiumHome;
 
   /**
+   * Helps avoid writing multiple times.
+   * @type {Promise<boolean>?}
+   */
+  _writing;
+
+  /**
+   * Helps avoid reading multiple times.
+   * @type {Promise<void>?}
+   */
+  _reading;
+
+  /**
    * @param {string} appiumHome
    */
   constructor (appiumHome) {
@@ -122,55 +134,66 @@ class ExtConfigIO {
    * @returns {Promise<object>} The data
    */
   async read (extensionType) {
-    if (!VALID_EXT_TYPES.has(extensionType)) {
-      throw new TypeError(
-        `Invalid extension type: ${extensionType}. Valid values are: ${[
-          ...VALID_EXT_TYPES,
-        ].join(', ')}`,
-      );
-    }
-    if (this._extensionTypeData.has(extensionType)) {
+    if (this._reading) {
+      await this._reading;
       return this._extensionTypeData.get(extensionType);
     }
 
-    let data;
-    let isNewFile = false;
-    try {
-      await mkdirp(this._appiumHome);
-      const yaml = await fs.readFile(this.filepath, 'utf8');
-      data = this._applySchemaMigrations(YAML.parse(yaml));
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        data = {
-          [CONFIG_DATA_DRIVER_KEY]: {},
-          [CONFIG_DATA_PLUGIN_KEY]: {},
-          schemaRev: CONFIG_SCHEMA_REV,
-        };
-        isNewFile = true;
-      } else {
-        throw new Error(
-          `Appium had trouble loading the extension installation ` +
-            `cache file (${this.filepath}). Ensure it exists and is ` +
-            `readable. Specific error: ${err.message}`,
+    this._reading = (async () => {
+      if (!VALID_EXT_TYPES.has(extensionType)) {
+        throw new TypeError(
+          `Invalid extension type: ${extensionType}. Valid values are: ${[
+            ...VALID_EXT_TYPES,
+          ].join(', ')}`,
         );
       }
+      if (this._extensionTypeData.has(extensionType)) {
+        return;
+      }
+
+      let data;
+      let isNewFile = false;
+      try {
+        await mkdirp(this._appiumHome);
+        const yaml = await fs.readFile(this.filepath, 'utf8');
+        data = this._applySchemaMigrations(YAML.parse(yaml));
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          data = {
+            [CONFIG_DATA_DRIVER_KEY]: {},
+            [CONFIG_DATA_PLUGIN_KEY]: {},
+            schemaRev: CONFIG_SCHEMA_REV,
+          };
+          isNewFile = true;
+        } else {
+          throw new Error(
+            `Appium had trouble loading the extension installation ` +
+              `cache file (${this.filepath}). Ensure it exists and is ` +
+              `readable. Specific error: ${err.message}`,
+          );
+        }
+      }
+
+      this._data = data;
+      this._extensionTypeData.set(
+        DRIVER_TYPE,
+        this._createProxy(DRIVER_TYPE, data),
+      );
+      this._extensionTypeData.set(
+        PLUGIN_TYPE,
+        this._createProxy(PLUGIN_TYPE, data),
+      );
+
+      if (isNewFile) {
+        await this.write(true);
+      }
+    })();
+    try {
+      await this._reading;
+      return this._extensionTypeData.get(extensionType);
+    } finally {
+      this._reading = null;
     }
-
-    this._data = data;
-    this._extensionTypeData.set(
-      DRIVER_TYPE,
-      this._createProxy(DRIVER_TYPE, data),
-    );
-    this._extensionTypeData.set(
-      PLUGIN_TYPE,
-      this._createProxy(PLUGIN_TYPE, data),
-    );
-
-    if (isNewFile) {
-      await this.write(true);
-    }
-
-    return this._extensionTypeData.get(extensionType);
   }
 
   /**
@@ -181,31 +204,40 @@ class ExtConfigIO {
    * @returns {Promise<boolean>} Whether the data was written
    */
   async write (force = false) {
-    if (!this._dirty && !force) {
-      return false;
+    if (this._writing) {
+      return this._writing;
     }
+    this._writing = (async () => {
+      try {
+        if (!this._dirty && !force) {
+          return false;
+        }
 
-    if (!this._data) {
-      throw new ReferenceError('No data to write. Call `read()` first');
-    }
+        if (!this._data) {
+          throw new ReferenceError('No data to write. Call `read()` first');
+        }
 
-    const dataToWrite = {
-      ...this._data,
-      [CONFIG_DATA_DRIVER_KEY]: this._extensionTypeData.get(DRIVER_TYPE),
-      [CONFIG_DATA_PLUGIN_KEY]: this._extensionTypeData.get(PLUGIN_TYPE),
-    };
+        const dataToWrite = {
+          ...this._data,
+          [CONFIG_DATA_DRIVER_KEY]: this._extensionTypeData.get(DRIVER_TYPE),
+          [CONFIG_DATA_PLUGIN_KEY]: this._extensionTypeData.get(PLUGIN_TYPE),
+        };
 
-    try {
-      await fs.writeFile(this.filepath, YAML.stringify(dataToWrite), 'utf8');
-    } catch {
-      throw new Error(
-        `Appium could not parse or write from the Appium Home directory ` +
-          `(${this._appiumHome}). Please ensure it is writable.`,
-      );
-    }
-
-    this._dirty = false;
-    return true;
+        try {
+          await fs.writeFile(this.filepath, YAML.stringify(dataToWrite), 'utf8');
+          this._dirty = false;
+          return true;
+        } catch {
+          throw new Error(
+            `Appium could not parse or write from the Appium Home directory ` +
+              `(${this._appiumHome}). Please ensure it is writable.`,
+          );
+        }
+      } finally {
+        this._writing = null;
+      }
+    })();
+    return await this._writing;
   }
 
   /**

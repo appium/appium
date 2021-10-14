@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS, validateCaps as validateArgs } from '@appium/base-driver';
+import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import { fs } from '@appium/support';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -32,39 +32,6 @@ function inspectObject (args) {
     }
   }
 }
-
-/**
- * Given a set of args and a set of constraints, throw an error if any args are not mentioned in
- * the set of constraints
- * @param {Object} extensionArgs the args
- * @param {Object} argsConstraints the constraints object
- * @throws {Error} if any args were not recognized
- */
-function ensureNoUnknownArgs (extensionArgs, argsConstraints) {
-  const knownArgNames = Object.keys(argsConstraints);
-  const unknownArgs = _.difference(Object.keys(extensionArgs), knownArgNames);
-  if (unknownArgs.length > 0) {
-    throw new Error(`Some arguments were not recognized: ${JSON.stringify(unknownArgs)}. ` +
-                    `Are you sure they are in the list of supported args? ${JSON.stringify(knownArgNames)}`);
-  }
-}
-
-/**
- * Takes in a set of driver/plugin args passed in by user, and arg constraints
- * and throws an error if any arg is unknown or of the incorrect type
- *
- * @param {object} extensionArgs - Driver or Plugin specific args
- * @param {object} argsConstraints - Constraints for arguments
- * @deprecated Extensions should use a schema instead of providing `argsConstraints`
- * @throws {Error} if any args are not recognized or are of an invalid type
-*/
-function validateExtensionArgs (extensionArgs, argsConstraints) {
-  if (!_.isEmpty(extensionArgs) && !_.isEmpty(argsConstraints)) {
-    ensureNoUnknownArgs(extensionArgs, argsConstraints);
-    validateArgs(extensionArgs, argsConstraints);
-  }
-}
-
 
 /**
  * Takes the caps that were provided in the request and translates them
@@ -253,6 +220,5 @@ const rootDir = fs.findRoot(__dirname);
 
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes,
-  validateExtensionArgs
+  getPackageVersion, pullSettings, removeAppiumPrefixes
 };

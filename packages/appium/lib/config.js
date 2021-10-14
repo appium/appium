@@ -9,7 +9,7 @@ import {
   StoreDeprecatedDefaultCapabilityAction, DEFAULT_CAPS_ARG,
 } from './cli/argparse-actions';
 import findUp from 'find-up';
-import { getDefaultsFromSchema } from './schema';
+import { getDefaultsFromSchema } from './schema/schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 

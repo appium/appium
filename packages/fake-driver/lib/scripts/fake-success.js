@@ -1,3 +1,3 @@
 import log from '../logger';
 
-log.info('Successfuly ran the script');
+log.info('Successfully ran the script');

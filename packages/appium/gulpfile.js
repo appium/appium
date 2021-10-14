@@ -49,7 +49,7 @@ gulp.task('copy-files', gulp.parallel(
 
 gulp.task('generate-appium-schema-json', function () {
   // don't care about file contents as text, so `read: false`
-  return gulp.src('./build/lib/appium-config-schema.js', {read: false})
+  return gulp.src('./build/lib/schema/appium-config-schema.js', {read: false})
     .pipe(through(writeAppiumConfigJsonSchema))
     .pipe(gulp.dest('./build/lib/'));
 });

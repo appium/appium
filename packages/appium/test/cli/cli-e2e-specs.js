@@ -25,9 +25,9 @@ describe('CLI', function () {
     await mkdirp(appiumHome);
   }
 
-  async function run (driverCmd, args = [], raw = false, ext = 'driver') {
+  async function run (extCommand, args = [], raw = false, ext = 'driver') {
     try {
-      const ret = await exec(process.execPath, [executable, ext, driverCmd, ...args], {
+      const ret = await exec(process.execPath, [executable, ext, extCommand, ...args], {
         cwd: PROJECT_ROOT,
         env: {
           APPIUM_HOME: appiumHome,

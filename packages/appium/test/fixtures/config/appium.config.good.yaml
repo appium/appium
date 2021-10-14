@@ -20,7 +20,8 @@ server:
   no-perms-check: false
   nodeconfig:
     foo: bar
-  plugins: all
+  plugins:
+    - all
   relaxed-security: false
   session-override: false
   strict-caps: false

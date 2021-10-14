@@ -67,7 +67,7 @@
   ],
   "lint-staged": {
     "*.js": "eslint --fix",
-    "packages/appium/lib/appium-config-schema.js": "npm run generate-schema-declarations && git add -A ./packages/appium/types/appium-config.d.ts"
+    "appium-config-schema.js": "npm run generate-schema-declarations && git add -A ./packages/appium/types/appium-config.d.ts"
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",

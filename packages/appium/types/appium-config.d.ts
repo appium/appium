@@ -16,7 +16,7 @@ export type AllowCorsConfig = boolean;
 /**
  * Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.
  */
-export type AllowInsecureConfig = string[] | string;
+export type AllowInsecureConfig = string[];
 /**
  * Base path to use as the prefix for all webdriver routes running on the server
  */
@@ -34,21 +34,15 @@ export type CallbackPortConfig = number;
  */
 export type DebugLogSpacingConfig = boolean;
 /**
- * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.
- */
-export type DefaultCapabilitiesConfig =
-  | {
-      [k: string]: unknown;
-    }
-  | string;
-/**
  * Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.
  */
-export type DenyInsecureConfig = string[] | string;
+export type DenyInsecureConfig = string[];
 /**
  * A list of drivers to activate. By default, all installed drivers will be activated.
  */
-export type DriversConfig = string | string[];
+export type DriversConfig = DriversConfig1 & DriversConfig2;
+export type DriversConfig1 = string;
+export type DriversConfig2 = string[];
 /**
  * Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.
  */
@@ -108,15 +102,13 @@ export type NoPermsCheckConfig = boolean;
 /**
  * Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself
  */
-export type NodeconfigConfig =
-  | {
-      [k: string]: unknown;
-    }
-  | string;
+export type NodeconfigConfig = string;
 /**
  * A list of plugins to activate. To activate all plugins, use the single string "all"
  */
-export type PluginsConfig = string | string[];
+export type PluginsConfig = PluginsConfig1 & PluginsConfig2;
+export type PluginsConfig1 = string;
+export type PluginsConfig2 = string[];
 /**
  * Port to listen on
  */
@@ -186,6 +178,12 @@ export interface ServerConfig {
   tmp?: TmpConfig;
   "trace-dir"?: TraceDirConfig;
   webhook?: WebhookConfig;
+}
+/**
+ * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.
+ */
+export interface DefaultCapabilitiesConfig {
+  [k: string]: unknown;
 }
 /**
  * Driver-specific configuration. Keys should correspond to driver package names

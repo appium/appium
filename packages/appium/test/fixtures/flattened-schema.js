@@ -24,7 +24,8 @@ export default {
       'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
     items: {type: 'string'},
     title: 'allow-insecure config',
-    type: ['array', 'string'],
+    type: 'array',
+    appiumCliTransformer: 'csv',
     uniqueItems: true,
   },
   basePath: {
@@ -68,7 +69,7 @@ export default {
     description:
       'Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.',
     title: 'default-capabilities config',
-    type: ['object', 'string'],
+    type: 'object',
   },
   denyInsecure: {
     $comment: 'Allowed values are defined by drivers',
@@ -78,7 +79,8 @@ export default {
       'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
     items: {type: 'string'},
     title: 'deny-insecure config',
-    type: ['array', 'string'],
+    type: 'array',
+    appiumCliTransformer: 'csv',
     uniqueItems: true,
   },
   drivers: {
@@ -88,7 +90,8 @@ export default {
       'A list of drivers to activate. By default, all installed drivers will be activated.',
     items: {type: 'string'},
     title: 'drivers config',
-    type: ['string', 'array'],
+    type: 'array',
+    uniqueItems: true
   },
   keepAliveTimeout: {
     $id: '#/properties/server/properties/keep-alive-timeout',
@@ -190,7 +193,7 @@ export default {
     description:
       'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
     title: 'nodeconfig config',
-    type: ['object', 'string'],
+    type: 'object',
   },
   plugins: {
     $id: '#/properties/server/properties/plugins',
@@ -199,7 +202,8 @@ export default {
       'A list of plugins to activate. To activate all plugins, use the single string "all"',
     items: {type: 'string'},
     title: 'plugins config',
-    type: ['string', 'array'],
+    type: 'array',
+    uniqueItems: true,
   },
   port: {
     $id: '#/properties/server/properties/port',

@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import getParser from '../lib/cli/parser';
 import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
 import logger from '../lib/logger';
-import { getDefaultsFromSchema, resetSchema } from '../lib/schema';
+import { getDefaultsFromSchema, resetSchema } from '../lib/schema/schema';
 
 describe('Config', function () {
   describe('Appium config', function () {

@@ -5,7 +5,7 @@ import os from 'os';
 import path from 'path';
 import { getExtConfigIOInstance } from './ext-config-io';
 import log from './logger';
-import { ALLOWED_SCHEMA_EXTENSIONS, readExtensionSchema } from './schema';
+import { ALLOWED_SCHEMA_EXTENSIONS, readExtensionSchema, isAllowedSchemaFileExtension } from './schema/schema';
 
 const DEFAULT_APPIUM_HOME = path.resolve(os.homedir(), '.appium');
 const APPIUM_HOME = process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME;
@@ -96,8 +96,7 @@ export default class ExtensionConfig {
     const {schema: argSchemaPath} = extData;
     if (argSchemaPath) {
       if (_.isString(argSchemaPath)) {
-        const argSchemaPathFileExtName = path.extname(argSchemaPath);
-        if (ALLOWED_SCHEMA_EXTENSIONS.has(argSchemaPathFileExtName)) {
+        if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
             readExtensionSchema(this.extensionType, extName, extData);
           } catch (err) {

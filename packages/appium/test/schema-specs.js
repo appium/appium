@@ -1,14 +1,15 @@
 //@ts-check
-import rewiremock from 'rewiremock/node';
+
 import sinon from 'sinon';
-import appiumConfigSchema from '../lib/appium-config-schema';
-import flattenedSchemaFixture from './fixtures/flattened-schema';
+import appiumConfigSchema from '../lib/schema/appium-config-schema';
 import defaultArgsFixture from './fixtures/default-args';
+import flattenedSchemaFixture from './fixtures/flattened-schema';
+import { rewiremock } from './helpers';
 
 const expect = require('chai').expect;
 
 describe('schema', function () {
-  /** @type {import('../lib/schema')} */
+  /** @type {import('../lib/schema/schema')} */
   let schema;
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
@@ -29,7 +30,7 @@ describe('schema', function () {
       '@sidvind/better-ajv-errors': sandbox.stub(),
     };
 
-    schema = rewiremock.proxy(() => require('../lib/schema'), mocks);
+    schema = rewiremock.proxy(() => require('../lib/schema/schema'), mocks);
 
     schema.resetSchema();
   });
@@ -147,6 +148,28 @@ describe('schema', function () {
         expect(schema.getSchema()).to.eql(appiumConfigSchema);
       });
     });
+
+    describe('when schema already compiled and provided a schema id', function () {
+      beforeEach(function () {
+        schema.finalizeSchema();
+      });
+      describe('when schema id is valid', function () {
+        it('should return a schema', function () {
+          expect(schema.getSchema(schema.APPIUM_CONFIG_SCHEMA_ID)).to.eql(
+            appiumConfigSchema,
+          );
+        });
+      });
+
+      describe('when schema id is invalid', function () {
+        it('should throw', function () {
+          expect(() => schema.getSchema('schema-the-clown')).to.throw(
+            ReferenceError,
+            /unknown schema/i,
+          );
+        });
+      });
+    });
   });
 
   describe('getDefaultsFromSchema()', function () {
@@ -250,7 +273,7 @@ describe('schema', function () {
   });
 
   describe('readExtensionSchema()', function () {
-    /** @type {import('../lib/schema').ExtData} */
+    /** @type {import('../lib/schema/schema').ExtData} */
     let extData;
     const extName = 'stuff';
 
@@ -296,7 +319,7 @@ describe('schema', function () {
 
     describe('plugin', function () {
       const extName = 'stuff';
-      /** @type {import('../lib/schema').ExtData} */
+      /** @type {import('../lib/schema/schema').ExtData} */
       let extData;
 
       beforeEach(function () {

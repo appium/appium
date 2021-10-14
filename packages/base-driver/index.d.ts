@@ -2,7 +2,6 @@ declare class BaseDriver {
     // class variables
     static baseVersion: string;
     static newMethodMap?: MethodMap;
-    static get argsConstraints(): Constraints;
 
     constructor(opts?: {}, shouldValidateCaps?: boolean);
 
@@ -281,7 +280,11 @@ declare interface DriverHelpers {
     parseCapsArray: (cap: string | string[]) => string[];
 }
 
-declare type SettingsUpdater = (prop: string, newValue: {}, curValue: {}) => Promise<void>;
+declare type SettingsUpdater = (
+  prop: string,
+  newValue: {},
+  curValue: {},
+) => Promise<void>;
 
 declare class DeviceSettings {
     constructor(defaultSettings: {}, onSettingsUpdate: SettingsUpdater);

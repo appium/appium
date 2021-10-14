@@ -28,6 +28,7 @@ async function main () {
     await fs.writeFile(DECLARATIONS_PATH, ts);
     console.log(`wrote to ${DECLARATIONS_PATH}`);
   } catch (err) {
+    console.error('Be sure to build the project first!');
     console.error(err);
     process.exitCode = 1;
   }

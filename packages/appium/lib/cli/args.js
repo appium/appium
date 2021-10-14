@@ -1,22 +1,25 @@
+// @ts-check
+
+// @ts-ignore
 import { DEFAULT_BASE_PATH } from '@appium/base-driver';
 import _ from 'lodash';
 import DriverConfig from '../driver-config';
 import { APPIUM_HOME, DRIVER_TYPE, INSTALL_TYPES, PLUGIN_TYPE } from '../extension-config';
 import PluginConfig from '../plugin-config';
-import {
-  parseDriverNames, parseInstallTypes, parseJsonStringOrFile,
-  parsePluginNames, parseSecurityFeatures
-} from './parser-helpers';
-import { toParserArgs } from './schema-args';
+import { toParserArgs } from '../schema/cli-args';
 
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'find_by_image';
 const USE_ALL_PLUGINS = 'all';
 
+/** @type {Set<ExtensionType>} */
+const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
+
 const driverConfig = new DriverConfig(APPIUM_HOME);
 const pluginConfig = new PluginConfig(APPIUM_HOME);
 
 // this set of args works for both drivers and plugins ('extensions')
+/** @type {ArgumentDefinition[]} */
 const globalExtensionArgs = [
   [['--json'], {
     required: false,
@@ -27,9 +30,12 @@ const globalExtensionArgs = [
   }]
 ];
 
+/**
+ * Builds a Record of extension types to a Record of subcommands to their argument definitions
+ */
 const getExtensionArgs = _.once(function getExtensionArgs () {
   const extensionArgs = {};
-  for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
+  for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
       list: makeListArgs(type),
       install: makeInstallArgs(type),
@@ -38,13 +44,13 @@ const getExtensionArgs = _.once(function getExtensionArgs () {
       run: makeRunArgs(type),
     };
   }
-  return extensionArgs;
+  return /** @type {Record<ExtensionType, Record<string,ArgumentDefinition[]>>} */ (extensionArgs);
 });
 
 /**
- *
+ * Makes the opts for the `list` subcommand for each extension type.
  * @param {ExtensionType} type
- * @returns
+ * @returns {ArgumentDefinition[]}
  */
 function makeListArgs (type) {
   return [
@@ -66,7 +72,11 @@ function makeListArgs (type) {
   ];
 }
 
-
+/**
+ * Makes the opts for the `install` subcommand for each extension type
+ * @param {ExtensionType} type
+ * @returns {ArgumentDefinition[]}
+ */
 function makeInstallArgs (type) {
   return [
     ...globalExtensionArgs,
@@ -78,9 +88,9 @@ function makeInstallArgs (type) {
     [['--source'], {
       required: false,
       default: null,
-      type: parseInstallTypes,
+      choices: INSTALL_TYPES,
       help: `Where to look for the ${type} if it is not one of Appium's verified ` +
-            `${type}s. Possible values: ${JSON.stringify(INSTALL_TYPES)}`,
+            `${type}s. Possible values: ${INSTALL_TYPES.join(', ')}`,
       dest: 'installType'
     }],
     [['--package'], {
@@ -95,6 +105,12 @@ function makeInstallArgs (type) {
   ];
 }
 
+
+/**
+ * Makes the opts for the `uninstall` subcommand for each extension type
+ * @param {ExtensionType} type
+ * @returns {ArgumentDefinition[]}
+ */
 function makeUninstallArgs (type) {
   return [
     ...globalExtensionArgs,
@@ -106,6 +122,11 @@ function makeUninstallArgs (type) {
   ];
 }
 
+/**
+ * Makes the opts for the `update` subcommand for each extension type
+ * @param {ExtensionType} type
+ * @returns {ArgumentDefinition[]}
+ */
 function makeUpdateArgs (type) {
   return [
     ...globalExtensionArgs,
@@ -125,6 +146,11 @@ function makeUpdateArgs (type) {
   ];
 }
 
+/**
+ * Makes the opts for the `run` subcommand for each extension type
+ * @param {ExtensionType} type
+ * @returns {ArgumentDefinition[]}
+ */
 function makeRunArgs (type) {
   return [
     ...globalExtensionArgs,
@@ -142,31 +168,18 @@ function makeRunArgs (type) {
   ];
 }
 
+/**
+ * Derives the options for the `server` command from the schema, and adds the arguments
+ * which are disallowed in the config file.
+ * @returns {ArgumentDefinition[]}
+ */
 function getServerArgs () {
   return [
     ...toParserArgs({
       overrides: {
-        allowInsecure: {
-          type: parseSecurityFeatures
-        },
         basePath: {
           default: DEFAULT_BASE_PATH
         },
-        defaultCapabilities: {
-          type: parseJsonStringOrFile
-        },
-        denyInsecure: {
-          type: parseSecurityFeatures
-        },
-        drivers: {
-          type: parseDriverNames
-        },
-        nodeconfig: {
-          type: parseJsonStringOrFile
-        },
-        plugins: {
-          type: parsePluginNames
-        }
       }
     }),
     ...serverArgsDisallowedInConfig,
@@ -175,6 +188,7 @@ function getServerArgs () {
 
 /**
  * These don't make sense in the context of a config file for obvious reasons.
+ * @type {ArgumentDefinition[]}
  */
 const serverArgsDisallowedInConfig = [
   [

@@ -36,7 +36,8 @@ export default {
             type: 'string'
           },
           title: 'allow-insecure config',
-          type: ['array', 'string'],
+          type: 'array',
+          appiumCliTransformer: 'csv',
           uniqueItems: true
         },
         'base-path': {
@@ -77,7 +78,7 @@ export default {
           appiumCliAliases: ['dc'],
           description: 'Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.',
           title: 'default-capabilities config',
-          type: ['object', 'string']
+          type: 'object'
         },
         'deny-insecure': {
           $comment: 'Allowed values are defined by drivers',
@@ -88,7 +89,8 @@ export default {
             type: 'string'
           },
           title: 'deny-insecure config',
-          type: ['array', 'string'],
+          type: 'array',
+          appiumCliTransformer: 'csv',
           uniqueItems: true
         },
         drivers: {
@@ -99,7 +101,8 @@ export default {
             type: 'string'
           },
           title: 'drivers config',
-          type: ['string', 'array']
+          type: 'array',
+          uniqueItems: true
         },
         'keep-alive-timeout': {
           $id: '#/properties/server/properties/keep-alive-timeout',
@@ -178,7 +181,7 @@ export default {
           default: '',
           description: 'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
           title: 'nodeconfig config',
-          type: ['object', 'string']
+          type: 'object'
         },
         plugins: {
           $id: '#/properties/server/properties/plugins',
@@ -188,7 +191,8 @@ export default {
             type: 'string'
           },
           title: 'plugins config',
-          type: ['string', 'array']
+          type: 'array',
+          uniqueItems: true
         },
         port: {
           $id: '#/properties/server/properties/port',

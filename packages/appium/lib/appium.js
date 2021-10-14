@@ -5,9 +5,8 @@ import { findMatchingDriver } from './drivers';
 import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
 import B from 'bluebird';
 import AsyncLock from 'async-lock';
-import { parseCapsForInnerDriver, pullSettings, validateExtensionArgs } from './utils';
+import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from '@appium/support';
-import { hasRegisteredSchema } from './schema';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -40,7 +39,7 @@ class AppiumDriver extends BaseDriver {
     // the main Appium Driver has no new command timeout
     this.newCommandTimeoutMs = 0;
 
-    this.args = Object.assign({}, args);
+    this.args = {...args};
 
     // Access to sessions list must be guarded with a Semaphore, because
     // it might be changed by other async calls at any time
@@ -118,19 +117,10 @@ class AppiumDriver extends BaseDriver {
    * If the extension has provided a schema, validation has already happened.
    * @param {'driver'|'plugin'} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
-   * @param {ObjectConstructor} extClass the class of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
-  assignCliArgsToExtension (extType, extName, extClass, extInstance) {
+  assignCliArgsToExtension (extType, extName, extInstance) {
     const cliArgs = this.args[extType]?.[extName];
-    if (!hasRegisteredSchema(extType, extName) && !_.isEmpty(cliArgs)) {
-      if (!_.has(extClass, 'argsConstraints')) {
-        throw new Error(`You sent in CLI args for the ${extName} "${extType}", but it ` +
-                          `does not define any`);
-      }
-      validateExtensionArgs(cliArgs, extClass.argsConstraints);
-      log.debug(`Set CLI arguments on ${extName} ${extType} instance: ${JSON.stringify(cliArgs)}`);
-    }
     if (!_.isEmpty(cliArgs)) {
       extInstance.cliArgs = cliArgs;
     }
@@ -218,7 +208,7 @@ class AppiumDriver extends BaseDriver {
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
-      this.assignCliArgsToExtension('driver', driverName, InnerDriver, driverInstance);
+      this.assignCliArgsToExtension('driver', driverName, driverInstance);
 
 
       // This assignment is required for correct web sockets functionality inside the driver
@@ -439,7 +429,7 @@ class AppiumDriver extends BaseDriver {
       const generalName = PluginClass.pluginName;
       const name = `${generalName} (${sessionId})`;
       const plugin = new PluginClass(name);
-      this.assignCliArgsToExtension('plugin', generalName, PluginClass, plugin);
+      this.assignCliArgsToExtension('plugin', generalName, plugin);
       return plugin;
     });
   }

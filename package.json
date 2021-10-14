@@ -36,7 +36,7 @@
     "postinstall": "lerna bootstrap && lerna exec --parallel \"gulp prepublish\"",
     "install-fake-driver": "lerna run --scope=appium install-fake-driver",
     "lint": "lerna exec --parallel \"gulp lint\" && lerna run --scope=@appium/eslint-config-appium lint",
-    "lint:fix": "lerna exec --parallel \"gulp lint --fix\"",
+    "lint:fix": "eslint --fix .",
     "precommit-lint": "lint-staged",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
     "reinstall": "npm run clean && npm install",
@@ -67,7 +67,7 @@
   ],
   "lint-staged": {
     "*.js": "eslint --fix",
-    "appium-config-schema.js": "npm run generate-schema-declarations && git add -A ./packages/appium/types/appium-config.d.ts"
+    "./packages/appium/lib/schema/appium-config-schema.js": "npm run generate-schema-declarations"
   },
   "devDependencies": {
     "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",

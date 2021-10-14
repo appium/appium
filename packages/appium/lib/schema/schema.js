@@ -5,8 +5,8 @@ import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
 import resolveFrom from 'resolve-from';
-import appiumConfigSchema from './appium-config-schema';
 import { APPIUM_HOME } from '../extension-config';
+import appiumConfigSchema from './appium-config-schema';
 import { keywords } from './keywords';
 
 /**
@@ -139,7 +139,9 @@ export function finalizeSchema () {
         /** @type {SchemaObject} */
         const finalExtSchema = {...extSchema, additionalProperties: false};
         _.forEach(finalExtSchema?.properties ?? {}, (prop, propName) => {
-          const schemaId = `${extensionType}-${name}-${_.kebabCase(prop.appiumCliDest ?? propName)}`;
+          const schemaId = `${extensionType}-${name}-${_.kebabCase(
+            prop.appiumCliDest ?? propName,
+          )}`;
           ajv.addSchema(prop, schemaId);
           createdSchemaIDs.add(schemaId);
         });
@@ -163,8 +165,10 @@ export function finalizeSchema () {
   const finalSchema = _.reduce(
     _.fromPairs([...registeredSchemas]),
     (baseSchema, extensionSchemas, extensionType) => {
-      baseSchema.properties[extensionType].properties =
-        combineExtSchemas(extensionSchemas, extensionType);
+      baseSchema.properties[extensionType].properties = combineExtSchemas(
+        extensionSchemas,
+        extensionType,
+      );
       return baseSchema;
     },
     baseSchema,
@@ -317,20 +321,18 @@ export const readExtensionSchema = _.memoize(
         `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
       );
     }
-    if (argSchemaPath) {
-      const schemaPath = resolveFrom(
-        path.resolve(APPIUM_HOME, installPath),
-        // this path sep is fine because `resolveFrom` uses Node's module resolution
-        path.normalize(`${pkgName}/${argSchemaPath}`),
-      );
-      const moduleObject = require(schemaPath);
-      // this sucks. default exports should be destroyed
-      const schema = moduleObject.__esModule
-        ? moduleObject.default
-        : moduleObject;
-      registerSchema(extType, extName, schema);
-      return schema;
-    }
+    const schemaPath = resolveFrom(
+      path.resolve(APPIUM_HOME, installPath),
+      // this path sep is fine because `resolveFrom` uses Node's module resolution
+      path.normalize(`${pkgName}/${argSchemaPath}`),
+    );
+    const moduleObject = require(schemaPath);
+    // this sucks. default exports should be destroyed
+    const schema = moduleObject.__esModule
+      ? moduleObject.default
+      : moduleObject;
+    registerSchema(extType, extName, schema);
+    return schema;
   },
   (extType, extData, extName) => `${extType}-${extName}`,
 );

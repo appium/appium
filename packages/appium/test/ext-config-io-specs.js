@@ -1,10 +1,10 @@
 // @ts-check
 
-import {rewiremock} from './helpers';
+import { promises as fs } from 'fs';
 import path from 'path';
 import sinon from 'sinon';
-import {promises as fs} from 'fs';
 import YAML from 'yaml';
+import { rewiremock } from './helpers';
 const expect = chai.expect;
 
 describe('ExtensionConfigIO', function () {
@@ -16,16 +16,9 @@ describe('ExtensionConfigIO', function () {
   /** @type {string} */
   let yamlFixture;
 
-  /** @type {string} */
-  let yamlFixtureRev1;
-
   before(async function () {
     yamlFixture = await fs.readFile(
       path.join(__dirname, 'fixtures', 'extensions.yaml'),
-      'utf8',
-    );
-    yamlFixtureRev1 = await fs.readFile(
-      path.join(__dirname, 'fixtures', 'extensions-rev-1.yaml'),
       'utf8',
     );
   });
@@ -98,7 +91,7 @@ describe('ExtensionConfigIO', function () {
     });
 
     describe('when called with a valid extension type', function () {
-      describe('when the file does not exist', function () {
+      describe('when the file does not yet exist', function () {
         beforeEach(async function () {
           /** @type {NodeJS.ErrnoException} */
           const err = new Error();
@@ -116,7 +109,7 @@ describe('ExtensionConfigIO', function () {
         });
       });
 
-      describe('when `schemaRev` is up-to-date', function () {
+      describe('when the file already exists', function () {
         beforeEach(async function () {
           await io.read('driver');
         });
@@ -133,39 +126,13 @@ describe('ExtensionConfigIO', function () {
           ).to.have.been.calledOnceWith(io.filepath, 'utf8');
         });
       });
-
-      describe('when the `schemaRev` of the extension config file is less than 2', function () {
-        let updatedYaml;
-
-        beforeEach(async function () {
-          mocks['@appium/support'].fs.readFile = sandbox
-            .stub()
-            .resolves(yamlFixtureRev1);
-          updatedYaml = {
-            ...YAML.parse(yamlFixtureRev1),
-            schemaRev: 2,
-            plugins: {},
-          };
-          await io.read('driver');
-        });
-
-        it('should write the file using the updated schema', async function () {
-          await io.write();
-          expect(
-            mocks['@appium/support'].fs.writeFile,
-          ).to.have.been.calledOnceWith(
-            io.filepath,
-            YAML.stringify(updatedYaml),
-            'utf8',
-          );
-        });
-      });
     });
 
-    describe('when called with an unknown `extensionType`', function () {
+    describe('when called with an unknown extension type`', function () {
       it('should reject', async function () {
         // @ts-ignore
-        return await expect(io.read('unknown')).to.be.rejectedWith(
+        const promise = io.read('unknown');
+        return await expect(promise).to.be.rejectedWith(
           TypeError,
           /invalid extension type/i,
         );

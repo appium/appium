@@ -8,6 +8,7 @@
 const path = require('path');
 const {compileFromFile} = require('json-schema-to-typescript');
 const {fs} = require('../packages/support');
+const {execSync} = require('child_process');
 
 const SCHEMA_PATH = require.resolve(
   '../packages/appium/build/lib/appium-config.schema.json',
@@ -27,6 +28,8 @@ async function main () {
     const ts = await compileFromFile(SCHEMA_PATH);
     await fs.writeFile(DECLARATIONS_PATH, ts);
     console.log(`wrote to ${DECLARATIONS_PATH}`);
+    execSync(`git add -A "${DECLARATIONS_PATH}"`);
+    console.log(`added ${DECLARATIONS_PATH} to the stage`);
   } catch (err) {
     console.error('Be sure to build the project first!');
     console.error(err);

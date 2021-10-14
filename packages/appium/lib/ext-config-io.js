@@ -4,8 +4,8 @@
  * Module containing {@link ExtConfigIO} which handles reading & writing of extension config files.
  */
 
+import { fs, mkdirp } from '@appium/support';
 import _ from 'lodash';
-import {fs, mkdirp} from '@appium/support';
 import path from 'path';
 import YAML from 'yaml';
 
@@ -16,16 +16,13 @@ const CONFIG_FILE_NAME = 'extensions.yaml';
  */
 const CONFIG_SCHEMA_REV = 2;
 
-/**
- * This schema revision adds the `plugins` property.
- *
- * See {@link ExtConfigIO._applySchemaMigrations} for more details.
- */
-const CONFIG_SCHEMA_REV_2 = 2;
-
 export const DRIVER_TYPE = 'driver';
 export const PLUGIN_TYPE = 'plugin';
 
+/**
+ * Set of valid extension types.
+ * @type {Readonly<Set<ExtensionType>>}
+ */
 const VALID_EXT_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
 
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s`;
@@ -43,6 +40,7 @@ class ExtConfigIO {
    * @private
    */
   _dirty;
+
   /**
    * The entire contents of a parsed YAML extension config file.
    * @type {object?}
@@ -51,37 +49,54 @@ class ExtConfigIO {
   _data;
 
   /**
-   * A mapping of extension type to configuration data. Configuration data is keyed on extension name.
+   * A mapping of extension type to configuration data. Configuration data is
+   * keyed on extension name.
    *
-   * Consumers get the values of this `Map` and do not have access to the entire data object.
-   * @type {Map<'driver'|'plugin',object>}
+   * Consumers get the values of this `Map` (corresponding to the
+   * `extensionType` of the consumer, which will be a subclass of
+   * `ExtensionConfig`) and do not have access to the entire data object.
    * @private
+   * @type {Map<ExtensionType,object>}
    */
-  _extensionTypeData = new Map();
+  _extDataByType = new Map();
 
   /**
    * Path to config file.
+   * @private
    * @type {Readonly<string>}
    */
   _filepath;
 
   /**
    * Path to `APPIUM_HOME`
+   * @private
    * @type {Readonly<string>}
    */
   _appiumHome;
 
   /**
    * Helps avoid writing multiple times.
+   *
+   * If this is `null`, calling {@link ExtConfigIO.write} will cause it to be
+   * set to a `Promise`. When the call to `write()` is complete, the `Promise`
+   * will resolve and then this value will be set to `null`.  Concurrent calls
+   * made while this value is a `Promise` will return the `Promise` itself.
+   * @private
    * @type {Promise<boolean>?}
    */
-  _writing;
+  _writing = null;
 
   /**
    * Helps avoid reading multiple times.
+   *
+   * If this is `null`, calling {@link ExtConfigIO.read} will cause it to be
+   * set to a `Promise`. When the call to `read()` is complete, the `Promise`
+   * will resolve and then this value will be set to `null`.  Concurrent calls
+   * made while this value is a `Promise` will return the `Promise` itself.
+   * @private
    * @type {Promise<void>?}
    */
-  _reading;
+  _reading = null;
 
   /**
    * @param {string} appiumHome
@@ -92,8 +107,13 @@ class ExtConfigIO {
   }
 
   /**
-   * Creaes a proxy which watches for changes to the extension-type-specific config data.
-   * @param {'driver'|'plugin'} extensionType
+   * Creaes a `Proxy` which watches for changes to the extension-type-specific
+   * config data.
+   *
+   * When changes are detected, it sets a `_dirty` flag.  The next call to
+   * {@link ExtConfigIO.write} will check if this flag is `true` before
+   * proceeding.
+   * @param {ExtensionType} extensionType
    * @param {Record<string,object>} data - Extension config data, keyed by name
    * @private
    * @returns {Record<string,object>}
@@ -117,7 +137,7 @@ class ExtConfigIO {
   }
 
   /**
-   * Returns the path to the config file.  This value is intended to be read-only.
+   * Returns the path to the config file.
    */
   get filepath () {
     return this._filepath;
@@ -129,14 +149,16 @@ class ExtConfigIO {
    * Force-reading is _not_ supported, as it's likely to be a source of
    * bugs--it's easy to mutate the data and then overwrite memory with the file
    * contents
-   * @param {'driver'|'plugin'} extensionType - Which bit of the config data we
+   *
+   * Ideally this will only ever read the file _once_.
+   * @param {ExtensionType} extensionType - Which bit of the config data we
    * want
    * @returns {Promise<object>} The data
    */
   async read (extensionType) {
     if (this._reading) {
       await this._reading;
-      return this._extensionTypeData.get(extensionType);
+      return this._extDataByType.get(extensionType);
     }
 
     this._reading = (async () => {
@@ -147,7 +169,7 @@ class ExtConfigIO {
           ].join(', ')}`,
         );
       }
-      if (this._extensionTypeData.has(extensionType)) {
+      if (this._extDataByType.has(extensionType)) {
         return;
       }
 
@@ -156,7 +178,7 @@ class ExtConfigIO {
       try {
         await mkdirp(this._appiumHome);
         const yaml = await fs.readFile(this.filepath, 'utf8');
-        data = this._applySchemaMigrations(YAML.parse(yaml));
+        data = YAML.parse(yaml);
       } catch (err) {
         if (err.code === 'ENOENT') {
           data = {
@@ -175,11 +197,11 @@ class ExtConfigIO {
       }
 
       this._data = data;
-      this._extensionTypeData.set(
+      this._extDataByType.set(
         DRIVER_TYPE,
         this._createProxy(DRIVER_TYPE, data),
       );
-      this._extensionTypeData.set(
+      this._extDataByType.set(
         PLUGIN_TYPE,
         this._createProxy(PLUGIN_TYPE, data),
       );
@@ -190,7 +212,7 @@ class ExtConfigIO {
     })();
     try {
       await this._reading;
-      return this._extensionTypeData.get(extensionType);
+      return this._extDataByType.get(extensionType);
     } finally {
       this._reading = null;
     }
@@ -219,12 +241,16 @@ class ExtConfigIO {
 
         const dataToWrite = {
           ...this._data,
-          [CONFIG_DATA_DRIVER_KEY]: this._extensionTypeData.get(DRIVER_TYPE),
-          [CONFIG_DATA_PLUGIN_KEY]: this._extensionTypeData.get(PLUGIN_TYPE),
+          [CONFIG_DATA_DRIVER_KEY]: this._extDataByType.get(DRIVER_TYPE),
+          [CONFIG_DATA_PLUGIN_KEY]: this._extDataByType.get(PLUGIN_TYPE),
         };
 
         try {
-          await fs.writeFile(this.filepath, YAML.stringify(dataToWrite), 'utf8');
+          await fs.writeFile(
+            this.filepath,
+            YAML.stringify(dataToWrite),
+            'utf8',
+          );
           this._dirty = false;
           return true;
         } catch {
@@ -238,31 +264,6 @@ class ExtConfigIO {
       }
     })();
     return await this._writing;
-  }
-
-  /**
-   * Normalizes the file, even if it was created with `schemaRev` < {@link CONFIG_SCHEMA_REV_2}.
-   * At {@link CONFIG_SCHEMA_REV_2}, we started including plugins as well as drivers in the file,
-   * so make sure we at least have an empty section for it.
-   *
-   * Returns a shallow copy of `yamlData`.
-   * @param {Readonly<object>} yamlData - Parsed contents of YAML `extensions.yaml`
-   * @private
-   * @returns {object} A shallow copy of `yamlData`
-   */
-  _applySchemaMigrations (yamlData) {
-    if (
-      yamlData.schemaRev < CONFIG_SCHEMA_REV_2 &&
-      yamlData[CONFIG_DATA_PLUGIN_KEY] === undefined
-    ) {
-      this._dirty = true;
-      return {
-        ...yamlData,
-        [CONFIG_DATA_PLUGIN_KEY]: {},
-        schemaRev: CONFIG_SCHEMA_REV,
-      };
-    }
-    return {...yamlData};
   }
 }
 

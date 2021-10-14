@@ -96,11 +96,13 @@ describe('CLI', function () {
         list.should.eql(ret);
       });
       it('should install a driver from npm with a specific version/tag', async function () {
+        const currentFakeDriverVersionAsOfRightNow = '3.0.5';
         await clear();
-        const ret = JSON.parse(await run('install', ['@appium/fake-driver@3.0.5', '--source', 'npm', '--json']));
+        const installSpec = `@appium/fake-driver@${currentFakeDriverVersionAsOfRightNow}`;
+        const ret = JSON.parse(await run('install', [installSpec, '--source', 'npm', '--json']));
         ret.fake.pkgName.should.eql('@appium/fake-driver');
         ret.fake.installType.should.eql('npm');
-        ret.fake.installSpec.should.eql('@appium/fake-driver@3.0.5');
+        ret.fake.installSpec.should.eql(installSpec);
         const list = JSON.parse(await run('list', ['--installed', '--json']));
         delete list.fake.installed;
         list.should.eql(ret);

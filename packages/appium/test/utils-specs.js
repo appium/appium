@@ -1,6 +1,6 @@
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, validateExtensionArgs
+  removeAppiumPrefixes
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
@@ -206,37 +206,6 @@ describe('utils', function () {
       const settings = pullSettings(caps);
       settings.should.eql({});
       caps.should.eql({});
-    });
-  });
-
-  describe('validateExtensionArgs', function () {
-    const webkitDebugProxyPort = 22222;
-    const wdaLocalPort = 8000;
-    const driverArgs = {wdaLocalPort, webkitDebugProxyPort};
-    const ARGS_CONSTRAINTS = {
-      webkitDebugProxyPort: {
-        isNumber: true
-      },
-      wdaLocalPort: {
-        isNumber: true
-      },
-    };
-
-    it('should not throw if args are valid', function () {
-      validateExtensionArgs(driverArgs, ARGS_CONSTRAINTS);
-    });
-    it('should not throw if unrequired args are not included', function () {
-      validateExtensionArgs({webkitDebugProxyPort}, ARGS_CONSTRAINTS);
-    });
-    it('should throw if an arg is of the wrong type', function () {
-      should.throw(() =>
-        validateExtensionArgs({webkitDebugProxyPort, wdaLocalPort: 'abcd'}, ARGS_CONSTRAINTS)
-      );
-    });
-    it('should throw if an unrecognized arg is included', function () {
-      should.throw(() =>
-        validateExtensionArgs({webkitDebugProxyPort, foo: '1234'}, ARGS_CONSTRAINTS)
-      );
     });
   });
 });

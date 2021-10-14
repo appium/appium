@@ -1,7 +1,8 @@
 // @ts-check
 
 import _ from 'lodash';
-import ExtensionConfig, { DRIVER_TYPE } from './extension-config';
+import ExtensionConfig from './extension-config';
+import { DRIVER_TYPE } from './ext-config-io';
 
 export default class DriverConfig extends ExtensionConfig {
   /**

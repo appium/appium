@@ -1,44 +1,50 @@
-import path from 'path';
-import {logger} from '@appium/support';
-import {readConfigFile} from '../lib/config-file';
-import {registerSchema, finalizeSchema, resetSchema} from '../lib/schema';
+// @ts-check
+
+import { logger } from '@appium/support';
+import { readConfigFile } from '../lib/config-file';
+import { finalizeSchema, registerSchema, resetSchema } from '../lib/schema/schema';
 import extSchema from './fixtures/driver.schema.js';
+import { resolveFixture } from './helpers';
+
+const log = logger.log;
 
 describe('config file behavior', function () {
-  const FIXTURE_PATH = path.join(__dirname, './fixtures/config');
-
-  const GOOD_FILEPATH = path.join(FIXTURE_PATH, 'appium.config.good.json');
-  const NODECONFIG_FILEPATH = path.join(
-    FIXTURE_PATH,
-    'appium.config.nodeconfig-path.json',
+  const GOOD_FILEPATH = resolveFixture('config', 'appium.config.good.json');
+  const BAD_NODECONFIG_FILEPATH = resolveFixture(
+    'config',
+    'appium.config.bad-nodeconfig.json',
   );
-  const BAD_FILEPATH = path.join(FIXTURE_PATH, 'appium.config.bad.json');
-  const INVALID_JSON_FILEPATH = path.join(
-    FIXTURE_PATH,
+  const BAD_FILEPATH = resolveFixture('config', 'appium.config.bad.json');
+  const INVALID_JSON_FILEPATH = resolveFixture(
+    'config',
     'appium.config.invalid.json',
   );
-  const SECURITY_ARRAY_FILEPATH = path.join(
-    FIXTURE_PATH,
+  const SECURITY_ARRAY_FILEPATH = resolveFixture(
+    'config',
     'appium.config.security-array.json',
   );
-  const SECURITY_DELIMITED_FILEPATH = path.join(
-    FIXTURE_PATH,
+  const SECURITY_DELIMITED_FILEPATH = resolveFixture(
+    'config',
     'appium.config.security-delimited.json',
   );
-  const SECURITY_PATH_FILEPATH = path.join(
-    FIXTURE_PATH,
+  const SECURITY_PATH_FILEPATH = resolveFixture(
+    'config',
     'appium.config.security-path.json',
   );
-  const UNKNOWN_PROPS_FILEPATH = path.join(
-    FIXTURE_PATH,
+  const UNKNOWN_PROPS_FILEPATH = resolveFixture(
+    'config',
     'appium.config.ext-unknown-props.json',
+  );
+  const EXT_PROPS_FILEPATH = resolveFixture(
+    'config',
+    'appium.config.ext-good.json',
   );
 
   let oldLogLevel;
   before(function () {
     // canonical way to do this?
-    oldLogLevel = logger.getLogger('Appium').level;
-    logger.getLogger('Appium').level = 'error';
+    oldLogLevel = log.level;
+    log.level = 'error';
   });
 
   beforeEach(function () {
@@ -50,7 +56,7 @@ describe('config file behavior', function () {
   });
 
   after(function () {
-    logger.getLogger('Appium').level = oldLogLevel;
+    log.level = oldLogLevel;
   });
 
   describe('when provided a path to a config file', function () {
@@ -68,43 +74,49 @@ describe('config file behavior', function () {
 
       describe('server.nodeconfig behavior', function () {
         describe('when a string', function () {
-          it('should return a valid config object', async function () {
-            const result = await readConfigFile(NODECONFIG_FILEPATH, {
+          it('should return errors', async function () {
+            const result = await readConfigFile(BAD_NODECONFIG_FILEPATH, {
               normalize: false,
             });
-            result.should.deep.equal({
-              config: require(NODECONFIG_FILEPATH),
-              filepath: NODECONFIG_FILEPATH,
-              errors: [],
+            result.should.have.nested.property(
+              'errors[0].instancePath',
+              '/server/nodeconfig',
+            );
+          });
+        });
+
+        describe('when an object', function () {
+          it('should return a valid config object', async function () {
+            const result = await readConfigFile(GOOD_FILEPATH, {
+              normalize: false,
             });
+            result.should.have.property('errors').that.is.empty;
           });
         });
       });
 
       describe('server.allow-insecure behavior', function () {
         describe('when a string path', function () {
-          it('should return a valid config object', async function () {
+          it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_PATH_FILEPATH, {
               normalize: false,
             });
-            result.should.deep.equal({
-              config: require(SECURITY_PATH_FILEPATH),
-              filepath: SECURITY_PATH_FILEPATH,
-              errors: [],
-            });
+            result.should.have.nested.property(
+              'errors[0].instancePath',
+              '/server/allow-insecure',
+            );
           });
         });
 
         describe('when a comma-delimited string', function () {
-          it('should return a valid config object', async function () {
+          it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH, {
               normalize: false,
             });
-            result.should.deep.equal({
-              config: require(SECURITY_DELIMITED_FILEPATH),
-              filepath: SECURITY_DELIMITED_FILEPATH,
-              errors: [],
-            });
+            result.should.have.nested.property(
+              'errors[0].instancePath',
+              '/server/allow-insecure',
+            );
           });
         });
 
@@ -131,7 +143,7 @@ describe('config file behavior', function () {
           });
           result.should.have.deep.property('config', require(BAD_FILEPATH));
           result.should.have.property('filepath', BAD_FILEPATH);
-          result.should.have.deep.property('errors', [
+          result.should.have.deep.property('errors').that.contains.members([
             {
               instancePath: '',
               schemaPath: '#/additionalProperties',
@@ -156,9 +168,9 @@ describe('config file behavior', function () {
               schemaPath: '#/properties/server/properties/allow-insecure/type',
               keyword: 'type',
               params: {
-                type: ['array', 'string'],
+                type: 'array'
               },
-              message: 'must be array,string',
+              message: 'must be array',
             },
             {
               instancePath: '/server/callback-port',
@@ -219,13 +231,16 @@ describe('config file behavior', function () {
               },
               message: 'must be integer',
             },
-          ]);
+          ]).and.lengthOf(7);
 
           result.should.have.property('reason').that.is.a.string;
         });
       });
 
       describe('with extensions', function () {
+        /** @type {import('../lib/config-file').ReadConfigFileResult} */
+        let result;
+
         beforeEach(function () {
           resetSchema();
           registerSchema('driver', 'fake', extSchema);
@@ -233,7 +248,6 @@ describe('config file behavior', function () {
         });
 
         describe('when provided a config file with unknown properties', function () {
-          let result;
           beforeEach(async function () {
             result = await readConfigFile(UNKNOWN_PROPS_FILEPATH, {
               normalize: false,
@@ -251,6 +265,17 @@ describe('config file behavior', function () {
                 isIdentifierLocation: true,
               },
             ]);
+          });
+        });
+
+        describe('when provided a config file with valid properties', function () {
+          beforeEach(async function () {
+            result = await readConfigFile(EXT_PROPS_FILEPATH, {
+              normalize: false,
+            });
+          });
+          it('should return an object containing no errors', function () {
+            result.should.have.deep.property('errors', []);
           });
         });
       });

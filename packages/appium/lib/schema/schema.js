@@ -1,15 +1,24 @@
 // @ts-check
 
-import path from 'path';
-import resolveFrom from 'resolve-from';
-import {APPIUM_HOME} from './extension-config';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
+import path from 'path';
+import resolveFrom from 'resolve-from';
 import appiumConfigSchema from './appium-config-schema';
+import { APPIUM_HOME } from '../extension-config';
+import { keywords } from './keywords';
 
+/**
+ * Extensions that an extension schema file can have.
+ */
 export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
 
+/**
+ * The schema prop containing server-related options. Everything in here
+ * is "native" to Appium.
+ * Used by {@link flattenSchema} for transforming the schema into CLI args.
+ */
 const SERVER_PROP_NAME = 'server';
 
 /**
@@ -19,12 +28,13 @@ const ajv = addFormats(
   new Ajv({
     // without this not much validation actually happens
     allErrors: true,
-    // enables use to use `"type": ["foo", "bar"]` in schema
-    allowUnionTypes: true,
-    // enables us to use custom properties (e.g., `appiumCliDest`); see `AppiumSchemaMetadata`
-    strict: false,
   }),
 );
+
+// add custom keywords to ajv. see schema-keywords.js
+_.forEach(keywords, (keyword) => {
+  ajv.addKeyword(keyword);
+});
 
 /**
  * The original ID of the Appium config schema.
@@ -33,12 +43,18 @@ const ajv = addFormats(
 export const APPIUM_CONFIG_SCHEMA_ID = 'appium.json';
 
 /**
+ * Cache of known schema IDs that we've created (so we don't try to blast the default metaschemas)
+ * @type {Set<string>}
+ */
+const createdSchemaIDs = new Set();
+
+/**
  * Registers a schema from an extension.
  *
  * This is "fail-fast" in that the schema will immediately be validated against JSON schema draft-07 _or_ whatever the value of the schema's `$schema` prop is.
  *
  * Does _not_ add the schema to the `ajv` instance (this is done by {@link finalizeSchema}).
- * @param {import('./ext-config-io').ExtensionType} extType - Extension type
+ * @param {import('../ext-config-io').ExtensionType} extType - Extension type
  * @param {string} extName - Unique extension name for `type`
  * @param {SchemaObject} schema - Schema object
  * @returns {void}
@@ -113,31 +129,49 @@ export function finalizeSchema () {
    * to be inserted under the `<driver|plugin>.properties` key of the base
    * schema.
    * @param {Map<string,SchemaObject>} extensionSchemas
+   * @param {string} extensionType
    * @returns {Record<string,SchemaObject>}
    */
-  const combineExtSchemas = (extensionSchemas) =>
+  const combineExtSchemas = (extensionSchemas, extensionType) =>
     _.reduce(
       _.fromPairs([...extensionSchemas]),
-      (extensionTypeSchema, extSchema, name) => ({
-        ...extensionTypeSchema,
-        [name]: {...extSchema, additionalProperties: false},
-      }),
+      (extensionTypeSchema, extSchema, name) => {
+        /** @type {SchemaObject} */
+        const finalExtSchema = {...extSchema, additionalProperties: false};
+        _.forEach(finalExtSchema?.properties ?? {}, (prop, propName) => {
+          const schemaId = `${extensionType}-${name}-${_.kebabCase(prop.appiumCliDest ?? propName)}`;
+          ajv.addSchema(prop, schemaId);
+          createdSchemaIDs.add(schemaId);
+        });
+        return {
+          ...extensionTypeSchema,
+          [name]: finalExtSchema,
+        };
+      },
       {},
     );
 
   // Ajv will _mutate_ the schema, so we need to clone it.
   const baseSchema = _.cloneDeep(appiumConfigSchema);
+
+  _.forEach(baseSchema.properties.server.properties, (prop, propName) => {
+    const schemaId = prop.appiumCliDest ?? propName;
+    ajv.addSchema(prop, schemaId);
+    createdSchemaIDs.add(schemaId);
+  });
+
   const finalSchema = _.reduce(
     _.fromPairs([...registeredSchemas]),
     (baseSchema, extensionSchemas, extensionType) => {
       baseSchema.properties[extensionType].properties =
-        combineExtSchemas(extensionSchemas);
+        combineExtSchemas(extensionSchemas, extensionType);
       return baseSchema;
     },
     baseSchema,
   );
 
   ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
+  createdSchemaIDs.add(APPIUM_CONFIG_SCHEMA_ID);
   ajv.validateSchema(finalSchema, true);
 }
 
@@ -149,7 +183,10 @@ export function finalizeSchema () {
  * @returns {void}
  */
 export function resetSchema () {
-  ajv.removeSchema(APPIUM_CONFIG_SCHEMA_ID);
+  createdSchemaIDs.forEach((id) => {
+    ajv.removeSchema(id);
+  });
+  createdSchemaIDs.clear();
   registeredSchemas = new Map();
   flattenSchema.cache = new Map();
   readExtensionSchema.cache = new Map();
@@ -159,12 +196,13 @@ export function resetSchema () {
  * Given an object, validates it against the Appium config schema.
  * If errors occur, the returned array will be non-empty.
  * @param {any} value - The value (hopefully an object) to validate against the schema
+ * @param {string} [id] - Schema ID
  * @public
  * @returns {import('ajv').ErrorObject[]} Array of errors, if any.
  */
-export function validate (value) {
+export function validate (value, id = APPIUM_CONFIG_SCHEMA_ID) {
   const validator = /** @type {import('ajv').ValidateFunction} */ (
-    getValidator()
+    getValidator(id)
   );
   return !validator(value) && _.isArray(validator.errors)
     ? [...validator.errors]
@@ -173,39 +211,29 @@ export function validate (value) {
 
 /**
  * Retrieves schema validator function
- * @public
+ * @param {string} [id] - Schema ID
  * @returns {import('ajv').ValidateFunction}
  */
-export function getValidator () {
-  const validator = ajv.getSchema(APPIUM_CONFIG_SCHEMA_ID);
+function getValidator (id = APPIUM_CONFIG_SCHEMA_ID) {
+  const validator = ajv.getSchema(id);
   if (!validator) {
-    throw new Error('Schema not yet compiled!');
+    if (id === APPIUM_CONFIG_SCHEMA_ID) {
+      throw new Error('Schema not yet compiled!');
+    } else {
+      throw new ReferenceError(`Unknown schema: "${id}"`);
+    }
   }
   return validator;
 }
 
 /**
- * Gets a formatter by name; useful for validation outside of schema contexts.
- *
- * A "formatter" is essentially just a validation function, but is more granular than a simple "type" (e.g., `string`); matches against `RegExp`s, numeric ranges, etc.
- * @param {string} name
- * @returns {AjvFormatter}
- */
-export function getFormatter (name) {
-  const formatter = /** @type {AjvFormatter|undefined} */ (ajv.formats[name]);
-  if (!formatter) {
-    throw new ReferenceError(`Unknown formatter "${name}"`);
-  }
-  return formatter;
-}
-
-/**
  * Retrieves the schema itself
  * @public
+ * @param {string} [id] - Schema ID
  * @returns {SchemaObject}
  */
-export function getSchema () {
-  return /** @type {SchemaObject} */ (getValidator().schema);
+export function getSchema (id) {
+  return /** @type {SchemaObject} */ (getValidator(id).schema);
 }
 
 /**
@@ -277,7 +305,7 @@ export const flattenSchema = _.memoize(() => {
  */
 export const readExtensionSchema = _.memoize(
   /**
-   * @param {import('./ext-config-io').ExtensionType} extType
+   * @param {import('../ext-config-io').ExtensionType} extType
    * @param {string} extName - Extension name (unique to its type)
    * @param {ExtData} extData - Extension config
    * @returns {SchemaObject|undefined}
@@ -306,6 +334,15 @@ export const readExtensionSchema = _.memoize(
   },
   (extType, extData, extName) => `${extType}-${extName}`,
 );
+
+/**
+ * Returns `true` if `filename`'s file extension is allowed (in {@link ALLOWED_SCHEMA_EXTENSIONS}).
+ * @param {string} filename
+ * @returns {boolean}
+ */
+export function isAllowedSchemaFileExtension (filename) {
+  return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename));
+}
 
 /**
  * Alias

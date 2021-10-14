@@ -173,15 +173,13 @@ describe('ExtensionConfig', function () {
             });
           });
 
-          describe('when the property as a path  is found', function () {
+          describe('when the property as a path is found', function () {
             it('should return an empty array', function () {
               const problems = driverConfig.getSchemaProblems(
                 {
                   pkgName: 'fixtures', // just corresponds to a directory name relative to `installPath` `(__dirname)`
                   installPath: __dirname,
                   schema: 'driver.schema.js',
-                  platformNames: ['foo'], // to avoid problem
-                  automationName: 'fake', // to avoid problem
                 },
                 'foo',
               );
@@ -206,6 +204,143 @@ describe('ExtensionConfig', function () {
       it('should validate the extension', async function () {
         await driverConfig.read();
         driverConfig.validate.should.have.been.calledOnce;
+      });
+    });
+  });
+
+  describe('PluginConfig', function () {
+    /**
+     * @type {typeof import('../lib/plugin-config').default}
+     */
+    let PluginConfig;
+    let mocks;
+    /** @type {import('sinon').SinonSandbox} */
+    let sandbox;
+    beforeEach(function () {
+      mocks = {
+        'resolve-from': sinon.stub().callsFake((cwd, id) => path.join(cwd, id)),
+      };
+
+      PluginConfig = rewiremock.proxy(
+        () => require('../lib/plugin-config'),
+        mocks,
+      ).default;
+
+      sandbox = sinon.createSandbox();
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    describe('extensionDesc()', function () {
+      it('should return the description of the extension', function () {
+        const config = new PluginConfig('/tmp/');
+        config
+          .extensionDesc('foo', {version: '1.0'})
+          .should.equal(`foo@1.0`);
+      });
+    });
+
+    describe('getConfigProblems()', function () {
+      /**
+       * @type {InstanceType<PluginConfig>}
+       */
+      let pluginConfig;
+
+      beforeEach(function () {
+        pluginConfig = new PluginConfig('/tmp/');
+      });
+
+      describe('when provided no arguments', function () {
+        it('should not throw', function () {
+          // @ts-ignore
+          (() => pluginConfig.getConfigProblems()).should.not.throw();
+        });
+      });
+    });
+
+    describe('getSchemaProblems()', function () {
+      /**
+       * @type {InstanceType<PluginConfig>}
+       */
+      let pluginConfig;
+
+      beforeEach(function () {
+        pluginConfig = new PluginConfig('/tmp/');
+      });
+      describe('when provided an object with a defined non-string `schema` property', function () {
+        it('should return an array with an associated problem', function () {
+          pluginConfig
+            .getSchemaProblems({schema: []}, 'foo')
+            .should.deep.include({
+              err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+              val: [],
+            });
+        });
+      });
+
+      describe('when provided a string `schema` property', function () {
+        describe('when the property ends in an unsupported extension', function () {
+          it('should return an array with an associated problem', function () {
+            pluginConfig
+              .getSchemaProblems({schema: 'selenium.java'}, 'foo')
+              .should.deep.include({
+                err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
+                val: 'selenium.java',
+              });
+          });
+        });
+
+        describe('when the property contains a supported extension', function () {
+          describe('when the property as a path cannot be found', function () {
+            it('should return an array with an associated problem', function () {
+              const problems = pluginConfig.getSchemaProblems(
+                {
+                  installPath: '/usr/bin/derp',
+                  pkgName: 'doop',
+                  schema: 'herp.json',
+                },
+                'foo',
+              );
+              problems.should.deep.include({
+                err: `Unable to register schema at path herp.json`,
+                val: 'herp.json',
+              });
+            });
+          });
+
+          describe('when the property as a path is found', function () {
+            it('should return an empty array', function () {
+              const problems = pluginConfig.getSchemaProblems(
+                {
+                  pkgName: 'fixtures', // just corresponds to a directory name relative to `installPath` `(__dirname)`
+                  installPath: __dirname,
+                  schema: 'plugin.schema.js',
+                },
+                'foo',
+              );
+              problems.should.be.empty;
+            });
+          });
+        });
+      });
+    });
+
+    describe('read()', function () {
+      /**
+       * @type {InstanceType<PluginConfig>}
+       */
+      let pluginConfig;
+
+      beforeEach(function () {
+        pluginConfig = new PluginConfig('/tmp/');
+        sandbox.spy(pluginConfig, 'validate');
+      });
+
+      it('should validate the extension', async function () {
+        await pluginConfig.read();
+        pluginConfig.validate.should.have.been.calledOnce;
       });
     });
   });

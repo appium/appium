@@ -5,7 +5,7 @@ import { lilconfig } from 'lilconfig';
 import _ from 'lodash';
 import yaml from 'yaml';
 import log from './logger';
-import { getSchema, validate } from './schema';
+import { getSchema, validate } from './schema/schema';
 
 /**
  * lilconfig loader to handle `.yaml` files
@@ -71,7 +71,6 @@ async function searchConfigFile (lc) {
   return result;
 }
 
-
 /**
  * Given an array of errors and the result of loading a config file, generate a
  * helpful string for the user.
@@ -81,13 +80,13 @@ async function searchConfigFile (lc) {
  *   was in JSON format. If present, it will associate line numbers with errors.
  * - If `errors` happens to be empty, this will throw.
  * @param {import('ajv').ErrorObject[]} errors - Non-empty array of errors. Required.
- * @param {import('./config-file').ReadConfigFileResult['config']} [config] -
+ * @param {import('./config-file').ReadConfigFileResult['config']|any} [config] -
  * Configuration & metadata
  * @param {FormatConfigErrorsOptions} [opts]
  * @throws {TypeError} If `errors` is empty
  * @returns {string}
  */
-export function formatConfigErrors (errors = [], config = {}, opts = {}) {
+export function formatErrors (errors = [], config = {}, opts = {}) {
   if (errors && !errors.length) {
     throw new TypeError('Array of errors must be non-empty');
   }
@@ -95,15 +94,11 @@ export function formatConfigErrors (errors = [], config = {}, opts = {}) {
   const json = opts.json;
   const format = opts.pretty ?? true ? 'cli' : 'js';
 
-  return _.join(
-    betterAjvErrors(getSchema(), config, errors, {
-      json,
-      format,
-    }),
-    '\n\n',
-  );
+  return /** @type {string} */ (betterAjvErrors(getSchema(opts.argSchemaId), config, errors, {
+    json,
+    format,
+  }));
 }
-
 
 /**
  * Given an optional path, read a config file. Validates the config file.
@@ -124,7 +119,9 @@ export async function readConfigFile (filepath, opts = {}) {
     },
   });
 
-  const result = filepath ? await loadConfigFile(lc, filepath) : await searchConfigFile(lc);
+  const result = filepath
+    ? await loadConfigFile(lc, filepath)
+    : await searchConfigFile(lc);
 
   if (result && !result.isEmpty && result.filepath) {
     log.debug(`Config file found at ${result.filepath}`);
@@ -136,7 +133,7 @@ export async function readConfigFile (filepath, opts = {}) {
       if (_.isEmpty(errors)) {
         configResult = {...result, errors};
       } else {
-        const reason = formatConfigErrors(errors, result.config, {
+        const reason = formatErrors(errors, result.config, {
           json: rawConfig.get(result.filepath),
           pretty,
         });
@@ -239,8 +236,9 @@ function normalizeConfig (config) {
  */
 
 /**
- * Options for {@link formatConfigErrors}.
+ * Options for {@link formatErrors}.
  * @typedef {Object} FormatConfigErrorsOptions
  * @property {import('./config-file').RawJson} [json] - Raw JSON config (as string)
  * @property {boolean} [pretty=true] - Whether to format errors as a CLI-friendly string
+ * @property {string}  [argSchemaId] - Specific ID of a prop; otherwise entire schema
  */

@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import ExtensionConfig, { PLUGIN_TYPE } from './extension-config';
+import ExtensionConfig from './extension-config';
+import { PLUGIN_TYPE } from './ext-config-io';
 import log from './logger';
 
 export default class PluginConfig extends ExtensionConfig {

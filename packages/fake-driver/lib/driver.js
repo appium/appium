@@ -5,17 +5,6 @@ import { FakeApp } from './fake-app';
 import commands from './commands';
 
 class FakeDriver extends BaseDriver {
-  static get argsConstraints () {
-    return {
-      sillyWebServerPort: {
-        isNumber: true
-      },
-      sillyWebServerHost: {
-        isString: true
-      }
-    };
-  }
-
   constructor (opts = {}, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
     this.appModel = null;

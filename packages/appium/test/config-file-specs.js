@@ -4,7 +4,7 @@ import {rewiremock, resolveFixture} from './helpers';
 import YAML from 'yaml';
 import fs from 'fs';
 import sinon from 'sinon';
-import * as schema from '../lib/schema';
+import * as schema from '../lib/schema/schema';
 
 const expect = chai.expect;
 
@@ -17,6 +17,7 @@ describe('config-file', function () {
     'config',
     'appium.config.good.json',
   );
+  const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.js');
   const GOOD_YAML_CONFIG = YAML.parse(
     fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8'),
   );
@@ -121,7 +122,17 @@ describe('config-file', function () {
 
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
-      expect(config).to.eql(require(GOOD_JSON_CONFIG_FILEPATH));
+      expect(config).to.eql(GOOD_JSON_CONFIG);
+    });
+
+    it('should support json', async function () {
+      const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
+      expect(config).to.eql(GOOD_JSON_CONFIG);
+    });
+
+    it('should support js', async function () {
+      const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
+      expect(config).to.eql(GOOD_JSON_CONFIG);
     });
 
     describe('when no filepath provided', function () {
@@ -306,10 +317,10 @@ describe('config-file', function () {
     });
   });
 
-  describe('formatConfigErrors()', function () {
+  describe('formatErrors()', function () {
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
-        expect(() => configFileModule.formatConfigErrors([])).to.throw(
+        expect(() => configFileModule.formatErrors([])).to.throw(
           TypeError,
           'Array of errors must be non-empty',
         );
@@ -319,7 +330,7 @@ describe('config-file', function () {
     describe('when provided `errors` as `undefined`', function () {
       it('should throw', function () {
         // @ts-ignore
-        expect(() => configFileModule.formatConfigErrors()).to.throw(
+        expect(() => configFileModule.formatErrors()).to.throw(
           TypeError,
           'Array of errors must be non-empty',
         );
@@ -329,14 +340,14 @@ describe('config-file', function () {
     describe('when provided `errors` as a non-empty array', function () {
       it('should return a string', function () {
         // @ts-ignore
-        expect(configFileModule.formatConfigErrors([{}])).to.be.a('string');
+        expect(configFileModule.formatErrors([{}])).to.be.a('string');
       });
     });
 
     describe('when `opts.pretty` is `false`', function () {
       it('should call `betterAjvErrors()` with option `format: "js"`', function () {
         // @ts-ignore
-        configFileModule.formatConfigErrors([{}], {}, {pretty: false});
+        configFileModule.formatErrors([{}], {}, {pretty: false});
         expect(mocks['@sidvind/better-ajv-errors']).to.have.been.calledWith(
           schema.getSchema(),
           {},
@@ -349,7 +360,7 @@ describe('config-file', function () {
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
         // @ts-ignore
-        configFileModule.formatConfigErrors([{}], {}, {json: '{"foo": "bar"}'});
+        configFileModule.formatErrors([{}], {}, {json: '{"foo": "bar"}'});
         expect(mocks['@sidvind/better-ajv-errors']).to.have.been.calledWith(
           schema.getSchema(),
           {},

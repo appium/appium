@@ -2,7 +2,7 @@
 
 import { getParser } from '../lib/cli/parser';
 import { INSTALL_TYPES } from '../lib/extension-config';
-import * as schema from '../lib/schema';
+import * as schema from '../lib/schema/schema';
 import { readConfigFile } from '../lib/config-file';
 import { resolveFixture } from './helpers';
 
@@ -51,21 +51,22 @@ describe('parser', function () {
         }
       });
 
+      // TODO: figure out how best to suppress color in error message
       describe('invalid arguments', function () {
         it('should throw an error with unknown argument', function () {
           (() => {p.parse_args(['--apple']);}).should.throw(/unrecognized arguments: --apple/i);
         });
 
         it('should throw an error for an invalid value ("hostname")', function () {
-          (() => {p.parse_args(['--address', '-42']);}).should.throw(/Value must be a valid hostname; received -42/i);
+          (() => {p.parse_args(['--address', '-42']);}).should.throw(/must match format "hostname"/i);
         });
 
         it('should throw an error for an invalid value ("uri")', function () {
-          (() => {p.parse_args(['--webhook', '-42']);}).should.throw(/Value must be a valid uri; received -42/i);
+          (() => {p.parse_args(['--webhook', 'blub']);}).should.throw(/must match format "uri"/i);
         });
 
         it('should throw an error for an invalid value (using "enum")', function () {
-          (() => {p.parse_args(['--loglevel', '-42']);}).should.throw(/invalid choice: '-42' \(choose from 'info'/i);
+          (() => {p.parse_args(['--loglevel', '-42']);}).should.throw(/must be equal to one of the allowed values/i);
         });
       });
 
@@ -152,7 +153,7 @@ describe('parser', function () {
 
       describe('when user supplies invalid args', function () {
         it('should error out', function () {
-          (() => p.parse_args(['--driver-fake-silly-web-server-port', 'foo'])).should.throw(/Value must be a number greater than or equal to 1; received foo/i);
+          (() => p.parse_args(['--driver-fake-silly-web-server-port', 'foo'])).should.throw(/must be integer/i);
         });
       });
 

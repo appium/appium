@@ -1,19 +1,19 @@
-import {fs} from '@appium/support';
-import {ArgumentParser} from 'argparse';
+// @ts-check
+
+import { fs } from '@appium/support';
+import { ArgumentParser } from 'argparse';
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../extension-config';
-import {finalizeSchema} from '../schema';
-import {parseArgName} from './schema-args';
-import {rootDir} from '../utils';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
+import { finalizeSchema, parseArgName } from '../schema';
+import { rootDir } from '../utils';
 import {
   driverConfig,
   getExtensionArgs,
   getServerArgs,
-  pluginConfig,
+  pluginConfig
 } from './args';
-import {handle, CLIError} from '@oclif/errors';
 
 export const SERVER_SUBCOMMAND = 'server';
 
@@ -34,7 +34,6 @@ class ArgParser {
       description:
         'A webdriver-compatible server for use with native and hybrid iOS and Android applications.',
       prog,
-      exit_on_error: false,
     });
 
     ArgParser._patchExit(parser);
@@ -67,11 +66,11 @@ class ArgParser {
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
     // conceptually rather than just through argparse
-    const serverArgs = ArgParser._addServerToParser(subParsers, debug);
+    const serverArgs = ArgParser._addServerToParser(subParsers);
     this.rawArgs = serverArgs;
 
     // add the 'driver' and 'plugin' subcommands
-    ArgParser._addExtensionCommandsToParser(subParsers, debug);
+    ArgParser._addExtensionCommandsToParser(subParsers);
 
     // backwards compatibility / drop-in wrapper
     this.parse_args = this.parseArgs;
@@ -104,12 +103,9 @@ class ArgParser {
       }
       // eslint-disable-next-line no-console
       console.error(); // need an extra space since argparse prints usage.
-      const cliError = new CLIError(err, {exit: 1});
-      // we could add an error code here which would be displayed to the user
-      // cliError.code = 'APPIUM_BAD_ARGUMENT';
-      // or a hyperlink
-      // cliError.ref = 'https://appium.io/docs/cli#usage'
-      handle(cliError);
+      // eslint-disable-next-line no-console
+      console.error(err.message);
+      process.exit(1);
     }
   }
 
@@ -160,6 +156,10 @@ class ArgParser {
     return serverArgs;
   }
 
+  /**
+   *
+   * @param {import('argparse').SubParser} subParsers
+   */
   static _addExtensionCommandsToParser (subParsers) {
     for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
       const extParser = subParsers.add_parser(type, {
@@ -210,7 +210,7 @@ class ArgParser {
 
         for (const [flagsOrNames, opts] of args) {
           // add_argument mutates params so make sure to send in copies instead
-          parser.add_argument(...flagsOrNames, {...opts});
+          parser.add_argument(flagsOrNames, {...opts});
         }
       }
     }
@@ -233,4 +233,4 @@ async function getParser (debug = false) {
 }
 
 export default getParser;
-export {getParser, ArgParser};
+export { getParser, ArgParser };

@@ -21,6 +21,7 @@ The format of method argument should be the following:
 - `optional_container_type` is the container type
     - `documents` is the only available option
         - You may specify `documents` container type only for bundle ids that exists in the device
+            - Since appium-xcuitest-driver v3.55.0, [mobile: listApps](https://github.com/appium/appium-xcuitest-driver#mobile-listapps) provides a list of available applications. Applications which have `UIFileSharingEnabled` attribute as `true` can be specified.
         - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in installed bundle ids. Then, we cannot mount it as `com.tinyspeck.chatlyio@documents/`
 
             <img src='/docs/en/writing-running-appium/ios/ios-xctest-file-movement/on_my_iphone.png' width=100>

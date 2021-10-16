@@ -614,7 +614,7 @@ const METHOD_MAP = {
   },
   '/session/:sessionId/window/rect': {
     GET: {command: 'getWindowRect'},
-    POST: {command: 'setWindowRect'},
+    POST: {command: 'setWindowRect', payloadParams: {required: ['x', 'y', 'width', 'height']}},
   },
   '/session/:sessionId/window/maximize': {
     POST: {command: 'maximizeWindow'}

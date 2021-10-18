@@ -165,7 +165,7 @@ declare class BaseDriver {
     toggleEnrollTouchId?(enabled: boolean): Promise<void>;
     launchApp?(): Promise<void>;
     closeApp?(): Promise<void>;
-    reset?(): Promise<void>;
+    reset(): Promise<void>;
     background?(seconds: null | number): Promise<void>;
     endCoverage?(intent: string, path: string): Promise<void>;
     getStrings?(language?: string, stringFile?: string): Promise<Record<string, unknown>>;

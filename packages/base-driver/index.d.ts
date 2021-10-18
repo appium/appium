@@ -56,7 +56,7 @@ declare class BaseDriver {
     implicitWaitForCondition(condition: () => Promise<any>): Promise<unknown>;
 
     // Commands
-    findElOrEls(strategy: string, selector: string, mult: boolean, context: string): Promise<Element>;
+    findElOrEls(strategy: string, selector: string, mult: boolean, context: string): Promise<Element | Element[]>;
     newCommandTimeout(ms: number): Promise<void>;
     getLogTypes(): Promise<string[]>;
     getLog(logType: string): Promise<{}[]>;
@@ -100,7 +100,7 @@ declare class BaseDriver {
     elementDisplayed?(elementId: string): Promise<boolean>;
     click?(elementId: string): Promise<void>;
     clear?(elementId: string): Promise<void>;
-    setValue?(elementId: string, text: string): Promise<void>;
+    setValue?(text: string, elementId: string): Promise<void>;
     getPageSource?(): Promise<string>;
     execute?(script: string, args: unknown[]): Promise<unknown>;
     executeAsync?(script: string, args: unknown[]): Promise<unknown>;
@@ -165,14 +165,14 @@ declare class BaseDriver {
     toggleEnrollTouchId?(enabled: boolean): Promise<void>;
     launchApp?(): Promise<void>;
     closeApp?(): Promise<void>;
-    reset?(): Promise<void>;
+    reset(): Promise<void>;
     background?(seconds: null | number): Promise<void>;
     endCoverage?(intent: string, path: string): Promise<void>;
     getStrings?(language?: string, stringFile?: string): Promise<Record<string, unknown>>;
     setValueImmediate?(value: string, elementId: string): Promise<void>;
     replaceValue?(value: string, elementId: string): Promise<void>;
-    updateSettings(newSettings: Record<string, unknown>): Promise<DeviceSettings>;
-    getSettings(): Promise<DeviceSettings>;
+    updateSettings(newSettings: Record<string, unknown>): Promise<void>;
+    getSettings(): Promise<Record<string, unknown>>;
     receiveAsyncResponse?(response: unknown): Promise<void>;
     executeDriverScript(script: string, scriptType?: string, timeout?: number): Promise<unknown>;
     getLogEvents(type?: string | string[]): {};
@@ -214,7 +214,7 @@ declare class BaseDriver {
     getCurrentContext?(): Promise<string | null>;
     setContext?(name: string): Promise<void>;
     getContexts?(): Promise<string[]>;
-    getPageIndex?(): Promise<string>;
+    getPageIndex?(elementId: string): Promise<string>;
     getNetworkConnection?(): Promise<number>;
     setNetworkConnection?(type: number): Promise<void>;
     performTouch?(actions: unknown): Promise<void>;
@@ -286,7 +286,7 @@ declare type SettingsUpdater = (prop: string, newValue: {}, curValue: {}) => Pro
 declare class DeviceSettings {
     constructor(defaultSettings: {}, onSettingsUpdate: SettingsUpdater);
     update(newSettings: {}): Promise<void>;
-    getSettings(): DeviceSettings;
+    getSettings(): Record<string, unknown>;;
 }
 
 declare type LogType = {

@@ -27,7 +27,7 @@
     "build": "lerna exec gulp transpile",
     "clean": "lerna clean -y && npx rimraf node_modules package-lock.json \"packages/*/build\"",
     "coverage": "lerna exec gulp coveralls",
-    "dev": "lerna exec --parallel gulp dev",
+    "dev": "lerna exec --parallel -- gulp dev --no-notif",
     "doctor": "node ./packages/doctor",
     "e2e-test": "lerna exec \"gulp e2e-test\"",
     "generate-docs": "lerna run --scope=appium generate-docs",

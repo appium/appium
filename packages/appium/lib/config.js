@@ -220,15 +220,9 @@ function getNonDefaultServerArgs (parser, args) {
     ])
   ]);
 
-  // this is a merge of top-level defaults and server defaults.
   const defaultsFromSchema = getDefaultsFromSchema();
 
-  return parser.rawArgs.reduce((acc, [, {dest}]) => {
-    if (isNotDefault(dest)) {
-      acc[dest] = args[dest];
-    }
-    return acc;
-  }, {});
+  return _.pickBy(args, (__, key) => isNotDefault(key));
 }
 
 function getDeprecatedArgs (parser, args) {

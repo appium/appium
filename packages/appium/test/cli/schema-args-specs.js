@@ -45,6 +45,7 @@ describe('cli/schema-args', function () {
 
     describe('when schema has not yet been compiled', function () {
       it('should throw', function () {
+        resetSchema();
         expect(() => schemaArgs.toParserArgs()).to.throw(
           'Schema not yet compiled',
         );

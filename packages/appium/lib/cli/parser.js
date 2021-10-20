@@ -6,7 +6,7 @@ import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
 import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
-import { finalizeSchema, parseArgName } from '../schema';
+import { finalizeSchema, getArgSpec, hasArgSpec } from '../schema';
 import { rootDir } from '../utils';
 import {
   driverConfig,
@@ -16,6 +16,22 @@ import {
 } from './args';
 
 export const SERVER_SUBCOMMAND = 'server';
+
+/**
+ * If the parsed args do not contain any of these values, then we
+ * will automatially inject the `server` subcommand.
+ */
+const NON_SERVER_ARGS = Object.freeze(
+  new Set([
+    DRIVER_TYPE,
+    PLUGIN_TYPE,
+    SERVER_SUBCOMMAND,
+    '-h',
+    '--help',
+    '-v',
+    '--version'
+  ])
+);
 
 const version = fs.readPackageJsonFrom(rootDir).version;
 
@@ -67,6 +83,7 @@ class ArgParser {
     // object as a way for other parts of the code to work with the arguments
     // conceptually rather than just through argparse
     const serverArgs = ArgParser._addServerToParser(subParsers);
+
     this.rawArgs = serverArgs;
 
     // add the 'driver' and 'plugin' subcommands
@@ -86,17 +103,13 @@ class ArgParser {
    * @returns {object} - The parsed arguments
    */
   parseArgs (args = process.argv.slice(2)) {
-    if (
-      !_.includes(
-        [DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'],
-        args[0],
-      )
-    ) {
-      args.splice(0, 0, SERVER_SUBCOMMAND);
+    if (!NON_SERVER_ARGS.has(args[0])) {
+      args.unshift(SERVER_SUBCOMMAND);
     }
 
     try {
-      return ArgParser._unpackExtensionArgDests(this.parser.parse_args(args));
+      const parsed = this.parser.parse_args(args);
+      return ArgParser._transformParsedArgs(parsed);
     } catch (err) {
       if (this.debug) {
         throw err;
@@ -111,36 +124,47 @@ class ArgParser {
 
   /**
    * Given an object full of arguments as returned by `argparser.parse_args`,
-   * expand the ones for extensions into a nested object structure.
+   * expand the ones for extensions into a nested object structure and rename
+   * keys to match the intended destination.
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
    * @param {object} args
    * @returns {object}
    */
-  static _unpackExtensionArgDests (args) {
+  static _transformParsedArgs (args) {
     return _.reduce(
       args,
       (unpacked, value, key) => {
-        const {extensionName, extensionType, argName} = parseArgName(key);
-        const keyPath =
-          extensionName && extensionType
-            ? `${extensionType}.${extensionName}.${argName}`
-            : argName;
-        _.set(unpacked, keyPath, value);
+        if (hasArgSpec(key)) {
+          const {dest} = /** @type {import('../schema/arg-tspec').ArgSpec} */(getArgSpec(key));
+          _.set(unpacked, dest, value);
+        } else {
+          // this could be anything that _isn't_ a server arg
+          unpacked[key] = value;
+        }
         return unpacked;
       },
       {},
     );
   }
 
+  /**
+   * Patches the `exit()` method of the parser to throw an error, so we can handle it manually.
+   * @param {ArgumentParser} parser
+   */
   static _patchExit (parser) {
     parser.exit = (code, msg) => {
       throw new Error(msg);
     };
   }
 
-  static _addServerToParser (subParsers) {
-    const serverParser = subParsers.add_parser('server', {
+  /**
+   *
+   * @param {import('argparse').SubParser} subParser
+   * @returns {import('./args').ArgumentDefinition[]}
+   */
+  static _addServerToParser (subParser) {
+    const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Run an Appium server',
     });
@@ -149,7 +173,8 @@ class ArgParser {
 
     const serverArgs = getServerArgs();
     for (const [flagsOrNames, opts] of serverArgs) {
-      // add_argument mutates arguments so make copies
+      // TS doesn't like the spread operator here.
+      // @ts-ignore
       serverParser.add_argument(...flagsOrNames, {...opts});
     }
 
@@ -157,7 +182,7 @@ class ArgParser {
   }
 
   /**
-   *
+   * Adds extension sub-sub-commands to `driver`/`plugin` subcommands
    * @param {import('argparse').SubParser} subParsers
    */
   static _addExtensionCommandsToParser (subParsers) {

@@ -65,19 +65,15 @@ export class ArgSpec {
    * @param {ArgSpecOptions<D>} [opts]
    */
   constructor (name, {extType, extName, dest, defaultValue} = {}) {
-    const isFromExtension = extType && extName;
-    const normalizedExtName = _.kebabCase(extName);
-    const baseId = _.kebabCase(name);
+    // we must normalize the extension name to fit into our convention for CLI
+    // args.
+    const id = ArgSpec.toId(name, extType, extName);
 
-    // we must normalize the extension name to kebab-case to fit into our convention
-    // for CLI args.
-    const id = isFromExtension ? [extType, normalizedExtName, baseId].join('-') : baseId;
-
-    // if no explicit `dest` provided, just camelCase the name to avoid needing to use
-    // bracket syntax when accessing props on the parsed args object.
+    // if no explicit `dest` provided, just camelCase the name to avoid needing
+    // to use bracket syntax when accessing props on the parsed args object.
     const baseDest = _.camelCase(dest ?? name);
 
-    const destKeypath = isFromExtension
+    const destKeypath = extType && extName
       ? [extType, extName, baseDest].join('.')
       : baseDest;
 
@@ -92,6 +88,21 @@ export class ArgSpec {
       id: {enumerable: true, value: id},
       dest: {enumerable: true, value: destKeypath},
     });
+  }
+
+  /**
+   * Return the unique ID for the argument given the parameters.
+   * @param {string} name - Argument name
+   * @param {ExtensionType} [extType] - Extension type
+   * @param {string} [extName] - Extension name
+   * @returns {string} Unique ID
+   */
+  static toId (name, extType, extName) {
+    const properName = _.kebabCase(name.replace(/^--?/, ''));
+    if (extType && extName) {
+      return [extType, _.kebabCase(extName), properName].join('-');
+    }
+    return properName;
   }
 
   /**

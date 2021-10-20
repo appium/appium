@@ -22,19 +22,69 @@ export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
  */
 export const SERVER_PROP_NAME = 'server';
 
+/**
+ * The original ID of the Appium config schema.
+ * We use this in the CLI to convert it to `argparse` options.
+ */
+export const APPIUM_CONFIG_SCHEMA_ID = 'appium.json';
+
+/**
+ * A wrapper around Ajv and schema-related functions.
+ *
+ * Should have been named Highlander, because _there can only be one_
+ */
 class AppiumSchema {
-  /** @type {ReadonlyMap<string,ArgSpec>} */
+  /**
+   * A mapping of unique argument IDs to their corresponding {@link ArgSpec}s.
+   *
+   * An "argument" is a CLI argument or a config property.
+   *
+   * Used to provide easy lookups of argument metadata when converting between different representations of those arguments.
+   * @private
+   * @type {ReadonlyMap<string,ArgSpec>}
+   */
   _argSpecs = new ReadonlyMap();
 
-  /** @type {Record<ExtensionType,Map<string,SchemaObject>>} */
+  /**
+   * A map of extension types to extension names to schema objects.
+   *
+   * This data structure is used to ensure there are no naming conflicts. The schemas
+   * are stored here in memory until the instance is _finalized_.
+   * @private
+   * @type {Record<ExtensionType,Map<string,SchemaObject>>}
+   */
   _registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
 
+  /**
+   * Whether or not this instance has been _finalized_.
+   *
+   * An instance is _finalized_ when it has been added to the Ajv instance.
+   * @private
+   * @type {boolean}
+   */
   _finalized = false;
 
+  /**
+   * Ajv instance
+   *
+   * @private
+   * @type {Ajv}
+   */
+  _ajv;
+
+  /**
+   * Singleton instance.
+   * @private
+   * @type {AppiumSchema}
+   */
+  static _instance;
+
+  /**
+   * Initializes Ajv, adds standard formats and our custom keywords.
+   * @see https://npm.im/ajv-formats
+   * @private
+   */
   constructor () {
-    /**
-     * Singleton Ajv instance.  A single instance can manage multiple schemas
-     */
     const ajv = addFormats(
       new Ajv({
         // without this not much validation actually happens
@@ -51,21 +101,78 @@ class AppiumSchema {
   }
 
   /**
-   * @param {ExtensionType} extType
-   * @param {string} extName
+   * Factory function for {@link AppiumSchema} instances.
+   *
+   * Returns a singleton instance if one exists, otherwise creates a new one.
+   * Binds public methods to the instance.
+   * @returns {AppiumSchema}
+   */
+  static create () {
+    const instance = AppiumSchema._instance ?? new AppiumSchema();
+    AppiumSchema._instance = instance;
+
+    _.bindAll(instance, [
+      'finalize',
+      'flatten',
+      'getArgSpec',
+      'getDefaults',
+      'getSchema',
+      'hasArgSpec',
+      'isFinalized',
+      'registerSchema',
+      'reset',
+      'validate',
+    ]);
+
+    return instance;
+  }
+
+  /**
+   * Returns `true` if a schema has been registered using given extension type and name.
+   *
+   * This does not depend on whether or not the instance has been _finalized_.
+   * @param {ExtensionType} extType - Extension type
+   * @param {string} extName - Name
+   * @returns {boolean} If registered
    */
   hasRegisteredSchema (extType, extName) {
     return this._registeredSchemas[extType].has(extName);
   }
 
-  get finalized () {
+  /**
+   * Return `true` if {@link AppiumSchema.finalize finalize} has been called
+   * successfully and {@link AppiumSchema.reset reset} has not been called since.
+   * @returns {boolean} If finalized
+   */
+  isFinalized () {
     return this._finalized;
   }
 
-  finalizeSchema () {
-    if (this.finalized) {
+  /**
+   * Call this when no more schemas will be registered.
+   *
+   * This does three things:
+   * 1. It combines all schemas from extensions into the Appium config schema,
+   *    then adds the result to the `Ajv` instance.
+   * 2. It adds schemas for _each_ argument/property for validation purposes.
+   *    The CLI uses these schemas to validate specific arguments.
+   * 3. The schemas are validated against JSON schema draft-07 (which is the
+   *    only one supported at this time)
+   *
+   * Any method in this instance that needs to interact with the `Ajv` instance
+   * will throw if this method has not been called.
+   *
+   * If the instance has already been finalized, this is a no-op.
+   * @public
+   * @throws {Error} If the schema is not valid
+   * @returns {void}
+   */
+  finalize () {
+    if (this._finalized) {
       return;
     }
+
+    const ajv = this._ajv;
     /**
      * For all schemas within a particular extension type, combine into an object
      * to be inserted under the `<driver|plugin>.properties` key of the base
@@ -140,7 +247,20 @@ class AppiumSchema {
     this._finalized = true;
   }
 
+  /**
+   * Resets this instance to its original state.
+   *
+   * - Removes all added schemas from the `Ajv` instance
+   * - Resets the map of {@link ArgSpec ArgSpecs}
+   * - Resets the map of registered schemas
+   * - Sets the {@link AppiumSchema._finalized _finalized} flag to `false`
+   *
+   * If you need to call {@link AppiumSchema.finalize} again, you'll want to call this first.
+   * @public
+   * @returns {void}
+   */
   reset () {
+    const ajv = this._ajv;
     for (const {id} of this._argSpecs.values()) {
       ajv.removeSchema(id);
     }
@@ -150,7 +270,6 @@ class AppiumSchema {
       [DRIVER_TYPE]: new Map(),
       [PLUGIN_TYPE]: new Map(),
     };
-    flattenSchema.cache = new Map();
     this._finalized = false;
   }
 
@@ -159,10 +278,11 @@ class AppiumSchema {
    *
    * This is "fail-fast" in that the schema will immediately be validated against JSON schema draft-07 _or_ whatever the value of the schema's `$schema` prop is.
    *
-   * Does _not_ add the schema to the `ajv` instance (this is done by {@link finalizeSchema}).
+   * Does _not_ add the schema to the `ajv` instance (this is done by {@link AppiumSchema.finalize}).
    * @param {import('../ext-config-io').ExtensionType} extType - Extension type
    * @param {string} extName - Unique extension name for `type`
    * @param {SchemaObject} schema - Schema object
+   * @throws {SchemaNameConflictError} If the schema is an invalid
    * @returns {void}
    */
   registerSchema (extType, extName, schema) {
@@ -174,71 +294,68 @@ class AppiumSchema {
 
     const normalizedExtName = _.kebabCase(extName);
     if (this.hasRegisteredSchema(extType, normalizedExtName)) {
-      throw new Error(
-        `Name for ${extType} schema "${extName}" conflicts with an existing schema`,
-      );
+      throw new SchemaNameConflictError(extType, extName);
     }
-    ajv.validateSchema(schema, true);
+    this._ajv.validateSchema(schema, true);
 
     this._registeredSchemas[extType].set(normalizedExtName, schema);
   }
 
   /**
-   *
-   * @param {string} id
-   * @returns {ArgSpec|undefined}
+   * Returns a {@link ArgSpec} for the given unique argument ID.
+   * @param {string} id - Unique argument ID _or_ raw CLI argument name
+   * @param {ExtensionType} [extType] - Extension type
+   * @param {string} [extName] - Extension name
+   * @returns {ArgSpec|undefined} ArgSpec or `undefined` if not found
    */
-  getArgSpec (id) {
-    return this._argSpecs.get(AppiumSchema._normalizeArgId(id));
+  getArgSpec (id, extType, extName) {
+    return this._argSpecs.get(ArgSpec.toId(id, extType, extName));
   }
 
   /**
-   *
-   * @param {string} id
-   * @returns {boolean}
+   * Returns `true` if the instance knows about an argument with the given unique ID.
+   * @param {string} id - Unique argument ID _or_ raw CLI argument name
+   * @param {ExtensionType} [extType] - Extension type
+   * @param {string} [extName] - Extension name
+   * @returns {boolean} `true` if such an {@link ArgSpec} exists
    */
-  hasArgSpec (id) {
-    return this._argSpecs.has(AppiumSchema._normalizeArgId(id));
+  hasArgSpec (id, extType, extName) {
+    return this._argSpecs.has(ArgSpec.toId(id, extType, extName));
   }
 
   /**
+   * Returns a `Record` of argument "dest" strings to default values.
    *
-   * @param {string} [name]
-   * @returns {string}
-   */
-  static _normalizeArgId (name) {
-    if (!_.isString(name)) {
-      throw new TypeError(`Expected string parameter, got: ${name}`);
-    }
-    return _.kebabCase(name.replace(/^--?/, ''));
-  }
-
-  /**
-   *
+   * The "dest" string is the property name in object returned by `argparse.ArgumentParser['parse_args']`.
    * @returns {Record<string,ArgSpec['defaultValue']>}
    */
   getDefaults () {
-    if (!this.finalized) {
-      throw new Error('Schema not yet compiled');
+    if (!this._finalized) {
+      throw new SchemaFinalizationError();
     }
-    return [...this._argSpecs.values()].reduce((defaults, argSpec) => {
-      const {defaultValue, dest} = argSpec;
-      if (!_.isUndefined(defaultValue)) {
-        defaults[dest] = defaultValue;
-      }
-      return defaults;
-    }, {});
+    return [...this._argSpecs.values()].reduce(
+      (defaults, {defaultValue, dest}) => {
+        if (!_.isUndefined(defaultValue)) {
+          defaults[dest] = defaultValue;
+        }
+        return defaults;
+      },
+      {},
+    );
   }
 
   /**
-   * Flatten schema into an array of `SchemaObject`s and associated {@link ArgSpec ArgSpecs}.
+   * Flatten schema into an array of `SchemaObject`s and associated
+   * {@link ArgSpec ArgSpecs}.
    *
    * Converts nested extension schemas to keys based on the extension type and
    * name. Used when translating to `argparse` options or getting the list of
    * default values (see {@link AppiumSchema.getDefaults}) for CLI or otherwise.
    *
-   * Memoized until {@link resetSchema} is called.
-   * @throws If {@link AppiumSchema.finalizeSchema} has not been called yet.
+   * The return value is an intermediate reprsentation used by `cli-args`
+   * module's `toParserArgs`, which converts the finalized schema to parameters
+   * used by `argparse`.
+   * @throws If {@link AppiumSchema.finalize} has not been called yet.
    * @returns {{schema: SchemaObject, argSpec: ArgSpec}[]}
    */
   flatten () {
@@ -261,12 +378,17 @@ class AppiumSchema {
           });
         } else {
           const [extType, extName] = prefix;
-          const argSpec = ArgSpec.create(key, {
-            extType,
+          const argSpec = this.getArgSpec(
+            key,
+            /** @type {ExtensionType} */ (extType),
             extName,
-            dest: value.appiumCliDest,
-            defaultValue: value.default,
-          });
+          );
+          if (!argSpec) {
+            /* istanbul ignore next */
+            throw new ReferenceError(
+              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This shouldn't happen!`,
+            );
+          }
           flattened.push({schema: _.cloneDeep(value), argSpec});
         }
       }
@@ -275,6 +397,13 @@ class AppiumSchema {
     return flattened;
   }
 
+  /**
+   * Retrieves the schema itself
+   * @public
+   * @param {string} [id] - Schema ID
+   * @throws If the schema has not yet been _finalized_
+   * @returns {SchemaObject}
+   */
   getSchema (id = APPIUM_CONFIG_SCHEMA_ID) {
     return /** @type {SchemaObject} */ (this._getValidator(id).schema);
   }
@@ -286,12 +415,12 @@ class AppiumSchema {
    * @returns {import('ajv').ValidateFunction}
    */
   _getValidator (id = APPIUM_CONFIG_SCHEMA_ID) {
-    const validator = ajv.getSchema(id);
+    const validator = this._ajv.getSchema(id);
     if (!validator) {
       if (id === APPIUM_CONFIG_SCHEMA_ID) {
-        throw new Error('Schema not yet compiled!');
+        throw new SchemaFinalizationError();
       } else {
-        throw new ReferenceError(`Unknown schema: "${id}"`);
+        throw new SchemaUnknownSchemaError(id);
       }
     }
     return validator;
@@ -324,106 +453,90 @@ class AppiumSchema {
   }
 }
 
-const appiumSchema = new AppiumSchema();
-const {_ajv: ajv} = appiumSchema;
-
-export const registerSchema = (extType, extName, schema) =>
-  appiumSchema.registerSchema(extType, extName, schema);
-
-export const getArgSpec = (name) => appiumSchema.getArgSpec(name);
-export const hasArgSpec = (id) => appiumSchema.hasArgSpec(id);
 /**
- * The original ID of the Appium config schema.
- * We use this in the CLI to convert it to `argparse` options.
+ * Thrown when the {@link AppiumSchema} instance has not yet been finalized, but
+ * the method called requires it.
  */
-export const APPIUM_CONFIG_SCHEMA_ID = 'appium.json';
+export class SchemaFinalizationError extends Error {
+  /**
+   * @type {Readonly<string>}
+   */
+  code = 'APPIUMERR_SCHEMA_FINALIZATION';
 
-/**
- * Checks if schema has been finalized.
- * @returns {boolean} `true` if {@link finalizeSchema} has been called successfully.
- */
-export const isFinalized = () => appiumSchema.finalized;
-
-/**
- * After all potential schemas have been registered, combine and finalize the schema, then add it to the ajv instance.
- *
- * If the schema has already been finalized, this is a no-op.
- * @public
- * @throws {Error} If the schema is not valid
- * @returns {void}
- */
-export const finalizeSchema = () => appiumSchema.finalizeSchema();
-
-/**
- * Resets the registered schemas and the ajv instance. Resets all memoized functions.
- *
- * If you need to call {@link finalizeSchema} again, you'll want to call this first.
- * @public
- * @returns {void}
- */
-export const resetSchema = () => appiumSchema.reset();
-
-/**
- * Given an object, validates it against the Appium config schema.
- * If errors occur, the returned array will be non-empty.
- * @param {any} value - The value (hopefully an object) to validate against the schema
- * @param {string} [id] - Schema ID
- * @public
- * @returns {import('ajv').ErrorObject[]} Array of errors, if any.
- */
-export function validate (value, id = APPIUM_CONFIG_SCHEMA_ID) {
-  return appiumSchema.validate(value, id);
+  constructor () {
+    super('Schema not yet finalized; `finalizeSchema()` must be called first.');
+  }
 }
 
 /**
- * Retrieves the schema itself
- * @public
- * @param {string} [id] - Schema ID
- * @returns {SchemaObject}
- */
-export function getSchema (id) {
-  return appiumSchema.getSchema(id);
-}
-
-/**
- * Get defaults from the schema. Returns object with keys matching the camel-cased
- * value of `appiumCliDest` (see schema) or the key name (camel-cased).
- * If no default found, the property will not have an associated key in the returned object.
- * @returns {Record<string, import('ajv').JSONType>}
- */
-export function getDefaultsFromSchema () {
-  return appiumSchema.getDefaults();
-}
-
-/**
- * Flatten schema into an array of `SchemaObject`s.
+ * Thrown when a "unique" schema ID conflicts with an existing schema ID.
  *
- * Converts nested extension schemas to keys based on the extension type and
- * name. Used when translating to `argparse` options or getting the list of
- * default values (see {@link getDefaultsFromSchema}) for CLI or otherwise.
- *
- * Memoized until {@link resetSchema} is called.
+ * This is likely going to be caused by attempting to register the same schema twice.
  */
-export const flattenSchema = _.memoize(() => appiumSchema.flatten());
+export class SchemaNameConflictError extends Error {
+  /**
+   * @type {Readonly<string>}
+   */
+  code = 'APPIUMERR_SCHEMA_NAME_CONFLICT';
 
-/**
- * Returns `true` if `filename`'s file extension is allowed (in {@link ALLOWED_SCHEMA_EXTENSIONS}).
- * @param {string} filename
- * @returns {boolean}
- */
-export function isAllowedSchemaFileExtension (filename) {
-  return AppiumSchema.isAllowedSchemaFileExtension(filename);
+  /**
+   * @type {Readonly<{extType: ExtensionType, extName: string}>}
+   */
+  data;
+
+  /**
+   * @param {ExtensionType} extType
+   * @param {string} extName
+   */
+  constructor (extType, extName) {
+    super(
+      `Name for ${extType} schema "${extName}" conflicts with an existing schema`,
+    );
+    this.data = {extType, extName};
+  }
 }
 
 /**
- * Alias
+ * Thrown when a schema ID was expected, but it doesn't exist on the {@link Ajv} instance.
+ */
+export class SchemaUnknownSchemaError extends ReferenceError {
+  /**
+   * @type {Readonly<string>}
+   */
+  code = 'APPIUMERR_SCHEMA_UNKNOWN_SCHEMA';
+
+  /**
+   * @type {Readonly<{schemaId: string}>}
+   */
+  data;
+
+  /**
+   * @param {string} schemaId
+   */
+  constructor (schemaId) {
+    super(`Unknown schema: "${schemaId}"`);
+    this.data = {schemaId};
+  }
+}
+
+const appiumSchema = AppiumSchema.create();
+
+export const {
+  registerSchema,
+  getArgSpec,
+  hasArgSpec,
+  isFinalized,
+  finalize: finalizeSchema,
+  reset: resetSchema,
+  validate,
+  getSchema,
+  flatten: flattenSchema,
+  getDefaults: getDefaultsFromSchema,
+} = appiumSchema;
+export const {isAllowedSchemaFileExtension} = AppiumSchema;
+
+/**
  * @typedef {import('ajv').SchemaObject} SchemaObject
- */
-
-/**
- * There is some disagreement between these types and the type of the values in
- * {@link ajv.formats}, which is why we need this.  I guess.
- * @typedef {import('ajv/dist/types').FormatValidator<string>|import('ajv/dist/types').FormatDefinition<string>|import('ajv/dist/types').FormatValidator<number>|import('ajv/dist/types').FormatDefinition<number>|RegExp} AjvFormatter
  */
 
 /**
@@ -431,10 +544,12 @@ export function isAllowedSchemaFileExtension (filename) {
  */
 
 /**
+ * An object having property `additionalProperties: false`
  * @typedef {Object} StrictProp
  * @property {false} additionalProperties
  */
 
 /**
+ * A {@link SchemaObject} with `additionalProperties: false`
  * @typedef {SchemaObject & StrictProp} StrictSchemaObject
  */

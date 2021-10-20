@@ -115,7 +115,7 @@ class AppiumDriver extends BaseDriver {
    * Validate and assign CLI args for a driver or plugin
    *
    * If the extension has provided a schema, validation has already happened.
-   * @param {'driver'|'plugin'} extType 'driver' or 'plugin'
+   * @param {import('./ext-config-io').ExtensionType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {Object} extInstance the driver or plugin instance
    */

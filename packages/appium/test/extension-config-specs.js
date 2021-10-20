@@ -4,7 +4,13 @@ import path from 'path';
 import rewiremock from 'rewiremock/node';
 import sinon from 'sinon';
 
+const expect = chai.expect;
+
 describe('ExtensionConfig', function () {
+  describe('getGenericConfigProblems()', function () {
+    it('should have some tests');
+  });
+
   describe('DriverConfig', function () {
     /**
      * @type {typeof import('../lib/driver-config').default}
@@ -206,6 +212,57 @@ describe('ExtensionConfig', function () {
         driverConfig.validate.should.have.been.calledOnce;
       });
     });
+
+    describe('readExtensionSchema()', function () {
+      /**
+       * @type {InstanceType<DriverConfig>}
+       */
+      let driverConfig;
+
+      /** @type {import('../lib/extension-config').ExtData} */
+      let extData;
+
+      const extName = 'stuff';
+
+      beforeEach(function () {
+        extData = {
+          installPath: 'fixtures',
+          pkgName: 'some-pkg',
+          schema: 'driver.schema.js',
+        };
+        mocks['resolve-from'].returns(
+          require.resolve('./fixtures/driver.schema.js'),
+        );
+        driverConfig = new DriverConfig('/tmp/');
+
+      });
+
+      describe('when the extension data is missing `schema`', function () {
+        it('should throw', function () {
+          delete extData.schema;
+          expect(() =>
+            driverConfig.readExtensionSchema(extName, extData),
+          ).to.throw(TypeError, /why is this function being called/i);
+        });
+      });
+
+      describe('when the extension schema has already been registered', function () {
+        it('should throw', function () {
+          driverConfig.readExtensionSchema(extName, extData);
+          // mocks['resolve-from'].reset();
+          expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(/conflicts with an existing schema/i);
+        });
+      });
+
+      describe('when the extension schema has not yet been registered', function () {
+        it('should resolve and load the extension schema file', function () {
+          driverConfig.readExtensionSchema (extName, extData);
+
+          // we don't have access to the schema registration cache directly, so this is as close as we can get.
+          expect(mocks['resolve-from']).to.have.been.calledOnce;
+        });
+      });
+    });
   });
 
   describe('PluginConfig', function () {
@@ -341,6 +398,57 @@ describe('ExtensionConfig', function () {
       it('should validate the extension', async function () {
         await pluginConfig.read();
         pluginConfig.validate.should.have.been.calledOnce;
+      });
+    });
+
+    describe('readExtensionSchema()', function () {
+      /**
+       * @type {InstanceType<PluginConfig>}
+       */
+      let pluginConfig;
+
+      /** @type {import('../lib/extension-config').ExtData} */
+      let extData;
+
+      const extName = 'stuff';
+
+      beforeEach(function () {
+        extData = {
+          installPath: 'fixtures',
+          pkgName: 'some-pkg',
+          schema: 'plugin.schema.js',
+        };
+        mocks['resolve-from'].returns(
+          require.resolve('./fixtures/plugin.schema.js'),
+        );
+        pluginConfig = new PluginConfig('/tmp/');
+
+      });
+
+      describe('when the extension data is missing `schema`', function () {
+        it('should throw', function () {
+          delete extData.schema;
+          expect(() =>
+            pluginConfig.readExtensionSchema(extName, extData),
+          ).to.throw(TypeError, /why is this function being called/i);
+        });
+      });
+
+      describe('when the extension schema has already been registered', function () {
+        it('should throw', function () {
+          pluginConfig.readExtensionSchema(extName, extData);
+          // mocks['resolve-from'].reset();
+          expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(/conflicts with an existing schema/i);
+        });
+      });
+
+      describe('when the extension schema has not yet been registered', function () {
+        it('should resolve and load the extension schema file', function () {
+          pluginConfig.readExtensionSchema (extName, extData);
+
+          // we don't have access to the schema registration cache directly, so this is as close as we can get.
+          expect(mocks['resolve-from']).to.have.been.calledOnce;
+        });
       });
     });
   });

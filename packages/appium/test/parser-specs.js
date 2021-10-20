@@ -66,7 +66,11 @@ describe('parser', function () {
         });
 
         it('should throw an error for an invalid value (using "enum")', function () {
-          (() => {p.parse_args(['--loglevel', '-42']);}).should.throw(/must be equal to one of the allowed values/i);
+          (() => {p.parse_args(['--log-level', '-42']);}).should.throw(/must be equal to one of the allowed values/i);
+        });
+
+        it('should throw an error for incorrectly formatted arg (matching "dest")', function () {
+          (() => {p.parse_args(['--loglevel', '-42']);}).should.throw(/unrecognized arguments: --loglevel/i);
         });
       });
 
@@ -149,6 +153,19 @@ describe('parser', function () {
         ]);
 
         args.driver.fake.should.eql(config.driver.fake);
+      });
+
+      it('should nicely handle extensions w/ dashes in them', async function () {
+        schema.resetSchema();
+        schema.registerSchema('plugin', 'crypto-fiend', {properties: {elite: {type: 'boolean'}}});
+        schema.finalizeSchema();
+        p = await getParser(true);
+        // const fakePluginArgs = {'xxx-crypt0-fiend-xxx': {elite: true}};
+        const args = p.parse_args([
+          '--plugin-crypto-fiend-elite'
+        ]);
+
+        args.should.have.nested.property('plugin.crypto-fiend.elite', true);
       });
 
       describe('when user supplies invalid args', function () {

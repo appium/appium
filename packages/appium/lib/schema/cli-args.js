@@ -27,16 +27,6 @@ const TYPENAMES = Object.freeze({
 });
 
 /**
- * Given an CLI arg for an extension, parse it into parts.
- * @example
- * const arg = '--driver-foo-bar-baz';
- * const matches = arg.match(CLI_ARG_PARSER_REGEXP);
- * matches.groups; // {extensionName: 'foo', extensionType: 'driver', argName: 'bar-baz'}
- */
-const CLI_ARG_PARSER_REGEXP =
-  /^(?<extensionType>.+?)-(?<extensionName>.+?)-(?<argName>.+)$/;
-
-/**
  * Options with alias lengths less than this will be considered "short" flags.
  */
 const SHORT_ARG_CUTOFF = 3;
@@ -52,56 +42,22 @@ function aliasToFlag (alias) {
 }
 
 /**
- * Given a full CLI argument name (without leading dashes), determine the associated
- * schema ID.
- */
-const argToSchemaId = _.memoize(
-  /**
-   * @param {string} alias
-   * @returns {string}
-   */
-  (alias) => {
-    const {extensionType, extensionName, argName} = parseArgName(alias);
-    return extensionType
-      ? `${extensionType}-${extensionName}-${_.kebabCase(argName)}`
-      : _.kebabCase(argName);
-  },
-);
-
-/**
  * Converts a string to SCREAMING_SNAKE_CASE
  */
 const screamingSnakeCase = _.flow(_.snakeCase, _.toUpper);
 
 /**
- * Given `alias` and optionally `appiumCliDest`, return the key where the arg parser should store the value.
- *
- * Extension prefixes are passed through, but everything else is camelCased.
- * @param {string} alias - argument alias
- * @param {Partial<{prefix: string, appiumCliDest: string}>} [opts] -`appiumCliDest` schema value if present
- * @returns {string}
- */
-function aliasToDest (alias, {appiumCliDest} = {}) {
-  const {extensionName, extensionType, argName} = parseArgName(alias);
-  const baseArgName = _.camelCase(appiumCliDest ?? argName);
-  return extensionName && extensionType
-    ? `${extensionType}-${extensionName}-${baseArgName}`
-    : baseArgName;
-}
-
-/**
  * Given unique property name `name`, return a function which validates a value
  * against a property within the schema.
  * @template Coerced
- * @param {string} name - Argument name
+ * @param {ArgSpec} argSpec - Argument name
  * @param {(value: string) => Coerced} [coerce] - Function to coerce to a different
  * primitive
  * @todo See if we can remove `coerce` by allowing Ajv to coerce in its
  * constructor options
  * @returns
  */
-function getSchemaValidator (name, coerce = _.identity) {
-  const argSchemaId = argToSchemaId(name);
+function getSchemaValidator ({id: argSchemaId}, coerce = _.identity) {
   /** @param {string} value */
   return (value) => {
     const coerced = coerce(value);
@@ -118,33 +74,33 @@ function getSchemaValidator (name, coerce = _.identity) {
 /**
  * Given arg `name`, a JSON schema `subSchema`, and options, return an argument definition
  * as understood by `argparse`.
- * @param {string} fullArgName - Option name
  * @param {AppiumJSONSchema} subSchema - JSON schema for the option
+ * @param {ArgSpec} argSpec - Argument spec tuple
  * @param {SubSchemaToArgDefOptions} [opts] - Options
  * @returns {import('../cli/args').ArgumentDefinition} Tuple of flag and options
  */
-function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
+function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
   const {overrides = {}} = opts;
   let {
     type,
     appiumCliAliases,
     appiumCliTransformer,
-    appiumCliDest,
+    // appiumCliDest,
     description,
     enum: enumValues,
   } = subSchema;
 
-  const {argName} = parseArgName(fullArgName);
+  const {name, id} = argSpec;
 
   const aliases = [
-    aliasToFlag(fullArgName),
+    aliasToFlag(id),
     .../** @type {string[]} */ (appiumCliAliases ?? []).map(aliasToFlag),
   ];
 
   /** @type {import('argparse').ArgumentOptions} */
   let argOpts = {
     required: false,
-    dest: aliasToDest(fullArgName, {appiumCliDest}),
+    // dest: aliasToDest(argSpec, {appiumCliDest}),
     help: description,
   };
 
@@ -183,13 +139,13 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
     // "number" type is coerced to float. `argparse` does this for us if we use `float` type, but
     // we don't.
     case TYPENAMES.NUMBER: {
-      argTypeFunction = getSchemaValidator(fullArgName, parseFloat);
+      argTypeFunction = getSchemaValidator(argSpec, parseFloat);
       break;
     }
 
     // "integer" is coerced to an .. integer.  again, `argparse` would do this for us if we used `int`.
     case TYPENAMES.INTEGER: {
-      argTypeFunction = getSchemaValidator(fullArgName, _.parseInt);
+      argTypeFunction = getSchemaValidator(argSpec, _.parseInt);
       break;
     }
 
@@ -197,7 +153,7 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
     // (e.g., must satisfy a mask or regex or even some custom validation
     // function)
     case TYPENAMES.STRING: {
-      argTypeFunction = getSchemaValidator(fullArgName);
+      argTypeFunction = getSchemaValidator(argSpec);
       break;
     }
 
@@ -207,7 +163,7 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
     // falls through
     default: {
       throw new TypeError(
-        `Schema property "${fullArgName}": \`${type}\` type unknown or disallowed`,
+        `Schema property "${id}": \`${type}\` type unknown or disallowed`,
       );
     }
   }
@@ -215,7 +171,7 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
   // metavar is used in help text. `boolean` cannot have a metavar--it is not
   // displayed--and `argparse` throws if you give it one.
   if (type !== TYPENAMES.BOOLEAN) {
-    argOpts.metavar = screamingSnakeCase(argName);
+    argOpts.metavar = screamingSnakeCase(name);
   }
 
   if (argTypeFunction) {
@@ -244,7 +200,7 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
       argOpts.choices = enumValues.map(String);
     } else {
       throw new TypeError(
-        `Problem with schema for ${fullArgName}; the \`enum\` prop depends on the \`string\` type`,
+        `Problem with schema for ${id}; the \`enum\` prop depends on the \`string\` type`,
       );
     }
   }
@@ -256,7 +212,7 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
     /** should the override keys correspond to the prop name or the prop dest?
      * the prop dest is computed by {@link aliasToDest}.
      */
-    overrides[fullArgName] ?? (argOpts.dest && overrides[argOpts.dest]) ?? {},
+    overrides[id] ?? (argOpts.dest && overrides[argOpts.dest]) ?? {},
   );
 
   return [aliases, argOpts];
@@ -266,36 +222,18 @@ function subSchemaToArgDef (fullArgName, subSchema, opts = {}) {
  * Converts the current JSON schema plus some metadata into `argparse` arguments.
  *
  * @param {ToParserArgsOptions} opts - Options
- * @throws If schema has not been added to ajv (via `finalize()`)
+ * @throws If schema has not been added to ajv (via `finalizeSchema()`)
  * @returns {import('../cli/args').ArgumentDefinition[]} An array of tuples of aliases and `argparse` arguments; empty if no schema found
  */
 export function toParserArgs (opts = {}) {
   const flattened = flattenSchema();
-  return _.map(flattened, (value, key) => subSchemaToArgDef(key, value, opts));
-}
-
-/**
- * Given an arg name like `<extension>-<name>-<arg>` (provided by
- * {@link CLI_ARG_PARSER_REGEXP}) or just `<arg>`, return its parts.
- * @param {string} fullArgName - Alias to parse
- * @returns {{extensionType?: string, extensionName?: string, argName: string}}
- */
-export function parseArgName (fullArgName) {
-  const matches = fullArgName.match(CLI_ARG_PARSER_REGEXP);
-  const groups = matches?.groups;
-  return groups?.argName
-    ? {
-      argName: groups.argName,
-      extensionName: groups.extensionName,
-      extensionType: groups.extensionType,
-    }
-    : {argName: fullArgName};
+  return _.map(flattened, ({schema, argSpec}) => subSchemaToArgDef(schema, argSpec, opts));
 }
 
 /**
  * CLI-specific option subset for {@link ToParserArgsOptions}
  * @typedef {Object} ToParserArgsOptsCli
- * @property {import('./schema').ExtData} [extData] - Extension data (from YAML)
+ * @property {import('../extension-config').ExtData} [extData] - Extension data (from YAML)
  * @property {'driver'|'plugin'} [type] - Extension type
  */
 
@@ -319,4 +257,8 @@ export function parseArgName (fullArgName) {
 /**
  * A JSON 7 schema with our custom keywords.
  * @typedef {import('./keywords').AppiumJSONSchemaKeywords & import('json-schema').JSONSchema7} AppiumJSONSchema
+ */
+
+/**
+ * @typedef {import('./arg-spec').ArgSpec} ArgSpec
  */

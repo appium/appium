@@ -5,7 +5,10 @@ import { lilconfig } from 'lilconfig';
 import _ from 'lodash';
 import yaml from 'yaml';
 import log from './logger';
-import { getSchema, validate } from './schema/schema';
+import {
+  getSchema,
+  validate
+} from './schema/schema';
 
 /**
  * lilconfig loader to handle `.yaml` files
@@ -94,10 +97,12 @@ export function formatErrors (errors = [], config = {}, opts = {}) {
   const json = opts.json;
   const format = opts.pretty ?? true ? 'cli' : 'js';
 
-  return /** @type {string} */ (betterAjvErrors(getSchema(opts.argSchemaId), config, errors, {
-    json,
-    format,
-  }));
+  return /** @type {string} */ (
+    betterAjvErrors(getSchema(opts.argSchemaId), config, errors, {
+      json,
+      format,
+    })
+  );
 }
 
 /**
@@ -164,23 +169,20 @@ export async function readConfigFile (filepath, opts = {}) {
  * @returns {NormalizedAppiumConfiguration} New object with camel-cased keys.
  */
 function normalizeConfig (config) {
+  const schema = getSchema();
   /**
    * @param {AppiumConfiguration} config
    * @param {string} [section] - Keypath (lodash `_.get()` style) to section of config. If omitted, assume root Appium config schema
    * @returns Normalized section of config
    */
   const normalize = (config, section) => {
-    const schema = getSchema();
     // @ts-ignore
     const obj = /** @type {object} */ (_.get(config, section, config)); // section is allowed to be `undefined`
 
-    const mappedObj = schema
-      ? _.mapKeys(
-          obj,
-          (__, prop) =>
-            schema.properties[prop]?.appiumCliDest ?? _.camelCase(prop),
-      )
-      : _.mapKeys(obj, (__, prop) => _.camelCase(prop));
+    const mappedObj = _.mapKeys(
+      obj,
+      (__, prop) => _.camelCase(schema.properties[prop]?.appiumCliDest ?? prop),
+    );
 
     return _.mapValues(mappedObj, (value, property) => {
       const nextSection = section ? `${section}.${property}` : property;

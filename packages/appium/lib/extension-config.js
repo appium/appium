@@ -3,9 +3,10 @@
 import _ from 'lodash';
 import os from 'os';
 import path from 'path';
+import resolveFrom from 'resolve-from';
 import { getExtConfigIOInstance } from './ext-config-io';
 import log from './logger';
-import { ALLOWED_SCHEMA_EXTENSIONS, readExtensionSchema, isAllowedSchemaFileExtension } from './schema/schema';
+import { ALLOWED_SCHEMA_EXTENSIONS, isAllowedSchemaFileExtension, registerSchema } from './schema/schema';
 
 const DEFAULT_APPIUM_HOME = path.resolve(os.homedir(), '.appium');
 const APPIUM_HOME = process.env.APPIUM_HOME || DEFAULT_APPIUM_HOME;
@@ -98,7 +99,7 @@ export default class ExtensionConfig {
       if (_.isString(argSchemaPath)) {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            readExtensionSchema(this.extensionType, extName, extData);
+            this.readExtensionSchema(extName, extData);
           } catch (err) {
             problems.push({err: `Unable to register schema at path ${argSchemaPath}`, val: argSchemaPath});
           }
@@ -281,8 +282,54 @@ export default class ExtensionConfig {
   isInstalled (extName) {
     return _.includes(Object.keys(this.installedExtensions), extName);
   }
+
+  /**
+   * Intended to be called by corresponding instance methods of subclass.
+   * @private
+   * @param {string} appiumHome
+   * @param {ExtensionType} extType
+   * @param {string} extName - Extension name (unique to its type)
+   * @param {ExtData} extData - Extension config
+   * @returns {import('ajv').SchemaObject|undefined}
+   */
+  static _readExtensionSchema (appiumHome, extType, extName, extData) {
+    const {installPath, pkgName, schema: argSchemaPath} = extData;
+    if (!argSchemaPath) {
+      throw new TypeError(
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
+      );
+    }
+    const schemaPath = resolveFrom(
+      path.resolve(appiumHome, installPath),
+      // this path sep is fine because `resolveFrom` uses Node's module resolution
+      path.normalize(`${pkgName}/${argSchemaPath}`),
+    );
+    const moduleObject = require(schemaPath);
+    // this sucks. default exports should be destroyed
+    const schema = moduleObject.__esModule
+      ? moduleObject.default
+      : moduleObject;
+    registerSchema(extType, extName, schema);
+    return schema;
+  }
+
+  /**
+   * If an extension provides a schema, this will load the schema and attempt to
+   * register it with the schema registrar.
+   * @param {string} extName - Name of extension
+   * @param {ExtData} extData - Extension data
+   * @returns {import('ajv').SchemaObject|undefined}
+   */
+  readExtensionSchema (extName, extData) {
+    return ExtensionConfig._readExtensionSchema(this.appiumHome, this.extensionType, extName, extData);
+  }
 }
 
+export { DRIVER_TYPE, PLUGIN_TYPE } from './ext-config-io';
+export {
+  INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
+  INSTALL_TYPES, DEFAULT_APPIUM_HOME, APPIUM_HOME
+};
 
 /**
  * Config problem
@@ -296,8 +343,11 @@ export default class ExtensionConfig {
  * @typedef {import('./ext-config-io').ExtensionType} ExtensionType
  */
 
-export { DRIVER_TYPE, PLUGIN_TYPE } from './ext-config-io';
-export {
-  INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB,
-  INSTALL_TYPES, DEFAULT_APPIUM_HOME, APPIUM_HOME
-};
+/**
+ * Extension data (pulled from config YAML)
+ * @typedef {Object} ExtData
+ * @property {string} [schema] - Optional schema path if the ext defined it
+ * @property {string} pkgName - Package name
+ * @property {string} installPath - Actually looks more like a module identifier? Resolved from `APPIUM_HOME`
+ */
+

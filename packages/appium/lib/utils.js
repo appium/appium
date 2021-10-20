@@ -218,7 +218,34 @@ function pullSettings (caps) {
 
 const rootDir = fs.findRoot(__dirname);
 
+
+/**
+ * A Map where you can set properties, but only once. And you can't remove anything. So there.
+ * @template K,V
+ * @extends {Map<K,V>}
+ */
+class ReadonlyMap extends Map {
+  /**
+   * @param {K} key
+   * @param {V} value
+   */
+  set (key, value) {
+    if (this.has(key)) {
+      throw new Error(`${key} is already set`);
+    }
+    return super.set(key, value);
+  }
+
+  delete (key) {
+    throw new Error(`${key} cannot be deleted`);
+  }
+
+  clear () {
+    throw new Error(`Cannot clear ReadonlyMap`);
+  }
+}
+
 export {
   inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes
+  getPackageVersion, pullSettings, removeAppiumPrefixes, ReadonlyMap
 };

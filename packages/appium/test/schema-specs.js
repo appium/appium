@@ -1,20 +1,29 @@
-//@ts-check
+// @ts-check
 
 import sinon from 'sinon';
 import appiumConfigSchema from '../lib/schema/appium-config-schema';
 import defaultArgsFixture from './fixtures/default-args';
-import flattenedSchemaFixture from './fixtures/flattened-schema';
-import {rewiremock} from './helpers';
-
 import DRIVER_SCHEMA_FIXTURE from './fixtures/driver.schema';
+import flattenedSchemaFixture from './fixtures/flattened-schema';
+import { rewiremock } from './helpers';
 
-const expect = require('chai').expect;
+const {expect} = chai;
 
 describe('schema', function () {
   /** @type {import('../lib/schema/schema')} */
   let schema;
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
+
+  /**
+   * @type {typeof import('../lib/schema/schema').SchemaFinalizationError}
+   */
+  let SchemaFinalizationError;
+
+  /**
+   * @type {typeof import('../lib/schema/schema').SchemaUnknownSchemaError}
+   */
+  let SchemaUnknownSchemaError;
 
   let mocks;
 
@@ -33,7 +42,8 @@ describe('schema', function () {
     };
 
     schema = rewiremock.proxy(() => require('../lib/schema/schema'), mocks);
-
+    SchemaFinalizationError = schema.SchemaFinalizationError;
+    SchemaUnknownSchemaError = schema.SchemaUnknownSchemaError;
     schema.resetSchema();
   });
 
@@ -135,8 +145,7 @@ describe('schema', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
         expect(() => schema.getSchema()).to.throw(
-          Error,
-          /schema not yet compiled/i,
+          SchemaFinalizationError
         );
       });
     });
@@ -166,8 +175,7 @@ describe('schema', function () {
       describe('when schema id is invalid', function () {
         it('should throw', function () {
           expect(() => schema.getSchema('schema-the-clown')).to.throw(
-            ReferenceError,
-            /unknown schema/i,
+            SchemaUnknownSchemaError
           );
         });
       });
@@ -178,8 +186,7 @@ describe('schema', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
         expect(() => schema.getDefaultsFromSchema()).to.throw(
-          Error,
-          /schema not yet compiled/i,
+          SchemaFinalizationError
         );
       });
     });
@@ -207,8 +214,7 @@ describe('schema', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
         expect(() => schema.flattenSchema()).to.throw(
-          Error,
-          /schema not yet compiled/i,
+          SchemaFinalizationError,
         );
       });
     });

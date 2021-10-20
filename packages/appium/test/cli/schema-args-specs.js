@@ -1,6 +1,6 @@
 import {rewiremock} from '../helpers';
 import sinon from 'sinon';
-import {finalizeSchema, resetSchema} from '../../lib/schema/schema';
+import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../lib/schema/schema';
 
 const expect = chai.expect;
 
@@ -47,7 +47,7 @@ describe('cli/schema-args', function () {
       it('should throw', function () {
         resetSchema();
         expect(() => schemaArgs.toParserArgs()).to.throw(
-          'Schema not yet compiled',
+          SchemaFinalizationError
         );
       });
     });

@@ -19,10 +19,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: |
-          npm i -g npm  # as a workaround to install npm as global scope for testing
           npm install
           npm test
           npm run install-fake-driver
+          npm i -g npm  # as a workaround to install npm as global scope for testing
           npm run e2e-test
 
   fossa-scan:

@@ -18,16 +18,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-        env:
-          NODE_PATH: npm -g root
       - run: |
+          npm i -g npm  # as a workaround to install npm as global scope for testing
           npm install
           npm test
           npm run install-fake-driver
-          echo "print debug info"
-          realpath $(which npm)
-          npm i -g npm
-          echo "=========="
           npm run e2e-test
 
   fossa-scan:

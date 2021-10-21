@@ -24,6 +24,10 @@ jobs:
           npm install
           npm test
           npm run install-fake-driver
+          echo "print debug info"
+          realpath $(which npm)
+          npm i -g npm
+          echo "=========="
           npm run e2e-test
 
   fossa-scan:

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "module": "es2015",
+    "target": "es2015"
+  }
+}

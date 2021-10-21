@@ -60,7 +60,7 @@
     "rimraf": "3.0.2",
     "sanitize-filename": "1.6.3",
     "semver": "7.3.5",
-    "shell-quote": "1.7.2",
+    "shell-quote": "1.7.3",
     "source-map-support": "0.5.20",
     "teen_process": "1.16.0",
     "uuid": "8.3.2",

@@ -4,29 +4,16 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
-import { ReadonlyMap } from '../utils';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../extension-config';
+import {ReadonlyMap} from '../utils';
 import appiumConfigSchema from './appium-config-schema';
-import { ArgSpec } from './arg-spec';
-import { keywords } from './keywords';
+import {ArgSpec, SERVER_PROP_NAME, APPIUM_CONFIG_SCHEMA_ID} from './arg-spec';
+import {keywords} from './keywords';
 
 /**
  * Extensions that an extension schema file can have.
  */
 export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
-
-/**
- * The schema prop containing server-related options. Everything in here
- * is "native" to Appium.
- * Used by {@link flattenSchema} for transforming the schema into CLI args.
- */
-export const SERVER_PROP_NAME = 'server';
-
-/**
- * The original ID of the Appium config schema.
- * We use this in the CLI to convert it to `argparse` options.
- */
-export const APPIUM_CONFIG_SCHEMA_ID = 'appium.json';
 
 /**
  * A wrapper around Ajv and schema-related functions.
@@ -56,15 +43,6 @@ class AppiumSchema {
   _registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
 
   /**
-   * Whether or not this instance has been _finalized_.
-   *
-   * An instance is _finalized_ when it has been added to the Ajv instance.
-   * @private
-   * @type {boolean}
-   */
-  _finalized = false;
-
-  /**
    * Ajv instance
    *
    * @private
@@ -80,24 +58,21 @@ class AppiumSchema {
   static _instance;
 
   /**
+   * Lookup of schema IDs to finalized schemas.
+   *
+   * This does not include references, but rather the root schemas themselves.
+   * @private
+   * @type {Record<string,SchemaObject>?}
+   */
+  _finalizedSchemas = null;
+
+  /**
    * Initializes Ajv, adds standard formats and our custom keywords.
    * @see https://npm.im/ajv-formats
    * @private
    */
   constructor () {
-    const ajv = addFormats(
-      new Ajv({
-        // without this not much validation actually happens
-        allErrors: true,
-      }),
-    );
-
-    // add custom keywords to ajv. see schema-keywords.js
-    _.forEach(keywords, (keyword) => {
-      ajv.addKeyword(keyword);
-    });
-
-    this._ajv = ajv;
+    this._ajv = AppiumSchema._instantiateAjv();
   }
 
   /**
@@ -145,7 +120,7 @@ class AppiumSchema {
    * @returns {boolean} If finalized
    */
   isFinalized () {
-    return this._finalized;
+    return Boolean(this._finalizedSchemas);
   }
 
   /**
@@ -165,86 +140,102 @@ class AppiumSchema {
    * If the instance has already been finalized, this is a no-op.
    * @public
    * @throws {Error} If the schema is not valid
-   * @returns {void}
+   * @returns {Readonly<Record<string,SchemaObject>>} Record of schema IDs to full schema objects
    */
   finalize () {
-    if (this._finalized) {
-      return;
+    if (this.isFinalized()) {
+      return /** @type {Record<string,SchemaObject>} */(this._finalizedSchemas);
     }
 
     const ajv = this._ajv;
-    /**
-     * For all schemas within a particular extension type, combine into an object
-     * to be inserted under the `<driver|plugin>.properties` key of the base
-     * schema.
-     * @param {Map<string,SchemaObject>} extensionSchemas
-     * @param {string} extType
-     * @returns {Record<string,StrictSchemaObject>}
-     */
-    const combineExtSchemas = (extensionSchemas, extType) =>
-      _.reduce(
-        _.fromPairs([...extensionSchemas]),
-        (extensionTypeSchema, extSchema, extName) => {
-          /** @type {StrictSchemaObject} */
-          const finalExtSchema = {...extSchema, additionalProperties: false};
-          // this loop mutates ajv (calls `addSchema`) and mutates the `_argSpecs` Map
-          _.forEach(finalExtSchema.properties ?? {}, (propSchema, propName) => {
-            const {default: defaultValue, appiumCliDest: dest} = propSchema;
-            const argSpec = ArgSpec.create(propName, {
-              extType,
-              extName,
-              dest,
-              defaultValue,
-            });
-            const {id} = argSpec;
-            ajv.addSchema(propSchema, id);
-            this._argSpecs.set(id, argSpec);
-          });
-          return {
-            ...extensionTypeSchema,
-            [extName]: finalExtSchema,
-          };
-        },
-        {},
-      );
 
     // Ajv will _mutate_ the schema, so we need to clone it.
     const baseSchema = _.cloneDeep(appiumConfigSchema);
 
-    _.forEach(
-      baseSchema.properties.server.properties,
-      (propSchema, propName) => {
+    /**
+     *
+     * @param {SchemaObject} schema
+     * @param {ExtensionType} [extType]
+     * @param {string} [extName]
+     */
+    const addArgSpecs = (schema, extType, extName) => {
+      _.forEach(schema, (propSchema, propName) => {
         const argSpec = ArgSpec.create(propName, {
           dest: propSchema.appiumCliDest,
           defaultValue: propSchema.default,
+          extType,
+          extName,
         });
-        const {id} = argSpec;
-        ajv.addSchema(propSchema, id);
-        this._argSpecs.set(id, argSpec);
-      },
+        const {arg} = argSpec;
+        this._argSpecs.set(arg, argSpec);
+      });
+    };
+
+    addArgSpecs(
+      _.omit(baseSchema.properties.server.properties, [
+        DRIVER_TYPE,
+        PLUGIN_TYPE,
+      ]),
     );
+
+    /**
+     * @type {Record<string,SchemaObject>}
+     */
+    const finalizedSchemas = {};
 
     const finalSchema = _.reduce(
       this._registeredSchemas,
       /**
        * @param {typeof baseSchema} baseSchema
        * @param {Map<string,SchemaObject>} extensionSchemas
-       * @param {ExtensionType} extensionType
+       * @param {ExtensionType} extType
        */
-      (baseSchema, extensionSchemas, extensionType) => {
-        baseSchema.properties[extensionType].properties = combineExtSchemas(
-          extensionSchemas,
-          extensionType,
-        );
+      (baseSchema, extensionSchemas, extType) => {
+        extensionSchemas.forEach((schema, extName) => {
+          schema.$id = `${extType}-${_.kebabCase(extName)}.json`;
+          baseSchema.properties.server.properties[extType].anyOf =
+            baseSchema.properties.server.properties[extType].anyOf ?? [];
+          baseSchema.properties.server.properties[extType].anyOf.push({
+            $ref: schema.$id,
+            $comment: extName,
+          });
+          ajv.validateSchema(schema, true);
+          addArgSpecs(schema.properties, extType, extName);
+          ajv.addSchema(schema, schema.$id);
+          finalizedSchemas[schema.$id] = schema;
+        });
         return baseSchema;
       },
       baseSchema,
     );
 
     ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
+    finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
     ajv.validateSchema(finalSchema, true);
 
-    this._finalized = true;
+    this._finalizedSchemas = finalizedSchemas;
+    return Object.freeze(finalizedSchemas);
+  }
+
+  /**
+   * Configures and creates an Ajv instance.
+   * @private
+   * @returns {Ajv}
+   */
+  static _instantiateAjv () {
+    const ajv = addFormats(
+      new Ajv({
+        // without this not much validation actually happens
+        allErrors: true,
+      }),
+    );
+
+    // add custom keywords to ajv. see schema-keywords.js
+    _.forEach(keywords, (keyword) => {
+      ajv.addKeyword(keyword);
+    });
+
+    return ajv;
   }
 
   /**
@@ -260,17 +251,18 @@ class AppiumSchema {
    * @returns {void}
    */
   reset () {
-    const ajv = this._ajv;
-    for (const {id} of this._argSpecs.values()) {
-      ajv.removeSchema(id);
+    for (const schemaId of Object.keys(this._finalizedSchemas ?? {})) {
+      this._ajv.removeSchema(schemaId);
     }
-    ajv.removeSchema(APPIUM_CONFIG_SCHEMA_ID);
     this._argSpecs = new ReadonlyMap();
     this._registeredSchemas = {
       [DRIVER_TYPE]: new Map(),
       [PLUGIN_TYPE]: new Map(),
     };
-    this._finalized = false;
+    this._finalizedSchemas = null;
+
+    // Ajv seems to have an over-eager cache, so we have to dump the object entirely.
+    this._ajv = AppiumSchema._instantiateAjv();
   }
 
   /**
@@ -302,25 +294,25 @@ class AppiumSchema {
   }
 
   /**
-   * Returns a {@link ArgSpec} for the given unique argument ID.
-   * @param {string} id - Unique argument ID _or_ raw CLI argument name
+   * Returns a {@link ArgSpec} for the given argument name.
+   * @param {string} name - CLI argument name
    * @param {ExtensionType} [extType] - Extension type
    * @param {string} [extName] - Extension name
    * @returns {ArgSpec|undefined} ArgSpec or `undefined` if not found
    */
-  getArgSpec (id, extType, extName) {
-    return this._argSpecs.get(ArgSpec.toId(id, extType, extName));
+  getArgSpec (name, extType, extName) {
+    return this._argSpecs.get(ArgSpec.toArg(name, extType, extName));
   }
 
   /**
-   * Returns `true` if the instance knows about an argument with the given unique ID.
-   * @param {string} id - Unique argument ID _or_ raw CLI argument name
+   * Returns `true` if the instance knows about an argument by the given `name`.
+   * @param {string} name - CLI argument name
    * @param {ExtensionType} [extType] - Extension type
    * @param {string} [extName] - Extension name
    * @returns {boolean} `true` if such an {@link ArgSpec} exists
    */
-  hasArgSpec (id, extType, extName) {
-    return this._argSpecs.has(ArgSpec.toId(id, extType, extName));
+  hasArgSpec (name, extType, extName) {
+    return this._argSpecs.has(ArgSpec.toArg(name, extType, extName));
   }
 
   /**
@@ -330,7 +322,7 @@ class AppiumSchema {
    * @returns {Record<string,ArgSpec['defaultValue']>}
    */
   getDefaults () {
-    if (!this._finalized) {
+    if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
     return [...this._argSpecs.values()].reduce(
@@ -376,7 +368,19 @@ class AppiumSchema {
             props: value.properties,
             prefix: key === SERVER_PROP_NAME ? [] : [...prefix, key],
           });
-        } else {
+        } else if (value.anyOf) {
+          value.anyOf.forEach(({$ref}) => {
+            const refSchema = this.getSchema($ref);
+            const {normalizedExtName} = ArgSpec.extensionInfoFromRootSchemaId($ref);
+            if (!normalizedExtName) {
+              throw new ReferenceError(`Could not determine extension name from schema ID ${$ref}. This is a bug.`);
+            }
+            stack.push({
+              props: refSchema.properties,
+              prefix: [...prefix, key, normalizedExtName],
+            });
+          });
+        } else if (key !== DRIVER_TYPE && key !== PLUGIN_TYPE) {
           const [extType, extName] = prefix;
           const argSpec = this.getArgSpec(
             key,
@@ -386,7 +390,7 @@ class AppiumSchema {
           if (!argSpec) {
             /* istanbul ignore next */
             throw new ReferenceError(
-              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This shouldn't happen!`,
+              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`,
             );
           }
           flattened.push({schema: _.cloneDeep(value), argSpec});
@@ -400,12 +404,16 @@ class AppiumSchema {
   /**
    * Retrieves the schema itself
    * @public
-   * @param {string} [id] - Schema ID
+   * @param {string} [ref] - Schema ID
    * @throws If the schema has not yet been _finalized_
    * @returns {SchemaObject}
    */
-  getSchema (id = APPIUM_CONFIG_SCHEMA_ID) {
-    return /** @type {SchemaObject} */ (this._getValidator(id).schema);
+  getSchema (ref = APPIUM_CONFIG_SCHEMA_ID) {
+    return /** @type {SchemaObject} */ (this._getValidator(ref).schema);
+  }
+
+  getAllSchemas () {
+    return this._ajv.schemas;
   }
 
   /**
@@ -430,13 +438,13 @@ class AppiumSchema {
    * Given an object, validates it against the Appium config schema.
    * If errors occur, the returned array will be non-empty.
    * @param {any} value - The value (hopefully an object) to validate against the schema
-   * @param {string} [id] - Schema ID
+   * @param {string} [ref] - Schema ID or ref.
    * @public
    * @returns {import('ajv').ErrorObject[]} Array of errors, if any.
    */
-  validate (value, id = APPIUM_CONFIG_SCHEMA_ID) {
+  validate (value, ref = APPIUM_CONFIG_SCHEMA_ID) {
     const validator = /** @type {import('ajv').ValidateFunction} */ (
-      this._getValidator(id)
+      this._getValidator(ref)
     );
     return !validator(value) && _.isArray(validator.errors)
       ? [...validator.errors]

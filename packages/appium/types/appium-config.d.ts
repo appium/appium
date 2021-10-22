@@ -38,12 +38,6 @@ export type DebugLogSpacingConfig = boolean;
  */
 export type DenyInsecureConfig = string[];
 /**
- * A list of drivers to activate. By default, all installed drivers will be activated.
- */
-export type DriversConfig = DriversConfig1 & DriversConfig2;
-export type DriversConfig1 = string;
-export type DriversConfig2 = string[];
-/**
  * Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.
  */
 export type KeepAliveTimeoutConfig = number;
@@ -100,16 +94,6 @@ export type LongStacktraceConfig = boolean;
  */
 export type NoPermsCheckConfig = boolean;
 /**
- * Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself
- */
-export type NodeconfigConfig = string;
-/**
- * A list of plugins to activate. To activate all plugins, use the single string "all"
- */
-export type PluginsConfig = PluginsConfig1 & PluginsConfig2;
-export type PluginsConfig1 = string;
-export type PluginsConfig2 = string[];
-/**
  * Port to listen on
  */
 export type PortConfig = number;
@@ -134,6 +118,14 @@ export type TmpConfig = string;
  */
 export type TraceDirConfig = string;
 /**
+ * A list of drivers to activate. By default, all installed drivers will be activated.
+ */
+export type UseDriversConfig = string[];
+/**
+ * A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".
+ */
+export type UsePluginsConfig = string[];
+/**
  * Also send log output to this http listener
  */
 export type WebhookConfig = string;
@@ -143,8 +135,6 @@ export type WebhookConfig = string;
  */
 export interface AppiumConfiguration {
   server?: ServerConfig;
-  driver?: DriverConfig;
-  plugin?: PluginConfig;
 }
 /**
  * Configuration when running Appium as a server
@@ -159,7 +149,7 @@ export interface ServerConfig {
   "debug-log-spacing"?: DebugLogSpacingConfig;
   "default-capabilities"?: DefaultCapabilitiesConfig;
   "deny-insecure"?: DenyInsecureConfig;
-  drivers?: DriversConfig;
+  driver?: DriverConfig;
   "keep-alive-timeout"?: KeepAliveTimeoutConfig;
   "local-timezone"?: LocalTimezoneConfig;
   log?: LogConfig;
@@ -170,13 +160,15 @@ export interface ServerConfig {
   "long-stacktrace"?: LongStacktraceConfig;
   "no-perms-check"?: NoPermsCheckConfig;
   nodeconfig?: NodeconfigConfig;
-  plugins?: PluginsConfig;
+  plugin?: PluginConfig;
   port?: PortConfig;
   "relaxed-security"?: RelaxedSecurityConfig;
   "session-override"?: SessionOverrideConfig;
   "strict-caps"?: StrictCapsConfig;
   tmp?: TmpConfig;
   "trace-dir"?: TraceDirConfig;
+  "use-drivers"?: UseDriversConfig;
+  "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
 }
 /**
@@ -189,6 +181,12 @@ export interface DefaultCapabilitiesConfig {
  * Driver-specific configuration. Keys should correspond to driver package names
  */
 export interface DriverConfig {
+  [k: string]: unknown;
+}
+/**
+ * Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself
+ */
+export interface NodeconfigConfig {
   [k: string]: unknown;
 }
 /**

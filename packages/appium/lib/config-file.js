@@ -98,7 +98,7 @@ export function formatErrors (errors = [], config = {}, opts = {}) {
   const format = opts.pretty ?? true ? 'cli' : 'js';
 
   return /** @type {string} */ (
-    betterAjvErrors(getSchema(opts.argSchemaId), config, errors, {
+    betterAjvErrors(getSchema(opts.schemaId), config, errors, {
       json,
       format,
     })
@@ -242,5 +242,5 @@ function normalizeConfig (config) {
  * @typedef {Object} FormatConfigErrorsOptions
  * @property {import('./config-file').RawJson} [json] - Raw JSON config (as string)
  * @property {boolean} [pretty=true] - Whether to format errors as a CLI-friendly string
- * @property {string}  [argSchemaId] - Specific ID of a prop; otherwise entire schema
+ * @property {string}  [schemaId] - Specific ID of a prop; otherwise entire schema
  */

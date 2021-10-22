@@ -19,8 +19,8 @@ const driverConfig = new DriverConfig(APPIUM_HOME);
 const pluginConfig = new PluginConfig(APPIUM_HOME);
 
 // this set of args works for both drivers and plugins ('extensions')
-/** @type {ArgumentDefinition[]} */
-const globalExtensionArgs = [
+/** @type {ArgumentDefinitions} */
+const globalExtensionArgs = new Map([
   [['--json'], {
     required: false,
     default: false,
@@ -28,7 +28,7 @@ const globalExtensionArgs = [
     help: 'Use JSON for output format',
     dest: 'json'
   }]
-];
+]);
 
 /**
  * Builds a Record of extension types to a Record of subcommands to their argument definitions
@@ -44,16 +44,16 @@ const getExtensionArgs = _.once(function getExtensionArgs () {
       run: makeRunArgs(type),
     };
   }
-  return /** @type {Record<ExtensionType, Record<string,ArgumentDefinition[]>>} */ (extensionArgs);
+  return /** @type {Record<ExtensionType, Record<string,ArgumentDefinitions[]>>} */ (extensionArgs);
 });
 
 /**
  * Makes the opts for the `list` subcommand for each extension type.
  * @param {ExtensionType} type
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function makeListArgs (type) {
-  return [
+  return new Map([
     ...globalExtensionArgs,
     [['--installed'], {
       required: false,
@@ -69,16 +69,16 @@ function makeListArgs (type) {
       help: 'Show information about newer versions',
       dest: 'showUpdates'
     }]
-  ];
+  ]);
 }
 
 /**
  * Makes the opts for the `install` subcommand for each extension type
  * @param {ExtensionType} type
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function makeInstallArgs (type) {
-  return [
+  return new Map([
     ...globalExtensionArgs,
     [[type], {
       type: 'str',
@@ -102,33 +102,33 @@ function makeInstallArgs (type) {
             `should be reported here, otherwise the install will probably fail.`,
       dest: 'packageName',
     }],
-  ];
+  ]);
 }
 
 
 /**
  * Makes the opts for the `uninstall` subcommand for each extension type
  * @param {ExtensionType} type
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function makeUninstallArgs (type) {
-  return [
+  return new Map([
     ...globalExtensionArgs,
     [[type], {
       type: 'str',
       help: 'Name of the driver to uninstall, for example: ' +
             type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE
     }],
-  ];
+  ]);
 }
 
 /**
  * Makes the opts for the `update` subcommand for each extension type
  * @param {ExtensionType} type
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function makeUpdateArgs (type) {
-  return [
+  return new Map([
     ...globalExtensionArgs,
     [[type], {
       type: 'str',
@@ -143,16 +143,16 @@ function makeUpdateArgs (type) {
       help: `Include updates that might have a new major revision, and potentially include ` +
             `breaking changes`,
     }],
-  ];
+  ]);
 }
 
 /**
  * Makes the opts for the `run` subcommand for each extension type
  * @param {ExtensionType} type
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function makeRunArgs (type) {
-  return [
+  return new Map([
     ...globalExtensionArgs,
     [[type], {
       type: 'str',
@@ -165,16 +165,16 @@ function makeRunArgs (type) {
       help: `Name of the script to run from the ${type}. The script name must be cached ` +
             `inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`
     }],
-  ];
+  ]);
 }
 
 /**
  * Derives the options for the `server` command from the schema, and adds the arguments
  * which are disallowed in the config file.
- * @returns {ArgumentDefinition[]}
+ * @returns {ArgumentDefinitions}
  */
 function getServerArgs () {
-  return [
+  return new Map([
     ...toParserArgs({
       overrides: {
         basePath: {
@@ -183,14 +183,14 @@ function getServerArgs () {
       }
     }),
     ...serverArgsDisallowedInConfig,
-  ];
+  ]);
 }
 
 /**
  * These don't make sense in the context of a config file for obvious reasons.
- * @type {ArgumentDefinition[]}
+ * @type {ArgumentDefinitions}
  */
-const serverArgsDisallowedInConfig = [
+const serverArgsDisallowedInConfig = new Map([
   [
     ['--shell'],
     {
@@ -220,7 +220,7 @@ const serverArgsDisallowedInConfig = [
       help: 'Explicit path to Appium configuration file',
     },
   ],
-];
+]);
 
 export {
   getServerArgs,
@@ -238,5 +238,5 @@ export {
 
 /**
  * A tuple of argument aliases and argument options
- * @typedef {[string[], import('argparse').ArgumentOptions]} ArgumentDefinition
+ * @typedef {Map<string[],import('argparse').ArgumentOptions>} ArgumentDefinitions
  */

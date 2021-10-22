@@ -1,4 +1,5 @@
 import {AppiumConfiguration} from './appium-config';
+import {keywords} from '../lib/schema/keywords';
 
 /*
  * Utility types

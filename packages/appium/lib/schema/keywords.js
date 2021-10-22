@@ -28,6 +28,7 @@ export const keywords = {
       },
       minItems: 1,
       uniqueItems: true,
+      description: 'List of aliases for the argument. Aliases shorter than three (3) characters will be prefixed with a single dash; otherwise two (2).'
     },
   },
   /**
@@ -45,6 +46,7 @@ export const keywords = {
     metaSchema: {
       type: 'string',
       minLength: 1,
+      description: 'Name of the associated property in the parsed CLI arguments object'
     },
   },
 
@@ -62,8 +64,10 @@ export const keywords = {
     metaSchema: {
       type: 'string',
       minLength: 1,
+      description: 'Description to provide in the --help text of the CLI. Overrides `description`'
     },
   },
+
   /**
    * Transformers for CLI args. These usually take strings then do something with them, like
    * read a file or parse further.
@@ -74,8 +78,21 @@ export const keywords = {
     metaSchema: {
       type: 'string',
       enum: Object.keys(transformers),
+      description: 'The name of a custom transformer to run against the value as provided via the CLI.'
     },
   },
+
+  /**
+   * Flag to tell Appium to _not_ provide this property as a CLI argument.
+   * @type {KeywordDefinition}
+   */
+  appiumCliIgnore: {
+    keyword: 'appiumCliIgnore',
+    metaSchema: {
+      type: 'boolean',
+      description: 'If `true`, Appium will not provide this property as a CLI argument.'
+    }
+  }
 };
 
 /**
@@ -86,11 +103,13 @@ export const keywords = {
  */
 
 /**
- * These are the custom keywords that Appium recognizes
+ * These are the custom keywords that Appium recognizes.
+ *
  * @typedef {Object} AppiumJSONSchemaKeywords
  * @property {string} [appiumCliDest]
  * @property {string} [appiumCliDescription]
  * @property {string[]} [appiumCliAliases]
+ * @property {boolean} [appiumCliIgnore]
  * @property {AppiumCliTransformerName} [appiumCliTransformer]
  */
 

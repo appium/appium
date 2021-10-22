@@ -28,13 +28,13 @@ describe('cli/schema-args', function () {
 
       afterEach(resetSchema);
 
-      it('should return an array', function () {
-        expect(schemaArgs.toParserArgs()).to.be.an('array').that.is.not.empty;
+      it('should return a Map', function () {
+        expect(schemaArgs.toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
       });
 
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
         const argDefs = schemaArgs.toParserArgs();
-        const argDefsWithMetavar = argDefs.filter((arg) => arg[1].metavar);
+        const argDefsWithMetavar = [...argDefs].filter((arg) => arg[1].metavar);
         expect(argDefsWithMetavar).not.to.be.empty;
         // is there a more idiomatic way to do this?
         expect(

@@ -1,10 +1,10 @@
 // @ts-check
 
-import { ArgumentTypeError } from 'argparse';
+import {ArgumentTypeError} from 'argparse';
 import _ from 'lodash';
-import { formatErrors as formatErrors } from '../config-file';
-import { flattenSchema, validate } from './schema';
-import { transformers } from './cli-transformers';
+import {formatErrors as formatErrors} from '../config-file';
+import {flattenSchema, validate} from './schema';
+import {transformers} from './cli-transformers';
 
 /**
  * This module concerns functions which convert schema definitions to
@@ -33,12 +33,20 @@ const SHORT_ARG_CUTOFF = 3;
 
 /**
  * Convert an alias (`foo`) to a flag (`--foo`) or a short flag (`-f`).
- * @param {string} alias - the alias to convert to a flag
+ * @param {ArgSpec} argSpec - the argument specification
+ * @param {string} [alias] - the alias to convert to a flag
  * @returns {string} the flag
  */
-function aliasToFlag (alias) {
-  const isShort = alias.length < SHORT_ARG_CUTOFF;
-  return isShort ? `-${alias}` : `--${_.kebabCase(alias)}`;
+function aliasToFlag (argSpec, alias) {
+  const {extType, extName, name} = argSpec;
+  const arg = alias ?? name;
+  const isShort = arg.length < SHORT_ARG_CUTOFF;
+  if (extType && extName) {
+    return isShort
+      ? `--${extType}-${_.kebabCase(extName)}-${arg}`
+      : `--${extType}-${_.kebabCase(extName)}-${_.kebabCase(arg)}`;
+  }
+  return isShort ? `-${arg}` : `--${_.kebabCase(arg)}`;
 }
 
 /**
@@ -57,16 +65,16 @@ const screamingSnakeCase = _.flow(_.snakeCase, _.toUpper);
  * constructor options
  * @returns
  */
-function getSchemaValidator ({id: argSchemaId}, coerce = _.identity) {
+function getSchemaValidator ({ref: schemaId}, coerce = _.identity) {
   /** @param {string} value */
   return (value) => {
     const coerced = coerce(value);
-    const errors = validate(coerced, argSchemaId);
+    const errors = validate(coerced, schemaId);
     if (_.isEmpty(errors)) {
       return coerced;
     }
     throw new ArgumentTypeError(
-      '\n\n' + formatErrors(errors, value, {argSchemaId}),
+      '\n\n' + formatErrors(errors, value, {schemaId}),
     );
   };
 }
@@ -77,7 +85,7 @@ function getSchemaValidator ({id: argSchemaId}, coerce = _.identity) {
  * @param {AppiumJSONSchema} subSchema - JSON schema for the option
  * @param {ArgSpec} argSpec - Argument spec tuple
  * @param {SubSchemaToArgDefOptions} [opts] - Options
- * @returns {import('../cli/args').ArgumentDefinition} Tuple of flag and options
+ * @returns {[string[], import('argparse').ArgumentOptions]} Tuple of flag and options
  */
 function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
   const {overrides = {}} = opts;
@@ -85,23 +93,24 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     type,
     appiumCliAliases,
     appiumCliTransformer,
-    // appiumCliDest,
+    appiumCliDescription,
     description,
     enum: enumValues,
   } = subSchema;
 
-  const {name, id} = argSpec;
+  const {name, arg, dest} = argSpec;
 
   const aliases = [
-    aliasToFlag(id),
-    .../** @type {string[]} */ (appiumCliAliases ?? []).map(aliasToFlag),
+    aliasToFlag(argSpec),
+    .../** @type {string[]} */ (appiumCliAliases ?? []).map((alias) =>
+      aliasToFlag(argSpec, alias),
+    ),
   ];
 
   /** @type {import('argparse').ArgumentOptions} */
   let argOpts = {
     required: false,
-    // dest: aliasToDest(argSpec, {appiumCliDest}),
-    help: description,
+    help: appiumCliDescription ?? description,
   };
 
   /**
@@ -163,7 +172,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     // falls through
     default: {
       throw new TypeError(
-        `Schema property "${id}": \`${type}\` type unknown or disallowed`,
+        `Schema property "${arg}": \`${type}\` type unknown or disallowed`,
       );
     }
   }
@@ -174,21 +183,22 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     argOpts.metavar = screamingSnakeCase(name);
   }
 
+  // the validity of "appiumCliTransformer" should already have been determined
+  // by ajv during schema validation in `finalizeSchema()`. the `array` &
+  // `object` types have already added a formatter (see above, so we don't do it
+  // twice).
+  if (
+    type !== TYPENAMES.ARRAY &&
+    type !== TYPENAMES.OBJECT &&
+    appiumCliTransformer
+  ) {
+    argTypeFunction = _.flow(
+      argTypeFunction ?? _.identity,
+      transformers[appiumCliTransformer],
+    );
+  }
+
   if (argTypeFunction) {
-    // the validity of "appiumCliTransformer" should already have been determined by ajv
-    // during schema validation in `finalizeSchema()`. the `array` type has already added
-    // a formatter (see above, so we don't do it twice).  transformation happens _after_
-    // validation, which could be wrong!
-    if (
-      type !== TYPENAMES.ARRAY &&
-      type !== TYPENAMES.OBJECT &&
-      appiumCliTransformer
-    ) {
-      argTypeFunction = _.flow(
-        argTypeFunction,
-        transformers[appiumCliTransformer],
-      );
-    }
     argOpts.type = argTypeFunction;
   }
 
@@ -200,7 +210,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
       argOpts.choices = enumValues.map(String);
     } else {
       throw new TypeError(
-        `Problem with schema for ${id}; the \`enum\` prop depends on the \`string\` type`,
+        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``,
       );
     }
   }
@@ -212,30 +222,29 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     /** should the override keys correspond to the prop name or the prop dest?
      * the prop dest is computed by {@link aliasToDest}.
      */
-    overrides[id] ?? (argOpts.dest && overrides[argOpts.dest]) ?? {},
+    overrides[dest] ?? {},
   );
 
   return [aliases, argOpts];
 }
 
 /**
- * Converts the current JSON schema plus some metadata into `argparse` arguments.
+ * Converts the finalized, flattened schema representation into
+ * ArgumentDefinitions for handoff to `argparse`.
  *
  * @param {ToParserArgsOptions} opts - Options
  * @throws If schema has not been added to ajv (via `finalizeSchema()`)
- * @returns {import('../cli/args').ArgumentDefinition[]} An array of tuples of aliases and `argparse` arguments; empty if no schema found
+ * @returns {import('../cli/args').ArgumentDefinitions} A map of arryas of
+ * aliases to `argparse` arguments; empty if no schema found
  */
 export function toParserArgs (opts = {}) {
   const flattened = flattenSchema();
-  return _.map(flattened, ({schema, argSpec}) => subSchemaToArgDef(schema, argSpec, opts));
+  return new Map(
+    _.map(flattened, ({schema, argSpec}) =>
+      subSchemaToArgDef(schema, argSpec, opts),
+    ),
+  );
 }
-
-/**
- * CLI-specific option subset for {@link ToParserArgsOptions}
- * @typedef {Object} ToParserArgsOptsCli
- * @property {import('../extension-config').ExtData} [extData] - Extension data (from YAML)
- * @property {'driver'|'plugin'} [type] - Extension type
- */
 
 /**
  * Options for {@link toParserArgs}

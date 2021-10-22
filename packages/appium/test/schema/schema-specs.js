@@ -1,27 +1,29 @@
 // @ts-check
 
+import _ from 'lodash';
 import sinon from 'sinon';
-import appiumConfigSchema from '../lib/schema/appium-config-schema';
-import defaultArgsFixture from './fixtures/default-args';
-import DRIVER_SCHEMA_FIXTURE from './fixtures/driver.schema';
-import flattenedSchemaFixture from './fixtures/flattened-schema';
-import { rewiremock } from './helpers';
+import appiumConfigSchema from '../../lib/schema/appium-config-schema';
+import defaultArgsFixture from '../fixtures/default-args';
+import DRIVER_SCHEMA_FIXTURE from '../fixtures/driver.schema';
+import flattenedSchemaFixture from '../fixtures/flattened-schema';
+import {rewiremock} from '../helpers';
+import {APPIUM_CONFIG_SCHEMA_ID} from '../../lib/schema/arg-spec';
 
 const {expect} = chai;
 
 describe('schema', function () {
-  /** @type {import('../lib/schema/schema')} */
+  /** @type {import('../../lib/schema/schema')} */
   let schema;
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
 
   /**
-   * @type {typeof import('../lib/schema/schema').SchemaFinalizationError}
+   * @type {typeof import('../../lib/schema/schema').SchemaFinalizationError}
    */
   let SchemaFinalizationError;
 
   /**
-   * @type {typeof import('../lib/schema/schema').SchemaUnknownSchemaError}
+   * @type {typeof import('../../lib/schema/schema').SchemaUnknownSchemaError}
    */
   let SchemaUnknownSchemaError;
 
@@ -31,7 +33,7 @@ describe('schema', function () {
     sandbox = sinon.createSandbox();
 
     mocks = {
-      '../lib/extension-config': {
+      '../../lib/extension-config': {
         DRIVER_TYPE: 'driver',
         PLUGIN_TYPE: 'plugin',
       },
@@ -41,7 +43,7 @@ describe('schema', function () {
       '@sidvind/better-ajv-errors': sandbox.stub(),
     };
 
-    schema = rewiremock.proxy(() => require('../lib/schema/schema'), mocks);
+    schema = rewiremock.proxy(() => require('../../lib/schema/schema'), mocks);
     SchemaFinalizationError = schema.SchemaFinalizationError;
     SchemaUnknownSchemaError = schema.SchemaUnknownSchemaError;
     schema.resetSchema();
@@ -144,13 +146,11 @@ describe('schema', function () {
   describe('getSchema()', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
-        expect(() => schema.getSchema()).to.throw(
-          SchemaFinalizationError
-        );
+        expect(() => schema.getSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
-    describe('when schema compiled', function () {
+    describe('when schema already compiled', function () {
       beforeEach(function () {
         schema.finalizeSchema();
       });
@@ -160,24 +160,50 @@ describe('schema', function () {
       });
     });
 
-    describe('when schema already compiled and provided a schema id', function () {
+    describe('when schema already compiled and provided a schema ID', function () {
       beforeEach(function () {
         schema.finalizeSchema();
       });
-      describe('when schema id is valid', function () {
-        it('should return a schema', function () {
-          expect(schema.getSchema(schema.APPIUM_CONFIG_SCHEMA_ID)).to.eql(
+
+      describe('when schema ID is the base schema ID', function () {
+        it('should return the base schema', function () {
+          expect(schema.getSchema(APPIUM_CONFIG_SCHEMA_ID)).to.eql(
             appiumConfigSchema,
           );
         });
       });
 
-      describe('when schema id is invalid', function () {
-        it('should throw', function () {
-          expect(() => schema.getSchema('schema-the-clown')).to.throw(
-            SchemaUnknownSchemaError
+      describe('when the schema ID is a reference', function () {
+        it('should return the schema for the reference', function () {
+          expect(
+            schema.getSchema(
+              `${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`,
+            ),
+          ).to.exist.and.to.eql(
+            appiumConfigSchema.properties.server.properties.address,
           );
         });
+      });
+
+      describe('when schema ID is invalid', function () {
+        it('should throw', function () {
+          expect(() => schema.getSchema('schema-the-clown')).to.throw(
+            SchemaUnknownSchemaError,
+          );
+        });
+      });
+    });
+
+    describe('when schema already compiled including an extension', function () {
+      beforeEach(function () {
+        schema.registerSchema('driver', 'stuff', DRIVER_SCHEMA_FIXTURE);
+        schema.finalizeSchema();
+      });
+
+      it('should return the extension schema', function () {
+        expect(schema.getSchema('driver-stuff.json')).to.eql(
+          DRIVER_SCHEMA_FIXTURE,
+        );
       });
     });
   });
@@ -186,7 +212,7 @@ describe('schema', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
         expect(() => schema.getDefaultsFromSchema()).to.throw(
-          SchemaFinalizationError
+          SchemaFinalizationError,
         );
       });
     });
@@ -213,9 +239,7 @@ describe('schema', function () {
   describe('flattenSchema()', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
-        expect(() => schema.flattenSchema()).to.throw(
-          SchemaFinalizationError,
-        );
+        expect(() => schema.flattenSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
@@ -223,8 +247,6 @@ describe('schema', function () {
       beforeEach(function () {
         schema.resetSchema();
         schema.finalizeSchema();
-        // sanity check
-        expect(schema.getSchema().properties.driver.properties).to.be.empty;
       });
 
       it('should flatten a schema', function () {
@@ -238,42 +260,46 @@ describe('schema', function () {
       beforeEach(function () {
         // TS complains about this require()
         // @ts-ignore
-        schema.registerSchema('driver', 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
+        schema.registerSchema(
+          'driver',
+          'fake',
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
+        );
         schema.finalizeSchema();
-        // sanity check
-        expect(schema.getSchema().properties.driver.properties.fake).to.exist;
 
         // these props would be added by the fake-driver extension
         expected = [
           ...flattenedSchemaFixture,
           {
+            schema: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 65535,
+              description: 'The port to use for the fake web server',
+            },
             argSpec: {
               name: 'silly-web-server-port',
-              extName: 'fake',
               extType: 'driver',
-              id: 'driver-fake-silly-web-server-port',
-              dest: 'driver.fake.sillyWebServerPort'
-            },
-            schema: {
-              description: 'The port to use for the fake web server',
-              maximum: 65535,
-              minimum: 1,
-              type: 'integer',
+              extName: 'fake',
+              ref: 'driver-fake.json#/properties/silly-web-server-port',
+              arg: 'driver-fake-silly-web-server-port',
+              dest: 'driver.fake.sillyWebServerPort',
             },
           },
           {
+            schema: {
+              type: 'string',
+              description: 'The host to use for the fake web server',
+              default: 'sillyhost',
+            },
             argSpec: {
               name: 'sillyWebServerHost',
-              extName: 'fake',
               extType: 'driver',
-              id: 'driver-fake-silly-web-server-host',
+              extName: 'fake',
+              ref: 'driver-fake.json#/properties/sillyWebServerHost',
+              arg: 'driver-fake-silly-web-server-host',
               dest: 'driver.fake.sillyWebServerHost',
-              defaultValue: 'sillyhost'
-            },
-            schema: {
-              default: 'sillyhost',
-              description: 'The host to use for the fake web server',
-              type: 'string',
+              defaultValue: 'sillyhost',
             },
           },
         ];
@@ -285,7 +311,37 @@ describe('schema', function () {
     });
   });
 
+  describe('finalizeSchema()', function () {
+    describe('when no extensions registered schemas', function () {
+      it('should return a Record containing the single base schema', function () {
+        expect(schema.finalizeSchema()).to.eql({
+          [APPIUM_CONFIG_SCHEMA_ID]: appiumConfigSchema,
+        });
+      });
+    });
 
+    describe('when extensions register schemas', function () {
+      beforeEach(function () {
+        schema.registerSchema('driver', 'stuff', DRIVER_SCHEMA_FIXTURE);
+      });
+
+      it('should return a Record containing all extension schemas _and_ the base schema containing references to the extension schemas', function () {
+        const baseSchemaWithRefs = _.cloneDeep(appiumConfigSchema);
+        _.set(baseSchemaWithRefs, 'properties.server.properties.driver.anyOf', [
+          // each reference points to the generated ID of the extension's schema, which is `<extType>-<extName>.json`
+          // the `$comment` field is abused to contain the extension's name
+          {
+            $ref: 'driver-stuff.json',
+            $comment: 'stuff',
+          },
+        ]);
+        expect(schema.finalizeSchema()).to.eql({
+          [APPIUM_CONFIG_SCHEMA_ID]: baseSchemaWithRefs,
+          'driver-stuff.json': DRIVER_SCHEMA_FIXTURE,
+        });
+      });
+    });
+  });
 
   describe('isFinalized()', function () {
     describe('when the schema is finalized', function () {

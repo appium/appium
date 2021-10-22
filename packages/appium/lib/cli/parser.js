@@ -136,7 +136,7 @@ class ArgParser {
       args,
       (unpacked, value, key) => {
         if (hasArgSpec(key)) {
-          const {dest} = /** @type {import('../schema/arg-tspec').ArgSpec} */(getArgSpec(key));
+          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */(getArgSpec(key));
           _.set(unpacked, dest, value);
         } else {
           // this could be anything that _isn't_ a server arg
@@ -161,7 +161,7 @@ class ArgParser {
   /**
    *
    * @param {import('argparse').SubParser} subParser
-   * @returns {import('./args').ArgumentDefinition[]}
+   * @returns {import('./args').ArgumentDefinitions}
    */
   static _addServerToParser (subParser) {
     const serverParser = subParser.add_parser('server', {

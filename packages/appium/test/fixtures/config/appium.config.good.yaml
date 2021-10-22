@@ -11,7 +11,6 @@ server:
   debug-log-spacing: false
   default-capabilities: {}
   deny-insecure: []
-  drivers: []
   keep-alive-timeout: 600
   local-timezone: false
   log: /tmp/appium.log
@@ -20,11 +19,12 @@ server:
   no-perms-check: false
   nodeconfig:
     foo: bar
-  plugins:
-    - all
   relaxed-security: false
   session-override: false
   strict-caps: false
   tmp: /tmp
   trace-dir: /tmp/appium-instruments
+  use-drivers: []
+  use-plugins:
+    - all
   webhook: 'http://0.0.0.0/hook'

@@ -117,13 +117,13 @@ describe('parser', function () {
         parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
       });
 
-      it('should allow a string for --drivers', function () {
-        p.parse_args(['--drivers', 'fake']).drivers.should.eql(['fake']);
+      it('should allow a string for --use-drivers', function () {
+        p.parse_args(['--use-drivers', 'fake']).useDrivers.should.eql(['fake']);
       });
 
 
-      it('should allow multiple --drivers', function () {
-        p.parse_args(['--drivers', 'fake,phony']).drivers.should.eql(['fake', 'phony']);
+      it('should allow multiple --use-drivers', function () {
+        p.parse_args(['--use-drivers', 'fake,phony']).useDrivers.should.eql(['fake', 'phony']);
       });
     });
 

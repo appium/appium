@@ -78,7 +78,7 @@
     "node-notifier": "10.0.0",
     "nyc": "15.1.0",
     "plugin-error": "1.0.1",
-    "replace-in-file": "6.3.1",
+    "replace-in-file": "6.3.2",
     "rimraf": "3.0.2",
     "semver": "7.3.5",
     "shell-quote": "1.7.3",

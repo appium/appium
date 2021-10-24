@@ -4104,9 +4104,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.55.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.55.0.tgz",
-      "integrity": "sha512-G9zJz3YNyfL4YIml7FaPWx54KTGYE6hReuRME8hmF9VEaxeKNUZ6INAJwSs+VYqf5U4ZTVJEP/H4hp+Ei6JeLg==",
+      "version": "3.55.1",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.55.1.tgz",
+      "integrity": "sha512-HSYvNjvpBxtTHQBvQy1+H6cmIO1l9HgyRuQ/eGHCPeAAIvZflTf+tO/8VW3iwRBTexWivDu9uDA3GmaxWtXosw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",

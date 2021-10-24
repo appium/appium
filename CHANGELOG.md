@@ -1,3 +1,37 @@
+CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
+===================================
+
+Appium 1.22.1 is a patch release
+
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking updates in XCTest or critical bugs before the EOL.
+
+### Android General
+
+* Use bundletool to install .apks packages [appium-adb#578](https://github.com/appium/appium-adb/pull/578)
+* Handle unlock via `locksettings` adb command [appium-adb#577](https://github.com/appium/appium-adb/pull/577)
+* Add a few delay after changing IME for Android 12 [appium-adb#581](https://github.com/appium/appium-adb/pull/581)
+
+### Android(UIAutomator2)
+
+* Add capabilities:
+    * `unlockStrategy` to customize the strategy of unlock. Defaults to `locksettings`. The previous behavior is `uiautomator`.
+    * `chromeLoggingPrefs` to configure chrome logging preferences mapping [appium-android-driver#710](https://github.com/appium/appium-android-driver/pull/710)
+* Add `mobile:` extensions:
+    * Add `mobile:unlock` to unlock the device as a mobile command [appium-android-driver#709](https://github.com/appium/appium-android-driver/pull/709)
+* Fix `/appium/device/display_density` endpoint to get the device density on Android 12 by getting it via Android API instead of adb command [appium-uiautomator2-driver#474](https://github.com/appium/appium-uiautomator2-driver/pull/474) [appium-uiautomator2-server#444](https://github.com/appium/appium-uiautomator2-server/pull/444)
+
+### iOS(XCUITest)
+
+* Decode cookies safely in WebView context [appium-xcuitest-driver#1336](https://github.com/appium/appium-xcuitest-driver/pull/1336)
+* Tune alert monitoring [appium-xcuitest-driver#1340](https://github.com/appium/appium-xcuitest-driver/pull/1340)
+* Add capabilities:
+    * `appInstallStrategy` capability to customize the application installation strategy. `serial`, `parallel` and `ios-deploy` are available. Please read [capabilities](https://github.com/appium/appium-xcuitest-driver#app) for more details. This strategy is available via installation APIs as well.
+* Add `mobile:` extensions:
+    * `mobile:listApps` to get the list of installed applications on the real device under test [appium-xcuitest-driver#1342](https://github.com/appium/appium-xcuitest-driver/pull/1342)
+* Add `NSProcessInfoThermalState` in device info API [WebDriverAgent#536](https://github.com/appium/WebDriverAgent/pull/536)
+* Fix `useXctestrunFile` capability behavior on Xcode 13 [WebDriverAgent#538](https://github.com/appium/WebDriverAgent/pull/538)
+
 CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
 ===================================
 

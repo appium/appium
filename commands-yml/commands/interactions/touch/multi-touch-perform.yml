@@ -2,6 +2,10 @@
 name: Multi Touch Perform
 short_description: Perform a multi touch action sequence
 
+description:
+  |
+    Deprecated. Please consider using [W3C Actions](/docs/en/commands/interactions/actions.md)
+
 example_usage:
   java:
     |

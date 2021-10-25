@@ -4,13 +4,13 @@ CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
 Appium 1.22.1 is a patch release
 
 We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
-Appium 1.x will have minor or patch releases only when Appium 1.x gets breaking updates in XCTest or critical bugs before the EOL.
+Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or makor bugs pop up before the EOL.
 
 ### Android General
 
 * Use bundletool to install .apks packages [appium-adb#578](https://github.com/appium/appium-adb/pull/578)
 * Handle unlock via `locksettings` adb command [appium-adb#577](https://github.com/appium/appium-adb/pull/577)
-* Add a few delay after changing IME for Android 12 [appium-adb#581](https://github.com/appium/appium-adb/pull/581)
+* Add a tiny delay after changing IME for Android 12 [appium-adb#581](https://github.com/appium/appium-adb/pull/581)
 
 ### Android(UIAutomator2)
 

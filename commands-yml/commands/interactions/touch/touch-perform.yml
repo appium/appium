@@ -4,7 +4,7 @@ short_description: Perform a touch action sequence
 
 description:
   |
-    Deprecated. Please consider to use [W3C Actions](/docs/en/commands/interactions/actions.md).
+    Deprecated. Please consider using [W3C Actions](/docs/en/commands/interactions/actions.md).
 
     This functionality is only available from within a native context.
 

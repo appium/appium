@@ -492,6 +492,7 @@ class AppiumDriver extends BaseDriver {
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
 
+
       if (isGetStatus) {
         return await this.getStatus();
       }
@@ -515,6 +516,17 @@ class AppiumDriver extends BaseDriver {
     // if we had plugins, make sure to log out the helpful report about which plugins ended up
     // handling the command and which didn't
     plugins.length && this.logPluginHandlerReport({cmd, cmdHandledBy});
+
+    // And finally, if the command was createSession, we want to migrate any plugins which were
+    // previously sessionless to use the new sessionId, so that plugins can share state between
+    // their createSession method and other instance methods
+    if (cmd === 'createSession' && this.sessionlessPlugins.length && !res.error) {
+      const sessionId = res.value[0];
+      log.info(`Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
+               `to session ID ${sessionId}`);
+      this.pluginsForSession[sessionId] = this.sessionlessPlugins;
+      this.sessionlessPlugins = [];
+    }
 
     return res;
   }
@@ -601,6 +613,8 @@ class AppiumDriver extends BaseDriver {
     }
     return false;
   }
+
+
 
   proxyActive (sessionId) {
     const dstSession = this.sessions[sessionId];

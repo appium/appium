@@ -112,12 +112,26 @@ describe('schema', function () {
       });
 
       describe('when schema previously registered', function () {
-        it('should throw', function () {
-          const schemaObject = {title: 'whoopee'};
-          schema.registerSchema('driver', 'whoopee', schemaObject);
-          expect(() =>
-            schema.registerSchema('driver', 'whoopee', schemaObject),
-          ).to.throw(Error, /conflicts with an existing schema/);
+        describe('when the schema is identical', function () {
+          it('should not throw', function () {
+            const schemaObject = {title: 'whoopee'};
+            schema.registerSchema('driver', 'whoopee', schemaObject);
+            expect(() =>
+              schema.registerSchema('driver', 'whoopee', schemaObject),
+            ).not.to.throw();
+          });
+        });
+
+        describe('when the schema is different', function () {
+          it('should throw', function () {
+            const schemaObject = {title: 'whoopee'};
+            schema.registerSchema('driver', 'whoopee', schemaObject);
+            expect(() =>
+              schema.registerSchema('driver', 'whoopee', {
+                title: 'cushion?',
+              }),
+            ).to.throw(Error, /conflicts with an existing schema/);
+          });
         });
       });
     });
@@ -327,14 +341,8 @@ describe('schema', function () {
 
       it('should return a Record containing all extension schemas _and_ the base schema containing references to the extension schemas', function () {
         const baseSchemaWithRefs = _.cloneDeep(appiumConfigSchema);
-        _.set(baseSchemaWithRefs, 'properties.server.properties.driver.anyOf', [
-          // each reference points to the generated ID of the extension's schema, which is `<extType>-<extName>.json`
-          // the `$comment` field is abused to contain the extension's name
-          {
-            $ref: 'driver-stuff.json',
-            $comment: 'stuff',
-          },
-        ]);
+        baseSchemaWithRefs.properties.server.properties.driver.properties.stuff =
+          {$ref: 'driver-stuff.json', $comment: 'stuff'};
         expect(schema.finalizeSchema()).to.eql({
           [APPIUM_CONFIG_SCHEMA_ID]: baseSchemaWithRefs,
           'driver-stuff.json': DRIVER_SCHEMA_FIXTURE,
@@ -355,6 +363,120 @@ describe('schema', function () {
       it('should return false', function () {
         schema.resetSchema();
         expect(schema.isFinalized()).to.be.false;
+      });
+    });
+  });
+
+  describe('validate()', function () {
+    describe('when schema not yet compiled', function () {
+      it('should throw', function () {
+        expect(() => schema.validate('foo')).to.throw(SchemaFinalizationError);
+      });
+    });
+
+    describe('when schema already compiled, with no extensions', function () {
+      beforeEach(function () {
+        schema.finalizeSchema();
+      });
+
+      describe('when provided an invalid schema ID ref', function () {
+        it('should throw', function () {
+          expect(() => schema.validate('foo', 'bar')).to.throw(
+            SchemaUnknownSchemaError,
+          );
+        });
+      });
+
+      describe('when not provided a schema ID ref', function () {
+        describe('when provided a valid value', function () {
+          it('should return an empty array of no errors', function () {
+            expect(schema.validate({server: {address: '127.0.0.1'}})).to.eql(
+              [],
+            );
+          });
+        });
+
+        describe('when provided an invalid value', function () {
+          it('should return an array containing errors', function () {
+            expect(schema.validate({address: '127.0.0.1'})).to.be.an('array')
+              .and.to.not.be.empty;
+          });
+        });
+      });
+
+      describe('when provided a schema ID ref', function () {
+        describe('when provided a valid value', function () {
+          it('should return an empty array of no errors', function () {
+            expect(
+              schema.validate(
+                '127.0.0.1',
+                'appium.json#/properties/server/properties/address',
+              ),
+            ).to.eql([]);
+          });
+        });
+
+        describe('when provided an invalid value', function () {
+          it('should return an array containing errors', function () {
+            expect(
+              schema.validate(
+                '127.0.0.1',
+                'appium.json#/properties/server/properties/port',
+              ),
+            ).to.be.an('array').and.to.not.be.empty;
+          });
+        });
+      });
+    });
+
+    describe('when schema already compiled, with extensions', function () {
+      beforeEach(function () {
+        schema.registerSchema('driver', 'stuff', DRIVER_SCHEMA_FIXTURE);
+        schema.finalizeSchema();
+      });
+
+      describe('when provided an invalid schema ID ref', function () {
+        it('should throw', function () {
+          expect(() => schema.validate('foo', 'bar')).to.throw(
+            SchemaUnknownSchemaError,
+          );
+        });
+      });
+
+      describe('when not provided a schema ID ref', function () {
+        describe('when provided a valid value', function () {
+          it('should return an empty array of no errors', function () {
+            expect(
+              schema.validate({server: {driver: {stuff: {answer: 99}}}}),
+            ).to.eql([]);
+          });
+        });
+
+        describe('when provided an invalid value', function () {
+          it('should return an array containing errors', function () {
+            expect(
+              schema.validate({server: {driver: {stuff: {answer: 101}}}}),
+            ).to.be.an('array').and.to.not.be.empty;
+          });
+        });
+      });
+
+      describe('when provided a schema ID ref', function () {
+        describe('when provided a valid value', function () {
+          it('should return an empty array of no errors', function () {
+            expect(
+              schema.validate(99, 'driver-stuff.json#/properties/answer'),
+            ).to.eql([]);
+          });
+        });
+
+        describe('when provided an invalid value', function () {
+          it('should return an array containing errors', function () {
+            expect(
+              schema.validate(101, 'driver-stuff.json#/properties/answer'),
+            ).to.be.an('array').and.to.not.be.empty;
+          });
+        });
       });
     });
   });

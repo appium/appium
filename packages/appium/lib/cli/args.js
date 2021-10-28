@@ -15,8 +15,8 @@ const USE_ALL_PLUGINS = 'all';
 /** @type {Set<ExtensionType>} */
 const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
 
-const driverConfig = new DriverConfig(APPIUM_HOME);
-const pluginConfig = new PluginConfig(APPIUM_HOME);
+const driverConfig = DriverConfig.getInstance(APPIUM_HOME);
+const pluginConfig = PluginConfig.getInstance(APPIUM_HOME);
 
 // this set of args works for both drivers and plugins ('extensions')
 /** @type {ArgumentDefinitions} */

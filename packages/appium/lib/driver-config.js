@@ -6,7 +6,16 @@ import { DRIVER_TYPE } from './ext-config-io';
 
 export default class DriverConfig extends ExtensionConfig {
   /**
-   *
+   * A mapping of `APPIUM_HOME` values to {@link DriverConfig} instances.
+   * Each `APPIUM_HOME` should only have one associated `DriverConfig` instance.
+   * @type {Record<string,DriverConfig>}
+   * @private
+   */
+  static _instances = {};
+
+  /**
+   * Call {@link DriverConfig.getInstance} instead.
+   * @private
    * @param {string} appiumHome
    * @param {(...args: any[]) => void} [logFn]
    */
@@ -19,6 +28,18 @@ export default class DriverConfig extends ExtensionConfig {
   async read () {
     this.knownAutomationNames.clear();
     return await super.read();
+  }
+
+  /**
+   * Creates or gets an instance of {@link DriverConfig} based value of `appiumHome`
+   * @param {string} appiumHome - `APPIUM_HOME` path
+   * @param {(...args: any[]) => void} [logFn] - Optional logging function
+   * @returns {DriverConfig}
+   */
+  static getInstance (appiumHome, logFn) {
+    const instance = DriverConfig._instances[appiumHome] ?? new DriverConfig(appiumHome, logFn);
+    DriverConfig._instances[appiumHome] = instance;
+    return instance;
   }
 
   /**

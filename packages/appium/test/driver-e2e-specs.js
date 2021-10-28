@@ -56,8 +56,7 @@ describe('FakeDriver - via HTTP', function () {
       }, DRIVER_TYPE);
     }
 
-    const config = new DriverConfig(appiumHome);
-    await config.read();
+    const config = DriverConfig.getInstance(appiumHome);
     FakeDriver = config.require('fake');
     // then start server if we need to
     await serverStart();

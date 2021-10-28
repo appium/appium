@@ -91,12 +91,12 @@ function logServerPort (address, port) {
  * wrap command execution
  *
  * @param {Object} args - argparser parsed dict
- * @param {PluginConfig} pluginConfig - a plugin extension config
+ * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
  */
 function getActivePlugins (args, pluginConfig) {
   return Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
-    _.includes(args.plugins, pluginName) ||
-    (args.plugins.length === 1 && args.plugins[0] === USE_ALL_PLUGINS)
+    _.includes(args.usePlugins, pluginName) ||
+    (args.usePlugins.length === 1 && args.usePlugins[0] === USE_ALL_PLUGINS)
   ).map((pluginName) => {
     try {
       logger.info(`Attempting to load plugin ${pluginName}...`);
@@ -122,7 +122,7 @@ function getActivePlugins (args, pluginConfig) {
  */
 function getActiveDrivers (args, driverConfig) {
   return Object.keys(driverConfig.installedExtensions).filter((driverName) =>
-    _.includes(args.drivers, driverName) || args.drivers.length === 0
+    _.includes(args.useDrivers, driverName) || args.useDrivers.length === 0
   ).map((driverName) => {
     try {
       logger.info(`Attempting to load driver ${driverName}...`);
@@ -240,6 +240,8 @@ async function main (args = null) {
   const {parser, appiumDriver} = await init(args);
 
   if (!appiumDriver) {
+    // if this branch is taken, we've run a different subcommand, so there's nothing
+    // left to do here.
     return;
   }
 

@@ -1,3 +1,5 @@
+// @ts-check
+
 import {ArgSpec} from '../../lib/schema/arg-spec';
 
 const {expect} = chai;
@@ -10,10 +12,10 @@ describe('ArgSpec', function () {
       });
     });
 
-    describe('toSchemaId()', function () {
+    describe('toSchemaRef()', function () {
       describe('when provided no extension information', function () {
         it('should return a schema ID for a specific argument', function () {
-          expect(ArgSpec.toSchemaId('foo')).to.equal(
+          expect(ArgSpec.toSchemaRef('foo')).to.equal(
             'appium.json#/properties/server/properties/foo',
           );
         });
@@ -21,8 +23,26 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return a schema ID for a specific argument within an extension schema', function () {
-          expect(ArgSpec.toSchemaId('bar', 'driver', 'stuff')).to.equal(
+          expect(ArgSpec.toSchemaRef('bar', 'driver', 'stuff')).to.equal(
             'driver-stuff.json#/properties/bar',
+          );
+        });
+      });
+    });
+
+    describe('toSchemaBaseRef()', function () {
+      describe('when provided no extension information', function () {
+        it('should return the base schema ID', function () {
+          expect(ArgSpec.toSchemaBaseRef()).to.equal(
+            'appium.json',
+          );
+        });
+      });
+
+      describe('when provided extension information', function () {
+        it('should return a schema ID for an extension', function () {
+          expect(ArgSpec.toSchemaBaseRef('driver', 'stuff')).to.equal(
+            'driver-stuff.json',
           );
         });
       });

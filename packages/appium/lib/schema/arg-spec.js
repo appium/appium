@@ -96,7 +96,7 @@ export class ArgSpec {
     // args.
     const arg = ArgSpec.toArg(name, extType, extName);
 
-    const ref = ArgSpec.toSchemaId(name, extType, extName);
+    const ref = ArgSpec.toSchemaRef(name, extType, extName);
 
     // if no explicit `dest` provided, just camelCase the name to avoid needing
     // to use bracket syntax when accessing props on the parsed args object.
@@ -120,17 +120,32 @@ export class ArgSpec {
   }
 
   /**
-   * Return the schema ID (`$id`) for the argument given the parameters.
+   * Return the schema ID (`$id`) for the **argument** given the parameters.
+   *
+   * If you need the "root" or "base" schema ID, use {@link ArgSpec.toSchemaBaseRef} instead.
    * @param {string} name - Argument name
    * @param {ExtensionType} [extType] - Extension type
    * @param {string} [extName] - Extension name
    * @returns {string} Schema ID
    */
-  static toSchemaId (name, extType, extName) {
+  static toSchemaRef (name, extType, extName) {
+    const baseRef = ArgSpec.toSchemaBaseRef(extType, extName);
     if (extType && extName) {
-      return [`${extType}-${_.kebabCase(extName)}.json#`, PROPERTIES, name].join('/');
+      return [`${baseRef}#`, PROPERTIES, name].join('/');
     }
-    return [`${APPIUM_CONFIG_SCHEMA_ID}#`, PROPERTIES, SERVER_PROP_NAME, PROPERTIES, name].join('/');
+    return [`${baseRef}#`, PROPERTIES, SERVER_PROP_NAME, PROPERTIES, name].join('/');
+  }
+
+  /**
+   * Return the schema ID for an extension or the base schema ID.
+   * @param {ExtensionType} [extType] - Extension type
+   * @param {string} [extName] - Extension name
+   */
+  static toSchemaBaseRef (extType, extName) {
+    if (extType && extName) {
+      return `${extType}-${ArgSpec.toNormalizedExtName(extName)}.json`;
+    }
+    return APPIUM_CONFIG_SCHEMA_ID;
   }
 
   /**
@@ -146,6 +161,15 @@ export class ArgSpec {
       return [extType, _.kebabCase(extName), properName].join('-');
     }
     return properName;
+  }
+
+  /**
+   * Normalizes a raw extension name (not including the type).
+   * @param {string} extName - Extension name
+   * @returns {string} Normalized extension name
+   */
+  static toNormalizedExtName (extName) {
+    return _.kebabCase(extName);
   }
 
   /**
@@ -167,7 +191,7 @@ export class ArgSpec {
    *
    * @param {string} name - The canonical name of the argument. Corresponds to a key in a schema's
    * `properties` property.
-   * @param {ArgSpecOptions} opts - Options
+   * @param {ArgSpecOptions} [opts] - Options
    * @returns {Readonly<ArgSpec>}
    */
   static create (name, opts) {

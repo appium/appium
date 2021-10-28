@@ -67,13 +67,10 @@ module.exports = {
     this.gulp.task(taskName, () => {
       this.exitOnError = false;
 
-      // there is nothing we can do if the gulpfile has been changed
-      this.gulp.watch('./gulpfile.js', function watchGulpfile () {
-        log('Gulpfile has been changed. Exiting');
-        process.exit(1);
-      });
-
-      return this.gulp.watch(filePattern, {ignoreInitial: false}, this.gulp.series(sequence, notifyWatch));
+      return this.gulp.watch(filePattern, {
+        ignoreInitial: false,
+        ignored: '**/gulpfile.js'
+      }, this.gulp.series(sequence, notifyWatch));
     });
   }
 };

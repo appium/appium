@@ -4,8 +4,37 @@ import { PLUGIN_TYPE } from './ext-config-io';
 import log from './logger';
 
 export default class PluginConfig extends ExtensionConfig {
-  constructor (appiumHome, logFn = null) {
+
+  /**
+   * A mapping of `APPIUM_HOME` values to {@link PluginConfig} instances.
+   * Each `APPIUM_HOME` should only have one associated `PluginConfig` instance.
+   * @type {Record<string,PluginConfig>}
+   * @private
+   */
+  static _instances = {};
+
+  /**
+   * Call {@link PluginConfig.getInstance} instead.
+   *
+   * Just calls the superclass' constructor with the correct extension type
+   * @private
+   * @param {string} appiumHome - `APPIUM_HOME` path
+   * @param {(...args: any[]) => void)} [logFn] - Optional logging function
+   */
+  constructor (appiumHome, logFn) {
     super(appiumHome, PLUGIN_TYPE, logFn);
+  }
+
+  /**
+   * Creates or gets an instance of {@link PluginConfig} based value of `appiumHome`
+   * @param {string} appiumHome - `APPIUM_HOME` path
+   * @param {(...args: any[]) => void} [logFn] - Optional logging function
+   * @returns {PluginConfig}
+   */
+  static getInstance (appiumHome, logFn) {
+    const instance = PluginConfig._instances[appiumHome] ?? new PluginConfig(appiumHome, logFn);
+    PluginConfig._instances[appiumHome] = instance;
+    return instance;
   }
 
   extensionDesc (pluginName, {version}) {

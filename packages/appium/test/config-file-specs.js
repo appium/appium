@@ -123,16 +123,19 @@ describe('config-file', function () {
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
       expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(schema.validate).to.have.been.calledOnce;
     });
 
     it('should support json', async function () {
       const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
       expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(schema.validate).to.have.been.calledOnce;
     });
 
     it('should support js', async function () {
       const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
       expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(schema.validate).to.have.been.calledOnce;
     });
 
     describe('when no filepath provided', function () {
@@ -142,6 +145,7 @@ describe('config-file', function () {
 
       it('should search for a config file', function () {
         expect(lc.search).to.have.been.calledOnce;
+        expect(schema.validate).to.have.been.calledOnce;
       });
 
       it('should not try to load a config file directly', function () {
@@ -151,11 +155,13 @@ describe('config-file', function () {
       describe('when no config file is found', function () {
         beforeEach(async function () {
           lc.search.resolves();
+          /** @type {import('sinon').SinonSpiedMember<typeof schema.validate>} */(schema.validate).resetHistory();
           result = await readConfigFile();
         });
 
         it('should resolve with an empty object', function () {
           expect(result).to.be.an('object').that.is.empty;
+          expect(schema.validate).not.to.have.been.called;
         });
       });
 
@@ -383,17 +389,9 @@ describe('config-file', function () {
  */
 
 /**
- * @typedef {ReturnType<import('lilconfig').lilconfig>["load"]} AsyncSearcherLoad
+ * @typedef {import('sinon').SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['load']>} AsyncSearcherLoadStub
  */
 
 /**
- * @typedef {ReturnType<import('lilconfig').lilconfig>["search"]} AsyncSearcherSearch
- */
-
-/**
- * @typedef {import('sinon').SinonStub<Parameters<AsyncSearcherLoad>,ReturnType<AsyncSearcherLoad>>} AsyncSearcherLoadStub
- */
-
-/**
- * @typedef {import('sinon').SinonStub<Parameters<AsyncSearcherSearch>,ReturnType<AsyncSearcherSearch>>} AsyncSearcherSearchStub
+ * @typedef {import('sinon').SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['search']>} AsyncSearcherSearchStub
  */

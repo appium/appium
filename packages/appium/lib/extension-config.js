@@ -30,19 +30,21 @@ export default class ExtensionConfig {
    * @param {(...args: any[]) => void} [logFn]
    */
   constructor (appiumHome, extensionType, logFn) {
-    if (!_.isFunction(logFn)) {
-      logFn = log.error.bind(log);
-    }
+    const logger = _.isFunction(logFn) ? logFn : log.error.bind(log);
+    /** @type {string} */
     this.appiumHome = appiumHome;
-    /**
-     * @type {Record<string,object>}
-     */
+    /** @type {Record<string,object>} */
     this.installedExtensions = {};
+    /** @type {import('./ext-config-io').ExtensionConfigIO} */
     this.io = getExtConfigIOInstance(appiumHome);
+    /** @type {ExtensionType} */
     this.extensionType = extensionType;
     /** @type {'drivers'|'plugins'} */
-    this.configKey = `${extensionType}s`;
-    this.log = /** @type {(...args: any[])=>void} */(logFn);
+    this.configKey = `${extensionType}s`; // todo use template type
+    /**
+     * @type {(...args: any[])=>void}
+     */
+    this.log = logger;
   }
 
   /**
@@ -101,7 +103,7 @@ export default class ExtensionConfig {
           try {
             this.readExtensionSchema(extName, extData);
           } catch (err) {
-            problems.push({err: `Unable to register schema at path ${argSchemaPath}`, val: argSchemaPath});
+            problems.push({err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`, val: argSchemaPath});
           }
         } else {
           problems.push({

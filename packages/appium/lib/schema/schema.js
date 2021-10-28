@@ -62,7 +62,7 @@ class AppiumSchema {
    *
    * This does not include references, but rather the root schemas themselves.
    * @private
-   * @type {Record<string,SchemaObject>?}
+   * @type {Record<string,StrictSchemaObject>?}
    */
   _finalizedSchemas = null;
 
@@ -140,17 +140,19 @@ class AppiumSchema {
    * If the instance has already been finalized, this is a no-op.
    * @public
    * @throws {Error} If the schema is not valid
-   * @returns {Readonly<Record<string,SchemaObject>>} Record of schema IDs to full schema objects
+   * @returns {Readonly<Record<string,StrictSchemaObject>>} Record of schema IDs to full schema objects
    */
   finalize () {
     if (this.isFinalized()) {
-      return /** @type {Record<string,SchemaObject>} */(this._finalizedSchemas);
+      return /** @type {Record<string,StrictSchemaObject>} */ (
+        this._finalizedSchemas
+      );
     }
 
     const ajv = this._ajv;
 
     // Ajv will _mutate_ the schema, so we need to clone it.
-    const baseSchema = _.cloneDeep(appiumConfigSchema);
+    const baseSchema = _.cloneDeep(/** @type {StrictSchemaObject} */(appiumConfigSchema));
 
     /**
      *
@@ -179,7 +181,7 @@ class AppiumSchema {
     );
 
     /**
-     * @type {Record<string,SchemaObject>}
+     * @type {Record<string,StrictSchemaObject>}
      */
     const finalizedSchemas = {};
 
@@ -192,17 +194,15 @@ class AppiumSchema {
        */
       (baseSchema, extensionSchemas, extType) => {
         extensionSchemas.forEach((schema, extName) => {
-          schema.$id = `${extType}-${_.kebabCase(extName)}.json`;
-          baseSchema.properties.server.properties[extType].anyOf =
-            baseSchema.properties.server.properties[extType].anyOf ?? [];
-          baseSchema.properties.server.properties[extType].anyOf.push({
-            $ref: schema.$id,
-            $comment: extName,
-          });
+          const $ref = ArgSpec.toSchemaBaseRef(extType, extName);
+          schema.$id = $ref;
+          schema.additionalProperties = false; // this makes `schema` become a `StrictSchemaObject`
+          baseSchema.properties.server.properties[extType].properties[extName] =
+            {$ref, $comment: extName};
           ajv.validateSchema(schema, true);
           addArgSpecs(schema.properties, extType, extName);
-          ajv.addSchema(schema, schema.$id);
-          finalizedSchemas[schema.$id] = schema;
+          ajv.addSchema(schema, $ref);
+          finalizedSchemas[$ref] = /** @type {StrictSchemaObject} */(schema);
         });
         return baseSchema;
       },
@@ -286,6 +286,9 @@ class AppiumSchema {
 
     const normalizedExtName = _.kebabCase(extName);
     if (this.hasRegisteredSchema(extType, normalizedExtName)) {
+      if (this._registeredSchemas[extType].get(normalizedExtName) === schema) {
+        return;
+      }
       throw new SchemaNameConflictError(extType, extName);
     }
     this._ajv.validateSchema(schema, true);
@@ -353,32 +356,41 @@ class AppiumSchema {
   flatten () {
     const schema = this.getSchema();
 
-    /** @type {{props: SchemaObject, prefix: string[]}[]} */
-    const stack = [{props: schema.properties, prefix: []}];
+    /** @type {{properties: SchemaObject, prefix: string[]}[]} */
+    const stack = [{properties: schema.properties, prefix: []}];
     /** @type {{schema: SchemaObject, argSpec: ArgSpec}[]} */
     const flattened = [];
 
     // this bit is a recursive algorithm rewritten as a for loop.
     // when we find something we want to traverse, we add it to `stack`
-    for (const {props, prefix} of stack) {
-      const pairs = _.toPairs(props);
+    for (const {properties, prefix} of stack) {
+      const pairs = _.toPairs(properties);
       for (const [key, value] of pairs) {
-        if (value.properties) {
+        const {properties, $ref} = value;
+        if (properties) {
           stack.push({
-            props: value.properties,
+            properties,
             prefix: key === SERVER_PROP_NAME ? [] : [...prefix, key],
           });
-        } else if (value.anyOf) {
-          value.anyOf.forEach(({$ref}) => {
-            const refSchema = this.getSchema($ref);
-            const {normalizedExtName} = ArgSpec.extensionInfoFromRootSchemaId($ref);
-            if (!normalizedExtName) {
-              throw new ReferenceError(`Could not determine extension name from schema ID ${$ref}. This is a bug.`);
-            }
-            stack.push({
-              props: refSchema.properties,
-              prefix: [...prefix, key, normalizedExtName],
-            });
+        } else if ($ref) {
+          let refSchema;
+          try {
+            refSchema = this.getSchema($ref);
+          } catch (err) {
+            // this can happen if an extension schema supplies a $ref to a non-existent schema
+            throw new SchemaUnknownSchemaError($ref);
+          }
+          const {normalizedExtName} =
+            ArgSpec.extensionInfoFromRootSchemaId($ref);
+          if (!normalizedExtName) {
+            /* istanbul ignore next */
+            throw new ReferenceError(
+              `Could not determine extension name from schema ID ${$ref}. This is a bug.`,
+            );
+          }
+          stack.push({
+            properties: refSchema.properties,
+            prefix: [...prefix, key, normalizedExtName],
           });
         } else if (key !== DRIVER_TYPE && key !== PLUGIN_TYPE) {
           const [extType, extName] = prefix;
@@ -410,10 +422,6 @@ class AppiumSchema {
    */
   getSchema (ref = APPIUM_CONFIG_SCHEMA_ID) {
     return /** @type {SchemaObject} */ (this._getValidator(ref).schema);
-  }
-
-  getAllSchemas () {
-    return this._ajv.schemas;
   }
 
   /**
@@ -472,7 +480,7 @@ export class SchemaFinalizationError extends Error {
   code = 'APPIUMERR_SCHEMA_FINALIZATION';
 
   constructor () {
-    super('Schema not yet finalized; `finalizeSchema()` must be called first.');
+    super('Schema not yet finalized; `finalize()` must be called first.');
   }
 }
 

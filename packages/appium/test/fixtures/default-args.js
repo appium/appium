@@ -17,4 +17,6 @@ export default {
   relaxedSecurity: false,
   sessionOverride: false,
   strictCaps: false,
+  useDrivers: [],
+  usePlugins: []
 };

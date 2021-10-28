@@ -94,6 +94,7 @@ export default {
           title: 'driver config',
           description:
             'Driver-specific configuration. Keys should correspond to driver package names',
+          properties: {}
         },
         'keep-alive-timeout': {
           appiumCliAliases: ['ka'],
@@ -194,6 +195,7 @@ export default {
           title: 'plugin config',
           description:
             'Plugin-specific configuration. Keys should correspond to plugin package names',
+          properties: {}
         },
         port: {
           appiumCliAliases: ['p'],
@@ -244,6 +246,7 @@ export default {
           items: {
             type: 'string',
           },
+          default: [],
           title: 'use-drivers config',
           type: 'array',
           uniqueItems: true,
@@ -256,6 +259,7 @@ export default {
           items: {
             type: 'string',
           },
+          default: [],
           title: 'use-plugins config',
           type: 'array',
           uniqueItems: true,

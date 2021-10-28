@@ -242,9 +242,9 @@ describe('config file behavior', function () {
           it('should return an object containing errors', function () {
             result.should.have.deep.property('errors', [
               {
-                instancePath: '/driver/fake',
+                instancePath: '/server/driver/fake',
                 schemaPath:
-                  '#/properties/driver/properties/fake/additionalProperties',
+                  'driver-fake.json/additionalProperties',
                 keyword: 'additionalProperties',
                 params: {additionalProperty: 'bubb'},
                 message: 'must NOT have additional properties',

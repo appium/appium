@@ -60,14 +60,14 @@ describe('FakePlugin', function () {
         installType: INSTALL_TYPE_LOCAL,
       }, PLUGIN_TYPE);
     }
-    baseArgs = {port: testPort, host: TEST_HOST, appiumHome, plugins: ['fake']};
+    baseArgs = {port: testPort, host: TEST_HOST, appiumHome, usePlugins: ['fake']};
   });
 
   describe('without plugin registered', function () {
     let server = null;
     before(async function () {
       // then start server if we need to
-      const args = {port: testPort, host: TEST_HOST, appiumHome, plugins: ['other1', 'other2']};
+      const args = {port: testPort, host: TEST_HOST, appiumHome, usePlugins: ['other1', 'other2']};
       server = await appiumServer(args);
     });
     after(async function () {
@@ -104,8 +104,8 @@ describe('FakePlugin', function () {
       let server = null;
       before(async function () {
         // then start server if we need to
-        const plugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
-        const args = {port: testPort, host: TEST_HOST, appiumHome, plugins};
+        const usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
+        const args = {port: testPort, host: TEST_HOST, appiumHome, usePlugins};
         server = await appiumServer(args);
       });
       after(async function () {

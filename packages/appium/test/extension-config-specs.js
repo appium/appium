@@ -38,7 +38,7 @@ describe('ExtensionConfig', function () {
 
     describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
-        const config = new DriverConfig('/tmp/');
+        const config = DriverConfig.getInstance('/tmp/');
         config
           .extensionDesc('foo', {version: '1.0', automationName: 'bar'})
           .should.equal(`foo@1.0 (automationName 'bar')`);
@@ -47,12 +47,12 @@ describe('ExtensionConfig', function () {
 
     describe('getConfigProblems()', function () {
       /**
-       * @type {InstanceType<DriverConfig>}
+       * @type {ReturnType<DriverConfig['getInstance']>}
        */
       let driverConfig;
 
       beforeEach(function () {
-        driverConfig = new DriverConfig('/tmp/');
+        driverConfig = DriverConfig.getInstance('/tmp/');
       });
 
       describe('when provided no arguments', function () {
@@ -131,12 +131,12 @@ describe('ExtensionConfig', function () {
 
     describe('getSchemaProblems()', function () {
       /**
-       * @type {InstanceType<DriverConfig>}
+       * @type {ReturnType<DriverConfig['getInstance']>}
        */
       let driverConfig;
 
       beforeEach(function () {
-        driverConfig = new DriverConfig('/tmp/');
+        driverConfig = DriverConfig.getInstance('/tmp/');
       });
       describe('when provided an object with a defined non-string `schema` property', function () {
         it('should return an array with an associated problem', function () {
@@ -172,10 +172,11 @@ describe('ExtensionConfig', function () {
                 },
                 'foo',
               );
-              problems.should.deep.include({
-                err: `Unable to register schema at path herp.json`,
-                val: 'herp.json',
-              });
+              problems[0].err.should.match(/Unable to register schema at path herp\.json/i);
+              // problems.should.deep.include({
+              //   err: `Unable to register schema at path herp.json`,
+              //   val: 'herp.json',
+              // });
             });
           });
 
@@ -198,12 +199,12 @@ describe('ExtensionConfig', function () {
 
     describe('read()', function () {
       /**
-       * @type {InstanceType<DriverConfig>}
+       * @type {ReturnType<DriverConfig['getInstance']>}
        */
       let driverConfig;
 
       beforeEach(function () {
-        driverConfig = new DriverConfig('/tmp/');
+        driverConfig = DriverConfig.getInstance('/tmp/');
         sandbox.spy(driverConfig, 'validate');
       });
 
@@ -215,7 +216,7 @@ describe('ExtensionConfig', function () {
 
     describe('readExtensionSchema()', function () {
       /**
-       * @type {InstanceType<DriverConfig>}
+       * @type {ReturnType<DriverConfig['getInstance']>}
        */
       let driverConfig;
 
@@ -233,8 +234,7 @@ describe('ExtensionConfig', function () {
         mocks['resolve-from'].returns(
           require.resolve('./fixtures/driver.schema.js'),
         );
-        driverConfig = new DriverConfig('/tmp/');
-
+        driverConfig = DriverConfig.getInstance('/tmp/');
       });
 
       describe('when the extension data is missing `schema`', function () {
@@ -246,11 +246,10 @@ describe('ExtensionConfig', function () {
         });
       });
 
-      describe('when the extension schema has already been registered', function () {
-        it('should throw', function () {
+      describe('when the extension schema has already been registered (with the same schema)', function () {
+        it('should not throw', function () {
           driverConfig.readExtensionSchema(extName, extData);
-          // mocks['resolve-from'].reset();
-          expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(/conflicts with an existing schema/i);
+          expect(() => driverConfig.readExtensionSchema(extName, extData)).not.to.throw();
         });
       });
 
@@ -292,7 +291,7 @@ describe('ExtensionConfig', function () {
 
     describe('extensionDesc()', function () {
       it('should return the description of the extension', function () {
-        const config = new PluginConfig('/tmp/');
+        const config = PluginConfig.getInstance('/tmp/');
         config
           .extensionDesc('foo', {version: '1.0'})
           .should.equal(`foo@1.0`);
@@ -301,12 +300,12 @@ describe('ExtensionConfig', function () {
 
     describe('getConfigProblems()', function () {
       /**
-       * @type {InstanceType<PluginConfig>}
+       * @type {ReturnType<PluginConfig['getInstance']>}
        */
       let pluginConfig;
 
       beforeEach(function () {
-        pluginConfig = new PluginConfig('/tmp/');
+        pluginConfig = PluginConfig.getInstance('/tmp/');
       });
 
       describe('when provided no arguments', function () {
@@ -319,12 +318,12 @@ describe('ExtensionConfig', function () {
 
     describe('getSchemaProblems()', function () {
       /**
-       * @type {InstanceType<PluginConfig>}
+       * @type {ReturnType<PluginConfig['getInstance']>}
        */
       let pluginConfig;
 
       beforeEach(function () {
-        pluginConfig = new PluginConfig('/tmp/');
+        pluginConfig = PluginConfig.getInstance('/tmp/');
       });
       describe('when provided an object with a defined non-string `schema` property', function () {
         it('should return an array with an associated problem', function () {
@@ -360,10 +359,7 @@ describe('ExtensionConfig', function () {
                 },
                 'foo',
               );
-              problems.should.deep.include({
-                err: `Unable to register schema at path herp.json`,
-                val: 'herp.json',
-              });
+              problems[0].err.should.match(/Unable to register schema at path herp\.json/i);
             });
           });
 
@@ -386,12 +382,12 @@ describe('ExtensionConfig', function () {
 
     describe('read()', function () {
       /**
-       * @type {InstanceType<PluginConfig>}
+       * @type {ReturnType<PluginConfig['getInstance']>}
        */
       let pluginConfig;
 
       beforeEach(function () {
-        pluginConfig = new PluginConfig('/tmp/');
+        pluginConfig = PluginConfig.getInstance('/tmp/');
         sandbox.spy(pluginConfig, 'validate');
       });
 
@@ -403,7 +399,7 @@ describe('ExtensionConfig', function () {
 
     describe('readExtensionSchema()', function () {
       /**
-       * @type {InstanceType<PluginConfig>}
+       * @type {ReturnType<PluginConfig['getInstance']>}
        */
       let pluginConfig;
 
@@ -421,7 +417,7 @@ describe('ExtensionConfig', function () {
         mocks['resolve-from'].returns(
           require.resolve('./fixtures/plugin.schema.js'),
         );
-        pluginConfig = new PluginConfig('/tmp/');
+        pluginConfig = PluginConfig.getInstance('/tmp/');
 
       });
 
@@ -435,10 +431,19 @@ describe('ExtensionConfig', function () {
       });
 
       describe('when the extension schema has already been registered', function () {
-        it('should throw', function () {
-          pluginConfig.readExtensionSchema(extName, extData);
-          // mocks['resolve-from'].reset();
-          expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(/conflicts with an existing schema/i);
+        describe('when the schema is identical (presumably the same extension)', function () {
+          it('should not throw', function () {
+            pluginConfig.readExtensionSchema(extName, extData);
+            expect(() => pluginConfig.readExtensionSchema(extName, extData)).not.to.throw();
+          });
+        });
+
+        describe('when the schema differs (presumably a different extension)', function () {
+          it('should throw', function () {
+            pluginConfig.readExtensionSchema(extName, extData);
+            mocks['resolve-from'].returns(require.resolve('./fixtures/driver.schema.js'));
+            expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(/conflicts with an existing schema/i);
+          });
         });
       });
 

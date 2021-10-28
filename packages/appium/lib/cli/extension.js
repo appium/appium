@@ -35,8 +35,7 @@ async function runExtensionCommand (args, type, configObject) {
     config = configObject;
     config.log = logFn;
   } else {
-    const ConfigClass = type === DRIVER_TYPE ? DriverConfig : PluginConfig;
-    config = new ConfigClass(APPIUM_HOME, logFn);
+    config = (type === DRIVER_TYPE ? DriverConfig : PluginConfig).getInstance(APPIUM_HOME, logFn);
   }
   const CommandClass = type === DRIVER_TYPE ? DriverCommand : PluginCommand;
   const cmd = new CommandClass({config, json});

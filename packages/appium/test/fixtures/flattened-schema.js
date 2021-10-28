@@ -434,10 +434,12 @@ export default [
       items: {type: 'string'},
       title: 'use-drivers config',
       type: 'array',
+      default: [],
       uniqueItems: true,
     },
     argSpec: {
       name: 'use-drivers',
+      defaultValue: [],
       ref: 'appium.json#/properties/server/properties/use-drivers',
       arg: 'use-drivers',
       dest: 'useDrivers',
@@ -450,6 +452,7 @@ export default [
       appiumCliDescription:
         'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins.',
       items: {type: 'string'},
+      default: [],
       title: 'use-plugins config',
       type: 'array',
       uniqueItems: true,
@@ -459,6 +462,7 @@ export default [
       ref: 'appium.json#/properties/server/properties/use-plugins',
       arg: 'use-plugins',
       dest: 'usePlugins',
+      defaultValue: []
     },
   },
   {

@@ -66,6 +66,40 @@ driver.execute_script('mobile: doubleClickGesture', {'x': 100, 'y': 100})
 ```
 
 
+### mobile: clickGesture
+
+This gesture performs click action on the given element/coordinates.
+Available since Appium v1.22.1. Usage of this gesture is recommended
+as a possible workaround for cases where the "native" tap call fails,
+even though tap coordinates seem correct. This issue is related to the fact
+these calls use the legacy UIAutomator-based calls while this extension
+is based on the same foundation as W3C does.
+
+
+#### Supported arguments
+
+ * _elementId_: The id of the element to be clicked.
+  If the element is missing then both click offset coordinates must be provided.
+  If both the element id and offset are provided then the coordinates
+  are parsed as relative offsets from the top left corner of the element.
+ * _x_: The x-offset coordinate
+ * _y_: The y-offset coordinate
+
+#### Usage examples
+
+```java
+// Java
+driver.executeScript("mobile: clickGesture", ImmutableMap.of(
+    "elementId", ((RemoteWebElement) element).getId()
+));
+```
+
+```python
+# Python
+driver.execute_script('mobile: clickGesture', {'x': 100, 'y': 100})
+```
+
+
 ### mobile: dragGesture
 
 This gesture performs drag action from the given element/coordinates to the given point.

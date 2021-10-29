@@ -69,7 +69,12 @@ driver.execute_script('mobile: doubleClickGesture', {'x': 100, 'y': 100})
 ### mobile: clickGesture
 
 This gesture performs click action on the given element/coordinates.
-Available since Appium v1.22.1
+Available since Appium v1.22.1. Usage of this gesture is recommended
+as a possible workaround for cases where the "native" tap call fails,
+even though tap coordinates seem correct. This issue is related to the fact
+these calls use the legacy UIAutomator-based calls while this extension
+is based on the same foundation as W3C does.
+
 
 #### Supported arguments
 

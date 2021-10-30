@@ -39,7 +39,7 @@
   ],
   "dependencies": {
     "@appium/support": "^2.54.2",
-    "@babel/runtime": "7.15.4",
+    "@babel/runtime": "7.16.0",
     "appium-adb": "8.16.2",
     "authorize-ios": "1.2.1",
     "bluebird": "3.7.2",

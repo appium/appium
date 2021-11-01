@@ -10,13 +10,7 @@
       }
     ]
   ],
-  "plugins": [
-    "source-map-support",
-    "@babel/plugin-transform-runtime",
-    ["@babel/plugin-proposal-private-methods", {"loose": true}],
-    ["@babel/plugin-proposal-class-properties", {"loose": true}],
-    ["@babel/plugin-proposal-private-property-in-object", {"loose": true}]
-  ],
+  "plugins": ["source-map-support", "@babel/plugin-transform-runtime"],
   "comments": false,
   "sourceMaps": "both",
   "env": {

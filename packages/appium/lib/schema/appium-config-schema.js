@@ -1,12 +1,11 @@
-export default {
+const schema = /** @type {const} */
+({
   $schema: 'http://json-schema.org/draft-07/schema',
-  type: 'object',
-  title: 'Appium Configuration',
+  additionalProperties: false,
   description: 'A schema for Appium configuration files',
   properties: {
     server: {
-      type: 'object',
-      title: 'server config',
+      additionalProperties: false,
       description: 'Configuration when running Appium as a server',
       properties: {
         address: {
@@ -90,11 +89,11 @@ export default {
           uniqueItems: true,
         },
         driver: {
-          type: 'object',
-          title: 'driver config',
           description:
             'Driver-specific configuration. Keys should correspond to driver package names',
-          properties: {}
+          properties: {},
+          title: 'driver config',
+          type: 'object',
         },
         'keep-alive-timeout': {
           appiumCliAliases: ['ka'],
@@ -191,11 +190,11 @@ export default {
           type: 'object',
         },
         plugin: {
-          type: 'object',
-          title: 'plugin config',
           description:
             'Plugin-specific configuration. Keys should correspond to plugin package names',
-          properties: {}
+          properties: {},
+          title: 'plugin config',
+          type: 'object',
         },
         port: {
           appiumCliAliases: ['p'],
@@ -227,6 +226,7 @@ export default {
           type: 'boolean',
         },
         tmp: {
+          appiumCliDest: 'tmpDir',
           description:
             'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
           title: 'tmp config',
@@ -239,27 +239,27 @@ export default {
           type: 'string',
         },
         'use-drivers': {
-          description:
-            'A list of drivers to activate. By default, all installed drivers will be activated.',
           appiumCliDescription:
             'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated.',
+          default: [],
+          description:
+            'A list of drivers to activate. By default, all installed drivers will be activated.',
           items: {
             type: 'string',
           },
-          default: [],
           title: 'use-drivers config',
           type: 'array',
           uniqueItems: true,
         },
         'use-plugins': {
-          description:
-            'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
           appiumCliDescription:
             'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins.',
+          default: [],
+          description:
+            'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
           items: {
             type: 'string',
           },
-          default: [],
           title: 'use-plugins config',
           type: 'array',
           uniqueItems: true,
@@ -274,8 +274,12 @@ export default {
           type: 'string',
         },
       },
-      additionalProperties: false,
+      title: 'server config',
+      type: 'object',
     },
   },
-  additionalProperties: false,
-};
+  title: 'Appium Configuration',
+  type: 'object',
+});
+
+export default schema;

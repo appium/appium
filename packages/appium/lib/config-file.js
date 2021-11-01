@@ -150,7 +150,7 @@ export async function readConfigFile (filepath, opts = {}) {
       if (normalize) {
         // normalize (to camel case) all top-level property names of the config file
         configResult.config = normalizeConfig(
-          /** @type {AppiumConfiguration} */ (configResult.config),
+          /** @type {AppiumConfig} */ (configResult.config),
         );
       }
 
@@ -165,13 +165,13 @@ export async function readConfigFile (filepath, opts = {}) {
 
 /**
  * Convert schema property names to either a) the value of the `appiumCliDest` property, if any; or b) camel-case
- * @param {AppiumConfiguration} config - Configuration object
- * @returns {NormalizedAppiumConfiguration} New object with camel-cased keys.
+ * @param {AppiumConfig} config - Configuration object
+ * @returns {NormalizedAppiumConfig} New object with camel-cased keys (or `dest` keys).
  */
 function normalizeConfig (config) {
   const schema = getSchema();
   /**
-   * @param {AppiumConfiguration} config
+   * @param {AppiumConfig} config
    * @param {string} [section] - Keypath (lodash `_.get()` style) to section of config. If omitted, assume root Appium config schema
    * @returns Normalized section of config
    */
@@ -205,7 +205,7 @@ function normalizeConfig (config) {
  * @property {import('ajv').ErrorObject[]} [errors] - Validation errors
  * @property {string} [filepath] - The path to the config file, if found
  * @property {boolean} [isEmpty] - If `true`, the config file exists but is empty
- * @property {AppiumConfiguration|import('../types/types').NormalizedAppiumConfiguration} [config] - The parsed configuration
+ * @property {AppiumConfig} [config] - The parsed configuration
  * @property {string|import('@sidvind/better-ajv-errors').IOutputError[]} [reason] - Human-readable error messages and suggestions. If the `pretty` option is `true`, this will be a nice string to print.
  */
 
@@ -218,18 +218,17 @@ function normalizeConfig (config) {
 
 /**
  * This is an `AsyncSearcher` which is inexplicably _not_ exported by the `lilconfig` type definition.
- * @private
  * @typedef {ReturnType<import('lilconfig')["lilconfig"]>} LilconfigAsyncSearcher
  */
 
 /**
  * The contents of an Appium config file. Generated from schema
- * @typedef {import('../types/types').AppiumConfiguration} AppiumConfiguration
+ * @typedef {import('../types/types').AppiumConfig} AppiumConfig
  */
 
 /**
- * The contents of an Appium config file with camelcased property names (and using `appiumCliDest` value if present). Generated from {@link AppiumConfiguration}
- * @typedef {import('../types/types').NormalizedAppiumConfiguration} NormalizedAppiumConfiguration
+ * The contents of an Appium config file with camelcased property names (and using `appiumCliDest` value if present). Generated from {@link AppiumConfig}
+ * @typedef {import('../types/types').NormalizedAppiumConfig} NormalizedAppiumConfig
  */
 
 /**

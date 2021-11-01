@@ -120,4 +120,4 @@ type ExtraCLIArgs = {
 export type FlattenedAppiumConfig = FlattenedArgProps<
   typeof appiumConfigSchema['properties']['server']['properties']
 > &
-  Partial<ExtraArgs>;
+  Partial<ExtraCLIArgs>;

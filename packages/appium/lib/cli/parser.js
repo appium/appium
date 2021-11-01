@@ -43,6 +43,9 @@ const version = fs.readPackageJsonFrom(rootDir).version;
  * - Handles error conditions, messages, and exit behavior
  */
 class ArgParser {
+  /**
+   * @param {boolean} [debug] - If true, throw instead of exit on error.
+   */
   constructor (debug = false) {
     const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
     const parser = new ArgumentParser({
@@ -90,6 +93,9 @@ class ArgParser {
     ArgParser._addExtensionCommandsToParser(subParsers);
 
     // backwards compatibility / drop-in wrapper
+    /**
+     * @type {ArgParser['parseArgs']}
+     */
     this.parse_args = this.parseArgs;
   }
 
@@ -100,7 +106,7 @@ class ArgParser {
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {object} - The parsed arguments
+   * @returns {import('../../types/types').FlattenedAppiumConfig} - The parsed arguments
    */
   parseArgs (args = process.argv.slice(2)) {
     if (!NON_SERVER_ARGS.has(args[0])) {
@@ -114,11 +120,16 @@ class ArgParser {
       if (this.debug) {
         throw err;
       }
-      // eslint-disable-next-line no-console
-      console.error(); // need an extra space since argparse prints usage.
-      // eslint-disable-next-line no-console
-      console.error(err.message);
-      process.exit(1);
+      // this isn't tested via unit tests (we use `debug: true`) so may escape coverage.
+
+      /* istanbul ignore next */
+      {
+        // eslint-disable-next-line no-console
+        console.error(); // need an extra space since argparse prints usage.
+        // eslint-disable-next-line no-console
+        console.error(err.message);
+        process.exit(1);
+      }
     }
   }
 

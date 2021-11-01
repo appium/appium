@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-// transpile:main
 
+// transpile:main
+// @ts-check
+
+// @ts-ignore
 import { routeConfiguringFunction as makeRouter, server as baseServer } from '@appium/base-driver';
 import { logger as logFactory, util } from '@appium/support';
 import { asyncify } from 'asyncbox';
@@ -18,7 +21,12 @@ import { init as logsinkInit } from './logsink';
 import { getDefaultsFromSchema, validate } from './schema/schema';
 import { inspectObject } from './utils';
 
-async function preflightChecks ({args, throwInsteadOfExit = false}) {
+/**
+ *
+ * @param {FlattenedAppiumConfig} args
+ * @param {boolean} [throwInsteadOfExit]
+ */
+async function preflightChecks (args, throwInsteadOfExit = false) {
   try {
     checkNodeOk();
     if (args.longStacktrace) {
@@ -91,25 +99,26 @@ function logServerPort (address, port) {
  * wrap command execution
  *
  * @param {Object} args - argparser parsed dict
- * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
+ * @param {import('./plugin-config').default} pluginConfig - a plugin extension config
+ * @returns {({pluginName: string} & ((...args: any[]) => unknown))[]}
  */
 function getActivePlugins (args, pluginConfig) {
-  return Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
+  return _.compact(Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
     _.includes(args.usePlugins, pluginName) ||
     (args.usePlugins.length === 1 && args.usePlugins[0] === USE_ALL_PLUGINS)
   ).map((pluginName) => {
     try {
       logger.info(`Attempting to load plugin ${pluginName}...`);
-      const PluginClass = pluginConfig.require(pluginName);
+      const PluginClass = /** @type {{pluginName: string} & ((...args: any[]) => unknown)} */(pluginConfig.require(pluginName));
+
       PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
       return PluginClass;
     } catch (err) {
       logger.error(`Could not load plugin '${pluginName}', so it will not be available. Error ` +
                    `in loading the plugin was: ${err.message}`);
       logger.debug(err.stack);
-      return false;
     }
-  }).filter(Boolean);
+  }));
 }
 
 /**
@@ -118,10 +127,10 @@ function getActivePlugins (args, pluginConfig) {
  * If the --drivers flag was given, this method only loads the given drivers.
  *
  * @param {Object} args - argparser parsed dict
- * @param {DriverConfig} driverConfig - a driver extension config
+ * @param {import('./driver-config').default} driverConfig - a driver extension config
  */
 function getActiveDrivers (args, driverConfig) {
-  return Object.keys(driverConfig.installedExtensions).filter((driverName) =>
+  return _.compact(Object.keys(driverConfig.installedExtensions).filter((driverName) =>
     _.includes(args.useDrivers, driverName) || args.useDrivers.length === 0
   ).map((driverName) => {
     try {
@@ -131,9 +140,8 @@ function getActiveDrivers (args, driverConfig) {
       logger.error(`Could not load driver '${driverName}', so it will not be available. Error ` +
                    `in loading the driver was: ${err.message}`);
       logger.debug(err.stack);
-      return false;
     }
-  }).filter(Boolean);
+  }));
 }
 
 function getServerUpdaters (driverClasses, pluginClasses) {
@@ -157,11 +165,14 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  * const options = {}; // config object
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
- * @returns {Promise<{parser: import('argparse').ArgumentParser, appiumDriver?: AppiumDriver}>}
+ * @param {FlattenedAppiumConfig} [args] - Parsed args
+ * @returns {Promise<{parser: import('./cli/parser').ArgParser} & Partial<{appiumDriver: AppiumDriver, parsedArgs: FlattenedAppiumConfig}>>}
  */
-async function init (args = null) {
+async function init (args) {
   const parser = await getParser();
   let throwInsteadOfExit = false;
+  /** @type {FlattenedAppiumConfig} */
+  let parsedArgs;
   if (args) {
     // if we have a containing package instead of running as a CLI process,
     // that package might not appreciate us calling 'process.exit' willy-
@@ -171,12 +182,13 @@ async function init (args = null) {
       // but remove it since it's not a real server arg per se
       delete args.throwInsteadOfExit;
     }
+    parsedArgs = args;
   } else {
     // otherwise parse from CLI
-    args = parser.parse_args();
+    parsedArgs = /** @type {FlattenedAppiumConfig} */(parser.parseArgs());
   }
 
-  const configResult = await readConfigFile(args.configFile);
+  const configResult = await readConfigFile(parsedArgs.configFile);
 
   if (!_.isEmpty(configResult.errors)) {
     throw new Error(`Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`);
@@ -188,9 +200,9 @@ async function init (args = null) {
   // 2. config file
   // 3. defaults from config file.
   // if no "subcommand" specified (e.g., `args` came from not-`parser.parse_args()`), assume we want a server.
-  if (args.subcommand === SERVER_SUBCOMMAND || !args.subcommand) {
-    args = _.defaultsDeep(
-      args,
+  if (parsedArgs.subcommand === SERVER_SUBCOMMAND || !parsedArgs.subcommand) {
+    parsedArgs = _.defaultsDeep(
+      parsedArgs,
       configResult.config?.server,
       getDefaultsFromSchema()
     );
@@ -205,68 +217,72 @@ async function init (args = null) {
 
   // if the user has requested the 'driver' CLI, don't run the normal server,
   // but instead pass control to the driver CLI
-  if (args.subcommand === DRIVER_TYPE) {
-    await runExtensionCommand(args, args.subcommand, driverConfig);
+  if (parsedArgs.subcommand === DRIVER_TYPE) {
+    await runExtensionCommand(args, parsedArgs.subcommand, driverConfig);
     return {parser};
   }
-  if (args.subcommand === PLUGIN_TYPE) {
-    await runExtensionCommand(args, args.subcommand, pluginConfig);
+  if (parsedArgs.subcommand === PLUGIN_TYPE) {
+    await runExtensionCommand(args, parsedArgs.subcommand, pluginConfig);
     return {parser};
   }
 
-  if (args.logFilters) {
-    const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(args.logFilters);
+  if (parsedArgs.logFilters) {
+    const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(parsedArgs.logFilters);
     if (!_.isEmpty(issues)) {
-      throw new Error(`The log filtering rules config '${args.logFilters}' has issues: ` +
+      throw new Error(`The log filtering rules config '${parsedArgs.logFilters}' has issues: ` +
         JSON.stringify(issues, null, 2));
     }
     if (_.isEmpty(rules)) {
-      logger.warn(`Found no log filtering rules in '${args.logFilters}'. Is that expected?`);
+      logger.warn(`Found no log filtering rules in '${parsedArgs.logFilters}'. Is that expected?`);
     } else {
-      logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${args.logFilters}'`);
+      logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${parsedArgs.logFilters}'`);
     }
   }
-
 
   const appiumDriver = new AppiumDriver(args);
   // set the config on the umbrella driver so it can match drivers to caps
   appiumDriver.driverConfig = driverConfig;
-  await preflightChecks({parser, args, driverConfig, pluginConfig, throwInsteadOfExit});
+  await preflightChecks(parsedArgs, throwInsteadOfExit);
 
-  return {parser, appiumDriver};
+  return {parser, appiumDriver, parsedArgs};
 }
 
-async function main (args = null) {
-  const {parser, appiumDriver} = await init(args);
+/**
+ *
+ * @param {FlattenedAppiumConfig} [args]
+ * @returns
+ */
+async function main (args) {
+  const {parser, appiumDriver, parsedArgs} = await init(args);
 
-  if (!appiumDriver) {
+  if (!appiumDriver || !parsedArgs) {
     // if this branch is taken, we've run a different subcommand, so there's nothing
     // left to do here.
     return;
   }
 
-  const pluginClasses = getActivePlugins(args, pluginConfig);
+  const pluginClasses = getActivePlugins(parsedArgs, pluginConfig);
   // set the active plugins on the umbrella driver so it can use them for commands
   appiumDriver.pluginClasses = pluginClasses;
 
-  await logStartupInfo(parser, args);
+  await logStartupInfo(parser, parsedArgs);
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
-  const driverClasses = getActiveDrivers(args, driverConfig);
+  const driverClasses = getActiveDrivers(parsedArgs, driverConfig);
   const serverUpdaters = getServerUpdaters(driverClasses, pluginClasses);
   const extraMethodMap = getExtraMethodMap(driverClasses, pluginClasses);
 
   const serverOpts = {
     routeConfiguringFunction,
-    port: args.port,
-    hostname: args.address,
-    allowCors: args.allowCors,
-    basePath: args.basePath,
+    port: parsedArgs.port,
+    hostname: parsedArgs.address,
+    allowCors: parsedArgs.allowCors,
+    basePath: parsedArgs.basePath,
     serverUpdaters,
     extraMethodMap,
   };
-  if (args.keepAliveTimeout) {
-    serverOpts.keepAliveTimeout = args.keepAliveTimeout * 1000;
+  if (parsedArgs.keepAliveTimeout) {
+    serverOpts.keepAliveTimeout = parsedArgs.keepAliveTimeout * 1000;
   }
   let server;
   try {
@@ -278,17 +294,18 @@ async function main (args = null) {
     return process.exit(1);
   }
 
-  if (args.allowCors) {
+  if (parsedArgs.allowCors) {
     logger.warn('You have enabled CORS requests from any host. Be careful not ' +
                 'to visit sites which could maliciously try to start Appium ' +
                 'sessions on your machine');
   }
+  // @ts-ignore
   appiumDriver.server = server;
   try {
     // configure as node on grid, if necessary
     // falsy values should not cause this to run
-    if (args.nodeconfig) {
-      await registerNode(args.nodeconfig, args.address, args.port, args.basePath);
+    if (parsedArgs.nodeconfig) {
+      await registerNode(parsedArgs.nodeconfig, parsedArgs.address, parsedArgs.port, parsedArgs.basePath);
     }
   } catch (err) {
     await server.close();
@@ -312,7 +329,7 @@ async function main (args = null) {
     });
   }
 
-  logServerPort(args.address, args.port);
+  logServerPort(parsedArgs.address, parsedArgs.port);
   driverConfig.print();
   pluginConfig.print(pluginClasses.map((p) => p.pluginName));
 
@@ -326,5 +343,9 @@ if (require.main === module) {
 // everything below here is intended to be a public API.
 export { main, init };
 export { APPIUM_HOME } from './extension-config';
-export { getSchema, validate as validateOption, finalizeSchema } from './schema/schema';
-export { readConfigFile, validateConfig } from './config-file';
+export { getSchema, validate, finalizeSchema } from './schema/schema';
+export { readConfigFile } from './config-file';
+
+/**
+ * @typedef {import('../types/types').FlattenedAppiumConfig} FlattenedAppiumConfig
+ */

@@ -59,6 +59,9 @@ class AppiumDriver extends BaseDriver {
     updateBuildInfo();
   }
 
+  /** @type {DriverConfig|undefined} */
+  driverConfig;
+
   /**
    * Cancel commands queueing for the umbrella Appium driver
    */

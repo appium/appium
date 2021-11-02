@@ -1,5 +1,6 @@
-const schema = /** @type {const} */
-({
+// @ts-check
+
+const schema = /** @type {const} */ ({
   $schema: 'http://json-schema.org/draft-07/schema',
   additionalProperties: false,
   description: 'A schema for Appium configuration files',
@@ -19,11 +20,11 @@ const schema = /** @type {const} */
           type: 'string',
         },
         'allow-cors': {
-          default: false,
           description:
             'Whether the Appium server should allow web browser connections from any host',
           title: 'allow-cors config',
           type: 'boolean',
+          default: false,
         },
         'allow-insecure': {
           appiumCliTransformer: 'csv',

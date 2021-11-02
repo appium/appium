@@ -1,14 +1,7 @@
-// @ts-check
-
 import {AppiumConfiguration, ServerConfig} from './appium-config';
 import appiumConfigSchema from '../lib/schema/appium-config-schema';
-import {keywords} from '../lib/schema/keywords';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../lib/ext-config-io';
 import {SERVER_SUBCOMMAND} from '../lib/cli/parser';
-
-/*
- * Utility types
- */
 
 /**
  * Converts a kebab-cased string into a camel-cased string.
@@ -54,16 +47,35 @@ type WithDest = {appiumCliDest: string};
  *
  * We use this to ensure that the {@link FlattenedAppiumConfig} makes guarantees about the presence of properties.
  */
-type WithDefault = {default: unknown};
+type WithDefault = {default: any};
 
-type DestProps<T> = {
-  [P in keyof T as T[P] extends WithDest
-    ? T[P]['appiumCliDest']
-    : KebabToCamel<string & P>]: ServerConfig[P];
+/**
+ * Derive the "constant" type of the server properties from the schema.
+ */
+type AppiumServerSchema =
+  typeof appiumConfigSchema['properties']['server']['properties'];
+
+/**
+ * Properties of `T` with keys `appiumCliDest` prop _or_ just camel-cased.
+ */
+type NormalizedServerConfig = {
+  [Prop in keyof ServerConfigMapping as AppiumServerSchema[Prop] extends WithDest
+    ? AppiumServerSchema[Prop]['appiumCliDest']
+    : KebabToCamel<Prop>]: ServerConfig[Prop];
 };
 
-export type NormalizedAppiumConfig = AppiumConfig & {
-  server: DestProps<ServerConfig>;
+/**
+ * "Normalized" config, which is like the flattened config (camel-cased keys), but not flattened.
+ */
+export type NormalizedAppiumConfig = {
+  server: NormalizedServerConfig;
+};
+
+/**
+ * Utility type to associate {@link AppiumServerSchema} with {@link ServerConfig}.
+ */
+type ServerConfigMapping = {
+  [Prop in keyof Required<ServerConfig>]: AppiumServerSchema[Prop];
 };
 
 /**
@@ -74,12 +86,12 @@ export type NormalizedAppiumConfig = AppiumConfig & {
  *
  * @todo Does not handle nested objects.
  */
-type FlattenedArgProps<T> = {
-  [P in keyof T as T[P] extends WithDest
-    ? T[P]['appiumCliDest']
-    : KebabToCamel<string & P>]: T[P] extends WithDefault
-    ? NonNullable<ServerConfig[P]>
-    : ServerConfig[P];
+type FlattenedArgProps = {
+  [Prop in keyof ServerConfigMapping as AppiumServerSchema[Prop] extends WithDest
+    ? AppiumServerSchema[Prop]['appiumCliDest']
+    : KebabToCamel<Prop>]: AppiumServerSchema[Prop] extends WithDefault
+    ? NonNullable<ServerConfig[Prop]>
+    : ServerConfig[Prop];
 };
 
 /**
@@ -90,10 +102,12 @@ type ExtraCLIArgs = {
    * Path to config file, if any
    */
   configFile: string | undefined;
+
   /**
    * If true, show the build info and exit
    */
   showConfig: boolean | undefined;
+
   /**
    * If true, open a REPL
    */
@@ -117,7 +131,4 @@ type ExtraCLIArgs = {
  * The Appium configuration as a flattened object, parsed via CLI args _and_ any CLI args unsupported by the config file.
  * @todo Does not make any assumptions about property names derived from extensions.
  */
-export type FlattenedAppiumConfig = FlattenedArgProps<
-  typeof appiumConfigSchema['properties']['server']['properties']
-> &
-  Partial<ExtraCLIArgs>;
+export type FlattenedAppiumConfig = FlattenedArgProps & ExtraCLIArgs;

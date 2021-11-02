@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "module": "es2015",
+    "target": "es2015",
+    "noEmit": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "packages/*/**/*.d.ts",
+    "packages/*/**/*.js",
+    "scripts/*.js",
+    "*.js"
+  ],
+  "exclude": ["**/node_modules/**", "**/build/**"]
+}

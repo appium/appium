@@ -403,12 +403,13 @@ export default [
         'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
       title: 'tmp config',
       type: 'string',
+      appiumCliDest: 'tmpDir',
     },
     argSpec: {
       name: 'tmp',
       ref: 'appium.json#/properties/server/properties/tmp',
       arg: 'tmp',
-      dest: 'tmp',
+      dest: 'tmpDir',
     },
   },
   {
@@ -462,7 +463,7 @@ export default [
       ref: 'appium.json#/properties/server/properties/use-plugins',
       arg: 'use-plugins',
       dest: 'usePlugins',
-      defaultValue: []
+      defaultValue: [],
     },
   },
   {

@@ -4053,9 +4053,9 @@
       "integrity": "sha512-R7cX/9UGUuUheFBnDMI6lQezQJKUfHdnZRKoXNtqxyAlzpgAhJNoG62LHEL3e5nygq1Qt2DQmbFB5xgNXUvomg=="
     },
     "appium-webdriveragent": {
-      "version": "3.15.0",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.15.0.tgz",
-      "integrity": "sha512-bQTBn9gsW2A/mtH2fBjKv9KnZQIzihHURw3C3+gM0gwCutr+ZBK8mvR5OvZelaprwXcsvMfHrahZv7uAZg+rLQ==",
+      "version": "3.15.1",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.15.1.tgz",
+      "integrity": "sha512-ts/dapE7JOa30TxkjvTGso+3LRNjcQgv6s97/a6cCR9eAytNCStn4ZhNvR1v3hh8vAYsXKoe5XPnpnTB/SWn+w==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",

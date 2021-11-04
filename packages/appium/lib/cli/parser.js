@@ -106,7 +106,7 @@ class ArgParser {
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {import('../../types/types').FlattenedAppiumConfig} - The parsed arguments
+   * @returns {import('../../types/types').ParsedArgs} - The parsed arguments
    */
   parseArgs (args = process.argv.slice(2)) {
     if (!NON_SERVER_ARGS.has(args[0])) {
@@ -246,7 +246,8 @@ class ArgParser {
 
         for (const [flagsOrNames, opts] of args) {
           // add_argument mutates params so make sure to send in copies instead
-          parser.add_argument(flagsOrNames, {...opts});
+          // @ts-ignore
+          parser.add_argument(...flagsOrNames, {...opts});
         }
       }
     }

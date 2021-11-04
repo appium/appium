@@ -103,7 +103,7 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|Array<string|Rule>} source The full path to the JSON file containing secure
+   * @param {string|string[]|Rule[]>} source The full path to the JSON file containing secure
    * values replacement rules or the rules themselves represented as an array
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist

@@ -23,7 +23,7 @@ import { inspectObject } from './utils';
 
 /**
  *
- * @param {FlattenedAppiumConfig} args
+ * @param {ParsedArgs} args
  * @param {boolean} [throwInsteadOfExit]
  */
 async function preflightChecks (args, throwInsteadOfExit = false) {
@@ -165,13 +165,13 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  * const options = {}; // config object
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
- * @param {FlattenedAppiumConfig} [args] - Parsed args
- * @returns {Promise<{parser: import('./cli/parser').ArgParser} & Partial<{appiumDriver: AppiumDriver, parsedArgs: FlattenedAppiumConfig}>>}
+ * @param {ParsedArgs} [args] - Parsed args
+ * @returns {Promise<{parser: import('./cli/parser').ArgParser} & Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
  */
 async function init (args) {
   const parser = await getParser();
   let throwInsteadOfExit = false;
-  /** @type {FlattenedAppiumConfig} */
+  /** @type {ParsedArgs} */
   let parsedArgs;
   if (args) {
     // if we have a containing package instead of running as a CLI process,
@@ -182,10 +182,10 @@ async function init (args) {
       // but remove it since it's not a real server arg per se
       delete args.throwInsteadOfExit;
     }
-    parsedArgs = args;
+    parsedArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
   } else {
     // otherwise parse from CLI
-    parsedArgs = /** @type {FlattenedAppiumConfig} */(parser.parseArgs());
+    parsedArgs = parser.parseArgs();
   }
 
   const configResult = await readConfigFile(parsedArgs.configFile);
@@ -199,8 +199,7 @@ async function init (args) {
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
-  // if no "subcommand" specified (e.g., `args` came from not-`parser.parse_args()`), assume we want a server.
-  if (parsedArgs.subcommand === SERVER_SUBCOMMAND || !parsedArgs.subcommand) {
+  if (parsedArgs.subcommand === SERVER_SUBCOMMAND) {
     parsedArgs = _.defaultsDeep(
       parsedArgs,
       configResult.config?.server,
@@ -208,21 +207,21 @@ async function init (args) {
     );
   }
 
-  args = _.defaultsDeep(
-    args,
+  parsedArgs = _.defaultsDeep(
+    parsedArgs,
     configResult.config ?? {},
   );
 
-  await logsinkInit(args);
+  await logsinkInit(parsedArgs);
 
   // if the user has requested the 'driver' CLI, don't run the normal server,
   // but instead pass control to the driver CLI
   if (parsedArgs.subcommand === DRIVER_TYPE) {
-    await runExtensionCommand(args, parsedArgs.subcommand, driverConfig);
+    await runExtensionCommand(parsedArgs, parsedArgs.subcommand, driverConfig);
     return {parser};
   }
   if (parsedArgs.subcommand === PLUGIN_TYPE) {
-    await runExtensionCommand(args, parsedArgs.subcommand, pluginConfig);
+    await runExtensionCommand(parsedArgs, parsedArgs.subcommand, pluginConfig);
     return {parser};
   }
 
@@ -239,7 +238,7 @@ async function init (args) {
     }
   }
 
-  const appiumDriver = new AppiumDriver(args);
+  const appiumDriver = new AppiumDriver(parsedArgs);
   // set the config on the umbrella driver so it can match drivers to caps
   appiumDriver.driverConfig = driverConfig;
   await preflightChecks(parsedArgs, throwInsteadOfExit);
@@ -249,7 +248,7 @@ async function init (args) {
 
 /**
  *
- * @param {FlattenedAppiumConfig} [args]
+ * @param {ParsedArgs} [args]
  * @returns
  */
 async function main (args) {
@@ -347,5 +346,5 @@ export { getSchema, validate, finalizeSchema } from './schema/schema';
 export { readConfigFile } from './config-file';
 
 /**
- * @typedef {import('../types/types').FlattenedAppiumConfig} FlattenedAppiumConfig
+ * @typedef {import('../types/types').ParsedArgs} ParsedArgs
  */

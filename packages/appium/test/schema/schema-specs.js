@@ -272,11 +272,11 @@ describe('schema', function () {
       let expected;
 
       beforeEach(function () {
-        // TS complains about this require()
-        // @ts-ignore
         schema.registerSchema(
           'driver',
           'fake',
+          // TS complains about this require()
+          // @ts-ignore
           require('@appium/fake-driver/build/lib/fake-driver-schema').default,
         );
         schema.finalizeSchema();

@@ -1,7 +1,11 @@
-import {AppiumConfiguration, ServerConfig} from './appium-config';
-import appiumConfigSchema from '../lib/schema/appium-config-schema';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../lib/ext-config-io';
+import {transformers} from '../lib/schema/cli-transformers';
 import {SERVER_SUBCOMMAND} from '../lib/cli/parser';
+import {
+  DRIVER_TYPE as DRIVER_SUBCOMMAND,
+  PLUGIN_TYPE as PLUGIN_SUBCOMMAND,
+} from '../lib/ext-config-io';
+import appiumConfigSchema from '../lib/schema/appium-config-schema';
+import {AppiumConfiguration, ServerConfig} from './appium-config';
 
 /**
  * Converts a kebab-cased string into a camel-cased string.
@@ -35,19 +39,37 @@ export type KeysToCamelCase<T> = {
 export type AppiumConfig = Partial<AppiumConfiguration>;
 
 /**
- * Certain properties have an `appiumCliDest` prop, which affects the shape of {@link FlattenedAppiumConfig}.
- * This type helps recognize these properties.
+ * Certain properties have an `appiumCliDest` prop, which affects the shape of
+ * {@link ParsedArgs}. This type helps recognize these properties.
  *
  * See `../lib/schema/keywords` for definition of `appiumCliDest`.
  */
-type WithDest = {appiumCliDest: string};
+interface WithDest {
+  appiumCliDest: string;
+}
 
 /**
- * Some properties have a `default` prop, which means practically they will not be `undefined` upon parsing.
+ * Some properties have a `default` prop, which means practically they will not
+ * be `undefined` upon parsing.
  *
- * We use this to ensure that the {@link FlattenedAppiumConfig} makes guarantees about the presence of properties.
+ * We use this to ensure that the {@link ParsedArgs} makes guarantees
+ * about the presence of properties.
  */
-type WithDefault = {default: any};
+interface WithDefault {
+  default: any;
+}
+
+interface WithCliTransformer {
+  appiumCliTransformer: keyof typeof transformers;
+}
+
+interface WithTypeArray {
+  type: 'array';
+}
+interface WithTypeObject {
+  type: 'object';
+}
+type WithTransformer = WithCliTransformer | WithTypeArray | WithTypeObject;
 
 /**
  * Derive the "constant" type of the server properties from the schema.
@@ -65,70 +87,115 @@ type NormalizedServerConfig = {
 };
 
 /**
- * "Normalized" config, which is like the flattened config (camel-cased keys), but not flattened.
+ * "Normalized" config, which is like the flattened config (camel-cased keys),
+ * but not flattened.
  */
 export type NormalizedAppiumConfig = {
   server: NormalizedServerConfig;
 };
 
 /**
- * Utility type to associate {@link AppiumServerSchema} with {@link ServerConfig}.
+ * Utility type to associate {@link AppiumServerSchema} with
+ * {@link ServerConfig}.
  */
 type ServerConfigMapping = {
   [Prop in keyof Required<ServerConfig>]: AppiumServerSchema[Prop];
 };
 
 /**
- * This type checks if `appiumCliDest` is present in the object via {@link WithDest}, and uses the _value_
- * of that property for the key name; otherwise uses the camel-cased value of the key name.
- *
- * Further, it checks for the existence of default values, and ensures those properties will be defined.
- *
- * @todo Does not handle nested objects.
+ * This type checks if `appiumCliDest` is present in the object via
+ * {@link WithDest}, and uses the _value_ of that property for the key name;
+ * otherwise uses the camel-cased value of the key name.
  */
-type FlattenedArgProps = {
-  [Prop in keyof ServerConfigMapping as AppiumServerSchema[Prop] extends WithDest
+type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
+  AppiumServerSchema[Prop] extends WithDest
     ? AppiumServerSchema[Prop]['appiumCliDest']
-    : KebabToCamel<Prop>]: AppiumServerSchema[Prop] extends WithDefault
+    : KebabToCamel<Prop>;
+
+/**
+ * Checks for the existence of default values, and ensures those properties will
+ * be defined (eliminate `| undefined` from the type).
+ */
+type DefaultForProp<Prop extends keyof ServerConfigMapping> =
+  AppiumServerSchema[Prop] extends WithDefault
     ? NonNullable<ServerConfig[Prop]>
     : ServerConfig[Prop];
+
+/**
+ * The final shape of the parsed CLI arguments.
+ */
+type ParsedArgsFromConfig = {
+  [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: DefaultForProp<Prop>;
 };
 
 /**
- * Random stuff that may appear in the parsed args which has no equivalent in a config file.
+ * Possible subcommands for the `appium` CLI.
  */
-type ExtraCLIArgs = {
+type CliSubCommands =
+  | typeof SERVER_SUBCOMMAND
+  | typeof DRIVER_SUBCOMMAND
+  | typeof PLUGIN_SUBCOMMAND;
+
+/**
+ * Possible subcommands of {@link DRIVER_SUBCOMMAND} or
+ * {@link PLUGIN_SUBCOMMAND}.
+ */
+type CliExtensionSubcommands =
+  | 'list'
+  | 'install'
+  | 'uninstall'
+  | 'update'
+  | 'run';
+
+/**
+ * Random stuff that may appear in the parsed args which has no equivalent in a
+ * config file.
+ */
+interface MoreArgs {
   /**
    * Path to config file, if any
    */
-  configFile: string | undefined;
+  configFile: string;
 
   /**
    * If true, show the build info and exit
    */
-  showConfig: boolean | undefined;
+  showConfig: boolean;
 
   /**
    * If true, open a REPL
    */
-  shell: boolean | undefined;
+  shell: boolean;
 
   /**
-   * If true, throw on error instead of exit. Not supported via CLI, but rather only programmatic usage.
+   * If true, throw on error instead of exit. Not supported via CLI, but rather
+   * only programmatic usage.
    */
-  throwInsteadOfExit: boolean | undefined;
+  throwInsteadOfExit: boolean;
 
   /**
    * Possible subcommands
    */
   subcommand:
-    | typeof DRIVER_TYPE
-    | typeof PLUGIN_TYPE
+    | typeof DRIVER_SUBCOMMAND
+    | typeof PLUGIN_SUBCOMMAND
     | typeof SERVER_SUBCOMMAND;
-};
+
+  /**
+   * Subcommands of `driver` subcommand
+   */
+  driverCommand: CliExtensionSubcommands;
+
+  /**
+   * Subcommands of `plugin` subcommand
+   */
+  pluginCommand: CliExtensionSubcommands;
+}
 
 /**
- * The Appium configuration as a flattened object, parsed via CLI args _and_ any CLI args unsupported by the config file.
- * @todo Does not make any assumptions about property names derived from extensions.
+ * The Appium configuration as a flattened object, parsed via CLI args _and_ any
+ * CLI args unsupported by the config file.
+ * @todo Does not make any assumptions about property names derived from
+ * extensions.
  */
-export type FlattenedAppiumConfig = FlattenedArgProps & ExtraCLIArgs;
+export type ParsedArgs = ParsedArgsFromConfig & Partial<MoreArgs>;

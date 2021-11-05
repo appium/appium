@@ -2166,6 +2166,11 @@
         "@wdio/logger": "6.10.10"
       }
     },
+    "@xmldom/xmldom": {
+      "version": "0.7.5",
+      "resolved": "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.7.5.tgz",
+      "integrity": "sha512-V3BIhmY36fXZ1OtVcI9W+FxQqxVLsPKcNjWigIaa81dLC9IolJl5Mt4Cvhmr0flUnjSpTdrbMTSbXqYqV5dT6A=="
+    },
     "accepts": {
       "version": "1.3.7",
       "resolved": "https://registry.npmjs.org/accepts/-/accepts-1.3.7.tgz",
@@ -4053,9 +4058,9 @@
       "integrity": "sha512-R7cX/9UGUuUheFBnDMI6lQezQJKUfHdnZRKoXNtqxyAlzpgAhJNoG62LHEL3e5nygq1Qt2DQmbFB5xgNXUvomg=="
     },
     "appium-webdriveragent": {
-      "version": "3.15.1",
-      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.15.1.tgz",
-      "integrity": "sha512-ts/dapE7JOa30TxkjvTGso+3LRNjcQgv6s97/a6cCR9eAytNCStn4ZhNvR1v3hh8vAYsXKoe5XPnpnTB/SWn+w==",
+      "version": "3.16.0",
+      "resolved": "https://registry.npmjs.org/appium-webdriveragent/-/appium-webdriveragent-3.16.0.tgz",
+      "integrity": "sha512-9yL5s48GqiQBqwwgmzgGk8BUAYZqmAvdVFoVwU/UcEeg6VvXA8UxwuFU087UmbzxF6XeJZDgI3Aa96kFEt2UjA==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "appium-base-driver": "^7.0.0",
@@ -4104,11 +4109,12 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.56.0",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.56.0.tgz",
-      "integrity": "sha512-zFe9vjjCJEUlzWKTiZ45ow6Z38lchf4sqcy8/TMy4y7aO6KuICExRH5dF7C6EJ8+OnvOVwYdTJhkTNmI6sZj1g==",
+      "version": "3.56.2",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.56.2.tgz",
+      "integrity": "sha512-xnUu7ec/O29SsWNrgCXkDLzoGq/eA46T+7XC2/PNzxi5tVFJmuPFPaueL1M6SkqEfXD55UNChT33KpcxIinfHQ==",
       "requires": {
         "@babel/runtime": "^7.0.0",
+        "@xmldom/xmldom": "^0.x",
         "appium-base-driver": "^7.0.0",
         "appium-idb": "^0.x",
         "appium-ios-device": "^1.8.0",
@@ -4121,7 +4127,7 @@
         "asyncbox": "^2.3.1",
         "bluebird": "^3.5.1",
         "css-selector-parser": "^1.4.1",
-        "js2xmlparser2": "^0.2.0",
+        "js2xmlparser2": "^0.x",
         "lodash": "^4.17.10",
         "lru-cache": "^6.0.0",
         "moment": "^2.24.0",
@@ -4129,10 +4135,9 @@
         "node-simctl": "^6.4.0",
         "portscanner": "2.2.0",
         "semver": "^7.0.0",
-        "source-map-support": "^0.5.5",
+        "source-map-support": "^0.x",
         "teen_process": "^1.14.0",
-        "ws": "^8.0.0",
-        "xmldom": "^0.x"
+        "ws": "^8.0.0"
       },
       "dependencies": {
         "ws": {

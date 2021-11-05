@@ -30,9 +30,12 @@ Appium 1.x will be receiving minor or patch releases only if XCTest gets breakin
 * Add `mobile:` extensions:
     * `mobile:listApps` to get the list of installed applications on the real device under test [appium-xcuitest-driver#1342](https://github.com/appium/appium-xcuitest-driver/pull/1342)
 * Add `NSProcessInfoThermalState` in [mobile: deviceInfo](https://github.com/appium/appium-xcuitest-driver#mobile-deviceinfo) [WebDriverAgent#536](https://github.com/appium/WebDriverAgent/pull/536)
-* Fix `useXctestrunFile` capability behavior on Xcode 13 [WebDriverAgent#538](https://github.com/appium/WebDriverAgent/pull/538)
-* Disable the build in notification checker by XCTest to avoid possible UI interuction failure on Xcode 13.2 and iOS 15.2 [WebDriverAgent#540](https://github.com/appium/WebDriverAgent/pull/540)
 * Add `nativeWebTapTabBarVisibility` and `nativeWebTapTabBarVisibility` Settings API items to handle _tab bar_ and _smart app banner_ via Settings API [appium-xcuitest-driver#1345](https://github.com/appium/appium-xcuitest-driver/pull/1345) (Thanks @zcmgyu)
+* Fix `useXctestrunFile` capability behavior on Xcode 13 [WebDriverAgent#538](https://github.com/appium/WebDriverAgent/pull/538)
+* Fix caching elements from `execute_script` in WebView context [appium-xcuitest-driver#1350](https://github.com/appium/appium-xcuitest-driver/pull/1350)
+* Fix `<` escape in the XML page source (`"appium:useJSONSource": false`) [appium-xcuitest-driver#1347](https://github.com/appium/appium-xcuitest-driver/pull/1347)
+* Disable the build in notification checker by XCTest to avoid possible UI interuction failure on Xcode 13.2 and iOS 15.2 [WebDriverAgent#540](https://github.com/appium/WebDriverAgent/pull/540)
+
 
 CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
 ===================================

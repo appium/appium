@@ -101,14 +101,14 @@ action.click(el).pause(keyboard).pause(keyboard).pause(keyboard).send_keys('keys
 # Build multiple action chains
 # Example: expressing a 1-second pinch-and-zoom
 # with a 500ms wait after the fingers first touch:
-f1 = action.add_pointer_input(:touch, 'finger1')
+f1 = ::Selenium::WebDriver::Interactions.pointer(:touch, name: 'finger1')
 f1.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f1.create_pointer_down(:left)
 f1.create_pause(0.5)
 f1.create_pointer_move(duration: 1, x: 200, y: 200, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f1.create_pointer_up(:left)
 
-f2 = action.add_pointer_input(:touch, 'finger2')
+f2 = ::Selenium::WebDriver::Interactions.pointer(:touch, name: 'finger2')
 f2.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f2.create_pointer_down(:left)
 f2.create_pause(0.5)
@@ -128,14 +128,14 @@ el = @driver.find_element(id: "some_id")
 # Build multiple action chains
 # Example: expressing a 1-second pinch-and-zoom
 # with a 500ms wait after the fingers first touch:
-f1 = @driver.action.add_pointer_input(:touch, 'finger1')
+f1 = ::Selenium::WebDriver::Interactions.pointer(:touch, name: 'finger1')
 f1.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f1.create_pointer_down(:left)
 f1.create_pause(0.5)
 f1.create_pointer_move(duration: 1, x: 200, y: 200, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f1.create_pointer_up(:left)
 
-f2 = @driver.action.add_pointer_input(:touch, 'finger2')
+f2 = ::Selenium::WebDriver::Interactions.pointer(:touch, name: 'finger2')
 f2.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f2.create_pointer_down(:left)
 f2.create_pause(0.5)

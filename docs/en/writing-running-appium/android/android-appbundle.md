@@ -9,6 +9,7 @@ We can get distributed apk files from the `.aab` file via the CLI. Using the gen
 
 1. Export `bundletool.jar` in your path
     - Appium looks for `bundletool.jar` in your local environemnt. Make sure you can find the path with `which 'bundletool.jar'`. If you can't find it, please set the path correctly.
+    - Please make sure the bundletool version is above 1.6.0
 2. Generate the `.apks` file from the `.aab` file
     - The `.aab` is available over Android Studio 3.2
     - You must sign correctly when you generate `.apks` from `.aab`. This step requires data signing.

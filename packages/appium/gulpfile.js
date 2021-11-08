@@ -44,6 +44,10 @@ gulp.task('copy-files', gulp.parallel(
   function copyTestConfigFixtures () {
     return gulp.src('./test/fixtures/config/*.{txt,yaml,json}')
       .pipe(gulp.dest('./build/test/fixtures/config'));
+  },
+  function copyJsonSchema () {
+    return gulp.src('./lib/appium-config.schema.json')
+      .pipe(gulp.dest('./build/lib'));
   }
 ));
 
@@ -51,7 +55,7 @@ gulp.task('generate-appium-schema-json', function () {
   // don't care about file contents as text, so `read: false`
   return gulp.src('./build/lib/schema/appium-config-schema.js', {read: false})
     .pipe(through(writeAppiumConfigJsonSchema))
-    .pipe(gulp.dest('./build/lib/'));
+    .pipe(gulp.dest('./lib/'));
 });
 
 boilerplate({
@@ -67,7 +71,7 @@ boilerplate({
     files: ['${testDir}/**/*-specs.js']
   },
   testTimeout: 160000,
-  postTranspile: ['copy-files', 'generate-appium-schema-json']
+  postTranspile: ['generate-appium-schema-json', 'copy-files']
 });
 
 // generates server arguments readme

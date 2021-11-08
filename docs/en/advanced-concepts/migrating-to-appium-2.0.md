@@ -163,7 +163,30 @@ TODO
 
 #### :tada: Driver and Plugin CLI args
 
-TODO
+#### CLI Argument Migrations
+
+Many driver-specific arguments have changed. These arguments are now only available upon installation of the appropriate driver:
+
+| Old Argument                 | New Argument                                                                                       | Driver(s)                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------ |
+| `--reboot`                   | `--driver-uiautomator2-reboot`                                                                     | `uiautomator2`                 |
+| `--ipa`                      | `--driver-xcuitest-ipa`                                                                            | `xcuitest`                     |
+| `--bootstrap-port`           | `--driver-uiautomator2-bootstrap-port`                                                             | `uiautomator2`                 |
+| `--backend-retries`          | `--driver-xcuitest-backend-retries`                                                                | `xcuitest`                     |
+| `--pre-launch`               | `--driver-xcuitest-pre-launch` _or_ `--driver-uiautomator2-pre-launch`                             | `uiautomator2` _or_ `xcuitest` |
+| `--safari`                   | `--driver-xcuitest-safari`                                                                         | `xcuitest`                     |
+| `--default-device`           | `--driver-xcuitest-default-device`                                                                 | `xcuitest`                     |
+| `--force-iphone`             | `--driver-xcuitest-force-iphone`                                                                   | `xcuitest`                     |
+| `--force-ipad`               | `--driver-xcuitest-force-ipad`                                                                     | `xcuitest`                     |
+| `--tracetemplate`            | `--driver-xcuitest-tracetemplate`                                                                  | `xcuitest`                     |
+| `--instruments`              | `--driver-xcuitest-instruments`                                                                    | `xcuitest`                     |
+| `--robot-address`            | `--driver-xcuitest-robot-address`                                                                  | `xcuitest`                     |
+| `--robot-port`               | `--driver-xcuitest-robot-port`                                                                     | `xcuitest`                     |
+| `--chromedriver-executable`  | `--driver-uiautomator2-chromedriver-executable` _or_ `--driver-selendroid-chromedriver-executable` | `uiautomator2` or `selendroid` |
+| `--isolate-sim-device`       | `--driver-xcuitest-sim-device`                                                                     | `xcuitest`                     |
+| `--suppress-adb-kill-server` | `--driver-uiautomator2-adb-kill-server`                                                            | `uiautomator2`                 |
+| `--webkit-debug-proxy-port`  | `--driver-xcuitest-webkit-debug-proxy-port`                                                        | `xcuitest`                     |
+| `--webdriveragent-port`      | `--driver-xcuitest-webdriveragent-port`                                                            | `xcuitest`                     |
 
 ## Special Notes for Cloud Providers
 

@@ -239,9 +239,17 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       // this command should never be proxied (which is useful for plugin developers who add
       // commands and generally would not want that command to be proxied instead of handled by the
       // plugin)
+      let pluginOverrodeProxy = false;
       if (isSessCmd && !spec.neverProxy && driverShouldDoJwpProxy(driver, req, spec.command)) {
-        await doJwpProxy(driver, req, res);
-        return;
+        if (!driver.pluginsToHandleCmd ||
+            driver.pluginsToHandleCmd(spec.command, req.params.sessionId).length === 0) {
+          await doJwpProxy(driver, req, res);
+          return;
+        }
+        SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol).debug(`Would have proxied ` +
+          `command directly, but a plugin exists which might require its value, so will let ` +
+          `its value be collected internally and made part of plugin chain`);
+        pluginOverrodeProxy = true;
       }
 
       // if a command is not in our method map, it's because we
@@ -282,6 +290,13 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol).debug(`Calling ` +
         `${driver.constructor.name}.${spec.command}() with args: ` +
         _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}));
+
+      if (pluginOverrodeProxy) {
+        // TODO for now we add this information on the args list, but that's mixing purposes here.
+        // We really should add another 'options' parameter to 'executeCommand', but this would be
+        // a breaking change for all drivers so would need to be handled carefully.
+        args.push({reqForProxy: req});
+      }
 
       driverRes = await driver.executeCommand(spec.command, ...args);
 

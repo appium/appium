@@ -451,6 +451,15 @@ class AppiumDriver extends BaseDriver {
     const isUmbrellaCmd = !isGetStatus && isAppiumDriverCommand(cmd);
     const isSessionCmd = !isGetStatus && !isUmbrellaCmd;
 
+    // if a plugin override proxying for this command and that is why we are here instead of just
+    // letting the protocol proxy the command entirely, determine that, get the request object for
+    // use later on, then clean up the args
+    const reqForProxy = _.last(args)?.reqForProxy;
+    if (reqForProxy) {
+      args.pop();
+    }
+
+
     // first do some error checking. If we're requesting a session command execution, then make
     // sure that session actually exists on the session driver, and set the session driver itself
     let sessionId = null;
@@ -492,6 +501,19 @@ class AppiumDriver extends BaseDriver {
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
 
+      if (reqForProxy) {
+        // we would have proxied this command had a plugin not handled it, so the default behavior
+        // is to do the proxy and retrieve the result internally so it can be passed to the plugin
+        // in case it calls 'await next()'. This requires that the driver have defined
+        // 'proxyCommand' and not just 'proxyReqRes'.
+        if (!dstSession.proxyCommand) {
+          throw new Error(`The default behavior for this command was to proxy, but the driver ` +
+                          `did not have the 'proxyCommand' method defined. To fully support ` +
+                          `plugins, drivers should have 'proxyCommand' set to a jwpProxy object's ` +
+                          `'command()' method, in addition to the normal 'proxyReqRes'`);
+        }
+        return await dstSession.proxyCommand(reqForProxy.originalUrl, reqForProxy.method, reqForProxy.body);
+      }
 
       if (isGetStatus) {
         return await this.getStatus();
@@ -595,26 +617,6 @@ class AppiumDriver extends BaseDriver {
     }
     return res;
   }
-
-  // We want to override basedriver's proxy avoidance detection since plugins might want to avoid
-  // proxying in order to handle a command, so we use this function to make an extra check whether
-  // plugins might want to do this.
-  proxyRouteIsAvoided (sessionId, method, url, body) {
-    if (super.proxyRouteIsAvoided(sessionId, method, url, body)) {
-      return true;
-    }
-    // if even just one plugin needs to avoid proxying, do so
-    for (const plugin of this.pluginsForSession(sessionId)) {
-      if (plugin.shouldAvoidProxy?.(method, url, body)) {
-        log.info(`Request to ${url} would normally be proxied, but plugin ${plugin.name} wants ` +
-                 `to handle it internally. We'll avoid proxying in this case.`);
-        return true;
-      }
-    }
-    return false;
-  }
-
-
 
   proxyActive (sessionId) {
     const dstSession = this.sessions[sessionId];

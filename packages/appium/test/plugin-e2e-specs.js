@@ -60,7 +60,7 @@ describe('FakePlugin', function () {
         installType: INSTALL_TYPE_LOCAL,
       }, PLUGIN_TYPE);
     }
-    baseArgs = {port: testPort, host: TEST_HOST, appiumHome, usePlugins: ['fake']};
+    baseArgs = {port: testPort, host: TEST_HOST, appiumHome, usePlugins: ['fake'], useDrivers: ['fake']};
   });
 
   describe('without plugin registered', function () {
@@ -105,7 +105,7 @@ describe('FakePlugin', function () {
       before(async function () {
         // then start server if we need to
         const usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
-        const args = {port: testPort, host: TEST_HOST, appiumHome, usePlugins};
+        const args = {port: testPort, host: TEST_HOST, appiumHome, usePlugins, useDrivers: ['fake']};
         server = await appiumServer(args);
       });
       after(async function () {
@@ -146,6 +146,19 @@ describe('FakePlugin', function () {
           const el = (await axios.post(`${baseUrl}/${sessionId}/element`, {using: 'xpath', value: '//MockWebView'})).data.value;
           el.should.have.property('fake');
         } finally {
+          await driver.deleteSession();
+        }
+      });
+
+      it('should allow original command to be proxied if supported', async function () {
+        const driver = await wdio(wdOpts);
+        const {sessionId} = driver;
+        try {
+          await axios.post(`${baseUrl}/${sessionId}/context`, {name: 'PROXY'});
+          const handle = (await axios.get(`${baseUrl}/${sessionId}/window/handle`)).data.value;
+          handle.should.eql('<<proxied via proxyCommand>>');
+        } finally {
+          await axios.post(`${baseUrl}/${sessionId}/context`, {name: 'NATIVE_APP'});
           await driver.deleteSession();
         }
       });

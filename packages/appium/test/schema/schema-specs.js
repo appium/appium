@@ -298,6 +298,7 @@ describe('schema', function () {
               ref: 'driver-fake.json#/properties/silly-web-server-port',
               arg: 'driver-fake-silly-web-server-port',
               dest: 'driver.fake.sillyWebServerPort',
+              defaultValue: undefined,
             },
           },
           {

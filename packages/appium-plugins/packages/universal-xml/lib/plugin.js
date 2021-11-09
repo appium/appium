@@ -6,21 +6,13 @@ import { transformSourceXml } from './source';
 import { transformQuery } from './xpath';
 import log from './logger';
 
-const SOURCE_URL_RE = new RegExp('/session/[^/]+/source');
-
 export default class UniversalXMLPlugin extends BasePlugin {
 
   commands = ['getPageSource', 'findElement', 'findElements', 'findElementFromElement',
     'findElementsFromElement'];
 
-  // we don't want the UIA2 driver to proxy source requests directly to the UIA2 server, since we
-  // want to handle the source command ourselves
-  shouldAvoidProxy (method, route) {
-    return method === 'GET' && SOURCE_URL_RE.test(route);
-  }
-
   async getPageSource (next, driver, sessId, addIndexPath = false) {
-    const source = await driver.getPageSource();
+    const source = next ? await next() : await driver.getPageSource();
     const metadata = {};
     const {platformName} = driver.caps;
     if (platformName.toLowerCase() === 'android') {

@@ -283,11 +283,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
         `${driver.constructor.name}.${spec.command}() with args: ` +
         _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}));
 
-      if (driver.executeCommand) {
-        driverRes = await driver.executeCommand(spec.command, ...args);
-      } else {
-        driverRes = await driver.execute(spec.command, ...args);
-      }
+      driverRes = await driver.executeCommand(spec.command, ...args);
 
       // Get the protocol after executeCommand
       currentProtocol = extractProtocol(driver, req.params.sessionId) || currentProtocol;

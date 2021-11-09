@@ -4,18 +4,8 @@ import _ from 'lodash';
 import { errors } from 'appium-base-driver';
 import BasePlugin from '@appium/base-plugin';
 import { compareImages } from './compare';
-import ImageElementFinder, { W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY } from './finder';
+import ImageElementFinder from './finder';
 import { ImageElement, IMAGE_ELEMENT_PREFIX } from './image-element';
-
-const IMG_EL_BODY_RE = new RegExp(
-  `"(${W3C_ELEMENT_KEY}|${MJSONWP_ELEMENT_KEY})":\s*` + // eslint-disable-line no-useless-escape
-  `"${IMAGE_ELEMENT_PREFIX}[^"]+"`
-);
-
-const IMG_EL_URL_RE = new RegExp(
-  `/(element|screenshot)` +
-  `/${IMAGE_ELEMENT_PREFIX}[^/]+`
-);
 
 const IMAGE_STRATEGY = '-image';
 
@@ -47,30 +37,6 @@ export default class ImageElementPlugin extends BasePlugin {
       }
     },
   };
-
-  shouldAvoidProxy (method, route, body) {
-    // if it looks like we have an image element in the url (as a route
-    // parameter), never proxy. Just look for our image element prefix in allowed
-    // positions (either after an 'element' or 'screenshot' path segment), and
-    // ensure the prefix is followed by something
-    if (IMG_EL_URL_RE.test(route)) {
-      return true;
-    }
-
-
-    // also if it looks like we have an image element in the request body (as
-    // a JSON parameter), never proxy. Basically check against a regexp of the
-    // json string of the body, where we know what the form of an image element
-    // must be
-    if (body) {
-      const stringBody = JSON.stringify(body);
-      if (stringBody && IMG_EL_BODY_RE.test(stringBody)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
 
   async compareImages (next, driver, ...args) {
     return await compareImages(...args);

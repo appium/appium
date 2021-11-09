@@ -51,7 +51,7 @@ class ArgParser {
     const parser = new ArgumentParser({
       add_help: true,
       description:
-        'A webdriver-compatible server for use with native and hybrid iOS and Android applications.',
+        'A webdriver-compatible server that facilitates automation of web, mobile, and other types of apps across various platforms.',
       prog,
     });
 

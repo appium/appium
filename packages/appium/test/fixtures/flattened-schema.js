@@ -1,5 +1,14 @@
 export default [
   {
+    argSpec: {
+      arg: 'address',
+      defaultValue: '0.0.0.0',
+      dest: 'address',
+      extName: undefined,
+      extType: undefined,
+      name: 'address',
+      ref: 'appium.json#/properties/server/properties/address',
+    },
     schema: {
       $comment: 'I think hostname covers both DNS and IPv4...could be wrong',
       appiumCliAliases: ['a'],
@@ -9,15 +18,17 @@ export default [
       title: 'address config',
       type: 'string',
     },
-    argSpec: {
-      name: 'address',
-      ref: 'appium.json#/properties/server/properties/address',
-      arg: 'address',
-      dest: 'address',
-      defaultValue: '0.0.0.0',
-    },
   },
   {
+    argSpec: {
+      arg: 'allow-cors',
+      defaultValue: false,
+      dest: 'allowCors',
+      extName: undefined,
+      extType: undefined,
+      name: 'allow-cors',
+      ref: 'appium.json#/properties/server/properties/allow-cors',
+    },
     schema: {
       default: false,
       description:
@@ -25,15 +36,17 @@ export default [
       title: 'allow-cors config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'allow-cors',
-      ref: 'appium.json#/properties/server/properties/allow-cors',
-      arg: 'allow-cors',
-      dest: 'allowCors',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'allow-insecure',
+      defaultValue: [],
+      dest: 'allowInsecure',
+      extName: undefined,
+      extType: undefined,
+      name: 'allow-insecure',
+      ref: 'appium.json#/properties/server/properties/allow-insecure',
+    },
     schema: {
       appiumCliTransformer: 'csv',
       default: [],
@@ -44,15 +57,17 @@ export default [
       type: 'array',
       uniqueItems: true,
     },
-    argSpec: {
-      name: 'allow-insecure',
-      ref: 'appium.json#/properties/server/properties/allow-insecure',
-      arg: 'allow-insecure',
-      dest: 'allowInsecure',
-      defaultValue: [],
-    },
   },
   {
+    argSpec: {
+      arg: 'base-path',
+      defaultValue: '',
+      dest: 'basePath',
+      extName: undefined,
+      extType: undefined,
+      name: 'base-path',
+      ref: 'appium.json#/properties/server/properties/base-path',
+    },
     schema: {
       appiumCliAliases: ['pa'],
       default: '',
@@ -61,29 +76,34 @@ export default [
       title: 'base-path config',
       type: 'string',
     },
-    argSpec: {
-      name: 'base-path',
-      ref: 'appium.json#/properties/server/properties/base-path',
-      arg: 'base-path',
-      dest: 'basePath',
-      defaultValue: '',
-    },
   },
   {
+    argSpec: {
+      arg: 'callback-address',
+      defaultValue: undefined,
+      dest: 'callbackAddress',
+      extName: undefined,
+      extType: undefined,
+      name: 'callback-address',
+      ref: 'appium.json#/properties/server/properties/callback-address',
+    },
     schema: {
       appiumCliAliases: ['ca'],
       description: 'Callback IP address (default: same as "address")',
       title: 'callback-address config',
       type: 'string',
     },
-    argSpec: {
-      name: 'callback-address',
-      ref: 'appium.json#/properties/server/properties/callback-address',
-      arg: 'callback-address',
-      dest: 'callbackAddress',
-    },
   },
   {
+    argSpec: {
+      arg: 'callback-port',
+      defaultValue: 4723,
+      dest: 'callbackPort',
+      extName: undefined,
+      extType: undefined,
+      name: 'callback-port',
+      ref: 'appium.json#/properties/server/properties/callback-port',
+    },
     schema: {
       appiumCliAliases: ['cp'],
       default: 4723,
@@ -93,15 +113,17 @@ export default [
       title: 'callback-port config',
       type: 'integer',
     },
-    argSpec: {
-      name: 'callback-port',
-      ref: 'appium.json#/properties/server/properties/callback-port',
-      arg: 'callback-port',
-      dest: 'callbackPort',
-      defaultValue: 4723,
-    },
   },
   {
+    argSpec: {
+      arg: 'debug-log-spacing',
+      defaultValue: false,
+      dest: 'debugLogSpacing',
+      extName: undefined,
+      extType: undefined,
+      name: 'debug-log-spacing',
+      ref: 'appium.json#/properties/server/properties/debug-log-spacing',
+    },
     schema: {
       default: false,
       description:
@@ -109,15 +131,17 @@ export default [
       title: 'debug-log-spacing config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'debug-log-spacing',
-      ref: 'appium.json#/properties/server/properties/debug-log-spacing',
-      arg: 'debug-log-spacing',
-      dest: 'debugLogSpacing',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'default-capabilities',
+      defaultValue: undefined,
+      dest: 'defaultCapabilities',
+      extName: undefined,
+      extType: undefined,
+      name: 'default-capabilities',
+      ref: 'appium.json#/properties/server/properties/default-capabilities',
+    },
     schema: {
       $comment: 'TODO',
       appiumCliAliases: ['dc'],
@@ -126,14 +150,17 @@ export default [
       title: 'default-capabilities config',
       type: 'object',
     },
-    argSpec: {
-      name: 'default-capabilities',
-      ref: 'appium.json#/properties/server/properties/default-capabilities',
-      arg: 'default-capabilities',
-      dest: 'defaultCapabilities',
-    },
   },
   {
+    argSpec: {
+      arg: 'deny-insecure',
+      defaultValue: [],
+      dest: 'denyInsecure',
+      extName: undefined,
+      extType: undefined,
+      name: 'deny-insecure',
+      ref: 'appium.json#/properties/server/properties/deny-insecure',
+    },
     schema: {
       $comment: 'Allowed values are defined by drivers',
       appiumCliTransformer: 'csv',
@@ -145,15 +172,17 @@ export default [
       type: 'array',
       uniqueItems: true,
     },
-    argSpec: {
-      name: 'deny-insecure',
-      ref: 'appium.json#/properties/server/properties/deny-insecure',
-      arg: 'deny-insecure',
-      dest: 'denyInsecure',
-      defaultValue: [],
-    },
   },
   {
+    argSpec: {
+      arg: 'keep-alive-timeout',
+      defaultValue: 600,
+      dest: 'keepAliveTimeout',
+      extName: undefined,
+      extType: undefined,
+      name: 'keep-alive-timeout',
+      ref: 'appium.json#/properties/server/properties/keep-alive-timeout',
+    },
     schema: {
       appiumCliAliases: ['ka'],
       default: 600,
@@ -163,30 +192,34 @@ export default [
       title: 'keep-alive-timeout config',
       type: 'integer',
     },
-    argSpec: {
-      name: 'keep-alive-timeout',
-      ref: 'appium.json#/properties/server/properties/keep-alive-timeout',
-      arg: 'keep-alive-timeout',
-      dest: 'keepAliveTimeout',
-      defaultValue: 600,
-    },
   },
   {
+    argSpec: {
+      arg: 'local-timezone',
+      defaultValue: false,
+      dest: 'localTimezone',
+      extName: undefined,
+      extType: undefined,
+      name: 'local-timezone',
+      ref: 'appium.json#/properties/server/properties/local-timezone',
+    },
     schema: {
       default: false,
       description: 'Use local timezone for timestamps',
       title: 'local-timezone config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'local-timezone',
-      ref: 'appium.json#/properties/server/properties/local-timezone',
-      arg: 'local-timezone',
-      dest: 'localTimezone',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'log',
+      defaultValue: undefined,
+      dest: 'logFile',
+      extName: undefined,
+      extType: undefined,
+      name: 'log',
+      ref: 'appium.json#/properties/server/properties/log',
+    },
     schema: {
       appiumCliAliases: ['g'],
       appiumCliDest: 'logFile',
@@ -194,14 +227,17 @@ export default [
       title: 'log config',
       type: 'string',
     },
-    argSpec: {
-      name: 'log',
-      ref: 'appium.json#/properties/server/properties/log',
-      arg: 'log',
-      dest: 'logFile',
-    },
   },
   {
+    argSpec: {
+      arg: 'log-filters',
+      defaultValue: undefined,
+      dest: 'logFilters',
+      extName: undefined,
+      extType: undefined,
+      name: 'log-filters',
+      ref: 'appium.json#/properties/server/properties/log-filters',
+    },
     schema: {
       $comment: 'TODO',
       description: 'One or more log filtering rules',
@@ -209,14 +245,17 @@ export default [
       title: 'log-filters config',
       type: 'array',
     },
-    argSpec: {
-      name: 'log-filters',
-      ref: 'appium.json#/properties/server/properties/log-filters',
-      arg: 'log-filters',
-      dest: 'logFilters',
-    },
   },
   {
+    argSpec: {
+      arg: 'log-level',
+      defaultValue: 'debug',
+      dest: 'loglevel',
+      extName: undefined,
+      extType: undefined,
+      name: 'log-level',
+      ref: 'appium.json#/properties/server/properties/log-level',
+    },
     schema: {
       appiumCliDest: 'loglevel',
       default: 'debug',
@@ -246,45 +285,51 @@ export default [
       title: 'log-level config',
       type: 'string',
     },
-    argSpec: {
-      name: 'log-level',
-      ref: 'appium.json#/properties/server/properties/log-level',
-      arg: 'log-level',
-      dest: 'loglevel',
-      defaultValue: 'debug',
-    },
   },
   {
+    argSpec: {
+      arg: 'log-no-colors',
+      defaultValue: false,
+      dest: 'logNoColors',
+      extName: undefined,
+      extType: undefined,
+      name: 'log-no-colors',
+      ref: 'appium.json#/properties/server/properties/log-no-colors',
+    },
     schema: {
       default: false,
       description: 'Do not use color in console output',
       title: 'log-no-colors config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'log-no-colors',
-      ref: 'appium.json#/properties/server/properties/log-no-colors',
-      arg: 'log-no-colors',
-      dest: 'logNoColors',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'log-timestamp',
+      defaultValue: false,
+      dest: 'logTimestamp',
+      extName: undefined,
+      extType: undefined,
+      name: 'log-timestamp',
+      ref: 'appium.json#/properties/server/properties/log-timestamp',
+    },
     schema: {
       default: false,
       description: 'Show timestamps in console output',
       title: 'log-timestamp config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'log-timestamp',
-      ref: 'appium.json#/properties/server/properties/log-timestamp',
-      arg: 'log-timestamp',
-      dest: 'logTimestamp',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'long-stacktrace',
+      defaultValue: false,
+      dest: 'longStacktrace',
+      extName: undefined,
+      extType: undefined,
+      name: 'long-stacktrace',
+      ref: 'appium.json#/properties/server/properties/long-stacktrace',
+    },
     schema: {
       default: false,
       description:
@@ -292,15 +337,17 @@ export default [
       title: 'long-stacktrace config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'long-stacktrace',
-      ref: 'appium.json#/properties/server/properties/long-stacktrace',
-      arg: 'long-stacktrace',
-      dest: 'longStacktrace',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'no-perms-check',
+      defaultValue: false,
+      dest: 'noPermsCheck',
+      extName: undefined,
+      extType: undefined,
+      name: 'no-perms-check',
+      ref: 'appium.json#/properties/server/properties/no-perms-check',
+    },
     schema: {
       default: false,
       description:
@@ -308,15 +355,17 @@ export default [
       title: 'no-perms-check config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'no-perms-check',
-      ref: 'appium.json#/properties/server/properties/no-perms-check',
-      arg: 'no-perms-check',
-      dest: 'noPermsCheck',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'nodeconfig',
+      defaultValue: undefined,
+      dest: 'nodeconfig',
+      extName: undefined,
+      extType: undefined,
+      name: 'nodeconfig',
+      ref: 'appium.json#/properties/server/properties/nodeconfig',
+    },
     schema: {
       $comment:
         'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
@@ -325,14 +374,17 @@ export default [
       title: 'nodeconfig config',
       type: 'object',
     },
-    argSpec: {
-      name: 'nodeconfig',
-      ref: 'appium.json#/properties/server/properties/nodeconfig',
-      arg: 'nodeconfig',
-      dest: 'nodeconfig',
-    },
   },
   {
+    argSpec: {
+      arg: 'port',
+      defaultValue: 4723,
+      dest: 'port',
+      extName: undefined,
+      extType: undefined,
+      name: 'port',
+      ref: 'appium.json#/properties/server/properties/port',
+    },
     schema: {
       appiumCliAliases: ['p'],
       default: 4723,
@@ -342,15 +394,17 @@ export default [
       title: 'port config',
       type: 'integer',
     },
-    argSpec: {
-      name: 'port',
-      ref: 'appium.json#/properties/server/properties/port',
-      arg: 'port',
-      dest: 'port',
-      defaultValue: 4723,
-    },
   },
   {
+    argSpec: {
+      arg: 'relaxed-security',
+      defaultValue: false,
+      dest: 'relaxedSecurity',
+      extName: undefined,
+      extType: undefined,
+      name: 'relaxed-security',
+      ref: 'appium.json#/properties/server/properties/relaxed-security',
+    },
     schema: {
       default: false,
       description:
@@ -358,30 +412,34 @@ export default [
       title: 'relaxed-security config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'relaxed-security',
-      ref: 'appium.json#/properties/server/properties/relaxed-security',
-      arg: 'relaxed-security',
-      dest: 'relaxedSecurity',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'session-override',
+      defaultValue: false,
+      dest: 'sessionOverride',
+      extName: undefined,
+      extType: undefined,
+      name: 'session-override',
+      ref: 'appium.json#/properties/server/properties/session-override',
+    },
     schema: {
       default: false,
       description: 'Enables session override (clobbering)',
       title: 'session-override config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'session-override',
-      ref: 'appium.json#/properties/server/properties/session-override',
-      arg: 'session-override',
-      dest: 'sessionOverride',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'strict-caps',
+      defaultValue: false,
+      dest: 'strictCaps',
+      extName: undefined,
+      extType: undefined,
+      name: 'strict-caps',
+      ref: 'appium.json#/properties/server/properties/strict-caps',
+    },
     schema: {
       default: false,
       description:
@@ -389,84 +447,96 @@ export default [
       title: 'strict-caps config',
       type: 'boolean',
     },
-    argSpec: {
-      name: 'strict-caps',
-      ref: 'appium.json#/properties/server/properties/strict-caps',
-      arg: 'strict-caps',
-      dest: 'strictCaps',
-      defaultValue: false,
-    },
   },
   {
+    argSpec: {
+      arg: 'tmp',
+      defaultValue: undefined,
+      dest: 'tmpDir',
+      extName: undefined,
+      extType: undefined,
+      name: 'tmp',
+      ref: 'appium.json#/properties/server/properties/tmp',
+    },
     schema: {
+      appiumCliDest: 'tmpDir',
       description:
         'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
       title: 'tmp config',
       type: 'string',
-      appiumCliDest: 'tmpDir',
-    },
-    argSpec: {
-      name: 'tmp',
-      ref: 'appium.json#/properties/server/properties/tmp',
-      arg: 'tmp',
-      dest: 'tmpDir',
     },
   },
   {
+    argSpec: {
+      arg: 'trace-dir',
+      defaultValue: undefined,
+      dest: 'traceDir',
+      extName: undefined,
+      extType: undefined,
+      name: 'trace-dir',
+      ref: 'appium.json#/properties/server/properties/trace-dir',
+    },
     schema: {
       description:
         'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
       title: 'trace-dir config',
       type: 'string',
     },
-    argSpec: {
-      name: 'trace-dir',
-      ref: 'appium.json#/properties/server/properties/trace-dir',
-      arg: 'trace-dir',
-      dest: 'traceDir',
-    },
   },
   {
+    argSpec: {
+      arg: 'use-drivers',
+      defaultValue: [],
+      dest: 'useDrivers',
+      extName: undefined,
+      extType: undefined,
+      name: 'use-drivers',
+      ref: 'appium.json#/properties/server/properties/use-drivers',
+    },
     schema: {
-      description:
-        'A list of drivers to activate. By default, all installed drivers will be activated.',
       appiumCliDescription:
         'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated.',
+      default: [],
+      description:
+        'A list of drivers to activate. By default, all installed drivers will be activated.',
       items: {type: 'string'},
       title: 'use-drivers config',
       type: 'array',
-      default: [],
       uniqueItems: true,
-    },
-    argSpec: {
-      name: 'use-drivers',
-      defaultValue: [],
-      ref: 'appium.json#/properties/server/properties/use-drivers',
-      arg: 'use-drivers',
-      dest: 'useDrivers',
     },
   },
   {
+    argSpec: {
+      arg: 'use-plugins',
+      defaultValue: [],
+      dest: 'usePlugins',
+      extName: undefined,
+      extType: undefined,
+      name: 'use-plugins',
+      ref: 'appium.json#/properties/server/properties/use-plugins',
+    },
     schema: {
-      description:
-        'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
       appiumCliDescription:
         'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins.',
-      items: {type: 'string'},
       default: [],
+      description:
+        'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
+      items: {type: 'string'},
       title: 'use-plugins config',
       type: 'array',
       uniqueItems: true,
     },
-    argSpec: {
-      name: 'use-plugins',
-      ref: 'appium.json#/properties/server/properties/use-plugins',
-      arg: 'use-plugins',
-      dest: 'usePlugins',
-      defaultValue: [],
-    },
   },
   {
+    argSpec: {
+      arg: 'webhook',
+      defaultValue: undefined,
+      dest: 'webhook',
+      extName: undefined,
+      extType: undefined,
+      name: 'webhook',
+      ref: 'appium.json#/properties/server/properties/webhook',
+    },
     schema: {
       $comment:
         'This should probably use a uri-template format to restrict the protocol to http/https',
@@ -475,12 +545,6 @@ export default [
       format: 'uri',
       title: 'webhook config',
       type: 'string',
-    },
-    argSpec: {
-      name: 'webhook',
-      ref: 'appium.json#/properties/server/properties/webhook',
-      arg: 'webhook',
-      dest: 'webhook',
     },
   },
 ];

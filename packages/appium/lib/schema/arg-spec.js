@@ -105,18 +105,13 @@ export class ArgSpec {
     const destKeypath =
       extType && extName ? [extType, extName, baseDest].join('.') : baseDest;
 
-    Object.defineProperties(this, {
-      defaultValue: {
-        enumerable: !_.isUndefined(defaultValue),
-        value: defaultValue,
-      },
-      name: {enumerable: true, value: name},
-      extType: {enumerable: !_.isUndefined(extType), value: extType},
-      extName: {enumerable: !_.isUndefined(extName), value: extName},
-      arg: {enumerable: true, value: arg},
-      dest: {enumerable: true, value: destKeypath},
-      ref: {enumerable: true, value: ref},
-    });
+    this.defaultValue = defaultValue;
+    this.name = name;
+    this.extType = extType;
+    this.extName = extName;
+    this.arg = arg;
+    this.dest = destKeypath;
+    this.ref = ref;
   }
 
   /**
@@ -195,7 +190,7 @@ export class ArgSpec {
    * @returns {Readonly<ArgSpec>}
    */
   static create (name, opts) {
-    return new ArgSpec(name, opts);
+    return Object.freeze(new ArgSpec(name, opts));
   }
 
   /**

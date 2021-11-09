@@ -15,6 +15,7 @@ class FakeDriver extends BaseDriver {
     this.caps = {};
     this.fakeThing = null;
     this.cliArgs = {};
+    this._proxyActive = false;
 
     this.desiredCapConstraints = {
       'app': {
@@ -22,6 +23,27 @@ class FakeDriver extends BaseDriver {
         isString: true
       }
     };
+  }
+
+  proxyActive () {
+    return this._proxyActive;
+  }
+
+  canProxy () {
+    return true;
+  }
+
+  proxyReqRes (req, res) {
+    // fake implementation of jwp proxy req res
+    res.set('content-type', 'application/json');
+    const resBodyObj = {value: 'proxied via proxyReqRes'};
+    const match = req.originalUrl.match(/\/session\/([^/]+)/);
+    resBodyObj.sessionId = match ? match[1] : null;
+    res.status(200).send(JSON.stringify(resBodyObj));
+  }
+
+  proxyCommand (/*url, method, body*/) {
+    return 'proxied via proxyCommand';
   }
 
   async createSession (jsonwpDesiredCapabilities, jsonwpRequiredCaps, w3cCapabilities, otherSessionData = []) {

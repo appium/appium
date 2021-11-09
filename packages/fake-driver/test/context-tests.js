@@ -15,7 +15,7 @@ function contextTests () {
     });
     it('should get contexts', async function () {
       await driver.getContexts()
-              .should.eventually.become(['NATIVE_APP', 'WEBVIEW_1']);
+              .should.eventually.become(['NATIVE_APP', 'PROXY', 'WEBVIEW_1']);
     });
     it('should not set context that is not there', async function () {
       await driver.switchContext('WEBVIEW_FOO')

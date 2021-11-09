@@ -306,6 +306,7 @@ class BaseDriver extends Protocol {
   async executeCommand (cmd, ...args) {
     // get start time for this command, and log in special cases
     let startTime = Date.now();
+
     if (cmd === 'createSession') {
       // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
       this.protocol = determineProtocol(...args);

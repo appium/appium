@@ -55,6 +55,11 @@ export default class FakePlugin extends BasePlugin {
     driver.fakeSessionData = args[0];
     return null;
   }
+
+  async getWindowHandle (next) {
+    const handle = await next();
+    return `<<${handle}>>`;
+  }
 }
 
 export { FakePlugin };

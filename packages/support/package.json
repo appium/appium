@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "2.54.2",
+  "version": "2.55.0",
   "description": "Support libs used across appium packages",
   "keywords": [
     "automation",
@@ -68,7 +68,7 @@
     "yauzl": "2.10.0"
   },
   "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.3"
+    "@appium/gulp-plugins": "^5.5.4"
   },
   "engines": {
     "node": ">=12",

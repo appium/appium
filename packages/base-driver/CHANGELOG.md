@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.1.2](https://github.com/appium/appium/compare/@appium/base-driver@8.1.1...@appium/base-driver@8.1.2) (2021-11-09)
+
+
+### Bug Fixes
+
+* **base-driver:** allow https in helper URL generation ([cf86871](https://github.com/appium/appium/commit/cf86871d4f5d3cf7f9865dd2409bd306a5dd920a))
+* **base-driver:** better URL handling in driver-e2e tests ([01d7c1b](https://github.com/appium/appium/commit/01d7c1bd7ebfa9a54b22d04f81c24ee95bec0962))
+* **base-driver:** type inconsistency ([#15982](https://github.com/appium/appium/issues/15982)) ([0e63393](https://github.com/appium/appium/commit/0e633939f9b6451899ce963391eaeb9e44bbba5d))
+
+
+
+
+
 ## [8.1.1](https://github.com/appium/appium/compare/@appium/base-driver@8.1.0...@appium/base-driver@8.1.1) (2021-09-16)
 
 **Note:** Version bump only for package @appium/base-driver

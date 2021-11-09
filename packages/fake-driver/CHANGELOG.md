@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@3.0.5...@appium/fake-driver@3.1.0) (2021-11-09)
+
+
+### Features
+
+* **fake-driver:** add a schema ([cf7438a](https://github.com/appium/appium/commit/cf7438a352a8668b6a3efdc2d7abb0252554630f))
+
+
+
+
+
 ## [3.0.5](https://github.com/appium/appium/compare/@appium/fake-driver@3.0.4...@appium/fake-driver@3.0.5) (2021-09-16)
 
 **Note:** Version bump only for package @appium/fake-driver

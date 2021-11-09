@@ -36,7 +36,7 @@ describe('cli-args', function () {
 
         describe('boolean', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'boolean'}}};
+            const schema = {properties: {foo: {type: 'boolean'}}, type: 'object'};
             result = getArgs({schema, extName, extType});
           });
 
@@ -54,7 +54,7 @@ describe('cli-args', function () {
 
         describe('object', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'object'}}};
+            const schema = {properties: {foo: {type: 'object'}}, type: 'object'};
             result = getArgs({schema, extName, extType});
           });
 
@@ -75,7 +75,7 @@ describe('cli-args', function () {
 
         describe('array', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'array'}}};
+            const schema = {properties: {foo: {type: 'array'}}, type: 'object'};
             result = getArgs({schema, extName, extType});
           });
 
@@ -96,7 +96,7 @@ describe('cli-args', function () {
 
         describe('number', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'number'}}};
+            const schema = {properties: {foo: {type: 'number'}}, type: 'object'};
             result = getArgs({schema, extName, extType});
           });
 
@@ -114,7 +114,7 @@ describe('cli-args', function () {
 
         describe('integer', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'integer'}}};
+            const schema = {properties: {foo: {type: 'integer'}}, type: 'object'};
             result = getArgs({schema, extName, extType});
           });
 
@@ -132,7 +132,10 @@ describe('cli-args', function () {
 
         describe('string', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'string'}}};
+            const schema = {
+              properties: {foo: {type: 'string'}},
+              type: 'object',
+            };
             result = getArgs({schema, extName, extType});
           });
 
@@ -150,7 +153,7 @@ describe('cli-args', function () {
 
         describe('null', function () {
           it('should throw', function () {
-            const schema = {properties: {foo: {type: 'null'}}};
+            const schema = {properties: {foo: {type: 'null'}}, type: 'object'};
             expect(() => getArgs({extType, extName, schema})).to.throw(
               TypeError,
               /unknown or disallowed/,
@@ -160,7 +163,10 @@ describe('cli-args', function () {
 
         describe('(unknown)', function () {
           it('should throw', function () {
-            const schema = {properties: {foo: {type: 'donkey'}}};
+            const schema = {
+              properties: {foo: {type: 'donkey'}},
+              type: 'object',
+            };
             expect(() => getArgs({extType, extName, schema})).to.throw(
               Error,
               /schema is invalid/,
@@ -174,10 +180,15 @@ describe('cli-args', function () {
 
         it('should not allow short aliases for extensions', function () {
           const schema = {
-            properties: {foo: {type: 'string', appiumCliAliases: ['fooooo', 'F']}},
+            properties: {
+              foo: {type: 'string', appiumCliAliases: ['fooooo', 'F']},
+            },
+            type: 'object',
           };
           result = getArgs({schema, extName, extType});
-          expect(result).to.have.property('--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F');
+          expect(result).to.have.property(
+            '--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F',
+          );
         });
       });
 
@@ -186,7 +197,14 @@ describe('cli-args', function () {
 
         it('should be preferred over `description`', function () {
           const schema = {
-            properties: {foo: {type: 'string', appiumCliDescription: 'foo', description: 'bar'}},
+            properties: {
+              foo: {
+                type: 'string',
+                appiumCliDescription: 'foo',
+                description: 'bar',
+              },
+            },
+            type: 'object',
           };
           result = getArgs({schema, extName, extType});
           expect(result['--plugin-blob-foo']).to.have.property('help', 'foo');
@@ -199,6 +217,7 @@ describe('cli-args', function () {
         it('should use the transformer', function () {
           const schema = {
             properties: {foo: {type: 'string', appiumCliTransformer: 'json'}},
+            type: 'object',
           };
           result = getArgs({schema, extName, extType});
           expect(result['--plugin-blob-foo'].type('{"herp": "derp"}')).to.eql({
@@ -209,6 +228,7 @@ describe('cli-args', function () {
         it('should error if the value is not valid for the transformer', function () {
           const schema = {
             properties: {foo: {type: 'string', appiumCliTransformer: 'json'}},
+            type: 'object',
           };
           result = getArgs({schema, extName, extType});
           expect(() => result['--plugin-blob-foo'].type('123')).to.throw(
@@ -229,6 +249,7 @@ describe('cli-args', function () {
                       enum: ['herp', 'derp'],
                     },
                   },
+                  type: 'object',
                 };
                 result = getArgs({schema, extName, extType});
                 expect(() => result['--plugin-blob-foo'].type('herp')).to.throw(
@@ -249,6 +270,7 @@ describe('cli-args', function () {
                       enum: ['{"herp": "derp"}', '{"derp": "herp"}'],
                     },
                   },
+                  type: 'object',
                 };
                 result = getArgs({schema, extName, extType});
                 expect(
@@ -267,6 +289,7 @@ describe('cli-args', function () {
                       enum: ['{"herp": "derp"}', '{"derp": "herp"}'],
                     },
                   },
+                  type: 'object',
                 };
                 result = getArgs({schema, extName, extType});
                 expect(() =>
@@ -288,13 +311,17 @@ describe('cli-args', function () {
                   enum: ['herp', 'derp'],
                 },
               },
+              type: 'object',
             };
             expect(() => getArgs({schema, extName, extType})).to.throw(
-              TypeError, /`enum` is only supported for `type: 'string'`/i,
+              TypeError,
+              /`enum` is only supported for `type: 'string'`/i,
             );
           });
 
-          it('should actually throw earlier by failing schema validation, but that would mean overriding the behavior of `enum` which sounds inadvisable');
+          it(
+            'should actually throw earlier by failing schema validation, but that would mean overriding the behavior of `enum` which sounds inadvisable',
+          );
         });
 
         describe('when used with a `string` type', function () {
@@ -306,9 +333,13 @@ describe('cli-args', function () {
                   enum: ['herp', 'derp'],
                 },
               },
+              type: 'object',
             };
             const result = getArgs({schema, extName, extType});
-            expect(result['--plugin-blob-foo']).to.have.deep.property('choices', ['herp', 'derp']);
+            expect(result['--plugin-blob-foo']).to.have.deep.property(
+              'choices',
+              ['herp', 'derp'],
+            );
           });
         });
       });
@@ -323,10 +354,19 @@ describe('cli-args', function () {
                 type: 'string',
               },
             },
+            type: 'object',
           };
 
-          const result = getArgs({schema, extName, extType, overrides: {'plugin.blob.foo': {enum: ['slug', 'snail']}}});
-          expect(result['--plugin-blob-foo']).to.have.deep.property('enum', ['slug', 'snail']);
+          const result = getArgs({
+            schema,
+            extName,
+            extType,
+            overrides: {'plugin.blob.foo': {enum: ['slug', 'snail']}},
+          });
+          expect(result['--plugin-blob-foo']).to.have.deep.property('enum', [
+            'slug',
+            'snail',
+          ]);
         });
       });
     });

@@ -161,7 +161,7 @@ class AppiumSchema {
      * @param {string} [extName]
      */
     const addArgSpecs = (schema, extType, extName) => {
-      _.forEach(schema, (propSchema, propName) => {
+      for (let [propName, propSchema] of Object.entries(schema)) {
         const argSpec = ArgSpec.create(propName, {
           dest: propSchema.appiumCliDest,
           defaultValue: propSchema.default,
@@ -170,7 +170,7 @@ class AppiumSchema {
         });
         const {arg} = argSpec;
         this._argSpecs.set(arg, argSpec);
-      });
+      }
     };
 
     addArgSpecs(

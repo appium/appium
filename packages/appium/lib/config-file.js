@@ -4,18 +4,13 @@ import betterAjvErrors from '@sidvind/better-ajv-errors';
 import { lilconfig } from 'lilconfig';
 import _ from 'lodash';
 import yaml from 'yaml';
-import log from './logger';
-import {
-  getSchema,
-  validate
-} from './schema/schema';
+import { getSchema, validate } from './schema/schema';
 
 /**
  * lilconfig loader to handle `.yaml` files
  * @type {import('lilconfig').LoaderSync}
  */
 function yamlLoader (filepath, content) {
-  log.debug(`Attempting to parse ${filepath} as YAML`);
   return yaml.parse(content);
 }
 
@@ -33,7 +28,6 @@ const rawConfig = new Map();
  * @type {import('lilconfig').LoaderSync}
  */
 function jsonLoader (filepath, content) {
-  log.debug(`Attempting to parse ${filepath} as JSON`);
   rawConfig.set(filepath, content);
   return JSON.parse(content);
 }
@@ -45,16 +39,17 @@ function jsonLoader (filepath, content) {
  * @returns {Promise<import('lilconfig').LilconfigResult>}
  */
 async function loadConfigFile (lc, filepath) {
-  log.debug(`Attempting to load config at filepath ${filepath}`);
   try {
     // removing "await" will cause any rejection to _not_ be caught in this block!
     return await lc.load(filepath);
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      err.message = `Config file not found at user-provided path: ${filepath}`;
+  } catch (/** @type {unknown} */err) {
+    if (/** @type {NodeJS.ErrnoException} */(err).code === 'ENOENT') {
+      /** @type {NodeJS.ErrnoException} */(err).message = `Config file not found at user-provided path: ${filepath}`;
+      throw err;
     } else if (err instanceof SyntaxError) {
       // generally invalid JSON
       err.message = `Config file at user-provided path ${filepath} is invalid:\n${err.message}`;
+      throw err;
     }
     throw err;
   }
@@ -66,12 +61,7 @@ async function loadConfigFile (lc, filepath) {
  * @returns {Promise<import('lilconfig').LilconfigResult>}
  */
 async function searchConfigFile (lc) {
-  log.debug('No config file specified; searching...');
-  const result = await lc.search();
-  if (!result?.filepath) {
-    log.debug('Could not find an Appium server config file');
-  }
-  return result;
+  return await lc.search();
 }
 
 /**
@@ -83,7 +73,7 @@ async function searchConfigFile (lc) {
  *   was in JSON format. If present, it will associate line numbers with errors.
  * - If `errors` happens to be empty, this will throw.
  * @param {import('ajv').ErrorObject[]} errors - Non-empty array of errors. Required.
- * @param {import('./config-file').ReadConfigFileResult['config']|any} [config] -
+ * @param {ReadConfigFileResult['config']|any} [config] -
  * Configuration & metadata
  * @param {FormatConfigErrorsOptions} [opts]
  * @throws {TypeError} If `errors` is empty
@@ -93,16 +83,10 @@ export function formatErrors (errors = [], config = {}, opts = {}) {
   if (errors && !errors.length) {
     throw new TypeError('Array of errors must be non-empty');
   }
-  // cached from the JSON loader; will be `undefined` if not JSON
-  const json = opts.json;
-  const format = opts.pretty ?? true ? 'cli' : 'js';
-
-  return /** @type {string} */ (
-    betterAjvErrors(getSchema(opts.schemaId), config, errors, {
-      json,
-      format,
-    })
-  );
+  return betterAjvErrors(getSchema(opts.schemaId), config, errors, {
+    json: opts.json,
+    format: 'cli',
+  });
 }
 
 /**
@@ -129,7 +113,6 @@ export async function readConfigFile (filepath, opts = {}) {
     : await searchConfigFile(lc);
 
   if (result && !result.isEmpty && result.filepath) {
-    log.debug(`Config file found at ${result.filepath}`);
     const {normalize = true, pretty = true} = opts;
     try {
       /** @type {ReadConfigFileResult} */
@@ -176,12 +159,10 @@ function normalizeConfig (config) {
    * @returns Normalized section of config
    */
   const normalize = (config, section) => {
-    // @ts-ignore
-    const obj = /** @type {object} */ (_.get(config, section, config)); // section is allowed to be `undefined`
+    const obj = _.isUndefined(section) ? config : _.get(config, section, config);
 
-    const mappedObj = _.mapKeys(
-      obj,
-      (__, prop) => _.camelCase(schema.properties[prop]?.appiumCliDest ?? prop),
+    const mappedObj = _.mapKeys(obj, (__, prop) =>
+      schema.properties[prop]?.appiumCliDest ?? _.camelCase(prop),
     );
 
     return _.mapValues(mappedObj, (value, property) => {
@@ -206,7 +187,7 @@ function normalizeConfig (config) {
  * @property {string} [filepath] - The path to the config file, if found
  * @property {boolean} [isEmpty] - If `true`, the config file exists but is empty
  * @property {AppiumConfig} [config] - The parsed configuration
- * @property {string|import('@sidvind/better-ajv-errors').IOutputError[]} [reason] - Human-readable error messages and suggestions. If the `pretty` option is `true`, this will be a nice string to print.
+ * @property {string|betterAjvErrors.IOutputError[]} [reason] - Human-readable error messages and suggestions. If the `pretty` option is `true`, this will be a nice string to print.
  */
 
 /**

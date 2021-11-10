@@ -39,7 +39,7 @@
   "dependencies": {
     "@appium/base-driver": "^8.1.2",
     "@appium/support": "^2.55.0",
-    "@babel/runtime": "7.16.0",
+    "@babel/runtime": "7.16.3",
     "asyncbox": "2.9.2",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

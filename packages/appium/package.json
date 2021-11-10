@@ -47,7 +47,7 @@
     "@appium/base-driver": "^8.1.2",
     "@appium/base-plugin": "1.7.2",
     "@appium/support": "^2.55.0",
-    "@babel/runtime": "7.16.0",
+    "@babel/runtime": "7.16.3",
     "@sidvind/better-ajv-errors": "0.9.2",
     "ajv": "8.6.2",
     "ajv-formats": "2.1.1",

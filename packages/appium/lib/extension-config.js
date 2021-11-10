@@ -111,9 +111,15 @@ export default class ExtensionConfig {
             val: argSchemaPath
           });
         }
+      } else if (_.isPlainObject(argSchemaPath)) {
+        try {
+          this.readExtensionSchema(extName, extData);
+        } catch (err) {
+          problems.push({err: `Unable to register embedded schema; ${err.message}`, val: argSchemaPath});
+        }
       } else {
         problems.push({
-          err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+          err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
           val: argSchemaPath
         });
       }
@@ -301,12 +307,17 @@ export default class ExtensionConfig {
         `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
       );
     }
-    const schemaPath = resolveFrom(
-      path.resolve(appiumHome, installPath),
-      // this path sep is fine because `resolveFrom` uses Node's module resolution
-      path.normalize(`${pkgName}/${argSchemaPath}`),
-    );
-    const moduleObject = require(schemaPath);
+    let moduleObject;
+    if (_.isString(argSchemaPath)) {
+      const schemaPath = resolveFrom(
+        path.resolve(appiumHome, installPath),
+        // this path sep is fine because `resolveFrom` uses Node's module resolution
+        path.normalize(`${pkgName}/${argSchemaPath}`),
+      );
+      moduleObject = require(schemaPath);
+    } else {
+      moduleObject = argSchemaPath;
+    }
     // this sucks. default exports should be destroyed
     const schema = moduleObject.__esModule
       ? moduleObject.default
@@ -348,7 +359,7 @@ export {
 /**
  * Extension data (pulled from config YAML)
  * @typedef {Object} ExtData
- * @property {string} [schema] - Optional schema path if the ext defined it
+ * @property {string|import('ajv').SchemaObject} [schema] - Optional schema path if the ext defined it
  * @property {string} pkgName - Package name
  * @property {string} installPath - Actually looks more like a module identifier? Resolved from `APPIUM_HOME`
  */

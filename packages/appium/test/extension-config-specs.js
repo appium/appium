@@ -143,7 +143,7 @@ describe('ExtensionConfig', function () {
           driverConfig
             .getSchemaProblems({schema: []}, 'foo')
             .should.deep.include({
-              err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+              err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
               val: [],
             });
         });
@@ -325,12 +325,13 @@ describe('ExtensionConfig', function () {
       beforeEach(function () {
         pluginConfig = PluginConfig.getInstance('/tmp/');
       });
-      describe('when provided an object with a defined non-string `schema` property', function () {
+
+      describe('when provided an object with a defined `schema` property of unsupported type', function () {
         it('should return an array with an associated problem', function () {
           pluginConfig
             .getSchemaProblems({schema: []}, 'foo')
             .should.deep.include({
-              err: 'Incorrectly formatted schema field; must be a path to a schema file.',
+              err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
               val: [],
             });
         });
@@ -376,6 +377,20 @@ describe('ExtensionConfig', function () {
               problems.should.be.empty;
             });
           });
+        });
+      });
+
+      describe('when provided an object `schema` property', function () {
+        it('should return an empty array', function () {
+          const problems = pluginConfig.getSchemaProblems(
+            {
+              pkgName: 'fixtures', // just corresponds to a directory name relative to `installPath` `(__dirname)`
+              installPath: __dirname,
+              schema: {type: 'object', properties: {foo: {type: 'string'}}},
+            },
+            'foo',
+          );
+          problems.should.be.empty;
         });
       });
     });
@@ -449,7 +464,7 @@ describe('ExtensionConfig', function () {
 
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', function () {
-          pluginConfig.readExtensionSchema (extName, extData);
+          pluginConfig.readExtensionSchema(extName, extData);
 
           // we don't have access to the schema registration cache directly, so this is as close as we can get.
           expect(mocks['resolve-from']).to.have.been.calledOnce;

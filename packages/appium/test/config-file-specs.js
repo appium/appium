@@ -350,19 +350,6 @@ describe('config-file', function () {
       });
     });
 
-    describe('when `opts.pretty` is `false`', function () {
-      it('should call `betterAjvErrors()` with option `format: "js"`', function () {
-        // @ts-ignore
-        configFileModule.formatErrors([{}], {}, {pretty: false});
-        expect(mocks['@sidvind/better-ajv-errors']).to.have.been.calledWith(
-          schema.getSchema(),
-          {},
-          [{}],
-          {format: 'js', json: undefined},
-        );
-      });
-    });
-
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
         // @ts-ignore

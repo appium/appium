@@ -7,7 +7,8 @@
     "target": "es2015",
     "noEmit": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
   },
   "include": [
     "packages/*/**/*.d.ts",

@@ -247,7 +247,6 @@ class AppiumSchema {
    * - Sets the {@link AppiumSchema._finalized _finalized} flag to `false`
    *
    * If you need to call {@link AppiumSchema.finalize} again, you'll want to call this first.
-   * @public
    * @returns {void}
    */
   reset () {
@@ -351,14 +350,14 @@ class AppiumSchema {
    * module's `toParserArgs`, which converts the finalized schema to parameters
    * used by `argparse`.
    * @throws If {@link AppiumSchema.finalize} has not been called yet.
-   * @returns {{schema: SchemaObject, argSpec: ArgSpec}[]}
+   * @returns {FlattenedSchema}
    */
   flatten () {
     const schema = this.getSchema();
 
     /** @type {{properties: SchemaObject, prefix: string[]}[]} */
     const stack = [{properties: schema.properties, prefix: []}];
-    /** @type {{schema: SchemaObject, argSpec: ArgSpec}[]} */
+    /** @type {FlattenedSchema} */
     const flattened = [];
 
     // this bit is a recursive algorithm rewritten as a for loop.
@@ -568,4 +567,11 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
 /**
  * A {@link SchemaObject} with `additionalProperties: false`
  * @typedef {SchemaObject & StrictProp} StrictSchemaObject
+ */
+
+/**
+ * A list of schemas associated with properties and their corresponding {@link ArgSpec} objects.
+ *
+ * Intermediate data structure used when converting the entire schema down to CLI arguments.
+ * @typedef {{schema: SchemaObject, argSpec: ArgSpec}[]} FlattenedSchema
  */

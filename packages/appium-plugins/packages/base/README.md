@@ -107,6 +107,20 @@ You might decide that you want to add some new routes or commands to the Appium 
 
 Note that the information about avoiding proxying above also applies to new commands that you've added. But to make life easy, instead of implementing `shouldAvoidProxy` for these cases, you can simply add the `neverProxy: true` field to your command specifier (see examples in the Fake Plugin class).
 
+### Unexpected session shutdown
+
+When developing a plugin you may want to add some cleanup logic by handling `deleteSession`. This works in most cases, except when the session does not finish cleanly. Appium sometimes determines that a session has finished unexpectedly, and in these situations, Appium will look for a method called `onUnexpectedShutdown` in your plugin class, which will be called (passing the current session driver as the first parameter, and the error object representing the cause of the shutdown as the second), giving you an opportunity to take any steps that might be necessary to clean up from the session. For example, keeping in mind that the function is not `await`ed you could implement something like this:
+
+```js
+async onUnexpectedShutdown(driver, cause) {
+  try {
+    // do some cleanup
+  } catch (e) {
+    // log any errors; don't allow anything to be thrown as they will be unhandled rejections
+  }
+}
+```
+
 ## Tips
 
 All of this is a lot to digest, and it's often easier to have a look at examples. The various plugins inside this monorepo are a good way to get familiar with what plugins can do!

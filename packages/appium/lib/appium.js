@@ -3,7 +3,6 @@ import log from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
 import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
-import B from 'bluebird';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from '@appium/support';
@@ -276,34 +275,27 @@ class AppiumDriver extends BaseDriver {
   }
 
   attachUnexpectedShutdownHandler (driver, innerSessionId) {
-    const removeSessionFromMasterList = (cause = new Error('Unknown error')) => {
-      log.warn(`Closing session, cause was '${cause.message}'`);
+    const onShutdown = (cause = new Error('Unknown error')) => {
+      log.warn(`Ending session, cause was '${cause.message}'`);
+
+      if (this.sessionPlugins[innerSessionId]) {
+        for (const plugin of this.sessionPlugins[innerSessionId]) {
+          if (_.isFunction(plugin.onUnexpectedShutdown)) {
+            log.debug(`Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`);
+            plugin.onUnexpectedShutdown(driver, cause);
+          } else {
+            log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
+          }
+        }
+      }
+
       log.info(`Removing session '${innerSessionId}' from our master session list`);
       delete this.sessions[innerSessionId];
       delete this.sessionPlugins[innerSessionId];
     };
 
-    // eslint-disable-next-line promise/prefer-await-to-then
-    if (_.isFunction((driver.onUnexpectedShutdown || {}).then)) {
-      // TODO: Remove this block after all the drivers use base driver above v 5.0.0
-      // Remove the session on unexpected shutdown, so that we are in a position
-      // to open another session later on.
-      driver.onUnexpectedShutdown
-        // eslint-disable-next-line promise/prefer-await-to-then
-        .then(() => {
-          // if we get here, we've had an unexpected shutdown, so error
-          throw new Error('Unexpected shutdown');
-        })
-        .catch((e) => {
-          // if we cancelled the unexpected shutdown promise, that means we
-          // no longer care about it, and can safely ignore it
-          if (!(e instanceof B.CancellationError)) {
-            removeSessionFromMasterList(e);
-          }
-        }); // this is a cancellable promise
-    } else if (_.isFunction(driver.onUnexpectedShutdown)) {
-      // since base driver v 5.0.0
-      driver.onUnexpectedShutdown(removeSessionFromMasterList);
+    if (_.isFunction(driver.onUnexpectedShutdown)) {
+      driver.onUnexpectedShutdown(onShutdown);
     } else {
       log.warn(`Failed to attach the unexpected shutdown listener. ` +
         `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`);
@@ -539,7 +531,7 @@ class AppiumDriver extends BaseDriver {
       const sessionId = res.value[0];
       log.info(`Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
                `to session ID ${sessionId}`);
-      this.pluginsForSession[sessionId] = this.sessionlessPlugins;
+      this.sessionPlugins[sessionId] = this.sessionlessPlugins;
       this.sessionlessPlugins = [];
     }
 

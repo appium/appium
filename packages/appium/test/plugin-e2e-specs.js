@@ -1,6 +1,7 @@
 // transpile:mocha
 import _ from 'lodash';
 import path from 'path';
+import B from 'bluebird';
 import { remote as wdio } from 'webdriverio';
 import axios from 'axios';
 import { main as appiumServer } from '../lib/main';
@@ -161,6 +162,25 @@ describe('FakePlugin', function () {
           await axios.post(`${baseUrl}/${sessionId}/context`, {name: 'NATIVE_APP'});
           await driver.deleteSession();
         }
+      });
+
+      it('should handle unexpected driver shutdown', async function () {
+        const newOpts = {...wdOpts};
+        newOpts.capabilities['appium:newCommandTimeout'] = 1;
+        const driver = await wdio(wdOpts);
+        let shutdownErr;
+        try {
+          let res = await axios.get(`http://${TEST_HOST}:${testPort}/unexpected`);
+          should.not.exist(res.data);
+          await B.delay(1500);
+          res = await axios.get(`http://${TEST_HOST}:${testPort}/unexpected`);
+          res.data.should.match(/Session ended/);
+          res.data.should.match(/timeout/);
+          await driver.deleteSession();
+        } catch (e) {
+          shutdownErr = e;
+        }
+        shutdownErr.message.should.match(/either terminated or not started/);
       });
     });
   }

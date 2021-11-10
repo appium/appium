@@ -391,19 +391,17 @@ class AppiumDriver extends BaseDriver {
    * @returns {Array} - array of plugin instances
    */
   pluginsForSession (sessionId = null) {
-    let plugins = [];
     if (sessionId) {
       if (!this.sessionPlugins[sessionId]) {
         this.sessionPlugins[sessionId] = this.createPluginInstances();
       }
-      plugins = this.sessionPlugins[sessionId];
-    } else {
-      if (_.isEmpty(this.sessionlessPlugins)) {
-        this.sessionlessPlugins = this.createPluginInstances();
-      }
-      plugins = this.sessionlessPlugins;
+      return this.sessionPlugins[sessionId];
     }
-    return plugins;
+
+    if (_.isEmpty(this.sessionlessPlugins)) {
+      this.sessionlessPlugins = this.createPluginInstances();
+    }
+    return this.sessionlessPlugins;
   }
 
   /**
@@ -423,16 +421,11 @@ class AppiumDriver extends BaseDriver {
       .filter((p) => _.isFunction(p[cmd]) || _.isFunction(p.handle));
   }
 
-  createPluginInstances (sessionId) {
-    if (!sessionId) {
-      sessionId = 'sessionless';
-    }
-    sessionId = _.truncate(sessionId, {length: 11});
+  createPluginInstances () {
     return this.pluginClasses.map((PluginClass) => {
-      const generalName = PluginClass.pluginName;
-      const name = `${generalName} (${sessionId})`;
+      const name = PluginClass.pluginName;
       const plugin = new PluginClass(name);
-      this.assignCliArgsToExtension('plugin', generalName, plugin);
+      this.assignCliArgsToExtension('plugin', name, plugin);
       return plugin;
     });
   }

@@ -1,7 +1,8 @@
 // transpile:main
 
 import {
-  Protocol, isSessionCommand, routeConfiguringFunction, determineProtocol
+  Protocol, isSessionCommand, routeConfiguringFunction, determineProtocol,
+  CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND,
 } from './protocol';
 import {
   NO_SESSION_ID_COMMANDS, ALL_COMMANDS, METHOD_MAP,
@@ -15,4 +16,5 @@ export {
   Protocol, routeConfiguringFunction, errors, isErrorType,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand, determineProtocol,
+  CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND,
 };

@@ -90,7 +90,7 @@
     "@types/sinon": "10.0.6",
     "@types/sinon-chai": "3.2.5",
     "@types/through2": "2.0.36",
-    "appium-base-driver": "7.10.1",
+    "appium-base-driver": "7.11.0",
     "asyncbox": "2.9.2",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.1.3",

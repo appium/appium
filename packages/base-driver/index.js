@@ -21,7 +21,7 @@ const {
   Protocol, routeConfiguringFunction, errors, isErrorType,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
-  normalizeBasePath, determineProtocol
+  normalizeBasePath, determineProtocol, CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND,
 } = protocol;
 
 export {
@@ -29,7 +29,7 @@ export {
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, determineProtocol,
   errorFromMJSONWPStatusCode as errorFromCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
-  DEFAULT_BASE_PATH, normalizeBasePath
+  DEFAULT_BASE_PATH, normalizeBasePath, CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND
 };
 
 // Express exports

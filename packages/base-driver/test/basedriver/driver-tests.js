@@ -336,7 +336,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           d.canProxy.should.be.an.instanceof(Function);
         });
         it('should return a boolean from #canProxy', function () {
-          [true, false].should.include(d.canProxy(sessId));
+          d.canProxy(sessId).should.be.a('boolean');
         });
         it('should throw an error when sessionId is wrong', function () {
           (() => { d.canProxy(); }).should.throw;

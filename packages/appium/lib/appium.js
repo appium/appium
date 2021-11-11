@@ -2,7 +2,8 @@ import _ from 'lodash';
 import log from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
-import { BaseDriver, errors, isSessionCommand } from '@appium/base-driver';
+import { BaseDriver, errors, isSessionCommand,
+         CREATE_SESSION_COMMAND } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from '@appium/support';
@@ -282,7 +283,11 @@ class AppiumDriver extends BaseDriver {
         for (const plugin of this.sessionPlugins[innerSessionId]) {
           if (_.isFunction(plugin.onUnexpectedShutdown)) {
             log.debug(`Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`);
-            plugin.onUnexpectedShutdown(driver, cause);
+            try {
+              plugin.onUnexpectedShutdown(driver, cause);
+            } catch (e) {
+              log.warn(`Got an error when running plugin ${plugin.name} shutdown handler: ${e}`);
+            }
           } else {
             log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
           }
@@ -492,12 +497,10 @@ class AppiumDriver extends BaseDriver {
         // in case it calls 'await next()'. This requires that the driver have defined
         // 'proxyCommand' and not just 'proxyReqRes'.
         if (!dstSession.proxyCommand) {
-          throw new Error(`The default behavior for this command was to proxy, but the driver ` +
-                          `did not have the 'proxyCommand' method defined. To fully support ` +
-                          `plugins, drivers should have 'proxyCommand' set to a jwpProxy object's ` +
-                          `'command()' method, in addition to the normal 'proxyReqRes'`);
+          throw new NoDriverProxyCommandError();
         }
-        return await dstSession.proxyCommand(reqForProxy.originalUrl, reqForProxy.method, reqForProxy.body);
+        return await dstSession.proxyCommand(reqForProxy.originalUrl, reqForProxy.method,
+          reqForProxy.body);
       }
 
       if (isGetStatus) {
@@ -522,13 +525,13 @@ class AppiumDriver extends BaseDriver {
 
     // if we had plugins, make sure to log out the helpful report about which plugins ended up
     // handling the command and which didn't
-    plugins.length && this.logPluginHandlerReport({cmd, cmdHandledBy});
+    this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
 
     // And finally, if the command was createSession, we want to migrate any plugins which were
     // previously sessionless to use the new sessionId, so that plugins can share state between
     // their createSession method and other instance methods
-    if (cmd === 'createSession' && this.sessionlessPlugins.length && !res.error) {
-      const sessionId = res.value[0];
+    if (cmd === CREATE_SESSION_COMMAND && this.sessionlessPlugins.length && !res.error) {
+      const sessionId = _.first(res.value);
       log.info(`Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
                `to session ID ${sessionId}`);
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
@@ -563,7 +566,11 @@ class AppiumDriver extends BaseDriver {
     return next;
   }
 
-  logPluginHandlerReport ({cmd, cmdHandledBy}) {
+  logPluginHandlerReport (plugins, {cmd, cmdHandledBy}) {
+    if (!plugins.length) {
+      return;
+    }
+
     // at the end of the day, we have an object representing which plugins ended up getting
     // their code run as part of handling this command. Because plugins can choose *not* to
     // pass control to other plugins or to the default driver behavior, this is information
@@ -573,7 +580,7 @@ class AppiumDriver extends BaseDriver {
     const didHandle = Object.keys(cmdHandledBy).filter((k) => cmdHandledBy[k]);
     const didntHandle = Object.keys(cmdHandledBy).filter((k) => !cmdHandledBy[k]);
     if (didntHandle.length > 0) {
-      log.info(`Command '${cmd}' was not handled by the following beahviors or plugins, even ` +
+      log.info(`Command '${cmd}' was *not* handled by the following behaviours or plugins, even ` +
                `though they were registered to handle it: ${JSON.stringify(didntHandle)}. The ` +
                `command *was* handled by these: ${JSON.stringify(didHandle)}.`);
     }
@@ -623,6 +630,24 @@ class AppiumDriver extends BaseDriver {
 // should be handled by this, our umbrella driver
 function isAppiumDriverCommand (cmd) {
   return !isSessionCommand(cmd) || cmd === 'deleteSession';
+}
+
+/**
+ * Thrown when Appium tried to proxy a command using a driver's `proxyCommand` method but the
+ * method did not exist
+ */
+export class NoDriverProxyCommandError extends Error {
+  /**
+   * @type {Readonly<string>}
+   */
+  code = 'APPIUMERR_NO_DRIVER_PROXYCOMMAND';
+
+  constructor () {
+    super(`The default behavior for this command was to proxy, but the driver ` +
+          `did not have the 'proxyCommand' method defined. To fully support ` +
+          `plugins, drivers should have 'proxyCommand' set to a jwpProxy object's ` +
+          `'command()' method, in addition to the normal 'proxyReqRes'`);
+  }
 }
 
 export { AppiumDriver };

@@ -6,6 +6,10 @@ Appium 1.22.1 is a patch release
 We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
 Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or makor bugs pop up before the EOL.
 
+### General
+* Allow unzip with JS implementation when `APPIUM_PREFER_SYSTEM_UNZIP` environment variable is given as `0` or `false` [appium-base-driver#537](https://github.com/appium/appium-base-driver/pull/537)
+    * This change may fix [installation error in iOS simulators](https://github.com/appium/appium/issues/16050)
+
 ### Android General
 
 * Use bundletool to install .apks packages [appium-adb#578](https://github.com/appium/appium-adb/pull/578)

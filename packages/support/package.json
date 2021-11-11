@@ -39,7 +39,7 @@
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.0",
-    "bplist-parser": "0.3.0",
+    "bplist-parser": "0.3.1",
     "find-root": "1.1.0",
     "form-data": "4.0.0",
     "get-stream": "6.0.1",

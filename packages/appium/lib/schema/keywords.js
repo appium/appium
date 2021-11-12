@@ -86,8 +86,8 @@ export const keywords = {
    * Flag to tell Appium to _not_ provide this property as a CLI argument.
    * @type {KeywordDefinition}
    */
-  appiumCliIgnore: {
-    keyword: 'appiumCliIgnore',
+  appiumCliIgnored: {
+    keyword: 'appiumCliIgnored',
     metaSchema: {
       type: 'boolean',
       description: 'If `true`, Appium will not provide this property as a CLI argument. This is NOT the same as a "hidden" argument.',
@@ -124,7 +124,7 @@ export const keywords = {
  * @property {string} [appiumCliDest]
  * @property {string} [appiumCliDescription]
  * @property {string[]} [appiumCliAliases]
- * @property {boolean} [appiumCliIgnore]
+ * @property {boolean} [appiumCliIgnored]
  * @property {AppiumCliTransformerName} [appiumCliTransformer]
  * @property {boolean} [appiumDeprecated]
  */

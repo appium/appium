@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import { system, tempDir, fs, util, zip, net, timing } from '@appium/support';
+import { tempDir, fs, util, zip, net, timing } from '@appium/support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
@@ -322,15 +322,16 @@ async function unzipApp (zipPath, dstRoot, supportedAppExtensions) {
   try {
     logger.debug(`Unzipping '${zipPath}'`);
     const timer = new timing.Timer().start();
+    const useSystemUnzipEnv = process.env.APPIUM_PREFER_SYSTEM_UNZIP;
+    const useSystemUnzip = _.isEmpty(useSystemUnzipEnv)
+      || !['0', 'false'].includes(_.toLower(useSystemUnzipEnv));
     /**
      * Attempt to use use the system `unzip` (e.g., `/usr/bin/unzip`) due
      * to the significant performance improvement it provides over the native
      * JS "unzip" implementation.
      * @type {import('@appium/support/lib/zip').ExtractAllOptions}
      */
-    const extractionOpts = {
-      useSystemUnzip: !system.isWindows(),
-    };
+    const extractionOpts = {useSystemUnzip};
     // https://github.com/appium/appium/issues/14100
     if (path.extname(zipPath) === IPA_EXT) {
       logger.debug(`Enforcing UTF-8 encoding on the extracted file names for '${path.basename(zipPath)}'`);

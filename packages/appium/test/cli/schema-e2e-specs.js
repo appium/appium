@@ -1,7 +1,7 @@
 // @ts-check
 import path from 'path';
 import {fs, tempDir} from '@appium/support';
-import {installExtension, runAppium} from './cli-helpers';
+import {installLocalExtension, runAppium} from './cli-helpers';
 
 const {expect} = chai;
 
@@ -26,7 +26,7 @@ describe('CLI behavior controlled by schema', function () {
     let help;
 
     before(async function () {
-      await installExtension(
+      await installLocalExtension(
         appiumHome,
         'driver',
         path.join(__dirname, 'fixtures', 'test-driver'),

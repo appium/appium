@@ -50,6 +50,16 @@ driver.execute_script('mobile: startScreenStreaming', {
 })
 ```
 
+```javascript
+// Javascript
+driver.execute('mobile: startScreenStreaming', {
+    'width': 1080,
+    'height': 1920,
+    'considerRotation': true,
+    'quality': 45,
+    'bitRate': 500000,
+})
+```
 
 ### mobile: stopScreenStreaming
 
@@ -65,4 +75,9 @@ driver.executeScript("mobile: stopScreenStreaming");
 ```python
 # Python
 driver.execute_script('mobile: stopScreenStreaming')
+```
+
+```javascript
+// Javascript
+driver.execute('mobile: stopScreenStreaming')
 ```

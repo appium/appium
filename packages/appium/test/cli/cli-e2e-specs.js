@@ -1,19 +1,25 @@
 
 import path from 'path';
-import { exec } from 'teen_process';
 import { tempDir, fs, mkdirp, util } from '@appium/support';
 import { KNOWN_DRIVERS } from '../../lib/drivers';
 import { PROJECT_ROOT } from '../helpers';
-
-
-// the ESM `main.js` is not executable as-is
-const executable = path.join(PROJECT_ROOT, 'packages', 'appium', 'build', 'lib', 'main.js');
+import { runAppium } from './cli-helpers';
 
 describe('CLI', function () {
+  /**
+   * @type {string}
+   */
   let appiumHome;
+
+  /**
+   * @type {(extCommand: string, args?: string[], raw?: boolean, ext?: ExtensionType) => Promise<string|import('./cli-helpers').TeenProcessExecResult>}
+   */
+  let run;
 
   before(async function () {
     appiumHome = await tempDir.openDir();
+    const runner = runAppium(appiumHome);
+    run = async (extCommand, args = [], raw = false, ext = 'driver') => await runner([ext, extCommand, ...args], {raw});
   });
 
   after(async function () {
@@ -25,25 +31,6 @@ describe('CLI', function () {
     await mkdirp(appiumHome);
   }
 
-  async function run (extCommand, args = [], raw = false, ext = 'driver') {
-    try {
-      const ret = await exec(process.execPath, [executable, ext, extCommand, ...args], {
-        cwd: PROJECT_ROOT,
-        env: {
-          APPIUM_HOME: appiumHome,
-          PATH: process.env.PATH
-        }
-      });
-      if (raw) {
-        return ret;
-      }
-      return ret.stdout;
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err);
-      throw err;
-    }
-  }
   describe('Driver CLI', function () {
     const localFakeDriverPath = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
     describe('list', function () {
@@ -224,3 +211,8 @@ describe('CLI', function () {
     });
   });
 });
+
+
+/**
+ * @typedef {import('../../lib/ext-config-io').ExtensionType} ExtensionType
+ */

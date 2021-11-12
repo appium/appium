@@ -80,6 +80,20 @@ function getSchemaValidator ({ref: schemaId}, coerce = _.identity) {
 }
 
 /**
+ * Determine the description for display on the CLI, given the schema.
+ * @param {AppiumJSONSchema} schema
+ * @returns {string}
+ */
+function makeDescription (schema) {
+  const {appiumCliDescription, description = '', appiumDeprecated} = schema;
+  let desc = appiumCliDescription ?? description;
+  if (appiumDeprecated) {
+    desc = `[DEPRECATED] ${desc}`;
+  }
+  return desc;
+}
+
+/**
  * Given arg `name`, a JSON schema `subSchema`, and options, return an argument definition
  * as understood by `argparse`.
  * @param {AppiumJSONSchema} subSchema - JSON schema for the option
@@ -93,8 +107,6 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     type,
     appiumCliAliases,
     appiumCliTransformer,
-    appiumCliDescription,
-    description,
     enum: enumValues,
   } = subSchema;
 
@@ -110,7 +122,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
   /** @type {import('argparse').ArgumentOptions} */
   let argOpts = {
     required: false,
-    help: appiumCliDescription ?? description,
+    help: makeDescription(subSchema)
   };
 
   /**
@@ -238,7 +250,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
  * aliases to `argparse` arguments; empty if no schema found
  */
 export function toParserArgs (opts = {}) {
-  const flattened = flattenSchema();
+  const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnore);
   return new Map(
     _.map(flattened, ({schema, argSpec}) =>
       subSchemaToArgDef(schema, argSpec, opts),

@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@appium/base-driver": "^8.1.2",
-    "@appium/base-plugin": "1.7.2",
+    "@appium/base-plugin": "1.8.0",
     "@appium/support": "^2.55.0",
     "@babel/runtime": "7.16.3",
     "@sidvind/better-ajv-errors": "0.9.2",

@@ -106,6 +106,7 @@ export async function readConfigFile (filepath, opts = {}) {
       '.json': jsonLoader,
       noExt: jsonLoader,
     },
+    packageProp: 'appiumConfig'
   });
 
   const result = filepath

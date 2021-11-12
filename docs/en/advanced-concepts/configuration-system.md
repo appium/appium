@@ -8,9 +8,23 @@ This document will be a technical overview of how the configuration system works
 
 A config file is a JSON, JavaScript, or YAML file which can be validated against a schema. By default, this file will be named `.appiumrc.{json,js,yaml,yml}` and should be in the root of the project which depends upon `appium`. Other filenames and locations are supported via the `--config <file>` flag. For obvious reasons, the `config` argument is disallowed within config files.
 
-When an Appium server is started via the `appium` executable, the `init` function in `lib/main.js` will call into `lib/config-file.js` to load and/or search for a configuration file. It is not an error if a configuration file is not found.
+In lieu of a separate file, configuration can be embedded in a project's `package.json` using the `appiumConfig` property, e.g.,:
 
-The [`lilconfig`](https://npm.im/lilconfig) package provides the search & load functionality; refer to its documentation for more information about the search paths. Appium provides support for config files written in YAML via the package [`yaml`](https://npm.im/yaml).
+```json
+{
+  "appiumConfig": {
+    "server": {
+      "port": 12345
+    }
+  }
+}
+```
+
+When an Appium server is started via the `appium` executable, the `init` function in `lib/main.js` will call into `lib/config-file.js` to load and/or search for a configuration file and in `package.json`.
+
+> Note: It is not an error if configuration isn't found!
+
+The [`lilconfig`](https://npm.im/lilconfig) package provides the search & load functionality; refer to its documentation for more information about the search paths. Additionally, Appium provides support for config files written in YAML via the package [`yaml`](https://npm.im/yaml).
 
 If a config file is found and successfully [validated](#validation), the result will be merged with a set of defaults and any additionall CLI arguments. CLI arguments have precedence over config files, and config files have precedence over defaults.
 
@@ -24,7 +38,7 @@ The _base_ schema is a [JSON Schema Draft-7](https://json-schema.org/draft/2020-
 
 > Note that this file is the _base_ schema; this will become painfully relevant.
 
-This file is is _not_ a JSON file, because a) JSON is painful to work with for humans and is especially reviled by @jlipps, and b) `ajv` accepts objects, not JSON files.
+This file is is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.
 
 It is more straightforward to explain how config files are validated, so we'll start there.
 
@@ -65,6 +79,7 @@ The conversion algorithm (see function `subSchemaToArgDef` in `lib/schema/cli-ar
 - A schema cannot natively express "store the value of `--foo=<value>` in a property called `bar`" in a schema (this corresponds to the `ArgumentOption['dest']` prop).
 - A schema cannot natively express aliases; e.g., `--verbose` can also be `-v`
 - A schema `enum` is not restricted to multiple types, but `argparse`'s equivalent `ArgumentOption['choices']` prop _is_
+- A schema does not know about `argparse`'s concept of "actions" (note that Appium is not currently using custom actions--though it did, and it could again).
 - `argparse` has no native type for `email`, `hostname`, `ipv4`, `uri` etc., and the schema does
 - Schema validation only _validates_, it does not perform translation, transformation, or coercion (mostly). `argparse` allows this.
 - Schemas allow the `null` type, for whatever reason. Ever pass `null` on the CLI?
@@ -78,14 +93,14 @@ Let's look more closely at handling types.
 
 #### Argument Types via `ajv`
 
-While `argparse` allows consumers, via its API, to define the _type_ of various arguments (e.g., a string, number, boolean flag, etc.), Appium most avoids this native API. Why?
+While `argparse` allows consumers, via its API, to define the _type_ of various arguments (e.g., a string, number, boolean flag, etc.), Appium mostly avoids these built-in types. _Why is that?_ Well:
 
-1. We already know what's allowed, because we've defined it in a schema.
+1. We already know the type of an argument, because we've defined it in a schema.
 2. `ajv` provides validation against a schema.
-3. A schema allows for greater expression of types, allowed values, etc., than `argparse`
+3. A schema allows for greater expression of types, allowed values, etc., than `argparse` can provide natively.
 4. The expressiveness of a schema allows for better error messaging.
 
-To that end, the adapter eschews `argparse`'s built-in types (see allowed string values of `ArgumentOption['type']`) and instead abuses the ability to provide a _function_ as a `type`. The exception is _boolean_ flags, which do not have a `type`, but rather `action: 'store_true'`.
+To that end, the adapter eschews `argparse`'s built-in types (see allowed string values of `ArgumentOption['type']`) and instead abuses the ability to provide a _function_ as a `type`. The exception is _boolean_ flags, which do not have a `type`, but rather `action: 'store_true'`. The world may never know why.
 
 ##### Types as Functions
 
@@ -140,31 +155,31 @@ An `ArgSpec` object stores the following metadata:
 | `dest`          | Property name in parsed arguments object (as returned by `argparse`'s `parse_args()`) |
 | `defaultValue?` | Value of the `default` keyword in schema, if appropriate                              |
 
-When a schema is [finalized](#schema-finalization), the `Map` is populated with all known arguments.
+When a schema is [finalized](#schema-finalization), the `Map` is populated with `ArgSpec` objects for all known arguments.
 
 So when the adapter is creating the pipeline of functions for the argument's `type`, it already has an `ArgSpec` for the argument. It creates a function which calls `validate(value, ref)` (in `lib/schema/schema.js`) where `value` is whatever the user provided, and `ref` is the `ref` property of the `ArgSpec`. The concept is that `ajv` can validate using _any_ `ref` it knows about; each property in a schema can be referenced by this `ref` whether it's defined or not. To help visualize, if a schema is:
 
 ```json
 {
-    "$id": "my-schema.json"
-    "type": "object",
-    "properties": {
-        "foo": {
-            "type": "number"
-        }
+  "$id": "my-schema.json",
+  "type": "object",
+  "properties": {
+    "foo": {
+      "type": "number"
     }
+  }
 }
 ```
 
 The `ref` of `foo` would be `my-schema.json#/properties/foo`. Assuming our `Ajv` instance knows about this `my-schema.json`, then we can call its `getSchema(ref)` method (which has a `schema` property, but is a misnomer nonetheless) to get a validation function; `validate(value, ref)` in `schema.js` calls this validation function.
 
-> The schema spec says a schema author can supply an explicit `$id` keyword to override this; it's unsupported by Appium at this time.
+> Note: The schema spec says a schema author can supply an explicit `$id` keyword to override this; it's unsupported by Appium at this time. If needed, extension authors must carefully use `$ref` without custom `$id`s. It's highly unlikely an extension would have a schema so complicated as to need this, however; Appium itself doesn't even use `$ref` to define its own properties!
 
 Next, let's take a look at how Appium loads schemas. This actually happens _before_ any argument validation.
 
 ## Schema Loading
 
-First, let's ignore extensions for a moment, and start with the base schema.
+Let's ignore extensions for a moment, and start with the base schema.
 
 When something first imports the `lib/schema/schema.js` module, an instance of an `AppiumSchema` is created. This is a singleton, and its methods are exported from the module (all of which are bound to the instance).
 
@@ -174,7 +189,7 @@ Otherwise, the `AppiumSchema` instance does not interact with the `Ajv` instance
 
 When does finalization happen? Well:
 
-1. When the `appium` executable begins, it checks for and configures extensions (more on this later) in `APPIUM_HOME`.
+1. When the `appium` executable begins, it _checks for and configures extensions_ (hand-wave) in `APPIUM_HOME`.
 2. Only then does it start to think about arguments--it instantiates an `ArgParser`, which (as you'll recall) runs the adapter to convert the schema to arguments.
 3. _Finalization happens here_--when creating the parser. Appium need the schema(s) to be registered with `ajv` in order to create validation functions for arguments.
 4. Thereafter, Appium parses the arguments with the `ArgParser`.
@@ -212,9 +227,7 @@ The corresponding property in a config file would be `server.<extension-type>.<e
 
 The naming convention described above avoids problems of one extension type having a name conflict with a different extension type.
 
-> Note: while an extension can provide aliases via `appiumCliAliases`, "short" flags are disallowed, since all arguments from extensions are prefixed with `--<extension-type>-<extension-name>-`.
-
-> Note: the extension name and argument name will be kebab-cased for the CLI according to Lodash's rules around kebab-casing.
+> Note: while an extension can provide aliases via `appiumCliAliases`, "short" flags are disallowed, since all arguments from extensions are prefixed with `--<extension-type>-<extension-name>-`. The extension name and argument name will be kebab-cased for the CLI, according to [Lodash's rules](https://lodash.com/docs/4.17.15#kebabCase) around kebab-casing.
 
 The schema object will look much like Appium's base schema, but it will only have top-level properties (nested properties are currently unsupported). Example:
 
@@ -250,24 +263,24 @@ Behind the scenes, the base schema has `driver` and `plugin` properties which ar
 }
 ```
 
-This is why we call it the "base" schema--it is _mutated_ due to extensions. The extension schemas are kept separately, but the references are added to the schema before it's ultimately added to `ajv`.
+This is why we call it the "base" schema--it is _mutated_ when extensions provide schemas. The extension schemas are kept separately, but the _references_ are added to the schema before it's ultimately added to `ajv`. This works because an `Ajv` instance understands references _from_ any schema it knows about _to_ any schema it knows about.
 
 > Note: This makes it impossible to provide a complete static schema for Appium _and_ the installed extensions (as of Nov 5 2021). A static `.json` schema _is_ generated from the base (via a Gulp task), but it does not contain any extension schemas. The static schema also has uses beyond Appium; e.g., IDEs can provide contextual error-checking of config files this way. Let's solve this?
 
-Just like how we look up the schema ID of a particular argument in the base schema, validation of arguments from extensions happens the exact same way. If the `cowabunga` driver has the schema ID `driver-cowabunga.json`, then the `fizz` property can be referenced from any schema registered with `ajv` via `driver-cowabunga.json#/properties/fizz`.
+Just like how we look up the reference ID of a particular argument in the base schema, validation of arguments from extensions happens the exact same way. If the `cowabunga` driver has the schema ID `driver-cowabunga.json`, then the `fizz` property can be referenced from any schema registered with `ajv` via `driver-cowabunga.json#/properties/fizz`. "Base" schema arguments begin with `appium.json#properties/` instead.
 
 ## Development Environment Support
 
 During the flow of development, a couple extra tasks have been automated to maintain the base schema:
 
-- As a post-transpilation step, a `lib/schema/appium-config.schema.json` gets generated from `lib/schema/appium-config-schema.js` (in addition to its CJS counterpart generated by Babel). This file is copied into `build/lib/schema/`.
-- A pre-commit hook (see `scripts/generate-schema-declarations.js` in the root monorepo) generates a `types/appium-config-schema.d.ts` from the above JSON file, which should be published.
+- As a post-transpilation step, a `lib/appium-config.schema.json` gets generated from `lib/schema/appium-config-schema.js` (in addition to its CJS counterpart generated by Babel). This file is under version control. It ends up being _copied_ to `build/lib/appium-config.schema.json` in this step.
+- A pre-commit hook (see `scripts/generate-schema-declarations.js` in the root monorepo) generates a `types/appium-config-schema.d.ts` from the above JSON file. The types in `types/types.d.ts` depend upon this file. This file is under version control.
 
 ## Custom Keyword Reference
 
 Keywords are defined in `lib/schema/keywords.js`.
 
-- `appiumCliAliases`: allows a schema to express aliases (e.g., a CLI argument can be `--verbose` or `-v`). This is an array of strings. Strings shorter than three (3) characters will begin with a single dash (`-`) instead of a double dash (`--`).
+- `appiumCliAliases`: allows a schema to express aliases (e.g., a CLI argument can be `--verbose` or `-v`). This is an array of strings. Strings shorter than three (3) characters will begin with a single dash (`-`) instead of a double-dash (`--`). Note that any argument provided by an extension will begin with a double-dash, because these are required to have the `--<extension-type>-<extension-name>-` prefix.
 - `appiumCliDest`: allows a schema to specify a custom property name in the post-`argprase` arguments objects. If not set, this becomes a camelCased string.
 - `appiumCliDescription`: allows a schema to override the description of the argument when displayed on the command-line. This is useful paired with `appiumCliTransformer` (or `array`/`object`-typed properties), since there's a substantial difference between what a CLI-using user can provide vs. what a config-file-using user can provide.
 - `appiumCliTransformer`: currently a choice between `csv` and `json`. These are custom functions which post-process a value. They are not used when loading & validating config files, but the idea should be that they result in the same object you'd get if you used whatever the config file wanted (e.g., an array of strings). `csv` is for comma-delimited strings and CSV files; `json` is for raw JSON strings and `.json` files.

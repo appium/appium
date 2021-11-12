@@ -5,6 +5,9 @@ import {exec} from 'teen_process';
 import {PROJECT_ROOT} from '../helpers';
 import path from 'path';
 
+/**
+ * Path to the `appium` executable. Sort of.
+ */
 export const EXECUTABLE = path.join(
   PROJECT_ROOT,
   'packages',
@@ -16,35 +19,53 @@ export const EXECUTABLE = path.join(
 
 /**
  * Runs the `appium` executable with the given args.
+ *
+ * If the process exits with a nonzero code, the error will be a
  * @param {string} appiumHome - Path to `APPIUM_HOME`
  * @param {string[]} args - Args, including commands
  * @returns {Promise<TeenProcessExecResult>}
  */
 async function run (appiumHome, args) {
+  const env = {
+    APPIUM_HOME: appiumHome,
+    PATH: process.env.PATH,
+  };
   try {
     /**
      * @type {TeenProcessExecResult}
      */
     return await exec(process.execPath, [EXECUTABLE, ...args], {
       cwd: PROJECT_ROOT,
-      env: {
-        APPIUM_HOME: appiumHome,
-        PATH: process.env.PATH,
-      },
+      env,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-    throw err;
+    const {stdout, stderr} = /** @type {TeenProcessExecError} */(err);
+    /**
+     * @type {AppiumRunError}
+     */
+    const runErr = Object.assign(
+      err,
+      {
+        originalMessage: err.message,
+        message: `${stdout.trim()}\n\n${stderr.trim()}`,
+        command: `${process.execPath} ${EXECUTABLE} ${args.join(' ')}`,
+        env,
+        cwd: PROJECT_ROOT,
+      });
+    throw runErr;
   }
 }
 
+/**
+ * Runs the `appium` executable with the given args and returns contents of `STDOUT`.
+ *
+ * Do not use this when testing error output, as it will likely be in `STDERR`. Use {@link runAppiumRaw} instead.
+ */
 export const runAppium = _.curry(
   /**
-   * Runs the `appium` executable with the given args
    * @param {string} appiumHome - Path to `APPIUM_HOME`
    * @param {string[]} args - Args, including commands
-   * @returns {Promise<string>} Contents of `STDOUT`
+   * @returns {Promise<string>} Contents of ``STDOUT``
    */
   async (appiumHome, args) => {
     const {stdout} = await run(appiumHome, args);
@@ -52,9 +73,12 @@ export const runAppium = _.curry(
   },
 );
 
+/**
+ * Runs the `appium` executable with the given args and returns the entire
+ * {@link TeenProcessExecResult} object.
+ */
 export const runAppiumRaw = _.curry(
   /**
-   * Runs the `appium` executable with the given args
    * @param {string} appiumHome - Path to `APPIUM_HOME`
    * @param {string[]} args - Args, including commands
    * @returns {Promise<TeenProcessExecResult>} Raw result of `exec`
@@ -62,9 +86,12 @@ export const runAppiumRaw = _.curry(
   async (appiumHome, args) => await run(appiumHome, args),
 );
 
+/**
+ * Runs the `appium` executable with the given args in JSON mode.
+ * Will reject with the contents of `STDOUT` (which were to be pasred) if parsing into JSON fails.
+ */
 export const runAppiumJson = _.curry(
   /**
-   * Runs the `appium` executable with the given args
    * @param {string} appiumHome - Path to `APPIUM_HOME`
    * @param {string[]} args - Args, including commands
    * @returns {Promise<TeenProcessExecResult>} Raw result of `exec`
@@ -73,35 +100,74 @@ export const runAppiumJson = _.curry(
     if (!args.includes('--json')) {
       args.push('--json');
     }
-    return JSON.parse(await runAppium(appiumHome, args));
+    const result = await runAppium(appiumHome, args);
+    try {
+      return JSON.parse(result);
+    } catch (err) {
+      err.message = `Error parsing JSON. Contents of STDOUT: ${result}`;
+      throw err;
+    }
   },
 );
 
-export const installExtension = _.curry(
+/**
+ * Given a path to a local extension, install it into `APPIUM_HOME` via CLI.
+ */
+export const installLocalExtension = _.curry(
   /**
-   * Given a path to an extension, install it.
    * @param {string} appiumHome
    * @param {import('../../lib/ext-config-io').ExtensionType} type
    * @param {string} pathToExtension
    * @returns {Promise<object>}
    */
-  async (appiumHome, type, pathToExtension) => await runAppiumJson(appiumHome, [
-    type,
-    'install',
-    '--source',
-    'local',
-    pathToExtension,
-  ]),
+  async (appiumHome, type, pathToExtension) =>
+    await runAppiumJson(appiumHome, [
+      type,
+      'install',
+      '--source',
+      'local',
+      pathToExtension,
+    ]),
 );
 
 /**
+ * Options for {@link runAppium}.
+ * @private
  * @typedef {Object} RunAppiumOptions
  * @property {boolean} [raw] - Whether to return the raw output from `teen_process`
  */
 
 /**
+ * Result from a non-zero-exit execution of `appium`
  * @typedef {Object} TeenProcessExecResult
  * @property {string} stdout - Stdout
  * @property {string} stderr - Stderr
  * @property {number?} code - Exit code
+ */
+
+/**
+ * Extra props `teen_process.exec` adds to its error objects
+ * @typedef {Object} TeenProcessExecErrorProps
+ * @property {string} stdout - STDOUT
+ * @property {string} stderr - STDERR
+ * @property {number?} code - Exit code
+ */
+
+/**
+ * Error thrown by `teen_process.exec`
+ * @typedef {Error & TeenProcessExecErrorProps} TeenProcessExecError
+ */
+
+/**
+ * Error thrown by all of the functions in this file which execute `appium`.
+ * @typedef {Error & AppiumRunErrorProps & TeenProcessExecErrorProps} AppiumRunError
+ */
+
+/**
+ * Wraps the error returned by {@link exec}.
+ * @typedef {Object} AppiumRunErrorProps
+ * @property {string} originalMessage - Original error message
+ * @property {string} command - Command that was run
+ * @property {string} env - Environment variables
+ * @property {string} cwd - Current working directory
  */

@@ -165,7 +165,10 @@ class ArgParser {
    */
   static _patchExit (parser) {
     parser.exit = (code, msg) => {
-      throw new Error(msg);
+      if (code) {
+        throw new Error(msg);
+      }
+      process.exit();
     };
   }
 

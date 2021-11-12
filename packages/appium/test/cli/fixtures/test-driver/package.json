@@ -1,0 +1,27 @@
+{
+  "name": "test-driver",
+  "version": "1.0",
+  "private": true,
+  "appium": {
+    "driverName": "test",
+    "automationName": "Test",
+    "platformNames": [
+      "Test"
+    ],
+    "mainClass": "TestDriver",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "mcmonkey-mcbean": {
+          "type": "string",
+          "appiumCliIgnore": true
+        },
+        "oliver-boliver": {
+          "type": "number",
+          "appiumDeprecated": true,
+          "description": "funkytelechy"
+        }
+      }
+    }
+  }
+}

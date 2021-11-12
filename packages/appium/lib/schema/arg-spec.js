@@ -216,3 +216,7 @@ export class ArgSpec {
  * @property {string} [dest]
  * @property {D} [defaultValue]
  */
+
+/**
+ * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ */

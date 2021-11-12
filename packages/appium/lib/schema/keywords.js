@@ -90,7 +90,22 @@ export const keywords = {
     keyword: 'appiumCliIgnore',
     metaSchema: {
       type: 'boolean',
-      description: 'If `true`, Appium will not provide this property as a CLI argument.'
+      description: 'If `true`, Appium will not provide this property as a CLI argument. This is NOT the same as a "hidden" argument.',
+      enum: [true]
+    }
+  },
+
+  /**
+   * Mark this property as deprecated.
+   * @type {KeywordDefinition}
+   */
+  appiumDeprecated: {
+    keyword: 'appiumDeprecated',
+    metaSchema: {
+      type: 'boolean',
+      description: 'If `true`, this property will be displayed as "deprecated" to the user',
+      enum: [true],
+      $comment: 'JSON schema draft-2019-09 keyword `deprecated` serves the same purpose. This keyword should itself be deprecated if we move to draft-2019-09!'
     }
   }
 };
@@ -111,6 +126,7 @@ export const keywords = {
  * @property {string[]} [appiumCliAliases]
  * @property {boolean} [appiumCliIgnore]
  * @property {AppiumCliTransformerName} [appiumCliTransformer]
+ * @property {boolean} [appiumDeprecated]
  */
 
 

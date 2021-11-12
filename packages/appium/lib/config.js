@@ -5,9 +5,6 @@ import { exec } from 'teen_process';
 import { rootDir } from './utils';
 import logger from './logger';
 import semver from 'semver';
-import {
-  StoreDeprecatedDefaultCapabilityAction, DEFAULT_CAPS_ARG,
-} from './cli/argparse-actions';
 import findUp from 'find-up';
 import { getDefaultsFromSchema } from './schema/schema';
 
@@ -26,11 +23,6 @@ const BUILD_INFO = {
 
 function getNodeVersion () {
   return semver.coerce(process.version);
-}
-
-function isSubClass (candidateClass, superClass) {
-  return _.isFunction(superClass) && _.isFunction(candidateClass)
-    && (candidateClass.prototype instanceof superClass || candidateClass === superClass);
 }
 
 async function updateBuildInfo (useGithubApiFallback = false) {
@@ -225,23 +217,6 @@ function getNonDefaultServerArgs (parser, args) {
   return _.pickBy(args, (__, key) => isNotDefault(key));
 }
 
-function getDeprecatedArgs (parser, args) {
-  // go through the server command line arguments and figure
-  // out which of the ones used are deprecated
-  return parser.rawArgs.reduce((acc, [[name], {dest, default: defaultValue, action}]) => {
-    if (!args[dest] || args[dest] === defaultValue) {
-      return acc;
-    }
-
-    if (action?.deprecated_for) {
-      acc[name] = action.deprecated_for;
-    } else if (isSubClass(action, StoreDeprecatedDefaultCapabilityAction)) {
-      acc[name] = DEFAULT_CAPS_ARG;
-    }
-    return acc;
-  }, {});
-}
-
 async function validateTmpDir (tmpDir) {
   try {
     await mkdirp(tmpDir);
@@ -254,6 +229,5 @@ async function validateTmpDir (tmpDir) {
 export {
   getBuildInfo, checkNodeOk, showConfig,
   warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
-  getGitRev, APPIUM_VER, updateBuildInfo,
-  getDeprecatedArgs
+  getGitRev, APPIUM_VER, updateBuildInfo
 };

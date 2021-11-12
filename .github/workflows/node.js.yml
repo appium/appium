@@ -29,18 +29,6 @@ jobs:
           npm run install-fake-driver
           npm run e2e-test
 
-  fossa-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Analyze with FOSSA
-        run: |
-          npm install
-          curl https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash
-          fossa analyze
-    env:
-      FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
-
   generate_docs:
     needs: [build]
     runs-on: ubuntu-latest

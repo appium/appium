@@ -250,7 +250,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
  * aliases to `argparse` arguments; empty if no schema found
  */
 export function toParserArgs (opts = {}) {
-  const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnore);
+  const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
   return new Map(
     _.map(flattened, ({schema, argSpec}) =>
       subSchemaToArgDef(schema, argSpec, opts),

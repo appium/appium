@@ -34,7 +34,7 @@ describe('CLI behavior controlled by schema', function () {
       help = await runAppium(appiumHome, ['server', '--help']);
     });
 
-    describe('appiumCliIgnore', function () {
+    describe('appiumCliIgnored', function () {
       it('should still support arguments without this keyword', function () {
         expect(help).to.match(/oliver-boliver/);
       });

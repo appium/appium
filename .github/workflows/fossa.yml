@@ -1,0 +1,20 @@
+name: License Checks
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  fossa-check:
+    name: Run FOSSA Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: '2.0'
+      - name: fossa analyze
+        run: |
+          npm install
+          curl -sS -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/spectrometer/master/install.sh | sudo bash
+          fossa analyze
+          fossa test
+    env:
+      FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}

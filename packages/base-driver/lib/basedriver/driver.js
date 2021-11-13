@@ -342,7 +342,7 @@ class BaseDriver extends Protocol {
         unexpectedShutdownListener = null;
       }
     });
-    const res = this.isCommandsQueueEnabled && cmd !== 'executeDriverScript'
+    const res = this.isCommandsQueueEnabled
       ? await this.commandsQueueGuard.acquire(BaseDriver.name, commandExecutor)
       : await commandExecutor();
 

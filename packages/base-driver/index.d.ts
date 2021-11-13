@@ -173,7 +173,6 @@ declare class BaseDriver {
     updateSettings(newSettings: Record<string, unknown>): Promise<void>;
     getSettings(): Promise<Record<string, unknown>>;
     receiveAsyncResponse?(response: unknown): Promise<void>;
-    executeDriverScript(script: string, scriptType?: string, timeout?: number): Promise<unknown>;
     getLogEvents(type?: string | string[]): {};
     logCustomEvent(vendor: string, event: string): void;
     setClipboard?(content: string, contentType?: string, label?: string): Promise<void>;

@@ -216,6 +216,12 @@ class AppiumDriver extends BaseDriver {
 
       // This assignment is required for correct web sockets functionality inside the driver
       driverInstance.server = this.server;
+
+      // Drivers/plugins might also want to know where they are hosted
+      driverInstance.serverHost = this.args.address;
+      driverInstance.serverPort = this.args.port;
+      driverInstance.serverPath = this.args.basePath;
+
       try {
         runningDriversData = await this.curSessionDataForDriver(InnerDriver);
       } catch (e) {

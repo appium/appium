@@ -575,9 +575,6 @@ const METHOD_MAP = {
   '/session/:sessionId/appium/receive_async_response': {
     POST: {command: 'receiveAsyncResponse', payloadParams: {required: ['response']}}
   },
-  '/session/:sessionId/appium/execute_driver': {
-    POST: {command: 'executeDriverScript', payloadParams: {required: ['script'], optional: ['type', 'timeout']}}
-  },
   '/session/:sessionId/appium/events': {
     POST: {command: 'getLogEvents', payloadParams: {optional: ['type']}}
   },

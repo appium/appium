@@ -129,6 +129,13 @@ If you use these image-related methods, to continue accessing them you will need
 
 Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.
 
+### :bangbang: Execute Driver Script command moved to plugin
+
+If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO script to have it executed completely on the server instead of command-by-command from the client), this functionality has been moved to a plugin. Here's what to do to keep using it:
+
+1. Install the plugin: `appium plugin install execute-driver`
+2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=execute-driver`
+
 ### :bangbang: Old drivers removed
 
 The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.

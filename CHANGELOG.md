@@ -4,10 +4,10 @@ CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
 Appium 1.22.1 is a patch release
 
 We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
-Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or makor bugs pop up before the EOL.
+Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or major bugs pop up before the EOL.
 
 ### General
-* Allow unzip with JS implementation when `APPIUM_PREFER_SYSTEM_UNZIP` environment variable is given as `0` or `false` [appium-base-driver#537](https://github.com/appium/appium-base-driver/pull/537)
+* Enforce unzip with JS implementation when `APPIUM_PREFER_SYSTEM_UNZIP` environment variable is given as `0` or `false` [appium-base-driver#537](https://github.com/appium/appium-base-driver/pull/537)
     * This change may fix [installation error in iOS simulators](https://github.com/appium/appium/issues/16050)
 
 ### Android General
@@ -19,7 +19,7 @@ Appium 1.x will be receiving minor or patch releases only if XCTest gets breakin
 ### Android(UIAutomator2)
 
 * Add capabilities:
-    * `unlockStrategy` to customize the strategy of unlock. Defaults to `locksettings`. The previous behavior is `uiautomator`.
+    * `unlockStrategy` to customize the strategy of unlock. Defaults to `locksettings` on Android 8+, where this adb shell command is supported. The previous behavior is `uiautomator`.
     * `chromeLoggingPrefs` to configure chrome logging preferences mapping [appium-android-driver#710](https://github.com/appium/appium-android-driver/pull/710)
 * Add `mobile:` extensions:
     * `mobile:unlock` to unlock the device as a mobile command [appium-android-driver#709](https://github.com/appium/appium-android-driver/pull/709)

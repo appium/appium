@@ -32,7 +32,7 @@
     "e2e-test": "lerna exec \"gulp e2e-test\"",
     "generate-docs": "lerna run --scope=appium generate-docs",
     "generate-schema-declarations": "node ./scripts/generate-schema-declarations.mjs",
-    "postinstall": "lerna bootstrap && lerna exec --parallel \"gulp prepublish\"",
+    "postinstall": "lerna exec --parallel \"gulp prepublish\"",
     "install-fake-driver": "lerna run --scope=appium install-fake-driver",
     "lint": "lerna exec --parallel \"gulp lint\" && lerna run --scope=@appium/eslint-config-appium lint",
     "lint:fix": "eslint --fix .",
@@ -69,8 +69,11 @@
     "./packages/appium/lib/schema/appium-config-schema.js": "npm run generate-schema-declarations"
   },
   "devDependencies": {
-    "@appium/eslint-config-appium": "file:./packages/eslint-config-appium",
+    "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
+    "@appium/fake-driver": "file:packages/fake-driver",
     "@appium/fake-plugin": "1.3.0",
+    "@appium/gulp-plugins": "file:packages/gulp-plugins",
+    "@appium/test-support": "file:packages/test-support",
     "@babel/core": "7.16.0",
     "@babel/eslint-parser": "7.16.3",
     "@babel/plugin-transform-runtime": "7.16.0",
@@ -127,5 +130,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@appium/base-driver": "file:packages/base-driver",
+    "@appium/doctor": "file:packages/doctor",
+    "@appium/support": "file:packages/support",
+    "appium": "file:packages/appium"
   }
 }

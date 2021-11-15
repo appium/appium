@@ -21,14 +21,15 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "./build/lib/main.js",
+  "main": "appium.js",
   "bin": {
-    "appium": "./build/lib/main.js"
+    "appium": "appium.js"
   },
   "directories": {
     "lib": "./lib"
   },
   "files": [
+    "appium.js",
     "bin",
     "lib",
     "build/lib",
@@ -44,9 +45,9 @@
     "zip-and-upload": "npm run zip && npm run upload"
   },
   "dependencies": {
-    "@appium/base-driver": "^8.2.0",
+    "@appium/base-driver": "file:../base-driver",
     "@appium/base-plugin": "1.8.0",
-    "@appium/support": "^2.55.1",
+    "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
     "@sidvind/better-ajv-errors": "0.9.2",
     "ajv": "8.8.0",
@@ -72,8 +73,8 @@
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "@appium/fake-driver": "^3.2.0",
-    "@appium/gulp-plugins": "^5.5.5"
+    "@appium/fake-driver": "file:../fake-driver",
+    "@appium/gulp-plugins": "file:../gulp-plugins"
   },
   "engines": {
     "node": ">=12",

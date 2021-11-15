@@ -35,7 +35,7 @@
     "build"
   ],
   "dependencies": {
-    "@appium/eslint-config-appium": "^4.7.4",
+    "@appium/eslint-config-appium": "file:../eslint-config-appium",
     "@babel/core": "7.16.0",
     "@babel/plugin-transform-runtime": "7.16.0",
     "@babel/preset-env": "7.16.0",

@@ -13,8 +13,8 @@
   "include": [
     "packages/*/**/*.d.ts",
     "packages/*/**/*.js",
-    "scripts/*.js",
-    "*.js"
+    "*.js",
+    "scripts/generate-schema-declarations.mjs"
   ],
   "exclude": ["**/node_modules/**", "**/build/**"]
 }

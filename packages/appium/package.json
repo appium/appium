@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.20",
   "description": "Automation for Apps.",
   "keywords": [
     "automation",
@@ -44,9 +44,9 @@
     "zip-and-upload": "npm run zip && npm run upload"
   },
   "dependencies": {
-    "@appium/base-driver": "^8.1.2",
+    "@appium/base-driver": "^8.2.0",
     "@appium/base-plugin": "1.8.0",
-    "@appium/support": "^2.55.0",
+    "@appium/support": "^2.55.1",
     "@babel/runtime": "7.16.3",
     "@sidvind/better-ajv-errors": "0.9.2",
     "ajv": "8.8.0",
@@ -71,8 +71,8 @@
     "yaml": "1.10.2"
   },
   "devDependencies": {
-    "@appium/fake-driver": "^3.1.0",
-    "@appium/gulp-plugins": "^5.5.4"
+    "@appium/fake-driver": "^3.2.0",
+    "@appium/gulp-plugins": "^5.5.5"
   },
   "engines": {
     "node": ">=12",

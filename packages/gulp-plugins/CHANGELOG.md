@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.5](https://github.com/appium/appium/compare/@appium/gulp-plugins@5.5.4...@appium/gulp-plugins@5.5.5) (2021-11-15)
+
+
+### Bug Fixes
+
+* **gulp-plugins:** fix potential race condition re: gulpfile.js ([0ef53d4](https://github.com/appium/appium/commit/0ef53d4e9907cdb6d66364890073c3ba8b900bc1))
+
+
+
+
+
 ## [5.5.4](https://github.com/appium/appium/compare/@appium/gulp-plugins@5.5.3...@appium/gulp-plugins@5.5.4) (2021-11-09)
 
 **Note:** Version bump only for package @appium/gulp-plugins

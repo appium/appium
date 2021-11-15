@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.2.0](https://github.com/appium/appium/compare/@appium/base-driver@8.1.2...@appium/base-driver@8.2.0) (2021-11-15)
+
+
+### Bug Fixes
+
+* **appium:** fix interaction of plugins with proxying ([7091008](https://github.com/appium/appium/commit/70910087d11100fe47627754ade379a2d3a7ff5d))
+
+
+### Features
+
+* **fake-driver:** add a new 'PROXY' context that does 'proxying' for use in testing ([9e6c0a1](https://github.com/appium/appium/commit/9e6c0a13ef197c3a8caa9e18bdf4f8e6960951f1))
+
+
+
+
+
 ## [8.1.2](https://github.com/appium/appium/compare/@appium/base-driver@8.1.1...@appium/base-driver@8.1.2) (2021-11-09)
 
 

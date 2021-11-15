@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@3.1.0...@appium/fake-driver@3.2.0) (2021-11-15)
+
+
+### Features
+
+* **fake-driver:** add a new 'PROXY' context that does 'proxying' for use in testing ([9e6c0a1](https://github.com/appium/appium/commit/9e6c0a13ef197c3a8caa9e18bdf4f8e6960951f1))
+
+
+
+
+
 # [3.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@3.0.5...@appium/fake-driver@3.1.0) (2021-11-09)
 
 

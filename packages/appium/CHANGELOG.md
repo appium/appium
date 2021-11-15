@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.20](https://github.com/appium/appium/compare/appium@2.0.0-beta.19...appium@2.0.0-beta.20) (2021-11-15)
+
+
+### Bug Fixes
+
+* **appium:** add missing support for schema-as-object ([e951010](https://github.com/appium/appium/commit/e951010055118f6be1614abe40f5701daacb441c))
+* **appium:** add types for parsed argument object ([95dfe24](https://github.com/appium/appium/commit/95dfe24176bb7ff6957b7942164280a3a2fbd155))
+* **appium:** avoid deprecation warning from argparse ([fc56662](https://github.com/appium/appium/commit/fc566628f599e8a529f30344d291f2351665c5f7))
+* **appium:** bad type name ([a7fa66b](https://github.com/appium/appium/commit/a7fa66bb7dfb321cf2bf7c90e5e739841a8753e9))
+* **appium:** fix interaction of plugins with proxying ([7091008](https://github.com/appium/appium/commit/70910087d11100fe47627754ade379a2d3a7ff5d))
+* **appium:** if a sessionless plugin is used for createSession, promote it to a session plugin ([3f1bb4c](https://github.com/appium/appium/commit/3f1bb4c9c38046699e6d8be3dcd257bc53345eb9))
+* **appium:** properly validates config files containing extension config ([b7c230c](https://github.com/appium/appium/commit/b7c230c1e9da9206ea050387bc72c5dda3b31620))
+* **appium:** remove extra logging from config-file ([7381a13](https://github.com/appium/appium/commit/7381a13da3e76f7051639d3ab2ba376fbb625e80))
+* **appium:** restore missing call to validate extensions ([1a860ca](https://github.com/appium/appium/commit/1a860cade2fd3eac151c81c4efcd11364ee35479))
+* **appium:** stop calling plugins 'sessionless' since the name is immutable ([ead3e07](https://github.com/appium/appium/commit/ead3e0723f912a2c7e825d397fe2d4272ce3d6d0))
+
+
+### Features
+
+* **appium:** allow plugins to react to unexpected session shutdowns ([fff6b2e](https://github.com/appium/appium/commit/fff6b2eb004166fc147251c513086b72be857fbd))
+* **appium:** configuration file and schema support ([d52c36e](https://github.com/appium/appium/commit/d52c36e1eaaccc8b47de514bdeeef55ac348ecb8))
+
+
+
+
+
 # [2.0.0-beta.19](https://github.com/appium/appium/compare/appium@2.0.0-beta.18...appium@2.0.0-beta.19) (2021-11-09)
 
 **Note:** Version bump only for package appium

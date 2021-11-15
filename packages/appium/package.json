@@ -63,6 +63,7 @@
     "longjohn": "0.2.12",
     "npmlog": "5.0.1",
     "ora": "5.4.1",
+    "resolve-from": "5.0.0",
     "semver": "7.3.5",
     "source-map-support": "0.5.20",
     "teen_process": "1.16.0",

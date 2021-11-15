@@ -166,7 +166,7 @@ export default class NPM {
     const pkgHome = path.resolve(this.appiumHome, pkgName);
 
     // call link with --no-package-lock to ensure no corruption while installing local packages
-    const res = await this.exec('link', ['--no-package-lock', pkgPath], {cwd: pkgHome, lockFile: LINK_LOCKFILE});
+    const res = await this.exec('install', ['--no-package-lock', pkgPath], {cwd: pkgHome, lockFile: LINK_LOCKFILE});
     if (res.json && res.json.error) {
       throw new Error(res.json.error);
     }

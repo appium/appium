@@ -94,9 +94,9 @@ function logServerPort (address, port) {
 
 /**
  * Find any plugin name which has been installed, and which has been requested for activation by
- * using the --plugins flag, and turn each one into its class, so we can send them as objects to
- * the server init. We also want to send/assign them to the umbrella driver so it can use them to
- * wrap command execution
+ * using the --use-plugins flag, and turn each one into its class, so we can send them as objects
+ * to the server init. We also want to send/assign them to the umbrella driver so it can use them
+ * to wrap command execution
  *
  * @param {Object} args - argparser parsed dict
  * @param {import('./plugin-config').default} pluginConfig - a plugin extension config

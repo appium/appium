@@ -105,7 +105,7 @@ One of the design goals for Appium 2.0 is to migrate non-core features into spec
 If you use these image-related methods, to continue accessing them you will need to do two things.
 
 1. Install the plugin: `appium plugin install images`
-2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --plugins=images`
+2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=images`
 
 Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.
 

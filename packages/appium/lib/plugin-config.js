@@ -57,7 +57,7 @@ export default class PluginConfig extends ExtensionConfig {
     }
 
     if (_.isEmpty(activeNames)) {
-      log.info('No plugins activated. Use the --plugins flag with names of plugins to activate');
+      log.info('No plugins activated. Use the --use-plugins flag with names of plugins to activate');
     }
   }
 }

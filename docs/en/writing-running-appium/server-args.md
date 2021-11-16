@@ -100,4 +100,4 @@ All flags are optional, but some are required in conjunction with certain others
 
 |Flag|Default|Description|Example|
 |----|-------|-----------|-------|
-|`APPIUM_PREFER_SYSTEM_UNZIP`|| Tell Appium to always prefer the built-in unzip implementation instead of trying to use the unzip executable bundled with the operationg system, whcih is usually more performance. Setting this environment variable to `0` or `false` could help to avoid issues similar to [appium#16050](https://github.com/appium/appium/issues/16050). This only ahs an effort since Appium 1.22.1. | `0` `false` |
+|`APPIUM_PREFER_SYSTEM_UNZIP`|| Tell Appium to always prefer the built-in unzip implementation instead of trying to use the unzip executable bundled with the operationg system, whcih is usually more performance. Setting this environment variable to `0` or `false` could help to avoid issues similar to [appium#16050](https://github.com/appium/appium/issues/16050). This flag is available since Appium 1.22.1. | `0` `false` |

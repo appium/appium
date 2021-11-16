@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.21](https://github.com/appium/appium/compare/appium@2.0.0-beta.20...appium@2.0.0-beta.21) (2021-11-16)
+
+
+### Bug Fixes
+
+* **appium:** resolve-from is a dependency ([5443b57](https://github.com/appium/appium/commit/5443b570adf41042c4735410b1425d248adfd0a9))
+
+
+
+
+
 # [2.0.0-beta.20](https://github.com/appium/appium/compare/appium@2.0.0-beta.19...appium@2.0.0-beta.20) (2021-11-15)
 
 

@@ -1,3 +1,46 @@
+CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
+===================================
+
+Appium 1.22.1 is a patch release
+
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or major bugs pop up before the EOL.
+
+### General
+* Enforce unzip with JS implementation when `APPIUM_PREFER_SYSTEM_UNZIP` environment variable is given as `0` or `false` [appium-base-driver#537](https://github.com/appium/appium-base-driver/pull/537)
+    * This change may fix [installation error in iOS simulators](https://github.com/appium/appium/issues/16050)
+
+### Android General
+
+* Use bundletool to install .apks packages [appium-adb#578](https://github.com/appium/appium-adb/pull/578)
+* Handle unlock via `locksettings` adb command [appium-adb#577](https://github.com/appium/appium-adb/pull/577)
+* Add a tiny delay after changing IME for Android 12 [appium-adb#581](https://github.com/appium/appium-adb/pull/581)
+
+### Android(UIAutomator2)
+
+* Add capabilities:
+    * `unlockStrategy` to customize the strategy of unlock. Defaults to `locksettings` on Android 8+, where this adb shell command is supported. The previous behavior is `uiautomator`.
+    * `chromeLoggingPrefs` to configure chrome logging preferences mapping [appium-android-driver#710](https://github.com/appium/appium-android-driver/pull/710)
+* Add `mobile:` extensions:
+    * `mobile:unlock` to unlock the device as a mobile command [appium-android-driver#709](https://github.com/appium/appium-android-driver/pull/709)
+* Fix `/appium/device/display_density` endpoint to get the device density on Android 12 by getting it via Android API instead of adb command [appium-uiautomator2-driver#474](https://github.com/appium/appium-uiautomator2-driver/pull/474) [appium-uiautomator2-server#444](https://github.com/appium/appium-uiautomator2-server/pull/444)
+
+### iOS(XCUITest)
+
+* Decode cookies safely in WebView context [appium-xcuitest-driver#1336](https://github.com/appium/appium-xcuitest-driver/pull/1336)
+* Tune alert monitoring [appium-xcuitest-driver#1340](https://github.com/appium/appium-xcuitest-driver/pull/1340)
+* Add capabilities:
+    * `appInstallStrategy` capability to customize the application installation strategy. `serial`, `parallel` and `ios-deploy` are available. Please read [capabilities](https://github.com/appium/appium-xcuitest-driver#app) for more details. This strategy is available via installation APIs as well.
+* Add `mobile:` extensions:
+    * `mobile:listApps` to get the list of installed applications on the real device under test [appium-xcuitest-driver#1342](https://github.com/appium/appium-xcuitest-driver/pull/1342)
+* Add `NSProcessInfoThermalState` in [mobile: deviceInfo](https://github.com/appium/appium-xcuitest-driver#mobile-deviceinfo) [WebDriverAgent#536](https://github.com/appium/WebDriverAgent/pull/536)
+* Add `nativeWebTapTabBarVisibility` and `nativeWebTapTabBarVisibility` Settings API items to handle _tab bar_ and _smart app banner_ via Settings API [appium-xcuitest-driver#1345](https://github.com/appium/appium-xcuitest-driver/pull/1345) (Thanks @zcmgyu)
+* Fix `useXctestrunFile` capability behavior on Xcode 13 [WebDriverAgent#538](https://github.com/appium/WebDriverAgent/pull/538)
+* Fix caching elements from `execute_script` in WebView context [appium-xcuitest-driver#1350](https://github.com/appium/appium-xcuitest-driver/pull/1350)
+* Fix `<` escape in the XML page source (`"appium:useJSONSource": false`) [appium-xcuitest-driver#1347](https://github.com/appium/appium-xcuitest-driver/pull/1347)
+* Disable the build in notification checker by XCTest to avoid possible UI interuction failure on Xcode 13.2 and iOS 15.2 [WebDriverAgent#540](https://github.com/appium/WebDriverAgent/pull/540)
+
+
 CHANGES IN VERSION 1.22.0 (FROM 1.21.0)
 ===================================
 

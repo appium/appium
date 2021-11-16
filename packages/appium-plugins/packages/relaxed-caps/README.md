@@ -22,5 +22,5 @@ No special action is needed to make things work on the client side. Just keep se
 The plugin will not be active unless turned on when invoking the Appium server:
 
 ```
-appium --plugins=relaxed-caps
+appium --use-plugins=relaxed-caps
 ```

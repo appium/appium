@@ -12,7 +12,7 @@ appium plugin install images
 The above commands will list officially-supported plugins, which you can then install via name. You can install unofficial plugins from pretty much any source as well. For more information check out the [Appium Extension CLI docs](#TODO). To activate an installed plugin so that it has an effect for the running server, make sure to include it in the list of activated plugins when starting the server:
 
 ```
-appium --plugins=images,fake
+appium --use-plugins=images,fake
 ```
 
 For information and documentation about each plugin hosted in this repo, head to the individual READMEs:

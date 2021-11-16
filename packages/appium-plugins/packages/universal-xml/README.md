@@ -19,7 +19,7 @@ No special action is needed to make the features available in the various Appium
 The plugin will not be active unless turned on when invoking the Appium server:
 
 ```
-appium --plugins=universal-xml
+appium --use-plugins=universal-xml
 ```
 
 ## Usage

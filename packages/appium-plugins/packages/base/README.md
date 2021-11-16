@@ -24,7 +24,7 @@ Appium plugins are Node.js programs, though of course you can call out to any ot
 Here the `pluginName` is the name used to activate your plugin by users who have installed it. So if your `pluginName` is `cool-plugin`, they would activate it as follows:
 
 ```
-appium --plugins=cool-plugin
+appium --use-plugins=cool-plugin
 ```
 
 The same goes for updating and removing the plugin using the CLI.

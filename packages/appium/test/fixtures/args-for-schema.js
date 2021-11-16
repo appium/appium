@@ -185,9 +185,9 @@ export default [
     },
   ],
   [
-    ['--plugins'],
+    ['--use-plugins'],
     {
-      dest: 'plugins',
+      dest: 'usePlugins',
       help: 'A list of plugins to activate. To activate all plugins, use the single string "all". If a string, can otherwise be valid JSON.',
       required: false,
     },

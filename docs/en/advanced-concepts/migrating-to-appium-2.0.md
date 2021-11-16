@@ -32,6 +32,26 @@ npm install -g appium --drivers=xcuitest,uiautomator2
 
 This will install Appium and the two drivers for you in one go.
 
+### :bangbang: Chromedriver installation flags
+
+In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:
+
+* `--chromedriver-skip-install`
+* `--chromedriver-version`
+* `--chromedriver-cdnurl`
+
+Because Appium 2.0 now installs drivers for you, and because these flags were implemented as NPM config flags, they will no longer work. Instead, use the following environment variables during driver installation:
+
+* `APPIUM_SKIP_CHROMEDRIVER_INSTALL`
+* `CHROMEDRIVER_VERSION`
+* `CHROMEDRIVER_CDNURL`
+
+For example:
+
+```
+APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
+```
+
 ### :bangbang: Driver-specific command line options
 
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.

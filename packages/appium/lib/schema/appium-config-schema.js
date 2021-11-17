@@ -212,6 +212,7 @@ const schema = /** @type {const} */ ({
             'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
           title: 'relaxed-security config',
           type: 'boolean',
+          appiumCliDest: 'relaxedSecurityEnabled'
         },
         'session-override': {
           default: false,

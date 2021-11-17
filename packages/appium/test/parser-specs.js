@@ -125,6 +125,10 @@ describe('parser', function () {
       it('should allow multiple --use-drivers', function () {
         p.parse_args(['--use-drivers', 'fake,phony']).useDrivers.should.eql(['fake', 'phony']);
       });
+
+      it('should respect --relaxed-security', function () {
+        p.parse_args(['--relaxed-security']).should.have.property('relaxedSecurityEnabled', true);
+      });
     });
 
     describe('extension arguments', function () {

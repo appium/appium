@@ -14,7 +14,7 @@ export default {
   longStacktrace: false,
   noPermsCheck: false,
   port: 4723,
-  relaxedSecurity: false,
+  relaxedSecurityEnabled: false,
   sessionOverride: false,
   strictCaps: false,
   useDrivers: [],

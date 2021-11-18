@@ -10,7 +10,7 @@ if (process.env.TRAVIS || process.env.CI) {
 }
 
 const DEFAULT_OPTS = {
-  files: ['*.js', 'lib/**/*.js', 'test/**/*.js', '!gulpfile.js'],
+  files: ['lib/**/*.js', 'test/**/*.js', '!gulpfile.js'],
   transpile: true,
   transpileOut: 'build',
   babelOpts: {},

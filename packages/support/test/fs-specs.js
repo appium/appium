@@ -1,4 +1,4 @@
-import { fs, tempDir } from '../index.js';
+import { fs, tempDir } from '../lib/index.js';
 import path from 'path';
 import { exec } from 'teen_process';
 import B from 'bluebird';

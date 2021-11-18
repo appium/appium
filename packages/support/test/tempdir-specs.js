@@ -1,5 +1,5 @@
 
-import { tempDir, fs } from '../index.js';
+import { tempDir, fs } from '../lib/index.js';
 
 
 describe('tempdir', function () {

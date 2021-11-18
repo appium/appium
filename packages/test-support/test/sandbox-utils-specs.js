@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { withSandbox, verifySandbox } from '..';
+import { withSandbox, verifySandbox } from '../lib';
 
 
 const expect = chai.expect;

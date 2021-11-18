@@ -28,7 +28,7 @@
     "eslint:find:unused-rules": "eslint-find-rules -u -n",
     "lint": "eslint index.js"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@babel/core": "7.16.0",
     "@babel/eslint-parser": "7.16.3",
     "eslint": "7.32.0",

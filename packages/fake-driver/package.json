@@ -21,9 +21,8 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "./build/index.js",
   "bin": {
-    "appium-fake-driver": "./build/index.js"
+    "appium-fake-driver": "index.js"
   },
   "directories": {
     "lib": "lib"
@@ -31,14 +30,13 @@
   "files": [
     "index.js",
     "lib",
-    "build/index.js",
-    "build/lib",
+    "build",
     "test/fixtures",
     "screen.png"
   ],
   "dependencies": {
-    "@appium/base-driver": "^8.2.0",
-    "@appium/support": "^2.55.1",
+    "@appium/base-driver": "file:../base-driver",
+    "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
     "asyncbox": "2.9.2",
     "bluebird": "3.7.2",
@@ -46,9 +44,6 @@
     "source-map-support": "0.5.20",
     "xmldom": "0.6.0",
     "xpath": "0.0.32"
-  },
-  "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.5"
   },
   "engines": {
     "node": ">=12",
@@ -67,9 +62,6 @@
       "fake-error": "./build/lib/scripts/fake-error.js",
       "fake-success": "./build/lib/scripts/fake-success.js"
     }
-  },
-  "greenkeeper": {
-    "ignore": []
   },
   "publishConfig": {
     "access": "public"

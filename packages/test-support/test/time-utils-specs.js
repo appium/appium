@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { fakeTime } from '..';
+import { fakeTime } from '../lib';
 
 import sinon from 'sinon';
 import B from 'bluebird';

@@ -2,7 +2,7 @@
 
 import {
   server, routeConfiguringFunction, errors, JWProxy, BaseDriver
-} from '../..';
+} from '../../lib';
 import { FakeDriver } from './fake-driver';
 import axios from 'axios';
 import sinon from 'sinon';

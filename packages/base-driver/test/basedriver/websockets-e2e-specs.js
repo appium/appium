@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { server, routeConfiguringFunction,
-         DEFAULT_WS_PATHNAME_PREFIX } from '../..';
+         DEFAULT_WS_PATHNAME_PREFIX } from '../../lib';
 import { FakeDriver } from '../protocol/fake-driver';
 import WebSocket from 'ws';
 import B from 'bluebird';

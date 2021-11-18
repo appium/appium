@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import { DeviceSettings } from '../..';
+import { DeviceSettings } from '../../lib';
 import sinon from 'sinon';
 
 

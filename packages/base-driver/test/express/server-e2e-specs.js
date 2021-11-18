@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { server } from '../..';
+import { server } from '../../lib';
 import axios from 'axios';
 import sinon from 'sinon';
 import B from 'bluebird';

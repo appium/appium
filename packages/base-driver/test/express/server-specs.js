@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction } from '../../index.js';
+import { server, routeConfiguringFunction } from '../../lib';
 import { configureServer, normalizeBasePath } from '../../lib/express/server';
 import sinon from 'sinon';
 import {getTestPort} from '../helpers';

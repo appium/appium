@@ -1,4 +1,4 @@
-import BaseDriver from '../..';
+import BaseDriver from '../../lib';
 import sinon from 'sinon';
 
 

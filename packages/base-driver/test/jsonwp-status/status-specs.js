@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { statusCodes, getSummaryByCode } from '../..';
+import { statusCodes, getSummaryByCode } from '../../lib';
 
 
 

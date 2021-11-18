@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import BaseDriver from '../..';
+import BaseDriver from '../../lib';
 import baseDriverUnitTests from './driver-tests';
 baseDriverUnitTests(BaseDriver, {
   platformName: 'iOS',

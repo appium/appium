@@ -1,4 +1,4 @@
-import { JWProxy, server, routeConfiguringFunction } from '../..';
+import { JWProxy, server, routeConfiguringFunction } from '../../lib';
 import { FakeDriver } from '../protocol/fake-driver';
 
 describe('proxy', function () {

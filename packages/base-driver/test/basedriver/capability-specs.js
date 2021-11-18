@@ -1,4 +1,4 @@
-import { default as BaseDriver, errors } from '../..';
+import { default as BaseDriver, errors } from '../../lib';
 import logger from '../../lib/basedriver/logger';
 import sinon from 'sinon';
 

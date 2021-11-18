@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import { JWProxy } from '../..';
+import { JWProxy } from '../../lib';
 import request from './mock-request';
 import { isErrorType, errors } from '../../lib/protocol/errors';
 import { getTestPort, TEST_HOST } from '../helpers';

@@ -1,6 +1,6 @@
 import {
   errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType
-} from '../..';
+} from '../../lib';
 import { getResponseForW3CError } from '../../lib/protocol/errors';
 import _ from 'lodash';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';

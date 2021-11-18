@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { BaseDriver, server, routeConfiguringFunction, DeviceSettings, errors } from '../..';
+import { BaseDriver, server, routeConfiguringFunction, DeviceSettings, errors } from '../../lib';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
 } from '../../lib/constants';

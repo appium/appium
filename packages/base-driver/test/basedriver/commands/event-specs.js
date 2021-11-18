@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { BaseDriver } from '../../..';
+import { BaseDriver } from '../../../lib';
 
 
 

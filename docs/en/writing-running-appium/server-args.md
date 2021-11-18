@@ -1,4 +1,4 @@
-# Appium server arguments
+# Appium server arguments and environment variables
 
 Since Appium 1.5, many server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).
 
@@ -6,8 +6,6 @@ Usage: `node . [flags]`
 
 ## Server flags
 All flags are optional, but some are required in conjunction with certain others.
-
-
 
 <expand_table>
 
@@ -96,3 +94,10 @@ All flags are optional, but some are required in conjunction with certain others
 |`--allow-insecure`|[]|Allow a list of features which are considered insecure and must be turned on explicitly by system administrators. Feature names are documented by the relevant server/driver. Should be a comma-separated list, or a path to a filename containing one feature name per line. Features listed in --deny-insecure will override anything listed here. Does not make sense to use in conjunction with --relaxed-security. See also the [security doc](/docs/en/writing-running-appium/security.md)|`--allow-insecure=foo,bar`|
 |`--deny-insecure`|[]|Specify a list of features which will never be allowed to run, even if --relaxed-security is turned on, and even if feature names are listed with --allow-insecure. Should be a comma-separated list, or a path to a filename containing one feature name per line. See also the [security doc](/docs/en/writing-running-appium/security.md)|`--deny-insecure=foo,bar`|
 |`--log-filters`|null|Specify a full path to a JSON file containing one or more log filtering rules. This feature is useful for cases when it is necessary to obfuscate sensitive information, which may be present in server log records, like passwords or access tokens. The format of each rule is described in https://github.com/appium/appium-support/blob/master/lib/log-internal.js. An exception will be thrown on server startup if any of the rules has issues.|`--log-filters=/home/config.json`|
+
+
+## Environment variables
+
+|Flag|Default|Description|Example|
+|----|-------|-----------|-------|
+|`APPIUM_PREFER_SYSTEM_UNZIP`|| Tell Appium to always prefer the built-in unzip implementation instead of trying to use the unzip executable bundled with the operationg system, whcih is usually more performance. Setting this environment variable to `0` or `false` could help to avoid issues similar to [appium#16050](https://github.com/appium/appium/issues/16050). This flag is available since Appium 1.22.1. | `0` `false` |

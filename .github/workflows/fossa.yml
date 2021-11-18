@@ -1,5 +1,6 @@
 name: License Checks
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
 jobs:
@@ -13,7 +14,7 @@ jobs:
       - name: fossa analyze
         run: |
           npm install
-          curl -sS -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/spectrometer/master/install.sh | sudo bash
+          curl -sS -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
           fossa analyze
           fossa test
     env:

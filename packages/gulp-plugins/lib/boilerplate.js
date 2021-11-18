@@ -38,9 +38,9 @@ const DEFAULT_OPTS = {
   testTimeout: 20000,
   build: 'Appium',
   extraPrepublishTasks: [],
-  eslint: true,
+  eslint: false, // deprecated, use eslint
   eslintOnWatch: false, // deprecated, move to lintOnWatch
-  lintOnWatch: false,
+  lintOnWatch: false, // deprecated
   ci: {
     interval: 60000,
     owner: 'appium',
@@ -81,7 +81,7 @@ const boilerplate = function (gulp, opts) {
     defaultSequence.push('clean');
   }
   if (opts.eslint || opts.lint) {
-    defaultSequence.push('lint');
+    log.warn('Use eslint proper instead of gulp; no linting will be performed via eslint');
   }
   if (opts.transpile && !opts.test) {
     defaultSequence.push('transpile');
@@ -101,6 +101,9 @@ const boilerplate = function (gulp, opts) {
     if (opts.eslintOnWatch) {
       log.warn(`The 'eslintOnWatch' option is deprecated. Use 'lintOnWatch' instead`);
       opts.lintOnWatch = true;
+    }
+    if (opts.lintOnWatch && !opts.eslint) {
+      log.warn('Use eslint proper instead of gulp; no linting will be performed via eslint');
     }
     const watchSequence = opts.lintOnWatch
       ? defaultSequence

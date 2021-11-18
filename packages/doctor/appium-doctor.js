@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('./build/bin/appium-doctor');
+module.exports = require('./build/bin/appium-doctor');

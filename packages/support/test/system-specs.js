@@ -1,5 +1,5 @@
 
-import { system } from '../index.js';
+import { system } from '../lib/index.js';
 import os from 'os';
 import sinon from 'sinon';
 import * as teen_process from 'teen_process';

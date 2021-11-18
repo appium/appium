@@ -5,7 +5,7 @@ import {
 } from '../lib/image-util';
 import path from 'path';
 import _ from 'lodash';
-import { fs } from '..';
+import { fs } from '../lib';
 
 
 const FIXTURES_ROOT = path.resolve(__dirname, '..', '..', 'test', 'images');

@@ -21,16 +21,13 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "./build/index.js",
-  "bin": {},
   "directories": {
     "lib": "lib"
   },
   "files": [
     "index.js",
     "lib",
-    "build/index.js",
-    "build/lib"
+    "build"
   ],
   "dependencies": {
     "@babel/runtime": "7.16.3",
@@ -66,9 +63,6 @@
     "uuid": "8.3.2",
     "which": "2.0.2",
     "yauzl": "2.10.0"
-  },
-  "devDependencies": {
-    "@appium/gulp-plugins": "^5.5.5"
   },
   "engines": {
     "node": ">=12",

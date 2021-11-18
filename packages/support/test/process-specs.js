@@ -1,6 +1,6 @@
 import * as teenProcess from 'teen_process';
 import sinon from 'sinon';
-import { process } from '../index.js';
+import { process } from '../lib/index.js';
 import { retryInterval } from 'asyncbox';
 
 

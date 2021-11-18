@@ -1,4 +1,4 @@
-import { fs } from '../index';
+import { fs } from '../lib/index';
 import os from 'os';
 import path from 'path';
 import { SecureValuesPreprocessor } from '../lib/log-internal';

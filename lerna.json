@@ -1,5 +1,4 @@
 {
-  "ci": false,
   "command": {
     "exec": {
       "ignore": "@appium/eslint-config-appium"
@@ -7,14 +6,14 @@
     "version": {
       "conventionalCommits": true,
       "createRelease": "github"
+    },
+    "add": {
+      "exact": true
     }
   },
   "ignoreChanges": [
     "**/test/**",
     "**/*.md"
-  ],
-  "npmClientArgs": [
-    "--no-package-lock"
   ],
   "packages": [
     "packages/*"

@@ -38,7 +38,6 @@
   "scripts": {
     "generate-docs": "gulp transpile && node ./build/commands-yml/parse.js",
     "postinstall": "node ./postinstall.js",
-    "install-fake-driver": "node . driver install --source=local ../fake-driver",
     "upload": "gulp github-upload",
     "zip": "zip -qr appium.zip .",
     "zip-and-upload": "npm run zip && npm run upload"

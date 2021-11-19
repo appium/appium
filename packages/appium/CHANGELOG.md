@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.22](https://github.com/appium/appium/compare/appium@2.0.0-beta.21...appium@2.0.0-beta.22) (2021-11-19)
+
+
+### Bug Fixes
+
+* **appium:** create cjs wrapper ([24596d6](https://github.com/appium/appium/commit/24596d67b04590acb568322098c88efc190f6318))
+* **appium:** enable --relaxed-security ([46a2041](https://github.com/appium/appium/commit/46a2041fbdc80b6210d0214a4d9fb71312d57e1b)), closes [/github.com/appium/appium/discussions/16103#discussioncomment-1655985](https://github.com//github.com/appium/appium/discussions/16103/issues/discussioncomment-1655985)
+
+
+### Features
+
+* **appium:** support for deprecated arguments ([aa69388](https://github.com/appium/appium/commit/aa69388c7a296d4d1e39a1ba0fbe23035a5ae8c5))
+
+
+
+
+
 # [2.0.0-beta.21](https://github.com/appium/appium/compare/appium@2.0.0-beta.20...appium@2.0.0-beta.21) (2021-11-16)
 
 

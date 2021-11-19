@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.55.2](https://github.com/appium/appium/compare/@appium/support@2.55.1...@appium/support@2.55.2) (2021-11-19)
+
+
+### Bug Fixes
+
+* **support:** create cjs wrapper ([0d70192](https://github.com/appium/appium/commit/0d7019273b8dd2295c3b027560748c796cf95900))
+
+
+### Reverts
+
+* Revert "chore(support): update dependency klaw to v4" (#16105) ([e7ea40a](https://github.com/appium/appium/commit/e7ea40a656b6332dbee9b02d4f539befbd10dff6)), closes [#16105](https://github.com/appium/appium/issues/16105)
+
+
+
+
+
 ## [2.55.1](https://github.com/appium/appium/compare/@appium/support@2.55.0...@appium/support@2.55.1) (2021-11-15)
 
 **Note:** Version bump only for package @appium/support

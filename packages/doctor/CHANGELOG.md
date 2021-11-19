@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.7](https://github.com/appium/appium/compare/@appium/doctor@1.16.6...@appium/doctor@1.16.7) (2021-11-19)
+
+
+### Bug Fixes
+
+* **doctor:** move index to support cjs wrapper ([69820ea](https://github.com/appium/appium/commit/69820eaf9369969ebbad038ca53accf973d18aa4))
+
+
+
+
+
 ## [1.16.6](https://github.com/appium/appium/compare/@appium/doctor@1.16.5...@appium/doctor@1.16.6) (2021-11-15)
 
 **Note:** Version bump only for package @appium/doctor

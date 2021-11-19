@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.1](https://github.com/appium/appium/compare/@appium/base-driver@8.2.0...@appium/base-driver@8.2.1) (2021-11-19)
+
+
+### Bug Fixes
+
+* **base-driver:** create cjs wrapper ([85cd55b](https://github.com/appium/appium/commit/85cd55bc2c54e2091dec69ead1462c5f022e590b))
+
+
+
+
+
 # [8.2.0](https://github.com/appium/appium/compare/@appium/base-driver@8.1.2...@appium/base-driver@8.2.0) (2021-11-15)
 
 

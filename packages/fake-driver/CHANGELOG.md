@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/appium/appium/compare/@appium/fake-driver@3.2.0...@appium/fake-driver@3.2.1) (2021-11-19)
+
+
+### Bug Fixes
+
+* **fake-driver:** create cjs wrapper ([a93f37a](https://github.com/appium/appium/commit/a93f37ad060ecfca41895bed49eed60413959421))
+
+
+
+
+
 # [3.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@3.1.0...@appium/fake-driver@3.2.0) (2021-11-15)
 
 

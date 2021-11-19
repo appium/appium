@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/appium/appium/compare/@appium/gulp-plugins@5.5.5...@appium/gulp-plugins@6.0.0) (2021-11-19)
+
+
+### Bug Fixes
+
+* **gulp-plugins:** do not transpile pkg root .js files by default ([b3771b0](https://github.com/appium/appium/commit/b3771b00421669a96a830400d97561a15ff74632))
+
+
+### BREAKING CHANGES
+
+* **gulp-plugins:** Package-root `.js` files (typically `index.js`) are now (typically) cjs wrappers.  These files needn't be transpiled, and in fact, doing so will create an invalid module because it will attempt to reference `build/whatever` but the resulting artifact would live in `build/index.js`.  `build/index.js` will no longer exist.
+
+
+
+
+
 ## [5.5.5](https://github.com/appium/appium/compare/@appium/gulp-plugins@5.5.4...@appium/gulp-plugins@5.5.5) (2021-11-15)
 
 

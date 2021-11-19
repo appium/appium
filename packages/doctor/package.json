@@ -43,7 +43,7 @@
     "colors": "1.4.0",
     "inquirer": "8.2.0",
     "lodash": "4.17.21",
-    "source-map-support": "0.5.20",
+    "source-map-support": "0.5.21",
     "teen_process": "1.16.0",
     "yargs": "17.2.1"
   },

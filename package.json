@@ -86,6 +86,7 @@
     "@types/json-schema": "7.0.9",
     "@types/mocha": "9.0.0",
     "@types/node": "16.11.9",
+    "@types/semver": "7.3.9",
     "@types/sinon": "10.0.6",
     "@types/sinon-chai": "3.2.5",
     "@types/through2": "2.0.36",

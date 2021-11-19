@@ -41,7 +41,7 @@
     "lodash": "4.17.21",
     "loud-rejection": "2.2.0",
     "sinon": "12.0.1",
-    "source-map-support": "0.5.20"
+    "source-map-support": "0.5.21"
   },
   "engines": {
     "node": ">=12",

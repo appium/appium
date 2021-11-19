@@ -1,3 +1,5 @@
+// @ts-check
+
 import path from 'path';
 import semver from 'semver';
 import { exec } from 'teen_process';
@@ -8,10 +10,23 @@ const LINK_LOCKFILE = '.appium.link.lock';
 
 export default class NPM {
 
+  /**
+   * @param {string} appiumHome
+   */
   constructor (appiumHome) {
+    /** @type {string} */
     this.appiumHome = appiumHome;
   }
 
+  /**
+   * Execute `npm` with given args.
+   *
+   * If the process exits with a nonzero code, the contents of `STDOUT` and `STDERR` will be in the
+   * `message` of the {@link TeenProcessExecError} rejected.
+   * @param {string} cmd
+   * @param {string[]} args
+   * @param {{ json?: boolean; cwd?: string; lockFile?: string; }} opts
+   */
   async exec (cmd, args, opts, execOpts = {}) {
     let { cwd, json, lockFile } = opts;
     if (!cwd) {
@@ -33,7 +48,7 @@ export default class NPM {
 
     args.unshift(cmd);
     if (json) {
-      args.push('-json');
+      args.push('--json');
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
     let runner = async () => await exec(npmCmd, args, execOpts);
@@ -42,27 +57,38 @@ export default class NPM {
       const _runner = runner;
       runner = async () => await acquireLock(_runner);
     }
-    const {stdout, stderr, code} = await runner();
-    const ret = {stdout, stderr, code, json: null};
 
-    if (json) {
+    let ret;
+    try {
+      const {stdout, stderr, code} = await runner();
+      ret = /** @type {TeenProcessExecResult} */({stdout, stderr, code});
       // if possible, parse NPM's json output. During NPM install 3rd-party
       // packages can write to stdout, so sometimes the json output can't be
       // guaranteed to be parseable
       try {
         ret.json = JSON.parse(stdout);
       } catch (ign) {}
+    } catch (e) {
+      const {stdout, stderr, code} = /** @type {TeenProcessExecError} */(e);
+      const err = new Error(`npm command '${cmd} ${args.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`);
+      throw err;
     }
-
     return ret;
   }
 
+  /**
+   * @param {string} pkg
+   */
   async getLatestVersion (pkg) {
     return (await this.exec('view', [pkg, 'dist-tags'], {
       json: true
-    })).json.latest;
+    })).json?.latest;
   }
 
+  /**
+   * @param {string} pkg
+   * @param {string} curVersion
+   */
   async getLatestSafeUpgradeVersion (pkg, curVersion) {
     const allVersions = (await this.exec('view', [pkg, 'versions'], {
       json: true
@@ -115,6 +141,11 @@ export default class NPM {
     return safeUpgradeVer;
   }
 
+  /**
+   *
+   * @param {{pkgDir: string, pkgName: string, pkgVer?: string}} param0
+   * @returns {Promise<import('type-fest').PackageJson>}
+   */
   async installPackage ({pkgDir, pkgName, pkgVer}) {
     const res = await this.exec('install', [
       '--no-save',
@@ -148,6 +179,9 @@ export default class NPM {
     }
   }
 
+  /**
+   * @param {string} pkgPath
+   */
   async linkPackage (pkgPath) {
     // from the path alone we don't know the npm package name, so we need to
     // look in package.json
@@ -180,6 +214,10 @@ export default class NPM {
     }
   }
 
+  /**
+   * @param {string} pkgDir
+   * @param {string} pkg
+   */
   async uninstallPackage (pkgDir, pkg) {
     await this.exec('uninstall', [pkg], {
       cwd: pkgDir,
@@ -187,3 +225,27 @@ export default class NPM {
     });
   }
 }
+
+
+/**
+ * Result from a non-zero-exit execution of `appium`
+ * @typedef {Object} TeenProcessExecResult
+ * @property {string} stdout - Stdout
+ * @property {string} stderr - Stderr
+ * @property {number?} code - Exit code
+ * @property {any} json - JSON parsed from stdout
+ */
+
+/**
+ * Extra props `teen_process.exec` adds to its error objects
+ * @typedef {Object} TeenProcessExecErrorProps
+ * @property {string} stdout - STDOUT
+ * @property {string} stderr - STDERR
+ * @property {number?} code - Exit code
+ */
+
+
+/**
+ * Error thrown by `teen_process.exec`
+ * @typedef {Error & TeenProcessExecErrorProps} TeenProcessExecError
+ */

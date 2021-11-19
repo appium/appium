@@ -137,30 +137,10 @@ export const installLocalExtension = _.curry(
  * @property {boolean} [raw] - Whether to return the raw output from `teen_process`
  */
 
-/**
- * Result from a non-zero-exit execution of `appium`
- * @typedef {Object} TeenProcessExecResult
- * @property {string} stdout - Stdout
- * @property {string} stderr - Stderr
- * @property {number?} code - Exit code
- */
-
-/**
- * Extra props `teen_process.exec` adds to its error objects
- * @typedef {Object} TeenProcessExecErrorProps
- * @property {string} stdout - STDOUT
- * @property {string} stderr - STDERR
- * @property {number?} code - Exit code
- */
-
-/**
- * Error thrown by `teen_process.exec`
- * @typedef {Error & TeenProcessExecErrorProps} TeenProcessExecError
- */
 
 /**
  * Error thrown by all of the functions in this file which execute `appium`.
- * @typedef {Error & AppiumRunErrorProps & TeenProcessExecErrorProps} AppiumRunError
+ * @typedef {Error & AppiumRunErrorProps & import('../../lib/cli/npm').TeenProcessExecErrorProps} AppiumRunError
  */
 
 /**

@@ -149,32 +149,25 @@ async function showConfig () {
   console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
 }
 
-function getNonDefaultServerArgs (parser, args) {
+/**
+ * Returns k/v pairs of server arguments which are _not_ the defaults.
+ * @param {import('../types/types').ParsedArgs} args
+ * @returns {Partial<import('../types/types').ParsedArgs>}
+ */
+function getNonDefaultServerArgs (args) {
   // hopefully these function names are descriptive enough
 
-  function typesDiffer (dest) {
-    return typeof args[dest] !== typeof defaultsFromSchema[dest];
-  }
+  const typesDiffer = (dest) => typeof args[dest] !== typeof defaultsFromSchema[dest];
 
-  function defaultValueIsArray (dest) {
-    return _.isArray(defaultsFromSchema[dest]);
-  }
+  const defaultValueIsArray = (dest) => _.isArray(defaultsFromSchema[dest]);
 
-  function argsValueIsArray (dest) {
-    return _.isArray(args[dest]);
-  }
+  const argsValueIsArray = (dest) => _.isArray(args[dest]);
 
-  function arraysDiffer (dest) {
-    return _.difference(args[dest], defaultsFromSchema[dest]).length > 0;
-  }
+  const arraysDiffer = (dest) => _.size(_.difference(args[dest], defaultsFromSchema[dest])) > 0;
 
-  function valuesUnequal (dest) {
-    return args[dest] !== defaultsFromSchema[dest];
-  }
+  const valuesDiffer = (dest) => args[dest] !== defaultsFromSchema[dest];
 
-  function defaultIsDefined (dest) {
-    return !_.isUndefined(defaultsFromSchema[dest]);
-  }
+  const defaultIsDefined = (dest) => !_.isUndefined(defaultsFromSchema[dest]);
 
   // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
 
@@ -183,8 +176,8 @@ function getNonDefaultServerArgs (parser, args) {
     arraysDiffer
   ]);
 
-  const defaultValueNotArrayAndValuesUnequal = _.overEvery([
-    _.negate(defaultValueIsArray), valuesUnequal
+  const defaultValueNotArrayAndValuesDiffer = _.overEvery([
+    _.negate(defaultValueIsArray), valuesDiffer
   ]);
 
   /**
@@ -197,8 +190,7 @@ function getNonDefaultServerArgs (parser, args) {
    * - if so, and the default is an array:
    *   - ensures the args value is an array
    *   - ensures the args values do not differ from the default values
-   * @param {string} dest - argument name (`dest` value)
-   * @returns {boolean}
+   * @type {(dest: string) => boolean}
    */
   const isNotDefault = _.overEvery([
     defaultIsDefined,
@@ -208,7 +200,7 @@ function getNonDefaultServerArgs (parser, args) {
         defaultValueIsArray,
         argValueNotArrayOrArraysDiffer
       ]),
-      defaultValueNotArrayAndValuesUnequal
+      defaultValueNotArrayAndValuesDiffer
     ])
   ]);
 

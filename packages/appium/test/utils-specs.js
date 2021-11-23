@@ -1,9 +1,12 @@
 import {
   parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, ReadonlyMap
+  removeAppiumPrefixes, ReadonlyMap, inspect
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
+import { stripColors } from 'colors';
+import sinon from 'sinon';
+import logger from '../lib/logger';
 
 describe('utils', function () {
   describe('parseCapsForInnerDriver()', function () {
@@ -234,6 +237,28 @@ describe('utils', function () {
     it('should not allow updating', function () {
       const map = new ReadonlyMap([['foo', 'bar']]);
       (() => map.set('foo', 'baz')).should.throw();
+    });
+  });
+
+  describe('inspect()', function () {
+
+    /**
+     * @type {import('sinon').SinonSandbox}
+     */
+    let sandbox;
+    beforeEach(function () {
+      sandbox = sinon.createSandbox();
+      sandbox.spy(logger, 'info');
+    });
+
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should log the result of inspecting a value', function () {
+      inspect({foo: 'bar'});
+      stripColors(/** @type {import('sinon').SinonStub} */(logger.info).firstCall.firstArg)
+        .should.equal('{ foo: \'bar\' }');
     });
   });
 });

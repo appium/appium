@@ -226,7 +226,7 @@ describe('utils', function () {
 
     it('should not allow deletion', function () {
       const map = new ReadonlyMap([['foo', 'bar']]);
-      (() => map.delete('foo')).should.throw();
+      map.delete('foo').should.be.false;
     });
 
     it('should not allow clearing', function () {

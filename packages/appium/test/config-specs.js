@@ -104,13 +104,19 @@ describe('Config', function () {
     });
     describe('getNonDefaultServerArgs', function () {
       it('should show none if we have all the defaults', function () {
-        let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
+        let nonDefaultArgs = getNonDefaultServerArgs(args);
         nonDefaultArgs.should.be.empty;
       });
       it('should catch a non-default argument', function () {
         args.allowCors = true;
-        let nonDefaultArgs = getNonDefaultServerArgs(parser, args);
+        let nonDefaultArgs = getNonDefaultServerArgs(args);
         nonDefaultArgs.should.eql({allowCors: true});
+      });
+      describe('when arg is an array', function () {
+        it('should return the arg as an array', function () {
+          args.usePlugins = ['all'];
+          getNonDefaultServerArgs(args).should.eql({usePlugins: ['all']});
+        });
       });
     });
 

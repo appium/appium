@@ -1,37 +1,36 @@
+// @ts-check
+
 import _ from 'lodash';
 import logger from './logger';
+// @ts-ignore
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import { fs } from '@appium/support';
+import { inspect as dump } from 'util';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
-function inspectObject (args) {
-  function getValueArray (obj, indent = '  ') {
-    if (!_.isObject(obj)) {
-      return [obj];
-    }
+/**
+ *
+ * If `stdout` is a TTY, this is `true`.
+ *
+ * Used for tighter control over log output.
+ * @type {boolean}
+ */
+const isStdoutTTY = process.stdout.isTTY;
 
-    let strArr = ['{'];
-    for (let [arg, value] of _.toPairs(obj)) {
-      if (!_.isObject(value)) {
-        strArr.push(`${indent}  ${arg}: ${value}`);
-      } else {
-        value = getValueArray(value, `${indent}  `);
-        strArr.push(`${indent}  ${arg}: ${value.shift()}`);
-        strArr.push(...value);
-      }
-    }
-    strArr.push(`${indent}}`);
-    return strArr;
-  }
-  for (let [arg, value] of _.toPairs(args)) {
-    value = getValueArray(value);
-    logger.info(`  ${arg}: ${value.shift()}`);
-    for (let val of value) {
-      logger.info(val);
-    }
-  }
-}
+/**
+ * Dumps to value to the console using `info` logger.
+ *
+ * @todo May want to force color to be `false` if {@link isStdoutTTY} is `false`.
+ */
+const inspect = _.flow(
+  _.partialRight(
+    /** @type {(object: any, options: import('util').InspectOptions) => string} */(dump),
+    {colors: true, depth: null, compact: !isStdoutTTY}
+  ),
+  (...args) => {
+    logger.info(...args);
+  });
 
 /**
  * Takes the caps that were provided in the request and translates them
@@ -246,6 +245,6 @@ class ReadonlyMap extends Map {
 }
 
 export {
-  inspectObject, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
+  inspect, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
   getPackageVersion, pullSettings, removeAppiumPrefixes, ReadonlyMap
 };

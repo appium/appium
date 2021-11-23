@@ -19,7 +19,7 @@ import registerNode from './grid-register';
 import logger from './logger'; // logger needs to remain first of imports
 import { init as logsinkInit } from './logsink';
 import { getDefaultsFromSchema, validate } from './schema/schema';
-import { inspectObject } from './utils';
+import { inspect } from './utils';
 
 /**
  *
@@ -53,18 +53,24 @@ async function preflightChecks (args, throwInsteadOfExit = false) {
   }
 }
 
+/**
+ * @param {Partial<ParsedArgs>} args
+ */
 function logNonDefaultArgsWarning (args) {
   logger.info('Non-default server args:');
-  inspectObject(args);
+  inspect(args);
 }
 
 function logDefaultCapabilitiesWarning (caps) {
   logger.info('Default capabilities, which will be added to each request ' +
               'unless overridden by desired capabilities:');
-  inspectObject(caps);
+  inspect(caps);
 }
 
-async function logStartupInfo (parser, args) {
+/**
+ * @param {ParsedArgs} args
+ */
+async function logStartupInfo (args) {
   let welcome = `Welcome to Appium v${APPIUM_VER}`;
   let appiumRev = await getGitRev();
   if (appiumRev) {
@@ -72,7 +78,7 @@ async function logStartupInfo (parser, args) {
   }
   logger.info(welcome);
 
-  let showArgs = getNonDefaultServerArgs(parser, args);
+  let showArgs = getNonDefaultServerArgs(args);
   if (_.size(showArgs)) {
     logNonDefaultArgsWarning(showArgs);
   }
@@ -86,6 +92,12 @@ async function logStartupInfo (parser, args) {
   // }
 }
 
+/**
+ * Logs the address and port the server is listening on
+ * @param {string} address - Address
+ * @param {number} port - Port
+ * @returns {void}
+ */
 function logServerPort (address, port) {
   let logMessage = `Appium REST http interface listener started on ` +
                    `${address}:${port}`;
@@ -160,13 +172,17 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  *
  * Use this to get at the configuration schema.
  *
+ * If `args` contains a non-empty `subcommand` which is not `server`, this function
+ * will resolve with an empty object.
+ *
+ * @todo: Use generics/conditional types to specify return values.
  * @example
  * import {init, getSchema} from 'appium';
  * const options = {}; // config object
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
  * @param {ParsedArgs} [args] - Parsed args
- * @returns {Promise<{parser: import('./cli/parser').ArgParser} & Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
+ * @returns {Promise<Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
  */
 async function init (args) {
   const parser = await getParser();
@@ -218,11 +234,11 @@ async function init (args) {
   // but instead pass control to the driver CLI
   if (parsedArgs.subcommand === DRIVER_TYPE) {
     await runExtensionCommand(parsedArgs, parsedArgs.subcommand, driverConfig);
-    return {parser};
+    return {};
   }
   if (parsedArgs.subcommand === PLUGIN_TYPE) {
     await runExtensionCommand(parsedArgs, parsedArgs.subcommand, pluginConfig);
-    return {parser};
+    return {};
   }
 
   if (parsedArgs.logFilters) {
@@ -243,16 +259,17 @@ async function init (args) {
   appiumDriver.driverConfig = driverConfig;
   await preflightChecks(parsedArgs, throwInsteadOfExit);
 
-  return {parser, appiumDriver, parsedArgs};
+  return {appiumDriver, parsedArgs};
 }
 
 /**
- *
- * @param {ParsedArgs} [args]
- * @returns
+ * Initializes Appium's config.  Starts server if appropriate and resolves the
+ * server instance if so; otherwise resolves w/ `undefined`.
+ * @param {ParsedArgs} [args] - Arguments from CLI or otherwise
+ * @returns {Promise<import('express').Express|undefined>}
  */
 async function main (args) {
-  const {parser, appiumDriver, parsedArgs} = await init(args);
+  const {appiumDriver, parsedArgs} = await init(args);
 
   if (!appiumDriver || !parsedArgs) {
     // if this branch is taken, we've run a different subcommand, so there's nothing
@@ -264,7 +281,7 @@ async function main (args) {
   // set the active plugins on the umbrella driver so it can use them for commands
   appiumDriver.pluginClasses = pluginClasses;
 
-  await logStartupInfo(parser, parsedArgs);
+  await logStartupInfo(parsedArgs);
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
   const driverClasses = getActiveDrivers(parsedArgs, driverConfig);

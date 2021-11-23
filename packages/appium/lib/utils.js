@@ -235,8 +235,8 @@ class ReadonlyMap extends Map {
     return super.set(key, value);
   }
 
-  delete (key) {
-    throw new Error(`${key} cannot be deleted`);
+  delete () {
+    return false;
   }
 
   clear () {

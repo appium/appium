@@ -24,7 +24,7 @@ Appium 1.x will be receiving minor or patch releases only if XCTest gets breakin
 * Add `mobile:` extensions:
     * `mobile:unlock` to unlock the device as a mobile command [appium-android-driver#709](https://github.com/appium/appium-android-driver/pull/709)
 * Fix `/appium/device/display_density` endpoint to get the device density on Android 12 by getting it via Android API instead of adb command [appium-uiautomator2-driver#474](https://github.com/appium/appium-uiautomator2-driver/pull/474) [appium-uiautomator2-server#444](https://github.com/appium/appium-uiautomator2-server/pull/444)
-* Support XPath 2.0 syntax. It has a possible breaking change in some environment like [issues#16142](https://github.com/appium/appium/issues/16142) [appium-uiautomator2-server#442](https://github.com/appium/appium-uiautomator2-server/pull/442)
+* XPath locators now support XPath 2.0 specification. XPath 2.0 is backward compatible to v 1.0, which means the most of existing queries should still work as expected. However, more advanced queries might require updates due to the strict type checking. See [issues#16142](https://github.com/appium/appium/issues/16142) [appium-uiautomator2-server#442](https://github.com/appium/appium-uiautomator2-server/pull/442) for more details.
 
 ### iOS(XCUITest)
 

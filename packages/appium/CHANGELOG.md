@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.23](https://github.com/appium/appium/compare/appium@2.0.0-beta.22...appium@2.0.0-beta.23) (2021-11-23)
+
+
+### Features
+
+* **appium:** make server host/port information available to drivers and thereby plugins ([221a3ec](https://github.com/appium/appium/commit/221a3ecd5211fadcd375fe6d6c9df11f1af201a2))
+
+
+
+
+
 # [2.0.0-beta.22](https://github.com/appium/appium/compare/appium@2.0.0-beta.21...appium@2.0.0-beta.22) (2021-11-19)
 
 

@@ -41,7 +41,7 @@
     "@babel/runtime": "7.16.3",
     "@octokit/rest": "18.12.0",
     "@types/mocha": "9.0.0",
-    "@types/node": "16.11.9",
+    "@types/node": "16.11.10",
     "ansi-red": "0.1.1",
     "axios": "0.24.0",
     "babel-eslint": "10.1.0",

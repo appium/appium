@@ -181,6 +181,8 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
  * cached and a fresh copy of it is downloaded each time. If this function returns an object
  * containing `appPath` property then the integrity of it will be verified and stored into
  * the cache.
+ * @property {!string[]} supportedExtensions List of supported application extensions (
+ * including starting dots)
  */
 
 /**

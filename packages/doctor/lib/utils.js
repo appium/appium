@@ -1,13 +1,9 @@
 import B from 'bluebird';
 import _inquirer from 'inquirer';
 import log from '../lib/logger';
-import authorize from 'authorize-ios';
 import { fs, system } from '@appium/support';
 import { exec } from 'teen_process';
 import { isFunction } from 'lodash';
-
-// rename to make more sense
-const authorizeIos = authorize;
 
 function ok (message) {
   return {ok: true, optional: false, message};
@@ -112,5 +108,7 @@ async function getNpmPackageInfo (packageName) {
   return null;
 }
 
-export { ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
-  authorizeIos, resolveExecutablePath, getNpmPackageInfo, resetLog };
+export {
+  ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
+  resolveExecutablePath, getNpmPackageInfo, resetLog
+};

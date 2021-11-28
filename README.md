@@ -1,8 +1,7 @@
 ## Appium
 
 [![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)
-[![Dependency Status](https://david-dm.org/appium/appium.svg)](https://david-dm.org/appium/appium)
-[![devDependency Status](https://david-dm.org/appium/appium/dev-status.svg)](https://david-dm.org/appium/appium#info=devDependencies)
+[![Node.js CI](https://github.com/appium/appium/actions/workflows/node.js.yml/badge.svg)](https://github.com/appium/appium/actions/workflows/node.js.yml)
 
 [![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
 

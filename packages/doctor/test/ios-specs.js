@@ -1,14 +1,14 @@
 // transpile:mocha
 
-import { fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-         AuthorizationDbCheck, CarthageCheck, OptionalApplesimutilsCommandCheck,
-         OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck,
-         OptionalLyftCommandCheck } from '../lib/ios';
+import {
+  fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
+  OptionalApplesimutilsCommandCheck, OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck,
+  OptionalLyftCommandCheck
+} from '../lib/ios';
 import { fs, system } from '@appium/support';
 import * as utils from '../lib/utils';
 import * as tp from 'teen_process';
 import * as prompter from '../lib/prompt';
-import CarthageDetector from '../lib/carthage-detector';
 import FixSkippedError from '../lib/doctor';
 import log from '../lib/logger';
 import B from 'bluebird';
@@ -136,35 +136,8 @@ describe('ios', function () {
       ].join('\n'));
     });
   }));
-
-  describe('authorizeIosFix', withSandbox({mocks: {utils, prompter}}, (S) => {
-    it('fix - yes', async function () {
-      let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      S.mocks.utils.expects('authorizeIos').once();
-      S.mocks.prompter.expects('fixIt').once().resolves('yes');
-      await fixes.authorizeIosFix();
-      S.verify();
-      logStub.output.should.equal([
-        'info: The authorize iOS script need to be run.',
-      ].join('\n'));
-    });
-    it('fix - no', async function () {
-      let logStub = stubLog(S.sandbox, log, {stripColors: true});
-      S.mocks.utils.expects('authorizeIos').never();
-      S.mocks.prompter.expects('fixIt').once().resolves('no');
-      await fixes.authorizeIosFix().should.be.rejectedWith(FixSkippedError);
-      S.verify();
-      logStub.output.should.equal([
-        'info: The authorize iOS script need to be run.',
-        'info: Skipping you will need to run the authorize iOS manually.'
-      ].join('\n'));
-    });
-  }));
   describe('DevToolsSecurityCheck', withMocks({fixes, tp}, (mocks) => {
     let check = new DevToolsSecurityCheck();
-    it('autofix', function () {
-      check.autofix.should.be.ok;
-    });
     it('diagnose - success', async function () {
       mocks.tp.expects('exec').once().returns(
         B.resolve({stdout: '1234 enabled\n', stderr: ''}));
@@ -193,91 +166,6 @@ describe('ios', function () {
         message: 'DevToolsSecurity is NOT enabled!'
       });
       mocks.verify();
-    });
-    it('fix', async function () {
-      mocks.fixes.expects('authorizeIosFix').once();
-      await check.fix();
-      mocks.verify();
-    });
-  }));
-  describe('AuthorizationDbCheck', withMocks({fixes, tp, fs, utils, system}, (mocks) => {
-    let check = new AuthorizationDbCheck();
-    it('autofix', function () {
-      check.autofix.should.be.ok;
-    });
-    it('diagnose - success', async function () {
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '1234 is-developer\n', stderr: ''}));
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: false,
-        message: 'The Authorization DB is set up properly.'
-      });
-      mocks.verify();
-    });
-    it('diagnose - failure', async function () {
-      mocks.tp.expects('exec').once().rejects(new Error('Oh No!'));
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        optional: false,
-        message: 'The Authorization DB is NOT set up properly.'
-      });
-      mocks.verify();
-    });
-    it('fix', async function () {
-      mocks.fixes.expects('authorizeIosFix').once();
-      await check.fix();
-      mocks.verify();
-    });
-  }));
-  describe('CarthageCheck', withMocks({CarthageDetector, tp}, (mocks) => {
-    let check = new CarthageCheck();
-    it('autofix', function () {
-      check.autofix.should.not.be.ok;
-    });
-    it('diagnose - success', async function () {
-      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: 'Please update to the latest Carthage version: 0.33.0. You currently are on 0.32.0\n0.32.0\n', stderr: ''}));
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: false,
-        message: 'Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.32.0'
-      });
-      mocks.verify();
-    });
-    it('diagnose - success - one line carthage version', async function () {
-      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
-      mocks.tp.expects('exec').once().returns(
-        B.resolve({stdout: '0.32.0\n', stderr: ''}));
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: false,
-        message: 'Carthage was found at: /usr/local/bin/carthage. Installed version is: 0.32.0'
-      });
-      mocks.verify();
-    });
-    it('diagnose - success - but error happens', async function () {
-      mocks.CarthageDetector.expects('detect').once().resolves('/usr/local/bin/carthage');
-      mocks.tp.expects('exec').once().throws(new Error());
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: false,
-        message: 'Carthage was found at: /usr/local/bin/carthage'
-      });
-      mocks.verify();
-    });
-    it('diagnose - failure', async function () {
-      mocks.CarthageDetector.expects('detect').once().resolves(null);
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        optional: false,
-        message: 'Carthage was NOT found!'
-      });
-      mocks.verify();
-    });
-    it('fix', async function () {
-      removeColors(await check.fix()).should.equal('[For lower than Appium 1.20.0] Please install Carthage. Visit https://github.com/Carthage/Carthage#installing-carthage for more information.');
     });
   }));
 

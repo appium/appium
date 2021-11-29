@@ -1,12 +1,10 @@
-import { ok, nok, okOptional, nokOptional, authorizeIos, resolveExecutablePath } from './utils'; // eslint-disable-line
-import { fs, util } from '@appium/support';
+import { ok, nok, okOptional, nokOptional, resolveExecutablePath } from './utils'; // eslint-disable-line
+import { fs } from '@appium/support';
 import { exec } from 'teen_process';
 import { DoctorCheck, FixSkippedError } from './doctor';
 import log from './logger';
-import CarthageDetector from './carthage-detector';
 import { fixIt } from './prompt';
 import EnvVarAndPathCheck from './env';
-import _ from 'lodash';
 import 'colors';
 
 let checks = [];
@@ -70,24 +68,8 @@ class XcodeCmdLineToolsCheck extends DoctorCheck {
 
 checks.push(new XcodeCmdLineToolsCheck());
 
-// Automatically run authorize iOS if requested
-fixes.authorizeIosFix = async function () {
-  log.info(`The authorize iOS script need to be run.`);
-  let yesno = await fixIt();
-  if (yesno === 'yes') {
-    await authorizeIos();
-  } else {
-    log.info(`Skipping you will need to run ${'the authorize iOS'.bold} manually.`);
-    throw new FixSkippedError();
-  }
-};
-
 // Dev Tools Security
 class DevToolsSecurityCheck extends DoctorCheck {
-  constructor () {
-    super({autofix: true});
-  }
-
   async diagnose () {
     const errMess = 'DevToolsSecurity is NOT enabled!';
     let stdout;
@@ -100,68 +82,8 @@ class DevToolsSecurityCheck extends DoctorCheck {
     return stdout && stdout.match(/enabled/) ? ok('DevToolsSecurity is enabled.')
       : nok(errMess);
   }
-  async fix () {
-    return await fixes.authorizeIosFix();
-  }
 }
 checks.push(new DevToolsSecurityCheck());
-
-// Authorization DB
-class AuthorizationDbCheck extends DoctorCheck {
-  constructor () {
-    super({autofix: true});
-  }
-
-  async diagnose () {
-    const successMess = 'The Authorization DB is set up properly.';
-    const errMess = 'The Authorization DB is NOT set up properly.';
-    let stdout;
-    try {
-      ({stdout} = await exec('security', ['authorizationdb', 'read', 'system.privilege.taskport']));
-    } catch (err) {
-      log.warn(err);
-      return nok(errMess);
-    }
-    return stdout && (stdout.match(/is-developer/) || stdout.match(/allow/)) ?
-      ok(successMess) : nok(errMess);
-  }
-  async fix () {
-    return await fixes.authorizeIosFix();
-  }
-}
-checks.push(new AuthorizationDbCheck());
-
-// Check for Carthage (for WDA)
-class CarthageCheck extends DoctorCheck {
-  async diagnose () {
-    let carthagePath = await CarthageDetector.detect();
-
-    let version;
-    if (carthagePath) {
-      try {
-        const {stdout} = await exec(carthagePath, ['version']);
-        // 'Please update to the latest Carthage version: 0.33.0. You currently are on 0.32.0\n0.32.0\n' or '0.32.0\n'
-        // 0.32.0 is the current version. 0.33.0 is an available newer version.
-        version = _.last(stdout.match(/(\d+\.\d+\.\d+)/g));
-        if (!util.coerceVersion(version, false)) {
-          log.warn(`Cannot parse Carthage version from ${stdout}`);
-        }
-      } catch (err) {
-        log.warn(err);
-      }
-    }
-
-    return carthagePath
-      ? ok(`Carthage was found at: ${carthagePath}${ version ? `. Installed version is: ${version}` : ''}`)
-      : nok(`Carthage was NOT found!`);
-  }
-
-  async fix () { // eslint-disable-line require-await
-    return `${'[For lower than Appium 1.20.0]'.bold} Please install ${'Carthage'.bold}. Visit https://github.com/Carthage` +
-           '/Carthage#installing-carthage for more information.';
-  }
-}
-checks.push(new CarthageCheck());
 
 checks.push(new EnvVarAndPathCheck('HOME'));
 
@@ -238,7 +160,7 @@ checks.push(new OptionalIOSDeployCommandCheck());
 
 export {
   fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
-  AuthorizationDbCheck, CarthageCheck, OptionalIdbCommandCheck, OptionalApplesimutilsCommandCheck,
+  OptionalIdbCommandCheck, OptionalApplesimutilsCommandCheck,
   OptionalIOSDeployCommandCheck, OptionalLyftCommandCheck
 };
 export default checks;

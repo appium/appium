@@ -415,7 +415,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
         delete httpResBody.sessionId;
       }
 
-      httpResBody = formatStatus(httpResBody, httpStatus, currentProtocol);
+      httpResBody = formatStatus(httpResBody);
       res.status(httpStatus).json(httpResBody);
     }
   };
@@ -452,11 +452,11 @@ async function doJwpProxy (driver, req, res) {
 
   // check that the inner driver has a proxy function
   if (!driver.canProxy(req.params.sessionId)) {
-    throw new Error('Trying to proxy to a JSONWP server but driver is unable to proxy');
+    throw new Error('Trying to proxy to a server but the driver is unable to proxy');
   }
   try {
     const proxiedRes = await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
-    if (proxiedRes && proxiedRes.error) throw proxiedRes.error; // eslint-disable-line curly
+    if (proxiedRes?.error) throw proxiedRes.error; // eslint-disable-line curly
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;

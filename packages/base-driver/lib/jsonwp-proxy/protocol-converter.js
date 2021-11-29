@@ -4,7 +4,6 @@ import { duplicateKeys } from '../basedriver/helpers';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS
 } from '../constants';
-import { formatStatus } from '../protocol/helpers';
 
 const log = logger.getLogger('Protocol Converter');
 
@@ -206,10 +205,7 @@ class ProtocolConverter {
    */
   async convertAndProxy (commandName, url, method, body) {
     if (!this.downstreamProtocol) {
-      // Patch calls with GENERIC protocol
-      // to preserve the backward compatibility
-      const [res, resBodyObj] = await this.proxyFunc(url, method, body);
-      return [res, formatStatus(resBodyObj, res.statusCode)];
+      return await this.proxyFunc(url, method, body);
     }
 
     // Same url, but different arguments

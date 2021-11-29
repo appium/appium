@@ -170,7 +170,7 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      status.should.equal(501);
+      status.should.equal(405);
       data.should.eql({
         value: {
           message: 'Method has not yet been implemented'
@@ -187,7 +187,7 @@ describe('Protocol', function () {
         data: {},
       });
 
-      status.should.equal(501);
+      status.should.equal(405);
       data.should.eql({
         value: {
           message: 'Method has not yet been implemented'
@@ -234,13 +234,10 @@ describe('Protocol', function () {
         validateStatus: null,
       });
       status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-            'the command. Original error: Mishandled Driver Error'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Mishandled Driver Error');
+      data.sessionId.should.eql('foo');
     });
 
     describe('w3c sendkeys migration', function () {
@@ -733,13 +730,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Too Fresh!'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Too Fresh!');
+      data.sessionId.should.eql('foo');
     });
 
     it('should not throw UnknownError when known', async function () {
@@ -749,12 +743,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(404);
-      data.should.eql({
-        value: {
-          message: 'A session is either terminated or not started'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('invalid session id');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Too Fresh!');
+      data.sessionId.should.eql('foo');
     });
   });
 
@@ -839,13 +831,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-            'the command. Original error: Too Fresh!'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Too Fresh!');
+      data.sessionId.should.eql('Vader Sessions');
     });
 
     it('should return a new session ID on create', async function () {
@@ -893,14 +882,11 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-            'the command. Original error: Trying to proxy to a ' +
-            'server but the driver is unable to proxy'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Trying to proxy to a ' +
+        'server but the driver is unable to proxy');
+      data.sessionId.should.eql('foo');
     });
 
     it('should pass on any errors in proxying', async function () {
@@ -915,14 +901,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-            'the command. Original error: Could not proxy. Proxy ' +
-            'error: foo'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Could not proxy. Proxy error: foo');
+      data.sessionId.should.eql('foo');
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
@@ -937,13 +919,10 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      status.should.equal(500);
-      data.should.eql({
-        value: {
-          message: 'No such context found.'
-        },
-        sessionId: 'foo'
-      });
+      status.should.equal(400);
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('No such context found.');
+      data.sessionId.should.eql('foo');
     });
 
     it('should let the proxy handle req/res', async function () {

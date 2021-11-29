@@ -4,6 +4,8 @@
 // npm package. I.e., these are the officially recognized plugins.
 const KNOWN_PLUGINS = {
   images: '@appium/images-plugin',
+  'execute-driver': '@appium/execute-driver-plugin',
+  'relaxed-caps': '@appium/relaxed-caps-plugin',
 };
 
 export {

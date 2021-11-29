@@ -228,7 +228,7 @@ information about this in the [Apple documentation](https://developer.apple.com/
 * A Mac with [Xcode](https://developer.apple.com/xcode/) and the Xcode Command
 Line Developer Tools.
 
-Appium handles installing the application to the device, using
+(Only for lower than Appium 1.15.0) Appium handles installing the application to the device, using
 `ideviceinstaller` (which is installed as part of `libimobiledevice`), but it
 is sometimes easier to pre-install your app using Xcode to ensure there are no
 problems (see again the [Apple

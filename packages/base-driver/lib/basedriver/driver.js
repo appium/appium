@@ -1,5 +1,5 @@
 import {
-  Protocol, errors, determineProtocol
+  Protocol, errors, determineProtocol, DELETE_SESSION_COMMAND,
 } from '../protocol';
 import { fs } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
@@ -311,7 +311,7 @@ class BaseDriver extends Protocol {
       // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
       this.protocol = determineProtocol(...args);
       this.logEvent(EVENT_SESSION_INIT);
-    } else if (cmd === 'deleteSession') {
+    } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_START);
     }
 
@@ -352,7 +352,7 @@ class BaseDriver extends Protocol {
     // automatic session deletion in this.onCommandTimeout. Of course we don't
     // want to trigger the timer when the user is shutting down the session
     // intentionally
-    if (this.isCommandsQueueEnabled && cmd !== 'deleteSession') {
+    if (this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
       // resetting existing timeout
       this.startNewCommandTimeout();
     }
@@ -362,7 +362,7 @@ class BaseDriver extends Protocol {
     this._eventHistory.commands.push({cmd, startTime, endTime});
     if (cmd === 'createSession') {
       this.logEvent(EVENT_SESSION_START);
-    } else if (cmd === 'deleteSession') {
+    } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_DONE);
     }
 

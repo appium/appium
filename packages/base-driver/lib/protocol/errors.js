@@ -657,7 +657,7 @@ class ProxyRequestError extends ES6Error {
 
   getActualError () {
     // If it's MJSONWP error, returns actual error cause for request failure based on `jsonwp.status`
-    if (util.hasValue(this.jsonwp) && util.hasValue(this.jsonwp.status) && util.hasValue(this.jsonwp.value)) {
+    if (util.hasValue(this.jsonwp?.status) && util.hasValue(this.jsonwp?.value)) {
       return errorFromMJSONWPStatusCode(this.jsonwp.status, this.jsonwp.value);
     } else if (util.hasValue(this.w3c) && _.isNumber(this.w3cStatus) && this.w3cStatus >= 300) {
       return errorFromW3CJsonCode(this.w3c.error, this.w3c.message || this.message, this.w3c.stacktrace);

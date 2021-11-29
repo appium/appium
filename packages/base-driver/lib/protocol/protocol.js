@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { util } from '@appium/support';
 import { validators } from './validators';
 import {
-  errors, isErrorType, getResponseForW3CError, getResponseForJsonwpError,
+  errors, isErrorType, getResponseForW3CError,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
 } from './errors';
 import { METHOD_MAP, NO_SESSION_ID_COMMANDS } from './routes';
@@ -377,24 +377,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
           .debug(`Encountered internal error running command: ${errMsg}`);
       }
 
-      if (currentProtocol === PROTOCOLS.W3C) {
-        [httpStatus, httpResBody] = getResponseForW3CError(actualErr);
-      } else if (currentProtocol === PROTOCOLS.MJSONWP) {
-        [httpStatus, httpResBody] = getResponseForJsonwpError(actualErr);
-      } else {
-        // If it's unknown what the protocol is (like if it's `getStatus` prior to `createSession`), merge the responses
-        // together to be protocol-agnostic
-        let jsonwpRes = getResponseForJsonwpError(actualErr);
-        let w3cRes = getResponseForW3CError(actualErr);
-
-        httpResBody = {
-          ...jsonwpRes[1],
-          ...w3cRes[1],
-        };
-
-        // Use the JSONWP status code (which is usually 500)
-        httpStatus = jsonwpRes[0];
-      }
+      [httpStatus, httpResBody] = getResponseForW3CError(actualErr);
     }
 
     // decode the response, which is either a string or json
@@ -455,8 +438,7 @@ async function doJwpProxy (driver, req, res) {
     throw new Error('Trying to proxy to a server but the driver is unable to proxy');
   }
   try {
-    const proxiedRes = await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
-    if (proxiedRes?.error) throw proxiedRes.error; // eslint-disable-line curly
+    await driver.executeCommand('proxyReqRes', req, res, req.params.sessionId);
   } catch (err) {
     if (isErrorType(err, errors.ProxyRequestError)) {
       throw err;

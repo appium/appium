@@ -11,7 +11,6 @@ import { createProxyServer } from './helpers';
 import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
 } from '../../lib/constants';
-import qs from 'querystring';
 import {TEST_HOST, getTestPort} from '../helpers';
 
 let port;
@@ -58,7 +57,6 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'}
       });
       data.should.eql({
-        status: 0,
         value: 'Navigated to: http://google.com',
         sessionId: 'foo'
       });
@@ -71,25 +69,23 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
       data.should.eql({
-        status: 0,
         value: 'Navigated to: http://google.com',
         sessionId: 'foo'
       });
     });
 
     it('should respond to x-www-form-urlencoded as well as json requests', async function () {
+      const reqData = new URLSearchParams();
+      reqData.set('url', 'http://google.com');
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         method: 'POST',
-        data: qs.stringify({
-          url: 'http://google.com',
-        }),
+        data: reqData.toString(),
       });
       data.should.eql({
-        status: 0,
         value: 'Navigated to: http://google.com',
         sessionId: 'foo'
       });
@@ -102,7 +98,6 @@ describe('Protocol', function () {
         data: {},
       });
       data.should.eql({
-        status: 0,
         value: 'foo',
         sessionId: 'foo'
       });
@@ -114,7 +109,6 @@ describe('Protocol', function () {
         method: 'POST',
         data: {},
       });
-      data.status.should.equal(0);
       data.value.should.eql(['bar', 'foo']);
     });
 
@@ -122,7 +116,6 @@ describe('Protocol', function () {
       const {data} = await axios({
         url: `${baseUrl}/session/foo/element/bar/attribute/baz`,
       });
-      data.status.should.equal(0);
       data.value.should.eql(['baz', 'bar', 'foo']);
     });
 
@@ -150,7 +143,6 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'}
       });
       data.should.eql({
-        status: 0,
         value: 'Navigated to: http://google.com',
         sessionId: 'foo'
       });
@@ -178,14 +170,10 @@ describe('Protocol', function () {
         validateStatus: null,
       });
 
-      status.should.equal(501);
-      data.should.eql({
-        status: 405,
-        value: {
-          message: 'Method has not yet been implemented'
-        },
-        sessionId: 'foo'
-      });
+      status.should.equal(405);
+      data.value.error.should.eql('unknown method');
+      data.value.message.should.eql('Method has not yet been implemented');
+      data.sessionId.should.eql('foo');
     });
 
     it('should throw not implemented for ignored commands', async function () {
@@ -196,14 +184,10 @@ describe('Protocol', function () {
         data: {},
       });
 
-      status.should.equal(501);
-      data.should.eql({
-        status: 405,
-        value: {
-          message: 'Method has not yet been implemented'
-        },
-        sessionId: 'foo'
-      });
+      status.should.equal(405);
+      data.value.error.should.eql('unknown method');
+      data.value.message.should.eql('Method has not yet been implemented');
+      data.sessionId.should.eql('foo');
     });
 
     it('should get 400 for bad parameters', async function () {
@@ -244,14 +228,10 @@ describe('Protocol', function () {
         validateStatus: null,
       });
       status.should.equal(500);
-      data.should.eql({
-        status: 13,
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Mishandled Driver Error'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Mishandled Driver Error');
+      data.sessionId.should.eql('foo');
     });
 
     describe('w3c sendkeys migration', function () {
@@ -261,7 +241,6 @@ describe('Protocol', function () {
           method: 'POST',
           data: {value: 'text to type'}
         });
-        data.status.should.equal(0);
         data.value.should.eql(['text to type', 'bar']);
       });
       it('should accept text for sendkeys', async function () {
@@ -270,7 +249,6 @@ describe('Protocol', function () {
           method: 'POST',
           data: {text: 'text to type'}
         });
-        data.status.should.equal(0);
         data.value.should.eql(['text to type', 'bar']);
       });
       it('should accept value and text for sendkeys, and use value', async function () {
@@ -279,7 +257,6 @@ describe('Protocol', function () {
           method: 'POST',
           data: {value: 'text to type', text: 'text to ignore'}
         });
-        data.status.should.equal(0);
         data.value.should.eql(['text to type', 'bar']);
       });
     });
@@ -292,7 +269,6 @@ describe('Protocol', function () {
             method: 'POST',
             data: {element: '3'}
           });
-          data.status.should.equal(0);
           data.value.should.eql(['3', null, null]);
         });
         it('should allow moveto with xoffset/yoffset', async function () {
@@ -301,7 +277,6 @@ describe('Protocol', function () {
             method: 'POST',
             data: {xoffset: 42, yoffset: 17}
           });
-          data.status.should.equal(0);
           data.value.should.eql([null, 42, 17]);
         });
       });
@@ -312,7 +287,6 @@ describe('Protocol', function () {
             method: 'POST',
             data: {appId: 42}
           });
-          data.status.should.equal(0);
           data.value.should.eql(42);
         });
         it('should allow removeApp with bundleId', async function () {
@@ -321,7 +295,6 @@ describe('Protocol', function () {
             method: 'POST',
             data: {bundleId: 42}
           });
-          data.status.should.equal(0);
           data.value.should.eql(42);
         });
       });
@@ -728,7 +701,6 @@ describe('Protocol', function () {
         method: 'POST',
       });
       data.should.eql({
-        status: 0,
         value: null,
         sessionId: 'foo'
       });
@@ -739,7 +711,6 @@ describe('Protocol', function () {
         url: `${baseUrl}/session/foo/element/bar/text`,
       });
       data.should.eql({
-        status: 0,
         value: '',
         sessionId: 'foo'
       });
@@ -753,14 +724,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        status: 13,
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Too Fresh!'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Too Fresh!');
+      data.sessionId.should.eql('foo');
     });
 
     it('should not throw UnknownError when known', async function () {
@@ -770,13 +737,9 @@ describe('Protocol', function () {
       });
 
       status.should.equal(404);
-      data.should.eql({
-        status: 6,
-        value: {
-          message: 'A session is either terminated or not started'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('invalid session id');
+      data.value.message.should.eql('A session is either terminated or not started');
+      data.sessionId.should.eql('foo');
     });
   });
 
@@ -832,7 +795,6 @@ describe('Protocol', function () {
       });
 
       status.should.equal(404);
-      data.status.should.equal(6);
       data.value.message.should.contain('session');
     });
 
@@ -848,7 +810,6 @@ describe('Protocol', function () {
       });
 
       status.should.equal(404);
-      data.status.should.equal(6);
       data.value.message.should.contain('session');
     });
 
@@ -863,14 +824,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        status: 13,
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Too Fresh!'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Too Fresh!');
+      data.sessionId.should.eql('Vader Sessions');
     });
 
     it('should return a new session ID on create', async function () {
@@ -918,15 +875,11 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        status: 13,
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Trying to proxy to a JSONWP ' +
-                   'server but driver is unable to proxy'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Trying to proxy to a ' +
+        'server but the driver is unable to proxy');
+      data.sessionId.should.eql('foo');
     });
 
     it('should pass on any errors in proxying', async function () {
@@ -941,15 +894,10 @@ describe('Protocol', function () {
       });
 
       status.should.equal(500);
-      data.should.eql({
-        status: 13,
-        value: {
-          message: 'An unknown server-side error occurred while processing ' +
-                   'the command. Original error: Could not proxy. Proxy ' +
-                   'error: foo'
-        },
-        sessionId
-      });
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
+        'the command. Original error: Could not proxy. Proxy error: foo');
+      data.sessionId.should.eql('foo');
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
@@ -964,14 +912,10 @@ describe('Protocol', function () {
         data: {url: 'http://google.com'},
       });
 
-      status.should.equal(500);
-      data.should.eql({
-        status: 35,
-        value: {
-          message: 'No such context found.'
-        },
-        sessionId: 'foo'
-      });
+      status.should.equal(400);
+      data.value.error.should.eql('unknown error');
+      data.value.message.should.eql('No such context found.');
+      data.sessionId.should.eql('foo');
     });
 
     it('should let the proxy handle req/res', async function () {
@@ -998,7 +942,6 @@ describe('Protocol', function () {
 
       status.should.equal(200);
       data.should.eql({
-        status: 0,
         value: 'Navigated to: http://google.com',
         sessionId
       });
@@ -1015,7 +958,6 @@ describe('Protocol', function () {
         });
 
         status.should.equal(500);
-        data.status.should.equal(13);
         data.value.message.should.contain('roxy');
       }
       const lists = [
@@ -1038,7 +980,6 @@ describe('Protocol', function () {
 
       status.should.equal(200);
       data.should.eql({
-        status: 0,
         value: "I'm fine",
         sessionId: null
       });
@@ -1063,7 +1004,6 @@ describe('Protocol', function () {
 
       status.should.equal(200);
       data.should.eql({
-        status: 0,
         value: 'This was not proxied',
         sessionId
       });

@@ -17,7 +17,6 @@ describe('proxy', function () {
   it('should proxy status straight', async function () {
     let [res, resBody] = await jwproxy.proxy('/status', 'GET');
     res.statusCode.should.equal(200);
-    resBody.status.should.equal(0);
     resBody.value.should.equal(`I'm fine`);
   });
   it('should proxy status as command', async function () {

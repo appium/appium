@@ -169,32 +169,32 @@ describe('proxy', function () {
       await j.proxyReqRes(req, res);
       res.headers['content-type'].should.equal('application/json; charset=utf-8');
       res.sentCode.should.equal(200);
-      res.sentBody.should.eql({status: 0, value: {foo: 'bar'}});
+      res.sentBody.should.eql({value: {foo: 'bar'}});
     });
     it('should rewrite the inner session id so it doesnt change', async function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/element/200/value', 'GET');
       await j.proxyReqRes(req, res);
-      res.sentBody.should.eql({status: 0, value: 'foobar', sessionId: '123'});
+      res.sentBody.should.eql({value: 'foobar', sessionId: '123'});
     });
     it('should rewrite the inner session id with sessionId in url', async function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/session/456/element/200/value', 'POST');
       await j.proxyReqRes(req, res);
-      res.sentBody.should.eql({status: 0, value: 'foobar', sessionId: '456'});
+      res.sentBody.should.eql({value: 'foobar', sessionId: '456'});
     });
     it('should pass through urls that do not require session IDs', async function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/status', 'GET');
       await j.proxyReqRes(req, res);
-      res.sentBody.should.eql({status: 0, value: {'foo': 'bar'}});
+      res.sentBody.should.eql({value: {'foo': 'bar'}});
     });
     it('should proxy strange responses', async function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/nochrome', 'GET');
       await j.proxyReqRes(req, res);
       res.sentCode.should.equal(100);
-      res.sentBody.should.eql({status: 0, value: {message: 'chrome not reachable'}});
+      res.sentBody.should.eql({value: {message: 'chrome not reachable'}});
     });
   });
 });

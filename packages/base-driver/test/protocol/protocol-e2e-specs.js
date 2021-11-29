@@ -171,12 +171,9 @@ describe('Protocol', function () {
       });
 
       status.should.equal(405);
-      data.should.eql({
-        value: {
-          message: 'Method has not yet been implemented'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown method');
+      data.value.message.should.eql('Method has not yet been implemented');
+      data.sessionId.should.eql('foo');
     });
 
     it('should throw not implemented for ignored commands', async function () {
@@ -188,12 +185,9 @@ describe('Protocol', function () {
       });
 
       status.should.equal(405);
-      data.should.eql({
-        value: {
-          message: 'Method has not yet been implemented'
-        },
-        sessionId: 'foo'
-      });
+      data.value.error.should.eql('unknown method');
+      data.value.message.should.eql('Method has not yet been implemented');
+      data.sessionId.should.eql('foo');
     });
 
     it('should get 400 for bad parameters', async function () {
@@ -744,8 +738,7 @@ describe('Protocol', function () {
 
       status.should.equal(404);
       data.value.error.should.eql('invalid session id');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Too Fresh!');
+      data.value.message.should.eql('A session is either terminated or not started');
       data.sessionId.should.eql('foo');
     });
   });

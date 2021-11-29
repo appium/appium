@@ -22,7 +22,7 @@ const APPLICATIONS_CACHE = new LRU({
     logger.info(`The application '${app}' cached at '${fullPath}' has ` +
       `expired after ${CACHED_APPS_MAX_AGE}ms`);
     setTimeout(async () => {
-      if (fullPath && await fs.exists(fullPath)) {
+      if (fullPath) {
         await fs.rimraf(fullPath);
       }
     });
@@ -74,6 +74,7 @@ function getCachedApplicationPath (link, currentAppProps = {}, cachedAppInfo = {
   };
 
   if (!_.isPlainObject(cachedAppInfo) || !_.isPlainObject(currentAppProps)) {
+    // if an invalid arg is passed then assume cache miss
     return refresh();
   }
 
@@ -137,7 +138,6 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
     return false;
   }
 
-  const isDir = (await fs.stat(currentPath)).isDirectory();
   // Folder integrity check is simple:
   // Verify the previous amount of files is not greater than the current one.
   // We don't want to use equality comparison because of an assumption that the OS might
@@ -145,22 +145,14 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
   // Ofc, validating the hash sum of each file (or at least of file path) would be much
   // more precise, but we don't need to be very precise here and also don't want to
   // overuse RAM and have a performance drop.
-  if (isDir && await calculateFolderIntegrity(currentPath) >= expectedIntegrity?.folder) {
-    return true;
-  }
-  if (!isDir && await calculateFileIntegrity(currentPath) === expectedIntegrity?.file) {
-    return true;
-  }
-  return false;
+  return (await fs.stat(currentPath)).isDirectory()
+    ? await calculateFolderIntegrity(currentPath) >= expectedIntegrity?.folder
+    : await calculateFileIntegrity(currentPath) === expectedIntegrity?.file;
 }
 
 /**
- * @typedef {Object} ConfigureAppOptions
- * @property {?Function} onPostProcess Optional function, which should be applied
- * to the application after it is downloaded/preprocessed. This function may be async
- * and is expected to accept single object parameter with the following properties:
- *
- * - cachedAppInfo: The information about the previously cached app instance (if exists):
+ * @typedef {Object} PostProcessOptions
+ * @property {Object} cachedAppInfo The information about the previously cached app instance (if exists):
  *    - packageHash: SHA1 hash of the package if it is a file and not a folder
  *    - lastModified: Optional Date instance, the value of file's `Last-Modified` header
  *    - immutable: Optional boolean value. Contains true if the file has an `immutable` mark
@@ -171,12 +163,25 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
  *    - integrity: An object containing either `file` property with SHA1 hash of the file
  *                 or `folder` property with total amount of cached files and subfolders
  *    - fullPath: the full path to the cached app
- * - isUrl: Whether the app has been downloaded from a remote URL
- * - headers: Optional headers object. Only present if `isUrl` is true and if the server
- * responds to HEAD requests.
- * - appPath: A string containing full path to the preprocessed application package (either
+ * @property {boolean} isUrl Whether the app has been downloaded from a remote URL
+ * @property {?Object} headers Optional headers object. Only present if `isUrl` is true and if the server
+ * responds to HEAD requests. All header names are normalized to lowercase.
+ * @property {string} appPath A string containing full path to the preprocessed application package (either
  * downloaded or a local one)
- *
+ */
+
+/**
+ * @typedef {Object} PostProcessResult
+ * @property {string} appPath The full past to the post-processed application package on the
+ * local file system (might be a file or a folder path)
+ */
+
+/**
+ * @typedef {Object} ConfigureAppOptions
+ * @property {(obj: PostProcessOptions) => (Promise<PostProcessResult|undefined>|PostProcessResult|undefined)} onPostProcess
+ * Optional function, which should be applied
+ * to the application after it is downloaded/preprocessed. This function may be async
+ * and is expected to accept single object parameter.
  * The function is expected to either return a falsy value, which means the app must not be
  * cached and a fresh copy of it is downloaded each time. If this function returns an object
  * containing `appPath` property then the integrity of it will be verified and stored into
@@ -322,7 +327,7 @@ async function configureApp (app, options = {}) {
       throw new Error(errorMessage);
     }
 
-    const isPackageAFile = !(await fs.stat(newApp)).isDirectory();
+    const isPackageAFile = (await fs.stat(newApp)).isFile();
     if (isPackageAFile) {
       packageHash = await calculateFileIntegrity(newApp);
     }
@@ -360,7 +365,7 @@ async function configureApp (app, options = {}) {
 
     const storeAppInCache = async (appPathToCache) => {
       const cachedFullPath = cachedAppInfo?.fullPath;
-      if (cachedFullPath && cachedFullPath !== appPathToCache && await fs.exists(cachedFullPath)) {
+      if (cachedFullPath && cachedFullPath !== appPathToCache) {
         await fs.rimraf(cachedFullPath);
       }
       const integrity = {};

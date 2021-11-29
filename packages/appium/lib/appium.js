@@ -3,7 +3,8 @@ import log from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
 import { BaseDriver, errors, isSessionCommand,
-         CREATE_SESSION_COMMAND } from '@appium/base-driver';
+         CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND
+} from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from '@appium/support';
@@ -443,9 +444,10 @@ class AppiumDriver extends BaseDriver {
     // The tricky part is that because we support command plugins, we need to wrap any of these
     // cases with plugin handling.
 
-    const isGetStatus = cmd === 'getStatus';
+    const isGetStatus = cmd === GET_STATUS_COMMAND;
+    const isDeleteSession = cmd === DELETE_SESSION_COMMAND;
     const isUmbrellaCmd = !isGetStatus && isAppiumDriverCommand(cmd);
-    const isSessionCmd = !isGetStatus && !isUmbrellaCmd;
+    const isSessionCmd = !isUmbrellaCmd || isDeleteSession;
 
     // if a plugin override proxying for this command and that is why we are here instead of just
     // letting the protocol proxy the command entirely, determine that, get the request object for
@@ -470,7 +472,9 @@ class AppiumDriver extends BaseDriver {
       }
       // now save the response protocol given that the session driver's protocol might differ
       protocol = dstSession.protocol;
-      driver = dstSession;
+      if (!isUmbrellaCmd) {
+        driver = dstSession;
+      }
     }
 
     // get any plugins which are registered as handling this command

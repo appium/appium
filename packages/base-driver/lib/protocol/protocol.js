@@ -16,6 +16,7 @@ import SESSIONS_CACHE from './sessions-cache';
 
 const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
+const GET_STATUS_COMMAND = 'getStatus';
 
 class Protocol {}
 
@@ -416,7 +417,7 @@ function driverShouldDoJwpProxy (driver, req, command) {
 
   // we should never proxy deleteSession because we need to give the containing
   // driver an opportunity to clean itself up
-  if (command === 'deleteSession') {
+  if (command === DELETE_SESSION_COMMAND) {
     return false;
   }
 
@@ -451,5 +452,6 @@ async function doJwpProxy (driver, req, res) {
 
 export {
   Protocol, routeConfiguringFunction, isSessionCommand,
-  driverShouldDoJwpProxy, determineProtocol, CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND,
+  driverShouldDoJwpProxy, determineProtocol, CREATE_SESSION_COMMAND,
+  DELETE_SESSION_COMMAND, GET_STATUS_COMMAND,
 };

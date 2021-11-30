@@ -86,7 +86,7 @@
     "@types/gulp": "4.0.9",
     "@types/json-schema": "7.0.9",
     "@types/mocha": "9.0.0",
-    "@types/node": "16.11.10",
+    "@types/node": "16.11.11",
     "@types/semver": "7.3.9",
     "@types/sinon": "10.0.6",
     "@types/sinon-chai": "3.2.6",

@@ -144,7 +144,7 @@ function warnNodeDeprecations () {
   // }
 }
 
-async function showConfig () {
+async function showBuildInfo () {
   await updateBuildInfo(true);
   console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
 }
@@ -219,7 +219,7 @@ async function validateTmpDir (tmpDir) {
 }
 
 export {
-  getBuildInfo, checkNodeOk, showConfig,
+  getBuildInfo, checkNodeOk, showBuildInfo,
   warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
   getGitRev, APPIUM_VER, updateBuildInfo
 };

@@ -12,7 +12,7 @@ import { AppiumDriver } from './appium';
 import { driverConfig, pluginConfig, USE_ALL_PLUGINS } from './cli/args';
 import { runExtensionCommand } from './cli/extension';
 import { default as getParser, SERVER_SUBCOMMAND } from './cli/parser';
-import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from './config';
+import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showBuildInfo, validateTmpDir, warnNodeDeprecations } from './config';
 import { readConfigFile } from './config-file';
 import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
 import registerNode from './grid-register';
@@ -32,8 +32,8 @@ async function preflightChecks (args, throwInsteadOfExit = false) {
     if (args.longStacktrace) {
       require('longjohn').async_trace_limit = -1;
     }
-    if (args.showConfig) {
-      await showConfig();
+    if (args.showBuildInfo) {
+      await showBuildInfo();
       process.exit(0);
     }
     warnNodeDeprecations();

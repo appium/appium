@@ -202,13 +202,13 @@ const serverArgsDisallowedInConfig = new Map([
     },
   ],
   [
-    ['--show-config'],
+    ['--show-build-info'],
     {
       default: false,
-      dest: 'showConfig',
+      dest: 'showBuildInfo',
       action: 'store_true',
       required: false,
-      help: 'Show info about the appium server configuration and exit',
+      help: 'Show info about the Appium build and exit',
     },
   ],
   [

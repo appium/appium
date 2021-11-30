@@ -160,7 +160,7 @@ interface MoreArgs {
   /**
    * If true, show the build info and exit
    */
-  showConfig: boolean;
+  showBuildInfo: boolean;
 
   /**
    * If true, open a REPL

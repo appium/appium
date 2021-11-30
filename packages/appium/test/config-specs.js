@@ -2,19 +2,19 @@
 import _ from 'lodash';
 import sinon from 'sinon';
 import getParser from '../lib/cli/parser';
-import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
+import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, validateTmpDir, warnNodeDeprecations } from '../lib/config';
 import logger from '../lib/logger';
 import { getDefaultsForSchema, resetSchema, registerSchema, finalizeSchema } from '../lib/schema/schema';
 
 describe('Config', function () {
   describe('Appium config', function () {
-    describe('showConfig', function () {
+    describe('showBuildInfo', function () {
       before(function () {
         sinon.spy(console, 'log');
       });
       it('should log the config to console', async function () {
         const config = getBuildInfo();
-        await showConfig();
+        await showBuildInfo();
         console.log.calledOnce.should.be.true; // eslint-disable-line no-console
         console.log.getCall(0).args[0].should.contain(JSON.stringify(config)); // eslint-disable-line no-console
       });

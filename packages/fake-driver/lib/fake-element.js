@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import XMLDom from 'xmldom';
+import XMLDom from '@xmldom/xmldom';
 
 class FakeElement {
   constructor (xmlNode, app) {

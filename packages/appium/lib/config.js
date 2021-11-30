@@ -6,7 +6,7 @@ import { rootDir } from './utils';
 import logger from './logger';
 import semver from 'semver';
 import findUp from 'find-up';
-import { getDefaultsFromSchema } from './schema/schema';
+import { getDefaultsForSchema } from './schema/schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 
@@ -204,7 +204,7 @@ function getNonDefaultServerArgs (args) {
     ])
   ]);
 
-  const defaultsFromSchema = getDefaultsFromSchema();
+  const defaultsFromSchema = getDefaultsForSchema();
 
   return _.pickBy(args, (__, key) => isNotDefault(key));
 }

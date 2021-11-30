@@ -74,6 +74,11 @@ export class ArgSpec {
   dest;
 
   /**
+   * The same as {@link ArgSpec.dest} but without the leading `<extType>.<extName>.` prefix.
+   */
+  rawDest;
+
+  /**
    * Whatever the default value of this argument is, as specified by the
    * `default` property of the schema.
    * @type {D}
@@ -100,10 +105,10 @@ export class ArgSpec {
 
     // if no explicit `dest` provided, just camelCase the name to avoid needing
     // to use bracket syntax when accessing props on the parsed args object.
-    const baseDest = _.camelCase(dest ?? name);
+    const rawDest = _.camelCase(dest ?? name);
 
     const destKeypath =
-      extType && extName ? [extType, extName, baseDest].join('.') : baseDest;
+      extType && extName ? [extType, extName, rawDest].join('.') : rawDest;
 
     this.defaultValue = defaultValue;
     this.name = name;
@@ -112,6 +117,7 @@ export class ArgSpec {
     this.arg = arg;
     this.dest = destKeypath;
     this.ref = ref;
+    this.rawDest = rawDest;
   }
 
   /**

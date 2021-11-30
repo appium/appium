@@ -18,7 +18,7 @@ import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
 import registerNode from './grid-register';
 import logger from './logger'; // logger needs to remain first of imports
 import { init as logsinkInit } from './logsink';
-import { getDefaultsFromSchema, validate } from './schema/schema';
+import { getDefaultsForSchema, validate } from './schema/schema';
 import { inspect } from './utils';
 
 /**
@@ -219,14 +219,9 @@ async function init (args) {
     parsedArgs = _.defaultsDeep(
       parsedArgs,
       configResult.config?.server,
-      getDefaultsFromSchema()
+      getDefaultsForSchema(false)
     );
   }
-
-  parsedArgs = _.defaultsDeep(
-    parsedArgs,
-    configResult.config ?? {},
-  );
 
   await logsinkInit(parsedArgs);
 

@@ -1,11 +1,10 @@
 // transpile:mocha
-
 import _ from 'lodash';
 import sinon from 'sinon';
 import getParser from '../lib/cli/parser';
 import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
 import logger from '../lib/logger';
-import { getDefaultsFromSchema, resetSchema } from '../lib/schema/schema';
+import { getDefaultsForSchema, resetSchema, registerSchema, finalizeSchema } from '../lib/schema/schema';
 
 describe('Config', function () {
   describe('Appium config', function () {
@@ -90,36 +89,52 @@ describe('Config', function () {
   });
 
   describe('server arguments', function () {
-    let parser;
     let args;
 
-    before(async function () {
-      parser = await getParser();
-      parser.debug = true;
-    });
-
-    beforeEach(function () {
-      // get all the defaults
-      args = getDefaultsFromSchema();
-    });
     describe('getNonDefaultServerArgs', function () {
-      it('should show none if we have all the defaults', function () {
-        let nonDefaultArgs = getNonDefaultServerArgs(args);
-        nonDefaultArgs.should.be.empty;
+      describe('without extension schemas', function () {
+        beforeEach(async function () {
+          await getParser(true);
+          // get all the defaults
+          args = getDefaultsForSchema();
+        });
+        it('should show none if we have all the defaults', function () {
+          let nonDefaultArgs = getNonDefaultServerArgs(args);
+          nonDefaultArgs.should.be.empty;
+        });
+        it('should catch a non-default argument', function () {
+          args.allowCors = true;
+          let nonDefaultArgs = getNonDefaultServerArgs(args);
+          nonDefaultArgs.should.eql({allowCors: true});
+        });
+        describe('when arg is an array', function () {
+          it('should return the arg as an array', function () {
+            args.usePlugins = ['all'];
+            getNonDefaultServerArgs(args).should.eql({usePlugins: ['all']});
+          });
+        });
       });
-      it('should catch a non-default argument', function () {
-        args.allowCors = true;
-        let nonDefaultArgs = getNonDefaultServerArgs(args);
-        nonDefaultArgs.should.eql({allowCors: true});
-      });
-      describe('when arg is an array', function () {
-        it('should return the arg as an array', function () {
-          args.usePlugins = ['all'];
-          getNonDefaultServerArgs(args).should.eql({usePlugins: ['all']});
+      describe('with extension schemas', function () {
+        beforeEach(async function () {
+          resetSchema();
+          registerSchema('plugin', 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean', default: true}}});
+          finalizeSchema();
+          await getParser(true);
+          args = getDefaultsForSchema();
+        });
+
+        it('should take extension schemas into account', function () {
+          const nonDefaultArgs = getNonDefaultServerArgs(args);
+          nonDefaultArgs.should.be.empty;
+        });
+
+        it('should catch a non-default argument', function () {
+          args['plugin.crypto-fiend.elite'] = false;
+          const nonDefaultArgs = getNonDefaultServerArgs(args);
+          nonDefaultArgs.should.eql({'plugin.crypto-fiend.elite': false});
         });
       });
     });
-
   });
 
   describe('validateTmpDir', function () {

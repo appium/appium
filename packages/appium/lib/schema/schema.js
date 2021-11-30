@@ -4,11 +4,11 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../extension-config';
-import {ReadonlyMap} from '../utils';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
+import { ReadonlyMap } from '../utils';
 import appiumConfigSchema from './appium-config-schema';
-import {ArgSpec, SERVER_PROP_NAME, APPIUM_CONFIG_SCHEMA_ID} from './arg-spec';
-import {keywords} from './keywords';
+import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
+import { keywords } from './keywords';
 
 /**
  * Extensions that an extension schema file can have.
@@ -91,6 +91,7 @@ class AppiumSchema {
       'flatten',
       'getArgSpec',
       'getDefaults',
+      'getDefaultsForExtension',
       'getSchema',
       'hasArgSpec',
       'isFinalized',
@@ -152,7 +153,9 @@ class AppiumSchema {
     const ajv = this._ajv;
 
     // Ajv will _mutate_ the schema, so we need to clone it.
-    const baseSchema = _.cloneDeep(/** @type {StrictSchemaObject} */(appiumConfigSchema));
+    const baseSchema = _.cloneDeep(
+      /** @type {StrictSchemaObject} */ (appiumConfigSchema),
+    );
 
     /**
      *
@@ -202,7 +205,7 @@ class AppiumSchema {
           ajv.validateSchema(schema, true);
           addArgSpecs(schema.properties, extType, extName);
           ajv.addSchema(schema, $ref);
-          finalizedSchemas[$ref] = /** @type {StrictSchemaObject} */(schema);
+          finalizedSchemas[$ref] = /** @type {StrictSchemaObject} */ (schema);
         });
         return baseSchema;
       },
@@ -321,21 +324,61 @@ class AppiumSchema {
    * Returns a `Record` of argument "dest" strings to default values.
    *
    * The "dest" string is the property name in object returned by `argparse.ArgumentParser['parse_args']`.
-   * @returns {Record<string,ArgSpec['defaultValue']>}
+   * @template {boolean|undefined} T
+   * @param {T} [flatten=true] - If `true`, flattens the returned object using "keypath"-style keys of the format `<extType>.<extName>.<argName>`. Otherwise, returns a nested object using `extType` and `extName` as properties. Base arguments (server arguments) are always at the top level.
+   * @returns {DefaultValues<T>}
    */
-  getDefaults () {
+  getDefaults (flatten = /** @type {T} */ (true)) {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
-    return [...this._argSpecs.values()].reduce(
-      (defaults, {defaultValue, dest}) => {
+
+    /**
+     * @private
+     * @callback DefaultReducer
+     * @param {DefaultValues<T>} defaults
+     * @param {ArgSpec} argSpec
+     * @returns {DefaultValues<T>}
+     */
+    /** @type {DefaultReducer} */
+    const reducer = flatten
+      ? (defaults, {defaultValue, dest}) => {
         if (!_.isUndefined(defaultValue)) {
           defaults[dest] = defaultValue;
         }
         return defaults;
-      },
-      {},
+      }
+      : (defaults, {defaultValue, dest}) => {
+        if (!_.isUndefined(defaultValue)) {
+          _.set(defaults, dest, defaultValue);
+        }
+        return defaults;
+      };
+
+    /** @type {DefaultValues<T>} */
+    const retval = {};
+    return [...this._argSpecs.values()].reduce(reducer, retval);
+  }
+
+  /**
+   * Returns a flattened Record of defaults for a specific extension. Keys will be of format `<argName>`.
+   * @param {ExtensionType} extType - Extension type
+   * @param {string} extName - Extension name
+   * @returns {Record<string,ArgSpecDefaultValue>}
+   */
+  getDefaultsForExtension (extType, extName) {
+    if (!this.isFinalized()) {
+      throw new SchemaFinalizationError();
+    }
+    const specs = [...this._argSpecs.values()].filter(
+      (spec) => spec.extType === extType && spec.extName === extName,
     );
+    return specs.reduce((defaults, {defaultValue, rawDest}) => {
+      if (!_.isUndefined(defaultValue)) {
+        defaults[rawDest] = defaultValue;
+      }
+      return defaults;
+    }, {});
   }
 
   /**
@@ -546,7 +589,8 @@ export const {
   validate,
   getSchema,
   flatten: flattenSchema,
-  getDefaults: getDefaultsFromSchema,
+  getDefaults: getDefaultsForSchema,
+  getDefaultsForExtension,
 } = appiumSchema;
 export const {isAllowedSchemaFileExtension} = AppiumSchema;
 
@@ -574,4 +618,19 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
  *
  * Intermediate data structure used when converting the entire schema down to CLI arguments.
  * @typedef {{schema: SchemaObject, argSpec: ArgSpec}[]} FlattenedSchema
+ */
+
+/**
+ * @typedef {ArgSpec['defaultValue']} ArgSpecDefaultValue
+ */
+
+/**
+ * e.g. `{driver: {foo: 'bar'}}` where `foo` is the arg name and `bar` is the default value.
+ * @typedef {Record<string,Record<string,ArgSpecDefaultValue>>} NestedArgSpecDefaultValue
+ */
+
+/**
+ * Helper type for the return value of {@link AppiumSchema.getDefaults}
+ * @template {boolean|undefined} Flattened
+ * @typedef {Record<string,Flattened extends true ? ArgSpecDefaultValue : ArgSpecDefaultValue | NestedArgSpecDefaultValue>} DefaultValues
  */

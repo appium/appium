@@ -7,6 +7,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'address',
+      rawDest: 'address',
       ref: 'appium.json#/properties/server/properties/address',
     },
     schema: {
@@ -27,6 +28,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'allow-cors',
+      rawDest: 'allowCors',
       ref: 'appium.json#/properties/server/properties/allow-cors',
     },
     schema: {
@@ -45,6 +47,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'allow-insecure',
+      rawDest: 'allowInsecure',
       ref: 'appium.json#/properties/server/properties/allow-insecure',
     },
     schema: {
@@ -66,6 +69,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'base-path',
+      rawDest: 'basePath',
       ref: 'appium.json#/properties/server/properties/base-path',
     },
     schema: {
@@ -85,6 +89,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'callback-address',
+      rawDest: 'callbackAddress',
       ref: 'appium.json#/properties/server/properties/callback-address',
     },
     schema: {
@@ -102,6 +107,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'callback-port',
+      rawDest: 'callbackPort',
       ref: 'appium.json#/properties/server/properties/callback-port',
     },
     schema: {
@@ -122,6 +128,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'debug-log-spacing',
+      rawDest: 'debugLogSpacing',
       ref: 'appium.json#/properties/server/properties/debug-log-spacing',
     },
     schema: {
@@ -140,6 +147,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'default-capabilities',
+      rawDest: 'defaultCapabilities',
       ref: 'appium.json#/properties/server/properties/default-capabilities',
     },
     schema: {
@@ -159,6 +167,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'deny-insecure',
+      rawDest: 'denyInsecure',
       ref: 'appium.json#/properties/server/properties/deny-insecure',
     },
     schema: {
@@ -181,6 +190,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'keep-alive-timeout',
+      rawDest: 'keepAliveTimeout',
       ref: 'appium.json#/properties/server/properties/keep-alive-timeout',
     },
     schema: {
@@ -201,6 +211,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'local-timezone',
+      rawDest: 'localTimezone',
       ref: 'appium.json#/properties/server/properties/local-timezone',
     },
     schema: {
@@ -218,6 +229,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'log',
+      rawDest: 'logFile',
       ref: 'appium.json#/properties/server/properties/log',
     },
     schema: {
@@ -236,6 +248,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'log-filters',
+      rawDest: 'logFilters',
       ref: 'appium.json#/properties/server/properties/log-filters',
     },
     schema: {
@@ -254,6 +267,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'log-level',
+      rawDest: 'loglevel',
       ref: 'appium.json#/properties/server/properties/log-level',
     },
     schema: {
@@ -294,6 +308,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'log-no-colors',
+      rawDest: 'logNoColors',
       ref: 'appium.json#/properties/server/properties/log-no-colors',
     },
     schema: {
@@ -311,6 +326,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'log-timestamp',
+      rawDest: 'logTimestamp',
       ref: 'appium.json#/properties/server/properties/log-timestamp',
     },
     schema: {
@@ -328,6 +344,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'long-stacktrace',
+      rawDest: 'longStacktrace',
       ref: 'appium.json#/properties/server/properties/long-stacktrace',
     },
     schema: {
@@ -346,6 +363,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'no-perms-check',
+      rawDest: 'noPermsCheck',
       ref: 'appium.json#/properties/server/properties/no-perms-check',
     },
     schema: {
@@ -364,6 +382,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'nodeconfig',
+      rawDest: 'nodeconfig',
       ref: 'appium.json#/properties/server/properties/nodeconfig',
     },
     schema: {
@@ -383,6 +402,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'port',
+      rawDest: 'port',
       ref: 'appium.json#/properties/server/properties/port',
     },
     schema: {
@@ -403,15 +423,16 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'relaxed-security',
+      rawDest: 'relaxedSecurityEnabled',
       ref: 'appium.json#/properties/server/properties/relaxed-security',
     },
     schema: {
+      appiumCliDest: 'relaxedSecurityEnabled',
       default: false,
       description:
         'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
       title: 'relaxed-security config',
       type: 'boolean',
-      appiumCliDest: 'relaxedSecurityEnabled'
     },
   },
   {
@@ -422,6 +443,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'session-override',
+      rawDest: 'sessionOverride',
       ref: 'appium.json#/properties/server/properties/session-override',
     },
     schema: {
@@ -439,6 +461,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'strict-caps',
+      rawDest: 'strictCaps',
       ref: 'appium.json#/properties/server/properties/strict-caps',
     },
     schema: {
@@ -457,6 +480,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'tmp',
+      rawDest: 'tmpDir',
       ref: 'appium.json#/properties/server/properties/tmp',
     },
     schema: {
@@ -475,6 +499,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'trace-dir',
+      rawDest: 'traceDir',
       ref: 'appium.json#/properties/server/properties/trace-dir',
     },
     schema: {
@@ -492,6 +517,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'use-drivers',
+      rawDest: 'useDrivers',
       ref: 'appium.json#/properties/server/properties/use-drivers',
     },
     schema: {
@@ -514,6 +540,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'use-plugins',
+      rawDest: 'usePlugins',
       ref: 'appium.json#/properties/server/properties/use-plugins',
     },
     schema: {
@@ -536,6 +563,7 @@ export default [
       extName: undefined,
       extType: undefined,
       name: 'webhook',
+      rawDest: 'webhook',
       ref: 'appium.json#/properties/server/properties/webhook',
     },
     schema: {
@@ -547,5 +575,5 @@ export default [
       title: 'webhook config',
       type: 'string',
     },
-  },
+  }
 ];

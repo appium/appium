@@ -33,11 +33,6 @@ describe('schema', function () {
     sandbox = sinon.createSandbox();
 
     mocks = {
-      '../../lib/extension-config': {
-        DRIVER_TYPE: 'driver',
-        PLUGIN_TYPE: 'plugin',
-      },
-
       'resolve-from': sandbox.stub(),
 
       '@sidvind/better-ajv-errors': sandbox.stub(),
@@ -222,10 +217,10 @@ describe('schema', function () {
     });
   });
 
-  describe('getDefaultsFromSchema()', function () {
+  describe('getDefaultsForSchema()', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
-        expect(() => schema.getDefaultsFromSchema()).to.throw(
+        expect(() => schema.getDefaultsForSchema()).to.throw(
           SchemaFinalizationError,
         );
       });
@@ -234,7 +229,7 @@ describe('schema', function () {
     describe('when schema already compiled', function () {
       it('should return a Record object with only defined default values', function () {
         schema.finalizeSchema();
-        const defaults = schema.getDefaultsFromSchema();
+        const defaults = schema.getDefaultsForSchema();
         expect(defaults).to.eql(defaultArgsFixture);
       });
 
@@ -242,7 +237,7 @@ describe('schema', function () {
         it('should return a Record object containing defaults for the extensions', function () {
           schema.registerSchema('driver', 'stuff', DRIVER_SCHEMA_FIXTURE);
           schema.finalizeSchema();
-          const defaults = schema.getDefaultsFromSchema();
+          const defaults = schema.getDefaultsForSchema();
           // extensions have a key that looks like a keypath. we may want to change that
           expect(defaults).to.have.property('driver.stuff.answer', 50);
         });
@@ -298,6 +293,7 @@ describe('schema', function () {
               ref: 'driver-fake.json#/properties/silly-web-server-port',
               arg: 'driver-fake-silly-web-server-port',
               dest: 'driver.fake.sillyWebServerPort',
+              rawDest: 'sillyWebServerPort',
               defaultValue: undefined,
             },
           },
@@ -314,6 +310,7 @@ describe('schema', function () {
               ref: 'driver-fake.json#/properties/sillyWebServerHost',
               arg: 'driver-fake-silly-web-server-host',
               dest: 'driver.fake.sillyWebServerHost',
+              rawDest: 'sillyWebServerHost',
               defaultValue: 'sillyhost',
             },
           },

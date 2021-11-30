@@ -7,6 +7,7 @@ import { BaseDriver, errors, isSessionCommand,
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util } from '@appium/support';
+import { getDefaultsForExtension } from './schema';
 
 const desiredCapabilityConstraints = {
   automationName: {
@@ -118,14 +119,22 @@ class AppiumDriver extends BaseDriver {
    * Validate and assign CLI args for a driver or plugin
    *
    * If the extension has provided a schema, validation has already happened.
+   *
+   * Any arg which is equal to its default value will not be assigned to the extension.
    * @param {import('./ext-config-io').ExtensionType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
   assignCliArgsToExtension (extType, extName, extInstance) {
-    const cliArgs = this.args[extType]?.[extName];
-    if (!_.isEmpty(cliArgs)) {
-      extInstance.cliArgs = cliArgs;
+    const allCliArgsForExt = this.args[extType]?.[extName];
+    if (!_.isEmpty(allCliArgsForExt)) {
+      const defaults = getDefaultsForExtension(extType, extName);
+      const cliArgs = _.isEmpty(defaults)
+        ? allCliArgsForExt
+        : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
+      if (!_.isEmpty(cliArgs)) {
+        extInstance.cliArgs = cliArgs;
+      }
     }
   }
 

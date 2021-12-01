@@ -152,7 +152,7 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
 
 /**
  * @typedef {Object} PostProcessOptions
- * @property {Object} cachedAppInfo The information about the previously cached app instance (if exists):
+ * @property {?Object} cachedAppInfo The information about the previously cached app instance (if exists):
  *    - packageHash: SHA1 hash of the package if it is a file and not a folder
  *    - lastModified: Optional Date instance, the value of file's `Last-Modified` header
  *    - immutable: Optional boolean value. Contains true if the file has an `immutable` mark
@@ -186,8 +186,8 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
  * cached and a fresh copy of it is downloaded each time. If this function returns an object
  * containing `appPath` property then the integrity of it will be verified and stored into
  * the cache.
- * @property {!string[]} supportedExtensions List of supported application extensions (
- * including starting dots)
+ * @property {string[]} supportedExtensions List of supported application extensions (
+ * including starting dots). This property is mandatory and must not be empty.
  */
 
 /**

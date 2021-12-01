@@ -144,9 +144,9 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
     throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must be a JSON array or undefined');
   }
 
-  // If an empty array as provided, we'll be forgiving and make it an array of one empty object
+  // Reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
   if (allFirstMatchCaps.length === 0) {
-    allFirstMatchCaps.push({});
+    throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must have one ore more entries');
   }
 
   // Check for non-prefixed, non-standard capabilities and log warnings if they are found

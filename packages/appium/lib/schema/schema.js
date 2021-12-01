@@ -153,9 +153,7 @@ class AppiumSchema {
     const ajv = this._ajv;
 
     // Ajv will _mutate_ the schema, so we need to clone it.
-    const baseSchema = _.cloneDeep(
-      /** @type {StrictSchemaObject} */ (appiumConfigSchema),
-    );
+    const baseSchema = _.cloneDeep(appiumConfigSchema);
 
     /**
      *
@@ -280,12 +278,14 @@ class AppiumSchema {
    * @returns {void}
    */
   registerSchema (extType, extName, schema) {
-    if (!(extType && extName && !_.isEmpty(schema))) {
+    if (!(extType && extName) || _.isUndefined(schema)) {
       throw new TypeError(
-        'Expected nonempty extension type, extension name and schema parameters',
+        'Expected extension type, extension name, and a defined schema',
       );
     }
-
+    if (!AppiumSchema.isSupportedSchemaType(schema)) {
+      throw new SchemaUnsupportedSchemaError(schema, extType, extName);
+    }
     const normalizedExtName = _.kebabCase(extName);
     if (this.hasRegisteredSchema(extType, normalizedExtName)) {
       if (this._registeredSchemas[extType].get(normalizedExtName) === schema) {
@@ -323,12 +323,16 @@ class AppiumSchema {
   /**
    * Returns a `Record` of argument "dest" strings to default values.
    *
-   * The "dest" string is the property name in object returned by `argparse.ArgumentParser['parse_args']`.
-   * @template {boolean|undefined} T
-   * @param {T} [flatten=true] - If `true`, flattens the returned object using "keypath"-style keys of the format `<extType>.<extName>.<argName>`. Otherwise, returns a nested object using `extType` and `extName` as properties. Base arguments (server arguments) are always at the top level.
-   * @returns {DefaultValues<T>}
+   * The "dest" string is the property name in object returned by
+   * `argparse.ArgumentParser['parse_args']`.
+   * @template {boolean|undefined} Flattened
+   * @param {Flattened} [flatten=true] - If `true`, flattens the returned object
+   * using "keypath"-style keys of the format `<extType>.<extName>.<argName>`.
+   * Otherwise, returns a nested object using `extType` and `extName` as
+   * properties. Base arguments (server arguments) are always at the top level.
+   * @returns {DefaultValues<Flattened>}
    */
-  getDefaults (flatten = /** @type {T} */ (true)) {
+  getDefaults (flatten = /** @type {Flattened} */ (true)) {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
@@ -336,9 +340,9 @@ class AppiumSchema {
     /**
      * @private
      * @callback DefaultReducer
-     * @param {DefaultValues<T>} defaults
+     * @param {DefaultValues<Flattened>} defaults
      * @param {ArgSpec} argSpec
-     * @returns {DefaultValues<T>}
+     * @returns {DefaultValues<Flattened>}
      */
     /** @type {DefaultReducer} */
     const reducer = flatten
@@ -355,13 +359,14 @@ class AppiumSchema {
         return defaults;
       };
 
-    /** @type {DefaultValues<T>} */
+    /** @type {DefaultValues<Flattened>} */
     const retval = {};
     return [...this._argSpecs.values()].reduce(reducer, retval);
   }
 
   /**
-   * Returns a flattened Record of defaults for a specific extension. Keys will be of format `<argName>`.
+   * Returns a flattened Record of defaults for a specific extension. Keys will
+   * be of format `<argName>`.
    * @param {ExtensionType} extType - Extension type
    * @param {string} extName - Extension name
    * @returns {Record<string,ArgSpecDefaultValue>}
@@ -459,7 +464,7 @@ class AppiumSchema {
    * Retrieves the schema itself
    * @public
    * @param {string} [ref] - Schema ID
-   * @throws If the schema has not yet been _finalized_
+   * @throws If the schema has not yet been finalized
    * @returns {SchemaObject}
    */
   getSchema (ref = APPIUM_CONFIG_SCHEMA_ID) {
@@ -493,9 +498,7 @@ class AppiumSchema {
    * @returns {import('ajv').ErrorObject[]} Array of errors, if any.
    */
   validate (value, ref = APPIUM_CONFIG_SCHEMA_ID) {
-    const validator = /** @type {import('ajv').ValidateFunction} */ (
-      this._getValidator(ref)
-    );
+    const validator = this._getValidator(ref);
     return !validator(value) && _.isArray(validator.errors)
       ? [...validator.errors]
       : [];
@@ -508,6 +511,15 @@ class AppiumSchema {
    */
   static isAllowedSchemaFileExtension (filename) {
     return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename));
+  }
+
+  /**
+   * Returns `true` if `schema` is a plain object with a non-true `$async` property.
+   * @param {any} schema - Schema to check
+   * @returns {schema is SchemaObject}
+   */
+  static isSupportedSchemaType (schema) {
+    return _.isPlainObject(schema) && schema.$async !== true;
   }
 }
 
@@ -577,6 +589,54 @@ export class SchemaUnknownSchemaError extends ReferenceError {
   }
 }
 
+/**
+ * Thrown when a schema is provided, but it's of an unsupported type.
+ *
+ * "Valid" schemas which are unsupported include boolean schemas and async schemas
+ * (having a `true` `$async` property).
+ */
+export class SchemaUnsupportedSchemaError extends TypeError {
+  /**
+   * @type {Readonly<string>}
+   */
+  code = 'APPIUMERR_SCHEMA_UNSUPPORTED_SCHEMA';
+
+  /**
+   * @type {Readonly<{schema: any, extType: ExtensionType, extName: string}>}
+   */
+  data;
+
+  /**
+   * @param {any} schema
+   * @param {ExtensionType} extType
+   * @param {string} extName
+   */
+  constructor (schema, extType, extName) {
+    // https://github.com/Microsoft/TypeScript/issues/8277
+    super(
+      (() => {
+        let msg = `Unsupported schema from ${extType} "${extName}":`;
+        if (_.isBoolean(schema)) {
+          return `${msg} schema cannot be a boolean`;
+        }
+        if (_.isPlainObject(schema)) {
+          if (schema.$async) {
+            return `${msg} schema cannot be an async schema`;
+          }
+          /* istanbul ignore next */
+          throw new TypeError(
+            `schema IS supported; this error should not be thrown (this is a bug). value of schema: ${JSON.stringify(
+              schema,
+            )}`,
+          );
+        }
+        return `${msg} schema must be a plain object without a true "$async" property`;
+      })(),
+    );
+    this.data = {schema, extType, extName};
+  }
+}
+
 const appiumSchema = AppiumSchema.create();
 
 export const {
@@ -595,7 +655,8 @@ export const {
 export const {isAllowedSchemaFileExtension} = AppiumSchema;
 
 /**
- * @typedef {import('ajv').SchemaObject} SchemaObject
+ * Appium only supports schemas that are plain objects; not arrays.
+ * @typedef {import('ajv').SchemaObject & {[key: number]: never}} SchemaObject
  */
 
 /**

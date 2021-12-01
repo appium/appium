@@ -37,7 +37,7 @@
   "dependencies": {
     "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
-    "appium-adb": "8.16.2",
+    "appium-adb": "8.17.0",
     "bluebird": "3.7.2",
     "colors": "1.4.0",
     "inquirer": "8.2.0",

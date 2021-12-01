@@ -139,7 +139,7 @@ describe('caps', function () {
 
     it('returns invalid argument error if "firstMatch" does not have one or more entries (3.2)', function () {
       caps.firstMatch = [];
-      (function () { parseCaps(caps); }).should.throw(/must have one ore more entries/);
+      (function () { parseCaps(caps); }).should.throw(/must have one or more entries/);
     });
 
     it('has "validatedFirstMatchCaps" property that is empty by default if no valid firstMatch caps were found (4)', function () {

@@ -146,7 +146,7 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
 
   // Reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
   if (allFirstMatchCaps.length === 0) {
-    throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must have one ore more entries');
+    throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must have one or more entries');
   }
 
   // Check for non-prefixed, non-standard capabilities and log warnings if they are found

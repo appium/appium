@@ -144,9 +144,12 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
     throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must be a JSON array or undefined');
   }
 
-  // Reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
+  // If an empty array as provided, we'll be forgiving and make it an array of one empty object
+  // In the future, reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
   if (allFirstMatchCaps.length === 0) {
-    throw new errors.InvalidArgumentError('The capabilities.firstMatch argument was not valid for the following reason(s): "capabilities.firstMatch" must have one or more entries');
+    log.warn(`The firstMatch array in the given capabilities has no entries. Adding an empty entry fo rnow, ` +
+      `but it will require one or more entries as W3C spec.`);
+    allFirstMatchCaps.push({});
   }
 
   // Check for non-prefixed, non-standard capabilities and log warnings if they are found

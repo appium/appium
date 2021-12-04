@@ -177,6 +177,7 @@ describe('Config', function () {
       validateTmpDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(/could not ensure/);
     });
     it('should fail to use an undefined tmp dir', function () {
+      // @ts-expect-error
       validateTmpDir().should.be.rejectedWith(/could not ensure/);
     });
     it('should be able to use a tmp dir with correct permissions', function () {
@@ -200,7 +201,7 @@ describe('Config', function () {
     });
 
     it('should not fail if process.argv[1] is undefined', async function () {
-      process.argv[1] = undefined;
+      delete process.argv[1];
       let args = await getParser();
       args.prog.should.be.equal('appium');
     });

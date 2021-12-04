@@ -1,3 +1,6 @@
+// @ts-check
+
+/* eslint-disable no-console */
 import _ from 'lodash';
 import { mkdirp, system, fs } from '@appium/support';
 import axios from 'axios';
@@ -22,7 +25,7 @@ const BUILD_INFO = {
 };
 
 function getNodeVersion () {
-  return semver.coerce(process.version);
+  return /** @type {import('semver').SemVer} */(semver.coerce(process.version));
 }
 
 async function updateBuildInfo (useGithubApiFallback = false) {
@@ -42,7 +45,7 @@ async function updateBuildInfo (useGithubApiFallback = false) {
  *
  * This is needed because Appium cannot assume `package.json` and `.git` are in the same
  * directory.  Monorepos, see?
- * @returns {string|void} Path to dir or `undefined` if not found
+ * @returns {Promise<string|undefined>} Path to dir or `undefined` if not found
  */
 async function findGitRoot () {
   return await findUp(GIT_META_ROOT, {cwd: rootDir, type: 'directory'});
@@ -80,6 +83,11 @@ async function getGitRev (useGithubApiFallback = false) {
   return null;
 }
 
+/**
+ * @param {string} commitSha
+ * @param {boolean} [useGithubApiFallback]
+ * @returns {Promise<number?>}
+ */
 async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();
   if (gitRoot) {
@@ -157,17 +165,17 @@ async function showBuildInfo () {
 function getNonDefaultServerArgs (args) {
   // hopefully these function names are descriptive enough
 
-  const typesDiffer = (dest) => typeof args[dest] !== typeof defaultsFromSchema[dest];
+  const typesDiffer = /** @param {string} dest */(dest) => typeof args[dest] !== typeof defaultsFromSchema[dest];
 
-  const defaultValueIsArray = (dest) => _.isArray(defaultsFromSchema[dest]);
+  const defaultValueIsArray = /** @param {string} dest */(dest) => _.isArray(defaultsFromSchema[dest]);
 
-  const argsValueIsArray = (dest) => _.isArray(args[dest]);
+  const argsValueIsArray = /** @param {string} dest */(dest) => _.isArray(args[dest]);
 
-  const arraysDiffer = (dest) => _.size(_.difference(args[dest], defaultsFromSchema[dest])) > 0;
+  const arraysDiffer = /** @param {string} dest */(dest) => _.gt(_.size(_.difference(args[dest], defaultsFromSchema[dest])), 0);
 
-  const valuesDiffer = (dest) => args[dest] !== defaultsFromSchema[dest];
+  const valuesDiffer = /** @param {string} dest */(dest) => args[dest] !== defaultsFromSchema[dest];
 
-  const defaultIsDefined = (dest) => !_.isUndefined(defaultsFromSchema[dest]);
+  const defaultIsDefined = /** @param {string} dest */(dest) => !_.isUndefined(defaultsFromSchema[dest]);
 
   // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
 
@@ -209,6 +217,42 @@ function getNonDefaultServerArgs (args) {
   return _.pickBy(args, (__, key) => isNotDefault(key));
 }
 
+/**
+ * Compacts an object for {@link showConfig}:
+ * 1. Removes `subcommand` key/value
+ * 2. Removes `undefined` values
+ * 3. Removes empty objects (but not `false` values)
+ * Does not operate recursively.
+ */
+const compactConfig = _.partial(
+  _.omitBy,
+  _,
+  (value, key) => key === 'subcommand' || _.isUndefined(value) || (!_.isBoolean(value) && _.isEmpty(value))
+);
+
+/**
+ * Shows a breakdown of the current config after CLI params, config file loaded & defaults applied.
+ * @param {import('../types/types').ParsedArgs} preConfigParsedArgs - Parsed CLI args (or param to `init()`) before config & defaults applied
+ * @param {import('./config-file').ReadConfigFileResult} configResult - Result of attempting to load a config file
+ * @param {import('./schema/schema').DefaultValues<true>} defaults - Configuration defaults from schemas
+ */
+function showConfig (preConfigParsedArgs, configResult, defaults) {
+  console.log('Appium Configuration\n');
+  if (configResult.config) {
+    console.log(`via config file at ${configResult.filepath}:\n`);
+    console.dir(compactConfig(configResult.config));
+  } else {
+    console.log(`(no configuration file loaded)\n`);
+  }
+  console.log('via CLI or function call:\n');
+  console.dir(compactConfig(preConfigParsedArgs));
+  console.log('\nvia defaults:\n');
+  console.dir(compactConfig(defaults));
+}
+
+/**
+ * @param {string} tmpDir
+ */
 async function validateTmpDir (tmpDir) {
   try {
     await mkdirp(tmpDir);
@@ -221,5 +265,5 @@ async function validateTmpDir (tmpDir) {
 export {
   getBuildInfo, checkNodeOk, showBuildInfo,
   warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
-  getGitRev, APPIUM_VER, updateBuildInfo
+  getGitRev, APPIUM_VER, updateBuildInfo, showConfig
 };

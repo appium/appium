@@ -3,6 +3,7 @@
 // transpile:main
 // @ts-check
 
+import logger from './logger'; // logger needs to remain first of imports
 // @ts-ignore
 import { routeConfiguringFunction as makeRouter, server as baseServer } from '@appium/base-driver';
 import { logger as logFactory, util } from '@appium/support';
@@ -12,13 +13,12 @@ import { AppiumDriver } from './appium';
 import { driverConfig, pluginConfig, USE_ALL_PLUGINS } from './cli/args';
 import { runExtensionCommand } from './cli/extension';
 import { default as getParser, SERVER_SUBCOMMAND } from './cli/parser';
-import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showBuildInfo, validateTmpDir, warnNodeDeprecations } from './config';
+import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showBuildInfo, validateTmpDir, warnNodeDeprecations, showConfig } from './config';
 import { readConfigFile } from './config-file';
 import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
 import registerNode from './grid-register';
-import logger from './logger'; // logger needs to remain first of imports
 import { init as logsinkInit } from './logsink';
-import { getDefaultsForSchema, validate } from './schema/schema';
+import { getDefaultsForSchema } from './schema/schema';
 import { inspect } from './utils';
 
 /**
@@ -37,8 +37,6 @@ async function preflightChecks (args, throwInsteadOfExit = false) {
       process.exit(0);
     }
     warnNodeDeprecations();
-
-    validate(args);
 
     if (args.tmpDir) {
       await validateTmpDir(args.tmpDir);
@@ -112,7 +110,7 @@ function logServerPort (address, port) {
  *
  * @param {Object} args - argparser parsed dict
  * @param {import('./plugin-config').default} pluginConfig - a plugin extension config
- * @returns {({pluginName: string} & ((...args: any[]) => unknown))[]}
+ * @returns {PluginExtensionClass[]}
  */
 function getActivePlugins (args, pluginConfig) {
   return _.compact(Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
@@ -121,7 +119,7 @@ function getActivePlugins (args, pluginConfig) {
   ).map((pluginName) => {
     try {
       logger.info(`Attempting to load plugin ${pluginName}...`);
-      const PluginClass = /** @type {{pluginName: string} & ((...args: any[]) => unknown)} */(pluginConfig.require(pluginName));
+      const PluginClass = /** @type {PluginExtensionClass} */(pluginConfig.require(pluginName));
 
       PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
       return PluginClass;
@@ -156,10 +154,22 @@ function getActiveDrivers (args, driverConfig) {
   }));
 }
 
+/**
+ * Gets a list of `updateServer` functions from all extensions
+ * @param {DriverExtensionClass[]} driverClasses
+ * @param {PluginExtensionClass[]} pluginClasses
+ * @returns {StaticExtMembers['updateServer'][]}
+ */
 function getServerUpdaters (driverClasses, pluginClasses) {
-  return [...driverClasses, ...pluginClasses].map((klass) => klass.updateServer).filter(Boolean);
+  return _.compact(_.map([...driverClasses, ...pluginClasses], 'updateServer'));
 }
 
+/**
+ * Makes a big `MethodMap` from all the little `MethodMap`s in the extensions
+ * @param {DriverExtensionClass[]} driverClasses
+ * @param {PluginExtensionClass[]} pluginClasses
+ * @returns {import('@appium/base-driver').MethodMap}
+ */
 function getExtraMethodMap (driverClasses, pluginClasses) {
   return [...driverClasses, ...pluginClasses].reduce(
     (map, klass) => ({...map, ...klass.newMethodMap}),
@@ -175,20 +185,27 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  * If `args` contains a non-empty `subcommand` which is not `server`, this function
  * will resolve with an empty object.
  *
- * @todo: Use generics/conditional types to specify return values.
+ * @param {ParsedArgs} [args] - Parsed args
+ * @returns {Promise<Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
  * @example
  * import {init, getSchema} from 'appium';
  * const options = {}; // config object
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
- * @param {ParsedArgs} [args] - Parsed args
- * @returns {Promise<Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
  */
 async function init (args) {
   const parser = await getParser();
   let throwInsteadOfExit = false;
   /** @type {ParsedArgs} */
+  let preConfigParsedArgs;
+  /** @type {typeof preConfigParsedArgs & import('type-fest').AsyncReturnType<readConfigFile>['config']} */
   let parsedArgs;
+  /**
+   * This is a definition (instead of declaration) because TS can't figure out
+   * the value will be defined when it's used.
+   * @type {ReturnType<getDefaultsForSchema>}
+   */
+  let defaults = {};
   if (args) {
     // if we have a containing package instead of running as a CLI process,
     // that package might not appreciate us calling 'process.exit' willy-
@@ -198,29 +215,39 @@ async function init (args) {
       // but remove it since it's not a real server arg per se
       delete args.throwInsteadOfExit;
     }
-    parsedArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
+    preConfigParsedArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
   } else {
     // otherwise parse from CLI
-    parsedArgs = parser.parseArgs();
+    preConfigParsedArgs = parser.parseArgs();
   }
 
-  const configResult = await readConfigFile(parsedArgs.configFile);
+  const configResult = await readConfigFile(preConfigParsedArgs.configFile);
 
   if (!_.isEmpty(configResult.errors)) {
     throw new Error(`Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`);
   }
+
 
   // merge config and apply defaults.
   // the order of precendece is:
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
-  if (parsedArgs.subcommand === SERVER_SUBCOMMAND) {
+  if (preConfigParsedArgs.subcommand === SERVER_SUBCOMMAND) {
+    defaults = getDefaultsForSchema(false);
+
+    if (preConfigParsedArgs.showConfig) {
+      showConfig(preConfigParsedArgs, configResult, defaults);
+      return {};
+    }
+
     parsedArgs = _.defaultsDeep(
-      parsedArgs,
+      preConfigParsedArgs,
       configResult.config?.server,
-      getDefaultsForSchema(false)
+      defaults
     );
+  } else {
+    parsedArgs = preConfigParsedArgs;
   }
 
   await logsinkInit(parsedArgs);
@@ -310,7 +337,6 @@ async function main (args) {
                 'to visit sites which could maliciously try to start Appium ' +
                 'sessions on your machine');
   }
-  // @ts-ignore
   appiumDriver.server = server;
   try {
     // configure as node on grid, if necessary
@@ -362,4 +388,16 @@ export { readConfigFile } from './config-file';
 
 /**
  * @typedef {import('../types/types').ParsedArgs} ParsedArgs
+ */
+
+/**
+ * @typedef {import('./appium').PluginExtensionClass} PluginExtensionClass
+ */
+
+/**
+ * @typedef {import('./appium').DriverExtensionClass} DriverExtensionClass
+ */
+
+/**
+ * @typedef {import('./appium').StaticExtMembers} StaticExtMembers
  */

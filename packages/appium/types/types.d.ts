@@ -163,6 +163,11 @@ interface MoreArgs {
   showBuildInfo: boolean;
 
   /**
+   * If true, show config and exit
+   */
+  showConfig: boolean;
+
+  /**
    * If true, open a REPL
    */
   shell: boolean;

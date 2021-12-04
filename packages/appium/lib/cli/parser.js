@@ -146,7 +146,7 @@ class ArgParser {
     return _.reduce(
       args,
       (unpacked, value, key) => {
-        if (hasArgSpec(key)) {
+        if (!_.isUndefined(value) && hasArgSpec(key)) {
           const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */(getArgSpec(key));
           _.set(unpacked, dest, value);
         } else {

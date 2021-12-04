@@ -40,10 +40,10 @@ describe('cli-args', function () {
             result = getArgs({schema, extName, extType});
           });
 
-          it('should return options containing `action` prop of `store_true` and no `type`', function () {
+          it('should return options containing `action` prop of `store_const` and no `type`', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'action',
-              'store_true',
+              'store_const',
             );
           });
 

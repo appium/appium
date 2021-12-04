@@ -270,7 +270,7 @@ export default class ExtensionConfig {
   /**
    * Loads extension and returns its main class
    * @param {string} extName
-   * @returns {(...args: any[]) => object }
+   * @returns {import('type-fest').Class<unknown>}
    */
   require (extName) {
     const {mainClass} = this.installedExtensions[extName];

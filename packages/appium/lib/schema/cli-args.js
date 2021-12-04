@@ -142,7 +142,8 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
   switch (type) {
     // booleans do not have a type per `ArgumentOptions`, just an "action"
     case TYPENAMES.BOOLEAN: {
-      argOpts.action = 'store_true';
+      argOpts.action = 'store_const';
+      argOpts.const = true;
       break;
     }
 

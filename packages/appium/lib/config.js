@@ -159,8 +159,8 @@ async function showBuildInfo () {
 
 /**
  * Returns k/v pairs of server arguments which are _not_ the defaults.
- * @param {import('../types/types').ParsedArgs} args
- * @returns {Partial<import('../types/types').ParsedArgs>}
+ * @param {ParsedArgs} args
+ * @returns {Partial<ParsedArgs>}
  */
 function getNonDefaultServerArgs (args) {
   // hopefully these function names are descriptive enough
@@ -227,14 +227,18 @@ function getNonDefaultServerArgs (args) {
 const compactConfig = _.partial(
   _.omitBy,
   _,
-  (value, key) => key === 'subcommand' || _.isUndefined(value) || (!_.isBoolean(value) && _.isEmpty(value))
+  (value, key) => key === 'subcommand' || _.isUndefined(value) || (_.isObject(value) && _.isEmpty(value))
 );
 
 /**
  * Shows a breakdown of the current config after CLI params, config file loaded & defaults applied.
- * @param {import('../types/types').ParsedArgs} preConfigParsedArgs - Parsed CLI args (or param to `init()`) before config & defaults applied
+ *
+ * The actual shape of `preConfigParsedArgs` and `defaults` does not matter for the purposes of this function,
+ * but it's intended to be called with values of type {@link ParsedArgs} and `DefaultValues<true>`, respectively.
+ *
+ * @param {object} preConfigParsedArgs - Parsed CLI args (or param to `init()`) before config & defaults applied
  * @param {import('./config-file').ReadConfigFileResult} configResult - Result of attempting to load a config file
- * @param {import('./schema/schema').DefaultValues<true>} defaults - Configuration defaults from schemas
+ * @param {object} defaults - Configuration defaults from schemas
  */
 function showConfig (preConfigParsedArgs, configResult, defaults) {
   console.log('Appium Configuration\n');
@@ -267,3 +271,7 @@ export {
   warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
   getGitRev, APPIUM_VER, updateBuildInfo, showConfig
 };
+
+/**
+ * @typedef {import('../types/types').ParsedArgs} ParsedArgs
+ */

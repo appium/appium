@@ -22,9 +22,11 @@ describe('Config', function () {
   describe('Appium config', function () {
     /** @type {import('sinon').SinonSpy<[message?: any, ...extra: any[]],void>} */
     let log;
-
+    /** @type {import('sinon').SinonSpy<[message?: any, ...extra: any[]],void>} */
+    let dir;
     beforeEach(function () {
       log = sandbox.spy(console, 'log');
+      dir = sandbox.spy(console, 'dir');
     });
 
     describe('showBuildInfo()', function () {
@@ -39,14 +41,18 @@ describe('Config', function () {
     describe('showConfig', function () {
       describe('when a config file is present', function () {
         it('should dump the current Appium config', function () {
-          // @ts-expect-error
-          showConfig({foo: 'bar'}, {config: {baz: 'quux'}}, {spam: 'food'});
+          showConfig({foo: 'bar'}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
           log.should.have.been.calledWith('Appium Configuration\n');
         });
+
+        it('should skip empty objects', function () {
+          showConfig({foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
+          dir.should.have.been.calledWith({foo: 'bar', sheep: 0, ducks: false});
+        });
       });
+
       describe('when a config file is not present', function () {
         it('should dump the current Appium config sans config file contents', function () {
-          // @ts-expect-error
           showConfig({foo: 'bar'}, {}, {spam: 'food'});
           log.should.have.been.calledWith('(no configuration file loaded)\n');
         });

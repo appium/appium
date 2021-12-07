@@ -245,10 +245,15 @@ for this).
     1. Settings -> Safari -> Advanced -> **Web Inspector** and **Remote Automation**
         1. Please read [Automating mobile web apps](/writing-running-appium/web/mobile-web) for more details about WebView
 1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)
-1. Make sure the device under test is not a jailbroken one
-    - Possibly it causes an issue such as [`com.apple.mobile.installation_proxy` service error to manage Apps on the device](https://github.com/appium/appium-desktop/issues/1447)
-    - Appium team does not test xcuitest driver against jailbroken devives.
 1. Make sure the provisioning profile has [_iOS Distribution_ certificate](https://developer.apple.com/support/certificates/)
     - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design. The certificate affects the limitation ([issue](https://github.com/appium/appium/issues/14577#issuecomment-660997827))
 1. Make sure the keyboard preference in the device under test is Apple official one and the input language is set to English to send texts to `XCUIElementTypeSecureTextField`
     - Non-official or non-English keyboards may not be able to send keys to `XCUIElementTypeSecureTextField`. e.g. [issues#15647](https://github.com/appium/appium/issues/15647)
+
+### Notice
+
+Appium team does not test xcuitest driver against jailbroken devices, so we cannot guaranteer it is going to work as expected as same as non-jailbroken devices.
+
+e.g., [`com.apple.mobile.installation_proxy` service error to manage Apps on the device](https://github.com/appium/appium-desktop/issues/1447)
+
+Please use it at your own risk.

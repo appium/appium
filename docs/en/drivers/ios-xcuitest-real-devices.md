@@ -175,6 +175,10 @@ If this was successful, the output should end with something like:
         t =     0.00s     Start Test at 2017-01-23 15:49:12.588
         t =     0.00s     Set Up
 ```
+If the command fails, try passing the `-allowProvisioningUpdates` flag like this (see [#16212](https://github.com/appium/appium/issues/16212)):
+```
+    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' -allowProvisioningUpdates test
+```
 *   To completely verify, you can try accessing the WebDriverAgent server status
     (**note:** you _must_ be on the same network as the device, and know its IP
     address, from Settings => Wi-Fi => Current Network):

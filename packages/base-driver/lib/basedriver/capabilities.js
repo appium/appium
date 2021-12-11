@@ -145,7 +145,10 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
   }
 
   // If an empty array as provided, we'll be forgiving and make it an array of one empty object
+  // In the future, reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
   if (allFirstMatchCaps.length === 0) {
+    log.warn(`The firstMatch array in the given capabilities has no entries. Adding an empty entry fo rnow, ` +
+      `but it will require one or more entries as W3C spec.`);
     allFirstMatchCaps.push({});
   }
 

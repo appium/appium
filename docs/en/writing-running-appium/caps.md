@@ -68,7 +68,7 @@ These Capabilities span multiple drivers.
 
 #### UIAutomator1
 
-These Capabilities are available on UiAutomator1 driver. The driver is for Android 5 and lower.
+These Capabilities are available for UiAutomator1 driver. The driver is for Android 5 and lower.
 
 |Capability|Description|Values|
 |----|-----------|-------|

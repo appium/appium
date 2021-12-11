@@ -64,9 +64,11 @@ These Capabilities span multiple drivers.
 |----|-----------|-------|
 |`settings[settingsKey]`| Update [Appium Settings](https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md) on session creation. |e.g., `'settings[mjpegScalingFactor]': 10`, `'settings[shouldUseCompactResponses]': true`|
 
-### Android Only
+### Android
 
-These Capabilities are available only on Android-based drivers.
+#### UIAutomator1
+
+These Capabilities are available for UiAutomator1 driver. The driver is for Android 5 and lower.
 
 |Capability|Description|Values|
 |----|-----------|-------|
@@ -138,25 +140,18 @@ These Capabilities are available only on Android-based drivers.
 | `ignoreHiddenApiPolicyError` | Ignores `Security exception: Permission denial` alert and allows to continue the session creation process since Appium 1.18.0+. The error happens when Appium tries to relax [hidden API policy](https://developer.android.com/distribute/best-practices/develop/restrictions-non-sdk-interfaces#how_can_i_enable_access_to_non-sdk_interfaces), although some devices with a customized firmware deny such requests. Defaults to `false`. | `true`, `false` |
 | `mockLocationApp` | Sets the package identifier of the app, which is used as a system mock location provider since Appium 1.18.0+. This capability has no effect on emulators. If the value is set to `null` or an empty string, then Appium will skip the mocked location provider setup procedure. Defaults to Appium Setting package identifier (`io.appium.settings`). | e.g., `null`, `io.appium.settings`, `example.your.app` |
 | logcatFormat | Set the output format for logcat messages since Appium 1.18.0. Supported formats are listed in [here](https://github.com/appium/appium-adb/blob/master/lib/logcat.js). Please read [logcat#outputFormat](https://developer.android.com/studio/command-line/logcat#outputFormat) for more details about each format. Defaults to `threadtime`. | e.g., `process`|
-| logcatFilterSpecs | Set the output filter rule for logcat messages since Appium 1.18.0. Please read [logcat#filteringOutput](https://developer.android.com/studio/command-line/logcat#filteringOutput) for more details about the rule. [Write and View Logs with Logcat](https://developer.android.com/studio/debug/am-logcat) is also helpful. | e.g., `['*:W', 'MyActivity:D']` (`MyActivity` is a tag)|
-| allowDelayAdb | Whether enable `-delay-adb` on emulator startup. Defaults to `true` | `true`, `false` |
-
-#### UIAutomator 1
-
-These Capabilities are available on UIAutomator 1.
-
-|Capability|Description|Values|
-|----|-----------|-------|
+| `logcatFilterSpecs` | Set the output filter rule for logcat messages since Appium 1.18.0. Please read [logcat#filteringOutput](https://developer.android.com/studio/command-line/logcat#filteringOutput) for more details about the rule. [Write and View Logs with Logcat](https://developer.android.com/studio/debug/am-logcat) is also helpful. | e.g., `['*:W', 'MyActivity:D']` (`MyActivity` is a tag)|
+| `allowDelayAdb` | Whether enable `-delay-adb` on emulator startup. Defaults to `true` | `true`, `false` |
 |`intentAction`| Intent action which will be used to start activity (default `android.intent.action.MAIN`)| e.g.`android.intent.action.MAIN`, `android.intent.action.VIEW`|
 |`intentCategory`| Intent category which will be used to start activity (default `android.intent.category.LAUNCHER`)| e.g. `android.intent.category.LAUNCHER`, `android.intent.category.APP_CONTACTS`
 |`intentFlags`| Flags that will be used to start activity (default `0x10200000`)| e.g. `0x10200000`
 |`optionalIntentArguments`| Additional intent arguments that will be used to start activity. See [Intent arguments](http://developer.android.com/reference/android/content/Intent.html) | e.g. `--esn <EXTRA_KEY>`, `--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE>`, etc.
 
-#### UIAutomator2 Only
+#### UIAutomator2
 
 Please refer to the documentation on the UIAutomator2 driver [repository](https://github.com/appium/appium-uiautomator2-driver#capabilities) about its available capabilities.
 
-#### Espresso Only
+#### Espresso
 
 Please refer to the documentation on the Espresso driver [repository](https://github.com/appium/appium-espresso-driver#capabilities) about its available capabilities.
 

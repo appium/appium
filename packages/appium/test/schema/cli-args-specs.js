@@ -20,7 +20,7 @@ describe('cli-args', function () {
         registerSchema(extType, extName, schema);
       }
       finalizeSchema();
-      return _.fromPairs([...toParserArgs(opts)]);
+      return _.fromPairs([...toParserArgs()]);
     }
 
     beforeEach(resetSchema);
@@ -40,10 +40,10 @@ describe('cli-args', function () {
             result = getArgs({schema, extName, extType});
           });
 
-          it('should return options containing `action` prop of `store_true` and no `type`', function () {
+          it('should return options containing `action` prop of `store_const` and no `type`', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'action',
-              'store_true',
+              'store_const',
             );
           });
 
@@ -341,32 +341,6 @@ describe('cli-args', function () {
               ['herp', 'derp'],
             );
           });
-        });
-      });
-
-      describe('overrides', function () {
-        // this might be better some other way, IDK.  I suspect this will be rarely used.
-        // since extensions can't actually call `toParserArgs()`, they can't set `overrides` anyway.
-        it('should set them via "dest" key', function () {
-          const schema = {
-            properties: {
-              foo: {
-                type: 'string',
-              },
-            },
-            type: 'object',
-          };
-
-          const result = getArgs({
-            schema,
-            extName,
-            extType,
-            overrides: {'plugin.blob.foo': {enum: ['slug', 'snail']}},
-          });
-          expect(result['--plugin-blob-foo']).to.have.deep.property('enum', [
-            'slug',
-            'snail',
-          ]);
         });
       });
     });

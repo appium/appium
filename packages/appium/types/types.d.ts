@@ -160,6 +160,11 @@ interface MoreArgs {
   /**
    * If true, show the build info and exit
    */
+  showBuildInfo: boolean;
+
+  /**
+   * If true, show config and exit
+   */
   showConfig: boolean;
 
   /**

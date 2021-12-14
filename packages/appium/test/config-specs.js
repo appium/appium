@@ -1,22 +1,61 @@
+// @ts-check
+
 // transpile:mocha
-import _ from 'lodash';
 import sinon from 'sinon';
 import getParser from '../lib/cli/parser';
-import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
+import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
 import logger from '../lib/logger';
 import { getDefaultsForSchema, resetSchema, registerSchema, finalizeSchema } from '../lib/schema/schema';
 
 describe('Config', function () {
+  /** @type {import('sinon').SinonSandbox} */
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = sinon.createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('Appium config', function () {
-    describe('showConfig', function () {
-      before(function () {
-        sinon.spy(console, 'log');
-      });
-      it('should log the config to console', async function () {
+    /** @type {import('sinon').SinonSpy<[message?: any, ...extra: any[]],void>} */
+    let log;
+    /** @type {import('sinon').SinonSpy<[message?: any, ...extra: any[]],void>} */
+    let dir;
+    beforeEach(function () {
+      log = sandbox.spy(console, 'log');
+      dir = sandbox.spy(console, 'dir');
+    });
+
+    describe('showBuildInfo()', function () {
+      it('should log build info to console', async function () {
         const config = getBuildInfo();
-        await showConfig();
-        console.log.calledOnce.should.be.true; // eslint-disable-line no-console
-        console.log.getCall(0).args[0].should.contain(JSON.stringify(config)); // eslint-disable-line no-console
+        await showBuildInfo();
+        log.should.have.been.calledOnce;
+        log.firstCall.args.should.contain(JSON.stringify(config));
+      });
+    });
+
+    describe('showConfig', function () {
+      describe('when a config file is present', function () {
+        it('should dump the current Appium config', function () {
+          showConfig({foo: 'bar'}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
+          log.should.have.been.calledWith('Appium Configuration\n');
+        });
+
+        it('should skip empty objects', function () {
+          showConfig({foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
+          dir.should.have.been.calledWith({foo: 'bar', sheep: 0, ducks: false});
+        });
+      });
+
+      describe('when a config file is not present', function () {
+        it('should dump the current Appium config sans config file contents', function () {
+          showConfig({foo: 'bar'}, {}, {spam: 'food'});
+          log.should.have.been.calledWith('(no configuration file loaded)\n');
+        });
       });
     });
   });
@@ -27,11 +66,7 @@ describe('Config', function () {
       // need to be able to write to process.version
       // but also to have access to process methods
       // so copy them over to a writable object
-      let tempProcess = {};
-      for (let [prop, value] of _.toPairs(process)) {
-        tempProcess[prop] = value;
-      }
-      process = tempProcess; // eslint-disable-line no-global-assign
+      process = {...process}; // eslint-disable-line no-global-assign
     });
     after(function () {
       process = _process; // eslint-disable-line no-global-assign
@@ -45,6 +80,7 @@ describe('Config', function () {
         ];
         for (const version of unsupportedVersions) {
           it(`should fail if node is ${version}`, function () {
+            // @ts-expect-error
             process.version = version;
             checkNodeOk.should.throw();
           });
@@ -53,14 +89,17 @@ describe('Config', function () {
 
       describe('supported nodes', function () {
         it('should succeed if node is 12+', function () {
+          // @ts-expect-error
           process.version = 'v12.0.1';
           checkNodeOk.should.not.throw();
         });
         it('should succeed if node is 13+', function () {
+          // @ts-expect-error
           process.version = 'v13.6.0';
           checkNodeOk.should.not.throw();
         });
         it('should succeed if node is 14+', function () {
+          // @ts-expect-error
           process.version = 'v14.0.0';
           checkNodeOk.should.not.throw();
         });
@@ -70,17 +109,19 @@ describe('Config', function () {
     describe('warnNodeDeprecations', function () {
       let spy;
       before(function () {
-        spy = sinon.spy(logger, 'warn');
+        spy = sandbox.spy(logger, 'warn');
       });
       beforeEach(function () {
         spy.resetHistory();
       });
       it('should not log a warning if node is 8+', function () {
+        // @ts-expect-error
         process.version = 'v8.0.0';
         warnNodeDeprecations();
         logger.warn.callCount.should.equal(0);
       });
       it('should not log a warning if node is 9+', function () {
+        // @ts-expect-error
         process.version = 'v9.0.0';
         warnNodeDeprecations();
         logger.warn.callCount.should.equal(0);
@@ -142,6 +183,7 @@ describe('Config', function () {
       validateTmpDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(/could not ensure/);
     });
     it('should fail to use an undefined tmp dir', function () {
+      // @ts-expect-error
       validateTmpDir().should.be.rejectedWith(/could not ensure/);
     });
     it('should be able to use a tmp dir with correct permissions', function () {
@@ -165,7 +207,7 @@ describe('Config', function () {
     });
 
     it('should not fail if process.argv[1] is undefined', async function () {
-      process.argv[1] = undefined;
+      delete process.argv[1];
       let args = await getParser();
       args.prog.should.be.equal('appium');
     });

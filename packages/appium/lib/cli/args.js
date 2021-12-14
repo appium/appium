@@ -1,7 +1,6 @@
 // @ts-check
 
 // @ts-ignore
-import { DEFAULT_BASE_PATH } from '@appium/base-driver';
 import _ from 'lodash';
 import DriverConfig from '../driver-config';
 import { APPIUM_HOME, DRIVER_TYPE, INSTALL_TYPES, PLUGIN_TYPE } from '../extension-config';
@@ -175,13 +174,7 @@ function makeRunArgs (type) {
  */
 function getServerArgs () {
   return new Map([
-    ...toParserArgs({
-      overrides: {
-        basePath: {
-          default: DEFAULT_BASE_PATH
-        },
-      }
-    }),
+    ...toParserArgs(),
     ...serverArgsDisallowedInConfig,
   ]);
 }
@@ -195,21 +188,31 @@ const serverArgsDisallowedInConfig = new Map([
     ['--shell'],
     {
       required: false,
-      default: null,
       help: 'Enter REPL mode',
-      action: 'store_true',
+      action: 'store_const',
+      const: true,
       dest: 'shell',
+    },
+  ],
+  [
+    ['--show-build-info'],
+    {
+      dest: 'showBuildInfo',
+      action: 'store_const',
+      const: true,
+      required: false,
+      help: 'Show info about the Appium build and exit',
     },
   ],
   [
     ['--show-config'],
     {
-      default: false,
       dest: 'showConfig',
-      action: 'store_true',
+      action: 'store_const',
+      const: true,
       required: false,
-      help: 'Show info about the appium server configuration and exit',
-    },
+      help: 'Show the current Appium configuration and exit',
+    }
   ],
   [
     ['--config'],

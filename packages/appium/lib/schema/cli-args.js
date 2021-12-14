@@ -98,11 +98,9 @@ function makeDescription (schema) {
  * as understood by `argparse`.
  * @param {AppiumJSONSchema} subSchema - JSON schema for the option
  * @param {ArgSpec} argSpec - Argument spec tuple
- * @param {SubSchemaToArgDefOptions} [opts] - Options
  * @returns {[string[], import('argparse').ArgumentOptions]} Tuple of flag and options
  */
-function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
-  const {overrides = {}} = opts;
+function subSchemaToArgDef (subSchema, argSpec) {
   let {
     type,
     appiumCliAliases,
@@ -110,7 +108,7 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     enum: enumValues,
   } = subSchema;
 
-  const {name, arg, dest} = argSpec;
+  const {name, arg} = argSpec;
 
   const aliases = [
     aliasToFlag(argSpec),
@@ -142,7 +140,8 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
   switch (type) {
     // booleans do not have a type per `ArgumentOptions`, just an "action"
     case TYPENAMES.BOOLEAN: {
-      argOpts.action = 'store_true';
+      argOpts.action = 'store_const';
+      argOpts.const = true;
       break;
     }
 
@@ -227,16 +226,6 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
     }
   }
 
-  // overrides override anything we computed here.  usually this involves "custom types",
-  // which are really just transform functions.
-  argOpts = _.merge(
-    argOpts,
-    /** should the override keys correspond to the prop name or the prop dest?
-     * the prop dest is computed by {@link aliasToDest}.
-     */
-    overrides[dest] ?? {},
-  );
-
   return [aliases, argOpts];
 }
 
@@ -244,31 +233,18 @@ function subSchemaToArgDef (subSchema, argSpec, opts = {}) {
  * Converts the finalized, flattened schema representation into
  * ArgumentDefinitions for handoff to `argparse`.
  *
- * @param {ToParserArgsOptions} opts - Options
  * @throws If schema has not been added to ajv (via `finalizeSchema()`)
  * @returns {import('../cli/args').ArgumentDefinitions} A map of arryas of
  * aliases to `argparse` arguments; empty if no schema found
  */
-export function toParserArgs (opts = {}) {
+export function toParserArgs () {
   const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
   return new Map(
     _.map(flattened, ({schema, argSpec}) =>
-      subSchemaToArgDef(schema, argSpec, opts),
+      subSchemaToArgDef(schema, argSpec),
     ),
   );
 }
-
-/**
- * Options for {@link toParserArgs}
- * @typedef {SubSchemaToArgDefOptions} ToParserArgsOptions
- */
-
-/**
- * Options for {@link subSchemaToArgDef}.
- * @typedef {Object} SubSchemaToArgDefOptions
- * @property {string} [prefix] - The prefix to use for the flag, if any
- * @property {{[key: string]: import('argparse').ArgumentOptions}} [overrides] - An object of key/value pairs to override the default values
- */
 
 /**
  * @template T

@@ -144,6 +144,14 @@ export const installLocalExtension = _.curry(
  */
 
 /**
+ * @typedef {import('../../lib/cli/npm').TeenProcessExecResult} TeenProcessExecResult
+ */
+
+/**
+ * @typedef {import('../../lib/cli/npm').TeenProcessExecError} TeenProcessExecError
+ */
+
+/**
  * Wraps the error returned by {@link exec}.
  * @typedef {Object} AppiumRunErrorProps
  * @property {string} originalMessage - Original error message

@@ -94,7 +94,7 @@ describe('parser', function () {
       });
 
       it('should parse --allow-insecure correctly', function () {
-        p.parseArgs([]).should.have.property('allowInsecure', undefined);
+        p.parseArgs([]).should.not.have.property('allowInsecure');
         p.parseArgs(['--allow-insecure', '']).allowInsecure.should.eql([]);
         p.parseArgs(['--allow-insecure', 'foo']).allowInsecure.should.eql(['foo']);
         p.parseArgs(['--allow-insecure', 'foo,bar']).allowInsecure.should.eql(['foo', 'bar']);
@@ -102,7 +102,7 @@ describe('parser', function () {
       });
 
       it('should parse --deny-insecure correctly', function () {
-        p.parseArgs([]).should.have.property('denyInsecure', undefined);
+        p.parseArgs([]).should.not.have.property('denyInsecure');
         p.parseArgs(['--deny-insecure', '']).denyInsecure.should.eql([]);
         p.parseArgs(['--deny-insecure', 'foo']).denyInsecure.should.eql(['foo']);
         p.parseArgs(['--deny-insecure', 'foo,bar']).denyInsecure.should.eql(['foo', 'bar']);
@@ -161,7 +161,7 @@ describe('parser', function () {
 
       it('should not yet apply defaults', function () {
         const args = p.parseArgs([]);
-        args.driver.fake.should.eql({sillyWebServerHost: undefined, sillyWebServerPort: undefined});
+        args.should.not.have.property('driver');
       });
 
       it('should nicely handle extensions w/ dashes in them', async function () {

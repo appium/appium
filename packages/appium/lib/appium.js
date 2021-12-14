@@ -53,6 +53,7 @@ class AppiumDriver extends BaseDriver {
     // It is not recommended to access this property directly from the outside
     this.pendingDrivers = {};
 
+    /** @type {PluginExtensionClass[]} */
     this.pluginClasses = []; // list of which plugins are active
     this.sessionPlugins = {}; // map of sessions to actual plugin instances per session
     this.sessionlessPlugins = []; // some commands are sessionless, so we need a set of plugins for them
@@ -61,8 +62,11 @@ class AppiumDriver extends BaseDriver {
     updateBuildInfo();
   }
 
-  /** @type {DriverConfig|undefined} */
+  /** @type {import('./driver-config').default|undefined} */
   driverConfig;
+
+  /** @type {import('express').Express|undefined} */
+  server;
 
   /**
    * Cancel commands queueing for the umbrella Appium driver
@@ -670,3 +674,23 @@ export class NoDriverProxyCommandError extends Error {
 }
 
 export { AppiumDriver };
+
+
+/**
+ * @typedef {Object} StaticExtMembers
+ * @property {(app: import('express').Express, httpServer: import('http').Server) => import('type-fest').Promisable<void>} [updateServer]
+ * @property {import('@appium/base-driver').MethodMap} [newMethodMap]
+ */
+
+/**
+ * @typedef {Object} StaticPluginMembers
+ * @property {string} pluginName
+ */
+
+/**
+ * @typedef {import('type-fest').Class<unknown> & StaticPluginMembers & StaticExtMembers} PluginExtensionClass
+ */
+
+/**
+ * @typedef {import('type-fest').Class<unknown> & StaticExtMembers} DriverExtensionClass
+ */

@@ -33,7 +33,7 @@
     "@babel/eslint-parser": "7.16.3",
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.25.3",
-    "eslint-plugin-mocha": "9.0.0",
+    "eslint-plugin-mocha": "10.0.3",
     "eslint-plugin-promise": "5.2.0"
   },
   "publishConfig": {

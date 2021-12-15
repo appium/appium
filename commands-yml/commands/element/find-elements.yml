@@ -33,7 +33,7 @@ example_usage:
       List<MobileElement> elementsTwo = (List<MobileElement>) driver.findElementsByClassName("SomeClassName");
   python:
     |
-      el = self.driver.find_elements_by_accessibility_id('SomeAccessibilityID')
+      el = driver.find_element(AppiumBy.ACCESSIBILITY_ID,'SomeAccessibilityID')
   javascript_wd:
     |
       let elementsOne = await driver.elementsByAccessibilityId("SomeAccessibilityID");

@@ -98,6 +98,10 @@ describe('helpers', function () {
       sandbox.stub(zip, 'extractAllTo').resolves();
       sandbox.stub(zip, 'assertValidZip').resolves();
       sandbox.stub(fs, 'mv').resolves();
+      sandbox.stub(fs, 'stat').resolves({
+        isFile: () => true,
+        isDirectory: () => false,
+      });
       sandbox.stub(fs, 'exists').resolves(true);
       sandbox.stub(fs, 'hash').resolves('0xDEADBEEF');
       sandbox.stub(fs, 'glob').resolves(['/path/to/an.apk']);

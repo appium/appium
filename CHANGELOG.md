@@ -1,3 +1,17 @@
+CHANGES IN VERSION 1.22.2 (FROM 1.22.1)
+===================================
+
+Appium 1.22.2 is a patch release
+
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or major bugs pop up before the EOL.
+
+### iOS(XCUITest)
+
+- Add `safariTabBarPosition` settings api to help `nativeWebTap` capability/setting consider if the device has the tab bar on the top of Safari or on the bottom. Please read `safariTabBarPosition` in [Settings API](https://github.com/appium/appium-xcuitest-driver#settings-api) for more details [appium-xcuitest-driver#1361](https://github.com/appium/appium-xcuitest-driver/pull/1361)
+- Do not show the keyboard tutorial in iOS 15 environemnt for simulators [appium-ios-simulator#315](https://github.com/appium/appium-ios-simulator/pull/315)
+- Fix to pass installation options in [Install App](http://appium.io/docs/en/commands/device/app/install-app/) command [appium-xcuitest-driver#1357](https://github.com/appium/appium-xcuitest-driver/pull/1357)
+
 CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
 ===================================
 

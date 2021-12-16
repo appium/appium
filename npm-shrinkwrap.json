@@ -3296,22 +3296,22 @@
       }
     },
     "appium-ios-simulator": {
-      "version": "3.28.1",
-      "resolved": "https://registry.npmjs.org/appium-ios-simulator/-/appium-ios-simulator-3.28.1.tgz",
-      "integrity": "sha512-JqtpDXeYpJ0iA5Uwx4bbLFGiA/vpuejMa7VG5qbQ1nrGQ7+EZuETpKl+w8oWUmDi2fvOwwVLbeCSuDp0ysSPzg==",
+      "version": "3.29.0",
+      "resolved": "https://registry.npmjs.org/appium-ios-simulator/-/appium-ios-simulator-3.29.0.tgz",
+      "integrity": "sha512-7Y6KJJI3K4V35xbJeEwyedPg0DACYmv7cyyyoMbyz7PcLmoaKcufziNYwhlIiiKJIlPc+U/MJfeWUBSQ6W5/Vg==",
       "requires": {
         "@babel/runtime": "^7.0.0",
+        "@xmldom/xmldom": "^0.x",
         "appium-support": "^2.44.0",
         "appium-xcode": "^3.1.0",
         "async-lock": "^1.0.0",
         "asyncbox": "^2.3.1",
         "bluebird": "^3.5.1",
         "lodash": "^4.2.1",
-        "node-simctl": "^6.4.0",
+        "node-simctl": "^6.6.0",
         "semver": "^7.0.0",
         "source-map-support": "^0.5.3",
-        "teen_process": "^1.3.0",
-        "xmldom": "^0.x"
+        "teen_process": "^1.3.0"
       }
     },
     "appium-mac-driver": {
@@ -6117,8 +6117,7 @@
     "emoji-regex": {
       "version": "8.0.0",
       "resolved": "https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz",
-      "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==",
-      "dev": true
+      "integrity": "sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A=="
     },
     "enabled": {
       "version": "2.0.0",

@@ -4109,9 +4109,9 @@
       }
     },
     "appium-xcuitest-driver": {
-      "version": "3.56.2",
-      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.56.2.tgz",
-      "integrity": "sha512-xnUu7ec/O29SsWNrgCXkDLzoGq/eA46T+7XC2/PNzxi5tVFJmuPFPaueL1M6SkqEfXD55UNChT33KpcxIinfHQ==",
+      "version": "3.59.0",
+      "resolved": "https://registry.npmjs.org/appium-xcuitest-driver/-/appium-xcuitest-driver-3.59.0.tgz",
+      "integrity": "sha512-SG3ylxzzbIDg8P4zx9S6vSBIcT4TGnvVcolENC/pYJBO/8g3ru4z8+lcHZNdVzNZ6fpORdTROcEk2Zfu8WEAnw==",
       "requires": {
         "@babel/runtime": "^7.0.0",
         "@xmldom/xmldom": "^0.x",
@@ -4121,7 +4121,7 @@
         "appium-ios-simulator": "^3.28.0",
         "appium-remote-debugger": "^8.13.2",
         "appium-support": "^2.47.1",
-        "appium-webdriveragent": "^3.13.0",
+        "appium-webdriveragent": "^3.16.0",
         "appium-xcode": "^3.8.0",
         "async-lock": "^1.0.0",
         "asyncbox": "^2.3.1",
@@ -4141,9 +4141,9 @@
       },
       "dependencies": {
         "ws": {
-          "version": "8.2.3",
-          "resolved": "https://registry.npmjs.org/ws/-/ws-8.2.3.tgz",
-          "integrity": "sha512-wBuoj1BDpC6ZQ1B7DWQBYVLphPWkm8i9Y0/3YdHjHKHiohOJ1ws+3OccDWtH+PoC9DZD5WOTrJvNbWvjS6JWaA=="
+          "version": "8.3.0",
+          "resolved": "https://registry.npmjs.org/ws/-/ws-8.3.0.tgz",
+          "integrity": "sha512-Gs5EZtpqZzLvmIM59w4igITU57lrtYVFneaa434VROv4thzJyV6UjIL3D42lslWlI+D4KzLYnxSwtfuiO79sNw=="
         }
       }
     },

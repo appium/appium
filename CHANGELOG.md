@@ -12,7 +12,7 @@ Appium 1.x will be receiving minor or patch releases only if XCTest gets breakin
 - Do not show the keyboard tutorial in iOS 15 environment for simulators [appium-ios-simulator#315](https://github.com/appium/appium-ios-simulator/pull/315)
 - Fix to pass installation options in [Install App](http://appium.io/docs/en/commands/device/app/install-app/) command [appium-xcuitest-driver#1357](https://github.com/appium/appium-xcuitest-driver/pull/1357)
 - Disable the default XCTest's notification checker to avoid [an issue on iOS 15.2](https://github.com/appium/appium/issues/16025) [WebDriverAgent#540](https://github.com/appium/WebDriverAgent/pull/540)
-- Improve generating XML source performance [appium-xcuitest-driver#1351](https://github.com/appium/appium-xcuitest-driver/pull/1351) [WebDriverAgent#544](https://github.com/appium/WebDriverAgent/pull/544)
+- Slightly improve the performance of XML source generation [appium-xcuitest-driver#1351](https://github.com/appium/appium-xcuitest-driver/pull/1351) [WebDriverAgent#544](https://github.com/appium/WebDriverAgent/pull/544)
 
 CHANGES IN VERSION 1.22.1 (FROM 1.22.0)
 ===================================

@@ -1,6 +1,6 @@
 ## Selenium Grid 4
 
-`Relay` feature in Grid 4 allows you to proxy Appium requests to an appium server instance without complicated configurations.
+`Relay` feature in Grid 4 allows you to proxy Appium requests to an appium server instance.
 
 Please check [Relaying commands to a service endpoint that supports WebDriver](https://www.selenium.dev/documentation/grid/configuration/toml_options/#relaying-commands-to-a-service-endpoint-that-supports-webdriver) and [Selenium Grid 4 and Appium together in harmony](https://www.youtube.com/watch?v=3_aP2rsqZD0) about the configuration and for more details.
 

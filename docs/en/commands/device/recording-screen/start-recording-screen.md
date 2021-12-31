@@ -23,9 +23,7 @@ self.driver.start_recording_screen()
 // webdriver.io example
 driver.startRecordingScreen();
 
-// wd example
-**NOT AVAILABLE**
-
+// Not supported
 ```
 
 ```ruby
@@ -78,7 +76,7 @@ driver.StartRecordingScreen(
 |[Java](https://github.com/appium/java-client/releases/latest)| All | [static.javadoc.io](https://static.javadoc.io/io.appium/java-client/6.1.0/io/appium/java_client/screenrecording/CanRecordScreen.html#startRecordingScreen-T-) |
 |[Python](https://github.com/appium/python-client/releases/latest)| All | [appium.github.io](https://appium.github.io/python-client-sphinx/webdriver.extensions.html#webdriver.extensions.screen_record.ScreenRecord.start_recording_screen) |
 |[Javascript (WebdriverIO)](http://webdriver.io/index.html)| All |  |
-|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All | [null](NOT AVAILABLE) |
+|[Javascript (WD)](https://github.com/admc/wd/releases/latest)| All |  |
 |[Ruby](https://github.com/appium/ruby_lib/releases/latest)| All | [Android](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Android/Device#start_recording_screen-instance_method) [iOS](https://www.rubydoc.info/github/appium/ruby_lib_core/Appium/Core/Ios/Xcuitest/Device#start_recording_screen-instance_method) |
 |[C#](https://github.com/appium/appium-dotnet-driver/releases/latest)| None | [github.com](https://github.com/appium/appium-dotnet-driver/) |
 

@@ -19,7 +19,7 @@ C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/
 
 Language/Framework | Github Repo and Installation Instructions |
 ----- | ----- |
-JavaScript (Node.js) | [https://github.com/admc/wd](https://github.com/admc/wd)
+[Deprecated] JavaScript (Node.js) | [https://github.com/admc/wd](https://github.com/admc/wd)
 JavaScript (Node.js) | [https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio)
 JavaScript (Browser) | [https://github.com/projectxyzio/web2driver](https://github.com/projectxyzio/web2driver)
 RobotFramework | [https://github.com/serhatbolsu/robotframework-appiumlibrary](https://github.com/serhatbolsu/robotframework-appiumlibrary)

@@ -22,6 +22,7 @@ IOS_BASE_CAPS = {
     # 'showIOSLog': False,
 }
 
+sauce = None
 if os.getenv('SAUCE_LABS') and os.getenv('SAUCE_USERNAME') and os.getenv('SAUCE_ACCESS_KEY'):
     build_id = os.getenv('TRAVIS_BUILD_ID') or datetime.now().strftime('%B %d, %Y %H:%M:%S')
     build_name = 'Python Sample Code %s' % build_id
@@ -71,6 +72,11 @@ def __save_log_type(driver, device_logger, calling_request, type):
             logcat_file.write(data_string)
 
 def report_to_sauce(session_id):
-    print("Link to your job: https://saucelabs.com/jobs/%s" % session_id)
-    passed = str(sys.exc_info() == (None, None, None))
-    sauce.jobs.update_job(session_id, passed=passed)
+    if sauce is not None:
+        print("Link to your job: https://saucelabs.com/jobs/%s" % session_id)
+        passed = str(sys.exc_info() == (None, None, None))
+        sauce.jobs.update_job(session_id, passed=passed)
+    else:
+        # this function gets called whether sauce is enabled or not.
+        # if we get here, we weren't using sauce, so silently do nothing
+        pass

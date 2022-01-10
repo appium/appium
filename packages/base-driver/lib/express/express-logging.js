@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import 'colors';
+import '@dabh/colors';
 import morgan from 'morgan';
 import log from './logger';
 import { MAX_LOG_BODY_LENGTH } from '../constants';

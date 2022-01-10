@@ -4,7 +4,7 @@ import {
 } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS } from './helpers';
 import _ from 'lodash';
-import { stripColors } from 'colors';
+import { stripColors } from '@dabh/colors';
 import sinon from 'sinon';
 import logger from '../lib/logger';
 

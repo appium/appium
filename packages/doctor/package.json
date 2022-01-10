@@ -37,9 +37,9 @@
   "dependencies": {
     "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
+    "@dabh/colors": "1.4.0",
     "appium-adb": "8.17.0",
     "bluebird": "3.7.2",
-    "colors": "1.4.0",
     "inquirer": "8.2.0",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",

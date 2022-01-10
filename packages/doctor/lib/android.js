@@ -3,7 +3,7 @@ import { ok, nok, okOptional, nokOptional, resolveExecutablePath } from './utils
 import { system, fs } from '@appium/support';
 import path from 'path';
 import EnvVarAndPathCheck from './env';
-import 'colors';
+import '@dabh/colors';
 import { getAndroidBinaryPath, getSdkRootFromEnv } from 'appium-adb';
 import log from './logger';
 

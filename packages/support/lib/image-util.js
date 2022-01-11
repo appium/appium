@@ -8,6 +8,10 @@ import log from './logger';
 import { requirePackage } from './node';
 
 
+const OCV_OLD = 'opencv4nodejs';
+const OCV_NEW = '@u4/opencv4nodejs';
+
+
 const { MIME_JPEG, MIME_PNG, MIME_BMP } = Jimp;
 let cv = null;
 
@@ -127,16 +131,20 @@ async function initOpenCV () {
   }
 
   log.debug(`Initializing opencv`);
-  try {
-    cv = await requirePackage('opencv4nodejs');
-  } catch (err) {
-    log.warn(`Unable to load 'opencv4nodejs': ${err.message}`);
+  for (const ocvPackage of [OCV_OLD, OCV_NEW]) {
+    try {
+      log.debug(`Attempting to load '${ocvPackage}'`);
+      cv = await requirePackage(ocvPackage);
+      break;
+    } catch (err) {
+      log.warn(`Unable to load '${ocvPackage}': ${err.message}`);
+    }
   }
 
   if (!cv) {
-    throw new Error(`'opencv4nodejs' module is required to use OpenCV features. ` +
-                    `Please install it first ('npm i -g opencv4nodejs') and restart Appium. ` +
-                    'Read https://github.com/justadudewhohacks/opencv4nodejs#how-to-install for more details on this topic.');
+    throw new Error(`An opencv node module is required to use OpenCV features. ` +
+                    `Please install one first (e.g., 'npm i -g ${OCV_NEW}') and restart Appium. ` +
+                    'Read https://github.com/UrielCh/opencv4nodejs#how-to-install for more details on this topic.');
   }
 }
 

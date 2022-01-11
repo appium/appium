@@ -50,7 +50,7 @@ checks.push(new NodeVersionCheck());
 
 class OptionalOpencv4nodejsCommandCheck extends DoctorCheck {
   async diagnose () {
-    const packageName = 'opencv4nodejs';
+    const packageName = '@u4/opencv4nodejs';
     const packageInfo = await getNpmPackageInfo(packageName);
 
     if (packageInfo) {

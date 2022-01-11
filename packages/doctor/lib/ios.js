@@ -5,7 +5,7 @@ import { DoctorCheck, FixSkippedError } from './doctor';
 import log from './logger';
 import { fixIt } from './prompt';
 import EnvVarAndPathCheck from './env';
-import 'colors';
+import '@dabh/colors';
 
 let checks = [];
 let fixes = {};

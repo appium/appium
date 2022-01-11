@@ -88,10 +88,10 @@ describe('general', function () {
       mocks.tp.expects('exec').once().returns({stdout: `
         {
           "dependencies": {
-            "opencv4nodejs": {
+            "@u4/opencv4nodejs": {
               "version": "4.13.0",
-              "from": "opencv4nodejs",
-              "resolved": "https://registry.npmjs.org/opencv4nodejs/-/opencv4nodejs-4.14.1.tgz"
+              "from": "@u4/opencv4nodejs",
+              "resolved": "https://registry.npmjs.org/@u4/opencv4nodejs/-/opencv4nodejs-4.14.1.tgz"
             }
           },
           "path": "/path/to/node/node/v11.4.0/lib"
@@ -100,7 +100,7 @@ describe('general', function () {
       (await check.diagnose()).should.deep.equal({
         ok: true,
         optional: true,
-        message: 'opencv4nodejs is installed at: /path/to/node/node/v11.4.0/lib. Installed version is: 4.13.0'
+        message: '@u4/opencv4nodejs is installed at: /path/to/node/node/v11.4.0/lib. Installed version is: 4.13.0'
       });
       mocks.verify();
     });
@@ -109,7 +109,7 @@ describe('general', function () {
       (await check.diagnose()).should.deep.equal({
         ok: false,
         optional: true,
-        message: 'opencv4nodejs cannot be found.'
+        message: '@u4/opencv4nodejs cannot be found.'
       });
       mocks.verify();
     });

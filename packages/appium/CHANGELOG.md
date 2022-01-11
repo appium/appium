@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.24](https://github.com/appium/appium/compare/appium@2.0.0-beta.23...appium@2.0.0-beta.24) (2022-01-11)
+
+
+### Bug Fixes
+
+* **appium:** correctly apply extension defaults ([20d95e4](https://github.com/appium/appium/commit/20d95e45313fc6aac30a2cf7b8f7bef156a17851))
+* **appium:** disallow unsupported schemas ([e074fee](https://github.com/appium/appium/commit/e074fee89f90a654407d01d3f3aea6b839bbf24f))
+* **appium:** fix behavior of ReadonlyMap to be compatible with Map ([88e351f](https://github.com/appium/appium/commit/88e351fc2da682bb4c8607259e001ed7e0f5d964))
+* **appium:** fix incorrect handling of delete session with regard to plugin driver assignment ([7b3893a](https://github.com/appium/appium/commit/7b3893a36202018de7c2124c2028bfbbd8a9d7fd))
+* **appium:** make object dumps less weird ([74a5911](https://github.com/appium/appium/commit/74a5911515f6c50f71fe6f18ddaa4f4fd2ed6d43))
+* Switch colors package to a non-compomised repository ([#16317](https://github.com/appium/appium/issues/16317)) ([40a6f05](https://github.com/appium/appium/commit/40a6f054dca3d94fc88773af9c6336ba12ebfb81))
+
+
+### Features
+
+* **appium:** add --show-config ([#16207](https://github.com/appium/appium/issues/16207)) ([af96879](https://github.com/appium/appium/commit/af96879cfdbbe40773182c29a49fbf2f3cf7e233)), closes [#15672](https://github.com/appium/appium/issues/15672)
+
+
+
+
+
 # [2.0.0-beta.23](https://github.com/appium/appium/compare/appium@2.0.0-beta.22...appium@2.0.0-beta.23) (2021-11-23)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/appium/appium/compare/@appium/test-support@1.3.9...@appium/test-support@1.3.10) (2022-01-11)
+
+
+### Bug Fixes
+
+* Switch colors package to a non-compomised repository ([#16317](https://github.com/appium/appium/issues/16317)) ([40a6f05](https://github.com/appium/appium/commit/40a6f054dca3d94fc88773af9c6336ba12ebfb81))
+
+
+
+
+
 ## [1.3.9](https://github.com/appium/appium/compare/@appium/test-support@1.3.8...@appium/test-support@1.3.9) (2021-11-19)
 
 

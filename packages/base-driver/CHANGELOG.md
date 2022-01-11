@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.3](https://github.com/appium/appium/compare/@appium/base-driver@8.2.2...@appium/base-driver@8.2.3) (2022-01-11)
+
+
+### Bug Fixes
+
+* **appium:** fix incorrect handling of delete session with regard to plugin driver assignment ([7b3893a](https://github.com/appium/appium/commit/7b3893a36202018de7c2124c2028bfbbd8a9d7fd))
+* **base-driver:** follow W3C capabilities more strictly ([#16193](https://github.com/appium/appium/issues/16193)) ([9a85a41](https://github.com/appium/appium/commit/9a85a41b9e134949ed5743ccdcf6bd83ee11df14))
+* Switch colors package to a non-compomised repository ([#16317](https://github.com/appium/appium/issues/16317)) ([40a6f05](https://github.com/appium/appium/commit/40a6f054dca3d94fc88773af9c6336ba12ebfb81))
+
+
+
+
+
 ## [8.2.2](https://github.com/appium/appium/compare/@appium/base-driver@8.2.1...@appium/base-driver@8.2.2) (2021-11-23)
 
 **Note:** Version bump only for package @appium/base-driver

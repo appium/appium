@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.8](https://github.com/appium/appium/compare/@appium/doctor@1.16.7...@appium/doctor@1.16.8) (2022-01-11)
+
+
+### Bug Fixes
+
+* **support:** allow @u4/opencv4nodejs in addition to the old one, and promote it in doctor instead ([7d8d547](https://github.com/appium/appium/commit/7d8d547fbd5f234922a38c79239391c83d48aa5b))
+* Switch colors package to a non-compomised repository ([#16317](https://github.com/appium/appium/issues/16317)) ([40a6f05](https://github.com/appium/appium/commit/40a6f054dca3d94fc88773af9c6336ba12ebfb81))
+
+
+
+
+
 ## [1.16.7](https://github.com/appium/appium/compare/@appium/doctor@1.16.6...@appium/doctor@1.16.7) (2021-11-19)
 
 

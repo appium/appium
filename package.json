@@ -54,9 +54,11 @@
     "test:e2e:fake-driver": "lerna exec --scope=@appium/fake-driver \"gulp e2e-test\"",
     "test:e2e:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins \"gulp e2e-test\"",
     "test:e2e:support": "lerna exec --scope=@appium/support \"gulp e2e-test\"",
+    "test:e2e:opencv": "lerna exec --scope=@appium/opencv \"gulp e2e-test\"",
     "test:fake-driver": "lerna exec --scope=@appium/fake-driver \"gulp once\"",
     "test:gulp-plugins": "lerna exec --scope=@appium/gulp-plugins \"gulp once\"",
     "test:support": "lerna exec --scope=@appium/support \"gulp once\"",
+    "test:opencv": "lerna exec --scope=@appium/opencv \"gulp once\"",
     "test:test-support": "lerna exec --scope=@appium/test-support \"gulp once\"",
     "preversion": "npm run sync-pkgs && npm run generate-schema-declarations && git add -A packages/appium/README.md packages/*/package.json",
     "watch": "lerna exec watch"
@@ -140,6 +142,7 @@
     "@appium/fake-driver": "file:packages/fake-driver",
     "@appium/gulp-plugins": "file:packages/gulp-plugins",
     "@appium/support": "file:packages/support",
+    "@appium/opencv": "file:packages/opencv",
     "@appium/test-support": "file:packages/test-support",
     "appium": "file:packages/appium"
   }

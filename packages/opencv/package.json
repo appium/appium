@@ -1,0 +1,44 @@
+{
+  "name": "@appium/opencv",
+  "version": "1.0.0",
+  "description": "OpenCV-related helper library",
+  "keywords": [
+    "opencv",
+    "image analysis",
+    "javascript"
+  ],
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build"
+  ],
+  "dependencies": {
+    "@babel/runtime": "7.16.3",
+    "bluebird": "3.7.2",
+    "jimp": "0.16.1",
+    "lodash": "4.17.21",
+    "opencv-bindings": "^4.5.5",
+    "source-map-support": "0.5.21"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://appium.io",
+  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+}

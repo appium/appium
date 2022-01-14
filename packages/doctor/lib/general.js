@@ -48,23 +48,6 @@ class NodeVersionCheck extends DoctorCheck {
 }
 checks.push(new NodeVersionCheck());
 
-class OptionalOpencv4nodejsCommandCheck extends DoctorCheck {
-  async diagnose () {
-    const packageName = '@u4/opencv4nodejs';
-    const packageInfo = await getNpmPackageInfo(packageName);
-
-    if (packageInfo) {
-      return okOptional(`${packageName} is installed at: ${packageInfo.path}. Installed version is: ${packageInfo.version}`);
-    }
-    return nokOptional(`${packageName} cannot be found.`);
-  }
-
-  async fix () { // eslint-disable-line require-await
-    return `Why ${'opencv4nodejs'.bold} is needed and how to install it: https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md`;
-  }
-}
-checks.push(new OptionalOpencv4nodejsCommandCheck());
-
 class OptionalFfmpegCommandCheck extends DoctorCheck {
   async diagnose () {
     const ffmpegPath = await resolveExecutablePath('ffmpeg');
@@ -98,6 +81,6 @@ class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
 checks.push(new OptionalMjpegConsumerCommandCheck());
 
 
-export { NodeBinaryCheck, NodeVersionCheck,
-  OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck };
+export { NodeBinaryCheck, NodeVersionCheck, OptionalFfmpegCommandCheck,
+  OptionalMjpegConsumerCommandCheck };
 export default checks;

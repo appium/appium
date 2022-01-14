@@ -5,15 +5,10 @@ import { PNG } from 'pngjs';
 import B from 'bluebird';
 import { hasValue } from './util';
 import log from './logger';
-import { requirePackage } from './node';
 
 
-const OCV_OLD = 'opencv4nodejs';
-const OCV_NEW = '@u4/opencv4nodejs';
-
-
+let cv;
 const { MIME_JPEG, MIME_PNG, MIME_BMP } = Jimp;
-let cv = null;
 
 /**
  * @typedef {Object} Region
@@ -42,26 +37,25 @@ const SCANLINE_FILTER_METHOD = 4;
 const DEFAULT_MATCH_THRESHOLD = 0.5;
 const MATCH_NEIGHBOUR_THRESHOLD = 10;
 
-const AVAILABLE_DETECTORS = [
-  'AKAZE',
-  'AGAST',
-  'BRISK',
-  'FAST',
-  'GFTT',
-  'KAZE',
-  'MSER',
-  'SIFT',
-  'ORB',
-];
+const AVAILABLE_DETECTORS = {
+  AKAZE: 'AKAZE',
+  AGAST: 'AgastFeatureDetector',
+  BRISK: 'BRISK',
+  FAST: 'FastFeatureDetector',
+  GFTT: 'GFTTDetector',
+  KAZE: 'KAZE',
+  MSER: 'MSER',
+  ORB: 'ORB',
+};
 
-const AVAILABLE_MATCHING_FUNCTIONS = [
-  'FlannBased',
-  'BruteForce',
-  'BruteForceL1',
-  'BruteForceHamming',
-  'BruteForceHammingLut',
-  'BruteForceSL2',
-];
+const AVAILABLE_MATCHING_FUNCTIONS = {
+  FlannBased: 'FlannBased',
+  BruteForce: 'BruteForce',
+  BruteForceL1: 'BruteForce-L1',
+  BruteForceHamming: 'BruteForce-Hamming',
+  BruteForceHammingLut: 'BruteForce-HammingLUT',
+  BruteForceSL2: 'BruteForce-SL2',
+};
 
 const MATCHING_METHODS = [
   'TM_CCOEFF',
@@ -123,34 +117,28 @@ async function getJimpImage (data) {
 }
 
 /**
- * @throws {Error} If opencv4nodejs module is not installed or cannot be loaded
+ * Spins until the opencv-bindings module is fully loaded
  */
-async function initOpenCV () {
-  if (cv) {
-    return;
+async function initOpenCv () {
+  cv = require('opencv-bindings');
+  let waited = false;
+  while (!cv.getBuildInformation) {
+    log.info(`OpenCV module not fully loaded, waiting...`);
+    await B.delay(500);
+    waited = true;
   }
-
-  log.debug(`Initializing opencv`);
-  for (const ocvPackage of [OCV_OLD, OCV_NEW]) {
-    try {
-      log.debug(`Attempting to load '${ocvPackage}'`);
-      cv = await requirePackage(ocvPackage);
-      break;
-    } catch (err) {
-      log.warn(`Unable to load '${ocvPackage}': ${err.message}`);
-    }
-  }
-
-  if (!cv) {
-    throw new Error(`An opencv node module is required to use OpenCV features. ` +
-                    `Please install one first (e.g., 'npm i -g ${OCV_NEW}') and restart Appium. ` +
-                    'Read https://github.com/UrielCh/opencv4nodejs#how-to-install for more details on this topic.');
+  // opencv-bindings sets a global unhandledRejection handler of an abort, which we don't want, so
+  // undo it here. https://github.com/opencv/opencv/issues/21481
+  process.removeAllListeners('unhandledRejection');
+  if (waited) {
+    log.info(`OpenCV module successfully loaded`);
   }
 }
 
+
 /**
  * @typedef {Object} MatchComputationResult
- * @property {cv.DescriptorMatch} desciptor - OpenCV match descriptor
+ * @property {cv.DescriptorMatch} descriptor - OpenCV match descriptor
  * @property {Array<cv.KeyPoint>} keyPoints - The array of key points
  */
 
@@ -165,9 +153,11 @@ async function initOpenCV () {
  *
  * @returns {MatchComputationResult}
  */
-async function detectAndCompute (img, detector) {
-  const keyPoints = await detector.detectAsync(img);
-  const descriptor = await detector.computeAsync(img, keyPoints);
+function detectAndCompute (img, detector) {
+  const keyPoints = new cv.KeyPointVector();
+  const descriptor = new cv.Mat();
+  detector.detect(img, keyPoints);
+  detector.compute(img, keyPoints, descriptor);
   return {
     keyPoints,
     descriptor
@@ -227,21 +217,23 @@ function highlightRegion (mat, region) {
   }
 
   // highlight in red
-  const color = new cv.Vec(0, 0, 255);
+  const color = new cv.Scalar(255, 0, 0, 255);
   const thickness = 2;
-  mat.drawRectangle(new cv.Rect(region.x, region.y, region.width, region.height), color, thickness, cv.LINE_8);
+  const topLeft = new cv.Point(region.x, region.y);
+  const botRight = new cv.Point(region.x + region.width, region.y + region.height);
+  cv.rectangle(mat, topLeft, botRight, color, thickness, cv.LINE_8, 0);
   return mat;
 }
 
 /**
  * @typedef {Object} MatchingOptions
  * @property {?string} detectorName ['ORB'] One of possible OpenCV feature detector names
- * from `AVAILABLE_DETECTORS` array.
+ * from keys of the `AVAILABLE_DETECTORS` object.
  * Some of these methods (FAST, AGAST, GFTT, FAST, SIFT and MSER) are not available
  * in the default OpenCV installation and have to be enabled manually before
  * library compilation.
  * @property {?string} matchFunc ['BruteForce'] The name of the matching function.
- * Should be one of `AVAILABLE_MATCHING_FUNCTIONS` array.
+ * Should be one of the keys of the `AVAILABLE_MATCHING_FUNCTIONS` object.
  * @property {?number|Function} goodMatchesFactor The maximum count of "good" matches
  * (e. g. with minimal distances) or a function, which accepts 3 arguments: the current distance,
  * minimal distance, maximum distance and returns true or false to include or exclude the match.
@@ -280,82 +272,99 @@ function highlightRegion (mat, region) {
  * @throws {Error} If `detectorName` value is unknown.
  */
 async function getImagesMatches (img1Data, img2Data, options = {}) {
-  await initOpenCV();
+  await initOpenCv();
 
-  const {detectorName = 'ORB', visualize = false,
-         goodMatchesFactor, matchFunc = 'BruteForce'} = options;
-  if (!_.includes(AVAILABLE_DETECTORS, detectorName)) {
-    throw new Error(`'${detectorName}' detector is unknown. ` +
-                    `Only ${JSON.stringify(AVAILABLE_DETECTORS)} detectors are supported.`);
-  }
-  if (!_.includes(AVAILABLE_MATCHING_FUNCTIONS, matchFunc)) {
-    throw new Error(`'${matchFunc}' matching function is unknown. ` +
-                    `Only ${JSON.stringify(AVAILABLE_MATCHING_FUNCTIONS)} matching functions are supported.`);
-  }
-
-  const detector = new cv[`${detectorName}Detector`]();
-  const [img1, img2] = await B.all([
-    cv.imdecodeAsync(img1Data),
-    cv.imdecodeAsync(img2Data)
-  ]);
-  const [result1, result2] = await B.all([
-    detectAndCompute(img1, detector),
-    detectAndCompute(img2, detector)
-  ]);
-  let matches = [];
+  let img1, img2, detector, result1, result2, matcher, matchesVec;
   try {
-    matches = await cv[`match${matchFunc}Async`](result1.descriptor, result2.descriptor);
-  } catch (e) {
-    throw new Error(`Cannot find any matches between the given images. Try another detection algorithm. ` +
-                    ` Original error: ${e}`);
-  }
-  const totalCount = matches.length;
-  if (hasValue(goodMatchesFactor)) {
-    if (_.isFunction(goodMatchesFactor)) {
-      const distances = matches.map((match) => match.distance);
-      const minDistance = _.min(distances);
-      const maxDistance = _.max(distances);
-      matches = matches
-        .filter((match) => goodMatchesFactor(match.distance, minDistance, maxDistance));
-    } else {
-      if (matches.length > goodMatchesFactor) {
+    const {detectorName = 'ORB', visualize = false,
+           goodMatchesFactor, matchFunc = 'BruteForce'} = options;
+    if (!_.includes(_.keys(AVAILABLE_DETECTORS), detectorName)) {
+      throw new Error(`'${detectorName}' detector is unknown. ` +
+                      `Only ${JSON.stringify(_.keys(AVAILABLE_DETECTORS))} detectors are supported.`);
+    }
+    if (!_.includes(_.keys(AVAILABLE_MATCHING_FUNCTIONS), matchFunc)) {
+      throw new Error(`'${matchFunc}' matching function is unknown. ` +
+                      `Only ${JSON.stringify(_.keys(AVAILABLE_MATCHING_FUNCTIONS))} matching functions are supported.`);
+    }
+
+    detector = new cv[AVAILABLE_DETECTORS[detectorName]]();
+    ([img1, img2] = await B.all([
+      cvMatFromImage(img1Data),
+      cvMatFromImage(img2Data)
+    ]));
+    result1 = detectAndCompute(img1, detector);
+    result2 = detectAndCompute(img2, detector);
+    matcher = new cv.DescriptorMatcher(AVAILABLE_MATCHING_FUNCTIONS[matchFunc]);
+    matchesVec = new cv.DMatchVector();
+    let matches = [];
+    matcher.match(result1.descriptor, result2.descriptor, matchesVec);
+    const totalCount = matchesVec.size();
+    if (totalCount < 1) {
+      throw new Error(`Could not find any matches between images. Double-check orientation, ` +
+                      `resolution, or use another detector or matching function.`);
+    }
+    for (let i = 0; i < totalCount; i++) {
+      matches.push(matchesVec.get(i));
+    }
+    if (hasValue(goodMatchesFactor)) {
+      if (_.isFunction(goodMatchesFactor)) {
+        const distances = matches.map((match) => match.distance);
+        const minDistance = _.min(distances);
+        const maxDistance = _.max(distances);
         matches = matches
-          .sort((match1, match2) => match1.distance - match2.distance)
-          .slice(0, goodMatchesFactor);
+          .filter((match) => goodMatchesFactor(match.distance, minDistance, maxDistance));
+      } else {
+        if (matches.length > goodMatchesFactor) {
+          matches = matches
+            .sort((match1, match2) => match1.distance - match2.distance)
+            .slice(0, goodMatchesFactor);
+        }
       }
     }
-  }
 
-  const extractPoint = (keyPoints, indexPropertyName) => (match) => {
-    const {pt, point} = keyPoints[match[indexPropertyName]];
-    // https://github.com/justadudewhohacks/opencv4nodejs/issues/584
-    return (pt || point);
-  };
-  const points1 = matches.map(extractPoint(result1.keyPoints, 'queryIdx'));
-  const rect1 = calculateMatchedRect(points1);
-  const points2 = matches.map(extractPoint(result2.keyPoints, 'trainIdx'));
-  const rect2 = calculateMatchedRect(points2);
+    const extractPoint = (keyPoints, indexPropertyName) => (match) => {
+      const {pt, point} = keyPoints.get(match[indexPropertyName]);
+      // https://github.com/justadudewhohacks/opencv4nodejs/issues/584
+      return (pt || point);
+    };
+    const points1 = matches.map(extractPoint(result1.keyPoints, 'queryIdx'));
+    const rect1 = calculateMatchedRect(points1);
+    const points2 = matches.map(extractPoint(result2.keyPoints, 'trainIdx'));
+    const rect2 = calculateMatchedRect(points2);
 
-  const result = {
-    points1,
-    rect1,
-    points2,
-    rect2,
-    totalCount,
-    count: matches.length,
-  };
-  if (visualize) {
-    const visualization = cv.drawMatches(img1, img2, result1.keyPoints, result2.keyPoints, matches);
-    highlightRegion(visualization, rect1);
-    highlightRegion(visualization, {
-      x: img1.cols + rect2.x,
-      y: rect2.y,
-      width: rect2.width,
-      height: rect2.height
-    });
-    result.visualization = await cv.imencodeAsync('.png', visualization);
+    const result = {
+      points1,
+      rect1,
+      points2,
+      rect2,
+      totalCount,
+      count: matches.length,
+    };
+    if (visualize) {
+      const goodMatchesVec = new cv.DMatchVector();
+      for (let i = 0; i < matches.length; i++) {
+        goodMatchesVec.push_back(matches[i]);
+      }
+      const visualization = new cv.Mat();
+      const color = new cv.Scalar(0, 255, 0, 255);
+      cv.drawMatches(img1, result1.keyPoints, img2, result2.keyPoints, goodMatchesVec, visualization, color);
+      highlightRegion(visualization, rect1);
+      highlightRegion(visualization, {
+        x: img1.cols + rect2.x,
+        y: rect2.y,
+        width: rect2.width,
+        height: rect2.height
+      });
+      result.visualization = await jimpImgFromCvMat(visualization).getBufferAsync(Jimp.MIME_PNG);
+    }
+
+    return result;
+  } finally {
+    try {
+      img1.delete(); img2.delete(); detector.delete(); result1.keyPoints.delete(); result1.descriptor.delete();
+      result2.keyPoints.delete(); result2.descriptor.delete(); matcher.delete(); matchesVec.delete();
+    } catch (ign) {}
   }
-  return result;
 }
 
 /**
@@ -395,65 +404,74 @@ async function getImagesMatches (img1Data, img2Data, options = {}) {
  * @throws {Error} If the given images have different resolution.
  */
 async function getImagesSimilarity (img1Data, img2Data, options = {}) {
-  await initOpenCV();
+  await initOpenCv();
 
   const {
     method = DEFAULT_MATCHING_METHOD,
     visualize = false,
   } = options;
-  let [template, reference] = await B.all([
-    cv.imdecodeAsync(img1Data),
-    cv.imdecodeAsync(img2Data)
-  ]);
-  if (template.rows !== reference.rows || template.cols !== reference.cols) {
-    throw new Error('Both images are expected to have the same size in order to ' +
-                    'calculate the similarity score.');
-  }
-  [template, reference] = await B.all([
-    template.convertToAsync(cv.CV_8UC3),
-    reference.convertToAsync(cv.CV_8UC3)
-  ]);
 
-  let matched;
+  let template, reference, matched;
   try {
-    matched = await reference.matchTemplateAsync(template, toMatchingMethod(method));
-  } catch (e) {
-    throw new Error(`The reference image did not match to the template one. Original error: ${e.message}`);
-  }
-  const minMax = await matched.minMaxLocAsync();
-  const result = {
-    score: minMax.maxVal
-  };
-  if (visualize) {
-    const resultMat = new cv.Mat(template.rows, template.cols * 2, cv.CV_8UC3);
-    await B.all([
-      reference.copyToAsync(
-        resultMat.getRegion(new cv.Rect(0, 0, reference.cols, reference.rows))),
-      template.copyToAsync(
-        resultMat.getRegion(new cv.Rect(reference.cols, 0, template.cols, template.rows)))
-    ]);
-    let mask = reference.absdiff(template);
-    mask = await mask.cvtColorAsync(cv.COLOR_BGR2GRAY);
-    let contours = [];
+    ([template, reference] = await B.all([
+      cvMatFromImage(img1Data),
+      cvMatFromImage(img2Data)
+    ]));
+    if (template.rows !== reference.rows || template.cols !== reference.cols) {
+      throw new Error('Both images are expected to have the same size in order to ' +
+                      'calculate the similarity score.');
+    }
+    template.convertTo(template, cv.CV_8UC3);
+    reference.convertTo(reference, cv.CV_8UC3);
+
+    matched = new cv.Mat();
+    cv.matchTemplate(reference, template, matched, toMatchingMethod(method));
+    const minMax = cv.minMaxLoc(matched);
+    const result = {
+      score: minMax.maxVal
+    };
+
+    if (visualize) {
+      let bothImages, resultMat, mask, contours, hierarchy;
+      try {
+        resultMat = new cv.Mat(template.rows, template.cols * 2, cv.CV_8UC3);
+        bothImages = new cv.MatVector();
+        bothImages.push_back(reference);
+        bothImages.push_back(template);
+        cv.hconcat(bothImages, resultMat);
+
+        mask = new cv.Mat();
+        cv.absdiff(reference, template, mask);
+        cv.cvtColor(mask, mask, cv.COLOR_BGR2GRAY, 0);
+
+        cv.threshold(mask, mask, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
+        contours = new cv.MatVector();
+        hierarchy = new cv.Mat();
+        cv.findContours(mask, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+        for (let i = 0; i < contours.size(); i++) {
+          const boundingRect = cv.boundingRect(contours.get(i));
+          highlightRegion(resultMat, boundingRect);
+          highlightRegion(resultMat, {
+            x: reference.cols + boundingRect.x,
+            y: boundingRect.y,
+            width: boundingRect.width,
+            height: boundingRect.height
+          });
+        }
+        result.visualization = await jimpImgFromCvMat(resultMat).getBufferAsync(Jimp.MIME_PNG);
+      } finally {
+        try {
+          bothImages.delete(); resultMat.delete(); mask.delete(); contours.delete(); hierarchy.delete();
+        } catch (ign) {}
+      }
+    }
+    return result;
+  } finally {
     try {
-      mask = await mask.thresholdAsync(128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
-      contours = await mask.findContoursAsync(cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-    } catch (ign) {
-      // No contours can be found, which means, most likely, that images are equal
-    }
-    for (const contour of contours) {
-      const boundingRect = contour.boundingRect();
-      highlightRegion(resultMat, boundingRect);
-      highlightRegion(resultMat, {
-        x: reference.cols + boundingRect.x,
-        y: boundingRect.y,
-        width: boundingRect.width,
-        height: boundingRect.height
-      });
-    }
-    result.visualization = await cv.imencodeAsync('.png', resultMat);
+      template.delete(); reference.delete(); matched.delete();
+    } catch (ign) {}
   }
-  return result;
 }
 
 /**
@@ -503,7 +521,7 @@ async function getImagesSimilarity (img1Data, img2Data, options = {}) {
  * @throws {Error} If no occurrences of the partial image can be found in the full image
  */
 async function getImageOccurrence (fullImgData, partialImgData, options = {}) {
-  await initOpenCV();
+  await initOpenCv();
 
   const {
     visualize = false,
@@ -513,26 +531,48 @@ async function getImageOccurrence (fullImgData, partialImgData, options = {}) {
     method = DEFAULT_MATCHING_METHOD,
   } = options;
 
-  const [fullImg, partialImg] = await B.all([
-    cv.imdecodeAsync(fullImgData),
-    cv.imdecodeAsync(partialImgData)
-  ]);
-  const results = [];
-  let visualization = null;
+  let fullImg, partialImg, matched;
 
   try {
-    const matched = await fullImg.matchTemplateAsync(partialImg, toMatchingMethod(method));
-    const minMax = await matched.minMaxLocAsync();
+    ([fullImg, partialImg] = await B.all([
+      cvMatFromImage(fullImgData),
+      cvMatFromImage(partialImgData)
+    ]));
+    matched = new cv.Mat();
+    const results = [];
+    let visualization = null;
 
-    if (multiple) {
-      const nonZeroMatchResults = matched.threshold(threshold, 1, cv.THRESH_BINARY)
-        .convertTo(cv.CV_8U)
-        .findNonZero();
-      const matches = filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold);
+    try {
+      cv.matchTemplate(fullImg, partialImg, matched, toMatchingMethod(method));
+      const minMax = cv.minMaxLoc(matched);
 
-      for (const {x, y} of matches) {
+      if (multiple) {
+        const matches = [];
+        for (let row = 0; row < matched.rows; row++) {
+          for (let col = 0; col < matched.cols; col++) {
+            const score = matched.floatAt(row, col);
+            if (score >= threshold) {
+              matches.push({score, x: col, y: row});
+            }
+          }
+        }
+
+        const nearMatches = filterNearMatches(matches, matchNeighbourThreshold);
+
+        for (const {x, y, score} of nearMatches) {
+          results.push({
+            score,
+            rect: {
+              x, y,
+              width: partialImg.cols,
+              height: partialImg.rows
+            }
+          });
+        }
+      } else if (minMax.maxVal >= threshold) {
+        const {x, y} = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
         results.push({
-          score: matched.at(y, x),
+          score: minMax.maxVal,
           rect: {
             x, y,
             width: partialImg.cols,
@@ -540,48 +580,54 @@ async function getImageOccurrence (fullImgData, partialImgData, options = {}) {
           }
         });
       }
-    } else if (minMax.maxVal >= threshold) {
-      const {x, y} = method.includes('SQDIFF') ? minMax.minLoc : minMax.maxLoc;
-      results.push({
-        score: minMax.maxVal,
-        rect: {
-          x, y,
-          width: partialImg.cols,
-          height: partialImg.rows
-        }
-      });
-    }
 
-    if (_.isEmpty(results)) {
+      if (_.isEmpty(results)) {
+        // Below error message, `Cannot find any occurrences` is referenced in find by image
+        throw new Error(`Match threshold: ${threshold}. Highest match value ` +
+                        `found was ${minMax.maxVal}`);
+      }
+    } catch (e) {
       // Below error message, `Cannot find any occurrences` is referenced in find by image
-      throw new Error(`Match threshold: ${threshold}. Highest match value ` +
-                      `found was ${minMax.maxVal}`);
+      throw new Error(`Cannot find any occurrences of the partial image in the full image. ` +
+        `Original error: ${e.message}`);
     }
-  } catch (e) {
-    // Below error message, `Cannot find any occurrences` is referenced in find by image
-    throw new Error(`Cannot find any occurrences of the partial image in the full image. ` +
-      `Original error: ${e.message}`);
-  }
 
-  if (visualize) {
-    const fullHighlightedImage = fullImg.copy();
+    if (visualize) {
+      const fullHighlightedImage = fullImg.clone();
 
-    for (const result of results) {
-      const singleHighlightedImage = fullImg.copy();
+      for (const result of results) {
+        const singleHighlightedImage = fullImg.clone();
 
-      highlightRegion(singleHighlightedImage, result.rect);
-      highlightRegion(fullHighlightedImage, result.rect);
-      result.visualization = await cv.imencodeAsync('.png', singleHighlightedImage);
+        highlightRegion(singleHighlightedImage, result.rect);
+        highlightRegion(fullHighlightedImage, result.rect);
+        result.visualization = await jimpImgFromCvMat(singleHighlightedImage).getBufferAsync(Jimp.MIME_PNG);
+      }
+      visualization = await jimpImgFromCvMat(fullHighlightedImage).getBufferAsync(Jimp.MIME_PNG);
     }
-    visualization = await cv.imencodeAsync('.png', fullHighlightedImage);
+    return {
+      rect: results[0].rect,
+      score: results[0].score,
+      visualization,
+      multiple: results
+    };
+  } finally {
+    try {
+      fullImg.delete(); partialImg.delete(); matched.delete();
+    } catch (ign) {}
   }
+}
 
-  return {
-    rect: results[0].rect,
-    score: results[0].score,
-    visualization,
-    multiple: results
-  };
+function jimpImgFromCvMat (mat) {
+  return new Jimp({
+    width: mat.cols,
+    height: mat.rows,
+    data: Buffer.from(mat.data)
+  });
+}
+
+async function cvMatFromImage (img) {
+  const jimpImg = await Jimp.read(img);
+  return cv.matFromImageData(jimpImg.bitmap);
 }
 
 /**
@@ -711,5 +757,5 @@ function getRectIntersection (rect, imageSize) {
 export {
   cropBase64Image, base64ToImage, imageToBase64, cropImage, getImagesMatches,
   getImagesSimilarity, getImageOccurrence, getJimpImage, MIME_JPEG, MIME_PNG,
-  MIME_BMP,
+  MIME_BMP
 };

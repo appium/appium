@@ -74,7 +74,7 @@ File.open('presentation.key', 'wb') { |f| f<< file }
 - Pull folder
 
 You can pull documents root of _On My iPhone/Keynote_ as `@driver.pull_folder '@com.apple.Keynote:documents/'`.
-`@driver.pull_folder '@com.apple.Keynote:documents/Keynote'` is to get files in the keynote folder. Then, _Keynote_ is the documentation root to get.
+`@driver.pull_folder '@com.apple.Keynote:documents/Keynote'` is to get files in the Keynote folder. Then, _Keynote_ is the documentation root to get.
 
 ```javascript
 // webdriver.io

@@ -2,7 +2,7 @@
 jobs:
   - job: bundle_and_upload_appium_zip
     pool:
-      vmImage: 'macOS 10.14'
+      vmImage: 'macOS 10.15'
     variables:
       CC: gcc
       CXX: g++

@@ -1,8 +1,8 @@
 # parameters: # No params yet, but may add later
 jobs:
   - job: generate_docs
-    pool: 
-      vmImage: "macOS 10.14"
+    pool:
+      vmImage: "macOS 10.15"
     variables:
       CC: gcc
       CXX: g++

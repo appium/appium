@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { NodeBinaryCheck, NodeVersionCheck,
-         OptionalOpencv4nodejsCommandCheck, OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck } from '../lib/general';
+         OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck } from '../lib/general';
 import * as tp from 'teen_process';
 import * as utils from '../lib/utils';
 import NodeDetector from '../lib/node-detector';
@@ -76,46 +76,6 @@ describe('general', function () {
     });
     it('fix', async function () {
       removeColors(await check.fix()).should.equal('Manually upgrade Node.js.');
-    });
-  }));
-
-  describe('OptionalOpencv4nodejsCommandCheck', withMocks({tp}, (mocks) => {
-    let check = new OptionalOpencv4nodejsCommandCheck();
-    it('autofix', function () {
-      check.autofix.should.not.be.ok;
-    });
-    it('diagnose - success', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: `
-        {
-          "dependencies": {
-            "@u4/opencv4nodejs": {
-              "version": "4.13.0",
-              "from": "@u4/opencv4nodejs",
-              "resolved": "https://registry.npmjs.org/@u4/opencv4nodejs/-/opencv4nodejs-4.14.1.tgz"
-            }
-          },
-          "path": "/path/to/node/node/v11.4.0/lib"
-        }
-      `, stderr: ''});
-      (await check.diagnose()).should.deep.equal({
-        ok: true,
-        optional: true,
-        message: '@u4/opencv4nodejs is installed at: /path/to/node/node/v11.4.0/lib. Installed version is: 4.13.0'
-      });
-      mocks.verify();
-    });
-    it('diagnose - failure', async function () {
-      mocks.tp.expects('exec').once().returns({stdout: '{}', stderr: ''});
-      (await check.diagnose()).should.deep.equal({
-        ok: false,
-        optional: true,
-        message: '@u4/opencv4nodejs cannot be found.'
-      });
-      mocks.verify();
-    });
-    it('fix', async function () {
-      removeColors(await check.fix()).should.
-        equal('Why opencv4nodejs is needed and how to install it: https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md');
     });
   }));
 

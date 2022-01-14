@@ -51,6 +51,7 @@
     "mv": "2.1.1",
     "ncp": "2.0.0",
     "npmlog": "5.0.1",
+    "opencv-bindings": "^4.5.5",
     "plist": "3.0.4",
     "pluralize": "8.0.0",
     "pngjs": "6.0.0",

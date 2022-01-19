@@ -4,3 +4,4 @@ examples/javascript-wd
 packages/*/build/**/*
 **/*.min.js
 sample-code
+**/*.d.ts

@@ -403,7 +403,7 @@ class AppiumSchema {
   flatten () {
     const schema = this.getSchema();
 
-    /** @type {{properties: SchemaObject, prefix: string[]}[]} */
+    /** @type { {properties: SchemaObject, prefix: string[]}[] } */
     const stack = [{properties: schema.properties, prefix: []}];
     /** @type {FlattenedSchema} */
     const flattened = [];
@@ -678,7 +678,7 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
  * A list of schemas associated with properties and their corresponding {@link ArgSpec} objects.
  *
  * Intermediate data structure used when converting the entire schema down to CLI arguments.
- * @typedef {{schema: SchemaObject, argSpec: ArgSpec}[]} FlattenedSchema
+ * @typedef { {schema: SchemaObject, argSpec: ArgSpec}[] } FlattenedSchema
  */
 
 /**

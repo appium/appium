@@ -176,7 +176,7 @@ export class ArgSpec {
   /**
    * When given the root ID of a schema for an extension (`<extType>-<normalizedExtName>.json`) Returns an object containing the extension type and the _normalized_ extension name.
    * @param {string} schemaId - Root schema ID
-   * @returns {{extType: ExtensionType|undefined, normalizedExtName: string|undefined}}
+   * @returns { {extType: ExtensionType|undefined, normalizedExtName: string|undefined} }
    */
   static extensionInfoFromRootSchemaId (schemaId) {
     const matches = schemaId.match(SCHEMA_ID_REGEXP);

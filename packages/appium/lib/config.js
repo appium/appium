@@ -9,7 +9,7 @@ import { rootDir } from './utils';
 import logger from './logger';
 import semver from 'semver';
 import findUp from 'find-up';
-import { getDefaultsForSchema } from './schema/schema';
+import { getDefaultsForSchema, getAllArgSpecs } from './schema/schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 
@@ -159,21 +159,40 @@ async function showBuildInfo () {
 
 /**
  * Returns k/v pairs of server arguments which are _not_ the defaults.
- * @param {ParsedArgs} args
+ * @param {ParsedArgs} parsedArgs
  * @returns {Partial<ParsedArgs>}
  */
-function getNonDefaultServerArgs (args) {
-  // hopefully these function names are descriptive enough
+function getNonDefaultServerArgs (parsedArgs) {
+  /**
+   * Flattens parsed args into a single level object for comparison with
+   * flattened defaults across server args and extension args.
+   * @param {ParsedArgs} args
+   * @returns {Record<string, { value: any, argSpec: import('./schema/arg-spec').ArgSpec }>}
+   */
+  const flatten = (args) => {
+    const argSpecs = getAllArgSpecs();
+    const flattened = _.reduce([...argSpecs.values()], (acc, argSpec) => {
+      if (_.has(args, argSpec.dest)) {
+        acc[argSpec.dest] = {value: _.get(args, argSpec.dest), argSpec};
+      }
+      return acc;
+    }, /** @type {Record<string, { value: any, argSpec: import('./schema/arg-spec').ArgSpec }>} */({}));
 
-  const typesDiffer = /** @param {string} dest */(dest) => typeof args[dest] !== typeof defaultsFromSchema[dest];
+    return flattened;
+  };
+
+  const args = flatten(parsedArgs);
+
+  // hopefully these function names are descriptive enough
+  const typesDiffer = /** @param {string} dest */(dest) => typeof args[dest].value !== typeof defaultsFromSchema[dest];
 
   const defaultValueIsArray = /** @param {string} dest */(dest) => _.isArray(defaultsFromSchema[dest]);
 
-  const argsValueIsArray = /** @param {string} dest */(dest) => _.isArray(args[dest]);
+  const argsValueIsArray = /** @param {string} dest */(dest) => _.isArray(args[dest].value);
 
-  const arraysDiffer = /** @param {string} dest */(dest) => _.gt(_.size(_.difference(args[dest], defaultsFromSchema[dest])), 0);
+  const arraysDiffer = /** @param {string} dest */(dest) => _.gt(_.size(_.difference(args[dest].value, defaultsFromSchema[dest])), 0);
 
-  const valuesDiffer = /** @param {string} dest */(dest) => args[dest] !== defaultsFromSchema[dest];
+  const valuesDiffer = /** @param {string} dest */(dest) => args[dest].value !== defaultsFromSchema[dest];
 
   const defaultIsDefined = /** @param {string} dest */(dest) => !_.isUndefined(defaultsFromSchema[dest]);
 
@@ -212,9 +231,13 @@ function getNonDefaultServerArgs (args) {
     ])
   ]);
 
-  const defaultsFromSchema = getDefaultsForSchema();
+  const defaultsFromSchema = getDefaultsForSchema(true);
 
-  return _.pickBy(args, (__, key) => isNotDefault(key));
+  return _.reduce(
+    _.pickBy(args, (__, key) => isNotDefault(key)),
+    // explodes the flattened object back into nested one
+    (acc, {value, argSpec}) => _.set(acc, argSpec.dest, value), /** @type {Partial<ParsedArgs>} */({})
+  );
 }
 
 /**
@@ -236,22 +259,29 @@ const compactConfig = _.partial(
  * The actual shape of `preConfigParsedArgs` and `defaults` does not matter for the purposes of this function,
  * but it's intended to be called with values of type {@link ParsedArgs} and `DefaultValues<true>`, respectively.
  *
- * @param {object} preConfigParsedArgs - Parsed CLI args (or param to `init()`) before config & defaults applied
- * @param {import('./config-file').ReadConfigFileResult} configResult - Result of attempting to load a config file
- * @param {object} defaults - Configuration defaults from schemas
+ * @param {Partial<ParsedArgs>} nonDefaultPreConfigParsedArgs - Parsed CLI args (or param to `init()`) before config & defaults applied
+ * @param {import('./config-file').ReadConfigFileResult} configResult - Result of attempting to load a config file.  _Must_ be normalized
+ * @param {Partial<ParsedArgs>} defaults - Configuration defaults from schemas
+ * @param {ParsedArgs} parsedArgs - Entire parsed args object
  */
-function showConfig (preConfigParsedArgs, configResult, defaults) {
+function showConfig (nonDefaultPreConfigParsedArgs, configResult, defaults, parsedArgs) {
   console.log('Appium Configuration\n');
+  console.log('from defaults:\n');
+  console.dir(compactConfig(defaults));
   if (configResult.config) {
-    console.log(`via config file at ${configResult.filepath}:\n`);
+    console.log(`\nfrom config file at ${configResult.filepath}:\n`);
     console.dir(compactConfig(configResult.config));
   } else {
-    console.log(`(no configuration file loaded)\n`);
+    console.log(`\n(no configuration file loaded)`);
   }
-  console.log('via CLI or function call:\n');
-  console.dir(compactConfig(preConfigParsedArgs));
-  console.log('\nvia defaults:\n');
-  console.dir(compactConfig(defaults));
+  if (_.isEmpty(nonDefaultPreConfigParsedArgs)) {
+    console.log(`\n(no CLI parameters provided)`);
+  } else {
+    console.log('\nvia CLI or function call:\n');
+    console.dir(compactConfig(nonDefaultPreConfigParsedArgs));
+  }
+  console.log('\nfinal configuration:\n');
+  console.dir(compactConfig(parsedArgs));
 }
 
 /**

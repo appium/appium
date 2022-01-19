@@ -89,6 +89,7 @@ class AppiumSchema {
     _.bindAll(instance, [
       'finalize',
       'flatten',
+      'getAllArgSpecs',
       'getArgSpec',
       'getDefaults',
       'getDefaultsForExtension',
@@ -122,6 +123,10 @@ class AppiumSchema {
    */
   isFinalized () {
     return Boolean(this._finalizedSchemas);
+  }
+
+  getAllArgSpecs () {
+    return this._argSpecs;
   }
 
   /**
@@ -641,6 +646,7 @@ const appiumSchema = AppiumSchema.create();
 
 export const {
   registerSchema,
+  getAllArgSpecs,
   getArgSpec,
   hasArgSpec,
   isFinalized,

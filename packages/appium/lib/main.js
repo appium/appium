@@ -236,16 +236,17 @@ async function init (args) {
   if (preConfigParsedArgs.subcommand === SERVER_SUBCOMMAND) {
     defaults = getDefaultsForSchema(false);
 
-    if (preConfigParsedArgs.showConfig) {
-      showConfig(preConfigParsedArgs, configResult, defaults);
-      return {};
-    }
-
     parsedArgs = _.defaultsDeep(
       preConfigParsedArgs,
       configResult.config?.server,
       defaults
     );
+
+    if (preConfigParsedArgs.showConfig) {
+      showConfig(getNonDefaultServerArgs(preConfigParsedArgs), configResult, defaults, parsedArgs);
+      return {};
+    }
+
   } else {
     parsedArgs = preConfigParsedArgs;
   }

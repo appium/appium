@@ -1,6 +1,6 @@
 // @ts-check
 
-import { readConfigFile } from '../lib/config-file';
+import { readConfigFile, normalizeConfig } from '../lib/config-file';
 import { finalizeSchema, registerSchema, resetSchema } from '../lib/schema/schema';
 import extSchema from './fixtures/driver.schema.js';
 import { resolveFixture } from './helpers';
@@ -45,12 +45,11 @@ describe('config file behavior', function () {
     resetSchema();
   });
 
+
   describe('when provided a path to a config file', function () {
     describe('when the config file is valid per the schema', function () {
       it('should return a valid config object', async function () {
-        const result = await readConfigFile(GOOD_FILEPATH, {
-          normalize: false,
-        });
+        const result = await readConfigFile(GOOD_FILEPATH);
         result.should.deep.equal({
           config: require(GOOD_FILEPATH),
           filepath: GOOD_FILEPATH,
@@ -61,9 +60,7 @@ describe('config file behavior', function () {
       describe('server.nodeconfig behavior', function () {
         describe('when a string', function () {
           it('should return errors', async function () {
-            const result = await readConfigFile(BAD_NODECONFIG_FILEPATH, {
-              normalize: false,
-            });
+            const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
             result.should.have.nested.property(
               'errors[0].instancePath',
               '/server/nodeconfig',
@@ -73,9 +70,7 @@ describe('config file behavior', function () {
 
         describe('when an object', function () {
           it('should return a valid config object', async function () {
-            const result = await readConfigFile(GOOD_FILEPATH, {
-              normalize: false,
-            });
+            const result = await readConfigFile(GOOD_FILEPATH);
             result.should.have.property('errors').that.is.empty;
           });
         });
@@ -84,9 +79,7 @@ describe('config file behavior', function () {
       describe('server.allow-insecure behavior', function () {
         describe('when a string path', function () {
           it('should return errors', async function () {
-            const result = await readConfigFile(SECURITY_PATH_FILEPATH, {
-              normalize: false,
-            });
+            const result = await readConfigFile(SECURITY_PATH_FILEPATH);
             result.should.have.nested.property(
               'errors[0].instancePath',
               '/server/allow-insecure',
@@ -96,9 +89,7 @@ describe('config file behavior', function () {
 
         describe('when a comma-delimited string', function () {
           it('should return errors', async function () {
-            const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH, {
-              normalize: false,
-            });
+            const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH);
             result.should.have.nested.property(
               'errors[0].instancePath',
               '/server/allow-insecure',
@@ -108,9 +99,7 @@ describe('config file behavior', function () {
 
         describe('when an array', function () {
           it('should return a valid config object', async function () {
-            const result = await readConfigFile(SECURITY_ARRAY_FILEPATH, {
-              normalize: false,
-            });
+            const result = await readConfigFile(SECURITY_ARRAY_FILEPATH);
             result.should.deep.equal({
               config: require(SECURITY_ARRAY_FILEPATH),
               filepath: SECURITY_ARRAY_FILEPATH,
@@ -124,10 +113,8 @@ describe('config file behavior', function () {
     describe('when the config file is invalid per the schema', function () {
       describe('without extensions', function () {
         it('should return an object containing errors', async function () {
-          const result = await readConfigFile(BAD_FILEPATH, {
-            normalize: false,
-          });
-          result.should.have.deep.property('config', require(BAD_FILEPATH));
+          const result = await readConfigFile(BAD_FILEPATH);
+          result.should.have.deep.property('config', normalizeConfig(require(BAD_FILEPATH)));
           result.should.have.property('filepath', BAD_FILEPATH);
           result.should.have.deep.property('errors').that.contains.members([
             {
@@ -235,9 +222,7 @@ describe('config file behavior', function () {
 
         describe('when provided a config file with unknown properties', function () {
           beforeEach(async function () {
-            result = await readConfigFile(UNKNOWN_PROPS_FILEPATH, {
-              normalize: false,
-            });
+            result = await readConfigFile(UNKNOWN_PROPS_FILEPATH);
           });
           it('should return an object containing errors', function () {
             result.should.have.deep.property('errors', [
@@ -256,9 +241,7 @@ describe('config file behavior', function () {
 
         describe('when provided a config file with valid properties', function () {
           beforeEach(async function () {
-            result = await readConfigFile(EXT_PROPS_FILEPATH, {
-              normalize: false,
-            });
+            result = await readConfigFile(EXT_PROPS_FILEPATH);
           });
           it('should return an object containing no errors', function () {
             result.should.have.deep.property('errors', []);

@@ -1,6 +1,7 @@
 // @ts-check
 
 // transpile:mocha
+import _ from 'lodash';
 import sinon from 'sinon';
 import getParser from '../lib/cli/parser';
 import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
@@ -38,23 +39,51 @@ describe('Config', function () {
       });
     });
 
-    describe('showConfig', function () {
+    describe('showConfig()', function () {
       describe('when a config file is present', function () {
         it('should dump the current Appium config', function () {
-          showConfig({foo: 'bar'}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
+          showConfig(
+            {address: 'bar'},
+            {config: {
+              // @ts-expect-error
+              server: {callbackAddress: 'quux'}}
+            },
+            {port: 1234},
+            {allowCors: false}
+          );
           log.should.have.been.calledWith('Appium Configuration\n');
         });
 
         it('should skip empty objects', function () {
-          showConfig({foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false}, {config: {server: {address: 'quux'}}}, {spam: 'food'});
+          showConfig(
+            // @ts-expect-error
+            {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
+            {config: {server: {address: 'quux'}}},
+            {spam: 'food'},
+            {}
+          );
           dir.should.have.been.calledWith({foo: 'bar', sheep: 0, ducks: false});
         });
       });
 
       describe('when a config file is not present', function () {
-        it('should dump the current Appium config sans config file contents', function () {
-          showConfig({foo: 'bar'}, {}, {spam: 'food'});
-          log.should.have.been.calledWith('(no configuration file loaded)\n');
+        it('should dump the current Appium config (sans config file contents)', function () {
+          showConfig(
+            // @ts-expect-error
+            {foo: 'bar', cows: {}, pigs: [], sheep: 0, ducks: false},
+            {},
+            {spam: 'food'},
+            {}
+          );
+          log.should.have.been.calledWith('\n(no configuration file loaded)');
+        });
+      });
+
+      describe('when no CLI arguments (other than --show-config) provided', function () {
+        it('should not dump CLI args', function () {
+          // @ts-expect-error
+          showConfig({}, {}, {}, {});
+          log.should.have.been.calledWith('\n(no CLI parameters provided)');
         });
       });
     });
@@ -172,7 +201,7 @@ describe('Config', function () {
         it('should catch a non-default argument', function () {
           args['plugin.crypto-fiend.elite'] = false;
           const nonDefaultArgs = getNonDefaultServerArgs(args);
-          nonDefaultArgs.should.eql({'plugin.crypto-fiend.elite': false});
+          nonDefaultArgs.should.eql(_.set({}, 'plugin.crypto-fiend.elite', false));
         });
       });
     });

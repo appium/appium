@@ -113,10 +113,9 @@ export async function readConfigFile (filepath, opts = {}) {
     ? await loadConfigFile(lc, filepath)
     : await searchConfigFile(lc);
 
-  if (result && !result.isEmpty && result.filepath) {
-    const {normalize = true, pretty = true} = opts;
+  if (result?.filepath && !result?.isEmpty) {
+    const {pretty = true} = opts;
     try {
-      /** @type {ReadConfigFileResult} */
       let configResult;
       const errors = validate(result.config);
       if (_.isEmpty(errors)) {
@@ -131,12 +130,10 @@ export async function readConfigFile (filepath, opts = {}) {
           : {...result, errors};
       }
 
-      if (normalize) {
-        // normalize (to camel case) all top-level property names of the config file
-        configResult.config = normalizeConfig(
-          /** @type {AppiumConfig} */ (configResult.config),
-        );
-      }
+      // normalize (to camel case) all top-level property names of the config file
+      configResult.config = normalizeConfig(
+        /** @type {AppiumConfig} */ (configResult.config),
+      );
 
       return configResult;
     } finally {
@@ -152,11 +149,12 @@ export async function readConfigFile (filepath, opts = {}) {
  * @param {AppiumConfig} config - Configuration object
  * @returns {NormalizedAppiumConfig} New object with camel-cased keys (or `dest` keys).
  */
-function normalizeConfig (config) {
+export function normalizeConfig (config) {
   const schema = getSchema();
   /**
    * @param {AppiumConfig} config
    * @param {string} [section] - Keypath (lodash `_.get()` style) to section of config. If omitted, assume root Appium config schema
+   * @todo Rewrite as a loop
    * @returns Normalized section of config
    */
   const normalize = (config, section) => {
@@ -187,7 +185,7 @@ function normalizeConfig (config) {
  * @property {import('ajv').ErrorObject[]} [errors] - Validation errors
  * @property {string} [filepath] - The path to the config file, if found
  * @property {boolean} [isEmpty] - If `true`, the config file exists but is empty
- * @property {AppiumConfig} [config] - The parsed configuration
+ * @property {NormalizedAppiumConfig} [config] - The parsed configuration
  * @property {string|betterAjvErrors.IOutputError[]} [reason] - Human-readable error messages and suggestions. If the `pretty` option is `true`, this will be a nice string to print.
  */
 
@@ -195,7 +193,6 @@ function normalizeConfig (config) {
  * Options for {@link readConfigFile}.
  * @typedef {Object} ReadConfigFileOptions
  * @property {boolean} [pretty=true] If `false`, do not use color and fancy formatting in the `reason` property of the {@link ReadConfigFileResult}. The value of `reason` is then suitable for machine-reading.
- * @property {boolean} [normalize=true] If `false`, do not normalize key names to camel case.
  */
 
 /**

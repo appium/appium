@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.25](https://github.com/appium/appium/compare/appium@2.0.0-beta.24...appium@2.0.0-beta.25) (2022-01-21)
+
+
+### Bug Fixes
+
+* **appium:** make show-config more right ([7470ed0](https://github.com/appium/appium/commit/7470ed00b2a8a8ebc39d62184a6ba5819b22f264)), closes [#16340](https://github.com/appium/appium/issues/16340)
+
+
+
+
+
 # [2.0.0-beta.24](https://github.com/appium/appium/compare/appium@2.0.0-beta.23...appium@2.0.0-beta.24) (2022-01-11)
 
 

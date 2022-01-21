@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.55.4](https://github.com/appium/appium/compare/@appium/support@2.55.3...@appium/support@2.55.4) (2022-01-21)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
 ## [2.55.3](https://github.com/appium/appium/compare/@appium/support@2.55.2...@appium/support@2.55.3) (2022-01-11)
 
 

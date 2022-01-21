@@ -1,11 +1,16 @@
 {
   "name": "@appium/opencv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OpenCV-related helper library",
   "keywords": [
-    "opencv",
-    "image analysis",
-    "javascript"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

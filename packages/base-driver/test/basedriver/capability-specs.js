@@ -17,7 +17,9 @@ describe('Desired Capabilities', function () {
 
   it('should require platformName and deviceName', async function () {
     try {
-      await d.createSession(null, null, {});
+      await d.createSession({
+        firstMatch: [{}]
+      });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
@@ -30,7 +32,11 @@ describe('Desired Capabilities', function () {
 
   it('should require platformName', async function () {
     try {
-      await d.createSession(null, null, {'deviceName': 'Delorean'});
+      await d.createSession({
+        alwaysMatch: {
+          'appium:deviceName': 'Delorean'
+        }
+      });
     } catch (e) {
       e.should.be.instanceof(errors.SessionNotCreatedError);
       e.message.should.contain('platformName');
@@ -353,28 +359,36 @@ describe('Desired Capabilities', function () {
       }
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession(null, null, {
-      platformName: 'iOS',
-      'appium:deviceName': 'Dumb',
-      'appium:foo': ''
+    await d.createSession(null, {
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': ''
+      }
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession(null, null, {
-      platformName: 'iOS',
-      'appium:deviceName': 'Dumb',
-      'appium:foo': {}
+    await d.createSession({
+      firstMatch: [{
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': {}
+      }]
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession(null, null, {
-      platformName: 'iOS',
-      'appium:deviceName': 'Dumb',
-      'appium:foo': []
+    await d.createSession({
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': []
+      }
     }).should.eventually.be.rejectedWith(/blank/);
 
-    await d.createSession(null, null, {
-      platformName: 'iOS',
-      'appium:deviceName': 'Dumb',
-      'appium:foo': '  '
+    await d.createSession({
+      alwaysMatch: {
+        platformName: 'iOS',
+        'appium:deviceName': 'Dumb',
+        'appium:foo': '  '
+      }
     }).should.eventually.be.rejectedWith(/blank/);
   });
 

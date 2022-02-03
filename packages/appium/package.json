@@ -55,7 +55,7 @@
     "@appium/base-plugin": "1.8.0",
     "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
-    "@sidvind/better-ajv-errors": "0.9.2",
+    "@sidvind/better-ajv-errors": "1.1.1",
     "ajv": "8.8.2",
     "ajv-formats": "2.1.1",
     "argparse": "2.0.1",

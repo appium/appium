@@ -3,38 +3,38 @@ import _ from 'lodash';
 import log from '../logger';
 import { errors } from '../../protocol';
 import { util } from '@appium/support';
-import { processCapabilities, promoteAppiumOptions, APPIUM_OPTS_CAP, PREFIXED_APPIUM_OPTS_CAP } from '../capabilities';
+import {
+  processCapabilities, promoteAppiumOptions, APPIUM_OPTS_CAP, PREFIXED_APPIUM_OPTS_CAP,
+  isW3cCaps,
+} from '../capabilities';
 
-let commands = {};
+const commands = {};
 
-// TODO: Remove jsonwpDesiredCapabilities and jsonwpRequiredCaps completely
-//       since Appium 2.0 no longer supports them.
-commands.createSession = async function createSession (jsonwpDesiredCapabilities, jsonwpRequiredCaps, w3cCapabilities) {
+commands.createSession = async function createSession (w3cCapabilities1, w3cCapabilities2, w3cCapabilities) {
   if (this.sessionId !== null) {
-    throw new errors.SessionNotCreatedError('Cannot create a new session ' +
-                                            'while one is in progress');
+    throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
   }
 
   log.debug();
 
-  if (!w3cCapabilities) {
+  // Historically the first two arguments were reserved for JSONWP capabilities.
+  // Appium 2 has dropped the support of these, so now we only accept capability
+  // objects in W3C format and thus allow any of the three arguments to represent
+  // the latter.
+  const originalCaps = [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps);
+  if (!originalCaps) {
     throw new errors.SessionNotCreatedError('Appium only supports W3C-style capability objects. ' +
       'Your client is sending an older capabilities format. Please update your client library.');
   }
 
-  if (jsonwpDesiredCapabilities) {
-    log.warn('Appium received (M)JSONWP desired capabilities in alongside the W3C capabilities; they will be ignored');
-  }
-
   this.setProtocolW3C();
 
-  this.originalCaps = _.cloneDeep(w3cCapabilities);
-  log.debug(`Creating session with W3C capabilities: ${JSON.stringify(w3cCapabilities, null, 2)}`);
-
+  this.originalCaps = _.cloneDeep(originalCaps);
+  log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
 
   let caps;
   try {
-    caps = processCapabilities(w3cCapabilities, this.desiredCapConstraints, this.shouldValidateCaps);
+    caps = processCapabilities(originalCaps, this.desiredCapConstraints, this.shouldValidateCaps);
     if (caps[APPIUM_OPTS_CAP]) {
       log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
       caps = promoteAppiumOptions(caps);

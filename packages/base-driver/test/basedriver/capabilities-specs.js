@@ -1,5 +1,7 @@
-import { parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps,
-         promoteAppiumOptions, APPIUM_OPTS_CAP, stripAppiumPrefixes } from '../../lib/basedriver/capabilities';
+import {
+  parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps,
+  promoteAppiumOptions, APPIUM_OPTS_CAP, stripAppiumPrefixes, isW3cCaps
+} from '../../lib/basedriver/capabilities';
 import _ from 'lodash';
 import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps';
 
@@ -500,6 +502,35 @@ describe('caps', function () {
         ...simpleCaps,
         foo: 'baz',
       });
+    });
+  });
+
+  describe('#isW3cCaps', function () {
+    it('should drop invalid W3C capabilities', function () {
+      for (const invalidCaps of [
+        null, undefined, [], {},
+        {firstMatch: null},
+        {firtMatch: [{}]},
+        {alwaysMatch: null},
+        {firstMatch: [{}], alwaysMatch: null},
+        {firstMatch: [], alwaysMatch: {}},
+        {firstMatch: []},
+        {firstMatch: {}},
+        {alwaysMatch: []},
+      ]) {
+        isW3cCaps(invalidCaps).should.be.false;
+      }
+    });
+
+    it('should accept valid W3C capabilities', function () {
+      for (const validCaps of [
+        {firstMatch: [{}]},
+        {firstMatch: [{}], alaysMatch: {}},
+        {firtMatch: [{}], alwaysMatch: {}},
+        {alwaysMatch: {}},
+      ]) {
+        isW3cCaps(validCaps).should.be.true;
+      }
     });
   });
 });

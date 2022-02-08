@@ -56,7 +56,7 @@
     "axios": "0.24.0",
     "bluebird": "3.7.2",
     "continuation-local-storage": "3.2.1",
-    "find-up": "5.0.0",
+    "find-up": "6.3.0",
     "lilconfig": "2.0.4",
     "lodash": "4.17.21",
     "longjohn": "0.2.12",

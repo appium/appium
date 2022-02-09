@@ -60,7 +60,7 @@
     "lilconfig": "2.0.4",
     "lodash": "4.17.21",
     "longjohn": "0.2.12",
-    "npmlog": "5.0.1",
+    "npmlog": "6.0.1",
     "ora": "5.4.1",
     "resolve-from": "5.0.0",
     "semver": "7.3.5",

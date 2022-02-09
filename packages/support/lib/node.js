@@ -1,7 +1,14 @@
 import { isWindows } from './system';
 import log from './logger';
+import _ from 'lodash';
 import { exec } from 'teen_process';
 import path from 'path';
+
+const ECMA_SIZES = Object.freeze({
+  STRING: 2,
+  BOOLEAN: 4,
+  NUMBER: 8,
+});
 
 /**
  * Internal utility to link global package to local context
@@ -63,4 +70,84 @@ async function requirePackage (packageName) {
   }
 }
 
-export { requirePackage };
+function extractAllProperties (obj) {
+  const stringProperties = [];
+  for (const prop in obj) {
+    stringProperties.push(prop);
+  }
+  if (_.isFunction(Object.getOwnPropertySymbols)) {
+    stringProperties.push(...(Object.getOwnPropertySymbols(obj)));
+  }
+  return stringProperties;
+}
+
+function _getSizeOfObject (seen, object) {
+  if (_.isNil(object)) {
+    return 0;
+  }
+
+  let bytes = 0;
+  const properties = extractAllProperties(object);
+  for (const key of properties) {
+    // Do not recalculate circular references
+    if (typeof object[key] === 'object' && !_.isNil(object[key])) {
+      if (seen.has(object[key])) {
+        continue;
+      }
+      seen.add(object[key]);
+    }
+
+    bytes += getCalculator(seen)(key);
+    try {
+      bytes += getCalculator(seen)(object[key]);
+    } catch (ex) {
+      if (ex instanceof RangeError) {
+        // circular reference detected, final result might be incorrect
+        // let's be nice and not throw an exception
+        bytes = 0;
+      }
+    }
+  }
+
+  return bytes;
+}
+
+function getCalculator (seen) {
+  return function calculator (obj) {
+    if (_.isBuffer(obj)) {
+      return obj.length;
+    }
+
+    switch (typeof (obj)) {
+      case 'string':
+        return obj.length * ECMA_SIZES.STRING;
+      case 'boolean':
+        return ECMA_SIZES.BOOLEAN;
+      case 'number':
+        return ECMA_SIZES.NUMBER;
+      case 'symbol':
+        return _.isFunction(Symbol.keyFor) && Symbol.keyFor(obj)
+          ? Symbol.keyFor(obj).length * ECMA_SIZES.STRING
+          : (obj.toString().length - 8) * ECMA_SIZES.STRING;
+      case 'object':
+        return _.isArray(obj)
+          ? obj.map(getCalculator(seen)).reduce((acc, curr) => acc + curr, 0)
+          : _getSizeOfObject(seen, obj);
+      default:
+        return 0;
+    }
+  };
+}
+
+/**
+ * Calculate the in-depth size in memory of the provided object.
+ * The original implementation is borrowed from https://github.com/miktam/sizeof.
+ *
+ * @param {*} obj An object whose size should be calculated
+ * @returns {number} Object size in bytes.
+ */
+function getObjectSize (obj) {
+  return getCalculator(new WeakSet())(obj);
+}
+
+export { requirePackage, getObjectSize };

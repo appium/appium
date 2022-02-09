@@ -20,7 +20,7 @@ const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 
 process.on('exit', () => {
-  const resPaths = IDEMPOTENT_RESPONSES.values()
+  const resPaths = [...IDEMPOTENT_RESPONSES.values()]
     .map(({response}) => response)
     .filter(Boolean);
   for (const resPath of resPaths) {

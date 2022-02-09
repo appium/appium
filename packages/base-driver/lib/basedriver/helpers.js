@@ -15,17 +15,17 @@ const ZIP_MIME_TYPES = [
   'multipart/x-zip',
 ];
 const CACHED_APPS_MAX_AGE = 1000 * 60 * 60 * 24; // ms
+const MAX_CACHED_APPS = 1024;
 const APPLICATIONS_CACHE = new LRU({
-  maxAge: CACHED_APPS_MAX_AGE, // expire after 24 hours
+  max: MAX_CACHED_APPS,
+  ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
   updateAgeOnGet: true,
   dispose: (app, {fullPath}) => {
     logger.info(`The application '${app}' cached at '${fullPath}' has ` +
       `expired after ${CACHED_APPS_MAX_AGE}ms`);
-    setTimeout(async () => {
-      if (fullPath) {
-        await fs.rimraf(fullPath);
-      }
-    });
+    if (fullPath) {
+      fs.rimraf(fullPath);
+    }
   },
   noDisposeOnSet: true,
 });

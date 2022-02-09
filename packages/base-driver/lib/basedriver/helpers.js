@@ -39,7 +39,7 @@ process.on('exit', () => {
     return;
   }
 
-  const appPaths = APPLICATIONS_CACHE.values()
+  const appPaths = [...APPLICATIONS_CACHE.values()]
     .map(({fullPath}) => fullPath);
   logger.debug(`Performing cleanup of ${appPaths.length} cached ` +
     util.pluralize('application', appPaths.length));

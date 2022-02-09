@@ -5,9 +5,9 @@ import * as driver from './basedriver/driver';
 import * as deviceSettings from './basedriver/device-settings';
 
 const { BaseDriver } = driver;
-const { DeviceSettings, BASEDRIVER_HANDLED_SETTINGS } = deviceSettings;
+const { DeviceSettings } = deviceSettings;
 
-export { BaseDriver, DeviceSettings, BASEDRIVER_HANDLED_SETTINGS };
+export { BaseDriver, DeviceSettings };
 export default BaseDriver;
 
 

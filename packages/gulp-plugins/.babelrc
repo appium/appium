@@ -23,6 +23,10 @@
           }
         ]
       ]
+    },
+    "test": {
+      "retainLines": true,
+      "comments": true
     }
   }
 }

@@ -51,7 +51,7 @@
     "express": "4.17.1",
     "http-status-codes": "2.1.4",
     "lodash": "4.17.21",
-    "lru-cache": "6.0.0",
+    "lru-cache": "7.3.0",
     "method-override": "3.0.0",
     "morgan": "1.10.0",
     "serve-favicon": "2.5.0",

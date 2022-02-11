@@ -13,7 +13,7 @@ const RDWR_EXCL = cnst.O_CREAT | cnst.O_TRUNC | cnst.O_RDWR | cnst.O_EXCL;
  * - No `process.env.APPIUM_TMP_DIR`: `/var/folders/34/2222sh8n27d6rcp7jqlkw8km0000gn/T/xxxxxxxx.yyyy`
  * - With `process.env.APPIUM_TMP_DIR = '/path/to/root'`: `/path/to/root/xxxxxxxx.yyyy`
  *
- * @returns {string} A path to the temporary directory
+ * @returns {Promise<string>} A path to the temporary directory
  */
 async function tempDir () {
   const now = new Date();
@@ -44,7 +44,7 @@ async function tempDir () {
  *
  * @param {string|Affixes} rawAffixes
  * @param {?string} defaultPrefix
- * @returns {string}  A path to the temporary directory with rawAffixes and defaultPrefix
+ * @returns {Promise<string>}  A path to the temporary directory with rawAffixes and defaultPrefix
  */
 async function path (rawAffixes, defaultPrefix) {
   const affixes = parseAffixes(rawAffixes, defaultPrefix);
@@ -64,7 +64,7 @@ async function path (rawAffixes, defaultPrefix) {
  * with arbitrary prefix/suffix for the directory name and return it as open.
  *
  * @param {Affixes} affixes
- * @returns {OpenedAffixes}
+ * @returns {Promise<OpenedAffixes>}
  */
 async function open (affixes) {
   const filePath = await path(affixes, 'f-');
@@ -116,7 +116,7 @@ const openDir = tempDir;
 /**
  * Returns a path to a temporary directory whcih is defined as static in the same process
  *
- * @returns {string} A temp directory path whcih is defined as static in the same process
+ * @returns {Promise<string>} A temp directory path whcih is defined as static in the same process
  */
 async function staticDir () { // eslint-disable-line require-await
   return _static;

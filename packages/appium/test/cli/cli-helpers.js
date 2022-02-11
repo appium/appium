@@ -6,8 +6,8 @@
 
 import _ from 'lodash';
 import path from 'path';
-import { exec } from 'teen_process';
-import { PACKAGE_ROOT } from '../helpers';
+import {exec} from 'teen_process';
+import {PACKAGE_ROOT} from '../helpers';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.

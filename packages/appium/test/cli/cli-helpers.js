@@ -46,12 +46,12 @@ async function run (appiumHome, args) {
      * @type {AppiumRunError}
      */
     const runErr = Object.assign(err, {
-        originalMessage: err.message,
-        message: `${stdout.trim()}\n\n${stderr.trim()}`,
-        command: `${process.execPath} ${EXECUTABLE} ${args.join(' ')}`,
-        env,
+      originalMessage: err.message,
+      message: `${stdout.trim()}\n\n${stderr.trim()}`,
+      command: `${process.execPath} ${EXECUTABLE} ${args.join(' ')}`,
+      env,
       cwd,
-      });
+    });
     throw runErr;
   }
 }
@@ -73,10 +73,10 @@ async function _runAppium (appiumHome, args) {
  */
 export const runAppium = _.curry(_runAppium);
 
-  /**
+/**
  * See {@link runAppiumRaw}.
  * @type {AppiumRunner<TeenProcessExecResult>}
-   */
+ */
 async function _runAppiumRaw (appiumHome, args) {
   return await run(appiumHome, args);
 }
@@ -92,16 +92,16 @@ export const runAppiumRaw = _.curry(_runAppiumRaw);
  * @type {AppiumRunner<unknown>}
  */
 async function _runAppiumJson (appiumHome, args) {
-    if (!args.includes('--json')) {
-      args.push('--json');
-    }
+  if (!args.includes('--json')) {
+    args.push('--json');
+  }
   const stdout = await runAppium(appiumHome, args);
-    try {
+  try {
     return JSON.parse(stdout);
-    } catch (err) {
+  } catch (err) {
     err.message = `Error parsing JSON. Contents of STDOUT: ${stdout}`;
-      throw err;
-    }
+    throw err;
+  }
 }
 
 /**
@@ -116,25 +116,25 @@ export const runAppiumJson = /**
  * @type {import('lodash').CurriedFunction2<string, CliExtArgs<ExtSubcommand>|CliArgs, Promise<unknown>>}
  */ (_.curry(_runAppiumJson));
 
-  /**
+/**
  * Given a path to a local extension, install it into `appiumHome` via CLI.
  * @template {ExtensionType} ExtType
-   * @param {string} appiumHome
+ * @param {string} appiumHome
  * @param {ExtType} type
-   * @param {string} pathToExtension
-   */
+ * @param {string} pathToExtension
+ */
 export async function installLocalExtension (appiumHome, type, pathToExtension) {
   return /** @type {import('../../lib/extension/manifest').ExtRecord<ExtType>} */ (
     /** @type {unknown} */ (
-    await runAppiumJson(appiumHome, [
-      type,
-      'install',
-      '--source',
-      'local',
-      pathToExtension,
+      await runAppiumJson(appiumHome, [
+        type,
+        'install',
+        '--source',
+        'local',
+        pathToExtension,
       ])
     )
-);
+  );
 }
 
 /**

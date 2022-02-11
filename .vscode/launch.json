@@ -6,45 +6,18 @@
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Test - Current File",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "runtimeArgs": ["-r", "@babel/register"],
+      "runtimeArgs": ["--require", "@babel/register"],
       "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": ["<node_internals>/**", "**/node_modules/mocha/**"],
       "type": "pwa-node",
       "sourceMaps": true,
       "cwd": "${workspaceFolder}",
       "outfiles": [],
       "env": {
-        "NODE_ENV": "test"
-      }
-    },
-    {
-      "name": "Debug",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "args": ["."]
-    },
-    {
-      "name": "Attach Debug",
-      "type": "node",
-      "request": "attach",
-      "cwd": "${workspaceFolder}",
-      "port": 9229
-    },
-    {
-      "name": "Test All",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/node_modules/.bin/_mocha",
-      "args": [
-        "--require",
-        "@babel/register",
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/packages/appium/test"
-      ]
+        "NODE_ENV": "test",
+        "BABEL_ENV": "test"
+      },
+      "autoAttachChildProcesses": true,
     }
   ]
 }

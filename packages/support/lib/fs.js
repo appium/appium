@@ -1,4 +1,3 @@
-// jshint ignore: start
 import _ from 'lodash';
 import path from 'path';
 import _fs from 'fs';
@@ -23,13 +22,13 @@ const findRootCached = _.memoize(findRoot);
 const fs = {
   async hasAccess (path) {
     try {
-      await this.access(path, _fs.R_OK);
+      await fs.access(path, _fs.R_OK);
     } catch (err) {
       return false;
     }
     return true;
   },
-  exists (path) { return this.hasAccess(path); },
+  exists (path) { return fs.hasAccess(path); },
   rimraf: B.promisify(rimraf),
   rimrafSync: rimraf.sync.bind(rimraf),
   async mkdir (...args) {
@@ -41,14 +40,22 @@ const fs = {
       }
     }
   },
-  async copyFile (source, destination, ...otherArgs) {
-    if (!await this.hasAccess(source)) {
+  /**
+   * Copies files _and entire directories_
+   * @param {string} source - Source to copy
+   * @param {string} destination - Destination to copy to
+   * @param {...any} args - Additional arguments to pass to `ncp`
+   * @see https://npm.im/ncp
+   * @returns {Promise<void>}
+   */
+  async copyFile (source, destination, ...args) {
+    if (!await fs.hasAccess(source)) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
-    return await ncpAsync(source, destination, ...otherArgs);
+    return await ncpAsync(source, destination, ...args);
   },
   async md5 (filePath) {
-    return await this.hash(filePath, 'md5');
+    return await fs.hash(filePath, 'md5');
   },
   mv: B.promisify(mv),
   which: B.promisify(which),
@@ -65,12 +72,21 @@ const fs = {
     });
   },
   /** The callback function which will be called during the directory walking
-   * @name WalkDirCallback
-   * @function
+   * @callback WalkDirCallback
    * @param {string} itemPath The path of the file or folder
    * @param {boolean} isDirectory Shows if it is a directory or a file
    * @return {boolean} return true if you want to stop walking
   */
+
+  /**
+   * Returns an async iterator.
+   * @param {string} dir - Dir to start walking at
+   * @param {import('klaw').Options} [opts]
+   * @returns {import('klaw').Walker}
+   */
+  walk (dir, opts = {}) {
+    return klaw(dir, opts);
+  },
 
   /**
    * Walks a directory given according to the parameters given. The callback will be invoked with a path joined with the dir parameter

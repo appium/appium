@@ -12,7 +12,7 @@ import * as imageUtil from './image-util';
 import * as mjpeg from './mjpeg';
 import * as node from './node';
 import * as timing from './timing';
-
+import * as env from './env';
 
 const { fs } = fsIndex;
 const { cancellableDelay } = util;
@@ -20,9 +20,9 @@ const { mkdirp } = mkdirpIndex;
 
 export {
   tempDir, system, util, fs, cancellableDelay, plist, mkdirp, logger, process,
-  zip, imageUtil, net, mjpeg, node, timing,
+  zip, imageUtil, net, mjpeg, node, timing, env
 };
 export default {
   tempDir, system, util, fs, cancellableDelay, plist, mkdirp, logger, process,
-  zip, imageUtil, net, mjpeg, node, timing,
+  zip, imageUtil, net, mjpeg, node, timing, env
 };

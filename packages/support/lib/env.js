@@ -121,9 +121,8 @@ export const resolveAppiumHome = _.memoize(
       const pkg = await readPackageInDir(cwd);
       const status = await getLocalAppiumInfo(pkg, cwd);
       if (
-        status.isLocalInstall ||
-        (status.dependencyVersion &&
-          !status.dependencyVersion.startsWith('file:'))
+        (status.isLocalInstall || status.dependencyVersion) &&
+        !status.dependencyVersion?.startsWith('file:')
       ) {
         return cwd;
       }

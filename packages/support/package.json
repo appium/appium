@@ -55,6 +55,7 @@
     "plist": "3.0.4",
     "pluralize": "8.0.0",
     "pngjs": "6.0.0",
+    "read-pkg": "5.1.1",
     "rimraf": "3.0.2",
     "sanitize-filename": "1.6.3",
     "semver": "7.3.5",

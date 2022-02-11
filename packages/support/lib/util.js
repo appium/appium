@@ -1,3 +1,5 @@
+// @ts-check
+
 import B from 'bluebird';
 import _ from 'lodash';
 import os from 'os';
@@ -75,6 +77,7 @@ function localIp () {
   let ip = _.chain(os.networkInterfaces())
     .values()
     .flatten()
+    // @ts-ignore
     .filter(function (val) {
       return (val.family === 'IPv4' && val.internal === false);
     })
@@ -217,16 +220,16 @@ function filterObject (obj, predicate) {
  *                 if it is less than zero.
  */
 function toReadableSizeString (bytes) {
-  const intBytes = parseInt(bytes, 10);
+  const intBytes = parseInt(String(bytes), 10);
   if (isNaN(intBytes) || intBytes < 0) {
     throw new Error(`Cannot convert '${bytes}' to a readable size format`);
   }
   if (intBytes >= GiB) {
-    return `${parseFloat(intBytes / (GiB * 1.0)).toFixed(2)} GB`;
+    return `${(intBytes / (GiB * 1.0)).toFixed(2)} GB`;
   } else if (intBytes >= MiB) {
-    return `${parseFloat(intBytes / (MiB * 1.0)).toFixed(2)} MB`;
+    return `${(intBytes / (MiB * 1.0)).toFixed(2)} MB`;
   } else if (intBytes >= KiB) {
-    return `${parseFloat(intBytes / (KiB * 1.0)).toFixed(2)} KB`;
+    return `${(intBytes / (KiB * 1.0)).toFixed(2)} KB`;
   }
   return `${intBytes} B`;
 }
@@ -260,7 +263,7 @@ function isSubPath (originalPath, root, forcePosix = null) {
  * @param {string} path1 - Absolute or relative path to a file/folder
  * @param {string} path2 - Absolute or relative path to a file/folder
  * @param {...string} pathN - Zero or more absolute or relative paths to files/folders
- * @returns {boolean} true if all paths are pointing to the same file system item
+ * @returns {Promise<boolean>} true if all paths are pointing to the same file system item
  */
 async function isSameDestination (path1, path2, ...pathN) {
   const allPaths = [path1, path2, ...pathN];
@@ -288,16 +291,14 @@ async function isSameDestination (path1, path2, ...pathN) {
 /**
  * Coerces the given number/string to a valid version string
  *
- * @param {string|number} ver - Version string to coerce
- * @param {boolean} strict [true] - If true then an exception will be thrown
- * if `ver` cannot be coerced
+ * @param {string} ver - Version string to coerce
  * @returns {string} Coerced version number or null if the string cannot be
  * coerced and strict mode is disabled
  * @throws {Error} if strict mode is enabled and `ver` cannot be coerced
  */
-function coerceVersion (ver, strict = true) {
+function coerceVersion (ver) {
   const result = semver.valid(semver.coerce(`${ver}`));
-  if (strict && !result) {
+  if (!result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }
   return result;
@@ -308,9 +309,9 @@ const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
 /**
  * Compares two version strings
  *
- * @param {string|number} ver1 - The first version number to compare. Should be a valid
+ * @param {string} ver1 - The first version number to compare. Should be a valid
  * version number supported by semver parser.
- * @param {string|number} ver2 - The second version number to compare. Should be a valid
+ * @param {string} ver2 - The second version number to compare. Should be a valid
  * version number supported by semver parser.
  * @param {string} operator - One of supported version number operators:
  * ==, !=, >, <, <=, >=, =
@@ -333,7 +334,7 @@ function compareVersions (ver1, operator, ver2) {
  * Add appropriate quotes to command arguments. See https://github.com/substack/node-shell-quote
  * for more details
  *
- * @param {string|Array<string>} - The arguments that will be parsed
+ * @param {string|string[]} args - The arguments that will be parsed
  * @returns {string} - The arguments, quoted
  */
 function quote (args) {
@@ -355,7 +356,7 @@ function unleakString (s) {
 
 /**
  * @typedef {Object} PluralizeOptions
- * @property {?boolean} inclusive [false] - Whether to prefix with the number (e.g., 3 ducks)
+ * @property {boolean} [inclusive=false] - Whether to prefix with the number (e.g., 3 ducks)
  */
 
 /**
@@ -363,7 +364,7 @@ function unleakString (s) {
  *
  * @param {string} word - The word to pluralize
  * @param {number} count - How many of the word exist
- * @param {?PluralizeOptions|boolean} options|inclusive - options for word pluralization,
+ * @param {PluralizeOptions|boolean} options - options for word pluralization,
  *   or a boolean indicating the options.inclusive property
  * @returns {string} The word pluralized according to the number
  */
@@ -381,7 +382,7 @@ function pluralize (word, count, options = {}) {
 
 /**
  * @typedef {Object} EncodingOptions
- * @property {number} maxSize [1073741824] The maximum size of
+ * @property {number} [maxSize=1073741824] The maximum size of
  * the resulting buffer in bytes. This is set to 1GB by default, because
  * Appium limits the maximum HTTP body size to 1GB. Also, the NodeJS heap
  * size must be enough to keep the resulting object (usually this size is
@@ -395,7 +396,7 @@ function pluralize (word, count, options = {}) {
  *
  * @param {string} srcPath The full path to the file being encoded
  * @param {EncodingOptions} opts
- * @returns {Buffer} base64-encoded content of the source file as memory buffer
+ * @returns {Promise<Buffer>} base64-encoded content of the source file as memory buffer
  * @throws {Error} if there was an error while reading the source file
  * or the source file is too
  */
@@ -446,8 +447,8 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
 
 /**
  * @typedef {Object} LockFileOptions
- * @property {number} timeout [120] The max time in seconds to wait for the lock
- * @property {boolean} tryRecovery [false] Whether to try lock recovery if
+ * @property {number} [timeout=120] The max time in seconds to wait for the lock
+ * @property {boolean} [tryRecovery=false] Whether to try lock recovery if
  * the first attempt to acquire it timed out.
  */
 
@@ -458,7 +459,7 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
  *
  * @param {string} lockFile The full path to the file used for the lock
  * @param {LockFileOptions} opts
- * @returns {AsyncFunction} async function that takes another async function defining the locked
+ * @returns {(behavior: () => Promise<void>) => Promise<void>} async function that takes another async function defining the locked
  * behavior
  */
 function getLockFileGuard (lockFile, opts = {}) {
@@ -467,7 +468,7 @@ function getLockFileGuard (lockFile, opts = {}) {
     tryRecovery = false,
   } = opts;
 
-  const lock = B.promisify(_lockfile.lock);
+  const lock = /** @type {(lockfile: string, opts: import('lockfile').Options)=>B<void>} */(B.promisify(_lockfile.lock));
   const check = B.promisify(_lockfile.check);
   const unlock = B.promisify(_lockfile.unlock);
 

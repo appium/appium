@@ -3,7 +3,7 @@
 // transpile:mocha
 import _ from 'lodash';
 import sinon from 'sinon';
-import getParser from '../lib/cli/parser';
+import { getParser } from '../lib/cli/parser';
 import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, showConfig, validateTmpDir, warnNodeDeprecations } from '../lib/config';
 import logger from '../lib/logger';
 import { getDefaultsForSchema, resetSchema, registerSchema, finalizeSchema } from '../lib/schema/schema';
@@ -147,13 +147,13 @@ describe('Config', function () {
         // @ts-expect-error
         process.version = 'v8.0.0';
         warnNodeDeprecations();
-        logger.warn.callCount.should.equal(0);
+        logger.warn.should.not.be.called;
       });
       it('should not log a warning if node is 9+', function () {
         // @ts-expect-error
         process.version = 'v9.0.0';
         warnNodeDeprecations();
-        logger.warn.callCount.should.equal(0);
+        logger.warn.should.not.be.called;
       });
     });
   });
@@ -163,8 +163,9 @@ describe('Config', function () {
 
     describe('getNonDefaultServerArgs', function () {
       describe('without extension schemas', function () {
-        beforeEach(async function () {
-          await getParser(true);
+        beforeEach(function () {
+          resetSchema();
+          getParser(true);
           // get all the defaults
           args = getDefaultsForSchema();
         });
@@ -185,11 +186,11 @@ describe('Config', function () {
         });
       });
       describe('with extension schemas', function () {
-        beforeEach(async function () {
+        beforeEach(function () {
           resetSchema();
           registerSchema('plugin', 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean', default: true}}});
           finalizeSchema();
-          await getParser(true);
+          getParser(true);
           args = getDefaultsForSchema();
         });
 
@@ -235,17 +236,16 @@ describe('Config', function () {
       process.argv[1] = argv1;
     });
 
-    it('should not fail if process.argv[1] is undefined', async function () {
-      delete process.argv[1];
-      let args = await getParser();
+    it('should not fail if process.argv[1] is undefined', function () {
+      process.argv[1] = undefined;
+      let args = getParser();
       args.prog.should.be.equal('appium');
     });
 
-    it('should set "prog" to process.argv[1]', async function () {
+    it('should set "prog" to process.argv[1]', function () {
       process.argv[1] = 'Hello World';
-      let args = await getParser();
+      let args = getParser();
       args.prog.should.be.equal('Hello World');
     });
   });
-
 });

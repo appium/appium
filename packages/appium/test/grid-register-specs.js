@@ -15,6 +15,7 @@ describe('grid-register', function () {
   });
 
   describe('registerNode()', function () {
+    /** @type {import('../lib/grid-register').default} */
     let registerNode;
     let mocks;
 
@@ -24,14 +25,17 @@ describe('grid-register', function () {
           fs: {
             readFile: sandbox.stub().resolves('{}'),
           },
+          logger: {
+            getLogger: sandbox.stub().returns(console)
+          }
         },
         axios: sandbox.stub().resolves({data: '', status: 200}),
       };
 
-      registerNode = rewiremock.proxy(
+      ({default: registerNode} = rewiremock.proxy(
         () => require('../lib/grid-register'),
         mocks,
-      ).default;
+      ));
     });
 
     describe('when provided a path to a config file', function () {

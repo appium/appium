@@ -4,18 +4,35 @@ import path from 'path';
 import semver from 'semver';
 import { exec } from 'teen_process';
 import { fs, mkdirp, util, system } from '@appium/support';
-
-const INSTALL_LOCKFILE = '.appium.install.lock';
-const LINK_LOCKFILE = '.appium.link.lock';
+import { LINK_LOCKFILE_RELATIVE_PATH, INSTALL_LOCKFILE_RELATIVE_PATH } from '../constants';
+import resolveFrom from 'resolve-from';
 
 export default class NPM {
+  /**
+   * Path to `APPIUM_HOME`
+   * @type {string}
+   */
+  appiumHome;
+
+  /**
+   * Path to "install" lockfile
+   * @type {string}
+   */
+  installLockfilePath;
+
+  /**
+   * Path to "link" lockfile
+   * @type {string}
+   */
+  linkLockfilePath;
 
   /**
    * @param {string} appiumHome
    */
   constructor (appiumHome) {
-    /** @type {string} */
     this.appiumHome = appiumHome;
+    this.installLockfilePath = path.join(appiumHome, INSTALL_LOCKFILE_RELATIVE_PATH);
+    this.linkLockfilePath = path.join(appiumHome, LINK_LOCKFILE_RELATIVE_PATH);
   }
 
   /**
@@ -53,7 +70,7 @@ export default class NPM {
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
     let runner = async () => await exec(npmCmd, args, execOpts);
     if (lockFile) {
-      const acquireLock = util.getLockFileGuard(path.resolve(cwd, lockFile));
+      const acquireLock = util.getLockFileGuard(lockFile);
       const _runner = runner;
       runner = async () => await acquireLock(_runner);
     }
@@ -142,19 +159,20 @@ export default class NPM {
   }
 
   /**
-   *
-   * @param {{pkgDir: string, pkgName: string, pkgVer?: string}} param0
+   * Installs a package w/ `npm`
+   * @param {InstallPackageOpts} opts
    * @returns {Promise<import('type-fest').PackageJson>}
    */
   async installPackage ({pkgDir, pkgName, pkgVer}) {
     const res = await this.exec('install', [
       '--no-save',
+      '--global-style',
       '--no-package-lock',
       pkgVer ? `${pkgName}@${pkgVer}` : pkgName
     ], {
       cwd: pkgDir,
       json: true,
-      lockFile: INSTALL_LOCKFILE
+      lockFile: this.installLockfilePath
     });
 
     if (res.json) {
@@ -169,13 +187,13 @@ export default class NPM {
     // everything got installed ok. Remember, pkgName might end up with a / in it due to an npm
     // org, so if so, that will get correctly exploded into multiple directories, by path.resolve here
     // (even on Windows!)
-    const pkgJson = path.resolve(pkgDir, 'node_modules', pkgName, 'package.json');
+    const pkgJsonPath = resolveFrom(this.appiumHome, `${pkgName}/package.json`);
     try {
-      return require(pkgJson);
+      return require(pkgJsonPath);
     } catch {
       throw new Error('The package was not downloaded correctly; its package.json ' +
                       'did not exist or was unreadable. We looked for it at ' +
-                      pkgJson);
+                      pkgJsonPath);
     }
   }
 
@@ -197,17 +215,20 @@ export default class NPM {
     // ie: "node . driver install --source=local ../fake-driver"
     pkgPath = path.resolve(process.cwd(), pkgPath);
 
-    const pkgHome = path.resolve(this.appiumHome, pkgName);
-
     // call link with --no-package-lock to ensure no corruption while installing local packages
-    const res = await this.exec('link', ['--no-package-lock', pkgPath], {cwd: pkgHome, lockFile: LINK_LOCKFILE});
+    const args = [
+      '--global-style',
+      '--no-package-lock',
+      pkgPath
+    ];
+    const res = await this.exec('link', args, {cwd: this.appiumHome, lockFile: this.linkLockfilePath});
     if (res.json && res.json.error) {
       throw new Error(res.json.error);
     }
 
     // now ensure it was linked to the correct place
     try {
-      return require(path.resolve(pkgHome, 'node_modules', pkgName, 'package.json'));
+      return require(resolveFrom(this.appiumHome, `${pkgName}/package.json`));
     } catch {
       throw new Error('The package was not linked correctly; its package.json ' +
                       'did not exist or was unreadable');
@@ -221,11 +242,20 @@ export default class NPM {
   async uninstallPackage (pkgDir, pkg) {
     await this.exec('uninstall', [pkg], {
       cwd: pkgDir,
-      lockFile: INSTALL_LOCKFILE
+      lockFile: this.installLockfilePath
     });
   }
 }
 
+/**
+ * Options for {@link NPM.installPackage}
+ * @typedef {Object} InstallPackageOpts
+ * @property {string} pkgDir - the directory to install the package into
+ * @property {string} pkgName - the name of the package to install
+ * @property {string} [pkgVer] - the version of the package to install
+ */
+
+// THESE TYPES SHOULD BE IN TEEN PROCESS, NOT HERE
 
 /**
  * Result from a non-zero-exit execution of `appium`
@@ -243,7 +273,6 @@ export default class NPM {
  * @property {string} stderr - STDERR
  * @property {number?} code - Exit code
  */
-
 
 /**
  * Error thrown by `teen_process.exec`

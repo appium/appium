@@ -4,11 +4,41 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
-import { ReadonlyMap } from '../utils';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
 import appiumConfigSchema from './appium-config-schema';
 import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
 import { keywords } from './keywords';
+
+/**
+ * Key/value pairs go in... but they don't come out.
+ *
+ * @template K,V
+ * @extends {Map<K,V>}
+ */
+export class RoachHotelMap extends Map {
+  /**
+   * @param {K} key
+   * @param {V} value
+   */
+  set (key, value) {
+    if (this.has(key)) {
+      throw new Error(`${key} is already set`);
+    }
+    return super.set(key, value);
+  }
+
+  /**
+   * @param {K} key
+   */
+  // eslint-disable-next-line no-unused-vars
+  delete (key) {
+    return false;
+  }
+
+  clear () {
+    throw new Error(`Cannot clear RoachHotelMap`);
+  }
+}
 
 /**
  * Extensions that an extension schema file can have.
@@ -28,9 +58,9 @@ class AppiumSchema {
    *
    * Used to provide easy lookups of argument metadata when converting between different representations of those arguments.
    * @private
-   * @type {ReadonlyMap<string,ArgSpec>}
+   * @type {RoachHotelMap<string,ArgSpec>}
    */
-  _argSpecs = new ReadonlyMap();
+  _argSpecs = new RoachHotelMap();
 
   /**
    * A map of extension types to extension names to schema objects.
@@ -83,25 +113,27 @@ class AppiumSchema {
    * @returns {AppiumSchema}
    */
   static create () {
-    const instance = AppiumSchema._instance ?? new AppiumSchema();
-    AppiumSchema._instance = instance;
+    if (!AppiumSchema._instance) {
+      const instance = new AppiumSchema();
+      AppiumSchema._instance = instance;
+      _.bindAll(instance, [
+        'finalize',
+        'flatten',
+        'getAllArgSpecs',
+        'getArgSpec',
+        'getDefaults',
+        'getDefaultsForExtension',
+        'getSchema',
+        'hasArgSpec',
+        'isFinalized',
+        'registerSchema',
+        'hasRegisteredSchema',
+        'reset',
+        'validate',
+      ]);
+    }
 
-    _.bindAll(instance, [
-      'finalize',
-      'flatten',
-      'getAllArgSpecs',
-      'getArgSpec',
-      'getDefaults',
-      'getDefaultsForExtension',
-      'getSchema',
-      'hasArgSpec',
-      'isFinalized',
-      'registerSchema',
-      'reset',
-      'validate',
-    ]);
-
-    return instance;
+    return AppiumSchema._instance;
   }
 
   /**
@@ -150,7 +182,7 @@ class AppiumSchema {
    */
   finalize () {
     if (this.isFinalized()) {
-      return /** @type {Record<string,StrictSchemaObject>} */ (
+      return /** @type {NonNullable<typeof this._finalizedSchemas>} */ (
         this._finalizedSchemas
       );
     }
@@ -259,7 +291,7 @@ class AppiumSchema {
     for (const schemaId of Object.keys(this._finalizedSchemas ?? {})) {
       this._ajv.removeSchema(schemaId);
     }
-    this._argSpecs = new ReadonlyMap();
+    this._argSpecs = new RoachHotelMap();
     this._registeredSchemas = {
       [DRIVER_TYPE]: new Map(),
       [PLUGIN_TYPE]: new Map(),
@@ -276,7 +308,7 @@ class AppiumSchema {
    * This is "fail-fast" in that the schema will immediately be validated against JSON schema draft-07 _or_ whatever the value of the schema's `$schema` prop is.
    *
    * Does _not_ add the schema to the `ajv` instance (this is done by {@link AppiumSchema.finalize}).
-   * @param {import('../ext-config-io').ExtensionType} extType - Extension type
+   * @param {ExtensionType} extType - Extension type
    * @param {string} extName - Unique extension name for `type`
    * @param {SchemaObject} schema - Schema object
    * @throws {SchemaNameConflictError} If the schema is an invalid
@@ -666,7 +698,7 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
  */
 
 /**
- * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
  */
 
 /**

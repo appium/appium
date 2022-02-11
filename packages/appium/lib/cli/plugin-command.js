@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import ExtensionCommand from './extension-command';
-import { PLUGIN_TYPE } from '../extension-config';
-import { KNOWN_PLUGINS } from '../plugins';
+import { PLUGIN_TYPE, KNOWN_PLUGINS } from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
 

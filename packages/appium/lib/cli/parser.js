@@ -2,20 +2,15 @@
 
 import { fs } from '@appium/support';
 import { ArgumentParser } from 'argparse';
-import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
+import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND } from '../constants';
 import { finalizeSchema, getArgSpec, hasArgSpec } from '../schema';
-import { rootDir } from '../utils';
+import { rootDir } from '../config';
 import {
-  driverConfig,
   getExtensionArgs,
-  getServerArgs,
-  pluginConfig
+  getServerArgs
 } from './args';
-
-export const SERVER_SUBCOMMAND = 'server';
 
 /**
  * If the parsed args do not contain any of these values, then we
@@ -258,19 +253,16 @@ class ArgParser {
 }
 
 /**
- * Creates a {@link ArgParser} instance.  Necessarily reads extension configuration
- * beforehand, and finalizes the config schema.
+ * Creates a {@link ArgParser} instance; finalizes the config schema.
  *
  * @constructs ArgParser
  * @param {boolean} [debug] - If `true`, throw instead of exit upon parsing error
- * @returns {Promise<ArgParser>}
+ * @returns {ArgParser}
  */
-async function getParser (debug = false) {
-  await B.all([driverConfig.read(), pluginConfig.read()]);
+function getParser (debug) {
   finalizeSchema();
 
   return new ArgParser(debug);
 }
 
-export default getParser;
 export { getParser, ArgParser };

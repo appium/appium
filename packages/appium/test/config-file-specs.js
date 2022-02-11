@@ -29,7 +29,7 @@ describe('config-file', function () {
   const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
 
   /**
-   * @type {import('sinon').SinonSandbox}
+   * @type {sinon.SinonSandbox}
    */
   let sandbox;
 
@@ -42,7 +42,7 @@ describe('config-file', function () {
    * Mock instance of `lilconfig` containing stubs for
    * `lilconfig#search()` and `lilconfig#load`.
    * Not _actually_ a `SinonStubbedInstance`, but duck-typed.
-   * @type {import('sinon').SinonStubbedInstance<ReturnType<import('lilconfig').lilconfig>>}
+   * @type {sinon.SinonStubbedInstance<ReturnType<import('lilconfig').lilconfig>>}
    */
   let lc;
 
@@ -155,7 +155,7 @@ describe('config-file', function () {
       describe('when no config file is found', function () {
         beforeEach(async function () {
           lc.search.resolves();
-          /** @type {import('sinon').SinonSpiedMember<typeof schema.validate>} */(schema.validate).resetHistory();
+          /** @type {sinon.SinonSpiedMember<typeof schema.validate>} */(schema.validate).resetHistory();
           result = await readConfigFile();
         });
 
@@ -376,9 +376,9 @@ describe('config-file', function () {
  */
 
 /**
- * @typedef {import('sinon').SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['load']>} AsyncSearcherLoadStub
+ * @typedef {sinon.SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['load']>} AsyncSearcherLoadStub
  */
 
 /**
- * @typedef {import('sinon').SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['search']>} AsyncSearcherSearchStub
+ * @typedef {sinon.SinonStubbedMember<ReturnType<import('lilconfig').lilconfig>['search']>} AsyncSearcherSearchStub
  */

@@ -1,10 +1,15 @@
-import {transformers} from '../lib/schema/cli-transformers';
-import {SERVER_SUBCOMMAND} from '../lib/cli/parser';
 import {
   DRIVER_TYPE as DRIVER_SUBCOMMAND,
+  EXT_SUBCOMMAND_INSTALL,
+  EXT_SUBCOMMAND_UPDATE,
+  EXT_SUBCOMMAND_RUN,
+  EXT_SUBCOMMAND_LIST,
+  EXT_SUBCOMMAND_UNINSTALL,
   PLUGIN_TYPE as PLUGIN_SUBCOMMAND,
-} from '../lib/ext-config-io';
+  SERVER_SUBCOMMAND,
+} from '../lib/constants';
 import appiumConfigSchema from '../lib/schema/appium-config-schema';
+import {transformers} from '../lib/schema/cli-transformers';
 import {AppiumConfiguration, ServerConfig} from './appium-config';
 
 /**
@@ -124,14 +129,14 @@ type DefaultForProp<Prop extends keyof ServerConfigMapping> =
 /**
  * The final shape of the parsed CLI arguments.
  */
-type ParsedArgsFromConfig = {
+type ArgsFromConfig = {
   [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: DefaultForProp<Prop>;
 };
 
 /**
  * Possible subcommands for the `appium` CLI.
  */
-type CliSubCommands =
+type CliSubcommand =
   | typeof SERVER_SUBCOMMAND
   | typeof DRIVER_SUBCOMMAND
   | typeof PLUGIN_SUBCOMMAND;
@@ -140,12 +145,12 @@ type CliSubCommands =
  * Possible subcommands of {@link DRIVER_SUBCOMMAND} or
  * {@link PLUGIN_SUBCOMMAND}.
  */
-type CliExtensionSubcommands =
-  | 'list'
-  | 'install'
-  | 'uninstall'
-  | 'update'
-  | 'run';
+export type CliExtensionSubcommand =
+  | typeof EXT_SUBCOMMAND_INSTALL
+  | typeof EXT_SUBCOMMAND_LIST
+  | typeof EXT_SUBCOMMAND_RUN
+  | typeof EXT_SUBCOMMAND_UPDATE
+  | typeof EXT_SUBCOMMAND_UNINSTALL;
 
 /**
  * Random stuff that may appear in the parsed args which has no equivalent in a
@@ -153,9 +158,50 @@ type CliExtensionSubcommands =
  */
 interface MoreArgs {
   /**
-   * Path to config file, if any
+   * Path to config file, if any. Does not make sense for this to be allowed in a config file!
    */
-  configFile: string;
+  configFile?: string;
+
+  /**
+   * If true, show the config and exit
+   */
+  showConfig?: boolean;
+
+  /**
+   * If true, open a REPL
+   */
+  shell?: boolean;
+}
+
+/**
+ * These arguments are _not_ supported by the CLI, but only via programmatic usage / tests.
+ */
+interface ProgrammaticArgs {
+  /**
+   * Subcommands of `driver` subcommand
+   */
+  driverCommand?: CliExtensionSubcommand;
+
+  /**
+   * Subcommands of `plugin` subcommand
+   */
+  pluginCommand?: CliExtensionSubcommand;
+
+  /**
+   * If true, throw on error instead of exit.
+   */
+  throwInsteadOfExit?: boolean;
+
+  /**
+   * Seems to only be used in tests or standalone driver calls
+   */
+  logHandler?: (...args: any[]) => void;
+
+  /**
+   * Alternate way to set `APPIUM_HOME` for tests. Since we don't want to muck about
+   * with the environment, we just set it here.
+   */
+  appiumHome?: string;
 
   /**
    * If true, show the build info and exit
@@ -167,17 +213,9 @@ interface MoreArgs {
    */
   showConfig: boolean;
 
-  /**
-   * If true, open a REPL
-   */
-  shell: boolean;
+}
 
-  /**
-   * If true, throw on error instead of exit. Not supported via CLI, but rather
-   * only programmatic usage.
-   */
-  throwInsteadOfExit: boolean;
-
+interface SubcommandArgs {
   /**
    * Possible subcommands
    */
@@ -185,17 +223,15 @@ interface MoreArgs {
     | typeof DRIVER_SUBCOMMAND
     | typeof PLUGIN_SUBCOMMAND
     | typeof SERVER_SUBCOMMAND;
-
-  /**
-   * Subcommands of `driver` subcommand
-   */
-  driverCommand: CliExtensionSubcommands;
-
-  /**
-   * Subcommands of `plugin` subcommand
-   */
-  pluginCommand: CliExtensionSubcommands;
 }
+
+  /**
+ * The same as {@link ParsedArgs} but with a nullable `subcommand`.
+   */
+export type PartialArgs = ArgsFromConfig &
+  MoreArgs &
+  ProgrammaticArgs &
+  Partial<SubcommandArgs>;
 
 /**
  * The Appium configuration as a flattened object, parsed via CLI args _and_ any
@@ -203,4 +239,7 @@ interface MoreArgs {
  * @todo Does not make any assumptions about property names derived from
  * extensions.
  */
-export type ParsedArgs = ParsedArgsFromConfig & Partial<MoreArgs>;
+export type ParsedArgs = ArgsFromConfig &
+  MoreArgs &
+  ProgrammaticArgs &
+  SubcommandArgs;

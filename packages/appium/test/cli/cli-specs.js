@@ -1,17 +1,38 @@
 // transpile:mocha
 
-import { DEFAULT_APPIUM_HOME } from '../../lib/extension-config';
-import DriverConfig from '../../lib/driver-config';
+import { tempDir, fs } from '@appium/support';
+import { loadExtensions } from '../../lib/extension';
+import { getManifestInstance } from '../../lib/extension/manifest';
 import DriverCommand from '../../lib/cli/driver-command';
 import sinon from 'sinon';
 
-
 describe('DriverCommand', function () {
-  const config = new DriverConfig(DEFAULT_APPIUM_HOME);
+  /**
+   * @type {string}
+   */
+  let appiumHome;
+
+  let config;
   const driver = 'fake';
   const pkgName = '@appium/fake-driver';
-  config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
-  const dc = new DriverCommand({config, json: true});
+  let dc;
+
+  let sandbox;
+
+  beforeEach(async function () {
+    sandbox = sinon.createSandbox();
+    appiumHome = await tempDir.openDir();
+    getManifestInstance.cache = new Map();
+    sandbox.stub(fs, 'exists').resolves(false);
+    config = (await loadExtensions(appiumHome)).driverConfig;
+    config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
+    dc = new DriverCommand({config, json: true});
+  });
+
+  afterEach(async function () {
+    await fs.rimraf(appiumHome);
+    sandbox.restore();
+  });
 
   describe('#checkForExtensionUpdate', function () {
     let npmMock;

@@ -24,6 +24,9 @@ describe('grid-register', function () {
           fs: {
             readFile: sandbox.stub().resolves('{}'),
           },
+          logger: {
+            getLogger: sandbox.stub().returns(console)
+          }
         },
         axios: sandbox.stub().resolves({data: '', status: 200}),
       };

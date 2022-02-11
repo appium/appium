@@ -4,7 +4,6 @@ import _ from 'lodash';
 import logger from './logger';
 // @ts-ignore
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
-import { fs } from '@appium/support';
 import { inspect as dump } from 'util';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -215,36 +214,7 @@ function pullSettings (caps) {
   return result;
 }
 
-const rootDir = fs.findRoot(__dirname);
-
-
-/**
- * A Map where you can set properties, but only once. And you can't remove anything. So there.
- * @template K,V
- * @extends {Map<K,V>}
- */
-class ReadonlyMap extends Map {
-  /**
-   * @param {K} key
-   * @param {V} value
-   */
-  set (key, value) {
-    if (this.has(key)) {
-      throw new Error(`${key} is already set`);
-    }
-    return super.set(key, value);
-  }
-
-  delete () {
-    return false;
-  }
-
-  clear () {
-    throw new Error(`Cannot clear ReadonlyMap`);
-  }
-}
-
 export {
-  inspect, parseCapsForInnerDriver, insertAppiumPrefixes, rootDir,
-  getPackageVersion, pullSettings, removeAppiumPrefixes, ReadonlyMap
+  inspect, parseCapsForInnerDriver, insertAppiumPrefixes,
+  getPackageVersion, pullSettings, removeAppiumPrefixes
 };

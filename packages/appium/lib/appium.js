@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
-import { findMatchingDriver } from './drivers';
-import {
-  BaseDriver, errors, isSessionCommand,
+import { BaseDriver, errors, isSessionCommand,
   CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
@@ -74,7 +72,7 @@ class AppiumDriver extends BaseDriver {
     return this._log;
   }
 
-  /** @type {import('./driver-config').default|undefined} */
+  /** @type {import('./extension/driver-config').DriverConfig|undefined} */
   driverConfig;
 
   /** @type {import('express').Express|undefined} */
@@ -125,20 +123,12 @@ class AppiumDriver extends BaseDriver {
   }
 
   /**
-   * This is just an alias for driver.js's method, which is necessary for
-   * mocking in the test suite
-   */
-  _findMatchingDriver (...args) {
-    return findMatchingDriver(...args);
-  }
-
-  /**
    * Validate and assign CLI args for a driver or plugin
    *
    * If the extension has provided a schema, validation has already happened.
    *
    * Any arg which is equal to its default value will not be assigned to the extension.
-   * @param {import('./ext-config-io').ExtensionType} extType 'driver' or 'plugin'
+   * @param {import('./manifest').ExtensionType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
@@ -201,7 +191,7 @@ class AppiumDriver extends BaseDriver {
         driver: InnerDriver,
         version: driverVersion,
         driverName
-      } = this._findMatchingDriver(this.driverConfig, desiredCaps);
+      } = this.driverConfig.findMatchingDriver(desiredCaps);
       this.printNewSessionAnnouncement(InnerDriver.name, driverVersion, InnerDriver.baseVersion);
 
       if (this.args.sessionOverride) {
@@ -686,23 +676,3 @@ export class NoDriverProxyCommandError extends Error {
 }
 
 export { AppiumDriver };
-
-
-/**
- * @typedef {Object} StaticExtMembers
- * @property {(app: import('express').Express, httpServer: import('http').Server) => import('type-fest').Promisable<void>} [updateServer]
- * @property {import('@appium/base-driver').MethodMap} [newMethodMap]
- */
-
-/**
- * @typedef {Object} StaticPluginMembers
- * @property {string} pluginName
- */
-
-/**
- * @typedef {import('type-fest').Class<unknown> & StaticPluginMembers & StaticExtMembers} PluginExtensionClass
- */
-
-/**
- * @typedef {import('type-fest').Class<unknown> & StaticExtMembers} DriverExtensionClass
- */

@@ -1,7 +1,7 @@
 // transpile:mocha
 
 import { getParser } from '../lib/cli/parser';
-import { INSTALL_TYPES } from '../lib/extension-config';
+import { INSTALL_TYPES } from '../lib/extension/extension-config';
 import * as schema from '../lib/schema/schema';
 import { readConfigFile } from '../lib/config-file';
 import { resolveFixture } from './helpers';
@@ -15,8 +15,8 @@ describe('parser', function () {
   let p;
 
   describe('Main Parser', function () {
-    beforeEach(async function () {
-      p = await getParser(true);
+    beforeEach(function () {
+      p = getParser(true);
     });
 
     it('should accept only server and driver subcommands', function () {
@@ -30,8 +30,8 @@ describe('parser', function () {
 
   describe('Server Parser', function () {
     describe('Appium arguments', function () {
-      beforeEach(async function () {
-        p = await getParser(true);
+      beforeEach(function () {
+        p = getParser(true);
       });
 
       it('should return an arg parser', function () {
@@ -132,14 +132,14 @@ describe('parser', function () {
     });
 
     describe('extension arguments', function () {
-      beforeEach(async function () {
+      beforeEach(function () {
         schema.resetSchema();
         // we have to require() here because babel will not compile stuff in node_modules
         // (even if it's in the monorepo; there may be a way around this)
         // anyway, if we do that, we need to use the `default` prop.
         schema.registerSchema('driver', 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
         schema.finalizeSchema();
-        p = await getParser(true);
+        p = getParser(true);
       });
 
       it('should parse driver args correctly from a string', async function () {
@@ -164,11 +164,11 @@ describe('parser', function () {
         args.should.not.have.property('driver');
       });
 
-      it('should nicely handle extensions w/ dashes in them', async function () {
+      it('should nicely handle extensions w/ dashes in them', function () {
         schema.resetSchema();
         schema.registerSchema('plugin', 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean'}}});
         schema.finalizeSchema();
-        p = await getParser(true);
+        p = getParser(true);
         const args = p.parseArgs([
           '--plugin-crypto-fiend-elite'
         ]);
@@ -194,6 +194,10 @@ describe('parser', function () {
   });
 
   describe('Driver Parser', function () {
+    let p;
+    beforeEach(function () {
+      p = getParser(true);
+    });
     it('should not allow random sub-subcommands', function () {
       (() => p.parseArgs(['driver', 'foo'])).should.throw();
     });

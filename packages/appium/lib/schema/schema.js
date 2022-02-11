@@ -4,11 +4,40 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../extension-config';
-import { ReadonlyMap } from '../utils';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import appiumConfigSchema from './appium-config-schema';
-import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
-import { keywords } from './keywords';
+import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
+import {keywords} from './keywords';
+
+/**
+ * A Map where you can set properties, but only once. And you can't remove anything. So there.
+ * @template K,V
+ * @extends {Map<K,V>}
+ */
+export class ReadonlyMap extends Map {
+  /**
+   * @param {K} key
+   * @param {V} value
+   */
+  set (key, value) {
+    if (this.has(key)) {
+      throw new Error(`${key} is already set`);
+    }
+    return super.set(key, value);
+  }
+
+  /**
+   * @param {K} key
+   */
+  // eslint-disable-next-line no-unused-vars
+  delete (key) {
+    return false;
+  }
+
+  clear () {
+    throw new Error(`Cannot clear ReadonlyMap`);
+  }
+}
 
 /**
  * Extensions that an extension schema file can have.
@@ -83,25 +112,27 @@ class AppiumSchema {
    * @returns {AppiumSchema}
    */
   static create () {
-    const instance = AppiumSchema._instance ?? new AppiumSchema();
-    AppiumSchema._instance = instance;
+    if (!AppiumSchema._instance) {
+      const instance = new AppiumSchema();
+      AppiumSchema._instance = instance;
+      _.bindAll(instance, [
+        'finalize',
+        'flatten',
+        'getAllArgSpecs',
+        'getArgSpec',
+        'getDefaults',
+        'getDefaultsForExtension',
+        'getSchema',
+        'hasArgSpec',
+        'isFinalized',
+        'registerSchema',
+        'hasRegisteredSchema',
+        'reset',
+        'validate',
+      ]);
+    }
 
-    _.bindAll(instance, [
-      'finalize',
-      'flatten',
-      'getAllArgSpecs',
-      'getArgSpec',
-      'getDefaults',
-      'getDefaultsForExtension',
-      'getSchema',
-      'hasArgSpec',
-      'isFinalized',
-      'registerSchema',
-      'reset',
-      'validate',
-    ]);
-
-    return instance;
+    return AppiumSchema._instance;
   }
 
   /**
@@ -113,7 +144,7 @@ class AppiumSchema {
    * @returns {boolean} If registered
    */
   hasRegisteredSchema (extType, extName) {
-    return this._registeredSchemas[extType].has(extName);
+    return Boolean(this._registeredSchemas[extType].has(extName));
   }
 
   /**
@@ -150,7 +181,7 @@ class AppiumSchema {
    */
   finalize () {
     if (this.isFinalized()) {
-      return /** @type {Record<string,StrictSchemaObject>} */ (
+      return /** @type {NonNullable<typeof this._finalizedSchemas>} */ (
         this._finalizedSchemas
       );
     }
@@ -276,7 +307,7 @@ class AppiumSchema {
    * This is "fail-fast" in that the schema will immediately be validated against JSON schema draft-07 _or_ whatever the value of the schema's `$schema` prop is.
    *
    * Does _not_ add the schema to the `ajv` instance (this is done by {@link AppiumSchema.finalize}).
-   * @param {import('../ext-config-io').ExtensionType} extType - Extension type
+   * @param {ExtensionType} extType - Extension type
    * @param {string} extName - Unique extension name for `type`
    * @param {SchemaObject} schema - Schema object
    * @throws {SchemaNameConflictError} If the schema is an invalid
@@ -666,7 +697,7 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
  */
 
 /**
- * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
  */
 
 /**

@@ -10,7 +10,6 @@ import { finalizeSchema, registerSchema, resetSchema } from '../lib/schema/schem
 import { insertAppiumPrefixes, removeAppiumPrefixes } from '../lib/utils';
 import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
 
-
 const SESSION_ID = 1;
 
 describe('AppiumDriver', function () {
@@ -28,16 +27,18 @@ describe('AppiumDriver', function () {
         return fakeDriver;
       };
 
-      appium._findMatchingDriver = function () {
-        return {
+      appium.driverConfig = {
+        findMatchingDriver: sinon.stub().returns({
           driver: mockedDriverReturnerClass,
           version: '1.2.3',
           driverName: 'fake',
-        };
+        })
       };
+
       return [appium, mockFakeDriver];
     }
     describe('createSession', function () {
+      /** @type {AppiumDriver} */
       let appium;
       let mockFakeDriver;
       beforeEach(function () {

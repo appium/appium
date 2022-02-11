@@ -3,14 +3,15 @@
   "tasks": [
     {
       "type": "npm",
-      "script": "build",
+      "script": "dev",
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "problemMatcher": [],
-      "label": "npm: build",
-      "detail": "lerna exec gulp transpile"
+      "label": "npm: dev",
+      "detail": "lerna exec --parallel gulp dev",
+      "isBackground": true,
     },
     {
       "type": "shell",
@@ -125,26 +126,11 @@
       "problemMatcher": []
     },
     {
-      "type": "shell",
-      "command": "node_modules/.bin/mocha",
-      "args": [
-        "--bail",
-        "-r",
-        "@babel/register",
-        "-t",
-        "20s",
-        "packages/appium/test/*e2e-specs.js"
-      ],
-      "label": "appium: E2E",
-      "problemMatcher": []
-    },
-    {
       "type": "npm",
-      "script": "dev",
+      "script": "test:e2e:appium",
       "problemMatcher": [],
-      "isBackground": true,
-      "label": "npm: dev",
-      "detail": "lerna exec --parallel gulp dev"
+      "label": "npm: test:e2e:appium",
+      "detail": "e2e tests: appium"
     }
   ]
 }

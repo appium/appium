@@ -17,6 +17,7 @@ module.exports = (wallaby) => {
       '!./packages/*/node_modules/**',
       '!./packages/*/gulpfile.js',
       './packages/*/test/**/fixtures/**/*',
+      './packages/appium/test/extension/mocks.js',
       // below this are fixtures
       {
         binary: true,

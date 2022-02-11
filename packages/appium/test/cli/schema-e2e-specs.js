@@ -1,7 +1,8 @@
 // @ts-check
+import { fs, tempDir } from '@appium/support';
 import path from 'path';
-import {fs, tempDir} from '@appium/support';
-import {installLocalExtension, runAppium} from './cli-helpers';
+import { resolveFixture } from '../helpers';
+import { installLocalExtension, runAppium } from './cli-helpers';
 
 const {expect} = chai;
 
@@ -29,7 +30,7 @@ describe('CLI behavior controlled by schema', function () {
       await installLocalExtension(
         appiumHome,
         'driver',
-        path.join(__dirname, 'fixtures', 'test-driver'),
+        path.dirname(resolveFixture('cli/test-driver/package.json'))
       );
       help = await runAppium(appiumHome, ['server', '--help']);
     });

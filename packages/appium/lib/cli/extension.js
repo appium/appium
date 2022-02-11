@@ -2,11 +2,8 @@
 
 import DriverCommand from './driver-command';
 import PluginCommand from './plugin-command';
-import DriverConfig from '../driver-config';
-import PluginConfig from '../plugin-config';
-import { DRIVER_TYPE } from '../extension-config';
+import { DRIVER_TYPE } from '../constants';
 import { errAndQuit, log, JSON_SPACES } from './utils';
-import { APPIUM_HOME } from './args';
 
 /**
  * Run a subcommand of the 'appium driver' type. Each subcommand has its own set of arguments which
@@ -14,13 +11,14 @@ import { APPIUM_HOME } from './args';
  *
  * @param {Object} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
- * @param {import('../ext-config-io').ExtensionType} type - Extension type
- * @oaram {ExtensionConfig} [configObject] - Extension config object, if we have one
+ * @template {ExtensionType} ExtType
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} configObject - Extension config object
  */
-async function runExtensionCommand (args, type, configObject) {
+async function runExtensionCommand (args, configObject) {
   // TODO driver config file should be locked while any of these commands are
   // running to prevent weird situations
   let jsonResult = null;
+  const {extensionType: type} = configObject;
   const extCmd = args[`${type}Command`];
   if (!extCmd) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
@@ -30,17 +28,11 @@ async function runExtensionCommand (args, type, configObject) {
     json = true;
   }
   const logFn = (msg) => log(json, msg);
-  let config;
-  if (configObject) {
-    config = configObject;
-    config.log = logFn;
-  } else {
-    config = (type === DRIVER_TYPE ? DriverConfig : PluginConfig).getInstance(APPIUM_HOME, logFn);
-  }
+  let config = configObject;
+  config.log = logFn;
   const CommandClass = type === DRIVER_TYPE ? DriverCommand : PluginCommand;
   const cmd = new CommandClass({config, json});
   try {
-    await config.read();
     jsonResult = await cmd.execute(args);
   } catch (err) {
     // in the suppress output case, we are calling this function internally and should

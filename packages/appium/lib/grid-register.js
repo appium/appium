@@ -12,9 +12,9 @@ const hubUri = (config) => {
 /**
  * Registers a new node with a selenium grid
  * @param {string|object} data - Path or object representing selenium grid node config file
- * @param {string} addr - Bind to this address
- * @param {number} port - Bind to this port
- * @param {string} basePath - Base path for the grid
+ * @param {string} [addr] - Bind to this address
+ * @param {number} [port] - Bind to this port
+ * @param {string} [basePath] - Base path for the grid
  */
 async function registerNode (data, addr, port, basePath) {
   let configFilePath;

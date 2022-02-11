@@ -224,5 +224,5 @@ export class ArgSpec {
  */
 
 /**
- * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ * @typedef {import('../manifest').ExtensionType} ExtensionType
  */

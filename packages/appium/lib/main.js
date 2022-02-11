@@ -7,19 +7,21 @@ import { init as logsinkInit } from './logsink'; // this import needs to come fi
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import { routeConfiguringFunction as makeRouter, server as baseServer } from '@appium/base-driver';
-import { logger as logFactory, util } from '@appium/support';
+import { logger as logFactory, util, env } from '@appium/support';
 import { asyncify } from 'asyncbox';
 import _ from 'lodash';
 import { AppiumDriver } from './appium';
-import { driverConfig, pluginConfig, USE_ALL_PLUGINS } from './cli/args';
 import { runExtensionCommand } from './cli/extension';
-import { default as getParser, SERVER_SUBCOMMAND } from './cli/parser';
-import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showBuildInfo, validateTmpDir, warnNodeDeprecations, showConfig } from './config';
+import { getParser } from './cli/parser';
+import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showConfig, showBuildInfo, validateTmpDir, warnNodeDeprecations } from './config';
 import { readConfigFile } from './config-file';
-import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
+import { loadExtensions, getActivePlugins, getActiveDrivers } from './extension';
+import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND } from './constants';
 import registerNode from './grid-register';
-import { getDefaultsForSchema } from './schema/schema';
+import { getDefaultsForSchema, validate } from './schema/schema';
 import { inspect } from './utils';
+
+const {resolveAppiumHome} = env;
 
 /**
  *
@@ -37,6 +39,8 @@ async function preflightChecks (args, throwInsteadOfExit = false) {
       process.exit(0);
     }
     warnNodeDeprecations();
+
+    validate(args);
 
     if (args.tmpDir) {
       await validateTmpDir(args.tmpDir);
@@ -103,62 +107,10 @@ function logServerPort (address, port) {
 }
 
 /**
- * Find any plugin name which has been installed, and which has been requested for activation by
- * using the --use-plugins flag, and turn each one into its class, so we can send them as objects
- * to the server init. We also want to send/assign them to the umbrella driver so it can use them
- * to wrap command execution
- *
- * @param {Object} args - argparser parsed dict
- * @param {import('./plugin-config').default} pluginConfig - a plugin extension config
- * @returns {PluginExtensionClass[]}
- */
-function getActivePlugins (args, pluginConfig) {
-  return _.compact(Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
-    _.includes(args.usePlugins, pluginName) ||
-    (args.usePlugins.length === 1 && args.usePlugins[0] === USE_ALL_PLUGINS)
-  ).map((pluginName) => {
-    try {
-      logger.info(`Attempting to load plugin ${pluginName}...`);
-      const PluginClass = /** @type {PluginExtensionClass} */(pluginConfig.require(pluginName));
-
-      PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
-      return PluginClass;
-    } catch (err) {
-      logger.error(`Could not load plugin '${pluginName}', so it will not be available. Error ` +
-                   `in loading the plugin was: ${err.message}`);
-      logger.debug(err.stack);
-    }
-  }));
-}
-
-/**
- * Find any driver name which has been installed, and turn each one into its class, so we can send
- * them as objects to the server init in case they need to add methods/routes or update the server.
- * If the --drivers flag was given, this method only loads the given drivers.
- *
- * @param {Object} args - argparser parsed dict
- * @param {import('./driver-config').default} driverConfig - a driver extension config
- */
-function getActiveDrivers (args, driverConfig) {
-  return _.compact(Object.keys(driverConfig.installedExtensions).filter((driverName) =>
-    _.includes(args.useDrivers, driverName) || args.useDrivers.length === 0
-  ).map((driverName) => {
-    try {
-      logger.info(`Attempting to load driver ${driverName}...`);
-      return driverConfig.require(driverName);
-    } catch (err) {
-      logger.error(`Could not load driver '${driverName}', so it will not be available. Error ` +
-                   `in loading the driver was: ${err.message}`);
-      logger.debug(err.stack);
-    }
-  }));
-}
-
-/**
  * Gets a list of `updateServer` functions from all extensions
- * @param {DriverExtensionClass[]} driverClasses
- * @param {PluginExtensionClass[]} pluginClasses
- * @returns {StaticExtMembers['updateServer'][]}
+ * @param {DriverClass[]} driverClasses
+ * @param {PluginClass[]} pluginClasses
+ * @returns {import('./extension/manifest').UpdateServerFn[]}
  */
 function getServerUpdaters (driverClasses, pluginClasses) {
   return _.compact(_.map([...driverClasses, ...pluginClasses], 'updateServer'));
@@ -166,8 +118,8 @@ function getServerUpdaters (driverClasses, pluginClasses) {
 
 /**
  * Makes a big `MethodMap` from all the little `MethodMap`s in the extensions
- * @param {DriverExtensionClass[]} driverClasses
- * @param {PluginExtensionClass[]} pluginClasses
+ * @param {DriverClass[]} driverClasses
+ * @param {PluginClass[]} pluginClasses
  * @returns {import('@appium/base-driver').MethodMap}
  */
 function getExtraMethodMap (driverClasses, pluginClasses) {
@@ -182,11 +134,10 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  *
  * Use this to get at the configuration schema.
  *
- * If `args` contains a non-empty `subcommand` which is not `server`, this function
- * will resolve with an empty object.
+ * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
  *
- * @param {ParsedArgs} [args] - Parsed args
- * @returns {Promise<Partial<{appiumDriver: AppiumDriver, parsedArgs: ParsedArgs}>>}
+ * @param {PartialArgs} [args] - Partial args (progammatic usage only)
+ * @returns {Promise<ServerInitResult | ExtCommandInitResult>}
  * @example
  * import {init, getSchema} from 'appium';
  * const options = {}; // config object
@@ -194,11 +145,15 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  * const schema = getSchema(); // entire config schema including plugins and drivers
  */
 async function init (args) {
-  const parser = await getParser();
+  const appiumHome = args?.appiumHome ?? await resolveAppiumHome();
+
+  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+
+  const parser = getParser();
   let throwInsteadOfExit = false;
   /** @type {ParsedArgs} */
   let preConfigParsedArgs;
-  /** @type {typeof preConfigParsedArgs & import('type-fest').AsyncReturnType<readConfigFile>['config']} */
+  /** @type {ParsedArgs} */
   let parsedArgs;
   /**
    * This is a definition (instead of declaration) because TS can't figure out
@@ -215,7 +170,7 @@ async function init (args) {
       // but remove it since it's not a real server arg per se
       delete args.throwInsteadOfExit;
     }
-    preConfigParsedArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
+    preConfigParsedArgs = /** @type {ParsedArgs} */({...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND});
   } else {
     // otherwise parse from CLI
     preConfigParsedArgs = parser.parseArgs();
@@ -226,7 +181,6 @@ async function init (args) {
   if (!_.isEmpty(configResult.errors)) {
     throw new Error(`Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`);
   }
-
 
   // merge config and apply defaults.
   // the order of precendece is:
@@ -256,11 +210,11 @@ async function init (args) {
   // if the user has requested the 'driver' CLI, don't run the normal server,
   // but instead pass control to the driver CLI
   if (parsedArgs.subcommand === DRIVER_TYPE) {
-    await runExtensionCommand(parsedArgs, parsedArgs.subcommand, driverConfig);
+    await runExtensionCommand(parsedArgs, driverConfig);
     return {};
   }
   if (parsedArgs.subcommand === PLUGIN_TYPE) {
-    await runExtensionCommand(parsedArgs, parsedArgs.subcommand, pluginConfig);
+    await runExtensionCommand(parsedArgs, pluginConfig);
     return {};
   }
 
@@ -282,36 +236,34 @@ async function init (args) {
   appiumDriver.driverConfig = driverConfig;
   await preflightChecks(parsedArgs, throwInsteadOfExit);
 
-  return {appiumDriver, parsedArgs};
+  return /** @type {ServerInitResult} */({appiumDriver, parsedArgs, driverConfig, pluginConfig});
 }
 
 /**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
- * @param {ParsedArgs} [args] - Arguments from CLI or otherwise
- * @returns {Promise<import('express').Express|undefined>}
+ * @param {PartialArgs} [args] - Arguments from CLI or otherwise
+ * @returns {Promise<import('http').Server|undefined>}
  */
 async function main (args) {
   // Appium drivers often use process events to schedule proper exit cleanup
   // The default value of 10 causes an ugly warning to appear in logs on server startup
-  process.setMaxListeners(100);
+  const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */(await init(args));
 
-  const {appiumDriver, parsedArgs} = await init(args);
-
-  if (!appiumDriver || !parsedArgs) {
+  if (!appiumDriver || !parsedArgs || !pluginConfig || !driverConfig) {
     // if this branch is taken, we've run a different subcommand, so there's nothing
     // left to do here.
     return;
   }
 
-  const pluginClasses = getActivePlugins(parsedArgs, pluginConfig);
+  const pluginClasses = getActivePlugins(pluginConfig, parsedArgs.usePlugins);
   // set the active plugins on the umbrella driver so it can use them for commands
   appiumDriver.pluginClasses = pluginClasses;
 
   await logStartupInfo(parsedArgs);
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
-  const driverClasses = getActiveDrivers(parsedArgs, driverConfig);
+  const driverClasses = getActiveDrivers(driverConfig, parsedArgs.useDrivers);
   const serverUpdaters = getServerUpdaters(driverClasses, pluginClasses);
   const extraMethodMap = getExtraMethodMap(driverClasses, pluginClasses);
 
@@ -386,23 +338,32 @@ if (require.main === module) {
 }
 
 // everything below here is intended to be a public API.
-export { main, init };
-export { APPIUM_HOME } from './extension-config';
-export { getSchema, validate, finalizeSchema } from './schema/schema';
 export { readConfigFile } from './config-file';
+export { finalizeSchema, getSchema, validate } from './schema/schema';
+export { main, init, resolveAppiumHome };
 
 /**
  * @typedef {import('../types/types').ParsedArgs} ParsedArgs
  */
 
 /**
- * @typedef {import('./appium').PluginExtensionClass} PluginExtensionClass
+ * @typedef {import('../types/types').PartialArgs} PartialArgs
+ * @typedef {import('./extension/manifest').DriverType} DriverType
+ * @typedef {import('./extension/manifest').PluginType} PluginType
+ * @typedef {import('./extension/manifest').DriverClass} DriverClass
+ * @typedef {import('./extension/manifest').PluginClass} PluginClass
  */
 
 /**
- * @typedef {import('./appium').DriverExtensionClass} DriverExtensionClass
+ * @typedef { {} } ExtCommandInitResult
  */
 
 /**
- * @typedef {import('./appium').StaticExtMembers} StaticExtMembers
+ * @typedef {Object} ServerInitData
+ * @property {AppiumDriver} appiumDriver - The Appium driver
+ * @property {ParsedArgs} parsedArgs - The parsed arguments
+ */
+
+/**
+ * @typedef {ServerInitData & import('./extension').ExtensionConfigs} ServerInitResult
  */

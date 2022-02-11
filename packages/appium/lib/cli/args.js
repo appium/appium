@@ -2,20 +2,15 @@
 
 // @ts-ignore
 import _ from 'lodash';
-import DriverConfig from '../driver-config';
-import { APPIUM_HOME, DRIVER_TYPE, INSTALL_TYPES, PLUGIN_TYPE } from '../extension-config';
-import PluginConfig from '../plugin-config';
+import { DRIVER_TYPE, PLUGIN_TYPE, EXT_SUBCOMMAND_INSTALL, EXT_SUBCOMMAND_LIST, EXT_SUBCOMMAND_RUN, EXT_SUBCOMMAND_UNINSTALL, EXT_SUBCOMMAND_UPDATE } from '../constants';
+import { INSTALL_TYPES } from '../extension/extension-config';
 import { toParserArgs } from '../schema/cli-args';
-
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'find_by_image';
-const USE_ALL_PLUGINS = 'all';
 
+const INSTALL_TYPES_ARRAY = [...INSTALL_TYPES];
 /** @type {Set<ExtensionType>} */
 const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
-
-const driverConfig = DriverConfig.getInstance(APPIUM_HOME);
-const pluginConfig = PluginConfig.getInstance(APPIUM_HOME);
 
 // this set of args works for both drivers and plugins ('extensions')
 /** @type {ArgumentDefinitions} */
@@ -32,18 +27,18 @@ const globalExtensionArgs = new Map([
 /**
  * Builds a Record of extension types to a Record of subcommands to their argument definitions
  */
-const getExtensionArgs = _.once(function getExtensionArgs () {
+const getExtensionArgs = _.memoize(function getExtensionArgs () {
   const extensionArgs = {};
   for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
-      list: makeListArgs(type),
-      install: makeInstallArgs(type),
-      uninstall: makeUninstallArgs(type),
-      update: makeUpdateArgs(type),
-      run: makeRunArgs(type),
+      [EXT_SUBCOMMAND_LIST]: makeListArgs(type),
+      [EXT_SUBCOMMAND_INSTALL]: makeInstallArgs(type),
+      [EXT_SUBCOMMAND_UNINSTALL]: makeUninstallArgs(type),
+      [EXT_SUBCOMMAND_UPDATE]: makeUpdateArgs(type),
+      [EXT_SUBCOMMAND_RUN]: makeRunArgs(type),
     };
   }
-  return /** @type {Record<ExtensionType, Record<string,ArgumentDefinitions[]>>} */ (extensionArgs);
+  return /** @type {Record<ExtensionType, Record<import('../../types/types').CliExtensionSubcommand,ArgumentDefinitions>>} */(extensionArgs);
 });
 
 /**
@@ -87,9 +82,9 @@ function makeInstallArgs (type) {
     [['--source'], {
       required: false,
       default: null,
-      choices: INSTALL_TYPES,
+      choices: INSTALL_TYPES_ARRAY,
       help: `Where to look for the ${type} if it is not one of Appium's verified ` +
-            `${type}s. Possible values: ${INSTALL_TYPES.join(', ')}`,
+            `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
       dest: 'installType'
     }],
     [['--package'], {
@@ -227,16 +222,12 @@ const serverArgsDisallowedInConfig = new Map([
 
 export {
   getServerArgs,
-  getExtensionArgs,
-  USE_ALL_PLUGINS,
-  driverConfig,
-  pluginConfig,
-  APPIUM_HOME
+  getExtensionArgs
 };
 
 /**
  * Alias
- * @typedef {import('../ext-config-io').ExtensionType} ExtensionType
+ * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
  */
 
 /**

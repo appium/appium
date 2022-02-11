@@ -1,13 +1,14 @@
-import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
-import path from 'path';
-import {insertAppiumPrefixes} from '../lib/utils';
 import getPort from 'get-port';
+import path from 'path';
+import rewiremock, { addPlugin, overrideEntryPoint, plugins } from 'rewiremock';
+import { insertAppiumPrefixes } from '../lib/utils';
 
 const TEST_HOST = '127.0.0.1';
 
-const fakeDriverPath = path.dirname(require.resolve('@appium/fake-driver/package.json'));
-const PROJECT_ROOT = path.join(fakeDriverPath, '..', '..');
-const TEST_FAKE_APP = path.join(fakeDriverPath, 'test', 'fixtures', 'app.xml');
+const FAKE_DRIVER_DIR = path.dirname(require.resolve('@appium/fake-driver/package.json'));
+const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');
+const PACKAGE_ROOT = path.join(PROJECT_ROOT, 'packages', 'appium');
+const TEST_FAKE_APP = path.join(FAKE_DRIVER_DIR, 'test', 'fixtures', 'app.xml');
 
 const BASE_CAPS = {
   automationName: 'Fake',
@@ -42,6 +43,5 @@ function resolveFixture (filename, ...pathParts) {
 
 overrideEntryPoint(module);
 addPlugin(plugins.nodejs);
-addPlugin(plugins.childOnly);
 
-export { TEST_FAKE_APP, TEST_HOST, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT, getTestPort, rewiremock, resolveFixture };
+export { TEST_FAKE_APP, TEST_HOST, BASE_CAPS, W3C_PREFIXED_CAPS, W3C_CAPS, PROJECT_ROOT, getTestPort, rewiremock, resolveFixture, FAKE_DRIVER_DIR, PACKAGE_ROOT };

@@ -35,7 +35,7 @@ const DEFAULT_BASENAME = 'appium-app';
 const APP_DOWNLOAD_TIMEOUT_MS = 120 * 1000;
 
 process.on('exit', () => {
-  if (APPLICATIONS_CACHE.itemCount === 0) {
+  if (APPLICATIONS_CACHE.size === 0) {
     return;
   }
 

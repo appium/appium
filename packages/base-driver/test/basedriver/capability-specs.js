@@ -1,18 +1,20 @@
 import { default as BaseDriver, errors } from '../../lib';
 import logger from '../../lib/basedriver/logger';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 
 
 describe('Desired Capabilities', function () {
   let d;
+  let sandbox;
 
   beforeEach(function () {
     d = new BaseDriver();
-    sinon.spy(logger, 'warn');
+    sandbox = createSandbox();
+    sandbox.spy(logger, 'warn');
   });
 
   afterEach(function () {
-    logger.warn.restore();
+    sandbox.restore();
   });
 
   it('should require platformName and deviceName', async function () {

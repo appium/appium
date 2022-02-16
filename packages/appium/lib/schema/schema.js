@@ -144,7 +144,7 @@ class AppiumSchema {
    * @returns {boolean} If registered
    */
   hasRegisteredSchema (extType, extName) {
-    return Boolean(this._registeredSchemas[extType].has(extName));
+    return this._registeredSchemas[extType].has(extName);
   }
 
   /**

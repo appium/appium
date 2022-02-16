@@ -64,7 +64,7 @@ export const readPackageInDir = _.memoize(
    * @todo better error handling
    * @returns {Promise<NormalizedPackageJson|undefined>}
    */
-  async function readPackageInDir (cwd) {
+  async function _readPackageInDir (cwd) {
     return await readPackage({cwd});
   },
 );
@@ -77,7 +77,7 @@ const getLocalAppiumInfo = _.memoize(
    * @param {string} [cwd]
    * @returns {Promise<LocalAppiumInfo>}
    */
-  async (pkg, cwd = process.cwd()) => {
+  async function _getLocalAppiumInfo (pkg, cwd = process.cwd()) {
     const [isLocalInstall, dependencyVersion] = await B.all([
       isLocalAppiumInstalled(cwd),
       getAppiumDependencyFromPackage(pkg),
@@ -107,8 +107,8 @@ export const resolveAppiumHome = _.memoize(
   /**
    * @param {string} [cwd] - Current working directory.  _Must_ be absolute, if specified.
    */
-  async (cwd) => {
-    if (cwd && !path.isAbsolute(cwd)) {
+  async function _resolveAppiumHome (cwd = process.cwd()) {
+    if (!path.isAbsolute(cwd)) {
       throw new TypeError('`cwd` parameter must be an absolute path');
     }
 
@@ -117,7 +117,6 @@ export const resolveAppiumHome = _.memoize(
     }
 
     try {
-      cwd = cwd ?? process.cwd();
       const pkg = await readPackageInDir(cwd);
       const status = await getLocalAppiumInfo(pkg, cwd);
       if (
@@ -126,7 +125,7 @@ export const resolveAppiumHome = _.memoize(
       ) {
         return cwd;
       }
-    } catch {}
+    } catch {} // WHO CARES
     return DEFAULT_APPIUM_HOME;
   },
 );

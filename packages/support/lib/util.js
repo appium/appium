@@ -291,17 +291,20 @@ async function isSameDestination (path1, path2, ...pathN) {
 /**
  * Coerces the given number/string to a valid version string
  *
+ * @template {boolean} [Strict=true]
  * @param {string} ver - Version string to coerce
- * @returns {string} Coerced version number or null if the string cannot be
+ * @param {Strict} [strict] - If `true` then an exception will be thrown
+ * if `ver` cannot be coerced
+ * @returns {Strict extends true ? string : string|null} Coerced version number or null if the string cannot be
  * coerced and strict mode is disabled
  * @throws {Error} if strict mode is enabled and `ver` cannot be coerced
  */
-function coerceVersion (ver) {
+function coerceVersion (ver, strict = /** @type {Strict} */(true)) {
   const result = semver.valid(semver.coerce(`${ver}`));
-  if (!result) {
+  if (strict && !result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }
-  return result;
+  return /** @type {Strict extends true ? string : string|null} */(result);
 }
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];

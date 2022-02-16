@@ -4,7 +4,6 @@ import { mkdirp } from '@appium/support';
 import { isPackageChanged } from 'package-changed';
 import path from 'path';
 import { HASHFILE_RELATIVE_PATH } from '../constants';
-import _ from 'lodash';
 import log from '../logger';
 
 /**
@@ -17,12 +16,9 @@ import log from '../logger';
  * @returns {Promise<boolean>} `true` if `package.json` `appiumHome` changed
  */
 export async function packageDidChange (appiumHome) {
-  if (!appiumHome || !_.isString(appiumHome)) {
-    throw new TypeError('appiumHome must be a string');
-  }
   const hashFilename = path.join(appiumHome, HASHFILE_RELATIVE_PATH);
 
-  // types are bad for this package
+  // XXX: the types in `package-changed` seem to be wrong.
 
   /** @type {boolean} */
   let isChanged;
@@ -35,8 +31,8 @@ export async function packageDidChange (appiumHome) {
 
   // first mkdirp the target dir.
   const hashFilenameDir = path.dirname(hashFilename);
+  log.debug(`Creating hash file directory: ${hashFilenameDir}`);
   try {
-    log.debug(`Creating hash file directory: ${hashFilenameDir}`);
     await mkdirp(hashFilenameDir);
   } catch (err) {
     throw new Error(
@@ -45,14 +41,10 @@ export async function packageDidChange (appiumHome) {
   }
 
   try {
-    const result = await isPackageChanged({
+    ({isChanged, writeHash, oldHash, hash} = await isPackageChanged({
       cwd: appiumHome,
       hashFilename: HASHFILE_RELATIVE_PATH,
-    });
-    isChanged = result.isChanged;
-    writeHash = result.writeHash;
-    oldHash = result.oldHash;
-    hash = result.hash;
+    }));
   } catch {
     return true;
   }

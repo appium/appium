@@ -5,8 +5,8 @@ import { rewiremock } from '../helpers';
 const expect = chai.expect;
 
 describe('cli/schema-args', function () {
-  /** @type {import('../../lib/schema/cli-args')} */
-  let schemaArgs;
+  /** @type {import('../../lib/schema/cli-args').toParserArgs} */
+  let toParserArgs;
 
   /**
    * @type {sinon.SinonSandbox}
@@ -15,7 +15,7 @@ describe('cli/schema-args', function () {
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
-    schemaArgs = rewiremock.proxy(() => require('../../lib/schema/cli-args'));
+    ({toParserArgs} = rewiremock.proxy(() => require('../../lib/schema/cli-args')));
   });
 
   afterEach(function () {
@@ -29,11 +29,11 @@ describe('cli/schema-args', function () {
       afterEach(resetSchema);
 
       it('should return a Map', function () {
-        expect(schemaArgs.toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
+        expect(toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
       });
 
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
-        const argDefs = schemaArgs.toParserArgs();
+        const argDefs = toParserArgs();
         const argDefsWithMetavar = [...argDefs].filter((arg) => arg[1].metavar);
         expect(argDefsWithMetavar).not.to.be.empty;
         // is there a more idiomatic way to do this?
@@ -46,7 +46,7 @@ describe('cli/schema-args', function () {
     describe('when schema has not yet been compiled', function () {
       it('should throw', function () {
         resetSchema();
-        expect(() => schemaArgs.toParserArgs()).to.throw(
+        expect(() => toParserArgs()).to.throw(
           SchemaFinalizationError
         );
       });

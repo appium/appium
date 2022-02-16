@@ -4,14 +4,14 @@
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
  */
 
-import {env, fs, mkdirp} from '@appium/support';
+import { env, fs, mkdirp } from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
 import YAML from 'yaml';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
 import log from '../logger';
-import {INSTALL_TYPE_NPM} from './extension-config';
-import {packageDidChange} from './package-changed';
+import { INSTALL_TYPE_NPM } from './extension-config';
+import { packageDidChange } from './package-changed';
 
 /**
  * Default depth to search in directory tree for whatever it is we're looking for.
@@ -36,11 +36,13 @@ const DEFAULT_FIND_EXTENSIONS_OPTS = Object.freeze({
 const CONFIG_SCHEMA_REV = 2;
 
 /**
+ * The name of the prop (`drivers`) used in `extensions.yaml` for drivers.
  * @type {`${typeof DRIVER_TYPE}s`}
  */
 const CONFIG_DATA_DRIVER_KEY = `${DRIVER_TYPE}s`;
 
 /**
+ * The name of the prop (`plugins`) used in `extensions.yaml` for plugins.
  * @type {`${typeof PLUGIN_TYPE}s`}
  */
 const CONFIG_DATA_PLUGIN_KEY = `${PLUGIN_TYPE}s`;
@@ -129,34 +131,51 @@ export class Manifest {
   /**
    * Helps avoid writing multiple times.
    *
-   * If this is `null`, calling {@link Manifest.write} will cause it to be
+   * If this is `undefined`, calling {@link Manifest.write} will cause it to be
    * set to a `Promise`. When the call to `write()` is complete, the `Promise`
-   * will resolve and then this value will be set to `null`.  Concurrent calls
+   * will resolve and then this value will be set to `undefined`.  Concurrent calls
    * made while this value is a `Promise` will return the `Promise` itself.
    * @private
-   * @type {Promise<boolean>?}
+   * @type {Promise<boolean>|undefined}
    */
-  _writing = null;
+  _writing;
 
   /**
    * Helps avoid reading multiple times.
    *
-   * If this is `null`, calling {@link Manifest.read} will cause it to be
+   * If this is `undefined`, calling {@link Manifest.read} will cause it to be
    * set to a `Promise`. When the call to `read()` is complete, the `Promise`
-   * will resolve and then this value will be set to `null`.  Concurrent calls
+   * will resolve and then this value will be set to `undefined`.  Concurrent calls
    * made while this value is a `Promise` will return the `Promise` itself.
    * @private
-   * @type {Promise<void>?}
+   * @type {Promise<void>|undefined}
    */
-  _reading = null;
+  _reading;
 
   /**
+   * Sets internal data to a fresh clone of {@link INITIAL_MANIFEST_DATA}
+   *
+   * Use {@link Manifest.getInstance} instead.
    * @param {string} appiumHome
+   * @private
    */
   constructor (appiumHome) {
     this._appiumHome = appiumHome;
     this._data = _.cloneDeep(INITIAL_MANIFEST_DATA);
   }
+
+  /**
+   * Returns a new or existing {@link Manifest} instance, based on the value of `appiumHome`.
+   *
+   * Maintains one instance per value of `appiumHome`.
+   * @param {string} appiumHome - Path to `APPIUM_HOME`
+   * @returns {Manifest}
+   */
+  static getInstance = _.memoize(function _getInstance (
+    appiumHome,
+  ) {
+    return new Manifest(appiumHome);
+  });
 
   /**
    * Searches `APPIUM_HOME` for installed extensions and adds them to the manifest.
@@ -334,7 +353,7 @@ export class Manifest {
       await this._reading;
       return this._data;
     } finally {
-      this._reading = null;
+      this._reading = undefined;
     }
   }
 
@@ -400,23 +419,10 @@ export class Manifest {
     try {
       return await this._writing;
     } finally {
-      this._writing = null;
+      this._writing = undefined;
     }
   }
 }
-
-/**
- * Factory function for {@link Manifest}.
- *
- * Maintains one instance per value of `appiumHome`.
- */
-export const getManifestInstance = _.memoize(
-  /**
-   * @param {string} appiumHome - Path to `APPIUM_HOME`
-   * @returns {Manifest}
-   */
-  (appiumHome) => new Manifest(appiumHome),
-);
 
 /**
  * Either `driver` or `plugin` rn

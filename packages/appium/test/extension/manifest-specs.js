@@ -25,9 +25,9 @@ describe('Manifest', function () {
   });
 
   /**
-   * @type {typeof import('../../lib/extension/manifest').getManifestInstance}
+   * @type {typeof import('../../lib/extension/manifest').Manifest}
    */
-  let getManifestInstance;
+  let Manifest;
 
   beforeEach(function () {
     const mocks = initMocks();
@@ -36,38 +36,37 @@ describe('Manifest', function () {
     sandbox = mocks.sandbox;
     AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
 
-    /**
-     * @type {typeof import('../../lib/extension/manifest')}
-     */
-    const manifest = rewiremock.proxy(
+    ({Manifest} = rewiremock.proxy(
       () => require('../../lib/extension/manifest'),
       {
         '@appium/support': AppiumSupportMocks,
         'package-changed': PackageChangedMocks,
       },
-    );
-    getManifestInstance = manifest.getManifestInstance;
+    ));
+
+    Manifest.getInstance.cache = new Map();
   });
 
   afterEach(function () {
     sandbox.restore();
-    getManifestInstance.cache = new Map();
   });
 
-  describe('constructor', function () {
-    describe('when called twice with the same `appiumHome` value', function () {
-      it('should return the same object both times', function () {
-        const firstInstance = getManifestInstance('/some/path');
-        const secondInstance = getManifestInstance('/some/path');
-        expect(firstInstance).to.equal(secondInstance);
+  describe('class method', function () {
+    describe('getInstance()', function () {
+      describe('when called twice with the same `appiumHome` value', function () {
+        it('should return the same object both times', function () {
+          const firstInstance = Manifest.getInstance('/some/path');
+          const secondInstance = Manifest.getInstance('/some/path');
+          expect(firstInstance).to.equal(secondInstance);
+        });
       });
-    });
 
-    describe('when called twice with different `appiumHome` values', function () {
-      it('should return different objects', function () {
-        const firstInstance = getManifestInstance('/some/path');
-        const secondInstance = getManifestInstance('/some/other/path');
-        expect(firstInstance).to.not.equal(secondInstance);
+      describe('when called twice with different `appiumHome` values', function () {
+        it('should return different objects', function () {
+          const firstInstance = Manifest.getInstance('/some/path');
+          const secondInstance = Manifest.getInstance('/some/other/path');
+          expect(firstInstance).to.not.equal(secondInstance);
+        });
       });
     });
   });
@@ -75,7 +74,7 @@ describe('Manifest', function () {
   describe('property', function () {
     describe('filepath', function () {
       it('should not be writable', function () {
-        const instance = getManifestInstance('/some/path');
+        const instance = Manifest.getInstance('/some/path');
         expect(() => {
           // @ts-ignore
           instance.appiumHome = '/some/other/path';
@@ -89,8 +88,8 @@ describe('Manifest', function () {
     let manifest;
 
     beforeEach(function () {
-      getManifestInstance.cache = new Map();
-      manifest = getManifestInstance('/some/path');
+      Manifest.getInstance.cache = new Map();
+      manifest = Manifest.getInstance('/some/path');
     });
 
     describe('read()', function () {

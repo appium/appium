@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import log from '../logger';
 import { USE_ALL_PLUGINS } from '../constants';
-import { getManifestInstance } from './manifest';
+import { Manifest } from './manifest';
 import { DriverConfig } from './driver-config';
 import { PluginConfig } from './plugin-config';
 
@@ -19,10 +19,10 @@ import { PluginConfig } from './plugin-config';
  * @returns {Promise<ExtensionConfigs>}
  */
 export async function loadExtensions (appiumHome) {
-  const io = getManifestInstance(appiumHome);
-  const {drivers, plugins} = await io.read();
-  const driverConfig = DriverConfig.create(io, {extData: drivers});
-  const pluginConfig = PluginConfig.create(io, {extData: plugins});
+  const manifest = Manifest.getInstance(appiumHome);
+  const {drivers, plugins} = await manifest.read();
+  const driverConfig = DriverConfig.create(manifest, {extData: drivers});
+  const pluginConfig = PluginConfig.create(manifest, {extData: plugins});
   return {driverConfig, pluginConfig};
 }
 

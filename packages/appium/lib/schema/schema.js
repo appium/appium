@@ -10,11 +10,12 @@ import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
 import {keywords} from './keywords';
 
 /**
- * A Map where you can set properties, but only once. And you can't remove anything. So there.
+ * Key/value pairs go in... but they don't come out.
+ *
  * @template K,V
  * @extends {Map<K,V>}
  */
-export class ReadonlyMap extends Map {
+export class RoachHotelMap extends Map {
   /**
    * @param {K} key
    * @param {V} value
@@ -35,7 +36,7 @@ export class ReadonlyMap extends Map {
   }
 
   clear () {
-    throw new Error(`Cannot clear ReadonlyMap`);
+    throw new Error(`Cannot clear RoachHotelMap`);
   }
 }
 
@@ -57,9 +58,9 @@ class AppiumSchema {
    *
    * Used to provide easy lookups of argument metadata when converting between different representations of those arguments.
    * @private
-   * @type {ReadonlyMap<string,ArgSpec>}
+   * @type {RoachHotelMap<string,ArgSpec>}
    */
-  _argSpecs = new ReadonlyMap();
+  _argSpecs = new RoachHotelMap();
 
   /**
    * A map of extension types to extension names to schema objects.
@@ -290,7 +291,7 @@ class AppiumSchema {
     for (const schemaId of Object.keys(this._finalizedSchemas ?? {})) {
       this._ajv.removeSchema(schemaId);
     }
-    this._argSpecs = new ReadonlyMap();
+    this._argSpecs = new RoachHotelMap();
     this._registeredSchemas = {
       [DRIVER_TYPE]: new Map(),
       [PLUGIN_TYPE]: new Map(),

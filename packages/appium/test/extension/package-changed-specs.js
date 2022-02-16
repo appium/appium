@@ -7,14 +7,15 @@ import { initMocks } from './mocks';
 const {expect} = chai;
 
 describe('package-changed', function () {
-  /** @type {typeof import('../../lib/extension/package-changed')} */
-  let packageChanged;
+  /** @type {typeof import('../../lib/extension/package-changed').packageDidChange} */
+  let packageDidChange;
 
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
   /** @type {import('./mocks').PackageChangedMocks} */
   let PackageChangedMocks;
+
   /** @type {import('./mocks').AppiumSupportMocks} */
   let AppiumSupportMocks;
 
@@ -23,13 +24,13 @@ describe('package-changed', function () {
     PackageChangedMocks = mocks.PackageChangedMocks;
     AppiumSupportMocks = mocks.AppiumSupportMocks;
     sandbox = mocks.sandbox;
-    packageChanged = rewiremock.proxy(
+    ({packageDidChange} = rewiremock.proxy(
       () => require('../../lib/extension/package-changed'),
       {
         'package-changed': PackageChangedMocks,
         '@appium/support': AppiumSupportMocks,
       },
-    );
+    ));
   });
 
   afterEach(function () {
@@ -37,19 +38,11 @@ describe('package-changed', function () {
   });
 
   describe('packageDidChange()', function () {
-    /** @type {typeof packageChanged['packageDidChange']} */
-    let packageDidChange;
-
-    beforeEach(function () {
-      packageDidChange = packageChanged.packageDidChange;
-    });
-
     describe('when called without an `appiumHome`', function () {
       it('should reject', async function () {
         // @ts-expect-error
         await expect(packageDidChange()).to.be.rejectedWith(
-          TypeError,
-          /appiumHome must be a string/i,
+          TypeError // from passing `undefined` to `path.join()`
         );
       });
     });

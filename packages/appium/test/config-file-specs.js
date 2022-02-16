@@ -35,9 +35,15 @@ describe('config-file', function () {
 
   /**
    * `readConfigFile()` from an isolated `config-file` module
-   * @type {typeof import('../lib/config-file').readConfigFile}
+   * @type {import('../lib/config-file').readConfigFile}
    */
   let readConfigFile;
+
+  /**
+   * @type {import('../lib/config-file').formatErrors}
+   */
+  let formatErrors;
+
   /**
    * Mock instance of `lilconfig` containing stubs for
    * `lilconfig#search()` and `lilconfig#load`.
@@ -45,11 +51,6 @@ describe('config-file', function () {
    * @type {sinon.SinonStubbedInstance<ReturnType<import('lilconfig').lilconfig>>}
    */
   let lc;
-
-  /**
-   * @type {typeof import('../lib/config-file')}
-   */
-  let configFileModule;
 
   let mocks;
 
@@ -103,8 +104,7 @@ describe('config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    configFileModule = rewiremock.proxy(() => require('../lib/config-file'), mocks);
-    readConfigFile = configFileModule.readConfigFile;
+    ({readConfigFile, formatErrors} = rewiremock.proxy(() => require('../lib/config-file'), mocks));
 
     // just want to be extra-sure `validate()` happens
     sandbox.spy(schema, 'validate');
@@ -326,7 +326,7 @@ describe('config-file', function () {
   describe('formatErrors()', function () {
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
-        expect(() => configFileModule.formatErrors([])).to.throw(
+        expect(() => formatErrors([])).to.throw(
           TypeError,
           'Array of errors must be non-empty',
         );
@@ -335,8 +335,7 @@ describe('config-file', function () {
 
     describe('when provided `errors` as `undefined`', function () {
       it('should throw', function () {
-        // @ts-ignore
-        expect(() => configFileModule.formatErrors()).to.throw(
+        expect(() => formatErrors()).to.throw(
           TypeError,
           'Array of errors must be non-empty',
         );
@@ -345,15 +344,15 @@ describe('config-file', function () {
 
     describe('when provided `errors` as a non-empty array', function () {
       it('should return a string', function () {
-        // @ts-ignore
-        expect(configFileModule.formatErrors([{}])).to.be.a('string');
+        // @ts-expect-error
+        expect(formatErrors([{}])).to.be.a('string');
       });
     });
 
     describe('when `opts.json` is a string', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
-        // @ts-ignore
-        configFileModule.formatErrors([{}], {}, {json: '{"foo": "bar"}'});
+        // @ts-expect-error
+        formatErrors([{}], {}, {json: '{"foo": "bar"}'});
         expect(mocks['@sidvind/better-ajv-errors']).to.have.been.calledWith(
           schema.getSchema(),
           {},

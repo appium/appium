@@ -2,7 +2,7 @@
 
 import { tempDir, fs } from '@appium/support';
 import { loadExtensions } from '../../lib/extension';
-import { getManifestInstance } from '../../lib/extension/manifest';
+import { Manifest } from '../../lib/extension/manifest';
 import DriverCommand from '../../lib/cli/driver-command';
 import sinon from 'sinon';
 
@@ -22,7 +22,7 @@ describe('DriverCommand', function () {
   beforeEach(async function () {
     sandbox = sinon.createSandbox();
     appiumHome = await tempDir.openDir();
-    getManifestInstance.cache = new Map();
+    Manifest.getInstance.cache = new Map();
     sandbox.stub(fs, 'exists').resolves(false);
     config = (await loadExtensions(appiumHome)).driverConfig;
     config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};

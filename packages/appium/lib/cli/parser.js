@@ -4,7 +4,7 @@ import { fs } from '@appium/support';
 import { ArgumentParser } from 'argparse';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from '../constants';
+import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND } from '../constants';
 import { finalizeSchema, getArgSpec, hasArgSpec } from '../schema';
 import { rootDir } from '../config';
 import {

@@ -42,30 +42,30 @@ export class ExtensionConfig {
   /** @type {ExtensionLogFn} */
   log;
 
-  /** @type {import('./manifest').Manifest} */
-  io;
+  /** @type {Manifest} */
+  manifest;
 
   /**
    * @protected
    * @param {ExtType} extensionType - Type of extension
-   * @param {import('./manifest').Manifest} io - IO object
+   * @param {Manifest} manifest - `Manifest` instance
    * @param {ExtensionLogFn} [logFn]
    */
-  constructor (extensionType, io, logFn) {
+  constructor (extensionType, manifest, logFn) {
     const logger = _.isFunction(logFn) ? logFn : log.error.bind(log);
     this.extensionType = extensionType;
     this.configKey = `${extensionType}s`;
-    this.installedExtensions = io.getExtensionData(extensionType);
+    this.installedExtensions = manifest.getExtensionData(extensionType);
     this.log = logger;
-    this.io = io;
+    this.manifest = manifest;
   }
 
   get manifestPath () {
-    return this.io.manifestPath;
+    return this.manifest.manifestPath;
   }
 
   get appiumHome () {
-    return this.io.appiumHome;
+    return this.manifest.appiumHome;
   }
 
   /**
@@ -230,9 +230,9 @@ export class ExtensionConfig {
    * @returns {Promise<void>}
    */
   async addExtension (extName, extData, {write = true} = {}) {
-    await this.io.addExtension(this.extensionType, extName, extData);
+    await this.manifest.addExtension(this.extensionType, extName, extData);
     if (write) {
-      await this.io.write();
+      await this.manifest.write();
     }
   }
 
@@ -248,7 +248,7 @@ export class ExtensionConfig {
       ...extData,
     };
     if (write) {
-      await this.io.write();
+      await this.manifest.write();
     }
   }
 
@@ -260,7 +260,7 @@ export class ExtensionConfig {
   async removeExtension (extName, {write = true} = {}) {
     delete this.installedExtensions[extName];
     if (write) {
-      await this.io.write();
+      await this.manifest.write();
     }
   }
 
@@ -419,6 +419,7 @@ export {
 
 /**
  * @typedef {import('./manifest').ExtensionType} ExtensionType
+ * @typedef {import('./manifest').Manifest} Manifest
  */
 
 /**

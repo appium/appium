@@ -1,10 +1,10 @@
 // @ts-check
 
 import _ from 'lodash';
-import log from '../logger';
 import { USE_ALL_PLUGINS } from '../constants';
-import { Manifest } from './manifest';
+import log from '../logger';
 import { DriverConfig } from './driver-config';
+import { Manifest } from './manifest';
 import { PluginConfig } from './plugin-config';
 
 /**
@@ -21,8 +21,12 @@ import { PluginConfig } from './plugin-config';
 export async function loadExtensions (appiumHome) {
   const manifest = Manifest.getInstance(appiumHome);
   const {drivers, plugins} = await manifest.read();
-  const driverConfig = DriverConfig.create(manifest, {extData: drivers});
-  const pluginConfig = PluginConfig.create(manifest, {extData: plugins});
+  const driverConfig =
+    DriverConfig.getInstance(manifest) ??
+    DriverConfig.create(manifest, {extData: drivers});
+  const pluginConfig =
+    PluginConfig.getInstance(manifest) ??
+    PluginConfig.create(manifest, {extData: plugins});
   return {driverConfig, pluginConfig};
 }
 
@@ -37,22 +41,29 @@ export async function loadExtensions (appiumHome) {
  * @returns {import('./manifest').PluginClass[]}
  */
 export function getActivePlugins (pluginConfig, usePlugins = []) {
-  return _.compact(Object.keys(pluginConfig.installedExtensions).filter((pluginName) =>
-    _.includes(usePlugins, pluginName) ||
-    (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS)
-  ).map((pluginName) => {
-    try {
-      log.info(`Attempting to load plugin ${pluginName}...`);
-      const PluginClass = pluginConfig.require(pluginName);
+  return _.compact(
+    Object.keys(pluginConfig.installedExtensions)
+      .filter(
+        (pluginName) =>
+          _.includes(usePlugins, pluginName) ||
+          (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS),
+      )
+      .map((pluginName) => {
+        try {
+          log.info(`Attempting to load plugin ${pluginName}...`);
+          const PluginClass = pluginConfig.require(pluginName);
 
-      PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
-      return PluginClass;
-    } catch (err) {
-      log.error(`Could not load plugin '${pluginName}', so it will not be available. Error ` +
-                   `in loading the plugin was: ${err.message}`);
-      log.debug(err.stack);
-    }
-  }));
+          PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
+          return PluginClass;
+        } catch (err) {
+          log.error(
+            `Could not load plugin '${pluginName}', so it will not be available. Error ` +
+              `in loading the plugin was: ${err.message}`,
+          );
+          log.debug(err.stack);
+        }
+      }),
+  );
 }
 
 /**
@@ -64,24 +75,29 @@ export function getActivePlugins (pluginConfig, usePlugins = []) {
  * @param {string[]} [useDrivers] - optional list of drivers to load
  */
 export function getActiveDrivers (driverConfig, useDrivers = []) {
-  return _.compact(Object.keys(driverConfig.installedExtensions).filter((driverName) =>
-    _.includes(useDrivers, driverName) || useDrivers.length === 0
-  ).map((driverName) => {
-    try {
-      log.info(`Attempting to load driver ${driverName}...`);
-      return driverConfig.require(driverName);
-    } catch (err) {
-      log.error(`Could not load driver '${driverName}', so it will not be available. Error ` +
-                   `in loading the driver was: ${err.message}`);
-      log.debug(err.stack);
-    }
-  }));
+  return _.compact(
+    Object.keys(driverConfig.installedExtensions)
+      .filter(
+        (driverName) =>
+          _.includes(useDrivers, driverName) || useDrivers.length === 0,
+      )
+      .map((driverName) => {
+        try {
+          log.info(`Attempting to load driver ${driverName}...`);
+          return driverConfig.require(driverName);
+        } catch (err) {
+          log.error(
+            `Could not load driver '${driverName}', so it will not be available. Error ` +
+              `in loading the driver was: ${err.message}`,
+          );
+          log.debug(err.stack);
+        }
+      }),
+  );
 }
-
 
 /**
  * @typedef {Object} ExtensionConfigs
  * @property {DriverConfig} driverConfig
  * @property {PluginConfig} pluginConfig
  */
-

@@ -90,7 +90,10 @@ describe('FakePlugin', function () {
 
     before(async function () {
       const args = {appiumHome, port, address: TEST_HOST, usePlugins: ['other1', 'other2']};
-      server = /** @type {typeof server} */(await appiumServer(args));
+      server = /** @type {typeof server} */(
+        // @ts-expect-error
+        await appiumServer(args)
+      );
     });
 
     after(async function () {
@@ -131,7 +134,10 @@ describe('FakePlugin', function () {
         // then start server if we need to
         const usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
         const args = {appiumHome, port, address: TEST_HOST, usePlugins, useDrivers: ['fake']};
-        server = /** @type {typeof server} */(await appiumServer(args));
+        server = /** @type {typeof server} */(
+          // @ts-expect-error
+          await appiumServer(args)
+        );
       });
       after(async function () {
         if (server) {
@@ -215,7 +221,10 @@ describe('FakePlugin', function () {
     before(async function () {
       // then start server if we need to
       const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
-      server = /** @type {typeof server} */(await appiumServer(args));
+      server = /** @type {typeof server} */(
+        // @ts-expect-error
+        await appiumServer(args)
+      );
     });
     after(async function () {
       if (server) {

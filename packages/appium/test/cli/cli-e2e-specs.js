@@ -147,7 +147,7 @@ describe('CLI behavior', function () {
       });
 
       describe('when a different driver is installed via appium', function () {
-        const testDriverPath = path.join(__dirname, 'fixtures', 'test-driver');
+        const testDriverPath = path.dirname(resolveFixture('cli/test-driver/package.json'));
         /** @type {string} */
         let oldHash;
         /** @type {string} */

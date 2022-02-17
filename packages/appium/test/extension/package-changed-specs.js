@@ -20,10 +20,7 @@ describe('package-changed', function () {
   let AppiumSupportMocks;
 
   beforeEach(function () {
-    const mocks = initMocks();
-    PackageChangedMocks = mocks.PackageChangedMocks;
-    AppiumSupportMocks = mocks.AppiumSupportMocks;
-    sandbox = mocks.sandbox;
+    ({PackageChangedMocks, AppiumSupportMocks, sandbox} = initMocks());
     ({packageDidChange} = rewiremock.proxy(
       () => require('../../lib/extension/package-changed'),
       {

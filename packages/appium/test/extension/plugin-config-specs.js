@@ -37,10 +37,7 @@ describe('PluginConfig', function () {
 
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
-    const mocks = initMocks();
-    AppiumSupportMocks = mocks.AppiumSupportMocks;
-    ResolveFromMocks = mocks.ResolveFromMocks;
-    sandbox = mocks.sandbox;
+    ({AppiumSupportMocks, ResolveFromMocks, sandbox} = initMocks());
     AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(
       () => require('../../lib/extension/plugin-config'),

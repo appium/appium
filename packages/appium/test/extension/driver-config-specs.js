@@ -37,10 +37,9 @@ describe('DriverConfig', function () {
 
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
-    const mocks = initMocks();
-    AppiumSupportMocks = mocks.AppiumSupportMocks;
-    ResolveFromMocks = mocks.ResolveFromMocks;
-    sandbox = mocks.sandbox;
+    ({AppiumSupportMocks,
+      ResolveFromMocks,
+      sandbox} = initMocks());
     AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
     ({DriverConfig} = rewiremock.proxy(
       () => require('../../lib/extension/driver-config'),

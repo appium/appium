@@ -30,10 +30,7 @@ describe('Manifest', function () {
   let Manifest;
 
   beforeEach(function () {
-    const mocks = initMocks();
-    PackageChangedMocks = mocks.PackageChangedMocks;
-    AppiumSupportMocks = mocks.AppiumSupportMocks;
-    sandbox = mocks.sandbox;
+    ({PackageChangedMocks, AppiumSupportMocks, sandbox} = initMocks());
     AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
 
     ({Manifest} = rewiremock.proxy(

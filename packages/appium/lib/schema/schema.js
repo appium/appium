@@ -4,10 +4,10 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
 import appiumConfigSchema from './appium-config-schema';
-import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
-import {keywords} from './keywords';
+import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
+import { keywords } from './keywords';
 
 /**
  * Key/value pairs go in... but they don't come out.

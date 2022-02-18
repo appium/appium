@@ -292,6 +292,10 @@ async function init (args) {
  * @returns {Promise<import('express').Express|undefined>}
  */
 async function main (args) {
+  // Appium drivers often use process events to schedule proper exit cleanup
+  // The default value of 10 causes an ugly warning to appear in logs on server startup
+  process.setMaxListeners(100);
+
   const {appiumDriver, parsedArgs} = await init(args);
 
   if (!appiumDriver || !parsedArgs) {

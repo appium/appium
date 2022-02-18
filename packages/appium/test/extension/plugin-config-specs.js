@@ -20,11 +20,11 @@ describe('PluginConfig', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').AppiumSupportMocks} */
-  let AppiumSupportMocks;
+  /** @type {import('./mocks').MockAppiumSupport} */
+  let MockAppiumSupport;
 
-  /** @type {import('./mocks').ResolveFromMocks} */
-  let ResolveFromMocks;
+  /** @type {import('./mocks').MockResolveFrom} */
+  let MockResolveFrom;
 
   /**
    * @type {typeof import('../../lib/extension/plugin-config').PluginConfig}
@@ -36,15 +36,14 @@ describe('PluginConfig', function () {
   });
 
   beforeEach(function () {
+    /** @type {import('./mocks').Overrides} */
+    let overrides;
     manifest = Manifest.getInstance('/somewhere/');
-    ({AppiumSupportMocks, ResolveFromMocks, sandbox} = initMocks());
-    AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
+    ({MockAppiumSupport, MockResolveFrom, sandbox, overrides} = initMocks());
+    MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(
       () => require('../../lib/extension/plugin-config'),
-      {
-        '@appium/support': AppiumSupportMocks,
-        'resolve-from': ResolveFromMocks,
-      },
+      overrides,
     ));
     resetSchema();
   });
@@ -213,7 +212,7 @@ describe('PluginConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              ResolveFromMocks.returns(
+              MockResolveFrom.returns(
                 require.resolve('../fixtures/plugin.schema'),
               );
             });
@@ -304,7 +303,7 @@ describe('PluginConfig', function () {
           installType: 'npm',
           installSpec: 'some-pkg',
         };
-        ResolveFromMocks.returns(resolveFixture('plugin.schema.js'));
+        MockResolveFrom.returns(resolveFixture('plugin.schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
@@ -331,7 +330,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', function () {
             pluginConfig.readExtensionSchema(extName, extData);
-            ResolveFromMocks.returns(resolveFixture('driver.schema.js'));
+            MockResolveFrom.returns(resolveFixture('driver.schema.js'));
             expect(() =>
               pluginConfig.readExtensionSchema(extName, extData),
             ).to.throw(/conflicts with an existing schema/i);
@@ -342,7 +341,7 @@ describe('PluginConfig', function () {
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', function () {
           pluginConfig.readExtensionSchema(extName, extData);
-          expect(ResolveFromMocks).to.have.been.calledOnce;
+          expect(MockResolveFrom).to.have.been.calledOnce;
         });
       });
     });

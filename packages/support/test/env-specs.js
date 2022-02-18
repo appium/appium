@@ -1,8 +1,8 @@
 // @ts-check
 
 import path from 'path';
-import sinon from 'sinon';
 import { rewiremock } from './helpers';
+import { initMocks } from './mocks';
 
 const {expect} = chai;
 
@@ -10,38 +10,33 @@ describe('env', function () {
   /** @type {typeof import('../lib/env')} */
   let env;
 
-  /** @type {import('sinon').SinonSandbox} */
+  /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /**
-   * @type { {'read-pkg': SinonStub<any[],Promise<any>>, 'resolve-from': SinonStub<any[],string>, '../lib/fs.js': { exists: SinonStub<any[],Promise<boolean>> } } }
-   */
-  let mocks;
+  /** @type {import('./mocks').MockResolveFrom} */
+  let MockResolveFrom;
+
+  /** @type {import('./mocks').MockReadPkgUp} */
+  let MockReadPkgUp;
 
   /** @type {string|undefined} */
   let envAppiumHome;
 
-  /**
-   * @type {import('type-fest').PackageJson}
-   */
-  let pkg;
-
   beforeEach(function () {
-    sandbox = sinon.createSandbox();
+    let overrides;
+
+    ({
+      MockResolveFrom,
+      MockReadPkgUp,
+      sandbox,
+      overrides
+    } = initMocks());
 
     // ensure an APPIUM_HOME in the environment does not befoul our tests
     envAppiumHome = process.env.APPIUM_HOME;
     delete process.env.APPIUM_HOME;
 
-    pkg = {};
-    mocks = {
-      'read-pkg': sandbox.stub().resolves(pkg),
-      'resolve-from': sandbox.stub().returns('/some/path/to/package.json'),
-      '../lib/fs.js': {
-        exists: sandbox.stub().resolves(false),
-      },
-    };
-    env = rewiremock.proxy(() => require('../lib/env'), mocks);
+    env = rewiremock.proxy(() => require('../lib/env'), overrides);
   });
 
   describe('resolveManifestPath()', function () {
@@ -55,7 +50,7 @@ describe('env', function () {
 
     describe('when appium is not resolvable from cwd', function () {
       beforeEach(function () {
-        mocks['resolve-from'].throws();
+        MockResolveFrom.throws();
       });
 
       it('should return a path relative to the default APPIUM_HOME', async function () {
@@ -67,10 +62,6 @@ describe('env', function () {
 
     describe('when provided an explicit APPIUM_HOME', function () {
       describe('when a manifest file exists there', function () {
-        beforeEach(function () {
-          mocks['../lib/fs.js'].exists.resolves(true);
-        });
-
         it('it should return the existing path', async function () {
           expect(
             await env.resolveManifestPath('/somewhere/over/the/rainbow'),
@@ -109,10 +100,6 @@ describe('env', function () {
 
     describe('when APPIUM_HOME is not set in env', function () {
       describe('when Appium is resolvable from cwd', function () {
-        beforeEach(function () {
-          mocks['resolve-from'].returns('/some/path/to/appium/main.js');
-        });
-
         it('should resolve with the identity', async function () {
           await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
             '/somewhere',
@@ -130,7 +117,7 @@ describe('env', function () {
 
       describe('when Appium is not resolvable from cwd', function () {
         beforeEach(function () {
-          mocks['resolve-from'].throws();
+          MockResolveFrom.throws();
         });
 
         describe('when `appium` is not a dependency of the local package', function () {
@@ -144,10 +131,13 @@ describe('env', function () {
         describe('when `appium` is a dependency of the local package', function () {
           describe('when the `appium` dependency spec begins with `file:`', function () {
             beforeEach(function () {
-              mocks['read-pkg'].resolves({
-                dependencies: {
-                  appium: 'file:/somewhere',
+              MockReadPkgUp.resolves({
+                packageJson: {
+                  dependencies: {
+                    appium: 'file:/somewhere',
+                  },
                 },
+                path: '/some/path/to/package.json',
               });
             });
 
@@ -160,11 +150,17 @@ describe('env', function () {
 
           describe('when the `appium` dependency spec does not begin with `file:`', function () {
             beforeEach(function () {
-              mocks['read-pkg'].resolves({
-                dependencies: {
-                  appium: 'next',
-                },
-              });
+              MockReadPkgUp.callsFake(
+                async ({cwd = process.cwd()}) =>
+                  await {
+                    packageJson: {
+                      dependencies: {
+                        appium: 'next',
+                      },
+                    },
+                    path: path.join(cwd, 'package.json'),
+                  },
+              );
             });
 
             it('should resolve with the identity', async function () {
@@ -178,7 +174,7 @@ describe('env', function () {
 
       describe('when package.json cannot be read (for whatever reason)', function () {
         beforeEach(function () {
-          mocks['read-pkg'].rejects(new Error('on the fritz'));
+          MockReadPkgUp.rejects(new Error('on the fritz'));
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -195,8 +191,3 @@ describe('env', function () {
     process.env.APPIUM_HOME = envAppiumHome;
   });
 });
-
-/**
- * @template P,R
- * @typedef {import('sinon').SinonStub<P,R>} SinonStub<P,R>
- */

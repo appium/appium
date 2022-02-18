@@ -20,11 +20,11 @@ describe('DriverConfig', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').AppiumSupportMocks} */
-  let AppiumSupportMocks;
+  /** @type {import('./mocks').MockAppiumSupport} */
+  let MockAppiumSupport;
 
-  /** @type {import('./mocks').ResolveFromMocks} */
-  let ResolveFromMocks;
+  /** @type {import('./mocks').MockResolveFrom} */
+  let MockResolveFrom;
 
   /**
     * @type {typeof import('../../lib/extension/driver-config').DriverConfig}
@@ -37,16 +37,16 @@ describe('DriverConfig', function () {
 
   beforeEach(function () {
     manifest = Manifest.getInstance('/somewhere/');
-    ({AppiumSupportMocks,
-      ResolveFromMocks,
+    /** @type {import('./mocks').Overrides} */
+    let overrides;
+    ({MockAppiumSupport,
+      MockResolveFrom,
+      overrides,
       sandbox} = initMocks());
-    AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
+    MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({DriverConfig} = rewiremock.proxy(
       () => require('../../lib/extension/driver-config'),
-      {
-        '@appium/support': AppiumSupportMocks,
-        'resolve-from': ResolveFromMocks,
-      },
+      overrides,
     ));
     resetSchema();
   });
@@ -271,7 +271,7 @@ describe('DriverConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              ResolveFromMocks.returns(
+              MockResolveFrom.returns(
                 require.resolve('../fixtures/driver.schema'),
               );
             });
@@ -315,7 +315,7 @@ describe('DriverConfig', function () {
           installSpec: 'some-pkg',
           installType: 'npm',
         };
-        ResolveFromMocks.returns(resolveFixture('driver.schema.js'));
+        MockResolveFrom.returns(resolveFixture('driver.schema.js'));
         driverConfig = DriverConfig.create(manifest);
       });
 
@@ -343,7 +343,7 @@ describe('DriverConfig', function () {
           driverConfig.readExtensionSchema(extName, extData);
 
           // we don't have access to the schema registration cache directly, so this is as close as we can get.
-          expect(ResolveFromMocks).to.have.been.calledOnce;
+          expect(MockResolveFrom).to.have.been.calledOnce;
         });
       });
     });

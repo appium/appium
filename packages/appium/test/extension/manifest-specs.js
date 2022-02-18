@@ -15,10 +15,11 @@ describe('Manifest', function () {
   /** @type {string} */
   let yamlFixture;
 
-  /** @type {import('./mocks').PackageChangedMocks} */
-  let PackageChangedMocks;
-  /** @type {import('./mocks').AppiumSupportMocks} */
-  let AppiumSupportMocks;
+  /** @type {import('./mocks').MockPackageChanged} */
+  let MockPackageChanged;
+
+  /** @type {import('./mocks').MockAppiumSupport} */
+  let MockAppiumSupport;
 
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('extensions.yaml'), 'utf8');
@@ -30,15 +31,13 @@ describe('Manifest', function () {
   let Manifest;
 
   beforeEach(function () {
-    ({PackageChangedMocks, AppiumSupportMocks, sandbox} = initMocks());
-    AppiumSupportMocks.fs.readFile.resolves(yamlFixture);
+    let overrides;
+    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
+    MockAppiumSupport.fs.readFile.resolves(yamlFixture);
 
     ({Manifest} = rewiremock.proxy(
       () => require('../../lib/extension/manifest'),
-      {
-        '@appium/support': AppiumSupportMocks,
-        'package-changed': PackageChangedMocks,
-      },
+      overrides,
     ));
 
     Manifest.getInstance.cache = new Map();
@@ -99,18 +98,18 @@ describe('Manifest', function () {
           /** @type {NodeJS.ErrnoException} */
           const err = new Error();
           err.code = 'ENOENT';
-          AppiumSupportMocks.fs.readFile.rejects(err);
+          MockAppiumSupport.fs.readFile.rejects(err);
           await manifest.read();
         });
 
         it('should create a new file', function () {
-          expect(AppiumSupportMocks.fs.writeFile).to.be.calledOnce;
+          expect(MockAppiumSupport.fs.writeFile).to.be.calledOnce;
         });
       });
 
       describe('when the file is invalid YAML', function () {
         beforeEach(function () {
-          AppiumSupportMocks.fs.readFile.resolves('{');
+          MockAppiumSupport.fs.readFile.resolves('{');
         });
         it('should reject', async function () {
           await expect(manifest.read()).to.be.rejectedWith(
@@ -122,7 +121,7 @@ describe('Manifest', function () {
 
       describe('when the manifest path cannot be determined', function () {
         beforeEach(function () {
-          AppiumSupportMocks.env.resolveManifestPath.rejects(
+          MockAppiumSupport.env.resolveManifestPath.rejects(
             new Error('Could not determine manifest path'),
           );
         });
@@ -140,7 +139,7 @@ describe('Manifest', function () {
           await B.all([manifest.read(), manifest.read()]);
         });
         it('should not read the file twice', function () {
-          expect(AppiumSupportMocks.fs.readFile).to.have.been.calledOnceWith(
+          expect(MockAppiumSupport.fs.readFile).to.have.been.calledOnceWith(
             '/some/path/extensions.yaml',
             'utf8',
           );
@@ -154,7 +153,7 @@ describe('Manifest', function () {
         });
 
         it('should attempt to read the file at `filepath`', function () {
-          expect(AppiumSupportMocks.fs.readFile).to.have.been.calledOnceWith(
+          expect(MockAppiumSupport.fs.readFile).to.have.been.calledOnceWith(
             '/some/path/extensions.yaml',
             'utf8',
           );
@@ -168,8 +167,8 @@ describe('Manifest', function () {
 
         describe('when a local `appium` is installed', function () {
           beforeEach(function () {
-            AppiumSupportMocks.env.isLocalAppiumInstalled.returns(true);
-            PackageChangedMocks.isPackageChanged.resolves({
+            MockAppiumSupport.env.isLocalAppiumInstalled.returns(true);
+            MockPackageChanged.isPackageChanged.resolves({
               isChanged: true,
               writeHash: sandbox.stub(),
               hash: 'foasdif',
@@ -184,7 +183,7 @@ describe('Manifest', function () {
 
           it('should check if the `package.json` has changed', async function () {
             await manifest.read();
-            expect(PackageChangedMocks.isPackageChanged).to.be.calledOnce;
+            expect(MockPackageChanged.isPackageChanged).to.be.calledOnce;
           });
         });
       });
@@ -217,7 +216,7 @@ describe('Manifest', function () {
         describe('when called again before the first call resolves', function () {
           it('should not write the file twice', async function () {
             await B.all([manifest.write(), manifest.write()]);
-            expect(AppiumSupportMocks.fs.writeFile).to.have.been.calledOnce;
+            expect(MockAppiumSupport.fs.writeFile).to.have.been.calledOnce;
           });
         });
 
@@ -245,7 +244,7 @@ describe('Manifest', function () {
 
         describe('when the manifest file could not be written', function () {
           beforeEach(function () {
-            AppiumSupportMocks.fs.writeFile.rejects();
+            MockAppiumSupport.fs.writeFile.rejects();
             data.drivers.foo = extData;
           });
 
@@ -392,7 +391,7 @@ describe('Manifest', function () {
         next.onSecondCall().resolves({
           done: true,
         });
-        AppiumSupportMocks.fs.walk.returns(
+        MockAppiumSupport.fs.walk.returns(
           /** @type {import('klaw').Walker} */ (
             /** @type {unknown} */ ({
               [Symbol.asyncIterator]: sandbox.stub().returns({
@@ -401,19 +400,19 @@ describe('Manifest', function () {
             })
           ),
         );
-        AppiumSupportMocks.env.readPackageInDir.resolves(
-          /** @type {import('read-pkg').NormalizedPackageJson} */ ({
-            name: 'foo',
-            version: '1.0.0',
-            appium: {
-              automationName: 'derp',
-              mainClass: 'SomeClass',
-              pkgName: 'derp',
-              platformNames: ['dogs', 'cats'],
-              driverName: 'myDriver',
-            },
-          }),
-        );
+        MockAppiumSupport.env.readPackageInDir.resolves({
+          name: 'foo',
+          version: '1.0.0',
+          readme: 'stuff!',
+          _id: 'totally unique',
+          appium: {
+            automationName: 'derp',
+            mainClass: 'SomeClass',
+            pkgName: 'derp',
+            platformNames: ['dogs', 'cats'],
+            driverName: 'myDriver',
+          },
+        });
       });
 
       it('should add a found extension', async function () {

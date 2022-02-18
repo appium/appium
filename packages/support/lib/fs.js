@@ -40,11 +40,19 @@ const fs = {
       }
     }
   },
-  async copyFile (source, destination, ...otherArgs) {
+  /**
+   * Copies files _and entire directories_
+   * @param {string} source - Source to copy
+   * @param {string} destination - Destination to copy to
+   * @param {...any} args - Additional arguments to pass to `ncp`
+   * @see https://npm.im/ncp
+   * @returns {Promise<void>}
+   */
+  async copyFile (source, destination, ...args) {
     if (!await fs.hasAccess(source)) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
-    return await ncpAsync(source, destination, ...otherArgs);
+    return await ncpAsync(source, destination, ...args);
   },
   async md5 (filePath) {
     return await fs.hash(filePath, 'md5');

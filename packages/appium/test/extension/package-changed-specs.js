@@ -13,19 +13,19 @@ describe('package-changed', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').PackageChangedMocks} */
-  let PackageChangedMocks;
+  /** @type {import('./mocks').MockPackageChanged} */
+  let MockPackageChanged;
 
-  /** @type {import('./mocks').AppiumSupportMocks} */
-  let AppiumSupportMocks;
+  /** @type {import('./mocks').MockAppiumSupport} */
+  let MockAppiumSupport;
 
   beforeEach(function () {
-    ({PackageChangedMocks, AppiumSupportMocks, sandbox} = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
     ({packageDidChange} = rewiremock.proxy(
       () => require('../../lib/extension/package-changed'),
       {
-        'package-changed': PackageChangedMocks,
-        '@appium/support': AppiumSupportMocks,
+        'package-changed': MockPackageChanged,
+        '@appium/support': MockAppiumSupport,
       },
     ));
   });
@@ -46,14 +46,14 @@ describe('package-changed', function () {
 
     it('it should attempt to create the parent dir for the hash file', async function () {
       await packageDidChange('/some/path');
-      expect(AppiumSupportMocks.mkdirp).to.have.been.calledWith(
+      expect(MockAppiumSupport.mkdirp).to.have.been.calledWith(
         path.dirname(path.join('/some/path', HASHFILE_RELATIVE_PATH)),
       );
     });
 
     it('should call `package-changed` with a cwd and relative path to hash file', async function () {
       await packageDidChange('/some/path');
-      expect(PackageChangedMocks.isPackageChanged).to.have.been.calledWith({
+      expect(MockPackageChanged.isPackageChanged).to.have.been.calledWith({
         cwd: '/some/path',
         hashFilename: HASHFILE_RELATIVE_PATH,
       });
@@ -61,7 +61,7 @@ describe('package-changed', function () {
 
     describe('when it cannot create the parent dir', function () {
       it('should reject', async function () {
-        AppiumSupportMocks.mkdirp.rejects(new Error('some error'));
+        MockAppiumSupport.mkdirp.rejects(new Error('some error'));
         await expect(packageDidChange('/some/path')).to.be.rejectedWith(
           Error,
           /could not create the directory/i,
@@ -71,9 +71,9 @@ describe('package-changed', function () {
 
     describe('when the package has not changed per `package-changed`', function () {
       beforeEach(function () {
-        PackageChangedMocks.isPackageChanged.resolves({
+        MockPackageChanged.isPackageChanged.resolves({
           isChanged: false,
-          writeHash: PackageChangedMocks.__writeHash,
+          writeHash: MockPackageChanged.__writeHash,
           hash: 'some-hash',
           oldHash: 'some-old-hash',
         });
@@ -85,14 +85,14 @@ describe('package-changed', function () {
 
       it('should not write the hash file', async function () {
         await packageDidChange('/some/where');
-        expect(PackageChangedMocks.__writeHash).not.to.have.been.called;
+        expect(MockPackageChanged.__writeHash).not.to.have.been.called;
       });
     });
 
     describe('when the package has changed per `package-changed`', function () {
       it('should write the hash file', async function () {
         await packageDidChange('/some/where');
-        expect(PackageChangedMocks.__writeHash).to.have.been.calledOnce;
+        expect(MockPackageChanged.__writeHash).to.have.been.calledOnce;
       });
 
       it('should resolve `true`', async function () {
@@ -101,7 +101,7 @@ describe('package-changed', function () {
 
       describe('when it cannot write the hash file', function () {
         beforeEach(function () {
-          PackageChangedMocks.__writeHash.throws(new Error('oh noes'));
+          MockPackageChanged.__writeHash.throws(new Error('oh noes'));
         });
         it('should reject', async function () {
           await expect(packageDidChange('/some/where')).to.be.rejectedWith(

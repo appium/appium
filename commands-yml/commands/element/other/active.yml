@@ -38,14 +38,14 @@ client_docs:
 # Driver support by platform
 driver_support:
   ios:
-    xcuitest: false
+    xcuitest: true
     uiautomation: false
   android:
-    uiautomator2: false
-    espresso: false
+    uiautomator2: true
+    espresso: true
     uiautomator: false
   mac:
-    mac: false
+    mac: true
   windows:
     windows: false
 client_support:

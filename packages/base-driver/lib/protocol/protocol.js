@@ -351,13 +351,6 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       httpResBody.value = driverRes;
       SESSIONS_CACHE.getLogger(req.params.sessionId || newSessionId, currentProtocol).debug(`Responding ` +
         `to client with driver.${spec.command}() result: ${_.truncate(JSON.stringify(driverRes), {length: MAX_LOG_BODY_LENGTH})}`);
-
-      if (spec.command === DELETE_SESSION_COMMAND) {
-        // We don't want to keep the logger instance in the cache
-        // after the session is deleted, because it contains the logging history
-        // and consumes the memory
-        SESSIONS_CACHE.resetLogger(req.params.sessionId);
-      }
     } catch (err) {
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered

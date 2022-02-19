@@ -2,11 +2,22 @@ import LRU from 'lru-cache';
 import { logger } from '@appium/support';
 import { PROTOCOLS } from '../constants';
 
-
 const GENERIC_PROTOCOL = 'GENERIC';
 const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');
 const genericProtocolLog = logger.getLogger(GENERIC_PROTOCOL);
+
+
+function getDefaultLogger (protocol) {
+  switch (protocol) {
+    case PROTOCOLS.W3C:
+      return w3cLog;
+    case PROTOCOLS.MJSONWP:
+      return mjsonwpLog;
+    default:
+      return genericProtocolLog;
+  }
+}
 
 
 class SessionsCache {
@@ -14,54 +25,42 @@ class SessionsCache {
     this._cache = new LRU({ max });
   }
 
-  getLogger (sessionId, protocol) {
-    if (sessionId) {
-      if (this._cache.has(sessionId)) {
-        const value = this._cache.get(sessionId);
-        if (value.logger) {
-          return value.logger;
-        }
-        protocol = protocol || value.protocol;
-      }
-      // Always create a new logger instance for ids
-      // that are not in the current sessions list,
-      // so we can still see such ids as prefixes
-      return logger.getLogger(`${protocol || GENERIC_PROTOCOL} ` +
-        `(${sessionId.substring(0, Math.min(sessionId.length, 8))})`);
+  getLogger (sessionId, defaultProtocol = null) {
+    if (!sessionId) {
+      // Fall back to protocol name-only logger if session id is unknown
+      return getDefaultLogger(defaultProtocol);
     }
 
-    // Fall back to protocol name-only logger if session id is unknown
-    switch (protocol) {
-      case PROTOCOLS.W3C:
-        return w3cLog;
-      case PROTOCOLS.MJSONWP:
-        return mjsonwpLog;
-      default:
-        return genericProtocolLog;
+    let logProtocol;
+    if (this._cache.has(sessionId)) {
+      const value = this._cache.get(sessionId);
+      const log = value.logger.get(sessionId);
+      if (log) {
+        return log;
+      }
+      logProtocol = value.protocol || defaultProtocol || GENERIC_PROTOCOL;
+    } else {
+      logProtocol = defaultProtocol || GENERIC_PROTOCOL;
     }
+    // Always create a new logger instance for ids
+    // that are not in the current sessions list,
+    // so we can still see such ids as prefixes
+    return logger.getLogger(`${logProtocol} (${sessionId.substring(0, Math.min(sessionId.length, 8))})`);
   }
 
   getProtocol (sessionId) {
-    return (this._cache.get(sessionId) || {}).protocol;
+    return this._cache.get(sessionId)?.protocol;
   }
 
-  putSession (sessionId, value) {
-    if (sessionId && value) {
-      this._cache.set(sessionId, {
-        protocol: value,
-        // We don't want to cache the logger instance for each random session id in the cache
-        // in order to save memory. Instead we only cache loggers for valid ids that
-        // are returned by `createSession` call and reset them after `deleteSession` is called
-        logger: this.getLogger(sessionId, value),
-      });
+  putSession (sessionId, protocol) {
+    if (!sessionId || !protocol) {
+      return;
     }
-    return value;
-  }
 
-  resetLogger (sessionId) {
-    if (this._cache.has(sessionId)) {
-      this._cache.get(sessionId).logger = null;
-    }
+    // This would probably look better if WeakRef was available
+    const item = { protocol, logger: new WeakMap() };
+    item.logger.put(sessionId, this.getLogger(sessionId, protocol));
+    this._cache.set(sessionId, item);
   }
 }
 

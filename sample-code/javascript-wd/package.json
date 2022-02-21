@@ -6,6 +6,10 @@
     "test": "mocha test/**/*.test.js",
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install"
   },
+  "mocha": {
+    "require": "@babel/register",
+    "timeout": "1800000"
+  },
   "author": "Dan Graham",
   "license": "Apache-2.0",
   "engines": {

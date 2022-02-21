@@ -1,12 +1,11 @@
 /* eslint-disable require-await */
 import _ from 'lodash';
-import log from '../logger';
 import { errors } from '../../protocol';
 import { util } from '@appium/support';
 import {
   processCapabilities, promoteAppiumOptions, APPIUM_OPTS_CAP, PREFIXED_APPIUM_OPTS_CAP,
-  isW3cCaps,
 } from '../capabilities';
+import { isW3cCaps } from '../../helpers/capabilities';
 
 const commands = {};
 
@@ -15,7 +14,7 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
     throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
   }
 
-  log.debug();
+  this.log.debug();
 
   // Historically the first two arguments were reserved for JSONWP capabilities.
   // Appium 2 has dropped the support of these, so now we only accept capability
@@ -30,13 +29,13 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
   this.setProtocolW3C();
 
   this.originalCaps = _.cloneDeep(originalCaps);
-  log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
+  this.log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
 
   let caps;
   try {
     caps = processCapabilities(originalCaps, this.desiredCapConstraints, this.shouldValidateCaps);
     if (caps[APPIUM_OPTS_CAP]) {
-      log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
+      this.log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
       caps = promoteAppiumOptions(caps);
     }
     caps = fixCaps(caps, this.desiredCapConstraints);
@@ -79,7 +78,7 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
     this.newCommandTimeoutMs = (this.caps.newCommandTimeout * 1000);
   }
 
-  log.info(`Session created with session id: ${this.sessionId}`);
+  this.log.info(`Session created with session id: ${this.sessionId}`);
 
   return [this.sessionId, caps];
 };
@@ -126,7 +125,7 @@ function fixCaps (originalCaps, desiredCapConstraints = {}) {
     if (_.isString(value)) {
       value = value.toLowerCase();
       if (value === 'true' || value === 'false') {
-        log.warn(`Capability '${cap}' changed from string to boolean. This may cause unexpected behavior`);
+        this.log.warn(`Capability '${cap}' changed from string to boolean. This may cause unexpected behavior`);
         caps[cap] = (value === 'true');
       }
     }
@@ -142,7 +141,7 @@ function fixCaps (originalCaps, desiredCapConstraints = {}) {
       if (value !== `${newValue}`) {
         newValue = parseFloat(value);
       }
-      log.warn(`Capability '${cap}' changed from string ('${value}') to integer (${newValue}). This may cause unexpected behavior`);
+      this.log.warn(`Capability '${cap}' changed from string ('${value}') to integer (${newValue}). This may cause unexpected behavior`);
       caps[cap] = newValue;
     }
   }

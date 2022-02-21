@@ -1,6 +1,3 @@
-import log from '../logger';
-
-
 const commands = {}, helpers = {}, extensions = {};
 
 
@@ -23,9 +20,9 @@ helpers.findElOrElsWithProcessing = async function findElOrElsWithProcessing (st
   } catch (err) {
     if (this.opts.printPageSourceOnFindFailure) {
       const src = await this.getPageSource();
-      log.debug(`Error finding element${mult ? 's' : ''}: ${err.message}`);
-      log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
-      log.debug(src);
+      this.log.debug(`Error finding element${mult ? 's' : ''}: ${err.message}`);
+      this.log.debug(`Page source requested through 'printPageSourceOnFindFailure':`);
+      this.log.debug(src);
     }
     // still want the error to occur
     throw err;

@@ -12,8 +12,7 @@ import { formatResponseValue, formatStatus } from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
 
-
-const log = logger.getLogger('WD Proxy');
+const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
 const COMPACT_ERROR_PATTERNS = [
   /\bECONNREFUSED\b/,
@@ -43,7 +42,12 @@ class JWProxy {
     };
     this.httpAgent = new http.Agent(agentOpts);
     this.httpsAgent = new https.Agent(agentOpts);
-    this.protocolConverter = new ProtocolConverter(this.proxy.bind(this));
+    this.protocolConverter = new ProtocolConverter(this.proxy.bind(this), opts.log);
+    this._log = opts.log;
+  }
+
+  get log () {
+    return this._log ?? DEFAULT_LOG;
   }
 
   /**
@@ -166,7 +170,7 @@ class JWProxy {
       }
     }
 
-    log.debug(`Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
+    this.log.debug(`Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
       (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body'));
 
     const throwProxyError = (error) => {
@@ -187,7 +191,7 @@ class JWProxy {
         // If it cannot be coerced to an object then the response is wrong
         throwProxyError(data);
       }
-      log.debug(`Got response with status ${status}: ${truncateBody(data)}`);
+      this.log.debug(`Got response with status ${status}: ${truncateBody(data)}`);
       isResponseLogged = true;
       const isSessionCreationRequest = /\/session$/.test(url) && method === 'POST';
       if (isSessionCreationRequest) {
@@ -195,7 +199,7 @@ class JWProxy {
           this.sessionId = data.sessionId || (data.value || {}).sessionId;
         }
         this.downstreamProtocol = this.getProtocolFromResBody(data);
-        log.info(`Determined the downstream protocol as '${this.downstreamProtocol}'`);
+        this.log.info(`Determined the downstream protocol as '${this.downstreamProtocol}'`);
       }
       if (_.has(data, 'status') && parseInt(data.status, 10) !== 0) {
         // Some servers, like chromedriver may return response code 200 for non-zero JSONWP statuses
@@ -211,16 +215,16 @@ class JWProxy {
       if (util.hasValue(e.response)) {
         if (!isResponseLogged) {
           const error = truncateBody(e.response.data);
-          log.info(util.hasValue(e.response.status)
+          this.log.info(util.hasValue(e.response.status)
             ? `Got response with status ${e.response.status}: ${error}`
             : `Got response with unknown status: ${error}`);
         }
       } else {
         proxyErrorMsg = `Could not proxy command to the remote server. Original error: ${e.message}`;
         if (COMPACT_ERROR_PATTERNS.some((p) => p.test(e.message))) {
-          log.info(e.message);
+          this.log.info(e.message);
         } else {
-          log.info(e.stack);
+          this.log.info(e.stack);
         }
       }
       throw new errors.ProxyRequestError(proxyErrorMsg, e.response?.data, e.response?.status);
@@ -256,7 +260,7 @@ class JWProxy {
     if (!commandName) {
       return await this.proxy(url, method, body);
     }
-    log.debug(`Matched '${url}' to command name '${commandName}'`);
+    this.log.debug(`Matched '${url}' to command name '${commandName}'`);
 
     return await this.protocolConverter.convertAndProxy(commandName, url, method, body);
   }
@@ -318,10 +322,10 @@ class JWProxy {
     const reqSessionId = this.getSessionIdFromUrl(req.originalUrl);
     if (_.has(resBodyObj, 'sessionId')) {
       if (reqSessionId) {
-        log.info(`Replacing sessionId ${resBodyObj.sessionId} with ${reqSessionId}`);
+        this.log.info(`Replacing sessionId ${resBodyObj.sessionId} with ${reqSessionId}`);
         resBodyObj.sessionId = reqSessionId;
       } else if (this.sessionId) {
-        log.info(`Replacing sessionId ${resBodyObj.sessionId} with ${this.sessionId}`);
+        this.log.info(`Replacing sessionId ${resBodyObj.sessionId} with ${this.sessionId}`);
         resBodyObj.sessionId = this.sessionId;
       }
     }

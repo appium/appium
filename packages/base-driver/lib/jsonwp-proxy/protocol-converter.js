@@ -5,9 +5,6 @@ import {
   MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS
 } from '../constants';
 
-const log = logger.getLogger('Protocol Converter');
-
-
 export const COMMAND_URLS_CONFLICTS = [
   {
     commandNames: ['execute', 'executeAsync'],
@@ -41,20 +38,24 @@ export const COMMAND_URLS_CONFLICTS = [
     jsonwpConverter: (w3cUrl) => {
       const w3cPropertyRegex = /\/element\/([^/]+)\/property\/([^/]+)/;
       const jsonwpUrl = w3cUrl.replace(w3cPropertyRegex, '/element/$1/attribute/$2');
-      log.info(`Converting W3C '${w3cUrl}' to '${jsonwpUrl}'`);
       return jsonwpUrl;
     },
     w3cConverter: (jsonwpUrl) => jsonwpUrl // Don't convert JSONWP URL to W3C. W3C accepts /attribute and /property
   }
 ];
-
 const {MJSONWP, W3C} = PROTOCOLS;
+const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
 
 class ProtocolConverter {
-  constructor (proxyFunc) {
+  constructor (proxyFunc, log = null) {
     this.proxyFunc = proxyFunc;
     this._downstreamProtocol = null;
+    this._log = log;
+  }
+
+  get log () {
+    return this._log ?? DEFAULT_LOG;
   }
 
   set downstreamProtocol (value) {
@@ -107,7 +108,7 @@ class ProtocolConverter {
     let response, resBody;
 
     const timeoutRequestObjects = this.getTimeoutRequestObjects(body);
-    log.debug(`Will send the following request bodies to /timeouts: ${JSON.stringify(timeoutRequestObjects)}`);
+    this.log.debug(`Will send the following request bodies to /timeouts: ${JSON.stringify(timeoutRequestObjects)}`);
     for (const timeoutObj of timeoutRequestObjects) {
       [response, resBody] = await this.proxyFunc(url, method, timeoutObj);
 
@@ -130,14 +131,14 @@ class ProtocolConverter {
     const bodyObj = util.safeJsonParse(body);
     if (_.isPlainObject(bodyObj)) {
       if (this.downstreamProtocol === W3C && _.has(bodyObj, 'name') && !_.has(bodyObj, 'handle')) {
-        log.debug(`Copied 'name' value '${bodyObj.name}' to 'handle' as per W3C spec`);
+        this.log.debug(`Copied 'name' value '${bodyObj.name}' to 'handle' as per W3C spec`);
         return await this.proxyFunc(url, method, {
           ...bodyObj,
           handle: bodyObj.name,
         });
       }
       if (this.downstreamProtocol === MJSONWP && _.has(bodyObj, 'handle') && !_.has(bodyObj, 'name')) {
-        log.debug(`Copied 'handle' value '${bodyObj.handle}' to 'name' as per JSONWP spec`);
+        this.log.debug(`Copied 'handle' value '${bodyObj.handle}' to 'name' as per JSONWP spec`);
         return await this.proxyFunc(url, method, {
           ...bodyObj,
           name: bodyObj.handle,
@@ -156,12 +157,12 @@ class ProtocolConverter {
         value = _.isString(text)
           ? [...text]
           : (_.isArray(text) ? text : []);
-        log.debug(`Added 'value' property ${JSON.stringify(value)} to 'setValue' request body`);
+        this.log.debug(`Added 'value' property ${JSON.stringify(value)} to 'setValue' request body`);
       } else if (!util.hasValue(text) && util.hasValue(value)) {
         text = _.isArray(value)
           ? value.join('')
           : (_.isString(value) ? value : '');
-        log.debug(`Added 'text' property ${JSON.stringify(text)} to 'setValue' request body`);
+        this.log.debug(`Added 'text' property ${JSON.stringify(text)} to 'setValue' request body`);
       }
       return await this.proxyFunc(url, method, Object.assign({}, bodyObj, {
         text,
@@ -236,11 +237,11 @@ class ProtocolConverter {
         ? jsonwpConverter(url)
         : w3cConverter(url);
       if (rewrittenUrl === url) {
-        log.debug(`Did not know how to rewrite the original URL '${url}' ` +
+        this.log.debug(`Did not know how to rewrite the original URL '${url}' ` +
           `for ${this.downstreamProtocol} protocol`);
         break;
       }
-      log.info(`Rewrote the original URL '${url}' to '${rewrittenUrl}' ` +
+      this.log.info(`Rewrote the original URL '${url}' to '${rewrittenUrl}' ` +
         `for ${this.downstreamProtocol} protocol`);
       return await this.proxyFunc(rewrittenUrl, method, body);
     }

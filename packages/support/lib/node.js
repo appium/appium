@@ -3,6 +3,7 @@ import log from './logger';
 import _ from 'lodash';
 import { exec } from 'teen_process';
 import path from 'path';
+import { v4 as uuidV4 } from 'uuid';
 
 const ECMA_SIZES = Object.freeze({
   STRING: 2,
@@ -150,4 +151,19 @@ function getObjectSize (obj) {
   return getCalculator(new WeakSet())(obj);
 }
 
-export { requirePackage, getObjectSize };
+const OBJECTS_MAPPING = new WeakMap();
+
+/**
+ * Calculates a unique object identifier
+ *
+ * @param {object} object Any valid ECMA object
+ * @returns {string} A uuidV4 string that uniquely identifies given object
+ */
+function getObjectId (object) {
+  if (!OBJECTS_MAPPING.has(object)) {
+    OBJECTS_MAPPING.set(object, uuidV4());
+  }
+  return OBJECTS_MAPPING.get(object);
+}
+
+export { requirePackage, getObjectSize, getObjectId };

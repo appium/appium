@@ -1,9 +1,10 @@
 import {
   parseCaps, validateCaps, mergeCaps, processCapabilities, findNonPrefixedCaps,
-  promoteAppiumOptions, APPIUM_OPTS_CAP, stripAppiumPrefixes, isW3cCaps
+  promoteAppiumOptions, APPIUM_OPTS_CAP, stripAppiumPrefixes
 } from '../../lib/basedriver/capabilities';
 import _ from 'lodash';
 import { desiredCapabilityConstraints } from '../../lib/basedriver/desired-caps';
+import { isW3cCaps } from '../../lib/helpers/capabilities';
 
 
 describe('caps', function () {

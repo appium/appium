@@ -24,26 +24,6 @@ function mergeCaps (primary = {}, secondary = {}) {
   return result;
 }
 
-function isW3cCaps (caps) {
-  if (!_.isPlainObject(caps)) {
-    return false;
-  }
-
-  const isFirstMatchValid = () => _.isArray(caps.firstMatch)
-    && !_.isEmpty(caps.firstMatch) && _.every(caps.firstMatch, _.isPlainObject);
-  const isAlwaysMatchValid = () => _.isPlainObject(caps.alwaysMatch);
-  if (_.has(caps, 'firstMatch') && _.has(caps, 'alwaysMatch')) {
-    return isFirstMatchValid() && isAlwaysMatchValid();
-  }
-  if (_.has(caps, 'firstMatch')) {
-    return isFirstMatchValid();
-  }
-  if (_.has(caps, 'alwaysMatch')) {
-    return isAlwaysMatchValid();
-  }
-  return false;
-}
-
 // Validates caps against a set of constraints
 function validateCaps (caps, constraints = {}, opts = {}) {
 
@@ -292,5 +272,4 @@ function promoteAppiumOptions (originalCaps) {
 export {
   parseCaps, processCapabilities, validateCaps, mergeCaps, APPIUM_VENDOR_PREFIX, APPIUM_OPTS_CAP,
   findNonPrefixedCaps, isStandardCap, stripAppiumPrefixes, promoteAppiumOptions, PREFIXED_APPIUM_OPTS_CAP,
-  isW3cCaps,
 };

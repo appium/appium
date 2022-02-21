@@ -1,4 +1,3 @@
-import log from '../logger';
 import { waitForCondition } from 'asyncbox';
 import _ from 'lodash';
 import { util } from '@appium/support';
@@ -11,7 +10,7 @@ const MIN_TIMEOUT = 0;
 
 commands.timeouts = async function timeouts (type, ms, script, pageLoad, implicit) {
   if (util.hasValue(type) && util.hasValue(ms)) {
-    log.debug(`MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`);
+    this.log.debug(`MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`);
 
     switch (type) {
       case 'command':
@@ -32,7 +31,7 @@ commands.timeouts = async function timeouts (type, ms, script, pageLoad, implici
   }
 
   // Otherwise assume it is W3C protocol
-  log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
+  this.log.debug(`W3C timeout argument: ${JSON.stringify({script, pageLoad, implicit})}}`);
   if (util.hasValue(script)) {
     await this.scriptTimeoutW3C(script);
   }
@@ -66,9 +65,9 @@ commands.implicitWait = async function implicitWait (ms) {
 
 helpers.setImplicitWait = function setImplicitWait (ms) { // eslint-disable-line require-await
   this.implicitWaitMs = ms;
-  log.debug(`Set implicit wait to ${ms}ms`);
+  this.log.debug(`Set implicit wait to ${ms}ms`);
   if (this.managedDrivers && this.managedDrivers.length) {
-    log.debug('Setting implicit wait on managed drivers');
+    this.log.debug('Setting implicit wait on managed drivers');
     for (let driver of this.managedDrivers) {
       if (_.isFunction(driver.setImplicitWait)) {
         driver.setImplicitWait(ms);
@@ -106,9 +105,9 @@ commands.newCommandTimeout = async function newCommandTimeout (ms) { // eslint-d
 
 helpers.setNewCommandTimeout = function setNewCommandTimeout (ms) {
   this.newCommandTimeoutMs = ms;
-  log.debug(`Set new command timeout to ${ms}ms`);
+  this.log.debug(`Set new command timeout to ${ms}ms`);
   if (this.managedDrivers && this.managedDrivers.length) {
-    log.debug('Setting new command timeout on managed drivers');
+    this.log.debug('Setting new command timeout on managed drivers');
     for (let driver of this.managedDrivers) {
       if (_.isFunction(driver.setNewCommandTimeout)) {
         driver.setNewCommandTimeout(ms);
@@ -132,7 +131,7 @@ helpers.startNewCommandTimeout = function startNewCommandTimeout () {
   if (!this.newCommandTimeoutMs) return; // eslint-disable-line curly
 
   this.noCommandTimer = setTimeout(async () => {
-    log.warn(`Shutting down because we waited ` +
+    this.log.warn(`Shutting down because we waited ` +
               `${this.newCommandTimeoutMs / 1000.0} seconds for a command`);
     const errorMessage = `New Command Timeout of ` +
               `${this.newCommandTimeoutMs / 1000.0} seconds ` +
@@ -143,7 +142,7 @@ helpers.startNewCommandTimeout = function startNewCommandTimeout () {
 };
 
 helpers.implicitWaitForCondition = async function implicitWaitForCondition (condFn) {
-  log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
+  this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
   let wrappedCondFn = async (...args) => {
     // reset command timeout
     this.clearNewCommandTimeout();
@@ -151,7 +150,7 @@ helpers.implicitWaitForCondition = async function implicitWaitForCondition (cond
     return await condFn(...args);
   };
   return await waitForCondition(wrappedCondFn, {
-    waitMs: this.implicitWaitMs, intervalMs: 500, logger: log
+    waitMs: this.implicitWaitMs, intervalMs: 500, logger: this.log
   });
 };
 

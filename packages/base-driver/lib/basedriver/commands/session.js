@@ -38,7 +38,7 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
       this.log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
       caps = promoteAppiumOptions(caps);
     }
-    caps = fixCaps(caps, this.desiredCapConstraints);
+    caps = fixCaps(caps, this.desiredCapConstraints, this.log);
   } catch (e) {
     throw new errors.SessionNotCreatedError(e.message);
   }
@@ -114,7 +114,7 @@ commands.deleteSession = async function deleteSession (/* sessionId */) {
   this.sessionId = null;
 };
 
-function fixCaps (originalCaps, desiredCapConstraints = {}) {
+function fixCaps (originalCaps, desiredCapConstraints = {}, log) {
   let caps = _.clone(originalCaps);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
@@ -125,7 +125,7 @@ function fixCaps (originalCaps, desiredCapConstraints = {}) {
     if (_.isString(value)) {
       value = value.toLowerCase();
       if (value === 'true' || value === 'false') {
-        this.log.warn(`Capability '${cap}' changed from string to boolean. This may cause unexpected behavior`);
+        log.warn(`Capability '${cap}' changed from string to boolean. This may cause unexpected behavior`);
         caps[cap] = (value === 'true');
       }
     }
@@ -141,7 +141,7 @@ function fixCaps (originalCaps, desiredCapConstraints = {}) {
       if (value !== `${newValue}`) {
         newValue = parseFloat(value);
       }
-      this.log.warn(`Capability '${cap}' changed from string ('${value}') to integer (${newValue}). This may cause unexpected behavior`);
+      log.warn(`Capability '${cap}' changed from string ('${value}') to integer (${newValue}). This may cause unexpected behavior`);
       caps[cap] = newValue;
     }
   }

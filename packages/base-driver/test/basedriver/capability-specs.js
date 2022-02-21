@@ -1,4 +1,5 @@
 import { default as BaseDriver, errors } from '../../lib';
+import logger from '../../lib/basedriver/logger';
 import { createSandbox } from 'sinon';
 
 
@@ -10,6 +11,7 @@ describe('Desired Capabilities', function () {
     d = new BaseDriver();
     sandbox = createSandbox();
     sandbox.spy(d.log, 'warn');
+    sandbox.spy(logger, 'warn');
   });
 
   afterEach(function () {
@@ -279,7 +281,7 @@ describe('Desired Capabilities', function () {
       }
     });
 
-    d.log.warn.callCount.should.be.above(0);
+    logger.warn.callCount.should.be.above(0);
   });
 
   it('should not warn if deprecated=false', async function () {

@@ -19,9 +19,7 @@ const GET_STATUS_COMMAND = 'getStatus';
 class Protocol {}
 
 function determineProtocol (createSessionArgs) {
-  return _.some(createSessionArgs, isW3cCaps) ?
-    PROTOCOLS.W3C :
-    PROTOCOLS.MJSONWP;
+  return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
 
 function extractProtocol (driver, sessionId = null) {

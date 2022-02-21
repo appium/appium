@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import logger from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
 import {
@@ -8,7 +7,7 @@ import {
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
-import { util, node } from '@appium/support';
+import { util, node, logger } from '@appium/support';
 import { getDefaultsForExtension } from './schema';
 
 const desiredCapabilityConstraints = {

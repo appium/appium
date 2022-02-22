@@ -1,4 +1,7 @@
+// @ts-check
+
 import _ from 'lodash';
+import readPkg from 'read-pkg';
 import path from 'path';
 import _fs from 'fs';
 import rimraf from 'rimraf';
@@ -14,15 +17,17 @@ import findRoot from 'find-root';
 import { pluralize } from './util';
 import log from './logger';
 import Timer from './timing';
+import pkgDir from 'pkg-dir';
 
-const mkdirAsync = B.promisify(_fs.mkdir);
-const ncpAsync = B.promisify(ncp);
-const findRootCached = _.memoize(findRoot);
+const mkdirAsync = /** @type {(filepath: string, opts: _fs.MakeDirectoryOptions|undefined) => B<void>} */(B.promisify(_fs.mkdir));
+const ncpAsync = /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */(B.promisify(ncp));
+const findRootCached = _.memoize(pkgDir.sync);
 
 const fs = {
   async hasAccess (path) {
     try {
-      await fs.access(path, _fs.R_OK);
+      // as of recent-ish node versions, `R_OK` moved into the `constants` property of `fs`
+      await fs.access(path, _fs.constants.R_OK);
     } catch (err) {
       return false;
     }
@@ -31,9 +36,9 @@ const fs = {
   exists (path) { return fs.hasAccess(path); },
   rimraf: B.promisify(rimraf),
   rimrafSync: rimraf.sync.bind(rimraf),
-  async mkdir (...args) {
+  async mkdir (filepath, opts = {}) {
     try {
-      return await mkdirAsync(...args);
+      return await mkdirAsync(filepath, opts);
     } catch (err) {
       if (err && err.code !== 'EEXIST') {
         throw err;
@@ -44,15 +49,15 @@ const fs = {
    * Copies files _and entire directories_
    * @param {string} source - Source to copy
    * @param {string} destination - Destination to copy to
-   * @param {...any} args - Additional arguments to pass to `ncp`
+   * @param {ncp.Options} [opts] - Additional arguments to pass to `ncp`
    * @see https://npm.im/ncp
    * @returns {Promise<void>}
    */
-  async copyFile (source, destination, ...args) {
+  async copyFile (source, destination, opts = {}) {
     if (!await fs.hasAccess(source)) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
-    return await ncpAsync(source, destination, ...args);
+    return await ncpAsync(source, destination, opts);
   },
   async md5 (filePath) {
     return await fs.hash(filePath, 'md5');
@@ -89,12 +94,21 @@ const fs = {
   },
 
   /**
+   * Recursively create a directory
+   * @param {string} dir
+   * @returns {Promise<void>}
+   */
+  async mkdirp (dir) {
+    return await fs.mkdir(dir, {recursive: true});
+  },
+
+  /**
    * Walks a directory given according to the parameters given. The callback will be invoked with a path joined with the dir parameter
    * @param {string} dir Directory path where we will start walking
    * @param {boolean} recursive Set it to true if you want to continue walking sub directories
    * @param {WalkDirCallback} callback The callback to be called when a new path is found
    * @throws {Error} If the `dir` parameter contains a path to an invalid folder
-   * @return {?string} returns the found path or null if the item was not found
+   * @returns {Promise<string?>} returns the found path or null if the item was not found
    */
   async walkDir (dir, recursive, callback) { //eslint-disable-line promise/prefer-await-to-callbacks
     let isValidRoot = false;
@@ -147,7 +161,9 @@ const fs = {
       })
       .on('end', function () {
         lastFileProcessed
-          .then(resolve)
+          .then((file) => {
+            resolve(/** @type {string|undefined} */(file) ?? null);
+          })
           .catch(function (err) {
             log.warn(`Unexpected error: ${err.message}`);
             reject(err);
@@ -165,14 +181,14 @@ const fs = {
   /**
    * Reads the closest `package.json` file from absolute path `dir`.
    * @param {string} dir - Directory to search from
-   * @throws {TypeError} If `dir` is not a nonempty string or relative path
+   * @param {import('read-pkg').Options} [opts] - Additional options for `read-pkg`
    * @throws {Error} If there were problems finding or reading a `package.json` file
    * @returns {object} A parsed `package.json`
    */
-  readPackageJsonFrom (dir) {
-    const root = fs.findRoot(dir);
+  readPackageJsonFrom (dir, opts = {}) {
+    const cwd = fs.findRoot(dir);
     try {
-      return JSON.parse(_fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+      return readPkg.sync({...opts, cwd});
     } catch (err) {
       err.message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${err.message}`;
       throw err;

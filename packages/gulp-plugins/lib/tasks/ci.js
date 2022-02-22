@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const log = require('fancy-log');
-const findRoot = require('find-root');
+const {sync: findRoot} = require('pkg-dir');
 const axios = require('axios');
 const B = require('bluebird');
 const os = require('os');

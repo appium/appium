@@ -1,6 +1,6 @@
 // @ts-check
 import path from 'path';
-import { HASHFILE_RELATIVE_PATH } from '../../lib/constants';
+import { PKG_HASHFILE_RELATIVE_PATH } from '../../lib/constants';
 import { rewiremock } from '../helpers';
 import { initMocks } from './mocks';
 
@@ -46,8 +46,8 @@ describe('package-changed', function () {
 
     it('it should attempt to create the parent dir for the hash file', async function () {
       await packageDidChange('/some/path');
-      expect(MockAppiumSupport.mkdirp).to.have.been.calledWith(
-        path.dirname(path.join('/some/path', HASHFILE_RELATIVE_PATH)),
+      expect(MockAppiumSupport.fs.mkdirp).to.have.been.calledWith(
+        path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH)),
       );
     });
 
@@ -55,13 +55,13 @@ describe('package-changed', function () {
       await packageDidChange('/some/path');
       expect(MockPackageChanged.isPackageChanged).to.have.been.calledWith({
         cwd: '/some/path',
-        hashFilename: HASHFILE_RELATIVE_PATH,
+        hashFilename: PKG_HASHFILE_RELATIVE_PATH,
       });
     });
 
     describe('when it cannot create the parent dir', function () {
       it('should reject', async function () {
-        MockAppiumSupport.mkdirp.rejects(new Error('some error'));
+        MockAppiumSupport.fs.mkdirp.rejects(new Error('some error'));
         await expect(packageDidChange('/some/path')).to.be.rejectedWith(
           Error,
           /could not create the directory/i,

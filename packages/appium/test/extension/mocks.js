@@ -28,10 +28,10 @@ export function initMocks (sandbox = createSandbox()) {
             .returns({next: sandbox.stub().resolves({done: true})}),
         })
       ),
+      mkdirp: /** @type {MockAppiumSupportFs['mkdirp']} */ (
+        sandbox.stub().resolves()
+      ),
     },
-    mkdirp: /** @type {MockAppiumSupport['mkdirp']} */ (
-      sandbox.stub().resolves()
-    ),
     env: {
       resolveAppiumHome:
       /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
@@ -111,7 +111,6 @@ export function initMocks (sandbox = createSandbox()) {
 /**
  * Mock of package `@appium/support`
  * @typedef {Object} MockAppiumSupport
- * @property {sinon.SinonStub<[string], Promise<void>>} mkdirp
  * @property {MockAppiumSupportLogger} logger
  * @property {MockAppiumSupportFs} fs
  * @property {MockAppiumSupportEnv} env
@@ -126,9 +125,10 @@ export function initMocks (sandbox = createSandbox()) {
 /**
  * Mock of package `@appium/support`'s `fs` module
  * @typedef {Object} MockAppiumSupportFs
- * @property {sinon.SinonStubbedMember<import('fs/promises')['readFile']>} readFile
- * @property {sinon.SinonStubbedMember<import('fs/promises')['writeFile']>} writeFile
- * @property {sinon.SinonStubbedMember<import('klaw')>} walk
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['readFile']>} readFile
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['writeFile']>} writeFile
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['walk']>} walk
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['mkdirp']>} mkdirp
  */
 
 /**

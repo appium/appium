@@ -71,21 +71,6 @@ export const HASHFILE_RELATIVE_PATH = path.join(
   'package.hash',
 );
 
-/**
- * Relative path to lockfile used when installing an extension via `appium`
- */
-export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(
-  CACHE_DIR_RELATIVE_PATH,
-  '.install.lock',
-);
-
-/**
- * Relative path to lockfile used when linking an extension via `appium`
- */
-export const LINK_LOCKFILE_RELATIVE_PATH = path.join(
-  CACHE_DIR_RELATIVE_PATH,
-  '.link.lock',
-);
 
 export const EXT_SUBCOMMAND_LIST = 'list';
 export const EXT_SUBCOMMAND_INSTALL = 'install';

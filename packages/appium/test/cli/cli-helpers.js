@@ -6,8 +6,8 @@
 
 import _ from 'lodash';
 import path from 'path';
-import {exec} from 'teen_process';
-import {PACKAGE_ROOT} from '../helpers';
+import { exec } from 'teen_process';
+import { PACKAGE_ROOT } from '../helpers';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.
@@ -146,15 +146,15 @@ export async function installLocalExtension (appiumHome, type, pathToExtension) 
 
 /**
  * Error thrown by all of the functions in this file which execute `appium`.
- * @typedef {Error & AppiumRunErrorProps & import('../../lib/cli/npm').TeenProcessExecErrorProps} AppiumRunError
+ * @typedef {Error & AppiumRunErrorProps & import('@appium/support/lib/npm').TeenProcessExecErrorProps} AppiumRunError
  */
 
 /**
- * @typedef {import('../../lib/cli/npm').TeenProcessExecResult} TeenProcessExecResult
+ * @typedef {import('@appium/support/lib/npm').TeenProcessExecResult} TeenProcessExecResult
  */
 
 /**
- * @typedef {import('../../lib/cli/npm').TeenProcessExecError} TeenProcessExecError
+ * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
  * @typedef {import('../../lib/extension/manifest').ExtensionType} ExtensionType
  * @typedef {import('../../lib/cli/extension-command').ExtensionListData} ExtensionListData
  */

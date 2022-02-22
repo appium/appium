@@ -339,7 +339,7 @@ export class Manifest {
       this._data = data;
       let installedExtensionsChanged = false;
       if (
-        env.isLocalAppiumInstalled(this.appiumHome) &&
+        await env.hasAppiumDependency(this.appiumHome) &&
         (await packageDidChange(this.appiumHome))
       ) {
         installedExtensionsChanged = await this.syncWithInstalledExtensions();

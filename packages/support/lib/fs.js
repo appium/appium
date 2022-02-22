@@ -95,7 +95,7 @@ const fs = {
    * @param {boolean} recursive Set it to true if you want to continue walking sub directories
    * @param {WalkDirCallback} callback The callback to be called when a new path is found
    * @throws {Error} If the `dir` parameter contains a path to an invalid folder
-   * @return {?string} returns the found path or null if the item was not found
+   * @returns {Promise<string?>} returns the found path or null if the item was not found
    */
   async walkDir (dir, recursive, callback) { //eslint-disable-line promise/prefer-await-to-callbacks
     let isValidRoot = false;
@@ -148,7 +148,9 @@ const fs = {
       })
       .on('end', function () {
         lastFileProcessed
-          .then(resolve)
+          .then((file) => {
+            resolve(/** @type {string|undefined} */(file) ?? null);
+          })
           .catch(function (err) {
             log.warn(`Unexpected error: ${err.message}`);
             reject(err);

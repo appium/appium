@@ -18,6 +18,10 @@ export { npm } from './npm';
 
 const { fs } = fsIndex;
 const { cancellableDelay } = util;
+/**
+ * Alias for `fs.mkdir(dir, {recursive: true}`). Use `fs.mkdirp` instead.
+ * @deprecated
+ */
 const { mkdirp } = mkdirpIndex;
 
 export {

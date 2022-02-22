@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import readPkg from 'read-pkg';
 import path from 'path';
@@ -16,14 +18,15 @@ import log from './logger';
 import Timer from './timing';
 import pkgDir from 'pkg-dir';
 
-const mkdirAsync = B.promisify(_fs.mkdir);
-const ncpAsync = B.promisify(ncp);
+const mkdirAsync = /** @type {(filepath: string, opts: _fs.MakeDirectoryOptions|undefined) => B<void>} */(B.promisify(_fs.mkdir));
+const ncpAsync = /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */(B.promisify(ncp));
 const findRootCached = _.memoize(pkgDir.sync);
 
 const fs = {
   async hasAccess (path) {
     try {
-      await fs.access(path, _fs.R_OK);
+      // as of recent-ish node versions, `R_OK` moved into the `constants` property of `fs`
+      await fs.access(path, _fs.constants.R_OK);
     } catch (err) {
       return false;
     }
@@ -32,9 +35,9 @@ const fs = {
   exists (path) { return fs.hasAccess(path); },
   rimraf: B.promisify(rimraf),
   rimrafSync: rimraf.sync.bind(rimraf),
-  async mkdir (...args) {
+  async mkdir (filepath, opts = {}) {
     try {
-      return await mkdirAsync(...args);
+      return await mkdirAsync(filepath, opts);
     } catch (err) {
       if (err && err.code !== 'EEXIST') {
         throw err;
@@ -45,15 +48,15 @@ const fs = {
    * Copies files _and entire directories_
    * @param {string} source - Source to copy
    * @param {string} destination - Destination to copy to
-   * @param {...any} args - Additional arguments to pass to `ncp`
+   * @param {ncp.Options} [opts] - Additional arguments to pass to `ncp`
    * @see https://npm.im/ncp
    * @returns {Promise<void>}
    */
-  async copyFile (source, destination, ...args) {
+  async copyFile (source, destination, opts = {}) {
     if (!await fs.hasAccess(source)) {
       throw new Error(`The file at '${source}' does not exist or is not accessible`);
     }
-    return await ncpAsync(source, destination, ...args);
+    return await ncpAsync(source, destination, opts);
   },
   async md5 (filePath) {
     return await fs.hash(filePath, 'md5');
@@ -87,6 +90,15 @@ const fs = {
    */
   walk (dir, opts = {}) {
     return klaw(dir, opts);
+  },
+
+  /**
+   * Recursively create a directory
+   * @param {string} dir
+   * @returns {Promise<void>}
+   */
+  async mkdirp (dir) {
+    return await fs.mkdir(dir, {recursive: true});
   },
 
   /**

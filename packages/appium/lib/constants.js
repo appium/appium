@@ -66,7 +66,7 @@ export const CACHE_DIR_RELATIVE_PATH = path.join(
 /**
  * Relative path to hashfile (from `APPIUM_HOME`) of consuming project's `package.json` (if it exists)
  */
-export const HASHFILE_RELATIVE_PATH = path.join(
+export const PKG_HASHFILE_RELATIVE_PATH = path.join(
   CACHE_DIR_RELATIVE_PATH,
   'package.hash',
 );

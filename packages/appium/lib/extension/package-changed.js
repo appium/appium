@@ -1,9 +1,9 @@
 // @ts-check
 
-import { mkdirp } from '@appium/support';
+import { fs } from '@appium/support';
 import { isPackageChanged } from 'package-changed';
 import path from 'path';
-import { HASHFILE_RELATIVE_PATH } from '../constants';
+import { PKG_HASHFILE_RELATIVE_PATH } from '../constants';
 import log from '../logger';
 
 /**
@@ -16,7 +16,7 @@ import log from '../logger';
  * @returns {Promise<boolean>} `true` if `package.json` `appiumHome` changed
  */
 export async function packageDidChange (appiumHome) {
-  const hashFilename = path.join(appiumHome, HASHFILE_RELATIVE_PATH);
+  const hashFilename = path.join(appiumHome, PKG_HASHFILE_RELATIVE_PATH);
 
   // XXX: the types in `package-changed` seem to be wrong.
 
@@ -33,7 +33,7 @@ export async function packageDidChange (appiumHome) {
   const hashFilenameDir = path.dirname(hashFilename);
   log.debug(`Creating hash file directory: ${hashFilenameDir}`);
   try {
-    await mkdirp(hashFilenameDir);
+    await fs.mkdirp(hashFilenameDir);
   } catch (err) {
     throw new Error(
       `Appium could not create the directory for hash file: ${hashFilenameDir}. Original error: ${err.message}`,
@@ -43,7 +43,7 @@ export async function packageDidChange (appiumHome) {
   try {
     ({isChanged, writeHash, oldHash, hash} = await isPackageChanged({
       cwd: appiumHome,
-      hashFilename: HASHFILE_RELATIVE_PATH,
+      hashFilename: PKG_HASHFILE_RELATIVE_PATH,
     }));
   } catch {
     return true;

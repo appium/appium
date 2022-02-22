@@ -4,7 +4,7 @@
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
  */
 
-import { env, fs, mkdirp } from '@appium/support';
+import { env, fs } from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
 import YAML from 'yaml';
@@ -394,7 +394,7 @@ export class Manifest {
     this._writing = (async () => {
       await this._setManifestPath();
       try {
-        await mkdirp(path.dirname(this._manifestPath));
+        await fs.mkdirp(path.dirname(this._manifestPath));
       } catch (err) {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(

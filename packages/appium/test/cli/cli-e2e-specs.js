@@ -1,6 +1,6 @@
 // @ts-check
 
-import { npm, env, fs, mkdirp, tempDir, util } from '@appium/support';
+import { npm, env, fs, tempDir, util } from '@appium/support';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import YAML from 'yaml';
@@ -10,7 +10,7 @@ import {
   EXT_SUBCOMMAND_LIST as LIST,
   EXT_SUBCOMMAND_RUN as RUN,
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
-  HASHFILE_RELATIVE_PATH,
+  PKG_HASHFILE_RELATIVE_PATH,
   KNOWN_DRIVERS,
   PLUGIN_TYPE
 } from '../../lib/constants';
@@ -59,7 +59,7 @@ describe('CLI behavior', function () {
 
     before(async function () {
       appiumHome = await tempDir.openDir();
-      hashPath = path.join(appiumHome, HASHFILE_RELATIVE_PATH);
+      hashPath = path.join(appiumHome, PKG_HASHFILE_RELATIVE_PATH);
       manifestPath = path.join(appiumHome, MANIFEST_RELATIVE_PATH);
       appiumHomePkgPath = path.join(appiumHome, 'package.json');
       runJson = runAppiumJson(appiumHome);
@@ -197,7 +197,7 @@ describe('CLI behavior', function () {
 
     async function clear () {
       await fs.rimraf(appiumHome);
-      await mkdirp(appiumHome);
+      await fs.mkdirp(appiumHome);
     }
 
     describe('Driver CLI', function () {

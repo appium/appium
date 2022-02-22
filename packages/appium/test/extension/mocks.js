@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 // @ts-check
 
 /**
@@ -40,25 +41,15 @@ export function initMocks (sandbox = createSandbox()) {
       /** @type {MockAppiumSupportEnv['resolveManifestPath']} */ (
         sandbox.stub().resolves('/some/path/extensions.yaml')
       ),
-      isLocalAppiumInstalled:
-      /** @type {MockAppiumSupportEnv['isLocalAppiumInstalled']} */ (
-        sandbox.stub().returns(false)
-      ),
-      readClosestPackage:
-      /** @type {MockAppiumSupportEnv['readClosestPackage']} */ (
-        sandbox.stub().callsFake(
-            async ({cwd = process.cwd()}) =>
-              await {
-                packageJson: MockAppiumSupport.env.__pkg,
-                path: path.join(cwd, 'package.json'),
-              },
-        )
+      hasAppiumDependency:
+      /** @type {MockAppiumSupportEnv['hasAppiumDependency']} */ (
+        sandbox.stub().resolves(false)
       ),
       readPackageInDir:
       /** @type {MockAppiumSupportEnv['readPackageInDir']} */ (
         sandbox
             .stub()
-            .callsFake(async () => await MockAppiumSupport.env.__pkg)
+            .callsFake(async () => MockAppiumSupport.env.__pkg)
       ),
       __pkg: {
         name: 'mock-package',
@@ -86,15 +77,12 @@ export function initMocks (sandbox = createSandbox()) {
    */
   const MockPackageChanged = {
     isPackageChanged: /** @type {MockPackageChanged['isPackageChanged']} */ (
-      sandbox.stub().callsFake(
-        async () =>
-          await {
-            isChanged: true,
-            writeHash: MockPackageChanged.__writeHash,
-            hash: 'some-hash',
-            oldHash: 'some-old-hash',
-          },
-      )
+      sandbox.stub().callsFake(async () => ({
+        isChanged: true,
+        writeHash: MockPackageChanged.__writeHash,
+        hash: 'some-hash',
+        oldHash: 'some-old-hash',
+      }))
     ),
     // exposing this for testing purposes
     __writeHash: sandbox.stub(),
@@ -149,8 +137,7 @@ export function initMocks (sandbox = createSandbox()) {
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveAppiumHome>} resolveAppiumHome
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveManifestPath>} resolveManifestPath
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').readPackageInDir>} readPackageInDir
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').isLocalAppiumInstalled>} isLocalAppiumInstalled
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').readClosestPackage>} readClosestPackage
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').hasAppiumDependency>} hasAppiumDependency
  * @property {import('@appium/support/lib/env').NormalizedPackageJson} __pkg
  */
 

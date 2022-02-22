@@ -1,10 +1,9 @@
 // @ts-check
 
-import { env, fs, mkdirp, tempDir, util } from '@appium/support';
+import { npm, env, fs, mkdirp, tempDir, util } from '@appium/support';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import YAML from 'yaml';
-import NPM from '../../lib/cli/npm';
 import {
   DRIVER_TYPE,
   EXT_SUBCOMMAND_INSTALL as INSTALL,
@@ -109,14 +108,10 @@ describe('CLI behavior', function () {
     });
 
     describe('when a driver is installed via npm', function () {
-      /** @type {NPM} */
-      let npm;
-
       before(async function () {
         // remove the hash file and the manifest to start clean.
         // this leaves any previously-installed extension in place, which should make this a little faster.
         await fs.rimraf(path.dirname(hashPath));
-        npm = new NPM(appiumHome);
         await npm.exec(INSTALL, [FAKE_DRIVER_DIR], {
           json: true,
           cwd: appiumHome,

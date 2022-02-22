@@ -1,6 +1,6 @@
 {
   "name": "my-project",
   "dependencies": {
-    "appium": "next"
+    "appium": "2.0.0"
   }
 }

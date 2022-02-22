@@ -1,10 +1,10 @@
 // transpile:mocha
 
-import { tempDir, fs } from '@appium/support';
+import { tempDir, fs, npm } from '@appium/support';
 import { loadExtensions } from '../../lib/extension';
 import { Manifest } from '../../lib/extension/manifest';
 import DriverCommand from '../../lib/cli/driver-command';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 
 describe('DriverCommand', function () {
   /**
@@ -20,7 +20,7 @@ describe('DriverCommand', function () {
   let sandbox;
 
   beforeEach(async function () {
-    sandbox = sinon.createSandbox();
+    sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     Manifest.getInstance.cache = new Map();
     sandbox.stub(fs, 'exists').resolves(false);
@@ -38,17 +38,17 @@ describe('DriverCommand', function () {
     let npmMock;
 
     beforeEach(function () {
-      npmMock = sinon.mock(dc.npm);
+      npmMock = sandbox.mock(npm);
     });
 
     function setupDriverUpdate (curVersion, latestVersion, latestSafeVersion) {
       npmMock.expects('getLatestVersion')
         .once()
-        .withExactArgs(pkgName)
+        .withExactArgs(appiumHome, pkgName)
         .returns(latestVersion);
       npmMock.expects('getLatestSafeUpgradeVersion')
         .once()
-        .withExactArgs(pkgName, curVersion)
+        .withExactArgs(appiumHome, pkgName, curVersion)
         .returns(latestSafeVersion);
     }
 

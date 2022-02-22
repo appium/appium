@@ -167,7 +167,7 @@ describe('Manifest', function () {
 
         describe('when a local `appium` is installed', function () {
           beforeEach(function () {
-            MockAppiumSupport.env.isLocalAppiumInstalled.returns(true);
+            MockAppiumSupport.env.hasAppiumDependency.resolves(true);
             MockPackageChanged.isPackageChanged.resolves({
               isChanged: true,
               writeHash: sandbox.stub(),

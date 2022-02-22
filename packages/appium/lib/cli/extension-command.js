@@ -2,8 +2,7 @@
 /* eslint-disable no-console */
 
 import _ from 'lodash';
-import NPM from './npm';
-import { fs, util } from '@appium/support';
+import { npm, fs, util } from '@appium/support';
 import { log, spinWith, RingBuffer } from './utils';
 import { SubProcess } from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
@@ -33,9 +32,6 @@ export default class ExtensionCommand {
      * @type {boolean}
      */
     this.isJsonOutput = json;
-
-    /** @type {NPM} */
-    this.npm = new NPM(this.config.appiumHome);
 
     /** @type {Record<string, string>} */
     this.knownExtensions = {}; // this needs to be overridden in final class
@@ -174,7 +170,7 @@ export default class ExtensionCommand {
     if (installType === INSTALL_TYPE_LOCAL) {
       const msg = `Linking ${this.type} from local path into ${this.config.appiumHome}`;
       const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
-        await this.npm.linkPackage(installSpec))
+        await npm.linkPackage(this.config.appiumHome, installSpec))
       );
       extData = this.getExtensionFields(pkgJsonData);
       log(this.isJsonOutput, `Successfully linked ${extData.pkgName} into ${this.config.appiumHome}`);
@@ -260,9 +256,7 @@ export default class ExtensionCommand {
     const msg = `Installing '${ext}'${specMsg}`;
     try {
       const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
-        await this.npm.installPackage({
-          pkgDir: this.config.appiumHome,
-          pkgName,
+        await npm.installPackage(this.config.appiumHome, pkgName, {
           pkgVer
         })
       ));
@@ -427,8 +421,8 @@ export default class ExtensionCommand {
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
     const {version, pkgName} = this.config.installedExtensions[ext];
-    let unsafeUpdate = await this.npm.getLatestVersion(pkgName);
-    let safeUpdate = await this.npm.getLatestSafeUpgradeVersion(pkgName, version);
+    let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
+    let safeUpdate = await npm.getLatestSafeUpgradeVersion(this.config.appiumHome, pkgName, version);
     if (!util.compareVersions(unsafeUpdate, '>', version)) {
       // the latest version is not greater than the current version, so there's no possible update
       unsafeUpdate = null;

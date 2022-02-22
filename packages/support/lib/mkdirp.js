@@ -1,9 +1,6 @@
-import mkdirp from 'mkdirp';
-
+import { fs } from './fs';
 /**
- * TODO: once we drop support for Node 10, this should be removed in favor
- * of fs.mkdir(dir, {recursive: true});
+ * @deprecated Use `fs.mkdirp` instead.
  */
-
-
+const { mkdirp } = fs;
 export { mkdirp };

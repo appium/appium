@@ -4,7 +4,6 @@ import yauzl from 'yauzl';
 import archiver from 'archiver';
 import { createWriteStream } from 'fs';
 import path from 'path';
-import { mkdirp } from '../lib/mkdirp';
 import stream from 'stream';
 import fs from './fs';
 import { isWindows } from './system';
@@ -261,11 +260,11 @@ async function _extractEntryTo (zipFile, entry, destDir) {
   // Create dest directory if doesn't exist already
   if (/\/$/.test(entry.fileName)) {
     if (!await fs.exists(dstPath)) {
-      await mkdirp(dstPath);
+      await fs.mkdirp(dstPath);
     }
     return;
   } else if (!await fs.exists(path.dirname(dstPath))) {
-    await mkdirp(path.dirname(dstPath));
+    await fs.mkdirp(path.dirname(dstPath));
   }
 
   // Create a write stream

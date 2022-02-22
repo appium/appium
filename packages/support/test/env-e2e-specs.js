@@ -1,7 +1,7 @@
 // @ts-check
 
 import path from 'path';
-import {mkdirp, fs, tempDir} from '../lib';
+import {fs, tempDir} from '../lib';
 import {
   DEFAULT_APPIUM_HOME,
   readPackageInDir,
@@ -112,7 +112,7 @@ describe('environment', function () {
     describe('when `appium` is a dependency', function () {
       describe('when `appium` is installed', function () {
         before(async function () {
-          await mkdirp(path.join(cwd, 'node_modules'));
+          await fs.mkdirp(path.join(cwd, 'node_modules'));
         });
 
         after(async function () {

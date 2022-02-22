@@ -3,36 +3,58 @@
 import path from 'path';
 import semver from 'semver';
 import { exec } from 'teen_process';
-import { fs, mkdirp, util, system } from '@appium/support';
-import { LINK_LOCKFILE_RELATIVE_PATH, INSTALL_LOCKFILE_RELATIVE_PATH } from '../constants';
+import { fs } from './fs';
+import * as util from './util';
+import * as system from './system';
 import resolveFrom from 'resolve-from';
 
-export default class NPM {
+
+/**
+ * Relative path to directory containing any Appium internal files
+ * XXX: this is duplicated in `appium/lib/constants.js`.
+ */
+export const CACHE_DIR_RELATIVE_PATH = path.join(
+  'node_modules',
+  '.cache',
+  'appium',
+);
+
+/**
+ * Relative path to lockfile used when installing an extension via `appium`
+ */
+export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(
+  CACHE_DIR_RELATIVE_PATH,
+  '.install.lock',
+);
+
+/**
+ * Relative path to lockfile used when linking an extension via `appium`
+ */
+export const LINK_LOCKFILE_RELATIVE_PATH = path.join(
+  CACHE_DIR_RELATIVE_PATH,
+  '.link.lock',
+);
+
+/**
+ * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
+ */
+export class NPM {
   /**
-   * Path to `APPIUM_HOME`
-   * @type {string}
+   * Returns path to "install" lockfile
+   * @private
+   * @param {string} cwd
    */
-  appiumHome;
+  _getInstallLockfilePath (cwd) {
+    return path.join(cwd, INSTALL_LOCKFILE_RELATIVE_PATH);
+  }
 
   /**
-   * Path to "install" lockfile
-   * @type {string}
+   * Returns path to "link" lockfile
+   * @private
+   * @param {string} cwd
    */
-  installLockfilePath;
-
-  /**
-   * Path to "link" lockfile
-   * @type {string}
-   */
-  linkLockfilePath;
-
-  /**
-   * @param {string} appiumHome
-   */
-  constructor (appiumHome) {
-    this.appiumHome = appiumHome;
-    this.installLockfilePath = path.join(appiumHome, INSTALL_LOCKFILE_RELATIVE_PATH);
-    this.linkLockfilePath = path.join(appiumHome, LINK_LOCKFILE_RELATIVE_PATH);
+  _getLinkLockfilePath (cwd) {
+    return path.join(cwd, LINK_LOCKFILE_RELATIVE_PATH);
   }
 
   /**
@@ -42,23 +64,11 @@ export default class NPM {
    * `message` of the {@link TeenProcessExecError} rejected.
    * @param {string} cmd
    * @param {string[]} args
-   * @param {{ json?: boolean; cwd?: string; lockFile?: string; }} opts
+   * @param {ExecOpts} opts
+   * @param {TeenProcessExecOpts} [execOpts]
    */
   async exec (cmd, args, opts, execOpts = {}) {
     let { cwd, json, lockFile } = opts;
-    if (!cwd) {
-      cwd = this.appiumHome;
-    }
-    // ensure the directory we want to install inside of exists
-    await mkdirp(cwd);
-
-    // not only this, this directory needs a 'package.json' inside of it, otherwise, if any
-    // directory in the filesystem tree ABOVE cwd happens to have a package.json or a node_modules
-    // dir in it, NPM will install the module up there instead (silly NPM)
-    const dummyPkgJson = path.resolve(cwd, 'package.json');
-    if (!await fs.exists(dummyPkgJson)) {
-      await fs.writeFile(dummyPkgJson, '{}');
-    }
 
     // make sure we perform the current operation in cwd
     execOpts = {...execOpts, cwd};
@@ -86,31 +96,44 @@ export default class NPM {
         ret.json = JSON.parse(stdout);
       } catch (ign) {}
     } catch (e) {
-      const {stdout, stderr, code} = /** @type {TeenProcessExecError} */(e);
-      const err = new Error(`npm command '${cmd} ${args.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`);
+      const {stdout = '', stderr = '', code = null} = /** @type {TeenProcessExecError} */(e);
+      const err = new Error(`npm command '${args.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`);
       throw err;
     }
     return ret;
   }
 
   /**
+   * @param {string} cwd
    * @param {string} pkg
    */
-  async getLatestVersion (pkg) {
+  async getLatestVersion (cwd, pkg) {
     return (await this.exec('view', [pkg, 'dist-tags'], {
-      json: true
+      json: true,
+      cwd
     })).json?.latest;
   }
 
   /**
+   * @param {string} cwd
    * @param {string} pkg
    * @param {string} curVersion
    */
-  async getLatestSafeUpgradeVersion (pkg, curVersion) {
+  async getLatestSafeUpgradeVersion (cwd, pkg, curVersion) {
     const allVersions = (await this.exec('view', [pkg, 'versions'], {
-      json: true
+      json: true,
+      cwd
     })).json;
     return this.getLatestSafeUpgradeFromVersions(curVersion, allVersions);
+  }
+
+  /**
+   * Runs `npm ls`, optionally for a particular package.
+   * @param {string} cwd
+   * @param {string} [pkg]
+   */
+  async list (cwd, pkg) {
+    return (await this.exec('list', pkg ? [pkg] : [], {cwd, json: true})).json;
   }
 
   /**
@@ -160,19 +183,29 @@ export default class NPM {
 
   /**
    * Installs a package w/ `npm`
-   * @param {InstallPackageOpts} opts
+   * @param {string} cwd
+   * @param {string} pkgName
+   * @param {InstallPackageOpts} [opts]
    * @returns {Promise<import('type-fest').PackageJson>}
    */
-  async installPackage ({pkgDir, pkgName, pkgVer}) {
+  async installPackage (cwd, pkgName, {pkgVer} = {}) {
+    // not only this, this directory needs a 'package.json' inside of it, otherwise, if any
+    // directory in the filesystem tree ABOVE cwd happens to have a package.json or a node_modules
+    // dir in it, NPM will install the module up there instead (silly NPM)
+    const dummyPkgJson = path.resolve(cwd, 'package.json');
+    if (!await fs.exists(dummyPkgJson)) {
+      await fs.writeFile(dummyPkgJson, '{}');
+    }
+
     const res = await this.exec('install', [
       '--no-save',
       '--global-style',
       '--no-package-lock',
       pkgVer ? `${pkgName}@${pkgVer}` : pkgName
     ], {
-      cwd: pkgDir,
+      cwd,
       json: true,
-      lockFile: this.installLockfilePath
+      lockFile: this._getInstallLockfilePath(cwd)
     });
 
     if (res.json) {
@@ -187,7 +220,7 @@ export default class NPM {
     // everything got installed ok. Remember, pkgName might end up with a / in it due to an npm
     // org, so if so, that will get correctly exploded into multiple directories, by path.resolve here
     // (even on Windows!)
-    const pkgJsonPath = resolveFrom(this.appiumHome, `${pkgName}/package.json`);
+    const pkgJsonPath = resolveFrom(cwd, `${pkgName}/package.json`);
     try {
       return require(pkgJsonPath);
     } catch {
@@ -198,9 +231,11 @@ export default class NPM {
   }
 
   /**
+   * @todo: I think this can be an `install` instead of a `link`.
+   * @param {string} cwd
    * @param {string} pkgPath
    */
-  async linkPackage (pkgPath) {
+  async linkPackage (cwd, pkgPath) {
     // from the path alone we don't know the npm package name, so we need to
     // look in package.json
     let pkgName;
@@ -221,14 +256,14 @@ export default class NPM {
       '--no-package-lock',
       pkgPath
     ];
-    const res = await this.exec('link', args, {cwd: this.appiumHome, lockFile: this.linkLockfilePath});
+    const res = await this.exec('link', args, {cwd, lockFile: this._getLinkLockfilePath(cwd)});
     if (res.json && res.json.error) {
       throw new Error(res.json.error);
     }
 
     // now ensure it was linked to the correct place
     try {
-      return require(resolveFrom(this.appiumHome, `${pkgName}/package.json`));
+      return require(resolveFrom(cwd, `${pkgName}/package.json`));
     } catch {
       throw new Error('The package was not linked correctly; its package.json ' +
                       'did not exist or was unreadable');
@@ -236,23 +271,31 @@ export default class NPM {
   }
 
   /**
-   * @param {string} pkgDir
+   * @param {string} cwd
    * @param {string} pkg
    */
-  async uninstallPackage (pkgDir, pkg) {
+  async uninstallPackage (cwd, pkg) {
     await this.exec('uninstall', [pkg], {
-      cwd: pkgDir,
-      lockFile: this.installLockfilePath
+      cwd,
+      lockFile: this._getInstallLockfilePath(cwd)
     });
   }
 }
 
+export const npm = new NPM();
+
 /**
  * Options for {@link NPM.installPackage}
  * @typedef {Object} InstallPackageOpts
- * @property {string} pkgDir - the directory to install the package into
- * @property {string} pkgName - the name of the package to install
  * @property {string} [pkgVer] - the version of the package to install
+ */
+
+/**
+ * Options for {@link NPM.exec}
+ * @typedef {Object} ExecOpts
+ * @property {string} cwd - Current working directory
+ * @property {boolean} [json] - If `true`, supply `--json` flag to npm and resolve w/ parsed JSON
+ * @property {string} [lockFile] - Path to lockfile to use
  */
 
 // THESE TYPES SHOULD BE IN TEEN PROCESS, NOT HERE
@@ -272,6 +315,18 @@ export default class NPM {
  * @property {string} stdout - STDOUT
  * @property {string} stderr - STDERR
  * @property {number?} code - Exit code
+ */
+
+/**
+ * Options unique to `teen_process.exec`. I probably missed some
+ * @typedef {Object} TeenProcessExecExtraOpts
+ * @property {number} [maxStdoutBufferSize]
+ * @property {number} [maxStderrBufferSize]
+ */
+
+/**
+ * All options for `teen_process.exec`
+ * @typedef {import('child_process').SpawnOptions & TeenProcessExecExtraOpts} TeenProcessExecOpts
  */
 
 /**

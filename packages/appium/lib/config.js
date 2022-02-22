@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 import _ from 'lodash';
-import { mkdirp, system, fs } from '@appium/support';
+import { system, fs } from '@appium/support';
 import axios from 'axios';
 import { exec } from 'teen_process';
 import logger from './logger';
@@ -288,7 +288,7 @@ function showConfig (nonDefaultPreConfigParsedArgs, configResult, defaults, pars
  */
 async function validateTmpDir (tmpDir) {
   try {
-    await mkdirp(tmpDir);
+    await fs.mkdirp(tmpDir);
   } catch (e) {
     throw new Error(`We could not ensure that the temp dir you specified ` +
                     `(${tmpDir}) exists. Please make sure it's writeable.`);

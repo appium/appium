@@ -1,6 +1,6 @@
 import path from 'path';
 import yaml from 'yaml-js';
-import { fs, mkdirp, util } from 'appium-support';
+import { fs, util } from '@appium/support';
 import validate from 'validate.js';
 import Handlebars from 'handlebars';
 import _ from 'lodash';
@@ -8,8 +8,6 @@ import { asyncify } from 'asyncbox';
 import { validator, CLIENT_URL_TYPES } from './validator';
 import url from 'url';
 import log from 'fancy-log';
-import findRoot from 'find-root';
-
 
 // What range of platforms do the driver's support
 const platformRanges = {
@@ -31,7 +29,7 @@ const appiumRanges = {
   mac: ['1.6.4'],
 };
 
-const rootFolder = findRoot(__dirname);
+const rootFolder = fs.findRoot(__dirname);
 
 // Create Handlebars helper that shows a version range
 Handlebars.registerHelper('versions', function versionHelper (object, name, driverName) {
@@ -207,7 +205,7 @@ async function generateCommands () {
     const markdownPath = `${relativeFilename.substring(0, relativeFilename.length - ext.length)}.md`;
     const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
     log(`    Writing to: ${outfile}`);
-    await mkdirp(path.dirname(outfile));
+    await fs.mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
 
     fileCount++;

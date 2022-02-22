@@ -26,7 +26,6 @@ const findRootCached = _.memoize(pkgDir.sync);
 const fs = {
   async hasAccess (path) {
     try {
-      // as of recent-ish node versions, `R_OK` moved into the `constants` property of `fs`
       await fs.access(path, _fs.constants.R_OK);
     } catch (err) {
       return false;

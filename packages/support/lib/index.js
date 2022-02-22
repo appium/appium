@@ -14,6 +14,8 @@ import * as node from './node';
 import * as timing from './timing';
 import * as env from './env';
 
+export { npm } from './npm';
+
 const { fs } = fsIndex;
 const { cancellableDelay } = util;
 const { mkdirp } = mkdirpIndex;

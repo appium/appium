@@ -42,7 +42,7 @@ function isSessionCommand (command) {
 }
 
 function getLogger (driver, sessionId = null) {
-  const dstDriver = _.isFunction(driver.driverForSession)
+  const dstDriver = sessionId && _.isFunction(driver.driverForSession)
     ? (driver.driverForSession(sessionId) ?? driver)
     : driver;
   if (_.isFunction(dstDriver.log?.info)) {

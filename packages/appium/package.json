@@ -28,7 +28,6 @@
     "lib": "./lib"
   },
   "files": [
-    "bin",
     "lib",
     "build",
     "index.js",

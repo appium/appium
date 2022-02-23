@@ -22,6 +22,7 @@ describe('log commands -', function () {
   beforeEach(function () {
     // reset the supported log types
     logCommands.supportedLogTypes = {};
+    logCommands.log = {debug: _.noop};
   });
   describe('getLogTypes', function () {
     it('should return empty array when no supported log types', async function () {

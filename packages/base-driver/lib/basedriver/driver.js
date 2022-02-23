@@ -1,12 +1,11 @@
 import {
   Protocol, errors, determineProtocol, DELETE_SESSION_COMMAND,
 } from '../protocol';
-import { fs } from '@appium/support';
+import { fs, logger, node } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
 import os from 'os';
 import commands from './commands';
 import * as helpers from './helpers';
-import log from './logger';
 import DeviceSettings from './device-settings';
 import { desiredCapabilityConstraints } from './desired-caps';
 import { validateCaps } from './capabilities';
@@ -30,6 +29,7 @@ const EVENT_SESSION_QUIT_START = 'quitSessionRequested';
 const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
+
 class BaseDriver extends Protocol {
 
   /**
@@ -47,6 +47,8 @@ class BaseDriver extends Protocol {
     this.caps = null;
     this.originalCaps = null; // To give the original capabilities to reset
     this.helpers = helpers;
+
+    this._log = null;
 
     // basePath is used for several purposes, for example in setting up
     // proxying to other drivers, since we need to know what the base path
@@ -102,6 +104,17 @@ class BaseDriver extends Protocol {
     this.eventEmitter = new EventEmitter();
 
     this.protocol = null;
+  }
+
+  get log () {
+    if (!this._log) {
+      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 8)}`;
+      this._log = logger.getLogger(() =>
+        this.sessionId ? `${instanceName} (${this.sessionId.substring(0, 8)})` : instanceName
+      );
+    }
+
+    return this._log;
   }
 
   /**
@@ -168,7 +181,7 @@ class BaseDriver extends Protocol {
     const ts = Date.now();
     const logTime = (new Date(ts)).toTimeString();
     this._eventHistory[eventName].push(ts);
-    log.debug(`Event '${eventName}' logged at ${ts} (${logTime})`);
+    this.log.debug(`Event '${eventName}' logged at ${ts} (${logTime})`);
   }
 
   /*
@@ -214,10 +227,10 @@ class BaseDriver extends Protocol {
     let extraCaps = _.difference(_.keys(caps),
                                  _.keys(this._constraints));
     if (extraCaps.length) {
-      log.warn(`The following capabilities were provided, but are not ` +
+      this.log.warn(`The following capabilities were provided, but are not ` +
                `recognized by Appium:`);
       for (const cap of extraCaps) {
-        log.warn(`  ${cap}`);
+        this.log.warn(`  ${cap}`);
       }
     }
   }
@@ -230,8 +243,8 @@ class BaseDriver extends Protocol {
     try {
       validateCaps(caps, this._constraints);
     } catch (e) {
-      log.errorAndThrow(new errors.SessionNotCreatedError(`The desiredCapabilities object was not valid for the ` +
-                    `following reason(s): ${e.message}`));
+      this.log.errorAndThrow(new errors.SessionNotCreatedError(`The desiredCapabilities object was not valid for the ` +
+        `following reason(s): ${e.message}`));
     }
 
     this.logExtraCaps(caps);
@@ -309,7 +322,7 @@ class BaseDriver extends Protocol {
 
     if (cmd === 'createSession') {
       // If creating a session determine if W3C or MJSONWP protocol was requested and remember the choice
-      this.protocol = determineProtocol(...args);
+      this.protocol = determineProtocol(args);
       this.logEvent(EVENT_SESSION_INIT);
     } else if (cmd === DELETE_SESSION_COMMAND) {
       this.logEvent(EVENT_SESSION_QUIT_START);
@@ -381,7 +394,7 @@ class BaseDriver extends Protocol {
 
   validateLocatorStrategy (strategy, webContext = false) {
     let validStrategies = this.locatorStrategies;
-    log.debug(`Valid locator strategies for this request: ${validStrategies.join(', ')}`);
+    this.log.debug(`Valid locator strategies for this request: ${validStrategies.join(', ')}`);
 
     if (webContext) {
       validStrategies = validStrategies.concat(this.webLocatorStrategies);
@@ -397,8 +410,8 @@ class BaseDriver extends Protocol {
    * preserving the timeout config.
    */
   async reset () {
-    log.debug('Resetting app mid-session');
-    log.debug('Running generic full reset');
+    this.log.debug('Resetting app mid-session');
+    this.log.debug('Running generic full reset');
 
     // preserving state
     let currentConfig = {};
@@ -411,7 +424,7 @@ class BaseDriver extends Protocol {
 
     try {
       await this.deleteSession(this.sessionId);
-      log.debug('Restarting app');
+      this.log.debug('Restarting app');
       await this.createSession(undefined, undefined, this.originalCaps);
     } finally {
       // always restore state.

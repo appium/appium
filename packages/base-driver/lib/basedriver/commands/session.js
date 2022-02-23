@@ -1,12 +1,11 @@
 /* eslint-disable require-await */
 import _ from 'lodash';
-import log from '../logger';
 import { errors } from '../../protocol';
 import { util } from '@appium/support';
 import {
   processCapabilities, promoteAppiumOptions, APPIUM_OPTS_CAP, PREFIXED_APPIUM_OPTS_CAP,
-  isW3cCaps,
 } from '../capabilities';
+import { isW3cCaps } from '../../helpers/capabilities';
 
 const commands = {};
 
@@ -15,7 +14,7 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
     throw new errors.SessionNotCreatedError('Cannot create a new session while one is in progress');
   }
 
-  log.debug();
+  this.log.debug();
 
   // Historically the first two arguments were reserved for JSONWP capabilities.
   // Appium 2 has dropped the support of these, so now we only accept capability
@@ -30,16 +29,16 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
   this.setProtocolW3C();
 
   this.originalCaps = _.cloneDeep(originalCaps);
-  log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
+  this.log.debug(`Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`);
 
   let caps;
   try {
     caps = processCapabilities(originalCaps, this.desiredCapConstraints, this.shouldValidateCaps);
     if (caps[APPIUM_OPTS_CAP]) {
-      log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
+      this.log.debug(`Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`);
       caps = promoteAppiumOptions(caps);
     }
-    caps = fixCaps(caps, this.desiredCapConstraints);
+    caps = fixCaps(caps, this.desiredCapConstraints, this.log);
   } catch (e) {
     throw new errors.SessionNotCreatedError(e.message);
   }
@@ -79,7 +78,7 @@ commands.createSession = async function createSession (w3cCapabilities1, w3cCapa
     this.newCommandTimeoutMs = (this.caps.newCommandTimeout * 1000);
   }
 
-  log.info(`Session created with session id: ${this.sessionId}`);
+  this.log.info(`Session created with session id: ${this.sessionId}`);
 
   return [this.sessionId, caps];
 };
@@ -115,7 +114,7 @@ commands.deleteSession = async function deleteSession (/* sessionId */) {
   this.sessionId = null;
 };
 
-function fixCaps (originalCaps, desiredCapConstraints = {}) {
+function fixCaps (originalCaps, desiredCapConstraints = {}, log) {
   let caps = _.clone(originalCaps);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'

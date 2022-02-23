@@ -1,6 +1,4 @@
-import log from '../logger';
 import _ from 'lodash';
-
 
 const commands = {}, helpers = {}, extensions = {};
 
@@ -16,12 +14,12 @@ extensions.supportedLogTypes = {};
 
 // eslint-disable-next-line require-await
 commands.getLogTypes = async function getLogTypes () {
-  log.debug('Retrieving supported log types');
+  this.log.debug('Retrieving supported log types');
   return _.keys(this.supportedLogTypes);
 };
 
 commands.getLog = async function getLog (logType) {
-  log.debug(`Retrieving '${logType}' logs`);
+  this.log.debug(`Retrieving '${logType}' logs`);
 
   if (!(await this.getLogTypes()).includes(logType)) {
     const logsTypesWithDescriptions = _.reduce(this.supportedLogTypes, (acc, value, key) => {

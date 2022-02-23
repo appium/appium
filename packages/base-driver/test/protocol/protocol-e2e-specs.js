@@ -350,18 +350,17 @@ describe('Protocol', function () {
         }).should.eventually.be.rejectedWith(/400/);
       });
       it('should allow create session with capabilities (W3C)', async function () {
-        const w3cCapabilities = {'appium:e': 'f'};
+        const w3cCapabilities = {alwaysMatch: {'appium:e': 'f'}};
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
           data: {capabilities: w3cCapabilities}
         });
-        sessionId = data.sessionId;
-
         should.not.exist(data.status);
         should.not.exist(data.sessionId);
         data.value.capabilities.should.eql(w3cCapabilities);
         data.value.sessionId.should.exist;
+        sessionId = data.value.sessionId;
       });
       it('should raise an error if the driver does not support W3C yet', async function () {
         const createSessionStub = sinon.stub(driver, 'createSession').callsFake(function (capabilities) {

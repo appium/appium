@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { util } from '@appium/support';
+import { util, logger } from '@appium/support';
 import { validators } from './validators';
 import {
   errors, isErrorType, getResponseForW3CError,
@@ -7,11 +7,9 @@ import {
 } from './errors';
 import { METHOD_MAP, NO_SESSION_ID_COMMANDS } from './routes';
 import B from 'bluebird';
-import {
-  formatResponseValue, formatStatus,
-} from './helpers';
+import { formatResponseValue, formatStatus } from './helpers';
 import { MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
-import SESSIONS_CACHE from './sessions-cache';
+import { isW3cCaps } from '../helpers/capabilities';
 
 
 const CREATE_SESSION_COMMAND = 'createSession';
@@ -20,10 +18,8 @@ const GET_STATUS_COMMAND = 'getStatus';
 
 class Protocol {}
 
-function determineProtocol (desiredCapabilities, requiredCapabilities, capabilities) {
-  return _.isPlainObject(capabilities) ?
-    PROTOCOLS.W3C :
-    PROTOCOLS.MJSONWP;
+function determineProtocol (createSessionArgs) {
+  return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
 
 function extractProtocol (driver, sessionId = null) {
@@ -38,11 +34,26 @@ function extractProtocol (driver, sessionId = null) {
   }
 
   // Extract the protocol for the current session if the given driver is the umbrella one
-  return dstDriver ? dstDriver.protocol : SESSIONS_CACHE.getProtocol(sessionId);
+  return dstDriver?.protocol ?? PROTOCOLS.W3C;
 }
 
 function isSessionCommand (command) {
   return !_.includes(NO_SESSION_ID_COMMANDS, command);
+}
+
+function getLogger (driver, sessionId = null) {
+  if (_.isFunction(driver?.log?.info)) {
+    return driver.log;
+  }
+
+  let logPrefix = 'AppiumDriver';
+  if (driver && driver.constructor) {
+    logPrefix = driver.constructor.name;
+  }
+  if (sessionId) {
+    logPrefix += ` (${sessionId.substring(0, 8)})`;
+  }
+  return logger.getLogger(logPrefix);
 }
 
 function wrapParams (paramSets, jsonObj) {
@@ -192,11 +203,11 @@ function makeArgs (requestParams, jsonObj, payloadParams, protocol) {
 
 function routeConfiguringFunction (driver) {
   if (!driver.sessionExists) {
-    throw new Error('Drivers used with MJSONWP must implement `sessionExists`');
+    throw new Error('Drivers must implement `sessionExists` property');
   }
 
   if (!(driver.executeCommand || driver.execute)) {
-    throw new Error('Drivers used with MJSONWP must implement `executeCommand` or `execute`');
+    throw new Error('Drivers must implement `executeCommand` or `execute` method');
   }
 
   // return a function which will add all the routes to the driver. Here extraMethods might be
@@ -247,7 +258,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
           await doJwpProxy(driver, req, res);
           return;
         }
-        SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol).debug(`Would have proxied ` +
+        getLogger(driver, req.params.sessionId).debug(`Would have proxied ` +
           `command directly, but a plugin exists which might require its value, so will let ` +
           `its value be collected internally and made part of plugin chain`);
         didPluginOverrideProxy = true;
@@ -272,7 +283,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       if (spec.command === CREATE_SESSION_COMMAND) {
         // try to determine protocol by session creation args, so we can throw a
         // properly formatted error if arguments validation fails
-        currentProtocol = determineProtocol(...makeArgs(req.params, jsonObj, spec.payloadParams || {}));
+        currentProtocol = determineProtocol(makeArgs(req.params, jsonObj, spec.payloadParams || {}));
       }
 
       // ensure that the json payload conforms to the spec
@@ -288,7 +299,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       }
 
       // run the driver command wrapped inside the argument validators
-      SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol).debug(`Calling ` +
+      getLogger(driver, req.params.sessionId).debug(`Calling ` +
         `${driver.constructor.name}.${spec.command}() with args: ` +
         _.truncate(JSON.stringify(args), {length: MAX_LOG_BODY_LENGTH}));
 
@@ -317,8 +328,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       // unpack createSession response
       if (spec.command === CREATE_SESSION_COMMAND) {
         newSessionId = driverRes[0];
-        SESSIONS_CACHE.putSession(newSessionId, currentProtocol);
-        SESSIONS_CACHE.getLogger(newSessionId, currentProtocol)
+        getLogger(driver, newSessionId)
           .debug(`Cached the protocol value '${currentProtocol}' for the new session ${newSessionId}`);
         if (currentProtocol === PROTOCOLS.MJSONWP) {
           driverRes = driverRes[1];
@@ -333,9 +343,9 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
 
       // delete should not return anything even if successful
       if (spec.command === DELETE_SESSION_COMMAND) {
-        SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol)
+        getLogger(driver, req.params.sessionId)
           .debug(`Received response: ${_.truncate(JSON.stringify(driverRes), {length: MAX_LOG_BODY_LENGTH})}`);
-        SESSIONS_CACHE.getLogger(req.params.sessionId, currentProtocol).debug('But deleting session, so not returning');
+        getLogger(driver, req.params.sessionId).debug('But deleting session, so not returning');
         driverRes = null;
       }
 
@@ -349,15 +359,8 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       }
 
       httpResBody.value = driverRes;
-      SESSIONS_CACHE.getLogger(req.params.sessionId || newSessionId, currentProtocol).debug(`Responding ` +
+      getLogger(driver, req.params.sessionId || newSessionId).debug(`Responding ` +
         `to client with driver.${spec.command}() result: ${_.truncate(JSON.stringify(driverRes), {length: MAX_LOG_BODY_LENGTH})}`);
-
-      if (spec.command === DELETE_SESSION_COMMAND) {
-        // We don't want to keep the logger instance in the cache
-        // after the session is deleted, because it contains the logging history
-        // and consumes the memory
-        SESSIONS_CACHE.resetLogger(req.params.sessionId);
-      }
     } catch (err) {
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
@@ -374,7 +377,7 @@ function buildHandler (app, method, path, spec, driver, isSessCmd) {
       if (isErrorType(err, errors.ProxyRequestError)) {
         actualErr = err.getActualError();
       } else {
-        SESSIONS_CACHE.getLogger(req.params.sessionId || newSessionId, currentProtocol)
+        getLogger(driver, req.params.sessionId || newSessionId)
           .debug(`Encountered internal error running command: ${errMsg}`);
       }
 
@@ -431,7 +434,7 @@ function driverShouldDoJwpProxy (driver, req, command) {
 }
 
 async function doJwpProxy (driver, req, res) {
-  SESSIONS_CACHE.getLogger(req.params.sessionId, extractProtocol(driver, req.params.sessionId))
+  getLogger(driver, req.params.sessionId)
     .info('Driver proxy active, passing request on via HTTP proxy');
 
   // check that the inner driver has a proxy function

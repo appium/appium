@@ -41,7 +41,7 @@ class FakeDriver extends BaseDriver {
       throw new errors.NotYetImplementedError();
     }
     if (cmd === 'createSession') {
-      this.protocol = determineProtocol(...args);
+      this.protocol = determineProtocol(args);
     }
     return await this[cmd](...args);
   }

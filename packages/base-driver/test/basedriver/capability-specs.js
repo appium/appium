@@ -10,6 +10,7 @@ describe('Desired Capabilities', function () {
   beforeEach(function () {
     d = new BaseDriver();
     sandbox = createSandbox();
+    sandbox.spy(d.log, 'warn');
     sandbox.spy(logger, 'warn');
   });
 
@@ -138,7 +139,7 @@ describe('Desired Capabilities', function () {
       }
     });
 
-    logger.warn.callCount.should.be.above(0);
+    d.log.warn.callCount.should.be.above(0);
   });
 
   it('should be sensitive to the case of caps', async function () {
@@ -167,7 +168,7 @@ describe('Desired Capabilities', function () {
           'appium:noReset': 'false'
         }
       });
-      logger.warn.callCount.should.be.above(0);
+      d.log.warn.callCount.should.be.above(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.noReset.should.eql(false);
@@ -181,7 +182,7 @@ describe('Desired Capabilities', function () {
           'appium:noReset': 'true'
         }
       });
-      logger.warn.callCount.should.be.above(0);
+      d.log.warn.callCount.should.be.above(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.noReset.should.eql(true);
@@ -195,7 +196,7 @@ describe('Desired Capabilities', function () {
           'appium:language': 'true'
         }
       });
-      logger.warn.callCount.should.equal(0);
+      d.log.warn.callCount.should.equal(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.language.should.eql('true');
@@ -211,7 +212,7 @@ describe('Desired Capabilities', function () {
           'appium:newCommandTimeout': '1'
         }
       });
-      logger.warn.callCount.should.be.above(0);
+      d.log.warn.callCount.should.be.above(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1);
@@ -225,7 +226,7 @@ describe('Desired Capabilities', function () {
           'appium:newCommandTimeout': '1.1'
         }
       });
-      logger.warn.callCount.should.be.above(0);
+      d.log.warn.callCount.should.be.above(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1.1);
@@ -239,7 +240,7 @@ describe('Desired Capabilities', function () {
           'appium:language': '1'
         }
       });
-      logger.warn.callCount.should.equal(0);
+      d.log.warn.callCount.should.equal(0);
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.language.should.eql('1');
@@ -300,7 +301,7 @@ describe('Desired Capabilities', function () {
       }
     });
 
-    logger.warn.callCount.should.equal(0);
+    d.log.warn.callCount.should.equal(0);
   });
 
   it('should not validate against null/undefined caps', async function () {

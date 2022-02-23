@@ -1,13 +1,13 @@
 import _ from 'lodash';
-import log from './logger';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
 import { findMatchingDriver } from './drivers';
-import { BaseDriver, errors, isSessionCommand,
-         CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND
+import {
+  BaseDriver, errors, isSessionCommand,
+  CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import { parseCapsForInnerDriver, pullSettings } from './utils';
-import { util } from '@appium/support';
+import { util, node, logger } from '@appium/support';
 import { getDefaultsForExtension } from './schema';
 
 const desiredCapabilityConstraints = {
@@ -62,6 +62,18 @@ class AppiumDriver extends BaseDriver {
     updateBuildInfo();
   }
 
+  /**
+   * Retrieves logger instance for the current umbrella driver instance
+   * @override
+   */
+  get log () {
+    if (!this._log) {
+      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 8)}`;
+      this._log = logger.getLogger(instanceName);
+    }
+    return this._log;
+  }
+
   /** @type {import('./driver-config').default|undefined} */
   driverConfig;
 
@@ -97,16 +109,16 @@ class AppiumDriver extends BaseDriver {
   }
 
   printNewSessionAnnouncement (driverName, driverVersion, driverBaseVersion) {
-    log.info(driverVersion
+    this.log.info(driverVersion
       ? `Appium v${APPIUM_VER} creating new ${driverName} (v${driverVersion}) session`
       : `Appium v${APPIUM_VER} creating new ${driverName} session`
     );
-    log.info(`Checking BaseDriver versions for Appium and ${driverName}`);
-    log.info(AppiumDriver.baseVersion
+    this.log.info(`Checking BaseDriver versions for Appium and ${driverName}`);
+    this.log.info(AppiumDriver.baseVersion
       ? `Appium's BaseDriver version is ${AppiumDriver.baseVersion}`
       : `Could not determine Appium's BaseDriver version`
     );
-    log.info(driverBaseVersion
+    this.log.info(driverBaseVersion
       ? `${driverName}'s BaseDriver version is ${driverBaseVersion}`
       : `Could not determine ${driverName}'s BaseDriver version`
     );
@@ -205,21 +217,21 @@ class AppiumDriver extends BaseDriver {
       // could have been set by a malicious user via capabilities, whereas we
       // want a guarantee the values were set by the appium server admin
       if (this.args.relaxedSecurityEnabled) {
-        log.info(`Applying relaxed security to '${InnerDriver.name}' as per ` +
-                 `server command line argument. All insecure features will be ` +
-                 `enabled unless explicitly disabled by --deny-insecure`);
+        this.log.info(`Applying relaxed security to '${InnerDriver.name}' as per ` +
+          `server command line argument. All insecure features will be ` +
+          `enabled unless explicitly disabled by --deny-insecure`);
         driverInstance.relaxedSecurityEnabled = true;
       }
 
       if (!_.isEmpty(this.args.denyInsecure)) {
-        log.info('Explicitly preventing use of insecure features:');
-        this.args.denyInsecure.map((a) => log.info(`    ${a}`));
+        this.log.info('Explicitly preventing use of insecure features:');
+        this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
         driverInstance.denyInsecure = this.args.denyInsecure;
       }
 
       if (!_.isEmpty(this.args.allowInsecure)) {
-        log.info('Explicitly enabling use of insecure features:');
-        this.args.allowInsecure.map((a) => log.info(`    ${a}`));
+        this.log.info('Explicitly enabling use of insecure features:');
+        this.args.allowInsecure.map((a) => this.log.info(`    ${a}`));
         driverInstance.allowInsecure = this.args.allowInsecure;
       }
 
@@ -266,19 +278,19 @@ class AppiumDriver extends BaseDriver {
 
       this.attachUnexpectedShutdownHandler(driverInstance, innerSessionId);
 
-      log.info(`New ${InnerDriver.name} session created successfully, session ` +
-              `${innerSessionId} added to master session list`);
+      this.log.info(`New ${InnerDriver.name} session created successfully, session ` +
+        `${innerSessionId} added to master session list`);
 
       // set the New Command Timeout for the inner driver
       driverInstance.startNewCommandTimeout();
 
       // apply initial values to Appium settings (if provided)
       if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
-        log.info(`Applying the initial values to Appium settings parsed from W3C caps: ` +
+        this.log.info(`Applying the initial values to Appium settings parsed from W3C caps: ` +
           JSON.stringify(w3cSettings));
         await driverInstance.updateSettings(w3cSettings);
       } else if (driverInstance.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
-        log.info(`Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
+        this.log.info(`Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
           JSON.stringify(jwpSettings));
         await driverInstance.updateSettings(jwpSettings);
       }
@@ -297,24 +309,24 @@ class AppiumDriver extends BaseDriver {
 
   attachUnexpectedShutdownHandler (driver, innerSessionId) {
     const onShutdown = (cause = new Error('Unknown error')) => {
-      log.warn(`Ending session, cause was '${cause.message}'`);
+      this.log.warn(`Ending session, cause was '${cause.message}'`);
 
       if (this.sessionPlugins[innerSessionId]) {
         for (const plugin of this.sessionPlugins[innerSessionId]) {
           if (_.isFunction(plugin.onUnexpectedShutdown)) {
-            log.debug(`Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`);
+            this.log.debug(`Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`);
             try {
               plugin.onUnexpectedShutdown(driver, cause);
             } catch (e) {
-              log.warn(`Got an error when running plugin ${plugin.name} shutdown handler: ${e}`);
+              this.log.warn(`Got an error when running plugin ${plugin.name} shutdown handler: ${e}`);
             }
           } else {
-            log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
+            this.log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
           }
         }
       }
 
-      log.info(`Removing session '${innerSessionId}' from our master session list`);
+      this.log.info(`Removing session '${innerSessionId}' from our master session list`);
       delete this.sessions[innerSessionId];
       delete this.sessionPlugins[innerSessionId];
     };
@@ -322,7 +334,7 @@ class AppiumDriver extends BaseDriver {
     if (_.isFunction(driver.onUnexpectedShutdown)) {
       driver.onUnexpectedShutdown(onShutdown);
     } else {
-      log.warn(`Failed to attach the unexpected shutdown listener. ` +
+      this.log.warn(`Failed to attach the unexpected shutdown listener. ` +
         `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`);
     }
   }
@@ -357,7 +369,7 @@ class AppiumDriver extends BaseDriver {
               .map(([, value]) => value.driverData);
         dstSession = this.sessions[sessionId];
         protocol = dstSession.protocol;
-        log.info(`Removing session ${sessionId} from our master session list`);
+        this.log.info(`Removing session ${sessionId} from our master session list`);
         // regardless of whether the deleteSession completes successfully or not
         // make the session unavailable, because who knows what state it might
         // be in otherwise
@@ -369,7 +381,7 @@ class AppiumDriver extends BaseDriver {
         value: await dstSession.deleteSession(sessionId, otherSessionsData),
       };
     } catch (e) {
-      log.error(`Had trouble ending session ${sessionId}: ${e.message}`);
+      this.log.error(`Had trouble ending session ${sessionId}: ${e.message}`);
       return {
         protocol,
         error: e,
@@ -380,7 +392,7 @@ class AppiumDriver extends BaseDriver {
   async deleteAllSessions (opts = {}) {
     const sessionsCount = _.size(this.sessions);
     if (0 === sessionsCount) {
-      log.debug('There are no active sessions for cleanup');
+      this.log.debug('There are no active sessions for cleanup');
       return;
     }
 
@@ -388,7 +400,7 @@ class AppiumDriver extends BaseDriver {
       force = false,
       reason,
     } = opts;
-    log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
+    this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
     const cleanupPromises = force
       ? _.values(this.sessions).map((drv) => drv.startUnexpectedShutdown(reason && new Error(reason)))
       : _.keys(this.sessions).map((id) => this.deleteSession(id));
@@ -396,7 +408,7 @@ class AppiumDriver extends BaseDriver {
       try {
         await cleanupPromise;
       } catch (e) {
-        log.debug(e);
+        this.log.debug(e);
       }
     }
   }
@@ -509,7 +521,7 @@ class AppiumDriver extends BaseDriver {
       // if we're running with plugins, make sure we log that the default behavior is actually
       // happening so we can tell when the plugin call chain is unwrapping to the default behavior
       // if that's what happens
-      plugins.length && log.info(`Executing default handling behavior for command '${cmd}'`);
+      plugins.length && this.log.info(`Executing default handling behavior for command '${cmd}'`);
 
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
@@ -555,8 +567,8 @@ class AppiumDriver extends BaseDriver {
     // their createSession method and other instance methods
     if (cmd === CREATE_SESSION_COMMAND && this.sessionlessPlugins.length && !res.error) {
       const sessionId = _.first(res.value);
-      log.info(`Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
-               `to session ID ${sessionId}`);
+      this.log.info(`Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
+        `to session ID ${sessionId}`);
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
       this.sessionlessPlugins = [];
     }
@@ -565,7 +577,7 @@ class AppiumDriver extends BaseDriver {
   }
 
   wrapCommandWithPlugins ({driver, cmd, args, next, cmdHandledBy, plugins}) {
-    plugins.length && log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
+    plugins.length && this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*
     // next in so that it can call it if it wants to
@@ -575,7 +587,7 @@ class AppiumDriver extends BaseDriver {
       // evaluated, otherwise we end up with infinite recursion of the last `next` to be defined.
       cmdHandledBy[plugin.name] = false; // we see a new plugin, so add it to the 'cmdHandledBy' object
       next = ((_next) => async () => {
-        log.info(`Plugin ${plugin.name} is now handling cmd '${cmd}'`);
+        this.log.info(`Plugin ${plugin.name} is now handling cmd '${cmd}'`);
         cmdHandledBy[plugin.name] = true; // if we make it here, this plugin has attempted to handle cmd
         // first attempt to handle the command via a command-specific handler on the plugin
         if (plugin[cmd]) {
@@ -603,9 +615,9 @@ class AppiumDriver extends BaseDriver {
     const didHandle = Object.keys(cmdHandledBy).filter((k) => cmdHandledBy[k]);
     const didntHandle = Object.keys(cmdHandledBy).filter((k) => !cmdHandledBy[k]);
     if (didntHandle.length > 0) {
-      log.info(`Command '${cmd}' was *not* handled by the following behaviours or plugins, even ` +
-               `though they were registered to handle it: ${JSON.stringify(didntHandle)}. The ` +
-               `command *was* handled by these: ${JSON.stringify(didHandle)}.`);
+      this.log.info(`Command '${cmd}' was *not* handled by the following behaviours or plugins, even ` +
+        `though they were registered to handle it: ${JSON.stringify(didntHandle)}. The ` +
+        `command *was* handled by these: ${JSON.stringify(didHandle)}.`);
     }
   }
 

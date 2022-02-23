@@ -1,6 +1,7 @@
 // @ts-check
 
 import { npm, env, fs, tempDir, util } from '@appium/support';
+import B from 'bluebird';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import YAML from 'yaml';
@@ -15,7 +16,7 @@ import {
   PLUGIN_TYPE
 } from '../../lib/constants';
 import { FAKE_DRIVER_DIR, resolveFixture } from '../helpers';
-import { installLocalExtension, runAppium, runAppiumJson } from './e2e-helpers';
+import { installLocalExtension, runAppium, runAppiumJson, runAppiumRaw, readAppiumArgErrorFixture, formatAppiumArgErrorOutput } from './e2e-helpers';
 
 const {MANIFEST_RELATIVE_PATH} = env;
 const {expect} = chai;
@@ -282,6 +283,7 @@ describe('CLI behavior', function () {
           ret.uiautomator2.installType.should.eql('npm');
           ret.uiautomator2.installSpec.should.eql('uiautomator2');
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.uiautomator2.installed;
           list.should.eql(ret);
         });
@@ -296,6 +298,7 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql('@appium/fake-driver');
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -308,6 +311,7 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql(installSpec);
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -324,6 +328,7 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('github');
           ret.fake.installSpec.should.eql('appium/appium-fake-driver');
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -340,6 +345,7 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('git');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed', '--json']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -358,6 +364,7 @@ describe('CLI behavior', function () {
             'git+https://github.com/appium/appium-fake-driver',
           );
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -370,6 +377,7 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('local');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed']);
+          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -464,6 +472,50 @@ describe('CLI behavior', function () {
           await expect(runRun(['foo', 'bar', '--json']))
             .to.eventually.be.rejectedWith(Error);
         });
+      });
+    });
+  });
+
+  describe('argument error handling', function () {
+    describe('when the user provides an string where a number was expected', function () {
+      describe('when color output is supported', function () {
+        it('should output a fancy error message', async function () {
+          const [{stderr: actual}, expected] = await B.all([
+            runAppiumRaw(appiumHome, ['--port=sheep'], {env: {FORCE_COLOR: '1'}}),
+            readAppiumArgErrorFixture('cli/cli-error-output-color.txt')
+          ]);
+          expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
+        });
+      });
+
+      describe('when color output is unsupported', function () {
+        it('should output a colorless yet fancy error message', async function () {
+          const [{stderr: actual}, expected] = await B.all([
+            runAppiumRaw(appiumHome, ['--port=sheep'], {}),
+            readAppiumArgErrorFixture('cli/cli-error-output.txt')
+          ]);
+          expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
+        });
+      });
+    });
+
+    describe('when the user provides a value for a boolean argument', function () {
+      it('should output a basic error message', async function () {
+        const [{stderr: actual}, expected] = await B.all([
+          runAppiumRaw(appiumHome, ['--relaxed-security=sheep'], {}),
+          readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt')
+        ]);
+        expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
+      });
+    });
+
+    describe('when the user provides an unknown argument', function () {
+      it('should output a basic error message', async function () {
+        const [{stderr: actual}, expected] = await B.all([
+          runAppiumRaw(appiumHome, ['--pigs=sheep'], {}),
+          readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt')
+        ]);
+        expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
       });
     });
   });

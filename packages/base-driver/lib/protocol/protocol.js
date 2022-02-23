@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { util, logger } from '@appium/support';
+import { util, logger, node } from '@appium/support';
 import { validators } from './validators';
 import {
   errors, isErrorType, getResponseForW3CError,
@@ -42,14 +42,16 @@ function isSessionCommand (command) {
 }
 
 function getLogger (driver, sessionId = null) {
-  if (_.isFunction(driver?.log?.info)) {
-    return driver.log;
+  const dstDriver = sessionId && _.isFunction(driver.driverForSession)
+    ? (driver.driverForSession(sessionId) ?? driver)
+    : driver;
+  if (_.isFunction(dstDriver.log?.info)) {
+    return dstDriver.log;
   }
 
-  let logPrefix = 'AppiumDriver';
-  if (driver && driver.constructor) {
-    logPrefix = driver.constructor.name;
-  }
+  let logPrefix = dstDriver.constructor
+    ? `${dstDriver.constructor.name}@${node.getObjectId(dstDriver).substring(0, 8)}`
+    : 'AppiumDriver';
   if (sessionId) {
     logPrefix += ` (${sessionId.substring(0, 8)})`;
   }

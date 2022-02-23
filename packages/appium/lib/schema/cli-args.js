@@ -139,6 +139,7 @@ function subSchemaToArgDef (subSchema, argSpec) {
   // handle special cases for various types
   switch (type) {
     // booleans do not have a type per `ArgumentOptions`, just an "action"
+    // NOTE: due to limitations of `argparse`, we cannot provide fancy help text, and must rely on its internal error messaging.
     case TYPENAMES.BOOLEAN: {
       argOpts.action = 'store_const';
       argOpts.const = true;

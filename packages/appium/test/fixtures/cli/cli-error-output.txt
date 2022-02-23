@@ -1,0 +1,2 @@
+> 1 | "sheep"
+    | ^^^^^^^ 👈🏽  type must be integer

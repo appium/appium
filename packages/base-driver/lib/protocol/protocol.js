@@ -42,13 +42,16 @@ function isSessionCommand (command) {
 }
 
 function getLogger (driver, sessionId = null) {
-  if (_.isFunction(driver?.log?.info)) {
-    return driver.log;
+  const dstDriver = _.isFunction(driver.driverForSession)
+    ? (driver.driverForSession(sessionId) ?? driver)
+    : driver;
+  if (_.isFunction(dstDriver.log?.info)) {
+    return dstDriver.log;
   }
 
   let logPrefix = 'AppiumDriver';
-  if (driver && driver.constructor) {
-    logPrefix = driver.constructor.name;
+  if (dstDriver.constructor) {
+    logPrefix = dstDriver.constructor.name;
   }
   if (sessionId) {
     logPrefix += ` (${sessionId.substring(0, 8)})`;

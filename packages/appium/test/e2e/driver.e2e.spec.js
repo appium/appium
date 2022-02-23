@@ -13,7 +13,7 @@ import { BaseDriver } from '@appium/base-driver';
 import { loadExtensions } from '../../lib/extension';
 import { runExtensionCommand } from '../../lib/cli/extension';
 import { removeAppiumPrefixes } from '../../lib/utils';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import { tempDir, fs } from '@appium/support';
 
 const should = chai.should();
@@ -50,7 +50,10 @@ describe('FakeDriver - via HTTP', function () {
   /** @type {string} */
   let testServerBaseSessionUrl;
 
+  let sandbox;
+
   before(async function () {
+    sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
     testServerBaseUrl = `http://${TEST_HOST}:${port}`;
@@ -77,6 +80,7 @@ describe('FakeDriver - via HTTP', function () {
   after(async function () {
     await serverClose();
     await fs.rimraf(appiumHome);
+    sandbox.restore();
   });
 
   /**
@@ -329,7 +333,7 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      const createSessionStub = sinon.stub(FakeDriver.prototype, 'createSession').callsFake(async function (jsonwpCaps) {
+      const createSessionStub = sandbox.stub(FakeDriver.prototype, 'createSession').callsFake(async function (jsonwpCaps) {
         const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
         this.protocol.should.equal('MJSONWP');
         return res;

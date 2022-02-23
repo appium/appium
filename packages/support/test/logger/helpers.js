@@ -3,10 +3,12 @@ import _ from 'lodash';
 import { logger } from '../../lib';
 
 
+let sandbox;
 
 function setupWriters () {
-  return {'stdout': sinon.spy(process.stdout, 'write'),
-          'stderr': sinon.spy(process.stderr, 'write')};
+  sandbox = sinon.createSandbox();
+  return {'stdout': sandbox.spy(process.stdout, 'write'),
+          'stderr': sandbox.spy(process.stderr, 'write')};
 }
 
 function getDynamicLogger (testingMode, forceLogs, prefix = null) {
@@ -15,10 +17,8 @@ function getDynamicLogger (testingMode, forceLogs, prefix = null) {
   return logger.getLogger(prefix);
 }
 
-function restoreWriters (writers) {
-  for (let w of _.values(writers)) {
-    w.restore();
-  }
+function restoreWriters () {
+  sandbox.restore();
 }
 
 function someoneHadOutput (writers, output) {

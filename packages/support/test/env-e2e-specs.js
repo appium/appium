@@ -45,8 +45,8 @@ describe('environment', function () {
 
         describe('when providing no `cwd` parameter', function () {
           /**
-           * **IMPORTANT:** If no `cwd` is provided, {@link resolveManifestPath `resolveManifestPath()`} call {@link resolveAppiumHome `resolveAppiumHome()`}.
-           * `resolveAppiumHome` depends on the value of the current working directory ({@link process.cwd `process.cwd()`}).
+           * **IMPORTANT:** If no `cwd` is provided, {@linkcode resolveManifestPath} call {@linkcode resolveAppiumHome}.
+           * `resolveAppiumHome` depends on the value of the current working directory ({@linkcode process.cwd }).
            * In order to isolate these tests properly, we must create a temp dir and `chdir` to it.
            * For our purposes, we can just use the `cwd` we set already.
            *

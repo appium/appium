@@ -1,33 +1,18 @@
 import { fs, tempDir } from '../lib/index.js';
 import path from 'path';
 import { exec } from 'teen_process';
-import B from 'bluebird';
 import _ from 'lodash';
 
+// TODO: normalize test organization
 
-const MOCHA_TIMEOUT = 20000;
+const MOCHA_TIMEOUT = 10000;
 
 describe('fs', function () {
   this.timeout(MOCHA_TIMEOUT);
 
-  const existingPath = path.resolve(__dirname, 'fs-specs.js');
+  const existingPath = __filename;
 
-  it('should have expected methods', function () {
-    should.exist(fs.open);
-    should.exist(fs.close);
-    should.exist(fs.access);
-    should.exist(fs.mkdir);
-    should.exist(fs.readlink);
-    should.exist(fs.exists);
-    should.exist(fs.rimraf);
-    should.exist(fs.rimrafSync);
-    should.exist(fs.readFile);
-    should.exist(fs.writeFile);
-    should.exist(fs.lstat);
-    should.exist(fs.mv);
-  });
-
-  describe('mkdir', function () {
+  describe('mkdir()', function () {
     let dirName = path.resolve(__dirname, 'tmp');
 
     it('should make a directory that does not exist', async function () {
@@ -48,52 +33,59 @@ describe('fs', function () {
     });
   });
 
-  it('hasAccess', async function () {
+  it('hasAccess()', async function () {
     (await fs.exists(existingPath)).should.be.ok;
     let nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
     (await fs.hasAccess(nonExistingPath)).should.not.be.ok;
   });
-  it('exists', async function () {
+
+  it('exists()', async function () {
     (await fs.exists(existingPath)).should.be.ok;
     let nonExistingPath = path.resolve(__dirname, 'wrong-specs.js');
     (await fs.exists(nonExistingPath)).should.not.be.ok;
   });
-  it('readFile', async function () {
+
+  it('readFile()', async function () {
     (await fs.readFile(existingPath, 'utf8')).should.contain('readFile');
   });
 
-  describe('copyFile', function () {
+  describe('copyFile()', function () {
     it('should be able to copy a file', async function () {
       let newPath = path.resolve(await tempDir.openDir(), 'fs-specs.js');
       await fs.copyFile(existingPath, newPath);
       (await fs.readFile(newPath, 'utf8')).should.contain('readFile');
     });
 
+    it('should be able to copy a directory');
+
     it('should throw an error if the source does not exist', async function () {
       await fs.copyFile('/sdfsdfsdfsdf', '/tmp/bla').should.eventually.be.rejected;
     });
   });
 
-  it('rimraf', async function () {
+  it('rimraf()', async function () {
     let newPath = path.resolve(await tempDir.openDir(), 'fs-specs.js');
     await fs.copyFile(existingPath, newPath);
     (await fs.exists(newPath)).should.be.true;
     await fs.rimraf(newPath);
     (await fs.exists(newPath)).should.be.false;
   });
-  it('sanitizeName', function () {
+
+  it('sanitizeName()', function () {
     fs.sanitizeName(':file?.txt', {
       replacement: '-',
     }).should.eql('-file-.txt');
   });
-  it('rimrafSync', async function () {
+
+  it('rimrafSync()', async function () {
     let newPath = path.resolve(await tempDir.openDir(), 'fs-specs.js');
     await fs.copyFile(existingPath, newPath);
     (await fs.exists(newPath)).should.be.true;
     fs.rimrafSync(newPath);
     (await fs.exists(newPath)).should.be.false;
   });
-  describe('md5', function () {
+
+  describe('md5()', function () {
     this.timeout(1200000);
     let smallFilePath;
     let bigFilePath;
@@ -119,11 +111,13 @@ describe('fs', function () {
     it('should calculate hash of correct length', async function () {
       (await fs.md5(smallFilePath)).should.have.length(32);
     });
+
     it('should be able to run on huge file', async function () {
       (await fs.md5(bigFilePath)).should.have.length(32);
     });
   });
-  describe('hash', function () {
+
+  describe('hash()', function () {
     it('should calculate sha1 hash', async function () {
       (await fs.hash(existingPath, 'sha1')).should.have.length(40);
     });
@@ -131,11 +125,11 @@ describe('fs', function () {
       (await fs.hash(existingPath, 'md5')).should.have.length(32);
     });
   });
-  it('stat', async function () {
+  it('stat()', async function () {
     let stat = await fs.stat(existingPath);
     stat.should.have.property('atime');
   });
-  describe('which', function () {
+  describe('which()', function () {
     it('should find correct executable', async function () {
       let systemNpmPath = (await exec('which', ['npm'])).stdout.trim();
       let npmPath = await fs.which('npm');
@@ -146,38 +140,19 @@ describe('fs', function () {
         .should.eventually.be.rejected;
     });
   });
-  it('glob', async function () {
+  it('glob()', async function () {
     let glob = '*-specs.js';
     let tests = await fs.glob(glob, {cwd: __dirname});
     tests.should.be.an('array');
     tests.should.have.length.above(2);
   });
-  describe('walkDir', function () {
+
+  describe('walkDir()', function () {
     it('walkDir recursive', async function () {
-      let inCallback = 0;
-      const filePath = await fs.walkDir(__dirname, true, async (item) => {
-        if (item.endsWith('logger/helpers.js')) {
-          ++inCallback;
-          // This is to verify proper await functionality of the
-          // callback invocation inside the file system walker
-          await B.delay(500);
-          --inCallback;
-          return true;
-        }
-      });
-      inCallback.should.equal(0);
-      filePath.should.not.be.null;
+      await chai.expect(fs.walkDir(__dirname, true, (item) => item.endsWith('logger/helpers.js'))).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {
-      let inCallback = 0;
-      const filePath = await fs.walkDir(__dirname, true, async () => {
-        ++inCallback;
-        await B.delay(500);
-        --inCallback;
-
-      });
-      inCallback.should.equal(0);
-      _.isNil(filePath).should.be.true;
+      await chai.expect(fs.walkDir(path.join(__dirname, 'fixture'), true, _.noop)).to.eventually.be.null;
     });
     it('should throw error through callback', async function () {
       let processed = 0;

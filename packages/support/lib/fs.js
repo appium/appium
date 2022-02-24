@@ -1,44 +1,74 @@
 // @ts-check
 
-import _ from 'lodash';
-import readPkg from 'read-pkg';
-import path from 'path';
-import _fs from 'fs';
-import rimraf from 'rimraf';
-import ncp from 'ncp';
 import B from 'bluebird';
-import mv from 'mv';
-import which from 'which';
-import glob from 'glob';
 import crypto from 'crypto';
+import { close, constants, createReadStream, createWriteStream, promises as fsPromises, read, write, open } from 'fs';
+import glob from 'glob';
 import klaw from 'klaw';
+import _ from 'lodash';
+import mv from 'mv';
+import ncp from 'ncp';
+import path from 'path';
+import pkgDir from 'pkg-dir';
+import readPkg from 'read-pkg';
+import rimraf from 'rimraf';
 import sanitize from 'sanitize-filename';
-import { pluralize } from './util';
+import which from 'which';
 import log from './logger';
 import Timer from './timing';
-import pkgDir from 'pkg-dir';
+import { pluralize } from './util';
 
-const mkdirAsync = /** @type {(filepath: string, opts: _fs.MakeDirectoryOptions|undefined) => B<void>} */(B.promisify(_fs.mkdir));
 const ncpAsync = /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */(B.promisify(ncp));
 const findRootCached = _.memoize(pkgDir.sync);
 
 const fs = {
+  /**
+   * Resolves `true` if `path` is _readable_, which differs from Node.js' default behavior of "can we see it?"
+   * @param {import('fs').PathLike} path
+   * @returns {Promise<boolean>}
+   */
   async hasAccess (path) {
     try {
-      await fs.access(path, _fs.constants.R_OK);
+      await fsPromises.access(path, constants.R_OK);
     } catch (err) {
       return false;
     }
     return true;
   },
-  exists (path) { return fs.hasAccess(path); },
-  rimraf: B.promisify(rimraf),
-  rimrafSync: rimraf.sync.bind(rimraf),
+
+  /**
+   * Alias for {@linkcode fs.hasAccess}
+   * @param {import('fs').PathLike} path
+   */
+  async exists (path) {
+    return await fs.hasAccess(path);
+  },
+
+  /**
+   * Remove a directory and all its contents, recursively
+   * @todo Replace with `rm()` from `fs.promises` when Node.js v12 support is dropped.
+   */
+  rimraf: /** @type {(dirpath: string, opts?: rimraf.Options) => Promise<void>} */(B.promisify(rimraf)),
+
+  /**
+   * Alias of {@linkcode rimraf.sync}
+   * @todo Replace with `rmSync()` from `fs` when Node.js v12 support is dropped.
+   */
+  rimrafSync: rimraf.sync,
+
+  /**
+   * Like Node.js' `fsPromises.mkdir()`, but will _not_ reject if the directory already exists.
+   *
+   * @param {string|Buffer|URL} filepath
+   * @param {import('fs').MakeDirectoryOptions} [opts]
+   * @returns {Promise<string|undefined>}
+   * @see https://nodejs.org/api/fs.html#fspromisesmkdirpath-options
+   */
   async mkdir (filepath, opts = {}) {
     try {
-      return await mkdirAsync(filepath, opts);
+      return await fsPromises.mkdir(filepath, opts);
     } catch (err) {
-      if (err && err.code !== 'EEXIST') {
+      if (err?.code !== 'EEXIST') {
         throw err;
       }
     }
@@ -57,44 +87,72 @@ const fs = {
     }
     return await ncpAsync(source, destination, opts);
   },
+
+  /**
+   * Create an MD5 hash of a file.
+   * @param {import('fs').PathLike} filePath
+   * @returns {Promise<string>}
+   */
   async md5 (filePath) {
     return await fs.hash(filePath, 'md5');
   },
-  mv: B.promisify(mv),
-  which: B.promisify(which),
-  glob: B.promisify(glob),
+
+  /**
+   * Move a file
+   */
+  mv: /** @type {(from: string, to: string, opts?: mv.Options) => B<void>} */(B.promisify(mv)),
+
+  /**
+   * Find path to an executable in system `PATH`
+   * @see https://github.com/npm/node-which
+   */
+  which,
+
+  /**
+   * Given a glob pattern, resolve with list of files matching that pattern
+   * @see https://github.com/isaacs/node-glob
+   */
+  glob: /** @type {(pattern: string, opts?: glob.IOptions) => B<string[]>} */(B.promisify(glob)),
+
+  /**
+   * Sanitize a filename
+   * @see https://github.com/parshap/node-sanitize-filename
+   */
   sanitizeName: sanitize,
+
+  /**
+   * Create a hex digest of some file at `filePath`
+   * @param {import('fs').PathLike} filePath
+   * @param {string} [algorithm]
+   * @returns {Promise<string>}
+   */
   async hash (filePath, algorithm = 'sha1') {
     return await new B((resolve, reject) => {
       const fileHash = crypto.createHash(algorithm);
-      const readStream = _fs.createReadStream(filePath);
+      const readStream = createReadStream(filePath);
       readStream.on('error', (e) => reject(
         new Error(`Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`)));
       readStream.on('data', (chunk) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
     });
   },
-  /** The callback function which will be called during the directory walking
-   * @callback WalkDirCallback
-   * @param {string} itemPath The path of the file or folder
-   * @param {boolean} isDirectory Shows if it is a directory or a file
-   * @return {boolean} return true if you want to stop walking
-  */
 
   /**
-   * Returns an async iterator.
+   * Returns an `Walker` instance, which is a readable stream (and thusly an async iterator).
+   *
    * @param {string} dir - Dir to start walking at
    * @param {import('klaw').Options} [opts]
    * @returns {import('klaw').Walker}
+   * @see https://www.npmjs.com/package/klaw
    */
-  walk (dir, opts = {}) {
+  walk (dir, opts) {
     return klaw(dir, opts);
   },
 
   /**
-   * Recursively create a directory
-   * @param {string} dir
-   * @returns {Promise<void>}
+   * Recursively create a directory.
+   * @param {import('fs').PathLike} dir
+   * @returns {Promise<string|undefined>}
    */
   async mkdirp (dir) {
     return await fs.mkdir(dir, {recursive: true});
@@ -208,34 +266,70 @@ const fs = {
       throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
     }
     return result;
-  }
+  },
+
+  // add the supported `fs` functions
+  access: fsPromises.access,
+  appendFile: fsPromises.appendFile,
+  chmod: fsPromises.chmod,
+  close: B.promisify(close),
+  constants,
+  createWriteStream,
+  createReadStream,
+  lstat: fsPromises.lstat,
+  /**
+   * Warning: this is a promisified {@linkcode open fs.open}.
+   * It resolves w/a file descriptor instead of a {@linkcode fsPromises.FileHandle FileHandle} object, as {@linkcode fsPromises.open} does. Use {@linkcode fs.openFile} if you want a `FileHandle`.
+   */
+  open: B.promisify(open),
+  openFile: fsPromises.open,
+  readdir: fsPromises.readdir,
+  read: B.promisify(read),
+  readFile: fsPromises.readFile,
+  readlink: fsPromises.readlink,
+  realpath: fsPromises.realpath,
+  rename: fsPromises.rename,
+  stat: fsPromises.stat,
+  symlink: fsPromises.symlink,
+  unlink: fsPromises.unlink,
+  write: B.promisify(write),
+  writeFile: fsPromises.writeFile,
+
+  // deprecated props
+
+  /**
+   * Use `constants.F_OK` instead.
+   * @deprecated
+   */
+  F_OK: constants.F_OK,
+
+  /**
+   * Use `constants.R_OK` instead.
+   * @deprecated
+   */
+  R_OK: constants.R_OK,
+
+  /**
+   * Use `constants.W_OK` instead.
+   * @deprecated
+   */
+  W_OK: constants.W_OK,
+
+  /**
+   * Use `constants.X_OK` instead.
+   * @deprecated
+   */
+  X_OK: constants.X_OK
 };
-
-// add the supported `fs` functions
-const simples = [
-  'open', 'close', 'access', 'readFile', 'writeFile', 'write', 'read',
-  'readlink', 'chmod', 'unlink', 'readdir', 'stat', 'rename', 'lstat',
-  'appendFile', 'realpath', 'symlink',
-];
-for (const s of simples) {
-  fs[s] = B.promisify(_fs[s]);
-}
-
-const syncFunctions = [
-  'createReadStream',
-  'createWriteStream',
-];
-for (const s of syncFunctions) {
-  fs[s] = _fs[s];
-}
-
-// add the constants from `fs`
-const constants = [
-  'F_OK', 'R_OK', 'W_OK', 'X_OK', 'constants',
-];
-for (const c of constants) {
-  fs[c] = _fs[c];
-}
 
 export { fs };
 export default fs;
+
+/**
+ * The callback function which will be called during the directory walking
+ * @callback WalkDirCallback
+ * @param {string} itemPath The path of the file or folder
+ * @param {boolean} isDirectory Shows if it is a directory or a file
+ * @return {boolean} return true if you want to stop walking
+*/
+

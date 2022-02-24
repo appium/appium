@@ -100,8 +100,8 @@ export const readPackageInDir = _.memoize(
  * Determines location of Appium's "home" dir
  *
  * - If `APPIUM_HOME` is set in the environment, use that
- * - If we have an `extensions.yaml` in {@link DEFAULT_APPIUM_HOME `DEFAULT_APPIUM_HOME`}, then use that.
- * - If we find a `package.json` in or above `cwd` and {@link shouldUseCwdForAppiumHome `shouldUseCwdForAppiumHome`} returns `true`, then use the directory containing the `package.json`.
+ * - If we have an `extensions.yaml` in {@linkcode DEFAULT_APPIUM_HOME}, then use that.
+ * - If we find a `package.json` in or above `cwd` and {@linkcode shouldUseCwdForAppiumHome} returns `true`, then use the directory containing the `package.json`.
  */
 export const resolveAppiumHome = _.memoize(
   /**

@@ -75,7 +75,7 @@ class AppiumDriver extends BaseDriver {
   /** @type {import('./extension/driver-config').DriverConfig|undefined} */
   driverConfig;
 
-  /** @type {import('express').Express|undefined} */
+  /** @type {Omit<import('http').Server,'close'> & { close: () => Promise<void>} } */
   server;
 
   /**

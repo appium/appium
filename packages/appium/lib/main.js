@@ -18,7 +18,7 @@ import { readConfigFile } from './config-file';
 import { loadExtensions, getActivePlugins, getActiveDrivers } from './extension';
 import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND } from './constants';
 import registerNode from './grid-register';
-import { getDefaultsForSchema, validate } from './schema/schema';
+import { finalizeSchema, getDefaultsForSchema, validate } from './schema/schema';
 import { inspect } from './utils';
 
 const {resolveAppiumHome} = env;
@@ -130,26 +130,31 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
 }
 
 /**
- * Initializes Appium, but does not start the server.
+ * Initializes extensions and finalizes the argument schema.
  *
- * Use this to get at the configuration schema.
+ * Prepares Appium to accept arguments by way of {@linkcode configure}.
  *
- * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
- *
- * @param {PartialArgs} [args] - Partial args (progammatic usage only)
- * @returns {Promise<ServerInitResult | ExtCommandInitResult>}
- * @example
- * import {init, getSchema} from 'appium';
- * const options = {}; // config object
- * await init(options);
- * const schema = getSchema(); // entire config schema including plugins and drivers
+ * Returns object containing configuration objects for plugins and drivers.
+ * @param {string} [appiumHome] - `APPIUM_HOME` if known
+ * @returns {Promise<ExtensionConfigs>}
  */
-async function init (args) {
-  const appiumHome = args?.appiumHome ?? await resolveAppiumHome();
+async function init (appiumHome) {
+  const extConfigs = await loadExtensions(appiumHome ?? await resolveAppiumHome());
+  finalizeSchema();
+  return extConfigs;
+}
 
-  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
-
-  const parser = getParser();
+/**
+ * Configures Appium with arguments, but does not start the server.
+ *
+ * Typically {@linkcode init} will provide the {@link ExtensionConfigs} object `extensionConfigs`.
+ * If `args` contains a non-empty `subcommand` _which is not `server`_, this function will return an {@link ExtCommandConfigureResult empty object}.
+ *
+ * @param {ExtensionConfigs} extensionConfigs - Extension configs (see {@linkcode init})
+ * @param {PartialArgs} [args] - Partial args (progammatic usage only)
+ * @returns {Promise<ConfigureResult | ExtCommandConfigureResult>}
+ **/
+async function configure ({driverConfig, pluginConfig}, args) {
   let throwInsteadOfExit = false;
   /** @type {ParsedArgs} */
   let preConfigParsedArgs;
@@ -161,6 +166,9 @@ async function init (args) {
    * @type {ReturnType<getDefaultsForSchema>}
    */
   let defaults = {};
+
+  const argParser = getParser(args?.throwInsteadOfExit);
+
   if (args) {
     // if we have a containing package instead of running as a CLI process,
     // that package might not appreciate us calling 'process.exit' willy-
@@ -173,7 +181,7 @@ async function init (args) {
     preConfigParsedArgs = /** @type {ParsedArgs} */({...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND});
   } else {
     // otherwise parse from CLI
-    preConfigParsedArgs = parser.parseArgs();
+    preConfigParsedArgs = argParser.parseArgs();
   }
 
   const configResult = await readConfigFile(preConfigParsedArgs.configFile);
@@ -236,23 +244,59 @@ async function init (args) {
   appiumDriver.driverConfig = driverConfig;
   await preflightChecks(parsedArgs, throwInsteadOfExit);
 
-  return /** @type {ServerInitResult} */({appiumDriver, parsedArgs, driverConfig, pluginConfig});
+  return /** @type {ConfigureResult} */({appiumDriver, parsedArgs});
 }
 
 /**
- * Initializes Appium's config.  Starts server if appropriate and resolves the
- * server instance if so; otherwise resolves w/ `undefined`.
- * @param {PartialArgs} [args] - Arguments from CLI or otherwise
- * @returns {Promise<import('http').Server|undefined>}
+ * Tracks Appium's own `process` listeners to avoid setting them multiple times.
+ * @type {Map<string,(...args: any[]) => Promise<void>>}
  */
-async function main (args) {
-  const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */(await init(args));
+const processListeners = new Map();
 
-  if (!appiumDriver || !parsedArgs || !pluginConfig || !driverConfig) {
-    // if this branch is taken, we've run a different subcommand, so there's nothing
-    // left to do here.
-    return;
+/**
+ * Configures signal handlers for this process.
+ *
+ * If Appium has already set listeners for the signals in question, it removes the old ones before proceeding.
+ * @param {import('./appium').AppiumDriver} appiumDriver
+ */
+function setupProcessListeners (appiumDriver) {
+  for (const signal of ['SIGINT', 'SIGTERM']) {
+    if (processListeners.has(signal)) {
+      process.removeListener(signal, /** @type {(...args: any[]) => Promise<void>} **/(processListeners.get(signal)));
+    }
+    /**
+     * Force-kills all active sessions, disconnect sockets & stops server.
+     * @this {typeof process}
+     * @returns {Promise<never>} Does _not_ resolve/reject; exits
+     */
+    const onSignal = async function () {
+      logger.info(`Received ${signal} - shutting down`);
+      // XXX: `process.exit()` is synchronous and is not particularly safe unless your call stack is
+      // entirely synchronous. better to set `process.exitCode` and let Node.js exit gracefully. if
+      // `appiumDriver.server.close()` works like it's supposed to, then it should!
+      try {
+        await appiumDriver.deleteAllSessions({
+          force: true,
+          reason: `The process has received ${signal} signal`,
+        });
+        await appiumDriver.server?.close();
+        process.exit(0);
+      } catch (e) {
+        logger.warn(e);
+        process.exit(1);
+      }
+    };
+    processListeners.set(signal, onSignal);
+    process.once(signal, onSignal);
   }
+}
+
+/**
+ * Given a {@linkcode PluginConfig}, {@linkcode DriverConfig}, {@link ParsedArgs parsed arguments} and an {@linkcode AppiumDriver} instance, start the Appium server and listen on the configured port.
+ * @param {StartParams} params
+ * @returns {Promise<import('./appium').AppiumDriver['server']>}
+ */
+async function start ({pluginConfig, driverConfig, parsedArgs, appiumDriver}) {
 
   const pluginClasses = getActivePlugins(pluginConfig, parsedArgs.usePlugins);
   // set the active plugins on the umbrella driver so it can use them for commands
@@ -304,28 +348,32 @@ async function main (args) {
     throw err;
   }
 
-  for (const signal of ['SIGINT', 'SIGTERM']) {
-    process.once(signal, async function onSignal () {
-      logger.info(`Received ${signal} - shutting down`);
-      try {
-        await appiumDriver.deleteAllSessions({
-          force: true,
-          reason: `The process has received ${signal} signal`,
-        });
-        await server.close();
-        process.exit(0);
-      } catch (e) {
-        logger.warn(e);
-        process.exit(1);
-      }
-    });
-  }
+  setupProcessListeners(appiumDriver);
 
   logServerPort(parsedArgs.address, parsedArgs.port);
   driverConfig.print();
   pluginConfig.print(pluginClasses.map((p) => p.pluginName));
 
   return server;
+}
+
+/**
+ * {@link configure Loads extensions}, {@link init parses arguments and configuration}, then {@link start  starts the Appium server}.
+ * @param {PartialArgs} [args] - Programmatic arguments.
+ * @returns {Promise<ReturnType<typeof start>|undefined>}
+ */
+async function main (args) {
+  const extConfigs = await init(args?.appiumHome);
+
+  const {appiumDriver, parsedArgs} = /** @type {ConfigureResult} */(await configure(extConfigs, args));
+
+  if (!appiumDriver || !parsedArgs) {
+    // if this branch is taken, we've run a different subcommand, so there's nothing
+    // left to do here.
+    return;
+  }
+
+  return await start({...extConfigs, parsedArgs, appiumDriver});
 }
 
 // NOTE: this is here for backwards compat for any scripts referencing `main.js` directly
@@ -337,8 +385,8 @@ if (require.main === module) {
 
 // everything below here is intended to be a public API.
 export { readConfigFile } from './config-file';
-export { finalizeSchema, getSchema, validate } from './schema/schema';
-export { main, init, resolveAppiumHome };
+export { finalizeSchema, getSchema, validate, getDefaultsForSchema as getDefaultArgs } from './schema/schema';
+export { main, init, configure, resolveAppiumHome };
 
 /**
  * @typedef {import('../types/types').ParsedArgs} ParsedArgs
@@ -353,7 +401,13 @@ export { main, init, resolveAppiumHome };
  */
 
 /**
- * @typedef { {} } ExtCommandInitResult
+ * Returned from {@linkcode configure} when an extension subcommand (`driver`/`plugin`) was provided by the user.
+ * @typedef { {} } ExtCommandConfigureResult
+ */
+
+/**
+ * @typedef {Object} BaseInitData
+ * @property {import('./cli/parser').ArgParser} argParser
  */
 
 /**
@@ -363,5 +417,12 @@ export { main, init, resolveAppiumHome };
  */
 
 /**
- * @typedef {ServerInitData & import('./extension').ExtensionConfigs} ServerInitResult
+ * @typedef {import('./extension').ExtensionConfigs} ExtensionConfigs
+ * @typedef {ExtensionConfigs & ConfigureResult} StartParams
+ */
+
+/**
+ * @typedef {Object} InitOptions
+ * @property {string} [appiumHome] - The path to the Appium home directory
+ * @property {boolean} [throwInsteadOfExit] - If `true`, arg parser will throw instead of exiting on error
  */

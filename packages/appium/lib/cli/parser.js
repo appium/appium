@@ -253,13 +253,14 @@ class ArgParser {
 }
 
 /**
- * Creates a {@link ArgParser} instance; finalizes the config schema.
+ * Creates a {@link ArgParser} instance; finalizes the config schema (if not yet finalized).
  *
  * @constructs ArgParser
  * @param {boolean} [debug] - If `true`, throw instead of exit upon parsing error
  * @returns {ArgParser}
  */
 function getParser (debug) {
+  // This may be finalized beforehand, but this is the last possible time we can do so.
   finalizeSchema();
 
   return new ArgParser(debug);

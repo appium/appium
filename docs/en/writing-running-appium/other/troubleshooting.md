@@ -39,7 +39,7 @@ own items in the SDK manager. Make sure you install the build-tools and platform
 * Make sure you set ANDROID_HOME pointing to the Android SDK directory
 * After setting power state to `off` (e.g.: `driver.setPowerAC(PowerACState.OFF);`) you must create a new session.
 * When using `-wipe-data` in `avdArgs` the `noReset` capability will be ignored if set to true.
-* Make sure proper developer options are enabled. Some devices have [custom options](https://github.com/appium/appium/issues/13802#issuecomment-587802222) to make the device testable.
+* Make sure proper developer options are enabled. Some devices have [custom options](https://github.com/appium/appium/issues/13802#issuecomment-587802222) to make the device testable. [This page](https://airtest.doc.io.netease.com/en/IDEdocs/device_connection/2_android_faq/#2-some-manufacturers-have-special-problems-with-equipment) also has helpful steps to configure devices for automation.
 
 
 ### Android Espresso

@@ -39,21 +39,6 @@ Then, use desired capabilities like these to run your test in mobile Safari:
 }
 ```
 
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'iOS',
-            'platformVersion' => '13.2',
-            'automationName' => 'XCUITest',
-            'browserName' => 'Safari',
-            'deviceName' => 'iPhone 11'
-        )
-    )
-);
-```
-
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -128,7 +113,7 @@ To configure you test to run against safari simply set the `"browserName"` to be
 DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 desiredCapabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
 desiredCapabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
-URL url = new URL("http://127.0.0.1:4723");
+URL url = new URL("http://127.0.0.1:4723/wd/hub");
 AppiumDriver driver = new AppiumDriver(url, desiredCapabilities);
 
 // Navigate to the page and interact with the elements on the guinea-pig page using id.
@@ -145,7 +130,7 @@ driver.quit();
 # python
 # setup the web driver and launch the webview app.
 capabilities = { 'browserName': 'Safari', 'automationName': 'XCUITest' }
-driver = webdriver.Remote('http://localhost:4723', capabilities)
+driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
 # Navigate to the page and interact with the elements on the guinea-pig page using id.
 driver.get('http://saucelabs.com/test/guinea-pig');
@@ -159,35 +144,6 @@ driver.find_element_by_id('comments').send_keys('My comment')
 # close the driver
 driver.quit()
 ```
-
-```php
-// php
-class ContextTests extends PHPUnit_Extensions_AppiumTestCase
-{
-    public static $browsers = array(
-        array(
-            'desiredCapabilities' => array(
-                'platformName' => 'iOS',
-                'platformVersion' => '7.1',
-                'automationName' => 'XCUITest',
-                'browserName' => 'Safari',
-                'deviceName' => 'iPhone 11'
-            )
-        )
-    );
-
-    public function testThings()
-    {
-        $this->get('http://saucelabs.com/test/guinea-pig');
-
-        $div = $this->byId('i_am_an_id');
-        $this->assertEquals('I am a div', $div->text());
-
-        $this->byId('comments')->sendKeys('My comment');
-    }
-}
-```
-
 
 ### Android mobile web automation
 
@@ -225,21 +181,6 @@ these to run your test in Chrome:
   'automationName': 'UIAutomator2',
   'browserName': 'Chrome'
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'Android',
-            'platformVersion' => '9.0',
-            'browserName' => 'Chrome',
-            'automationName' => 'UIAutomator2',
-            'deviceName' => 'Android Emulator'
-        )
-    )
-);
 ```
 
 ```java

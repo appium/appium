@@ -10,6 +10,7 @@ The important capabilities:
 - `chromedriverPort` the chromedriver port (if using webviews or chrome)
 - `mjpegServerPort` If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a unique MJPEG server port for each parallel session. Otherwise you might get a port conflict such as in [this issue](https://github.com/appium/appium/issues/7745).
 - `systemPort` If you are using [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver), set a unique system port for each parallel session. Otherwise you might get a port conflict such as in [this issue](https://github.com/appium/appium/issues/7745).
+- `chromedriverPort` If you are using [appium-chromedriver](https://github.com/appium/appium-chromedriver), set a unique ChromeDriver port for each parallel session. Otherwise, you might get a port conflict with the error message `Address already in use (48)` in the ChromeDriver log.
 
 ### Parallel iOS Tests
 

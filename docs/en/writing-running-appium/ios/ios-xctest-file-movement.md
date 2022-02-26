@@ -20,8 +20,9 @@ The format of method argument should be the following:
 - `@<app_bundle_id>` is the application bundle identifier
 - `optional_container_type` is the container type
     - `documents` is the only available option
-        - You may specify `documents` container type only for bundle ids returned by `ifuse -u <udid> --list-apps`
-        - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in the output of `--list-apps`. Thus, we cannot mount it as `com.tinyspeck.chatlyio@documents/`
+        - You may specify `documents` container type only for bundle ids that exists in the device
+            - Since appium-xcuitest-driver v3.55.0, [mobile: listApps](https://github.com/appium/appium-xcuitest-driver#mobile-listapps) provides a list of available applications. Applications which have `UIFileSharingEnabled` attribute as `true` can be specified.
+        - e.g. Below _On My iPhone_ image has _Slack_ folder, but `com.tinyspeck.chatlyio` does not exist in installed bundle ids. Then, we cannot mount it as `com.tinyspeck.chatlyio@documents/`
 
             <img src='/docs/en/writing-running-appium/ios/ios-xctest-file-movement/on_my_iphone.png' width=100>
     - The others work as _format 2_
@@ -73,17 +74,24 @@ File.open('presentation.key', 'wb') { |f| f<< file }
 - Pull folder
 
 You can pull documents root of _On My iPhone/Keynote_ as `@driver.pull_folder '@com.apple.Keynote:documents/'`.
+`@driver.pull_folder '@com.apple.Keynote:documents/Keynote'` is to get files in the Keynote folder. Then, _Keynote_ is the documentation root to get.
 
 ```javascript
 // webdriver.io
 let data = driver.pullFolder('@io.appium.example:documents/');
 await fs.writeFile('documents.zip', Buffer.from(data, 'base64'), 'binary');
+
+let data = driver.pullFolder('@io.appium.example:documents/Keynote');
+await fs.writeFile('keynote.zip', Buffer.from(data, 'base64'), 'binary');
 ```
 
 ```ruby
 # ruby_lib_core
 file = @driver.pull_folder '@com.apple.Keynote:documents/'
 File.open('documents.zip', 'wb') { |f| f<< file }
+
+file = @driver.pull_folder '@com.apple.Keynote:documents/Keynote'
+File.open('keynote.zip', 'wb') { |f| f<< file }
 ```
 
 - Push file

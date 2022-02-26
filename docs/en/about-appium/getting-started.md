@@ -18,7 +18,8 @@ to Appium, you will need [Node.js and NPM](http://nodejs.org) (use
 [n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
 you'll run into problems). We recommend the latest stable version, though
-Appium supports Node 10+.
+Appium supports Node.js 12+.
+(The minimal Node.js version follows [EOL schedule](https://nodejs.org/en/about/releases/))
 
 The actual installation is as simple as:
 
@@ -50,19 +51,6 @@ you want to automate, so your system is set up correctly:
 - The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md) (for Android apps)
 - The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
 - The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
-
-To actually install a driver and make it ready for use, first check the list of available drivers:
-
-```
-appium driver list
-```
-
-Then pick the driver or drivers you'd like to install. For example, you could install the main drivers for iOS and Android as follows:
-
-```
-appium driver install xcuitest
-appium driver install uiautomator2
-```
 
 ### Verifying the Installation
 
@@ -184,7 +172,7 @@ So here is how we begin to construct a session in our test file:
 ```js
 // javascript
 const opts = {
-  path: '',
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",
@@ -239,7 +227,7 @@ const wdio = require("webdriverio");
 const assert = require("assert");
 
 const opts = {
-  path: '',
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",

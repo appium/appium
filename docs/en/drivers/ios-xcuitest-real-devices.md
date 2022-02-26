@@ -130,10 +130,12 @@ installed, and is _not_ recommended):
 ```
 *   Given this installation location, `/path/where/installed/bin/appium`, `WebDriverAgent` project
     will be found in `/path/where/installed/lib/node_modules/appium/node_modules/appium-webdriveragent`.
-    Open a terminal and go to that location, then run the following in order to
-    set the project up:
+    Open a terminal and go to the location, then run the next script.
 ```
     mkdir -p Resources/WebDriverAgent.bundle
+```
+*  (Only for Appium versions below 1.20) Run the next script on the same terminal.
+```
     ./Scripts/bootstrap.sh -d
 ```
 *   Open `WebDriverAgent.xcodeproj` in Xcode. For **both** the `WebDriverAgentLib`
@@ -172,6 +174,10 @@ If this was successful, the output should end with something like:
     Test Case '-[UITestingUITests testRunner]' started.
         t =     0.00s     Start Test at 2017-01-23 15:49:12.588
         t =     0.00s     Set Up
+```
+If the command fails, try passing the `-allowProvisioningUpdates` flag like this (see [#16212](https://github.com/appium/appium/issues/16212)):
+```
+    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' -allowProvisioningUpdates test
 ```
 *   To completely verify, you can try accessing the WebDriverAgent server status
     (**note:** you _must_ be on the same network as the device, and know its IP
@@ -226,7 +232,7 @@ information about this in the [Apple documentation](https://developer.apple.com/
 * A Mac with [Xcode](https://developer.apple.com/xcode/) and the Xcode Command
 Line Developer Tools.
 
-Appium handles installing the application to the device, using
+(Only for Appium versions below 1.15.0) Appium handles installing the application to the device, using
 `ideviceinstaller` (which is installed as part of `libimobiledevice`), but it
 is sometimes easier to pre-install your app using Xcode to ensure there are no
 problems (see again the [Apple
@@ -243,7 +249,15 @@ for this).
     1. Settings -> Safari -> Advanced -> **Web Inspector** and **Remote Automation**
         1. Please read [Automating mobile web apps](/writing-running-appium/web/mobile-web) for more details about WebView
 1. Consider generating a provisioning profile with `.xctrunner` identifier if you do not want to generate a wildcard one for manual configuration. The `.xctrunner` config support has been added since Xcode 11. [A reference](https://github.com/appium/appium/issues/13610)
-1. Make sure the device under test is not a jaibroken one
-    - `com.apple.mobile.installation_proxy` service to manage Apps on the device [does not work](https://github.com/appium/appium-desktop/issues/1447)
 1. Make sure the provisioning profile has [_iOS Distribution_ certificate](https://developer.apple.com/support/certificates/)
     - An active Xcode/xcodebuild connection/session is necessary to interact with WebDriverAgentRunner because of Apple's security design. The certificate affects the limitation ([issue](https://github.com/appium/appium/issues/14577#issuecomment-660997827))
+1. Make sure the keyboard preference in the device under test is Apple official one and the input language is set to English to send texts to `XCUIElementTypeSecureTextField`
+    - Non-official or non-English keyboards may not be able to send keys to `XCUIElementTypeSecureTextField`. e.g. [issues#15647](https://github.com/appium/appium/issues/15647)
+
+### Notice
+
+Appium team does not test xcuitest driver against jailbroken devices, so we cannot guaranteer it is going to work as expected as same as non-jailbroken devices.
+
+e.g., [`com.apple.mobile.installation_proxy` service error to manage Apps on the device](https://github.com/appium/appium-desktop/issues/1447)
+
+Please use it at your own risk.

@@ -7,10 +7,8 @@ module.exports = {
       ['Getting Started', 'getting-started.md'],
       ['Supported Platforms', 'platform-support.md'],
       ['API Documentation', 'api.md'],
-      ['Appium 1.x EOL Plan', '1.x-eol.md'],
     ]],
     ['Drivers', ['drivers',
-      ['Driver CLI', 'driver-cli.md'],
       ['XCUITest (iOS)', 'ios-xcuitest.md'],
       ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
       ['UIAutomation (iOS)', 'ios-uiautomation.md'],
@@ -301,7 +299,6 @@ module.exports = {
       ]],
     ]],
     ['Advanced', ['advanced-concepts',
-      ['Migrating to Appium 2.x', 'migrating-to-appium-2.0.md'],
       ['Finding Image Elements', 'image-elements.md'],
       ['Using Element Finding Plugins', 'element-finding-plugins.md'],
       ['Migrating to XCUITest', 'migrating-to-xcuitest.md'],
@@ -333,7 +330,6 @@ module.exports = {
       // ['API 文档', 'api.md'],
     ]],
     ['驱动程序', ['drivers',
-      ['Driver CLI', 'driver-cli.md'],
       ['XCUITest (iOS)', 'ios-xcuitest.md'],
       ['XCUITest Real Devices (iOS)', 'ios-xcuitest-real-devices.md'],
       // ['UIAutomation (iOS)', 'ios-uiautomation.md'],
@@ -383,7 +379,6 @@ module.exports = {
       ]],
     ]],
     ['进阶', ['advanced-concepts',
-      ['迁移至 Appium 2.x', 'migrating-to-appium-2.0.md'],
       //['定位图像中的元素', 'image-elements.md'],
       //['用于定位元素的插件', 'element-finding-plugins.md'],
       ['迁移到 XCUITest', 'migrating-to-xcuitest.md'],
@@ -404,5 +399,14 @@ module.exports = {
       ['如何编写文档', 'how-to-write-docs.md'],
       ['Appium 包结构', 'appium-packages.md'],
       ['鸣谢', 'credits.md']]]
+  ],
+  ja: [
+    ['ホーム', 'about-appium/intro.md'],
+    ['概要', ['about-appium',
+      ['イントロ', 'intro.md'],
+      ['Appium クライアント', 'appium-clients.md'],
+      ['はじめに', 'getting-started.md'],
+      ['サポートプラットフォーム', 'platform-support.md'],
+    ]]
   ]
 };

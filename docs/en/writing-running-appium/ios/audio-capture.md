@@ -9,55 +9,8 @@ Apple does not provide any API to directly retrieve the audio stream from a
 Simulator or a real device, but it is possible to redirect that stream to
 the host machine, where it could be captured.
 
-#### mobile: startAudioRecording
-
-Starts audio recording process on the given host audio input with the given
-audio compression parameters.
-
-#### Supported arguments
-
- * _audioInput_: The name of the corresponding audio input device to use for the capture, for example `:1`. The full list of capture devices could be shown using `ffmpeg -f avfoundation -list_devices true -i ""` Terminal command. This argument is mandatory.
- * _audioCodec_: The name of the audio codec. `aac` is used by default.
- * _audioBitrate_: The bitrate of the resulting audio stream. `128k` by default.
- * _audioChannels_: The count of audio channels in the resulting stream. Setting it to `1` will create a single channel (mono) audio stream. `2` by default.
- * _audioRate_: The sampling rate of the resulting audio stream. `44100` by default.
- * _timeLimit_: The maximum recording time, in seconds. The default value is `180`, the maximum value is `43200` (12 hours)
- * _forceRestart_: Whether to restart audio capture process forcefully when startRecordingAudio is called (`true`) or ignore the call until the current audio recording is completed (`false`, the default setting).
-
-#### mobile: stopAudioRecording
-
-Stops the audio recording process previously started by `startAudioRecording` call. The result of the method call is a base64-encoded .mp4 file containing the audio content recorded since `startAudioRecording` was called. Subsequent method calls will return the same result.
-If `startAudioRecording` was not called before then an empty string is returned.
-
-#### Usage Examples
-
-```java
-// Java
-driver.executeScript("mobile: startAudioRecording", ImmutableMap.of("audioInput", ":1"));
-Thread.sleep(10000);
-byte[] mp4Data = Base64.getMimeDecoder()
-  .decode((String) driver.executeScript("mobile: stopAudioRecording"));
-try (FileOutputStream fos = new FileOutputStream("out.mp4")) {
-   fos.write(mp4Data);
-}
-```
-
-```ruby
-# Ruby
-@driver.execute_script 'mobile: startAudioRecording', audioInput: ':0'
-sleep 10
-base64_str = @driver.execute_script 'mobile: stopAudioRecording'
-File.write 'out.mp4', Base64.decode64(base64_str)
-```
-
-```python
-# Python
-driver.execute_script('mobile: startAudioRecording', {'audioInput': ':1'})
-time.sleep(10)
-base64_str = driver.execute_script('mobile: stopAudioRecording')
-with open('out.mp4', 'wb') as f:
-    f.write(base64.b64decode(base64_str))
-```
+- [mobile: startAudioRecording](https://github.com/appium/appium-xcuitest-driver#mobile-startaudiorecording)
+- [mobile: stopAudioRecording](https://github.com/appium/appium-xcuitest-driver#mobile-stopaudiorecording)
 
 ### Server Requirements
 

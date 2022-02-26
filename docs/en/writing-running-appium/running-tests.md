@@ -27,7 +27,7 @@ Nothing in particular needs to be done to run your test.
 
 The best way to see what to do currently is to look at the example tests:
 
-[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
+[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
 
 Basically, first make sure Appium is running:
 
@@ -53,20 +53,6 @@ Then script your WebDriver test, sending in the following desired capabilities:
     'deviceName': 'iPhone Simulator',
     'app': myApp
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'iOS',
-            'platformVersion' => '7.1',
-            'deviceName' => 'iPhone Simulator',
-            'app' => $myApp
-        )
-    )
-);
 ```
 
 ```java
@@ -157,20 +143,6 @@ Then script your WebDriver test, sending in the following desired capabilities:
     'deviceName': 'Android Emulator',
     'app': myApp
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'Android',
-            'platformVersion' => '4.4',
-            'deviceName' => 'Android Emulator',
-            'app' => $myApp
-        )
-    )
-);
 ```
 
 ```java

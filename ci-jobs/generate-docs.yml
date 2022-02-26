@@ -2,7 +2,7 @@
 jobs:
   - job: generate_docs
     pool:
-      vmImage: "macOS 10.15"
+      vmImage: "macOS-latest"
     variables:
       CC: gcc
       CXX: g++

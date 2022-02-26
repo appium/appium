@@ -18,7 +18,8 @@ to Appium, you will need [Node.js and NPM](http://nodejs.org) (use
 [n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
 you'll run into problems). We recommend the latest stable version, though
-Appium supports Node 10+.
+Appium supports Node.js 12+.
+(The minimal Node.js version follows [EOL schedule](https://nodejs.org/en/about/releases/))
 
 The actual installation is as simple as:
 

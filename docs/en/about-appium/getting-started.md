@@ -52,6 +52,19 @@ you want to automate, so your system is set up correctly:
 - The [Windows Driver](/docs/en/drivers/windows.md) (for Windows Desktop apps)
 - The [Mac Driver](/docs/en/drivers/mac.md) (for Mac Desktop apps)
 
+To actually install a driver and make it ready for use, first check the list of available drivers:
+
+```
+appium driver list
+```
+
+Then pick the driver or drivers you'd like to install. For example, you could install the main drivers for iOS and Android as follows:
+
+```
+appium driver install xcuitest
+appium driver install uiautomator2
+```
+
 ### Verifying the Installation
 
 To verify that all of Appium's dependencies are met you can use

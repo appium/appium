@@ -83,6 +83,22 @@ changes and automatically re-transpile the code. Usually, the same tool will
 automatically run unit tests as well to ensure that nothing small has broken.
 Most Appium packages have this as the default behavior when running `gulp`.
 
+### Hacking on Extensions
+
+If you are building an Appium driver or plugin, you can always link your development version into
+an Appium server so that as you make changes, you don't have to publish/install as part of your dev
+cycle:
+
+```
+appium driver install --source=/path/to/your/local/dev/repo
+```
+
+If you make changes to your extension while the Appium server is already running, those changes
+won't be picked up since Appium has loaded your extension into memory. If you want to have
+something approaching a "hot reload", then run appium with the `APPIUM_RELOAD_EXTENSIONS=1` env
+var. This will cause Appium to reload your extension any time it would be instantiated, for
+example, on a new session request.
+
 ### Linting and Style
 
 It's important for all of Appium's JS to look and feel the same. This includes

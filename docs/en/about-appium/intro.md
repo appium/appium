@@ -109,6 +109,8 @@ or installed directly from [NPM](https://www.npmjs.com/package/appium):
 
 ```
 $ npm install -g appium
+$ appium driver install xcuitest      # install the ios driver if desired
+$ appium driver install uiautomator2  # install the android driver if desired
 $ appium
 ```
 

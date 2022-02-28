@@ -16,13 +16,13 @@ const schema = /** @type {const} */ ({
           default: '0.0.0.0',
           description: 'IP address to listen on',
           format: 'hostname',
-          title: 'address config',
+          title: 'Server Address',
           type: 'string',
         },
         'allow-cors': {
           description:
             'Whether the Appium server should allow web browser connections from any host',
-          title: 'allow-cors config',
+          title: 'Allow CORS',
           type: 'boolean',
           default: false,
         },
@@ -34,7 +34,7 @@ const schema = /** @type {const} */ ({
           items: {
             type: 'string',
           },
-          title: 'allow-insecure config',
+          title: 'Allow Insecure Features',
           type: 'array',
           uniqueItems: true,
         },
@@ -43,13 +43,13 @@ const schema = /** @type {const} */ ({
           default: '',
           description:
             'Base path to use as the prefix for all webdriver routes running on the server',
-          title: 'base-path config',
+          title: 'Base Path for Webdriver Routes',
           type: 'string',
         },
         'callback-address': {
           appiumCliAliases: ['ca'],
           description: 'Callback IP address (default: same as "address")',
-          title: 'callback-address config',
+          title: 'Callback Server Address',
           type: 'string',
         },
         'callback-port': {
@@ -58,14 +58,14 @@ const schema = /** @type {const} */ ({
           description: 'Callback port (default: same as "port")',
           maximum: 65535,
           minimum: 1,
-          title: 'callback-port config',
+          title: 'Callback Server Port',
           type: 'integer',
         },
         'debug-log-spacing': {
           default: false,
           description:
             'Add exaggerated spacing in logs to help with visual inspection',
-          title: 'debug-log-spacing config',
+          title: 'Enable "Debug" Log Spacing',
           type: 'boolean',
         },
         'default-capabilities': {
@@ -73,7 +73,7 @@ const schema = /** @type {const} */ ({
           appiumCliAliases: ['dc'],
           description:
             'Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.',
-          title: 'default-capabilities config',
+          title: 'Default Capabilities',
           type: 'object',
         },
         'deny-insecure': {
@@ -85,7 +85,7 @@ const schema = /** @type {const} */ ({
           items: {
             type: 'string',
           },
-          title: 'deny-insecure config',
+          title: 'Deny Insecure Features',
           type: 'array',
           uniqueItems: true,
         },
@@ -93,7 +93,7 @@ const schema = /** @type {const} */ ({
           description:
             'Driver-specific configuration. Keys should correspond to driver package names',
           properties: {},
-          title: 'driver config',
+          title: 'Driver-Specific Config',
           type: 'object',
         },
         'keep-alive-timeout': {
@@ -102,20 +102,20 @@ const schema = /** @type {const} */ ({
           description:
             'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.',
           minimum: 0,
-          title: 'keep-alive-timeout config',
+          title: 'Keep-Alive Timeout',
           type: 'integer',
         },
         'local-timezone': {
           default: false,
           description: 'Use local timezone for timestamps',
-          title: 'local-timezone config',
+          title: 'Local Timezone',
           type: 'boolean',
         },
         log: {
           appiumCliAliases: ['g'],
           appiumCliDest: 'logFile',
           description: 'Also send log output to this file',
-          title: 'log config',
+          title: 'Logfile Path',
           type: 'string',
         },
         'log-filters': {
@@ -124,7 +124,7 @@ const schema = /** @type {const} */ ({
           items: {
             type: 'string',
           },
-          title: 'log-filters config',
+          title: 'Log Filtering Rules',
           type: 'array',
         },
         'log-level': {
@@ -153,33 +153,33 @@ const schema = /** @type {const} */ ({
             'debug:warn',
             'debug:error',
           ],
-          title: 'log-level config',
+          title: 'Log Level',
           type: 'string',
         },
         'log-no-colors': {
           default: false,
           description: 'Do not use color in console output',
-          title: 'log-no-colors config',
+          title: 'Suppress Log Color',
           type: 'boolean',
         },
         'log-timestamp': {
           default: false,
           description: 'Show timestamps in console output',
-          title: 'log-timestamp config',
+          title: 'Log Timestamps',
           type: 'boolean',
         },
         'long-stacktrace': {
           default: false,
           description:
             'Add long stack traces to log entries. Recommended for debugging only.',
-          title: 'long-stacktrace config',
+          title: 'Show Long Stacktraces',
           type: 'boolean',
         },
         'no-perms-check': {
           default: false,
           description:
             'Do not check that needed files are readable and/or writable',
-          title: 'no-perms-check config',
+          title: 'Disable Permission Checks',
           type: 'boolean',
         },
         nodeconfig: {
@@ -187,14 +187,14 @@ const schema = /** @type {const} */ ({
             'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
           description:
             'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-          title: 'nodeconfig config',
+          title: 'Node Config File Path',
           type: 'object',
         },
         plugin: {
           description:
             'Plugin-specific configuration. Keys should correspond to plugin package names',
           properties: {},
-          title: 'plugin config',
+          title: 'Plugin-Specific Config',
           type: 'object',
         },
         port: {
@@ -203,41 +203,41 @@ const schema = /** @type {const} */ ({
           description: 'Port to listen on',
           maximum: 65535,
           minimum: 1,
-          title: 'port config',
+          title: 'Server Port',
           type: 'integer',
         },
         'relaxed-security': {
           default: false,
           description:
             'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
-          title: 'relaxed-security config',
+          title: 'Enable Relaxed Security',
           type: 'boolean',
           appiumCliDest: 'relaxedSecurityEnabled'
         },
         'session-override': {
           default: false,
           description: 'Enables session override (clobbering)',
-          title: 'session-override config',
+          title: 'Allow Session Override',
           type: 'boolean',
         },
         'strict-caps': {
           default: false,
           description:
             'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-          title: 'strict-caps config',
+          title: 'Strict Caps Mode',
           type: 'boolean',
         },
         tmp: {
           appiumCliDest: 'tmpDir',
           description:
             'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
-          title: 'tmp config',
+          title: 'Override Temp Path',
           type: 'string',
         },
         'trace-dir': {
           description:
             'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-          title: 'trace-dir config',
+          title: 'Trace Directory',
           type: 'string',
         },
         'use-drivers': {
@@ -249,7 +249,7 @@ const schema = /** @type {const} */ ({
           items: {
             type: 'string',
           },
-          title: 'use-drivers config',
+          title: 'Enabled Drivers',
           type: 'array',
           uniqueItems: true,
         },
@@ -262,7 +262,7 @@ const schema = /** @type {const} */ ({
           items: {
             type: 'string',
           },
-          title: 'use-plugins config',
+          title: 'Enabled Plugins',
           type: 'array',
           uniqueItems: true,
         },
@@ -272,11 +272,11 @@ const schema = /** @type {const} */ ({
           appiumCliAliases: ['G'],
           description: 'Also send log output to this http listener',
           format: 'uri',
-          title: 'webhook config',
+          title: 'Webhook URL',
           type: 'string',
         },
       },
-      title: 'server config',
+      title: 'Server Configuration',
       type: 'object',
     },
   },

@@ -385,8 +385,8 @@ if (require.main === module) {
 
 // everything below here is intended to be a public API.
 export { readConfigFile } from './config-file';
-export { finalizeSchema, getSchema, validate, getDefaultsForSchema as getDefaultArgs } from './schema/schema';
-export { main, init, configure, resolveAppiumHome };
+export { finalizeSchema, getSchema, validate } from './schema/schema';
+export { main, init, configure, start, resolveAppiumHome };
 
 /**
  * @typedef {import('../types/types').ParsedArgs} ParsedArgs

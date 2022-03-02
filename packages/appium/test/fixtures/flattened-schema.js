@@ -16,7 +16,7 @@ export default [
       default: '0.0.0.0',
       description: 'IP address to listen on',
       format: 'hostname',
-      title: 'address config',
+      title: 'Server Address',
       type: 'string',
     },
   },
@@ -35,7 +35,7 @@ export default [
       default: false,
       description:
         'Whether the Appium server should allow web browser connections from any host',
-      title: 'allow-cors config',
+      title: 'Allow CORS',
       type: 'boolean',
     },
   },
@@ -56,7 +56,7 @@ export default [
       description:
         'Set which insecure features are allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.',
       items: {type: 'string'},
-      title: 'allow-insecure config',
+      title: 'Allow Insecure Features',
       type: 'array',
       uniqueItems: true,
     },
@@ -77,7 +77,7 @@ export default [
       default: '',
       description:
         'Base path to use as the prefix for all webdriver routes running on the server',
-      title: 'base-path config',
+      title: 'Base Path for Webdriver Routes',
       type: 'string',
     },
   },
@@ -95,7 +95,7 @@ export default [
     schema: {
       appiumCliAliases: ['ca'],
       description: 'Callback IP address (default: same as "address")',
-      title: 'callback-address config',
+      title: 'Callback Server Address',
       type: 'string',
     },
   },
@@ -116,7 +116,7 @@ export default [
       description: 'Callback port (default: same as "port")',
       maximum: 65535,
       minimum: 1,
-      title: 'callback-port config',
+      title: 'Callback Server Port',
       type: 'integer',
     },
   },
@@ -135,7 +135,7 @@ export default [
       default: false,
       description:
         'Add exaggerated spacing in logs to help with visual inspection',
-      title: 'debug-log-spacing config',
+      title: 'Enable "Debug" Log Spacing',
       type: 'boolean',
     },
   },
@@ -155,7 +155,7 @@ export default [
       appiumCliAliases: ['dc'],
       description:
         'Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.',
-      title: 'default-capabilities config',
+      title: 'Default Capabilities',
       type: 'object',
     },
   },
@@ -177,7 +177,7 @@ export default [
       description:
         'Set which insecure features are not allowed to run in this server\'s sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.',
       items: {type: 'string'},
-      title: 'deny-insecure config',
+      title: 'Deny Insecure Features',
       type: 'array',
       uniqueItems: true,
     },
@@ -199,7 +199,7 @@ export default [
       description:
         'Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.',
       minimum: 0,
-      title: 'keep-alive-timeout config',
+      title: 'Keep-Alive Timeout',
       type: 'integer',
     },
   },
@@ -217,7 +217,7 @@ export default [
     schema: {
       default: false,
       description: 'Use local timezone for timestamps',
-      title: 'local-timezone config',
+      title: 'Local Timezone',
       type: 'boolean',
     },
   },
@@ -236,7 +236,7 @@ export default [
       appiumCliAliases: ['g'],
       appiumCliDest: 'logFile',
       description: 'Also send log output to this file',
-      title: 'log config',
+      title: 'Logfile Path',
       type: 'string',
     },
   },
@@ -255,7 +255,7 @@ export default [
       $comment: 'TODO',
       description: 'One or more log filtering rules',
       items: {type: 'string'},
-      title: 'log-filters config',
+      title: 'Log Filtering Rules',
       type: 'array',
     },
   },
@@ -296,7 +296,7 @@ export default [
         'debug:warn',
         'debug:error',
       ],
-      title: 'log-level config',
+      title: 'Log Level',
       type: 'string',
     },
   },
@@ -314,7 +314,7 @@ export default [
     schema: {
       default: false,
       description: 'Do not use color in console output',
-      title: 'log-no-colors config',
+      title: 'Suppress Log Color',
       type: 'boolean',
     },
   },
@@ -332,7 +332,7 @@ export default [
     schema: {
       default: false,
       description: 'Show timestamps in console output',
-      title: 'log-timestamp config',
+      title: 'Log Timestamps',
       type: 'boolean',
     },
   },
@@ -351,7 +351,7 @@ export default [
       default: false,
       description:
         'Add long stack traces to log entries. Recommended for debugging only.',
-      title: 'long-stacktrace config',
+      title: 'Show Long Stacktraces',
       type: 'boolean',
     },
   },
@@ -370,7 +370,7 @@ export default [
       default: false,
       description:
         'Do not check that needed files are readable and/or writable',
-      title: 'no-perms-check config',
+      title: 'Disable Permission Checks',
       type: 'boolean',
     },
   },
@@ -390,7 +390,7 @@ export default [
         'Selenium Grid 3 is unmaintained and Selenium Grid 4 no longer supports this file.',
       description:
         'Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself',
-      title: 'nodeconfig config',
+      title: 'Node Config File Path',
       type: 'object',
     },
   },
@@ -411,7 +411,7 @@ export default [
       description: 'Port to listen on',
       maximum: 65535,
       minimum: 1,
-      title: 'port config',
+      title: 'Server Port',
       type: 'integer',
     },
   },
@@ -431,7 +431,7 @@ export default [
       default: false,
       description:
         'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
-      title: 'relaxed-security config',
+      title: 'Enable Relaxed Security',
       type: 'boolean',
     },
   },
@@ -449,7 +449,7 @@ export default [
     schema: {
       default: false,
       description: 'Enables session override (clobbering)',
-      title: 'session-override config',
+      title: 'Allow Session Override',
       type: 'boolean',
     },
   },
@@ -468,7 +468,7 @@ export default [
       default: false,
       description:
         'Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device',
-      title: 'strict-caps config',
+      title: 'Strict Caps Mode',
       type: 'boolean',
     },
   },
@@ -487,7 +487,7 @@ export default [
       appiumCliDest: 'tmpDir',
       description:
         'Absolute path to directory Appium can use to manage temp files. Defaults to C:\\Windows\\Temp on Windows and /tmp otherwise.',
-      title: 'tmp config',
+      title: 'Override Temp Path',
       type: 'string',
     },
   },
@@ -505,7 +505,7 @@ export default [
     schema: {
       description:
         'Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments',
-      title: 'trace-dir config',
+      title: 'Trace Directory',
       type: 'string',
     },
   },
@@ -527,7 +527,7 @@ export default [
       description:
         'A list of drivers to activate. By default, all installed drivers will be activated.',
       items: {type: 'string'},
-      title: 'use-drivers config',
+      title: 'Enabled Drivers',
       type: 'array',
       uniqueItems: true,
     },
@@ -550,7 +550,7 @@ export default [
       description:
         'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',
       items: {type: 'string'},
-      title: 'use-plugins config',
+      title: 'Enabled Plugins',
       type: 'array',
       uniqueItems: true,
     },
@@ -572,8 +572,8 @@ export default [
       appiumCliAliases: ['G'],
       description: 'Also send log output to this http listener',
       format: 'uri',
-      title: 'webhook config',
+      title: 'Webhook URL',
       type: 'string',
     },
-  }
+  },
 ];

@@ -1,4 +1,3 @@
-# parameters: # No params yet, but may add later
 jobs:
   - job: generate_docs
     pool: 

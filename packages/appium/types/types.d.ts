@@ -10,7 +10,7 @@ import {
 } from '../lib/constants';
 import appiumConfigSchema from '../lib/schema/appium-config-schema';
 import {transformers} from '../lib/schema/cli-transformers';
-import {AppiumConfiguration, ServerConfig} from './appium-config';
+import {AppiumConfiguration, ServerConfiguration} from './appium-config';
 
 /**
  * Converts a kebab-cased string into a camel-cased string.
@@ -88,7 +88,7 @@ type AppiumServerSchema =
 type NormalizedServerConfig = {
   [Prop in keyof ServerConfigMapping as AppiumServerSchema[Prop] extends WithDest
     ? AppiumServerSchema[Prop]['appiumCliDest']
-    : KebabToCamel<Prop>]: ServerConfig[Prop];
+    : KebabToCamel<Prop>]: ServerConfiguration[Prop];
 };
 
 /**
@@ -104,7 +104,7 @@ export type NormalizedAppiumConfig = {
  * {@link ServerConfig}.
  */
 type ServerConfigMapping = {
-  [Prop in keyof Required<ServerConfig>]: AppiumServerSchema[Prop];
+  [Prop in keyof Required<ServerConfiguration>]: AppiumServerSchema[Prop];
 };
 
 /**
@@ -123,8 +123,8 @@ type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
  */
 type DefaultForProp<Prop extends keyof ServerConfigMapping> =
   AppiumServerSchema[Prop] extends WithDefault
-    ? NonNullable<ServerConfig[Prop]>
-    : ServerConfig[Prop];
+    ? NonNullable<ServerConfiguration[Prop]>
+    : ServerConfiguration[Prop];
 
 /**
  * The final shape of the parsed CLI arguments.

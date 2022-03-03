@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import { timing } from '../lib';
 
 
@@ -7,8 +7,15 @@ const expect = chai.expect;
 
 describe('timing', function () {
   let processMock;
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
   afterEach(function () {
     processMock.verify();
+    sandbox.restore();
   });
 
   describe('no bigint', function () {
@@ -20,7 +27,7 @@ describe('timing', function () {
       }
     });
     beforeEach(function () {
-      processMock = sinon.mock(process);
+      processMock = sandbox.mock(process);
     });
     after(function () {
       if (_.isFunction(bigintFn)) {
@@ -84,7 +91,7 @@ describe('timing', function () {
       if (!_.isFunction(process.hrtime.bigint)) {
         return this.skip();
       }
-      processMock = sinon.mock(process.hrtime);
+      processMock = sandbox.mock(process.hrtime);
     });
 
     function setupMocks (once = false) {

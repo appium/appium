@@ -1,5 +1,5 @@
 import logCommands from '../../../lib/basedriver/commands/log';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import _ from 'lodash';
 
 
@@ -19,11 +19,19 @@ const SUPPORTED_LOG_TYPES = {
 };
 
 describe('log commands -', function () {
+  let sandbox;
+
   beforeEach(function () {
+    sandbox = createSandbox();
     // reset the supported log types
     logCommands.supportedLogTypes = {};
     logCommands.log = {debug: _.noop};
   });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('getLogTypes', function () {
     it('should return empty array when no supported log types', async function () {
       (await logCommands.getLogTypes()).should.eql([]);
@@ -35,8 +43,8 @@ describe('log commands -', function () {
   });
   describe('getLog', function () {
     beforeEach(function () {
-      sinon.spy(SUPPORTED_LOG_TYPES.one, 'getter');
-      sinon.spy(SUPPORTED_LOG_TYPES.two, 'getter');
+      sandbox.spy(SUPPORTED_LOG_TYPES.one, 'getter');
+      sandbox.spy(SUPPORTED_LOG_TYPES.two, 'getter');
     });
     afterEach(function () {
       SUPPORTED_LOG_TYPES.one.getter.restore();

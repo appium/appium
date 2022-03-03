@@ -2,7 +2,7 @@
 
 import { server } from '../../lib';
 import axios from 'axios';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
 import {TEST_HOST, getTestPort} from '../helpers';
@@ -10,11 +10,11 @@ import {TEST_HOST, getTestPort} from '../helpers';
 
 describe('server', function () {
   let hwServer;
-  let errorStub;
   let port;
+  let sandbox;
   before(async function () {
     port = await getTestPort(true);
-    errorStub = sinon.stub(console, 'error');
+
     function configureRoutes (app) {
       app.get('/', (req, res) => {
         res.header['content-type'] = 'text/html';
@@ -37,9 +37,15 @@ describe('server', function () {
       port,
     });
   });
+  beforeEach(function () {
+    sandbox = createSandbox();
+    sandbox.stub(console, 'error');
+  });
   after(async function () {
     await hwServer.close();
-    errorStub.restore();
+  });
+  afterEach(function () {
+    sandbox.restore();
   });
 
   it('should start up with our middleware', async function () {

@@ -1,4 +1,4 @@
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import {
   getGitRev,
   getBuildInfo,
@@ -10,6 +10,16 @@ import { fs } from '@appium/support';
 
 
 describe('Config', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('getGitRev', function () {
     it('should get a reasonable git revision', async function () {
       let rev = await getGitRev();
@@ -34,8 +44,8 @@ describe('Config', function () {
     let mockFs;
     let getStub;
     beforeEach(function () {
-      mockFs = sinon.mock(fs);
-      getStub = sinon.stub(axios, 'get');
+      mockFs = sandbox.mock(fs);
+      getStub = sandbox.stub(axios, 'get');
     });
     afterEach(function () {
       getStub.restore();

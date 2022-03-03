@@ -1,13 +1,21 @@
 import * as teenProcess from 'teen_process';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import { process } from '../lib/index.js';
 import { retryInterval } from 'asyncbox';
-
-
 
 const SubProcess = teenProcess.SubProcess;
 
 describe('process', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('getProcessIds', function () {
     let proc;
     before(async function () {
@@ -30,7 +38,7 @@ describe('process', function () {
       pids.should.have.length(0);
     });
     it('should throw an error if pgrep fails', async function () {
-      let tpMock = sinon.mock(teenProcess);
+      let tpMock = sandbox.mock(teenProcess);
       tpMock.expects('exec').throws({message: 'Oops', code: 2});
 
       await process.getProcessIds('tail').should.eventually.be.rejectedWith(/Oops/);
@@ -68,7 +76,7 @@ describe('process', function () {
       }).should.eventually.be.rejected;
     });
     it('should throw an error if pgrep fails', async function () {
-      let tpMock = sinon.mock(teenProcess);
+      let tpMock = sandbox.mock(teenProcess);
       tpMock.expects('exec').throws({message: 'Oops', code: 2});
 
       await process.killProcess('tail').should.eventually.be.rejectedWith(/Oops/);
@@ -76,7 +84,7 @@ describe('process', function () {
       tpMock.restore();
     });
     it('should throw an error if pkill fails', async function () {
-      let tpMock = sinon.mock(teenProcess);
+      let tpMock = sandbox.mock(teenProcess);
       tpMock.expects('exec').twice()
         .onFirstCall().returns({stdout: '42\n'})
         .onSecondCall().throws({message: 'Oops', code: 2});

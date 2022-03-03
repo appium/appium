@@ -1,14 +1,22 @@
 // transpile:mocha
 
 import { welcome } from '../../lib/express/static';
-import sinon from 'sinon';
-
-
+import { createSandbox } from 'sinon';
 
 describe('welcome', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   it('should fill the template', async function () {
     let res = {
-      send: sinon.spy()
+      send: sandbox.stub()
     };
     await welcome({}, res);
 

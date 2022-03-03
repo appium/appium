@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import { DeviceSettings } from '../../lib';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 
 
 // wrap these tests in a function so we can export the tests and re-use them
@@ -10,10 +10,14 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   // to display the driver under test in report
   const className = DriverClass.name || '(unknown driver)';
 
+
   describe(`BaseDriver (as ${className})`, function () {
     let d, w3cCaps;
 
+    let sandbox;
+
     beforeEach(function () {
+      sandbox = createSandbox();
       d = new DriverClass();
       w3cCaps = {
         alwaysMatch: Object.assign({}, defaultCaps, {
@@ -25,6 +29,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
     afterEach(async function () {
       await d.deleteSession();
+      sandbox.restore();
     });
 
     it('should report the version of BaseDriver used', function () {
@@ -345,7 +350,7 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
       describe('#proxyRouteIsAvoided', function () {
         it('should validate form of avoidance list', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /\/foo/], ['GET']]);
           (() => { d.proxyRouteIsAvoided(); }).should.throw;
           avoidStub.returns([['POST', /\/foo/], ['GET', /^foo/, 'bar']]);
@@ -353,31 +358,31 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           avoidStub.restore();
         });
         it('should reject bad http methods', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^foo/], ['BAZETE', /^bar/]]);
           (() => { d.proxyRouteIsAvoided(); }).should.throw;
           avoidStub.restore();
         });
         it('should reject non-regex routes', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^foo/], ['GET', '/bar']]);
           (() => { d.proxyRouteIsAvoided(); }).should.throw;
           avoidStub.restore();
         });
         it('should return true for routes in the avoid list', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^\/foo/]]);
           d.proxyRouteIsAvoided(null, 'POST', '/foo/bar').should.be.true;
           avoidStub.restore();
         });
         it('should strip away any wd/hub prefix', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^\/foo/]]);
           d.proxyRouteIsAvoided(null, 'POST', '/foo/bar').should.be.true;
           avoidStub.restore();
         });
         it('should return false for routes not in the avoid list', function () {
-          const avoidStub = sinon.stub(d, 'getProxyAvoidList');
+          const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /^\/foo/]]);
           d.proxyRouteIsAvoided(null, 'GET', '/foo/bar').should.be.false;
           d.proxyRouteIsAvoided(null, 'POST', '/boo').should.be.false;

@@ -2,23 +2,8 @@
 
 import { server, routeConfiguringFunction } from '../../lib';
 import { configureServer, normalizeBasePath } from '../../lib/express/server';
-import sinon from 'sinon';
-import {getTestPort} from '../helpers';
-
-function fakeApp () {
-  const app = {
-    use: sinon.spy(),
-    all: sinon.spy(),
-    get: sinon.spy(),
-    post: sinon.spy(),
-    delete: sinon.spy(),
-    totalCount: () => (
-      app.use.callCount + app.all.callCount + app.get.callCount + app.post.callCount +
-      app.delete.callCount
-    )
-  };
-  return app;
-}
+import { createSandbox } from 'sinon';
+import { getTestPort } from '../helpers';
 
 const newMethodMap = {
   '/session/:sessionId/fake': {
@@ -39,8 +24,33 @@ function fakeDriver () {
 describe('server configuration', function () {
   let port;
 
+  let sandbox;
+
+  function fakeApp () {
+    const app = {
+      use: sandbox.spy(),
+      all: sandbox.spy(),
+      get: sandbox.spy(),
+      post: sandbox.spy(),
+      delete: sandbox.spy(),
+      totalCount: () => (
+        app.use.callCount + app.all.callCount + app.get.callCount + app.post.callCount +
+        app.delete.callCount
+      )
+    };
+    return app;
+  }
+
   before(async function () {
     port = await getTestPort(true);
+  });
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
   });
 
   it('should actually use the middleware', function () {

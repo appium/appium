@@ -1,20 +1,29 @@
-
 import { system } from '../lib/index.js';
 import os from 'os';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import * as teen_process from 'teen_process';
 import _ from 'lodash';
 
 
-let sandbox, tpMock, osMock = null;
+let tpMock, osMock = null;
 let SANDBOX = Symbol();
 let mocks = {};
 let libs = {teen_process, os, system};
 
 describe('system', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('isX functions', function () {
     beforeEach(function () {
-      osMock = sinon.mock(os);
+      osMock = sandbox.mock(os);
     });
     afterEach(function () {
       osMock.verify();
@@ -38,7 +47,7 @@ describe('system', function () {
 
   describe('mac OSX version', function () {
     beforeEach(function () {
-      tpMock = sinon.mock(teen_process);
+      tpMock = sandbox.mock(teen_process);
     });
     afterEach(function () {
       tpMock.verify();
@@ -68,7 +77,7 @@ describe('system', function () {
 
   describe('architecture', function () {
     beforeEach(function () {
-      sandbox = sinon.createSandbox();
+      // this is weird as hell
       mocks[SANDBOX] = sandbox;
       for (let [key, value] of _.toPairs(libs)) {
         mocks[key] = sandbox.mock(value);

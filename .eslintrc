@@ -15,6 +15,29 @@
       "parserOptions": {
         "sourceType": "script"
       }
+    },
+    {
+      "files": "./packages/*/test/**/*.js",
+      "rules": {
+        "no-restricted-properties": [
+          "error", 
+          {
+            "object": "sinon",
+            "property": "spy",
+            "message": "Use `sandbox = sinon.createSandbox()` and `sandbox.spy()` instead. Don't forget to call `sandbox.restore()` in `afterEach`"
+          },
+          {
+            "object": "sinon",
+            "property": "stub",
+            "message": "Use `sandbox = sinon.createSandbox()` and `sandbox.stub()` instead. Don't forget to call `sandbox.restore()` in `afterEach`"
+          },
+          {
+            "object": "sinon",
+            "property": "mock",
+            "message": "Use `sandbox = sinon.createSandbox()` and `sandbox.mock()` instead. Don't forget to call `sandbox.restore()` in `afterEach`"
+          }
+        ] 
+      }
     }
   ]
 }

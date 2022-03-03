@@ -1,7 +1,7 @@
 
 import { util, fs, tempDir } from '../lib';
 import B from 'bluebird';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import os from 'os';
 import path from 'path';
 import _ from 'lodash';
@@ -11,6 +11,16 @@ const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 
 describe('util', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
   describe('hasValue', function () {
     it('should exist', function () {
       should.exist(util.hasValue);
@@ -174,7 +184,7 @@ describe('util', function () {
             }
           ],
       };
-      let osMock = sinon.mock(os);
+      let osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
       ifConfigOut = '';
       let ip = util.localIp();

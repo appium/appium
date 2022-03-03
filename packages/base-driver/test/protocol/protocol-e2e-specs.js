@@ -5,7 +5,7 @@ import {
 } from '../../lib';
 import { FakeDriver } from './fake-driver';
 import axios from 'axios';
-import sinon from 'sinon';
+import { createSandbox } from 'sinon';
 import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
 import { createProxyServer } from './helpers';
 import {
@@ -17,6 +17,15 @@ let port;
 let baseUrl;
 
 describe('Protocol', function () {
+  let sandbox;
+
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
 
   before(async function () {
     port = await getTestPort();
@@ -363,7 +372,7 @@ describe('Protocol', function () {
         sessionId = data.value.sessionId;
       });
       it('should raise an error if the driver does not support W3C yet', async function () {
-        const createSessionStub = sinon.stub(driver, 'createSession').callsFake(function (capabilities) {
+        const createSessionStub = sandbox.stub(driver, 'createSession').callsFake(function (capabilities) {
           driver.sessionId = null;
           return BaseDriver.prototype.createSession.call(driver, capabilities);
         });
@@ -505,7 +514,7 @@ describe('Protocol', function () {
         });
 
         it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
-          let setUrlStub = sinon.stub(driver, 'setUrl').callsFake(function () {
+          let setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
             throw new errors.TimeoutError;
           });
           const {status, data} = await axios({
@@ -600,7 +609,7 @@ describe('Protocol', function () {
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
             const error = new Error(`Some error occurred`);
             error.w3cStatus = 414;
-            const executeCommandStub = sinon.stub(driver, 'executeCommand').returns({
+            const executeCommandStub = sandbox.stub(driver, 'executeCommand').returns({
               protocol: 'W3C',
               error,
             });

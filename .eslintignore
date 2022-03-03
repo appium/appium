@@ -1,7 +1,8 @@
-coverage
-node_modules
+**/coverage/**
+**/node_modules/**
 examples/javascript-wd
-packages/*/build/**/*
+**/build/**
 **/*.min.js
 sample-code
 **/*.d.ts
+**/build-fixtures/**

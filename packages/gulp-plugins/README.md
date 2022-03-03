@@ -108,7 +108,7 @@ There are some issues with Gulp 3.x error handling which cause the default
 gulp-watch to hang. This plugin is a small hack which solves that by respawning
 the whole process on error. This should not be needed in gulp 4.0.
 
-Files in the `/test` directory that are named `.*-specs.js` are run. Tests which end in `.*-e2e-specs.js` are *not* run when watching. To run end-to-end tests, run `gulp e2e-test`.
+Files in the `/test` directory that are named `.*-specs.js` are run. Tests which end in `.*-e2e-specs.js` are *not* run when watching. To run end-to-end tests, run `gulp e2e-test:run`.
 
 ### usage
 

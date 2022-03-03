@@ -10,7 +10,7 @@ const gulpIf = require('gulp-if');
 
 gulp.task('clean-fixtures', function () {
   return gulp
-    .src('build', {read: false, allowEmpty: true})
+    .src('build-fixtures', {read: false, allowEmpty: true})
     .pipe(vinylPaths(del));
 });
 
@@ -21,7 +21,7 @@ gulp.task('transpile-es7-fixtures', function () {
     .pipe(gulpIf(isVerbose(), debug()))
     .pipe(transpiler.stream())
     .on('error', spawnWatcher.handleError)
-    .pipe(gulp.dest('build'));
+    .pipe(gulp.dest('build-fixtures'));
 });
 
 gulp.task('transpile-fixtures', gulp.series('clean-fixtures', 'transpile-es7-fixtures'));

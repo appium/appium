@@ -1,5 +1,6 @@
 {
   "name": "@appium/base-driver",
+  "version": "8.2.4",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",
@@ -11,20 +12,16 @@
     "firefoxos",
     "testing"
   ],
-  "version": "8.2.4",
-  "author": "https://github.com/appium",
-  "license": "Apache-2.0",
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git"
   },
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
-  },
-  "engines": {
-    "node": ">=12",
-    "npm": ">=6"
-  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
   "directories": {
     "lib": "lib"
   },
@@ -38,6 +35,12 @@
     "build",
     "!build/test/basedriver/fixtures"
   ],
+  "scripts": {
+    "dev": "gulp dev --no-notif",
+    "build": "gulp transpile",
+    "test": "gulp unit-test:run",
+    "test:e2e": "gulp e2e-test:run"
+  },
   "dependencies": {
     "@appium/support": "file:../support",
     "@babel/runtime": "7.16.3",
@@ -59,9 +62,12 @@
     "validate.js": "0.13.1",
     "ws": "7.5.6"
   },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://appium.io",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

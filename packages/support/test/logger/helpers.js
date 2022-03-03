@@ -7,8 +7,10 @@ let sandbox;
 
 function setupWriters () {
   sandbox = sinon.createSandbox();
-  return {'stdout': sandbox.spy(process.stdout, 'write'),
-          'stderr': sandbox.spy(process.stderr, 'write')};
+  return {
+    stdout: sandbox.spy(process.stdout, 'write'),
+    stderr: sandbox.spy(process.stderr, 'write')
+  };
 }
 
 function getDynamicLogger (testingMode, forceLogs, prefix = null) {

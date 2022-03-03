@@ -34,7 +34,7 @@ const DEFAULT_OPTS = {
     forceExit: false,
     traceWarnings: false,
   },
-  testReporter: (process.env.TRAVIS || process.env.CI) ? 'spec' : 'nyan',
+  testReporter: 'spec',
   testTimeout: 20000,
   build: 'Appium',
   extraPrepublishTasks: [],

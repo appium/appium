@@ -12,6 +12,7 @@
     "firefoxos",
     "testing"
   ],
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -31,15 +32,22 @@
     "lib",
     "build",
     "index.js",
-    "postinstall.js",
+    "scripts/postinstall.js",
     "types"
   ],
   "scripts": {
-    "generate-docs": "gulp transpile && node ./build/commands-yml/parse.js",
-    "postinstall": "node ./postinstall.js",
-    "upload": "gulp github-upload",
-    "zip": "zip -qr appium.zip .",
-    "zip-and-upload": "npm run zip && npm run upload"
+    "build": "babel lib --root-mode=upward --delete-dir-on-start --out-dir=build/lib",
+    "postbuild": "npm run generate-schema-json",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "generate-docs": "node ./scripts/parse-yml-commands.js",
+    "generate-schema-json": "node ./scripts/generate-schema-json.js",
+    "generate-schema-declarations": "node ./scripts/generate-schema-declarations.js",
+    "postinstall": "node ./scripts/postinstall.js",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:e2e": "mocha --require ./test/setup.js --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha --require ./test/setup.js \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",
@@ -78,6 +86,5 @@
     "access": "public",
     "tag": "next"
   },
-  "homepage": "https://appium.io",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

@@ -1,3 +1,5 @@
+// @ts-check
+
 import getPort from 'get-port';
 import path from 'path';
 import rewiremock, { addPlugin, overrideEntryPoint, plugins } from 'rewiremock';
@@ -34,7 +36,7 @@ async function getTestPort () {
 /**
  * Resolve a file relative to the `fixtures` dir
  * @param {string} filename - Filename to resolve
- * @param {...string} [pathParts] - Additional paths to `join()`
+ * @param {...string} pathParts - Additional paths to `join()`
  * @returns {string}
  */
 function resolveFixture (filename, ...pathParts) {

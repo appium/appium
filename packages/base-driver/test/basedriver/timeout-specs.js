@@ -1,22 +1,17 @@
 import BaseDriver from '../../lib';
-import sinon from 'sinon';
-
-
-
+import { createSandbox } from 'sinon';
 
 describe('timeout', function () {
   let driver = new BaseDriver();
-  let implicitWaitSpy, newCommandTimeoutSpy;
-  before(function () {
-    implicitWaitSpy = sinon.spy(driver, 'setImplicitWait');
-    newCommandTimeoutSpy = sinon.spy(driver, 'setNewCommandTimeout');
-  });
+  let implicitWaitSpy;
+  let sandbox;
   beforeEach(function () {
+    sandbox = createSandbox();
     driver.implicitWaitMs = 0;
+    implicitWaitSpy = sandbox.spy(driver, 'setImplicitWait');
   });
   afterEach(function () {
-    implicitWaitSpy.resetHistory();
-    newCommandTimeoutSpy.resetHistory();
+    sandbox.restore();
   });
   describe('timeouts', function () {
     describe('errors', function () {

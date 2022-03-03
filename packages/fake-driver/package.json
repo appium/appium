@@ -12,6 +12,7 @@
     "firefoxos",
     "testing"
   ],
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -34,6 +35,12 @@
     "test/fixtures",
     "screen.png"
   ],
+  "scripts": {
+    "dev": "gulp dev --no-notif",
+    "build": "gulp transpile",
+    "test": "gulp unit-test:run",
+    "test:e2e": "gulp e2e-test:run"
+  },
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",
     "@appium/support": "file:../support",
@@ -49,6 +56,9 @@
     "node": ">=12",
     "npm": ">=6"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "access": "public",
   "appium": {
     "driverName": "fake",
@@ -63,9 +73,5 @@
       "fake-success": "./build/lib/scripts/fake-success.js"
     }
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "homepage": "https://appium.io",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

@@ -52,12 +52,12 @@ IWebElement currentElement = driver.SwitchTo().ActiveElement();
 
 |Platform|Driver|Platform Versions|Appium Version|Driver Version|
 |--------|----------------|------|--------------|--------------|
-| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | None | None | None |
+| iOS | [XCUITest](/docs/en/drivers/ios-xcuitest.md) | 9.3+ | 1.6.0+ | All |
 |  | [UIAutomation](/docs/en/drivers/ios-uiautomation.md) | None | None | None |
-| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | None | None | None |
-|  | [Espresso](/docs/en/drivers/android-espresso.md) | None | None | None |
+| Android | [UiAutomator2](/docs/en/drivers/android-uiautomator2.md) | ?+ | 1.6.0+ | All |
+|  | [Espresso](/docs/en/drivers/android-espresso.md) | ?+ | 1.9.0+ | All |
 |  | [UiAutomator](/docs/en/drivers/android-uiautomator.md) | None | None | None |
-| Mac | [Mac](/docs/en/drivers/mac.md) | None | None | None |
+| Mac | [Mac](/docs/en/drivers/mac.md) | ?+ | 1.6.4+ | All |
 | Windows | [Windows](/docs/en/drivers/windows.md) | None | None | None |
 
 

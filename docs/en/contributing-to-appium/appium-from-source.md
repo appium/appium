@@ -111,7 +111,7 @@ npm run reinstall
 
 Appium is made up of a number of different packages.  As of v2.0, the core packages
 live in a [_monorepo_](https://github.com/appium/appium) (including this documentation).
-The packages themselves live in the `packages` subdirectory.  Running `npm install` 
+The packages themselves live in the `packages` subdirectory.  Running `npm install`
 will automatically install all dependencies for all packages in this directory by way of
 [Lerna](https://lerna.js.org).
 

@@ -22,7 +22,7 @@
 
 想知道当前要做什么，最好的方法就是是查看示例代码：
 
-[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [PHP](https://github.com/appium/appium/tree/master/sample-code/php) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
+[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
 
 基本上，首先确认 Appium 正在运行：
 
@@ -48,20 +48,6 @@
     'deviceName': 'iPhone Simulator',
     'app': myApp
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'iOS',
-            'platformVersion' => '7.1',
-            'deviceName' => 'iPhone Simulator',
-            'app' => $myApp
-        )
-    )
-);
 ```
 
 ```java
@@ -142,20 +128,6 @@ Activity 可以通过以下方式指定：
 }
 ```
 
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'platformName' => 'Android',
-            'platformVersion' => '4.4',
-            'deviceName' => 'Android Emulator',
-            'app' => $myApp
-        )
-    )
-);
-```
-
 ```java
 // java
 DesiredCapabilities capabilities = new DesiredCapabilities();
@@ -203,23 +175,6 @@ Android 设备在 4.3  版本（API 级别 17）之前没有安装谷歌的 [UiA
     'appPackage': 'com.mycompany.package',
     'appActivity': '.MainActivity'
 }
-```
-
-```php
-// php
-public static $browsers = array(
-    array(
-        'desiredCapabilities' => array(
-            'automationName' => 'Selendroid',
-            'platformName' => 'Android',
-            'platformVersion' => '2.3',
-            'deviceName' => 'Android Emulator',
-            'app' => $myApp,
-            'appPackage' => 'com.mycompany.package',
-            'appActivity'=> '.MainActivity'
-        )
-    )
-);
 ```
 
 ```java

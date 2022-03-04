@@ -2,7 +2,7 @@
 
 This document explains how to release a new version of one or more packages in [this monorepo](https://github.com/appium/appium).
 
-Note: the shell commands herein expect `lerna` in your `PATH`; you can also use `npx lerna`. 
+Note: the shell commands herein expect `lerna` in your `PATH`; you can also use `npx lerna`.
 
 > See the [`lerna publish`](https://github.com/lerna/lerna/tree/main/commands/publish) docs for more info.
 
@@ -57,7 +57,7 @@ If you are happy with what it's going to do, confirm with `y` and continue to bu
 
 **This is not recommended.**   Lerna relies heavily on Git tags to do its thing, and a mistake would be costly.  It is only _possible_ because we use independent versioning.
 
-1. Navigate to a package directory and call `npm version --no-git-tag-version <newversion>`.  
+1. Navigate to a package directory and call `npm version --no-git-tag-version <newversion>`.
 1. You **must** tag the version manually using the format `[@scope/]<package-name>@<new-version>`.
 1. Push the new changeset and tag to GitHub.
 1. Issue `npm publish` from this package directory.

@@ -18,7 +18,8 @@ to Appium, you will need [Node.js and NPM](http://nodejs.org) (use
 [n](https://github.com/visionmedia/n), or `brew install node` to install
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
 you'll run into problems). We recommend the latest stable version, though
-Appium supports Node 10+.
+Appium supports Node.js 12+.
+(The minimal Node.js version follows Node.js' [release schedule](https://github.com/nodejs/release#readme)
 
 The actual installation is as simple as:
 
@@ -184,7 +185,7 @@ So here is how we begin to construct a session in our test file:
 ```js
 // javascript
 const opts = {
-  path: '',
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",
@@ -239,7 +240,7 @@ const wdio = require("webdriverio");
 const assert = require("assert");
 
 const opts = {
-  path: '',
+  path: '/wd/hub',
   port: 4723,
   capabilities: {
     platformName: "Android",

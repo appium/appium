@@ -202,7 +202,7 @@
     - node binary check
 
 ## appium-gulp-plugins
-- dev package with custom plugins used accross appium modules (for Appium development only)
+- dev package with custom plugins used across appium modules (for Appium development only)
 - contains task for
   - e2e and unit tests (with coverage reporting)
   - transpiling ES2016 into ES5

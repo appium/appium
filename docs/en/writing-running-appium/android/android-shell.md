@@ -35,3 +35,10 @@ result = driver.execute_script('mobile: shell', {
 })
 assert result['stdout'] == 'arg1 arg2'
 ```
+
+```js
+// Javascript
+const output = driver.executeScript('mobile: shell', [{
+  command: 'ls',
+  args: ['/sdcard'],
+}]);

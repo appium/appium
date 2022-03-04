@@ -1,4 +1,4 @@
-;# Automating hybrid apps
+## Automating hybrid apps
 
 One of the core principles of Appium is that you shouldn't have to change your
 app to test it. In line with that methodology, it is possible to test hybrid
@@ -63,7 +63,7 @@ driver
 ```java
 // java
 // assuming we have a set of capabilities
-driver = new AppiumDriver(new URL("http://127.0.0.1:4723"), capabilities);
+driver = new AppiumDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
 
 Set<String> contextNames = driver.getContextHandles();
 for (String contextName : contextNames) {
@@ -118,7 +118,7 @@ webview = driver.contexts.last
 driver.switch_to.context(webview)
 
 # do some webby stuff
-driver.find_element(:css, ".green_button").click
+driver.find_element(By.CSS, ".green_button").click
 
 # switch back to native view
 driver.switch_to.context(driver.contexts.first)
@@ -127,34 +127,6 @@ driver.switch_to.context(driver.contexts.first)
 
 driver.quit()
 ```
-
-```php
-// php
-// assuming we have an initialized `driver` object in an AppiumTestCase
-
-public function testThings()
-{
-        $expected_contexts = array(
-                0 => 'NATIVE_APP',
-                1 => 'WEBVIEW_1'
-        );
-
-        $contexts = $this->contexts();
-        $this->assertEquals($expected_contexts, $contexts);
-
-        $this->context($contexts[1]);
-        $context = $this->context();
-        $this->assertEquals('WEBVIEW_1', $context);
-
-        // do webby stuff
-
-        $this->context('NATIVE_APP');
-
-        // do mobile stuff
-}
-```
-
-
 
 ### Automating hybrid Android apps
 

@@ -7,8 +7,8 @@ applications on iOS mobile, Android mobile, and Windows desktop platforms.
 supports Safari on iOS and Chrome or the built-in 'Browser' app on Android).
 **Hybrid apps** have a wrapper around a "webview" -- a native control that
 enables interaction with web content. Projects like [Apache Cordova](https://cordova.apache.org)
-or [Phonegap](http://phonegap.com/) make it easy to build apps using web
-technologies that are then bundled into a native wrapper, creating a hybrid app.
+make it easy to build apps using web technologies that are then bundled
+into a native wrapper, creating a hybrid app.
 
 Importantly, Appium is "cross-platform": it allows you to write tests against
 multiple platforms (iOS, Android, Windows), using the same API. This enables
@@ -79,8 +79,7 @@ up a lot of possibilities: we can write our test code in any language that has
 a http client API, but it is easier to use one of the [Appium client
 libraries](http://appium.io/downloads). We can put the server on a different
 machine than our tests are running on. We can write test code and rely on
-a cloud service like [Sauce Labs](https://saucelabs.com/products/mobile-app-testing) & [LambdaTest](https://www.lambdatest.com/feature) to receive and
-interpret the commands.
+cloud services to receive and interpret the commands.
 
 **Session**<br/>
 Automation is always performed in the context of a session. Clients initiate

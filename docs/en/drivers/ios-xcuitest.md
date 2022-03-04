@@ -138,7 +138,7 @@ $HOME/Library/Developer/Xcode/DerivedData/*
 ```
 
 ### Configure keyboards
-Over Appium 1.14.0, Appium configures keyboard preferences by default to make test running more stable. You can change some of them via settings API.
+In Appium v1.14.0 or newer, Appium configures keyboard preferences by default to make test running more stable. You can change some of them via settings API.
 
 - Turn `Auto-Correction` in _Keyboards_ off
 - Turn `Predictive` in _Keyboards_ off

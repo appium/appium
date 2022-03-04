@@ -176,9 +176,8 @@ If this was successful, the output should end with something like:
         t =     0.00s     Set Up
 ```
 If the command fails, try passing the `-allowProvisioningUpdates` flag like this (see [#16212](https://github.com/appium/appium/issues/16212)):
-```
-    xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' -allowProvisioningUpdates test
-```
+```bash
+xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner -destination 'id=<udid>' -allowProvisioningUpdates test
 *   To completely verify, you can try accessing the WebDriverAgent server status
     (**note:** you _must_ be on the same network as the device, and know its IP
     address, from Settings => Wi-Fi => Current Network):
@@ -255,7 +254,7 @@ for this).
 
 ### Notice
 
-Appium team does not test xcuitest driver against jailbroken devices, so we cannot guaranteer it is going to work as expected as same as non-jailbroken devices.
+The Appium team does not support the `xcuitest` driver running against jailbroken devices.
 
 e.g., [`com.apple.mobile.installation_proxy` service error to manage Apps on the device](https://github.com/appium/appium-desktop/issues/1447)
 

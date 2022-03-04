@@ -36,10 +36,9 @@ result = driver.execute_script('mobile: shell', {
 assert result['stdout'] == 'arg1 arg2'
 ```
 
-```javascript
+```js
 // Javascript
 const output = driver.executeScript('mobile: shell', [{
-    command: 'ls',
-    args: ['/sdcard'],
-    }]);
-```
+  command: 'ls',
+  args: ['/sdcard'],
+}]);

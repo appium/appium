@@ -13,4 +13,4 @@ easier for people to help in translating the documentation.
 ## Bump supported NodeJS version
 
 - Refer to https://nodejs.org/en/download/releases/ if current supported version is EOL
-- Example to bump supported NodeJS version: https://github.com/appium/appium/pull/15000
+- Example to bump supported NodeJS version: appium/appium#15000

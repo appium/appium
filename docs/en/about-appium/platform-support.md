@@ -14,7 +14,6 @@ This section lists drivers that are supported by Appium team.
 iOS automation is supported with two drivers:
 
 - The [XCUITest Driver](/docs/en/drivers/ios-xcuitest.md)
-- The (deprecated) [UIAutomation Driver](/docs/en/drivers/ios-uiautomation.md)
 - The [safaridriver](/docs/en/drivers/safari.md) for Apple's [safaridriver](https://developer.apple.com/documentation/webkit/testing_with_webdriver_in_safari?language=objc)
 
 Please refer to these driver docs for setup instructions.
@@ -36,11 +35,10 @@ Please refer to these driver docs for setup instructions.
 
 ### Android Support
 
-Android automation is supported with two drivers:
+Android automation is supported with three drivers:
 
 - The [UiAutomator2 Driver](/docs/en/drivers/android-uiautomator2.md)
 - The [Espresso Driver](/docs/en/drivers/android-espresso.md)
-- The (deprecated) [UiAutomator Driver](/docs/en/drivers/android-uiautomator.md)
 - The [geckodriver](/docs/en/drivers/gecko.md) for Firefox and [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView)
 
 Please refer to these driver docs for setup instructions.

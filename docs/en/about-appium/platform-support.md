@@ -78,7 +78,7 @@ Windows automation is supported with below drivers.
 - The [WinAppDriver](/docs/en/drivers/windows.md)
 - The [geckodriver](/docs/en/drivers/gecko.md) for Firefox and [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView)
 
-## Other based drivers
+## Other drivers
 
 | Driver name | URL |
 | :---: | :--- |

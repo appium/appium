@@ -78,16 +78,11 @@ Windows automation is supported with below drivers.
 - The [WinAppDriver](/docs/en/drivers/windows.md)
 - The [geckodriver](/docs/en/drivers/gecko.md) for Firefox and [GeckoView](https://wiki.mozilla.org/Mobile/GeckoView)
 
-## Community based drivers
+## Other based drivers
 
 | Driver name | URL |
 | :---: | :--- |
 | Flutter | https://github.com/appium-userland/appium-flutter-driver |
-| WebOS | https://github.com/sharkyStudy/appium-webos-driver |
-
-## Vendors based drivers
-
-| Driver name | URL |
-| :---: | :--- |
 | You.i Engine | https://github.com/YOU-i-Labs/appium-youiengine-driver |
 | Roku | https://github.com/projectxyzio/appium-roku-driver |
+| WebOS | https://github.com/sharkyStudy/appium-webos-driver |

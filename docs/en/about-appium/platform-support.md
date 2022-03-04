@@ -70,7 +70,6 @@ Please refer to these driver docs for setup instructions.
 macOS automation is supported with below drivers.
 
 - The [Mac2Driver](/docs/en/drivers/mac2.md) is for macOS 10.15 or later
-- The (deprecated) [MacDriver](/docs/en/drivers/mac.md) is for lower macOS versions
 
 ### Windows Desktop Support
 
@@ -81,22 +80,14 @@ Windows automation is supported with below drivers.
 
 ## Community based drivers
 
-This section lists drivers that are supported by vendors and community as OSS.
-
-### Flutter Support
-
-- The [Flutter Driver](https://github.com/appium-userland/appium-flutter-driver)
-
-### WebOS Support
-
-- The [WebOS Driver](https://github.com/sharkyStudy/appium-webos-driver)
+| Driver name | URL |
+| :---: | :--- |
+| Flutter | https://github.com/appium-userland/appium-flutter-driver |
+| WebOS | https://github.com/sharkyStudy/appium-webos-driver |
 
 ## Vendors based drivers
 
-### You.i Engine Support
-
-- The [You.i Engine](https://github.com/YOU-i-Labs/appium-youiengine-driver)
-
-### Roku Support
-
-- The [Roku Driver](https://github.com/projectxyzio/appium-roku-driver)
+| Driver name | URL |
+| :---: | :--- |
+| You.i Engine | https://github.com/YOU-i-Labs/appium-youiengine-driver |
+| Roku | https://github.com/projectxyzio/appium-roku-driver |

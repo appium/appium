@@ -19,7 +19,7 @@ to Appium, you will need [Node.js and NPM](http://nodejs.org) (use
 Node.js. Make sure you have not installed Node or Appium with `sudo`, otherwise
 you'll run into problems). We recommend the latest stable version, though
 Appium supports Node.js 12+.
-(The minimal Node.js version follows [EOL schedule](https://nodejs.org/en/about/releases/))
+(The minimal Node.js version follows Node.js' [release schedule](https://github.com/nodejs/release#readme)
 
 The actual installation is as simple as:
 

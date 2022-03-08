@@ -4,7 +4,7 @@ Appium supports a variety of platforms and testing modalities (native,
 hybrid, web, real devices, simulators, etc...).
 This documentation aims to list available drivers and each repository.
 
-## Appium team support drivers
+## Drivers supported by the Appium team
 
 This section lists drivers that are supported by Appium team.
 
@@ -18,7 +18,7 @@ This section lists drivers that are supported by Appium team.
 | macOS | [Mac2Driver](/docs/en/drivers/mac2.md) | https://github.com/appium/appium-mac2-driver |
 | Windows | [WinAppDriver](/docs/en/drivers/windows.md) | https://github.com/appium/appium-windows-driver |
 
-## Other drivers
+## Drivers supported by their own communities
 
 | Driver name | Repository |
 | :---: | :--- |

@@ -153,8 +153,6 @@ export default class ExtensionCommand {
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
   async install ({ext, installType, packageName}) {
-    log(this.isJsonOutput, `Attempting to find and install ${this.type} '${ext}' via "${installType}" strategy`);
-
     /** @type {ExtData<ExtType>} */
     let extData;
     let installSpec = ext;

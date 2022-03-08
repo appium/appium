@@ -3,7 +3,8 @@
 // transpile:main
 // @ts-check
 
-import logger from './logger'; // logger needs to remain first of imports
+import { init as logsinkInit } from './logsink'; // this import needs to come first since it sets up global npmlog
+import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import { routeConfiguringFunction as makeRouter, server as baseServer } from '@appium/base-driver';
 import { logger as logFactory, util } from '@appium/support';
@@ -17,7 +18,6 @@ import { APPIUM_VER, checkNodeOk, getGitRev, getNonDefaultServerArgs, showBuildI
 import { readConfigFile } from './config-file';
 import { DRIVER_TYPE, PLUGIN_TYPE } from './extension-config';
 import registerNode from './grid-register';
-import { init as logsinkInit } from './logsink';
 import { getDefaultsForSchema } from './schema/schema';
 import { inspect } from './utils';
 

@@ -146,7 +146,7 @@
     "sync-monorepo-packages": "0.3.4",
     "through2": "4.0.2",
     "type-fest": "2.8.0",
-    "typescript": "4.6.0-dev.20220210",
+    "typescript": "4.6.2",
     "validate.js": "0.13.1",
     "webdriverio": "6.12.1",
     "yaml-js": "0.3.1"

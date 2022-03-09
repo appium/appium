@@ -1,13 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: Appium Build
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
+    name: Test
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
@@ -23,18 +23,29 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Run unit tests
-        run: npm test
+        run: npm run test:ci
+      - name: Install @appium/fake-driver
+        run: npm run install-fake-driver
       - name: Run E2E tests
-        run: |
-          npm run install-fake-driver
-          npm run e2e-test
+        run: npm run e2e-test
 
-  generate_docs:
-    needs: [build]
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          npm install
-          npm run generate-docs
+      - name: Install dependencies
+        run: npm install
+      - name: ESLint
+        run: npm run lint
+
+  docs:
+    name: Build Command Documentation
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm install
+      - name: Generate docs
+        run: npm run generate-docs

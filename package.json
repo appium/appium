@@ -48,6 +48,8 @@
     "test": "lerna run test",
     "test:appium": "lerna run --scope=appium test",
     "test:base-driver": "lerna run --scope=@appium/base-driver test",
+    "pretest:ci": "npm run build",
+    "test:ci": "lerna run test",
     "test:doctor": "lerna run --scope=@appium/doctor test",
     "test:e2e:appium": "lerna run --scope=appium test:e2e",
     "test:e2e:base-driver": "lerna run --scope=@appium/base-driver test:e2e",

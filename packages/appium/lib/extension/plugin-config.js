@@ -99,7 +99,7 @@ export class PluginConfig extends ExtensionConfig {
 }
 
 /**
- * @typedef {Object} PluginConfigOptions
+ * @typedef PluginConfigOptions
  * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
  * @property {import('./manifest').ExtRecord<PluginType>} [extData] - Extension data
  */

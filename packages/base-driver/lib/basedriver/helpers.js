@@ -151,7 +151,7 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
 }
 
 /**
- * @typedef {Object} PostProcessOptions
+ * @typedef PostProcessOptions
  * @property {?Object} cachedAppInfo The information about the previously cached app instance (if exists):
  *    - packageHash: SHA1 hash of the package if it is a file and not a folder
  *    - lastModified: Optional Date instance, the value of file's `Last-Modified` header
@@ -171,13 +171,13 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
  */
 
 /**
- * @typedef {Object} PostProcessResult
+ * @typedef PostProcessResult
  * @property {string} appPath The full past to the post-processed application package on the
  * local file system (might be a file or a folder path)
  */
 
 /**
- * @typedef {Object} ConfigureAppOptions
+ * @typedef ConfigureAppOptions
  * @property {(obj: PostProcessOptions) => (Promise<PostProcessResult|undefined>|PostProcessResult|undefined)} onPostProcess
  * Optional function, which should be applied
  * to the application after it is downloaded/preprocessed. This function may be async

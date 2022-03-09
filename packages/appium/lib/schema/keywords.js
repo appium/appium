@@ -120,7 +120,7 @@ export const keywords = {
 /**
  * These are the custom keywords that Appium recognizes.
  *
- * @typedef {Object} AppiumJSONSchemaKeywords
+ * @typedef AppiumJSONSchemaKeywords
  * @property {string} [appiumCliDest]
  * @property {string} [appiumCliDescription]
  * @property {string[]} [appiumCliAliases]

@@ -4,7 +4,7 @@ import _ from 'lodash';
 const DEFAULT_REPLACER = '**SECURE**';
 
 /**
- * @typedef {Object} SecureValuePreprocessingRule
+ * @typedef SecureValuePreprocessingRule
  * @property {RegExp} pattern The parsed pattern which is going to be used for replacement
  * @property {string} replacer [DEFAULT_SECURE_REPLACER] The replacer value to use. By default
  * equals to `DEFAULT_SECURE_REPLACER`
@@ -24,7 +24,7 @@ class SecureValuesPreprocessor {
   }
 
   /**
-   * @typedef {Object} Rule
+   * @typedef Rule
    * @property {string} pattern A valid RegExp pattern to be replaced
    * @property {string} text A text match to replace. Either this property or the
    * above one must be provided. `pattern` has priority over `text` if both are provided.

@@ -405,7 +405,7 @@ export {
 
 /**
  * Config problem
- * @typedef {Object} Problem
+ * @typedef Problem
  * @property {string} err - Error message
  * @property {any} val - Associated value
  */
@@ -449,7 +449,7 @@ export {
 
 /**
  * Options for various methods in {@link ExtensionConfig}
- * @typedef {Object} ExtensionConfigMutationOpts
+ * @typedef ExtensionConfigMutationOpts
  * @property {boolean} [write=true] Whether or not to write the manifest to disk after a mutation operation
  */
 

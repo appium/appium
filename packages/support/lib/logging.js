@@ -104,7 +104,7 @@ function getLogger (prefix = null) {
 }
 
 /**
- * @typedef {Object} LoadResult
+ * @typedef LoadResult
  * @property {List<string>} issues The list of rule parsing issues (one item per rule).
  * Rules with issues are skipped. An empty list is returned if no parsing issues exist.
  * @property {List<SecureValuePreprocessingRule>} rules The list of successfully loaded

@@ -7,7 +7,7 @@ import B from 'bluebird';
 let cv;
 
 /**
- * @typedef {Object} Region
+ * @typedef Region
  * @property {number} left - The offset from the left side
  * @property {number} top - The offset from the top
  * @property {number} width - The width
@@ -15,13 +15,13 @@ let cv;
  */
 
 /**
- * @typedef {Object} Point
+ * @typedef Point
  * @property {number} x - The x coordinate
  * @property {number} y - The y coordinate
  */
 
 /**
- * @typedef {Object} Rect
+ * @typedef Rect
  * @property {number} x - The top left coordinate
  * @property {number} y - The bottom right coordinate
  * @property {number} width - The width
@@ -93,7 +93,7 @@ async function initOpenCv () {
 
 
 /**
- * @typedef {Object} MatchComputationResult
+ * @typedef MatchComputationResult
  * @property {cv.DescriptorMatch} descriptor - OpenCV match descriptor
  * @property {Array<cv.KeyPoint>} keyPoints - The array of key points
  */
@@ -182,7 +182,7 @@ function highlightRegion (mat, region) {
 }
 
 /**
- * @typedef {Object} MatchingOptions
+ * @typedef MatchingOptions
  * @property {?string} detectorName ['ORB'] One of possible OpenCV feature detector names
  * from keys of the `AVAILABLE_DETECTORS` object.
  * Some of these methods (FAST, AGAST, GFTT, FAST, SIFT and MSER) are not available
@@ -198,7 +198,7 @@ function highlightRegion (mat, region) {
  */
 
 /**
- * @typedef {Object} MatchingResult
+ * @typedef MatchingResult
  * @property {number} count The count of matched edges on both images.
  * The more matching edges there are no both images the more similar they are.
  * @property {number} totalCount The total count of matched edges on both images.
@@ -329,7 +329,7 @@ async function getImagesMatches (img1Data, img2Data, options = {}) {
 }
 
 /**
- * @typedef {Object} SimilarityOptions
+ * @typedef SimilarityOptions
  * @property {?boolean} visualize [false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
  * @property {string} method [TM_CCOEFF_NORMED] The name of the template matching method.
@@ -345,7 +345,7 @@ async function getImagesMatches (img1Data, img2Data, options = {}) {
  */
 
 /**
- * @typedef {Object} SimilarityResult
+ * @typedef SimilarityResult
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
  * @property {?Buffer} visualization The visualization of the matching result
@@ -436,7 +436,7 @@ async function getImagesSimilarity (img1Data, img2Data, options = {}) {
 }
 
 /**
- * @typedef {Object} OccurrenceOptions
+ * @typedef OccurrenceOptions
  * @property {?boolean} visualize [false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
  * @property {?float} threshold [0.5] At what normalized threshold to reject
@@ -447,7 +447,7 @@ async function getImagesSimilarity (img1Data, img2Data, options = {}) {
  */
 
 /**
- * @typedef {Object} OccurrenceResult
+ * @typedef OccurrenceResult
  * @property {Rect} rect The region of the partial image occurence
  * on the full image
  * @property {?Buffer} visualization The visualization of the matching result

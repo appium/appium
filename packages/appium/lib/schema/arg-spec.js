@@ -216,7 +216,7 @@ export class ArgSpec {
 /**
  * Options for {@link ArgSpec.create}
  * @template D
- * @typedef {Object} ArgSpecOptions
+ * @typedef ArgSpecOptions
  * @property {string} [extName]
  * @property {ExtensionType} [extType]
  * @property {string} [dest]

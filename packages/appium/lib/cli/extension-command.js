@@ -53,7 +53,7 @@ export default class ExtensionCommand {
   }
 
   /**
-   * @typedef {Object} ListOptions
+   * @typedef ListOptions
    * @property {boolean} showInstalled - whether should show only installed extensions
    * @property {boolean} showUpdates - whether should show available updates
    */
@@ -138,13 +138,6 @@ export default class ExtensionCommand {
 
     return exts;
   }
-
-  /**
-   * @typedef {Object} InstallArgs
-   * @property {string} ext - the name or spec of an extension to install
-   * @property {import('../extension/extension-config').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
-   * @property {string} [packageName] - for git/github installs, the extension node package name
-   */
 
   /**
    * Install an extension
@@ -401,13 +394,6 @@ export default class ExtensionCommand {
   }
 
   /**
-   * @typedef PossibleUpdates
-   * @property {string} current - current version
-   * @property {string|null} safeUpdate - version we can safely update to if it exists, or null
-   * @property {string|null} unsafeUpdate - version we can unsafely update to if it exists, or null
-   */
-
-  /**
    * Given an extension name, figure out what its highest possible version upgrade is, and also the
    * highest possible safe upgrade.
    *
@@ -513,35 +499,26 @@ export default class ExtensionCommand {
 }
 
 /**
- * Return value of {@link ExtensionCommand#run}
- *
- * @typedef {Object} RunOutput
- * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
- * @property {string[]} output - script output
+ * @template {ExtensionType} ExtType
+ * @typedef {import('../extension/extension-config').ExtensionConfig<ExtType>} ExtensionConfig
  */
 
 /**
- * Options for the {@link ExtensionCommand} constructor
- * @typedef {Object} ExtensionCommandOptions
+ * Options for the {@linkcode ExtensionCommand} constructor
  * @template {ExtensionType} ExtType
+ * @typedef ExtensionCommandOptions
  * @property {ExtensionConfig<ExtType>} config - the `DriverConfig` or `PluginConfig` instance used for this command
  * @property {boolean} json - whether the output of this command should be JSON or text
- * @property {ExtType} type - DRIVER_TYPE or PLUGIN_TYPE
  */
 
 /**
- * Extra stuff about extensions; used indirectly by {@link ExtensionCommand#list}.
+ * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCommand.list}.
  *
- * @typedef {Object} ExtensionMetadata
+ * @typedef ExtensionMetadata
  * @property {boolean} installed - If `true`, the extension is installed
  * @property {string|null} [updateVersion] - If the extension is installed, the version it can be updated to
  * @property {string|null} [unsafeUpdateVersion] - Same as above, but a major version bump
  * @property {boolean} [upToDate] - If the extension is installed and the latest
- */
-
-/**
- * @template {ExtensionType} ExtType
- * @typedef {import('../extension/extension-config').ExtensionConfig<ExtType>} ExtensionConfig
  */
 
 /**
@@ -559,55 +536,79 @@ export default class ExtensionCommand {
  */
 
 /**
- * Return value of {@link ExtensionCommand#list}.
- * @typedef {Record<string, Partial<import('../extension/manifest').InternalData> & ExtensionMetadata>} ExtensionListData
+ * Return value of {@linkcode ExtensionCommand.list}.
+ * @typedef {Record<string, (import('../extension/manifest').InternalData & ExtensionMetadata) | { pkgName: string, installed: false }>} ExtensionListData
  */
 
 /**
- * Options for {@link ExtensionCommand#run}.
- * @typedef {Object} RunOptions
+ * Options for {@linkcode ExtensionCommand.run}.
+ * @typedef RunOptions
  * @property {string} ext - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
  */
 
+/**
+ * Return value of {@linkcode ExtensionCommand.run}
+ *
+ * @typedef RunOutput
+ * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
+ * @property {string[]} output - script output
+ */
 
 /**
- * Options for {@link ExtensionCommand#update}.
- * @typedef {Object} ExtensionUpdateOpts
+ * Options for {@linkcode ExtensionCommand.update}.
+ * @typedef ExtensionUpdateOpts
  * @property {string} ext - the name of the extension to update
  * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
  */
 
 /**
- * Return value of {@link ExtensionCommand#update}.
- * @typedef {Object} ExtensionUpdateResult
+ * Return value of {@linkcode ExtensionCommand.update}.
+ * @typedef ExtensionUpdateResult
  * @property {Record<string,Error>} errors - map of ext names to error objects
- * @property {Record<string,UpdateReport>} updates - map of ext names to {@link UpdateReport}s
+ * @property {Record<string,UpdateReport>} updates - map of ext names to {@linkcode UpdateReport}s
  */
 
 /**
- * Part of result of {@link ExtensionCommand#update}.
- * @typedef {Object} UpdateReport
+ * Part of result of {@linkcode ExtensionCommand.update}.
+ * @typedef UpdateReport
  * @property {string} from - version the extension was updated from
  * @property {string} to - version the extension was updated to
  */
 
 /**
- * Options for {@link ExtensionCommand#uninstall}.
- * @typedef {Object} UninstallOpts
+ * Options for {@linkcode ExtensionCommand.uninstall}.
+ * @typedef UninstallOpts
  * @property {string} ext - the name or spec of an extension to uninstall
  */
 
 /**
- * Used by {@link ExtensionCommand#getPostInstallText}
- * @typedef {Object} ExtensionArgs
+ * Used by {@linkcode ExtensionCommand.getPostInstallText}
+ * @typedef ExtensionArgs
  * @property {string} extName - the name of an extension
  * @property {object} extData - the data for an installed extension
  */
 
 /**
- * @typedef {Object} InstallViaNpmArgs
+ * Options for {@linkcode ExtensionCommand.installViaNpm}
+ * @typedef InstallViaNpmArgs
  * @property {string} ext - the name or spec of an extension to install
  * @property {string} pkgName - the NPM package name of the extension
  * @property {string} [pkgVer] - the specific version of the NPM package
+ */
+
+/**
+ * Object returned by {@linkcode ExtensionCommand.checkForExtensionUpdate}
+ * @typedef PossibleUpdates
+ * @property {string} current - current version
+ * @property {string?} safeUpdate - version we can safely update to if it exists, or null
+ * @property {string?} unsafeUpdate - version we can unsafely update to if it exists, or null
+ */
+
+/**
+ * Options for {@linkcode ExtensionCommand.install}
+ * @typedef InstallArgs
+ * @property {string} ext - the name or spec of an extension to install
+ * @property {import('../extension/extension-config').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
+ * @property {string} [packageName] - for git/github installs, the extension node package name
  */

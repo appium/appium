@@ -110,7 +110,7 @@ export function initMocks (sandbox = createSandbox()) {
 
 /**
  * Mock of package `@appium/support`
- * @typedef {Object} MockAppiumSupport
+ * @typedef MockAppiumSupport
  * @property {MockAppiumSupportLogger} logger
  * @property {MockAppiumSupportFs} fs
  * @property {MockAppiumSupportEnv} env
@@ -118,13 +118,13 @@ export function initMocks (sandbox = createSandbox()) {
 
 /**
  * Mock of package `@appium/support`'s `logger` module
- * @typedef {Object} MockAppiumSupportLogger
+ * @typedef MockAppiumSupportLogger
  * @property {sinon.SinonStub<[string?], typeof console>} getLogger
  */
 
 /**
  * Mock of package `@appium/support`'s `fs` module
- * @typedef {Object} MockAppiumSupportFs
+ * @typedef MockAppiumSupportFs
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['readFile']>} readFile
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['writeFile']>} writeFile
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['walk']>} walk
@@ -133,7 +133,7 @@ export function initMocks (sandbox = createSandbox()) {
 
 /**
  * Mock of package `@appium/support`'s `env` module.
- * @typedef {Object} MockAppiumSupportEnv
+ * @typedef MockAppiumSupportEnv
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveAppiumHome>} resolveAppiumHome
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveManifestPath>} resolveManifestPath
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').readPackageInDir>} readPackageInDir
@@ -143,7 +143,7 @@ export function initMocks (sandbox = createSandbox()) {
 
 /**
  * Mock of package `package-changed`
- * @typedef {Object} MockPackageChanged
+ * @typedef MockPackageChanged
  * @property {sinon.SinonStubbedMember<import('package-changed').isPackageChanged>} isPackageChanged
  * @property {sinon.SinonStub<never, void>} __writeHash
  */

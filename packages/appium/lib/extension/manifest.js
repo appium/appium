@@ -431,7 +431,7 @@ export class Manifest {
 
 /**
  * Represents an entire YAML manifest (`extensions.yaml`)
- * @typedef {Object} ManifestData
+ * @typedef ManifestData
  * @property {ExtRecord<DriverType>} drivers - Record of drivers, keyed by name
  * @property {ExtRecord<PluginType>} plugins - Record of plugins, keyed by name
  * @property {number} [schemaRev] - The schema revision of the manifest
@@ -447,7 +447,7 @@ export class Manifest {
  * Manifest extension data which is _not_ provided in `package.json`.  It may be derived
  * (e.g., `installSpec`) or copied from elsewhere in a `package.json` (e.g.,
  * `version`).
- * @typedef {Object} InternalData
+ * @typedef InternalData
  * @property {string} pkgName - Name of package (e.g., `appium-xcuitest-driver`)
  * @property {string} version - Version of package
  * @property {import('./extension-config').InstallType} installType - Install type
@@ -466,7 +466,7 @@ export class Manifest {
 
 /**
  * Data points shared by all Appium extensions
- * @typedef {Object} CommonData
+ * @typedef CommonData
  * @property {string} mainClass - Name of main class in the extension
  * @property {Record<string,string>} [scripts] - Collection of scripts which an extension may run
  * @property {string | (import('ajv').SchemaObject & {[key: number]: never})} [schema] - Argument schema object
@@ -474,7 +474,7 @@ export class Manifest {
 
 /**
  * Driver-specific manifest data.
- * @typedef {Object} DriverData
+ * @typedef DriverData
  * @property {string} automationName - Automation engine to use
  * @property {string[]} platformNames - Platforms to run on
  * @property {string} driverName - Name of driver (_not_ the same as the package name, probably)
@@ -482,7 +482,7 @@ export class Manifest {
 
 /**
  * Plugin-specific manifest data.
- * @typedef {Object} PluginData
+ * @typedef PluginData
  * @property {string} pluginName - Name of plugin (_not_ the same as the package name, probably)
  */
 
@@ -507,7 +507,7 @@ export class Manifest {
  */
 
 /**
- * @typedef {Object} ExtClassStaticMembers
+ * @typedef ExtClassStaticMembers
  * @property {UpdateServerFn} [updateServer]
  * @property {import('@appium/base-driver').MethodMap} [newMethodMap]
  */
@@ -565,6 +565,6 @@ export class Manifest {
  */
 
 /**
- * @typedef {Object} SyncWithInstalledExtensionsOpts
+ * @typedef SyncWithInstalledExtensionsOpts
  * @property {number} [depthLimit] - Maximum depth to recurse into subdirectories
  */

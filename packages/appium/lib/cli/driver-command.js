@@ -51,7 +51,7 @@ export default class DriverCommand extends ExtensionCommand {
 }
 
 /**
- * @typedef {Object} DriverCommandOptions
+ * @typedef DriverCommandOptions
  * @property {import('../extension/driver-config').DriverConfig} config
  * @property {boolean} json
  */

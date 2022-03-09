@@ -286,13 +286,13 @@ export const npm = new NPM();
 
 /**
  * Options for {@link NPM.installPackage}
- * @typedef {Object} InstallPackageOpts
+ * @typedef InstallPackageOpts
  * @property {string} [pkgVer] - the version of the package to install
  */
 
 /**
  * Options for {@link NPM.exec}
- * @typedef {Object} ExecOpts
+ * @typedef ExecOpts
  * @property {string} cwd - Current working directory
  * @property {boolean} [json] - If `true`, supply `--json` flag to npm and resolve w/ parsed JSON
  * @property {string} [lockFile] - Path to lockfile to use
@@ -302,7 +302,7 @@ export const npm = new NPM();
 
 /**
  * Result from a non-zero-exit execution of `appium`
- * @typedef {Object} TeenProcessExecResult
+ * @typedef TeenProcessExecResult
  * @property {string} stdout - Stdout
  * @property {string} stderr - Stderr
  * @property {number?} code - Exit code
@@ -311,7 +311,7 @@ export const npm = new NPM();
 
 /**
  * Extra props `teen_process.exec` adds to its error objects
- * @typedef {Object} TeenProcessExecErrorProps
+ * @typedef TeenProcessExecErrorProps
  * @property {string} stdout - STDOUT
  * @property {string} stderr - STDERR
  * @property {number?} code - Exit code
@@ -319,7 +319,7 @@ export const npm = new NPM();
 
 /**
  * Options unique to `teen_process.exec`. I probably missed some
- * @typedef {Object} TeenProcessExecExtraOpts
+ * @typedef TeenProcessExecExtraOpts
  * @property {number} [maxStdoutBufferSize]
  * @property {number} [maxStderrBufferSize]
  */

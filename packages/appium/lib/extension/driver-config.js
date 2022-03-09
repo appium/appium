@@ -205,7 +205,7 @@ export class DriverConfig extends ExtensionConfig {
 }
 
 /**
- * @typedef {Object} DriverConfigOptions
+ * @typedef DriverConfigOptions
  * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
  * @property {ManifestData['drivers']} [extData] - Extension data
  */

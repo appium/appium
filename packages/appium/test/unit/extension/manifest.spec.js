@@ -1,6 +1,7 @@
 // @ts-check
 import B from 'bluebird';
 import { promises as fs } from 'fs';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
 import { resolveFixture, rewiremock } from '../../helpers';
 import { initMocks } from './mocks';
 
@@ -68,12 +69,50 @@ describe('Manifest', function () {
   });
 
   describe('property', function () {
-    describe('filepath', function () {
+    describe('appiumHome', function () {
+      it('should return the `appiumHome` path', function () {
+        expect(Manifest.getInstance('/some/path').appiumHome).to.equal(
+          '/some/path',
+        );
+      });
+
       it('should not be writable', function () {
         const instance = Manifest.getInstance('/some/path');
         expect(() => {
-          // @ts-ignore
+          // @ts-expect-error
           instance.appiumHome = '/some/other/path';
+        }).to.throw(TypeError);
+      });
+    });
+
+    describe('manifestPath', function () {
+      describe('before `read()` has been called', function () {
+        it('should be undefined', function () {
+          expect(Manifest.getInstance('/some/path').manifestPath).to.be
+            .undefined;
+        });
+      });
+
+      describe('after `read()` has been called', function () {
+        let manifest;
+        beforeEach(async function () {
+          manifest = Manifest.getInstance('/some/path');
+          await manifest.read();
+        });
+
+        it('should return the manifest file path', function () {
+          // this path is not the actual path; it's mocked in `MockAppiumSupport.env.resolveManifestPath`.
+          expect(Manifest.getInstance('/some/path').manifestPath).to.equal(
+            '/some/path/extensions.yaml',
+          );
+        });
+      });
+
+      it('should not be writable', function () {
+        const instance = Manifest.getInstance('/some/path');
+        expect(() => {
+          // @ts-expect-error
+          instance.manifestPath = '/some/other/path';
         }).to.throw(TypeError);
       });
     });
@@ -220,24 +259,8 @@ describe('Manifest', function () {
           });
         });
 
-        describe('when called after adding a property', function () {
-          beforeEach(function () {
-            data.drivers.foo = extData;
-          });
-
-          it('should write the file', async function () {
-            expect(await manifest.write()).to.be.true;
-          });
-        });
-
-        describe('when called after deleting a property', function () {
-          beforeEach(async function () {
-            data.drivers.foo = extData;
-            await manifest.write();
-            delete data.drivers.foo;
-          });
-
-          it('should write the file', async function () {
+        describe('when the manifest file was successfully written to', function () {
+          it('should return `true`', async function () {
             expect(await manifest.write()).to.be.true;
           });
         });
@@ -252,6 +275,19 @@ describe('Manifest', function () {
             await expect(manifest.write()).to.be.rejectedWith(
               Error,
               /Appium could not write to manifest/i,
+            );
+          });
+        });
+
+        describe('when the manifest directory could not be created', function () {
+          beforeEach(function () {
+            MockAppiumSupport.fs.mkdirp.rejects();
+          });
+
+          it('should reject', async function () {
+            await expect(manifest.write()).to.be.rejectedWith(
+              Error,
+              /could not create the directory for the manifest file/i,
             );
           });
         });
@@ -295,18 +331,23 @@ describe('Manifest', function () {
 
     describe('addExtensionFromPackage()', function () {
       describe('when provided a valid package.json for a driver and its path', function () {
-        it('should add an extension to the internal data', function () {
-          const packageJson = {
+        /** @type {ExtensionPackageJson<DriverType>} */
+        let packageJson;
+
+        beforeEach(function () {
+          packageJson = {
             name: 'derp',
             version: '1.0.0',
             appium: {
               automationName: 'derp',
               mainClass: 'SomeClass',
-              pkgName: 'derp',
               platformNames: ['dogs', 'cats'],
               driverName: 'myDriver',
             },
           };
+        });
+
+        it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(
             packageJson,
             '/some/path/to/package.json',
@@ -323,19 +364,50 @@ describe('Manifest', function () {
             },
           });
         });
+
+        it('should return `true`', function () {
+          expect(
+            manifest.addExtensionFromPackage(
+              packageJson,
+              '/some/path/to/package.json',
+            ),
+          ).to.be.true;
+        });
+
+        describe('when the driver has already been registered', function () {
+          beforeEach(function () {
+            manifest.addExtensionFromPackage(
+              packageJson,
+              '/some/path/to/package.json',
+            );
+          });
+
+          it('should return `false`', function () {
+            expect(
+              manifest.addExtensionFromPackage(
+                packageJson,
+                '/some/path/to/package.json',
+              ),
+            ).to.be.false;
+          });
+        });
       });
 
       describe('when provided a valid package.json for a plugin and its path', function () {
-        it('should add an extension to the internal data', function () {
-          const packageJson = {
+        /** @type {ExtensionPackageJson<PluginType>} */
+        let packageJson;
+        beforeEach(function () {
+          packageJson = {
             name: 'derp',
             version: '1.0.0',
             appium: {
               mainClass: 'SomeClass',
-              pkgName: 'derp',
               pluginName: 'myPlugin',
             },
           };
+        });
+
+        it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(
             packageJson,
             '/some/path/to/package.json',
@@ -350,26 +422,41 @@ describe('Manifest', function () {
             },
           });
         });
-      });
 
-      describe('when provided a non-extension', function () {
-        it('should ignore', function () {
-          manifest.addExtensionFromPackage(
-            // @ts-expect-error
-            {herp: 'derp'},
-            '/some/path/to/package.json',
-          );
-          expect(manifest.getExtensionData('plugin')).to.deep.equal({});
-          expect(manifest.getExtensionData('driver')).to.deep.equal({});
+        it('should return `true`', function () {
+          expect(
+            manifest.addExtensionFromPackage(
+              packageJson,
+              '/some/path/to/package.json',
+            ),
+          ).to.be.true;
+        });
+
+        describe('when the plugin has already been registered', function () {
+          beforeEach(function () {
+            manifest.addExtensionFromPackage(
+              packageJson,
+              '/some/path/to/package.json',
+            );
+          });
+
+          it('should return `false`', function () {
+            expect(
+              manifest.addExtensionFromPackage(
+                packageJson,
+                '/some/path/to/package.json',
+              ),
+            ).to.be.false;
+          });
         });
       });
 
-      describe('when provided an unrecognizable extension', function () {
+      describe('when provided a non-extension', function () {
         it('should throw', function () {
           expect(() =>
             manifest.addExtensionFromPackage(
               // @ts-expect-error
-              {name: 'derp', version: '123', appium: {}},
+              {herp: 'derp'},
               '/some/path/to/package.json',
             ),
           ).to.throw(/neither a valid driver nor a valid plugin/);
@@ -422,6 +509,44 @@ describe('Manifest', function () {
         );
       });
     });
+
+    describe('hasDriver()', function () {
+      describe('when the driver is registered', function () {
+        beforeEach(function () {
+          // @ts-expect-error
+          manifest.addExtension(DRIVER_TYPE, 'foo', {});
+        });
+
+        it('should return `true`', function () {
+          expect(manifest.hasDriver('foo')).to.be.true;
+        });
+      });
+
+      describe('when the driver is not registered', function () {
+        it('should return `false`', function () {
+          expect(manifest.hasDriver('foo')).to.be.false;
+        });
+      });
+    });
+
+    describe('hasPlugin()', function () {
+      describe('when the plugin is registered', function () {
+        beforeEach(function () {
+          // @ts-expect-error
+          manifest.addExtension(PLUGIN_TYPE, 'foo', {});
+        });
+
+        it('should return `true`', function () {
+          expect(manifest.hasPlugin('foo')).to.be.true;
+        });
+      });
+
+      describe('when the plugin is not registered', function () {
+        it('should return `false`', function () {
+          expect(manifest.hasPlugin('foo')).to.be.false;
+        });
+      });
+    });
   });
 });
 
@@ -431,5 +556,11 @@ describe('Manifest', function () {
  */
 
 /**
+ * @template T
+ * @typedef {import('../../../lib/extension/manifest').ExtensionPackageJson<T>} ExtensionPackageJson
+ */
+
+/**
  * @typedef {import('../../../lib/extension/manifest').DriverType} DriverType
+ * @typedef {import('../../../lib/extension/manifest').PluginType} PluginType
  */

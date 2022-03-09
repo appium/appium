@@ -160,7 +160,7 @@ export class DriverConfig extends ExtensionConfig {
        log.info(`Will require it at ${this.getInstallPath(driverName)}`);
        const driver = this.require(driverName);
        if (!driver) {
-         throw new Error(`MainClass ${mainClass} did not result in a driver object`);
+         throw new Error(`Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`);
        }
        return {driver, version, driverName};
      } catch (err) {

@@ -246,8 +246,6 @@ async function init (args) {
  * @returns {Promise<import('http').Server|undefined>}
  */
 async function main (args) {
-  // Appium drivers often use process events to schedule proper exit cleanup
-  // The default value of 10 causes an ugly warning to appear in logs on server startup
   const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */(await init(args));
 
   if (!appiumDriver || !parsedArgs || !pluginConfig || !driverConfig) {

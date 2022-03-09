@@ -8,7 +8,12 @@ import { toParserArgs } from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'find_by_image';
 
+/**
+ * This is necessary because we pass the array into `argparse`. `argparse` is bad and mutates things. We don't want that.
+ * Bad `argparse`! Bad!
+ */
 const INSTALL_TYPES_ARRAY = [...INSTALL_TYPES];
+
 /** @type {Set<ExtensionType>} */
 const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
 

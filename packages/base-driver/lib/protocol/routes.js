@@ -207,6 +207,9 @@ const METHOD_MAP = {
   '/session/:sessionId/element/:elementId/size': {
     GET: {command: 'getSize'}
   },
+  '/session/:sessionId/element/:elementId/shadow': {
+    GET: {command: 'elementShadowRoot'}
+  },
   '/session/:sessionId/element/:elementId/css/:propertyName': {
     GET: {command: 'getCssProperty'}
   },

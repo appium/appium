@@ -1,4 +1,4 @@
-import '@dabh/colors';
+import '@colors/colors';
 import _ from 'lodash';
 import log from './logger';
 import { fs } from '@appium/support';

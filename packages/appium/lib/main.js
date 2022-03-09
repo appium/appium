@@ -359,7 +359,7 @@ export { main, init, resolveAppiumHome };
  */
 
 /**
- * @typedef {Object} ServerInitData
+ * @typedef ServerInitData
  * @property {AppiumDriver} appiumDriver - The Appium driver
  * @property {ParsedArgs} parsedArgs - The parsed arguments
  */

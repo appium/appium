@@ -77,7 +77,7 @@ async function resolveExecutablePath (cmd) {
 }
 
 /**
- * @typedef {Object} NpmPackageInfo
+ * @typedef NpmPackageInfo
  * @property {string} version - version
  * @property {string} path - A path to npm root
  */

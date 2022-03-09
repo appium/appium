@@ -181,7 +181,7 @@ export function normalizeConfig (config) {
 
 /**
  * Result of calling {@link readConfigFile}.
- * @typedef {Object} ReadConfigFileResult
+ * @typedef ReadConfigFileResult
  * @property {import('ajv').ErrorObject[]} [errors] - Validation errors
  * @property {string} [filepath] - The path to the config file, if found
  * @property {boolean} [isEmpty] - If `true`, the config file exists but is empty
@@ -191,7 +191,7 @@ export function normalizeConfig (config) {
 
 /**
  * Options for {@link readConfigFile}.
- * @typedef {Object} ReadConfigFileOptions
+ * @typedef ReadConfigFileOptions
  * @property {boolean} [pretty=true] If `false`, do not use color and fancy formatting in the `reason` property of the {@link ReadConfigFileResult}. The value of `reason` is then suitable for machine-reading.
  */
 
@@ -217,7 +217,7 @@ export function normalizeConfig (config) {
 
 /**
  * Options for {@link formatErrors}.
- * @typedef {Object} FormatConfigErrorsOptions
+ * @typedef FormatConfigErrorsOptions
  * @property {import('./config-file').RawJson} [json] - Raw JSON config (as string)
  * @property {boolean} [pretty=true] - Whether to format errors as a CLI-friendly string
  * @property {string}  [schemaId] - Specific ID of a prop; otherwise entire schema

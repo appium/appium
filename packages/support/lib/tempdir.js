@@ -33,7 +33,7 @@ async function tempDir () {
 }
 
 /**
- * @typedef {Object} Affixes
+ * @typedef Affixes
  * @property {string} prefix - prefix of the temp directory name
  * @property {string} suffix - suffix of the temp directory name
  */
@@ -54,7 +54,7 @@ async function path (rawAffixes, defaultPrefix) {
 }
 
 /**
- * @typedef {Object} OpenedAffixes
+ * @typedef OpenedAffixes
  * @property {string} path - The path to file
  * @property {integer} fd - The file descriptor opened
  */

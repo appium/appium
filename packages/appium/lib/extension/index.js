@@ -97,7 +97,7 @@ export function getActiveDrivers (driverConfig, useDrivers = []) {
 }
 
 /**
- * @typedef {Object} ExtensionConfigs
+ * @typedef ExtensionConfigs
  * @property {DriverConfig} driverConfig
  * @property {PluginConfig} pluginConfig
  */

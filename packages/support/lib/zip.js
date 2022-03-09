@@ -168,7 +168,7 @@ class ZipExtractor {
 
 
 /**
- * @typedef {Object} ExtractAllOptions
+ * @typedef ExtractAllOptions
  * @property {?string} fileNamesEncoding The encoding to use for extracted file names.
  * For ZIP archives created on MacOS it is usually expected to be `utf8`.
  * By default it is autodetected based on the entry metadata and is only needed to be set explicitly
@@ -293,7 +293,7 @@ async function _extractEntryTo (zipFile, entry, destDir) {
 }
 
 /**
- * @typedef {Object} ZipEntry
+ * @typedef ZipEntry
  * @property {yauzl.ZipEntry} entry The actual entry instance
  * @property {function} extractEntryTo An async function, which accepts one parameter.
  * This parameter contains the destination folder path to which this function is going to extract the entry.
@@ -334,7 +334,7 @@ async function readEntries (zipFilePath, onEntry) {
 }
 
 /**
- * @typedef {Object} ZipOptions
+ * @typedef ZipOptions
  * @property {boolean} encodeToBase64 [false] Whether to encode
  * the resulting archive to a base64-encoded string
  * @property {boolean} isMetered [true] Whether to log the actual
@@ -474,13 +474,13 @@ async function assertValidZip (filePath) {
 }
 
 /**
- * @typedef {Object} ZipCompressionOptions
+ * @typedef ZipCompressionOptions
  * @property {number} level [9] - Compression level in range 0..9
  * (greater numbers mean better compression, but longer processing time)
  */
 
 /**
- * @typedef {Object} ZipSourceOptions
+ * @typedef ZipSourceOptions
  * @property {!string} pattern ['**\/*'] - GLOB pattern for compression
  * @property {!string} cwd - The source root folder (the parent folder of
  * the destination file by default)

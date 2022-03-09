@@ -358,7 +358,7 @@ function unleakString (s) {
 
 
 /**
- * @typedef {Object} PluralizeOptions
+ * @typedef PluralizeOptions
  * @property {boolean} [inclusive=false] - Whether to prefix with the number (e.g., 3 ducks)
  */
 
@@ -384,7 +384,7 @@ function pluralize (word, count, options = {}) {
 }
 
 /**
- * @typedef {Object} EncodingOptions
+ * @typedef EncodingOptions
  * @property {number} [maxSize=1073741824] The maximum size of
  * the resulting buffer in bytes. This is set to 1GB by default, because
  * Appium limits the maximum HTTP body size to 1GB. Also, the NodeJS heap
@@ -449,7 +449,7 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
 }
 
 /**
- * @typedef {Object} LockFileOptions
+ * @typedef LockFileOptions
  * @property {number} [timeout=120] The max time in seconds to wait for the lock
  * @property {boolean} [tryRecovery=false] Whether to try lock recovery if
  * the first attempt to acquire it timed out.

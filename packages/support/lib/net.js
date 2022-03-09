@@ -111,20 +111,20 @@ async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = {}) 
 }
 
 /**
- * @typedef {Object} AuthCredentials
+ * @typedef AuthCredentials
  * @property {string} user - Non-empty user name
  * @property {string} pass - Non-empty password
  */
 
 /**
- * @typedef {Object} FtpUploadOptions
+ * @typedef FtpUploadOptions
  * @property {boolean} isMetered [true] - Whether to log the actual upload performance
  * (e.g. timings and speed)
  * @property {AuthCredentials} auth
  */
 
 /**
- * @typedef {Object} HttpUploadOptions
+ * @typedef HttpUploadOptions
  * @property {boolean} isMetered [true] - Whether to log the actual upload performance
  * (e.g. timings and speed)
  * @property {string} method [POST] - The HTTP method used for file upload
@@ -183,7 +183,7 @@ async function uploadFile (localPath, remoteUri, uploadOptions = {}) {
 }
 
 /**
- * @typedef {Object} DownloadOptions
+ * @typedef DownloadOptions
  * @property {boolean} isMetered [true] - Whether to log the actual download performance
  * (e.g. timings and speed)
  * @property {AuthCredentials} auth

@@ -171,7 +171,7 @@ export function formatAppiumArgErrorOutput (stderr) {
 /**
  * Options for {@link runAppium}.
  * @private
- * @typedef {Object} RunAppiumOptions
+ * @typedef RunAppiumOptions
  * @property {boolean} [raw] - Whether to return the raw output from `teen_process`
  */
 
@@ -193,7 +193,7 @@ export function formatAppiumArgErrorOutput (stderr) {
 
 /**
  * Wraps the error returned by {@link exec}.
- * @typedef {Object} AppiumRunErrorProps
+ * @typedef AppiumRunErrorProps
  * @property {string} originalMessage - Original error message
  * @property {string} command - Command that was run
  * @property {string} env - Environment variables

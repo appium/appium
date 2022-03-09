@@ -703,7 +703,7 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
 
 /**
  * An object having property `additionalProperties: false`
- * @typedef {Object} StrictProp
+ * @typedef StrictProp
  * @property {false} additionalProperties
  */
 

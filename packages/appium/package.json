@@ -68,7 +68,7 @@
     "lodash": "4.17.21",
     "longjohn": "0.2.12",
     "npmlog": "5.0.1",
-    "ora": "5.4.1",
+    "ora": "6.1.0",
     "package-changed": "1.9.0",
     "resolve-from": "5.0.0",
     "semver": "7.3.5",

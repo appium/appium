@@ -79,7 +79,7 @@
     "@babel/preset-env": "7.16.4",
     "@babel/register": "7.16.0",
     "@babel/runtime": "7.16.3",
-    "@dabh/colors": "1.4.0",
+    "@colors/colors": "1.5.0",
     "@types/argparse": "2.0.10",
     "@types/bluebird": "3.5.36",
     "@types/chai": "4.3.0",

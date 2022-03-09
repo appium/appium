@@ -1,7 +1,7 @@
 import { fs } from '@appium/support';
 import { DoctorCheck } from './doctor';
 import { ok, nok } from './utils';
-import '@dabh/colors';
+import '@colors/colors';
 
 // Check env variables
 class EnvVarAndPathCheck extends DoctorCheck {

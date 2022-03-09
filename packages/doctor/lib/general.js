@@ -4,7 +4,7 @@ import { DoctorCheck } from './doctor';
 import NodeDetector from './node-detector';
 import { util } from '@appium/support';
 import { EOL } from 'os';
-import '@dabh/colors';
+import '@colors/colors';
 
 let checks = [];
 

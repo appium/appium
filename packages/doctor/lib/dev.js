@@ -2,7 +2,7 @@ import { DoctorCheck } from './doctor';
 import { ok, nok, resolveExecutablePath } from './utils';
 import { fs, system } from '@appium/support';
 import path from 'path';
-import '@dabh/colors';
+import '@colors/colors';
 
 let checks = [];
 

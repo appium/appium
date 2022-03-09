@@ -3,7 +3,7 @@
 import { stubLog } from '../lib';
 import log from '../lib/logger';
 import sinon from 'sinon';
-import '@dabh/colors';
+import '@colors/colors';
 
 
 describe('log-utils', function () {

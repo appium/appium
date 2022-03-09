@@ -17,24 +17,38 @@ class NoUpdatesAvailableError extends Error {}
  * @template {ExtensionType} ExtType
  */
 export default class ExtensionCommand {
+  /**
+   * This is the `DriverConfig` or `PluginConfig`, depending on `ExtType`.
+   * @type {ExtensionConfig<ExtType>}
+   */
+  config;
+
+  /**
+   * {@linkcode Record} of official plugins or drivers.
+   * @type {ExtType extends import('../extension/manifest').DriverType ? typeof import('../constants').KNOWN_DRIVERS : typeof import('../constants').KNOWN_PLUGINS}
+   */
+  knownExtensions;
+
+  /**
+   * If `true`, command output has been requested as JSON.
+   * @type {boolean}
+   */
+  isJsonOutput;
 
   /**
    * Build an ExtensionCommand
    * @param {ExtensionCommandOptions<ExtType>} opts
    */
-  constructor ({config, json, type}) {
-    /** @type {ExtensionConfig<ExtType>} */
+  constructor ({config, json}) {
     this.config = config;
-
-    /** @type {ExtType} */
-    this.type = type;
-    /**
-     * @type {boolean}
-     */
     this.isJsonOutput = json;
+  }
 
-    /** @type {Record<string, string>} */
-    this.knownExtensions = {}; // this needs to be overridden in final class
+  /**
+   * `driver` or `plugin`, depending on the `ExtensionConfig`.
+   */
+  get type () {
+    return this.config.extensionType;
   }
 
   /**
@@ -85,8 +99,7 @@ export default class ExtensionCommand {
         return;
       }
       for (const [ext, data] of _.toPairs(exts)) {
-        const {installed, installType} = data;
-        if (!installed || installType !== INSTALL_TYPE_NPM) {
+        if (!data.installed || data.installType !== INSTALL_TYPE_NPM) {
           // don't need to check for updates on exts that aren't installed
           // also don't need to check for updates on non-npm exts
           continue;
@@ -106,32 +119,40 @@ export default class ExtensionCommand {
 
     for (const [
       name,
-      {installType, installSpec, installed, updateVersion, unsafeUpdateVersion, version, upToDate}
+      data
     ] of _.toPairs(exts)) {
-      let typeTxt;
-      switch (installType) {
-        case INSTALL_TYPE_GIT:
-        case INSTALL_TYPE_GITHUB:
-          typeTxt = `(cloned from ${installSpec})`.yellow;
-          break;
-        case INSTALL_TYPE_LOCAL:
-          typeTxt = `(linked from ${installSpec})`.magenta;
-          break;
-        default:
-          typeTxt = '(NPM)';
+      let installTxt = ' [not installed]'.grey;
+      let updateTxt = '';
+      let upToDateTxt = '';
+      let unsafeUpdateTxt = '';
+      if (data.installed) {
+        const {installType, installSpec, updateVersion, unsafeUpdateVersion, version, upToDate} = data;
+        let typeTxt;
+        switch (installType) {
+          case INSTALL_TYPE_GIT:
+          case INSTALL_TYPE_GITHUB:
+            typeTxt = `(cloned from ${installSpec})`.yellow;
+            break;
+          case INSTALL_TYPE_LOCAL:
+            typeTxt = `(linked from ${installSpec})`.magenta;
+            break;
+          default:
+            typeTxt = '(NPM)';
+        }
+        installTxt = `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
+
+        if (showUpdates) {
+          if (updateVersion) {
+            updateTxt = ` [${updateVersion} available]`.magenta;
+          }
+          if (upToDate) {
+            upToDateTxt = ` [Up to date]`.green;
+          }
+          if (unsafeUpdateVersion) {
+            unsafeUpdateTxt = ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+          }
+        }
       }
-      const installTxt = installed ?
-        `@${/** @type {string} */(version).yellow} ${('[installed ' + typeTxt + ']').green}` :
-        ' [not installed]'.grey;
-      const updateTxt = showUpdates && updateVersion ?
-        ` [${updateVersion} available]`.magenta :
-        '';
-      const upToDateTxt = showUpdates && upToDate ?
-        ` [Up to date]`.green :
-        '';
-      const unsafeUpdateTxt = showUpdates && unsafeUpdateVersion ?
-        ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan :
-        '';
 
       console.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
     }

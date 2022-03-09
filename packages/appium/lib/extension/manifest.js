@@ -194,16 +194,36 @@ export class Manifest {
         try {
           const pkg = await env.readPackageInDir(filepath);
           if (pkg && isExtension(pkg)) {
-            this.addExtensionFromPackage(
+            // it's possible that this extension already exists in the manifest,
+            // so only update `didChange` if it's new.
+            const added = this.addExtensionFromPackage(
               pkg,
               path.join(filepath, 'package.json'),
             );
-            didChange = true;
+            didChange = didChange || added;
           }
         } catch {}
       }
     }
     return didChange;
+  }
+
+  /**
+   * Returns `true` if driver with name `name` is registered.
+   * @param {string} name - Driver name
+   * @returns {boolean}
+   */
+  hasDriver (name) {
+    return Boolean(this._data.drivers[name]);
+  }
+
+  /**
+   * Returns `true` if plugin with name `name` is registered.
+   * @param {string} name - Plugin name
+   * @returns {boolean}
+   */
+  hasPlugin (name) {
+    return Boolean(this._data.plugins[name]);
   }
 
   /**
@@ -213,13 +233,9 @@ export class Manifest {
    * @template {ExtensionType} ExtType
    * @param {ExtensionPackageJson<ExtType>} pkgJson
    * @param {string} pkgPath
-   * @returns {void}
+   * @returns {boolean} - `true` upon success, `false` if the extension is already registered.
    */
   addExtensionFromPackage (pkgJson, pkgPath) {
-    if (!isExtension(pkgJson)) {
-      return;
-    }
-
     /**
      * @type {InternalData}
      */
@@ -231,19 +247,23 @@ export class Manifest {
     };
 
     if (isDriver(pkgJson)) {
-      if (!this._data.drivers[pkgJson.appium.driverName]) {
-        this._data.drivers[pkgJson.appium.driverName] = {
+      if (!this.hasDriver(pkgJson.appium.driverName)) {
+        this.addExtension(DRIVER_TYPE, pkgJson.appium.driverName, {
           ..._.omit(pkgJson.appium, 'driverName'),
-          ...internal,
-        };
+          ...internal
+        });
+        return true;
       }
+      return false;
     } else if (isPlugin(pkgJson)) {
-      if (!this._data.plugins[pkgJson.appium.pluginName]) {
-        this._data.plugins[pkgJson.appium.pluginName] = {
+      if (!this.hasPlugin(pkgJson.appium.pluginName)) {
+        this.addExtension(PLUGIN_TYPE, pkgJson.appium.pluginName, {
           ..._.omit(pkgJson.appium, 'pluginName'),
           ...internal,
-        };
+        });
+        return true;
       }
+      return false;
     } else {
       throw new TypeError(
         `The extension in ${path.dirname(
@@ -254,14 +274,14 @@ export class Manifest {
   }
 
   /**
-   * Adds an extension to the manifest as was installed by the `appium` CLI.  It determines the
-   * `extData`, `extType`, `extName` itself.
+   * Adds an extension to the manifest as was installed by the `appium` CLI.  The
+   * `extData`, `extType`, and `extName` have already been determined.
    *
    * See {@link Manifest.addExtensionFromPackage} for adding an extension from an on-disk package.
    * @template {ExtensionType} ExtType
-   * @param {ExtType} extType
-   * @param {string} extName
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtType} extType - `driver` or `plugin`
+   * @param {string} extName - Name of extension
+   * @param {ExtData<ExtType>} extData - Extension metadata
    * @returns {void}
    */
   addExtension (extType, extName, extData) {

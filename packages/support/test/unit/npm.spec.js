@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import {NPM} from '../lib/npm';
+import {NPM} from '../../lib/npm';
 
 describe('npm', function () {
 

@@ -1,7 +1,7 @@
 import path from 'path';
-import * as zip from '../lib/zip';
-import { tempDir, fs } from '../lib/index';
-import { MockReadWriteStream } from './helpers';
+import * as zip from '../../lib/zip';
+import { tempDir, fs } from '../../lib/index';
+import { MockReadWriteStream } from '../helpers';
 
 
 describe('#zip', function () {

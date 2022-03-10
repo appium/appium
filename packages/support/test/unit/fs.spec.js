@@ -1,5 +1,6 @@
-import { fs, tempDir } from '../lib/index.js';
+import { fs, tempDir } from '../../lib/index.js';
 import path from 'path';
+import { createSandbox } from 'sinon';
 import { exec } from 'teen_process';
 import _ from 'lodash';
 
@@ -11,6 +12,15 @@ describe('fs', function () {
   this.timeout(MOCHA_TIMEOUT);
 
   const existingPath = __filename;
+
+  let sandbox;
+  beforeEach(function () {
+    sandbox = createSandbox();
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
 
   describe('mkdir()', function () {
     let dirName = path.resolve(__dirname, 'tmp');
@@ -141,7 +151,7 @@ describe('fs', function () {
     });
   });
   it('glob()', async function () {
-    let glob = '*-specs.js';
+    let glob = '*.spec.js';
     let tests = await fs.glob(glob, {cwd: __dirname});
     tests.should.be.an('array');
     tests.should.have.length.above(2);
@@ -152,16 +162,13 @@ describe('fs', function () {
       await chai.expect(fs.walkDir(__dirname, true, (item) => item.endsWith('logger/helpers.js'))).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {
-      await chai.expect(fs.walkDir(path.join(__dirname, 'fixture'), true, _.noop)).to.eventually.be.null;
+      await chai.expect(fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, _.noop)).to.eventually.be.null;
     });
     it('should throw error through callback', async function () {
-      let processed = 0;
-      await chai.expect(fs.walkDir(__dirname, true,
-        () => {
-          ++processed;
-          throw 'Callback error';
-        })).to.be.rejectedWith('Callback error');
-      processed.should.equal(1);
+      const err = new Error('Callback error');
+      const stub = sandbox.stub().rejects(err);
+      await (fs.walkDir(__dirname, true, stub)).should.eventually.be.rejectedWith(err);
+      stub.should.have.been.calledOnce;
     });
     it('should traverse non-recursively', async function () {
       const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));

@@ -1,13 +1,13 @@
 // @ts-check
 
 import path from 'path';
-import {fs, tempDir} from '../lib';
+import { fs, tempDir } from '../../lib';
 import {
   DEFAULT_APPIUM_HOME,
   readPackageInDir,
   resolveAppiumHome,
   resolveManifestPath,
-} from '../lib/env';
+} from '../../lib/env';
 
 const {expect} = chai;
 

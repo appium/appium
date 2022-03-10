@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { createSandbox } from 'sinon';
-import { timing } from '../lib';
+import { timing } from '../../lib';
 
 
 const expect = chai.expect;

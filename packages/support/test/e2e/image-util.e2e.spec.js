@@ -1,13 +1,13 @@
 import {
   base64ToImage, imageToBase64, cropImage,
   getJimpImage, MIME_PNG,
-} from '../lib/image-util';
+} from '../../lib/image-util';
 import path from 'path';
 import _ from 'lodash';
-import { fs } from '../lib';
+import { fs } from '../../lib';
 
 
-const FIXTURES_ROOT = path.resolve(__dirname, '..', '..', 'test', 'images');
+const FIXTURES_ROOT = path.resolve(__dirname, 'fixture', 'images');
 
 async function getImage (name) {
   const imagePath = path.resolve(FIXTURES_ROOT, name);

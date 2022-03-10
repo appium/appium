@@ -2,25 +2,25 @@
 // @ts-check
 
 import path from 'path';
-import {rewiremock} from './helpers';
-import {initMocks} from './mocks';
+import {rewiremock} from '../helpers';
+import {initMocks} from '../mocks';
 
 const {expect} = chai;
 
 describe('env', function () {
-  /** @type {typeof import('../lib/env')} */
+  /** @type {typeof import('../../lib/env')} */
   let env;
 
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
-  /** @type {import('./mocks').MockPkgDir} */
+  /** @type {import('../mocks').MockPkgDir} */
   let MockPkgDir;
 
-  /** @type {import('./mocks').MockReadPkg} */
+  /** @type {import('../mocks').MockReadPkg} */
   let MockReadPkg;
 
-  /** @type {import('./mocks').MockTeenProcess} */
+  /** @type {import('../mocks').MockTeenProcess} */
   let MockTeenProcess;
 
   /** @type {string|undefined} */
@@ -36,7 +36,7 @@ describe('env', function () {
     envAppiumHome = process.env.APPIUM_HOME;
     delete process.env.APPIUM_HOME;
 
-    env = rewiremock.proxy(() => require('../lib/env'), overrides);
+    env = rewiremock.proxy(() => require('../../lib/env'), overrides);
   });
 
   describe('resolveManifestPath()', function () {

@@ -193,6 +193,8 @@ async function isAppIntegrityOk (currentPath, expectedIntegrity = {}) {
 /**
  * Prepares an app to be used in an automated test. The app gets cached automatically
  * if it is an archive or if it is downloaded from an URL.
+ * If the downloaded app has `.zip` extension, this method will unzip it.
+ * The unzip does not work when `onPostProcess` is provided.
  *
  * @param {string} app Either a full path to the app or a remote URL
  * @param {string|string[]|ConfigureAppOptions} options

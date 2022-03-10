@@ -1,6 +1,6 @@
 import * as teenProcess from 'teen_process';
 import { createSandbox } from 'sinon';
-import { process } from '../lib/index.js';
+import { process } from '../../lib/index.js';
 import { retryInterval } from 'asyncbox';
 
 const SubProcess = teenProcess.SubProcess;

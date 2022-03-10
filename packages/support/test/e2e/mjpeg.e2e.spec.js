@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { mjpeg } from '../lib';
+import { mjpeg } from '../../lib';
 import B from 'bluebird';
 import http from 'http';
 import mJpegServer from 'mjpeg-server';

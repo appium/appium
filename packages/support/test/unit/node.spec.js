@@ -1,4 +1,4 @@
-import { node } from '../lib';
+import { node } from '../../lib';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {

@@ -25,11 +25,11 @@ module.exports = (wallaby) => {
       // below this are fixtures
       {
         binary: true,
-        pattern: './packages/support/test/assets/sample_binary.plist',
+        pattern: './packages/support/test/unit/assets/sample_binary.plist',
       },
       {
         instrument: false,
-        pattern: './packages/support/test/assets/sample_text.plist',
+        pattern: './packages/support/test/unit/assets/sample_text.plist',
       },
       {
         instrument: false,
@@ -50,6 +50,7 @@ module.exports = (wallaby) => {
       './packages/*/test/**/*-specs.js',
       './packages/*/test/unit/**/*.spec.js',
       '!./packages/*/test/**/*-e2e-specs.js',
+      '!./packages/*/test/e2e/**/*',
       '!./packages/*/node_modules/**',
       // this is more of an E2E test and it's tedious to run
       '!./packages/gulp-plugins/test/transpile-specs.js',

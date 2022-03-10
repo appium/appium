@@ -1,5 +1,5 @@
 import path from 'path';
-import { plist, tempDir, fs } from '../lib/index.js';
+import { plist, tempDir, fs } from '../../lib/index.js';
 
 
 

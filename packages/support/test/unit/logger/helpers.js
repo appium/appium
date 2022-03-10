@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { logger } from '../../lib';
+import { logger } from '../../../lib';
 
 
 let sandbox;

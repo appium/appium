@@ -1,5 +1,5 @@
 
-import { util, fs, tempDir } from '../lib';
+import { util, fs, tempDir } from '../../lib';
 import B from 'bluebird';
 import { createSandbox } from 'sinon';
 import os from 'os';

@@ -1,7 +1,7 @@
-import { fs } from '../lib/index';
+import { fs } from '../../lib/index';
 import os from 'os';
 import path from 'path';
-import { SecureValuesPreprocessor } from '../lib/log-internal';
+import { SecureValuesPreprocessor } from '../../lib/log-internal';
 
 
 const CONFIG_PATH = path.resolve(os.tmpdir(), 'rules.json');

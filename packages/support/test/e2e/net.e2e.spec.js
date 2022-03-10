@@ -1,6 +1,6 @@
 import path from 'path';
-import { downloadFile } from '../lib/net';
-import { tempDir, fs } from '../lib/index';
+import { downloadFile } from '../../lib/net';
+import { tempDir, fs } from '../../lib/index';
 
 
 describe('#net', function () {

@@ -332,7 +332,7 @@ async function configureApp (app, options = {}) {
       packageHash = await calculateFileIntegrity(newApp);
     }
 
-    if (isPackageAFile && shouldUnzipApp && !_.isFunction(onPostProcess)) {
+    if (isPackageAFile && shouldUnzipApp) {
       const archivePath = newApp;
       if (packageHash === cachedAppInfo?.packageHash) {
         const {fullPath} = cachedAppInfo;

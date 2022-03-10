@@ -18,7 +18,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/appium/appium.git"
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/test-support"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",

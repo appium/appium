@@ -41,7 +41,7 @@
     "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.16.3",
+    "@babel/runtime": "7.17.2",
     "archiver": "5.3.0",
     "axios": "0.24.0",
     "base64-stream": "1.0.0",

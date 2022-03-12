@@ -60,7 +60,7 @@
     "mv": "2.1.1",
     "ncp": "2.0.0",
     "npmlog": "6.0.1",
-    "opencv-bindings": "^4.5.5",
+    "opencv-bindings": "4.5.5",
     "pkg-dir": "5.0.0",
     "plist": "3.0.4",
     "pluralize": "8.0.0",

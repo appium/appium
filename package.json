@@ -88,7 +88,7 @@
     "appium": "file:packages/appium"
   },
   "devDependencies": {
-    "@appium/fake-plugin": "1.3.0",
+    "@appium/fake-plugin": "1.3.1",
     "@babel/cli": "7.17.6",
     "@babel/core": "7.17.5",
     "@babel/eslint-parser": "7.17.0",

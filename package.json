@@ -117,7 +117,7 @@
     "@types/sinon": "10.0.11",
     "@types/sinon-chai": "3.2.8",
     "@types/through2": "2.0.36",
-    "appium-base-driver": "7.11.2",
+    "appium-base-driver": "7.11.3",
     "asyncbox": "2.9.2",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.1.3",

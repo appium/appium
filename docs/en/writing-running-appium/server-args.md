@@ -48,7 +48,7 @@ All flags are optional, but some are required in conjunction with certain others
 |`--trace-dir`|null|Absolute path to directory Appium use to save ios instruments traces, defaults to <tmp dir>/appium-instruments||
 |`--debug-log-spacing`|false|Add exaggerated spacing in logs to help with visual inspection||
 |`--suppress-adb-kill-server`|false|(Android-only) If set, prevents Appium from killing the adb server instance||
-|`--async-trace`|false|Add long stack traces to log entries. Recommended for debugging only.||
+|`--long-stacktrace`|false|Add long stack traces to log entries. Recommended for debugging only.||
 |`--webkit-debug-proxy-port`|27753|(IOS-only) Local port used for communication with ios-webkit-debug-proxy|`--webkit-debug-proxy-port 27753`|
 |`-dc`, `--default-capabilities`|{}|Set the default desired capabilities, which will be set on each session unless overridden by received capabilities.|`--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]`|
 |`--reboot`|false| - (Android-only) reboot emulator after each session and kill it at the end||

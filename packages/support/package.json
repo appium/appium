@@ -32,7 +32,7 @@
     "build"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --delete-dir-on-start --out-dir=build/lib",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
@@ -83,6 +83,13 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "types": "./build/lib/index.d.ts",
+  "devDependencies": {
+    "type-fest": "2.8.0"
+  },
+  "overrides": {
+    "type-fest": "$type-fest"
   },
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

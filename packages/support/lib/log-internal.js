@@ -3,12 +3,6 @@ import _ from 'lodash';
 
 const DEFAULT_REPLACER = '**SECURE**';
 
-/**
- * @typedef SecureValuePreprocessingRule
- * @property {RegExp} pattern The parsed pattern which is going to be used for replacement
- * @property {string} replacer [DEFAULT_SECURE_REPLACER] The replacer value to use. By default
- * equals to `DEFAULT_SECURE_REPLACER`
- */
 
 class SecureValuesPreprocessor {
   constructor () {
@@ -24,19 +18,6 @@ class SecureValuesPreprocessor {
   }
 
   /**
-   * @typedef Rule
-   * @property {string} pattern A valid RegExp pattern to be replaced
-   * @property {string} text A text match to replace. Either this property or the
-   * above one must be provided. `pattern` has priority over `text` if both are provided.
-   * @property {string} flags ['g'] Regular expression flags for the given pattern.
-   * Supported flag are the same as for the standard JavaScript RegExp constructor:
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
-   * The 'g' (global matching) is always enabled though.
-   * @property {string} replacer [DEFAULT_SECURE_REPLACER] The replacer value to use. By default
-   * equals to `DEFAULT_SECURE_REPLACER`
-   */
-
-  /**
    * Parses single rule from the given JSON file
    *
    * @param {string|Rule} rule The rule might either be represented as a single string
@@ -45,32 +26,28 @@ class SecureValuesPreprocessor {
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
   parseRule (rule) {
-    const raiseError = (msg) => {
-      throw new Error(`${JSON.stringify(rule)} -> ${msg}`);
-    };
-
     let pattern;
     let replacer = DEFAULT_REPLACER;
     let flags = ['g'];
     if (_.isString(rule)) {
       if (rule.length === 0) {
-        raiseError('The value must not be empty');
+        throw new Error(`${JSON.stringify(rule)} -> The value must not be empty`);
       }
       pattern = `\\b${_.escapeRegExp(rule)}\\b`;
     } else if (_.isPlainObject(rule)) {
       if (_.has(rule, 'pattern')) {
         if (!_.isString(rule.pattern) || rule.pattern.length === 0) {
-          raiseError(`The value of 'pattern' must be a valid non-empty string`);
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`);
         }
         pattern = rule.pattern;
       } else if (_.has(rule, 'text')) {
         if (!_.isString(rule.text) || rule.text.length === 0) {
-          raiseError(`The value of 'text' must be a valid non-empty string`);
+          throw new Error(`${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`);
         }
         pattern = `\\b${_.escapeRegExp(rule.text)}\\b`;
       }
       if (!pattern) {
-        raiseError(`Must either have a field named 'pattern' or 'text'`);
+        throw new Error(`${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`);
       }
 
       if (_.has(rule, 'flags')) {
@@ -87,27 +64,23 @@ class SecureValuesPreprocessor {
         replacer = rule.replacer;
       }
     } else {
-      raiseError('Must either be a string or an object');
+      throw new Error(`${JSON.stringify(rule)} -> Must either be a string or an object`);
     }
 
-    try {
-      return {
-        pattern: new RegExp(pattern, flags.join('')),
-        replacer,
-      };
-    } catch (e) {
-      raiseError(e.message);
-    }
+    return {
+      pattern: new RegExp(pattern, flags.join('')),
+      replacer,
+    };
   }
 
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|Rule[]>} source The full path to the JSON file containing secure
+   * @param {string|string[]|Rule[]} source The full path to the JSON file containing secure
    * values replacement rules or the rules themselves represented as an array
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
-   * @returns {Array<string>} The list of issues found while parsing each rule.
+   * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
   async loadRules (source) {
@@ -165,3 +138,23 @@ const SECURE_VALUES_PREPROCESSOR = new SecureValuesPreprocessor();
 
 export { SECURE_VALUES_PREPROCESSOR, SecureValuesPreprocessor };
 export default SECURE_VALUES_PREPROCESSOR;
+
+/**
+ * @typedef Rule
+ * @property {string} pattern A valid RegExp pattern to be replaced
+ * @property {string} text A text match to replace. Either this property or the
+ * above one must be provided. `pattern` has priority over `text` if both are provided.
+ * @property {string} [flags] Regular expression flags for the given pattern.
+ * Supported flag are the same as for the standard JavaScript RegExp constructor:
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
+ * The 'g' (global matching) is always enabled though.
+ * @property {string} [replacer] The replacer value to use. By default
+ * equals to `DEFAULT_SECURE_REPLACER`
+ */
+
+/**
+ * @typedef SecureValuePreprocessingRule
+ * @property {RegExp} pattern The parsed pattern which is going to be used for replacement
+ * @property {string} [replacer] The replacer value to use. By default
+ * equals to `DEFAULT_SECURE_REPLACER`
+ */

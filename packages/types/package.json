@@ -1,0 +1,34 @@
+{
+  "name": "@appium/types",
+  "version": "0.0.0",
+  "description": "Various type declarations used across Appium",
+  "keywords": [],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/types"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "files": [
+    "build",
+    "src",
+    "schema"
+  ],
+  "scripts": {
+    "generate-schema-declarations": "node ./scripts/generate-schema-declarations.js"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "types": "./build/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+}

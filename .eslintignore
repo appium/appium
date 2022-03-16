@@ -6,3 +6,4 @@ examples/javascript-wd
 sample-code
 **/*.d.ts
 **/build-fixtures/**
+**/*.ts

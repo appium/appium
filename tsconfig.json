@@ -10,7 +10,9 @@
     },
     "noEmit": true
   },
+  "files": [],
   "references": [
-    {"path": "packages/types"}
+    {"path": "packages/types"},
+    {"path": "packages/support"}
   ]
 }

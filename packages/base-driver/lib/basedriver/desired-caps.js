@@ -2,7 +2,7 @@ import log from './logger';
 import validator from 'validate.js';
 import B from 'bluebird';
 
-
+/** @type {import('@appium/types').Constraints} */
 let desiredCapabilityConstraints = {
   platformName: {
     presence: true,

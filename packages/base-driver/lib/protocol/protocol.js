@@ -16,8 +16,6 @@ const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
 const GET_STATUS_COMMAND = 'getStatus';
 
-class Protocol {}
-
 function determineProtocol (createSessionArgs) {
   return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
@@ -456,7 +454,7 @@ async function doJwpProxy (driver, req, res) {
 
 
 export {
-  Protocol, routeConfiguringFunction, isSessionCommand,
+  routeConfiguringFunction, isSessionCommand,
   driverShouldDoJwpProxy, determineProtocol, CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND, GET_STATUS_COMMAND,
 };

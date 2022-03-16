@@ -75,5 +75,6 @@
   "publishConfig": {
     "access": "public"
   },
+  "types": "./build/lib/index.d.ts",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

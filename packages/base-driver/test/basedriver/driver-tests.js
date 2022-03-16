@@ -10,6 +10,13 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   // to display the driver under test in report
   const className = DriverClass.name || '(unknown driver)';
 
+  describe('static property', function () {
+    describe('baseVersion', function () {
+      it('should exist', function () {
+        DriverClass.baseVersion.should.exist;
+      });
+    });
+  });
 
   describe(`BaseDriver (as ${className})`, function () {
     let d, w3cCaps;
@@ -183,8 +190,8 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         throw new Error('multipass');
       }.bind(d);
 
-      afterEach(function () {
-        d.clearNewCommandTimeout();
+      afterEach(async function () {
+        await d.clearNewCommandTimeout();
       });
 
       it('should queue commands and.executeCommand/respond in the order received', async function () {

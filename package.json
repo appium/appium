@@ -111,7 +111,7 @@
     "@types/mocha": "9.0.0",
     "@types/mv": "2.1.2",
     "@types/ncp": "2.0.5",
-    "@types/node": "16.11.12",
+    "@types/node": "16.11.26",
     "@types/rimraf": "3.0.2",
     "@types/semver": "7.3.9",
     "@types/sinon": "10.0.11",

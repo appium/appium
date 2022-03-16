@@ -85,6 +85,7 @@
     "@appium/opencv": "file:packages/opencv",
     "@appium/support": "file:packages/support",
     "@appium/test-support": "file:packages/test-support",
+    "@appium/types": "file:packages/types",
     "appium": "file:packages/appium"
   },
   "devDependencies": {

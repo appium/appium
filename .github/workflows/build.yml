@@ -41,16 +41,6 @@ jobs:
       - name: Check types
         run: npm run build:types
 
-  typecheck:
-    name: Check Types
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: npm install
-      - name: Build Declarations
-        run: npm run build:types
-
   docs:
     name: Build Command Documentation
     needs: [test]

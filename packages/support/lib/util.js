@@ -276,15 +276,9 @@ async function isSameDestination (path1, path2, ...pathN) {
     return true;
   }
 
-  // Node 10.5.0 introduced bigint support in stat, which allows for more precision
-  // however below that the options get interpreted as the callback
-  // TODO: remove when Node 10 is no longer supported
-  let mapCb = async (x) => await fs.stat(x, {
+  let mapCb = async (x) => (await fs.stat(x, {
     bigint: true,
-  }).ino;
-  if (semver.lt(process.version, '10.5.0')) {
-    mapCb = async (x) => await fs.stat(x).ino;
-  }
+  })).ino;
   return areAllItemsEqual(await B.map(allPaths, mapCb));
 }
 
@@ -304,7 +298,7 @@ function coerceVersion (ver, strict = /** @type {Strict} */(true)) {
   if (strict && !result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }
-  return /** @type {Strict extends true ? string : string|null} */(result);
+  return /** @type {Strict extends true ? string : string?} */(result);
 }
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
@@ -341,7 +335,7 @@ function compareVersions (ver1, operator, ver2) {
  * @returns {string} - The arguments, quoted
  */
 function quote (args) {
-  return shellQuote(args);
+  return shellQuote(_.castArray(args));
 }
 
 /**

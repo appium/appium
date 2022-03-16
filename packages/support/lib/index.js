@@ -1,10 +1,10 @@
 import * as tempDir from './tempdir';
 import * as system from './system';
 import * as util from './util';
-import * as fsIndex from './fs';
+import { fs } from './fs';
 import * as net from './net';
 import * as plist from './plist';
-import * as mkdirpIndex from './mkdirp';
+import { mkdirp } from './mkdirp';
 import * as logger from './logging';
 import * as process from './process';
 import * as zip from './zip';
@@ -16,13 +16,7 @@ import * as env from './env';
 
 export { npm } from './npm';
 
-const { fs } = fsIndex;
 const { cancellableDelay } = util;
-/**
- * Alias for `fs.mkdir(dir, {recursive: true}`). Use `fs.mkdirp` instead.
- * @deprecated
- */
-const { mkdirp } = mkdirpIndex;
 
 export {
   tempDir, system, util, fs, cancellableDelay, plist, mkdirp, logger, process,

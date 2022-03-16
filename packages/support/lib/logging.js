@@ -22,10 +22,14 @@ function patchLogger (logger) {
   }
 }
 
+/**
+ *
+ * @returns {[npmlog.Logger, boolean]}
+ */
 function _getLogger () {
   // check if the user set the `_TESTING` or `_FORCE_LOGS` flag
-  const testingMode = parseInt(process.env._TESTING, 10) === 1;
-  const forceLogMode = parseInt(process.env._FORCE_LOGS, 10) === 1;
+  const testingMode = process.env._TESTING === '1';
+  const forceLogMode = process.env._FORCE_LOGS === '1';
 
   // if is possible that there is a logger instance that is already around,
   // in which case we want t o use that
@@ -44,6 +48,10 @@ function _getLogger () {
   return [logger, usingGlobalLog];
 }
 
+/**
+ * @param {Prefix} prefix
+ * @param {boolean} [logTimestamp]
+ */
 function getActualPrefix (prefix, logTimestamp = false) {
   let actualPrefix = _.isFunction(prefix) ? prefix() : prefix;
   if (logTimestamp) {
@@ -52,11 +60,19 @@ function getActualPrefix (prefix, logTimestamp = false) {
   return actualPrefix;
 }
 
+/**
+ *
+ * @param {Prefix} [prefix]
+ * @returns {AppiumLogger}
+ */
 function getLogger (prefix = null) {
   let [logger, usingGlobalLog] = _getLogger();
 
   // wrap the logger so that we can catch and modify any logging
-  let wrappedLogger = {unwrap: () => logger};
+  let wrappedLogger = {
+    unwrap: () => logger,
+    levels: NPM_LEVELS
+  };
 
   // allow access to the level of the underlying logger
   Object.defineProperty(wrappedLogger, 'level', {
@@ -70,7 +86,7 @@ function getLogger (prefix = null) {
     configurable: true
   });
 
-  const logTimestamp = parseInt(process.env._LOG_TIMESTAMP, 10) === 1;
+  const logTimestamp = process.env._LOG_TIMESTAMP === '1';
 
   // add all the levels from `npmlog`, and map to the underlying logger
   for (const level of NPM_LEVELS) {
@@ -99,15 +115,14 @@ function getLogger (prefix = null) {
     // package set the log level
     wrappedLogger.level = 'verbose';
   }
-  wrappedLogger.levels = NPM_LEVELS;
-  return wrappedLogger;
+  return /** @type {AppiumLogger} */(wrappedLogger);
 }
 
 /**
  * @typedef LoadResult
- * @property {List<string>} issues The list of rule parsing issues (one item per rule).
+ * @property {string[]} issues The list of rule parsing issues (one item per rule).
  * Rules with issues are skipped. An empty list is returned if no parsing issues exist.
- * @property {List<SecureValuePreprocessingRule>} rules The list of successfully loaded
+ * @property {import('./log-internal').SecureValuePreprocessingRule[]} rules The list of successfully loaded
  * replacement rules. The list could be empty if no rules were loaded.
  */
 
@@ -117,12 +132,12 @@ function getLogger (prefix = null) {
  * appear in Appium logs.
  * Each call to this method replaces the previously loaded rules if any existed.
  *
- * @param {string|string[]|Rule[]} rulesJsonPath The full path to the JSON file containing
+ * @param {string|string[]|import('./log-internal').Rule[]} rulesJsonPath The full path to the JSON file containing
  * the replacement rules. Each rule could either be a string to be replaced
  * or an object with predefined properties. See the `Rule` type definition in
  * `log-internals.js` to get more details on its format.
  * @throws {Error} If the given file cannot be loaded
- * @returns {LoadResult}
+ * @returns {Promise<LoadResult>}
  */
 async function loadSecureValuesPreprocessingRules (rulesJsonPath) {
   const issues = await SECURE_VALUES_PREPROCESSOR.loadRules(rulesJsonPath);
@@ -137,3 +152,16 @@ const log = getLogger();
 
 export { log, patchLogger, getLogger, loadSecureValuesPreprocessingRules };
 export default log;
+
+/**
+ * @callback PrefixCallback
+ * @returns {string}
+ */
+
+/**
+ * @typedef {PrefixCallback|string?} Prefix
+ */
+
+/**
+ * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ */

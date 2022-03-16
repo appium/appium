@@ -34,8 +34,8 @@ async function tempDir () {
 
 /**
  * @typedef Affixes
- * @property {string} prefix - prefix of the temp directory name
- * @property {string} suffix - suffix of the temp directory name
+ * @property {string} [prefix] - prefix of the temp directory name
+ * @property {string} [suffix] - suffix of the temp directory name
  */
 
 /**
@@ -43,7 +43,7 @@ async function tempDir () {
  * with arbitrary prefix/suffix for the directory name.
  *
  * @param {string|Affixes} rawAffixes
- * @param {?string} defaultPrefix
+ * @param {string} [defaultPrefix]
  * @returns {Promise<string>}  A path to the temporary directory with rawAffixes and defaultPrefix
  */
 async function path (rawAffixes, defaultPrefix) {
@@ -56,7 +56,7 @@ async function path (rawAffixes, defaultPrefix) {
 /**
  * @typedef OpenedAffixes
  * @property {string} path - The path to file
- * @property {integer} fd - The file descriptor opened
+ * @property {number} fd - The file descriptor opened
  */
 
 /**
@@ -73,7 +73,7 @@ async function open (affixes) {
     // opens the file in mode 384
     return {path: filePath, fd};
   } catch (err) {
-    log.errorAndThrow(err);
+    return log.errorAndThrow(err);
   }
 }
 
@@ -82,11 +82,12 @@ async function open (affixes) {
  * Returns prefix/suffix object
  *
  * @param {string|Affixes} rawAffixes
- * @param {?string} defaultPrefix
+ * @param {string} [defaultPrefix]
  * @returns {Affixes}
  */
 function parseAffixes (rawAffixes, defaultPrefix) {
-  let affixes = {prefix: null, suffix: null};
+  /** @type {Affixes} */
+  let affixes = {};
   if (rawAffixes) {
     switch (typeof rawAffixes) {
       case 'string':

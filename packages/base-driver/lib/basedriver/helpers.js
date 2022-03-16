@@ -546,6 +546,6 @@ function parseCapsArray (cap) {
   throw new Error(`must provide a string or JSON Array; received ${cap}`);
 }
 
-export {
-  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray
-};
+/** @type {import('@appium/types').DriverHelpers} */
+export default {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray};
+export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray};

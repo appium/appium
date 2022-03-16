@@ -14,6 +14,7 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
 // define the routes, mapping of HTTP methods to particular driver commands,
 // and any parameters that are expected in a request
 // parameters can be `required` or `optional`
+/** @type {import('@appium/types').MethodMap} */
 const METHOD_MAP = {
   '/status': {
     GET: {command: 'getStatus'}

@@ -1,11 +1,9 @@
-// transpile:main
+// @ts-check
 
 // BaseDriver exports
-import * as driver from './basedriver/driver';
-import * as deviceSettings from './basedriver/device-settings';
-
-const { BaseDriver } = driver;
-const { DeviceSettings } = deviceSettings;
+import { BaseDriver } from './basedriver/driver';
+export { DriverCore } from './basedriver/core';
+import { DeviceSettings } from './basedriver/device-settings';
 
 export { BaseDriver, DeviceSettings };
 export default BaseDriver;
@@ -18,19 +16,19 @@ import {
 } from './constants';
 
 const {
-  Protocol, routeConfiguringFunction, errors, isErrorType,
+  routeConfiguringFunction, errors, isErrorType,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
-  normalizeBasePath, determineProtocol, CREATE_SESSION_COMMAND,
+  determineProtocol, CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND, GET_STATUS_COMMAND,
 } = protocol;
 
 export {
-  Protocol, routeConfiguringFunction, errors, isErrorType, PROTOCOLS,
+  routeConfiguringFunction, errors, isErrorType, PROTOCOLS,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode, determineProtocol,
   errorFromMJSONWPStatusCode as errorFromCode, ALL_COMMANDS, METHOD_MAP,
   routeToCommandName, NO_SESSION_ID_COMMANDS, isSessionCommand,
-  DEFAULT_BASE_PATH, normalizeBasePath, CREATE_SESSION_COMMAND,
+  DEFAULT_BASE_PATH, CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND, GET_STATUS_COMMAND,
 };
 
@@ -40,8 +38,8 @@ const { STATIC_DIR } = staticIndex;
 export { STATIC_DIR };
 
 import * as serverIndex from './express/server';
-const { server } = serverIndex;
-export { server };
+const { server, normalizeBasePath } = serverIndex;
+export { server, normalizeBasePath };
 
 // jsonwp-proxy exports
 import * as proxyIndex from './jsonwp-proxy/proxy';

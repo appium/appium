@@ -9,7 +9,7 @@ const w3cLog = logger.getLogger('W3C');
 const W3C_UNKNOWN_ERROR = 'unknown error';
 
 // base error class for all of our errors
-class ProtocolError extends ES6Error {
+export class ProtocolError extends ES6Error {
   constructor (msg, jsonwpCode, w3cStatus, error) {
     super(msg);
     this.jsonwpCode = jsonwpCode;
@@ -34,7 +34,7 @@ class ProtocolError extends ES6Error {
 // https://github.com/SeleniumHQ/selenium/issues/5562#issuecomment-370379470
 // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-error-code
 
-class NoSuchDriverError extends ProtocolError {
+export class NoSuchDriverError extends ProtocolError {
   static code () {
     return 6;
   }
@@ -51,7 +51,7 @@ class NoSuchDriverError extends ProtocolError {
   }
 }
 
-class NoSuchElementError extends ProtocolError {
+export class NoSuchElementError extends ProtocolError {
   static code () {
     return 7;
   }
@@ -68,7 +68,7 @@ class NoSuchElementError extends ProtocolError {
   }
 }
 
-class NoSuchFrameError extends ProtocolError {
+export class NoSuchFrameError extends ProtocolError {
   static code () {
     return 8;
   }
@@ -85,7 +85,7 @@ class NoSuchFrameError extends ProtocolError {
   }
 }
 
-class UnknownCommandError extends ProtocolError {
+export class UnknownCommandError extends ProtocolError {
   static code () {
     return 9;
   }
@@ -102,7 +102,7 @@ class UnknownCommandError extends ProtocolError {
   }
 }
 
-class StaleElementReferenceError extends ProtocolError {
+export class StaleElementReferenceError extends ProtocolError {
   static code () {
     return 10;
   }
@@ -119,7 +119,7 @@ class StaleElementReferenceError extends ProtocolError {
   }
 }
 
-class ElementNotVisibleError extends ProtocolError {
+export class ElementNotVisibleError extends ProtocolError {
   static code () {
     return 11;
   }
@@ -136,7 +136,7 @@ class ElementNotVisibleError extends ProtocolError {
   }
 }
 
-class InvalidElementStateError extends ProtocolError {
+export class InvalidElementStateError extends ProtocolError {
   static code () {
     return 12;
   }
@@ -154,7 +154,7 @@ class InvalidElementStateError extends ProtocolError {
   }
 }
 
-class UnknownError extends ProtocolError {
+export class UnknownError extends ProtocolError {
   static code () {
     return 13;
   }
@@ -174,7 +174,7 @@ class UnknownError extends ProtocolError {
   }
 }
 
-class UnknownMethodError extends ProtocolError {
+export class UnknownMethodError extends ProtocolError {
   static code () {
     return 405;
   }
@@ -190,7 +190,7 @@ class UnknownMethodError extends ProtocolError {
   }
 }
 
-class UnsupportedOperationError extends ProtocolError {
+export class UnsupportedOperationError extends ProtocolError {
   static code () {
     return 405;
   }
@@ -207,7 +207,7 @@ class UnsupportedOperationError extends ProtocolError {
   }
 }
 
-class ElementIsNotSelectableError extends ProtocolError {
+export class ElementIsNotSelectableError extends ProtocolError {
   static code () {
     return 15;
   }
@@ -224,7 +224,7 @@ class ElementIsNotSelectableError extends ProtocolError {
   }
 }
 
-class ElementClickInterceptedError extends ProtocolError {
+export class ElementClickInterceptedError extends ProtocolError {
   static code () {
     return 64;
   }
@@ -242,7 +242,7 @@ class ElementClickInterceptedError extends ProtocolError {
   }
 }
 
-class ElementNotInteractableError extends ProtocolError {
+export class ElementNotInteractableError extends ProtocolError {
   static code () {
     return 60;
   }
@@ -259,7 +259,7 @@ class ElementNotInteractableError extends ProtocolError {
   }
 }
 
-class InsecureCertificateError extends ProtocolError {
+export class InsecureCertificateError extends ProtocolError {
   static error () {
     return 'insecure certificate';
   }
@@ -269,7 +269,7 @@ class InsecureCertificateError extends ProtocolError {
   }
 }
 
-class JavaScriptError extends ProtocolError {
+export class JavaScriptError extends ProtocolError {
   static code () {
     return 17;
   }
@@ -285,7 +285,7 @@ class JavaScriptError extends ProtocolError {
   }
 }
 
-class XPathLookupError extends ProtocolError {
+export class XPathLookupError extends ProtocolError {
   static code () {
     return 19;
   }
@@ -301,7 +301,7 @@ class XPathLookupError extends ProtocolError {
   }
 }
 
-class TimeoutError extends ProtocolError {
+export class TimeoutError extends ProtocolError {
   static code () {
     return 21;
   }
@@ -317,7 +317,7 @@ class TimeoutError extends ProtocolError {
   }
 }
 
-class NoSuchWindowError extends ProtocolError {
+export class NoSuchWindowError extends ProtocolError {
   static code () {
     return 23;
   }
@@ -334,7 +334,7 @@ class NoSuchWindowError extends ProtocolError {
   }
 }
 
-class InvalidArgumentError extends ProtocolError {
+export class InvalidArgumentError extends ProtocolError {
   static code () {
     return 61;
   }
@@ -351,7 +351,7 @@ class InvalidArgumentError extends ProtocolError {
   }
 }
 
-class InvalidCookieDomainError extends ProtocolError {
+export class InvalidCookieDomainError extends ProtocolError {
   static code () {
     return 24;
   }
@@ -368,7 +368,7 @@ class InvalidCookieDomainError extends ProtocolError {
   }
 }
 
-class NoSuchCookieError extends ProtocolError {
+export class NoSuchCookieError extends ProtocolError {
   static code () {
     return 62;
   }
@@ -384,7 +384,7 @@ class NoSuchCookieError extends ProtocolError {
   }
 }
 
-class UnableToSetCookieError extends ProtocolError {
+export class UnableToSetCookieError extends ProtocolError {
   static code () {
     return 25;
   }
@@ -400,7 +400,7 @@ class UnableToSetCookieError extends ProtocolError {
   }
 }
 
-class UnexpectedAlertOpenError extends ProtocolError {
+export class UnexpectedAlertOpenError extends ProtocolError {
   static code () {
     return 26;
   }
@@ -416,7 +416,7 @@ class UnexpectedAlertOpenError extends ProtocolError {
   }
 }
 
-class NoAlertOpenError extends ProtocolError {
+export class NoAlertOpenError extends ProtocolError {
   static code () {
     return 27;
   }
@@ -432,9 +432,9 @@ class NoAlertOpenError extends ProtocolError {
   }
 }
 
-class NoSuchAlertError extends NoAlertOpenError {}
+export class NoSuchAlertError extends NoAlertOpenError {}
 
-class ScriptTimeoutError extends ProtocolError {
+export class ScriptTimeoutError extends ProtocolError {
   static code () {
     return 28;
   }
@@ -450,7 +450,7 @@ class ScriptTimeoutError extends ProtocolError {
   }
 }
 
-class InvalidElementCoordinatesError extends ProtocolError {
+export class InvalidElementCoordinatesError extends ProtocolError {
   static code () {
     return 29;
   }
@@ -467,9 +467,9 @@ class InvalidElementCoordinatesError extends ProtocolError {
   }
 }
 
-class InvalidCoordinatesError extends InvalidElementCoordinatesError {}
+export class InvalidCoordinatesError extends InvalidElementCoordinatesError {}
 
-class IMENotAvailableError extends ProtocolError {
+export class IMENotAvailableError extends ProtocolError {
   static code () {
     return 30;
   }
@@ -485,7 +485,7 @@ class IMENotAvailableError extends ProtocolError {
   }
 }
 
-class IMEEngineActivationFailedError extends ProtocolError {
+export class IMEEngineActivationFailedError extends ProtocolError {
   static code () {
     return 31;
   }
@@ -502,7 +502,7 @@ class IMEEngineActivationFailedError extends ProtocolError {
   }
 }
 
-class InvalidSelectorError extends ProtocolError {
+export class InvalidSelectorError extends ProtocolError {
   static code () {
     return 32;
   }
@@ -519,7 +519,7 @@ class InvalidSelectorError extends ProtocolError {
   }
 }
 
-class SessionNotCreatedError extends ProtocolError {
+export class SessionNotCreatedError extends ProtocolError {
   static code () {
     return 33;
   }
@@ -539,7 +539,7 @@ class SessionNotCreatedError extends ProtocolError {
   }
 }
 
-class MoveTargetOutOfBoundsError extends ProtocolError {
+export class MoveTargetOutOfBoundsError extends ProtocolError {
   static code () {
     return 34;
   }
@@ -555,7 +555,7 @@ class MoveTargetOutOfBoundsError extends ProtocolError {
   }
 }
 
-class NoSuchContextError extends ProtocolError {
+export class NoSuchContextError extends ProtocolError {
   static code () {
     return 35;
   }
@@ -564,7 +564,7 @@ class NoSuchContextError extends ProtocolError {
   }
 }
 
-class InvalidContextError extends ProtocolError {
+export class InvalidContextError extends ProtocolError {
   static code () {
     return 36;
   }
@@ -575,18 +575,18 @@ class InvalidContextError extends ProtocolError {
 }
 
 // These are aliases for UnknownMethodError
-class NotYetImplementedError extends UnknownMethodError {
+export class NotYetImplementedError extends UnknownMethodError {
   constructor (err) {
     super(err || 'Method has not yet been implemented');
   }
 }
-class NotImplementedError extends UnknownMethodError {
+export class NotImplementedError extends UnknownMethodError {
   constructor (err) {
     super(err || 'Method is not implemented');
   }
 }
 
-class UnableToCaptureScreen extends ProtocolError {
+export class UnableToCaptureScreen extends ProtocolError {
   static code () {
     return 63;
   }
@@ -604,7 +604,7 @@ class UnableToCaptureScreen extends ProtocolError {
 
 
 // Equivalent to W3C InvalidArgumentError
-class BadParametersError extends ES6Error {
+export class BadParametersError extends ES6Error {
   static error () {
     return 'invalid argument';
   }
@@ -628,7 +628,7 @@ class BadParametersError extends ES6Error {
  * In case of ProxyRequestError should fetch the actual error by calling `getActualError()`
  * for proxy failure to generate the client response.
  */
-class ProxyRequestError extends ES6Error {
+export class ProxyRequestError extends ES6Error {
   constructor (err, responseError, httpStatus) {
     let responseErrorObj = util.safeJsonParse(responseError);
     if (!_.isPlainObject(responseErrorObj)) {
@@ -864,7 +864,7 @@ function getResponseForJsonwpError (err) {
 }
 
 export {
-  ProtocolError, errors, isErrorType, isUnknownError,
+  errors, isErrorType, isUnknownError,
   errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
   getResponseForW3CError, getResponseForJsonwpError,
 };

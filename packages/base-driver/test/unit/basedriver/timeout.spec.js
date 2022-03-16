@@ -1,3 +1,5 @@
+// @ts-check
+
 import BaseDriver from '../../../lib';
 import { createSandbox } from 'sinon';
 
@@ -13,6 +15,7 @@ describe('timeout', function () {
   afterEach(function () {
     sandbox.restore();
   });
+  // expected errors are for checks against runtime type failures. the types we're giving the function are not allowed
   describe('timeouts', function () {
     describe('errors', function () {
       it('should throw an error if something random is sent', async function () {

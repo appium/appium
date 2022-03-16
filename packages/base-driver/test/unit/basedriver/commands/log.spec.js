@@ -1,7 +1,7 @@
-import logCommands from '../../../../lib/basedriver/commands/log';
+// @ts-check
+import {LogMixin} from '../../../../lib/basedriver/commands/log';
 import { createSandbox } from 'sinon';
 import _ from 'lodash';
-
 
 const expect = chai.expect;
 
@@ -20,12 +20,19 @@ const SUPPORTED_LOG_TYPES = {
 
 describe('log commands -', function () {
   let sandbox;
+  /** @type {ReturnType<typeof LogMixin>} */
+  let LogCommands;
+
+  let logCommands;
 
   beforeEach(function () {
     sandbox = createSandbox();
+    // @ts-expect-error
+    LogCommands = LogMixin(class { get log () { return this._log; }});
+    logCommands = new LogCommands();
     // reset the supported log types
     logCommands.supportedLogTypes = {};
-    logCommands.log = {debug: _.noop};
+    logCommands._log = /** @type {import('@appium/types').AppiumLogger} */({debug: _.noop});
   });
 
   afterEach(function () {
@@ -42,18 +49,18 @@ describe('log commands -', function () {
     });
   });
   describe('getLog', function () {
+    /** @type {sinon.SinonSpiedMember<typeof SUPPORTED_LOG_TYPES.one.getter>} */
+    let one;
+    /** @type {sinon.SinonSpiedMember<typeof SUPPORTED_LOG_TYPES.two.getter>} */
+    let two;
     beforeEach(function () {
-      sandbox.spy(SUPPORTED_LOG_TYPES.one, 'getter');
-      sandbox.spy(SUPPORTED_LOG_TYPES.two, 'getter');
-    });
-    afterEach(function () {
-      SUPPORTED_LOG_TYPES.one.getter.restore();
-      SUPPORTED_LOG_TYPES.two.getter.restore();
+      one = sandbox.spy(SUPPORTED_LOG_TYPES.one, 'getter');
+      two = sandbox.spy(SUPPORTED_LOG_TYPES.two, 'getter');
     });
     it('should throw error if log type not supported', async function () {
       await logCommands.getLog('one').should.eventually.be.rejected;
-      SUPPORTED_LOG_TYPES.one.getter.called.should.be.false;
-      SUPPORTED_LOG_TYPES.two.getter.called.should.be.false;
+      one.called.should.be.false;
+      two.called.should.be.false;
     });
     it('should throw an error with available log types if log type not supported', async function () {
       logCommands.supportedLogTypes = SUPPORTED_LOG_TYPES;
@@ -65,15 +72,15 @@ describe('log commands -', function () {
       }
       expect(err).to.exist;
       err.message.should.eql(`Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`);
-      SUPPORTED_LOG_TYPES.one.getter.called.should.be.false;
-      SUPPORTED_LOG_TYPES.two.getter.called.should.be.false;
+      one.called.should.be.false;
+      two.called.should.be.false;
     });
     it('should call getter on appropriate log when found', async function () {
       logCommands.supportedLogTypes = SUPPORTED_LOG_TYPES;
       let logs = await logCommands.getLog('one');
       logs.should.eql(FIRST_LOGS);
-      SUPPORTED_LOG_TYPES.one.getter.called.should.be.true;
-      SUPPORTED_LOG_TYPES.two.getter.called.should.be.false;
+      one.called.should.be.true;
+      two.called.should.be.false;
     });
   });
 });

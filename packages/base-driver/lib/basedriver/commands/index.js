@@ -1,22 +1,28 @@
-import sessionCmds from './session';
-import settingsCmds from './settings';
-import timeoutCmds from './timeout';
-import findCmds from './find';
-import logCmds from './log';
-import eventCmds from './event';
+// @ts-check
 
+import { EventMixin } from './event';
+import { FindMixin } from './find';
+import { LogMixin } from './log';
+import { SessionMixin } from './session';
+import { SettingsMixin } from './settings';
+import { TimeoutMixin } from './timeout';
 
-let commands = {};
+/**
+ * Applies all the mixins to the `BaseDriverBase` class.
+ * Returns a `BaseDriver` class.
+ * @param {BaseDriverBase} Base
+ */
+export function createBaseDriverClass (Base) {
+  const WithTimeoutCommands = TimeoutMixin(Base);
+  const WithEventCommands = EventMixin(WithTimeoutCommands);
+  const WithFindCommands = FindMixin(WithEventCommands);
+  const WithLogCommands = LogMixin(WithFindCommands);
+  const WithSettingsCommands = SettingsMixin(WithLogCommands);
+  const WithSessionCommands = SessionMixin(WithSettingsCommands);
+  return WithSessionCommands;
+}
 
-Object.assign(
-  commands,
-  sessionCmds,
-  settingsCmds,
-  timeoutCmds,
-  findCmds,
-  logCmds,
-  eventCmds,
-  // add other command types here
-);
-
-export default commands;
+/**
+ * @template [T={}]
+ * @typedef {import('../driver').BaseDriverBase<T>} BaseDriverBase
+ */

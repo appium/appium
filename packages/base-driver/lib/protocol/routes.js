@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import { util } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
@@ -14,6 +16,7 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
 // define the routes, mapping of HTTP methods to particular driver commands,
 // and any parameters that are expected in a request
 // parameters can be `required` or `optional`
+/** @type {import('@appium/types').MethodMap} */
 const METHOD_MAP = {
   '/status': {
     GET: {command: 'getStatus'}
@@ -238,6 +241,7 @@ const METHOD_MAP = {
     GET: {command: 'getSize'}
   },
   '/session/:sessionId/element/:elementId/shadow': {
+    // @ts-expect-error -- this method is not defined in ExternalDriver
     GET: {command: 'elementShadowRoot'}
   },
   '/session/:sessionId/element/:elementId/css/:propertyName': {

@@ -16,7 +16,7 @@ example_usage:
       await driver.pushFileToDevice('/data/local/tmp/foo.bar', 'QXJlIHlvdXIgYmVlcnMgb2theT8=');
   javascript_wdio:
     |
-      let data = new Buffer("Hello World").toString('base64');
+      let data = Buffer.from("Hello World").toString('base64');
       driver.pushFile('/data/local/tmp/file.txt', data);
   ruby:
     |

@@ -26,7 +26,7 @@ async function parseXmlPlistFile (plistFilename) {
  * @param {string} plist The plist file path
  * @param {boolean} mustExist If set to false, this method will return an empty object when the file doesn't exist
  * @param {boolean} quiet If set to false, the plist path will be logged in debug level
- * @returns {Object} parsed plist JS Object
+ * @returns {Promise<any>} parsed plist JS Object
  */
 async function parsePlistFile (plist, mustExist = true, quiet = true) {
   // handle nonexistant file
@@ -103,6 +103,8 @@ function createBinaryPlist (data) {
  * @param {Buffer} data The beffer of a binary plist
  */
 function parseBinaryPlist (data) {
+  // this function exists, but is not in the type declarations.
+  // @ts-expect-error
   return bplistParse.parseBuffer(data);
 }
 

@@ -14,7 +14,7 @@ const ECMA_SIZES = Object.freeze({
 /**
  * Internal utility to link global package to local context
  *
- * @returns {string} - name of the package to link
+ * @param {string} packageName - name of the package to link
  * @throws {Error} If the command fails
  */
 async function linkGlobalPackage (packageName) {
@@ -40,7 +40,7 @@ async function linkGlobalPackage (packageName) {
  * this will attempt to link the package and then re-require it
  *
  * @param {string} packageName - the name of the package to be required
- * @returns {object} - the package object
+ * @returns {Promise<unknown>} - the package object
  * @throws {Error} If the package is not found locally or globally
  */
 async function requirePackage (packageName) {
@@ -54,7 +54,7 @@ async function requirePackage (packageName) {
 
   // second, get it from where it ought to be in the global node_modules
   try {
-    const globalPackageName = path.resolve(process.env.npm_config_prefix, 'lib', 'node_modules', packageName);
+    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
     log.debug(`Loading global package '${globalPackageName}'`);
     return require(globalPackageName);
   } catch (err) {
@@ -128,7 +128,7 @@ function getCalculator (seen) {
         return ECMA_SIZES.NUMBER;
       case 'symbol':
         return _.isFunction(Symbol.keyFor) && Symbol.keyFor(obj)
-          ? Symbol.keyFor(obj).length * ECMA_SIZES.STRING
+          ? /** @type {string} */(Symbol.keyFor(obj)).length * ECMA_SIZES.STRING
           : (obj.toString().length - 8) * ECMA_SIZES.STRING;
       case 'object':
         return _.isArray(obj)

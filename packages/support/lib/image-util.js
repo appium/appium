@@ -15,7 +15,7 @@ const { MIME_JPEG, MIME_PNG, MIME_BMP } = Jimp;
  *
  * @param {Buffer|string} data - binary image buffer or base64-encoded image
  * string
- * @returns {Jimp} - the jimp image object
+ * @returns {Promise<AppiumJimp>} - the jimp image object
  */
 async function getJimpImage (data) {
   return await new B((resolve, reject) => {
@@ -26,15 +26,19 @@ async function getJimpImage (data) {
     if (_.isString(data)) {
       data = Buffer.from(data, 'base64');
     }
-    new Jimp(data, (err, imgObj) => {
+    new Jimp(data,
+      /**
+       * @param {Error?} err
+       * @param {AppiumJimp} imgObj
+       */
+    (err, imgObj) => {
       if (err) {
         return reject(err);
       }
       if (!imgObj) {
         return reject(new Error('Could not create jimp image from that data'));
       }
-      imgObj._getBuffer = imgObj.getBuffer.bind(imgObj);
-      imgObj.getBuffer = B.promisify(imgObj._getBuffer, {context: imgObj});
+      imgObj.getBuffer = B.promisify(imgObj.getBuffer.bind(imgObj), {context: imgObj});
       resolve(imgObj);
     });
   });
@@ -45,7 +49,7 @@ async function getJimpImage (data) {
  *
  * @param {string} base64Image The string with base64 encoded image
  * @param {Region} rect The selected region of image
- * @return {string} base64 encoded string of cropped image
+ * @return {Promise<string>} base64 encoded string of cropped image
  */
 async function cropBase64Image (base64Image, rect) {
   const image = await base64ToImage(base64Image);
@@ -57,7 +61,7 @@ async function cropBase64Image (base64Image, rect) {
  * Create a pngjs image from given base64 image
  *
  * @param {string} base64Image The string with base64 encoded image
- * @return {PNG} The image object
+ * @return {Promise<PNG>} The image object
  */
 async function base64ToImage (base64Image) {
   const imageBuffer = Buffer.from(base64Image, 'base64');
@@ -76,7 +80,7 @@ async function base64ToImage (base64Image) {
  * Create a base64 string for given image object
  *
  * @param {PNG} image The image object
- * @return {string} The string with base64 encoded image
+ * @return {Promise<string>} The string with base64 encoded image
  */
 async function imageToBase64 (image) {
   return await new B((resolve, reject) => {
@@ -138,3 +142,15 @@ export {
   cropBase64Image, base64ToImage, imageToBase64, cropImage,
   getJimpImage, MIME_JPEG, MIME_PNG, MIME_BMP
 };
+
+/**
+ * @typedef {Omit<Jimp,'getBuffer'> & {getBuffer: Jimp['getBufferAsync']}} AppiumJimp
+ */
+
+/**
+ * @typedef Region
+ * @property {number} left
+ * @property {number} top
+ * @property {number} width
+ * @property {number} height
+ */

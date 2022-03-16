@@ -14,7 +14,13 @@ import log from './logger';
 import getStream from 'get-stream';
 import { exec } from 'teen_process';
 
+/**
+ * @type {(path: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>}
+ */
 const openZip = B.promisify(yauzl.open);
+/**
+ * @type {(source: NodeJS.ReadableStream, destination: NodeJS.WritableStream) => Promise<NodeJS.WritableStream>}
+ */
 const pipeline = B.promisify(stream.pipeline);
 const ZIP_MAGIC = 'PK';
 const IFMT = 61440;
@@ -23,6 +29,9 @@ const IFLNK = 40960;
 
 // This class is mostly copied from https://github.com/maxogden/extract-zip/blob/master/index.js
 class ZipExtractor {
+  /** @type {yauzl.ZipFile} */
+  zipfile;
+
   constructor (sourcePath, opts = {}) {
     this.zipPath = sourcePath;
     this.opts = opts;
@@ -125,7 +134,9 @@ class ZipExtractor {
       return;
     }
 
-    const readStream = await B.promisify(this.zipfile.openReadStream.bind(this.zipfile))(entry);
+    /** @type {(entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>} */
+    const openReadStream = B.promisify(this.zipfile.openReadStream.bind(this.zipfile));
+    const readStream = await openReadStream(entry);
     if (isSymlink) {
       const link = await getStream(readStream);
       await fs.symlink(link, dest);
@@ -183,9 +194,9 @@ class ZipExtractor {
  *
  * @param {string} zipFilePath The full path to the source ZIP file
  * @param {string} destDir The full path to the destination folder
- * @param {?ExtractAllOptions} opts
+ * @param {ExtractAllOptions} [opts]
  */
-async function extractAllTo (zipFilePath, destDir, opts = {}) {
+async function extractAllTo (zipFilePath, destDir, opts = /** @type {ExtractAllOptions} */({})) {
   if (!path.isAbsolute(destDir)) {
     throw new Error(`Target path '${destDir}' is expected to be absolute`);
   }
@@ -250,8 +261,8 @@ async function extractWithSystemUnzip (zipFilePath, destDir) {
 /**
  * Extract a single zip entry to a directory
  *
- * @param {Streamable} zipFile The source ZIP stream
- * @param {yauzl.ZipEntry} entry The entry instance
+ * @param {yauzl.ZipFile} zipFile The source ZIP stream
+ * @param {yauzl.Entry} entry The entry instance
  * @param {string} destDir The full path to the destination folder
  */
 async function _extractEntryTo (zipFile, entry, destDir) {
@@ -294,7 +305,7 @@ async function _extractEntryTo (zipFile, entry, destDir) {
 
 /**
  * @typedef ZipEntry
- * @property {yauzl.ZipEntry} entry The actual entry instance
+ * @property {yauzl.Entry} entry The actual entry instance
  * @property {function} extractEntryTo An async function, which accepts one parameter.
  * This parameter contains the destination folder path to which this function is going to extract the entry.
  */
@@ -354,12 +365,12 @@ async function readEntries (zipFilePath, onEntry) {
  *
  * @param {string} srcPath The full path to the folder or file being zipped
  * @param {ZipOptions} opts Zipping options
- * @returns {Buffer} Zipped (and encoded if `encodeToBase64` is truthy)
+ * @returns {Promise<Buffer>} Zipped (and encoded if `encodeToBase64` is truthy)
  * content of the source path as memory buffer
  * @throws {Error} if there was an error while reading the source
  * or the source is too big
  */
-async function toInMemoryZip (srcPath, opts = {}) {
+async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
   if (!await fs.exists(srcPath)) {
     throw new Error(`No such file or folder: ${srcPath}`);
   }
@@ -481,10 +492,10 @@ async function assertValidZip (filePath) {
 
 /**
  * @typedef ZipSourceOptions
- * @property {!string} pattern ['**\/*'] - GLOB pattern for compression
- * @property {!string} cwd - The source root folder (the parent folder of
+ * @property {string} pattern ['**\/*'] - GLOB pattern for compression
+ * @property {string} cwd - The source root folder (the parent folder of
  * the destination file by default)
- * @property {?Array<string>} ignore - The list of ignored patterns
+ * @property {string[]} [ignore] - The list of ignored patterns
  */
 
 /**
@@ -495,7 +506,7 @@ async function assertValidZip (filePath) {
  * @param {ZipCompressionOptions} opts - Compression options
  * @throws {Error} If there was an error while creating the archive
  */
-async function toArchive (dstPath, src = {}, opts = {}) {
+async function toArchive (dstPath, src = /** @type {ZipSourceOptions} */({}), opts = /** @type {ZipCompressionOptions} */({})) {
   const {
     level = 9,
   } = opts;
@@ -532,7 +543,7 @@ async function toArchive (dstPath, src = {}, opts = {}) {
  */
 const getExecutablePath = _.memoize(
   /**
-   * @returns {B<string>} Full Path to the executable
+   * @returns {Promise<string>} Full Path to the executable
    */
   async function getExecutablePath (binaryName) {
     const fullPath = await fs.which(binaryName);

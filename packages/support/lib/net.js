@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import fs from './fs';
-import url from 'url';
 import B from 'bluebird';
 import { toReadableSizeString } from './util';
 import log from './logger';
@@ -11,19 +10,29 @@ import FormData from 'form-data';
 
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
+/**
+ * Converts {@linkcode AuthCredentials} to credentials understood by {@linkcode axios}.
+ * @param {AuthCredentials | import('axios').AxiosBasicCredentials} auth
+ * @returns {import('axios').AxiosBasicCredentials?}
+ */
 function toAxiosAuth (auth) {
   if (!_.isPlainObject(auth)) {
     return null;
   }
 
   const axiosAuth = {
-    username: auth.username || auth.user,
-    password: auth.password || auth.pass,
+    username: _.get(auth, 'username', _.get(auth, 'user')),
+    password: _.get(auth, 'password', _.get(auth, 'pass')),
   };
   return (axiosAuth.username && axiosAuth.password) ? axiosAuth : null;
 }
 
-async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = {}) {
+/**
+ * @param {NodeJS.ReadableStream} localFileStream
+ * @param {URL} parsedUri
+ * @param {HttpUploadOptions & NetOptions} [uploadOptions]
+ */
+async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /** @type {HttpUploadOptions & NetOptions} */({})) {
   const {
     method = 'POST',
     timeout = DEFAULT_TIMEOUT_MS,
@@ -34,6 +43,7 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = {})
   } = uploadOptions;
   const { href } = parsedUri;
 
+  /** @type {import('axios').AxiosRequestConfig} */
   const requestOpts = {
     url: href,
     method,
@@ -61,8 +71,10 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = {})
         }
       }
     }
-    requestOpts.headers = Object.assign({}, _.isPlainObject(headers) ? headers : {},
-      form.getHeaders());
+    requestOpts.headers = {
+      ...(_.isPlainObject(headers) ? headers : {}),
+      ...form.getHeaders()
+    };
     requestOpts.data = form;
   } else {
     if (_.isPlainObject(headers)) {
@@ -77,11 +89,14 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = {})
   log.info(`Server response: ${status} ${statusText}`);
 }
 
-async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = {}) {
+/**
+ * @param {string | Buffer | NodeJS.ReadableStream} localFileStream
+ * @param {URL} parsedUri
+ * @param {NotHttpUploadOptions & NetOptions} [uploadOptions]
+ */
+async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = /** @type {NotHttpUploadOptions & NetOptions} */({})) {
   const {
     auth,
-    user,
-    pass,
   } = uploadOptions;
   const {
     hostname,
@@ -92,11 +107,11 @@ async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = {}) 
 
   const ftpOpts = {
     host: hostname,
-    port: port || 21,
+    port: !_.isUndefined(port) ? _.parseInt(port) : 21,
   };
-  if ((auth?.user && auth?.pass) || (user && pass)) {
-    ftpOpts.user = auth?.user || user;
-    ftpOpts.pass = auth?.pass || pass;
+  if (auth?.user && auth?.pass) {
+    ftpOpts.user = auth.user;
+    ftpOpts.pass = auth.pass;
   }
   log.debug(`${protocol} upload options: ${JSON.stringify(ftpOpts)}`);
   return await new B((resolve, reject) => {
@@ -111,42 +126,44 @@ async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = {}) 
 }
 
 /**
- * @typedef AuthCredentials
- * @property {string} user - Non-empty user name
- * @property {string} pass - Non-empty password
+ * Returns `true` if params are valid for {@linkcode uploadFileToHttp}.
+ * @param {any} opts
+ * @param {URL} url
+ * @returns {opts is HttpUploadOptions & NetOptions}
  */
+function isHttpUploadOptions (opts, url) {
+  try {
+    const {protocol} = new URL(url);
+    return protocol === 'http:' || protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
 
 /**
- * @typedef FtpUploadOptions
- * @property {boolean} isMetered [true] - Whether to log the actual upload performance
- * (e.g. timings and speed)
- * @property {AuthCredentials} auth
+ * Returns `true` if params are valid for {@linkcode uploadFileToFtp}.
+ * @param {any} opts
+ * @param {URL} url
+ * @returns {opts is NotHttpUploadOptions & NetOptions}
  */
-
-/**
- * @typedef HttpUploadOptions
- * @property {boolean} isMetered [true] - Whether to log the actual upload performance
- * (e.g. timings and speed)
- * @property {string} method [POST] - The HTTP method used for file upload
- * @property {AuthCredentials} auth
- * @property {number} timeout [240000] - The actual request timeout in milliseconds
- * @property {Object} headers - Additional request headers mapping
- * @property {?string} fileFieldName [file] - The name of the form field containing the file
- * content to be uploaded. Any falsy value make the request to use non-multipart upload
- * @property {Array<Pair>|Object} formFields - The additional form fields
- * to be included into the upload request. This property is only considered if
- * `fileFieldName` is set
- */
-
+function isNotHttpUploadOptions (opts, url) {
+  try {
+    const {protocol} = new URL(url);
+    return protocol === 'ftp:';
+  } catch {
+    return false;
+  }
+}
 /**
  * Uploads the given file to a remote location. HTTP(S) and FTP
  * protocols are supported.
  *
  * @param {string} localPath - The path to a file on the local storage.
  * @param {string} remoteUri - The remote URI to upload the file to.
- * @param {?FtpUploadOptions|HttpUploadOptions} uploadOptions
+ * @param {(HttpUploadOptions|NotHttpUploadOptions) & NetOptions} [uploadOptions]
+ * @returns {Promise<void>}
  */
-async function uploadFile (localPath, remoteUri, uploadOptions = {}) {
+async function uploadFile (localPath, remoteUri, uploadOptions = /** @type {(HttpUploadOptions|NotHttpUploadOptions) & NetOptions} */({})) {
   if (!await fs.exists(localPath)) {
     throw new Error (`'${localPath}' does not exists or is not accessible`);
   }
@@ -154,26 +171,25 @@ async function uploadFile (localPath, remoteUri, uploadOptions = {}) {
   const {
     isMetered = true,
   } = uploadOptions;
-
-  const parsedUri = url.parse(remoteUri);
+  const url = new URL(remoteUri);
   const {size} = await fs.stat(localPath);
   if (isMetered) {
     log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
   }
   const timer = new Timer().start();
-  if (['http:', 'https:'].includes(parsedUri.protocol)) {
+  if (isHttpUploadOptions(uploadOptions, url)) {
     if (!uploadOptions.fileFieldName) {
-      uploadOptions.headers = Object.assign({},
-        _.isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {},
-        {'Content-Length': size}
-      );
+      uploadOptions.headers = {
+        ...(_.isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
+        'Content-Length': size
+      };
     }
-    await uploadFileToHttp(fs.createReadStream(localPath), parsedUri, uploadOptions);
-  } else if (parsedUri.protocol === 'ftp:') {
-    await uploadFileToFtp(fs.createReadStream(localPath), parsedUri, uploadOptions);
+    await uploadFileToHttp(fs.createReadStream(localPath), url, uploadOptions);
+  } else if (isNotHttpUploadOptions(uploadOptions, url)) {
+    await uploadFileToFtp(fs.createReadStream(localPath), url, uploadOptions);
   } else {
     throw new Error(`Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
-      `Unsupported remote protocol '${parsedUri.protocol}'. ` +
+      `Unsupported remote protocol '${url.protocol}'. ` +
       `Only http/https and ftp/ftps protocols are supported.`);
   }
   if (isMetered) {
@@ -183,23 +199,14 @@ async function uploadFile (localPath, remoteUri, uploadOptions = {}) {
 }
 
 /**
- * @typedef DownloadOptions
- * @property {boolean} isMetered [true] - Whether to log the actual download performance
- * (e.g. timings and speed)
- * @property {AuthCredentials} auth
- * @property {number} timeout [240000] - The actual request timeout in milliseconds
- * @property {Object} headers - Request headers mapping
- */
-
-/**
  * Downloads the given file via HTTP(S)
  *
  * @param {string} remoteUrl - The remote url
  * @param {string} dstPath - The local path to download the file to
- * @param {?DownloadOptions} downloadOptions
+ * @param {DownloadOptions & NetOptions} [downloadOptions]
  * @throws {Error} If download operation fails
  */
-async function downloadFile (remoteUrl, dstPath, downloadOptions = {}) {
+async function downloadFile (remoteUrl, dstPath, downloadOptions = /** @type {DownloadOptions & NetOptions} */({})) {
   const {
     isMetered = true,
     auth,
@@ -207,6 +214,9 @@ async function downloadFile (remoteUrl, dstPath, downloadOptions = {}) {
     headers,
   } = downloadOptions;
 
+  /**
+   * @type {import('axios').AxiosRequestConfig}
+   */
   const requestOpts = {
     url: remoteUrl,
     responseType: 'stream',
@@ -261,3 +271,49 @@ async function downloadFile (remoteUrl, dstPath, downloadOptions = {}) {
 }
 
 export { uploadFile, downloadFile };
+
+/**
+ * Common options for {@linkcode uploadFile} and {@linkcode downloadFile}.
+ * @typedef NetOptions
+ * @property {boolean} [isMetered=true] - Whether to log the actual download performance
+ * (e.g. timings and speed)
+ * @property {AuthCredentials} auth
+ */
+
+/**
+ * Specific options for {@linkcode downloadFile}.
+ * @typedef DownloadOptions
+ * @property {number} [timeout] - The actual request timeout in milliseconds; defaults to {@linkcode DEFAULT_TIMEOUT_MS}
+ * @property {Record<string,any>} headers - Request headers mapping
+ */
+
+/**
+ * Basic auth credentials; used by {@linkcode NetOptions}.
+ * @typedef AuthCredentials
+ * @property {string} user - Non-empty user name
+ * @property {string} pass - Non-empty password
+ */
+
+/**
+ * This type is used in {@linkcode uploadFile} if the remote location uses the `ftp` protocol, and distinguishes the type from {@linkcode HttpUploadOptions}.
+ * @typedef NotHttpUploadOptions
+ * @property {never} headers
+ * @property {never} method
+ * @property {never} timeout
+ * @property {never} fileFieldName
+ * @property {never} formFields
+ */
+
+/**
+ * Specific options for {@linkcode uploadFile} if the remote location uses the `http(s)` protocol
+ * @typedef HttpUploadOptions
+ * @property {Record<string,any>} headers - Additional request headers mapping
+ * @property {import('axios').Method} [method='POST'] - The HTTP method used for file upload
+ * @property {number} [timeout] - The actual request timeout in milliseconds; defaults to {@linkcode DEFAULT_TIMEOUT_MS}
+ * @property {string} [fileFieldName='file'] - The name of the form field containing the file
+ * content to be uploaded. Any falsy value make the request to use non-multipart upload
+ * @property {Record<string,any>} [formFields] - The additional form fields
+ * to be included into the upload request. This property is only considered if
+ * `fileFieldName` is set
+ */
+

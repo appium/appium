@@ -31,6 +31,11 @@ const MJPEG_SERVER_TIMEOUT_MS = 10000;
 class MJpegStream extends Writable {
 
   /**
+   * @type {number}
+   */
+  updateCount = 0;
+
+  /**
    * Create an MJpegStream
    * @param {string} mJpegUrl - URL of MJPEG-over-HTTP stream
    * @param {function} [errorHandler=noop] - additional function that will be
@@ -52,24 +57,26 @@ class MJpegStream extends Writable {
    * or `null` if no image can be parsed
    */
   get lastChunkBase64 () {
+    const lastChunk = /** @type {Buffer} */(this.lastChunk);
     return !_.isEmpty(this.lastChunk) && _.isBuffer(this.lastChunk)
-      ? this.lastChunk.toString('base64')
+      ? lastChunk.toString('base64')
       : null;
   }
 
   /**
    * Get the PNG version of the JPEG buffer
    *
-   * @returns {?Buffer} PNG image data or `null` if no PNG
+   * @returns {Promise<Buffer?>} PNG image data or `null` if no PNG
    * image can be parsed
    */
   async lastChunkPNG () {
-    if (_.isEmpty(this.lastChunk) || !_.isBuffer(this.lastChunk)) {
+    const lastChunk = /** @type {Buffer} */(this.lastChunk);
+    if (_.isEmpty(lastChunk) || !_.isBuffer(lastChunk)) {
       return null;
     }
 
     try {
-      const jpg = await getJimpImage(this.lastChunk);
+      const jpg = await getJimpImage(lastChunk);
       return await jpg.getBuffer(MIME_PNG);
     } catch (e) {
       return null;
@@ -79,7 +86,7 @@ class MJpegStream extends Writable {
   /**
    * Get the base64-encoded version of the PNG
    *
-   * @returns {?string} base64-encoded PNG image data
+   * @returns {Promise<string?>} base64-encoded PNG image data
    * or `null` if no image can be parsed
    */
   async lastChunkPNGBase64 () {
@@ -185,6 +192,8 @@ class MJpegStream extends Writable {
       this.registerStartSuccess();
       this.registerStartSuccess = null;
     }
+
+    return true;
   }
 }
 

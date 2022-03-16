@@ -35,6 +35,7 @@
     "clean:distfiles": "npx rimraf \"packages/*/build\"",
     "clean:monorepo": "npx rimraf node_modules package-lock.json",
     "clean:packages": "lerna clean -y && npx rimraf \"packages/*/package-lock.json\"",
+    "clean:distfiles": "npx rimraf \"packages/*/build\"",
     "clean:types": "tsc -b --clean",
     "dev": "lerna run --parallel --prefix --concurrency=8 dev",
     "dev:types": "tsc -b --watch",

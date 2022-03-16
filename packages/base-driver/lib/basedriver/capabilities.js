@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import { validator } from './desired-caps';
 import { util } from '@appium/support';
@@ -10,6 +12,11 @@ const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}${APPIUM_OPTS_CAP}`;
 
 // Takes primary caps object and merges it into a secondary caps object.
 // (see https://www.w3.org/TR/webdriver/#dfn-merging-capabilities)
+/**
+ * @param {Capabilities} [primary]
+ * @param {Capabilities} [secondary]
+ * @returns {Capabilities}
+ */
 function mergeCaps (primary = {}, secondary = {}) {
   let result = Object.assign({}, primary);
 
@@ -25,6 +32,13 @@ function mergeCaps (primary = {}, secondary = {}) {
 }
 
 // Validates caps against a set of constraints
+/**
+ *
+ * @param {Capabilities} caps
+ * @param {Constraints} [constraints]
+ * @param {ValidateCapsOpts} [opts]
+ * @returns {Capabilities}
+ */
 function validateCaps (caps, constraints = {}, opts = {}) {
 
   let {skipPresenceConstraint} = opts;
@@ -119,13 +133,20 @@ function findNonPrefixedCaps ({alwaysMatch = {}, firstMatch = []}) {
   return _.chain([alwaysMatch, ...firstMatch])
     .reduce((unprefixedCaps, caps) => [
       ...unprefixedCaps,
-      ..._(caps).keys().filter((cap) => !cap.includes(':') && !isStandardCap(cap)),
+      ...Object.keys(caps).filter((cap) => !cap.includes(':') && !isStandardCap(cap)),
     ], [])
     .uniq()
     .value();
 }
 
 // Parse capabilities (based on https://www.w3.org/TR/webdriver/#processing-capabilities)
+/**
+ *
+ * @param {W3CCapabilities} caps
+ * @param {Constraints} [constraints]
+ * @param {boolean} [shouldValidateCaps]
+ * @returns
+ */
 function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
   // If capabilities request is not an object, return error (#1.1)
   if (!_.isPlainObject(caps)) {
@@ -182,15 +203,15 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
 
   // Validate all of the first match capabilities and return an array with only the valid caps (see spec #5)
   let validationErrors = [];
-  let validatedFirstMatchCaps = allFirstMatchCaps.map((firstMatchCaps) => {
+  /** @type {Capabilities[]} */
+  let validatedFirstMatchCaps = _.compact(allFirstMatchCaps.map((firstMatchCaps) => {
     try {
       // Validate firstMatch caps
       return shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
     } catch (e) {
       validationErrors.push(e.message);
-      return null;
     }
-  }).filter((caps) => !_.isNull(caps));
+  }));
 
   // Try to merge requiredCaps with first match capabilities, break once it finds its first match (see spec #6)
   let matchedCaps = null;
@@ -211,21 +232,28 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
 }
 
 // Calls parseCaps and just returns the matchedCaps variable
-function processCapabilities (caps, constraints = {}, shouldValidateCaps = true) {
-  const {matchedCaps, validationErrors} = parseCaps(caps, constraints, shouldValidateCaps);
+/**
+ *
+ * @param {W3CCapabilities} w3cCaps
+ * @param {Constraints} [constraints]
+ * @param {boolean} [shouldValidateCaps]
+ * @returns {Capabilities}
+ */
+function processCapabilities (w3cCaps, constraints = {}, shouldValidateCaps = true) {
+  const {matchedCaps, validationErrors} = parseCaps(w3cCaps, constraints, shouldValidateCaps);
 
   // If we found an error throw an exception
   if (!util.hasValue(matchedCaps)) {
-    if (_.isArray(caps.firstMatch) && caps.firstMatch.length > 1) {
+    if (_.isArray(w3cCaps.firstMatch) && w3cCaps.firstMatch.length > 1) {
       // If there was more than one 'firstMatch' cap, indicate that we couldn't find a matching capabilities set and show all the errors
-      throw new errors.InvalidArgumentError(`Could not find matching capabilities from ${JSON.stringify(caps)}:\n ${validationErrors.join('\n')}`);
+      throw new errors.InvalidArgumentError(`Could not find matching capabilities from ${JSON.stringify(w3cCaps)}:\n ${validationErrors.join('\n')}`);
     } else {
       // Otherwise, just show the singular error message
       throw new errors.InvalidArgumentError(validationErrors[0]);
     }
   }
 
-  return matchedCaps;
+  return matchedCaps ?? {};
 }
 
 /**
@@ -237,7 +265,7 @@ function processCapabilities (caps, constraints = {}, shouldValidateCaps = true)
  * user-constructed capabilities.
  *
  * @param {object} originalCaps - the capabilities to analyze and promote from 'options'
- * @return {object} - the capabilities with 'options' promoted if necessary
+ * @return {object!} - the capabilities with 'options' promoted if necessary
  */
 function promoteAppiumOptions (originalCaps) {
   const appiumOptions = originalCaps[APPIUM_OPTS_CAP];
@@ -273,3 +301,14 @@ export {
   parseCaps, processCapabilities, validateCaps, mergeCaps, APPIUM_VENDOR_PREFIX, APPIUM_OPTS_CAP,
   findNonPrefixedCaps, isStandardCap, stripAppiumPrefixes, promoteAppiumOptions, PREFIXED_APPIUM_OPTS_CAP,
 };
+
+/**
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ */
+
+/**
+ * @typedef ValidateCapsOpts
+ * @property {boolean} [skipPresenceConstraint] - if true, skip the presence constraint
+ */

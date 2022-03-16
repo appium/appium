@@ -1,38 +1,65 @@
+/* eslint-disable require-await */
+// @ts-check
+
 import _ from 'lodash';
 
-const commands = {}, helpers = {}, extensions = {};
+/**
+ *
+ * @param {FindBase} Base
+ * @returns {LogBase}
+ */
+export function LogMixin (Base) {
+  /**
+   * @implements {ILogCommands}
+   */
+  class LogCommands extends Base {
+    /**
+     * XXX: dubious
+     * @type {Record<string,LogType<Driver>>}
+     */
+    supportedLogTypes;
 
-// override in sub-classes, with appropriate logs
-// in the form of
-//   {
-//     type: {
-//       description: 'some useful text',
-//       getter: () => {}, // some function that will be called to get the logs
-//     }
-//   }
-extensions.supportedLogTypes = {};
+    async getLogTypes () {
+      this.log.debug('Retrieving supported log types');
+      return _.keys(this.supportedLogTypes);
+    }
 
-// eslint-disable-next-line require-await
-commands.getLogTypes = async function getLogTypes () {
-  this.log.debug('Retrieving supported log types');
-  return _.keys(this.supportedLogTypes);
-};
+    /**
+     * @this {Driver}
+     */
+    async getLog (logType) {
+      this.log.debug(`Retrieving '${logType}' logs`);
 
-commands.getLog = async function getLog (logType) {
-  this.log.debug(`Retrieving '${logType}' logs`);
+      if (!(await this.getLogTypes()).includes(logType)) {
+        const logsTypesWithDescriptions = _.reduce(
+          this.supportedLogTypes,
+          (acc, value, key) => {
+            acc[key] = value.description;
+            return acc;
+          },
+          {},
+        );
+        throw new Error(
+          `Unsupported log type '${logType}'. ` +
+            `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
+        );
+      }
 
-  if (!(await this.getLogTypes()).includes(logType)) {
-    const logsTypesWithDescriptions = _.reduce(this.supportedLogTypes, (acc, value, key) => {
-      acc[key] = value.description;
-      return acc;
-    }, {});
-    throw new Error(`Unsupported log type '${logType}'. ` +
-      `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`);
+      return await this.supportedLogTypes[logType].getter(this);
+    }
   }
+  return LogCommands;
+}
 
-  return await this.supportedLogTypes[logType].getter(this);
-};
 
-Object.assign(extensions, commands, helpers);
-export { commands, helpers};
-export default extensions;
+/**
+ * @typedef {import('@appium/types').LogCommands} ILogCommands
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('./find').FindBase} FindBase
+ * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & ILogCommands>} LogBase
+ */
+
+/**
+ * @template T
+ * @typedef {import('@appium/types').LogType<T>} LogType
+ */

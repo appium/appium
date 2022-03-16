@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import _ from 'lodash';
 import { getBuildInfo, updateBuildInfo, APPIUM_VER } from './config';
-import { BaseDriver, errors, isSessionCommand,
+import { BaseDriver, DriverCore, errors, isSessionCommand,
          CREATE_SESSION_COMMAND, DELETE_SESSION_COMMAND, GET_STATUS_COMMAND
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
@@ -8,6 +9,9 @@ import { parseCapsForInnerDriver, pullSettings } from './utils';
 import { util, node, logger } from '@appium/support';
 import { getDefaultsForExtension } from './schema';
 
+/**
+ * @type {import('@appium/types').Constraints}
+ */
 const desiredCapabilityConstraints = {
   automationName: {
     presence: true,
@@ -21,40 +25,71 @@ const desiredCapabilityConstraints = {
 
 const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
+/**
+ * @implements {SessionHandler}
+ */
+class AppiumDriver extends DriverCore {
+  /**
+   * Access to sessions list must be guarded with a Semaphore, because
+   * it might be changed by other async calls at any time
+   * It is not recommended to access this property directly from the outside
+   * @type {Record<string,Driver>}
+   */
+  sessions = {};
 
-class AppiumDriver extends BaseDriver {
-  constructor (args) {
+  /**
+   * Access to pending drivers list must be guarded with a Semaphore, because
+   * it might be changed by other async calls at any time
+   * It is not recommended to access this property directly from the outside
+   * @type {Record<string,Driver[]>}
+   */
+  pendingDrivers = {};
+
+  // the main Appium Driver has no new command timeout
+  newCommandTimeoutMs = 0;
+
+  /**
+   * List of active plugins
+   * @type {import('../types').Extension.PluginClass[]}
+   */
+  pluginClasses = [];
+
+  /**
+   * map of sessions to actual plugin instances per session
+   * @type {Record<string,InstanceType<import('../types').Extension.PluginClass>[]>}
+   */
+  sessionPlugins = {};
+
+  /**
+   * some commands are sessionless, so we need a set of plugins for them
+   * @type {InstanceType<import('../types').Extension.PluginClass>[]}
+   */
+  sessionlessPlugins = [];;
+
+  /** @type {import('./extension/driver-config').DriverConfig} */
+  driverConfig;
+
+  /** @type {import('@appium/types').AppiumServer} */
+  server;
+
+  /**
+   *
+   * @param {import('@appium/types').DriverOpts} opts
+   */
+  constructor (opts) {
     // It is necessary to set `--tmp` here since it should be set to
     // process.env.APPIUM_TMP_DIR once at an initial point in the Appium lifecycle.
     // The process argument will be referenced by BaseDriver.
     // Please call @appium/support.tempDir module to apply this benefit.
-    if (args.tmpDir) {
-      process.env.APPIUM_TMP_DIR = args.tmpDir;
+    if (opts.tmpDir) {
+      process.env.APPIUM_TMP_DIR = opts.tmpDir;
     }
 
-    super(args);
+    super(opts);
 
     this.desiredCapConstraints = desiredCapabilityConstraints;
 
-    // the main Appium Driver has no new command timeout
-    this.newCommandTimeoutMs = 0;
-
-    this.args = {...args};
-
-    // Access to sessions list must be guarded with a Semaphore, because
-    // it might be changed by other async calls at any time
-    // It is not recommended to access this property directly from the outside
-    this.sessions = {};
-
-    // Access to pending drivers list must be guarded with a Semaphore, because
-    // it might be changed by other async calls at any time
-    // It is not recommended to access this property directly from the outside
-    this.pendingDrivers = {};
-
-    /** @type {PluginExtensionClass[]} */
-    this.pluginClasses = []; // list of which plugins are active
-    this.sessionPlugins = {}; // map of sessions to actual plugin instances per session
-    this.sessionlessPlugins = []; // some commands are sessionless, so we need a set of plugins for them
+    this.args = {...opts};
 
     // allow this to happen in the background, so no `await`
     updateBuildInfo();
@@ -62,7 +97,6 @@ class AppiumDriver extends BaseDriver {
 
   /**
    * Retrieves logger instance for the current umbrella driver instance
-   * @override
    */
   get log () {
     if (!this._log) {
@@ -72,11 +106,6 @@ class AppiumDriver extends BaseDriver {
     return this._log;
   }
 
-  /** @type {import('./extension/driver-config').DriverConfig|undefined} */
-  driverConfig;
-
-  /** @type {import('express').Express|undefined} */
-  server;
 
   /**
    * Cancel commands queueing for the umbrella Appium driver
@@ -128,12 +157,12 @@ class AppiumDriver extends BaseDriver {
    * If the extension has provided a schema, validation has already happened.
    *
    * Any arg which is equal to its default value will not be assigned to the extension.
-   * @param {import('./manifest').ExtensionType} extType 'driver' or 'plugin'
+   * @param {import('./extension/manifest').ExtensionType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
   assignCliArgsToExtension (extType, extName, extInstance) {
-    const allCliArgsForExt = this.args[extType]?.[extName];
+    const allCliArgsForExt = /** @type {Record<string,unknown>|undefined} */(this.args[extType]?.[extName]);
     if (!_.isEmpty(allCliArgsForExt)) {
       const defaults = getDefaultsForExtension(extType, extName);
       const cliArgs = _.isEmpty(defaults)
@@ -147,24 +176,26 @@ class AppiumDriver extends BaseDriver {
 
   /**
    * Create a new session
-   * @param {Object} jsonwpCaps JSONWP formatted desired capabilities
-   * @param {Object} reqCaps Required capabilities (JSONWP standard)
-   * @param {Object} w3cCapabilities W3C capabilities
-   * @return {Array} Unique session ID and capabilities
+   * @param {W3CCapabilities} jsonwpCaps JSONWP formatted desired capabilities
+   * @param {W3CCapabilities} reqCaps Required capabilities (JSONWP standard)
+   * @param {W3CCapabilities} w3cCapabilities W3C capabilities
+   * @param {import('@appium/types').DriverData[]} [driverData]
    */
-  async createSession (jsonwpCaps, reqCaps, w3cCapabilities) {
+  async createSession (jsonwpCaps, reqCaps, w3cCapabilities, driverData) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
     const defaultSettings = pullSettings(defaultCapabilities);
     jsonwpCaps = _.cloneDeep(jsonwpCaps);
-    const jwpSettings = Object.assign({}, defaultSettings, pullSettings(jsonwpCaps));
+    const jwpSettings = {...defaultSettings, ...pullSettings(jsonwpCaps)};
     w3cCapabilities = _.cloneDeep(w3cCapabilities);
     // It is possible that the client only provides caps using JSONWP standard,
     // although firstMatch/alwaysMatch properties are still present.
     // In such case we assume the client understands W3C protocol and merge the given
     // JSONWP caps to W3C caps
-    const w3cSettings = Object.assign({}, jwpSettings);
-    Object.assign(w3cSettings, pullSettings((w3cCapabilities || {}).alwaysMatch || {}));
-    for (const firstMatchEntry of ((w3cCapabilities || {}).firstMatch || [])) {
+    const w3cSettings = {
+      ...jwpSettings,
+      ...pullSettings((w3cCapabilities ?? {}).alwaysMatch ?? {})
+    };
+    for (const firstMatchEntry of ((w3cCapabilities ?? {}).firstMatch ?? [])) {
       Object.assign(w3cSettings, pullSettings(firstMatchEntry));
     }
 
@@ -179,9 +210,9 @@ class AppiumDriver extends BaseDriver {
         defaultCapabilities
       );
 
-      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, error} = parsedCaps;
+      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} = /** @type {import('./utils').ParsedDriverCaps} */(parsedCaps);
       protocol = parsedCaps.protocol;
-
+      const error = /** @type {import('./utils').InvalidCaps} */(parsedCaps).error;
       // If the parsing of the caps produced an error, throw it in here
       if (error) {
         throw error;
@@ -198,7 +229,14 @@ class AppiumDriver extends BaseDriver {
         await this.deleteAllSessions();
       }
 
-      let runningDriversData, otherPendingDriversData;
+      /**
+       * @type {DriverData[]}
+       */
+      let runningDriversData = [];
+      /**
+       * @type {DriverData[]}
+       */
+      let otherPendingDriversData = [];
 
       const driverInstance = new InnerDriver(this.args, true);
 
@@ -231,21 +269,17 @@ class AppiumDriver extends BaseDriver {
 
 
       // This assignment is required for correct web sockets functionality inside the driver
-      driverInstance.server = this.server;
-
       // Drivers/plugins might also want to know where they are hosted
-      driverInstance.serverHost = this.args.address;
-      driverInstance.serverPort = this.args.port;
-      driverInstance.serverPath = this.args.basePath;
+      driverInstance.assignServer(this.server, this.args.address, this.args.port, this.args.basePath);
 
       try {
-        runningDriversData = await this.curSessionDataForDriver(InnerDriver);
+        runningDriversData = await this.curSessionDataForDriver(InnerDriver) ?? [];
       } catch (e) {
         throw new errors.SessionNotCreatedError(e.message);
       }
       await pendingDriversGuard.acquire(AppiumDriver.name, () => {
         this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
-        otherPendingDriversData = this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData);
+        otherPendingDriversData = _.compact(this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData));
         this.pendingDrivers[InnerDriver.name].push(driverInstance);
       });
 
@@ -329,11 +363,16 @@ class AppiumDriver extends BaseDriver {
     }
   }
 
+  /**
+   *
+   * @param {import('../types/extension').DriverClass} InnerDriver
+   * @returns {Promise<DriverData[]>}}
+   */
   async curSessionDataForDriver (InnerDriver) {
     const sessions = await sessionsListGuard.acquire(AppiumDriver.name, () => this.sessions);
-    const data = _.values(sessions)
+    const data = _.compact(_.values(sessions)
                    .filter((s) => s.constructor.name === InnerDriver.name)
-                   .map((s) => s.driverData);
+                   .map((s) => s.driverData));
     for (let datum of data) {
       if (!datum) {
         throw new Error(`Problem getting session data for driver type ` +
@@ -344,12 +383,14 @@ class AppiumDriver extends BaseDriver {
     return data;
   }
 
+  /**
+   * @param {string} sessionId
+   */
   async deleteSession (sessionId) {
     let protocol;
     try {
-      let otherSessionsData = null;
-      let dstSession = null;
-      await sessionsListGuard.acquire(AppiumDriver.name, () => {
+      let otherSessionsData;
+      const dstSession = await sessionsListGuard.acquire(AppiumDriver.name, () => {
         if (!this.sessions[sessionId]) {
           return;
         }
@@ -357,7 +398,7 @@ class AppiumDriver extends BaseDriver {
         otherSessionsData = _.toPairs(this.sessions)
               .filter(([key, value]) => value.constructor.name === curConstructorName && key !== sessionId)
               .map(([, value]) => value.driverData);
-        dstSession = this.sessions[sessionId];
+        const dstSession = this.sessions[sessionId];
         protocol = dstSession.protocol;
         this.log.info(`Removing session ${sessionId} from our master session list`);
         // regardless of whether the deleteSession completes successfully or not
@@ -365,7 +406,13 @@ class AppiumDriver extends BaseDriver {
         // be in otherwise
         delete this.sessions[sessionId];
         delete this.sessionPlugins[sessionId];
+        return dstSession;
       });
+      // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
+      // throw anyway.
+      if (!dstSession) {
+        throw new Error('Session not found');
+      }
       return {
         protocol,
         value: await dstSession.deleteSession(sessionId, otherSessionsData),
@@ -449,6 +496,12 @@ class AppiumDriver extends BaseDriver {
     });
   }
 
+  /**
+   *
+   * @param {string} cmd
+   * @param  {...any} args
+   * @returns {Promise<{value: any, error?: Error, protocol: string} | import('type-fest').AsyncReturnType<import('@appium/types').Driver['executeCommand']>>}
+   */
   async executeCommand (cmd, ...args) {
     // We have basically three cases for how to handle commands:
     // 1. handle getStatus (we do this as a special out of band case so it doesn't get added to an
@@ -478,6 +531,7 @@ class AppiumDriver extends BaseDriver {
     let sessionId = null;
     let dstSession = null;
     let protocol = null;
+    /** @type {this | Driver} */
     let driver = this;
     if (isSessionCmd) {
       sessionId = _.last(args);
@@ -535,7 +589,7 @@ class AppiumDriver extends BaseDriver {
       if (isUmbrellaCmd) {
         // some commands, like deleteSession, we want to make sure to handle on *this* driver,
         // not the platform driver
-        return await super.executeCommand(cmd, ...args);
+        return await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
       }
 
       // here we know that we are executing a session command, and have a valid session driver
@@ -676,3 +730,21 @@ export class NoDriverProxyCommandError extends Error {
 }
 
 export { AppiumDriver };
+
+/**
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
+ * @typedef {import('@appium/types').DriverData} DriverData
+ */
+
+/**
+ * @template V
+ * @typedef SessionHandlerResult
+ * @property {V} [value]
+ * @property {Error} [error]
+ * @property {string} [protocol]
+ */
+
+/**
+ * @typedef {import('@appium/types').SessionHandler<SessionHandlerResult<any[]>,SessionHandlerResult<void>>} SessionHandler
+ */

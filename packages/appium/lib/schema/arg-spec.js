@@ -28,6 +28,7 @@ const PROPERTIES = 'properties';
  * option) used for cross-referencing.
  *
  * This class has no instance methods, and is basically just a read-only "struct".
+ * @template D
  */
 export class ArgSpec {
   /**
@@ -81,7 +82,7 @@ export class ArgSpec {
   /**
    * Whatever the default value of this argument is, as specified by the
    * `default` property of the schema.
-   * @type {D}
+   * @type {D|undefined}
    */
   defaultValue;
 
@@ -92,7 +93,6 @@ export class ArgSpec {
    *
    * The _constructor_ is private. Use {@link ArgSpec.create} instead.
    * @private
-   * @template D
    * @param {string} name
    * @param {ArgSpecOptions<D>} [opts]
    */
@@ -176,12 +176,15 @@ export class ArgSpec {
   /**
    * When given the root ID of a schema for an extension (`<extType>-<normalizedExtName>.json`) Returns an object containing the extension type and the _normalized_ extension name.
    * @param {string} schemaId - Root schema ID
-   * @returns { {extType: ExtensionType|undefined, normalizedExtName: string|undefined} }
+   * @returns { {extType?: ExtensionType, normalizedExtName?: string} }
    */
   static extensionInfoFromRootSchemaId (schemaId) {
     const matches = schemaId.match(SCHEMA_ID_REGEXP);
     if (matches?.groups) {
-      const {extType, normalizedExtName} = matches.groups;
+      const {extType, normalizedExtName} =
+        /** @type { {extType: ExtensionType, normalizedExtName: string} } */ (
+          matches.groups
+        );
       return {extType, normalizedExtName};
     }
     return {};
@@ -192,7 +195,8 @@ export class ArgSpec {
    *
    * @param {string} name - The canonical name of the argument. Corresponds to a key in a schema's
    * `properties` property.
-   * @param {ArgSpecOptions} [opts] - Options
+   * @template D
+   * @param {ArgSpecOptions<D>} [opts] - Options
    * @returns {Readonly<ArgSpec>}
    */
   static create (name, opts) {
@@ -224,5 +228,5 @@ export class ArgSpec {
  */
 
 /**
- * @typedef {import('../manifest').ExtensionType} ExtensionType
+ * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
  */

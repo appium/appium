@@ -1,4 +1,3 @@
-// @ts-check
 
 import _ from 'lodash';
 import { DRIVER_TYPE } from '../constants';
@@ -80,7 +79,7 @@ export class DriverConfig extends ExtensionConfig {
    }
 
    /**
-   * @param {ManifestDriverData} extData
+   * @param {ExtManifest<DriverType>} extData
    * @returns {import('./extension-config').Problem[]}
    */
    getConfigProblems (extData) {
@@ -126,7 +125,7 @@ export class DriverConfig extends ExtensionConfig {
 
    /**
    * @param {ExtName<DriverType>} driverName
-   * @param {ManifestDriverData} extData
+   * @param {ExtManifest<DriverType>} extData
    * @returns {string}
    */
    extensionDesc (driverName, {version, automationName}) {
@@ -135,8 +134,8 @@ export class DriverConfig extends ExtensionConfig {
 
    /**
    * Given capabilities, find a matching driver within the config. Load its class and return it along with version and driver name.
-   * @param { { automationName: string, platformName: string } } caps
-   * @returns { { driver: import('./manifest').DriverClass, version: string, driverName: string } }
+   * @param {AppiumCapabilities} caps
+   * @returns {MatchedDriver}
    */
    findMatchingDriver ({automationName, platformName}) {
      if (!_.isString(platformName)) {
@@ -177,7 +176,7 @@ export class DriverConfig extends ExtensionConfig {
    * Given an automation name and platform name, find a suitable driver and return its extension data.
    * @param {string} matchAutomationName
    * @param {string} matchPlatformName
-   * @returns {ManifestDriverData & { driverName: string } }
+   * @returns {ExtMetadata<DriverType> & import('../../types/appium-manifest').InternalMetadata & import('../../types/external-manifest').CommonMetadata}
    */
    _getDriverBySupport (matchAutomationName, matchPlatformName) {
      const drivers = this.installedExtensions;
@@ -211,20 +210,40 @@ export class DriverConfig extends ExtensionConfig {
  */
 
 /**
- * @typedef {import('./manifest').ExternalData<DriverType>} ExternalDriverData
- * @typedef {import('./manifest').ManifestDriverData} ManifestDriverData
- * @typedef {import('./manifest').ManifestData} ManifestData
- * @typedef {import('./manifest').DriverType} DriverType
+ * @template T
+ * @typedef {import('../../types').ExternalManifest.ExtMetadata<T>} ExtMetadata
+ */
+
+/**
+ * @template T
+ * @typedef {import('../../types').AppiumManifest.ExtManifest<T>} ExtManifest
+ */
+
+/**
+ * @typedef {import('../../types').AppiumManifest.ManifestData} ManifestData
+ * @typedef {import('../../types').DriverType} DriverType
  * @typedef {import('./manifest').Manifest} Manifest
  */
 
 /**
  * @template T
- * @typedef {import('./extension-config').ExtRecord<T>} ExtRecord
+ * @typedef {import('../../types').AppiumManifest.ExtRecord<T>} ExtRecord
  */
 
 /**
  * @template T
- * @typedef {import('./extension-config').ExtName<T>} ExtName
+ * @typedef {import('../../types').AppiumManifest.ExtName<T>} ExtName
  */
 
+
+/**
+ * Return value of {@linkcode DriverConfig.findMatchingDriver}
+ * @typedef MatchedDriver
+ * @property {import('../../types/extension').DriverClass} driver
+ * @property {string} version
+ * @property {string} driverName
+ */
+
+/**
+ * @typedef {import('@appium/types').AppiumCapabilities} AppiumCapabilities
+ */

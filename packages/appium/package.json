@@ -37,7 +37,7 @@
     "types"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --delete-dir-on-start --out-dir=build/lib",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
     "postbuild": "npm run generate-schema-json",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
@@ -87,5 +87,6 @@
     "access": "public",
     "tag": "next"
   },
+  "types": "./build/lib/index.d.ts",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

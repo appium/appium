@@ -1,4 +1,3 @@
-// @ts-check
 
 import _ from 'lodash';
 import logger from './logger';
@@ -35,25 +34,28 @@ const inspect = _.flow(
  * Takes the caps that were provided in the request and translates them
  * into caps that can be used by the inner drivers.
  *
- * @param {Object} jsonwpCapabilities
- * @param {Object} w3cCapabilities
- * @param {Object} constraints
- * @param {Object} defaultCapabilities
+ * @param {any} jsonwpCapabilities
+ * @param {W3CCapabilities} w3cCapabilities
+ * @param {import('@appium/types').Constraints} constraints
+ * @param {Capabilities} [defaultCapabilities]
+ * @returns {ParsedDriverCaps|InvalidCaps}
  */
 function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constraints = {}, defaultCapabilities = {}) {
   // Check if the caller sent JSONWP caps, W3C caps, or both
   const hasW3CCaps = _.isPlainObject(w3cCapabilities) &&
     (_.has(w3cCapabilities, 'alwaysMatch') || _.has(w3cCapabilities, 'firstMatch'));
   const hasJSONWPCaps = _.isPlainObject(jsonwpCapabilities);
-  let desiredCaps = {};
-  let processedW3CCapabilities = null;
-  let processedJsonwpCapabilities = null;
+  let desiredCaps = /** @type {ParsedDriverCaps['desiredCaps']} */({});
+  /** @type {ParsedDriverCaps['processedW3CCapabilities']} */
+  let processedW3CCapabilities;
+  /** @type {ParsedDriverCaps['processedJsonwpCapabilities']} */
+  let processedJsonwpCapabilities;
 
   if (!hasW3CCaps) {
-    return {
+    return /** @type {InvalidCaps} */({
       protocol: PROTOCOLS.W3C,
       error: new Error('W3C capabilities should be provided'),
-    };
+    });
   }
 
   const {W3C} = PROTOCOLS;
@@ -93,7 +95,7 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
       }
     }
     if (hasJSONWPCaps) {
-      jsonwpCapabilities = Object.assign({}, removeAppiumPrefixes(defaultCapabilities), jsonwpCapabilities);
+      jsonwpCapabilities = {...removeAppiumPrefixes(defaultCapabilities), ...jsonwpCapabilities};
     }
   }
 
@@ -110,13 +112,13 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
       desiredCaps = processCapabilities(w3cCapabilities, constraints, true);
     } catch (error) {
       logger.info(`Could not parse W3C capabilities: ${error.message}`);
-      return {
+      return /** @type {InvalidCaps} */({
         desiredCaps,
         processedJsonwpCapabilities,
         processedW3CCapabilities,
         protocol,
         error,
-      };
+      });
     }
 
     // Create a new w3c capabilities payload that contains only the matching caps in `alwaysMatch`
@@ -126,12 +128,13 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
     };
   }
 
-  return {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol};
+  return /** @type {ParsedDriverCaps} */({desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol});
 }
 
 /**
  * Takes a capabilities objects and prefixes capabilities with `appium:`
- * @param {Object} caps Desired capabilities object
+ * @param {AppiumCapabilities} caps Desired capabilities object
+ * @returns {AppiumW3CCapabilities}
  */
 function insertAppiumPrefixes (caps) {
   // Standard, non-prefixed capabilities (see https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities)
@@ -158,6 +161,11 @@ function insertAppiumPrefixes (caps) {
   return prefixedCaps;
 }
 
+/**
+ *
+ * @param {AppiumW3CCapabilities} caps
+ * @returns {AppiumCapabilities}
+ */
 function removeAppiumPrefixes (caps) {
   if (!_.isPlainObject(caps)) {
     return caps;
@@ -218,3 +226,29 @@ export {
   inspect, parseCapsForInnerDriver, insertAppiumPrefixes,
   getPackageVersion, pullSettings, removeAppiumPrefixes
 };
+
+/**
+ * @todo protocol is more specific
+ * @typedef ParsedDriverCaps
+ * @property {AppiumCapabilities} desiredCaps
+ * @property {string} protocol
+ * @property {any} [processedJsonwpCapabilities]
+ * @property {W3CCapabilities} [processedW3CCapabilities]
+ */
+
+/**
+ * @todo protocol is more specific
+ * @typedef InvalidCaps
+ * @property {Error} error
+ * @property {string} protocol
+ * @property {AppiumCapabilities} [desiredCaps]
+ * @property {any} [processedJsonwpCapabilities]
+ * @property {W3CCapabilities} [processedW3CCapabilities]
+ */
+
+/**
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ * @typedef {import('@appium/types').AppiumCapabilities} AppiumCapabilities
+ * @typedef {import('@appium/types').AppiumW3CCapabilities} AppiumW3CCapabilities
+ */

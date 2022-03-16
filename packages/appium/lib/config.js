@@ -1,5 +1,3 @@
-// @ts-check
-
 /* eslint-disable no-console */
 import _ from 'lodash';
 import { system, fs } from '@appium/support';
@@ -19,6 +17,9 @@ const GIT_META_ROOT = '.git';
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
 const GITHUB_API = 'https://api.github.com/repos/appium/appium';
 
+/**
+ * @type {import('../types/cli').BuildInfo}
+ */
 const BUILD_INFO = {
   version: APPIUM_VER,
 };
@@ -34,7 +35,7 @@ async function updateBuildInfo (useGithubApiFallback = false) {
   }
   BUILD_INFO['git-sha'] = sha;
   const built = await getGitTimestamp(sha, useGithubApiFallback);
-  if (!_.isEmpty(built)) {
+  if (built) {
     BUILD_INFO.built = built;
   }
 }
@@ -121,10 +122,11 @@ async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
 }
 
 /**
- * @return Mutable object containing Appium build information. By default it
+ * Mutable object containing Appium build information. By default it
  * only contains the Appium version, but is updated with the build timestamp
  * and git commit hash asynchronously as soon as `updateBuildInfo` is called
  * and succeeds.
+ * @returns {import('../types/cli').BuildInfo}
  */
 function getBuildInfo () {
   return BUILD_INFO;
@@ -166,7 +168,7 @@ function getNonDefaultServerArgs (parsedArgs) {
    * Flattens parsed args into a single level object for comparison with
    * flattened defaults across server args and extension args.
    * @param {ParsedArgs} args
-   * @returns {Record<string, { value: any, argSpec: import('./schema/arg-spec').ArgSpec }>}
+   * @returns {Record<string, { value: any, argSpec: ArgSpec }>}
    */
   const flatten = (args) => {
     const argSpecs = getAllArgSpecs();
@@ -175,7 +177,7 @@ function getNonDefaultServerArgs (parsedArgs) {
         acc[argSpec.dest] = {value: _.get(args, argSpec.dest), argSpec};
       }
       return acc;
-    }, /** @type {Record<string, { value: any, argSpec: import('./schema/arg-spec').ArgSpec }>} */({}));
+    }, /** @type {Record<string, { value: any, argSpec: ArgSpec }>} */({}));
 
     return flattened;
   };
@@ -304,5 +306,7 @@ export {
 };
 
 /**
- * @typedef {import('../types/types').ParsedArgs} ParsedArgs
+ * @typedef {import('../types/cli').ParsedArgs} ParsedArgs
+ * @typedef {import('./schema/arg-spec').ArgSpec} ArgSpec
  */
+

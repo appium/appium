@@ -7,7 +7,7 @@ import { initMocks } from './mocks';
 const {expect} = chai;
 
 describe('package-changed', function () {
-  /** @type {typeof import('../../..lib/extension/package-changed').packageDidChange} */
+  /** @type {typeof import('../../../lib/extension/package-changed').packageDidChange} */
   let packageDidChange;
 
   /** @type {sinon.SinonSandbox} */

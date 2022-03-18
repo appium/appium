@@ -32,15 +32,20 @@
     "lib",
     "static",
     "test/basedriver",
-    "!test/basedriver/fixtures",
+    "!test/e2e/fixtures",
     "build",
-    "!build/test/basedriver/fixtures"
+    "!build/test/e2e/fixtures"
   ],
   "scripts": {
-    "dev": "gulp dev --no-notif",
-    "build": "gulp transpile",
-    "test": "gulp unit-test:run",
-    "test:e2e": "gulp e2e-test:run"
+    "build": "npm run build:sources && npm run build:test",
+    "build:sources": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build:test": "babel test --root-mode=upward --out-dir=build/test --copy-files",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:e2e": "mocha --require ../../test/setup-babel.js --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/support": "file:../support",

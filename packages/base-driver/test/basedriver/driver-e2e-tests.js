@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { BaseDriver, server, routeConfiguringFunction, DeviceSettings } from '../../lib';
 import axios from 'axios';
 import B from 'bluebird';
-import {TEST_HOST, getTestPort, createAppiumURL, METHODS} from '../helpers';
+import { TEST_HOST, getTestPort, createAppiumURL, METHODS } from '../helpers';
 import { PREFIXED_APPIUM_OPTS_CAP } from '../../lib/basedriver/capabilities';
 const {POST, DELETE} = METHODS;
 

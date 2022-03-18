@@ -6,7 +6,7 @@ import xpath from 'xpath';
 import log from './logger';
 import { FakeElement } from './fake-element';
 
-const SCREENSHOT = path.join(__dirname, '..', 'screen.png');
+const SCREENSHOT = path.join(__dirname, 'screen.png');
 
 class FakeApp {
   constructor () {

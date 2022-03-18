@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-import contextCommands from '../lib/commands/contexts';
-import elementCommands from '../lib/commands/element';
-import findCommands from '../lib/commands/find';
-import generalCommands from '../lib/commands/general';
-import exportedCommands from '../lib/commands';
+import contextCommands from '../../lib/commands/contexts';
+import elementCommands from '../../lib/commands/element';
+import findCommands from '../../lib/commands/find';
+import generalCommands from '../../lib/commands/general';
+import exportedCommands from '../../lib/commands';
 
 
 

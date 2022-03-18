@@ -2,8 +2,8 @@
 
 import axios from 'axios';
 import { baseDriverE2ETests } from '@appium/base-driver/build/test/basedriver';
-import { FakeDriver, startServer } from '../lib/index.js';
-import { BASE_CAPS, deleteSession, initSession, TEST_HOST, TEST_PORT, W3C_PREFIXED_CAPS } from './helpers';
+import { FakeDriver, startServer } from '../../lib/index.js';
+import { BASE_CAPS, deleteSession, initSession, TEST_HOST, TEST_PORT, W3C_PREFIXED_CAPS } from '../helpers';
 import contextTests from './context-tests';
 import findElementTests from './find-element-tests';
 import elementInteractionTests from './element-interaction-tests';

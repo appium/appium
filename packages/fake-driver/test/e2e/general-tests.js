@@ -1,5 +1,5 @@
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
-import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
+import { initSession, deleteSession, W3C_PREFIXED_CAPS } from '../helpers';
 
 function generalTests () {
   describe('generic actions', function () {

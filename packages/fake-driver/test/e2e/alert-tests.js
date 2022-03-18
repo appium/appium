@@ -1,4 +1,4 @@
-import { initSession, deleteSession, W3C_PREFIXED_CAPS } from './helpers';
+import { initSession, deleteSession, W3C_PREFIXED_CAPS } from '../helpers';
 
 function alertTests () {
   describe('alerts', function () {

@@ -1,8 +1,8 @@
 // transpile:mocha
 
 import _ from 'lodash';
-import { FakeDriver } from '../lib';
-import { W3C_CAPS, W3C_PREFIXED_CAPS } from './helpers';
+import { FakeDriver } from '../../lib';
+import { W3C_CAPS, W3C_PREFIXED_CAPS } from '../helpers';
 import { baseDriverUnitTests } from '@appium/base-driver/build/test/basedriver';
 
 

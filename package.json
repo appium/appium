@@ -125,7 +125,7 @@
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.6.0",
     "eslint": "7.32.0",
-    "eslint-find-rules": "4.0.0",
+    "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-mocha": "9.0.0",
     "eslint-plugin-promise": "5.2.0",

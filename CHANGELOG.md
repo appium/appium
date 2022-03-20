@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.22.3 (FROM 1.22.2)
+===================================
+
+Appium 1.22.3 is a patch release
+
+We're going to move to [Appium 2.x](https://github.com/appium/appium/blob/2.0/docs/en/about-appium/1.x-eol.md).
+Appium 1.x will be receiving minor or patch releases only if XCTest gets breaking updates or major bugs pop up before the EOL.
+
+### iOS(XCUITest)
+
+- Fix failing screenshot issue in Xcode 13.3 and iOS 15.4 combination [WebDriverAgent#573](https://github.com/appium/WebDriverAgent/pull/573)
+    - Please read [the original issue](https://github.com/appium/appium/issues/16604) for more details
+
 CHANGES IN VERSION 1.22.2 (FROM 1.22.1)
 ===================================
 

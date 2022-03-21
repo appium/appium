@@ -33,13 +33,13 @@ const METHOD_MAP = {
   '/session/:sessionId/timeouts': {
     GET: {command: 'getTimeouts'}, // W3C route
     POST: {command: 'timeouts', payloadParams: {
-      // TODO: Remove when we drops MJSONWP
       validate: (jsonObj, protocolName) => {
         if (protocolName === PROTOCOLS.W3C) {
           if (!util.hasValue(jsonObj.script) && !util.hasValue(jsonObj.pageLoad) && !util.hasValue(jsonObj.implicit)) {
             return 'W3C protocol expects any of script, pageLoad or implicit to be set';
           }
         } else {
+          // MJSONWP
           if (!util.hasValue(jsonObj.type) || !util.hasValue(jsonObj.ms)) {
             return 'MJSONWP protocol requires type and ms';
           }

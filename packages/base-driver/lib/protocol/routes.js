@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { util } from '@appium/support';
-import { DEFAULT_BASE_PATH } from '../constants';
+import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
 
 
 const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
@@ -33,6 +33,18 @@ const METHOD_MAP = {
   '/session/:sessionId/timeouts': {
     GET: {command: 'getTimeouts'}, // W3C route
     POST: {command: 'timeouts', payloadParams: {
+      validate: (jsonObj, protocolName) => {
+        if (protocolName === PROTOCOLS.W3C) {
+          if (!util.hasValue(jsonObj.script) && !util.hasValue(jsonObj.pageLoad) && !util.hasValue(jsonObj.implicit)) {
+            return 'W3C protocol expects any of script, pageLoad or implicit to be set';
+          }
+        } else {
+          // MJSONWP
+          if (!util.hasValue(jsonObj.type) || !util.hasValue(jsonObj.ms)) {
+            return 'MJSONWP protocol requires type and ms';
+          }
+        }
+      },
       optional: ['type', 'ms', 'script', 'pageLoad', 'implicit'],
     }}
   },
@@ -42,9 +54,19 @@ const METHOD_MAP = {
   '/session/:sessionId/timeouts/implicit_wait': {
     POST: {command: 'implicitWait', payloadParams: {required: ['ms']}}
   },
+  // JSONWP
+  '/session/:sessionId/window_handle': {
+    GET: {command: 'getWindowHandle'}
+  },
+  // W3C
   '/session/:sessionId/window/handle': {
     GET: {command: 'getWindowHandle'}
   },
+  // JSONWP
+  '/session/:sessionId/window_handles': {
+    GET: {command: 'getWindowHandles'}
+  },
+  // W3C
   '/session/:sessionId/window/handles': {
     GET: {command: 'getWindowHandles'}
   },
@@ -60,6 +82,14 @@ const METHOD_MAP = {
   },
   '/session/:sessionId/refresh': {
     POST: {command: 'refresh'}
+  },
+  // MJSONWP
+  '/session/:sessionId/execute': {
+    POST: {command: 'execute', payloadParams: {required: ['script', 'args']}}
+  },
+  // MJSONWP
+  '/session/:sessionId/execute_async': {
+    POST: {command: 'executeAsync', payloadParams: {required: ['script', 'args']}}
   },
   '/session/:sessionId/screenshot': {
     GET: {command: 'getScreenshot'}
@@ -585,6 +615,28 @@ const METHOD_MAP = {
     POST: {command: 'logCustomEvent', payloadParams: {required: ['vendor', 'event']}}
   },
 
+  /*
+   * The W3C spec has some changes to the wire protocol.
+   * https://w3c.github.io/webdriver/webdriver-spec.html
+   * Begin to add those changes here, keeping the old version
+   * since clients still implement them.
+   */
+  // MJSONWP
+  '/session/:sessionId/alert_text': {
+    GET: {command: 'getAlertText'},
+    POST: {
+      command: 'setAlertText',
+      payloadParams: SET_ALERT_TEXT_PAYLOAD_PARAMS,
+    }
+  },
+  // MJSONWP
+  '/session/:sessionId/accept_alert': {
+    POST: {command: 'postAcceptAlert'}
+  },
+  // MJSONWP
+  '/session/:sessionId/dismiss_alert': {
+    POST: {command: 'postDismissAlert'}
+  },
   // https://w3c.github.io/webdriver/webdriver-spec.html#user-prompts
   '/session/:sessionId/alert/text': {
     GET: {command: 'getAlertText'},
@@ -608,6 +660,10 @@ const METHOD_MAP = {
   },
   '/session/:sessionId/execute/async': {
     POST: {command: 'executeAsync', payloadParams: {required: ['script', 'args']}}
+  },
+  // Pre-W3C endpoint for element screenshot
+  '/session/:sessionId/screenshot/:elementId': {
+    GET: {command: 'getElementScreenshot'}
   },
   '/session/:sessionId/element/:elementId/screenshot': {
     GET: {command: 'getElementScreenshot'}

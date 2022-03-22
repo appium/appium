@@ -5,8 +5,8 @@ import {errors} from '../../protocol';
 
 /**
  *
- * @param {ReturnType<import('./event').EventMixin>} Base
- * @returns {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & IFindCommands>}
+ * @param {EventBase} Base
+ * @returns {FindBase}
  */
 export function FindMixin (Base) {
   /**
@@ -111,4 +111,6 @@ export function FindMixin (Base) {
 /**
  * @typedef {import('@appium/types').Element} Element
  * @typedef {import('@appium/types').FindCommands} IFindCommands
+ * @typedef {import('./event').EventBase} EventBase
+ * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & IFindCommands>} FindBase
  */

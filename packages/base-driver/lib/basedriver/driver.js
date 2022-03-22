@@ -27,6 +27,10 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
  * @implements {SessionHandler}
  */
 export class BaseDriverCore extends DriverCore {
+
+  /** @type {Record<string,any>|undefined} */
+  cliArgs;
+
   // This is the main command handler for the driver. It wraps command
   // execution with timeout logic, checking that we have a valid session,
   // and ensuring that we execute commands one at a time. This method is called
@@ -179,7 +183,7 @@ export class BaseDriverCore extends DriverCore {
         await this.deleteSession(this.sessionId);
       }
       this.log.debug('Restarting app');
-      await this.createSession(undefined, undefined, this.originalCaps);
+      await this.createSession(this.originalCaps);
     } finally {
       // always restore state.
       for (let [key, value] of _.toPairs(currentConfig)) {
@@ -286,7 +290,7 @@ export class BaseDriverCore extends DriverCore {
 
     // Prevents empty string caps so we don't need to test it everywhere
     if (typeof this.opts.app === 'string' && this.opts.app.trim() === '') {
-      this.opts.app = null;
+      delete this.opts.app;
     }
 
     if (!_.isUndefined(this.caps.newCommandTimeout)) {
@@ -301,7 +305,7 @@ export class BaseDriverCore extends DriverCore {
   /**
     *
     * @param {string} [sessionId]
-    * @param {object[]} [driverData]
+    * @param {DriverData[]} [driverData]
     * @returns {Promise<void>}
     */
   async deleteSession (sessionId, driverData) {
@@ -330,11 +334,30 @@ export default BaseDriver;
  * @typedef {import('@appium/types').DriverOpts} DriverOpts
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
  * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').DriverData} DriverData
+ */
+
+
+/**
+ * @callback UpdateServerCallback
+ * @param {import('express').Express} app - Express app
+ * @param {import('@appium/types').AppiumServer} httpServer - HTTP server
+ * @returns {import('type-fest').Promisable<void>}
  */
 
 /**
- * @template [T={}]
- * @typedef {import('type-fest').Class<BaseDriverCore & T> & {baseVersion: string}} BaseDriverBase
+ * This is used to extend {@linkcode BaseDriverCore} by the mixins and also external drivers.
+ * @template [Proto={}]
+ * @template [Static={}]
+ * @typedef {import('@appium/types').Class<BaseDriverCore & Proto,BaseDriverStatic & Static>} BaseDriverBase
+ */
+
+/**
+ * Static properties of `BaseDriver` and optional properties for subclasses.
+ * @typedef BaseDriverStatic
+ * @property {string} baseVersion
+ * @property {UpdateServerCallback} [updateServer]
+ * @property {import('@appium/types').MethodMap} [newMethodMap]
  */
 
 /**

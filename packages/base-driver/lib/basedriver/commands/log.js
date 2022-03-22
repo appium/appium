@@ -5,8 +5,8 @@ import _ from 'lodash';
 
 /**
  *
- * @param {ReturnType<import('./find').FindMixin>} Base
- * @returns {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & ILogCommands>}
+ * @param {FindBase} Base
+ * @returns {LogBase}
  */
 export function LogMixin (Base) {
   /**
@@ -15,7 +15,7 @@ export function LogMixin (Base) {
   class LogCommands extends Base {
     /**
      * XXX: dubious
-     * @type {Record<string,import('@appium/types').LogType<import('@appium/types').Driver>>}
+     * @type {Record<string,LogType<Driver>>}
      */
     supportedLogTypes;
 
@@ -25,7 +25,7 @@ export function LogMixin (Base) {
     }
 
     /**
-     * @this {import('@appium/types').Driver}
+     * @this {Driver}
      */
     async getLog (logType) {
       this.log.debug(`Retrieving '${logType}' logs`);
@@ -54,4 +54,12 @@ export function LogMixin (Base) {
 
 /**
  * @typedef {import('@appium/types').LogCommands} ILogCommands
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('./find').FindBase} FindBase
+ * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & ILogCommands>} LogBase
+ */
+
+/**
+ * @template T
+ * @typedef {import('@appium/types').LogType<T>} LogType
  */

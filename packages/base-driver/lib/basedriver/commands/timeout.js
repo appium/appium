@@ -11,7 +11,7 @@ const MIN_TIMEOUT = 0;
 
 /**
  * @param {import('../driver').BaseDriverBase} Base
- * @returns {import('../driver').BaseDriverBase<ITimeoutCommands>}
+ * @returns {TimeoutBase}
  */
 export function TimeoutMixin (Base) {
 
@@ -163,4 +163,5 @@ export function TimeoutMixin (Base) {
 
 /**
  * @typedef {import('@appium/types').TimeoutCommands} ITimeoutCommands
+ * @typedef {import('../driver').BaseDriverBase<ITimeoutCommands>} TimeoutBase
  */

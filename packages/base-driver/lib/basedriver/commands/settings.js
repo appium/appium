@@ -3,7 +3,7 @@
 /**
  *
  * @param {ReturnType<import('./log').LogMixin>} Base
- * @returns {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & import('@appium/types').LogCommands & ISettingsCommands>}
+ * @returns {SettingsBase}
  */
 export function SettingsMixin (Base) {
   /**
@@ -32,4 +32,6 @@ export function SettingsMixin (Base) {
 
 /**
  * @typedef {import('@appium/types').SettingsCommands} ISettingsCommands
+ * @typedef {import('./log').LogBase} LogBase
+ * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & import('@appium/types').LogCommands & ISettingsCommands>} SettingsBase
  */

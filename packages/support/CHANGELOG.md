@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.56.0](https://github.com/appium/appium/compare/@appium/support@2.55.4...@appium/support@2.56.0) (2022-03-22)
+
+
+### Features
+
+* **base-driver:** Add the size validation of the passed settings objects ([#16420](https://github.com/appium/appium/issues/16420)) ([a881ae9](https://github.com/appium/appium/commit/a881ae992abfddcdb9fd27d699ce8b824847ed47))
+* **support:** add env module ([4ef3323](https://github.com/appium/appium/commit/4ef3323d1aaa4a8282c63605b5640c9f10610437))
+* **support:** move npm module into support ([2fbd49f](https://github.com/appium/appium/commit/2fbd49fed4cdf10fe1f4b374b5b44ae327ab3f85))
+* **support:** remove mkdirp ([9829e69](https://github.com/appium/appium/commit/9829e693333f7bd4b7728f466b02414c1e117b61))
+
+
+
+
+
 ## [2.55.4](https://github.com/appium/appium/compare/@appium/support@2.55.3...@appium/support@2.55.4) (2022-01-21)
 
 **Note:** Version bump only for package @appium/support

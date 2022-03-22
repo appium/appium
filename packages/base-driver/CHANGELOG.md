@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.3.0](https://github.com/appium/appium/compare/@appium/base-driver@8.2.4...@appium/base-driver@8.3.0) (2022-03-22)
+
+
+### Bug Fixes
+
+* remove BASEDRIVER_HANDLED_SETTINGS ([#16368](https://github.com/appium/appium/issues/16368)) ([5aae1ae](https://github.com/appium/appium/commit/5aae1ae8a70495f4b2ff230b0881acb5b7b59d76))
+* revert 15809 ([#16621](https://github.com/appium/appium/issues/16621)) ([3ee93ba](https://github.com/appium/appium/commit/3ee93ba5bd44268692bee5853b39f6b7ce593d7e))
+* Update property name after lru-cache package bump ([#16446](https://github.com/appium/appium/issues/16446)) ([1165269](https://github.com/appium/appium/commit/1165269644f8151b31730e920d9576c05e8072f4))
+
+
+### Features
+
+* Add a missing route for element shadow root ([#16538](https://github.com/appium/appium/issues/16538)) ([493c48d](https://github.com/appium/appium/commit/493c48d190373e188f5a8a3c416ebddc6a17189b))
+* **base-driver:** Add the size validation of the passed settings objects ([#16420](https://github.com/appium/appium/issues/16420)) ([a881ae9](https://github.com/appium/appium/commit/a881ae992abfddcdb9fd27d699ce8b824847ed47))
+
+
+
+
+
 ## [8.2.4](https://github.com/appium/appium/compare/@appium/base-driver@8.2.3...@appium/base-driver@8.2.4) (2022-01-21)
 
 **Note:** Version bump only for package @appium/base-driver

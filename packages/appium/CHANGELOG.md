@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.26](https://github.com/appium/appium/compare/appium@2.0.0-beta.25...appium@2.0.0-beta.26) (2022-03-22)
+
+
+### Bug Fixes
+
+* **appium:** Increase the default limit of process listeners ([#16471](https://github.com/appium/appium/issues/16471)) ([a8315f3](https://github.com/appium/appium/commit/a8315f3f87862b3deeae90b4e21b133e9e3e78d5))
+* **appium:** make sure logsink init happens first since it patches npmlog globally (fix [#16519](https://github.com/appium/appium/issues/16519)) ([5abf852](https://github.com/appium/appium/commit/5abf85204614b47d2363097a5356f4bddf697352))
+* **appium:** remove bad log ([1dbeee2](https://github.com/appium/appium/commit/1dbeee200677a9c0452bb8c24d78da1e2b5e181c))
+
+
+### Features
+
+* **appium:** allow installation of extensions via `npm` ([d89fb9b](https://github.com/appium/appium/commit/d89fb9b354b274f2ba410527d25d73af6743d76c))
+* **support:** move npm module into support ([2fbd49f](https://github.com/appium/appium/commit/2fbd49fed4cdf10fe1f4b374b5b44ae327ab3f85))
+
+
+
+
+
 # [2.0.0-beta.25](https://github.com/appium/appium/compare/appium@2.0.0-beta.24...appium@2.0.0-beta.25) (2022-01-21)
 
 

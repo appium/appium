@@ -51,7 +51,7 @@
     "@types/mocha": "9.1.0",
     "@types/node": "16.11.26",
     "ansi-red": "0.1.1",
-    "axios": "0.24.0",
+    "axios": "0.26.1",
     "babel-eslint": "10.1.0",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.1.3",

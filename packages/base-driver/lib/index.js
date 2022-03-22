@@ -1,5 +1,11 @@
 // @ts-check
 
+import B from 'bluebird';
+
+B.config({
+  cancellation: true,
+});
+
 // BaseDriver exports
 import { BaseDriver } from './basedriver/driver';
 export { DriverCore } from './basedriver/core';

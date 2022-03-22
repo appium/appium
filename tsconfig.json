@@ -13,6 +13,7 @@
   "files": [],
   "references": [
     {"path": "packages/types"},
-    {"path": "packages/support"}
+    {"path": "packages/support"},
+    {"path": "packages/base-driver"}
   ]
 }

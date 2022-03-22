@@ -156,6 +156,20 @@ export class BaseDriverCore extends DriverCore {
     }, this.newCommandTimeoutMs);
   }
 
+  /**
+   *
+   * @param {import('@appium/types').AppiumServer} server
+   * @param {string} host
+   * @param {number} port
+   * @param {string} path
+   */
+  assignServer (server, host, port, path) {
+    this.server = server;
+    this.serverHost = host;
+    this.serverPort = port;
+    this.serverPath = path;
+  }
+
   /*
     * Restart the session with the original caps,
     * preserving the timeout config.
@@ -199,10 +213,10 @@ export class BaseDriverCore extends DriverCore {
      * Appium 2 has dropped the support of these, so now we only accept capability
      * objects in W3C format and thus allow any of the three arguments to represent
      * the latter.
-     * @param {object} w3cCapabilities1
-     * @param {object} [w3cCapabilities2]
-     * @param {object} [w3cCapabilities]
-     * @param {object[]} [driverData]
+     * @param {W3CCapabilities} w3cCapabilities1
+     * @param {W3CCapabilities} [w3cCapabilities2]
+     * @param {W3CCapabilities} [w3cCapabilities]
+     * @param {DriverData[]} [driverData]
      * @returns {Promise<[string,object]>}
      */
   async createSession (
@@ -334,6 +348,8 @@ export default BaseDriver;
  * @typedef {import('@appium/types').DriverOpts} DriverOpts
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
  * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
  */
 

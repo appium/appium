@@ -4,7 +4,6 @@
 
 import { fs, logger, node } from '@appium/support';
 import AsyncLock from 'async-lock';
-import B from 'bluebird';
 import { EventEmitter } from 'events';
 import _ from 'lodash';
 import os from 'os';
@@ -18,14 +17,13 @@ import helpers from './helpers';
 // for compat with running tests transpiled and in-place
 const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 
-B.config({
-  cancellation: true,
-});
-
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
-export class DriverCore {
+/**
+ * @implements {Core}
+ */
+class DriverCore {
 
   /**
    * Make the basedriver version available so for any driver which inherits from this package, we
@@ -38,17 +36,23 @@ export class DriverCore {
     */
    sessionId = null;
 
+   /**
+    * @type {DriverOpts}
+    */
    opts;
 
+   /**
+    * @type {DriverOpts}
+    */
    initialOpts;
 
    /**
-    * @type {object}
+    * @type {Capabilities}
     */
    caps;
 
    /**
-    * @type {object}
+    * @type {W3CCapabilities}
     */
    originalCaps;
 
@@ -82,13 +86,13 @@ export class DriverCore {
    /** @type {string[]} */
    webLocatorStrategies = [];
 
-   /** @type {import('@appium/types').Driver[]} */
+   /** @type {Driver[]} */
    managedDrivers = [];
 
    /** @type {NodeJS.Timeout?} */
    noCommandTimer = null;
 
-   /** @type {import('@appium/types').EventHistory} */
+   /** @type {EventHistory} */
    _eventHistory = {commands: []};
 
    _constraints = _.cloneDeep(desiredCapabilityConstraints);
@@ -98,7 +102,7 @@ export class DriverCore {
    eventEmitter = new EventEmitter();
 
    /**
-    * @type {import('@appium/types').AppiumLogger?}
+    * @type {AppiumLogger?}
     */
    _log = null;
 
@@ -127,7 +131,7 @@ export class DriverCore {
    settings = new DeviceSettings();
 
    constructor (
-     opts = /** @type {import('@appium/types').DriverOpts} */ ({}),
+     opts = /** @type {DriverOpts} */ ({}),
      shouldValidateCaps = true,
    ) {
      // setup state
@@ -181,7 +185,7 @@ export class DriverCore {
     * properties for driver instances running in parallel.
     * Override it in inherited driver classes if necessary.
     *
-    * @return {object} Driver properties mapping
+    * @return {Record<string,unknown>} Driver properties mapping
     */
    get driverData () {
      return {};
@@ -230,7 +234,7 @@ export class DriverCore {
      this.log.debug(`Event '${eventName}' logged at ${ts} (${logTime})`);
    }
 
-   /*
+   /**
     * Overridden in appium driver, but here so that individual drivers can be
     * tested with clients that poll
     */
@@ -279,7 +283,7 @@ export class DriverCore {
 
    /**
     *
-    * @param {object} caps
+    * @param {Capabilities} caps
     */
    logExtraCaps (caps) {
      let extraCaps = _.difference(_.keys(caps), _.keys(this._constraints));
@@ -296,7 +300,7 @@ export class DriverCore {
 
    /**
     *
-    * @param {object} caps
+    * @param {Capabilities} caps
     * @returns {boolean}
     */
    validateDesiredCaps (caps) {
@@ -471,7 +475,7 @@ export class DriverCore {
 
    /**
     *
-    * @param {import('@appium/types').Driver} driver
+    * @param {Driver} driver
     */
    addManagedDriver (driver) {
      this.managedDrivers.push(driver);
@@ -488,3 +492,15 @@ export class DriverCore {
      }
    }
 }
+
+export {DriverCore};
+
+/**
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').Core} Core
+ * @typedef {import('@appium/types').DriverOpts} DriverOpts
+ * @typedef {import('@appium/types').EventHistory} EventHistory
+ * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ */

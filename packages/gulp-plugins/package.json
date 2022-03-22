@@ -89,7 +89,7 @@
     "source-map-support": "0.5.21",
     "through2": "4.0.2",
     "vinyl-paths": "3.0.1",
-    "yargs": "17.3.1"
+    "yargs": "17.4.0"
   },
   "peerDependencies": {
     "gulp": "^4.0.2"

@@ -1,6 +1,5 @@
 // @ts-check
 
-// transpile:mocha
 
 import { BaseDriver } from '@appium/base-driver';
 import { FakeDriver } from '@appium/fake-driver';

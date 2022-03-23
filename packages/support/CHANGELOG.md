@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.56.1](https://github.com/appium/appium/compare/@appium/support@2.56.0...@appium/support@2.56.1) (2022-03-23)
+
+
+### Bug Fixes
+
+* **support:** add missing resolve-from dependency ([77727dc](https://github.com/appium/appium/commit/77727dc9139dcece87b25222f51a306a46040d8a))
+
+
+
+
+
 # [2.56.0](https://github.com/appium/appium/compare/@appium/support@2.55.4...@appium/support@2.56.0) (2022-03-22)
 
 

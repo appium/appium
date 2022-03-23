@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.27](https://github.com/appium/appium/compare/appium@2.0.0-beta.26...appium@2.0.0-beta.27) (2022-03-23)
+
+
+### Bug Fixes
+
+* **base-driver:** Use WeakRef to reference the driver instance in the log prefix generator ([#16636](https://github.com/appium/appium/issues/16636)) ([bbfc7ef](https://github.com/appium/appium/commit/bbfc7ef51d8a5c7e99072ee599ce2a6265017ea4))
+
+
+
+
+
 # [2.0.0-beta.26](https://github.com/appium/appium/compare/appium@2.0.0-beta.25...appium@2.0.0-beta.26) (2022-03-22)
 
 

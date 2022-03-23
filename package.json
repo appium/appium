@@ -130,7 +130,7 @@
     "eslint-plugin-mocha": "9.0.0",
     "eslint-plugin-promise": "5.2.0",
     "fancy-log": "1.3.3",
-    "finalhandler": "1.1.2",
+    "finalhandler": "1.2.0",
     "get-port": "5.1.1",
     "gulp": "4.0.2",
     "handlebars": "4.7.7",

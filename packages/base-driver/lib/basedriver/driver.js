@@ -115,7 +115,7 @@ class BaseDriver extends Protocol {
       const self = global.WeakRef ? new global.WeakRef(this) : this;
       this._log = logger.getLogger(() => {
         let sessionId = self?.sessionId;
-        if (_.isFunction(self.deref)) {
+        if (!sessionId && _.isFunction(self.deref)) {
           const ref = self.deref();
           if (ref?.sessionId) {
             sessionId = ref.sessionId;

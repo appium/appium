@@ -137,7 +137,7 @@
     "json-schema-to-typescript": "10.1.5",
     "lerna": "4.0.0",
     "lint-staged": "12.3.7",
-    "log-symbols": "4.1.0",
+    "log-symbols": "5.1.0",
     "mjpeg-server": "0.3.1",
     "mocha": "9.2.2",
     "pre-commit": "1.2.2",

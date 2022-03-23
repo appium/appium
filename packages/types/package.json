@@ -15,13 +15,14 @@
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
   "files": [
-    "index.d.ts"
+    "build",
+    "src"
   ],
   "engines": {
     "node": ">=12",
     "npm": ">=6"
   },
-  "types": "./index.d.ts",
+  "types": "./build/index.d.ts",
   "publishConfig": {
     "access": "public"
   },

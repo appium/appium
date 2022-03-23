@@ -1,9 +1,9 @@
 import { Capabilities } from '@wdio/types';
-import { Method as _Method } from 'axios';
-import { EventEmitter } from 'events';
-import { Server } from 'http';
-import { Logger } from 'npmlog';
-import { Class as _Class } from 'type-fest';
+import type { Method as _Method } from 'axios';
+import type { EventEmitter } from 'events';
+import type { Server } from 'http';
+import type { Logger } from 'npmlog';
+import type { Class as _Class } from 'type-fest';
 import { DriverOpts } from './config';
 
 export { DriverOpts };

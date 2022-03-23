@@ -1,5 +1,5 @@
-import appiumConfigSchema from 'appium/lib/schema/appium-config-schema';
-import { AppiumConfiguration, ServerConfig } from 'appium/types/appium-config';
+import type appiumConfigSchema from 'appium/lib/schema/appium-config-schema';
+import type { AppiumConfiguration, ServerConfig } from 'appium/types/appium-config';
 
 /**
  * The Appium configuration as it would be in a user-provided configuration file.

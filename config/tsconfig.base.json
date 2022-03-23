@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strictNullChecks": true,
+    "removeComments": false,
     "target": "es2015",
     "types": [
       "node",

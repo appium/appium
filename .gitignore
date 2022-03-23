@@ -57,4 +57,5 @@ appium.zip
 .nyc_output
 *.lerna_backup
 **/build-fixtures/**
+*.tsbuildinfo
 

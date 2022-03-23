@@ -7,8 +7,10 @@
       "@appium/base-driver": ["base-driver"],
       "appium": ["appium"],
       "@appium/types": ["types"]
-    }
+    },
+    "noEmit": true
   },
-  "include": ["./packages/types/**/*.d.ts"],
-  "references": []
+  "references": [
+    {"path": "packages/types"}
+  ]
 }

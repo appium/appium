@@ -48,7 +48,7 @@
     "@appium/support": "file:../support",
     "@babel/runtime": "7.17.8",
     "@colors/colors": "1.5.0",
-    "appium-adb": "8.18.0",
+    "appium-adb": "9.2.0",
     "bluebird": "3.7.2",
     "inquirer": "8.2.2",
     "lodash": "4.17.21",

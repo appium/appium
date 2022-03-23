@@ -1,14 +1,14 @@
+import { DriverOpts } from '@appium/types';
 import {
   DRIVER_TYPE as DRIVER_SUBCOMMAND,
   EXT_SUBCOMMAND_INSTALL,
-  EXT_SUBCOMMAND_UPDATE,
-  EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_LIST,
+  EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
+  EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE as PLUGIN_SUBCOMMAND,
   SERVER_SUBCOMMAND,
 } from '../lib/constants';
-import {DriverOpts} from '@appium/types';
 
 /**
  * Possible subcommands for the `appium` CLI.
@@ -54,9 +54,8 @@ interface MoreArgs {
  * These arguments are _not_ supported by the CLI, but only via programmatic usage / tests.
  */
 interface ProgrammaticArgs {
-
   /**
-   * If true, throw on error instead of exit.
+   * If `true`, throw on error instead of exit.
    */
   throwInsteadOfExit?: boolean;
 
@@ -68,7 +67,7 @@ interface ProgrammaticArgs {
   /**
    * Alternate way to set `APPIUM_HOME` for tests. Since we don't want to muck about
    * with the environment, we just set it here.
-   * 
+   *
    * Setting this means that any discovery of the proper `APPIUM_HOME` path is bypassed
    * and is equivalent to setting `APPIUM_HOME` in the environment.
    */
@@ -84,6 +83,7 @@ interface ProgrammaticArgs {
    */
   showConfig?: boolean;
 }
+
 /**
  * These are args that Appium assigns while parsing the args.
  */
@@ -101,10 +101,7 @@ interface InternalArgs {
   /**
    * Possible subcommands
    */
-  subcommand:
-    | typeof DRIVER_SUBCOMMAND
-    | typeof PLUGIN_SUBCOMMAND
-    | typeof SERVER_SUBCOMMAND;
+  subcommand: CliSubcommand;
 }
 
 /**

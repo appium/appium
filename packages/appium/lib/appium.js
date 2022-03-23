@@ -66,7 +66,7 @@ class AppiumDriver extends BaseDriver {
    */
   get log () {
     if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 8)}`;
+      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 4)}`;
       this._log = logger.getLogger(instanceName);
     }
     return this._log;

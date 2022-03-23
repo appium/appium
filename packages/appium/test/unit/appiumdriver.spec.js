@@ -1,15 +1,14 @@
 // @ts-check
 
-
+import B from 'bluebird';
 import { BaseDriver } from '@appium/base-driver';
 import { FakeDriver } from '@appium/fake-driver';
 import { sleep } from 'asyncbox';
 import _ from 'lodash';
 import { createSandbox } from 'sinon';
-import { AppiumDriver } from '../../lib/appium';
 import { finalizeSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
 import { insertAppiumPrefixes, removeAppiumPrefixes } from '../../lib/utils';
-import { BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from '../helpers';
+import { rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS } from '../helpers';
 
 const SESSION_ID = '1';
 
@@ -17,14 +16,53 @@ describe('AppiumDriver', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
+  let AppiumDriver;
+
+  let MockConfig;
+
   beforeEach(function () {
     sandbox = createSandbox();
     resetSchema();
     finalizeSchema();
+
+    MockConfig = {
+      getBuildInfo: sandbox.stub().returns({
+        version: '2.0'
+      }),
+      updateBuildInfo: sandbox.stub().resolves(),
+      APPIUM_VER: '2.0'
+    };
+    ({AppiumDriver} = rewiremock.proxy(() => require('../../lib/appium'), {
+      '../../lib/config': MockConfig
+    }));
   });
 
   afterEach(function () {
     sandbox.restore();
+  });
+
+  describe('constructor', function () {
+    it('should not emit an uncaught rejection if updateBuildInfo() fails', async function () {
+      const err = new Error('oops');
+      // this test is wacky because we do not await the call to `updateBuildInfo()` within
+      // the constructor. in that case, we won't actually know _when_ the promise is resolved or rejected.
+      // the following is the workaround
+      const promise = new B((resolve) => {
+        MockConfig.updateBuildInfo.callsFake(() => {
+          resolve();
+          return B.reject(err);
+        });
+      });
+
+      let ad = new AppiumDriver({});
+      // triggers the `log` getter to set `_log`
+      ad.log;
+      // now we can stub `_log`, since it exists
+      sandbox.stub(ad._log, 'debug');
+      // finally, wait for `updateBuildInfo()` to finish up
+      await promise;
+      ad._log.debug.should.have.been.calledOnceWith(err);
+    });
   });
 
   describe('instance method', function () {
@@ -44,7 +82,6 @@ describe('AppiumDriver', function () {
         return fakeDriver;
       };
 
-      // @ts-expect-error
       appium.driverConfig = {
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,

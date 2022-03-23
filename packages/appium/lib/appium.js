@@ -10,9 +10,10 @@ import { util, node, logger } from '@appium/support';
 import { getDefaultsForExtension } from './schema';
 
 /**
- * @type {import('@appium/types').Constraints}
+ * Invariant set of base constraints
+ * @type {Readonly<Constraints>}
  */
-const desiredCapabilityConstraints = {
+const desiredCapabilityConstraints = Object.freeze({
   automationName: {
     presence: true,
     isString: true,
@@ -21,10 +22,11 @@ const desiredCapabilityConstraints = {
     presence: true,
     isString: true,
   },
-};
+});
 
 const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
+
 /**
  * @implements {SessionHandler}
  */
@@ -45,36 +47,39 @@ class AppiumDriver extends DriverCore {
    */
   pendingDrivers = {};
 
-  // the main Appium Driver has no new command timeout
+  /**
+   * Note that {@linkcode AppiumDriver} has no `newCommandTimeout` method.
+   * `AppiumDriver` does not set and observe its own timeouts; individual
+   * sessions (managed drivers) do instead.
+   */
   newCommandTimeoutMs = 0;
 
   /**
    * List of active plugins
-   * @type {import('../types').Extension.PluginClass[]}
+   * @type {PluginClass[]}
    */
   pluginClasses = [];
 
   /**
    * map of sessions to actual plugin instances per session
-   * @type {Record<string,InstanceType<import('../types').Extension.PluginClass>[]>}
+   * @type {Record<string,InstanceType<PluginClass>[]>}
    */
   sessionPlugins = {};
 
   /**
    * some commands are sessionless, so we need a set of plugins for them
-   * @type {InstanceType<import('../types').Extension.PluginClass>[]}
+   * @type {InstanceType<PluginClass>[]}
    */
   sessionlessPlugins = [];;
 
-  /** @type {import('./extension/driver-config').DriverConfig} */
+  /** @type {DriverConfig} */
   driverConfig;
 
-  /** @type {import('@appium/types').AppiumServer} */
+  /** @type {AppiumServer} */
   server;
 
   /**
-   *
-   * @param {import('@appium/types').DriverOpts} opts
+   * @param {DriverOpts} opts
    */
   constructor (opts) {
     // It is necessary to set `--tmp` here since it should be set to
@@ -92,7 +97,11 @@ class AppiumDriver extends DriverCore {
     this.args = {...opts};
 
     // allow this to happen in the background, so no `await`
-    updateBuildInfo();
+    // catch this to avoid an unhandled rejection
+    // eslint-disable-next-line promise/prefer-await-to-then,promise/prefer-await-to-callbacks
+    updateBuildInfo().catch((err) => {
+      this.log.debug(err);
+    });
   }
 
   /**
@@ -157,7 +166,7 @@ class AppiumDriver extends DriverCore {
    * If the extension has provided a schema, validation has already happened.
    *
    * Any arg which is equal to its default value will not be assigned to the extension.
-   * @param {import('./extension/manifest').ExtensionType} extType 'driver' or 'plugin'
+   * @param {ExtensionType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
    * @param {Object} extInstance the driver or plugin instance
    */
@@ -735,9 +744,17 @@ export { AppiumDriver };
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
+ * @typedef {import('@appium/types').DriverOpts} DriverOpts
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ * @typedef {import('../types').ExtensionType} ExtensionType
+ * @typedef {import('../types/extension').PluginClass} PluginClass
+ * @typedef {import('./extension/driver-config').DriverConfig} DriverConfig
  */
 
 /**
+ * Used by {@linkcode AppiumDriver.createSession} and {@linkcode AppiumDriver.deleteSession} to describe
+ * result.
  * @template V
  * @typedef SessionHandlerResult
  * @property {V} [value]

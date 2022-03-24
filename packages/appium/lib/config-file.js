@@ -201,12 +201,12 @@ export function normalizeConfig (config) {
 
 /**
  * The contents of an Appium config file. Generated from schema
- * @typedef {import('@appium/types/config').AppiumConfig} AppiumConfig
+ * @typedef {import('@appium/types').AppiumConfig} AppiumConfig
  */
 
 /**
  * The contents of an Appium config file with camelcased property names (and using `appiumCliDest` value if present). Generated from {@link AppiumConfig}
- * @typedef {import('@appium/types/config').NormalizedAppiumConfig} NormalizedAppiumConfig
+ * @typedef {import('@appium/types').NormalizedAppiumConfig} NormalizedAppiumConfig
  */
 
 /**

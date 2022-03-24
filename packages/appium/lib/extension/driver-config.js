@@ -134,7 +134,7 @@ export class DriverConfig extends ExtensionConfig {
 
    /**
    * Given capabilities, find a matching driver within the config. Load its class and return it along with version and driver name.
-   * @param {AppiumCapabilities} caps
+   * @param {Capabilities} caps
    * @returns {MatchedDriver}
    */
    findMatchingDriver ({automationName, platformName}) {
@@ -245,5 +245,5 @@ export class DriverConfig extends ExtensionConfig {
  */
 
 /**
- * @typedef {import('@appium/types').AppiumCapabilities} AppiumCapabilities
+ * @typedef {import('@appium/types').Capabilities} Capabilities
  */

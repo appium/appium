@@ -37,7 +37,7 @@ const inspect = _.flow(
  * @param {any} jsonwpCapabilities
  * @param {W3CCapabilities} w3cCapabilities
  * @param {import('@appium/types').Constraints} constraints
- * @param {Capabilities} [defaultCapabilities]
+ * @param {import('../types/appium-config').DefaultCapabilitiesConfig} [defaultCapabilities]
  * @returns {ParsedDriverCaps|InvalidCaps}
  */
 function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constraints = {}, defaultCapabilities = {}) {
@@ -133,7 +133,7 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
 
 /**
  * Takes a capabilities objects and prefixes capabilities with `appium:`
- * @param {AppiumCapabilities} caps Desired capabilities object
+ * @param {Capabilities} caps Desired capabilities object
  * @returns {AppiumW3CCapabilities}
  */
 function insertAppiumPrefixes (caps) {
@@ -164,13 +164,14 @@ function insertAppiumPrefixes (caps) {
 /**
  *
  * @param {AppiumW3CCapabilities} caps
- * @returns {AppiumCapabilities}
+ * @returns {Capabilities}
  */
 function removeAppiumPrefixes (caps) {
   if (!_.isPlainObject(caps)) {
     return caps;
   }
 
+  /** @type {Capabilities} */
   const fixedCaps = {};
   for (let [name, value] of _.toPairs(caps)) {
     fixedCaps[removeAppiumPrefix(name)] = value;
@@ -230,7 +231,7 @@ export {
 /**
  * @todo protocol is more specific
  * @typedef ParsedDriverCaps
- * @property {AppiumCapabilities} desiredCaps
+ * @property {Capabilities} desiredCaps
  * @property {string} protocol
  * @property {any} [processedJsonwpCapabilities]
  * @property {W3CCapabilities} [processedW3CCapabilities]
@@ -241,7 +242,7 @@ export {
  * @typedef InvalidCaps
  * @property {Error} error
  * @property {string} protocol
- * @property {AppiumCapabilities} [desiredCaps]
+ * @property {Capabilities} [desiredCaps]
  * @property {any} [processedJsonwpCapabilities]
  * @property {W3CCapabilities} [processedW3CCapabilities]
  */
@@ -249,6 +250,5 @@ export {
 /**
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').Capabilities} Capabilities
- * @typedef {import('@appium/types').AppiumCapabilities} AppiumCapabilities
  * @typedef {import('@appium/types').AppiumW3CCapabilities} AppiumW3CCapabilities
  */

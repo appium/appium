@@ -80,7 +80,7 @@
     "moment": "2.29.1",
     "node-notifier": "10.0.1",
     "nyc": "15.1.0",
-    "pkg-dir": "5.0.0",
+    "pkg-dir": "6.0.1",
     "plugin-error": "1.0.1",
     "replace-in-file": "6.3.2",
     "rimraf": "3.0.2",

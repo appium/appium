@@ -3,18 +3,9 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "build",
-    "paths": {
-      "appium": ["../appium"]
-    },
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationMap": true
   },
-  "include": [
-    "./src/**/*"
-  ],
-  // "references": [
-  //   {"path": "../appium"}
-  // ]  
+  "include": ["./src/**/*"]
 }
-

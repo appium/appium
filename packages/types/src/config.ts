@@ -1,5 +1,5 @@
-import type appiumConfigSchema from 'appium/lib/schema/appium-config-schema';
-import type { AppiumConfiguration, ServerConfig } from 'appium/types/appium-config';
+import appiumConfigSchema from './appium-config-schema';
+import type { AppiumConfiguration, ServerConfig } from './appium-config';
 
 /**
  * The Appium configuration as it would be in a user-provided configuration file.
@@ -62,7 +62,6 @@ type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
 export type DriverOpts = {
   [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: KeyOrDefaultForProp<Prop>;
 };
-
 // begin utils
 
 /**
@@ -124,26 +123,6 @@ type Associated<A extends object, B extends { [key in keyof Required<A>]: unknow
 interface WithDefault<T = any> {
   default: T;
 }
-/**
- * Transformers are defined in `appium/lib/schema/cli-transformers.js'
- */ 
-interface WithCliTransformer {
-  appiumCliTransformer: 'json' | 'csv';
-}
-
-interface WithTypeArray {
-  type: 'array';
-}
-
-interface WithTypeObject {
-  type: 'object';
-}
-/**
- * If any of these apply to a property, then we will convert the value if necessary.  Those that
- * have {@linkcode WithTypeArray}, for instance, will also need `appiumCliTransformer: 'csv'`, or
- * they cannot be input on the command-line at all--they must be specified in the config file.
- */
-type WithTransformer = WithCliTransformer | WithTypeArray | WithTypeObject;
 
 // end conditionals
 

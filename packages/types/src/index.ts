@@ -1,17 +1,14 @@
-import { Capabilities } from '@wdio/types';
 import type { Method as _Method } from 'axios';
 import type { EventEmitter } from 'events';
 import type { Server } from 'http';
 import type { Logger } from 'npmlog';
 import type { Class as _Class } from 'type-fest';
 import { DriverOpts } from './config';
+import { Capabilities, W3CCapabilities } from './capabilities';
 
-export { DriverOpts };
-export type W3CCapabilities = Capabilities.W3CCapabilities;
-export type Capabilities = Capabilities.Capabilities;
-export type AppiumCapabilities = Capabilities.Capabilities &
-  Capabilities.AppiumCapabilities;
-export type AppiumW3CCapabilities = Capabilities.AppiumW3CCapabilities;
+export { AppiumW3CCapabilities } from './capabilities';
+export { AppiumConfig, NormalizedAppiumConfig } from './config';
+export { DriverOpts, Capabilities, W3CCapabilities };
 
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
@@ -20,7 +17,7 @@ export interface Core {
   sessionId: string | null;
   opts: DriverOpts;
   initialOpts: DriverOpts;
-  caps?: AppiumCapabilities;
+  caps?: Capabilities;
   originalCaps?: W3CCapabilities;
   protocol?: string;
   helpers: DriverHelpers;
@@ -41,9 +38,9 @@ export interface Core {
   desiredCapConstraints: Constraints;
   onUnexpectedShutdown(handler: () => any): void;
   getStatus(): Promise<unknown>;
-  logExtraCaps(caps: AppiumCapabilities): void;
+  logExtraCaps(caps: Capabilities): void;
   sessionExists(sessionId: string): boolean;
-  validateDesiredCaps(caps: AppiumCapabilities): boolean;
+  validateDesiredCaps(caps: Capabilities): boolean;
   isW3CProtocol(): boolean;
   isMjsonwpProtocol(): boolean;
   isFeatureEnabled(name: string): boolean;
@@ -537,10 +534,10 @@ export interface SessionCommands {
 
 export interface MultiSessionData {
   id: string;
-  capabilities: AppiumCapabilities;
+  capabilities: Capabilities;
 }
 
-export type SingularSessionData = AppiumCapabilities & {events?: EventHistory};
+export type SingularSessionData = Capabilities & {events?: EventHistory};
 
 export interface FindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;

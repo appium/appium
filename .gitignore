@@ -58,4 +58,7 @@ appium.zip
 *.lerna_backup
 **/build-fixtures/**
 *.tsbuildinfo
+packages/*/**/appium-config.schema.json
+packages/types/src/appium-config.ts
+packages/types/src/appium-config-schema.js
 

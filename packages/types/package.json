@@ -16,8 +16,12 @@
   "author": "https://github.com/appium",
   "files": [
     "build",
-    "src"
+    "src",
+    "schema"
   ],
+  "scripts": {
+    "generate-schema-declarations": "node ./scripts/generate-schema-declarations.js"
+  },
   "engines": {
     "node": ">=12",
     "npm": ">=6"

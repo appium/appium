@@ -35,7 +35,7 @@
     "eslint": "7.32.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-mocha": "9.0.0",
-    "eslint-plugin-promise": "5.2.0"
+    "eslint-plugin-promise": "6.0.0"
   },
   "publishConfig": {
     "access": "public"

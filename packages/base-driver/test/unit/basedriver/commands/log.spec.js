@@ -1,5 +1,5 @@
 // @ts-check
-import {LogMixin} from '../../../lib/basedriver/commands/log';
+import {LogMixin} from '../../../../lib/basedriver/commands/log';
 import { createSandbox } from 'sinon';
 import _ from 'lodash';
 

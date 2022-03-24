@@ -345,7 +345,6 @@ export { BaseDriver };
 export default BaseDriver;
 
 /**
- * @typedef {import('@appium/types').DriverOpts} DriverOpts
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Capabilities} Capabilities

@@ -5,9 +5,9 @@
     "outDir": "./build",
     "paths": {
       "@appium/support": ["../support"],
-      "@appium/types": ["../types"],
-    },
+      "@appium/types": ["../types"]
+    }
   },
   "include": ["./lib/**/*"],
-  "references": [{"path": "../support"}]
+  "references": [{"path": "../support"}, {"path": "../types"}]
 }

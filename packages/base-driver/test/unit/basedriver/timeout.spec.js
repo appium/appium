@@ -1,6 +1,6 @@
 // @ts-check
 
-import BaseDriver from '../../lib';
+import BaseDriver from '../../../lib';
 import { createSandbox } from 'sinon';
 
 describe('timeout', function () {

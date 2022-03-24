@@ -37,7 +37,7 @@ class DriverCore {
    sessionId = null;
 
    /**
-    * @type {DriverOpts}
+    * @type {DriverOpts & Capabilities}
     */
    opts;
 

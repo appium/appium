@@ -1,6 +1,4 @@
-// transpile:mocha
-
-import { stubEnv } from '../lib';
+import { stubEnv } from '../../lib';
 
 
 const expect = chai.expect;

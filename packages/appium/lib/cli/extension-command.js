@@ -242,9 +242,6 @@ class ExtensionCommand {
       extData = await this.installViaNpm({ext, pkgName, pkgVer});
     }
 
-    /**
-     * @type {string}
-     */
     const extName = extData[/** @type {string} */(`${this.type}Name`)];
     delete extData[/** @type {string} */(`${this.type}Name`)];
 
@@ -313,8 +310,9 @@ class ExtensionCommand {
     }
     const {appium, name, version} = pkgJsonData;
     this.validateExtensionFields(appium);
-
-    return /** @type {ExtensionFields<ExtType>} */(/** @type {unknown} */({...appium, pkgName: name, version}));
+    /** @type {unknown} */
+    const result = {...appium, pkgName: name, version};
+    return /** @type {ExtensionFields<ExtType>} */(result);
   }
 
   /**

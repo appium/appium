@@ -249,11 +249,11 @@ export class BaseDriverCore extends DriverCore {
 
     this.originalCaps = _.cloneDeep(originalCaps);
     this.log.debug(
-         `Creating session with W3C capabilities: ${JSON.stringify(
-           originalCaps,
-           null,
-           2,
-         )}`,
+      `Creating session with W3C capabilities: ${JSON.stringify(
+        originalCaps,
+        null,
+        2,
+      )}`,
     );
 
     let caps;

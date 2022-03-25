@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 // @ts-check
 import _ from 'lodash';
 
@@ -25,9 +26,9 @@ export function EventMixin (Base) {
      * Get the event log
      * @param {string|string[]} [type] - the event type to filter with.
      * It returns all events if the type is not provided or empty string/array.
-     * @returns {import('@appium/types').EventHistory|Record<string,number>} - the event history log object
+     * @returns {Promise<import('@appium/types').EventHistory|Record<string,number>>} - the event history log object
      */
-    getLogEvents (type) {
+    async getLogEvents (type) {
       if (_.isEmpty(type)) {
         return this.eventHistory;
       }

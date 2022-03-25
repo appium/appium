@@ -32,10 +32,13 @@
     "build"
   ],
   "scripts": {
-    "dev": "gulp dev --no-notif",
-    "build": "gulp transpile",
-    "test": "gulp unit-test:run",
-    "test:e2e": "gulp e2e-test:run"
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:e2e": "mocha --require ../../test/setup-babel.js --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@babel/runtime": "7.17.8",

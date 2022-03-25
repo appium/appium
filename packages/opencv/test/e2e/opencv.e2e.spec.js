@@ -1,10 +1,10 @@
 import {
   getImagesMatches, getImagesSimilarity, getImageOccurrence
-} from '../lib';
+} from '../../lib';
 import path from 'path';
 import { fs } from '@appium/support';
 
-const FIXTURES_ROOT = path.resolve(__dirname, '..', '..', 'test', 'images');
+const FIXTURES_ROOT = path.resolve(__dirname, 'images');
 
 describe('OpenCV helpers', function () {
   // OpenCV needs several seconds for initialization

@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 
 function isW3cCaps (caps) {
@@ -20,7 +22,14 @@ function isW3cCaps (caps) {
   return false;
 }
 
-function fixCaps (originalCaps, desiredCapConstraints = {}, log) {
+/**
+ *
+ * @param {Capabilities} originalCaps
+ * @param {Constraints} desiredCapConstraints
+ * @param {AppiumLogger} log
+ * @returns {Capabilities}
+ */
+function fixCaps (originalCaps, desiredCapConstraints, log) {
   let caps = _.clone(originalCaps);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
@@ -67,3 +76,9 @@ export {
   isW3cCaps,
   fixCaps
 };
+
+/**
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ */

@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import { validator } from './desired-caps';
 import { util } from '@appium/support';
@@ -131,7 +133,7 @@ function findNonPrefixedCaps ({alwaysMatch = {}, firstMatch = []}) {
   return _.chain([alwaysMatch, ...firstMatch])
     .reduce((unprefixedCaps, caps) => [
       ...unprefixedCaps,
-      ..._(caps).keys().filter((cap) => !cap.includes(':') && !isStandardCap(cap)),
+      ...Object.keys(caps).filter((cap) => !cap.includes(':') && !isStandardCap(cap)),
     ], [])
     .uniq()
     .value();
@@ -202,15 +204,14 @@ function parseCaps (caps, constraints = {}, shouldValidateCaps = true) {
   // Validate all of the first match capabilities and return an array with only the valid caps (see spec #5)
   let validationErrors = [];
   /** @type {Capabilities[]} */
-  let validatedFirstMatchCaps = allFirstMatchCaps.map((firstMatchCaps) => {
+  let validatedFirstMatchCaps = _.compact(allFirstMatchCaps.map((firstMatchCaps) => {
     try {
       // Validate firstMatch caps
       return shouldValidateCaps ? validateCaps(firstMatchCaps, filteredConstraints) : firstMatchCaps;
     } catch (e) {
       validationErrors.push(e.message);
-      return null;
     }
-  }).filter((caps) => !_.isNull(caps));
+  }));
 
   // Try to merge requiredCaps with first match capabilities, break once it finds its first match (see spec #6)
   let matchedCaps = null;
@@ -303,7 +304,6 @@ export {
 
 /**
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
- * @typedef {import('@appium/types').Capabilities} Capabilities
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').Capabilities} Capabilities
  */

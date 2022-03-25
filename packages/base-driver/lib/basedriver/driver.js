@@ -347,6 +347,7 @@ export default BaseDriver;
 /**
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
  * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').Capabilities} Capabilities
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
@@ -369,10 +370,11 @@ export default BaseDriver;
 
 /**
  * Static properties of `BaseDriver` and optional properties for subclasses.
+ * @template {ExternalDriver} [T=ExternalDriver]
  * @typedef BaseDriverStatic
  * @property {string} baseVersion
  * @property {UpdateServerCallback} [updateServer]
- * @property {import('@appium/types').MethodMap} [newMethodMap]
+ * @property {import('@appium/types').MethodMap<T>} [newMethodMap]
  */
 
 /**

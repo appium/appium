@@ -18,7 +18,7 @@ export function EventMixin (Base) {
      * separation
      * @param {string} event - the event name
      */
-    logCustomEvent (vendor, event) {
+    async logCustomEvent (vendor, event) {
       this.logEvent(`${vendor}:${event}`);
     }
 

@@ -1,3 +1,5 @@
+// @ts-check
+
 import _ from 'lodash';
 import { util } from '@appium/support';
 import { PROTOCOLS, DEFAULT_BASE_PATH } from '../constants';
@@ -239,6 +241,7 @@ const METHOD_MAP = {
     GET: {command: 'getSize'}
   },
   '/session/:sessionId/element/:elementId/shadow': {
+    // @ts-expect-error -- this method is not defined in ExternalDriver
     GET: {command: 'elementShadowRoot'}
   },
   '/session/:sessionId/element/:elementId/css/:propertyName': {

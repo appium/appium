@@ -25,7 +25,7 @@ describe('#getLogEvents', function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
-    await d.getLogEvents().should.eql({
+    (await d.getLogEvents()).should.eql({
       commands: [], testCommand: ['1', '2', '3']
     });
   });
@@ -34,7 +34,7 @@ describe('#getLogEvents', function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
-    await d.getLogEvents('testCommand').should.eql({
+    (await d.getLogEvents('testCommand')).should.eql({
       testCommand: ['1', '2', '3']
     });
   });
@@ -43,7 +43,7 @@ describe('#getLogEvents', function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
-    await d.getLogEvents('testCommandDummy').should.eql({});
+    (await d.getLogEvents('testCommandDummy')).should.eql({});
   });
 
   it('should filter with multiple event keys', async function () {
@@ -51,7 +51,7 @@ describe('#getLogEvents', function () {
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
     d._eventHistory.testCommand2 = ['4', '5'];
-    await d.getLogEvents(['testCommand', 'testCommand2']).should.eql({
+    (await d.getLogEvents(['testCommand', 'testCommand2'])).should.eql({
       testCommand: ['1', '2', '3'], testCommand2: ['4', '5']
     });
   });
@@ -60,7 +60,7 @@ describe('#getLogEvents', function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
     d._eventHistory['custom:appiumEvent'] = ['1', '2', '3'];
-    await d.getLogEvents(['custom:appiumEvent']).should.eql({
+    (await d.getLogEvents(['custom:appiumEvent'])).should.eql({
       'custom:appiumEvent': ['1', '2', '3']
     });
   });
@@ -69,6 +69,6 @@ describe('#getLogEvents', function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
-    await d.getLogEvents(['noEventName']).should.eql({});
+    (await d.getLogEvents(['noEventName'])).should.eql({});
   });
 });

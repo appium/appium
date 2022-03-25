@@ -1,9 +1,7 @@
-// transpile:mocha
-
-import { configureBinaryLog, resetLog } from '../lib/utils';
+import { configureBinaryLog, resetLog } from '../../lib/utils';
 import { fs } from '@appium/support';
 import path from 'path';
-import { Doctor } from '../lib/doctor';
+import { Doctor } from '../../lib/doctor';
 
 
 describe('utils', function () {

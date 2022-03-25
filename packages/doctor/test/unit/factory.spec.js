@@ -1,6 +1,4 @@
-// transpile:mocha
-
-import newDoctor from '../lib/factory';
+import newDoctor from '../../lib/factory';
 
 
 describe('factory', function () {

@@ -1,6 +1,4 @@
-// transpile:mocha
-
-import { newDoctor, Doctor, DoctorCheck } from '../lib';
+import { newDoctor, Doctor, DoctorCheck } from '../../lib';
 
 
 describe('index', function () {

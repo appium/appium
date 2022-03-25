@@ -1,8 +1,6 @@
-// transpile:mocha
-
-import { Doctor, DoctorCheck, FixSkippedError } from '../lib/doctor';
+import { Doctor, DoctorCheck, FixSkippedError } from '../../lib/doctor';
 import { withSandbox, stubLog } from '@appium/test-support';
-import log from '../lib/logger';
+import log from '../../lib/logger';
 import B from 'bluebird';
 
 

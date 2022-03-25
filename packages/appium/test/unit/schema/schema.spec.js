@@ -17,17 +17,17 @@ describe('schema', function () {
   let sandbox;
 
   /**
-   * @type {Class<import('../../../lib/schema/schema').SchemaFinalizationError>}
+   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaFinalizationError>}
    */
   let SchemaFinalizationError;
 
   /**
-   * @type {Class<import('../../../lib/schema/schema').SchemaUnknownSchemaError>}
+   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaUnknownSchemaError>}
    */
   let SchemaUnknownSchemaError;
 
   /**
-   * @type {Class<import('../../../lib/schema/schema').SchemaUnsupportedSchemaError>}
+   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaUnsupportedSchemaError>}
    */
   let SchemaUnsupportedSchemaError;
 
@@ -74,7 +74,7 @@ describe('schema', function () {
   let mocks;
 
   /**
-   * @type {Class<import('../../../lib/schema/schema').RoachHotelMap>}
+   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').RoachHotelMap>}
    */
   let RoachHotelMap;
 
@@ -131,7 +131,6 @@ describe('schema', function () {
       describe('when provided `type` and nonempty `schema`, but no `name`', function () {
         it('should throw a TypeError', function () {
           expect(() =>
-            // @ts-expect-error
             registerSchema(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
             }),
@@ -579,12 +578,6 @@ describe('schema', function () {
  * @typedef {import('ajv/dist/core').default['addSchema']} AjvAddSchema
  * @typedef {import('ajv/dist/core').default['getSchema']} AjvGetSchema
  * @typedef {import('ajv/dist/core').default['validateSchema']} AjvValidateSchema
- */
-
-/**
- * @template T
- * @template [Args=any[]]
- * @typedef {import('type-fest').Class<T,Args>} Class
  */
 
 /**

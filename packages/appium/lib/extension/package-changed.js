@@ -1,4 +1,3 @@
-// @ts-check
 
 import { fs } from '@appium/support';
 import { isPackageChanged } from 'package-changed';

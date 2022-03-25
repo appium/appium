@@ -1,4 +1,3 @@
-// @ts-check
 
 import { transformers } from './cli-transformers';
 

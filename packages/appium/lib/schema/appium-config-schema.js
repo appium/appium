@@ -1,4 +1,3 @@
-// @ts-check
 
 const schema = /** @type {const} */ ({
   $schema: 'http://json-schema.org/draft-07/schema',

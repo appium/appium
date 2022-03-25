@@ -1,4 +1,4 @@
-// @ts-check
+/// <reference path="../../types/appium-manifest.d.ts" />
 
 /**
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
@@ -61,7 +61,7 @@ const INITIAL_MANIFEST_DATA = Object.freeze({
  *
  * The `package.json` must have an `appium` property which is an object.
  * @param {any} value
- * @returns {value is ExtensionPackageJson<ExtensionType>}
+ * @returns {value is ExtPackageJson<ExtensionType>}
  */
 function isExtension (value) {
   return (
@@ -77,7 +77,7 @@ function isExtension (value) {
  * To be considered a driver, a `package.json` must have a fields
  * `appium.driverName`, `appium.automationName` and `appium.platformNames`.
  * @param {any} value - Value to test
- * @returns {value is ExtensionPackageJson<DriverType>}
+ * @returns {value is ExtPackageJson<DriverType>}
  */
 function isDriver (value) {
   return (
@@ -93,7 +93,7 @@ function isDriver (value) {
  *
  * To be considered a plugin, a `package.json` must have an `appium.pluginName` field.
  * @param {any} value - Value to test
- * @returns {value is ExtensionPackageJson<PluginType>}
+ * @returns {value is ExtPackageJson<PluginType>}
  */
 function isPlugin (value) {
   return isExtension(value) && _.isString(_.get(value, 'appium.pluginName'));
@@ -231,13 +231,13 @@ export class Manifest {
    *
    * Will _not_ overwrite existing entries.
    * @template {ExtensionType} ExtType
-   * @param {ExtensionPackageJson<ExtType>} pkgJson
+   * @param {ExtPackageJson<ExtType>} pkgJson
    * @param {string} pkgPath
    * @returns {boolean} - `true` upon success, `false` if the extension is already registered.
    */
   addExtensionFromPackage (pkgJson, pkgPath) {
     /**
-     * @type {InternalData}
+     * @type {InternalMetadata}
      */
     const internal = {
       pkgName: pkgJson.name,
@@ -281,7 +281,7 @@ export class Manifest {
    * @template {ExtensionType} ExtType
    * @param {ExtType} extType - `driver` or `plugin`
    * @param {string} extName - Name of extension
-   * @param {ExtData<ExtType>} extData - Extension metadata
+   * @param {ExtManifest<ExtType>} extData - Extension metadata
    * @returns {void}
    */
   addExtension (extType, extName, extData) {
@@ -445,146 +445,42 @@ export class Manifest {
 }
 
 /**
- * Either `driver` or `plugin` rn
- * @typedef {typeof DRIVER_TYPE | typeof PLUGIN_TYPE} ExtensionType
- */
-
-/**
- * Represents an entire YAML manifest (`extensions.yaml`)
- * @typedef ManifestData
- * @property {ExtRecord<DriverType>} drivers - Record of drivers, keyed by name
- * @property {ExtRecord<PluginType>} plugins - Record of plugins, keyed by name
- * @property {number} [schemaRev] - The schema revision of the manifest
- */
-
-/**
- * Combination of external + internal extension data with `driverName`/`pluginName` removed (it becomes a key in an {@link ExtRecord} object).
- * @template {ExtensionType} ExtType
- * @typedef {(Omit<ExternalData<ExtType>, ExtType extends DriverType ? 'driverName' : 'pluginName'>) & InternalData & CommonData} ExtensionManifest
- */
-
-/**
- * Manifest extension data which is _not_ provided in `package.json`.  It may be derived
- * (e.g., `installSpec`) or copied from elsewhere in a `package.json` (e.g.,
- * `version`).
- * @typedef InternalData
- * @property {string} pkgName - Name of package (e.g., `appium-xcuitest-driver`)
- * @property {string} version - Version of package
- * @property {import('./extension-config').InstallType} installType - Install type
- * @property {string} installSpec - Whatever the user typed as the extension to install. May be derived from `package.json`
- */
-
-/**
- * Convert external (`package.json`) extension data into manifest data
- * @typedef {ExtensionManifest<DriverType>} ManifestDriverData
- */
-
-/**
- * Convert external (`package.json`) extension data into manifest data
- * @typedef {ExtensionManifest<PluginType>} ManifestPluginData
- */
-
-/**
- * Data points shared by all Appium extensions
- * @typedef CommonData
- * @property {string} mainClass - Name of main class in the extension
- * @property {Record<string,string>} [scripts] - Collection of scripts which an extension may run
- * @property {string | (import('ajv').SchemaObject & {[key: number]: never})} [schema] - Argument schema object
- */
-
-/**
- * Driver-specific manifest data.
- * @typedef DriverData
- * @property {string} automationName - Automation engine to use
- * @property {string[]} platformNames - Platforms to run on
- * @property {string} driverName - Name of driver (_not_ the same as the package name, probably)
- */
-
-/**
- * Plugin-specific manifest data.
- * @typedef PluginData
- * @property {string} pluginName - Name of plugin (_not_ the same as the package name, probably)
- */
-
-/**
- * Generic type to refer to either {@link DriverData} or {@link PluginData}
- * @template {ExtensionType} ExtType
- * @typedef {CommonData & (ExtType extends DriverType ? DriverData : PluginData)} ExternalData
- */
-
-/**
- * Main class/constructor of third-party plugin
- *
- * Referenced by {@link CommonData.mainClass}
- * @typedef { {pluginName: string} & import('type-fest').Class<unknown> & ExtClassStaticMembers} PluginClass
- */
-
-/**
- * Main class/constructor of third-party driver
- *
- * Referenced by {@link CommonData.mainClass}
- * @typedef { {driverName: string} & import('type-fest').Class<unknown> & ExtClassStaticMembers } DriverClass
- */
-
-/**
- * @typedef ExtClassStaticMembers
- * @property {UpdateServerFn} [updateServer]
- * @property {import('@appium/base-driver').MethodMap} [newMethodMap]
- */
-
-/**
- * @callback UpdateServerFn
- * @param {import('express').Express} app - Express app
- * @param {import('http').Server} httpServer - HTTP server
- * @returns {import('type-fest').Promisable<void>}
- */
-/**
- * Generic type for an object keyed by extension name, with values of type {@link ExtData}
- * @template {ExtensionType} ExtType
- * @typedef {Record<string,ExtData<ExtType>>} ExtRecord
- */
-
-/**
- * Generic type to refer to the data in an {@link ExtRecord}; this is the data for each extension in `extensions.yaml`.
- * @template {ExtensionType} ExtType
- * @typedef {ExtensionManifest<ExtType>} ExtData
- */
-
-/**
- * Like {@link ExtData} except it _for sure_ has a `schema` property.
- * @template {ExtensionType} ExtType
- * @typedef {(ExtensionManifest<ExtType>) & {schema: import('ajv').SchemaObject|string} } ExtDataWithSchema
- */
-
-/**
- * Generic type to refer to the main class constructor of an extension
- * @template {ExtensionType} ExtType
- * @typedef {ExtType extends DriverType ? DriverClass : PluginClass} ExtClass
- */
-
-/**
- * Generic type for the key of an {@link ExtRecord} which corresponds to an extension name.
- * @template {ExtensionType} ExtType
- * @typedef {keyof ExtRecord<ExtType>} ExtName
- */
-
-/**
  * Type of the string referring to a driver (typically as a key or type string)
- * @typedef {typeof import('../constants').DRIVER_TYPE} DriverType
+ * @typedef {import('../../types').DriverType} DriverType
  */
 
 /**
  * Type of the string referring to a plugin (typically as a key or type string)
- * @typedef {typeof import('../constants').PLUGIN_TYPE} PluginType
- */
-
-/**
- * A `package.json` containing extension data.
- * @template {ExtensionType} ExtType
- * @typedef {import('type-fest').SetRequired<import('type-fest').PackageJson, 'name' | 'version'> & {appium: ExternalData<ExtType>} } ExtensionPackageJson
+ * @typedef {import('../../types').PluginType} PluginType
  */
 
 /**
  * @typedef SyncWithInstalledExtensionsOpts
  * @property {number} [depthLimit] - Maximum depth to recurse into subdirectories
  */
+
+/**
+ * @typedef {import('../../types/appium-manifest').ManifestData} ManifestData
+ * @typedef {import('../../types/appium-manifest').InternalMetadata} InternalMetadata
+ */
+
+/**
+ * @template T
+ * @typedef {import('../../types/external-manifest').ExtPackageJson<T>} ExtPackageJson
+ */
+
+/**
+ * @template T
+ * @typedef {import('../../types/appium-manifest').ExtManifest<T>} ExtManifest
+ */
+
+/**
+ * @template T
+ * @typedef {import('../../types/appium-manifest').ExtRecord<T>} ExtRecord
+ */
+
+/**
+ * Either `driver` or `plugin` rn
+ * @typedef {import('../../types').ExtensionType} ExtensionType
+ */
+

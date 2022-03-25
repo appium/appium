@@ -1,4 +1,3 @@
-// @ts-check
 
 import { ArgumentTypeError } from 'argparse';
 import { readFileSync } from 'fs';

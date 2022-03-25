@@ -524,7 +524,7 @@ export interface TimeoutCommands {
 
 export interface EventCommands {
   logCustomEvent(vendor: string, event: string): void;
-  getLogEvents(type?: string | string[]): EventHistory | Record<string, number>;
+  getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
 
 export interface SessionCommands {

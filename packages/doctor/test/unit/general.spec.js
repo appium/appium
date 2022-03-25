@@ -1,10 +1,8 @@
-// transpile:mocha
-
 import { NodeBinaryCheck, NodeVersionCheck,
-         OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck } from '../lib/general';
+         OptionalFfmpegCommandCheck, OptionalMjpegConsumerCommandCheck } from '../../lib/general';
 import * as tp from 'teen_process';
-import * as utils from '../lib/utils';
-import NodeDetector from '../lib/node-detector';
+import * as utils from '../../lib/utils';
+import NodeDetector from '../../lib/node-detector';
 import { withMocks } from '@appium/test-support';
 import B from 'bluebird';
 import { removeColors } from './helper';

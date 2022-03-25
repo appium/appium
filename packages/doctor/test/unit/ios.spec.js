@@ -1,16 +1,14 @@
-// transpile:mocha
-
 import {
   fixes, XcodeCheck, XcodeCmdLineToolsCheck, DevToolsSecurityCheck,
   OptionalApplesimutilsCommandCheck, OptionalIdbCommandCheck, OptionalIOSDeployCommandCheck,
   OptionalLyftCommandCheck
-} from '../lib/ios';
+} from '../../lib/ios';
 import { fs, system } from '@appium/support';
-import * as utils from '../lib/utils';
+import * as utils from '../../lib/utils';
 import * as tp from 'teen_process';
-import * as prompter from '../lib/prompt';
-import FixSkippedError from '../lib/doctor';
-import log from '../lib/logger';
+import * as prompter from '../../lib/prompt';
+import FixSkippedError from '../../lib/doctor';
+import log from '../../lib/logger';
 import B from 'bluebird';
 import { withMocks, withSandbox, stubLog } from '@appium/test-support';
 import {removeColors} from './helper';

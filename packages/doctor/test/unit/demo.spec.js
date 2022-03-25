@@ -1,11 +1,9 @@
-// transpile:mocha
-
-import { DirCheck, FileCheck } from '../lib/demo';
+import { DirCheck, FileCheck } from '../../lib/demo';
 import { fs } from '@appium/support';
 import * as tp from 'teen_process';
-import * as prompt from '../lib/prompt';
-import log from '../lib/logger';
-import { FixSkippedError } from '../lib/doctor';
+import * as prompt from '../../lib/prompt';
+import log from '../../lib/logger';
+import { FixSkippedError } from '../../lib/doctor';
 import { withMocks, withSandbox, stubLog } from '@appium/test-support';
 import B from 'bluebird';
 

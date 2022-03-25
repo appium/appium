@@ -1,9 +1,7 @@
-// transpile:mocha
-
-import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck, OptionalGstreamerCheck } from '../lib/android';
+import { EnvVarAndPathCheck, AndroidToolCheck, OptionalAppBundleCheck, OptionalGstreamerCheck } from '../../lib/android';
 import { fs } from '@appium/support';
 import * as adb from 'appium-adb';
-import * as utils from '../lib/utils';
+import * as utils from '../../lib/utils';
 import * as tp from 'teen_process';
 import { withMocks, stubEnv } from '@appium/test-support';
 import B from 'bluebird';

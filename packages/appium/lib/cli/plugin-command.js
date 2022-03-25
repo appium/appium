@@ -1,30 +1,34 @@
 import _ from 'lodash';
 import ExtensionCommand from './extension-command';
-import { PLUGIN_TYPE, KNOWN_PLUGINS } from '../constants';
+import { KNOWN_PLUGINS } from '../constants';
 
 const REQ_PLUGIN_FIELDS = ['pluginName', 'mainClass'];
 
 export default class PluginCommand extends ExtensionCommand {
 
+  /**
+   *
+   * @param {PluginCommandOptions} opts
+   */
   constructor ({config, json}) {
-    super({config, json, type: PLUGIN_TYPE});
+    super({config, json});
     this.knownExtensions = KNOWN_PLUGINS;
   }
 
   async install ({plugin, installType, packageName}) {
-    return await super.install({ext: plugin, installType, packageName});
+    return await super._install({ext: plugin, installType, packageName});
   }
 
   async uninstall ({plugin}) {
-    return await super.uninstall({ext: plugin});
+    return await super._uninstall({ext: plugin});
   }
 
   async update ({plugin, unsafe}) {
-    return await super.update({ext: plugin, unsafe});
+    return await super._update({ext: plugin, unsafe});
   }
 
   async run ({plugin, scriptName}) {
-    return await super.run({ext: plugin, scriptName});
+    return await super._run({ext: plugin, scriptName});
   }
 
   getPostInstallText ({extName, extData}) {
@@ -44,3 +48,9 @@ export default class PluginCommand extends ExtensionCommand {
   }
 
 }
+
+/**
+ * @typedef PluginCommandOptions
+ * @property {import('../extension/extension-config').ExtensionConfig<import('../extension/manifest').PluginType>} config
+ * @property {boolean} json
+ */

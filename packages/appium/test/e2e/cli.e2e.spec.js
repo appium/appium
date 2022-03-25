@@ -261,7 +261,7 @@ describe('CLI behavior', function () {
             '--source',
             'npm',
           ]);
-          const {fake} = await runList(['--updates']);
+          const {fake} = /** @type {Record<string,import('../../lib/cli/extension-command').InstalledExtensionListData>} */(await runList(['--updates']));
           util.compareVersions(
             fake.updateVersion,
             '>',

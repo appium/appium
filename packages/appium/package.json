@@ -37,13 +37,10 @@
     "types"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --delete-dir-on-start --out-dir=build/lib",
-    "postbuild": "npm run generate-schema-json",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "generate-docs": "node ./scripts/parse-yml-commands.js",
-    "generate-schema-json": "node ./scripts/generate-schema-json.js",
-    "generate-schema-declarations": "node ./scripts/generate-schema-declarations.js",
     "postinstall": "node ./scripts/postinstall.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
@@ -87,5 +84,6 @@
     "access": "public",
     "tag": "next"
   },
+  "types": "./build/lib/index.d.ts",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

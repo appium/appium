@@ -1,6 +1,5 @@
 // @ts-check
 
-// transpile:mocha
 import _ from 'lodash';
 import path from 'path';
 import B from 'bluebird';

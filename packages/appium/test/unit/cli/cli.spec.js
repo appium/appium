@@ -1,4 +1,3 @@
-// transpile:mocha
 
 import { tempDir, fs, npm } from '@appium/support';
 import { loadExtensions } from '../../../lib/extension';

@@ -66,6 +66,8 @@ const stripColorFormat = format(function stripColor (info) {
 
 function createConsoleTransport (args, logLvl) {
   return new (transports.Console)({
+    // `name` is unsupported per winston's type declarations
+    // @ts-expect-error
     name: 'console',
     handleExceptions: true,
     exitOnError: false,
@@ -92,6 +94,7 @@ function createConsoleTransport (args, logLvl) {
 
 function createFileTransport (args, logLvl) {
   return new (transports.File)({
+    // @ts-expect-error
     name: 'file',
     filename: args.logFile,
     maxFiles: 1,
@@ -120,6 +123,7 @@ function createHttpTransport (args, logLvl) {
   }
 
   return new (transports.Http)({
+    // @ts-expect-error
     name: 'http',
     host,
     port,

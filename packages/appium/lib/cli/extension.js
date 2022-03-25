@@ -2,8 +2,13 @@
 
 import DriverCommand from './driver-command';
 import PluginCommand from './plugin-command';
-import { DRIVER_TYPE } from '../constants';
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
 import { errAndQuit, log, JSON_SPACES } from './utils';
+
+const commandClasses = Object.freeze(/** @type {const} */({
+  [DRIVER_TYPE]: DriverCommand,
+  [PLUGIN_TYPE]: PluginCommand
+}));
 
 /**
  * Run a subcommand of the 'appium driver' type. Each subcommand has its own set of arguments which
@@ -11,7 +16,7 @@ import { errAndQuit, log, JSON_SPACES } from './utils';
  *
  * @param {Object} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
- * @template {ExtensionType} ExtType
+ * @template {import('../extension/manifest').ExtensionType} ExtType
  * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} configObject - Extension config object
  */
 async function runExtensionCommand (args, configObject) {
@@ -30,7 +35,7 @@ async function runExtensionCommand (args, configObject) {
   const logFn = (msg) => log(json, msg);
   let config = configObject;
   config.log = logFn;
-  const CommandClass = type === DRIVER_TYPE ? DriverCommand : PluginCommand;
+  const CommandClass = /** @type {ExtCommand<ExtType>} */(commandClasses[type]);
   const cmd = new CommandClass({config, json});
   try {
     jsonResult = await cmd.execute(args);
@@ -53,3 +58,8 @@ async function runExtensionCommand (args, configObject) {
 export {
   runExtensionCommand,
 };
+
+/**
+ * @template {import('../../types').ExtensionType} ExtType
+ * @typedef {ExtType extends import('../../types').DriverType ? import('@appium/types').Class<DriverCommand> : ExtType extends import('../../types').PluginType ? import('@appium/types').Class<PluginCommand> : never} ExtCommand
+ */

@@ -7,7 +7,7 @@ const JSON_SPACES = 4;
 /***
  * Log an error to the console and exit the process.
  * @param {boolean} json - whether we should log json or text
- * @param {string} msg - error message
+ * @param {any} msg - error message, object, Error instance, etc.
  */
 function errAndQuit (json, msg) {
   if (json) {

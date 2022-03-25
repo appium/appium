@@ -1,4 +1,3 @@
-// @ts-check
 
 import _ from 'lodash';
 import {ExtensionConfig} from './extension-config';
@@ -27,7 +26,7 @@ export class PluginConfig extends ExtensionConfig {
    *
    * Just calls the superclass' constructor with the correct extension type
    * @private
-   * @param {import('./manifest').Manifest} manifest - IO object
+   * @param {Manifest} manifest - IO object
    * @param {PluginConfigOptions} [opts]
    */
    constructor (manifest, {extData, logFn} = {}) {
@@ -63,9 +62,10 @@ export class PluginConfig extends ExtensionConfig {
    static getInstance (manifest) {
      return PluginConfig._instances.get(manifest);
    }
+
    /**
    * @param {string} pluginName
-   * @param {PluginData} pluginData
+   * @param {import('../../types/appium-manifest').ExtManifest<PluginType>} pluginData
    * @returns {string}
    */
    extensionDesc (pluginName, {version}) {
@@ -74,7 +74,7 @@ export class PluginConfig extends ExtensionConfig {
 
    /**
    *
-   * @param {(keyof import('./manifest').ExtRecord<PluginType>)[]} activeNames
+   * @param {(keyof PluginRecord)[]} activeNames
    * @returns {void}
    */
    print (activeNames) {
@@ -101,11 +101,13 @@ export class PluginConfig extends ExtensionConfig {
 /**
  * @typedef PluginConfigOptions
  * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
- * @property {import('./manifest').ExtRecord<PluginType>} [extData] - Extension data
+ * @property {import('../../types/appium-manifest').PluginRecord} [extData] - Extension data
  */
 
+
 /**
- * @typedef {import('./manifest').PluginType} PluginType
- * @typedef {import('./manifest').ExtData<PluginType>} PluginData
+ * @typedef {import('../../types/appium-manifest').PluginRecord} PluginRecord
+ * @typedef {import('../../types').PluginType} PluginType
+ * @typedef {import('../../types/external-manifest').ExtMetadata<PluginType>} PluginMetadata
  * @typedef {import('./manifest').Manifest} Manifest
  */

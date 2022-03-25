@@ -1,4 +1,3 @@
-// @ts-check
 
 import { fs } from '@appium/support';
 import { ArgumentParser } from 'argparse';
@@ -101,7 +100,7 @@ class ArgParser {
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {import('../../types/types').ParsedArgs} - The parsed arguments
+   * @returns {import('../../types/cli').ParsedArgs} - The parsed arguments
    */
   parseArgs (args = process.argv.slice(2)) {
     if (!NON_SERVER_ARGS.has(args[0])) {

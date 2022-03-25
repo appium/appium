@@ -1,4 +1,3 @@
-// @ts-check
 
 import _ from 'lodash';
 import path from 'path';
@@ -78,7 +77,7 @@ export class ExtensionConfig {
     for (const [
       extName,
       extData,
-    ] of /** @type {[ExtName<ExtType>, ExtData<ExtType>][]} */ (
+    ] of /** @type {[ExtName<ExtType>, ExtManifest<ExtType>][]} */ (
         _.toPairs(exts)
       )) {
       foundProblems[extName] = [
@@ -121,7 +120,7 @@ export class ExtensionConfig {
   }
 
   /**
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extData
    * @param {ExtName<ExtType>} extName
    * @returns {Problem[]}
    */
@@ -167,7 +166,7 @@ export class ExtensionConfig {
   }
 
   /**
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extData
    * @param {ExtName<ExtType>} extName
    * @returns {Problem[]}
    */
@@ -214,7 +213,7 @@ export class ExtensionConfig {
 
   /**
    * @abstract
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extData
    * @returns {Problem[]}
    */
   // eslint-disable-next-line no-unused-vars
@@ -225,12 +224,12 @@ export class ExtensionConfig {
 
   /**
    * @param {string} extName
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extData
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
   async addExtension (extName, extData, {write = true} = {}) {
-    await this.manifest.addExtension(this.extensionType, extName, extData);
+    this.manifest.addExtension(this.extensionType, extName, extData);
     if (write) {
       await this.manifest.write();
     }
@@ -238,7 +237,7 @@ export class ExtensionConfig {
 
   /**
    * @param {ExtName<ExtType>} extName
-   * @param {ExtData<ExtType>} extData
+   * @param {ExtManifest<ExtType>|import('../cli/extension-command').ExtensionFields<ExtType>} extData
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
@@ -282,7 +281,7 @@ export class ExtensionConfig {
     for (const [
       extName,
       extData,
-    ] of /** @type {[string, ExtData<ExtType>][]} */ (
+    ] of /** @type {[string, ExtManifest<ExtType>][]} */ (
         _.toPairs(this.installedExtensions)
       )) {
       log.info(`  - ${this.extensionDesc(extName, extData)}`);
@@ -292,7 +291,7 @@ export class ExtensionConfig {
   /**
    * Returns a string describing the extension. Subclasses must implement.
    * @param {ExtName<ExtType>} extName - Extension name
-   * @param {ExtData<ExtType>} extData - Extension data
+   * @param {ExtManifest<ExtType>} extData - Extension data
    * @returns {string}
    * @abstract
    */
@@ -342,7 +341,7 @@ export class ExtensionConfig {
    * @param {string} appiumHome
    * @param {ExtType} extType
    * @param {ExtName<ExtType>} extName - Extension name (unique to its type)
-   * @param {ExtDataWithSchema<ExtType>} extData - Extension config
+   * @param {ExtManifestWithSchema<ExtType>} extData - Extension config
    * @returns {import('ajv').SchemaObject|undefined}
    */
   static _readExtensionSchema (appiumHome, extType, extName, extData) {
@@ -368,11 +367,11 @@ export class ExtensionConfig {
   }
 
   /**
-   * Returns `true` if a specific {@link ExtData} object has a `schema` prop.
-   * The {@link ExtData} object becomes a {@link ExtDataWithSchema} object.
+   * Returns `true` if a specific {@link ExtManifest} object has a `schema` prop.
+   * The {@link ExtManifest} object becomes a {@link ExtManifestWithSchema} object.
    * @template {ExtensionType} ExtType
-   * @param {ExtData<ExtType>} extData
-   * @returns {extData is ExtDataWithSchema<ExtType>}
+   * @param {ExtManifest<ExtType>} extData
+   * @returns {extData is ExtManifestWithSchema<ExtType>}
    */
   static extDataHasSchema (extData) {
     return _.isString(extData?.schema) || _.isObject(extData?.schema);
@@ -382,7 +381,7 @@ export class ExtensionConfig {
    * If an extension provides a schema, this will load the schema and attempt to
    * register it with the schema registrar.
    * @param {ExtName<ExtType>} extName - Name of extension
-   * @param {ExtDataWithSchema<ExtType>} extData - Extension data
+   * @param {ExtManifestWithSchema<ExtType>} extData - Extension data
    * @returns {import('ajv').SchemaObject|undefined}
    */
   readExtensionSchema (extName, extData) {
@@ -418,33 +417,33 @@ export {
  */
 
 /**
- * @typedef {import('./manifest').ExtensionType} ExtensionType
+ * @typedef {import('../../types').ExtensionType} ExtensionType
  * @typedef {import('./manifest').Manifest} Manifest
  */
 
 /**
  * @template T
- * @typedef {import('./manifest').ExtData<T>} ExtData
+ * @typedef {import('../../types/appium-manifest').ExtManifest<T>} ExtManifest
  */
 
 /**
  * @template T
- * @typedef {import('./manifest').ExtDataWithSchema<T>} ExtDataWithSchema
+ * @typedef {import('../../types/appium-manifest').ExtManifestWithSchema<T>} ExtManifestWithSchema
  */
 
 /**
  * @template T
- * @typedef {import('./manifest').ExtName<T>} ExtName
+ * @typedef {import('../../types/appium-manifest').ExtName<T>} ExtName
  */
 
 /**
  * @template T
- * @typedef {import('./manifest').ExtClass<T>} ExtClass
+ * @typedef {import('../../types/extension').ExtClass<T>} ExtClass
  */
 
 /**
  * @template T
- * @typedef {import('./manifest').ExtRecord<T>} ExtRecord
+ * @typedef {import('../../types/appium-manifest').ExtRecord<T>} ExtRecord
  */
 
 /**

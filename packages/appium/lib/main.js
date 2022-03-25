@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// transpile:main
-// @ts-check
 
 import { init as logsinkInit } from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
@@ -110,7 +108,7 @@ function logServerPort (address, port) {
  * Gets a list of `updateServer` functions from all extensions
  * @param {DriverClass[]} driverClasses
  * @param {PluginClass[]} pluginClasses
- * @returns {import('./extension/manifest').UpdateServerFn[]}
+ * @returns {import('@appium/base-driver/lib/basedriver/driver').UpdateServerCallback[]}
  */
 function getServerUpdaters (driverClasses, pluginClasses) {
   return _.compact(_.map([...driverClasses, ...pluginClasses], 'updateServer'));
@@ -120,7 +118,7 @@ function getServerUpdaters (driverClasses, pluginClasses) {
  * Makes a big `MethodMap` from all the little `MethodMap`s in the extensions
  * @param {DriverClass[]} driverClasses
  * @param {PluginClass[]} pluginClasses
- * @returns {import('@appium/base-driver').MethodMap}
+ * @returns {import('@appium/types').MethodMap}
  */
 function getExtraMethodMap (driverClasses, pluginClasses) {
   return [...driverClasses, ...pluginClasses].reduce(
@@ -341,18 +339,19 @@ export { finalizeSchema, getSchema, validate } from './schema/schema';
 export { main, init, resolveAppiumHome };
 
 /**
- * @typedef {import('../types/types').ParsedArgs} ParsedArgs
+ * @typedef {import('../types/cli').ParsedArgs} ParsedArgs
  */
 
 /**
- * @typedef {import('../types/types').PartialArgs} PartialArgs
- * @typedef {import('./extension/manifest').DriverType} DriverType
- * @typedef {import('./extension/manifest').PluginType} PluginType
- * @typedef {import('./extension/manifest').DriverClass} DriverClass
- * @typedef {import('./extension/manifest').PluginClass} PluginClass
+ * @typedef {import('../types/cli').PartialArgs} PartialArgs
+ * @typedef {import('../types').DriverType} DriverType
+ * @typedef {import('../types').PluginType} PluginType
+ * @typedef {import('../types/extension').DriverClass} DriverClass
+ * @typedef {import('../types/extension').PluginClass} PluginClass
  */
 
 /**
+ * Literally an empty object
  * @typedef { {} } ExtCommandInitResult
  */
 

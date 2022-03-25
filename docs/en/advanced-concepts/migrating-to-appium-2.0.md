@@ -136,6 +136,14 @@ If you use the advanced Execute Driver Script feature (which allows you to send 
 1. Install the plugin: `appium plugin install execute-driver`
 2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=execute-driver`
 
+### :bangbang: External Files No Longer Supported for `--nodeconfig`, `--allow-insecure` and `--deny-insecure`
+
+These options can be provided as strings on the command line (a JSON string for `--nodeconfig` and a comma-separated list of strings for `--allow-insecure` and `--deny-insecure`). Arguments provided on the command line will likely need to be quoted or escaped. 
+
+The recommended method to provide these options is now via a [configuration file](#tada-configuration-files).  Please see [JSON](https://github.com/appium/appium/blob/2.0/sample-code/appium.config.sample.json), [YAML](https://github.com/appium/appium/blob/2.0/sample-code/appium.config.sample.yaml), and [JS](https://github.com/appium/appium/blob/2.0/sample-code/appium.config.sample.js) for example config files.  
+
+In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property.  Any CSV-like files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files (respectively); both are arrays of strings.
+
 ### :bangbang: Old drivers removed
 
 The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.

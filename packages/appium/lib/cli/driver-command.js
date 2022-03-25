@@ -1,33 +1,36 @@
 import _ from 'lodash';
 import ExtensionCommand from './extension-command';
-import { DRIVER_TYPE, KNOWN_DRIVERS } from '../constants';
+import { KNOWN_DRIVERS } from '../constants';
+import '@colors/colors';
 
 const REQ_DRIVER_FIELDS = ['driverName', 'automationName', 'platformNames', 'mainClass'];
-
+/**
+ * @extends {ExtensionCommand<import('../extension/manifest').DriverType>}
+ */
 export default class DriverCommand extends ExtensionCommand {
 
   /**
    * @param {DriverCommandOptions} opts
    */
   constructor ({config, json}) {
-    super({config, json, type: DRIVER_TYPE});
+    super({config, json});
     this.knownExtensions = KNOWN_DRIVERS;
   }
 
   async install ({driver, installType, packageName}) {
-    return await super.install({ext: driver, installType, packageName});
+    return await super._install({ext: driver, installType, packageName});
   }
 
   async uninstall ({driver}) {
-    return await super.uninstall({ext: driver});
+    return await super._uninstall({ext: driver});
   }
 
   async update ({driver, unsafe}) {
-    return await super.update({ext: driver, unsafe});
+    return await super._update({ext: driver, unsafe});
   }
 
   async run ({driver, scriptName}) {
-    return await super.run({ext: driver, scriptName});
+    return await super._run({ext: driver, scriptName});
   }
 
   getPostInstallText ({extName, extData}) {
@@ -52,6 +55,6 @@ export default class DriverCommand extends ExtensionCommand {
 
 /**
  * @typedef DriverCommandOptions
- * @property {import('../extension/driver-config').DriverConfig} config
+ * @property {import('../extension/extension-config').ExtensionConfig<import('../extension/manifest').DriverType>} config
  * @property {boolean} json
  */

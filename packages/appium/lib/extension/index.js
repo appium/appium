@@ -1,4 +1,3 @@
-// @ts-check
 
 import _ from 'lodash';
 import { USE_ALL_PLUGINS } from '../constants';
@@ -38,7 +37,7 @@ export async function loadExtensions (appiumHome) {
  *
  * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
  * @param {string[]} usePlugins
- * @returns {import('./manifest').PluginClass[]}
+ * @returns {import('../../types').Extension.PluginClass[]}
  */
 export function getActivePlugins (pluginConfig, usePlugins = []) {
   return _.compact(

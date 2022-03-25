@@ -1,4 +1,3 @@
-// @ts-check
 /* eslint-disable no-console */
 
 import _ from 'lodash';
@@ -16,7 +15,7 @@ class NoUpdatesAvailableError extends Error {}
 /**
  * @template {ExtensionType} ExtType
  */
-export default class ExtensionCommand {
+class ExtensionCommand {
   /**
    * This is the `DriverConfig` or `PluginConfig`, depending on `ExtType`.
    * @type {ExtensionConfig<ExtType>}
@@ -25,7 +24,7 @@ export default class ExtensionCommand {
 
   /**
    * {@linkcode Record} of official plugins or drivers.
-   * @type {ExtType extends import('../extension/manifest').DriverType ? typeof import('../constants').KNOWN_DRIVERS : typeof import('../constants').KNOWN_PLUGINS}
+   * @type {KnownExtensions<ExtType>}
    */
   knownExtensions;
 
@@ -59,7 +58,7 @@ export default class ExtensionCommand {
    */
   async execute (args) {
     const cmd = args[`${this.type}Command`];
-    if (!_.isFunction(ExtensionCommand.prototype[cmd])) {
+    if (!_.isFunction(this[cmd])) {
       throw new Error(`Cannot handle ${this.type} command ${cmd}`);
     }
     const executeCmd = this[cmd].bind(this);
@@ -91,7 +90,12 @@ export default class ExtensionCommand {
         }
       }
       return acc;
-    }, /** @type {ExtensionListData} */({}));
+    },
+    /**
+     * This accumulator contains either {@linkcode UninstalledExtensionLIstData} _or_
+     * {@linkcode InstalledExtensionListData} without upgrade information (which is added by the below code block)
+     * @type {Record<string,Partial<InstalledExtensionListData>|UninstalledExtensionListData>}
+     */({}));
 
     // if we want to show whether updates are available, put that behind a spinner
     await spinWith(this.isJsonOutput, lsMsg, async () => {
@@ -111,16 +115,18 @@ export default class ExtensionCommand {
       }
     });
 
+    const listData = /** @type {ExtensionListData} */(exts);
+
     // if we're just getting the data, short circuit return here since we don't need to do any
     // formatting logic
     if (this.isJsonOutput) {
-      return exts;
+      return listData;
     }
 
     for (const [
       name,
       data
-    ] of _.toPairs(exts)) {
+    ] of _.toPairs(listData)) {
       let installTxt = ' [not installed]'.grey;
       let updateTxt = '';
       let upToDateTxt = '';
@@ -157,7 +163,7 @@ export default class ExtensionCommand {
       console.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
     }
 
-    return exts;
+    return listData;
   }
 
   /**
@@ -166,8 +172,7 @@ export default class ExtensionCommand {
    * @param {InstallArgs} args
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async install ({ext, installType, packageName}) {
-    /** @type {ExtData<ExtType>} */
+  async _install ({ext, installType, packageName}) {
     let extData;
     let installSpec = ext;
 
@@ -246,9 +251,8 @@ export default class ExtensionCommand {
                       `installed ${this.type}s with 'appium ${this.type} list --installed'.`);
     }
 
-    extData.installType = installType;
-    extData.installSpec = installSpec;
-    await this.config.addExtension(extName, extData);
+    const extManifest = {...extData, installType, installSpec};
+    await this.config.addExtension(extName, extManifest);
 
     // log info for the user
     log(this.isJsonOutput, this.getPostInstallText({extName, extData}));
@@ -260,7 +264,6 @@ export default class ExtensionCommand {
    * Install an extension via NPM
    *
    * @param {InstallViaNpmArgs} args
-   * @returns {Promise<ExtData<ExtType>>}
    */
   async installViaNpm ({ext, pkgName, pkgVer}) {
     const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
@@ -296,8 +299,9 @@ export default class ExtensionCommand {
    * load as the main driver class, or to be able to detect incompatibilities between driver and
    * appium versions.
    *
-   * @param {object} pkgJsonData - the package.json data for a driver module, as if it had been
+   * @param {ExtPackageJson<ExtType>} pkgJsonData - the package.json data for a driver module, as if it had been
    * straightforwardly 'require'd
+   * @returns {ExtensionFields<ExtType>}
    */
   getExtensionFields (pkgJsonData) {
     if (!pkgJsonData.appium) {
@@ -306,8 +310,9 @@ export default class ExtensionCommand {
     }
     const {appium, name, version} = pkgJsonData;
     this.validateExtensionFields(appium);
-
-    return {...appium, pkgName: name, version};
+    /** @type {unknown} */
+    const result = {...appium, pkgName: name, version};
+    return /** @type {ExtensionFields<ExtType>} */(result);
   }
 
   /**
@@ -315,19 +320,20 @@ export default class ExtensionCommand {
    * presence and form of those fields on the package.json data, throwing an error if anything is
    * amiss.
    *
-   * @param {import('../extension/manifest').ExternalData<ExtType>} appiumPkgData - the data in the "appium" field of package.json for an extension
+   * @param {ExtMetadata<ExtType>} appiumPkgData - the data in the "appium" field of package.json for an extension
    */
   // eslint-disable-next-line no-unused-vars
   validateExtensionFields (appiumPkgData) {
     throw new Error('Must be implemented in final class');
   }
+
   /**
    * Uninstall an extension
    *
    * @param {UninstallOpts} opts
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async uninstall ({ext}) {
+  async _uninstall ({ext}) {
     if (!this.config.isInstalled(ext)) {
       throw new Error(`Can't uninstall ${this.type} '${ext}'; it is not installed`);
     }
@@ -347,7 +353,7 @@ export default class ExtensionCommand {
    * @param {ExtensionUpdateOpts} updateSpec
    * @return {Promise<ExtensionUpdateResult>}
    */
-  async update ({ext, unsafe}) {
+  async _update ({ext, unsafe}) {
     const shouldUpdateAll = ext === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(ext)) {
@@ -450,6 +456,7 @@ export default class ExtensionCommand {
    *
    * @param {string} ext - name of extension to update
    * @param {string} version - version string identifier to update extension to
+   * @returns {Promise<void>}
    */
   async updateExtension (ext, version) {
     const {pkgName} = this.config.installedExtensions[ext];
@@ -470,7 +477,7 @@ export default class ExtensionCommand {
    * @param {RunOptions} opts
    * @return {Promise<RunOutput>}
    */
-  async run ({ext, scriptName}) {
+  async _run ({ext, scriptName}) {
     if (!_.has(this.config.installedExtensions, ext)) {
       throw new Error(`please install the ${this.type} first`);
     }
@@ -519,10 +526,8 @@ export default class ExtensionCommand {
   }
 }
 
-/**
- * @template {ExtensionType} ExtType
- * @typedef {import('../extension/extension-config').ExtensionConfig<ExtType>} ExtensionConfig
- */
+export default ExtensionCommand;
+export {ExtensionCommand};
 
 /**
  * Options for the {@linkcode ExtensionCommand} constructor
@@ -537,39 +542,68 @@ export default class ExtensionCommand {
  *
  * @typedef ExtensionMetadata
  * @property {boolean} installed - If `true`, the extension is installed
- * @property {string|null} [updateVersion] - If the extension is installed, the version it can be updated to
- * @property {string|null} [unsafeUpdateVersion] - Same as above, but a major version bump
- * @property {boolean} [upToDate] - If the extension is installed and the latest
+ * @property {string?} updateVersion - If the extension is installed, the version it can be updated to
+ * @property {string?} unsafeUpdateVersion - Same as above, but a major version bump
+ * @property {boolean} upToDate - If the extension is installed and the latest
  */
 
 /**
- * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
+ * @typedef {import('../../types').ExtensionType} ExtensionType
+ * @typedef {import('../../types').DriverType} DriverType
+ * @typedef {import('../../types').PluginType} PluginType
  */
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../extension/manifest').ExtRecord<ExtType>} ExtRecord
+ * @typedef {import('../../types/appium-manifest').ExtRecord<ExtType>} ExtRecord
  */
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../extension/manifest').ExtData<ExtType>} ExtData
+ * @typedef {import('../extension/extension-config').ExtensionConfig<ExtType>} ExtensionConfig
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('../../types/external-manifest').ExtMetadata<ExtType>} ExtMetadata
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('../../types/appium-manifest').ExtManifest<ExtType>} ExtManifest
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('../../types/external-manifest').ExtPackageJson<ExtType>} ExtPackageJson
+ */
+
+/**
+ * Possible return value for {@linkcode ExtensionCommand.list}
+ * @typedef UninstalledExtensionListData
+ * @property {string} pkgName
+ * @property {false} installed
+ */
+
+/**
+ * Possible return value for {@linkcode ExtensionCommand.list}
+ * @typedef {import('../../types/appium-manifest').InternalMetadata & ExtensionMetadata} InstalledExtensionListData
  */
 
 /**
  * Return value of {@linkcode ExtensionCommand.list}.
- * @typedef {Record<string, (import('../extension/manifest').InternalData & ExtensionMetadata) | { pkgName: string, installed: false }>} ExtensionListData
+ * @typedef {Record<string,InstalledExtensionListData|UninstalledExtensionListData>} ExtensionListData
  */
 
 /**
- * Options for {@linkcode ExtensionCommand.run}.
+ * Options for {@linkcode ExtensionCommand._run}.
  * @typedef RunOptions
  * @property {string} ext - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
  */
 
 /**
- * Return value of {@linkcode ExtensionCommand.run}
+ * Return value of {@linkcode ExtensionCommand._run}
  *
  * @typedef RunOutput
  * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
@@ -577,28 +611,28 @@ export default class ExtensionCommand {
  */
 
 /**
- * Options for {@linkcode ExtensionCommand.update}.
+ * Options for {@linkcode ExtensionCommand._update}.
  * @typedef ExtensionUpdateOpts
  * @property {string} ext - the name of the extension to update
  * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
  */
 
 /**
- * Return value of {@linkcode ExtensionCommand.update}.
+ * Return value of {@linkcode ExtensionCommand._update}.
  * @typedef ExtensionUpdateResult
  * @property {Record<string,Error>} errors - map of ext names to error objects
  * @property {Record<string,UpdateReport>} updates - map of ext names to {@linkcode UpdateReport}s
  */
 
 /**
- * Part of result of {@linkcode ExtensionCommand.update}.
+ * Part of result of {@linkcode ExtensionCommand._update}.
  * @typedef UpdateReport
  * @property {string} from - version the extension was updated from
  * @property {string} to - version the extension was updated to
  */
 
 /**
- * Options for {@linkcode ExtensionCommand.uninstall}.
+ * Options for {@linkcode ExtensionCommand._uninstall}.
  * @typedef UninstallOpts
  * @property {string} ext - the name or spec of an extension to uninstall
  */
@@ -627,9 +661,20 @@ export default class ExtensionCommand {
  */
 
 /**
- * Options for {@linkcode ExtensionCommand.install}
+ * Options for {@linkcode ExtensionCommand._install}
  * @typedef InstallArgs
  * @property {string} ext - the name or spec of an extension to install
- * @property {import('../extension/extension-config').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
+ * @property {import('../../types/appium-manifest').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
  * @property {string} [packageName] - for git/github installs, the extension node package name
+ */
+
+/**
+ * Returned by {@linkcode ExtensionCommand.getExtensionFields}
+ * @template {ExtensionType} ExtType
+ * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string } & import('../../types/external-manifest').CommonMetadata} ExtensionFields
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {ExtType extends DriverType ? typeof import('../constants').KNOWN_DRIVERS : ExtType extends PluginType ? typeof import('../constants').KNOWN_PLUGINS : never} KnownExtensions
  */

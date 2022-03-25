@@ -19,6 +19,7 @@ const BASE_CAPS = {
   app: TEST_FAKE_APP
 };
 const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
+/** @type {import('@appium/types').W3CCapabilities} */
 const W3C_CAPS = {
   alwaysMatch: {...W3C_PREFIXED_CAPS},
   firstMatch: [{}],

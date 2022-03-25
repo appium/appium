@@ -1,4 +1,3 @@
-// transpile:mocha
 
 import { init as logsinkInit, clear as logsinkClear } from '../../lib/logsink';
 import { createSandbox } from 'sinon';

@@ -1,4 +1,3 @@
-// transpile:mocha
 
 import { getParser } from '../../lib/cli/parser';
 import { INSTALL_TYPES } from '../../lib/extension/extension-config';

@@ -2,7 +2,7 @@ import type { Method as _Method } from 'axios';
 import type { EventEmitter } from 'events';
 import type { Server } from 'http';
 import type { Logger } from 'npmlog';
-import type { Class as _Class } from 'type-fest';
+import type { Class as _Class, MultidimensionalReadonlyArray } from 'type-fest';
 import { DriverOpts } from './config';
 import { Capabilities, W3CCapabilities } from './capabilities';
 
@@ -324,8 +324,8 @@ export interface ExternalDriver extends Driver {
   ): Promise<unknown>;
 }
 
-export interface Method {
-  command?: string;
+export interface Method<T extends ExternalDriver = ExternalDriver> {
+  command?: keyof T; // T[keyof T] needs to return a Promise.
   neverProxy?: boolean;
   payloadParams?: PayloadParams;
 }
@@ -333,13 +333,13 @@ export interface Method {
 export interface PayloadParams {
   wrap?: string;
   unwrap?: string;
-  required?: string[] | string[][];
-  optional?: string[] | string[][];
-  validate?: <T>(obj: T, protocol: string) => T;
+  required?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
+  optional?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
+  validate?: (obj: any, protocol: string) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 
-export type MethodMap = Record<string, Record<string, Method>>;
+export type MethodMap<T extends ExternalDriver = ExternalDriver> = Record<string, Record<string, Method<T>>>;
 
 export interface Constraint {
   presence?: boolean | {allowEmpty: boolean};
@@ -523,7 +523,7 @@ export interface TimeoutCommands {
 }
 
 export interface EventCommands {
-  logCustomEvent(vendor: string, event: string): void;
+  logCustomEvent(vendor: string, event: string): Promise<void>;
   getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
 

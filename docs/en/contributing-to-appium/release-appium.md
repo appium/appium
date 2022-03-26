@@ -1,7 +1,8 @@
 # Releasing Appium
 Appium follows the GitLab flow approach. Releases are made on release branches that have the format `releases/x.y` where `x` is a major version and `y` is a minor version. The main Appium repository doesn't strictly follow semver (unlike the dependencies of Appium). A minor release (e.g.: `1.20.0`) means that we're creating a new release that has a newly created set of dependencies that are shrinkwrapped to the latest. A patch release (e.g.: `1.20.4`) isn't strictly a "patch", but just means that we're making an intermediary release that brings in small changes. For example, suppose I have a new version of `appium-xcuitest-driver` that I want to publish and it can't wait until the next minor release. To bring in that change, I would checkout the release branch (e.g.: `git checkout releases/1.20`); install the dependency (`npm install appium-xcuitest-driver@version && git commit -a -m 'bump appium-xcuitest-driver to version $version`); release a "release candidate" (see below) and then when it's ready, graduate the "release candidate" to general availability
 
-## Create a release branch
+## Appium
+### Create a release branch
 1. `bash ./scripts/release-branch.sh x.y` where `x` is the major version and `y` is the minor version (example: `bash ./scripts/release-branch.sh 1.20`)
   * This will create:
     * A release branch `releases/1.20`
@@ -9,11 +10,11 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
     * Publish a NPM package `1.20.0-rc.0` as a release candidate
 1. Create a changelog pull request
 
-## Create a release candidate
+### Create a release candidate
 1. Checkout the release branch (e.g.: `git checkout releases/1.21 && git pull origin releases/1.21`)
 1. `bash ./scripts/release.sh rc`
 
-## Publish to GA
+### Publish to GA
 1. Checkout the release branch (e.g.: `git checkout releases/1.21 && git pull origin releases/1.21`)
 1. `bash ./scripts/release-latest.sh 1.21.0`
     - The `1.21.0` must be proper version name
@@ -28,9 +29,9 @@ Appium follows the GitLab flow approach. Releases are made on release branches t
     2. Commit the change without a tag,
     3. Push the version as `npm publish --tag beta`.
 
-# Troubleshooting
+## Troubleshooting
 
-## When you publish a version to a wrong channel
+### When you publish a version to a wrong channel
 
 For example, you accidentally pusbed `rc` version into the `latest` channel.
 Then, you could add the `deprecated` label to this version , and re-tag the previous stable version in order to keep the stable one via `npm install`.
@@ -44,3 +45,10 @@ $ npm dist-tag add appium@1.20.2 latest
 You can confirm if the above step works by calling `npm install -g appium`.
 Once you can install `appium@1.20.2`, the above step worked.
 (You may need to wait for a few minutes because of npm caching.)
+
+## Each package
+
+Each package is now pushed via [semantic-release](https://github.com/semantic-release/semantic-release). The rule is in `.releaserc` in each repository.
+The basic rule is [the default rule](https://github.com/semantic-release/commit-analyzer#default-rules-matching). It means if a commit message has `feat` prefix message, the commit version will be a minor release.
+
+Please modify `.releaserc` to customize the release rule.

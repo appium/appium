@@ -22,7 +22,7 @@ self.driver.push_file(dest_path, base64.b64encode(data).decode('utf-8'))
 ```javascript
 // Javascript
 // webdriver.io example
-let data = new Buffer("Hello World").toString('base64');
+let data = Buffer.from("Hello World").toString('base64');
 driver.pushFile('/data/local/tmp/file.txt', data);
 
 // wd example

@@ -22,13 +22,13 @@ There are the following limitations:
 #### Real Devices
 
 * Changing Airplane Mode state only works for Android 6 and older
-* Chaning data connection state works for Android 4.4 and older. Newer OS releases (5.0+) must be rooted in order to make the feature working (e. g. _su_ binary should available)
+* Changing data connection state works for Android 4.4 and older. Newer OS releases (5.0+) must be rooted in order to make the feature working (e. g. _su_ binary should available)
 * Changing Wi-Fi connection state should work for all Android versions
 
 #### Emulators
 
 * Changing Airplane Mode state only works for Android 6 and older
-* Chaning data connection state should work for all Android versions
+* Changing data connection state should work for all Android versions
 * Changing Wi-Fi connection state should work for all Android versions
 
 ### Windows

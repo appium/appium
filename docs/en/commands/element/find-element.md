@@ -14,7 +14,7 @@ MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeCl
 
 ```python
 # Python
-el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+el = driver.find_elements(AppiumBy.ACCESSIBILITY_ID,'SomeAccessibilityID')
 
 ```
 

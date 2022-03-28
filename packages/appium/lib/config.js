@@ -86,7 +86,7 @@ async function getGitRev (useGithubApiFallback = false) {
 /**
  * @param {string} commitSha
  * @param {boolean} [useGithubApiFallback]
- * @returns {Promise<number?>}
+ * @returns {Promise<string?>}
  */
 async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();

@@ -21,11 +21,11 @@ export const EXECUTABLE = path.join(PACKAGE_ROOT, 'build', 'lib', 'main.js');
  * Runs the `appium` executable with the given args.
  *
  * If the process exits with a nonzero code, the error will be a {@link AppiumRunError}.
- * @template {import('../../types/types').CliExtensionSubcommand} ExtSubcommand
+ * @template {import('../../types/cli').CliExtensionSubcommand} ExtSubcommand
  * @param {string} appiumHome - Path to `APPIUM_HOME`
  * @param {CliExtArgs<ExtSubcommand> | CliArgs} args - Args, including commands
- * @param {import('@appium/support/lib/npm').TeenProcessExecOpts} [opts] - Options for `teen_process`
- * @returns {Promise<TeenProcessExecResult>}
+ * @param {import('teen_process').ExecOptions} [opts] - Options for `teen_process`
+ * @returns {Promise<import('teen_process').ExecResult<string>>}
  */
 async function run (appiumHome, args, opts = {}) {
   const cwd = PACKAGE_ROOT;
@@ -35,9 +35,6 @@ async function run (appiumHome, args, opts = {}) {
   };
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
-    /**
-     * @type {TeenProcessExecResult}
-     */
     return await exec(process.execPath, args, {
       cwd,
       env,
@@ -78,7 +75,7 @@ export const runAppium = _.curry(_runAppium);
 
 /**
  * See {@link runAppiumRaw}.
- * @type {AppiumOptsRunner<TeenProcessExecResult>}
+ * @type {AppiumOptsRunner<import('teen_process').ExecResult>}
  */
 async function _runAppiumRaw (appiumHome, args, opts) {
   try {
@@ -90,7 +87,7 @@ async function _runAppiumRaw (appiumHome, args, opts) {
 
 /**
  * Runs the `appium` executable with the given args and returns the entire
- * {@link TeenProcessExecResult} object.
+ * `ExecResult` object.
  *
  * **The third parameter is required**.  Pass empty object if you don't need it.
  **/
@@ -121,7 +118,7 @@ async function _runAppiumJson (appiumHome, args) {
  * i.e., add `@type {MyType}` tag.
  */
 export const runAppiumJson = /**
- * @template {import('../../types/types').CliExtensionSubcommand} ExtSubcommand
+ * @template {import('../../types/cli').CliExtensionSubcommand} ExtSubcommand
  * @type {import('lodash').CurriedFunction2<string, CliExtArgs<ExtSubcommand>|CliArgs, Promise<unknown>>}
  */ (_.curry(_runAppiumJson));
 
@@ -181,13 +178,8 @@ export function formatAppiumArgErrorOutput (stderr) {
  */
 
 /**
- * @typedef {import('@appium/support/lib/npm').TeenProcessExecResult} TeenProcessExecResult
- */
-
-/**
- * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
- * @typedef {import('@appium/support/lib/npm').TeenProcessExecOpts} TeenProcessExecOpts
  * @typedef {import('../../lib/extension/manifest').ExtensionType} ExtensionType
+ * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
  * @typedef {import('../../lib/cli/extension-command').ExtensionListData} ExtensionListData
  */
 
@@ -207,7 +199,7 @@ export function formatAppiumArgErrorOutput (stderr) {
 
 /**
  * @template ExtSubCommand
- * @typedef {[import('../../types/types').CliSubcommand, ExtSubCommand, ...string[]]} CliExtArgs
+ * @typedef {[import('../../types/cli').CliSubcommand, ExtSubCommand, ...string[]]} CliExtArgs
  */
 
 /**
@@ -216,7 +208,7 @@ export function formatAppiumArgErrorOutput (stderr) {
 
 /**
  * @template [Result=unknown]
- * @template {import('../../types/types').CliExtensionSubcommand} [ExtSubcommand=never]
+ * @template {import('../../types/cli').CliSubcommand} [ExtSubcommand=never]
  * @callback AppiumRunner
  * @param {string} appiumHome
  * @param {CliExtArgs<ExtSubcommand>|CliArgs} args
@@ -226,10 +218,10 @@ export function formatAppiumArgErrorOutput (stderr) {
 
 /**
  * @template [Result=unknown]
- * @template {import('../../types/types').CliExtensionSubcommand} [ExtSubcommand=never]
+ * @template {import('../../types/cli').CliExtensionSubcommand} [ExtSubcommand=never]
  * @callback AppiumOptsRunner
  * @param {string} appiumHome
  * @param {CliExtArgs<ExtSubcommand>|CliArgs} args
- * @param {import('@appium/support/lib/npm').TeenProcessExecOpts} opts
+ * @param {import('teen_process').ExecOptions} opts
  * @returns {Promise<Result>}
  */

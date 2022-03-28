@@ -29,7 +29,7 @@ const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake
 describe('FakePlugin', function () {
   /** @type {string} */
   let appiumHome;
-  /** @type {Partial<import('../../types/types').ParsedArgs>} */
+  /** @type {Partial<import('../../types/cli').ParsedArgs>} */
   let baseArgs;
   /** @type {string} */
   let testServerBaseUrl;

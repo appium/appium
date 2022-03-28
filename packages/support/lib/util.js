@@ -454,9 +454,10 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
  * longer present on the system. This allows for preventing concurrent behavior across processes
  * using a known lockfile path.
  *
+ * @template T
  * @param {string} lockFile The full path to the file used for the lock
  * @param {LockFileOptions} opts
- * @returns {(behavior: () => Promise<void>) => Promise<void>} async function that takes another async function defining the locked
+ * @returns async function that takes another async function defining the locked
  * behavior
  */
 function getLockFileGuard (lockFile, opts = {}) {
@@ -469,6 +470,10 @@ function getLockFileGuard (lockFile, opts = {}) {
   const check = B.promisify(_lockfile.check);
   const unlock = B.promisify(_lockfile.unlock);
 
+  /**
+   * @param {(...args: any[]) => T} behavior
+   * @returns {Promise<T>}
+   */
   const guard = async (behavior) => {
     let triedRecovery = false;
     do {

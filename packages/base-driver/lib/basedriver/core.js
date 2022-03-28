@@ -155,7 +155,7 @@ class DriverCore {
      if (!this._log) {
        const instanceName = `${this.constructor.name}@${node
          .getObjectId(this)
-         .substring(0, 8)}`;
+         .substring(0, 4)}`;
        this._log = logger.getLogger(() =>
          this.sessionId
            ? `${instanceName} (${this.sessionId.substring(0, 8)})`

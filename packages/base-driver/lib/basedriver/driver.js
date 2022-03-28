@@ -233,11 +233,11 @@ export class BaseDriverCore extends DriverCore {
 
     this.log.debug();
 
-    const originalCaps = [
+    const originalCaps = _.cloneDeep([
       w3cCapabilities,
       w3cCapabilities1,
       w3cCapabilities2,
-    ].find(isW3cCaps);
+    ].find(isW3cCaps));
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
            'Appium only supports W3C-style capability objects. ' +

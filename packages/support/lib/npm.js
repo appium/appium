@@ -2,6 +2,7 @@
 
 import path from 'path';
 import semver from 'semver';
+import { hasAppiumDependency } from './env';
 import { exec } from 'teen_process';
 import { fs } from './fs';
 import * as util from './util';
@@ -28,14 +29,6 @@ export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(
 );
 
 /**
- * Relative path to lockfile used when linking an extension via `appium`
- */
-export const LINK_LOCKFILE_RELATIVE_PATH = path.join(
-  CACHE_DIR_RELATIVE_PATH,
-  '.link.lock',
-);
-
-/**
  * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
  */
 export class NPM {
@@ -49,15 +42,6 @@ export class NPM {
   }
 
   /**
-   * Returns path to "link" lockfile
-   * @private
-   * @param {string} cwd
-   */
-  _getLinkLockfilePath (cwd) {
-    return path.join(cwd, LINK_LOCKFILE_RELATIVE_PATH);
-  }
-
-  /**
    * Execute `npm` with given args.
    *
    * If the process exits with a nonzero code, the contents of `STDOUT` and `STDERR` will be in the
@@ -65,9 +49,9 @@ export class NPM {
    * @param {string} cmd
    * @param {string[]} args
    * @param {ExecOpts} opts
-   * @param {TeenProcessExecOpts} [execOpts]
+   * @param {ExecOpts} [execOpts]
    */
-  async exec (cmd, args, opts, execOpts = {}) {
+  async exec (cmd, args, opts, execOpts = /** @type {ExecOpts} */({})) {
     let { cwd, json, lockFile } = opts;
 
     // make sure we perform the current operation in cwd
@@ -85,10 +69,11 @@ export class NPM {
       runner = async () => await acquireLock(_runner);
     }
 
+    /** @type {import('teen_process').ExecResult<string> & {json?: any}} */
     let ret;
     try {
       const {stdout, stderr, code} = await runner();
-      ret = /** @type {TeenProcessExecResult} */({stdout, stderr, code});
+      ret = {stdout, stderr, code};
       // if possible, parse NPM's json output. During NPM install 3rd-party
       // packages can write to stdout, so sometimes the json output can't be
       // guaranteed to be parseable
@@ -189,18 +174,37 @@ export class NPM {
    * @returns {Promise<import('type-fest').PackageJson>}
    */
   async installPackage (cwd, pkgName, {pkgVer} = {}) {
-    // not only this, this directory needs a 'package.json' inside of it, otherwise, if any
-    // directory in the filesystem tree ABOVE cwd happens to have a package.json or a node_modules
-    // dir in it, NPM will install the module up there instead (silly NPM)
-    const dummyPkgJson = path.resolve(cwd, 'package.json');
-    if (!await fs.exists(dummyPkgJson)) {
-      await fs.writeFile(dummyPkgJson, '{}');
+    /** @type {any} */
+    let dummyPkgJson;
+    const dummyPkgPath = path.join(cwd, 'package.json');
+    try {
+      dummyPkgJson = JSON.parse(await fs.readFile(dummyPkgPath, 'utf8'));
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        dummyPkgJson = {};
+        await fs.writeFile(dummyPkgPath, JSON.stringify(dummyPkgJson, null, 2), 'utf8');
+      } else {
+        throw err;
+      }
     }
 
+    /**
+     * If we've found a `package.json` containined the `appiumCreated` property,
+     * then we can do whatever we please with it, since we created it.  This is
+     * likely when `APPIUM_HOME` is the default (in `~/.appium`).  In that case,
+     * we want `--global-style` to avoid deduping, and we also do not need a
+     * `package-lock.json`.
+     *
+     * If we _haven't_ found such a key, then this `package.json` isn't a
+     * "dummy" and is controlled by the user.  So we'll just add it as a dev
+     * dep; whatever else it does is up to the user's npm config.
+     */
+    const installOpts = await hasAppiumDependency(cwd) ?
+      ['--save-dev'] :
+      ['--save-dev', '--save-exact', '--global-style', '--no-package-lock'];
+
     const res = await this.exec('install', [
-      '--no-save',
-      '--global-style',
-      '--no-package-lock',
+      ...installOpts,
       pkgVer ? `${pkgName}@${pkgVer}` : pkgName
     ], {
       cwd,
@@ -227,46 +231,6 @@ export class NPM {
       throw new Error('The package was not downloaded correctly; its package.json ' +
                       'did not exist or was unreadable. We looked for it at ' +
                       pkgJsonPath);
-    }
-  }
-
-  /**
-   * @todo: I think this can be an `install` instead of a `link`.
-   * @param {string} cwd
-   * @param {string} pkgPath
-   */
-  async linkPackage (cwd, pkgPath) {
-    // from the path alone we don't know the npm package name, so we need to
-    // look in package.json
-    let pkgName;
-    try {
-      pkgName = require(path.resolve(pkgPath, 'package.json')).name;
-    } catch {
-      throw new Error('Could not find package.json inside the package path ' +
-                      `provided: ${pkgPath}`);
-    }
-
-    // this is added to handle commands with relative paths
-    // ie: "node . driver install --source=local ../fake-driver"
-    pkgPath = path.resolve(process.cwd(), pkgPath);
-
-    // call link with --no-package-lock to ensure no corruption while installing local packages
-    const args = [
-      '--global-style',
-      '--no-package-lock',
-      pkgPath
-    ];
-    const res = await this.exec('link', args, {cwd, lockFile: this._getLinkLockfilePath(cwd)});
-    if (res.json && res.json.error) {
-      throw new Error(res.json.error);
-    }
-
-    // now ensure it was linked to the correct place
-    try {
-      return require(resolveFrom(cwd, `${pkgName}/package.json`));
-    } catch {
-      throw new Error('The package was not linked correctly; its package.json ' +
-                      'did not exist or was unreadable');
     }
   }
 
@@ -301,32 +265,11 @@ export const npm = new NPM();
 // THESE TYPES SHOULD BE IN TEEN PROCESS, NOT HERE
 
 /**
- * Result from a non-zero-exit execution of `appium`
- * @typedef TeenProcessExecResult
- * @property {string} stdout - Stdout
- * @property {string} stderr - Stderr
- * @property {number?} code - Exit code
- * @property {any} json - JSON parsed from stdout
- */
-
-/**
  * Extra props `teen_process.exec` adds to its error objects
  * @typedef TeenProcessExecErrorProps
  * @property {string} stdout - STDOUT
  * @property {string} stderr - STDERR
  * @property {number?} code - Exit code
- */
-
-/**
- * Options unique to `teen_process.exec`. I probably missed some
- * @typedef TeenProcessExecExtraOpts
- * @property {number} [maxStdoutBufferSize]
- * @property {number} [maxStderrBufferSize]
- */
-
-/**
- * All options for `teen_process.exec`
- * @typedef {import('child_process').SpawnOptions & TeenProcessExecExtraOpts} TeenProcessExecOpts
  */
 
 /**

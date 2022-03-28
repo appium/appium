@@ -1,6 +1,6 @@
 {
   "name": "my-project",
-  "dependencies": {
+  "devDependencies": {
     "appium": "next"
   }
 }

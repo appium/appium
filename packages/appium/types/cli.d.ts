@@ -130,5 +130,5 @@ export type ParsedArgs = DriverOpts &
 export type BuildInfo = {
   version: string;
   'git-sha'?: string;
-  built?: number;
+  built?: string;
 };

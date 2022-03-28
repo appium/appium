@@ -27,6 +27,8 @@ describe('CLI behavior', function () {
    */
   let appiumHome;
 
+  const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
+
   describe('when appium is a dependency', function () {
     /** @type {string} */
     let hashPath;
@@ -142,28 +144,24 @@ describe('CLI behavior', function () {
         });
       });
 
-      describe('when a different driver is installed via appium', function () {
-        const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
+      describe('when a different driver is installed via "appium driver install"', function () {
         /** @type {string} */
         let oldHash;
-        /** @type {string} */
-        let oldPkg;
 
         before(async function () {
           await runJson([DRIVER_TYPE, LIST]);
           oldHash = await readHash();
-          oldPkg = await fs.readFile(appiumHomePkgPath, 'utf8');
           await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
         });
 
-        it('should not update package.json', async function () {
-          const newPkg = await fs.readFile(appiumHomePkgPath, 'utf8');
-          newPkg.should.equal(oldPkg);
+        it('should update package.json', async function () {
+          const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
+          expect(newPkg).to.have.nested.property('devDependencies.test-driver');
         });
 
-        it('should not update the hash', async function () {
-          const newHash = await fs.readFile(path.join(hashPath), 'utf8');
-          newHash.should.equal(oldHash);
+        it('should update the hash', async function () {
+          const newHash = await readHash();
+          newHash.should.not.equal(oldHash);
         });
 
         it('should update the manifest with the new driver', async function () {
@@ -172,6 +170,11 @@ describe('CLI behavior', function () {
           const manifestParsed = YAML.parse(manifest);
           manifestParsed.should.have.nested.property('drivers.test');
           manifestParsed.should.have.nested.property('drivers.fake');
+        });
+
+        it('should actually install both drivers', function () {
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
       });
     });
@@ -283,7 +286,6 @@ describe('CLI behavior', function () {
           ret.uiautomator2.installType.should.eql('npm');
           ret.uiautomator2.installSpec.should.eql('uiautomator2');
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.uiautomator2.installed;
           list.should.eql(ret);
         });
@@ -298,10 +300,40 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql('@appium/fake-driver');
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
+
+        it('should install a driver from npm and a local driver', async function () {
+          await clear();
+          await runInstall([
+            '@appium/fake-driver',
+            '--source',
+            'npm',
+          ]);
+          await installLocalExtension(appiumHome, 'driver', testDriverPath);
+          const list = await runList(['--installed']);
+          expect(list.fake).to.exist;
+          expect(list.test).to.exist;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
+        });
+
+        it('should install _two_ drivers from npm', async function () {
+          await clear();
+          await runInstall([
+            '@appium/fake-driver',
+            '--source',
+            'npm',
+          ]);
+          await runInstall(['appium-uiautomator2-driver', '--source', 'npm']);
+          const list = await runList(['--installed']);
+          expect(list.fake).to.exist;
+          expect(list.uiautomator2).to.exist;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, 'appium-uiautomator2-driver')).not.to.throw;
+        });
+
         it('should install a driver from npm with a specific version/tag', async function () {
           const currentFakeDriverVersionAsOfRightNow = '3.0.5';
           await clear();
@@ -311,7 +343,6 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql(installSpec);
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -328,7 +359,6 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('github');
           ret.fake.installSpec.should.eql('appium/appium-fake-driver');
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -345,7 +375,6 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('git');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed', '--json']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -364,7 +393,6 @@ describe('CLI behavior', function () {
             'git+https://github.com/appium/appium-fake-driver',
           );
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
         });
@@ -377,9 +405,13 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('local');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed']);
-          // @ts-expect-error
           delete list.fake.installed;
           list.should.eql(ret);
+
+          // it should be a link!  this may be npm-version dependent, but it's worked
+          // this way for quite awhile
+          const stat = await fs.lstat(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'));
+          expect(stat.isSymbolicLink()).to.be.true;
         });
       });
 
@@ -528,7 +560,7 @@ describe('CLI behavior', function () {
  * @typedef {import('../../lib/extension/manifest').PluginType} PluginType
  * @typedef {import('../../lib/cli/extension-command').ExtensionListData} ExtensionListData
  * @typedef {import('./e2e-helpers').CliArgs} CliArgs
- * @typedef {import('../../types/types').CliExtensionSubcommand} CliExtensionSubcommand
+ * @typedef {import('../../types/cli').CliExtensionSubcommand} CliExtensionSubcommand
  */
 
 /**

@@ -1,11 +1,13 @@
 /* eslint-disable no-console */
 
 import _ from 'lodash';
-import { npm, fs, util } from '@appium/support';
+import path from 'path';
+import { npm, fs, util, env } from '@appium/support';
 import { log, spinWith, RingBuffer } from './utils';
 import { SubProcess } from 'teen_process';
 import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
          INSTALL_TYPE_LOCAL } from '../extension/extension-config';
+import { packageDidChange } from '../extension/package-changed';
 
 const UPDATE_ALL = 'installed';
 
@@ -184,14 +186,7 @@ class ExtensionCommand {
       throw new Error(`When using --source=${installType}, must also use --package`);
     }
 
-    if (installType === INSTALL_TYPE_LOCAL) {
-      const msg = `Linking ${this.type} from local path into ${this.config.appiumHome}`;
-      const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
-        await npm.linkPackage(this.config.appiumHome, installSpec))
-      );
-      extData = this.getExtensionFields(pkgJsonData);
-      log(this.isJsonOutput, `Successfully linked ${extData.pkgName} into ${this.config.appiumHome}`);
-    } else if (installType === INSTALL_TYPE_GITHUB) {
+    if (installType === INSTALL_TYPE_GITHUB) {
       if (installSpec.split('/').length !== 2) {
         throw new Error(`Github ${this.type} spec ${installSpec} appeared to be invalid; ` +
                         'it should be of the form <org>/<repo>');
@@ -203,40 +198,44 @@ class ExtensionCommand {
       installSpec = installSpec.replace(/\.git$/, '');
       extData = await this.installViaNpm({ext: installSpec, pkgName: /** @type {string} */(packageName)});
     } else {
-      // at this point we have either an npm package or an appium verified extension
-      // name. both of which will be installed via npm.
-      // extensions installed via npm can include versions or tags after the '@'
-      // sign, so check for that. We also need to be careful that package names themselves can
-      // contain the '@' symbol, as in `npm install @appium/fake-driver@1.2.0`
-      let name, pkgVer;
-      const splits = installSpec.split('@');
-      if (installSpec[0] === '@') {
-        // this is the case where we have an npm org included in the package name
-        [name, pkgVer] = [`@${splits[1]}`, splits[2]];
+      let pkgName, pkgVer;
+      if (installType === INSTALL_TYPE_LOCAL) {
+        pkgName = path.isAbsolute(installSpec) ? installSpec : path.resolve(installSpec);
       } else {
-        // this is the case without an npm org
-        [name, pkgVer] = splits;
-      }
-      let pkgName;
-
-      if (installType === INSTALL_TYPE_NPM) {
-        // if we're installing a named package from npm, we don't need to check
-        // against the appium extension list; just use the installSpec as is
-        pkgName = name;
-      } else {
-        // if we're installing a named appium driver (like 'xcuitest') we need to
-        // dereference the actual npm package ('appiupm-xcuitest-driver'), so
-        // check it exists and get the correct package
-        const knownNames = Object.keys(this.knownExtensions);
-        if (!_.includes(knownNames, name)) {
-          const msg = `Could not resolve ${this.type}; are you sure it's in the list ` +
-                      `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
-          throw new Error(msg);
+        // at this point we have either an npm package or an appium verified extension
+        // name or a local path. both of which will be installed via npm.
+        // extensions installed via npm can include versions or tags after the '@'
+        // sign, so check for that. We also need to be careful that package names themselves can
+        // contain the '@' symbol, as in `npm install @appium/fake-driver@1.2.0`
+        let name;
+        const splits = installSpec.split('@');
+        if (installSpec[0] === '@') {
+          // this is the case where we have an npm org included in the package name
+          [name, pkgVer] = [`@${splits[1]}`, splits[2]];
+        } else {
+          // this is the case without an npm org
+          [name, pkgVer] = splits;
         }
-        pkgName = this.knownExtensions[name];
-        // given that we'll use the install type in the driver json, store it as
-        // 'npm' now
-        installType = INSTALL_TYPE_NPM;
+
+        if (installType === INSTALL_TYPE_NPM) {
+          // if we're installing a named package from npm, we don't need to check
+          // against the appium extension list; just use the installSpec as is
+          pkgName = name;
+        } else {
+          // if we're installing a named appium driver (like 'xcuitest') we need to
+          // dereference the actual npm package ('appiupm-xcuitest-driver'), so
+          // check it exists and get the correct package
+          const knownNames = Object.keys(this.knownExtensions);
+          if (!_.includes(knownNames, name)) {
+            const msg = `Could not resolve ${this.type}; are you sure it's in the list ` +
+                        `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
+            throw new Error(msg);
+          }
+          pkgName = this.knownExtensions[name];
+          // given that we'll use the install type in the driver json, store it as
+          // 'npm' now
+          installType = INSTALL_TYPE_NPM;
+        }
       }
 
       extData = await this.installViaNpm({ext, pkgName, pkgVer});
@@ -253,6 +252,11 @@ class ExtensionCommand {
 
     const extManifest = {...extData, installType, installSpec};
     await this.config.addExtension(extName, extManifest);
+
+    // update the if we've changed the local `package.json`
+    if (await env.hasAppiumDependency(this.config.appiumHome)) {
+      await packageDidChange(this.config.appiumHome);
+    }
 
     // log info for the user
     log(this.isJsonOutput, this.getPostInstallText({extName, extData}));

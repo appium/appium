@@ -60,3 +60,4 @@ appium.zip
 *.tsbuildinfo
 packages/*/LICENSE
 local_appium_home
+jsdoc-out

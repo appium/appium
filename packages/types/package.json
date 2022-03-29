@@ -2,7 +2,11 @@
   "name": "@appium/types",
   "version": "0.0.0",
   "description": "Various type declarations used across Appium",
-  "keywords": [],
+  "keywords": [
+    "appium",
+    "typescript",
+    "types"
+  ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

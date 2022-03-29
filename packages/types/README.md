@@ -1,0 +1,20 @@
+# @appium/types
+
+> A collection of TypeScript type declarations used across various [Appium](https://github.com/appium/appium) packages.
+
+**Warning: This is a work-in-progress; expect breaking changes!**
+
+## Install
+
+```bash
+npm install @appium/types -D
+```
+
+## Notes
+
+- The sources are `.ts` files, _not_ `.d.ts` files. This allows other packages in the root TypeScript "project" to define a dependency upon this one, and enables incremental builds an "watch" mode.
+- If there is a way to switch to `.d.ts` files and configure this package to work in our "project" context _without_ needing to actually "emit" anything, then we should do that instead.  Help accepted!
+
+## License
+
+Apache-2.0

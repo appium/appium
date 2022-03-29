@@ -61,4 +61,4 @@ appium.zip
 packages/*/**/appium-config.schema.json
 packages/types/src/appium-config.ts
 packages/types/src/appium-config-schema.js
-
+packages/*/LICENSE

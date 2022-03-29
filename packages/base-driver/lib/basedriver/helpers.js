@@ -549,7 +549,8 @@ function parseCapsArray (cap) {
 /**
  * Generate a string that uniquely describes driver instance
  *
- * @param {Object} obj
+ * @param {Object} obj driver instance
+ * @param {string?} sessionId session identifier (if exists)
  * @returns {string}
  */
 function generateDriverLogPrefix (obj, sessionId = null) {

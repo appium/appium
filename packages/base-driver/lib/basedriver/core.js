@@ -102,9 +102,9 @@ class DriverCore {
   eventEmitter = new EventEmitter();
 
   /**
-  * @type {AppiumLogger?}
+  * @type {AppiumLogger}
   */
-  _log = null;
+  _log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
   /**
   * @protected
@@ -152,29 +152,6 @@ class DriverCore {
   }
 
   get log () {
-    if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 4)}`;
-      // We don't want the self reference to be captured inside the below closure
-      // to avoid possible memory leaks,
-      // but NodeJS started supporting WeakRef only since v. 14.6
-      /**
-       * @type {WeakRef<DriverCore>|DriverCore}
-       */
-      const self = global.WeakRef ? new global.WeakRef(this) : this;
-      this._log = logger.getLogger(() => {
-        let sessionId;
-        if (self instanceof DriverCore) {
-          sessionId = self.sessionId;
-        } else if (global.WeakRef && self instanceof global.WeakRef) {
-          const ref = self.deref();
-          if (ref?.sessionId) {
-            sessionId = ref.sessionId;
-          }
-        }
-        return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
-      });
-    }
-
     return this._log;
   }
 

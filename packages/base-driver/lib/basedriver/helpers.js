@@ -2,7 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import { tempDir, fs, util, zip, net, timing } from '@appium/support';
+import { tempDir, fs, util, zip, net, timing, node } from '@appium/support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
@@ -546,6 +546,21 @@ function parseCapsArray (cap) {
   throw new Error(`must provide a string or JSON Array; received ${cap}`);
 }
 
+/**
+ * Generate a string that uniquely describes driver instance
+ *
+ * @param {Object} obj
+ * @returns {string}
+ */
+function generateDriverLogPrefix (obj, sessionId = null) {
+  const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
+  return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
+}
+
 /** @type {import('@appium/types').DriverHelpers} */
-export default {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray};
-export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray};
+export default {
+  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generateDriverLogPrefix
+};
+export {
+  configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generateDriverLogPrefix
+};

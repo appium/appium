@@ -365,6 +365,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
+  generateDriverLogPrefix: (obj: any, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<

@@ -92,7 +92,7 @@ function getLogger (prefix = null) {
   // add all the levels from `npmlog`, and map to the underlying logger
   for (const level of NPM_LEVELS) {
     wrappedLogger[level] = function (...args) {
-      const actualPrefix = getActualPrefix(wrappedLogger.prefix, logTimestamp);
+      const actualPrefix = getActualPrefix(this.prefix, logTimestamp);
       for (const arg of args) {
         const out = (_.isError(arg) && arg.stack) ? arg.stack : `${arg}`;
         for (const line of out.split('\n')) {

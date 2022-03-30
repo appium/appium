@@ -62,7 +62,7 @@ function getActualPrefix (prefix, logTimestamp = false) {
 
 /**
  *
- * @param {Prefix} prefix
+ * @param {Prefix?} prefix
  * @returns {AppiumLogger}
  */
 function getLogger (prefix = null) {

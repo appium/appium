@@ -35,7 +35,7 @@ class AppiumDriver extends DriverCore {
    * Access to sessions list must be guarded with a Semaphore, because
    * it might be changed by other async calls at any time
    * It is not recommended to access this property directly from the outside
-   * @type {Record<string,Driver>}
+   * @type {Record<string,ExternalDriver>}
    */
   sessions = {};
 
@@ -43,7 +43,7 @@ class AppiumDriver extends DriverCore {
    * Access to pending drivers list must be guarded with a Semaphore, because
    * it might be changed by other async calls at any time
    * It is not recommended to access this property directly from the outside
-   * @type {Record<string,Driver[]>}
+   * @type {Record<string,ExternalDriver[]>}
    */
   pendingDrivers = {};
 
@@ -540,7 +540,7 @@ class AppiumDriver extends DriverCore {
     let sessionId = null;
     let dstSession = null;
     let protocol = null;
-    /** @type {this | Driver} */
+    /** @type {this | ExternalDriver} */
     let driver = this;
     if (isSessionCmd) {
       sessionId = _.last(args);
@@ -741,7 +741,7 @@ export class NoDriverProxyCommandError extends Error {
 export { AppiumDriver };
 
 /**
- * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').DriverOpts} DriverOpts

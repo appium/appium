@@ -49,8 +49,8 @@ function _getLogger () {
 }
 
 /**
- * @param {Prefix} prefix
- * @param {boolean} [logTimestamp]
+ * @param {Prefix?} prefix
+ * @param {boolean} logTimestamp whether to include timestamps into log prefixes
  * @returns {string}
  */
 function getActualPrefix (prefix, logTimestamp = false) {

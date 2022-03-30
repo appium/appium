@@ -245,6 +245,7 @@ export interface ExternalDriver extends Driver {
   getLocation?(elementId: string): Promise<Position>;
   getLocationInView?(elementId: string): Promise<Position>;
   getSize?(elementId: string): Promise<Size>;
+  elementShadowRoot?(elementId: string): Promise<Element>;
   equalsElement?(elementId: string, otherElementId: string): Promise<boolean>;
   submit?(elementId: string): Promise<void>;
   keys?(value: string[]): Promise<void>;

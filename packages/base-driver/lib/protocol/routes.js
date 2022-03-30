@@ -241,7 +241,6 @@ const METHOD_MAP = {
     GET: {command: 'getSize'}
   },
   '/session/:sessionId/element/:elementId/shadow': {
-    // @ts-expect-error -- this method is not defined in ExternalDriver
     GET: {command: 'elementShadowRoot'}
   },
   '/session/:sessionId/element/:elementId/css/:propertyName': {

@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 
 import { DriverCore } from './core';
-import { util, logger } from '@appium/support';
+import { util } from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
 import { fixCaps, isW3cCaps } from '../helpers/capabilities';
@@ -312,7 +312,7 @@ export class BaseDriverCore extends DriverCore {
       this.newCommandTimeoutMs = this.caps.newCommandTimeout * 1000;
     }
 
-    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this, this.sessionId));
+    this._log.prefix = helpers.generateDriverLogPrefix(this, this.sessionId);
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
@@ -336,7 +336,7 @@ export class BaseDriverCore extends DriverCore {
       }
     }
     this.sessionId = null;
-    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
+    this._log.prefix = helpers.generateDriverLogPrefix(this);
   }
 }
 

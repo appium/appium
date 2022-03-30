@@ -482,10 +482,15 @@ export interface EventHistoryCommand {
 }
 export type HTTPMethod = _Method;
 
+export type PrefixCallback = () => string;
+
+export type Prefix = PrefixCallback|string;
+
 export interface AppiumLogger {
   unwrap(): Logger;
   level: string;
   levels: string[];
+  prefix?: Prefix,
   debug: (...args: any[]) => void;
   info: (...args: any[]) => void;
   warn: (...args: any[]) => void;

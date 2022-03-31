@@ -246,12 +246,12 @@ export interface ExternalDriver extends Driver {
   getLocationInView?(elementId: string): Promise<Position>;
   getSize?(elementId: string): Promise<Size>;
   elementShadowRoot?(elementId: string): Promise<Element>;
-  findElementFromShadowRoot(
+  findElementFromShadowRoot?(
     strategy: string,
     selector: string,
     shadowId: string
   ): Promise<Element>;
-  findElementsFromShadowRoot(
+  findElementsFromShadowRoot?(
     strategy: string,
     selector: string,
     shadowId: string

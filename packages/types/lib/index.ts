@@ -8,6 +8,7 @@ import { Capabilities, W3CCapabilities } from './capabilities';
 
 export { AppiumW3CCapabilities } from './capabilities';
 export { AppiumConfig, NormalizedAppiumConfig } from './config';
+export * from './appium-config';
 export { DriverOpts, Capabilities, W3CCapabilities };
 
 /**

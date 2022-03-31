@@ -50,6 +50,7 @@
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",
     "@appium/base-plugin": "1.8.1",
+    "@appium/schema": "file:../schema",
     "@appium/support": "file:../support",
     "@babel/runtime": "7.17.9",
     "@sidvind/better-ajv-errors": "1.1.1",
@@ -60,7 +61,6 @@
     "asyncbox": "2.9.2",
     "axios": "0.26.1",
     "bluebird": "3.7.2",
-    "continuation-local-storage": "3.2.1",
     "find-up": "5.0.0",
     "lilconfig": "2.0.5",
     "lodash": "4.17.21",

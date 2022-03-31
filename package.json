@@ -27,15 +27,12 @@
     "build": "run-s build:distfiles build:types",
     "build:distfiles": "lerna run --parallel --prefix --concurrency=8 build",
     "build:loose": "run-s -c build:distfiles build:types || true",
-    "prebuild:schema": "node ./scripts/generate-schema-json.js",
-    "build:schema": "lerna run --scope=@appium/types generate-schema-declarations",
-    "prebuild:types": "npm run build:schema",
     "build:types": "tsc -b",
     "clean": "run-s clean:*",
     "clean:distfiles": "npx rimraf \"packages/*/build\"",
+    "clean:monorepo": "npx rimraf node_modules package-lock.json",
     "clean:packages": "lerna clean -y && npx rimraf \"packages/*/package-lock.json\"",
     "clean:types": "tsc -b --clean",
-    "clean:monorepo": "npx rimraf node_modules package-lock.json",
     "dev": "lerna run --parallel --prefix --concurrency=8 dev",
     "dev:types": "tsc -b --watch",
     "doctor": "node ./packages/doctor",
@@ -85,8 +82,7 @@
     "precommit-lint"
   ],
   "lint-staged": {
-    "*.js": "eslint --fix",
-    "./packages/appium/lib/schema/appium-config-schema.js": "npm run build:schema"
+    "*.js": "eslint --fix"
   },
   "dependencies": {
     "@appium/base-driver": "file:packages/base-driver",
@@ -95,6 +91,7 @@
     "@appium/fake-driver": "file:packages/fake-driver",
     "@appium/gulp-plugins": "file:packages/gulp-plugins",
     "@appium/opencv": "file:packages/opencv",
+    "@appium/schema": "file:packages/schema",
     "@appium/support": "file:packages/support",
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",

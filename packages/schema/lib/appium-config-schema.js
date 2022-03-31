@@ -1,5 +1,10 @@
+/**
+ * The single-source-of-truth of the Appium server configuration
+ *
+ * This defines _both_ what the CLI supports and what the config files support.
+ */
 
-const schema = /** @type {const} */ ({
+export const AppiumConfigJsonSchema = /** @type {const} */({
   $schema: 'http://json-schema.org/draft-07/schema',
   additionalProperties: false,
   description: 'A schema for Appium configuration files',
@@ -91,7 +96,7 @@ const schema = /** @type {const} */ ({
         driver: {
           description:
             'Driver-specific configuration. Keys should correspond to driver package names',
-          properties: {},
+          properties: /** @type {Record<string,import('json-schema').JSONSchema7>} */({}),
           title: 'driver config',
           type: 'object',
         },
@@ -192,7 +197,7 @@ const schema = /** @type {const} */ ({
         plugin: {
           description:
             'Plugin-specific configuration. Keys should correspond to plugin package names',
-          properties: {},
+          properties: /** @type {Record<string,import('json-schema').JSONSchema7>} */({}),
           title: 'plugin config',
           type: 'object',
         },
@@ -282,5 +287,3 @@ const schema = /** @type {const} */ ({
   title: 'Appium Configuration',
   type: 'object',
 });
-
-export default schema;

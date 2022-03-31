@@ -1,11 +1,14 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": "lib",
     "outDir": "build",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "declarationMap": true
+    "paths": {
+      "@appium/schema": ["../schema"]
+    }
   },
-  "include": ["./src/**/*"]
+  "include": ["lib/**/*"],
+  "references": [
+    {"path": "../schema"}
+  ]
 }

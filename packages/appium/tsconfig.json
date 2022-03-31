@@ -6,7 +6,8 @@
     "paths": {
       "@appium/support": ["../support"],
       "@appium/base-driver": ["../base-driver"],
-      "@appium/types": ["../types"]
+      "@appium/types": ["../types"],
+      "@appium/schema": ["../schema"]
     },
     "checkJs": true
   },
@@ -14,6 +15,7 @@
   "references": [
     {"path": "../support"},
     {"path": "../base-driver"},
-    {"path": "../types"}
+    {"path": "../types"},
+    {"path": "../schema"}
   ]
 }

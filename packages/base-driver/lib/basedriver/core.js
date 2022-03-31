@@ -104,7 +104,7 @@ class DriverCore {
   /**
   * @type {AppiumLogger}
   */
-  _log = logger.getLogger(helpers.generateDriverLogPrefix(this));
+  _log;
 
   /**
   * @protected
@@ -134,6 +134,8 @@ class DriverCore {
     opts = /** @type {DriverOpts} */ ({}),
     shouldValidateCaps = true,
   ) {
+    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
+
     // setup state
     this.opts = opts;
 

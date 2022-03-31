@@ -55,6 +55,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       sessId.length.should.be.above(5);
     });
 
+    it('should setup log prefix after createSession', async function () {
+      const previousPrefix = d.log.prefix;
+      await d.createSession(null, null, w3cCaps);
+      previousPrefix.should.not.eql(d.log.prefix);
+    });
+
     it('should not be able to start two sessions without closing the first', async function () {
       await d.createSession(null, null, _.cloneDeep(w3cCaps));
       await d.createSession(null, null, _.cloneDeep(w3cCaps)).should.eventually.be.rejectedWith('session');

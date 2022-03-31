@@ -1,6 +1,5 @@
-import {SchemaObject} from 'ajv';
-import {CommonMetadata, ExtMetadata, SchemaMetadata} from './external-manifest';
-import {ExtensionType, DriverType, PluginType} from '.';
+import { CommonMetadata, ExtMetadata, SchemaMetadata } from './external-manifest';
+import { ExtensionType, DriverType, PluginType } from '.';
 
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
 

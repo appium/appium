@@ -1,12 +1,8 @@
 {
-  "name": "@appium/types",
+  "name": "@appium/schema",
   "version": "0.0.0",
-  "description": "Various type declarations used across Appium",
-  "keywords": [
-    "appium",
-    "typescript",
-    "types"
-  ],
+  "description": "Appium Configuration Schema",
+  "keywords": [],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -14,16 +10,20 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
-    "directory": "packages/types"
+    "directory": "schema"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/index.d.ts",
   "files": [
     "build",
-    "lib"
+    "lib",
+    "index.js"
   ],
   "scripts": {
-    "build": "node ./scripts/generate-schema-types.js",
+    "build": "run-s build:distfiles build:schema-json",
+    "build:distfiles": "babel lib --root-mode=upward --out-dir=build",
+    "build:schema-json": "node ./scripts/generate-schema-json.js",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore ."
@@ -32,12 +32,8 @@
     "node": ">=12",
     "npm": ">=6"
   },
-  "types": "./build/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07",
-  "dependencies": {
-    "@appium/schema": "file:../schema"
-  }
+  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

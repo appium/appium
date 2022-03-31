@@ -1,20 +1,31 @@
 {
-  "exclude": ["packages/**/test/**", "packages/**/build/**"],
   "compilerOptions": {
     "baseUrl": "./packages",
     "paths": {
-      "@appium/support": ["support"],
       "@appium/base-driver": ["base-driver"],
-      "appium": ["appium"],
-      "@appium/types": ["types"]
-    },
-    "noEmit": true
+      "@appium/schema": ["schema"],
+      "@appium/support": ["support"],
+      "@appium/types": ["types"],
+      "appium": ["appium"]
+    }
   },
+  "exclude": ["packages/**/test/**", "packages/**/build/**"],
   "files": [],
   "references": [
-    {"path": "packages/types"},
-    {"path": "packages/support"},
-    {"path": "packages/base-driver"},
-    {"path": "packages/appium"}
+    {
+      "path": "packages/types"
+    },
+    {
+      "path": "packages/support"
+    },
+    {
+      "path": "packages/base-driver"
+    },
+    {
+      "path": "packages/appium"
+    },
+    {
+      "path": "packages/schema"
+    }
   ]
 }

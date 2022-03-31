@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import { createSandbox } from 'sinon';
 import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
-import appiumConfigSchema from '../../../lib/schema/appium-config-schema';
+import { AppiumConfigJsonSchema } from '@appium/schema';
 import { APPIUM_CONFIG_SCHEMA_ID } from '../../../lib/schema/arg-spec';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver.schema';
@@ -232,7 +232,7 @@ describe('schema', function () {
       });
 
       it('should return a schema', function () {
-        expect(getSchema()).to.eql(appiumConfigSchema);
+        expect(getSchema()).to.eql(AppiumConfigJsonSchema);
       });
     });
 
@@ -244,7 +244,7 @@ describe('schema', function () {
       describe('when schema ID is the base schema ID', function () {
         it('should return the base schema', function () {
           expect(getSchema(APPIUM_CONFIG_SCHEMA_ID)).to.eql(
-            appiumConfigSchema,
+            AppiumConfigJsonSchema,
           );
         });
       });
@@ -256,7 +256,7 @@ describe('schema', function () {
               `${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`,
             ),
           ).to.exist.and.to.eql(
-            appiumConfigSchema.properties.server.properties.address,
+            AppiumConfigJsonSchema.properties.server.properties.address,
           );
         });
       });
@@ -394,7 +394,7 @@ describe('schema', function () {
     describe('when no extensions registered schemas', function () {
       it('should return a Record containing the single base schema', function () {
         expect(finalizeSchema()).to.eql({
-          [APPIUM_CONFIG_SCHEMA_ID]: appiumConfigSchema,
+          [APPIUM_CONFIG_SCHEMA_ID]: AppiumConfigJsonSchema,
         });
       });
     });
@@ -405,7 +405,7 @@ describe('schema', function () {
       });
 
       it('should return a Record containing all extension schemas _and_ the base schema containing references to the extension schemas', function () {
-        const baseSchemaWithRefs = _.cloneDeep(appiumConfigSchema);
+        const baseSchemaWithRefs = _.cloneDeep(AppiumConfigJsonSchema);
         baseSchemaWithRefs.properties.server.properties.driver.properties.stuff =
           {$ref: 'driver-stuff.json', $comment: 'stuff'};
         expect(finalizeSchema()).to.eql({

@@ -1,7 +1,6 @@
 
 import _ from 'lodash';
 import logger from './logger';
-// @ts-ignore
 import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
 import { inspect as dump } from 'util';
 
@@ -37,7 +36,7 @@ const inspect = _.flow(
  * @param {any} jsonwpCapabilities
  * @param {W3CCapabilities} w3cCapabilities
  * @param {import('@appium/types').Constraints} constraints
- * @param {import('../types/appium-config').DefaultCapabilitiesConfig} [defaultCapabilities]
+ * @param {import('@appium/types').DefaultCapabilitiesConfig} [defaultCapabilities]
  * @returns {ParsedDriverCaps|InvalidCaps}
  */
 function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constraints = {}, defaultCapabilities = {}) {

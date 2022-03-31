@@ -60,7 +60,7 @@
     "express": "4.17.3",
     "http-status-codes": "2.2.0",
     "lodash": "4.17.21",
-    "lru-cache": "7.7.2",
+    "lru-cache": "7.7.3",
     "method-override": "3.0.0",
     "morgan": "1.10.0",
     "serve-favicon": "2.5.0",

@@ -243,6 +243,12 @@ const METHOD_MAP = {
   '/session/:sessionId/element/:elementId/shadow': {
     GET: {command: 'elementShadowRoot'}
   },
+  '/session/:sessionId/shadow/:shadowId/element': {
+    POST: {command: 'findElementFromShadowRoot', payloadParams: {required: ['using', 'value']}}
+  },
+  '/session/:sessionId/shadow/:shadowId/elements': {
+    POST: {command: 'findElementsFromShadowRoot', payloadParams: {required: ['using', 'value']}}
+  },
   '/session/:sessionId/element/:elementId/css/:propertyName': {
     GET: {command: 'getCssProperty'}
   },

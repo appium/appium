@@ -86,7 +86,7 @@
   },
   "types": "./build/lib/index.d.ts",
   "devDependencies": {
-    "type-fest": "2.12.1"
+    "type-fest": "2.12.2"
   },
   "overrides": {
     "type-fest": "$type-fest"

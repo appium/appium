@@ -18,6 +18,28 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     });
   });
 
+  describe('Log prefix', function () {
+
+    it('should setup log prefix', async function () {
+      const d = new DriverClass();
+      const previousPrefix = d.log.prefix;
+      await d.createSession({
+        alwaysMatch: Object.assign({}, defaultCaps, {
+          platformName: 'Fake',
+          'appium:deviceName': 'Commodore 64',
+        }),
+        firstMatch: [{}],
+      });
+      try {
+        previousPrefix.should.not.eql(d.log.prefix);
+      } finally {
+        await d.deleteSession();
+        previousPrefix.should.eql(d.log.prefix);
+      }
+    });
+
+  });
+
   describe(`BaseDriver (as ${className})`, function () {
     let d, w3cCaps;
 
@@ -53,12 +75,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       should.exist(sessId);
       sessId.should.be.a('string');
       sessId.length.should.be.above(5);
-    });
-
-    it('should setup log prefix after createSession', async function () {
-      const previousPrefix = d.log.prefix;
-      await d.createSession(null, null, w3cCaps);
-      previousPrefix.should.not.eql(d.log.prefix);
     });
 
     it('should not be able to start two sessions without closing the first', async function () {

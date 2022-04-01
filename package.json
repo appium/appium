@@ -174,7 +174,7 @@
     "sinon-chai": "3.7.0",
     "sync-monorepo-packages": "0.3.4",
     "through2": "4.0.2",
-    "type-fest": "2.12.1",
+    "type-fest": "2.12.2",
     "typescript": "4.6.3",
     "validate.js": "0.13.1",
     "webdriverio": "6.12.1",

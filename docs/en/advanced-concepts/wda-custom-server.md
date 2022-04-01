@@ -32,6 +32,12 @@ Also, it might be necessary to create an empty folder for WDA resources:
 mkdir -p /usr/local/lib/node_modules/appium/node_modules/appium-webdriveragent/Resources/WebDriverAgent.bundle
 ```
 
+If you've installed npm through brew install, then all the sub libraries installed through npm will be under homebrew directory. Hence, the Webdriver agent for appium will be located here 
+
+``` 
+/opt/homebrew/lib/node_modules/appium/node_modules/appium-webdriveragent
+```
+
 No further configuration steps are needed if you're going to execute your automated tests on
 iOS Simulator.
 

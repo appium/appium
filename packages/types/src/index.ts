@@ -376,6 +376,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
+  generateDriverLogPrefix: (obj: Core, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<
@@ -492,10 +493,13 @@ export interface EventHistoryCommand {
 }
 export type HTTPMethod = _Method;
 
+export type Prefix = string|(() => string);
+
 export interface AppiumLogger {
   unwrap(): Logger;
   level: string;
   levels: string[];
+  prefix?: Prefix,
   debug: (...args: any[]) => void;
   info: (...args: any[]) => void;
   warn: (...args: any[]) => void;

@@ -102,9 +102,9 @@ class DriverCore {
   eventEmitter = new EventEmitter();
 
   /**
-  * @type {AppiumLogger?}
+  * @type {AppiumLogger}
   */
-  _log = null;
+  _log;
 
   /**
   * @protected
@@ -134,6 +134,8 @@ class DriverCore {
     opts = /** @type {DriverOpts} */ ({}),
     shouldValidateCaps = true,
   ) {
+    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
+
     // setup state
     this.opts = opts;
 
@@ -152,17 +154,6 @@ class DriverCore {
   }
 
   get log () {
-    if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node
-        .getObjectId(this)
-        .substring(0, 4)}`;
-      this._log = logger.getLogger(() =>
-        this.sessionId
-          ? `${instanceName} (${this.sessionId.substring(0, 8)})`
-          : instanceName,
-      );
-    }
-
     return this._log;
   }
 

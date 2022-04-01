@@ -49,20 +49,20 @@ function _getLogger () {
 }
 
 /**
- * @param {Prefix} prefix
- * @param {boolean} [logTimestamp]
+ * @param {Prefix?} prefix
+ * @param {boolean} logTimestamp whether to include timestamps into log prefixes
+ * @returns {string}
  */
 function getActualPrefix (prefix, logTimestamp = false) {
-  let actualPrefix = _.isFunction(prefix) ? prefix() : prefix;
-  if (logTimestamp) {
-    actualPrefix = `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}] ${actualPrefix}`;
-  }
-  return actualPrefix;
+  const result = (_.isFunction(prefix) ? prefix() : prefix) ?? '';
+  return logTimestamp
+    ? `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}] ${result}`
+    : result;
 }
 
 /**
  *
- * @param {Prefix} [prefix]
+ * @param {Prefix?} prefix
  * @returns {AppiumLogger}
  */
 function getLogger (prefix = null) {
@@ -71,7 +71,8 @@ function getLogger (prefix = null) {
   // wrap the logger so that we can catch and modify any logging
   let wrappedLogger = {
     unwrap: () => logger,
-    levels: NPM_LEVELS
+    levels: NPM_LEVELS,
+    prefix,
   };
 
   // allow access to the level of the underlying logger
@@ -91,7 +92,7 @@ function getLogger (prefix = null) {
   // add all the levels from `npmlog`, and map to the underlying logger
   for (const level of NPM_LEVELS) {
     wrappedLogger[level] = function (...args) {
-      const actualPrefix = getActualPrefix(prefix, logTimestamp);
+      const actualPrefix = getActualPrefix(this.prefix, logTimestamp);
       for (const arg of args) {
         const out = (_.isError(arg) && arg.stack) ? arg.stack : `${arg}`;
         for (const line of out.split('\n')) {
@@ -154,12 +155,7 @@ export { log, patchLogger, getLogger, loadSecureValuesPreprocessingRules };
 export default log;
 
 /**
- * @callback PrefixCallback
- * @returns {string}
- */
-
-/**
- * @typedef {PrefixCallback|string?} Prefix
+ * @typedef {import('@appium/types').Prefix} Prefix
  */
 
 /**

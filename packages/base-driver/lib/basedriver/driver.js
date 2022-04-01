@@ -15,6 +15,7 @@ import {
   promoteAppiumOptions
 } from './capabilities';
 import { createBaseDriverClass } from './commands';
+import helpers from './helpers';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -311,6 +312,8 @@ export class BaseDriverCore extends DriverCore {
       this.newCommandTimeoutMs = this.caps.newCommandTimeout * 1000;
     }
 
+    this._log.prefix = helpers.generateDriverLogPrefix(this, this.sessionId);
+
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
     return [this.sessionId, caps];
@@ -333,6 +336,7 @@ export class BaseDriverCore extends DriverCore {
       }
     }
     this.sessionId = null;
+    this._log.prefix = helpers.generateDriverLogPrefix(this);
   }
 }
 

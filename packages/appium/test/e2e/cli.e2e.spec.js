@@ -320,6 +320,7 @@ describe('CLI behavior', function () {
         });
 
         it('should install _two_ drivers from npm', async function () {
+          this.timeout('40s');
           await clear();
           await runInstall([
             '@appium/fake-driver',

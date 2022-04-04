@@ -51,16 +51,16 @@ function elementTests () {
       (await el.getTagName()).should.equal('MockWebView');
     });
     it('should detect whether an element is displayed', async function () {
-      await driver.$('#Button1').should.not.be.displayed();
-      await driver.$('#Button2').should.be.displayed();
+      (await driver.$('#Button1')).should.not.be.displayed();
+      (await driver.$('#Button2')).should.be.displayed();
     });
     it('should detect whether an element is enabled', async function () {
-      await driver.$('#Button1').should.not.be.enabled();
-      await driver.$('#Button2').should.be.enabled();
+      (await driver.$('#Button1')).should.not.be.enabled();
+      (await driver.$('#Button2')).should.be.enabled();
     });
     it('should detect whether an element is selected', async function () {
-      await driver.$('#Button1').should.not.be.selected();
-      await driver.$('#Button2').should.be.selected();
+      (await driver.$('#Button1')).should.not.be.selected();
+      (await driver.$('#Button2')).should.be.selected();
     });
     it('should get the rect of an element', async function () {
       let {elementId} = await driver.$('#nav');

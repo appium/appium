@@ -143,7 +143,6 @@
     "@types/through2": "2.0.36",
     "@types/uuid": "8.3.4",
     "@wdio/types": "7.19.1",
-    "appium-base-driver": "7.11.3",
     "asyncbox": "2.9.2",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.1.3",
@@ -177,7 +176,7 @@
     "type-fest": "2.12.2",
     "typescript": "4.6.3",
     "validate.js": "0.13.1",
-    "webdriverio": "6.12.1",
+    "webdriverio": "7.19.3",
     "yaml-js": "0.3.1"
   },
   "engines": {

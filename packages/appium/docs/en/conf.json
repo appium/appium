@@ -16,20 +16,28 @@
             "start-test-java": { "title": "First Example (Java)" }
         }
     },
-    "migrating-1-to-2": { "title": "Migrating from Appium 1.x to 2.x" },
-    "managing-exts": { "title": "Managing Drivers and Plugins" },
     "cli": {
-        "title": "CLI Reference",
+        "title": "Appium CLI",
         "children": {
             "cli-args": { "title": "Appium Server CLI" },
-            "cli-extensions": { "title": "Driver and Plugin CLI" },
-            "cli-config": { "title": "The Appium Config File" }
+            "cli-extensions": { "title": "Driver and Plugin CLI" }
         }
     },
-    "drivers": { "title": "Appium Drivers" },
-    "plugins": { "title": "Appium Plugins" },
-    "clients": { "title": "Appium Clients" },
-    "grid": { "title": "Appium and Selenium Grid" },
+    "ecosystem": { "title": "The Appium Ecosystem" },
+    "guide": {
+        "title": "Guides and Feature Articles",
+        "children": {
+            "guide-managing-exts": { "title": "Managing Drivers and Plugins" },
+            "guide-config": { "title": "The Appium Config File" },
+            "guide-security": { "title": "Appium Server Security" },
+            "guide-caps": { "title": "Capabilities" },
+            "guide-context": { "title": "Contexts (Hybrid Apps)" },
+            "guide-event-timing": { "title": "Event Timings" },
+            "guide-grid": { "title": "Appium and Selenium Grid" },
+            "guide-log-filters": { "title": "Log Filters" },
+            "guide-1-to-2": { "title": "Migrating from Appium 1.x to 2.x" }
+        }
+    },
     "build-drivers": { "title": "Building Your Own Drivers" },
     "build-plugins": { "title": "Building Your Own Plugins" },
     "contributing": { "title": "Contributing to Appium" }

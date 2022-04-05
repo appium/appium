@@ -15,6 +15,9 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - footnotes
 
+extra:
+  generator: false
+
 theme:
   name: material
   palette:

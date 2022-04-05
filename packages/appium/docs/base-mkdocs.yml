@@ -1,9 +1,14 @@
 INHERIT: ../../docutils/base-mkdocs.yml
-site_name: Appium
+site_name: Appium Documentation
 repo_url: https://github.com/appium/appium
 repo_name: appium/appium
+copyright: Copyright &copy; 2012 - 2022 OpenJS Foundation
 
 extra:
+  homepage: /
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/AppiumDevs
   alternate:
     - name: English
       link: /docs/en/ 

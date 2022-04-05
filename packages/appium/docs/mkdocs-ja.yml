@@ -9,7 +9,6 @@ theme:
   language: ja
 
 nav:
-  - Home: /
   - About:
     - about/intro.md
     - about/getting-started.md

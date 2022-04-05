@@ -1,0 +1,17 @@
+INHERIT: ./base-mkdocs.yml
+site_url: https://appium.io/docs/ja
+edit_uri: edit/2.0/packages/appium/docs/ja
+site_description: The Appium automation project documentation
+
+docs_dir: ja
+
+theme:
+  language: ja
+
+nav:
+  - Home: /
+  - About:
+    - about/intro.md
+    - about/getting-started.md
+    - about/platform-support.md
+    - about/appium-clients.md

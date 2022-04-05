@@ -50,6 +50,7 @@
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",
     "@appium/base-plugin": "file:../base-plugin",
+    "@appium/docutils": "file:../docutils",
     "@appium/schema": "file:../schema",
     "@appium/support": "file:../support",
     "@babel/runtime": "7.17.9",

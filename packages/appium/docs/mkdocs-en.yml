@@ -1,0 +1,42 @@
+INHERIT: ./base-mkdocs.yml
+site_url: https://appium.io/docs/en
+edit_uri: edit/2.0/packages/appium/docs/en
+site_description: The Appium automation project documentation
+
+docs_dir: en
+
+theme:
+  language: en
+
+nav:
+  - Home: /
+  - Introduction:
+    - intro/index.md
+    - intro/drivers.md
+    - intro/clients.md
+  - Quickstart:
+    - quickstart/index.md
+    - quickstart/install.md
+    - quickstart/test-js.md
+    - quickstart/test-py.md
+    - quickstart/test-java.md
+  - CLI Reference:
+    - cli/index.md
+    - cli/args.md
+    - cli/extensions.md
+  - Guides:
+    - guides/migrating-1-to-2.md
+    - guides/managing-exts.md
+    - guides/config.md
+    - guides/security.md
+    - guides/caps.md
+    - guides/context.md
+    - guides/event-timing.md
+    - guides/log-filters.md
+    - guides/grid.md
+  - Ecosystem:
+    - ecosystem/index.md
+    - ecosystem/build-drivers.md
+    - ecosystem/build-plugins.md
+  - Contributing: contributing/index.md
+  - Issues: https://github.com/appium/appium/issues

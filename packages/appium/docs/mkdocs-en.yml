@@ -7,9 +7,11 @@ docs_dir: en
 
 theme:
   language: en
+  logo: assets/appium-logo-white.png
+  favicon: assets/appium-logo.png
 
 nav:
-  - Home: /
+  - Home: index.md
   - Introduction:
     - intro/index.md
     - intro/drivers.md
@@ -20,6 +22,7 @@ nav:
     - quickstart/test-js.md
     - quickstart/test-py.md
     - quickstart/test-java.md
+    - quickstart/next-steps.md
   - CLI Reference:
     - cli/index.md
     - cli/args.md

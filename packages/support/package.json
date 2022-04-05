@@ -56,7 +56,7 @@
     "klaw": "3.0.0",
     "lockfile": "1.0.4",
     "lodash": "4.17.21",
-    "moment": "2.29.1",
+    "moment": "2.29.2",
     "mv": "2.1.1",
     "ncp": "2.0.0",
     "npmlog": "6.0.1",
@@ -86,7 +86,7 @@
   },
   "types": "./build/lib/index.d.ts",
   "devDependencies": {
-    "type-fest": "2.12.1"
+    "type-fest": "2.12.2"
   },
   "overrides": {
     "type-fest": "$type-fest"

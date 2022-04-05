@@ -246,6 +246,16 @@ export interface ExternalDriver extends Driver {
   getLocationInView?(elementId: string): Promise<Position>;
   getSize?(elementId: string): Promise<Size>;
   elementShadowRoot?(elementId: string): Promise<Element>;
+  findElementFromShadowRoot?(
+    strategy: string,
+    selector: string,
+    shadowId: string
+  ): Promise<Element>;
+  findElementsFromShadowRoot?(
+    strategy: string,
+    selector: string,
+    shadowId: string
+  ): Promise<Element[]>;
   equalsElement?(elementId: string, otherElementId: string): Promise<boolean>;
   submit?(elementId: string): Promise<void>;
   keys?(value: string[]): Promise<void>;
@@ -366,6 +376,7 @@ export interface DriverHelpers {
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
+  generateDriverLogPrefix: (obj: Core, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<
@@ -482,10 +493,13 @@ export interface EventHistoryCommand {
 }
 export type HTTPMethod = _Method;
 
+export type Prefix = string|(() => string);
+
 export interface AppiumLogger {
   unwrap(): Logger;
   level: string;
   levels: string[];
+  prefix?: Prefix,
   debug: (...args: any[]) => void;
   info: (...args: any[]) => void;
   warn: (...args: any[]) => void;

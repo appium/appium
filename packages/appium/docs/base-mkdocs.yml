@@ -1,0 +1,13 @@
+INHERIT: ../../docutils/base-mkdocs.yml
+site_name: Appium
+repo_url: https://github.com/appium/appium
+repo_name: appium/appium
+
+extra:
+  alternate:
+    - name: English
+      link: /docs/en/ 
+      lang: en
+    - name: 日本
+      link: /docs/ja/
+      lang: ja

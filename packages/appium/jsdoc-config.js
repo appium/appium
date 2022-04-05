@@ -1,4 +1,4 @@
-const baseConfig = require('../../jsdoc-config');
+const { baseConfig } = require('@appium/docutils');
 
 const lang = process.env.APPIUM_DOCS_LANG || 'en';
 

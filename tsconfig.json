@@ -40,6 +40,9 @@
     },
     {
       "path": "packages/execute-driver-plugin"
+    },
+    {
+      "path": "packages/docutils"
     }
   ]
 }

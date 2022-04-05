@@ -1,0 +1,58 @@
+{
+  "name": "@appium/docutils",
+  "version": "0.0.0",
+  "description": "Documentation generation utilities for Appium and related projects",
+  "keywords": [
+    "appium",
+    "docs"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/docutils"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "build"
+  ],
+  "scripts": {
+    "build": "npm run build:sources && npm run build:test",
+    "build:sources": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build:test": "babel test --root-mode=upward --out-dir=build/test --copy-files",
+    "dev": "npm run build:sources -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:e2e": "echo \"No e2e tests for this package\"",
+    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+  },
+  "dependencies": {
+    "@appium/support": "file:../support",
+    "@babel/runtime": "7.17.8",
+    "docdash": "1.2.0",
+    "jsdoc": "3.6.10",
+    "jsdoc-plugin-typescript": "2.0.6",
+    "source-map-support": "0.5.21",
+    "teen_process": "1.16.0"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "types": "./build/lib/index.d.ts",
+  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+}

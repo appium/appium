@@ -16,9 +16,11 @@ nav:
     - intro/index.md
     - intro/drivers.md
     - intro/clients.md
+    - intro/requirements.md
   - Quickstart:
     - quickstart/index.md
     - quickstart/install.md
+    - quickstart/uiauto2-driver.md
     - quickstart/test-js.md
     - quickstart/test-py.md
     - quickstart/test-java.md
@@ -41,5 +43,6 @@ nav:
     - ecosystem/index.md
     - ecosystem/build-drivers.md
     - ecosystem/build-plugins.md
+    - ecosystem/build-docs.md
   - Contributing: contributing/index.md
   - Issues: https://github.com/appium/appium/issues

@@ -54,7 +54,7 @@ the Appium client depends on) since that is what you will use as your primary in
 !!! warning
 
     Currently, the .NET client has a low level of maintenance/support. Expect bugs and
-    incompatibility.
+    incompatibility. We're looking for help here, so please reach out if you know .NET!
 
 In general, any W3C WebDriver spec-compatible client will also integrate well with Appium, though
 some Appium-specific commands may not be implemented in other clients.

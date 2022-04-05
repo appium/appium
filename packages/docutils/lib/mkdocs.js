@@ -1,4 +1,4 @@
-import { exec } from 'teen_process';
+import { exec, SubProcess } from 'teen_process';
 
 const MKDOCS_VER_STR = 'version 1.';
 
@@ -27,4 +27,15 @@ export async function verifyMkdocs () {
 export async function mkdocsBuild (configPath, outputDir, theme = 'mkdocs') {
   await verifyMkdocs();
   await exec('mkdocs', ['build', '-f', configPath, '-t', theme, '-d', outputDir]);
+}
+
+/**
+ * Run 'mkdocs serve' on a project
+ *
+ * @param {string} configPath path to mkdocs config yml
+ */
+export async function mkdocsServe (configPath) {
+  await verifyMkdocs();
+  const proc = new SubProcess('mkdocs', ['serve', '-f', configPath]);
+  await proc.start();
 }

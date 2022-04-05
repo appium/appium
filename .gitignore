@@ -59,3 +59,4 @@ appium.zip
 **/build-fixtures/**
 *.tsbuildinfo
 packages/*/LICENSE
+local_appium_home

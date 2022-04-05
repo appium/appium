@@ -17,6 +17,12 @@
       }
     },
     {
+      "files": "./packages/*/index.js",
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    },
+    {
       "files": "./packages/*/test/**/*.js",
       "rules": {
         "no-restricted-properties": [

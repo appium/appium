@@ -88,15 +88,20 @@
   },
   "dependencies": {
     "@appium/base-driver": "file:packages/base-driver",
+    "@appium/base-plugin": "file:packages/base-plugin",
     "@appium/doctor": "file:packages/doctor",
     "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
     "@appium/fake-driver": "file:packages/fake-driver",
+    "@appium/fake-plugin": "file:packages/fake-plugin",
     "@appium/gulp-plugins": "file:packages/gulp-plugins",
+    "@appium/images-plugin": "file:packages/images-plugin",
     "@appium/opencv": "file:packages/opencv",
+    "@appium/relaxed-caps-plugin": "file:packages/relaxed-caps-plugin",
     "@appium/schema": "file:packages/schema",
     "@appium/support": "file:packages/support",
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",
+    "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
     "appium": "file:packages/appium"
   },
   "devDependencies": {

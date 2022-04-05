@@ -1,0 +1,45 @@
+{
+  "name": "@appium/base-plugin",
+  "version": "1.6.4",
+  "description": "The base plugin used to create Appium 2.0 plugins",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/base-plugin"
+  },
+  "license": "Apache-2.0",
+  "author": "Appium <maintainers@appium.io>",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "lib",
+    "build",
+    "index.js"
+  ],
+  "scripts": {
+    "build": "run-s build:*",
+    "build:distfiles": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build:test": "babel test/helpers.js --root-mode=upward --out-dir=build/test",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+  },
+  "dependencies": {
+    "@appium/support": "file:../support"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  },
+  "types": "./build/lib/plugin.d.ts",
+  "gitHead": "802f7ad1b2d313a0d445dcd97f9666de478913da",
+  "tags": [
+    "appium"
+  ]
+}

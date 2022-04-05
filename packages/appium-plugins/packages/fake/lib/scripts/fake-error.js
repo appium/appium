@@ -1,1 +1,0 @@
-throw Error('Unsuccessfuly ran the script');

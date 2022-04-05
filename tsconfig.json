@@ -3,6 +3,7 @@
     "baseUrl": "./packages",
     "paths": {
       "@appium/base-driver": ["base-driver"],
+      "@appium/base-plugin": ["base-plugin"],
       "@appium/schema": ["schema"],
       "@appium/support": ["support"],
       "@appium/types": ["types"],
@@ -26,6 +27,21 @@
     },
     {
       "path": "packages/schema"
+    },
+    {
+      "path": "packages/base-plugin"
+    },
+    {
+      "path": "packages/fake-plugin"
+    },
+    {
+      "path": "packages/images-plugin"
+    },
+    {
+      "path": "packages/relaxed-caps-plugin"
+    },
+    {
+      "path": "packages/universal-xml-plugin"
     }
   ]
 }

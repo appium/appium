@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "paths": {
+      "@appium/base-plugin": ["../base-plugin"],
+      "@appium/support": ["../support"]
+    }
+  },
+  "extends": "../../config/tsconfig.base.json",
+  "include": ["lib"],
+  "references": [
+    {
+      "path": "../base-plugin"
+    },
+    {
+      "path": "../support"
+    }
+  ]
+}

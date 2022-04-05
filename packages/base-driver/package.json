@@ -37,7 +37,7 @@
     "!build/test/e2e/fixtures"
   ],
   "scripts": {
-    "build": "npm run build:distfiles && npm run build:test",
+    "build": "run-s build:*",
     "build:distfiles": "babel lib --root-mode=upward --out-dir=build/lib",
     "build:test": "babel test --root-mode=upward --out-dir=build/test --copy-files",
     "dev": "run-p \"build:distfiles -- --watch\" \"build:test -- --watch\"",

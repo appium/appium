@@ -29,6 +29,10 @@ describe('CLI behavior', function () {
 
   const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
+  beforeEach(function () {
+    this.timeout(30000);
+  });
+
   describe('when appium is a dependency', function () {
     /** @type {string} */
     let hashPath;

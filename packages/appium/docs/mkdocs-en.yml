@@ -7,8 +7,6 @@ docs_dir: en
 
 theme:
   language: en
-  logo: assets/appium-logo-white.png
-  favicon: assets/appium-logo.png
 
 nav:
   - Home: index.md

@@ -6,9 +6,6 @@
       "@appium/support": ["../support"]
     }
   },
-  "files": [
-    "test/helpers.js"
-  ],
   "include": ["lib"],
   "references": [
     {"path": "../support"}

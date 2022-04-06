@@ -4,6 +4,7 @@ edit_uri: edit/2.0/packages/appium/docs/ja
 site_description: The Appium automation project documentation
 
 docs_dir: ja
+site_dir: site/docs/ja
 
 theme:
   language: ja

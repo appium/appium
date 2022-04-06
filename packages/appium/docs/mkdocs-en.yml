@@ -16,6 +16,7 @@ nav:
     - intro/drivers.md
     - intro/clients.md
     - intro/requirements.md
+    - intro/history.md
   - Quickstart:
     - quickstart/index.md
     - quickstart/install.md

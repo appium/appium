@@ -44,9 +44,9 @@ describe('finding elements by image', function () {
     it('should not be able to find image element from any other element', async function () {
       const d = new PluginDriver();
       await d.findElementFromElement(IMAGE_STRATEGY, 'foo', 'elId')
-        .should.eventually.be.rejectedWith(/Locator Strategy.+is not supported/);
+        .should.be.rejectedWith(/Locator Strategy.+is not supported/);
       await d.findElementsFromElement(IMAGE_STRATEGY, 'foo', 'elId')
-        .should.eventually.be.rejectedWith(/Locator Strategy.+is not supported/);
+        .should.be.rejectedWith(/Locator Strategy.+is not supported/);
     });
   });
 
@@ -79,7 +79,7 @@ describe('finding elements by image', function () {
     beforeEach(function () {
       d = new PluginDriver();
       f = new ImageElementFinder(d);
-      compareStub = sandbox.stub(compareModule, 'compareImages').returns({rect, score});
+      compareStub = sandbox.stub(compareModule, 'compareImages').resolves({rect, score});
       basicStub(d, f);
     });
 
@@ -88,6 +88,8 @@ describe('finding elements by image', function () {
       basicImgElVerify(imgElProto, f);
     });
     it('should find image elements happypath', async function () {
+      compareStub.restore();
+      compareStub = sandbox.stub(compareModule, 'compareImages').resolves([{rect, score}]);
       const els = await f.findByImage(template, {multiple: true});
       els.should.have.length(1);
       basicImgElVerify(els[0], f);

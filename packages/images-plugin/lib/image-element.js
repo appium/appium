@@ -15,23 +15,15 @@ const IMAGE_TAP_STRATEGIES = [
 const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
 
 /**
- * @typedef {Object} Rect
- * @property {int} x - x-coordinate of top-left corner
- * @property {int} y - y-coordinate of top-left corner
- * @property {int} width - width of rect
- * @property {int} height - height of rect
+ * @typedef Dimension
+ * @property {number} width - width of rect
+ * @property {number} height - height of rect
  */
 
 /**
- * @typedef {Object} Dimension
- * @property {int} width - width of rect
- * @property {int} height - height of rect
- */
-
-/**
- * @typedef {Object} Position
- * @property {int} x - x coordinate
- * @property {int} y - y coordinate
+ * @typedef Position
+ * @property {number} x - x coordinate
+ * @property {number} y - y coordinate
  */
 
 /**
@@ -46,11 +38,9 @@ export default class ImageElement {
    * @param {Rect} rect - bounds of matched image element
    * @param {number} score The similarity score as a float number in range [0.0, 1.0].
    * 1.0 is the highest score (means both images are totally equal).
-   * @param {?string} b64Result - the base64-encoded image which has matched marks.
+   * @param {string?} b64Result - the base64-encoded image which has matched marks.
    *                              Defaults to null.
-   * @param {?ImageElementFinder} finder - the finder we can use to re-check stale elements
-   *
-   * @returns {ImageElement}
+   * @param {import('./finder').default?} finder - the finder we can use to re-check stale elements
    */
   constructor (b64Template, rect, score, b64Result = null, finder = null) {
     this.template = b64Template;
@@ -217,12 +207,12 @@ export default class ImageElement {
   /**
    * Handle various Appium commands that involve an image element
    *
-   * @param {BaseDriver} driver - the driver to use for commands
+   * @param {import('@appium/base-driver').BaseDriver} driver - the driver to use for commands
    * @param {string} cmd - the name of the driver command
    * @param {string} imgElId - the id of the ImageElement to work with
-   * @param {Array} args - Rest of arguments for executeScripts
+   * @param {string[]} args - Rest of arguments for executeScripts
    *
-   * @returns {Object} - the result of running a command
+   * @returns {object} - the result of running a command
    */
   static async execute (driver, imgEl, cmd, ...args) {
     switch (cmd) {
@@ -258,3 +248,7 @@ export {
   ImageElement, IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C,
   DEFAULT_TEMPLATE_IMAGE_SCALE, IMAGE_ELEMENT_PREFIX
 };
+
+/**
+ * @typedef {import('@appium/types').Rect} Rect
+ */

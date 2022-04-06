@@ -72,7 +72,7 @@ describe('ImageElement', function () {
       const d = new BaseDriver();
       const el = new ImageElement(defTemplate, defRect);
       await d.settings.update({imageElementTapStrategy: 'bad'});
-      await el.click(d).should.eventually.be.rejectedWith(/Incorrect imageElementTapStrategy/);
+      await el.click(d).should.be.rejectedWith(/Incorrect imageElementTapStrategy/);
     });
     it('should try to check for image element staleness, and throw if stale', async function () {
       const d = new BaseDriver();
@@ -84,14 +84,14 @@ describe('ImageElement', function () {
         checkForImageElementStaleness: true,
         autoUpdateImageElementPosition: false
       });
-      await el.click(d).should.eventually.be.rejectedWith(/no longer attached/);
+      await el.click(d).should.be.rejectedWith(/no longer attached/);
 
       // and also if we are updating the element position
       await d.settings.update({
         checkForImageElementStaleness: false,
         autoUpdateImageElementPosition: true
       });
-      await el.click(d).should.eventually.be.rejectedWith(/no longer attached/);
+      await el.click(d).should.be.rejectedWith(/no longer attached/);
     });
     it('should auto-update element position if requested', async function () {
       const d = new BaseDriver();
@@ -162,7 +162,7 @@ describe('ImageElement', function () {
       await d.settings.update({
         checkForImageElementStaleness: false,
       });
-      await el.click(d).should.eventually.be.rejectedWith(/did not implement/);
+      await el.click(d).should.be.rejectedWith(/did not implement/);
     });
   });
 
@@ -184,7 +184,7 @@ describe('ImageElement', function () {
 
     it('should reject executions for unsupported commands', async function () {
       await ImageElement.execute(driver, imgEl, 'foobar')
-        .should.eventually.be.rejectedWith(/not yet been implemented/);
+        .should.be.rejectedWith(/not yet been implemented/);
     });
     it('should get displayed status of element', async function () {
       await ImageElement.execute(driver, imgEl, 'elementDisplayed')

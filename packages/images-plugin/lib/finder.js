@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import LRU from 'lru-cache';
 import { imageUtil, util } from '@appium/support';
 import { errors } from '@appium/base-driver';
@@ -18,6 +19,12 @@ const DEFAULT_SETTINGS = {
   // value between 0 and 1 representing match strength, below which an image
   // element will not be found
   imageMatchThreshold: DEFAULT_MATCH_THRESHOLD,
+
+  // One of possible image matching methods.
+  // Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
+  // for more details.
+  // TM_CCOEFF_NORMED by default
+  imageMatchMethod: '',
 
   // if the image returned by getScreenshot differs in size or aspect ratio
   // from the screen, attempt to fix it automatically
@@ -81,7 +88,7 @@ export default class ImageElementFinder {
   }
 
   /**
-   * @typedef {Object} FindByImageOptions
+   * @typedef FindByImageOptions
    * @property {boolean} [shouldCheckStaleness=false] - whether this call to find an
    * image is merely to check staleness. If so we can bypass a lot of logic
    * @property {boolean} [multiple=false] - Whether we are finding one element or
@@ -109,13 +116,14 @@ export default class ImageElementFinder {
     if (!this.driver) {
       throw new Error(`Can't find without a driver!`);
     }
-    const settings = Object.assign({}, DEFAULT_SETTINGS, this.driver.settings.getSettings());
+    const settings = {...DEFAULT_SETTINGS, ...this.driver.settings.getSettings()};
     const {
       imageMatchThreshold: threshold,
+      imageMatchMethod,
       fixImageTemplateSize,
       fixImageTemplateScale,
       defaultImageTemplateScale,
-      getMatchedImageResult: visualize,
+      getMatchedImageResult: visualize
     } = settings;
 
     log.info(`Finding image element with match threshold ${threshold}`);
@@ -133,9 +141,7 @@ export default class ImageElementFinder {
         screenHeight);
     }
 
-    let rect = null;
-    let b64Matched = null;
-    let score = 0;
+    const results = [];
     const condition = async () => {
       try {
         const {b64Screenshot, scale} = await this.getScreenshotForImageFind(screenWidth, screenHeight);
@@ -145,12 +151,27 @@ export default class ImageElementFinder {
           fixImageTemplateScale, ...scale
         });
 
-        const comparedImage = await compareImages(MATCH_TEMPLATE_MODE, b64Screenshot, b64Template, {threshold, visualize});
-        rect = comparedImage.rect;
-        b64Matched = comparedImage.visualization;
-        score = comparedImage.score;
-
+        const comparisonOpts = {
+          threshold,
+          visualize,
+          multiple,
+        };
+        if (imageMatchMethod) {
+          comparisonOpts.method = imageMatchMethod;
+        }
+        if (multiple) {
+          results.push(...(await compareImages(MATCH_TEMPLATE_MODE,
+                                               b64Screenshot,
+                                               b64Template,
+                                               comparisonOpts)));
+        } else {
+          results.push(await compareImages(MATCH_TEMPLATE_MODE,
+                                           b64Screenshot,
+                                           b64Template,
+                                           comparisonOpts));
+        }
         return true;
+
       } catch (err) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of
@@ -177,29 +198,28 @@ export default class ImageElementFinder {
       }
     }
 
-    if (!rect) {
+    if (_.isEmpty(results)) {
       if (multiple) {
         return [];
       }
       throw new errors.NoSuchElementError();
     }
 
-    log.info(`Image template matched: ${JSON.stringify(rect)}`);
-    if (b64Matched) {
-      log.info(`Matched base64 data: ${b64Matched.substring(0, 200)}...`);
-    }
-    const imgEl = new ImageElement(b64Template, rect, score, b64Matched, this);
+    const elements = results.map(({rect, score, visualization}) => {
+      log.info(`Image template matched: ${JSON.stringify(rect)}`);
+      return new ImageElement(b64Template, rect, score, visualization, this);
+    });
 
     // if we're just checking staleness, return straightaway so we don't add
     // a new element to the cache. shouldCheckStaleness does not support multiple
     // elements, since it is a purely internal mechanism
     if (shouldCheckStaleness) {
-      return imgEl;
+      return elements[0];
     }
 
-    const protocolEl = this.registerImageElement(imgEl);
+    const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
 
-    return multiple ? [protocolEl] : protocolEl;
+    return multiple ? registeredElements : registeredElements[0];
   }
 
   /**
@@ -229,11 +249,11 @@ export default class ImageElementFinder {
   }
 
   /**
-   * @typedef {Object} Screenshot
+   * @typedef Screenshot
    * @property {string} b64Screenshot - base64 based screenshot string
    */
   /**
-   * @typedef {Object} ScreenshotScale
+   * @typedef ScreenshotScale
    * @property {float} xScale - Scale ratio for width
    * @property {float} yScale - Scale ratio for height
    */
@@ -244,7 +264,7 @@ export default class ImageElementFinder {
    * @param {int} screenWidth - width of screen
    * @param {int} screenHeight - height of screen
    *
-   * @returns {Screenshot, ?ScreenshotScale} base64-encoded screenshot and ScreenshotScale
+   * @returns { {b64Screenshot: Screenshot, scale: ScreenshotScale? } } base64-encoded screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind (screenWidth, screenHeight) {
     if (!this.driver.getScreenshot) {
@@ -352,7 +372,7 @@ export default class ImageElementFinder {
   }
 
   /**
-   * @typedef {Object} ImageTemplateSettings
+   * @typedef ImageTemplateSettings
    * @property {boolean} fixImageTemplateScale - fixImageTemplateScale in device-settings
    * @property {float} defaultImageTemplateScale - defaultImageTemplateScale in device-settings
    * @property {boolean} ignoreDefaultImageTemplateScale - Ignore defaultImageTemplateScale if it has true.

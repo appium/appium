@@ -1,18 +1,10 @@
-let hasOpenCV = false;
-try {
-  require('opencv4nodejs');
-  hasOpenCV = true;
-} catch (ign) {}
-
 import { ImageElementPlugin, IMAGE_STRATEGY } from '../../lib/plugin';
 import { MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE } from '../../lib/compare';
 import BaseDriver from '@appium/base-driver';
 import { W3C_ELEMENT_KEY } from '../../lib/finder';
 import { TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64 } from '../fixtures';
 
-const describeOrSkip = hasOpenCV ? describe : describe.skip;
-
-describeOrSkip('ImageElementPlugin#handle', function () {
+describe('ImageElementPlugin#handle', function () {
   const next = () => {};
   const driver = new BaseDriver();
   const p = new ImageElementPlugin();

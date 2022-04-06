@@ -1,4 +1,3 @@
-import FakePlugin from './lib/plugin';
+'use strict';
 
-export default FakePlugin;
-export { FakePlugin };
+module.exports = require('./build/lib/plugin');

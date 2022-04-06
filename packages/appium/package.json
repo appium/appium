@@ -74,7 +74,7 @@
     "teen_process": "1.16.0",
     "winston": "3.7.2",
     "word-wrap": "1.2.3",
-    "yaml": "1.10.2"
+    "yaml": "2.0.0"
   },
   "engines": {
     "node": ">=12",

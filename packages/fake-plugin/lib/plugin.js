@@ -11,7 +11,7 @@ export default class FakePlugin extends BasePlugin {
 
   async getFakePluginArgs () {
     await B.delay(1);
-    return this.opts.pluginArgs;
+    return this.cliArgs;
   }
 
   static newMethodMap = {

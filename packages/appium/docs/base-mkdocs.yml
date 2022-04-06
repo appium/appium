@@ -13,6 +13,8 @@ extra_css:
 
 extra:
   homepage: /
+  version:
+    provider: mike
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/AppiumDevs

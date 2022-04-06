@@ -5,6 +5,8 @@
       "@appium/base-plugin": ["../base-plugin"],
       "@appium/support": ["../support"],
       "@appium/base-driver": ["../base-driver"],
+      "@appium/opencv": ["../opencv"],
+      "appium": ["../appium"]
     }
   },
   "extends": "../../config/tsconfig.base.json",
@@ -18,6 +20,12 @@
     },
     {
       "path": "../base-driver"
+    },
+    {
+      "path": "../opencv"
+    },
+    {
+      "path": "../appium"
     }
   ]
 }

@@ -4,8 +4,9 @@ import { MATCH_FEATURES_MODE, GET_SIMILARITY_MODE } from '../../lib/compare';
 import { TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH } from '../fixtures';
 import { e2eSetup } from '@appium/base-plugin/build/test/helpers';
 
-const THIS_PLUGIN_DIR = path.resolve(__dirname, '..', '..', '..');
-const APPIUM_HOME = path.resolve(__dirname, '..', '..', '..', 'local_appium_home');
+const THIS_PLUGIN_DIR = path.resolve(__dirname, '..', '..');
+const APPIUM_HOME = path.resolve(THIS_PLUGIN_DIR, 'local_appium_home');
+const FAKE_DRIVER_DIR = path.resolve(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = 'localhost';
 const TEST_PORT = 4723;
 const TEST_FAKE_APP = path.resolve(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures',
@@ -34,7 +35,7 @@ describe('ImageElementPlugin', function () {
 
   e2eSetup({
     before, after, server, port: TEST_PORT, host: TEST_HOST, appiumHome: APPIUM_HOME,
-    driverName: 'fake', driverSource: 'npm', driverSpec: 'appium-fake-driver',
+    driverName: 'fake', driverSource: 'local', driverSpec: FAKE_DRIVER_DIR,
     pluginName: 'images', pluginSource: 'local', pluginSpec: THIS_PLUGIN_DIR,
   });
 

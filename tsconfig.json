@@ -6,6 +6,7 @@
       "@appium/base-plugin": ["base-plugin"],
       "@appium/schema": ["schema"],
       "@appium/support": ["support"],
+      "@appium/opencv": ["opencv"],
       "@appium/types": ["types"],
       "appium": ["appium"]
     }
@@ -42,6 +43,9 @@
     },
     {
       "path": "packages/universal-xml-plugin"
+    },
+    {
+      "path": "packages/opencv"
     }
   ]
 }

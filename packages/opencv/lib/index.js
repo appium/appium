@@ -3,7 +3,7 @@ import Jimp from 'jimp';
 import { Buffer } from 'buffer';
 import B from 'bluebird';
 
-
+/** @type {any} */
 let cv;
 
 /**
@@ -94,8 +94,8 @@ async function initOpenCv () {
 
 /**
  * @typedef MatchComputationResult
- * @property {cv.DescriptorMatch} descriptor - OpenCV match descriptor
- * @property {Array<cv.KeyPoint>} keyPoints - The array of key points
+ * @property {OpenCVBindings['Mat']} descriptor - OpenCV match descriptor
+ * @property {OpenCVBindings['KeyPointVector']} keyPoints - The array of key points
  */
 
 /**
@@ -104,8 +104,8 @@ async function initOpenCv () {
  * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html
  * for more details.
  *
- * @param {cv.Mat} img Image data
- * @param {cv.FeatureDetector} detector OpenCV feature detector instance
+ * @param {OpenCVBindings['Mat']} img Image data
+ * @param {OpenCVBindings['FeatureDetector']} detector OpenCV feature detector instance
  *
  * @returns {MatchComputationResult}
  */
@@ -437,28 +437,32 @@ async function getImagesSimilarity (img1Data, img2Data, options = {}) {
 
 /**
  * @typedef OccurrenceOptions
- * @property {?boolean} visualize [false] Whether to return the resulting visalization
+ * @property {boolean} [visualize=false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
- * @property {?float} threshold [0.5] At what normalized threshold to reject
+ * @property {number} [threshold=0.5] At what normalized threshold to reject
  * a match
- * @property {?float} multiple [false] find multiple matches in the image
- * @property {?number} matchNeighbourThreshold [10] The pixel distance between matches we consider
+ * @property {number|boolean} [multiple=false] find multiple matches in the image
+ * @property {number} [matchNeighbourThreshold=10] The pixel distance between matches we consider
  * to be part of the same template match
  */
 
 /**
+ * @typedef {'TM_CCOEFF'|'TM_CCOEFF_NORMED|'TM_CCORR'|'TM_CCORR_NORMED'|'TM_SQDIFF'|'TMSQDIFF_NORMED'} OccurrenceResultMethod
+ */
+
+/**
  * @typedef OccurrenceResult
- * @property {Rect} rect The region of the partial image occurence
+ * @property {import('@appium/types').Rect} rect The region of the partial image occurence
  * on the full image
- * @property {?Buffer} visualization The visualization of the matching result
+ * @property {Buffer} visualization The visualization of the matching result
  * represented as PNG image buffer. On this image the matching
  * region is highlighted with a rectangle. If the multiple option is passed,
  * all results are highlighted here.
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {Array<OccurrenceResult>} multiple The array of matching OccurenceResults
+ * @property {OccurrenceResult[]} multiple The array of matching OccurenceResults
  * - only when multiple option is passed
- * @property {string} method [TM_CCOEFF_NORMED] The name of the template matching method.
+ * @property {OccurrenceResultMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
  * Acceptable values are:
  * - TM_CCOEFF
  * - TM_CCOEFF_NORMED (default)
@@ -476,7 +480,7 @@ async function getImagesSimilarity (img1Data, img2Data, options = {}) {
  *
  * @param {Buffer} fullImgData The data of the full image packed into a NodeJS buffer
  * @param {Buffer} partialImgData The data of the partial image packed into a NodeJS buffer
- * @param {?OccurrenceOptions} options [{}] Set of occurrence calculation options
+ * @param {OccurrenceOptions?} [options] Set of occurrence calculation options
  *
  * @returns {OccurrenceResult}
  * @throws {Error} If no occurrences of the partial image can be found in the full image
@@ -639,3 +643,10 @@ export {
   getImageOccurrence,
   initOpenCv
 };
+
+/**
+ * @typedef OpenCVBindings
+ * @property {any} Mat
+ * @property {any} KeyPointVector
+ * @property {any} FeatureDetector
+ */

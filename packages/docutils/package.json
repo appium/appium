@@ -35,7 +35,7 @@
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
     "test:e2e": "echo \"No e2e tests for this package\"",
-    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/support": "file:../support",

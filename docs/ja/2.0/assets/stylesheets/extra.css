@@ -1,0 +1,6 @@
+.md-source__fact--version {
+  display: none;
+}
+.md-source__fact:nth-child(1n+2)::before {
+  margin-left: 0;
+}

@@ -41,6 +41,6 @@
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
-    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   }
 }

@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * Mocha will load this file to configure the environment to use Chai as the
  * assertion library. Since Chai is a singleton, we can run into problems when
@@ -10,8 +11,14 @@
  * to load different versions of this file depending on the test context (are we
  * running tests against the distfiles, or the source files?).
  *
- * @module
  */
+
+// This configures @babel/register to look for a babel config in parent dir(s) of
+// wherever the tests are run.  This is required if running tests via `mocha` in a package dir
+// instead of the monorepo root. This does not affect `gulp-mocha`, since it has its own `.babelrc`.
+// This file is required _in addition to_ the monorepo root's `test/setup.js`.
+
+require('@babel/register')({rootMode: 'upward'});
 
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');

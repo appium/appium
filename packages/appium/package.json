@@ -44,8 +44,8 @@
     "postinstall": "node ./scripts/postinstall.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --require ../../test/setup-babel.js --timeout 30s --slow 15s \"./test/e2e/**/*.spec.js\"",
-    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --timeout 30s --slow 15s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",

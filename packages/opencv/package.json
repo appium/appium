@@ -41,7 +41,7 @@
     "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.17.8",
+    "@babel/runtime": "7.17.9",
     "bluebird": "3.7.2",
     "jimp": "0.16.1",
     "lodash": "4.17.21",

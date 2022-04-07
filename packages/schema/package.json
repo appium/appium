@@ -24,7 +24,7 @@
     "build": "run-s build:distfiles build:schema-json",
     "build:distfiles": "babel lib --root-mode=upward --out-dir=build",
     "build:schema-json": "node ./scripts/generate-schema-json.js",
-    "dev": "npm run build -- --watch",
+    "dev": "npm run build:distfiles -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore ."
   },

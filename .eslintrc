@@ -3,21 +3,19 @@
   "overrides": [
     {
       "files": "packages/fake-driver/**/*",
-      "rules": { "require-await": "off" }
+      "rules": {"require-await": "off"}
     },
-    { "files": "packages/support/**/*", "globals": { "BigInt": "readonly" } },
+    {"files": "packages/support/**/*", "globals": {"BigInt": "readonly"}},
     {
       "files": "packages/*/test/**/*",
-      "rules": { "func-names": "off" }
+      "rules": {"func-names": "off"}
     },
     {
-      "files": "./packages/*/scripts/**/*.js",
-      "parserOptions": {
-        "sourceType": "script"
-      }
-    },
-    {
-      "files": "./packages/*/index.js",
+      "files": [
+        "./packages/*/index.js",
+        "./packages/*/scripts/**/*.js",
+        "./test/*.js"
+      ],
       "parserOptions": {
         "sourceType": "script"
       }
@@ -26,7 +24,7 @@
       "files": "./packages/*/test/**/*.js",
       "rules": {
         "no-restricted-properties": [
-          "error", 
+          "error",
           {
             "object": "sinon",
             "property": "spy",
@@ -42,7 +40,7 @@
             "property": "mock",
             "message": "Use `sandbox = sinon.createSandbox()` and `sandbox.mock()` instead. Don't forget to call `sandbox.restore()` in `afterEach`"
           }
-        ] 
+        ]
       }
     }
   ]

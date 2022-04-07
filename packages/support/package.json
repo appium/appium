@@ -37,8 +37,8 @@
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --require ../../test/setup-babel.js --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
-    "test:unit": "mocha --require ../../test/setup-babel.js \"./test/unit/**/*.spec.js\""
+    "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
     "@babel/runtime": "7.17.9",

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.4.0](https://github.com/appium/appium/compare/@appium/base-driver@8.3.1...@appium/base-driver@8.4.0) (2022-04-07)
+
+
+### Bug Fixes
+
+* **base-driver:** Make sure we never mutate incoming args ([#16670](https://github.com/appium/appium/issues/16670)) ([c63e9bf](https://github.com/appium/appium/commit/c63e9bf8e0f42e6e070ca662d0b6079a5e7284e2))
+* **base-driver:** Update/simplify the logic for logger prefix ([#16683](https://github.com/appium/appium/issues/16683)) ([a9651d3](https://github.com/appium/appium/commit/a9651d3c59caf0b1be1b85b5185192578925f3ac))
+
+
+### Features
+
+* **base-driver:** Add more shadow root-related W3C routes ([#16700](https://github.com/appium/appium/issues/16700)) ([d8a9b4d](https://github.com/appium/appium/commit/d8a9b4da362c0ee3d1616595a9f652a59b178065))
+* **base-driver:** generate declaration files ([164bedb](https://github.com/appium/appium/commit/164bedb2f13e0c3ab7d27644107bc2320bb02db9))
+
+
+
+
+
 ## [8.3.1](https://github.com/appium/appium/compare/@appium/base-driver@8.3.0...@appium/base-driver@8.3.1) (2022-03-23)
 
 

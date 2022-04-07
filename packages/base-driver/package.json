@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "8.3.1",
+  "version": "8.4.0",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",

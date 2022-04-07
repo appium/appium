@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.57.0](https://github.com/appium/appium/compare/@appium/support@2.56.1...@appium/support@2.57.0) (2022-04-07)
+
+
+### Bug Fixes
+
+* **base-driver:** Update/simplify the logic for logger prefix ([#16683](https://github.com/appium/appium/issues/16683)) ([a9651d3](https://github.com/appium/appium/commit/a9651d3c59caf0b1be1b85b5185192578925f3ac))
+* **support:** avoid 'npm link' for local-sourced extensions ([61b0506](https://github.com/appium/appium/commit/61b05063ee99d23f55867578de6fa15287068e58))
+
+
+### Features
+
+* **support:** generate declaration files ([326b7b4](https://github.com/appium/appium/commit/326b7b4e06f0ed964448f7d2346817928b79b143))
+
+
+
+
+
 ## [2.56.1](https://github.com/appium/appium/compare/@appium/support@2.56.0...@appium/support@2.56.1) (2022-03-23)
 
 

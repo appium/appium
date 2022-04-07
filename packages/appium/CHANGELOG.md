@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.28](https://github.com/appium/appium/compare/appium@2.0.0-beta.27...appium@2.0.0-beta.28) (2022-04-07)
+
+
+### Bug Fixes
+
+* **appium:** allow multiple drivers to be installed ([0bbec13](https://github.com/appium/appium/commit/0bbec13d1e386b2fdf3f9cdcb43da78d6834f28f)), closes [#16674](https://github.com/appium/appium/issues/16674)
+
+
+### Features
+
+* **appium:** generate declaration files ([#16597](https://github.com/appium/appium/issues/16597)) ([06a6054](https://github.com/appium/appium/commit/06a605420d761a830be267f0f96e12f4caa2c534))
+
+
+
+
+
 # [2.0.0-beta.27](https://github.com/appium/appium/compare/appium@2.0.0-beta.26...appium@2.0.0-beta.27) (2022-03-23)
 
 

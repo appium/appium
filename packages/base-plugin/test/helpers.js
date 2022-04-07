@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-import { exec } from 'teen_process';
 import { fs } from '@appium/support';
 import { main as appiumServer } from 'appium';
 import getPort from 'get-port';
 import { info, success, warning } from 'log-symbols';
+import { exec } from 'teen_process';
 
 const APPIUM_BIN = require.resolve('appium');
 
@@ -27,67 +27,116 @@ function e2eSetup (opts = {}) {
   } = opts;
 
   before(async function () {
-    let env = {...process.env};
-    if (appiumHome) {
-      env.APPIUM_HOME = appiumHome;
-      await fs.mkdirp(appiumHome);
-      console.log(`${info} Set \`APPIUM_HOME\` to ${appiumHome}`);
-    }
-    const oldTimeout = this.timeout();
-    this.timeout(0);
-    try {
-      console.log(`${info} Checking if driver "${driverName}" is installed...`);
-      let listArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
-      console.log(`${info} Running: ${process.execPath} ${listArgs.join(' ')}`);
-      let {stdout} = await exec(process.execPath, listArgs, {
-        env
-      });
-      let installed = JSON.parse(stdout);
+    const setupAppiumHome = async () => {
+      const env = {...process.env};
 
-      if (!installed[driverName]?.installed) {
-        console.log(`${warning} Driver "${driverName}" not installed; installing...`);
-        const driverArgs = [APPIUM_BIN, 'driver', 'install', '--source', driverSource, driverSpec];
-        console.log(`${info} Running: ${process.execPath} ${driverArgs.join(' ')}`);
+      if (appiumHome) {
+        env.APPIUM_HOME = appiumHome;
+        await fs.mkdirp(appiumHome);
+        console.log(`${info} Set \`APPIUM_HOME\` to ${appiumHome}`);
+      }
+
+      return env;
+    };
+
+    const installDriver = async (env) => {
+      console.log(`${info} Checking if driver "${driverName}" is installed...`);
+      const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
+      console.log(
+        `${info} Running: ${process.execPath} ${driverListArgs.join(' ')}`,
+      );
+      const {stdout: driverListJson} = await exec(
+        process.execPath,
+        driverListArgs,
+        {
+          env,
+        },
+      );
+      const installedDrivers = JSON.parse(driverListJson);
+
+      if (!installedDrivers[driverName]?.installed) {
+        console.log(
+          `${warning} Driver "${driverName}" not installed; installing...`,
+        );
+        const driverArgs = [
+          APPIUM_BIN,
+          'driver',
+          'install',
+          '--source',
+          driverSource,
+          driverSpec,
+        ];
         if (driverPackage) {
           driverArgs.push('--package', driverPackage);
         }
+        console.log(
+          `${info} Running: ${process.execPath} ${driverArgs.join(' ')}`,
+        );
         await exec(process.execPath, driverArgs, {
-          env
+          env,
         });
       }
       console.log(`${success} Installed driver "${driverName}"`);
+    };
 
+    const installPlugin = async (env) => {
       console.log(`${info} Checking if plugin "${pluginName}" is installed...`);
-      listArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
-      ({stdout} = await exec(process.execPath, listArgs, {
-        env
-      }));
-      installed = JSON.parse(stdout);
+      const pluginListArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
+      const {stdout: pluginListJson} = await exec(
+        process.execPath,
+        pluginListArgs,
+        {
+          env,
+        },
+      );
+      const installedPlugins = JSON.parse(pluginListJson);
 
-      if (!installed[pluginName]?.installed) {
-        console.log(`${warning} Plugin "${pluginName}" not installed; installing...`);
-        const pluginArgs = [APPIUM_BIN, 'plugin', 'install', '--source', pluginSource, pluginSpec];
-        console.log(`${info} Running: ${process.execPath} ${pluginArgs.join(' ')}`);
+      if (!installedPlugins[pluginName]?.installed) {
+        console.log(
+          `${warning} Plugin "${pluginName}" not installed; installing...`,
+        );
+        const pluginArgs = [
+          APPIUM_BIN,
+          'plugin',
+          'install',
+          '--source',
+          pluginSource,
+          pluginSpec,
+        ];
         if (pluginPackage) {
           pluginArgs.push('--package', pluginPackage);
         }
+        console.log(
+          `${info} Running: ${process.execPath} ${pluginArgs.join(' ')}`,
+        );
         await exec(process.execPath, pluginArgs, {
-          env
+          env,
         });
       }
       console.log(`${success} Installed plugin "${pluginName}"`);
+    };
 
+    const createServer = async () => {
       if (!port) {
         port = await getPort();
       }
       console.log(`${info} Will use port ${port} for Appium server`);
       this.port = port;
 
-      const args = {port, host, usePlugins: [pluginName], useDrivers: [driverName], ...serverArgs};
+      const args = {
+        port,
+        host,
+        usePlugins: [pluginName],
+        useDrivers: [driverName],
+        ...serverArgs,
+      };
       server = await appiumServer(args);
-    } finally {
-      this.timeout(oldTimeout);
-    }
+    };
+
+    const env = await setupAppiumHome();
+    await installDriver(env);
+    await installPlugin(env);
+    await createServer();
   });
 
   after(async function () {
@@ -103,3 +152,4 @@ function e2eSetup (opts = {}) {
 }
 
 export { e2eSetup };
+

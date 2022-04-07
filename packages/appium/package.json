@@ -69,7 +69,7 @@
     "ora": "5.4.1",
     "package-changed": "1.9.0",
     "resolve-from": "5.0.0",
-    "semver": "7.3.5",
+    "semver": "7.3.6",
     "source-map-support": "0.5.21",
     "teen_process": "1.16.0",
     "winston": "3.7.2",

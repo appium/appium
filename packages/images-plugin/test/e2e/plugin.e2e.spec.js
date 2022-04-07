@@ -4,12 +4,12 @@ import { MATCH_FEATURES_MODE, GET_SIMILARITY_MODE } from '../../lib/compare';
 import { TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH } from '../fixtures';
 import { e2eSetup } from '@appium/base-plugin/build/test/helpers';
 
-const THIS_PLUGIN_DIR = path.resolve(__dirname, '..', '..');
-const APPIUM_HOME = path.resolve(THIS_PLUGIN_DIR, 'local_appium_home');
-const FAKE_DRIVER_DIR = path.resolve(THIS_PLUGIN_DIR, '..', 'fake-driver');
+const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
+const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
+const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = 'localhost';
 const TEST_PORT = 4723;
-const TEST_FAKE_APP = path.resolve(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures',
+const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures',
                                    'app.xml');
 const TEST_CAPS = {
   platformName: 'Fake',
@@ -27,6 +27,7 @@ const WDIO_OPTS = {
 describe('ImageElementPlugin', function () {
   let server, driver = null;
 
+  // this hook is intended to be run before the hooks created by `e2eSetup`
   after(async function () {
     if (driver) {
       await driver.deleteSession();

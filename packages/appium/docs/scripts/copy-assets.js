@@ -1,11 +1,10 @@
+// for simplicity this file is not transpiled and is run directly via an npm script
+/* eslint-disable promise/prefer-await-to-callbacks */
+/* eslint-disable promise/prefer-await-to-then */
+
+const { fs } = require('@appium/support');
+const { log, LANGS, DOCS_DIR, ASSETS_DIR } = require('./utils');
 const path = require('path');
-const { fs, logger } = require('@appium/support');
-
-const log = logger.getLogger('Docs');
-
-const DOCS_DIR = path.resolve(__dirname);
-const ASSETS_DIR = path.join(DOCS_DIR, 'assets');
-const LANGS = ['en', 'ja'];
 
 async function main () {
   log.info('Copying generic assets to docs language dirs');
@@ -20,6 +19,10 @@ async function main () {
   }
 }
 
-main().catch((err) => {
-  throw err;
-});
+if (require.main === module) {
+  main().catch((err) => {
+    throw err;
+  });
+}
+
+module.exports = main;

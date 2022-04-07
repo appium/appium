@@ -2,7 +2,16 @@
   "name": "@appium/schema",
   "version": "0.0.0",
   "description": "Appium Configuration Schema",
-  "keywords": [],
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

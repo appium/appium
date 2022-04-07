@@ -73,7 +73,7 @@
     "test:test-support": "lerna run --scope=@appium/test-support test",
     "uninstall-fake-driver": "npm start -- driver uninstall fake",
     "upload": "gulp github-upload",
-    "preversion": "npm run sync-pkgs && git add -A packages/appium/README.md packages/*/package.json && npm run build:schema",
+    "preversion": "npm run sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
     "zip": "zip -qr ./appium.zip ./packages/appium",
     "zip-and-upload": "run-s zip upload"
   },

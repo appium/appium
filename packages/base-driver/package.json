@@ -37,10 +37,10 @@
     "!build/test/e2e/fixtures"
   ],
   "scripts": {
-    "build": "npm run build:sources && npm run build:test",
-    "build:sources": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build": "npm run build:distfiles && npm run build:test",
+    "build:distfiles": "babel lib --root-mode=upward --out-dir=build/lib",
     "build:test": "babel test --root-mode=upward --out-dir=build/test --copy-files",
-    "dev": "npm run build -- --watch",
+    "dev": "run-p \"build:distfiles -- --watch\" \"build:test -- --watch\"",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",

@@ -160,14 +160,14 @@ async function showBuildInfo () {
 
 /**
  * Returns k/v pairs of server arguments which are _not_ the defaults.
- * @param {ParsedArgs} parsedArgs
- * @returns {Partial<ParsedArgs>}
+ * @param {Args} parsedArgs
+ * @returns {Args}
  */
 function getNonDefaultServerArgs (parsedArgs) {
   /**
    * Flattens parsed args into a single level object for comparison with
    * flattened defaults across server args and extension args.
-   * @param {ParsedArgs} args
+   * @param {Args} args
    * @returns {Record<string, { value: any, argSpec: ArgSpec }>}
    */
   const flatten = (args) => {
@@ -237,7 +237,7 @@ function getNonDefaultServerArgs (parsedArgs) {
   return _.reduce(
     _.pickBy(args, (__, key) => isNotDefault(key)),
     // explodes the flattened object back into nested one
-    (acc, {value, argSpec}) => _.set(acc, argSpec.dest, value), /** @type {Partial<ParsedArgs>} */({})
+    (acc, {value, argSpec}) => _.set(acc, argSpec.dest, value), /** @type {Args} */({})
   );
 }
 
@@ -306,7 +306,8 @@ export {
 };
 
 /**
- * @typedef {import('../types/cli').ParsedArgs} ParsedArgs
+ * @typedef {import('../types').ParsedArgs} ParsedArgs
+ * @typedef {import('../types').Args} Args
  * @typedef {import('./schema/arg-spec').ArgSpec} ArgSpec
  */
 

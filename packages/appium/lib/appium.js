@@ -516,7 +516,7 @@ class AppiumDriver extends DriverCore {
     // cases with plugin handling.
 
     const isGetStatus = cmd === GET_STATUS_COMMAND;
-    const isUmbrellaCmd = !isGetStatus && isAppiumDriverCommand(cmd);
+    const isUmbrellaCmd = isAppiumDriverCommand(cmd);
     const isSessionCmd = isSessionCommand(cmd);
 
     // if a plugin override proxying for this command and that is why we are here instead of just

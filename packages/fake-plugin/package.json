@@ -42,7 +42,12 @@
     "lodash": "4.17.21"
   },
   "scripts": {
-    "test:unit": "mocha ./build/test/unit/*-specs.js"
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "gitHead": "b5bc9d9142ba583f5c3f6ca230473d159cc4fb94"
 }

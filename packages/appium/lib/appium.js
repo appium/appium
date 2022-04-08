@@ -115,7 +115,6 @@ class AppiumDriver extends DriverCore {
     return this._log;
   }
 
-
   /**
    * Cancel commands queueing for the umbrella Appium driver
    */
@@ -138,9 +137,8 @@ class AppiumDriver extends DriverCore {
     };
   }
 
-  async getSessions () {
-    const sessions = await sessionsListGuard.acquire(AppiumDriver.name, () => this.sessions);
-    return _.toPairs(sessions)
+  async getSessions () { // eslint-disable-line require-await
+    return _.toPairs(this.sessions)
       .map(([id, driver]) => ({id, capabilities: driver.caps}));
   }
 
@@ -300,9 +298,7 @@ class AppiumDriver extends DriverCore {
           [...runningDriversData, ...otherPendingDriversData]
         );
         protocol = driverInstance.protocol;
-        await sessionsListGuard.acquire(AppiumDriver.name, () => {
-          this.sessions[innerSessionId] = driverInstance;
-        });
+        this.sessions[innerSessionId] = driverInstance;
       } finally {
         await pendingDriversGuard.acquire(AppiumDriver.name, () => {
           _.pull(this.pendingDrivers[InnerDriver.name], driverInstance);
@@ -377,16 +373,14 @@ class AppiumDriver extends DriverCore {
    * @param {import('../types/extension').DriverClass} InnerDriver
    * @returns {Promise<DriverData[]>}}
    */
-  async curSessionDataForDriver (InnerDriver) {
-    const sessions = await sessionsListGuard.acquire(AppiumDriver.name, () => this.sessions);
-    const data = _.compact(_.values(sessions)
-                   .filter((s) => s.constructor.name === InnerDriver.name)
-                   .map((s) => s.driverData));
-    for (let datum of data) {
+  async curSessionDataForDriver (InnerDriver) { // eslint-disable-line require-await
+    const data = _.compact(_.values(this.sessions)
+      .filter((s) => s.constructor.name === InnerDriver.name)
+      .map((s) => s.driverData));
+    for (const datum of data) {
       if (!datum) {
         throw new Error(`Problem getting session data for driver type ` +
-                        `${InnerDriver.name}; does it implement 'get ` +
-                        `driverData'?`);
+          `${InnerDriver.name}; does it implement 'get driverData'?`);
       }
     }
     return data;
@@ -522,9 +516,8 @@ class AppiumDriver extends DriverCore {
     // cases with plugin handling.
 
     const isGetStatus = cmd === GET_STATUS_COMMAND;
-    const isDeleteSession = cmd === DELETE_SESSION_COMMAND;
     const isUmbrellaCmd = !isGetStatus && isAppiumDriverCommand(cmd);
-    const isSessionCmd = !isUmbrellaCmd || isDeleteSession;
+    const isSessionCmd = isSessionCommand(cmd);
 
     // if a plugin override proxying for this command and that is why we are here instead of just
     // letting the protocol proxy the command entirely, determine that, get the request object for
@@ -544,7 +537,7 @@ class AppiumDriver extends DriverCore {
     let driver = this;
     if (isSessionCmd) {
       sessionId = _.last(args);
-      dstSession = await sessionsListGuard.acquire(AppiumDriver.name, () => this.sessions[sessionId]);
+      dstSession = this.sessions[sessionId];
       if (!dstSession) {
         throw new Error(`The session with id '${sessionId}' does not exist`);
       }
@@ -717,7 +710,7 @@ class AppiumDriver extends DriverCore {
 // help decide which commands should be proxied to sub-drivers and which
 // should be handled by this, our umbrella driver
 function isAppiumDriverCommand (cmd) {
-  return !isSessionCommand(cmd) || cmd === 'deleteSession';
+  return !isSessionCommand(cmd) || cmd === DELETE_SESSION_COMMAND;
 }
 
 /**

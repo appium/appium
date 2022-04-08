@@ -279,11 +279,10 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should be able to get settings object', function () {
         d.settings.getSettings().ignoreUnimportantViews.should.be.false;
       });
-      it('should throw error when updateSettings method is not defined', async function () {
-        await d.settings.update({ignoreUnimportantViews: true}).should.eventually
-                .be.rejectedWith('onSettingsUpdate');
+      it('should not reject when `updateSettings` method is not provided', async function () {
+        await d.settings.update({ignoreUnimportantViews: true}).should.not.be.rejected;
       });
-      it('should throw error for invalid update object', async function () {
+      it('should reject for invalid update object', async function () {
         await d.settings.update('invalid json').should.eventually
                 .be.rejectedWith('JSON');
       });

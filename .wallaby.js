@@ -43,7 +43,8 @@ module.exports = (wallaby) => {
       {
         instrument: false,
         pattern: './test/setup.js'
-      }
+      },
+      '!**/local_appium_home/**'
     ],
     testFramework: 'mocha',
     tests: [
@@ -54,6 +55,7 @@ module.exports = (wallaby) => {
       '!./packages/*/node_modules/**',
       // this is more of an E2E test and it's tedious to run
       '!./packages/gulp-plugins/test/transpile-specs.js',
+      '!**/local_appium_home/**'
     ],
     workers: {
       restart: true,

@@ -5,7 +5,10 @@ import log from './logger';
 import { node, util } from '@appium/support';
 import { errors } from '../protocol/errors';
 
-const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
+/**
+ * Maximum size (in bytes) of a given driver's settings object (which is internal to {@linkcode DriverSettings}).
+ */
+export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
 
 /**
  * @template {Record<string,unknown>} T
@@ -21,19 +24,18 @@ class DeviceSettings {
 
   /**
    * @protected
-   * @type {import('@appium/types').SettingsUpdateListener<T>|undefined}
+   * @type {import('@appium/types').SettingsUpdateListener<T>}
    */
   _onSettingsUpdate;
 
   /**
-   * `onSettingsUpdate` is _required_ if settings will ever be updated; otherwise
-   * an error will occur at runtime.
+   * Creates a _shallow copy_ of the `defaultSettings` parameter!
    * @param {T} [defaultSettings]
    * @param {import('@appium/types').SettingsUpdateListener<T>} [onSettingsUpdate]
    */
   constructor (defaultSettings, onSettingsUpdate) {
     this._settings = /** @type {T} */({...(defaultSettings ?? {})});
-    this._onSettingsUpdate = onSettingsUpdate;
+    this._onSettingsUpdate = onSettingsUpdate ?? (async () => {});
   }
 
   /**
@@ -51,12 +53,6 @@ class DeviceSettings {
         `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`);
     }
 
-    if (!_.isFunction(this._onSettingsUpdate)) {
-      log.errorAndThrow(`Unable to update settings; ` +
-      `onSettingsUpdate method not found on '${this.constructor.name}'`);
-      return;
-    }
-
     const props = /** @type {(keyof T & string)[]} */(_.keys(newSettings));
     for (const prop of props) {
       if (!_.isUndefined(this._settings[prop])) {
@@ -65,7 +61,6 @@ class DeviceSettings {
           continue;
         }
       }
-      // update setting only when there is updateSettings defined.
       await this._onSettingsUpdate(prop, newSettings[prop], this._settings[prop]);
       this._settings[prop] = newSettings[prop];
     }

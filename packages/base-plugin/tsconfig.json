@@ -3,11 +3,10 @@
   "compilerOptions": {
     "outDir": "./build",
     "paths": {
-      "@appium/support": ["../support"]
+      "@appium/support": ["../support"],
+      "appium": ["../appium"]
     }
   },
   "include": ["lib"],
-  "references": [
-    {"path": "../support"}
-  ]
+  "references": [{"path": "../support"}, {"path": "../appium"}]
 }

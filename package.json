@@ -102,6 +102,7 @@
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",
     "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
+    "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
     "appium": "file:packages/appium"
   },
   "devDependencies": {

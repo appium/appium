@@ -1,0 +1,51 @@
+{
+  "name": "@appium/execute-driver-plugin",
+  "version": "1.0.1",
+  "description": "Plugin for batching and executing driver commands with Appiums",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/execute-driver-plugin"
+  },
+  "appium": {
+    "pluginName": "execute-driver",
+    "mainClass": "ExecuteDriverPlugin"
+  },
+  "keywords": [
+    "appium",
+    "automation",
+    "webdriver"
+  ],
+  "author": "Appium <maintainers@appium.io>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "homepage": "https://github.com/appium/appium#readme",
+  "files": [
+    "build",
+    "lib",
+    "index.js"
+  ],
+  "dependencies": {
+    "@appium/base-plugin": "file:../base-plugin",
+    "@appium/support": "file:../support",
+    "bluebird": "3.7.2",
+    "lodash": "4.17.21",
+    "vm2": "3.9.5",
+    "webdriverio": "7.19.3"
+  },
+  "scripts": {
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "test": "npm run test:unit",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
+    "test:e2e": "mocha -t 160s --slow 20s \"./test/e2e/**/*.spec.js\""
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "5efbd2840a4e5dd078a4646c026472a006ab2211"
+}

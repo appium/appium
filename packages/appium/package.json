@@ -84,6 +84,6 @@
     "access": "public",
     "tag": "next"
   },
-  "types": "./build/lib/index.d.ts",
+  "types": "./build/lib/main.d.ts",
   "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
 }

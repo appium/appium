@@ -54,13 +54,16 @@ async function preflightChecks (args, throwInsteadOfExit = false) {
 }
 
 /**
- * @param {Partial<ParsedArgs>} args
+ * @param {Args} args
  */
 function logNonDefaultArgsWarning (args) {
   logger.info('Non-default server args:');
   inspect(args);
 }
 
+/**
+ * @param {Args['defaultCapabilities']} caps
+ */
 function logDefaultCapabilitiesWarning (caps) {
   logger.info('Default capabilities, which will be added to each request ' +
               'unless overridden by desired capabilities:');
@@ -122,9 +125,18 @@ function getServerUpdaters (driverClasses, pluginClasses) {
  */
 function getExtraMethodMap (driverClasses, pluginClasses) {
   return [...driverClasses, ...pluginClasses].reduce(
-    (map, klass) => ({...map, ...klass.newMethodMap}),
+    (map, klass) => ({...map, .../** @type {DriverClass} */(klass).newMethodMap ?? {}}),
     {}
   );
+}
+
+/**
+ * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @param {Args<T>} args
+ * @returns {args is Args<WithServerSubcommand>}
+ */
+function areServerCommandArgs (args) {
+  return args.subcommand === SERVER_SUBCOMMAND;
 }
 
 /**
@@ -134,7 +146,8 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
  *
  * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
  *
- * @param {PartialArgs} [args] - Partial args (progammatic usage only)
+ * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @param {Args<T>} [args] - Partial args (progammatic usage only)
  * @returns {Promise<ServerInitResult | ExtCommandInitResult>}
  * @example
  * import {init, getSchema} from 'appium';
@@ -149,16 +162,9 @@ async function init (args) {
 
   const parser = getParser();
   let throwInsteadOfExit = false;
-  /** @type {ParsedArgs} */
-  let preConfigParsedArgs;
-  /** @type {ParsedArgs} */
-  let parsedArgs;
-  /**
-   * This is a definition (instead of declaration) because TS can't figure out
-   * the value will be defined when it's used.
-   * @type {ReturnType<getDefaultsForSchema>}
-   */
-  let defaults = {};
+  /** @type {Args<T>} */
+  let preConfigArgs;
+
   if (args) {
     // if we have a containing package instead of running as a CLI process,
     // that package might not appreciate us calling 'process.exit' willy-
@@ -168,13 +174,13 @@ async function init (args) {
       // but remove it since it's not a real server arg per se
       delete args.throwInsteadOfExit;
     }
-    preConfigParsedArgs = /** @type {ParsedArgs} */({...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND});
+    preConfigArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
   } else {
     // otherwise parse from CLI
-    preConfigParsedArgs = parser.parseArgs();
+    preConfigArgs = /** @type {Args<T>} */(parser.parseArgs());
   }
 
-  const configResult = await readConfigFile(preConfigParsedArgs.configFile);
+  const configResult = await readConfigFile(preConfigArgs.configFile);
 
   if (!_.isEmpty(configResult.errors)) {
     throw new Error(`Errors in config file ${configResult.filepath}:\n ${configResult.reason ?? configResult.errors}`);
@@ -185,63 +191,65 @@ async function init (args) {
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
-  if (preConfigParsedArgs.subcommand === SERVER_SUBCOMMAND) {
-    defaults = getDefaultsForSchema(false);
+  if (!areServerCommandArgs(preConfigArgs)) {
 
-    parsedArgs = _.defaultsDeep(
-      preConfigParsedArgs,
+    // if the user has requested the 'driver' CLI, don't run the normal server,
+    // but instead pass control to the driver CLI
+    if (preConfigArgs.subcommand === DRIVER_TYPE) {
+      await runExtensionCommand(preConfigArgs, driverConfig);
+      return {};
+    }
+    if (preConfigArgs.subcommand === PLUGIN_TYPE) {
+      await runExtensionCommand(preConfigArgs, pluginConfig);
+      return {};
+    }
+    /* istanbul ignore next */
+    return {}; // should never happen
+  } else {
+    const defaults = getDefaultsForSchema(false);
+
+    /** @type {ParsedArgs} */
+    const serverArgs = _.defaultsDeep(
+      preConfigArgs,
       configResult.config?.server,
       defaults
     );
 
-    if (preConfigParsedArgs.showConfig) {
-      showConfig(getNonDefaultServerArgs(preConfigParsedArgs), configResult, defaults, parsedArgs);
+    if (preConfigArgs.showConfig) {
+      showConfig(getNonDefaultServerArgs(preConfigArgs), configResult, defaults, serverArgs);
       return {};
     }
 
-  } else {
-    parsedArgs = preConfigParsedArgs;
-  }
+    await logsinkInit(serverArgs);
 
-  await logsinkInit(parsedArgs);
-
-  // if the user has requested the 'driver' CLI, don't run the normal server,
-  // but instead pass control to the driver CLI
-  if (parsedArgs.subcommand === DRIVER_TYPE) {
-    await runExtensionCommand(parsedArgs, driverConfig);
-    return {};
-  }
-  if (parsedArgs.subcommand === PLUGIN_TYPE) {
-    await runExtensionCommand(parsedArgs, pluginConfig);
-    return {};
-  }
-
-  if (parsedArgs.logFilters) {
-    const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(parsedArgs.logFilters);
-    if (!_.isEmpty(issues)) {
-      throw new Error(`The log filtering rules config '${parsedArgs.logFilters}' has issues: ` +
+    if (serverArgs.logFilters) {
+      const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(serverArgs.logFilters);
+      if (!_.isEmpty(issues)) {
+        throw new Error(`The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
         JSON.stringify(issues, null, 2));
+      }
+      if (_.isEmpty(rules)) {
+        logger.warn(`Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`);
+      } else {
+        logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${serverArgs.logFilters}'`);
+      }
     }
-    if (_.isEmpty(rules)) {
-      logger.warn(`Found no log filtering rules in '${parsedArgs.logFilters}'. Is that expected?`);
-    } else {
-      logger.info(`Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${parsedArgs.logFilters}'`);
-    }
+
+    const appiumDriver = new AppiumDriver(serverArgs);
+    // set the config on the umbrella driver so it can match drivers to caps
+    appiumDriver.driverConfig = driverConfig;
+    await preflightChecks(serverArgs, throwInsteadOfExit);
+
+    return /** @type {ServerInitResult} */({appiumDriver, parsedArgs: serverArgs, driverConfig, pluginConfig});
   }
-
-  const appiumDriver = new AppiumDriver(parsedArgs);
-  // set the config on the umbrella driver so it can match drivers to caps
-  appiumDriver.driverConfig = driverConfig;
-  await preflightChecks(parsedArgs, throwInsteadOfExit);
-
-  return /** @type {ServerInitResult} */({appiumDriver, parsedArgs, driverConfig, pluginConfig});
 }
 
 /**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
- * @param {PartialArgs} [args] - Arguments from CLI or otherwise
- * @returns {Promise<import('http').Server|undefined>}
+ * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @param {Args<T>} [args] - Arguments from CLI or otherwise
+ * @returns {Promise<import('@appium/types').AppiumServer|undefined>}
  */
 async function main (args) {
   const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */(await init(args));
@@ -339,15 +347,12 @@ export { finalizeSchema, getSchema, validate } from './schema/schema';
 export { main, init, resolveAppiumHome };
 
 /**
- * @typedef {import('../types/cli').ParsedArgs} ParsedArgs
- */
-
-/**
- * @typedef {import('../types/cli').PartialArgs} PartialArgs
  * @typedef {import('../types').DriverType} DriverType
  * @typedef {import('../types').PluginType} PluginType
- * @typedef {import('../types/extension').DriverClass} DriverClass
- * @typedef {import('../types/extension').PluginClass} PluginClass
+ * @typedef {import('../types').DriverClass} DriverClass
+ * @typedef {import('../types').PluginClass} PluginClass
+ * @typedef {import('../types').WithSubcommand} WithSubcommand
+ * @typedef {import('../types').WithServerSubcommand} WithServerSubcommand
  */
 
 /**
@@ -358,9 +363,20 @@ export { main, init, resolveAppiumHome };
 /**
  * @typedef ServerInitData
  * @property {AppiumDriver} appiumDriver - The Appium driver
- * @property {ParsedArgs} parsedArgs - The parsed arguments
+ * @property {import('../types').ParsedArgs} parsedArgs - The parsed arguments
  */
 
 /**
  * @typedef {ServerInitData & import('./extension').ExtensionConfigs} ServerInitResult
  */
+
+/**
+ * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @typedef {import('../types').Args<T>} Args
+ */
+
+/**
+ * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @typedef {import('../types').ParsedArgs<T>} ParsedArgs
+ */
+

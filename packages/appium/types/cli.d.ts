@@ -1,4 +1,4 @@
-import { DriverOpts } from '@appium/types';
+import {DriverOpts} from '@appium/types';
 import {
   DRIVER_TYPE as DRIVER_SUBCOMMAND,
   EXT_SUBCOMMAND_INSTALL,
@@ -10,17 +10,21 @@ import {
   SERVER_SUBCOMMAND,
 } from '../lib/constants';
 
+type ServerSubcommand = typeof SERVER_SUBCOMMAND;
+type DriverSubcommand = typeof DRIVER_SUBCOMMAND;
+type PluginSubcommand = typeof PLUGIN_SUBCOMMAND;
+
 /**
  * Possible subcommands for the `appium` CLI.
  */
 type CliSubcommand =
-  | typeof SERVER_SUBCOMMAND
-  | typeof DRIVER_SUBCOMMAND
-  | typeof PLUGIN_SUBCOMMAND;
+  | ServerSubcommand
+  | DriverSubcommand
+  | PluginSubcommand;
 
 /**
- * Possible subcommands of {@link DRIVER_SUBCOMMAND} or
- * {@link PLUGIN_SUBCOMMAND}.
+ * Possible subcommands of {@linkcode DriverSubcommand} or
+ * {@linkcode PluginSubcommand}.
  */
 export type CliExtensionSubcommand =
   | typeof EXT_SUBCOMMAND_INSTALL
@@ -85,9 +89,21 @@ interface ProgrammaticArgs {
 }
 
 /**
- * These are args that Appium assigns while parsing the args.
+ * Args which the user supplies when invoking the CLI.
+ * 
+ * The code will default the `subcommand` value to `server`; see {@linkcode WithServerSubcommand}
  */
-interface InternalArgs {
+interface WithSubcommand {
+  /**
+   * Possible subcommands
+   */
+  subcommand: CliSubcommand;
+}
+
+/**
+ * These are args which the user will specify if using an extension command
+ */
+interface ExtArgs extends WithExtSubcommand {
   /**
    * Subcommands of `driver` subcommand
    */
@@ -97,32 +113,41 @@ interface InternalArgs {
    * Subcommands of `plugin` subcommand
    */
   pluginCommand?: CliExtensionSubcommand;
-
-  /**
-   * Possible subcommands
-   */
-  subcommand: CliSubcommand;
 }
 
 /**
- * The same as {@link ParsedArgs} but with a nullable `subcommand`.
- * This is _not_ the same as `Partial<ParsedArgs>`.
+ * Args having the `server` subcommand
  */
-export type PartialArgs = DriverOpts &
-  MoreArgs &
-  ProgrammaticArgs &
-  Partial<InternalArgs>;
+interface WithServerSubcommand extends WithSubcommand {
+  subcommand: ServerSubcommand;
+}
 
 /**
- * The Appium configuration as a flattened object, parsed via CLI args _and_ any
- * CLI args unsupported by the config file.
- * @todo Does not make any assumptions about property names derived from
- * extensions.
+ * Args having the `driver` or `plugin` subcommand
  */
-export type ParsedArgs = DriverOpts &
-  MoreArgs &
+interface WithExtSubcommand extends WithSubcommand {
+  subcommand: DriverSubcommand | PluginSubcommand;
+}
+
+/**
+ * Some generic bits of arguments; should not be used outside this declaration
+ */
+type CommonArgs<Opts, T extends WithSubcommand> = MoreArgs &
   ProgrammaticArgs &
-  InternalArgs;
+  WithSubcommand &
+  (T extends WithServerSubcommand ? Opts : T extends WithExtSubcommand ? ExtArgs : never);
+
+/**
+ * Fully-parsed arguments, containing defaults, computed args, and config file values.
+ */
+export type ParsedArgs<T extends WithSubcommand = WithServerSubcommand> =
+  CommonArgs<DriverOpts, T>;
+
+/**
+ * Partial arguments, as supplied by a user. _May_ have defaults applied; _may_ contain config values; _may_ contain computed args.
+ */
+export type Args<T extends WithSubcommand = WithServerSubcommand> =
+  CommonArgs<Partial<DriverOpts>, T>;
 
 /**
  * Shown by `appium --build-info`

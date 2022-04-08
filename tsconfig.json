@@ -37,6 +37,9 @@
     },
     {
       "path": "packages/opencv"
+    },
+    {
+      "path": "packages/execute-driver-plugin"
     }
   ]
 }

@@ -1,3 +1,6 @@
+
+// @ts-check
+
 /* eslint-disable no-console */
 import { fs } from '@appium/support';
 import { main as appiumServer } from 'appium';
@@ -7,12 +10,16 @@ import { exec } from 'teen_process';
 
 const APPIUM_BIN = require.resolve('appium');
 
-function e2eSetup (opts = {}) {
+/**
+ * Creates hooks to install a driver and a plugin and starts an Appium server w/ the given extensions.
+ * @param {E2ESetupOpts} opts
+ * @returns {void}
+ */
+function e2eSetup (opts) {
   let {
     appiumHome,
     before,
     after,
-    server,
     serverArgs = {},
     driverSource,
     driverPackage,
@@ -26,8 +33,16 @@ function e2eSetup (opts = {}) {
     host,
   } = opts;
 
+  /**
+   * @type {AppiumServer}
+   */
+  let server;
+
   before(async function () {
     const setupAppiumHome = async () => {
+      /**
+       * @type {Env}
+       */
       const env = {...process.env};
 
       if (appiumHome) {
@@ -39,6 +54,10 @@ function e2eSetup (opts = {}) {
       return env;
     };
 
+    /**
+     *
+     * @param {Env} env
+     */
     const installDriver = async (env) => {
       console.log(`${info} Checking if driver "${driverName}" is installed...`);
       const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
@@ -79,6 +98,10 @@ function e2eSetup (opts = {}) {
       console.log(`${success} Installed driver "${driverName}"`);
     };
 
+    /**
+     *
+     * @param {Env} env
+     */
     const installPlugin = async (env) => {
       console.log(`${info} Checking if plugin "${pluginName}" is installed...`);
       const pluginListArgs = [APPIUM_BIN, 'plugin', 'list', '--json'];
@@ -128,9 +151,10 @@ function e2eSetup (opts = {}) {
         host,
         usePlugins: [pluginName],
         useDrivers: [driverName],
-        ...serverArgs,
+        appiumHome,
+        ...serverArgs
       };
-      server = await appiumServer(args);
+      server = /** @type {AppiumServer} */(await appiumServer(args));
     };
 
     const env = await setupAppiumHome();
@@ -143,13 +167,34 @@ function e2eSetup (opts = {}) {
     if (server) {
       await server.close();
     }
-    if (appiumHome) {
-      await fs.rimraf(appiumHome);
-    }
   });
-
-  return port;
 }
 
 export { e2eSetup };
 
+/**
+ * @typedef E2ESetupOpts
+ * @property {string} [appiumHome] - Path to Appium home directory
+ * @property {Mocha.before} before - Mocha "before all" hook function
+ * @property {Mocha.after} after - Mocha "after all" hook function
+ * @property {Partial<import('appium/types').Args>} [serverArgs] - Arguments to pass to Appium server
+ * @property {import('appium/types').InstallType & string} [driverSource] - Source of driver to install
+ * @property {string} [driverPackage] - Package name of driver to install
+ * @property {string} [driverName] - Name of driver to install
+ * @property {string} [driverSpec] - Spec of driver to install
+ * @property {import('appium/types').InstallType & string} [pluginSource] - Source of plugin to install
+ * @property {string} [pluginPackage] - Package name of plugin to install
+ * @property {string} [pluginSpec] - Spec of plugin to install
+ * @property {string} [pluginName] - Name of plugin to install
+ * @property {number} [port] - Port to use for Appium server
+ * @property {string} [host] - Host to use for Appium server
+ */
+
+
+/**
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ */
+
+/**
+ * @typedef {NodeJS.ProcessEnv & {APPIUM_HOME?: string}} Env
+ */

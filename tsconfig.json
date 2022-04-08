@@ -1,17 +1,8 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./packages",
-    "paths": {
-      "@appium/base-driver": ["base-driver"],
-      "@appium/base-plugin": ["base-plugin"],
-      "@appium/schema": ["schema"],
-      "@appium/support": ["support"],
-      "@appium/opencv": ["opencv"],
-      "@appium/types": ["types"],
-      "appium": ["appium"]
-    }
-  },
-  "exclude": ["packages/**/test/**", "packages/**/build/**"],
+  "exclude": [
+    "packages/**/test/**",
+    "packages/**/build/**"
+  ],
   "files": [],
   "references": [
     {

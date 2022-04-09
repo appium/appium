@@ -25,7 +25,7 @@ async function addWebSocketHandler (handlerPathname, handlerServer) { // eslint-
     this.on('upgrade', (request, socket, head) => {
       let currentPathname;
       try {
-        currentPathname = (new URL(currentPathname)).pathname;
+        currentPathname = (new URL(request.url)).pathname;
       } catch (ign) {
         currentPathname = request.url;
       }

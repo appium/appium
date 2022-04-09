@@ -1,6 +1,7 @@
 import _ from 'lodash';
-import { server, routeConfiguringFunction,
-         DEFAULT_WS_PATHNAME_PREFIX } from '../../../lib';
+import {
+  server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX
+} from '../../../lib';
 import { FakeDriver } from '../protocol/fake-driver';
 import WebSocket from 'ws';
 import B from 'bluebird';
@@ -45,17 +46,22 @@ describe('Websockets (e2e)', function () {
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
-        client.on('connection', (ws, req) => {
-          ws.should.not.be.empty;
-          req.connection.remoteAddress.should.not.be.empty;
+        client.once('connection', (ws, req) => {
+          try {
+            ws.should.not.be.empty;
+            req.connection.remoteAddress.should.not.be.empty;
+          } catch (e) {
+            reject(e);
+          }
         });
-        client.on('message', (data) => {
-          data.should.eql(WS_DATA);
+        client.once('message', (data) => {
+          const dataStr = _.isString(data) ? data : data.toString();
+          dataStr.should.eql(WS_DATA);
           resolve();
         });
-        client.on('error', reject);
+        client.once('error', reject);
         setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')),
-                   timeout);
+          timeout);
       });
 
       (await baseServer.removeWebSocketHandler(endpoint)).should.be.true;
@@ -64,7 +70,7 @@ describe('Websockets (e2e)', function () {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>
           reject(new Error(`No websocket messages are expected after the handler ` +
-                           `has been removed. '${data}' is received instead. `))
+            `has been removed. '${data}' is received instead. `))
         );
         client.on('error', resolve);
         setTimeout(resolve, timeout);

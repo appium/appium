@@ -1,5 +1,6 @@
 import _ from 'lodash';
-import url from 'url';
+import { URL } from 'url';
+import B from 'bluebird';
 
 const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 
@@ -18,29 +19,23 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * on how to configure the handler properly.
  */
 async function addWebSocketHandler (handlerPathname, handlerServer) { // eslint-disable-line require-await
-  let isUpgradeListenerAssigned = true;
   if (_.isUndefined(this.webSocketsMapping)) {
     this.webSocketsMapping = {};
-    isUpgradeListenerAssigned = false;
+    // https://github.com/websockets/ws/pull/885
+    this.on('upgrade', (request, socket, head) => {
+      const currentPathname = (new URL(request.url)).pathname;
+      for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
+        if (currentPathname === pathname) {
+          wsServer.handleUpgrade(request, socket, head, (ws) => {
+            wsServer.emit('connection', ws, request);
+          });
+          return;
+        }
+      }
+      socket.destroy();
+    });
   }
   this.webSocketsMapping[handlerPathname] = handlerServer;
-  if (isUpgradeListenerAssigned) {
-    return;
-  }
-
-  // https://github.com/websockets/ws/pull/885
-  this.on('upgrade', (request, socket, head) => {
-    const currentPathname = url.parse(request.url).pathname;
-    for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
-      if (currentPathname === pathname) {
-        wsServer.handleUpgrade(request, socket, head, (ws) => {
-          wsServer.emit('connection', ws, request);
-        });
-        return;
-      }
-    }
-    socket.destroy();
-  });
 }
 
 /**
@@ -59,13 +54,12 @@ async function getWebSocketHandlers (keysFilter = null) { // eslint-disable-line
     return {};
   }
 
-  let result = {};
-  for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
+  return _.toPairs(this.webSocketsMapping).reduce((acc, [pathname, wsServer]) => {
     if (!_.isString(keysFilter) || pathname.includes(keysFilter)) {
-      result[pathname] = wsServer;
+      acc[pathname] = wsServer;
     }
-  }
-  return result;
+    return acc;
+  }, {});
 }
 
 /**
@@ -79,12 +73,14 @@ async function getWebSocketHandlers (keysFilter = null) { // eslint-disable-line
  * @returns {boolean} true if the handlerPathname was found and deleted
  */
 async function removeWebSocketHandler (handlerPathname) { // eslint-disable-line require-await
-  if (!this.webSocketsMapping || !this.webSocketsMapping[handlerPathname]) {
+  const wsServer = this.webSocketsMapping?.[handlerPathname];
+  if (!wsServer) {
     return false;
   }
 
   try {
-    this.webSocketsMapping[handlerPathname].close();
+    wsServer.close();
+    (wsServer.clients || []).map((client) => client.terminate());
     return true;
   } catch (ign) {
     // ignore
@@ -106,11 +102,11 @@ async function removeAllWebSocketHandlers () {
     return false;
   }
 
-  let result = false;
-  for (const pathname of _.keys(this.webSocketsMapping)) {
-    result = result || await this.removeWebSocketHandler(pathname);
-  }
-  return result;
+  return _.some(
+    await B.all(
+      _.keys(this.webSocketsMapping).map((pathname) => this.removeWebSocketHandler(pathname))
+    )
+  );
 }
 
 export {

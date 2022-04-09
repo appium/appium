@@ -23,7 +23,12 @@ async function addWebSocketHandler (handlerPathname, handlerServer) { // eslint-
     this.webSocketsMapping = {};
     // https://github.com/websockets/ws/pull/885
     this.on('upgrade', (request, socket, head) => {
-      const currentPathname = (new URL(request.url)).pathname;
+      let currentPathname;
+      try {
+        currentPathname = (new URL(currentPathname)).pathname;
+      } catch (ign) {
+        currentPathname = request.url;
+      }
       for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
         if (currentPathname === pathname) {
           wsServer.handleUpgrade(request, socket, head, (ws) => {
@@ -80,7 +85,9 @@ async function removeWebSocketHandler (handlerPathname) { // eslint-disable-line
 
   try {
     wsServer.close();
-    (wsServer.clients || []).map((client) => client.terminate());
+    for (const client of (wsServer.clients || [])) {
+      client.terminate();
+    }
     return true;
   } catch (ign) {
     // ignore

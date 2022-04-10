@@ -54,7 +54,7 @@
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "teen_process": "1.16.0",
-    "yargs": "17.4.0"
+    "yargs": "17.4.1"
   },
   "engines": {
     "node": ">=12",

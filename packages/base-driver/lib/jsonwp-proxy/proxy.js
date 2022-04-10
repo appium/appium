@@ -336,8 +336,6 @@ class JWProxy {
         _.truncate(`${resBodyObj}`, {length: 300})
       );
       [statusCode, resBodyObj] = getResponseForW3CError(error);
-      res.status(statusCode).send(JSON.stringify(resBodyObj));
-      return;
     }
 
     // if the proxied response contains a sessionId that the downstream

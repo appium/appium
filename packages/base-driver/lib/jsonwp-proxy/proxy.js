@@ -324,9 +324,7 @@ class JWProxy {
       statusCode = response.statusCode;
     } catch (err) {
       [statusCode, resBodyObj] = getResponseForW3CError(
-        errors.isErrorType(err, errors.ProxyRequestError)
-          ? err.getActualError()
-          : err
+        isErrorType(err, errors.ProxyRequestError) ? err.getActualError() : err
       );
     }
     res.set('content-type', 'application/json; charset=utf-8');

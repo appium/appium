@@ -691,7 +691,7 @@ const METHOD_MAP = {
     POST: {command: 'fullScreenWindow'}
   },
   '/session/:sessionId/window/new': {
-    POST: {command: 'createNewWindow', payloadParams: {optional: ['parameters']}}
+    POST: {command: 'createNewWindow', payloadParams: {optional: ['type']}}
   },
   '/session/:sessionId/element/:elementId/property/:name': {
     GET: {command: 'getProperty'}

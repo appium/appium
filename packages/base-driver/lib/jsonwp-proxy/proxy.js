@@ -339,8 +339,8 @@ class JWProxy {
     // if the proxied response contains a sessionId that the downstream
     // driver has generated, we don't want to return that to the client.
     // Instead, return the id from the request or from current session
-    const reqSessionId = this.getSessionIdFromUrl(req.originalUrl);
     if (_.has(resBodyObj, 'sessionId')) {
+      const reqSessionId = this.getSessionIdFromUrl(req.originalUrl);
       if (reqSessionId) {
         this.log.info(`Replacing sessionId ${resBodyObj.sessionId} with ${reqSessionId}`);
         resBodyObj.sessionId = reqSessionId;

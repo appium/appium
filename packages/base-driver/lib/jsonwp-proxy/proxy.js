@@ -3,7 +3,8 @@ import { logger, util } from '@appium/support';
 import axios from 'axios';
 import { getSummaryByCode } from '../jsonwp-status/status';
 import {
-  errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode
+  errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
+  getResponseForW3CError,
 } from '../protocol/errors';
 import { routeToCommandName } from '../protocol';
 import { MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS } from '../constants';
@@ -312,10 +313,31 @@ class JWProxy {
   }
 
   async proxyReqRes (req, res) {
-    const [response, resBodyObj] = await this.proxyCommand(req.originalUrl, req.method, req.body);
+    // ! this method must not throw any exceptions
+    // ! make sure to call res.send before return
+    let statusCode;
+    let resBodyObj;
+    try {
+      let response;
+      [response, resBodyObj] = await this.proxyCommand(req.originalUrl, req.method, req.body);
+      res.headers = response.headers;
+      statusCode = response.statusCode;
+    } catch (err) {
+      [statusCode, resBodyObj] = getResponseForW3CError(
+        errors.isErrorType(err, errors.ProxyRequestError)
+          ? err.getActualError()
+          : err
+      );
+    }
+    res.set('content-type', 'application/json; charset=utf-8');
+    if (!_.isPlainObject(resBodyObj)) {
+      const error = new errors.UnknownError(
+        `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +
+        _.truncate(`${resBodyObj}`, {length: 300})
+      );
+      [statusCode, resBodyObj] = getResponseForW3CError(error);
+    }
 
-    res.headers = response.headers;
-    res.set('content-type', response.headers['content-type']);
     // if the proxied response contains a sessionId that the downstream
     // driver has generated, we don't want to return that to the client.
     // Instead, return the id from the request or from current session
@@ -330,7 +352,7 @@ class JWProxy {
       }
     }
     resBodyObj.value = formatResponseValue(resBodyObj.value);
-    res.status(response.statusCode).send(JSON.stringify(formatStatus(resBodyObj)));
+    res.status(statusCode).send(JSON.stringify(formatStatus(resBodyObj)));
   }
 }
 

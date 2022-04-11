@@ -22,12 +22,8 @@ jobs:
         run: npm install -g npm
       - name: Install dependencies
         run: npm install
-      - name: Run unit tests
+      - name: Run all tests
         run: npm run test:ci
-      - name: Install @appium/fake-driver
-        run: npm run install-fake-driver
-      - name: Run E2E tests
-        run: npm run e2e-test
 
   lint:
     name: Lint & Check Types

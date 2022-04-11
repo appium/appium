@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "@appium/base-driver": "file:../base-driver",
-    "@appium/base-plugin": "1.8.1",
+    "@appium/base-plugin": "file:../base-plugin",
     "@appium/schema": "file:../schema",
     "@appium/support": "file:../support",
     "@babel/runtime": "7.17.9",

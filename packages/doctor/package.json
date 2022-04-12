@@ -1,6 +1,6 @@
 {
   "name": "@appium/doctor",
-  "version": "1.16.13",
+  "version": "1.16.14",
   "description": "Test environment for fitness to run Appium",
   "keywords": [
     "automation",

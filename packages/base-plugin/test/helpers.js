@@ -41,7 +41,7 @@ function e2eSetup (opts) {
   before(async function () {
     const setupAppiumHome = async () => {
       /**
-       * @type {Env}
+       * @type {AppiumEnv}
        */
       const env = {...process.env};
 
@@ -56,7 +56,7 @@ function e2eSetup (opts) {
 
     /**
      *
-     * @param {Env} env
+     * @param {AppiumEnv} env
      */
     const installDriver = async (env) => {
       console.log(`${info} Checking if driver "${driverName}" is installed...`);
@@ -100,7 +100,7 @@ function e2eSetup (opts) {
 
     /**
      *
-     * @param {Env} env
+     * @param {AppiumEnv} env
      */
     const installPlugin = async (env) => {
       console.log(`${info} Checking if plugin "${pluginName}" is installed...`);
@@ -146,9 +146,10 @@ function e2eSetup (opts) {
       console.log(`${info} Will use port ${port} for Appium server`);
       this.port = port;
 
+      /** @type {import('appium').Args} */
       const args = {
         port,
-        host,
+        address: host,
         usePlugins: [pluginName],
         useDrivers: [driverName],
         appiumHome,
@@ -177,7 +178,7 @@ export { e2eSetup };
  * @property {string} [appiumHome] - Path to Appium home directory
  * @property {Mocha.before} before - Mocha "before all" hook function
  * @property {Mocha.after} after - Mocha "after all" hook function
- * @property {Partial<import('appium/types').Args>} [serverArgs] - Arguments to pass to Appium server
+ * @property {Partial<import('appium').Args>} [serverArgs] - Arguments to pass to Appium server
  * @property {import('appium/types').InstallType & string} [driverSource] - Source of driver to install
  * @property {string} [driverPackage] - Package name of driver to install
  * @property {string} [driverName] - Name of driver to install
@@ -194,7 +195,6 @@ export { e2eSetup };
 /**
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
  */
-
 /**
- * @typedef {NodeJS.ProcessEnv & {APPIUM_HOME?: string}} Env
+ * @typedef {import('appium/types').AppiumEnv} AppiumEnv
  */

@@ -1,5 +1,3 @@
-/// <reference path="../../types/appium-manifest.d.ts" />
-
 /**
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
  */

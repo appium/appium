@@ -28,7 +28,7 @@ export type ExtManifest<ExtType extends ExtensionType> = Omit<
   InternalMetadata &
   CommonMetadata; // XXX: ExtMetadata should be a union with CommonMetadata. why is this needed?
 
-type WithSchemaManifest = {
+export type WithSchemaManifest = {
   schema: SchemaMetadata;
 };
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.4.1](https://github.com/appium/appium/compare/@appium/base-driver@8.4.0...@appium/base-driver@8.4.1) (2022-04-12)
+
+
+### Bug Fixes
+
+* **base-driver:** isErrorType import ([ad3b4b2](https://github.com/appium/appium/commit/ad3b4b2c9676623a5eeb92e0beb510ec181fbcf8))
+* **base-driver:** Make sure proxyReqRes helper never throws any exceptions ([#16742](https://github.com/appium/appium/issues/16742)) ([5d2156a](https://github.com/appium/appium/commit/5d2156a06bcf621116db0adbedce431d7c18fca7))
+
+
+
+
+
 # [8.4.0](https://github.com/appium/appium/compare/@appium/base-driver@8.3.1...@appium/base-driver@8.4.0) (2022-04-07)
 
 

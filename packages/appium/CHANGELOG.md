@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.29](https://github.com/appium/appium/compare/appium@2.0.0-beta.28...appium@2.0.0-beta.29) (2022-04-12)
+
+
+### Bug Fixes
+
+* **appium:** Properly detect if a command is a session command ([#16737](https://github.com/appium/appium/issues/16737)) ([f8a5144](https://github.com/appium/appium/commit/f8a51443e490d9a373778499bfc440e8464ca2ed))
+
+
+
+
+
 # [2.0.0-beta.28](https://github.com/appium/appium/compare/appium@2.0.0-beta.27...appium@2.0.0-beta.28) (2022-04-07)
 
 

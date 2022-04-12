@@ -113,6 +113,7 @@ export interface ExternalDriver extends Driver {
   maximizeWindow?(): Promise<Rect>;
   minimizeWindow?(): Promise<Rect>;
   fullScreenWindow?(): Promise<Rect>;
+  createNewWindow?(type?: NewWindowType): Promise<NewWindow>;
   active?(): Promise<Element>;
   elementSelected?(elementId: string): Promise<boolean>;
   getAttribute?(name: string, elementId: string): Promise<string | null>;
@@ -403,6 +404,13 @@ export interface Rect {
   y: number;
   width: number;
   height: number;
+}
+
+export type NewWindowType = 'tab' | 'window';
+
+export interface NewWindow {
+  handle: string;
+  type: NewWindowType;
 }
 
 export interface Cookie {

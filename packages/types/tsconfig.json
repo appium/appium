@@ -7,7 +7,7 @@
       "@appium/schema": ["../schema"]
     }
   },
-  "include": ["lib/**/*"],
+  "include": ["lib"],
   "references": [
     {"path": "../schema"}
   ]

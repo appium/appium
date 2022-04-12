@@ -491,7 +491,7 @@ export {DriverCore};
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Core} Core
- * @typedef {import('@appium/types').DriverOpts} DriverOpts
+ * @typedef {import('@appium/types').ServerArgs} DriverOpts
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
  */

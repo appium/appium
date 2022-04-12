@@ -59,7 +59,7 @@ type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
  *
  * These will be camel-cased unless overridden by `appiumCliDest` field in schema(s).
  */
-export type DriverOpts = {
+export type ServerArgs = {
   [Prop in keyof ServerConfigMapping as SetKeyForProp<Prop>]: KeyOrDefaultForProp<Prop>;
 };
 // begin utils

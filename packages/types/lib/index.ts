@@ -3,21 +3,21 @@ import type { EventEmitter } from 'events';
 import type { Server } from 'http';
 import type { Logger } from 'npmlog';
 import type { Class as _Class, MultidimensionalReadonlyArray } from 'type-fest';
-import { DriverOpts } from './config';
+import { ServerArgs } from './config';
 import { Capabilities, W3CCapabilities } from './capabilities';
 
 export { AppiumW3CCapabilities } from './capabilities';
 export { AppiumConfig, NormalizedAppiumConfig } from './config';
 export * from './appium-config';
-export { DriverOpts, Capabilities, W3CCapabilities };
+export { ServerArgs, Capabilities, W3CCapabilities };
 
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
  */
 export interface Core {
   sessionId: string | null;
-  opts: DriverOpts;
-  initialOpts: DriverOpts;
+  opts: ServerArgs;
+  initialOpts: ServerArgs;
   caps?: Capabilities;
   originalCaps?: W3CCapabilities;
   protocol?: string;

@@ -2,7 +2,11 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Appium Build
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - '2.0'
 
 jobs:
   test:

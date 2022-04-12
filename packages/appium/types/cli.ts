@@ -1,5 +1,5 @@
-import {DriverOpts} from '@appium/types';
-import {
+import {ServerArgs} from '@appium/types';
+import type {
   DRIVER_TYPE as DRIVER_SUBCOMMAND,
   EXT_SUBCOMMAND_INSTALL,
   EXT_SUBCOMMAND_LIST,
@@ -10,14 +10,14 @@ import {
   SERVER_SUBCOMMAND,
 } from '../lib/constants';
 
-type ServerSubcommand = typeof SERVER_SUBCOMMAND;
-type DriverSubcommand = typeof DRIVER_SUBCOMMAND;
-type PluginSubcommand = typeof PLUGIN_SUBCOMMAND;
+export type ServerSubcommand = typeof SERVER_SUBCOMMAND;
+export type DriverSubcommand = typeof DRIVER_SUBCOMMAND;
+export type PluginSubcommand = typeof PLUGIN_SUBCOMMAND;
 
 /**
  * Possible subcommands for the `appium` CLI.
  */
-type CliSubcommand =
+export type CliSubcommand =
   | ServerSubcommand
   | DriverSubcommand
   | PluginSubcommand;
@@ -37,7 +37,12 @@ export type CliExtensionSubcommand =
  * Random stuff that may appear in the parsed args which has no equivalent in a
  * config file.
  */
-interface MoreArgs {
+export interface MoreArgs {
+  /**
+   * Possible subcommands. If empty, defaults to {@linkcode ServerSubcommand}.
+   */
+  subcommand?: CliSubcommand;
+
   /**
    * Path to config file, if any. Does not make sense for this to be allowed in a config file!
    */
@@ -57,7 +62,7 @@ interface MoreArgs {
 /**
  * These arguments are _not_ supported by the CLI, but only via programmatic usage / tests.
  */
-interface ProgrammaticArgs {
+export interface ProgrammaticArgs {
   /**
    * If `true`, throw on error instead of exit.
    */
@@ -89,21 +94,9 @@ interface ProgrammaticArgs {
 }
 
 /**
- * Args which the user supplies when invoking the CLI.
- * 
- * The code will default the `subcommand` value to `server`; see {@linkcode WithServerSubcommand}
- */
-interface WithSubcommand {
-  /**
-   * Possible subcommands
-   */
-  subcommand: CliSubcommand;
-}
-
-/**
  * These are args which the user will specify if using an extension command
  */
-interface ExtArgs extends WithExtSubcommand {
+export interface ExtArgs extends WithExtSubcommand {
   /**
    * Subcommands of `driver` subcommand
    */
@@ -118,36 +111,37 @@ interface ExtArgs extends WithExtSubcommand {
 /**
  * Args having the `server` subcommand
  */
-interface WithServerSubcommand extends WithSubcommand {
-  subcommand: ServerSubcommand;
+export interface WithServerSubcommand {
+  subcommand?: ServerSubcommand;
 }
 
 /**
  * Args having the `driver` or `plugin` subcommand
  */
-interface WithExtSubcommand extends WithSubcommand {
+export interface WithExtSubcommand {
   subcommand: DriverSubcommand | PluginSubcommand;
 }
 
 /**
  * Some generic bits of arguments; should not be used outside this declaration
  */
-type CommonArgs<Opts, T extends WithSubcommand> = MoreArgs &
+type CommonArgs<SArgs, T = WithServerSubcommand> = MoreArgs &
   ProgrammaticArgs &
-  WithSubcommand &
-  (T extends WithServerSubcommand ? Opts : T extends WithExtSubcommand ? ExtArgs : never);
+  (T extends WithServerSubcommand
+    ? SArgs
+    : T extends WithExtSubcommand
+    ? ExtArgs
+    : never);
 
 /**
  * Fully-parsed arguments, containing defaults, computed args, and config file values.
  */
-export type ParsedArgs<T extends WithSubcommand = WithServerSubcommand> =
-  CommonArgs<DriverOpts, T>;
+export type ParsedArgs<T = WithServerSubcommand> = CommonArgs<ServerArgs, T>;
 
 /**
  * Partial arguments, as supplied by a user. _May_ have defaults applied; _may_ contain config values; _may_ contain computed args.
  */
-export type Args<T extends WithSubcommand = WithServerSubcommand> =
-  CommonArgs<Partial<DriverOpts>, T>;
+export type Args<T = WithServerSubcommand> = CommonArgs<Partial<ServerArgs>, T>;
 
 /**
  * Shown by `appium --build-info`

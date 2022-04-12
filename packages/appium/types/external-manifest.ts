@@ -2,8 +2,8 @@
  * These types describe information about external extensions and the contents of their `package.json` files
  */
 
-import { SchemaObject } from 'ajv';
-import { PackageJson, SetRequired } from 'type-fest';
+import type { SchemaObject } from 'ajv';
+import type { PackageJson, SetRequired } from 'type-fest';
 import { DriverType, ExtensionType, PluginType } from './index';
 
 /**

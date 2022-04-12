@@ -11,7 +11,7 @@
     },
     "checkJs": true
   },
-  "include": ["./lib/**/*.js", "./types/**/*.d.ts"],
+  "include": ["lib", "types"],
   "references": [
     {"path": "../support"},
     {"path": "../base-driver"},

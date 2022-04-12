@@ -131,7 +131,7 @@ function getExtraMethodMap (driverClasses, pluginClasses) {
 }
 
 /**
- * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @template [T=WithServerSubcommand]
  * @param {Args<T>} args
  * @returns {args is Args<WithServerSubcommand>}
  */
@@ -146,7 +146,7 @@ function areServerCommandArgs (args) {
  *
  * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
  *
- * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @template [T=WithServerSubcommand]
  * @param {Args<T>} [args] - Partial args (progammatic usage only)
  * @returns {Promise<ServerInitResult | ExtCommandInitResult>}
  * @example
@@ -247,7 +247,7 @@ async function init (args) {
 /**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
- * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @template [T=WithServerSubcommand]
  * @param {Args<T>} [args] - Arguments from CLI or otherwise
  * @returns {Promise<import('@appium/types').AppiumServer|undefined>}
  */
@@ -351,7 +351,6 @@ export { main, init, resolveAppiumHome };
  * @typedef {import('../types').PluginType} PluginType
  * @typedef {import('../types').DriverClass} DriverClass
  * @typedef {import('../types').PluginClass} PluginClass
- * @typedef {import('../types').WithSubcommand} WithSubcommand
  * @typedef {import('../types').WithServerSubcommand} WithServerSubcommand
  */
 
@@ -371,12 +370,12 @@ export { main, init, resolveAppiumHome };
  */
 
 /**
- * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @template [T=WithServerSubcommand]
  * @typedef {import('../types').Args<T>} Args
  */
 
 /**
- * @template {WithSubcommand} [T=WithServerSubcommand]
+ * @template [T=WithServerSubcommand]
  * @typedef {import('../types').ParsedArgs<T>} ParsedArgs
  */
 

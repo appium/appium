@@ -737,7 +737,7 @@ export { AppiumDriver };
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
- * @typedef {import('@appium/types').DriverOpts} DriverOpts
+ * @typedef {import('@appium/types').ServerArgs} DriverOpts
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
  * @typedef {import('../types').ExtensionType} ExtensionType

@@ -99,7 +99,7 @@ class ArgParser {
    * If no subcommand is passed in, this method will inject the `server` subcommand.
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
-   * @template {import('../../types').WithSubcommand} [T=import('../../types').WithServerSubcommand]
+   * @template [T=import('../../types').WithServerSubcommand]
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
    * @returns {import('../../types').Args<T>} - The parsed arguments
    */

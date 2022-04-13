@@ -262,7 +262,7 @@ async function configureApp (app, options = {}) {
         }
         logger.info(`The application at '${cachedPath}' does not exist anymore ` +
           `or its integrity has been damaged. Deleting it from the internal cache`);
-        APPLICATIONS_CACHE.del(app);
+        APPLICATIONS_CACHE.delete(app);
       }
 
       let fileName = null;
@@ -347,7 +347,7 @@ async function configureApp (app, options = {}) {
         }
         logger.info(`The application at '${fullPath}' does not exist anymore ` +
           `or its integrity has been damaged. Deleting it from the cache`);
-        APPLICATIONS_CACHE.del(app);
+        APPLICATIONS_CACHE.delete(app);
       }
       const tmpRoot = await tempDir.openDir();
       try {

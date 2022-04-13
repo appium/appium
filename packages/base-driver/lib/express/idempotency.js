@@ -78,14 +78,14 @@ function cacheResponse (key, req, res) {
     }
     if (writeError) {
       log.info(`Could not cache the response identified by '${key}': ${writeError.message}`);
-      IDEMPOTENT_RESPONSES.del(key);
+      IDEMPOTENT_RESPONSES.delete(key);
       return responseStateListener.emit('ready', null);
     }
     if (!isResponseFullySent) {
       log.info(`Could not cache the response identified by '${key}', ` +
         `because it has not been completed`);
       log.info('Does the client terminate connections too early?');
-      IDEMPOTENT_RESPONSES.del(key);
+      IDEMPOTENT_RESPONSES.delete(key);
       return responseStateListener.emit('ready', null);
     }
 
@@ -125,7 +125,7 @@ async function handleIdempotency (req, res, next) {
 
   const rerouteCachedResponse = async (cachedResPath) => {
     if (!await fs.exists(cachedResPath)) {
-      IDEMPOTENT_RESPONSES.del(key);
+      IDEMPOTENT_RESPONSES.delete(key);
       log.warn(`Could not read the cached response identified by key '${key}'`);
       log.warn('The temporary storage is not accessible anymore');
       return next();

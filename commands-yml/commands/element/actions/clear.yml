@@ -8,7 +8,7 @@ example_usage:
       element.clear();
   python:
     |
-      self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
+      self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value="SomeAccessibilityID").clear()
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId("SomeAccessibilityID");

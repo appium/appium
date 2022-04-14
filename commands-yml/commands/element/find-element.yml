@@ -12,7 +12,7 @@ example_usage:
       MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeClassName");
   python:
     |
-      el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+      el = self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value="SomeAccessibilityID")
   javascript_wd:
     |
       let elementOne = await driver.elementByAccessibilityId("SomeAccessibilityID");

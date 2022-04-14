@@ -13,8 +13,8 @@ example_usage:
       el.click();
   python:
     |
-      el = self.driver.find_element_by_accessibility_id('SomeId')
-      el.click();
+      el = self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='SomeId')
+      el.click()
   javascript_wd:
     |
       let element = await driver.elementByAccessibilityId('id', 'SomeId');

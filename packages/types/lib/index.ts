@@ -72,7 +72,7 @@ export interface Driver
   startNewCommandTimeout(): Promise<void>;
   reset(): Promise<void>;
 
-  assignServer(
+  assignServer?(
     server: AppiumServer,
     host: string,
     port: number,

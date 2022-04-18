@@ -274,10 +274,14 @@ class AppiumDriver extends DriverCore {
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
       this.assignCliArgsToExtension('driver', driverName, driverInstance);
 
-
       // This assignment is required for correct web sockets functionality inside the driver
       // Drivers/plugins might also want to know where they are hosted
-      driverInstance.assignServer(this.server, this.args.address, this.args.port, this.args.basePath);
+
+      // XXX: temporary hack to work around #16747
+      driverInstance.server = this.server;
+      driverInstance.serverHost = this.args.address;
+      driverInstance.serverPort = this.args.port;
+      driverInstance.serverPath = this.args.basePath;
 
       try {
         runningDriversData = await this.curSessionDataForDriver(InnerDriver) ?? [];

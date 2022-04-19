@@ -7,6 +7,8 @@ copyright: Copyright &copy; 2012 - 2022 OpenJS Foundation
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
+  features:
+    - navigation.sections
 
 extra_css:
   - assets/stylesheets/extra.css

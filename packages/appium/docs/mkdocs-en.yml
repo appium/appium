@@ -10,7 +10,7 @@ theme:
   language: en
 
 nav:
-  - Home: index.md
+  - Welcome: index.md
   - Introduction:
     - intro/index.md
     - intro/drivers.md
@@ -45,4 +45,5 @@ nav:
     - ecosystem/build-plugins.md
     - ecosystem/build-docs.md
   - Contributing: contributing/index.md
+  - Resources: resources.md
   - Issues: https://github.com/appium/appium/issues

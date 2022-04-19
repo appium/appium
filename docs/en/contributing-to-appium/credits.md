@@ -10,8 +10,6 @@
 * [node-webkit](https://github.com/rogerwang/node-webkit)
 * [Remote Debug](https://github.com/leftlogic/remote-debug)
 * [Selenium Project](https://www.selenium.dev/)
-* [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy)
-* [instruments-without-delay](https://github.com/facebook/instruments-without-delay)
 * [deviceconsole](https://github.com/rpetrich/deviceconsole)
 * [WinAppDriver](http://github.com/Microsoft/WinAppDriver)
 * [WebDriverAgent](https://github.com/facebook/webdriveragent)

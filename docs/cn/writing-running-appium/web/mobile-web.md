@@ -54,19 +54,10 @@ capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, "Safari");
 capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone Simulator");
 ```
 
-### iOS 真机上的移动端 Safari
-
-在iOS 9.3及以下(pre-XCUITest)版本系统，我们借助 SafariLauncher 应用在移动端Safari运行测试。
-这是因为Safari是苹果公司的应用，Instruments 不能在真机上拉起 Safari。SafariLuncher 可以帮助打开 Safari 浏览器，浏览器一旦打开，Remote Debugger 会通过 [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy) 自动连接。在 `ios-webkit-debug-proxy` 运行时，
-必须在你的iOS设备测试前，信任这台设备
-
-指导如何安装和运行 ios-webkit-debugger-proxy ，可以查阅 [iOS WebKit debug proxy](/docs/cn/writing-running-appium/web/ios-webkit-debug-proxy.md)
-
 ### 安装
 
 在真实上运行测试前，你需要：
 
-* 安装好 **ios-webkit-debug-proxy**，运行并在 27753 接口开启监听。（查阅 [hybrid 文档](/docs/cn/writing-running-appium/web/hybrid.md#execution-against-a-real-ios-device) 作为指导）
 * 在 iOS 设备上开启 **web inspector**（设置>safari>高级）
 
 

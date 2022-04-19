@@ -72,7 +72,7 @@ export interface Driver
   startNewCommandTimeout(): Promise<void>;
   reset(): Promise<void>;
 
-  assignServer(
+  assignServer?(
     server: AppiumServer,
     host: string,
     port: number,
@@ -597,7 +597,14 @@ export interface FindCommands {
 export interface LogCommands {
   supportedLogTypes: Record<string, LogType<Driver>>;
   getLogTypes(): Promise<string[]>;
-  getLog<T>(logType: LogType<T>): Promise<any[]>;
+  /**
+   * Gets logs
+   * 
+   * TODO: `logType` should be a key in `supportedLogTypes`, and the return value of this function
+   * should be the associated `LogType` object's `LogEntry` parameterized type.
+   * @param logType - Name/key of log type as defined in {@linkcode LogCommands.supportedLogTypes}.
+   */
+  getLog(logType: string): Promise<any[]>;
 }
 
 export interface SettingsCommands {

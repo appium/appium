@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@appium/support": "file:../support",
-    "@babel/runtime": "7.17.8",
+    "@babel/runtime": "7.17.9",
     "docdash": "1.2.0",
     "jsdoc": "3.6.10",
     "jsdoc-plugin-typescript": "2.0.6",

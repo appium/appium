@@ -51,7 +51,6 @@
 |`--debug-log-spacing`|false| 在日志中加大间距，帮助进行视觉检查||
 |`--suppress-adb-kill-server`|false| （仅 Android) 如果设置了，可以阻止 Appium 杀掉 adb 实例||
 |`--async-trace`|false| 向日志条目添加长堆栈追踪。建议仅在调试时使用 ||
-|`--webkit-debug-proxy-port`|27753|（仅 iOS）用于 ios-webkit-debug-proxy 通信的本地端口 | `--webkit-debug-proxy-port 27753` |
 |`-dc`, `--default-capabilities`|{}| 设置默认预期功能（Desired capabilities），每个会话都将使用默认预期功能，除非被新的功能覆盖 | `--default-capabilities [ '{"app": "myapp.app", "deviceName": "iPhone Simulator"}' | /path/to/caps.json ]` |
 |`--reboot`|false| - （仅 Android）每次建立会话都重启模拟器，会话结束后杀掉模拟器 ||
 |`--command-timeout`|60| 【弃用】- 没有效果。这曾是服务器用于所有会话接收命令的默认超时时间（单位是秒，但不超过 2147483）。预期能力（Desired capabilities）中的 newCommandTimeout 替代 ||

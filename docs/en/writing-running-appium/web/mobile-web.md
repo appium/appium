@@ -72,34 +72,12 @@ preferences so that the remote debugger port is open.
 We use [appium-ios-device](https://github.com/appium/appium-ios-device) to handle Safari since Appium 1.15.
 You no longer need to install additional dependencies.
 
-#### For `Instruments`
-
-For [iOS 9.3 and below](/docs/en/drivers/ios-uiautomation.md) (pre-XCUITest), we
-use the [SafariLauncher App](https://github.com/snevesbarros/SafariLauncher) app
-to launch Safari and run tests against mobile Safari. This is because Safari is
-an app that is owned by Apple, and Instruments cannot launch it on real devices.
-Once Safari has been launched by `SafariLauncher`, the Remote Debugger
-automatically connects using the [ios-webkit-debug-proxy](https://github.com/google/ios-webkit-debug-proxy).
-When working with `ios-webkit-debug-proxy`, you have to trust the machine before
-you can can run tests against your iOS device.
-
-For instruction on how to install and run `ios-webkit-debugger-proxy` see
-[iOS WebKit debug proxy](/docs/en/writing-running-appium/web/ios-webkit-debug-proxy.md)
-documentation.
-
 #### Setup for an iOS real device
 
 Before you can run your tests against Safari on a real device you will need to:
 
-* `XCUITest` and `Instruments`
+* `XCUITest`
     * Turn on **web inspector** on iOS device (**settings > safari > advanced**)
-* Only for `Instruments`
-    * Have the `ios-webkit-debug-proxy` installed, running and listening on port
-      27753 (see the [hybrid docs](/docs/en/writing-running-appium/web/hybrid.md#execution-against-an-ios-real-device)
-      for instructions)
-    * Make sure that `SafariLauncher` will work (see the [SafariLauncher docs](/docs/en/drivers/ios-uiautomation-safari-launcher.md)
-      for instructions)
-
 
 ### Running your test
 

@@ -149,14 +149,6 @@ Appium 使用自定义的远程调试器建立连接去与 web 视图交互。�
 
 一旦你设置了 [「预期功能（desired capabilities）」](/docs/en/writing-running-appium/caps.md)并开启了 Appium 会话，请遵循上面的通用说明。
 
-#### 对真实的 iOS 设备执行
-
-当对真实的 iOS 设备执行时，Appium 不能直接访问 web 试图。所以必须通过 USB 线缆连接设备。我们使用 [ios-webkit-debugger-proxy](https://github.com/google/ios-webkit-debug-proxy) 建立连接。
-
-关于如何安装并运行 `ios-webkit-debugger-proxy` 的教学，请查看 [iOS webkit 调试代理](/writing-running-appium/web/ios-webkit-debug-proxy.md) 文档
-
-现在你可以开启 Appium 测试会话，并遵循上面的通用说明。
-
 ---
 EOF.
 

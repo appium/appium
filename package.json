@@ -162,7 +162,7 @@
     "serve-static": "1.15.0",
     "sinon": "13.0.2",
     "sinon-chai": "3.7.0",
-    "sync-monorepo-packages": "0.3.4",
+    "sync-monorepo-packages": "0.3.5",
     "through2": "4.0.2",
     "type-fest": "2.12.2",
     "typescript": "4.6.3",

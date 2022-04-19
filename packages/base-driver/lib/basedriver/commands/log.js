@@ -13,11 +13,12 @@ export function LogMixin (Base) {
    * @implements {ILogCommands}
    */
   class LogCommands extends Base {
-    /**
-     * XXX: dubious
-     * @type {Record<string,LogType<Driver>>}
-     */
-    supportedLogTypes;
+
+    constructor (...args) {
+      super(...args);
+      /** @type {Record<string, LogType<Driver>>} */
+      this.supportedLogTypes = this.supportedLogTypes ?? {};
+    }
 
     async getLogTypes () {
       this.log.debug('Retrieving supported log types');
@@ -26,19 +27,13 @@ export function LogMixin (Base) {
 
     /**
      * @this {Driver}
+     * @param {string} logType
      */
     async getLog (logType) {
       this.log.debug(`Retrieving '${logType}' logs`);
 
       if (!(await this.getLogTypes()).includes(logType)) {
-        const logsTypesWithDescriptions = _.reduce(
-          this.supportedLogTypes,
-          (acc, value, key) => {
-            acc[key] = value.description;
-            return acc;
-          },
-          {},
-        );
+        const logsTypesWithDescriptions = _.mapValues(this.supportedLogTypes, 'description');
         throw new Error(
           `Unsupported log type '${logType}'. ` +
             `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,

@@ -41,7 +41,7 @@
     "test:e2e": "gulp e2e-test:run"
   },
   "dependencies": {
-    "@appium/eslint-config-appium": "file:../eslint-config-appium",
+    "@appium/eslint-config-appium": "^5.0.5",
     "@babel/core": "7.17.9",
     "@babel/eslint-parser": "7.17.0",
     "@babel/plugin-transform-runtime": "7.17.0",
@@ -101,5 +101,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

@@ -32,7 +32,7 @@
     "build"
   ],
   "dependencies": {
-    "@appium/base-plugin": "file:../base-plugin",
+    "@appium/base-plugin": "^1.8.3",
     "lodash": "4.17.21"
   },
   "scripts": {
@@ -42,5 +42,6 @@
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "test": "npm run test:unit",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
-  }
+  },
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

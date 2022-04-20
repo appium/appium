@@ -35,10 +35,10 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "file:../base-driver",
-    "@appium/base-plugin": "file:../base-plugin",
-    "@appium/opencv": "file:../opencv",
-    "@appium/support": "file:../support",
+    "@appium/base-driver": "^8.5.1",
+    "@appium/base-plugin": "^1.8.3",
+    "@appium/opencv": "^1.0.6",
+    "@appium/support": "^2.57.3",
     "lru-cache": "6.0.0"
   },
   "appium": {
@@ -46,5 +46,5 @@
     "mainClass": "ImageElementPlugin"
   },
   "types": "./build/lib/plugin.d.ts",
-  "gitHead": "6bada81cddda35d888a883396fef1843608c271b"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

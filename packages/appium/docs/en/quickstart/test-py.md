@@ -2,8 +2,8 @@
 title: Write a Test (Python)
 ---
 
-[Appium Python Client](https://github.com/appium/python-client) client is
-an official Appium client in Python, which is available via [pypi](https://pypi.org/project/Appium-Python-Client/)
+[Appium Python Client](https://github.com/appium/python-client) is
+an official Appium client in Python, which is available via [pypi](https://pypi.org/project/Appium-Python-Client/).
 It inherits [Selenium Python Binding](https://pypi.org/project/selenium/),
 so installing the Appium Python Clint includes the selenium binding.
 

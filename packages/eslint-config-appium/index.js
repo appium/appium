@@ -98,6 +98,17 @@ module.exports = {
     'require-atomic-updates': 0,
     'no-prototype-builtins': 1,
     'no-redeclare': 1,
+    'no-restricted-syntax': [
+      'warn',
+      {
+        selector: 'AssignmentExpression[left.object.property.name="prototype"]',
+        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.',
+      },
+      {
+        selector: 'CallExpression[callee.object.name="Object"][callee.property.name="assign"][arguments.0.property.name="prototype"]',
+        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.'
+      }
+    ]
   },
   extends: [
     'eslint:recommended',

@@ -1,6 +1,6 @@
 {
   "name": "@appium/gulp-plugins",
-  "version": "6.0.7",
+  "version": "6.0.8",
   "description": "Custom gulp plugins to be used across all appium modules",
   "keywords": [
     "automation",
@@ -41,7 +41,7 @@
     "test:e2e": "gulp e2e-test:run"
   },
   "dependencies": {
-    "@appium/eslint-config-appium": "^5.0.5",
+    "@appium/eslint-config-appium": "^5.0.6",
     "@babel/core": "7.17.9",
     "@babel/eslint-parser": "7.17.0",
     "@babel/plugin-transform-runtime": "7.17.0",

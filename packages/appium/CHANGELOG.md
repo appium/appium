@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.31](https://github.com/appium/appium/compare/appium@2.0.0-beta.30...appium@2.0.0-beta.31) (2022-04-20)
+
+
+### Bug Fixes
+
+* **appium,types:** avoid call to assignServer() ([cd08daf](https://github.com/appium/appium/commit/cd08dafabcc16e718a5bdc6b96d5a7bcbfe6e1be))
+* **appium:** fix some argument-related types ([37cb3bd](https://github.com/appium/appium/commit/37cb3bd80c76f003940e680b7925b5c3bdc5144c))
+* **appium:** make types actually consumable ([8b814c9](https://github.com/appium/appium/commit/8b814c9243a7b51ecd0bc619146063aa5b0ccb76))
+
+
+
+
+
 # [2.0.0-beta.30](https://github.com/appium/appium/compare/appium@2.0.0-beta.29...appium@2.0.0-beta.30) (2022-04-12)
 
 **Note:** Version bump only for package appium

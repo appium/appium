@@ -1,6 +1,6 @@
 {
   "name": "@appium/universal-xml-plugin",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Appium plugin for making XML source and XPath queries the same across iOS and Android",
   "keywords": [
     "appium",

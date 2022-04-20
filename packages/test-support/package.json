@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "1.3.16",
+  "version": "1.3.17",
   "description": "A collection of test utilities used across Appium packages",
   "keywords": [
     "automation",

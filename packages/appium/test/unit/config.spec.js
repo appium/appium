@@ -4,8 +4,9 @@ import _ from 'lodash';
 import { createSandbox } from 'sinon';
 import { getParser } from '../../lib/cli/parser';
 import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, showConfig, validateTmpDir, warnNodeDeprecations } from '../../lib/config';
+import { PLUGIN_TYPE } from '../../lib/constants';
 import logger from '../../lib/logger';
-import { getDefaultsForSchema, resetSchema, registerSchema, finalizeSchema } from '../../lib/schema/schema';
+import { finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
 
 describe('Config', function () {
   /** @type {sinon.SinonSandbox} */
@@ -187,7 +188,7 @@ describe('Config', function () {
       describe('with extension schemas', function () {
         beforeEach(function () {
           resetSchema();
-          registerSchema('plugin', 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean', default: true}}});
+          registerSchema(PLUGIN_TYPE, 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean', default: true}}});
           finalizeSchema();
           getParser(true);
           args = getDefaultsForSchema();

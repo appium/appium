@@ -315,7 +315,7 @@ describe('CLI behavior', function () {
             '--source',
             'npm',
           ]);
-          await installLocalExtension(appiumHome, 'driver', testDriverPath);
+          await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
           const list = await runList(['--installed']);
           expect(list.fake).to.exist;
           expect(list.test).to.exist;

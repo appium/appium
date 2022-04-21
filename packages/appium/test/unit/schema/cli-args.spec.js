@@ -1,9 +1,10 @@
 // @ts-check
 
 import _ from 'lodash';
-import {resetSchema, finalizeSchema, registerSchema} from '../../../lib/schema';
-import {toParserArgs} from '../../../lib/schema/cli-args';
-import {transformers} from '../../../lib/schema/cli-transformers';
+import { PLUGIN_TYPE } from '../../../lib/constants';
+import { finalizeSchema, registerSchema, resetSchema } from '../../../lib/schema';
+import { toParserArgs } from '../../../lib/schema/cli-args';
+import { transformers } from '../../../lib/schema/cli-transformers';
 
 const {expect} = chai;
 
@@ -29,7 +30,7 @@ describe('cli-args', function () {
 
     describe('schema contents', function () {
       const extName = 'blob';
-      const extType = 'plugin';
+      const extType = PLUGIN_TYPE;
 
       describe('type', function () {
         let result;

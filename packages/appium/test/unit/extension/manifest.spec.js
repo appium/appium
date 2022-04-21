@@ -315,7 +315,7 @@ describe('Manifest', function () {
         /** @type {ExtData<DriverType>} */
 
         beforeEach(function () {
-          manifest.addExtension('driver', 'foo', extData);
+          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
         });
 
         it('should rewrite', function () {
@@ -412,7 +412,7 @@ describe('Manifest', function () {
             packageJson,
             '/some/path/to/package.json',
           );
-          expect(manifest.getExtensionData('plugin')).to.deep.equal({
+          expect(manifest.getExtensionData(PLUGIN_TYPE)).to.deep.equal({
             myPlugin: {
               mainClass: 'SomeClass',
               pkgName: 'derp',
@@ -504,7 +504,7 @@ describe('Manifest', function () {
 
       it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
-        expect(manifest.getExtensionData('driver')).to.have.property(
+        expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property(
           'myDriver',
         );
       });

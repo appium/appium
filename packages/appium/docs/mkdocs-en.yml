@@ -38,6 +38,8 @@ nav:
     - guides/security.md
     - guides/caps.md
     - guides/context.md
+    - guides/settings.md
+    - guides/execute-script-overload.md
     - guides/event-timing.md
     - guides/log-filters.md
     - guides/grid.md

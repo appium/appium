@@ -7,7 +7,9 @@ capabilities = dict(
     automationName='uiautomator2',
     deviceName='Android',
     appPackage='com.android.settings',
-    appActivity='.Settings'
+    appActivity='.Settings',
+    language='en',
+    locale='US'
 )
 
 appium_server_url = 'http://localhost:4723'
@@ -21,7 +23,7 @@ class TestAppium(unittest.TestCase):
             self.driver.quit()
 
     def test_find_battery(self) -> None:
-        el = self.driver.find_element(by=AppiumBy.ID, value='//*[@text="Battery"]')
+        el = self.driver.find_element(by=AppiumBy.XPATH, value='//*[@text="Battery"]')
         el.click()
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 // @ts-check
 
+import { PLUGIN_TYPE } from '../../lib/constants';
 import B from 'bluebird';
 import { BaseDriver } from '@appium/base-driver';
 import { FakeDriver } from '@appium/fake-driver';
@@ -183,7 +184,6 @@ describe('AppiumDriver', function () {
           ...W3C_CAPS,
           alwaysMatch: {
             ...W3C_CAPS.alwaysMatch,
-            // @ts-expect-error
             'appium:someOtherParm': 'someOtherParm',
           },
         };
@@ -358,7 +358,7 @@ describe('AppiumDriver', function () {
         // to establish defaults, we need to register a schema for the plugin.
         // note that the `noargs` plugin does not need a schema, because it
         // accepts no arguments.
-        registerSchema('plugin', ArgsPlugin.pluginName, {
+        registerSchema(PLUGIN_TYPE, ArgsPlugin.pluginName, {
           type: 'object',
           properties: {
             randomArg: {
@@ -367,7 +367,7 @@ describe('AppiumDriver', function () {
             }
           }
         });
-        registerSchema('plugin', ArrayArgPlugin.pluginName, {
+        registerSchema(PLUGIN_TYPE, ArrayArgPlugin.pluginName, {
           type: 'object',
           properties: {
             arr: {

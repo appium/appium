@@ -1,5 +1,6 @@
 // @ts-check
 
+import { DRIVER_TYPE } from '../../lib/constants';
 import { readConfigFile, normalizeConfig } from '../../lib/config-file';
 import { finalizeSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver.schema.js';
@@ -216,7 +217,7 @@ describe('config file behavior', function () {
 
         beforeEach(function () {
           resetSchema();
-          registerSchema('driver', 'fake', extSchema);
+          registerSchema(DRIVER_TYPE, 'fake', extSchema);
           finalizeSchema();
         });
 

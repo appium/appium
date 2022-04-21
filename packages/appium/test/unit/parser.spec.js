@@ -1,4 +1,4 @@
-
+import { DRIVER_TYPE, PLUGIN_TYPE } from '../../lib/constants';
 import { getParser } from '../../lib/cli/parser';
 import { INSTALL_TYPES } from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
@@ -21,7 +21,7 @@ describe('parser', function () {
     it('should accept only server and driver subcommands', function () {
       p.parseArgs([]);
       p.parseArgs(['server']);
-      p.parseArgs(['driver', 'list']);
+      p.parseArgs([DRIVER_TYPE, 'list']);
       (() => p.parseArgs(['foo'])).should.throw();
       (() => p.parseArgs(['foo --bar'])).should.throw();
     });
@@ -136,7 +136,7 @@ describe('parser', function () {
         // we have to require() here because babel will not compile stuff in node_modules
         // (even if it's in the monorepo; there may be a way around this)
         // anyway, if we do that, we need to use the `default` prop.
-        schema.registerSchema('driver', 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
+        schema.registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
         schema.finalizeSchema();
         p = getParser(true);
       });
@@ -160,12 +160,12 @@ describe('parser', function () {
 
       it('should not yet apply defaults', function () {
         const args = p.parseArgs([]);
-        args.should.not.have.property('driver');
+        args.should.not.have.property(DRIVER_TYPE);
       });
 
       it('should nicely handle extensions w/ dashes in them', function () {
         schema.resetSchema();
-        schema.registerSchema('plugin', 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean'}}});
+        schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean'}}});
         schema.finalizeSchema();
         p = getParser(true);
         const args = p.parseArgs([
@@ -198,123 +198,123 @@ describe('parser', function () {
       p = getParser(true);
     });
     it('should not allow random sub-subcommands', function () {
-      (() => p.parseArgs(['driver', 'foo'])).should.throw();
+      (() => p.parseArgs([DRIVER_TYPE, 'foo'])).should.throw();
     });
     describe('list', function () {
       it('should allow an empty argument list', function () {
-        const args = p.parseArgs(['driver', 'list']);
-        args.subcommand.should.eql('driver');
+        const args = p.parseArgs([DRIVER_TYPE, 'list']);
+        args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('list');
         args.showInstalled.should.eql(false);
         args.showUpdates.should.eql(false);
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
-        const args = p.parseArgs(['driver', 'list', '--json']);
+        const args = p.parseArgs([DRIVER_TYPE, 'list', '--json']);
         args.json.should.eql(true);
       });
       it('should allow --installed', function () {
-        const args = p.parseArgs(['driver', 'list', '--installed']);
+        const args = p.parseArgs([DRIVER_TYPE, 'list', '--installed']);
         args.showInstalled.should.eql(true);
       });
       it('should allow --updates', function () {
-        const args = p.parseArgs(['driver', 'list', '--updates']);
+        const args = p.parseArgs([DRIVER_TYPE, 'list', '--updates']);
         args.showUpdates.should.eql(true);
       });
     });
     describe('install', function () {
       it('should not allow an empty argument list', function () {
-        (() => p.parseArgs(['driver', 'install'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'install'])).should.throw();
       });
       it('should take a driver name to install', function () {
-        const args = p.parseArgs(['driver', 'install', 'foobar']);
-        args.subcommand.should.eql('driver');
+        const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar']);
+        args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('install');
         args.driver.should.eql('foobar');
         should.not.exist(args.installType);
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
-        const args = p.parseArgs(['driver', 'install', 'foobar', '--json']);
+        const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar', '--json']);
         args.json.should.eql(true);
       });
       it('should allow --source', function () {
         for (const source of INSTALL_TYPES) {
-          const args = p.parseArgs(['driver', 'install', 'foobar', '--source', source]);
+          const args = p.parseArgs([DRIVER_TYPE, 'install', 'foobar', '--source', source]);
           args.installType.should.eql(source);
         }
       });
       it('should not allow unknown --source', function () {
-        (() => p.parseArgs(['driver', 'install', 'fobar', '--source', 'blah'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'install', 'fobar', '--source', 'blah'])).should.throw();
       });
     });
     describe('uninstall', function () {
       it('should not allow an empty argument list', function () {
-        (() => p.parseArgs(['driver', 'uninstall'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'uninstall'])).should.throw();
       });
       it('should take a driver name to uninstall', function () {
-        const args = p.parseArgs(['driver', 'uninstall', 'foobar']);
-        args.subcommand.should.eql('driver');
+        const args = p.parseArgs([DRIVER_TYPE, 'uninstall', 'foobar']);
+        args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('uninstall');
         args.driver.should.eql('foobar');
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
-        const args = p.parseArgs(['driver', 'uninstall', 'foobar', '--json']);
+        const args = p.parseArgs([DRIVER_TYPE, 'uninstall', 'foobar', '--json']);
         args.json.should.eql(true);
       });
     });
     describe('update', function () {
       it('should not allow an empty argument list', function () {
-        (() => p.parseArgs(['driver', 'update'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'update'])).should.throw();
       });
       it('should take a driver name to update', function () {
-        const args = p.parseArgs(['driver', 'update', 'foobar']);
-        args.subcommand.should.eql('driver');
+        const args = p.parseArgs([DRIVER_TYPE, 'update', 'foobar']);
+        args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('update');
         args.driver.should.eql('foobar');
         args.json.should.eql(false);
       });
       it('should allow json format', function () {
-        const args = p.parseArgs(['driver', 'update', 'foobar', '--json']);
+        const args = p.parseArgs([DRIVER_TYPE, 'update', 'foobar', '--json']);
         args.json.should.eql(true);
       });
     });
     describe('run', function () {
       it('should not allow an empty driver argument list', function () {
-        (() => p.parseArgs(['driver', 'run'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'run'])).should.throw();
       });
       it('should not allow no driver scriptName', function () {
-        (() => p.parseArgs(['driver', 'run', 'foo'])).should.throw();
+        (() => p.parseArgs([DRIVER_TYPE, 'run', 'foo'])).should.throw();
       });
       it('should take a driverName and scriptName to run', function () {
-        const args = p.parseArgs(['driver', 'run', 'foo', 'bar']);
-        args.subcommand.should.eql('driver');
+        const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar']);
+        args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('run');
         args.driver.should.eql('foo');
         args.scriptName.should.eql('bar');
         args.json.should.eql(false);
       });
       it('should allow json format for driver', function () {
-        const args = p.parseArgs(['driver', 'run', 'foo', 'bar', '--json']);
+        const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar', '--json']);
         args.json.should.eql(true);
       });
       it('should not allow an empty plugin argument list', function () {
-        (() => p.parseArgs(['plugin', 'run'])).should.throw();
+        (() => p.parseArgs([PLUGIN_TYPE, 'run'])).should.throw();
       });
       it('should not allow no plugin scriptName', function () {
-        (() => p.parseArgs(['plugin', 'run', 'foo'])).should.throw();
+        (() => p.parseArgs([PLUGIN_TYPE, 'run', 'foo'])).should.throw();
       });
       it('should take a pluginName and scriptName to run', function () {
-        const args = p.parseArgs(['plugin', 'run', 'foo', 'bar']);
-        args.subcommand.should.eql('plugin');
+        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);
+        args.subcommand.should.eql(PLUGIN_TYPE);
         args.pluginCommand.should.eql('run');
         args.plugin.should.eql('foo');
         args.scriptName.should.eql('bar');
         args.json.should.eql(false);
       });
       it('should allow json format for plugin', function () {
-        const args = p.parseArgs(['plugin', 'run', 'foo', 'bar', '--json']);
+        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar', '--json']);
         args.json.should.eql(true);
       });
     });

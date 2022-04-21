@@ -1,6 +1,7 @@
 // @ts-check
 
-import {ArgSpec} from '../../../lib/schema/arg-spec';
+import { DRIVER_TYPE } from '../../../lib/constants';
+import { ArgSpec } from '../../../lib/schema/arg-spec';
 
 const {expect} = chai;
 
@@ -23,7 +24,7 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return a schema ID for a specific argument within an extension schema', function () {
-          expect(ArgSpec.toSchemaRef('bar', 'driver', 'stuff')).to.equal(
+          expect(ArgSpec.toSchemaRef('bar', DRIVER_TYPE, 'stuff')).to.equal(
             'driver-stuff.json#/properties/bar',
           );
         });
@@ -41,7 +42,7 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return a schema ID for an extension', function () {
-          expect(ArgSpec.toSchemaBaseRef('driver', 'stuff')).to.equal(
+          expect(ArgSpec.toSchemaBaseRef(DRIVER_TYPE, 'stuff')).to.equal(
             'driver-stuff.json',
           );
         });
@@ -57,7 +58,7 @@ describe('ArgSpec', function () {
 
       describe('when provided extension information', function () {
         it('should return an extension-specific arg name', function () {
-          expect(ArgSpec.toArg('no-oats', 'driver', 'bad-donkey')).to.equal(
+          expect(ArgSpec.toArg('no-oats', DRIVER_TYPE, 'bad-donkey')).to.equal(
             'driver-bad-donkey-no-oats',
           );
         });
@@ -75,7 +76,7 @@ describe('ArgSpec', function () {
       describe('when provided the schema ID of an extension schema', function () {
         expect(
           ArgSpec.extensionInfoFromRootSchemaId('driver-stuff.json'),
-        ).to.eql({extType: 'driver', normalizedExtName: 'stuff'});
+        ).to.eql({extType: DRIVER_TYPE, normalizedExtName: 'stuff'});
       });
     });
   });

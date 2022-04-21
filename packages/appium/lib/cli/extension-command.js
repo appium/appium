@@ -2,12 +2,16 @@
 
 import _ from 'lodash';
 import path from 'path';
-import { npm, fs, util, env } from '@appium/support';
-import { log, spinWith, RingBuffer } from './utils';
-import { SubProcess } from 'teen_process';
-import { INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB,
-         INSTALL_TYPE_LOCAL } from '../extension/extension-config';
-import { packageDidChange } from '../extension/package-changed';
+import {npm, fs, util, env} from '@appium/support';
+import {log, spinWith, RingBuffer} from './utils';
+import {SubProcess} from 'teen_process';
+import {
+  INSTALL_TYPE_NPM,
+  INSTALL_TYPE_GIT,
+  INSTALL_TYPE_GITHUB,
+  INSTALL_TYPE_LOCAL,
+} from '../extension/extension-config';
+import {packageDidChange} from '../extension/package-changed';
 
 const UPDATE_ALL = 'installed';
 
@@ -40,7 +44,7 @@ class ExtensionCommand {
    * Build an ExtensionCommand
    * @param {ExtensionCommandOptions<ExtType>} opts
    */
-  constructor ({config, json}) {
+  constructor({config, json}) {
     this.config = config;
     this.isJsonOutput = json;
   }
@@ -48,7 +52,7 @@ class ExtensionCommand {
   /**
    * `driver` or `plugin`, depending on the `ExtensionConfig`.
    */
-  get type () {
+  get type() {
     return this.config.extensionType;
   }
 
@@ -58,7 +62,7 @@ class ExtensionCommand {
    * @param {object} args - a key/value object with CLI flags and values
    * @return {Promise<object>} the result of the specific command which is executed
    */
-  async execute (args) {
+  async execute(args) {
     const cmd = args[`${this.type}Command`];
     if (!_.isFunction(this[cmd])) {
       throw new Error(`Cannot handle ${this.type} command ${cmd}`);
@@ -79,25 +83,32 @@ class ExtensionCommand {
    * @param {ListOptions} opts
    * @return {Promise<ExtensionListData>} map of extension names to extension data
    */
-  async list ({showInstalled, showUpdates}) {
-    const lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s`;
+  async list({showInstalled, showUpdates}) {
+    const lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${
+      this.type
+    }s`;
     const installedNames = Object.keys(this.config.installedExtensions);
     const knownNames = Object.keys(this.knownExtensions);
-    const exts = [...installedNames, ...knownNames].reduce((acc, name) => {
-      if (!acc[name]) {
-        if (installedNames.includes(name)) {
-          acc[name] = {...this.config.installedExtensions[name], installed: true};
-        } else if (!showInstalled) {
-          acc[name] = {pkgName: this.knownExtensions[name], installed: false};
+    const exts = [...installedNames, ...knownNames].reduce(
+      (acc, name) => {
+        if (!acc[name]) {
+          if (installedNames.includes(name)) {
+            acc[name] = {
+              ...this.config.installedExtensions[name],
+              installed: true,
+            };
+          } else if (!showInstalled) {
+            acc[name] = {pkgName: this.knownExtensions[name], installed: false};
+          }
         }
-      }
-      return acc;
-    },
-    /**
-     * This accumulator contains either {@linkcode UninstalledExtensionLIstData} _or_
-     * {@linkcode InstalledExtensionListData} without upgrade information (which is added by the below code block)
-     * @type {Record<string,Partial<InstalledExtensionListData>|UninstalledExtensionListData>}
-     */({}));
+        return acc;
+      },
+      /**
+       * This accumulator contains either {@linkcode UninstalledExtensionLIstData} _or_
+       * {@linkcode InstalledExtensionListData} without upgrade information (which is added by the below code block)
+       * @type {Record<string,Partial<InstalledExtensionListData>|UninstalledExtensionListData>}
+       */ ({})
+    );
 
     // if we want to show whether updates are available, put that behind a spinner
     await spinWith(this.isJsonOutput, lsMsg, async () => {
@@ -113,11 +124,12 @@ class ExtensionCommand {
         const updates = await this.checkForExtensionUpdate(ext);
         data.updateVersion = updates.safeUpdate;
         data.unsafeUpdateVersion = updates.unsafeUpdate;
-        data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
+        data.upToDate =
+          updates.safeUpdate === null && updates.unsafeUpdate === null;
       }
     });
 
-    const listData = /** @type {ExtensionListData} */(exts);
+    const listData = /** @type {ExtensionListData} */ (exts);
 
     // if we're just getting the data, short circuit return here since we don't need to do any
     // formatting logic
@@ -125,16 +137,20 @@ class ExtensionCommand {
       return listData;
     }
 
-    for (const [
-      name,
-      data
-    ] of _.toPairs(listData)) {
+    for (const [name, data] of _.toPairs(listData)) {
       let installTxt = ' [not installed]'.grey;
       let updateTxt = '';
       let upToDateTxt = '';
       let unsafeUpdateTxt = '';
       if (data.installed) {
-        const {installType, installSpec, updateVersion, unsafeUpdateVersion, version, upToDate} = data;
+        const {
+          installType,
+          installSpec,
+          updateVersion,
+          unsafeUpdateVersion,
+          version,
+          upToDate,
+        } = data;
         let typeTxt;
         switch (installType) {
           case INSTALL_TYPE_GIT:
@@ -147,7 +163,9 @@ class ExtensionCommand {
           default:
             typeTxt = '(NPM)';
         }
-        installTxt = `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
+        installTxt = `@${version.yellow} ${
+          ('[installed ' + typeTxt + ']').green
+        }`;
 
         if (showUpdates) {
           if (updateVersion) {
@@ -157,12 +175,15 @@ class ExtensionCommand {
             upToDateTxt = ` [Up to date]`.green;
           }
           if (unsafeUpdateVersion) {
-            unsafeUpdateTxt = ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+            unsafeUpdateTxt =
+              ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
           }
         }
       }
 
-      console.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
+      console.log(
+        `- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`
+      );
     }
 
     return listData;
@@ -174,33 +195,53 @@ class ExtensionCommand {
    * @param {InstallArgs} args
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async _install ({ext, installType, packageName}) {
+  async _install({installSpec, installType, packageName}) {
+    /** @type {ExtensionFields<typeof this.type>} */
     let extData;
-    let installSpec = ext;
 
-    if (packageName && [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)) {
-      throw new Error(`When using --source=${installType}, cannot also use --package`);
+    if (
+      packageName &&
+      [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)
+    ) {
+      throw new Error(
+        `When using --source=${installType}, cannot also use --package`
+      );
     }
 
-    if (!packageName && [INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB].includes(installType)) {
-      throw new Error(`When using --source=${installType}, must also use --package`);
+    if (
+      !packageName &&
+      [INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB].includes(installType)
+    ) {
+      throw new Error(
+        `When using --source=${installType}, must also use --package`
+      );
     }
 
     if (installType === INSTALL_TYPE_GITHUB) {
       if (installSpec.split('/').length !== 2) {
-        throw new Error(`Github ${this.type} spec ${installSpec} appeared to be invalid; ` +
-                        'it should be of the form <org>/<repo>');
+        throw new Error(
+          `Github ${this.type} spec ${installSpec} appeared to be invalid; ` +
+            'it should be of the form <org>/<repo>'
+        );
       }
-      extData = await this.installViaNpm({ext: installSpec, pkgName: /** @type {string} */(packageName)});
+      extData = await this.installViaNpm({
+        installSpec,
+        pkgName: /** @type {string} */ (packageName),
+      });
     } else if (installType === INSTALL_TYPE_GIT) {
       // git urls can have '.git' at the end, but this is not necessary and would complicate the
       // way we download and name directories, so we can just remove it
       installSpec = installSpec.replace(/\.git$/, '');
-      extData = await this.installViaNpm({ext: installSpec, pkgName: /** @type {string} */(packageName)});
+      extData = await this.installViaNpm({
+        installSpec,
+        pkgName: /** @type {string} */ (packageName),
+      });
     } else {
       let pkgName, pkgVer;
       if (installType === INSTALL_TYPE_LOCAL) {
-        pkgName = path.isAbsolute(installSpec) ? installSpec : path.resolve(installSpec);
+        pkgName = path.isAbsolute(installSpec)
+          ? installSpec
+          : path.resolve(installSpec);
       } else {
         // at this point we have either an npm package or an appium verified extension
         // name or a local path. both of which will be installed via npm.
@@ -227,8 +268,9 @@ class ExtensionCommand {
           // check it exists and get the correct package
           const knownNames = Object.keys(this.knownExtensions);
           if (!_.includes(knownNames, name)) {
-            const msg = `Could not resolve ${this.type}; are you sure it's in the list ` +
-                        `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
+            const msg =
+              `Could not resolve ${this.type}; are you sure it's in the list ` +
+              `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
             throw new Error(msg);
           }
           pkgName = this.knownExtensions[name];
@@ -238,16 +280,18 @@ class ExtensionCommand {
         }
       }
 
-      extData = await this.installViaNpm({ext, pkgName, pkgVer});
+      extData = await this.installViaNpm({installSpec, pkgName, pkgVer});
     }
 
-    const extName = extData[/** @type {string} */(`${this.type}Name`)];
-    delete extData[/** @type {string} */(`${this.type}Name`)];
+    const extName = extData[/** @type {string} */ (`${this.type}Name`)];
+    delete extData[/** @type {string} */ (`${this.type}Name`)];
 
     if (this.config.isInstalled(extName)) {
-      throw new Error(`A ${this.type} named '${extName}' is already installed. ` +
-                      `Did you mean to update? 'appium ${this.type} update'. See ` +
-                      `installed ${this.type}s with 'appium ${this.type} list --installed'.`);
+      throw new Error(
+        `A ${this.type} named '${extName}' is already installed. ` +
+          `Did you mean to update? 'appium ${this.type} update'. See ` +
+          `installed ${this.type}s with 'appium ${this.type} list --installed'.`
+      );
     }
 
     const extManifest = {...extData, installType, installSpec};
@@ -269,19 +313,25 @@ class ExtensionCommand {
    *
    * @param {InstallViaNpmArgs} args
    */
-  async installViaNpm ({ext, pkgName, pkgVer}) {
+  async installViaNpm({installSpec, pkgName, pkgVer}) {
     const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
-    const specMsg = npmSpec === ext ? '' : ` using NPM install spec '${npmSpec}'`;
-    const msg = `Installing '${ext}'${specMsg}`;
+    const specMsg =
+      npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
+    const msg = `Installing '${installSpec}'${specMsg}`;
     try {
-      const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => (
-        await npm.installPackage(this.config.appiumHome, pkgName, {
-          pkgVer
-        })
-      ));
-      return this.getExtensionFields(pkgJsonData);
+      const pkgJsonData = await spinWith(
+        this.isJsonOutput,
+        msg,
+        async () =>
+          await npm.installPackage(this.config.appiumHome, pkgName, {
+            pkgVer,
+          })
+      );
+      return this.getExtensionFields(pkgJsonData, installSpec);
     } catch (err) {
-      throw new Error(`Encountered an error when installing package: ${err.message}`);
+      throw new Error(
+        `Encountered an error when installing package: ${err.message}`
+      );
     }
   }
 
@@ -293,7 +343,7 @@ class ExtensionCommand {
    * @returns {string}
    */
   // eslint-disable-next-line no-unused-vars
-  getPostInstallText (args) {
+  getPostInstallText(args) {
     throw new Error('Must be implemented in final class');
   }
 
@@ -303,31 +353,38 @@ class ExtensionCommand {
    * load as the main driver class, or to be able to detect incompatibilities between driver and
    * appium versions.
    *
-   * @param {ExtPackageJson<ExtType>} pkgJsonData - the package.json data for a driver module, as if it had been
-   * straightforwardly 'require'd
+   * @param {ExtPackageJson<ExtType>} pkgJsonData - the package.json data for a driver module, as if it had been straightforwardly 'require'd
+   * @param {string} installSpec
    * @returns {ExtensionFields<ExtType>}
    */
-  getExtensionFields (pkgJsonData) {
+  getExtensionFields(pkgJsonData, installSpec) {
     if (!pkgJsonData.appium) {
-      throw new Error(`Installed driver did not have an 'appium' section in its ` +
-                      `package.json file as expected`);
+      throw new Error(
+        `Installed driver did not have an 'appium' section in its ` +
+          `package.json file as expected`
+      );
     }
     const {appium, name, version} = pkgJsonData;
-    this.validateExtensionFields(appium);
+    this.validateExtensionFields(appium, installSpec);
     /** @type {unknown} */
     const result = {...appium, pkgName: name, version};
-    return /** @type {ExtensionFields<ExtType>} */(result);
+    return /** @type {ExtensionFields<ExtType>} */ (result);
   }
 
   /**
    * For any package.json fields which a particular type of extension requires, validate the
    * presence and form of those fields on the package.json data, throwing an error if anything is
+
+  /**
+   * For any `package.json` fields which a particular type of extension requires, validate the
+   * presence and form of those fields on the `package.json` data, throwing an error if anything is
    * amiss.
    *
-   * @param {ExtMetadata<ExtType>} appiumPkgData - the data in the "appium" field of package.json for an extension
+   * @param {ExtMetadata<ExtType>} extMetadata - the data in the "appium" field of `package.json` for an extension
+   * @param {string} installSpec - Extension name/spec
    */
   // eslint-disable-next-line no-unused-vars
-  validateExtensionFields (appiumPkgData) {
+  validateExtensionFields(extMetadata, installSpec) {
     throw new Error('Must be implemented in final class');
   }
 
@@ -337,17 +394,22 @@ class ExtensionCommand {
    * @param {UninstallOpts} opts
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async _uninstall ({ext}) {
-    if (!this.config.isInstalled(ext)) {
-      throw new Error(`Can't uninstall ${this.type} '${ext}'; it is not installed`);
+  async _uninstall({installSpec}) {
+    if (!this.config.isInstalled(installSpec)) {
+      throw new Error(
+        `Can't uninstall ${this.type} '${installSpec}'; it is not installed`
+      );
     }
-    const installPath = this.config.getInstallPath(ext);
+    const installPath = this.config.getInstallPath(installSpec);
     try {
       await fs.rimraf(installPath);
     } finally {
-      await this.config.removeExtension(ext);
+      await this.config.removeExtension(installSpec);
     }
-    log(this.isJsonOutput, `Successfully uninstalled ${this.type} '${ext}'`.green);
+    log(
+      this.isJsonOutput,
+      `Successfully uninstalled ${this.type} '${installSpec}'`.green
+    );
     return this.config.installedExtensions;
   }
 
@@ -357,13 +419,17 @@ class ExtensionCommand {
    * @param {ExtensionUpdateOpts} updateSpec
    * @return {Promise<ExtensionUpdateResult>}
    */
-  async _update ({ext, unsafe}) {
-    const shouldUpdateAll = ext === UPDATE_ALL;
+  async _update({installSpec, unsafe}) {
+    const shouldUpdateAll = installSpec === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
-    if (!shouldUpdateAll && !this.config.isInstalled(ext)) {
-      throw new Error(`The ${this.type} '${ext}' was not installed, so can't be updated`);
+    if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
+      throw new Error(
+        `The ${this.type} '${installSpec}' was not installed, so can't be updated`
+      );
     }
-    const extsToUpdate = shouldUpdateAll ? Object.keys(this.config.installedExtensions) : [ext];
+    const extsToUpdate = shouldUpdateAll
+      ? Object.keys(this.config.installedExtensions)
+      : [installSpec];
 
     // 'errors' will have ext names as keys and error objects as values
     /** @type {Record<string,Error>} */
@@ -376,24 +442,40 @@ class ExtensionCommand {
 
     for (const e of extsToUpdate) {
       try {
-        await spinWith(this.isJsonOutput, `Checking if ${this.type} '${e}' is updatable`, () => {
-          if (this.config.installedExtensions[e].installType !== INSTALL_TYPE_NPM) {
-            throw new NotUpdatableError();
+        await spinWith(
+          this.isJsonOutput,
+          `Checking if ${this.type} '${e}' is updatable`,
+          () => {
+            if (
+              this.config.installedExtensions[e].installType !==
+              INSTALL_TYPE_NPM
+            ) {
+              throw new NotUpdatableError();
+            }
           }
-        });
-        const update = await spinWith(this.isJsonOutput, `Checking if ${this.type} '${e}' needs an update`, async () => {
-          const update = await this.checkForExtensionUpdate(e);
-          if (!(update.safeUpdate || update.unsafeUpdate)) {
-            throw new NoUpdatesAvailableError();
+        );
+        const update = await spinWith(
+          this.isJsonOutput,
+          `Checking if ${this.type} '${e}' needs an update`,
+          async () => {
+            const update = await this.checkForExtensionUpdate(e);
+            if (!(update.safeUpdate || update.unsafeUpdate)) {
+              throw new NoUpdatesAvailableError();
+            }
+            return update;
           }
-          return update;
-        });
+        );
         if (!unsafe && !update.safeUpdate) {
-          throw new Error(`The ${this.type} '${e}' has a major revision update ` +
-                          `(${update.current} => ${update.unsafeUpdate}), which could include ` +
-                          `breaking changes. If you want to apply this update, re-run with --unsafe`);
+          throw new Error(
+            `The ${this.type} '${e}' has a major revision update ` +
+              `(${update.current} => ${update.unsafeUpdate}), which could include ` +
+              `breaking changes. If you want to apply this update, re-run with --unsafe`
+          );
         }
-        const updateVer = unsafe && update.unsafeUpdate ? update.unsafeUpdate : update.safeUpdate;
+        const updateVer =
+          unsafe && update.unsafeUpdate
+            ? update.unsafeUpdate
+            : update.safeUpdate;
         await spinWith(
           this.isJsonOutput,
           `Updating driver '${e}' from ${update.current} to ${updateVer}`,
@@ -407,12 +489,18 @@ class ExtensionCommand {
 
     log(this.isJsonOutput, 'Update report:');
     for (const [e, update] of _.toPairs(updates)) {
-      log(this.isJsonOutput, `- ${this.type} ${e} updated: ${update.from} => ${update.to}`.green);
+      log(
+        this.isJsonOutput,
+        `- ${this.type} ${e} updated: ${update.from} => ${update.to}`.green
+      );
     }
     for (const [e, err] of _.toPairs(errors)) {
       if (err instanceof NotUpdatableError) {
-        log(this.isJsonOutput, `- '${e}' was not installed via npm, so we could not check ` +
-                               `for updates`.yellow);
+        log(
+          this.isJsonOutput,
+          `- '${e}' was not installed via npm, so we could not check ` +
+            `for updates`.yellow
+        );
       } else if (err instanceof NoUpdatesAvailableError) {
         log(this.isJsonOutput, `- '${e}' had no updates available`.yellow);
       } else {
@@ -431,13 +519,20 @@ class ExtensionCommand {
    * @param {string} ext - name of extension
    * @return {Promise<PossibleUpdates>}
    */
-  async checkForExtensionUpdate (ext) {
+  async checkForExtensionUpdate(ext) {
     // TODO decide how we want to handle beta versions?
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
     const {version, pkgName} = this.config.installedExtensions[ext];
-    let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
-    let safeUpdate = await npm.getLatestSafeUpgradeVersion(this.config.appiumHome, pkgName, version);
+    let unsafeUpdate = await npm.getLatestVersion(
+      this.config.appiumHome,
+      pkgName
+    );
+    let safeUpdate = await npm.getLatestSafeUpgradeVersion(
+      this.config.appiumHome,
+      pkgName,
+      version
+    );
     if (!util.compareVersions(unsafeUpdate, '>', version)) {
       // the latest version is not greater than the current version, so there's no possible update
       unsafeUpdate = null;
@@ -458,16 +553,20 @@ class ExtensionCommand {
    * Actually update an extension installed by NPM, using the NPM cli. And update the installation
    * manifest.
    *
-   * @param {string} ext - name of extension to update
+   * @param {string} installSpec - name of extension to update
    * @param {string} version - version string identifier to update extension to
    * @returns {Promise<void>}
    */
-  async updateExtension (ext, version) {
-    const {pkgName} = this.config.installedExtensions[ext];
-    await fs.rimraf(this.config.getInstallPath(ext));
-    const extData = await this.installViaNpm({ext, pkgName, pkgVer: version});
-    delete extData[/** @type {string} */(`${this.type}Name`)];
-    await this.config.updateExtension(ext, extData);
+  async updateExtension(installSpec, version) {
+    const {pkgName} = this.config.installedExtensions[installSpec];
+    await fs.rimraf(this.config.getInstallPath(installSpec));
+    const extData = await this.installViaNpm({
+      installSpec,
+      pkgName,
+      pkgVer: version,
+    });
+    delete extData[/** @type {string} */ (`${this.type}Name`)];
+    await this.config.updateExtension(installSpec, extData);
   }
 
   /**
@@ -481,33 +580,37 @@ class ExtensionCommand {
    * @param {RunOptions} opts
    * @return {Promise<RunOutput>}
    */
-  async _run ({ext, scriptName}) {
-    if (!_.has(this.config.installedExtensions, ext)) {
+  async _run({installSpec, scriptName}) {
+    if (!_.has(this.config.installedExtensions, installSpec)) {
       throw new Error(`please install the ${this.type} first`);
     }
 
-    const extConfig = this.config.installedExtensions[ext];
+    const extConfig = this.config.installedExtensions[installSpec];
 
     // note: TS cannot understand that _.has() is a type guard
     if (!extConfig.scripts) {
-      throw new Error(`The ${this.type} named '${ext}' does not contain the ` +
-                      `"scripts" field underneath the "appium" field in its package.json`);
+      throw new Error(
+        `The ${this.type} named '${installSpec}' does not contain the ` +
+          `"scripts" field underneath the "appium" field in its package.json`
+      );
     }
 
     const extScripts = extConfig.scripts;
 
     if (!_.isPlainObject(extScripts)) {
-      throw new Error(`The ${this.type} named '${ext}' "scripts" field must be a plain object`);
+      throw new Error(
+        `The ${this.type} named '${installSpec}' "scripts" field must be a plain object`
+      );
     }
 
     if (!_.has(extScripts, scriptName)) {
-      throw new Error(`The ${this.type} named '${ext}' does not support the script: '${scriptName}'`);
+      throw new Error(
+        `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
+      );
     }
 
-    const runner = new SubProcess(process.execPath, [
-      extScripts[scriptName]
-    ], {
-      cwd: this.config.getInstallPath(ext)
+    const runner = new SubProcess(process.execPath, [extScripts[scriptName]], {
+      cwd: this.config.getInstallPath(installSpec),
     });
 
     const output = new RingBuffer(50);
@@ -524,7 +627,10 @@ class ExtensionCommand {
       log(this.isJsonOutput, `${scriptName} successfully ran`.green);
       return {output: output.getBuff()};
     } catch (err) {
-      log(this.isJsonOutput, `Encountered an error when running '${scriptName}': ${err.message}`.red);
+      log(
+        this.isJsonOutput,
+        `Encountered an error when running '${scriptName}': ${err.message}`.red
+      );
       return {error: err.message, output: output.getBuff()};
     }
   }
@@ -602,7 +708,7 @@ export {ExtensionCommand};
 /**
  * Options for {@linkcode ExtensionCommand._run}.
  * @typedef RunOptions
- * @property {string} ext - name of the extension to run a script from
+ * @property {string} installSpec - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
  */
 
@@ -617,7 +723,7 @@ export {ExtensionCommand};
 /**
  * Options for {@linkcode ExtensionCommand._update}.
  * @typedef ExtensionUpdateOpts
- * @property {string} ext - the name of the extension to update
+ * @property {string} installSpec - the name of the extension to update
  * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
  */
 
@@ -638,7 +744,7 @@ export {ExtensionCommand};
 /**
  * Options for {@linkcode ExtensionCommand._uninstall}.
  * @typedef UninstallOpts
- * @property {string} ext - the name or spec of an extension to uninstall
+ * @property {string} installSpec - the name or spec of an extension to uninstall
  */
 
 /**
@@ -651,7 +757,7 @@ export {ExtensionCommand};
 /**
  * Options for {@linkcode ExtensionCommand.installViaNpm}
  * @typedef InstallViaNpmArgs
- * @property {string} ext - the name or spec of an extension to install
+ * @property {string} installSpec - the name or spec of an extension to install
  * @property {string} pkgName - the NPM package name of the extension
  * @property {string} [pkgVer] - the specific version of the NPM package
  */
@@ -667,7 +773,7 @@ export {ExtensionCommand};
 /**
  * Options for {@linkcode ExtensionCommand._install}
  * @typedef InstallArgs
- * @property {string} ext - the name or spec of an extension to install
+ * @property {string} installSpec - the name or spec of an extension to install
  * @property {import('../../types/appium-manifest').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
  * @property {string} [packageName] - for git/github installs, the extension node package name
  */

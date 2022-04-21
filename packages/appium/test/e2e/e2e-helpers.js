@@ -6,9 +6,10 @@
 
 import _ from 'lodash';
 import path from 'path';
-import { exec } from 'teen_process';
-import { PACKAGE_ROOT, resolveFixture } from '../helpers';
-import { fs } from '@appium/support';
+import {exec} from 'teen_process';
+import {PACKAGE_ROOT, resolveFixture} from '../helpers';
+import {fs, logger} from '@appium/support';
+import stripAnsi from 'strip-ansi';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.
@@ -16,6 +17,8 @@ import { fs } from '@appium/support';
  * This means **you must build `appium` before running tests calling this code.**
  */
 export const EXECUTABLE = path.join(PACKAGE_ROOT, 'build', 'lib', 'main.js');
+
+const log = logger.getLogger('appium-e2e-helpers');
 
 /**
  * Runs the `appium` executable with the given args.
@@ -27,7 +30,7 @@ export const EXECUTABLE = path.join(PACKAGE_ROOT, 'build', 'lib', 'main.js');
  * @param {import('teen_process').ExecOptions} [opts] - Options for `teen_process`
  * @returns {Promise<import('teen_process').ExecResult<string>>}
  */
-async function run (appiumHome, args, opts = {}) {
+async function run(appiumHome, args, opts = {}) {
   const cwd = PACKAGE_ROOT;
   const env = {
     APPIUM_HOME: appiumHome,
@@ -35,10 +38,11 @@ async function run (appiumHome, args, opts = {}) {
   };
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
+    log.debug(stripAnsi(`Running: ${process.execPath} ${args.join(' ')}`));
     return await exec(process.execPath, args, {
       cwd,
       env,
-      ...opts
+      ...opts,
     });
   } catch (err) {
     const {stdout, stderr} = /** @type {TeenProcessExecError} */ (err);
@@ -60,7 +64,7 @@ async function run (appiumHome, args, opts = {}) {
  * See {@link runAppium}.
  * @type {AppiumRunner<string>}
  */
-async function _runAppium (appiumHome, args) {
+async function _runAppium(appiumHome, args) {
   const {stdout} = await run(appiumHome, args);
   return stdout;
 }
@@ -77,7 +81,7 @@ export const runAppium = _.curry(_runAppium);
  * See {@link runAppiumRaw}.
  * @type {AppiumOptsRunner<import('teen_process').ExecResult>}
  */
-async function _runAppiumRaw (appiumHome, args, opts) {
+async function _runAppiumRaw(appiumHome, args, opts) {
   try {
     return await run(appiumHome, args, opts);
   } catch (err) {
@@ -97,7 +101,7 @@ export const runAppiumRaw = _.curry(_runAppiumRaw);
  * See {@link runAppiumJson}.
  * @type {AppiumRunner<unknown>}
  */
-async function _runAppiumJson (appiumHome, args) {
+async function _runAppiumJson(appiumHome, args) {
   if (!args.includes('--json')) {
     args.push('--json');
   }
@@ -129,7 +133,7 @@ export const runAppiumJson = /**
  * @param {ExtType} type
  * @param {string} pathToExtension
  */
-export async function installLocalExtension (appiumHome, type, pathToExtension) {
+export async function installLocalExtension(appiumHome, type, pathToExtension) {
   return /** @type {import('../../lib/extension/manifest').ExtRecord<ExtType>} */ (
     /** @type {unknown} */ (
       await runAppiumJson(appiumHome, [
@@ -150,7 +154,7 @@ export async function installLocalExtension (appiumHome, type, pathToExtension) 
  * @param {string} name - Name of a fixture
  * @returns {Promise<string>} - Contents of file, normalized
  */
-export async function readAppiumArgErrorFixture (name) {
+export async function readAppiumArgErrorFixture(name) {
   const filepath = resolveFixture(name);
   const body = await fs.readFile(filepath, 'utf8');
   return formatAppiumArgErrorOutput(body);
@@ -161,7 +165,7 @@ export async function readAppiumArgErrorFixture (name) {
  * @param {string} stderr
  * @returns {string}
  */
-export function formatAppiumArgErrorOutput (stderr) {
+export function formatAppiumArgErrorOutput(stderr) {
   return stderr.replace(/^[\s\S]+\n\n([\s\S]+)/, '$1').trim() + '\n';
 }
 
@@ -214,7 +218,6 @@ export function formatAppiumArgErrorOutput (stderr) {
  * @param {CliExtArgs<ExtSubcommand>|CliArgs} args
  * @returns {Promise<Result>}
  */
-
 
 /**
  * @template [Result=unknown]

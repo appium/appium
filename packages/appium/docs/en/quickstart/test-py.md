@@ -2,18 +2,18 @@
 title: Write a Test (Python)
 ---
 
-[Appium Python Client](https://github.com/appium/python-client) is
-an official Appium client in Python, which is available via pypi as [Appium-Python-Client](https://pypi.org/project/Appium-Python-Client/) package name.
-It inherits [Selenium Python Binding](https://pypi.org/project/selenium/),
-so installing the Appium Python Clint includes the selenium binding.
+The [Appium Python Client](https://github.com/appium/python-client) is
+an official Appium client in Python, which is available via pypi under the [Appium-Python-Client](https://pypi.org/project/Appium-Python-Client/) package name.
+It inherits from the [Selenium Python Binding](https://pypi.org/project/selenium/),
+so installing the Appium Python Client includes the selenium binding.
 
 ```bash
 pip install Appium-Python-Client
 ```
 
-This example follows `unittest` module.
-Appium Python client adds `appium:` vendor prefix automatically.
-You usually do not need to take care about the prefix.
+This example uses Python's built-in `unittest` module, though you can use any Python test framework you want.
+The Appium Python client adds the `appium:` vendor prefix automatically.
+You usually do not need to worry about the prefix.
 
 ```python title="test.py"
 --8<-- "./sample-code/quickstarts/py/test.py"

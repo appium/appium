@@ -41,7 +41,7 @@
     "test:e2e": "gulp e2e-test:run"
   },
   "dependencies": {
-    "@appium/eslint-config-appium": "^5.0.6",
+    "@appium/eslint-config-appium": "file:../eslint-config-appium",
     "@babel/core": "7.17.9",
     "@babel/eslint-parser": "7.17.0",
     "@babel/plugin-transform-runtime": "7.17.0",

@@ -32,8 +32,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^8.5.2",
-    "@appium/base-plugin": "^1.8.4",
+    "@appium/base-driver": "file:../base-driver",
+    "@appium/base-plugin": "file:../base-plugin",
     "fast-xml-parser": "3.21.1",
     "xmldom": "0.6.0",
     "xpath": "0.0.32"

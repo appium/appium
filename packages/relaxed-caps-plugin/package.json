@@ -32,7 +32,7 @@
     "build"
   ],
   "dependencies": {
-    "@appium/base-plugin": "^1.8.4",
+    "@appium/base-plugin": "file:../base-plugin",
     "lodash": "4.17.21"
   },
   "scripts": {

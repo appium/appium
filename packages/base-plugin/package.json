@@ -31,7 +31,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^2.57.4"
+    "@appium/support": "file:../support"
   },
   "engines": {
     "node": ">=12",

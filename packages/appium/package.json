@@ -53,11 +53,11 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^8.5.2",
-    "@appium/base-plugin": "^1.8.4",
-    "@appium/docutils": "^0.0.3",
-    "@appium/schema": "^0.0.5",
-    "@appium/support": "^2.57.4",
+    "@appium/base-driver": "file:../base-driver",
+    "@appium/base-plugin": "file:../base-plugin",
+    "@appium/docutils": "file:../docutils",
+    "@appium/schema": "file:../schema",
+    "@appium/support": "file:../support",
     "@babel/runtime": "7.17.9",
     "@sidvind/better-ajv-errors": "1.1.1",
     "ajv": "8.11.0",

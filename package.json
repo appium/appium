@@ -41,6 +41,7 @@
     "generate-docs": "lerna run --scope=appium generate-docs",
     "postinstall": "npm run build:loose",
     "install-fake-driver": "npm start -- driver install --source=local ./packages/fake-driver",
+    "install-mjpeg-consumer": "npm install mjpeg-consumer --no-save",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "precommit-lint": "lint-staged",
@@ -82,6 +83,7 @@
     "@appium/base-driver": "file:packages/base-driver",
     "@appium/base-plugin": "file:packages/base-plugin",
     "@appium/doctor": "file:packages/doctor",
+    "@appium/docutils": "file:packages/docutils",
     "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
     "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
     "@appium/fake-driver": "file:packages/fake-driver",
@@ -177,6 +179,7 @@
     "typescript": "4.6.3",
     "validate.js": "0.13.1",
     "webdriverio": "7.19.5",
+    "ws": "8.5.0",
     "yaml-js": "0.3.1"
   },
   "engines": {

@@ -85,11 +85,5 @@
     "access": "public"
   },
   "types": "./build/lib/index.d.ts",
-  "devDependencies": {
-    "type-fest": "2.12.2"
-  },
-  "overrides": {
-    "type-fest": "$type-fest"
-  },
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

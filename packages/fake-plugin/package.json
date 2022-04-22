@@ -36,8 +36,8 @@
     "build"
   ],
   "dependencies": {
-    "@appium/base-plugin": "^1.8.4",
-    "@appium/support": "^2.57.4",
+    "@appium/base-plugin": "file:../base-plugin",
+    "@appium/support": "file:../support",
     "bluebird": "3.7.2",
     "lodash": "4.17.21"
   },

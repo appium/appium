@@ -1,6 +1,5 @@
 import { should } from 'chai';
 import { node } from '../../lib';
-import { deepFreeze } from '../../lib/node';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -37,7 +36,7 @@ describe('node utilities', function () {
     it('should be able to deep freeze objects', function () {
       const obj1 = {};
       node.deepFreeze(obj1).should.eql(obj1);
-      const obj2 = deepFreeze({a: {b: 'c'}});
+      const obj2 = node.deepFreeze({a: {b: 'c'}});
       should().throw(() => obj2.a.b = 'd');
       node.deepFreeze(1).should.eql(1);
       should().equal(node.deepFreeze(null), null);

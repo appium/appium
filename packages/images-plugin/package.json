@@ -35,10 +35,10 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^8.5.2",
-    "@appium/base-plugin": "^1.8.4",
-    "@appium/opencv": "^1.0.7",
-    "@appium/support": "^2.57.4",
+    "@appium/base-driver": "file:../base-driver",
+    "@appium/base-plugin": "file:../base-plugin",
+    "@appium/opencv": "file:../opencv",
+    "@appium/support": "file:../support",
     "lru-cache": "6.0.0"
   },
   "appium": {

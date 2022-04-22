@@ -23,10 +23,9 @@ You usually do not need to worry about the prefix.
 
     It's not within the scope of this guide to give a complete run-down on the Python client
     library or everything that's happening here, so we'll leave the code itself unexplained in detail for now.
-    You may want to read up particularly on Appium [Capabilities](../guides/caps.md).
-
-    [functional test code](https://github.com/appium/python-client/tree/master/test/functional) in Python Client GitHub repository should help to find more working example.
-    [Documentation](https://appium.github.io/python-client-sphinx/) also helps to find methods
+    - You may want to read up particularly on Appium [Capabilities](../guides/caps.md).
+    - [functional test code](https://github.com/appium/python-client/tree/master/test/functional) in Python Client GitHub repository should help to find more working example.
+    - [Documentation](https://appium.github.io/python-client-sphinx/) also helps to find methods
     defined in the Appium Python Client.
 
 Basically, this code is doing the following:

@@ -48,7 +48,7 @@
     "@babel/preset-env": "7.16.11",
     "@babel/runtime": "7.17.9",
     "@octokit/rest": "18.12.0",
-    "@types/mocha": "9.1.0",
+    "@types/mocha": "9.1.1",
     "@types/node": "16.11.27",
     "ansi-red": "0.1.1",
     "axios": "0.26.1",

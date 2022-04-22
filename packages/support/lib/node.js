@@ -166,4 +166,33 @@ function getObjectId (object) {
   return OBJECTS_MAPPING.get(object);
 }
 
-export { requirePackage, getObjectSize, getObjectId };
+/**
+ * Perform deep freeze of the given object (e. g.
+ * all nested objects also become immutable).
+ * If the passed object is of a plain type
+ * then no change is done and the same object
+ * is returned.
+ * ! This function changes the given object,
+ * so it becomes immutable.
+ *
+ * @param {*} object Any valid ECMA object
+ * @returns {*} The same object that was passed to the
+ * function after it was made immutable.
+ */
+function deepFreeze (object) {
+  let propNames;
+  try {
+    propNames = Object.getOwnPropertyNames(object);
+  } catch (ign) {
+    return object;
+  }
+  for (const name of propNames) {
+    const value = object[name];
+    if (value && typeof value === 'object') {
+      deepFreeze(value);
+    }
+  }
+  return Object.freeze(object);
+}
+
+export { requirePackage, getObjectSize, getObjectId, deepFreeze };

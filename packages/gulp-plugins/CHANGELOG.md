@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.8](https://github.com/appium/appium/compare/@appium/gulp-plugins@6.0.7...@appium/gulp-plugins@6.0.8) (2022-04-20)
+
+**Note:** Version bump only for package @appium/gulp-plugins
+
+
+
+
+
+## [6.0.7](https://github.com/appium/appium/compare/@appium/gulp-plugins@6.0.6...@appium/gulp-plugins@6.0.7) (2022-04-20)
+
+**Note:** Version bump only for package @appium/gulp-plugins
+
+
+
+
+
+## [6.0.6](https://github.com/appium/appium/compare/@appium/gulp-plugins@6.0.5...@appium/gulp-plugins@6.0.6) (2022-04-20)
+
+**Note:** Version bump only for package @appium/gulp-plugins
+
+
+
+
+
 ## [6.0.5](https://github.com/appium/appium/compare/@appium/gulp-plugins@6.0.4...@appium/gulp-plugins@6.0.5) (2022-04-12)
 
 **Note:** Version bump only for package @appium/gulp-plugins

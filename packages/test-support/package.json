@@ -1,6 +1,6 @@
 {
   "name": "@appium/test-support",
-  "version": "1.3.15",
+  "version": "1.3.18",
   "description": "A collection of test utilities used across Appium packages",
   "keywords": [
     "automation",
@@ -45,7 +45,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "file:../support",
+    "@appium/support": "^2.57.4",
     "@babel/runtime": "7.17.9",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
@@ -60,5 +60,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

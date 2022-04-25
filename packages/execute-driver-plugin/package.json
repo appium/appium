@@ -1,6 +1,6 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "Plugin for batching and executing driver commands with Appiums",
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
     "index.js"
   ],
   "dependencies": {
-    "@appium/base-plugin": "file:../base-plugin",
-    "@appium/support": "file:../support",
+    "@appium/base-plugin": "^1.8.4",
+    "@appium/support": "^2.57.4",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "vm2": "3.9.9",
@@ -47,5 +47,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5efbd2840a4e5dd078a4646c026472a006ab2211"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

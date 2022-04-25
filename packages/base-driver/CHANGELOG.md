@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.5.2](https://github.com/appium/appium/compare/@appium/base-driver@8.5.1...@appium/base-driver@8.5.2) (2022-04-20)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [8.5.1](https://github.com/appium/appium/compare/@appium/base-driver@8.5.0...@appium/base-driver@8.5.1) (2022-04-20)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+# [8.5.0](https://github.com/appium/appium/compare/@appium/base-driver@8.4.2...@appium/base-driver@8.5.0) (2022-04-20)
+
+
+### Bug Fixes
+
+* **base-driver:** do not throw if updateSettings aren't provided ([2d76923](https://github.com/appium/appium/commit/2d76923e7232592f32c30731f2879a16b3e27b17))
+* **base-driver:** supportedLogTypes does not get overwritten ([ab6dfb3](https://github.com/appium/appium/commit/ab6dfb3158e192b42313d6b1d8648ffc672af8bd)), closes [#16738](https://github.com/appium/appium/issues/16738)
+
+
+### Features
+
+* **base-driver:** Add a route for new window creation ([#16748](https://github.com/appium/appium/issues/16748)) ([78a4637](https://github.com/appium/appium/commit/78a46375aed016feb6e2b20299cc834d2d24e1cb))
+
+
+
+
+
 ## [8.4.2](https://github.com/appium/appium/compare/@appium/base-driver@8.4.1...@appium/base-driver@8.4.2) (2022-04-12)
 
 **Note:** Version bump only for package @appium/base-driver

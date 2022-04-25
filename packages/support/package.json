@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "2.57.1",
+  "version": "2.57.4",
   "description": "Support libs used across appium packages",
   "keywords": [
     "automation",
@@ -59,7 +59,7 @@
     "moment": "2.29.3",
     "mv": "2.1.1",
     "ncp": "2.0.0",
-    "npmlog": "6.0.1",
+    "npmlog": "6.0.2",
     "opencv-bindings": "4.5.5",
     "pkg-dir": "5.0.0",
     "plist": "3.0.5",
@@ -91,5 +91,5 @@
   "overrides": {
     "type-fest": "$type-fest"
   },
-  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

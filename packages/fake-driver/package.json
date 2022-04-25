@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "3.2.9",
+  "version": "3.2.12",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
     "automation",
@@ -45,8 +45,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "file:../base-driver",
-    "@appium/support": "file:../support",
+    "@appium/base-driver": "^8.5.2",
+    "@appium/support": "^2.57.4",
     "@babel/runtime": "7.17.9",
     "@xmldom/xmldom": "0.8.2",
     "asyncbox": "2.9.2",
@@ -76,5 +76,5 @@
       "fake-success": "./build/lib/scripts/fake-success.js"
     }
   },
-  "gitHead": "ec6a90a797d2dadb407922426be16efaec9def07"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

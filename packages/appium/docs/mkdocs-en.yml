@@ -10,20 +10,22 @@ theme:
   language: en
 
 nav:
-  - Home: index.md
+  - Welcome: index.md
   - Introduction:
-    - intro/index.md
-    - intro/drivers.md
-    - intro/clients.md
+    - Intro to Appium:
+      - Overview of Appium: intro/index.md
+      - intro/drivers.md
+      - intro/clients.md
     - intro/requirements.md
     - intro/history.md
   - Quickstart:
     - quickstart/index.md
     - quickstart/install.md
     - quickstart/uiauto2-driver.md
-    - quickstart/test-js.md
-    - quickstart/test-py.md
-    - quickstart/test-java.md
+    - Write a Test:
+      - quickstart/test-js.md
+      - quickstart/test-py.md
+      - quickstart/test-java.md
     - quickstart/next-steps.md
   - CLI Reference:
     - cli/index.md
@@ -36,13 +38,17 @@ nav:
     - guides/security.md
     - guides/caps.md
     - guides/context.md
+    - guides/settings.md
+    - guides/execute-script-overload.md
     - guides/event-timing.md
     - guides/log-filters.md
     - guides/grid.md
   - Ecosystem:
     - ecosystem/index.md
-    - ecosystem/build-drivers.md
-    - ecosystem/build-plugins.md
-    - ecosystem/build-docs.md
+    - Developing Appium Extensions:
+      - ecosystem/build-drivers.md
+      - ecosystem/build-plugins.md
+      - ecosystem/build-docs.md
   - Contributing: contributing/index.md
+  - More Appium Resources: resources.md
   - Issues: https://github.com/appium/appium/issues

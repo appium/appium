@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/appium/appium/compare/@appium/types@0.2.1...@appium/types@0.2.2) (2022-04-20)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.2.1](https://github.com/appium/appium/compare/@appium/types@0.2.0...@appium/types@0.2.1) (2022-04-20)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+# [0.2.0](https://github.com/appium/appium/compare/@appium/types@0.1.1...@appium/types@0.2.0) (2022-04-20)
+
+
+### Bug Fixes
+
+* **base-driver:** supportedLogTypes does not get overwritten ([ab6dfb3](https://github.com/appium/appium/commit/ab6dfb3158e192b42313d6b1d8648ffc672af8bd)), closes [#16738](https://github.com/appium/appium/issues/16738)
+* **types:** fix declaration for AppiumServer['close'] ([b8df5b5](https://github.com/appium/appium/commit/b8df5b5c38a9e1741af3386acf49a842a82648fc))
+
+
+### Features
+
+* **base-driver:** Add a route for new window creation ([#16748](https://github.com/appium/appium/issues/16748)) ([78a4637](https://github.com/appium/appium/commit/78a46375aed016feb6e2b20299cc834d2d24e1cb))
+
+
+
+
+
 ## [0.1.1](https://github.com/appium/appium/compare/@appium/types@0.1.0...@appium/types@0.1.1) (2022-04-12)
 
 **Note:** Version bump only for package @appium/types

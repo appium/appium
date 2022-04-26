@@ -57,7 +57,7 @@
     "bluebird": "3.7.2",
     "body-parser": "1.20.0",
     "es6-error": "4.1.1",
-    "express": "4.17.3",
+    "express": "4.18.0",
     "http-status-codes": "2.2.0",
     "lodash": "4.17.21",
     "lru-cache": "7.8.1",

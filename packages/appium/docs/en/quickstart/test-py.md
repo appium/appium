@@ -42,7 +42,7 @@ running in another terminal session, otherwise you'll get an error about not bei
 to one. Then, you can execute the script:
 
 ```bash
-python test.js
+python test.py
 ```
 
 If all goes well, you'll see the Settings app open up and navigate to the "Battery" view before the

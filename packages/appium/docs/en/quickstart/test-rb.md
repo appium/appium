@@ -13,7 +13,7 @@ gem install appium_lib_core
 
 The `appium_lib_core` is the main part as an Appium client.
 `appium_lib` has various helper methods, but it was ordinally designed to be used as a global driver variable, that could causes an issue to handle the instance.
-If you would like to manage an appium driver instance as an instance variable, please use `appium_lib_core` first.
+If you would like to manage an appium client instance as an instance variable, please use `appium_lib_core` first.
 
 This example is by the `appium_lib_core` with `test-unit` gem module.
 

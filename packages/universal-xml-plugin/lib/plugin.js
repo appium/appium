@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 
-import BasePlugin from '@appium/base-plugin';
-import {errors} from '@appium/base-driver';
+import BasePlugin from 'appium/plugin';
+import {errors} from 'appium/driver';
 import {transformSourceXml} from './source';
 import {transformQuery} from './xpath';
 import log from './logger';

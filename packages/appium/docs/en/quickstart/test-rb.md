@@ -3,7 +3,7 @@ title: Write a Test (Ruby)
 ---
 
 
-The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) are Appium officcial client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits appium_lib_core, so intalling these libraries include the selenium binding.
+The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) are Appium officcial client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so intalling these libraries include the selenium binding.
 
 ```bash
 gem install appium_lib
@@ -12,10 +12,11 @@ gem install appium_lib_core
 ```
 
 The `appium_lib_core` is the main part as an Appium client.
-`appium_lib` has various helper methods, but it was ordinally designed to be used as a global driver variable, that could causes an issue to handle the instance.
-If you would like to manage an appium client instance as an instance variable, please use `appium_lib_core` first.
+`appium_lib` has various helper methods, but the driver instance was ordinally designed to be used as a global variable. It could causes an issue to handle the instance.
+`appium_lib_core` does not have such a global variable.
 
 This example is by the `appium_lib_core` with `test-unit` gem module.
+Tes code in `appium_lib` should be similar.
 
 ```python title="test.py"
 --8<-- "./sample-code/quickstarts/rb/test.rb"

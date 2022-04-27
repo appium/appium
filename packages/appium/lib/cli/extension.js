@@ -60,6 +60,6 @@ async function runExtensionCommand(args, configObject) {
 export {runExtensionCommand};
 
 /**
- * @template {import('appium/types').ExtensionType} ExtType
- * @typedef {ExtType extends import('appium/types').DriverType ? import('@appium/types').Class<DriverCommand> : ExtType extends import('appium/types').PluginType ? import('@appium/types').Class<PluginCommand> : never} ExtCommand
+ * @template {import('@appium/types').ExtensionType} ExtType
+ * @typedef {ExtType extends import('@appium/types').DriverType ? import('@appium/types').Class<DriverCommand> : ExtType extends import('@appium/types').PluginType ? import('@appium/types').Class<PluginCommand> : never} ExtCommand
  */

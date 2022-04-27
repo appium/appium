@@ -799,7 +799,7 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').ServerArgs} DriverOpts
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
- * @typedef {import('appium/types').ExtensionType} ExtensionType
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('appium/types').PluginClass} PluginClass
  * @typedef {import('./extension/driver-config').DriverConfig} DriverConfig
  */

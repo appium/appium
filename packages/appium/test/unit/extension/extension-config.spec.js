@@ -207,5 +207,5 @@ describe('ExtensionConfig', function () {
 });
 
 /**
- * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').DriverType} DriverType
  */

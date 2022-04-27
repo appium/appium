@@ -67,5 +67,5 @@ export default class PluginCommand extends ExtensionCommand {
 }
 
 /**
- * @typedef {import('appium/types').PluginType} PluginType
+ * @typedef {import('@appium/types').PluginType} PluginType
  */

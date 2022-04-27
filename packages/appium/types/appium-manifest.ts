@@ -1,5 +1,5 @@
 import {CommonMetadata, ExtMetadata, SchemaMetadata} from './external-manifest';
-import {ExtensionType, DriverType, PluginType} from '.';
+import {ExtensionType, DriverType, PluginType} from '@appium/types';
 
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
 

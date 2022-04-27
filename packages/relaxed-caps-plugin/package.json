@@ -30,8 +30,10 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "file:../base-plugin",
     "lodash": "4.17.21"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.35"
   },
   "engines": {
     "node": ">=12",

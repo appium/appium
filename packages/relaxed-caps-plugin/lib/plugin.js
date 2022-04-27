@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 
 import _ from 'lodash';
-import BasePlugin from '@appium/base-plugin';
+import BasePlugin from 'appium/plugin';
 
 const STANDARD_CAPS = [
   'browserName',

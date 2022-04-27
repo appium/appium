@@ -176,7 +176,7 @@ export function formatAppiumArgErrorOutput(stderr) {
  */
 
 /**
- * @typedef {import('appium/types').ExtensionType} ExtensionType
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
  * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
  */

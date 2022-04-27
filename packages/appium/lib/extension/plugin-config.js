@@ -109,7 +109,7 @@ export class PluginConfig extends ExtensionConfig {
 
 /**
  * @typedef {import('appium/types').PluginRecord} PluginRecord
- * @typedef {import('appium/types').PluginType} PluginType
+ * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('appium/types').ExtMetadata<PluginType>} PluginMetadata
  * @typedef {import('./manifest').Manifest} Manifest
  */

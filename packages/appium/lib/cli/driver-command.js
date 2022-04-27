@@ -76,5 +76,5 @@ export default class DriverCommand extends ExtensionCommand {
  */
 
 /**
- * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').DriverType} DriverType
  */

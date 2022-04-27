@@ -229,7 +229,7 @@ export class DriverConfig extends ExtensionConfig {
 
 /**
  * @typedef {import('appium/types').ManifestData} ManifestData
- * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').DriverType} DriverType
  * @typedef {import('./manifest').Manifest} Manifest
  */
 

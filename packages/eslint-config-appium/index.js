@@ -85,7 +85,6 @@ module.exports = {
     'no-whitespace-before-property': 2,
     'space-in-parens': [2, 'never'],
     'space-before-blocks': [2, 'always'],
-    'space-before-function-paren': [2, 'always'],
     'space-unary-ops': [
       2,
       {
@@ -119,13 +118,16 @@ module.exports = {
       'warn',
       {
         selector: 'AssignmentExpression[left.object.property.name="prototype"]',
-        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.',
+        message:
+          'Avoid assignment to prototype; use class fields, methods or mixins instead.',
       },
       {
-        selector: 'CallExpression[callee.object.name="Object"][callee.property.name="assign"][arguments.0.property.name="prototype"]',
-        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.'
-      }
-    ]
+        selector:
+          'CallExpression[callee.object.name="Object"][callee.property.name="assign"][arguments.0.property.name="prototype"]',
+        message:
+          'Avoid assignment to prototype; use class fields, methods or mixins instead.',
+      },
+    ],
   },
   extends: ['eslint:recommended', 'prettier'],
 };

@@ -43,7 +43,7 @@
   "dependencies": {
     "@babel/runtime": "7.17.9",
     "archiver": "5.3.1",
-    "axios": "0.26.1",
+    "axios": "0.27.2",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.0",

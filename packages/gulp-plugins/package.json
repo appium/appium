@@ -76,7 +76,7 @@
     "js-yaml": "4.1.0",
     "lodash": "4.17.21",
     "merge-stream": "2.0.0",
-    "mocha": "9.2.2",
+    "mocha": "10.0.0",
     "moment": "2.29.3",
     "node-notifier": "10.0.1",
     "nyc": "15.1.0",

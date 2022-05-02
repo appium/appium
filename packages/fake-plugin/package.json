@@ -4,7 +4,7 @@
   "tags": [
     "appium"
   ],
-  "version": "1.3.3",
+  "version": "1.3.4",
   "author": "Appium <maintainers@appium.io>",
   "license": "Apache-2.0",
   "repository": {

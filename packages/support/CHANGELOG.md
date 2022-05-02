@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.58.0](https://github.com/appium/appium/compare/@appium/support@2.57.4...@appium/support@2.58.0) (2022-05-02)
+
+
+### Features
+
+* **support:** Add a helper to deep freeze objects ([#16849](https://github.com/appium/appium/issues/16849)) ([a2b2ded](https://github.com/appium/appium/commit/a2b2ded1e4cab84b6ff9a6ecdc5bb3e544118ba0))
+
+
+
+
+
 ## [2.57.4](https://github.com/appium/appium/compare/@appium/support@2.57.3...@appium/support@2.57.4) (2022-04-20)
 
 **Note:** Version bump only for package @appium/support

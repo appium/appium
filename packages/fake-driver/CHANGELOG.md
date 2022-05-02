@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.13](https://github.com/appium/appium/compare/@appium/fake-driver@3.2.12...@appium/fake-driver@3.2.13) (2022-05-02)
+
+**Note:** Version bump only for package @appium/fake-driver
+
+
+
+
+
 ## [3.2.12](https://github.com/appium/appium/compare/@appium/fake-driver@3.2.11...@appium/fake-driver@3.2.12) (2022-04-20)
 
 **Note:** Version bump only for package @appium/fake-driver

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium@5.0.6...@appium/eslint-config-appium@5.1.0) (2022-05-02)
+
+
+### Bug Fixes
+
+* **eslint-config-appium:** disable space-before-function-paren ([88a6655](https://github.com/appium/appium/commit/88a6655253a4879041478d64254471efebe4cbfe))
+
+
+### Features
+
+* **eslint-config-appium:** adds a warning if code attempts to assign to an object prototype ([5bdc476](https://github.com/appium/appium/commit/5bdc476c626caa301c7cb4ffc01c296f437deb06)), closes [#16829](https://github.com/appium/appium/issues/16829)
+
+
+
+
+
 ## [5.0.6](https://github.com/appium/appium/compare/@appium/eslint-config-appium@5.0.5...@appium/eslint-config-appium@5.0.6) (2022-04-20)
 
 **Note:** Version bump only for package @appium/eslint-config-appium

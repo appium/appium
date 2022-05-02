@@ -32,24 +32,6 @@ module.exports = {
         allowSingleLine: true,
       },
     ],
-    indent: [
-      2,
-      2,
-      {
-        VariableDeclarator: {
-          var: 2,
-          let: 2,
-          const: 3,
-        },
-        ImportDeclaration: 'first',
-        CallExpression: {
-          arguments: 'off',
-        },
-        MemberExpression: 'off',
-        ObjectExpression: 'first',
-        SwitchCase: 1,
-      },
-    ],
     'comma-dangle': 0,
     'no-empty': 0,
     'object-shorthand': 2,

@@ -12,12 +12,12 @@ export default class PluginCommand extends ExtensionCommand {
    *
    * @param {import('./extension-command').ExtensionCommandOptions<PluginType>} opts
    */
-  constructor({config, json}) {
+  constructor ({config, json}) {
     super({config, json});
     this.knownExtensions = KNOWN_PLUGINS;
   }
 
-  async install({plugin, installType, packageName}) {
+  async install ({plugin, installType, packageName}) {
     return await super._install({
       installSpec: plugin,
       installType,
@@ -25,19 +25,19 @@ export default class PluginCommand extends ExtensionCommand {
     });
   }
 
-  async uninstall({plugin}) {
+  async uninstall ({plugin}) {
     return await super._uninstall({installSpec: plugin});
   }
 
-  async update({plugin, unsafe}) {
+  async update ({plugin, unsafe}) {
     return await super._update({installSpec: plugin, unsafe});
   }
 
-  async run({plugin, scriptName}) {
+  async run ({plugin, scriptName}) {
     return await super._run({installSpec: plugin, scriptName});
   }
 
-  getPostInstallText({extName, extData}) {
+  getPostInstallText ({extName, extData}) {
     return `Plugin ${extName}@${extData.version} successfully installed`.green;
   }
 
@@ -51,7 +51,7 @@ export default class PluginCommand extends ExtensionCommand {
    * @param {string} installSpec
    * @returns {void}
    */
-  validateExtensionFields(pluginMetadata, installSpec) {
+  validateExtensionFields (pluginMetadata, installSpec) {
     const missingFields = REQ_PLUGIN_FIELDS.reduce(
       (acc, field) => (pluginMetadata[field] ? acc : [...acc, field]),
       []

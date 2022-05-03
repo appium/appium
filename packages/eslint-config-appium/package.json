@@ -8,14 +8,13 @@
     "appium",
     "es2015"
   ],
-  "homepage": "https://appium.io",
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/eslint-config-appium"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
@@ -34,17 +33,17 @@
     "@babel/core": "7.17.10",
     "@babel/eslint-parser": "7.17.0",
     "eslint": "7.32.0",
-    "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "9.0.0",
     "eslint-plugin-promise": "6.0.0"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://appium.io",
   "engines": {
     "node": ">=12",
     "npm": ">=6"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

@@ -1,30 +1,33 @@
 // @ts-check
 
 import fs from 'fs';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 import YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
-import { resolveFixture, rewiremock } from '../helpers';
+import {resolveFixture, rewiremock} from '../helpers';
 
 const expect = chai.expect;
 
 describe('config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture(
     'config',
-    'appium.config.good.yaml',
+    'appium.config.good.yaml'
   );
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture(
     'config',
-    'appium.config.good.json',
+    'appium.config.good.json'
   );
-  const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.js');
+  const GOOD_JS_CONFIG_FILEPATH = resolveFixture(
+    'config',
+    'appium.config.good.js'
+  );
   const GOOD_YAML_CONFIG = YAML.parse(
-    fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8'),
+    fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8')
   );
   const GOOD_JSON_CONFIG = require(GOOD_JSON_CONFIG_FILEPATH);
   const BAD_JSON_CONFIG_FILEPATH = resolveFixture(
     'config',
-    'appium.config.bad.json',
+    'appium.config.bad.json'
   );
   const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
 
@@ -35,12 +38,12 @@ describe('config-file', function () {
 
   /**
    * `readConfigFile()` from an isolated `config-file` module
-   * @type {import('../../lib/config-file').readConfigFile}
+   * @type {import('appium/lib/config-file').readConfigFile}
    */
   let readConfigFile;
 
   /**
-   * @type {import('../../lib/config-file').formatErrors}
+   * @type {import('appium/lib/config-file').formatErrors}
    */
   let formatErrors;
 
@@ -104,7 +107,10 @@ describe('config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({readConfigFile, formatErrors} = rewiremock.proxy(() => require('../../lib/config-file'), mocks));
+    ({readConfigFile, formatErrors} = rewiremock.proxy(
+      () => require('../../lib/config-file'),
+      mocks
+    ));
 
     // just want to be extra-sure `validate()` happens
     sandbox.spy(schema, 'validate');
@@ -116,7 +122,7 @@ describe('config-file', function () {
 
   describe('readConfigFile()', function () {
     /**
-     * @type {import('../../lib/config-file').ReadConfigFileResult}
+     * @type {import('appium/lib/config-file').ReadConfigFileResult}
      */
     let result;
 
@@ -155,7 +161,9 @@ describe('config-file', function () {
       describe('when no config file is found', function () {
         beforeEach(async function () {
           lc.search.resolves();
-          /** @type {sinon.SinonSpiedMember<typeof schema.validate>} */(schema.validate).resetHistory();
+          /** @type {sinon.SinonSpiedMember<typeof schema.validate>} */ (
+            schema.validate
+          ).resetHistory();
           result = await readConfigFile();
         });
 
@@ -185,7 +193,7 @@ describe('config-file', function () {
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
             expect(schema.validate).to.have.been.calledOnceWith(
-              GOOD_JSON_CONFIG,
+              GOOD_JSON_CONFIG
             );
           });
 
@@ -243,7 +251,7 @@ describe('config-file', function () {
 
         it('should reject with user-friendly message', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /not found at user-provided path/,
+            /not found at user-provided path/
           );
         });
       });
@@ -255,7 +263,7 @@ describe('config-file', function () {
 
         it('should reject with user-friendly message', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /Config file at user-provided path appium.json is invalid/,
+            /Config file at user-provided path appium.json is invalid/
           );
         });
       });
@@ -267,7 +275,7 @@ describe('config-file', function () {
 
         it('should pass error through', async function () {
           await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /guru meditation/,
+            /guru meditation/
           );
         });
       });
@@ -291,7 +299,7 @@ describe('config-file', function () {
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
             expect(schema.validate).to.have.been.calledOnceWith(
-              GOOD_JSON_CONFIG,
+              GOOD_JSON_CONFIG
             );
           });
 
@@ -328,7 +336,7 @@ describe('config-file', function () {
       it('should throw', function () {
         expect(() => formatErrors([])).to.throw(
           TypeError,
-          'Array of errors must be non-empty',
+          'Array of errors must be non-empty'
         );
       });
     });
@@ -337,7 +345,7 @@ describe('config-file', function () {
       it('should throw', function () {
         expect(() => formatErrors()).to.throw(
           TypeError,
-          'Array of errors must be non-empty',
+          'Array of errors must be non-empty'
         );
       });
     });
@@ -357,7 +365,7 @@ describe('config-file', function () {
           schema.getSchema(),
           {},
           [{}],
-          {format: 'cli', json: '{"foo": "bar"}'},
+          {format: 'cli', json: '{"foo": "bar"}'}
         );
       });
     });

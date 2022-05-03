@@ -1,10 +1,10 @@
 // @ts-check
 
-import { promises as fs } from 'fs';
-import { Manifest } from '../../../lib/extension/manifest';
-import { resetSchema } from '../../../lib/schema';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
+import {promises as fs} from 'fs';
+import {Manifest} from '../../../lib/extension/manifest';
+import {resetSchema} from '../../../lib/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
 
 const {expect} = chai;
 
@@ -27,7 +27,7 @@ describe('PluginConfig', function () {
   let MockResolveFrom;
 
   /**
-   * @type {typeof import('../../../lib/extension/plugin-config').PluginConfig}
+   * @type {typeof import('appium/lib/extension/plugin-config').PluginConfig}
    */
   let PluginConfig;
 
@@ -43,7 +43,7 @@ describe('PluginConfig', function () {
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({PluginConfig} = rewiremock.proxy(
       () => require('../../../lib/extension/plugin-config'),
-      overrides,
+      overrides
     ));
     resetSchema();
   });
@@ -76,8 +76,8 @@ describe('PluginConfig', function () {
             Error,
             new RegExp(
               `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig`,
-              'i',
-            ),
+              'i'
+            )
           );
         });
       });
@@ -115,7 +115,7 @@ describe('PluginConfig', function () {
             pkgName: 'herrbbbff',
             installType: 'npm',
             installSpec: 'herrbbbff',
-          }),
+          })
         ).to.equal(`foo@1.0`);
       });
     });
@@ -159,8 +159,8 @@ describe('PluginConfig', function () {
                 pkgName: 'yodel',
                 version: '-1',
               },
-              'foo',
-            ),
+              'foo'
+            )
           ).to.deep.include({
             err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
             val: [],
@@ -181,8 +181,8 @@ describe('PluginConfig', function () {
                   installType: 'npm',
                   installSpec: 'yodel',
                 },
-                'foo',
-              ),
+                'foo'
+              )
             ).to.deep.include({
               err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
               val: 'selenium.java',
@@ -202,8 +202,8 @@ describe('PluginConfig', function () {
                     mainClass: 'Yankovic',
                     version: '1.0.0',
                   },
-                  'foo',
-                ),
+                  'foo'
+                )
               )
                 .with.nested.property('[0].err')
                 .to.match(/Unable to register schema at path herp\.json/i);
@@ -225,8 +225,8 @@ describe('PluginConfig', function () {
                     mainClass: 'Yankovic',
                     version: '1.0.0',
                   },
-                  'foo',
-                ),
+                  'foo'
+                )
               ).to.be.empty;
             });
           });
@@ -310,7 +310,7 @@ describe('PluginConfig', function () {
           // @ts-expect-error
           delete extData.schema;
           expect(() =>
-            pluginConfig.readExtensionSchema(extName, extData),
+            pluginConfig.readExtensionSchema(extName, extData)
           ).to.throw(TypeError, /why is this function being called/i);
         });
       });
@@ -320,7 +320,7 @@ describe('PluginConfig', function () {
           it('should not throw', function () {
             pluginConfig.readExtensionSchema(extName, extData);
             expect(() =>
-              pluginConfig.readExtensionSchema(extName, extData),
+              pluginConfig.readExtensionSchema(extName, extData)
             ).not.to.throw();
           });
         });
@@ -330,7 +330,7 @@ describe('PluginConfig', function () {
             pluginConfig.readExtensionSchema(extName, extData);
             MockResolveFrom.returns(resolveFixture('driver.schema.js'));
             expect(() =>
-              pluginConfig.readExtensionSchema(extName, extData),
+              pluginConfig.readExtensionSchema(extName, extData)
             ).to.throw(/conflicts with an existing schema/i);
           });
         });
@@ -347,11 +347,11 @@ describe('PluginConfig', function () {
 });
 
 /**
- * @typedef {import('../../../lib/extension/manifest').PluginType} PluginType
- * @typedef {import('../../../lib/extension/plugin-config').PluginConfig} PluginConfig
+ * @typedef {import('appium/lib/extension/manifest').PluginType} PluginType
+ * @typedef {import('appium/lib/extension/plugin-config').PluginConfig} PluginConfig
  */
 
 /**
- * @template {import('../../../lib/extension/manifest').ExtensionType} ExtType
- * @typedef {import('../../../lib/extension/manifest').ExtDataWithSchema<ExtType>} ExtDataWithSchema
+ * @template {import('appium/lib/extension/manifest').ExtensionType} ExtType
+ * @typedef {import('appium/lib/extension/manifest').ExtDataWithSchema<ExtType>} ExtDataWithSchema
  */

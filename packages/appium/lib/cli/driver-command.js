@@ -15,14 +15,14 @@ const REQ_DRIVER_FIELDS = [
  */
 export default class DriverCommand extends ExtensionCommand {
   /**
-   * @param {DriverCommandOptions} opts
+   * @param {import('./extension-command').ExtensionCommandOptions<DriverType>} opts
    */
-  constructor ({config, json}) {
+  constructor({config, json}) {
     super({config, json});
     this.knownExtensions = KNOWN_DRIVERS;
   }
 
-  async install ({driver, installType, packageName}) {
+  async install({driver, installType, packageName}) {
     return await super._install({
       installSpec: driver,
       installType,
@@ -30,19 +30,19 @@ export default class DriverCommand extends ExtensionCommand {
     });
   }
 
-  async uninstall ({driver}) {
+  async uninstall({driver}) {
     return await super._uninstall({installSpec: driver});
   }
 
-  async update ({driver, unsafe}) {
+  async update({driver, unsafe}) {
     return await super._update({installSpec: driver, unsafe});
   }
 
-  async run ({driver, scriptName}) {
+  async run({driver, scriptName}) {
     return await super._run({installSpec: driver, scriptName});
   }
 
-  getPostInstallText ({extName, extData}) {
+  getPostInstallText({extName, extData}) {
     return (
       `Driver ${extName}@${extData.version} successfully installed\n`.green +
       `- automationName: ${extData.automationName.green}\n` +
@@ -59,7 +59,7 @@ export default class DriverCommand extends ExtensionCommand {
    * @param {import('appium/types').ExtMetadata<DriverType>} driverMetadata
    * @param {string} installSpec
    */
-  validateExtensionFields (driverMetadata, installSpec) {
+  validateExtensionFields(driverMetadata, installSpec) {
     const missingFields = REQ_DRIVER_FIELDS.reduce(
       (acc, field) => (driverMetadata[field] ? acc : [...acc, field]),
       []

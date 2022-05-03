@@ -4,8 +4,21 @@ import { ExtensionType, DriverType, PluginType } from '.';
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
 
 export interface InternalMetadata {
+  /**
+   * Package name of extension
+   * 
+   * `name` from its `package.json`
+   */
   pkgName: string;
+  /**
+   * Version of extension
+   * 
+   * `version` from its `package.json`
+   */
   version: string;
+  /**
+   * The method in which the user installed the extension (the `source` CLI arg)
+   */
   installType: InstallType;
   /**
    * Whatever the user typed as the extension to install. May be derived from `package.json`

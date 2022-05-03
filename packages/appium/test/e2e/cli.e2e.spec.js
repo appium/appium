@@ -1,6 +1,6 @@
 // @ts-check
 
-import { npm, env, fs, tempDir, util } from '@appium/support';
+import {npm, env, fs, tempDir, util} from '@appium/support';
 import B from 'bluebird';
 import path from 'path';
 import resolveFrom from 'resolve-from';
@@ -13,10 +13,17 @@ import {
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
   PKG_HASHFILE_RELATIVE_PATH,
   KNOWN_DRIVERS,
-  PLUGIN_TYPE
+  PLUGIN_TYPE,
 } from '../../lib/constants';
-import { FAKE_DRIVER_DIR, resolveFixture } from '../helpers';
-import { installLocalExtension, runAppium, runAppiumJson, runAppiumRaw, readAppiumArgErrorFixture, formatAppiumArgErrorOutput } from './e2e-helpers';
+import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {
+  installLocalExtension,
+  runAppium,
+  runAppiumJson,
+  runAppiumRaw,
+  readAppiumArgErrorFixture,
+  formatAppiumArgErrorOutput,
+} from './e2e-helpers';
 
 const {MANIFEST_RELATIVE_PATH} = env;
 const {expect} = chai;
@@ -27,7 +34,9 @@ describe('CLI behavior', function () {
    */
   let appiumHome;
 
-  const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
+  const testDriverPath = path.dirname(
+    resolveFixture('test-driver/package.json')
+  );
 
   beforeEach(function () {
     this.timeout(30000);
@@ -45,7 +54,7 @@ describe('CLI behavior', function () {
      * Helper fn
      * @returns {Promise<ManifestData>}
      */
-    async function readManifest () {
+    async function readManifest() {
       const manifest = await fs.readFile(manifestPath, 'utf8');
       return YAML.parse(manifest);
     }
@@ -54,7 +63,7 @@ describe('CLI behavior', function () {
      * Helper fn
      * @returns {Promise<string>}
      */
-    async function readHash () {
+    async function readHash() {
       return await fs.readFile(hashPath, 'utf8');
     }
 
@@ -73,7 +82,7 @@ describe('CLI behavior', function () {
       // an example package.json referencing appium dependency
       await fs.copyFile(
         resolveFixture('cli/appium-dependency.package.json'),
-        appiumHomePkgPath,
+        appiumHomePkgPath
       );
     });
 
@@ -88,7 +97,7 @@ describe('CLI behavior', function () {
         );
         res.should.satisfy(
           /** @param {typeof res} value */ (value) =>
-            Object.values(value).every(({installed}) => !installed),
+            Object.values(value).every(({installed}) => !installed)
         );
       });
     });
@@ -109,7 +118,7 @@ describe('CLI behavior', function () {
         (() =>
           resolveFrom(
             appiumHome,
-            '@appium/fake-driver/package.json',
+            '@appium/fake-driver/package.json'
           )).should.not.throw();
       });
     });
@@ -159,7 +168,9 @@ describe('CLI behavior', function () {
         });
 
         it('should update package.json', async function () {
-          const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
+          const newPkg = JSON.parse(
+            await fs.readFile(appiumHomePkgPath, 'utf8')
+          );
           expect(newPkg).to.have.nested.property('devDependencies.test-driver');
         });
 
@@ -177,7 +188,8 @@ describe('CLI behavior', function () {
         });
 
         it('should actually install both drivers', function () {
-          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to
+            .throw;
           expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
       });
@@ -203,7 +215,7 @@ describe('CLI behavior', function () {
       await fs.rimraf(appiumHome);
     });
 
-    async function clear () {
+    async function clear() {
       await fs.rimraf(appiumHome);
       await fs.mkdirp(appiumHome);
     }
@@ -268,16 +280,23 @@ describe('CLI behavior', function () {
             '--source',
             'npm',
           ]);
-          const {fake} = /** @type {Record<string,import('../../lib/cli/extension-command').InstalledExtensionListData>} */(await runList(['--updates']));
+          const {fake} =
+            /** @type {Record<string,import('appium/lib/cli/extension-command').InstalledExtensionListData>} */ (
+              await runList(['--updates'])
+            );
           util.compareVersions(
             fake.updateVersion,
             '>',
-            penultimateFakeDriverVersionAsOfRightNow,
+            penultimateFakeDriverVersionAsOfRightNow
           ).should.be.true;
           // TODO: this could probably be replaced by looking at updateVersion in the JSON
-          const stdout = await runAppium(appiumHome, [DRIVER_TYPE, LIST, '--updates']);
+          const stdout = await runAppium(appiumHome, [
+            DRIVER_TYPE,
+            LIST,
+            '--updates',
+          ]);
           stdout.should.match(
-            new RegExp(`fake.+[${fake.updateVersion} available]`),
+            new RegExp(`fake.+[${fake.updateVersion} available]`)
           );
         });
       });
@@ -310,33 +329,31 @@ describe('CLI behavior', function () {
 
         it('should install a driver from npm and a local driver', async function () {
           await clear();
-          await runInstall([
-            '@appium/fake-driver',
-            '--source',
-            'npm',
-          ]);
+          await runInstall(['@appium/fake-driver', '--source', 'npm']);
           await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
           const list = await runList(['--installed']);
           expect(list.fake).to.exist;
           expect(list.test).to.exist;
-          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() =>
+            resolveFrom(appiumHome, '@appium/fake-driver')
+          ).not.to.throw;
           expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
 
         it('should install _two_ drivers from npm', async function () {
           this.timeout('40s');
           await clear();
-          await runInstall([
-            '@appium/fake-driver',
-            '--source',
-            'npm',
-          ]);
+          await runInstall(['@appium/fake-driver', '--source', 'npm']);
           await runInstall(['appium-uiautomator2-driver', '--source', 'npm']);
           const list = await runList(['--installed']);
           expect(list.fake).to.exist;
           expect(list.uiautomator2).to.exist;
-          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
-          expect(() => resolveFrom(appiumHome, 'appium-uiautomator2-driver')).not.to.throw;
+          expect(() =>
+            resolveFrom(appiumHome, '@appium/fake-driver')
+          ).not.to.throw;
+          expect(() =>
+            resolveFrom(appiumHome, 'appium-uiautomator2-driver')
+          ).not.to.throw;
         });
 
         it('should install a driver from npm with a specific version/tag', async function () {
@@ -395,7 +412,7 @@ describe('CLI behavior', function () {
           ret.fake.pkgName.should.eql('appium-fake-driver');
           ret.fake.installType.should.eql('git');
           ret.fake.installSpec.should.eql(
-            'git+https://github.com/appium/appium-fake-driver',
+            'git+https://github.com/appium/appium-fake-driver'
           );
           const list = await runList(['--installed']);
           delete list.fake.installed;
@@ -405,7 +422,11 @@ describe('CLI behavior', function () {
           await clear();
           // take advantage of the fact that we know we have fake driver installed as a dependency in
           // this module, so we know its local path on disk
-          const ret = await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
+          const ret = await installLocalExtension(
+            appiumHome,
+            DRIVER_TYPE,
+            FAKE_DRIVER_DIR
+          );
           ret.fake.pkgName.should.eql('@appium/fake-driver');
           ret.fake.installType.should.eql('local');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
@@ -415,7 +436,9 @@ describe('CLI behavior', function () {
 
           // it should be a link!  this may be npm-version dependent, but it's worked
           // this way for quite awhile
-          const stat = await fs.lstat(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'));
+          const stat = await fs.lstat(
+            path.join(appiumHome, 'node_modules', '@appium', 'fake-driver')
+          );
           expect(stat.isSymbolicLink()).to.be.true;
         });
       });
@@ -456,20 +479,22 @@ describe('CLI behavior', function () {
         });
         it('should take a valid driver, invalid script, and throw an error', async function () {
           const driverName = 'fake';
-          await expect(runRun([driverName, 'foo']))
-            .to.eventually.be.rejectedWith(Error);
+          await expect(
+            runRun([driverName, 'foo'])
+          ).to.eventually.be.rejectedWith(Error);
         });
         it('should take an invalid driver, invalid script, and throw an error', async function () {
           const driverName = 'foo';
-          await expect(runRun([driverName, 'bar']))
-            .to.eventually.be.rejectedWith(Error);
+          await expect(
+            runRun([driverName, 'bar'])
+          ).to.eventually.be.rejectedWith(Error);
         });
       });
     });
 
     describe('Plugin CLI', function () {
       const FAKE_PLUGIN_DIR = path.dirname(
-        require.resolve('@appium/fake-plugin/package.json'),
+        require.resolve('@appium/fake-plugin/package.json')
       );
 
       before(function () {
@@ -502,12 +527,14 @@ describe('CLI behavior', function () {
         });
         it('should take a valid plugin, invalid script, and throw an error', async function () {
           const pluginName = 'fake';
-          await expect(runRun([pluginName, 'foo', '--json']))
-            .to.eventually.be.rejectedWith(Error);
+          await expect(
+            runRun([pluginName, 'foo', '--json'])
+          ).to.eventually.be.rejectedWith(Error);
         });
         it('should take an invalid plugin, invalid script, and throw an error', async function () {
-          await expect(runRun(['foo', 'bar', '--json']))
-            .to.eventually.be.rejectedWith(Error);
+          await expect(
+            runRun(['foo', 'bar', '--json'])
+          ).to.eventually.be.rejectedWith(Error);
         });
       });
     });
@@ -518,8 +545,10 @@ describe('CLI behavior', function () {
       describe('when color output is supported', function () {
         it('should output a fancy error message', async function () {
           const [{stderr: actual}, expected] = await B.all([
-            runAppiumRaw(appiumHome, ['--port=sheep'], {env: {FORCE_COLOR: '1'}}),
-            readAppiumArgErrorFixture('cli/cli-error-output-color.txt')
+            runAppiumRaw(appiumHome, ['--port=sheep'], {
+              env: {FORCE_COLOR: '1'},
+            }),
+            readAppiumArgErrorFixture('cli/cli-error-output-color.txt'),
           ]);
           expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
         });
@@ -529,7 +558,7 @@ describe('CLI behavior', function () {
         it('should output a colorless yet fancy error message', async function () {
           const [{stderr: actual}, expected] = await B.all([
             runAppiumRaw(appiumHome, ['--port=sheep'], {}),
-            readAppiumArgErrorFixture('cli/cli-error-output.txt')
+            readAppiumArgErrorFixture('cli/cli-error-output.txt'),
           ]);
           expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
         });
@@ -540,7 +569,7 @@ describe('CLI behavior', function () {
       it('should output a basic error message', async function () {
         const [{stderr: actual}, expected] = await B.all([
           runAppiumRaw(appiumHome, ['--relaxed-security=sheep'], {}),
-          readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt')
+          readAppiumArgErrorFixture('cli/cli-error-output-boolean.txt'),
         ]);
         expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
       });
@@ -550,7 +579,7 @@ describe('CLI behavior', function () {
       it('should output a basic error message', async function () {
         const [{stderr: actual}, expected] = await B.all([
           runAppiumRaw(appiumHome, ['--pigs=sheep'], {}),
-          readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt')
+          readAppiumArgErrorFixture('cli/cli-error-output-unknown.txt'),
         ]);
         expect(formatAppiumArgErrorOutput(actual)).to.equal(expected);
       });
@@ -559,13 +588,13 @@ describe('CLI behavior', function () {
 });
 
 /**
- * @typedef {import('../../lib/extension/manifest').ExtensionType} ExtensionType
- * @typedef {import('../../lib/extension/manifest').ManifestData} ManifestData
- * @typedef {import('../../lib/extension/manifest').DriverType} DriverType
- * @typedef {import('../../lib/extension/manifest').PluginType} PluginType
- * @typedef {import('../../lib/cli/extension-command').ExtensionListData} ExtensionListData
+ * @typedef {import('appium/types').ExtensionType} ExtensionType
+ * @typedef {import('appium/types').ManifestData} ManifestData
+ * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('appium/types').PluginType} PluginType
+ * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
  * @typedef {import('./e2e-helpers').CliArgs} CliArgs
- * @typedef {import('../../types/cli').CliExtensionSubcommand} CliExtensionSubcommand
+ * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
  */
 
 /**
@@ -575,5 +604,5 @@ describe('CLI behavior', function () {
 
 /**
  * @template T
- * @typedef {import('../../lib/extension/manifest').ExtRecord<T>} ExtRecord
+ * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
  */

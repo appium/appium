@@ -1,7 +1,7 @@
 // @ts-check
 
-import { createSandbox } from 'sinon';
-import { rewiremock } from '../helpers';
+import {createSandbox} from 'sinon';
+import {rewiremock} from '../helpers';
 
 describe('grid-register', function () {
   let sandbox;
@@ -15,7 +15,7 @@ describe('grid-register', function () {
   });
 
   describe('registerNode()', function () {
-    /** @type {import('../../lib/grid-register').default} */
+    /** @type {import('appium/lib/grid-register').default} */
     let registerNode;
     let mocks;
 
@@ -26,15 +26,15 @@ describe('grid-register', function () {
             readFile: sandbox.stub().resolves('{}'),
           },
           logger: {
-            getLogger: sandbox.stub().returns(console)
-          }
+            getLogger: sandbox.stub().returns(console),
+          },
         },
         axios: sandbox.stub().resolves({data: '', status: 200}),
       };
 
       ({default: registerNode} = rewiremock.proxy(
         () => require('../../lib/grid-register'),
-        mocks,
+        mocks
       ));
     });
 
@@ -43,7 +43,7 @@ describe('grid-register', function () {
         await registerNode('/path/to/config-file.json');
         mocks['@appium/support'].fs.readFile.should.have.been.calledOnceWith(
           '/path/to/config-file.json',
-          'utf-8',
+          'utf-8'
         );
       });
 
@@ -51,7 +51,7 @@ describe('grid-register', function () {
         sandbox.spy(JSON, 'parse');
         await registerNode('/path/to/config-file.json');
         JSON.parse.should.have.been.calledOnceWith(
-          await mocks['@appium/support'].fs.readFile.firstCall.returnValue,
+          await mocks['@appium/support'].fs.readFile.firstCall.returnValue
         );
       });
 

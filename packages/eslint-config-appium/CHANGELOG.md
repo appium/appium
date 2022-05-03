@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium@5.1.0...@appium/eslint-config-appium@5.1.1) (2022-05-03)
+
+
+### Bug Fixes
+
+* **eslint-config-appium:** remove custom indenting rules ([d89203f](https://github.com/appium/appium/commit/d89203f96c7d45e8cda5e447c808d1485449c284))
+* **eslint-config-appium:** revert prettier-related change ([93e05a8](https://github.com/appium/appium/commit/93e05a82696514be04d9792c90eb3fe7e3fa0143))
+
+
+
+
+
 # [5.1.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium@5.0.6...@appium/eslint-config-appium@5.1.0) (2022-05-02)
 
 

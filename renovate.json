@@ -7,7 +7,23 @@
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchDepTypes": ["devDependencies"],
       "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "find-up",
+        "globby",
+        "log-symbols",
+        "read-pkg",
+        "term-size",
+        "wrap-ansi",
+        "write-pkg",
+        "@types/wrap-ansi",
+        "execa"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ],
   "baseBranches": ["2.0"],
@@ -15,5 +31,6 @@
   "semanticCommits": "enabled",
   "semanticCommitScope": "{{parentDir}}",
   "schedule": ["after 10pm and before 5:00am"],
-  "timezone": "America/Vancouver"
+  "timezone": "America/Vancouver",
+  "transitiveRemediation": true
 }

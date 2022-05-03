@@ -1,15 +1,11 @@
-
-import { fs } from '@appium/support';
-import { ArgumentParser } from 'argparse';
+import {fs} from '@appium/support';
+import {ArgumentParser} from 'argparse';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND } from '../constants';
-import { finalizeSchema, getArgSpec, hasArgSpec } from '../schema';
-import { rootDir } from '../config';
-import {
-  getExtensionArgs,
-  getServerArgs
-} from './args';
+import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from '../constants';
+import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
+import {rootDir} from '../config';
+import {getExtensionArgs, getServerArgs} from './args';
 
 /**
  * If the parsed args do not contain any of these values, then we
@@ -23,7 +19,7 @@ const NON_SERVER_ARGS = Object.freeze(
     '-h',
     '--help',
     '-v',
-    '--version'
+    '--version',
   ])
 );
 
@@ -40,7 +36,7 @@ class ArgParser {
   /**
    * @param {boolean} [debug] - If true, throw instead of exit on error.
    */
-  constructor (debug = false) {
+  constructor(debug = false) {
     const prog = process.argv[1] ? path.basename(process.argv[1]) : 'appium';
     const parser = new ArgumentParser({
       add_help: true,
@@ -99,11 +95,11 @@ class ArgParser {
    * If no subcommand is passed in, this method will inject the `server` subcommand.
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
-   * @template [T=import('../../types').WithServerSubcommand]
+   * @template [T=import('appium/types').WithServerSubcommand]
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {import('../../types').Args<T>} - The parsed arguments
+   * @returns {import('appium/types').Args<T>} - The parsed arguments
    */
-  parseArgs (args = process.argv.slice(2)) {
+  parseArgs(args = process.argv.slice(2)) {
     if (!NON_SERVER_ARGS.has(args[0])) {
       args.unshift(SERVER_SUBCOMMAND);
     }
@@ -137,12 +133,14 @@ class ArgParser {
    * @param {object} args
    * @returns {object}
    */
-  static _transformParsedArgs (args) {
+  static _transformParsedArgs(args) {
     return _.reduce(
       args,
       (unpacked, value, key) => {
         if (!_.isUndefined(value) && hasArgSpec(key)) {
-          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */(getArgSpec(key));
+          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */ (
+            getArgSpec(key)
+          );
           _.set(unpacked, dest, value);
         } else {
           // this could be anything that _isn't_ a server arg
@@ -150,7 +148,7 @@ class ArgParser {
         }
         return unpacked;
       },
-      {},
+      {}
     );
   }
 
@@ -158,7 +156,7 @@ class ArgParser {
    * Patches the `exit()` method of the parser to throw an error, so we can handle it manually.
    * @param {ArgumentParser} parser
    */
-  static _patchExit (parser) {
+  static _patchExit(parser) {
     parser.exit = (code, msg) => {
       if (code) {
         throw new Error(msg);
@@ -172,7 +170,7 @@ class ArgParser {
    * @param {import('argparse').SubParser} subParser
    * @returns {import('./args').ArgumentDefinitions}
    */
-  static _addServerToParser (subParser) {
+  static _addServerToParser(subParser) {
     const serverParser = subParser.add_parser('server', {
       add_help: true,
       help: 'Run an Appium server',
@@ -194,7 +192,7 @@ class ArgParser {
    * Adds extension sub-sub-commands to `driver`/`plugin` subcommands
    * @param {import('argparse').SubParser} subParsers
    */
-  static _addExtensionCommandsToParser (subParsers) {
+  static _addExtensionCommandsToParser(subParsers) {
     for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
       const extParser = subParsers.add_parser(type, {
         add_help: true,
@@ -259,10 +257,10 @@ class ArgParser {
  * @param {boolean} [debug] - If `true`, throw instead of exit upon parsing error
  * @returns {ArgParser}
  */
-function getParser (debug) {
+function getParser(debug) {
   finalizeSchema();
 
   return new ArgParser(debug);
 }
 
-export { getParser, ArgParser };
+export {getParser, ArgParser};

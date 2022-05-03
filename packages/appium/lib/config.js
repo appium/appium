@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 import _ from 'lodash';
-import { system, fs } from '@appium/support';
+import {system, fs} from '@appium/support';
 import axios from 'axios';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import logger from './logger';
 import semver from 'semver';
 import findUp from 'find-up';
-import { getDefaultsForSchema, getAllArgSpecs } from './schema/schema';
+import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 
@@ -18,17 +18,19 @@ const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
 const GITHUB_API = 'https://api.github.com/repos/appium/appium';
 
 /**
- * @type {import('../types/cli').BuildInfo}
+ * @type {import('appium/types').BuildInfo}
  */
 const BUILD_INFO = {
   version: APPIUM_VER,
 };
 
-function getNodeVersion () {
-  return /** @type {import('semver').SemVer} */(semver.coerce(process.version));
+function getNodeVersion() {
+  return /** @type {import('semver').SemVer} */ (
+    semver.coerce(process.version)
+  );
 }
 
-async function updateBuildInfo (useGithubApiFallback = false) {
+async function updateBuildInfo(useGithubApiFallback = false) {
   const sha = await getGitRev(useGithubApiFallback);
   if (!sha) {
     return;
@@ -47,16 +49,16 @@ async function updateBuildInfo (useGithubApiFallback = false) {
  * directory.  Monorepos, see?
  * @returns {Promise<string|undefined>} Path to dir or `undefined` if not found
  */
-async function findGitRoot () {
+async function findGitRoot() {
   return await findUp(GIT_META_ROOT, {cwd: rootDir, type: 'directory'});
 }
 
-async function getGitRev (useGithubApiFallback = false) {
+async function getGitRev(useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();
   if (gitRoot) {
     try {
       const {stdout} = await exec(GIT_BINARY, ['rev-parse', 'HEAD'], {
-        cwd: gitRoot
+        cwd: gitRoot,
       });
       return stdout.trim();
     } catch (ign) {}
@@ -67,11 +69,13 @@ async function getGitRev (useGithubApiFallback = false) {
   }
 
   try {
-    const resBodyObj = (await axios.get(`${GITHUB_API}/tags`, {
-      headers: {
-        'User-Agent': `Appium ${APPIUM_VER}`
-      }
-    })).data;
+    const resBodyObj = (
+      await axios.get(`${GITHUB_API}/tags`, {
+        headers: {
+          'User-Agent': `Appium ${APPIUM_VER}`,
+        },
+      })
+    ).data;
     if (_.isArray(resBodyObj)) {
       for (const {name, commit} of resBodyObj) {
         if (name === `v${APPIUM_VER}` && commit && commit.sha) {
@@ -88,13 +92,17 @@ async function getGitRev (useGithubApiFallback = false) {
  * @param {boolean} [useGithubApiFallback]
  * @returns {Promise<string?>}
  */
-async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
+async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();
   if (gitRoot) {
     try {
-      const {stdout} = await exec(GIT_BINARY, ['show', '-s', '--format=%ci', commitSha], {
-        cwd: gitRoot
-      });
+      const {stdout} = await exec(
+        GIT_BINARY,
+        ['show', '-s', '--format=%ci', commitSha],
+        {
+          cwd: gitRoot,
+        }
+      );
       return stdout.trim();
     } catch (ign) {}
   }
@@ -104,11 +112,13 @@ async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
   }
 
   try {
-    const resBodyObj = (await axios.get(`${GITHUB_API}/commits/${commitSha}`, {
-      headers: {
-        'User-Agent': `Appium ${APPIUM_VER}`
-      }
-    })).data;
+    const resBodyObj = (
+      await axios.get(`${GITHUB_API}/commits/${commitSha}`, {
+        headers: {
+          'User-Agent': `Appium ${APPIUM_VER}`,
+        },
+      })
+    ).data;
     if (resBodyObj && resBodyObj.commit) {
       if (resBodyObj.commit.committer && resBodyObj.commit.committer.date) {
         return resBodyObj.commit.committer.date;
@@ -126,25 +136,26 @@ async function getGitTimestamp (commitSha, useGithubApiFallback = false) {
  * only contains the Appium version, but is updated with the build timestamp
  * and git commit hash asynchronously as soon as `updateBuildInfo` is called
  * and succeeds.
- * @returns {import('../types/cli').BuildInfo}
+ * @returns {import('appium/types').BuildInfo}
  */
-function getBuildInfo () {
+function getBuildInfo() {
   return BUILD_INFO;
 }
 
-function checkNodeOk () {
+function checkNodeOk() {
   const version = getNodeVersion();
   if (!semver.satisfies(version, MIN_NODE_VERSION)) {
-    logger.errorAndThrow(`Node version must be ${MIN_NODE_VERSION}. Currently ${version.version}`);
+    logger.errorAndThrow(
+      `Node version must be ${MIN_NODE_VERSION}. Currently ${version.version}`
+    );
   }
 }
 
-function warnNodeDeprecations () {
+function warnNodeDeprecations() {
   /**
    * Uncomment this section to get node version deprecation warnings
    * Also add test cases to config-specs.js to cover the cases added
    **/
-
   // const version = getNodeVersion();
   // if (version.major < 8) {
   //   logger.warn(`Appium support for versions of node < ${version.major} has been ` +
@@ -153,7 +164,7 @@ function warnNodeDeprecations () {
   // }
 }
 
-async function showBuildInfo () {
+async function showBuildInfo() {
   await updateBuildInfo(true);
   console.log(JSON.stringify(getBuildInfo())); // eslint-disable-line no-console
 }
@@ -163,7 +174,7 @@ async function showBuildInfo () {
  * @param {Args} parsedArgs
  * @returns {Args}
  */
-function getNonDefaultServerArgs (parsedArgs) {
+function getNonDefaultServerArgs(parsedArgs) {
   /**
    * Flattens parsed args into a single level object for comparison with
    * flattened defaults across server args and extension args.
@@ -172,12 +183,16 @@ function getNonDefaultServerArgs (parsedArgs) {
    */
   const flatten = (args) => {
     const argSpecs = getAllArgSpecs();
-    const flattened = _.reduce([...argSpecs.values()], (acc, argSpec) => {
-      if (_.has(args, argSpec.dest)) {
-        acc[argSpec.dest] = {value: _.get(args, argSpec.dest), argSpec};
-      }
-      return acc;
-    }, /** @type {Record<string, { value: any, argSpec: ArgSpec }>} */({}));
+    const flattened = _.reduce(
+      [...argSpecs.values()],
+      (acc, argSpec) => {
+        if (_.has(args, argSpec.dest)) {
+          acc[argSpec.dest] = {value: _.get(args, argSpec.dest), argSpec};
+        }
+        return acc;
+      },
+      /** @type {Record<string, { value: any, argSpec: ArgSpec }>} */ ({})
+    );
 
     return flattened;
   };
@@ -185,27 +200,34 @@ function getNonDefaultServerArgs (parsedArgs) {
   const args = flatten(parsedArgs);
 
   // hopefully these function names are descriptive enough
-  const typesDiffer = /** @param {string} dest */(dest) => typeof args[dest].value !== typeof defaultsFromSchema[dest];
+  const typesDiffer = /** @param {string} dest */ (dest) =>
+    typeof args[dest].value !== typeof defaultsFromSchema[dest];
 
-  const defaultValueIsArray = /** @param {string} dest */(dest) => _.isArray(defaultsFromSchema[dest]);
+  const defaultValueIsArray = /** @param {string} dest */ (dest) =>
+    _.isArray(defaultsFromSchema[dest]);
 
-  const argsValueIsArray = /** @param {string} dest */(dest) => _.isArray(args[dest].value);
+  const argsValueIsArray = /** @param {string} dest */ (dest) =>
+    _.isArray(args[dest].value);
 
-  const arraysDiffer = /** @param {string} dest */(dest) => _.gt(_.size(_.difference(args[dest].value, defaultsFromSchema[dest])), 0);
+  const arraysDiffer = /** @param {string} dest */ (dest) =>
+    _.gt(_.size(_.difference(args[dest].value, defaultsFromSchema[dest])), 0);
 
-  const valuesDiffer = /** @param {string} dest */(dest) => args[dest].value !== defaultsFromSchema[dest];
+  const valuesDiffer = /** @param {string} dest */ (dest) =>
+    args[dest].value !== defaultsFromSchema[dest];
 
-  const defaultIsDefined = /** @param {string} dest */(dest) => !_.isUndefined(defaultsFromSchema[dest]);
+  const defaultIsDefined = /** @param {string} dest */ (dest) =>
+    !_.isUndefined(defaultsFromSchema[dest]);
 
   // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
 
   const argValueNotArrayOrArraysDiffer = _.overSome([
     _.negate(argsValueIsArray),
-    arraysDiffer
+    arraysDiffer,
   ]);
 
   const defaultValueNotArrayAndValuesDiffer = _.overEvery([
-    _.negate(defaultValueIsArray), valuesDiffer
+    _.negate(defaultValueIsArray),
+    valuesDiffer,
   ]);
 
   /**
@@ -224,12 +246,9 @@ function getNonDefaultServerArgs (parsedArgs) {
     defaultIsDefined,
     _.overSome([
       typesDiffer,
-      _.overEvery([
-        defaultValueIsArray,
-        argValueNotArrayOrArraysDiffer
-      ]),
-      defaultValueNotArrayAndValuesDiffer
-    ])
+      _.overEvery([defaultValueIsArray, argValueNotArrayOrArraysDiffer]),
+      defaultValueNotArrayAndValuesDiffer,
+    ]),
   ]);
 
   const defaultsFromSchema = getDefaultsForSchema(true);
@@ -237,7 +256,8 @@ function getNonDefaultServerArgs (parsedArgs) {
   return _.reduce(
     _.pickBy(args, (__, key) => isNotDefault(key)),
     // explodes the flattened object back into nested one
-    (acc, {value, argSpec}) => _.set(acc, argSpec.dest, value), /** @type {Args} */({})
+    (acc, {value, argSpec}) => _.set(acc, argSpec.dest, value),
+    /** @type {Args} */ ({})
   );
 }
 
@@ -251,7 +271,10 @@ function getNonDefaultServerArgs (parsedArgs) {
 const compactConfig = _.partial(
   _.omitBy,
   _,
-  (value, key) => key === 'subcommand' || _.isUndefined(value) || (_.isObject(value) && _.isEmpty(value))
+  (value, key) =>
+    key === 'subcommand' ||
+    _.isUndefined(value) ||
+    (_.isObject(value) && _.isEmpty(value))
 );
 
 /**
@@ -265,7 +288,12 @@ const compactConfig = _.partial(
  * @param {Partial<ParsedArgs>} defaults - Configuration defaults from schemas
  * @param {ParsedArgs} parsedArgs - Entire parsed args object
  */
-function showConfig (nonDefaultPreConfigParsedArgs, configResult, defaults, parsedArgs) {
+function showConfig(
+  nonDefaultPreConfigParsedArgs,
+  configResult,
+  defaults,
+  parsedArgs
+) {
   console.log('Appium Configuration\n');
   console.log('from defaults:\n');
   console.dir(compactConfig(defaults));
@@ -288,26 +316,35 @@ function showConfig (nonDefaultPreConfigParsedArgs, configResult, defaults, pars
 /**
  * @param {string} tmpDir
  */
-async function validateTmpDir (tmpDir) {
+async function validateTmpDir(tmpDir) {
   try {
     await fs.mkdirp(tmpDir);
   } catch (e) {
-    throw new Error(`We could not ensure that the temp dir you specified ` +
-                    `(${tmpDir}) exists. Please make sure it's writeable.`);
+    throw new Error(
+      `We could not ensure that the temp dir you specified ` +
+        `(${tmpDir}) exists. Please make sure it's writeable.`
+    );
   }
 }
 
 const rootDir = fs.findRoot(__dirname);
 
 export {
-  getBuildInfo, checkNodeOk, showBuildInfo,
-  warnNodeDeprecations, validateTmpDir, getNonDefaultServerArgs,
-  getGitRev, APPIUM_VER, updateBuildInfo, showConfig, rootDir
+  getBuildInfo,
+  checkNodeOk,
+  showBuildInfo,
+  warnNodeDeprecations,
+  validateTmpDir,
+  getNonDefaultServerArgs,
+  getGitRev,
+  APPIUM_VER,
+  updateBuildInfo,
+  showConfig,
+  rootDir,
 };
 
 /**
- * @typedef {import('../types').ParsedArgs} ParsedArgs
- * @typedef {import('../types').Args} Args
+ * @typedef {import('appium/types').ParsedArgs} ParsedArgs
+ * @typedef {import('appium/types').Args} Args
  * @typedef {import('./schema/arg-spec').ArgSpec} ArgSpec
  */
-

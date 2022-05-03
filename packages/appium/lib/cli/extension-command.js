@@ -44,7 +44,7 @@ class ExtensionCommand {
    * Build an ExtensionCommand
    * @param {ExtensionCommandOptions<ExtType>} opts
    */
-  constructor ({config, json}) {
+  constructor({config, json}) {
     this.config = config;
     this.isJsonOutput = json;
   }
@@ -52,7 +52,7 @@ class ExtensionCommand {
   /**
    * `driver` or `plugin`, depending on the `ExtensionConfig`.
    */
-  get type () {
+  get type() {
     return this.config.extensionType;
   }
 
@@ -62,7 +62,7 @@ class ExtensionCommand {
    * @param {object} args - a key/value object with CLI flags and values
    * @return {Promise<object>} the result of the specific command which is executed
    */
-  async execute (args) {
+  async execute(args) {
     const cmd = args[`${this.type}Command`];
     if (!_.isFunction(this[cmd])) {
       throw new Error(`Cannot handle ${this.type} command ${cmd}`);
@@ -83,7 +83,7 @@ class ExtensionCommand {
    * @param {ListOptions} opts
    * @return {Promise<ExtensionListData>} map of extension names to extension data
    */
-  async list ({showInstalled, showUpdates}) {
+  async list({showInstalled, showUpdates}) {
     const lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${
       this.type
     }s`;
@@ -195,7 +195,7 @@ class ExtensionCommand {
    * @param {InstallArgs} args
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async _install ({installSpec, installType, packageName}) {
+  async _install({installSpec, installType, packageName}) {
     /** @type {ExtensionFields<typeof this.type>} */
     let extData;
 
@@ -313,7 +313,7 @@ class ExtensionCommand {
    *
    * @param {InstallViaNpmArgs} args
    */
-  async installViaNpm ({installSpec, pkgName, pkgVer}) {
+  async installViaNpm({installSpec, pkgName, pkgVer}) {
     const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
     const specMsg =
       npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
@@ -343,7 +343,7 @@ class ExtensionCommand {
    * @returns {string}
    */
   // eslint-disable-next-line no-unused-vars
-  getPostInstallText (args) {
+  getPostInstallText(args) {
     throw new Error('Must be implemented in final class');
   }
 
@@ -357,7 +357,7 @@ class ExtensionCommand {
    * @param {string} installSpec
    * @returns {ExtensionFields<ExtType>}
    */
-  getExtensionFields (pkgJsonData, installSpec) {
+  getExtensionFields(pkgJsonData, installSpec) {
     if (!pkgJsonData.appium) {
       throw new Error(
         `Installed driver did not have an 'appium' section in its ` +
@@ -384,7 +384,7 @@ class ExtensionCommand {
    * @param {string} installSpec - Extension name/spec
    */
   // eslint-disable-next-line no-unused-vars
-  validateExtensionFields (extMetadata, installSpec) {
+  validateExtensionFields(extMetadata, installSpec) {
     throw new Error('Must be implemented in final class');
   }
 
@@ -394,7 +394,7 @@ class ExtensionCommand {
    * @param {UninstallOpts} opts
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
-  async _uninstall ({installSpec}) {
+  async _uninstall({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
       throw new Error(
         `Can't uninstall ${this.type} '${installSpec}'; it is not installed`
@@ -419,7 +419,7 @@ class ExtensionCommand {
    * @param {ExtensionUpdateOpts} updateSpec
    * @return {Promise<ExtensionUpdateResult>}
    */
-  async _update ({installSpec, unsafe}) {
+  async _update({installSpec, unsafe}) {
     const shouldUpdateAll = installSpec === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
@@ -519,7 +519,7 @@ class ExtensionCommand {
    * @param {string} ext - name of extension
    * @return {Promise<PossibleUpdates>}
    */
-  async checkForExtensionUpdate (ext) {
+  async checkForExtensionUpdate(ext) {
     // TODO decide how we want to handle beta versions?
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
@@ -557,7 +557,7 @@ class ExtensionCommand {
    * @param {string} version - version string identifier to update extension to
    * @returns {Promise<void>}
    */
-  async updateExtension (installSpec, version) {
+  async updateExtension(installSpec, version) {
     const {pkgName} = this.config.installedExtensions[installSpec];
     await fs.rimraf(this.config.getInstallPath(installSpec));
     const extData = await this.installViaNpm({
@@ -580,7 +580,7 @@ class ExtensionCommand {
    * @param {RunOptions} opts
    * @return {Promise<RunOutput>}
    */
-  async _run ({installSpec, scriptName}) {
+  async _run({installSpec, scriptName}) {
     if (!_.has(this.config.installedExtensions, installSpec)) {
       throw new Error(`please install the ${this.type} first`);
     }
@@ -658,14 +658,14 @@ export {ExtensionCommand};
  */
 
 /**
- * @typedef {import('../../types').ExtensionType} ExtensionType
- * @typedef {import('../../types').DriverType} DriverType
- * @typedef {import('../../types').PluginType} PluginType
+ * @typedef {import('appium/types').ExtensionType} ExtensionType
+ * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('appium/types').PluginType} PluginType
  */
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../../types/appium-manifest').ExtRecord<ExtType>} ExtRecord
+ * @typedef {import('appium/types').ExtRecord<ExtType>} ExtRecord
  */
 
 /**
@@ -675,17 +675,17 @@ export {ExtensionCommand};
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../../types/external-manifest').ExtMetadata<ExtType>} ExtMetadata
+ * @typedef {import('appium/types').ExtMetadata<ExtType>} ExtMetadata
  */
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../../types/appium-manifest').ExtManifest<ExtType>} ExtManifest
+ * @typedef {import('appium/types').ExtManifest<ExtType>} ExtManifest
  */
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {import('../../types/external-manifest').ExtPackageJson<ExtType>} ExtPackageJson
+ * @typedef {import('appium/types').ExtPackageJson<ExtType>} ExtPackageJson
  */
 
 /**
@@ -697,7 +697,7 @@ export {ExtensionCommand};
 
 /**
  * Possible return value for {@linkcode ExtensionCommand.list}
- * @typedef {import('../../types/appium-manifest').InternalMetadata & ExtensionMetadata} InstalledExtensionListData
+ * @typedef {import('appium/types').InternalMetadata & ExtensionMetadata} InstalledExtensionListData
  */
 
 /**
@@ -774,7 +774,7 @@ export {ExtensionCommand};
  * Options for {@linkcode ExtensionCommand._install}
  * @typedef InstallArgs
  * @property {string} installSpec - the name or spec of an extension to install
- * @property {import('../../types/appium-manifest').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
+ * @property {import('appium/types').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
  * @property {string} [packageName] - for git/github installs, the extension node package name
  */
 

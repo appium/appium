@@ -4,16 +4,22 @@ import _ from 'lodash';
 import path from 'path';
 import B from 'bluebird';
 import axios from 'axios';
-import { remote as wdio } from 'webdriverio';
-import { main as appiumServer } from '../../lib/main';
-import { INSTALL_TYPE_LOCAL } from '../../lib/extension/extension-config';
-import { W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT } from '../helpers';
-import { BaseDriver } from '@appium/base-driver';
-import { loadExtensions } from '../../lib/extension';
-import { runExtensionCommand } from '../../lib/cli/extension';
-import { removeAppiumPrefixes } from '../../lib/utils';
-import { createSandbox } from 'sinon';
-import { tempDir, fs } from '@appium/support';
+import {remote as wdio} from 'webdriverio';
+import {main as appiumServer} from '../../lib/main';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
+import {
+  W3C_PREFIXED_CAPS,
+  TEST_FAKE_APP,
+  TEST_HOST,
+  getTestPort,
+  PROJECT_ROOT,
+} from '../helpers';
+import {BaseDriver} from '@appium/base-driver';
+import {loadExtensions} from '../../lib/extension';
+import {runExtensionCommand} from '../../lib/cli/extension';
+import {removeAppiumPrefixes} from '../../lib/utils';
+import {createSandbox} from 'sinon';
+import {tempDir, fs} from '@appium/support';
 
 const should = chai.should();
 
@@ -44,7 +50,7 @@ describe('FakeDriver - via HTTP', function () {
   let appiumHome;
   // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
   // actually going to be required by Appium
-  /** @type {import('../../types/extension').DriverClass} */
+  /** @type {import('appium/types').DriverClass} */
   let FakeDriver;
   /** @type {string} */
   let testServerBaseSessionUrl;
@@ -59,16 +65,22 @@ describe('FakeDriver - via HTTP', function () {
     testServerBaseSessionUrl = `${testServerBaseUrl}/session`;
     // first ensure we have fakedriver installed
     const {driverConfig} = await loadExtensions(appiumHome);
-    const driverList = await runExtensionCommand({
-      driverCommand: 'list',
-      showInstalled: true,
-    }, driverConfig);
+    const driverList = await runExtensionCommand(
+      {
+        driverCommand: 'list',
+        showInstalled: true,
+      },
+      driverConfig
+    );
     if (!_.has(driverList, 'fake')) {
-      await runExtensionCommand({
-        driverCommand: 'install',
-        driver: FAKE_DRIVER_DIR,
-        installType: INSTALL_TYPE_LOCAL,
-      }, driverConfig);
+      await runExtensionCommand(
+        {
+          driverCommand: 'install',
+          driver: FAKE_DRIVER_DIR,
+          installType: INSTALL_TYPE_LOCAL,
+        },
+        driverConfig
+      );
     }
 
     FakeDriver = driverConfig.require('fake');
@@ -85,19 +97,19 @@ describe('FakeDriver - via HTTP', function () {
   /**
    *
    * @param {number} port
-   * @param {Partial<import('../../types/cli').ParsedArgs>} [args]
+   * @param {Partial<import('appium/types').ParsedArgs>} [args]
    */
-  async function serverStart (port, args = {}) {
+  async function serverStart(port, args = {}) {
     args = {...args, port, address: TEST_HOST};
     if (shouldStartServer) {
-      server = /** @type {typeof server} */(
+      server = /** @type {typeof server} */ (
         // @ts-expect-error
         await appiumServer(args)
       );
     }
   }
 
-  async function serverClose () {
+  async function serverClose() {
     if (server) {
       await server.close();
     }
@@ -115,7 +127,9 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
+        const {data} = await axios.get(
+          `${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`
+        );
         should.not.exist(data.value.sillyWebServerPort);
         should.not.exist(data.value.sillyWebServerHost);
       } finally {
@@ -139,7 +153,9 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
+        const {data} = await axios.get(
+          `${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`
+        );
         data.value.sillyWebServerPort.should.eql(sillyWebServerPort);
         data.value.sillyWebServerHost.should.eql(sillyWebServerHost);
       } finally {
@@ -180,14 +196,19 @@ describe('FakeDriver - via HTTP', function () {
     });
 
     it('should use the newCommandTimeout of the inner Driver on session creation', async function () {
-      let localCaps = Object.assign({
-        'appium:newCommandTimeout': 0.25,
-      }, caps);
+      let localCaps = Object.assign(
+        {
+          'appium:newCommandTimeout': 0.25,
+        },
+        caps
+      );
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
 
       await B.delay(250);
-      await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
+      await driver
+        .getPageSource()
+        .should.eventually.be.rejectedWith(/terminated/);
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {
@@ -195,12 +216,16 @@ describe('FakeDriver - via HTTP', function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {'appium:automationName': 'Fake', platformName: 'Fake'},
-          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
-        }
+          firstMatch: [
+            {'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP},
+          ],
+        },
       };
 
       // Create the session
-      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
+      const {status, value, sessionId} = (
+        await axios.post(testServerBaseSessionUrl, w3cCaps)
+      ).data;
       try {
         should.not.exist(status); // Test that it's a W3C session by checking that 'status' is not in the response
         should.not.exist(sessionId);
@@ -214,14 +239,21 @@ describe('FakeDriver - via HTTP', function () {
         });
 
         // Now use that sessionId to call /screenshot
-        const {status: screenshotStatus, value: screenshotValue} = (await axios({url: `${testServerBaseSessionUrl}/${value.sessionId}/screenshot`})).data;
+        const {status: screenshotStatus, value: screenshotValue} = (
+          await axios({
+            url: `${testServerBaseSessionUrl}/${value.sessionId}/screenshot`,
+          })
+        ).data;
         should.not.exist(screenshotStatus);
         screenshotValue.should.match(/^iVBOR/); // should be a png
 
         // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
-        await axios.post(
-          `${testServerBaseSessionUrl}/${value.sessionId}/execute/async`,
-          {script: '', args: ['a']}).should.eventually.be.rejectedWith(/405/);
+        await axios
+          .post(
+            `${testServerBaseSessionUrl}/${value.sessionId}/execute/async`,
+            {script: '', args: ['a']}
+          )
+          .should.eventually.be.rejectedWith(/405/);
       } finally {
         // End session
         await axios.delete(`${testServerBaseSessionUrl}/${value.sessionId}`);
@@ -232,28 +264,36 @@ describe('FakeDriver - via HTTP', function () {
       const badW3Ccaps = {
         capabilities: {
           alwaysMatch: {},
-          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
-        }
+          firstMatch: [
+            {'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP},
+          ],
+        },
       };
 
-      await axios.post(testServerBaseSessionUrl, badW3Ccaps).should.eventually.be.rejectedWith(/400/);
+      await axios
+        .post(testServerBaseSessionUrl, badW3Ccaps)
+        .should.eventually.be.rejectedWith(/400/);
     });
 
     it('should accept a combo of W3C and JSONWP capabilities but completely ignore JSONWP', async function () {
       const combinedCaps = {
-        'desiredCapabilities': {
+        desiredCapabilities: {
           ...caps,
           jsonwpParam: 'jsonwpParam',
         },
-        'capabilities': {
-          'alwaysMatch': {...caps},
-          'firstMatch': [{
-            'appium:w3cParam': 'w3cParam',
-          }],
-        }
+        capabilities: {
+          alwaysMatch: {...caps},
+          firstMatch: [
+            {
+              'appium:w3cParam': 'w3cParam',
+            },
+          ],
+        },
       };
 
-      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, combinedCaps)).data;
+      const {status, value, sessionId} = (
+        await axios.post(testServerBaseSessionUrl, combinedCaps)
+      ).data;
       try {
         should.not.exist(status); // If it's a W3C session, should not respond with 'status'
         should.not.exist(sessionId);
@@ -277,19 +317,26 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      await axios.post(testServerBaseSessionUrl, w3cCaps).should.eventually.be.rejectedWith(/500/);
+      await axios
+        .post(testServerBaseSessionUrl, w3cCaps)
+        .should.eventually.be.rejectedWith(/500/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {},
-          firstMatch: [{}, {
-            ...caps
-          }],
+          firstMatch: [
+            {},
+            {
+              ...caps,
+            },
+          ],
         },
       };
-      const {value, sessionId, status} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
+      const {value, sessionId, status} = (
+        await axios.post(testServerBaseSessionUrl, w3cCaps)
+      ).data;
       try {
         should.not.exist(status);
         should.not.exist(sessionId);
@@ -307,15 +354,20 @@ describe('FakeDriver - via HTTP', function () {
         },
         capabilities: {
           alwaysMatch: {},
-          firstMatch: [{}, {
-            ...caps,
-            platformName: null,
-            'appium:automationName': null,
-            'appium:deviceName': null,
-          }],
+          firstMatch: [
+            {},
+            {
+              ...caps,
+              platformName: null,
+              'appium:automationName': null,
+              'appium:deviceName': null,
+            },
+          ],
         },
       };
-      const res = (await axios.post(testServerBaseSessionUrl, combinedCaps, {validateStatus: null}));
+      const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
+        validateStatus: null,
+      });
       res.status.should.eql(400);
       res.data.value.error.should.match(/invalid argument/);
     });
@@ -332,13 +384,20 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      const createSessionStub = sandbox.stub(FakeDriver.prototype, 'createSession').callsFake(async function (jsonwpCaps) {
-        const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
-        this.protocol.should.equal('MJSONWP');
-        return res;
-      });
+      const createSessionStub = sandbox
+        .stub(FakeDriver.prototype, 'createSession')
+        .callsFake(async function (jsonwpCaps) {
+          const res = await BaseDriver.prototype.createSession.call(
+            this,
+            jsonwpCaps
+          );
+          this.protocol.should.equal('MJSONWP');
+          return res;
+        });
 
-      const res = (await axios.post(testServerBaseSessionUrl, combinedCaps, {validateStatus: null}));
+      const res = await axios.post(testServerBaseSessionUrl, combinedCaps, {
+        validateStatus: null,
+      });
       const {data, status} = res;
       status.should.eql(500);
       data.value.message.should.match(/older capabilities/);
@@ -350,8 +409,13 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {thing: {yes: 'lolno'}});
-        (await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)).data.value.should.eql({yes: 'lolno'});
+        await axios.post(
+          `${testServerBaseSessionUrl}/${sessionId}/fakedriver`,
+          {thing: {yes: 'lolno'}}
+        );
+        (
+          await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)
+        ).data.value.should.eql({yes: 'lolno'});
       } finally {
         await driver.deleteSession();
       }

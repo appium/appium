@@ -1,14 +1,14 @@
 // @ts-check
 
 import _ from 'lodash';
-import { createSandbox } from 'sinon';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
-import { AppiumConfigJsonSchema } from '@appium/schema';
-import { APPIUM_CONFIG_SCHEMA_ID } from '../../../lib/schema/arg-spec';
+import {createSandbox} from 'sinon';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
+import {AppiumConfigJsonSchema} from '@appium/schema';
+import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
 import defaultArgsFixture from '../../fixtures/default-args';
 import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver.schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
-import { rewiremock } from '../../helpers';
+import {rewiremock} from '../../helpers';
 
 const {expect} = chai;
 
@@ -17,64 +17,64 @@ describe('schema', function () {
   let sandbox;
 
   /**
-   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaFinalizationError>}
+   * @type {import('@appium/types').Class<import('appium/lib/schema/schema').SchemaFinalizationError>}
    */
   let SchemaFinalizationError;
 
   /**
-   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaUnknownSchemaError>}
+   * @type {import('@appium/types').Class<import('appium/lib/schema/schema').SchemaUnknownSchemaError>}
    */
   let SchemaUnknownSchemaError;
 
   /**
-   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').SchemaUnsupportedSchemaError>}
+   * @type {import('@appium/types').Class<import('appium/lib/schema/schema').SchemaUnsupportedSchemaError>}
    */
   let SchemaUnsupportedSchemaError;
 
   /**
-   * @type {import('../../../lib/schema/schema').resetSchema}
+   * @type {import('appium/lib/schema/schema').resetSchema}
    */
   let resetSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').registerSchema}
+   * @type {import('appium/lib/schema/schema').registerSchema}
    */
   let registerSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').getSchema}
+   * @type {import('appium/lib/schema/schema').getSchema}
    */
   let getSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').finalizeSchema}
+   * @type {import('appium/lib/schema/schema').finalizeSchema}
    */
   let finalizeSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').getDefaultsForSchema}
+   * @type {import('appium/lib/schema/schema').getDefaultsForSchema}
    */
   let getDefaultsForSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').flattenSchema}
+   * @type {import('appium/lib/schema/schema').flattenSchema}
    */
   let flattenSchema;
 
   /**
-   * @type {import('../../../lib/schema/schema').isFinalized}
+   * @type {import('appium/lib/schema/schema').isFinalized}
    */
   let isFinalized;
 
   /**
-   * @type {import('../../../lib/schema/schema').validate}
+   * @type {import('appium/lib/schema/schema').validate}
    */
   let validate;
 
   let mocks;
 
   /**
-   * @type {import('@appium/types').Class<import('../../../lib/schema/schema').RoachHotelMap>}
+   * @type {import('@appium/types').Class<import('appium/lib/schema/schema').RoachHotelMap>}
    */
   let RoachHotelMap;
 
@@ -99,7 +99,7 @@ describe('schema', function () {
       finalizeSchema,
       getDefaultsForSchema,
       flattenSchema,
-      validate
+      validate,
     } = rewiremock.proxy(() => require('../../../lib/schema/schema'), mocks));
     resetSchema();
   });
@@ -123,7 +123,7 @@ describe('schema', function () {
         it('should throw a TypeError', function () {
           expect(() =>
             // @ts-expect-error
-            registerSchema(DRIVER_TYPE, 'whoopeee'),
+            registerSchema(DRIVER_TYPE, 'whoopeee')
           ).to.throw(TypeError, /expected extension type/i);
         });
       });
@@ -133,7 +133,7 @@ describe('schema', function () {
           expect(() =>
             registerSchema(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
-            }),
+            })
           ).to.throw(TypeError, /expected extension type/i);
         });
       });
@@ -146,7 +146,7 @@ describe('schema', function () {
               registerSchema(DRIVER_TYPE, 'whoopeee', [45]);
             }).to.throw(
               SchemaUnsupportedSchemaError,
-              /must be a plain object/i,
+              /must be a plain object/i
             );
           });
         });
@@ -158,7 +158,7 @@ describe('schema', function () {
               registerSchema(DRIVER_TYPE, 'whoopee', {$async: true});
             }).to.throw(
               SchemaUnsupportedSchemaError,
-              /cannot be an async schema/i,
+              /cannot be an async schema/i
             );
           });
         });
@@ -179,7 +179,7 @@ describe('schema', function () {
             const schemaObject = {title: 'whoopee'};
             registerSchema(DRIVER_TYPE, 'whoopee', schemaObject);
             expect(() =>
-              registerSchema(DRIVER_TYPE, 'whoopee', schemaObject),
+              registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)
             ).not.to.throw();
           });
         });
@@ -191,7 +191,7 @@ describe('schema', function () {
             expect(() =>
               registerSchema(DRIVER_TYPE, 'whoopee', {
                 title: 'cushion?',
-              }),
+              })
             ).to.throw(Error, /conflicts with an existing schema/);
           });
         });
@@ -202,7 +202,7 @@ describe('schema', function () {
       it('should register the schema', function () {
         const schemaObject = {title: 'whoopee'};
         expect(() =>
-          registerSchema(DRIVER_TYPE, 'whoopee', schemaObject),
+          registerSchema(DRIVER_TYPE, 'whoopee', schemaObject)
         ).not.to.throw();
       });
 
@@ -212,7 +212,7 @@ describe('schema', function () {
           const schema2 = {title: 'anti-skub'};
           registerSchema(DRIVER_TYPE, 'skub', schema1);
           expect(() =>
-            registerSchema(PLUGIN_TYPE, 'skub', schema2),
+            registerSchema(PLUGIN_TYPE, 'skub', schema2)
           ).not.to.throw();
         });
       });
@@ -244,7 +244,7 @@ describe('schema', function () {
       describe('when schema ID is the base schema ID', function () {
         it('should return the base schema', function () {
           expect(getSchema(APPIUM_CONFIG_SCHEMA_ID)).to.eql(
-            AppiumConfigJsonSchema,
+            AppiumConfigJsonSchema
           );
         });
       });
@@ -253,10 +253,10 @@ describe('schema', function () {
         it('should return the schema for the reference', function () {
           expect(
             getSchema(
-              `${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`,
-            ),
+              `${APPIUM_CONFIG_SCHEMA_ID}#/properties/server/properties/address`
+            )
           ).to.exist.and.to.eql(
-            AppiumConfigJsonSchema.properties.server.properties.address,
+            AppiumConfigJsonSchema.properties.server.properties.address
           );
         });
       });
@@ -264,7 +264,7 @@ describe('schema', function () {
       describe('when schema ID is invalid', function () {
         it('should throw', function () {
           expect(() => getSchema('schema-the-clown')).to.throw(
-            SchemaUnknownSchemaError,
+            SchemaUnknownSchemaError
           );
         });
       });
@@ -277,9 +277,7 @@ describe('schema', function () {
       });
 
       it('should return the extension schema', function () {
-        expect(getSchema('driver-stuff.json')).to.eql(
-          DRIVER_SCHEMA_FIXTURE,
-        );
+        expect(getSchema('driver-stuff.json')).to.eql(DRIVER_SCHEMA_FIXTURE);
       });
     });
   });
@@ -287,9 +285,7 @@ describe('schema', function () {
   describe('getDefaultsForSchema()', function () {
     describe('when schema not yet compiled', function () {
       it('should throw', function () {
-        expect(() => getDefaultsForSchema()).to.throw(
-          SchemaFinalizationError,
-        );
+        expect(() => getDefaultsForSchema()).to.throw(SchemaFinalizationError);
       });
     });
 
@@ -339,7 +335,7 @@ describe('schema', function () {
           'fake',
           // TS complains about this require()
           // @ts-ignore
-          require('@appium/fake-driver/build/lib/fake-driver-schema').default,
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default
         );
         finalizeSchema();
 
@@ -447,7 +443,7 @@ describe('schema', function () {
       describe('when provided an invalid schema ID ref', function () {
         it('should throw', function () {
           expect(() => validate('foo', 'bar')).to.throw(
-            SchemaUnknownSchemaError,
+            SchemaUnknownSchemaError
           );
         });
       });
@@ -455,16 +451,14 @@ describe('schema', function () {
       describe('when not provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(validate({server: {address: '127.0.0.1'}})).to.eql(
-              [],
-            );
+            expect(validate({server: {address: '127.0.0.1'}})).to.eql([]);
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
-            expect(validate({address: '127.0.0.1'})).to.be.an('array')
-              .and.to.not.be.empty;
+            expect(validate({address: '127.0.0.1'})).to.be.an('array').and.to
+              .not.be.empty;
           });
         });
       });
@@ -475,8 +469,8 @@ describe('schema', function () {
             expect(
               validate(
                 '127.0.0.1',
-                'appium.json#/properties/server/properties/address',
-              ),
+                'appium.json#/properties/server/properties/address'
+              )
             ).to.eql([]);
           });
         });
@@ -486,8 +480,8 @@ describe('schema', function () {
             expect(
               validate(
                 '127.0.0.1',
-                'appium.json#/properties/server/properties/port',
-              ),
+                'appium.json#/properties/server/properties/port'
+              )
             ).to.be.an('array').and.to.not.be.empty;
           });
         });
@@ -503,7 +497,7 @@ describe('schema', function () {
       describe('when provided an invalid schema ID ref', function () {
         it('should throw', function () {
           expect(() => validate('foo', 'bar')).to.throw(
-            SchemaUnknownSchemaError,
+            SchemaUnknownSchemaError
           );
         });
       });
@@ -511,16 +505,16 @@ describe('schema', function () {
       describe('when not provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(
-              validate({server: {driver: {stuff: {answer: 99}}}}),
-            ).to.eql([]);
+            expect(validate({server: {driver: {stuff: {answer: 99}}}})).to.eql(
+              []
+            );
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
             expect(
-              validate({server: {driver: {stuff: {answer: 101}}}}),
+              validate({server: {driver: {stuff: {answer: 101}}}})
             ).to.be.an('array').and.to.not.be.empty;
           });
         });
@@ -529,16 +523,16 @@ describe('schema', function () {
       describe('when provided a schema ID ref', function () {
         describe('when provided a valid value', function () {
           it('should return an empty array of no errors', function () {
-            expect(
-              validate(99, 'driver-stuff.json#/properties/answer'),
-            ).to.eql([]);
+            expect(validate(99, 'driver-stuff.json#/properties/answer')).to.eql(
+              []
+            );
           });
         });
 
         describe('when provided an invalid value', function () {
           it('should return an array containing errors', function () {
             expect(
-              validate(101, 'driver-stuff.json#/properties/answer'),
+              validate(101, 'driver-stuff.json#/properties/answer')
             ).to.be.an('array').and.to.not.be.empty;
           });
         });

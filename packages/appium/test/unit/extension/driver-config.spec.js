@@ -1,10 +1,10 @@
 // @ts-check
 
-import { promises as fs } from 'fs';
-import { Manifest } from '../../../lib/extension/manifest';
-import { resetSchema } from '../../../lib/schema';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
+import {promises as fs} from 'fs';
+import {Manifest} from '../../../lib/extension/manifest';
+import {resetSchema} from '../../../lib/schema';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
 
 const {expect} = chai;
 
@@ -27,8 +27,8 @@ describe('DriverConfig', function () {
   let MockResolveFrom;
 
   /**
-   * @type {typeof import('../../../lib/extension/driver-config').DriverConfig}
-    */
+   * @type {typeof import('appium/lib/extension/driver-config').DriverConfig}
+   */
   let DriverConfig;
 
   before(async function () {
@@ -39,14 +39,11 @@ describe('DriverConfig', function () {
     manifest = Manifest.getInstance('/somewhere/');
     /** @type {import('./mocks').Overrides} */
     let overrides;
-    ({MockAppiumSupport,
-      MockResolveFrom,
-      overrides,
-      sandbox} = initMocks());
+    ({MockAppiumSupport, MockResolveFrom, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({DriverConfig} = rewiremock.proxy(
       () => require('../../../lib/extension/driver-config'),
-      overrides,
+      overrides
     ));
     resetSchema();
   });
@@ -79,8 +76,8 @@ describe('DriverConfig', function () {
             Error,
             new RegExp(
               `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig`,
-              'i',
-            ),
+              'i'
+            )
           );
         });
       });
@@ -114,7 +111,7 @@ describe('DriverConfig', function () {
         const config = DriverConfig.create(manifest);
         expect(
           // @ts-expect-error
-          config.extensionDesc('foo', {version: '1.0', automationName: 'bar'}),
+          config.extensionDesc('foo', {version: '1.0', automationName: 'bar'})
         ).to.equal(`foo@1.0 (automationName 'bar')`);
       });
     });
@@ -152,7 +149,7 @@ describe('DriverConfig', function () {
             expect(
               driverConfig
                 // @ts-expect-error
-                .getConfigProblems({platformNames: []}),
+                .getConfigProblems({platformNames: []})
             ).to.deep.include({
               err: 'Empty platformNames list.',
               val: [],
@@ -165,7 +162,7 @@ describe('DriverConfig', function () {
             expect(
               driverConfig
                 // @ts-expect-error
-                .getConfigProblems({platformNames: 'foo'}),
+                .getConfigProblems({platformNames: 'foo'})
             ).to.deep.include({
               err: 'Missing or incorrect supported platformNames list.',
               val: 'foo',
@@ -178,7 +175,7 @@ describe('DriverConfig', function () {
             expect(
               driverConfig
                 // @ts-expect-error
-                .getConfigProblems({platformNames: ['a', 1]}),
+                .getConfigProblems({platformNames: ['a', 1]})
             ).to.deep.include({
               err: 'Incorrectly formatted platformName.',
               val: 1,
@@ -204,7 +201,7 @@ describe('DriverConfig', function () {
             expect(
               driverConfig
                 // @ts-expect-error
-                .getConfigProblems({automationName: 'foo'}),
+                .getConfigProblems({automationName: 'foo'})
             ).to.deep.include({
               err: 'Multiple drivers claim support for the same automationName',
               val: 'foo',
@@ -229,7 +226,7 @@ describe('DriverConfig', function () {
           expect(
             driverConfig
               // @ts-expect-error
-              .getSchemaProblems({schema: []}),
+              .getSchemaProblems({schema: []})
           ).to.deep.include({
             err: 'Incorrectly formatted schema field; must be a path to a schema file or a schema object.',
             val: [],
@@ -243,7 +240,7 @@ describe('DriverConfig', function () {
             expect(
               driverConfig
                 // @ts-expect-error
-                .getSchemaProblems({schema: 'selenium.java'}),
+                .getSchemaProblems({schema: 'selenium.java'})
             ).to.deep.include({
               err: 'Schema file has unsupported extension. Allowed: .json, .js, .cjs',
               val: 'selenium.java',
@@ -261,8 +258,8 @@ describe('DriverConfig', function () {
                     pkgName: 'doop',
                     schema: 'herp.json',
                   },
-                  'foo',
-                ),
+                  'foo'
+                )
               )
                 .with.nested.property('[0].err')
                 .to.match(/Unable to register schema at path herp\.json/i);
@@ -282,8 +279,8 @@ describe('DriverConfig', function () {
                     pkgName: 'whatever',
                     schema: 'driver.schema.js',
                   },
-                  'foo',
-                ),
+                  'foo'
+                )
               ).to.be.empty;
             });
           });
@@ -297,7 +294,7 @@ describe('DriverConfig', function () {
        */
       let driverConfig;
 
-      /** @type {ExtDataWithSchema<DriverType>} */
+      /** @type {ExtManifestWithSchema<DriverType>} */
       let extData;
 
       const extName = 'stuff';
@@ -319,10 +316,9 @@ describe('DriverConfig', function () {
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', function () {
-          // @ts-expect-error
           delete extData.schema;
           expect(() =>
-            driverConfig.readExtensionSchema(extName, extData),
+            driverConfig.readExtensionSchema(extName, extData)
           ).to.throw(TypeError, /why is this function being called/i);
         });
       });
@@ -331,7 +327,7 @@ describe('DriverConfig', function () {
         it('should not throw', function () {
           driverConfig.readExtensionSchema(extName, extData);
           expect(() =>
-            driverConfig.readExtensionSchema(extName, extData),
+            driverConfig.readExtensionSchema(extName, extData)
           ).not.to.throw();
         });
       });
@@ -349,11 +345,16 @@ describe('DriverConfig', function () {
 });
 
 /**
- * @typedef {import('../../../lib/extension/manifest').DriverType} DriverType
- * @typedef {import('../../../lib/extension/driver-config').DriverConfig} DriverConfig
+ * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('appium/lib/extension/driver-config').DriverConfig} DriverConfig
  */
 
 /**
- * @template {import('../../../lib/extension/manifest').ExtensionType} ExtType
- * @typedef {import('../../../lib/extension/manifest').ExtDataWithSchema<ExtType>} ExtDataWithSchema
+ * @template {import('appium/types').ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifestWithSchema<ExtType>} ExtManifestWithSchema
+ */
+
+/**
+ * @template {import('appium/types').ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifest<ExtType>} ExtManifest
  */

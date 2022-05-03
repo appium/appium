@@ -1,4 +1,3 @@
-
 import _ from 'lodash';
 import path from 'path';
 import resolveFrom from 'resolve-from';
@@ -50,7 +49,7 @@ export class ExtensionConfig {
    * @param {Manifest} manifest - `Manifest` instance
    * @param {ExtensionLogFn} [logFn]
    */
-  constructor (extensionType, manifest, logFn) {
+  constructor(extensionType, manifest, logFn) {
     const logger = _.isFunction(logFn) ? logFn : log.error.bind(log);
     this.extensionType = extensionType;
     this.configKey = `${extensionType}s`;
@@ -59,11 +58,11 @@ export class ExtensionConfig {
     this.manifest = manifest;
   }
 
-  get manifestPath () {
+  get manifestPath() {
     return this.manifest.manifestPath;
   }
 
-  get appiumHome () {
+  get appiumHome() {
     return this.manifest.appiumHome;
   }
 
@@ -71,15 +70,15 @@ export class ExtensionConfig {
    * Checks extensions for problems
    * @param {ExtRecord<ExtType>} exts - Extension data
    */
-  validate (exts) {
+  validate(exts) {
     const foundProblems =
       /** @type {Record<ExtName<ExtType>,Problem[]>} */ ({});
     for (const [
       extName,
       extData,
     ] of /** @type {[ExtName<ExtType>, ExtManifest<ExtType>][]} */ (
-        _.toPairs(exts)
-      )) {
+      _.toPairs(exts)
+    )) {
       foundProblems[extName] = [
         ...this.getGenericConfigProblems(extData, extName),
         ...this.getConfigProblems(extData),
@@ -96,12 +95,12 @@ export class ExtensionConfig {
       delete exts[extName];
       problemSummaries.push(
         `${this.extensionType} ${extName} had errors and will not ` +
-          `be available. Errors:`,
+          `be available. Errors:`
       );
       for (const problem of problems) {
         problemSummaries.push(
           `  - ${problem.err} (Actual value: ` +
-            `${JSON.stringify(problem.val)})`,
+            `${JSON.stringify(problem.val)})`
         );
       }
     }
@@ -109,7 +108,7 @@ export class ExtensionConfig {
     if (!_.isEmpty(problemSummaries)) {
       this.log(
         `Appium encountered one or more errors while validating ` +
-          `the ${this.configKey} extension file (${this.manifestPath}):`,
+          `the ${this.configKey} extension file (${this.manifestPath}):`
       );
       for (const summary of problemSummaries) {
         this.log(summary);
@@ -124,7 +123,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>} extName
    * @returns {Problem[]}
    */
-  getSchemaProblems (extData, extName) {
+  getSchemaProblems(extData, extName) {
     const problems = [];
     const {schema: argSchemaPath} = extData;
     if (ExtensionConfig.extDataHasSchema(extData)) {
@@ -171,9 +170,8 @@ export class ExtensionConfig {
    * @returns {Problem[]}
    */
   // eslint-disable-next-line no-unused-vars
-  getGenericConfigProblems (extData, extName) {
-    const {version, pkgName, installSpec, installType, mainClass} =
-      extData;
+  getGenericConfigProblems(extData, extName) {
+    const {version, pkgName, installSpec, installType, mainClass} = extData;
     const problems = [];
 
     if (!_.isString(version)) {
@@ -217,7 +215,7 @@ export class ExtensionConfig {
    * @returns {Problem[]}
    */
   // eslint-disable-next-line no-unused-vars
-  getConfigProblems (extData) {
+  getConfigProblems(extData) {
     // shoud override this method if special validation is necessary for this extension type
     return [];
   }
@@ -228,7 +226,7 @@ export class ExtensionConfig {
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
-  async addExtension (extName, extData, {write = true} = {}) {
+  async addExtension(extName, extData, {write = true} = {}) {
     this.manifest.addExtension(this.extensionType, extName, extData);
     if (write) {
       await this.manifest.write();
@@ -241,7 +239,7 @@ export class ExtensionConfig {
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
-  async updateExtension (extName, extData, {write = true} = {}) {
+  async updateExtension(extName, extData, {write = true} = {}) {
     this.installedExtensions[extName] = {
       ...this.installedExtensions[extName],
       ...extData,
@@ -256,7 +254,7 @@ export class ExtensionConfig {
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
-  async removeExtension (extName, {write = true} = {}) {
+  async removeExtension(extName, {write = true} = {}) {
     delete this.installedExtensions[extName];
     if (write) {
       await this.manifest.write();
@@ -268,11 +266,11 @@ export class ExtensionConfig {
    * @returns {void}
    */
   // eslint-disable-next-line no-unused-vars
-  print (activeNames) {
+  print(activeNames) {
     if (_.isEmpty(this.installedExtensions)) {
       log.info(
         `No ${this.configKey} have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
-          'command to install the one(s) you want to use.',
+          'command to install the one(s) you want to use.'
       );
       return;
     }
@@ -282,8 +280,8 @@ export class ExtensionConfig {
       extName,
       extData,
     ] of /** @type {[string, ExtManifest<ExtType>][]} */ (
-        _.toPairs(this.installedExtensions)
-      )) {
+      _.toPairs(this.installedExtensions)
+    )) {
       log.info(`  - ${this.extensionDesc(extName, extData)}`);
     }
   }
@@ -296,7 +294,7 @@ export class ExtensionConfig {
    * @abstract
    */
   // eslint-disable-next-line no-unused-vars
-  extensionDesc (extName, extData) {
+  extensionDesc(extName, extData) {
     throw new Error('This must be implemented in a subclass');
   }
 
@@ -304,8 +302,12 @@ export class ExtensionConfig {
    * @param {string} extName
    * @returns {string}
    */
-  getInstallPath (extName) {
-    return path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName);
+  getInstallPath(extName) {
+    return path.join(
+      this.appiumHome,
+      'node_modules',
+      this.installedExtensions[extName].pkgName
+    );
   }
 
   /**
@@ -313,7 +315,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>} extName
    * @returns {ExtClass<ExtType>}
    */
-  require (extName) {
+  require(extName) {
     const {mainClass} = this.installedExtensions[extName];
     const reqPath = this.getInstallPath(extName);
     const reqResolved = require.resolve(reqPath);
@@ -330,7 +332,7 @@ export class ExtensionConfig {
    * @param {string} extName
    * @returns {boolean}
    */
-  isInstalled (extName) {
+  isInstalled(extName) {
     return _.includes(Object.keys(this.installedExtensions), extName);
   }
 
@@ -344,16 +346,19 @@ export class ExtensionConfig {
    * @param {ExtManifestWithSchema<ExtType>} extData - Extension config
    * @returns {import('ajv').SchemaObject|undefined}
    */
-  static _readExtensionSchema (appiumHome, extType, extName, extData) {
+  static _readExtensionSchema(appiumHome, extType, extName, extData) {
     const {pkgName, schema: argSchemaPath} = extData;
     if (!argSchemaPath) {
       throw new TypeError(
-        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`,
+        `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
       );
     }
     let moduleObject;
     if (_.isString(argSchemaPath)) {
-      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
+      const schemaPath = resolveFrom(
+        appiumHome,
+        path.join(pkgName, argSchemaPath)
+      );
       moduleObject = require(schemaPath);
     } else {
       moduleObject = argSchemaPath;
@@ -373,7 +378,7 @@ export class ExtensionConfig {
    * @param {ExtManifest<ExtType>} extData
    * @returns {extData is ExtManifestWithSchema<ExtType>}
    */
-  static extDataHasSchema (extData) {
+  static extDataHasSchema(extData) {
     return _.isString(extData?.schema) || _.isObject(extData?.schema);
   }
 
@@ -384,12 +389,12 @@ export class ExtensionConfig {
    * @param {ExtManifestWithSchema<ExtType>} extData - Extension data
    * @returns {import('ajv').SchemaObject|undefined}
    */
-  readExtensionSchema (extName, extData) {
+  readExtensionSchema(extName, extData) {
     return ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
-      extData,
+      extData
     );
   }
 }
@@ -417,33 +422,33 @@ export {
  */
 
 /**
- * @typedef {import('../../types').ExtensionType} ExtensionType
+ * @typedef {import('appium/types').ExtensionType} ExtensionType
  * @typedef {import('./manifest').Manifest} Manifest
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtManifest<T>} ExtManifest
+ * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtManifestWithSchema<T>} ExtManifestWithSchema
+ * @typedef {import('appium/types').ExtManifestWithSchema<T>} ExtManifestWithSchema
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtName<T>} ExtName
+ * @typedef {import('appium/types').ExtName<T>} ExtName
  */
 
 /**
  * @template T
- * @typedef {import('../../types/extension').ExtClass<T>} ExtClass
+ * @typedef {import('appium/types').ExtClass<T>} ExtClass
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtRecord<T>} ExtRecord
+ * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
  */
 
 /**

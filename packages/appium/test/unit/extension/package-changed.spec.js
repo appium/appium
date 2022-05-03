@@ -1,13 +1,13 @@
 // @ts-check
 import path from 'path';
-import { PKG_HASHFILE_RELATIVE_PATH } from '../../../lib/constants';
-import { rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
+import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
+import {rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
 
 const {expect} = chai;
 
 describe('package-changed', function () {
-  /** @type {typeof import('../../../lib/extension/package-changed').packageDidChange} */
+  /** @type {typeof import('appium/lib/extension/package-changed').packageDidChange} */
   let packageDidChange;
 
   /** @type {sinon.SinonSandbox} */
@@ -26,7 +26,7 @@ describe('package-changed', function () {
       {
         'package-changed': MockPackageChanged,
         '@appium/support': MockAppiumSupport,
-      },
+      }
     ));
   });
 
@@ -47,7 +47,7 @@ describe('package-changed', function () {
     it('it should attempt to create the parent dir for the hash file', async function () {
       await packageDidChange('/some/path');
       expect(MockAppiumSupport.fs.mkdirp).to.have.been.calledWith(
-        path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH)),
+        path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH))
       );
     });
 
@@ -64,7 +64,7 @@ describe('package-changed', function () {
         MockAppiumSupport.fs.mkdirp.rejects(new Error('some error'));
         await expect(packageDidChange('/some/path')).to.be.rejectedWith(
           Error,
-          /could not create the directory/i,
+          /could not create the directory/i
         );
       });
     });
@@ -106,7 +106,7 @@ describe('package-changed', function () {
         it('should reject', async function () {
           await expect(packageDidChange('/some/where')).to.be.rejectedWith(
             Error,
-            /could not write hash file/i,
+            /could not write hash file/i
           );
         });
       });

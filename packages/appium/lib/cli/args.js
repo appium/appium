@@ -1,9 +1,16 @@
-
 // @ts-ignore
 import _ from 'lodash';
-import { DRIVER_TYPE, PLUGIN_TYPE, EXT_SUBCOMMAND_INSTALL, EXT_SUBCOMMAND_LIST, EXT_SUBCOMMAND_RUN, EXT_SUBCOMMAND_UNINSTALL, EXT_SUBCOMMAND_UPDATE } from '../constants';
-import { INSTALL_TYPES } from '../extension/extension-config';
-import { toParserArgs } from '../schema/cli-args';
+import {
+  DRIVER_TYPE,
+  PLUGIN_TYPE,
+  EXT_SUBCOMMAND_INSTALL,
+  EXT_SUBCOMMAND_LIST,
+  EXT_SUBCOMMAND_RUN,
+  EXT_SUBCOMMAND_UNINSTALL,
+  EXT_SUBCOMMAND_UPDATE,
+} from '../constants';
+import {INSTALL_TYPES} from '../extension/extension-config';
+import {toParserArgs} from '../schema/cli-args';
 const DRIVER_EXAMPLE = 'xcuitest';
 const PLUGIN_EXAMPLE = 'find_by_image';
 
@@ -19,19 +26,22 @@ const EXTENSION_TYPES = new Set([DRIVER_TYPE, PLUGIN_TYPE]);
 // this set of args works for both drivers and plugins ('extensions')
 /** @type {ArgumentDefinitions} */
 const globalExtensionArgs = new Map([
-  [['--json'], {
-    required: false,
-    default: false,
-    action: 'store_true',
-    help: 'Use JSON for output format',
-    dest: 'json'
-  }]
+  [
+    ['--json'],
+    {
+      required: false,
+      default: false,
+      action: 'store_true',
+      help: 'Use JSON for output format',
+      dest: 'json',
+    },
+  ],
 ]);
 
 /**
  * Builds a Record of extension types to a Record of subcommands to their argument definitions
  */
-const getExtensionArgs = _.memoize(function getExtensionArgs () {
+const getExtensionArgs = _.memoize(function getExtensionArgs() {
   const extensionArgs = {};
   for (const type of EXTENSION_TYPES) {
     extensionArgs[type] = {
@@ -42,7 +52,9 @@ const getExtensionArgs = _.memoize(function getExtensionArgs () {
       [EXT_SUBCOMMAND_RUN]: makeRunArgs(type),
     };
   }
-  return /** @type {Record<ExtensionType, Record<import('../../types/cli').CliExtensionSubcommand,ArgumentDefinitions>>} */(extensionArgs);
+  return /** @type {Record<ExtensionType, Record<import('appium/types').CliExtensionSubcommand,ArgumentDefinitions>>} */ (
+    extensionArgs
+  );
 });
 
 /**
@@ -50,23 +62,29 @@ const getExtensionArgs = _.memoize(function getExtensionArgs () {
  * @param {ExtensionType} type
  * @returns {ArgumentDefinitions}
  */
-function makeListArgs (type) {
+function makeListArgs(type) {
   return new Map([
     ...globalExtensionArgs,
-    [['--installed'], {
-      required: false,
-      default: false,
-      action: 'store_true',
-      help: `List only installed ${type}s`,
-      dest: 'showInstalled'
-    }],
-    [['--updates'], {
-      required: false,
-      default: false,
-      action: 'store_true',
-      help: 'Show information about newer versions',
-      dest: 'showUpdates'
-    }]
+    [
+      ['--installed'],
+      {
+        required: false,
+        default: false,
+        action: 'store_true',
+        help: `List only installed ${type}s`,
+        dest: 'showInstalled',
+      },
+    ],
+    [
+      ['--updates'],
+      {
+        required: false,
+        default: false,
+        action: 'store_true',
+        help: 'Show information about newer versions',
+        dest: 'showUpdates',
+      },
+    ],
   ]);
 }
 
@@ -75,48 +93,66 @@ function makeListArgs (type) {
  * @param {ExtensionType} type
  * @returns {ArgumentDefinitions}
  */
-function makeInstallArgs (type) {
+function makeInstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
-    [[type], {
-      type: 'str',
-      help: `Name of the ${type} to install, for example: ` +
-            type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE,
-    }],
-    [['--source'], {
-      required: false,
-      default: null,
-      choices: INSTALL_TYPES_ARRAY,
-      help: `Where to look for the ${type} if it is not one of Appium's verified ` +
-            `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
-      dest: 'installType'
-    }],
-    [['--package'], {
-      required: false,
-      default: null,
-      type: 'str',
-      help: `If installing from Git or GitHub, the package name, as defined in the plugin's ` +
-            `package.json file in the "name" field, cannot be determined automatically, and ` +
-            `should be reported here, otherwise the install will probably fail.`,
-      dest: 'packageName',
-    }],
+    [
+      [type],
+      {
+        type: 'str',
+        help:
+          `Name of the ${type} to install, for example: ` + type === DRIVER_TYPE
+            ? DRIVER_EXAMPLE
+            : PLUGIN_EXAMPLE,
+      },
+    ],
+    [
+      ['--source'],
+      {
+        required: false,
+        default: null,
+        choices: INSTALL_TYPES_ARRAY,
+        help:
+          `Where to look for the ${type} if it is not one of Appium's verified ` +
+          `${type}s. Possible values: ${INSTALL_TYPES_ARRAY.join(', ')}`,
+        dest: 'installType',
+      },
+    ],
+    [
+      ['--package'],
+      {
+        required: false,
+        default: null,
+        type: 'str',
+        help:
+          `If installing from Git or GitHub, the package name, as defined in the plugin's ` +
+          `package.json file in the "name" field, cannot be determined automatically, and ` +
+          `should be reported here, otherwise the install will probably fail.`,
+        dest: 'packageName',
+      },
+    ],
   ]);
 }
-
 
 /**
  * Makes the opts for the `uninstall` subcommand for each extension type
  * @param {ExtensionType} type
  * @returns {ArgumentDefinitions}
  */
-function makeUninstallArgs (type) {
+function makeUninstallArgs(type) {
   return new Map([
     ...globalExtensionArgs,
-    [[type], {
-      type: 'str',
-      help: 'Name of the driver to uninstall, for example: ' +
-            type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE
-    }],
+    [
+      [type],
+      {
+        type: 'str',
+        help:
+          'Name of the driver to uninstall, for example: ' + type ===
+          DRIVER_TYPE
+            ? DRIVER_EXAMPLE
+            : PLUGIN_EXAMPLE,
+      },
+    ],
   ]);
 }
 
@@ -125,22 +161,34 @@ function makeUninstallArgs (type) {
  * @param {ExtensionType} type
  * @returns {ArgumentDefinitions}
  */
-function makeUpdateArgs (type) {
+function makeUpdateArgs(type) {
   return new Map([
     ...globalExtensionArgs,
-    [[type], {
-      type: 'str',
-      help: `Name of the ${type} to update, or the word "installed" to update all installed ` +
+    [
+      [type],
+      {
+        type: 'str',
+        help:
+          `Name of the ${type} to update, or the word "installed" to update all installed ` +
             `${type}s. To see available updates, run "appium ${type} list --installed --updates". ` +
-            'For example: ' + type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE,
-    }],
-    [['--unsafe'], {
-      required: false,
-      default: false,
-      action: 'store_true',
-      help: `Include updates that might have a new major revision, and potentially include ` +
-            `breaking changes`,
-    }],
+            'For example: ' +
+            type ===
+          DRIVER_TYPE
+            ? DRIVER_EXAMPLE
+            : PLUGIN_EXAMPLE,
+      },
+    ],
+    [
+      ['--unsafe'],
+      {
+        required: false,
+        default: false,
+        action: 'store_true',
+        help:
+          `Include updates that might have a new major revision, and potentially include ` +
+          `breaking changes`,
+      },
+    ],
   ]);
 }
 
@@ -149,20 +197,30 @@ function makeUpdateArgs (type) {
  * @param {ExtensionType} type
  * @returns {ArgumentDefinitions}
  */
-function makeRunArgs (type) {
+function makeRunArgs(type) {
   return new Map([
     ...globalExtensionArgs,
-    [[type], {
-      type: 'str',
-      help: `Name of the ${type} to run a script from, for example: ` +
-            type === DRIVER_TYPE ? DRIVER_EXAMPLE : PLUGIN_EXAMPLE,
-    }],
-    [['scriptName'], {
-      default: null,
-      type: 'str',
-      help: `Name of the script to run from the ${type}. The script name must be cached ` +
-            `inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`
-    }],
+    [
+      [type],
+      {
+        type: 'str',
+        help:
+          `Name of the ${type} to run a script from, for example: ` + type ===
+          DRIVER_TYPE
+            ? DRIVER_EXAMPLE
+            : PLUGIN_EXAMPLE,
+      },
+    ],
+    [
+      ['scriptName'],
+      {
+        default: null,
+        type: 'str',
+        help:
+          `Name of the script to run from the ${type}. The script name must be cached ` +
+          `inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`,
+      },
+    ],
   ]);
 }
 
@@ -171,11 +229,8 @@ function makeRunArgs (type) {
  * which are disallowed in the config file.
  * @returns {ArgumentDefinitions}
  */
-function getServerArgs () {
-  return new Map([
-    ...toParserArgs(),
-    ...serverArgsDisallowedInConfig,
-  ]);
+function getServerArgs() {
+  return new Map([...toParserArgs(), ...serverArgsDisallowedInConfig]);
 }
 
 /**
@@ -211,7 +266,7 @@ const serverArgsDisallowedInConfig = new Map([
       const: true,
       required: false,
       help: 'Show the current Appium configuration and exit',
-    }
+    },
   ],
   [
     ['--config'],
@@ -224,10 +279,7 @@ const serverArgsDisallowedInConfig = new Map([
   ],
 ]);
 
-export {
-  getServerArgs,
-  getExtensionArgs
-};
+export {getServerArgs, getExtensionArgs};
 
 /**
  * Alias

@@ -2,14 +2,14 @@
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
  */
 
-import { env, fs } from '@appium/support';
+import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
 import YAML from 'yaml';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
-import { INSTALL_TYPE_NPM } from './extension-config';
-import { packageDidChange } from './package-changed';
+import {INSTALL_TYPE_NPM} from './extension-config';
+import {packageDidChange} from './package-changed';
 
 /**
  * Default depth to search in directory tree for whatever it is we're looking for.
@@ -61,7 +61,7 @@ const INITIAL_MANIFEST_DATA = Object.freeze({
  * @param {any} value
  * @returns {value is ExtPackageJson<ExtensionType>}
  */
-function isExtension (value) {
+function isExtension(value) {
   return (
     _.isPlainObject(value) &&
     _.isPlainObject(value.appium) &&
@@ -77,7 +77,7 @@ function isExtension (value) {
  * @param {any} value - Value to test
  * @returns {value is ExtPackageJson<DriverType>}
  */
-function isDriver (value) {
+function isDriver(value) {
   return (
     isExtension(value) &&
     _.isString(_.get(value, 'appium.driverName')) &&
@@ -93,7 +93,7 @@ function isDriver (value) {
  * @param {any} value - Value to test
  * @returns {value is ExtPackageJson<PluginType>}
  */
-function isPlugin (value) {
+function isPlugin(value) {
   return isExtension(value) && _.isString(_.get(value, 'appium.pluginName'));
 }
 
@@ -157,7 +157,7 @@ export class Manifest {
    * @param {string} appiumHome
    * @private
    */
-  constructor (appiumHome) {
+  constructor(appiumHome) {
     this._appiumHome = appiumHome;
     this._data = _.cloneDeep(INITIAL_MANIFEST_DATA);
   }
@@ -169,9 +169,7 @@ export class Manifest {
    * @param {string} appiumHome - Path to `APPIUM_HOME`
    * @returns {Manifest}
    */
-  static getInstance = _.memoize(function _getInstance (
-    appiumHome,
-  ) {
+  static getInstance = _.memoize(function _getInstance(appiumHome) {
     return new Manifest(appiumHome);
   });
 
@@ -180,13 +178,13 @@ export class Manifest {
    * @param {SyncWithInstalledExtensionsOpts} opts
    * @returns {Promise<boolean>} `true` if any extensions were added, `false` otherwise.
    */
-  async syncWithInstalledExtensions ({depthLimit = DEFAULT_SEARCH_DEPTH} = {}) {
+  async syncWithInstalledExtensions({depthLimit = DEFAULT_SEARCH_DEPTH} = {}) {
     const walkOpts = _.defaults({depthLimit}, DEFAULT_FIND_EXTENSIONS_OPTS);
     // this could be parallelized, but we can't use fs.walk as an async iterator
     let didChange = false;
     for await (const {stats, path: filepath} of fs.walk(
       this._appiumHome,
-      walkOpts,
+      walkOpts
     )) {
       if (filepath !== this._appiumHome && stats.isDirectory()) {
         try {
@@ -196,7 +194,7 @@ export class Manifest {
             // so only update `didChange` if it's new.
             const added = this.addExtensionFromPackage(
               pkg,
-              path.join(filepath, 'package.json'),
+              path.join(filepath, 'package.json')
             );
             didChange = didChange || added;
           }
@@ -211,7 +209,7 @@ export class Manifest {
    * @param {string} name - Driver name
    * @returns {boolean}
    */
-  hasDriver (name) {
+  hasDriver(name) {
     return Boolean(this._data.drivers[name]);
   }
 
@@ -220,7 +218,7 @@ export class Manifest {
    * @param {string} name - Plugin name
    * @returns {boolean}
    */
-  hasPlugin (name) {
+  hasPlugin(name) {
     return Boolean(this._data.plugins[name]);
   }
 
@@ -233,7 +231,7 @@ export class Manifest {
    * @param {string} pkgPath
    * @returns {boolean} - `true` upon success, `false` if the extension is already registered.
    */
-  addExtensionFromPackage (pkgJson, pkgPath) {
+  addExtensionFromPackage(pkgJson, pkgPath) {
     /**
      * @type {InternalMetadata}
      */
@@ -248,7 +246,7 @@ export class Manifest {
       if (!this.hasDriver(pkgJson.appium.driverName)) {
         this.addExtension(DRIVER_TYPE, pkgJson.appium.driverName, {
           ..._.omit(pkgJson.appium, 'driverName'),
-          ...internal
+          ...internal,
         });
         return true;
       }
@@ -265,8 +263,8 @@ export class Manifest {
     } else {
       throw new TypeError(
         `The extension in ${path.dirname(
-          pkgPath,
-        )} is neither a valid driver nor a valid plugin.`,
+          pkgPath
+        )} is neither a valid driver nor a valid plugin.`
       );
     }
   }
@@ -282,21 +280,21 @@ export class Manifest {
    * @param {ExtManifest<ExtType>} extData - Extension metadata
    * @returns {void}
    */
-  addExtension (extType, extName, extData) {
+  addExtension(extType, extName, extData) {
     this._data[`${extType}s`][extName] = extData;
   }
 
   /**
    * Returns the APPIUM_HOME path
    */
-  get appiumHome () {
+  get appiumHome() {
     return this._appiumHome;
   }
 
   /**
    * Returns the path to the manifest file
    */
-  get manifestPath () {
+  get manifestPath() {
     return this._manifestPath;
   }
 
@@ -307,7 +305,7 @@ export class Manifest {
    * @param {ExtType} extType
    * @returns {ExtRecord<ExtType>}
    */
-  getExtensionData (extType) {
+  getExtensionData(extType) {
     return this._data[/** @type {string} */ (`${extType}s`)];
   }
 
@@ -321,7 +319,7 @@ export class Manifest {
    * Only one read operation should happen at a time.  This is controlled via the {@link Manifest._reading} property.
    * @returns {Promise<ManifestData>} The data
    */
-  async read () {
+  async read() {
     if (this._reading) {
       await this._reading;
       return this._data;
@@ -344,11 +342,11 @@ export class Manifest {
           if (this._manifestPath) {
             throw new Error(
               `Appium had trouble loading the extension installation ` +
-                `cache file (${this._manifestPath}). It may be invalid YAML. Specific error: ${err.message}`,
+                `cache file (${this._manifestPath}). It may be invalid YAML. Specific error: ${err.message}`
             );
           } else {
             throw new Error(
-              `Appium encountered an unknown problem. Specific error: ${err.message}`,
+              `Appium encountered an unknown problem. Specific error: ${err.message}`
             );
           }
         }
@@ -357,7 +355,7 @@ export class Manifest {
       this._data = data;
       let installedExtensionsChanged = false;
       if (
-        await env.hasAppiumDependency(this.appiumHome) &&
+        (await env.hasAppiumDependency(this.appiumHome)) &&
         (await packageDidChange(this.appiumHome))
       ) {
         installedExtensionsChanged = await this.syncWithInstalledExtensions();
@@ -382,14 +380,14 @@ export class Manifest {
    * @private
    * @returns {Promise<string>}
    */
-  async _setManifestPath () {
+  async _setManifestPath() {
     if (!this._manifestPath) {
       this._manifestPath = await env.resolveManifestPath(this._appiumHome);
 
       /* istanbul ignore if */
       if (path.relative(this._appiumHome, this._manifestPath).startsWith('.')) {
         throw new Error(
-          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${this.appiumHome}, manifest file: ${this._manifestPath}`,
+          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${this.appiumHome}, manifest file: ${this._manifestPath}`
         );
       }
     }
@@ -405,7 +403,7 @@ export class Manifest {
    * @todo If this becomes too much of a bottleneck, throttle it.
    * @returns {Promise<boolean>} Whether the data was written
    */
-  async write () {
+  async write() {
     if (this._writing) {
       return this._writing;
     }
@@ -416,21 +414,21 @@ export class Manifest {
       } catch (err) {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(
-            this._manifestPath,
-          )}. Original error: ${err.message}`,
+            this._manifestPath
+          )}. Original error: ${err.message}`
         );
       }
       try {
         await fs.writeFile(
           this._manifestPath,
           YAML.stringify(this._data),
-          'utf8',
+          'utf8'
         );
         return true;
       } catch (err) {
         throw new Error(
           `Appium could not write to manifest at ${this._manifestPath} using APPIUM_HOME ${this._appiumHome}. ` +
-            `Please ensure it is writable. Original error: ${err.message}`,
+            `Please ensure it is writable. Original error: ${err.message}`
         );
       }
     })();
@@ -444,12 +442,12 @@ export class Manifest {
 
 /**
  * Type of the string referring to a driver (typically as a key or type string)
- * @typedef {import('../../types').DriverType} DriverType
+ * @typedef {import('appium/types').DriverType} DriverType
  */
 
 /**
  * Type of the string referring to a plugin (typically as a key or type string)
- * @typedef {import('../../types').PluginType} PluginType
+ * @typedef {import('appium/types').PluginType} PluginType
  */
 
 /**
@@ -458,27 +456,26 @@ export class Manifest {
  */
 
 /**
- * @typedef {import('../../types/appium-manifest').ManifestData} ManifestData
- * @typedef {import('../../types/appium-manifest').InternalMetadata} InternalMetadata
+ * @typedef {import('appium/types').ManifestData} ManifestData
+ * @typedef {import('appium/types').InternalMetadata} InternalMetadata
  */
 
 /**
  * @template T
- * @typedef {import('../../types/external-manifest').ExtPackageJson<T>} ExtPackageJson
+ * @typedef {import('appium/types').ExtPackageJson<T>} ExtPackageJson
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtManifest<T>} ExtManifest
+ * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
  */
 
 /**
  * @template T
- * @typedef {import('../../types/appium-manifest').ExtRecord<T>} ExtRecord
+ * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
  */
 
 /**
  * Either `driver` or `plugin` rn
- * @typedef {import('../../types').ExtensionType} ExtensionType
+ * @typedef {import('appium/types').ExtensionType} ExtensionType
  */
-

@@ -1,9 +1,9 @@
 // @ts-check
 import B from 'bluebird';
-import { promises as fs } from 'fs';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../../../lib/constants';
-import { resolveFixture, rewiremock } from '../../helpers';
-import { initMocks } from './mocks';
+import {promises as fs} from 'fs';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
+import {resolveFixture, rewiremock} from '../../helpers';
+import {initMocks} from './mocks';
 
 const {expect} = chai;
 
@@ -27,7 +27,7 @@ describe('Manifest', function () {
   });
 
   /**
-   * @type {typeof import('../../../lib/extension/manifest').Manifest}
+   * @type {typeof import('appium/lib/extension/manifest').Manifest}
    */
   let Manifest;
 
@@ -38,7 +38,7 @@ describe('Manifest', function () {
 
     ({Manifest} = rewiremock.proxy(
       () => require('../../../lib/extension/manifest'),
-      overrides,
+      overrides
     ));
 
     Manifest.getInstance.cache = new Map();
@@ -72,7 +72,7 @@ describe('Manifest', function () {
     describe('appiumHome', function () {
       it('should return the `appiumHome` path', function () {
         expect(Manifest.getInstance('/some/path').appiumHome).to.equal(
-          '/some/path',
+          '/some/path'
         );
       });
 
@@ -103,7 +103,7 @@ describe('Manifest', function () {
         it('should return the manifest file path', function () {
           // this path is not the actual path; it's mocked in `MockAppiumSupport.env.resolveManifestPath`.
           expect(Manifest.getInstance('/some/path').manifestPath).to.equal(
-            '/some/path/extensions.yaml',
+            '/some/path/extensions.yaml'
           );
         });
       });
@@ -119,7 +119,7 @@ describe('Manifest', function () {
   });
 
   describe('instance method', function () {
-    /** @type {import('../../../lib/extension/manifest').Manifest} */
+    /** @type {import('appium/lib/extension/manifest').Manifest} */
     let manifest;
 
     beforeEach(function () {
@@ -153,7 +153,7 @@ describe('Manifest', function () {
         it('should reject', async function () {
           await expect(manifest.read()).to.be.rejectedWith(
             Error,
-            /trouble loading the extension installation cache file/i,
+            /trouble loading the extension installation cache file/i
           );
         });
       });
@@ -161,14 +161,14 @@ describe('Manifest', function () {
       describe('when the manifest path cannot be determined', function () {
         beforeEach(function () {
           MockAppiumSupport.env.resolveManifestPath.rejects(
-            new Error('Could not determine manifest path'),
+            new Error('Could not determine manifest path')
           );
         });
 
         it('should reject', async function () {
           await expect(manifest.read()).to.be.rejectedWith(
             Error,
-            /could not determine manifest path/i,
+            /could not determine manifest path/i
           );
         });
       });
@@ -180,7 +180,7 @@ describe('Manifest', function () {
         it('should not read the file twice', function () {
           expect(MockAppiumSupport.fs.readFile).to.have.been.calledOnceWith(
             '/some/path/extensions.yaml',
-            'utf8',
+            'utf8'
           );
         });
       });
@@ -194,7 +194,7 @@ describe('Manifest', function () {
         it('should attempt to read the file at `filepath`', function () {
           expect(MockAppiumSupport.fs.readFile).to.have.been.calledOnceWith(
             '/some/path/extensions.yaml',
-            'utf8',
+            'utf8'
           );
         });
 
@@ -234,10 +234,10 @@ describe('Manifest', function () {
       });
 
       describe('when called after `read()`', function () {
-        /** @type {import('../../../lib/extension/manifest').ManifestData} */
+        /** @type {ManifestData} */
         let data;
 
-        /** @type {ExtData<DriverType>} */
+        /** @type {ExtManifest<DriverType>} */
         const extData = {
           version: '1.0.0',
           automationName: 'Derp',
@@ -274,7 +274,7 @@ describe('Manifest', function () {
           it('should reject', async function () {
             await expect(manifest.write()).to.be.rejectedWith(
               Error,
-              /Appium could not write to manifest/i,
+              /Appium could not write to manifest/i
             );
           });
         });
@@ -287,7 +287,7 @@ describe('Manifest', function () {
           it('should reject', async function () {
             await expect(manifest.write()).to.be.rejectedWith(
               Error,
-              /could not create the directory for the manifest file/i,
+              /could not create the directory for the manifest file/i
             );
           });
         });
@@ -295,7 +295,7 @@ describe('Manifest', function () {
     });
 
     describe('addExtension()', function () {
-      /** @type {ExtData<DriverType>} */
+      /** @type {ExtManifest<DriverType>} */
       const extData = {
         automationName: 'derp',
         version: '1.0.0',
@@ -312,7 +312,7 @@ describe('Manifest', function () {
       });
 
       describe('when existing extension added', function () {
-        /** @type {ExtData<DriverType>} */
+        /** @type {ExtManifest<DriverType>} */
 
         beforeEach(function () {
           manifest.addExtension(DRIVER_TYPE, 'foo', extData);
@@ -331,7 +331,7 @@ describe('Manifest', function () {
 
     describe('addExtensionFromPackage()', function () {
       describe('when provided a valid package.json for a driver and its path', function () {
-        /** @type {ExtensionPackageJson<DriverType>} */
+        /** @type {ExtPackageJson<DriverType>} */
         let packageJson;
 
         beforeEach(function () {
@@ -350,7 +350,7 @@ describe('Manifest', function () {
         it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(
             packageJson,
-            '/some/path/to/package.json',
+            '/some/path/to/package.json'
           );
           expect(manifest.getExtensionData('driver')).to.deep.equal({
             myDriver: {
@@ -369,8 +369,8 @@ describe('Manifest', function () {
           expect(
             manifest.addExtensionFromPackage(
               packageJson,
-              '/some/path/to/package.json',
-            ),
+              '/some/path/to/package.json'
+            )
           ).to.be.true;
         });
 
@@ -378,7 +378,7 @@ describe('Manifest', function () {
           beforeEach(function () {
             manifest.addExtensionFromPackage(
               packageJson,
-              '/some/path/to/package.json',
+              '/some/path/to/package.json'
             );
           });
 
@@ -386,15 +386,15 @@ describe('Manifest', function () {
             expect(
               manifest.addExtensionFromPackage(
                 packageJson,
-                '/some/path/to/package.json',
-              ),
+                '/some/path/to/package.json'
+              )
             ).to.be.false;
           });
         });
       });
 
       describe('when provided a valid package.json for a plugin and its path', function () {
-        /** @type {ExtensionPackageJson<PluginType>} */
+        /** @type {ExtPackageJson<PluginType>} */
         let packageJson;
         beforeEach(function () {
           packageJson = {
@@ -410,7 +410,7 @@ describe('Manifest', function () {
         it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(
             packageJson,
-            '/some/path/to/package.json',
+            '/some/path/to/package.json'
           );
           expect(manifest.getExtensionData(PLUGIN_TYPE)).to.deep.equal({
             myPlugin: {
@@ -427,8 +427,8 @@ describe('Manifest', function () {
           expect(
             manifest.addExtensionFromPackage(
               packageJson,
-              '/some/path/to/package.json',
-            ),
+              '/some/path/to/package.json'
+            )
           ).to.be.true;
         });
 
@@ -436,7 +436,7 @@ describe('Manifest', function () {
           beforeEach(function () {
             manifest.addExtensionFromPackage(
               packageJson,
-              '/some/path/to/package.json',
+              '/some/path/to/package.json'
             );
           });
 
@@ -444,8 +444,8 @@ describe('Manifest', function () {
             expect(
               manifest.addExtensionFromPackage(
                 packageJson,
-                '/some/path/to/package.json',
-              ),
+                '/some/path/to/package.json'
+              )
             ).to.be.false;
           });
         });
@@ -457,8 +457,8 @@ describe('Manifest', function () {
             manifest.addExtensionFromPackage(
               // @ts-expect-error
               {herp: 'derp'},
-              '/some/path/to/package.json',
-            ),
+              '/some/path/to/package.json'
+            )
           ).to.throw(/neither a valid driver nor a valid plugin/);
         });
       });
@@ -485,7 +485,7 @@ describe('Manifest', function () {
                 next,
               }),
             })
-          ),
+          )
         );
         MockAppiumSupport.env.readPackageInDir.resolves({
           name: 'foo',
@@ -505,7 +505,7 @@ describe('Manifest', function () {
       it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
         expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property(
-          'myDriver',
+          'myDriver'
         );
       });
     });
@@ -552,15 +552,16 @@ describe('Manifest', function () {
 
 /**
  * @template T
- * @typedef {import('../../../lib/extension/manifest').ExtData<T>} ExtData
+ * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
  */
 
 /**
  * @template T
- * @typedef {import('../../../lib/extension/manifest').ExtensionPackageJson<T>} ExtensionPackageJson
+ * @typedef {import('appium/types').ExtPackageJson<T>} ExtPackageJson
  */
 
 /**
- * @typedef {import('../../../lib/extension/manifest').DriverType} DriverType
- * @typedef {import('../../../lib/extension/manifest').PluginType} PluginType
+ * @typedef {import('appium/types').DriverType} DriverType
+ * @typedef {import('appium/types').PluginType} PluginType
+ * @typedef {import('appium/types').ManifestData} ManifestData
  */

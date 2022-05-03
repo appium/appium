@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "composite": true,
     "declaration": true,
     "declarationMap": true,
@@ -12,12 +13,6 @@
     "strictNullChecks": true,
     "removeComments": false,
     "target": "es2015",
-    "types": [
-      "node",
-      "mocha",
-      "chai",
-      "sinon-chai",
-      "chai-as-promised"
-    ]
+    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
   }
 }

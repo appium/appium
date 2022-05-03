@@ -11,7 +11,17 @@
       "rules": {"func-names": "off"}
     },
     {
-      "files": ["./packages/*/index.js", "./packages/*/scripts/**/*.js", "./test/*.js"],
+      "files": ["packages/*/index.js", "packages/*/scripts/**/*.js", "test/*.js"],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    },
+    {
+      "files": [
+        "packages/appium/support.js",
+        "packages/appium/driver.js",
+        "packages/appium/plugin.js"
+      ],
       "parserOptions": {
         "sourceType": "script"
       }

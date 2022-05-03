@@ -84,6 +84,8 @@ class AppiumDriver extends DriverCore {
   /** @type {AppiumServer} */
   server;
 
+  desiredCapConstraints = desiredCapabilityConstraints;
+
   /**
    * @param {DriverOpts} opts
    */
@@ -97,8 +99,6 @@ class AppiumDriver extends DriverCore {
     }
 
     super(opts);
-
-    this.desiredCapConstraints = desiredCapabilityConstraints;
 
     this.args = {...opts};
 
@@ -406,7 +406,7 @@ class AppiumDriver extends DriverCore {
 
   /**
    *
-   * @param {import('appium/types').DriverClass} InnerDriver
+   * @param {import('@appium/base-driver').DriverClass} InnerDriver
    * @returns {Promise<DriverData[]>}}
    */
   // eslint-disable-next-line require-await

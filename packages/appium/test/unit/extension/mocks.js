@@ -7,6 +7,7 @@
 
 import path from 'path';
 import {createSandbox} from 'sinon';
+import {version as APPIUM_VER} from '../../../package.json';
 
 export function initMocks(sandbox = createSandbox()) {
   /**
@@ -25,6 +26,12 @@ export function initMocks(sandbox = createSandbox()) {
         })
       ),
       mkdirp: /** @type {MockAppiumSupportFs['mkdirp']} */ (sandbox.stub().resolves()),
+      readPackageJsonFrom: /** @type {MockAppiumSupportFs['readPackageJsonFrom']} */ (
+        sandbox.stub().returns({version: APPIUM_VER, engines: {node: '>=12'}})
+      ),
+      findRoot: /** @type {MockAppiumSupportFs['findRoot']} */ (
+        sandbox.stub().returns(path.join(__dirname, '..', '..', '..'))
+      ),
     },
     env: {
       resolveAppiumHome: /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
@@ -48,9 +55,27 @@ export function initMocks(sandbox = createSandbox()) {
     },
     logger: {
       getLogger: /** @type {MockAppiumSupportLogger['getLogger']} */ (
-        sandbox
-          .stub()
-          .returns(sandbox.stub(new global.console.Console(process.stdout, process.stderr)))
+        sandbox.stub().callsFake(() => MockAppiumSupport.logger.__logger)
+      ),
+      __logger: sandbox.stub(new global.console.Console(process.stdout, process.stderr)),
+    },
+    system: {
+      isWindows: /** @type {MockAppiumSupportSystem['isWindows']} */ (
+        sandbox.stub().returns(false)
+      ),
+    },
+    npm: {
+      getLatestVersion: /** @type {MockAppiumSupportNpm['getLatestVersion']} */ (
+        sandbox.stub().resolves('2.0.0')
+      ),
+      getLatestSafeUpgradeVersion:
+        /** @type {MockAppiumSupportNpm['getLatestSafeUpgradeVersion']} */ (
+          sandbox.stub().resolves('1.1.0')
+        ),
+    },
+    util: {
+      compareVersions: /** @type {MockAppiumSupportUtil['compareVersions']} */ (
+        sandbox.stub().returns(true)
       ),
     },
   };
@@ -98,12 +123,16 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {MockAppiumSupportLogger} logger
  * @property {MockAppiumSupportFs} fs
  * @property {MockAppiumSupportEnv} env
+ * @property {MockAppiumSupportSystem} system
+ * @property {MockAppiumSupportNpm} npm
+ * @property {MockAppiumSupportUtil} util
  */
 
 /**
  * Mock of package `@appium/support`'s `logger` module
  * @typedef MockAppiumSupportLogger
- * @property {sinon.SinonStub<[string?], typeof console>} getLogger
+ * @property {sinon.SinonStub<[string?], Console>} getLogger
+ * @property {sinon.SinonStubbedInstance<Console>} __logger
  */
 
 /**
@@ -113,6 +142,8 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['writeFile']>} writeFile
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['walk']>} walk
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['mkdirp']>} mkdirp
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['readPackageJsonFrom']>} readPackageJsonFrom
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['findRoot']>} findRoot
  */
 
 /**
@@ -123,6 +154,22 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').readPackageInDir>} readPackageInDir
  * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').hasAppiumDependency>} hasAppiumDependency
  * @property {import('@appium/support/lib/env').NormalizedPackageJson} __pkg
+ */
+
+/**
+ * @typedef MockAppiumSupportSystem
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/system').isWindows>} isWindows
+ */
+
+/**
+ * @typedef MockAppiumSupportNpm
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/npm').NPM['getLatestVersion']>} getLatestVersion
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/npm').NPM['getLatestSafeUpgradeVersion']>} getLatestSafeUpgradeVersion
+ */
+
+/**
+ * @typedef MockAppiumSupportUtil
+ * @property {sinon.SinonStubbedMember<import('@appium/support/lib/util').compareVersions>} compareVersions
  */
 
 /**

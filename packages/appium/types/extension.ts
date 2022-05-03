@@ -1,15 +1,5 @@
-import type {BaseDriverBase} from '@appium/base-driver/lib/basedriver/driver';
-import {Class, Driver, ExternalDriver} from '@appium/types';
-import {DriverType, ExtensionType, PluginType} from '.';
-
-export type DriverClass = BaseDriverBase<ExternalDriver, ExternalDriverStatic>;
-
-/**
- * Additional static props for external driver classes
- */
-export interface ExternalDriverStatic {
-  driverName: string;
-}
+import {DriverClass} from '@appium/base-driver';
+import {Class, Driver, DriverType, PluginType} from '@appium/types';
 
 /**
  * TODO: This should be derived from the base plugin.

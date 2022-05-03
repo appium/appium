@@ -1,8 +1,4 @@
 {
-  "exclude": [
-    "packages/**/test/**",
-    "packages/**/build/**"
-  ],
   "files": [],
   "references": [
     {

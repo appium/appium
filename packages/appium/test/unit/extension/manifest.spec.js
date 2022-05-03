@@ -4,6 +4,7 @@ import {promises as fs} from 'fs';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
+import {version as APPIUM_VER} from '../../../package.json';
 
 const {expect} = chai;
 
@@ -35,7 +36,6 @@ describe('Manifest', function () {
     let overrides;
     ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
 
     Manifest.getInstance.cache = new Map();
@@ -240,6 +240,7 @@ describe('Manifest', function () {
           platformNames: ['dogs', 'cats'],
           installSpec: 'derp',
           installType: 'npm',
+          appiumVersion: '2.0.0',
         };
 
         beforeEach(async function () {
@@ -298,11 +299,14 @@ describe('Manifest', function () {
         platformNames: ['dogs', 'cats'],
         installSpec: 'derp',
         installType: 'npm',
+        appiumVersion: '2.0.0',
       };
 
-      it('should add the extension to the internal data object', function () {
-        manifest.addExtension('driver', 'foo', extData);
-        expect(manifest.getExtensionData('driver').foo).to.equal(extData);
+      it('should add a clone of the extension manifest to the internal data object', function () {
+        manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+        expect(manifest.getExtensionData(DRIVER_TYPE).foo)
+          .to.eql(extData)
+          .and.not.to.equal(extData);
       });
 
       describe('when existing extension added', function () {
@@ -317,12 +321,55 @@ describe('Manifest', function () {
             ...extData,
             automationName: 'BLAAHAH',
           };
-          manifest.addExtension('driver', 'foo', expected);
-          expect(manifest.getExtensionData('driver').foo).to.equal(expected);
+          manifest.addExtension(DRIVER_TYPE, 'foo', expected);
+          expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.eql(expected);
+        });
+      });
+
+      describe('when the extension has no peer dependency on `appium`', function () {
+        beforeEach(function () {
+          delete extData.appiumVersion;
+        });
+
+        it('should work anyway', function () {
+          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+          expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.not.have.property('appiumVersion');
+        });
+      });
+
+      describe('when the extension has a peer dependency on `appium`, but it references a filepath', function () {
+        beforeEach(function () {
+          extData.appiumVersion = 'file:../appium';
+        });
+
+        it('should set `appiumVersion` to the current appium version', function () {
+          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+          expect(manifest.getExtensionData(DRIVER_TYPE).foo.appiumVersion).to.equal(APPIUM_VER);
         });
       });
     });
 
+    describe('getExtensionData()', function () {
+      /** @type {ExtManifest<DriverType>} */
+      const extData = {
+        version: '1.0.0',
+        automationName: 'Derp',
+        mainClass: 'SomeClass',
+        pkgName: 'derp',
+        platformNames: ['dogs', 'cats'],
+        installSpec: 'derp',
+        installType: 'npm',
+        appiumVersion: '2.0.0',
+      };
+
+      beforeEach(function () {
+        manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+      });
+
+      it('should return all extension data for an extension type', function () {
+        expect(manifest.getExtensionData(DRIVER_TYPE)).to.eql({foo: extData});
+      });
+    });
     describe('addExtensionFromPackage()', function () {
       describe('when provided a valid package.json for a driver and its path', function () {
         /** @type {ExtPackageJson<DriverType>} */
@@ -338,12 +385,15 @@ describe('Manifest', function () {
               platformNames: ['dogs', 'cats'],
               driverName: 'myDriver',
             },
+            peerDependencies: {
+              appium: '2.0.0',
+            },
           };
         });
 
         it('should add an extension to the internal data', function () {
           manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
-          expect(manifest.getExtensionData('driver')).to.deep.equal({
+          expect(manifest.getExtensionData(DRIVER_TYPE)).to.deep.equal({
             myDriver: {
               automationName: 'derp',
               mainClass: 'SomeClass',
@@ -352,6 +402,7 @@ describe('Manifest', function () {
               version: '1.0.0',
               installType: 'npm',
               installSpec: 'derp@1.0.0',
+              appiumVersion: '2.0.0',
             },
           });
         });
@@ -384,6 +435,9 @@ describe('Manifest', function () {
               mainClass: 'SomeClass',
               pluginName: 'myPlugin',
             },
+            peerDependencies: {
+              appium: '2.0.0',
+            },
           };
         });
 
@@ -396,6 +450,7 @@ describe('Manifest', function () {
               version: '1.0.0',
               installType: 'npm',
               installSpec: 'derp@1.0.0',
+              appiumVersion: '2.0.0',
             },
           });
         });
@@ -426,6 +481,34 @@ describe('Manifest', function () {
               '/some/path/to/package.json'
             )
           ).to.throw(/neither a valid driver nor a valid plugin/);
+        });
+      });
+
+      describe('when the extension has an appium peer dependency beginning with `file:..`', function () {
+        /** @type {ExtPackageJson<DriverType>} */
+        let packageJson;
+
+        beforeEach(function () {
+          packageJson = {
+            name: 'derp',
+            version: '1.0.0',
+            appium: {
+              automationName: 'derp',
+              mainClass: 'SomeClass',
+              platformNames: ['dogs', 'cats'],
+              driverName: 'myDriver',
+            },
+            peerDependencies: {
+              appium: 'file:../appium',
+            },
+          };
+        });
+
+        it('should set the appiumVersion to the current Appium version', function () {
+          manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
+          expect(manifest.getExtensionData(DRIVER_TYPE).myDriver.appiumVersion).to.equal(
+            APPIUM_VER
+          );
         });
       });
     });
@@ -464,6 +547,9 @@ describe('Manifest', function () {
             pkgName: 'derp',
             platformNames: ['dogs', 'cats'],
             driverName: 'myDriver',
+          },
+          peerDependencies: {
+            appium: '2.0.0',
           },
         });
       });

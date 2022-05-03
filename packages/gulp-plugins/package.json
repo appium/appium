@@ -58,6 +58,7 @@
     "bluebird": "3.7.2",
     "del": "6.0.0",
     "eslint": "7.32.0",
+    "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "9.0.0",
     "eslint-plugin-promise": "6.0.0",

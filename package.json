@@ -29,11 +29,11 @@
     "build:loose": "run-s -c build:distfiles build:types || true",
     "build:types": "tsc -b",
     "clean": "run-s clean:artifacts clean:packages clean:monorepo",
+    "clean:artifacts": "run-s clean:distfiles clean:types && npx rimraf \"packages/*/build\"",
     "clean:distfiles": "npx rimraf \"packages/*/build/**/*.js\"",
     "clean:monorepo": "npx rimraf node_modules package-lock.json",
     "clean:packages": "lerna clean -y && npx rimraf \"packages/*/package-lock.json\"",
     "clean:types": "tsc -b --clean",
-    "clean:artifacts": "run-s clean:distfiles clean:types && npx rimraf \"packages/*/build\"",
     "dev": "run-p dev:*",
     "dev:distfiles": "lerna run --parallel --prefix --concurrency=8 dev",
     "dev:types": "tsc -b --watch",
@@ -70,7 +70,14 @@
     "precommit-lint"
   ],
   "lint-staged": {
-    "*.js": "eslint --fix"
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "bracketSpacing": false,
+    "singleQuote": true
   },
   "dependencies": {
     "@appium/base-driver": "file:packages/base-driver",
@@ -78,6 +85,7 @@
     "@appium/doctor": "file:packages/doctor",
     "@appium/docutils": "file:packages/docutils",
     "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
+    "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
     "@appium/fake-driver": "file:packages/fake-driver",
     "@appium/fake-plugin": "file:packages/fake-plugin",
     "@appium/gulp-plugins": "file:packages/gulp-plugins",
@@ -89,7 +97,6 @@
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",
     "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
-    "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
     "appium": "file:packages/appium"
   },
   "devDependencies": {
@@ -142,6 +149,7 @@
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
     "eslint": "7.32.0",
+    "eslint-config-prettier": "8.5.0",
     "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "9.0.0",
@@ -159,6 +167,7 @@
     "mocha": "10.0.0",
     "npm-run-all": "4.1.5",
     "pre-commit": "1.2.2",
+    "prettier": "2.6.2",
     "rewiremock": "3.14.3",
     "rimraf": "3.0.2",
     "serve-static": "1.15.0",

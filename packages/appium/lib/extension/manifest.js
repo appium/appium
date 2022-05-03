@@ -10,6 +10,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
 import {INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from './package-changed';
+import {APPIUM_VER} from '../config';
 
 /**
  * Default depth to search in directory tree for whatever it is we're looking for.
@@ -226,12 +227,15 @@ export class Manifest {
    * @returns {boolean} - `true` upon success, `false` if the extension is already registered.
    */
   addExtensionFromPackage(pkgJson, pkgPath) {
+    const extensionPath = path.dirname(pkgPath);
+
     /**
      * @type {InternalMetadata}
      */
     const internal = {
       pkgName: pkgJson.name,
       version: pkgJson.version,
+      appiumVersion: pkgJson.peerDependencies?.appium,
       installType: INSTALL_TYPE_NPM,
       installSpec: `${pkgJson.name}@${pkgJson.version}`,
     };
@@ -256,7 +260,7 @@ export class Manifest {
       return false;
     } else {
       throw new TypeError(
-        `The extension in ${path.dirname(pkgPath)} is neither a valid driver nor a valid plugin.`
+        `The extension in ${extensionPath} is neither a valid driver nor a valid plugin.`
       );
     }
   }
@@ -270,10 +274,15 @@ export class Manifest {
    * @param {ExtType} extType - `driver` or `plugin`
    * @param {string} extName - Name of extension
    * @param {ExtManifest<ExtType>} extData - Extension metadata
-   * @returns {void}
+   * @returns {ExtManifest<ExtType>} A clone of `extData`, potentially with a mutated `appiumVersion` field
    */
   addExtension(extType, extName, extData) {
-    this._data[`${extType}s`][extName] = extData;
+    const data = _.clone(extData);
+    if (data.appiumVersion?.startsWith('file:..')) {
+      data.appiumVersion = APPIUM_VER;
+    }
+    this._data[`${extType}s`][extName] = data;
+    return data;
   }
 
   /**
@@ -326,6 +335,7 @@ export class Manifest {
         log.debug(`Reading ${this._manifestPath}...`);
         const yaml = await fs.readFile(this._manifestPath, 'utf8');
         data = YAML.parse(yaml);
+        log.debug(`Parsed manifest file: ${JSON.stringify(data, null, 2)}`);
       } catch (err) {
         if (err.code === 'ENOENT') {
           data = _.cloneDeep(INITIAL_MANIFEST_DATA);

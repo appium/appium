@@ -31,14 +31,10 @@ export class DriverConfig extends ExtensionConfig {
    * @param {import('./manifest').Manifest} manifest - Manifest instance
    * @param {DriverConfigOptions} [opts]
    */
-  constructor(manifest, {logFn, extData} = {}) {
+  constructor(manifest, {logFn} = {}) {
     super(DRIVER_TYPE, manifest, logFn);
 
     this.knownAutomationNames = new Set();
-
-    if (extData) {
-      this.validate(extData);
-    }
   }
 
   /**
@@ -49,8 +45,8 @@ export class DriverConfig extends ExtensionConfig {
    * @throws If `manifest` already associated with a `DriverConfig`
    * @returns {DriverConfig}
    */
-  static create(manifest, {extData, logFn} = {}) {
-    const instance = new DriverConfig(manifest, {logFn, extData});
+  static create(manifest, {logFn} = {}) {
+    const instance = new DriverConfig(manifest, {logFn});
     if (DriverConfig.getInstance(manifest)) {
       throw new Error(
         `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig; use DriverConfig.getInstance() to retrieve it.`
@@ -71,11 +67,10 @@ export class DriverConfig extends ExtensionConfig {
 
   /**
    * Checks extensions for problems
-   * @param {ExtRecord<DriverType>} exts
    */
-  validate(exts) {
+  async validate() {
     this.knownAutomationNames.clear();
-    return super.validate(exts);
+    return await super._validate(this.manifest.getExtensionData(DRIVER_TYPE));
   }
 
   /**
@@ -220,7 +215,6 @@ export class DriverConfig extends ExtensionConfig {
 /**
  * @typedef DriverConfigOptions
  * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
- * @property {ManifestData['drivers']} [extData] - Extension data
  */
 
 /**
@@ -252,7 +246,7 @@ export class DriverConfig extends ExtensionConfig {
 /**
  * Return value of {@linkcode DriverConfig.findMatchingDriver}
  * @typedef MatchedDriver
- * @property {import('appium/types').DriverClass} driver
+ * @property {import('@appium/base-driver').DriverClass} driver
  * @property {string} version
  * @property {string} driverName
  */

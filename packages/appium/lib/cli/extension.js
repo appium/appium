@@ -5,7 +5,7 @@ import PluginCommand from './plugin-command';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {errAndQuit, log, JSON_SPACES} from './utils';
 
-const commandClasses = Object.freeze(
+export const commandClasses = Object.freeze(
   /** @type {const} */ ({
     [DRIVER_TYPE]: DriverCommand,
     [PLUGIN_TYPE]: PluginCommand,

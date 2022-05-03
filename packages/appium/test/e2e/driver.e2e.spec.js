@@ -44,7 +44,7 @@ describe('FakeDriver - via HTTP', function () {
   let appiumHome;
   // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
   // actually going to be required by Appium
-  /** @type {import('appium/types').DriverClass} */
+  /** @type {import('@appium/types').DriverClass} */
   let FakeDriver;
   /** @type {string} */
   let testServerBaseSessionUrl;

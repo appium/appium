@@ -24,6 +24,12 @@ export interface InternalMetadata {
    * Whatever the user typed as the extension to install. May be derived from `package.json`
    */
   installSpec: string;
+  /**
+   * Maximum version of Appium that this extension is compatible with.
+   *
+   * If `undefined`, we'll try anyway.
+   */
+  appiumVersion?: string;
 }
 
 /**

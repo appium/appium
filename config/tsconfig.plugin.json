@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "appium": ["../packages/appium"]
+    },
+    "types": ["webdriverio/async"]
+  },
+  "extends": "./tsconfig.base.json",
+  "references": [{"path": "../packages/appium"}]
+}

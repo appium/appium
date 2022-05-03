@@ -324,27 +324,63 @@ class ExtensionCommand {
    * load as the main driver class, or to be able to detect incompatibilities between driver and
    * appium versions.
    *
-   * @param {ExtPackageJson<ExtType>} pkgJsonData - the package.json data for a driver module, as if it had been straightforwardly 'require'd
-   * @param {string} installSpec
+   * @param {ExtPackageJson<ExtType>} pkgJson - the package.json data for a driver module, as if it had been straightforwardly 'require'd
+   * @param {string} installSpec - Extension name/spec
    * @returns {ExtensionFields<ExtType>}
    */
-  getExtensionFields(pkgJsonData, installSpec) {
-    if (!pkgJsonData.appium) {
-      throw new Error(
-        `Installed driver did not have an 'appium' section in its ` +
-          `package.json file as expected`
-      );
-    }
-    const {appium, name, version} = pkgJsonData;
-    this.validateExtensionFields(appium, installSpec);
+  getExtensionFields(pkgJson, installSpec) {
+    this.validatePackageJson(pkgJson, installSpec);
+    const {appium, name, version, peerDependencies} = pkgJson;
+
     /** @type {unknown} */
-    const result = {...appium, pkgName: name, version};
+    const result = {
+      ...appium,
+      pkgName: name,
+      version,
+      appiumVersion: peerDependencies?.appium,
+    };
     return /** @type {ExtensionFields<ExtType>} */ (result);
   }
 
   /**
-   * For any package.json fields which a particular type of extension requires, validate the
-   * presence and form of those fields on the package.json data, throwing an error if anything is
+   * Validates the _required_ root fields of an extension's `package.json` file.
+   *
+   * These required fields are:
+   * - `name`
+   * - `version`
+   * - `appium`
+   * @param {import('type-fest').PackageJson} pkgJson - `package.json` of extension
+   * @param {string} installSpec - Extension name/spec
+   * @throws {ReferenceError} If `package.json` has a missing or invalid field
+   * @returns {pkgJson is ExtPackageJson<ExtType>}
+   */
+  validatePackageJson(pkgJson, installSpec) {
+    const {appium, name, version} = /** @type {ExtPackageJson<ExtType>} */ (pkgJson);
+
+    /**
+     *
+     * @param {string} field
+     * @returns {ReferenceError}
+     */
+    const createMissingFieldError = (field) =>
+      new ReferenceError(
+        `${this.type} "${installSpec}" invalid; missing a \`${field}\` field of its \`package.json\``
+      );
+
+    if (!name) {
+      throw createMissingFieldError('name');
+    }
+    if (!version) {
+      throw createMissingFieldError('version');
+    }
+    if (!appium) {
+      throw createMissingFieldError('appium');
+    }
+
+    this.validateExtensionFields(appium, installSpec);
+
+    return true;
+  }
 
   /**
    * For any `package.json` fields which a particular type of extension requires, validate the
@@ -728,7 +764,7 @@ export {ExtensionCommand};
 /**
  * Returned by {@linkcode ExtensionCommand.getExtensionFields}
  * @template {ExtensionType} ExtType
- * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string } & import('../../types/external-manifest').CommonMetadata} ExtensionFields
+ * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string, appiumVersion: string } & import('appium/types').CommonMetadata} ExtensionFields
  */
 
 /**

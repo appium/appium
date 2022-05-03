@@ -27,12 +27,12 @@ export class PluginConfig extends ExtensionConfig {
    * @param {Manifest} manifest - IO object
    * @param {PluginConfigOptions} [opts]
    */
-  constructor(manifest, {extData, logFn} = {}) {
+  constructor(manifest, {logFn} = {}) {
     super(PLUGIN_TYPE, manifest, logFn);
+  }
 
-    if (extData) {
-      this.validate(extData);
-    }
+  async validate() {
+    return await super._validate(this.manifest.getExtensionData(PLUGIN_TYPE));
   }
 
   /**
@@ -43,8 +43,8 @@ export class PluginConfig extends ExtensionConfig {
    * @throws If `manifest` already associated with a `PluginConfig`
    * @returns {PluginConfig}
    */
-  static create(manifest, {extData, logFn} = {}) {
-    const instance = new PluginConfig(manifest, {logFn, extData});
+  static create(manifest, {logFn} = {}) {
+    const instance = new PluginConfig(manifest, {logFn});
     if (PluginConfig.getInstance(manifest)) {
       throw new Error(
         `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig; use PluginConfig.getInstance() to retrieve it.`
@@ -105,7 +105,6 @@ export class PluginConfig extends ExtensionConfig {
 /**
  * @typedef PluginConfigOptions
  * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
- * @property {import('appium/types').PluginRecord} [extData] - Extension data
  */
 
 /**

@@ -40,7 +40,7 @@ describe('CLI behavior', function () {
     this.timeout(30000);
   });
 
-  describe('when appium is a dependency', function () {
+  describe('when appium is a dependency of the project in the current working directory', function () {
     /** @type {string} */
     let hashPath;
     /** @type {string} */

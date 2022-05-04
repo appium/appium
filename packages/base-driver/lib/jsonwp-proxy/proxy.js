@@ -23,8 +23,23 @@ const COMPACT_ERROR_PATTERNS = [/\bECONNREFUSED\b/, /socket hang up/];
 const {MJSONWP, W3C} = PROTOCOLS;
 
 class JWProxy {
+  /** @type {string} */
+  scheme;
+  /** @type {string} */
+  server;
+  /** @type {number} */
+  port;
+  /** @type {string} */
+  base;
+  /** @type {string} */
+  reqBasePath;
+  /** @type {string?} */
+  sessionId;
+  /** @type {number} */
+  timeout;
+
   constructor(opts = {}) {
-    _.defaults(this, opts, {
+    const options = _.defaults(opts, {
       scheme: 'http',
       server: 'localhost',
       port: 4444,
@@ -33,7 +48,9 @@ class JWProxy {
       sessionId: null,
       timeout: DEFAULT_REQUEST_TIMEOUT,
     });
-    this.scheme = this.scheme.toLowerCase();
+    options.scheme = options.scheme.toLowerCase();
+    Object.assign(this, options);
+
     this._activeRequests = [];
     this._downstreamProtocol = null;
     const agentOpts = {
@@ -57,8 +74,8 @@ class JWProxy {
    * @private - Do not call this method directly,
    * it uses client-specific arguments and responses!
    *
-   * @param {AxiosRequestConfig} requestConfig
-   * @returns {AxiosResponse}
+   * @param {import('axios').AxiosRequestConfig} requestConfig
+   * @returns {Promise<import('axios').AxiosResponse>}
    */
   async request(requestConfig) {
     const reqPromise = axios(requestConfig);
@@ -112,7 +129,7 @@ class JWProxy {
 
     const stripPrefixRe = new RegExp('^.*?(/(session|status).*)$');
     if (stripPrefixRe.test(remainingUrl)) {
-      remainingUrl = stripPrefixRe.exec(remainingUrl)[1];
+      remainingUrl = /** @type {RegExpExecArray} */ (stripPrefixRe.exec(remainingUrl))[1];
     }
 
     if (!new RegExp(endpointRe).test(remainingUrl)) {
@@ -130,7 +147,12 @@ class JWProxy {
       // we have something like /session/:id/foobar, so we need to replace
       // the session id
       const match = sessionBaseRe.exec(remainingUrl);
-      remainingUrl = remainingUrl.replace(match[1], this.sessionId);
+      // TODO: if `requiresSessionId` is `false` and `sessionId` is `null`, this is a bug.
+      // are we sure `sessionId` is not `null`?
+      remainingUrl = remainingUrl.replace(
+        /** @type {RegExpExecArray} */ (match)[1],
+        /** @type {string} */ (this.sessionId)
+      );
     } else if (requiresSessionId) {
       throw new Error(`Could not find :session section for url: ${remainingUrl}`);
     }
@@ -146,6 +168,7 @@ class JWProxy {
       _.truncate(_.isString(content) ? content : JSON.stringify(content), {
         length: MAX_LOG_BODY_LENGTH,
       });
+    /** @type {import('axios').AxiosRequestConfig} */
     const reqOpts = {
       url: newUrl,
       method,
@@ -178,7 +201,7 @@ class JWProxy {
     );
 
     const throwProxyError = (error) => {
-      const err = new Error(`The request to ${url} has failed`);
+      const err = /** @type {ProxyError} */ (new Error(`The request to ${url} has failed`));
       err.response = {
         data: error,
         status: 500,
@@ -251,6 +274,7 @@ class JWProxy {
       const pathMatch = pattern.exec(url);
       return pathMatch ? routeToCommandName(pathMatch[1], method, this.reqBasePath) : null;
     };
+    /** @type {keyof import('@appium/types').ExternalDriver | null | undefined} */
     let commandName = routeToCommandName(url, method, this.reqBasePath);
     if (!commandName && _.includes(url, `${this.reqBasePath}/session/`)) {
       commandName = extractCommandName(
@@ -374,3 +398,7 @@ class JWProxy {
 
 export {JWProxy};
 export default JWProxy;
+
+/**
+ * @typedef {Error & {response: {data: import('type-fest').JsonObject, status: import('http-status-codes').StatusCodes}}} ProxyError
+ */

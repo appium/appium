@@ -41,6 +41,12 @@ function isSessionCommand(command) {
   return !_.includes(NO_SESSION_ID_COMMANDS, command);
 }
 
+/**
+ *
+ * @param {import('@appium/types').ExternalDriver} driver
+ * @param {string?} [sessionId]
+ * @returns {import('@appium/types').AppiumLogger}
+ */
 function getLogger(driver, sessionId = null) {
   const dstDriver =
     sessionId && _.isFunction(driver.driverForSession)

@@ -1,5 +1,3 @@
-// @ts-check
-
 import B from 'bluebird';
 
 B.config({
@@ -83,3 +81,5 @@ export {processCapabilities, isStandardCap, validateCaps};
 import * as ws from './express/websocket';
 const {DEFAULT_WS_PATHNAME_PREFIX} = ws;
 export {DEFAULT_WS_PATHNAME_PREFIX};
+
+export {PREFIXED_APPIUM_OPTS_CAP} from './basedriver/capabilities';

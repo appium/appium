@@ -36,9 +36,7 @@ export interface TimeoutCommands {
 
 export interface EventCommands {
   logCustomEvent(vendor: string, event: string): Promise<void>;
-  getLogEvents(
-    type?: string | string[]
-  ): Promise<EventHistory | Record<string, number>>;
+  getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
 
 export interface SessionCommands {
@@ -56,11 +54,7 @@ export type SingularSessionData = Capabilities & {events?: EventHistory};
 export interface FindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
-  findElementFromElement(
-    strategy: string,
-    selector: string,
-    elementId: string
-  ): Promise<Element>;
+  findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
   findElementsFromElement(
     strategy: string,
     selector: string,
@@ -110,10 +104,7 @@ export interface SessionHandler<CreateResult, DeleteResult> {
     driverData?: DriverData[]
   ): Promise<CreateResult>;
 
-  deleteSession(
-    sessionId?: string,
-    driverData?: DriverData[]
-  ): Promise<DeleteResult>;
+  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult>;
 }
 
 /**
@@ -151,19 +142,18 @@ export interface Element {
 }
 
 export interface DriverHelpers {
-  configureApp: (
-    app: string,
-    supportedAppExtensions: string[]
-  ) => Promise<string>;
+  configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
   generateDriverLogPrefix: (obj: Core, sessionId?: string) => string;
 }
 
-export type SettingsUpdateListener<
-  T extends Record<string, unknown> = Record<string, unknown>
-> = (prop: keyof T, newValue: unknown, curValue: unknown) => Promise<void>;
+export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
+  prop: keyof T,
+  newValue: unknown,
+  curValue: unknown
+) => Promise<void>;
 
 export interface DeviceSettings<T = any> {
   update(newSettings: Record<string, T>): Promise<void>;
@@ -348,12 +338,7 @@ export interface Driver
   desiredCapConstraints: Constraints;
   validateDesiredCaps(caps: Capabilities): boolean;
   logExtraCaps(caps: Capabilities): void;
-  assignServer?(
-    server: AppiumServer,
-    host: string,
-    port: number,
-    path: string
-  ): void;
+  assignServer?(server: AppiumServer, host: string, port: number, path: string): void;
 }
 
 /**
@@ -380,12 +365,7 @@ export interface ExternalDriver extends Driver {
   getWindowHandles?(): Promise<string[]>;
   setFrame?(id: null | number | string): Promise<void>;
   getWindowRect?(): Promise<Rect>;
-  setWindowRect?(
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ): Promise<Rect>;
+  setWindowRect?(x: number, y: number, width: number, height: number): Promise<Rect>;
   maximizeWindow?(): Promise<Rect>;
   minimizeWindow?(): Promise<Rect>;
   fullScreenWindow?(): Promise<Rect>;
@@ -433,16 +413,8 @@ export interface ExternalDriver extends Driver {
     dataType: string,
     dataReadTimeout?: number
   ): Promise<string[]>;
-  pressKeyCode?(
-    keycode: number,
-    metastate?: number,
-    flags?: number
-  ): Promise<void>;
-  longPressKeyCode?(
-    keycode: number,
-    metastate?: number,
-    flags?: number
-  ): Promise<void>;
+  pressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
+  longPressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
   fingerprint?(fingerprintId: number): Promise<void>;
   sendSMS?(phoneNumber: string, message: string): Promise<void>;
   gsmCall?(phoneNumber: string, action: string): Promise<void>;
@@ -469,12 +441,7 @@ export interface ExternalDriver extends Driver {
   terminateApp?(appId: string, options?: unknown): Promise<void>;
   isAppInstalled?(appId: string): Promise<boolean>;
   queryAppState?(appId: string): Promise<number>;
-  hideKeyboard?(
-    strategy?: string,
-    key?: string,
-    keyCode?: string,
-    keyName?: string
-  ): Promise<void>;
+  hideKeyboard?(strategy?: string, key?: string, keyCode?: string, keyName?: string): Promise<void>;
   isKeyboardShown?(): Promise<boolean>;
   pushFile?(path: string, data: string): Promise<void>;
   pullFile?(path: string): Promise<string>;
@@ -503,18 +470,11 @@ export interface ExternalDriver extends Driver {
   closeApp?(): Promise<void>;
   background?(seconds: null | number): Promise<void>;
   endCoverage?(intent: string, path: string): Promise<void>;
-  getStrings?(
-    language?: string,
-    stringFile?: string
-  ): Promise<Record<string, unknown>>;
+  getStrings?(language?: string, stringFile?: string): Promise<Record<string, unknown>>;
   setValueImmediate?(value: string, elementId: string): Promise<void>;
   replaceValue?(value: string, elementId: string): Promise<void>;
   receiveAsyncResponse?(response: unknown): Promise<void>;
-  setClipboard?(
-    content: string,
-    contentType?: string,
-    label?: string
-  ): Promise<void>;
+  setClipboard?(content: string, contentType?: string, label?: string): Promise<void>;
   getClipboard?(contentType?: string): Promise<string>;
 
   // JSONWP
@@ -544,11 +504,7 @@ export interface ExternalDriver extends Driver {
   activateIMEEngine?(engine: string): Promise<void>;
   getOrientation?(): Promise<string>;
   setOrientation?(orientation: string): Promise<void>;
-  moveTo?(
-    element?: null | string,
-    xOffset?: number,
-    yOffset?: number
-  ): Promise<void>;
+  moveTo?(element?: null | string, xOffset?: number, yOffset?: number): Promise<void>;
   buttonDown?(button?: number): Promise<void>;
   buttonUp?(button?: number): Promise<void>;
   clickCurrent?(button?: number): Promise<void>;
@@ -606,11 +562,7 @@ export interface ExternalDriver extends Driver {
   removeAuthCredential?(): Promise<void>;
   setUserAuthVerified?(isUserVerified: boolean): Promise<void>;
 
-  proxyCommand?(
-    url: string,
-    method: HTTPMethod,
-    body?: string
-  ): Promise<unknown>;
+  proxyCommand?(url: string, method: HTTPMethod, body?: string): Promise<unknown>;
 }
 
 /**
@@ -641,9 +593,7 @@ export type DriverClass<
  */
 export type DriverOpts = ServerArgs & Capabilities;
 
-export type DriverCommand<TArgs = any, TReturn = unknown> = (
-  ...args: TArgs[]
-) => Promise<TReturn>;
+export type DriverCommand<TArgs = any, TReturn = unknown> = (...args: TArgs[]) => Promise<TReturn>;
 
 export type DriverCommands<TArgs = any, TReturn = unknown> = Record<
   string,

@@ -1,16 +1,13 @@
-// @ts-check
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-await */
 
-import {fs, logger, node} from '@appium/support';
+import {fs, logger} from '@appium/support';
 import AsyncLock from 'async-lock';
 import {EventEmitter} from 'events';
 import _ from 'lodash';
 import os from 'os';
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
-import {validateCaps} from './capabilities';
-import {desiredCapabilityConstraints} from './desired-caps';
 import DeviceSettings from './device-settings';
 import helpers from './helpers';
 
@@ -36,12 +33,12 @@ class DriverCore {
   sessionId = null;
 
   /**
-   * @type {DriverOpts & Capabilities}
+   * @type {import('@appium/types').DriverOpts}
    */
   opts;
 
   /**
-   * @type {DriverOpts}
+   * @type {ServerArgs}
    */
   initialOpts;
 
@@ -94,8 +91,6 @@ class DriverCore {
   /** @type {EventHistory} */
   _eventHistory = {commands: []};
 
-  _constraints = _.cloneDeep(desiredCapabilityConstraints);
-
   // used to handle driver events
   /** @type {NodeJS.EventEmitter} */
   eventEmitter = new EventEmitter();
@@ -112,7 +107,6 @@ class DriverCore {
 
   /**
    * @type {boolean}
-   * @protected
    */
   shouldValidateCaps;
 
@@ -129,7 +123,7 @@ class DriverCore {
    */
   settings = new DeviceSettings();
 
-  constructor(opts = /** @type {DriverOpts} */ ({}), shouldValidateCaps = true) {
+  constructor(opts = /** @type {ServerArgs} */ ({}), shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
     // setup state
@@ -228,24 +222,6 @@ class DriverCore {
     return {};
   }
 
-  // we only want subclasses to ever extend the contraints
-  set desiredCapConstraints(constraints) {
-    this._constraints = Object.assign(this._constraints, constraints);
-    // 'presence' means different things in different versions of the validator,
-    // when we say 'true' we mean that it should not be able to be empty
-    for (const [, value] of _.toPairs(this._constraints)) {
-      if (value && value.presence === true) {
-        value.presence = {
-          allowEmpty: false,
-        };
-      }
-    }
-  }
-
-  get desiredCapConstraints() {
-    return this._constraints;
-  }
-
   /**
    * method required by MJSONWP in order to determine whether it should
    * respond with an invalid session response
@@ -261,52 +237,10 @@ class DriverCore {
    * method required by MJSONWP in order to determine if the command should
    * be proxied directly to the driver
    * @param {string} sessionId
-   * @returns {this | import('@appium/types').Driver}
+   * @returns {Core | null}
    */
   driverForSession(sessionId) {
     return this;
-  }
-
-  /**
-   *
-   * @param {Capabilities} caps
-   */
-  logExtraCaps(caps) {
-    let extraCaps = _.difference(_.keys(caps), _.keys(this._constraints));
-    if (extraCaps.length) {
-      this.log.warn(
-        `The following capabilities were provided, but are not ` + `recognized by Appium:`
-      );
-      for (const cap of extraCaps) {
-        this.log.warn(`  ${cap}`);
-      }
-    }
-  }
-
-  /**
-   *
-   * @param {Capabilities} caps
-   * @returns {boolean}
-   */
-  validateDesiredCaps(caps) {
-    if (!this.shouldValidateCaps) {
-      return true;
-    }
-
-    try {
-      validateCaps(caps, this._constraints);
-    } catch (e) {
-      this.log.errorAndThrow(
-        new errors.SessionNotCreatedError(
-          `The desiredCapabilities object was not valid for the ` +
-            `following reason(s): ${e.message}`
-        )
-      );
-    }
-
-    this.logExtraCaps(caps);
-
-    return true;
   }
 
   isMjsonwpProtocol() {
@@ -478,7 +412,7 @@ export {DriverCore};
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Core} Core
- * @typedef {import('@appium/types').ServerArgs} DriverOpts
+ * @typedef {import('@appium/types').ServerArgs} ServerArgs
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
  */

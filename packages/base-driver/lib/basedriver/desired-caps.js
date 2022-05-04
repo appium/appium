@@ -1,6 +1,11 @@
 import log from './logger';
-import validator from 'validate.js';
+import _validator from 'validate.js';
 import B from 'bluebird';
+
+const validator =
+  /** @type {import('validate.js').ValidateJS & {promise: typeof import('bluebird')}} */ (
+    _validator
+  );
 
 /** @type {import('@appium/types').Constraints} */
 let desiredCapabilityConstraints = {
@@ -73,7 +78,7 @@ validator.validators.isNumber = function isNumber(value) {
   }
 
   // allow a string value
-  if (typeof value === 'string' && !isNaN(value)) {
+  if (typeof value === 'string' && !isNaN(Number(value))) {
     log.warn('Number capability passed in as string. Functionality may be compromised.');
     return null;
   }

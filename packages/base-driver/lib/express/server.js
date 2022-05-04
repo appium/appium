@@ -192,14 +192,16 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   });
 }
 
+/**
+ *
+ * @param {StartServerOpts} opts
+ */
 async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
-  const serverArgs = [port];
-  if (hostname) {
-    // If the hostname is omitted, the server will accept
-    // connections on any IP address
-    serverArgs.push(hostname);
-  }
-  const startPromise = B.promisify(httpServer.listen, {context: httpServer})(...serverArgs);
+  // If the hostname is omitted, the server will accept
+  // connections on any IP address
+  /** @type {(port: number, hostname?: string) => B<http.Server>} */
+  const start = B.promisify(httpServer.listen, {context: httpServer});
+  const startPromise = start(port, hostname);
   httpServer.keepAliveTimeout = keepAliveTimeout;
   // headers timeout must be greater than keepAliveTimeout
   httpServer.headersTimeout = keepAliveTimeout + 5 * 1000;
@@ -225,3 +227,12 @@ function normalizeBasePath(basePath) {
 }
 
 export {server, configureServer, normalizeBasePath};
+
+/**
+ * Options for {@linkcode startServer}.
+ * @typedef StartServerOpts
+ * @property {import('http').Server} httpServer - HTTP server instance
+ * @property {number} port - Port to run on
+ * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
+ * @property {string} [hostname] - Optional hostname
+ */

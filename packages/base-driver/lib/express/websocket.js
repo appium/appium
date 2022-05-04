@@ -9,7 +9,7 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * It is expected this function is called in Express
  * server instance context.
  *
- * @param {Object} server - An instance of express HTTP server.
+ * @this {WebSocketServer} - An instance of express HTTP server.
  * @param {string} handlerPathname - Web socket endpoint path starting with
  * a single slash character. It is recommended to always add
  * DEFAULT_WS_PATHNAME_PREFIX to all web socket pathnames.
@@ -25,8 +25,9 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
     this.on('upgrade', (request, socket, head) => {
       let currentPathname;
       try {
+        // @ts-expect-error
         currentPathname = new URL(request.url).pathname;
-      } catch (ign) {
+      } catch {
         currentPathname = request.url;
       }
       for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
@@ -49,9 +50,9 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
  * It is expected this function is called in Express
  * server instance context.
  *
- * @param {?string} keysFilter [null]- Only include pathnames with given
+ * @param {string?} [keysFilter] - Only include pathnames with given
  * `keysFilter` value if set. All pairs will be included by default.
- * @returns {Object} pathnames to websocket server isntances mapping
+ * @returns {Promise<Object>} pathnames to websocket server isntances mapping
  * matching the search criteria or an empty object otherwise.
  */
 // eslint-disable-next-line require-await
@@ -76,7 +77,7 @@ async function getWebSocketHandlers(keysFilter = null) {
  * server instance context.
  *
  * @param {string} handlerPathname - Websocket endpoint path.
- * @returns {boolean} true if the handlerPathname was found and deleted
+ * @returns {Promise<boolean>} true if the handlerPathname was found and deleted
  */
 // eslint-disable-next-line require-await
 async function removeWebSocketHandler(handlerPathname) {
@@ -104,7 +105,7 @@ async function removeWebSocketHandler(handlerPathname) {
  * It is expected this function is called in Express
  * server instance context.
  *
- * @returns {boolean} true if at least one handler has been deleted
+ * @returns {Promise<boolean>} true if at least one handler has been deleted
  */
 async function removeAllWebSocketHandlers() {
   if (_.isEmpty(this.webSocketsMapping)) {
@@ -125,3 +126,7 @@ export {
   getWebSocketHandlers,
   DEFAULT_WS_PATHNAME_PREFIX,
 };
+
+/**
+ * @typedef {import('http').Server & {webSocketsMapping: Record<string,import('ws').Server>}} WebSocketServer
+ */

@@ -33,7 +33,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "vm2": "3.9.9",
-    "webdriverio": "7.19.5"
+    "webdriverio": "7.19.7"
   },
   "scripts": {
     "build": "babel lib --root-mode=upward --out-dir=build/lib",

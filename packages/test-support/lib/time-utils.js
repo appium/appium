@@ -1,3 +1,4 @@
+/** @deprecated */
 function fakeTime(sandbox) {
   let clock = sandbox.useFakeTimers();
   return new TimeLord(clock);

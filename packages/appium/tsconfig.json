@@ -9,6 +9,7 @@
       "@appium/base-plugin": ["../base-plugin"],
       "@appium/types": ["../types"],
       "@appium/schema": ["../schema"],
+      "@appium/test-support": ["../test-support"],
       "appium": ["."]
     },
     "checkJs": true
@@ -19,6 +20,7 @@
     {"path": "../types"},
     {"path": "../support"},
     {"path": "../base-driver"},
-    {"path": "../base-plugin"}
+    {"path": "../base-plugin"},
+    {"path": "../test-support"}
   ]
 }

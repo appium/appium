@@ -21,10 +21,8 @@
     "index.js"
   ],
   "scripts": {
-    "build": "run-s build:*",
-    "build:distfiles": "babel lib --root-mode=upward --out-dir=build/lib",
-    "build:test": "babel test/helpers.js --root-mode=upward --out-dir=build/test",
-    "dev": "run-p \"build:distfiles -- --watch\" \"build:test -- --watch\"",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",

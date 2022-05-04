@@ -3,7 +3,7 @@ import {server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX} from '../.
 import {FakeDriver} from '../protocol/fake-driver';
 import WebSocket from 'ws';
 import B from 'bluebird';
-import {TEST_HOST, getTestPort} from '../../helpers';
+import {TEST_HOST, getTestPort} from '@appium/test-support';
 
 describe('Websockets (e2e)', function () {
   let baseServer;

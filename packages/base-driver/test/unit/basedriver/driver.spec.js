@@ -1,9 +1,7 @@
-// transpile:mocha
-
 import BaseDriver from '../../../lib';
-import {baseDriverUnitTests} from '../../basedriver';
+import {driverUnitTestSuite} from '@appium/test-support';
 
-baseDriverUnitTests(BaseDriver, {
+driverUnitTestSuite(BaseDriver, {
   platformName: 'iOS',
   'appium:deviceName': 'Delorean',
 });

@@ -7,7 +7,7 @@ import {createSandbox} from 'sinon';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createProxyServer} from './helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
-import {TEST_HOST, getTestPort} from '../../helpers';
+import {TEST_HOST, getTestPort} from '@appium/test-support';
 
 let port;
 let baseUrl;

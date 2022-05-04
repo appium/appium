@@ -1,17 +1,13 @@
 import getPort from 'get-port';
 import {curry} from 'lodash';
 
+/**
+ * Default test host
+ */
 const TEST_HOST = '127.0.0.1';
 
-/**
- * Some HTTP methods, for your pleasure
- */
-const METHODS = {
-  POST: 'POST',
-  DELETE: 'DELETE',
-};
-
 let testPort;
+
 /**
  * Returns a free port; one per process
  * @param {boolean} [force] - If true, do not reuse the port (if it already exists)
@@ -28,16 +24,18 @@ async function getTestPort(force = false) {
   return testPort;
 }
 
+/**
+ * Build an Appium URL from components.
+ *
+ * **All** parameters are required.  Provide an empty string (`''`) if you don't need one.
+ * To rearrange arguments (if needed), use the placeholder from Lodash (`_`).
+ *
+ */
 const createAppiumURL = curry(
   /**
-   * Build an Appium URL from components.
-   *
-   * **All** parameters are required.  Provide an empty string (`''`) if you don't need one.
-   * To rearrange arguments (if needed), use the placeholder (`_`).
-   *
    * @param {string} address - Base address (w/ optional protocol)
    * @param {string|number} port - Port number
-   * @param {string} session - Session ID
+   * @param {string?} session - Session ID
    * @param {string} pathname - Extra path
    * @returns {string} New URL
    * @example
@@ -63,10 +61,8 @@ const createAppiumURL = curry(
     if (pathname) {
       path = `${path}/${pathname}`;
     }
-    let url = new URL(path, `${address}:${port}`);
-    return url.href;
-  },
-  4
+    return new URL(path, `${address}:${port}`).href;
+  }
 );
 
-export {TEST_HOST, METHODS, getTestPort, createAppiumURL};
+export {TEST_HOST, getTestPort, createAppiumURL};

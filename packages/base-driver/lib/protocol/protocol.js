@@ -212,18 +212,25 @@ function makeArgs(requestParams, jsonObj, payloadParams, protocol) {
   return args;
 }
 
+/**
+ *
+ * @param {import('@appium/types').Core} driver
+ * @returns {import('../express/server').RouteConfiguringFunction}
+ */
 function routeConfiguringFunction(driver) {
   if (!driver.sessionExists) {
     throw new Error('Drivers must implement `sessionExists` property');
   }
 
+  // "execute" isn't defined anywhere
+  // @ts-expect-error
   if (!(driver.executeCommand || driver.execute)) {
     throw new Error('Drivers must implement `executeCommand` or `execute` method');
   }
 
   // return a function which will add all the routes to the driver. Here extraMethods might be
   // passed in as defined by Appium plugins, so we need to add those to the default list
-  return function addRoutes(app, {basePath = DEFAULT_BASE_PATH, extraMethodMap = {}}) {
+  return function addRoutes(app, {basePath = DEFAULT_BASE_PATH, extraMethodMap = {}} = {}) {
     // store basePath on the driver instance so it can use it if necessary
     // for example in determining proxy avoidance
     driver.basePath = basePath;

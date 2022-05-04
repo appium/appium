@@ -9,17 +9,6 @@ export interface PluginStatic {
    * Allows a plugin to modify the Appium server instance.
    */
   updateServer?: UpdateServerCallback;
-  /**
-   * Plugins can define new methods for the Appium server to map to command names, of the same
-   * format as used in Appium's `routes.js`, for example, this would be a valid `newMethodMap`:
-   * @example
-   * {
-   *   '/session/:sessionId/new_method': {
-   *     GET: {command: 'getNewThing'},
-   *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
-   *   }
-   * }
-   */
   newMethodMap?: MethodMap<Plugin>;
 }
 
@@ -58,6 +47,11 @@ export interface Plugin {
 }
 
 /**
+ * Plugin implementations implement this type.
+ */
+// export type PluginClass<T extends Plugin> = Class<T, PluginStatic, [string]>;
+
+/**
  * A reference to an async function which encapsulates what would normally
  * happen if this plugin were not handling a command. Used by {@link PluginInterface.handle}.
  *
@@ -70,15 +64,13 @@ export interface Plugin {
  * for managing new command timeouts and command logging, for example:
  * `driver.stopNewCommandTimeout()` -- before running plugin logic
  * `driver.startNewCommandTimeout()` -- after running plugin logic
- * `driver._eventHistory.commands.push({cmd: cmdName, startTime, endTime})` --
+ * `driver._eventHistory.commands.push({cmd: cmdName, startTime, endTime}) --
  * after running plugin logic
  */
 export type NextPluginCallback = () => Promise<void>;
 
 /**
  * Implementation of a command within a plugin
- *
- * Note that this signature differs from a `DriverCommand`.
  */
 export type PluginCommand<TArgs = any> = (
   next: NextPluginCallback,
@@ -86,9 +78,4 @@ export type PluginCommand<TArgs = any> = (
   ...args: TArgs[]
 ) => Promise<void>;
 
-/**
- * Represents a plugin class, which is used internally by Appium.
- *
- * This is likely unusable by external consumers, but YMMV!
- */
 export type PluginClass = Class<Plugin, PluginStatic & {pluginName: string}, [string]>;

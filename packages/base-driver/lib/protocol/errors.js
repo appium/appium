@@ -851,14 +851,14 @@ const errors = {
 // map of error code to error class
 const jsonwpErrorCodeMap = {};
 for (let ErrorClass of _.values(errors)) {
-  if (ErrorClass.code) {
+  if ('code' in ErrorClass) {
     jsonwpErrorCodeMap[ErrorClass.code()] = ErrorClass;
   }
 }
 
 const w3cErrorCodeMap = {};
 for (let ErrorClass of _.values(errors)) {
-  if (ErrorClass.error) {
+  if ('error' in ErrorClass) {
     w3cErrorCodeMap[ErrorClass.error()] = ErrorClass;
   }
 }
@@ -931,8 +931,17 @@ function errorFromW3CJsonCode(code, message, stacktrace = null) {
 }
 
 /**
+ *
+ * @param {any} err
+ * @returns {err is ProtocolError}
+ */
+function isProtocolError(err) {
+  return 'w3cStatus' in err;
+}
+
+/**
  * Convert an Appium error to proper W3C HTTP response
- * @param {ProtocolError} err The error that needs to be translated
+ * @param {ProtocolError|MJSONWPError} err The error that needs to be translated
  */
 function getResponseForW3CError(err) {
   let httpStatus;
@@ -940,7 +949,7 @@ function getResponseForW3CError(err) {
   // W3C defined error message (https://www.w3.org/TR/webdriver/#dfn-error-code)
   let w3cErrorString;
 
-  if (!err.w3cStatus) {
+  if (!isProtocolError(err)) {
     err = util.hasValue(err.status)
       ? // If it's a JSONWP error, find corresponding error
         errorFromMJSONWPStatusCode(err.status, err.value)
@@ -981,6 +990,8 @@ function getResponseForJsonwpError(err) {
   }
   // MJSONWP errors are usually 500 status code so set it to that by default
   let httpStatus = HTTPStatusCodes.INTERNAL_SERVER_ERROR;
+
+  /** @type {HttpResultBody} */
   let httpResBody = {
     status: err.jsonwpCode,
     value: {
@@ -1016,3 +1027,21 @@ export {
   getResponseForW3CError,
   getResponseForJsonwpError,
 };
+
+/**
+ * @typedef { string | {value: HttpResultBodyValue, status?: number } } HttpResultBody
+ */
+
+/**
+ * @typedef HttpResultBodyValue
+ * @property {string} [message]
+ * @property {string|Error} [error]
+ * @property {string} [stacktrace]
+ */
+
+/**
+ * @typedef MJSONWPError
+ * @property {number} status
+ * @property {string|object} value
+ * @property {string} message
+ */

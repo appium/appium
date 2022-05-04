@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import log from './logger';
 import {node, util} from '@appium/support';
@@ -11,13 +9,13 @@ import {errors} from '../protocol/errors';
 export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
 
 /**
- * @template {Record<string,unknown>} T
+ * @template T
  * @implements {IDeviceSettings<T>}
  */
 class DeviceSettings {
   /**
    * @protected
-   * @type {T}
+   * @type {Record<string,T>}
    */
   _settings;
 
@@ -29,17 +27,17 @@ class DeviceSettings {
 
   /**
    * Creates a _shallow copy_ of the `defaultSettings` parameter!
-   * @param {T} [defaultSettings]
+   * @param {Record<string,T>} [defaultSettings]
    * @param {import('@appium/types').SettingsUpdateListener<T>} [onSettingsUpdate]
    */
-  constructor(defaultSettings, onSettingsUpdate) {
-    this._settings = /** @type {T} */ ({...(defaultSettings ?? {})});
-    this._onSettingsUpdate = onSettingsUpdate ?? (async () => {});
+  constructor(defaultSettings = {}, onSettingsUpdate = async () => {}) {
+    this._settings = {...defaultSettings};
+    this._onSettingsUpdate = onSettingsUpdate;
   }
 
   /**
    * calls updateSettings from implementing driver every time a setting is changed.
-   * @param {T} newSettings
+   * @param {Record<string,T>} newSettings
    */
   async update(newSettings) {
     if (!_.isPlainObject(newSettings)) {

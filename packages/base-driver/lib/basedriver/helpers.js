@@ -182,7 +182,7 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
 
 /**
  * @typedef ConfigureAppOptions
- * @property {(obj: PostProcessOptions) => (Promise<PostProcessResult|undefined>|PostProcessResult|undefined)} onPostProcess
+ * @property {(obj: PostProcessOptions) => (Promise<PostProcessResult|undefined>|PostProcessResult|undefined)} [onPostProcess]
  * Optional function, which should be applied
  * to the application after it is downloaded/preprocessed. This function may be async
  * and is expected to accept single object parameter.
@@ -204,14 +204,16 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
  * @param {string|string[]|ConfigureAppOptions} options
  * @returns The full path to the resulting application bundle
  */
-async function configureApp(app, options = {}) {
+async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({})) {
   if (!_.isString(app)) {
     // immediately shortcircuit if not given an app
     return;
   }
 
   let supportedAppExtensions;
-  const {onPostProcess} = _.isPlainObject(options) ? options : {};
+  const onPostProcess =
+    !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
+
   if (_.isString(options)) {
     supportedAppExtensions = [options];
   } else if (_.isArray(options)) {
@@ -227,13 +229,14 @@ async function configureApp(app, options = {}) {
   let shouldUnzipApp = false;
   let packageHash = null;
   let headers = null;
+  /** @type {RemoteAppProps} */
   const remoteAppProps = {
     lastModified: null,
     immutable: false,
     maxAge: null,
   };
   const {protocol, pathname} = url.parse(newApp);
-  const isUrl = ['http:', 'https:'].includes(protocol);
+  const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
 
@@ -270,7 +273,7 @@ async function configureApp(app, options = {}) {
       }
 
       let fileName = null;
-      const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname)), {
+      const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
         replacement: SANITIZE_REPLACEMENT,
       });
       const extname = path.extname(basename);
@@ -316,7 +319,7 @@ async function configureApp(app, options = {}) {
             `The current file extension '${resultingExt}' is not supported. ` +
               `Defaulting to '${_.first(supportedAppExtensions)}'`
           );
-          resultingExt = _.first(supportedAppExtensions);
+          resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
         }
         fileName = `${resultingName}${resultingExt}`;
       }
@@ -441,7 +444,7 @@ async function downloadApp(app, targetPath) {
  * @param {Array<string>|string} supportedAppExtensions The list of extensions
  * the target application bundle supports, for example ['.apk', '.apks'] for
  * Android packages
- * @returns {string} Full path to the bundle in the destination folder
+ * @returns {Promise<string>} Full path to the bundle in the destination folder
  * @throws {Error} If the given archive is invalid or no application bundles
  * have been found inside
  */
@@ -502,7 +505,7 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
           timer.getDuration().asMilliSeconds
         )}ms: ${sortedBundleItems}`
     );
-    const matchedBundle = _.first(sortedBundleItems);
+    const matchedBundle = /** @type {string} */ (_.first(sortedBundleItems));
     logger.info(`Assuming '${matchedBundle}' is the correct bundle`);
     const dstPath = path.resolve(dstRoot, path.basename(matchedBundle));
     await fs.mv(path.resolve(tmpRoot, matchedBundle), dstPath, {mkdirp: true});
@@ -598,3 +601,10 @@ export default {
   generateDriverLogPrefix,
 };
 export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generateDriverLogPrefix};
+
+/**
+ * @typedef RemoteAppProps
+ * @property {Date?} lastModified
+ * @property {boolean} immutable
+ * @property {number?} maxAge
+ */

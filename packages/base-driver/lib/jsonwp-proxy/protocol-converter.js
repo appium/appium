@@ -233,7 +233,7 @@ class ProtocolConverter {
       case 'performActions':
         return await this.proxyPerformActions(url, method, body);
       case 'releaseActions':
-        return await this.proxyReleaseActions(url, method, body);
+        return await this.proxyReleaseActions(url, method);
       case 'setFrame':
         return await this.proxySetFrame(url, method, body);
       default:

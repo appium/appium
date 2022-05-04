@@ -1,21 +1,22 @@
-// @ts-check
 /* eslint-disable require-await */
 /* eslint-disable no-unused-vars */
 
+import {
+  validateCaps,
+  APPIUM_OPTS_CAP,
+  PREFIXED_APPIUM_OPTS_CAP,
+  processCapabilities,
+  promoteAppiumOptions,
+} from './capabilities';
 import {DriverCore} from './core';
 import {util} from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {
-  APPIUM_OPTS_CAP,
-  PREFIXED_APPIUM_OPTS_CAP,
-  processCapabilities,
-  promoteAppiumOptions,
-} from './capabilities';
 import {createBaseDriverClass} from './commands';
 import helpers from './helpers';
+import {desiredCapabilityConstraints} from './desired-caps';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -27,6 +28,8 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
  * @implements {SessionHandler}
  */
 export class BaseDriverCore extends DriverCore {
+  _constraints = _.cloneDeep(desiredCapabilityConstraints);
+
   /** @type {Record<string,any>|undefined} */
   cliArgs;
 
@@ -36,7 +39,7 @@ export class BaseDriverCore extends DriverCore {
   // by MJSONWP's express router.
   /**
    * @param {string} cmd
-   * @param  {...any[]} args
+   * @param  {...any} args
    * @returns {Promise<any>}
    */
   async executeCommand(cmd, ...args) {
@@ -314,13 +317,79 @@ export class BaseDriverCore extends DriverCore {
     this.sessionId = null;
     this._log.prefix = helpers.generateDriverLogPrefix(this);
   }
+
+  /**
+   *
+   * @param {Capabilities} caps
+   */
+  logExtraCaps(caps) {
+    let extraCaps = _.difference(_.keys(caps), _.keys(this._constraints));
+    if (extraCaps.length) {
+      this.log.warn(
+        `The following capabilities were provided, but are not ` + `recognized by Appium:`
+      );
+      for (const cap of extraCaps) {
+        this.log.warn(`  ${cap}`);
+      }
+    }
+  }
+
+  /**
+   *
+   * @param {Capabilities} caps
+   * @returns {boolean}
+   */
+  validateDesiredCaps(caps) {
+    if (!this.shouldValidateCaps) {
+      return true;
+    }
+
+    try {
+      validateCaps(caps, this._constraints);
+    } catch (e) {
+      this.log.errorAndThrow(
+        new errors.SessionNotCreatedError(
+          `The desiredCapabilities object was not valid for the ` +
+            `following reason(s): ${e.message}`
+        )
+      );
+    }
+
+    this.logExtraCaps(caps);
+
+    return true;
+  }
+
+  // we only want subclasses to ever extend the contraints
+  set desiredCapConstraints(constraints) {
+    this._constraints = Object.assign(this._constraints, constraints);
+    // 'presence' means different things in different versions of the validator,
+    // when we say 'true' we mean that it should not be able to be empty
+    for (const [, value] of _.toPairs(this._constraints)) {
+      if (value && value.presence === true) {
+        value.presence = {
+          allowEmpty: false,
+        };
+      }
+    }
+  }
+
+  get desiredCapConstraints() {
+    return this._constraints;
+  }
 }
 
 /**
  * This ensures that all of the mixins correctly implement the interface described in {@linkcode Driver}.
  * @implements {Driver}
  */
-class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
+class _BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
+
+/**
+ * @type {import('@appium/types').DriverClass<Driver>}
+ */
+const BaseDriver = _BaseDriver;
+
 export {BaseDriver};
 export default BaseDriver;
 
@@ -344,16 +413,7 @@ export default BaseDriver;
  * This is used to extend {@linkcode BaseDriverCore} by the mixins and also external drivers.
  * @template [Proto={}]
  * @template [Static={}]
- * @typedef {import('@appium/types').Class<BaseDriverCore & Proto,BaseDriverStatic & Static>} BaseDriverBase
- */
-
-/**
- * Static properties of `BaseDriver` and optional properties for subclasses.
- * @template {ExternalDriver} [T=ExternalDriver]
- * @typedef BaseDriverStatic
- * @property {string} baseVersion
- * @property {UpdateServerCallback} [updateServer]
- * @property {import('@appium/types').MethodMap<T>} [newMethodMap]
+ * @typedef {import('@appium/types').Class<BaseDriverCore & Proto,import('@appium/types').DriverStatic & Static>} BaseDriverBase
  */
 
 /**

@@ -1,11 +1,6 @@
 import type {Method as _Method} from 'axios';
 import type {Server} from 'http';
-import type {
-  Class as _Class,
-  ConditionalPick,
-  LiteralUnion,
-  MultidimensionalReadonlyArray,
-} from 'type-fest';
+import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
 import {Capabilities, W3CCapabilities} from './capabilities';
 import type {Express} from 'express';
@@ -31,14 +26,7 @@ export type AppiumLoggerPrefix = string | (() => string);
  *
  * Extracted from `npmlog`.
  */
-export type AppiumLoggerLevel =
-  | 'silly'
-  | 'verbose'
-  | 'debug'
-  | 'info'
-  | 'http'
-  | 'warn'
-  | 'error';
+export type AppiumLoggerLevel = 'silly' | 'verbose' | 'debug' | 'info' | 'http' | 'warn' | 'error';
 
 /**
  * Describes the `npmlog`-based internal logger.
@@ -157,7 +145,7 @@ export type ExtensionType = DriverType | PluginType;
  * @param expressApp - the Express 'app' object used by Appium for route handling
  * @param httpServer - the node HTTP server that hosts the app
  */
-export type UpdateServerCallback = (
+export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServer) => Promise<void>;
 
 /**
  * Possible HTTP methods, as stolen from `axios`.

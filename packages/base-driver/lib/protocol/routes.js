@@ -14,10 +14,12 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
   makeArgs: (jsonObj) => [jsonObj.value || jsonObj.text],
 };
 
-// define the routes, mapping of HTTP methods to particular driver commands,
-// and any parameters that are expected in a request
-// parameters can be `required` or `optional`
-/** @type {import('@appium/types').MethodMap<import('../basedriver/driver').BaseDriver>} */
+/**
+ * define the routes, mapping of HTTP methods to particular driver commands, and
+ * any parameters that are expected in a request parameters can be `required` or
+ * `optional`
+ * @type {MethodMap}
+ */
 const METHOD_MAP = {
   '/status': {
     GET: {command: 'getStatus'},
@@ -956,10 +958,18 @@ class Route {
   }
 }
 
+/**
+ *
+ * @param {string} endpoint
+ * @param {import('@appium/types').HTTPMethod} method
+ * @param {string} [basePath]
+ * @returns {string|undefined}
+ */
 function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
   let dstRoute = null;
 
   // remove any query string
+  // TODO: would this be better handled as a `URL` object?
   if (endpoint.includes('?')) {
     endpoint = endpoint.slice(0, endpoint.indexOf('?'));
   }
@@ -982,7 +992,7 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
   if (!dstRoute) return; // eslint-disable-line curly
 
   const methods = _.get(METHOD_MAP, dstRoute);
-  method = _.toUpper(method);
+  method = /** @type {Uppercase<typeof method>} */ (_.toUpper(method));
   if (_.has(methods, method)) {
     const dstMethod = _.get(methods, method);
     if (dstMethod.command) {
@@ -995,3 +1005,8 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
 const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
 
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};
+
+/**
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').MethodMap} MethodMap
+ */

@@ -1,5 +1,3 @@
-// transpile:main
-
 import {
   isSessionCommand,
   routeConfiguringFunction,

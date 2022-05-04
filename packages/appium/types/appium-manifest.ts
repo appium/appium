@@ -1,4 +1,4 @@
-import {CommonMetadata, ExtMetadata, SchemaMetadata} from './external-manifest';
+import {CommonExtMetadata, ExtMetadata, ExtSchemaMetadata} from './extension-manifest';
 import {ExtensionType, DriverType, PluginType} from '@appium/types';
 
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
@@ -41,10 +41,10 @@ export type ExtManifest<ExtType extends ExtensionType> = Omit<
   ExtType extends DriverType ? 'driverName' : ExtType extends PluginType ? 'pluginName' : never
 > &
   InternalMetadata &
-  CommonMetadata; // XXX: ExtMetadata should be a union with CommonMetadata. why is this needed?
+  CommonExtMetadata; // XXX: ExtMetadata should be a union with CommonMetadata. why is this needed?
 
 export type WithSchemaManifest = {
-  schema: SchemaMetadata;
+  schema: ExtSchemaMetadata;
 };
 
 /**

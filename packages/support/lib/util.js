@@ -1,5 +1,3 @@
-// @ts-check
-
 import B from 'bluebird';
 import _ from 'lodash';
 import os from 'os';
@@ -28,21 +26,29 @@ const KiB = 1024;
 const MiB = KiB * 1024;
 const GiB = MiB * 1024;
 
+/**
+ * @template {string} T
+ * @param {T} val
+ * @returns {val is NonEmptyString<T>}
+ */
 export function hasContent(val) {
   return _.isString(val) && val !== '';
 }
 
-// return true if the the value is not undefined, null, or NaN.
+/**
+ * return true if the the value is not `undefined`, `null`, or `NaN`.
+ *
+ * XXX: `NaN` is not expressible in TypeScript.
+ * @template T
+ * @param {T} val
+ * @returns {val is NonNullable<T>}
+ */
 function hasValue(val) {
-  let hasVal = false;
   // avoid incorrectly evaluating `0` as false
   if (_.isNumber(val)) {
-    hasVal = !_.isNaN(val);
-  } else {
-    hasVal = !_.isUndefined(val) && !_.isNull(val);
+    return !_.isNaN(val);
   }
-
-  return hasVal;
+  return !_.isUndefined(val) && !_.isNull(val);
 }
 
 // escape spaces in string, for commandline calls
@@ -557,3 +563,10 @@ export {
   shellParse,
   getLockFileGuard,
 };
+
+/**
+ * A `string` which is never `''`.
+ *
+ * @template {string} T
+ * @typedef {T extends '' ? never : T} NonEmptyString
+ */

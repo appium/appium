@@ -269,12 +269,24 @@ class JWProxy {
     }
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {import('@appium/types').HTTPMethod} method
+   * @returns {string|undefined}
+   */
   requestToCommandName(url, method) {
+    /**
+     *
+     * @param {RegExp} pattern
+     * @returns {string|undefined}
+     */
     const extractCommandName = (pattern) => {
       const pathMatch = pattern.exec(url);
-      return pathMatch ? routeToCommandName(pathMatch[1], method, this.reqBasePath) : null;
+      if (pathMatch) {
+        return routeToCommandName(pathMatch[1], method, this.reqBasePath);
+      }
     };
-    /** @type {keyof import('@appium/types').ExternalDriver | null | undefined} */
     let commandName = routeToCommandName(url, method, this.reqBasePath);
     if (!commandName && _.includes(url, `${this.reqBasePath}/session/`)) {
       commandName = extractCommandName(

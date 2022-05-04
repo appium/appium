@@ -1,9 +1,12 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "./build",
-    "checkJs": true,
+    "outDir": "build",
+    "paths": {
+      "@appium/types": ["../types"]
+    },
+    "checkJs": true
   },
-  "include": ["./lib/**/*.js"]
+  "include": ["lib"],
+  "references": [{"path": "../types"}]
 }

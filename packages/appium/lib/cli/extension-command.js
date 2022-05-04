@@ -764,7 +764,7 @@ export {ExtensionCommand};
 /**
  * Returned by {@linkcode ExtensionCommand.getExtensionFields}
  * @template {ExtensionType} ExtType
- * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string, appiumVersion: string } & import('appium/types').CommonMetadata} ExtensionFields
+ * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string, appiumVersion: string } & import('appium/types').CommonExtMetadata} ExtensionFields
  */
 
 /**

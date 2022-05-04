@@ -5,18 +5,17 @@ import fs from './fs';
 import log from './logger';
 import _ from 'lodash';
 
-
 const BPLIST_IDENTIFIER = {
   BUFFER: Buffer.from('bplist00'),
-  TEXT: 'bplist00'
+  TEXT: 'bplist00',
 };
 const PLIST_IDENTIFIER = {
   BUFFER: Buffer.from('<'),
-  TEXT: '<'
+  TEXT: '<',
 };
 
 // XML Plist library helper
-async function parseXmlPlistFile (plistFilename) {
+async function parseXmlPlistFile(plistFilename) {
   let xmlContent = await fs.readFile(plistFilename, 'utf8');
   return xmlplist.parse(xmlContent);
 }
@@ -28,13 +27,15 @@ async function parseXmlPlistFile (plistFilename) {
  * @param {boolean} quiet If set to false, the plist path will be logged in debug level
  * @returns {Promise<any>} parsed plist JS Object
  */
-async function parsePlistFile (plist, mustExist = true, quiet = true) {
+async function parsePlistFile(plist, mustExist = true, quiet = true) {
   // handle nonexistant file
-  if (!await fs.exists(plist)) {
+  if (!(await fs.exists(plist))) {
     if (mustExist) {
       log.errorAndThrow(`Plist file doesn't exist: '${plist}'`);
     } else {
-      log.debug(`Plist file '${plist}' does not exist. Returning an empty plist.`);
+      log.debug(
+        `Plist file '${plist}' does not exist. Returning an empty plist.`
+      );
       return {};
     }
   }
@@ -53,7 +54,9 @@ async function parsePlistFile (plist, mustExist = true, quiet = true) {
       obj = await parseXmlPlistFile(plist);
       type = 'xml';
     } catch (err) {
-      log.errorAndThrow(`Could not parse plist file '${plist}' as XML: ${err.message}`);
+      log.errorAndThrow(
+        `Could not parse plist file '${plist}' as XML: ${err.message}`
+      );
     }
   }
 
@@ -71,7 +74,13 @@ async function parsePlistFile (plist, mustExist = true, quiet = true) {
  * @param {boolean} mustExist If set to false, this method will update an empty plist
  * @param {boolean} quiet If set to false, the plist path will be logged in debug level
  */
-async function updatePlistFile (plist, updatedFields, binary = true, mustExist = true, quiet = true) {
+async function updatePlistFile(
+  plist,
+  updatedFields,
+  binary = true,
+  mustExist = true,
+  quiet = true
+) {
   let obj;
   try {
     obj = await parsePlistFile(plist, mustExist);
@@ -94,7 +103,7 @@ async function updatePlistFile (plist, updatedFields, binary = true, mustExist =
  * @param {Object} data The object to be turned into a binary plist
  * @returns {Buffer} plist in the form of a binary buffer
  */
-function createBinaryPlist (data) {
+function createBinaryPlist(data) {
   return bplistCreate(data);
 }
 
@@ -102,28 +111,37 @@ function createBinaryPlist (data) {
  * Parses a Buffer into an Object
  * @param {Buffer} data The beffer of a binary plist
  */
-function parseBinaryPlist (data) {
-  // this function exists, but is not in the type declarations.
-  // @ts-expect-error
+function parseBinaryPlist(data) {
   return bplistParse.parseBuffer(data);
 }
 
-function getXmlPlist (data) {
+function getXmlPlist(data) {
   if (_.isString(data) && data.startsWith(PLIST_IDENTIFIER.TEXT)) {
     return data;
   }
-  if (_.isBuffer(data) && PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) === 0) {
+  if (
+    _.isBuffer(data) &&
+    PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) ===
+      0
+  ) {
     return data.toString();
   }
   return null;
 }
 
-function getBinaryPlist (data) {
+function getBinaryPlist(data) {
   if (_.isString(data) && data.startsWith(BPLIST_IDENTIFIER.TEXT)) {
     return Buffer.from(data);
   }
 
-  if (_.isBuffer(data) && BPLIST_IDENTIFIER.BUFFER.compare(data, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0) {
+  if (
+    _.isBuffer(data) &&
+    BPLIST_IDENTIFIER.BUFFER.compare(
+      data,
+      0,
+      BPLIST_IDENTIFIER.BUFFER.length
+    ) === 0
+  ) {
     return data;
   }
   return null;
@@ -135,7 +153,7 @@ function getBinaryPlist (data) {
  * @param {boolean} binary Set it to true for a binary plist
  * @returns {string|Buffer} returns a buffer or a string in respect to the binary parameter
  */
-function createPlist (object, binary = false) {
+function createPlist(object, binary = false) {
   if (binary) {
     return createBinaryPlist(object);
   } else {
@@ -149,7 +167,7 @@ function createPlist (object, binary = false) {
  * @returns {Object} parsed plist JS Object
  * @throws Will throw an error if the plist type is unknown
  */
-function parsePlist (data) {
+function parsePlist(data) {
   let textPlist = getXmlPlist(data);
   if (textPlist) {
     return xmlplist.parse(textPlist);
@@ -163,4 +181,11 @@ function parsePlist (data) {
   throw new Error(`Unknown type of plist, data: ${data.toString()}`);
 }
 
-export { parsePlistFile, parsePlist, createPlist, updatePlistFile, createBinaryPlist, parseBinaryPlist };
+export {
+  parsePlistFile,
+  parsePlist,
+  createPlist,
+  updatePlistFile,
+  createBinaryPlist,
+  parseBinaryPlist,
+};

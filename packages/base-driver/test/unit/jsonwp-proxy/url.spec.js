@@ -1,7 +1,5 @@
-// transpile:mocha
-
 import {JWProxy} from '../../../lib';
-import {getTestPort, TEST_HOST, createAppiumURL} from '../../helpers';
+import {getTestPort, TEST_HOST, createAppiumURL} from '@appium/test-support';
 import _ from 'lodash';
 
 describe('JWProxy', function () {

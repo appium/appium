@@ -1,3 +1,4 @@
+/* eslint-disable require-await */
 import _ from 'lodash';
 import {URL} from 'url';
 import B from 'bluebird';
@@ -9,20 +10,21 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * It is expected this function is called in Express
  * server instance context.
  *
- * @this {WebSocketServer} - An instance of express HTTP server.
+ * @this {AppiumServer} - An instance of express HTTP server.
  * @param {string} handlerPathname - Web socket endpoint path starting with
  * a single slash character. It is recommended to always add
  * DEFAULT_WS_PATHNAME_PREFIX to all web socket pathnames.
- * @param {Object} handlerServer - WebSocket server instance. See
+ * @param {import('ws').Server} handlerServer - WebSocket server instance. See
  * https://github.com/websockets/ws/pull/885 for more details
  * on how to configure the handler properly.
+ * @returns {Promise<void>}
  */
-// eslint-disable-next-line require-await
 async function addWebSocketHandler(handlerPathname, handlerServer) {
+  const server = /** @type {AppiumServer} */ (this);
   if (_.isUndefined(this.webSocketsMapping)) {
-    this.webSocketsMapping = {};
+    server.webSocketsMapping = {};
     // https://github.com/websockets/ws/pull/885
-    this.on('upgrade', (request, socket, head) => {
+    server.on('upgrade', (request, socket, head) => {
       let currentPathname;
       try {
         // @ts-expect-error
@@ -30,7 +32,7 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
       } catch {
         currentPathname = request.url;
       }
-      for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
+      for (const [pathname, wsServer] of _.toPairs(server.webSocketsMapping)) {
         if (currentPathname === pathname) {
           wsServer.handleUpgrade(request, socket, head, (ws) => {
             wsServer.emit('connection', ws, request);
@@ -50,10 +52,10 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
  * It is expected this function is called in Express
  * server instance context.
  *
+ * @this {AppiumServer}
  * @param {string?} [keysFilter] - Only include pathnames with given
  * `keysFilter` value if set. All pairs will be included by default.
- * @returns {Promise<Object>} pathnames to websocket server isntances mapping
- * matching the search criteria or an empty object otherwise.
+ * @returns {Promise<Record<string, import('ws').Server>>} pathnames to websocket server instances mapping matching the search criteria or an empty object otherwise.
  */
 // eslint-disable-next-line require-await
 async function getWebSocketHandlers(keysFilter = null) {
@@ -75,7 +77,7 @@ async function getWebSocketHandlers(keysFilter = null) {
  * is not present in the handlers list.
  * It is expected this function is called in Express
  * server instance context.
- *
+ * @this {AppiumServer}
  * @param {string} handlerPathname - Websocket endpoint path.
  * @returns {Promise<boolean>} true if the handlerPathname was found and deleted
  */
@@ -104,7 +106,7 @@ async function removeWebSocketHandler(handlerPathname) {
  * Removes all existing websocket handler from express server instance.
  * It is expected this function is called in Express
  * server instance context.
- *
+ * @this {AppiumServer}
  * @returns {Promise<boolean>} true if at least one handler has been deleted
  */
 async function removeAllWebSocketHandlers() {
@@ -128,5 +130,5 @@ export {
 };
 
 /**
- * @typedef {import('http').Server & {webSocketsMapping: Record<string,import('ws').Server>}} WebSocketServer
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
  */

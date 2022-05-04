@@ -1,14 +1,14 @@
-appium-test-support
+@appium/test-support
 ===================
 
 A collection of test utility lib used across Appium packages.
 
-[![Build Status](https://travis-ci.org/appium/appium-test-support.svg?branch=master)](https://travis-ci.org/appium/appium-test-support)
+[![Build Status](https://travis-ci.org/appium/@appium/test-support.svg?branch=master)](https://travis-ci.org/appium/@appium/test-support)
 
 ## Install
 
 ```
-npm install appium-test-support --save-dev
+npm install @appium/test-support --save-dev
 ```
 
 ## Api
@@ -16,7 +16,7 @@ npm install appium-test-support --save-dev
 ### stubEnv
 
 ```js
-import { stubEnv } from 'appium-test-support';
+import { stubEnv } from '@appium/test-support';
 
 describe('myTest', () => {
   stubEnv();
@@ -30,7 +30,7 @@ describe('myTest', () => {
 ### stubLog
 
 ```js
-import { stubLog } from 'appium-test-support';
+import { stubLog } from '@appium/test-support';
 
 describe('myTest', () => {
   let sandbox;
@@ -62,7 +62,7 @@ describe('myTest', () => {
 Use when mixing up sinon apis (mocks, spies stubs).
 
 ```js
-import { withSandbox } from 'appium-test-support';
+import { withSandbox } from '@appium/test-support';
 
 let api = {
   abc: () => { return 'abc'; }
@@ -85,7 +85,7 @@ describe('MyTest', withSandbox({mocks: {api}}, (S) => {
 When using mainly stubs.
 
 ```js
-import { withMocks } from 'appium-test-support';
+import { withMocks } from '@appium/test-support';
 
 let api = {
   abc: () => { return 'abc'; }
@@ -103,7 +103,7 @@ describe('withMocks', withMocks({api}, (mocks) => {
 ### fakeTime
 
 ```js
-import { fakeTime } from 'appium-test-support';
+import { fakeTime } from '@appium/test-support';
 
 function doSomething() {
   return new B.Promise((resolve) => {

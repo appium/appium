@@ -1,3 +1,5 @@
+import type {Server as WSServer} from 'ws';
+import type {Socket} from 'net';
 import type {Server} from 'http';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
@@ -43,22 +45,38 @@ export interface AppiumLogger {
    * Log prefix, if applicable.
    */
   prefix?: AppiumLoggerPrefix;
-  debug: (...args: any[]) => void;
-  info: (...args: any[]) => void;
-  warn: (...args: any[]) => void;
-  error: (...args: any[]) => void;
-  verbose: (...args: any[]) => void;
-  silly: (...args: any[]) => void;
-  http: (...args: any[]) => void;
-  errorAndThrow: (...args: any[]) => never;
+  debug(...args: any[]): void;
+  info(...args: any[]): void;
+  warn(...args: any[]): void;
+  error(...args: any[]): void;
+  verbose(...args: any[]): void;
+  silly(...args: any[]): void;
+  http(...args: any[]): void;
+  errorAndThrow(...args: any[]): never;
 }
 
 /**
  * Appium's slightly-modified {@linkcode Server http.Server}.
  */
-export type AppiumServer = Omit<Server, 'close'> & {
-  close: () => Promise<void>;
-};
+export type AppiumServer = Omit<Server, 'close'> & AppiumServerExtension;
+
+export interface AppiumServerExtension {
+  close(): Promise<void>;
+  addWebSocketHandler(
+    handlerPathname: string,
+    handlerServer: WSServer
+  ): Promise<void>;
+  removeWebSocketHandler(handlerPathname: string): Promise<boolean>;
+  removeAllWebSocketHandlers(): Promise<boolean>;
+  getWebSocketHandlers(
+    keysFilter: string | null | undefined
+  ): Promise<Record<string, WSServer>>;
+  webSocketsMapping: Record<string, WSServer>;
+}
+
+export interface AppiumServerSocket extends Socket {
+  _openReqCount: number;
+}
 
 /**
  * The definition of an extension method, which will be provided via Appium's API.

@@ -345,11 +345,11 @@ describe('PluginConfig', function () {
 });
 
 /**
- * @typedef {import('appium/lib/extension/manifest').PluginType} PluginType
+ * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('appium/lib/extension/plugin-config').PluginConfig} PluginConfig
  */
 
 /**
- * @template {import('appium/lib/extension/manifest').ExtensionType} ExtType
- * @typedef {import('appium/lib/extension/manifest').ExtDataWithSchema<ExtType>} ExtDataWithSchema
+ * @template {import('@appium/types').ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtDataWithSchema<ExtType>} ExtDataWithSchema
  */

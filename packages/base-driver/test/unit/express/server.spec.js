@@ -3,7 +3,7 @@
 import {server, routeConfiguringFunction} from '../../../lib';
 import {configureServer, normalizeBasePath} from '../../../lib/express/server';
 import {createSandbox} from 'sinon';
-import {getTestPort} from '../../helpers';
+import {getTestPort} from '@appium/test-support';
 
 const newMethodMap = {
   '/session/:sessionId/fake': {

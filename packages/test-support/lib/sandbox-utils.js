@@ -1,40 +1,84 @@
 import sinon from 'sinon';
 import _ from 'lodash';
 import B from 'bluebird';
+import {MockStore} from './mock-utils';
 
-let SANDBOX = Symbol();
-
-// use this one if using a mix of mocks/stub/spies
-function withSandbox(config, fn) {
+/**
+ * @template {Record<string,any>|{mocks: Record<string,any>}} Mocks
+ * @param {Mocks} mockDefs
+ * @param {(sandboxStore: SandboxStore) => void} fn
+ * @returns {() => void}
+ */
+export function withSandbox(mockDefs, fn) {
+  // backwards-compat
+  if (!_.isEmpty(mockDefs.mocks)) {
+    mockDefs = mockDefs.mocks;
+  }
   return () => {
-    const S = {
-      mocks: {},
-      verify() {
-        return this.sandbox.verify();
-      },
-    };
+    /** @type {SandboxStore} */
+    const sbx = new SandboxStore();
     beforeEach(function beforeEach() {
-      S.sandbox = sinon.createSandbox();
-      S.sandbox.usingPromise(B);
-      S.mocks[SANDBOX] = S.sandbox;
-      for (let [key, value] of _.toPairs(config.mocks)) {
-        S.mocks[key] = S.sandbox.mock(value);
-      }
+      sbx.createSandbox(mockDefs);
     });
     afterEach(function afterEach() {
-      S.sandbox.restore();
-      for (let k of _.keys(S.mocks)) {
-        delete S.mocks[k];
-      }
-      delete S.mocks[SANDBOX];
+      sbx.reset();
     });
-    fn(S);
+    fn(sbx);
   };
 }
 
-function verifySandbox(obj) {
-  let sandbox = obj.sandbox ? obj.sandbox : obj[SANDBOX];
-  sandbox.verify();
+/**
+ * Convenience function for calling {@linkcode SandboxStore.verify}.
+ * @param {SandboxStore|MockStore} sbxOrMocks
+ */
+export function verifySandbox(sbxOrMocks) {
+  sbxOrMocks.verify();
 }
 
-export {withSandbox, verifySandbox};
+/**
+ * @template {Record<string,any>} Mocks
+ */
+export class SandboxStore {
+  /** @type {MockStore<Record<string,any>>} */
+  mocks;
+
+  /** @type {SinonSandbox|undefined} */
+  sandbox;
+
+  /**
+   * Uses a sandbox if one is provided
+   * @param {SinonSandbox} [sandbox]
+   */
+  constructor(sandbox) {
+    this.sandbox = sandbox;
+  }
+
+  /**
+   * @param {Mocks} mocks
+   */
+  createSandbox(mocks = /** @type {Mocks} */ ({})) {
+    this.sandbox = this.sandbox ?? sinon.createSandbox().usingPromise(B);
+    this.mocks = new MockStore(this.sandbox).createMocks(mocks);
+  }
+
+  /**
+   * Calls {@linkcode SinonSandbox.verify} on the `sandbox` prop, if it exists
+   */
+  verify() {
+    if (!this.sandbox) {
+      throw new ReferenceError(
+        'Cannot verify mocks before they are created; call `createMocks()` first'
+      );
+    }
+    this.sandbox.verify();
+  }
+
+  reset() {
+    this.mocks?.reset();
+    delete this.sandbox;
+  }
+}
+
+/**
+ * @typedef {import('sinon').SinonSandbox} SinonSandbox
+ */

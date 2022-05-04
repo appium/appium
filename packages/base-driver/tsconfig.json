@@ -9,6 +9,6 @@
     },
     "checkJs": true
   },
-  "include": ["./lib/**/*"],
+  "include": ["lib"],
   "references": [{"path": "../support"}, {"path": "../types"}]
 }

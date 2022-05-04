@@ -30,11 +30,16 @@ import {EventEmitter} from 'events';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
-async function server(opts = {}) {
+/**
+ *
+ * @param {ServerOpts} opts
+ * @returns {Promise<AppiumServer>}
+ */
+async function server(opts) {
   const {
     routeConfiguringFunction,
     port,
-    hostname = null,
+    hostname,
     allowCors = true,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
@@ -52,7 +57,11 @@ async function server(opts = {}) {
     // way we resolve it is to use an async function here but to wrap all the inner logic in
     // try/catch so any errors can be passed to reject.
     try {
-      configureHttp({httpServer, reject, keepAliveTimeout});
+      const appiumServer = configureHttp({
+        httpServer,
+        reject,
+        keepAliveTimeout,
+      });
       configureServer({
         app,
         addRoutes: routeConfiguringFunction,
@@ -62,7 +71,7 @@ async function server(opts = {}) {
       });
       // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {
-        await updater(app, httpServer);
+        await updater(app, appiumServer);
       }
 
       // once all configurations and updaters have been applied, make sure to set up a catchall
@@ -71,13 +80,18 @@ async function server(opts = {}) {
       app.all('*', catch404Handler);
 
       await startServer({httpServer, hostname, port, keepAliveTimeout});
-      resolve(httpServer);
+
+      resolve(appiumServer);
     } catch (err) {
       reject(err);
     }
   });
 }
 
+/**
+ * Sets up some Express middleware and stuff
+ * @param {ConfigureServerOpts} opts
+ */
 function configureServer({
   app,
   addRoutes,
@@ -125,20 +139,28 @@ function configureServer({
   app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
+/**
+ * Monkeypatches the `http.Server` instance and returns a {@linkcode AppiumServer}.
+ * This function _mutates_ the `httpServer` parameter.
+ * @param {ConfigureHttpOpts} opts
+ * @returns {AppiumServer}
+ */
 function configureHttp({httpServer, reject, keepAliveTimeout}) {
   const serverState = {
     notifier: new EventEmitter(),
     closed: false,
   };
-  httpServer.addWebSocketHandler = addWebSocketHandler;
-  httpServer.removeWebSocketHandler = removeWebSocketHandler;
-  httpServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
-  httpServer.getWebSocketHandlers = getWebSocketHandlers;
+  // TS does not love monkeypatching.
+  const appiumServer = /** @type {AppiumServer} */ (/** @type {unknown} */ (httpServer));
+  appiumServer.addWebSocketHandler = addWebSocketHandler;
+  appiumServer.removeWebSocketHandler = removeWebSocketHandler;
+  appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
+  appiumServer.getWebSocketHandlers = getWebSocketHandlers;
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
-  const close = httpServer.close.bind(httpServer);
-  httpServer.close = async () =>
+  const close = appiumServer.close.bind(appiumServer);
+  appiumServer.close = async () =>
     await new B((resolve, reject) => {
       // https://github.com/nodejs/node-v0.x-archive/issues/9066#issuecomment-124210576
       serverState.closed = true;
@@ -153,35 +175,41 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
       });
     });
 
-  httpServer.on('error', (err) => {
-    if (err.code === 'EADDRNOTAVAIL') {
-      log.error(
-        'Could not start REST http interface listener. ' + 'Requested address is not available.'
-      );
-    } else {
-      log.error(
-        'Could not start REST http interface listener. The requested ' +
-          'port may already be in use. Please make sure there is no ' +
-          'other instance of this server running already.'
-      );
+  appiumServer.on(
+    'error',
+    /** @param {NodeJS.ErrnoException} err */ (err) => {
+      if (err.code === 'EADDRNOTAVAIL') {
+        log.error(
+          'Could not start REST http interface listener. ' + 'Requested address is not available.'
+        );
+      } else {
+        log.error(
+          'Could not start REST http interface listener. The requested ' +
+            'port may already be in use. Please make sure there is no ' +
+            'other instance of this server running already.'
+        );
+      }
+      reject(err);
     }
-    reject(err);
-  });
+  );
 
-  httpServer.on('connection', (socket) => {
-    socket.setTimeout(keepAliveTimeout);
-    socket.on('error', reject);
+  appiumServer.on(
+    'connection',
+    /** @param {AppiumServerSocket} socket */ (socket) => {
+      socket.setTimeout(keepAliveTimeout);
+      socket.on('error', reject);
 
-    function destroy() {
-      socket.destroy();
+      function destroy() {
+        socket.destroy();
+      }
+      socket._openReqCount = 0;
+      socket.once('close', () => serverState.notifier.removeListener('shutdown', destroy));
+      serverState.notifier.once('shutdown', destroy);
     }
-    socket._openReqCount = 0;
-    socket.once('close', () => serverState.notifier.removeListener('shutdown', destroy));
-    serverState.notifier.once('shutdown', destroy);
-  });
+  );
 
-  httpServer.on('request', function (req, res) {
-    const socket = req.connection || req.socket;
+  appiumServer.on('request', function (req, res) {
+    const socket = /** @type {AppiumServerSocket} */ (req.connection || req.socket);
     socket._openReqCount++;
     res.on('finish', function () {
       socket._openReqCount--;
@@ -190,11 +218,14 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
       }
     });
   });
+
+  return appiumServer;
 }
 
 /**
- *
+ * Starts an {@linkcode AppiumServer}
  * @param {StartServerOpts} opts
+ * @returns {Promise<void>}
  */
 async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
   // If the hostname is omitted, the server will accept
@@ -208,6 +239,11 @@ async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
   await startPromise;
 }
 
+/**
+ * Normalize base path string
+ * @param {string} basePath
+ * @returns {string}
+ */
 function normalizeBasePath(basePath) {
   if (!_.isString(basePath)) {
     throw new Error(`Invalid path prefix ${basePath}`);
@@ -235,4 +271,56 @@ export {server, configureServer, normalizeBasePath};
  * @property {number} port - Port to run on
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
  * @property {string} [hostname] - Optional hostname
+ */
+
+/**
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ * @typedef {import('@appium/types').AppiumServerSocket} AppiumServerSocket
+ * @typedef {import('@appium/types').MethodMap} MethodMap
+ */
+
+/**
+ * Options for {@linkcode configureHttp}
+ * @typedef ConfigureHttpOpts
+ * @property {import('http').Server} httpServer - HTTP server instance
+ * @property {(error?: any) => void} reject - Rejection function from `Promise` constructor
+ * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
+ */
+
+/**
+ * Options for {@linkcode server}
+ * @typedef ServerOpts
+ * @property {RouteConfiguringFunction} routeConfiguringFunction
+ * @property {number} port
+ * @property {string} [hostname]
+ * @property {boolean} [allowCors]
+ * @property {string} [basePath]
+ * @property {MethodMap} [extraMethodMap]
+ * @property {import('@appium/types').UpdateServerCallback[]} [serverUpdaters]
+ * @property {number} [keepAliveTimeout]
+ */
+
+/**
+ * A function which configures routes
+ * @callback RouteConfiguringFunction
+ * @param {import('express').Express} app
+ * @param {RouteConfiguringFunctionOpts} [opts]
+ * @returns {void}
+ */
+
+/**
+ * Options for a {@linkcode RouteConfiguringFunction}
+ * @typedef RouteConfiguringFunctionOpts
+ * @property {string} [basePath]
+ * @property {MethodMap} [extraMethodMap]
+ */
+
+/**
+ * Options for {@linkcode configureServer}
+ * @typedef ConfigureServerOpts
+ * @property {import('express').Express} app
+ * @property {RouteConfiguringFunction} addRoutes
+ * @property {boolean} [allowCors]
+ * @property {string} [basePath]
+ * @property {MethodMap} [extraMethodMap]
  */

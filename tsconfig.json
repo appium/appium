@@ -2,6 +2,9 @@
   "files": [],
   "references": [
     {
+      "path": "packages/schema"
+    },
+    {
       "path": "packages/types"
     },
     {
@@ -11,13 +14,13 @@
       "path": "packages/base-driver"
     },
     {
-      "path": "packages/appium"
-    },
-    {
-      "path": "packages/schema"
-    },
-    {
       "path": "packages/base-plugin"
+    },
+    {
+      "path": "packages/test-support"
+    },
+    {
+      "path": "packages/appium"
     },
     {
       "path": "packages/fake-plugin"

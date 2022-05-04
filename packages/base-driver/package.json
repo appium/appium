@@ -31,16 +31,11 @@
     "index.d.ts",
     "lib",
     "static",
-    "test/basedriver",
-    "!test/e2e/fixtures",
-    "build",
-    "!build/test/e2e/fixtures"
+    "build"
   ],
   "scripts": {
-    "build": "run-s build:*",
-    "build:distfiles": "babel lib --root-mode=upward --out-dir=build/lib",
-    "build:test": "babel test --root-mode=upward --out-dir=build/test --copy-files",
-    "dev": "run-p \"build:distfiles -- --watch\" \"build:test -- --watch\"",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",

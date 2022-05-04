@@ -7,7 +7,7 @@ import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 import contentDisposition from 'content-disposition';
 import B from 'bluebird';
-import {TEST_HOST, getTestPort} from '../../helpers';
+import {TEST_HOST, getTestPort} from '@appium/test-support';
 
 function getFixture(file) {
   // XXX: __dirname disallowed in native ESM

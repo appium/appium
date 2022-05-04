@@ -1,0 +1,22 @@
+{
+  "extends": "../../config/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "checkJs": true,
+    "paths": {
+      "appium/driver": ["../appium/driver"],
+      "@appium/types": ["../types"],
+      "appium/support": ["../appium/support"]
+    },
+    "types": [
+      "mocha", "chai", "sinon", "sinon-chai", "chai-as-promised"
+    ]
+  },
+  "include": ["./lib"],
+  "references": [
+    {"path": "../base-driver"},
+    {"path": "../types"},
+    {"path": "../support"}
+  ]
+}

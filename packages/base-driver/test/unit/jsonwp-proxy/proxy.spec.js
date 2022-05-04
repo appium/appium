@@ -3,7 +3,7 @@
 import {JWProxy} from '../../../lib';
 import request from './mock-request';
 import {isErrorType, errors} from '../../../lib/protocol/errors';
-import {getTestPort, TEST_HOST} from '../../helpers';
+import {getTestPort, TEST_HOST} from '@appium/test-support';
 
 function buildReqRes(url, method, body) {
   let req = {originalUrl: url, method, body};

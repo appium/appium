@@ -47,7 +47,7 @@ export class ExtensionConfig {
   manifest;
 
   /**
-   * @type {import('../cli/extension-command').ExtensionListData}
+   * @type {ExtensionListData}
    */
   _listDataCache;
 
@@ -77,6 +77,7 @@ export class ExtensionConfig {
   /**
    * Checks extensions for problems
    * @param {ExtRecord<ExtType>} exts - Extension data
+   * @returns {Promise<ExtRecord<ExtType>>}
    */
   async _validate(exts) {
     const foundProblems = /** @type {Record<ExtName<ExtType>,Problem[]>} */ ({});
@@ -126,15 +127,13 @@ export class ExtensionConfig {
    * Retrieves listing data for extensions via command class.
    * Caches the result in {@linkcode ExtensionConfig._listDataCache}
    * @protected
-   * @returns {import('../cli/extension-command').ExtensionListData}
+   * @returns {Promise<ExtensionListData>}
    */
   async getListData() {
     if (this._listDataCache) {
       return this._listDataCache;
     }
-    const CommandClass = /** @type {import('../cli/extension').ExtCommand<ExtType>} */ (
-      commandClasses[this.extensionType]
-    );
+    const CommandClass = /** @type {ExtCommand<ExtType>} */ (commandClasses[this.extensionType]);
     const cmd = new CommandClass({config: this, json: true});
     const listData = await cmd.list({showInstalled: true, showUpdates: true});
     this._listDataCache = listData;
@@ -513,6 +512,11 @@ export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GIT
  */
 
 /**
+ * @template T
+ * @typedef {import('../cli/extension').ExtCommand<T>} ExtCommand
+ */
+
+/**
  * Options for various methods in {@link ExtensionConfig}
  * @typedef ExtensionConfigMutationOpts
  * @property {boolean} [write=true] Whether or not to write the manifest to disk after a mutation operation
@@ -521,4 +525,8 @@ export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GIT
 /**
  * A valid install type
  * @typedef {typeof INSTALL_TYPE_NPM | typeof INSTALL_TYPE_GIT | typeof INSTALL_TYPE_LOCAL | typeof INSTALL_TYPE_GITHUB} InstallType
+ */
+
+/**
+ * @typedef {import('../cli/extension-command').ExtensionListData} ExtensionListData
  */

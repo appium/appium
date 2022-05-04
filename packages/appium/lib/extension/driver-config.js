@@ -181,7 +181,7 @@ export class DriverConfig extends ExtensionConfig {
    * Given an automation name and platform name, find a suitable driver and return its extension data.
    * @param {string} matchAutomationName
    * @param {string} matchPlatformName
-   * @returns {ExtMetadata<DriverType> & import('appium/types').InternalMetadata & import('appium/types').CommonMetadata}
+   * @returns {ExtMetadata<DriverType> & import('appium/types').InternalMetadata & import('appium/types').CommonExtMetadata}
    */
   _getDriverBySupport(matchAutomationName, matchPlatformName) {
     const drivers = this.installedExtensions;
@@ -246,7 +246,7 @@ export class DriverConfig extends ExtensionConfig {
 /**
  * Return value of {@linkcode DriverConfig.findMatchingDriver}
  * @typedef MatchedDriver
- * @property {import('@appium/base-driver').DriverClass} driver
+ * @property {import('@appium/types').DriverClass} driver
  * @property {string} version
  * @property {string} driverName
  */

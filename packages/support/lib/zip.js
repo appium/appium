@@ -176,12 +176,12 @@ class ZipExtractor {
 
 /**
  * @typedef ExtractAllOptions
- * @property {?string} fileNamesEncoding The encoding to use for extracted file names.
+ * @property {string} [fileNamesEncoding] The encoding to use for extracted file names.
  * For ZIP archives created on MacOS it is usually expected to be `utf8`.
  * By default it is autodetected based on the entry metadata and is only needed to be set explicitly
  * if the particular archive does not comply to the standards, which leads to corrupted file names
  * after extraction. Only applicable if system unzip binary is NOT being used.
- * @property {?boolean} useSystemUnzip [false] If true, attempt to use system unzip; if this fails,
+ * @property {boolean} [useSystemUnzip] If true, attempt to use system unzip; if this fails,
  * fallback to the JS unzip implementation.
  */
 

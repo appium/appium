@@ -35,7 +35,7 @@ export async function loadExtensions(appiumHome) {
  *
  * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
  * @param {string[]} usePlugins
- * @returns {import('appium/types').PluginClass[]}
+ * @returns {import('@appium/types').PluginClass[]}
  */
 export function getActivePlugins(pluginConfig, usePlugins = []) {
   return _.compact(

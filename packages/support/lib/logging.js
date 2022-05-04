@@ -1,21 +1,27 @@
+// @ts-check
+
 import npmlog from 'npmlog';
 import _ from 'lodash';
 import {unleakString} from './util';
 import moment from 'moment';
 import SECURE_VALUES_PREPROCESSOR from './log-internal';
 
-// levels that are available from `npmlog`
-const NPM_LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
+/** @type {import('@appium/types').AppiumLoggerLevel[]} */
+export const LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 const MAX_LOG_RECORDS_COUNT = 3000;
 
 const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
 
 // mock log object used in testing mode
 let mockLog = {};
-for (let level of NPM_LEVELS) {
+for (let level of LEVELS) {
   mockLog[level] = () => {};
 }
 
+/**
+ *
+ * @param {import('npmlog').Logger} logger
+ */
 function patchLogger(logger) {
   if (!logger.debug) {
     logger.addLevel('debug', 1000, {fg: 'blue', bg: 'black'}, 'dbug');
@@ -24,7 +30,7 @@ function patchLogger(logger) {
 
 /**
  *
- * @returns {[npmlog.Logger, boolean]}
+ * @returns {[import('npmlog').Logger, boolean]}
  */
 function _getLogger() {
   // check if the user set the `_TESTING` or `_FORCE_LOGS` flag
@@ -49,7 +55,7 @@ function _getLogger() {
 }
 
 /**
- * @param {Prefix?} prefix
+ * @param {AppiumLoggerPrefix?} prefix
  * @param {boolean} logTimestamp whether to include timestamps into log prefixes
  * @returns {string}
  */
@@ -60,7 +66,7 @@ function getActualPrefix(prefix, logTimestamp = false) {
 
 /**
  *
- * @param {Prefix?} prefix
+ * @param {AppiumLoggerPrefix?} prefix
  * @returns {AppiumLogger}
  */
 function getLogger(prefix = null) {
@@ -69,7 +75,7 @@ function getLogger(prefix = null) {
   // wrap the logger so that we can catch and modify any logging
   let wrappedLogger = {
     unwrap: () => logger,
-    levels: NPM_LEVELS,
+    levels: LEVELS,
     prefix,
   };
 
@@ -88,8 +94,8 @@ function getLogger(prefix = null) {
   const logTimestamp = process.env._LOG_TIMESTAMP === '1';
 
   // add all the levels from `npmlog`, and map to the underlying logger
-  for (const level of NPM_LEVELS) {
-    wrappedLogger[level] = function (...args) {
+  for (const level of LEVELS) {
+    wrappedLogger[level] = /** @param {...any} args */ function (...args) {
       const actualPrefix = getActualPrefix(this.prefix, logTimestamp);
       for (const arg of args) {
         const out = _.isError(arg) && arg.stack ? arg.stack : `${arg}`;
@@ -153,9 +159,7 @@ export {log, patchLogger, getLogger, loadSecureValuesPreprocessingRules};
 export default log;
 
 /**
- * @typedef {import('@appium/types').Prefix} Prefix
- */
-
-/**
+ * @typedef {import('@appium/types').AppiumLoggerPrefix} AppiumLoggerPrefix
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ * @typedef {import('@appium/types').AppiumLoggerLevel} AppiumLoggerLevel
  */

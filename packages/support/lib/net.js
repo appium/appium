@@ -12,7 +12,7 @@ const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
 /**
  * Converts {@linkcode AuthCredentials} to credentials understood by {@linkcode axios}.
- * @param {AuthCredentials | import('axios').AxiosBasicCredentials} auth
+ * @param {AuthCredentials | import('axios').AxiosBasicCredentials} [auth]
  * @returns {import('axios').AxiosBasicCredentials?}
  */
 function toAxiosAuth(auth) {
@@ -286,14 +286,14 @@ export {uploadFile, downloadFile};
  * @typedef NetOptions
  * @property {boolean} [isMetered=true] - Whether to log the actual download performance
  * (e.g. timings and speed)
- * @property {AuthCredentials} auth
+ * @property {AuthCredentials} [auth] - Authentication credentials
  */
 
 /**
  * Specific options for {@linkcode downloadFile}.
  * @typedef DownloadOptions
  * @property {number} [timeout] - The actual request timeout in milliseconds; defaults to {@linkcode DEFAULT_TIMEOUT_MS}
- * @property {Record<string,any>} headers - Request headers mapping
+ * @property {Record<string,any>} [headers] - Request headers mapping
  */
 
 /**

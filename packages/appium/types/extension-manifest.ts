@@ -9,15 +9,15 @@ import {DriverType, ExtensionType, PluginType} from '@appium/types';
 /**
  * This is what is allowed in the `appium.schema` prop of an extension's `package.json`.
  */
-export type SchemaMetadata = string | (SchemaObject & {[key: number]: never});
+export type ExtSchemaMetadata = string | (SchemaObject & {[key: number]: never});
 
 /**
  * Manifest data shared by all extensions, as contained in `package.json`
  */
-export interface CommonMetadata {
+export interface CommonExtMetadata {
   mainClass: string;
   scripts?: Record<string, string>;
-  schema?: SchemaMetadata;
+  schema?: ExtSchemaMetadata;
 }
 
 /**
@@ -45,7 +45,7 @@ export type ExtMetadata<ExtType extends ExtensionType> = (ExtType extends Driver
   : ExtType extends PluginType
   ? PluginMetadata
   : never) &
-  CommonMetadata;
+  CommonExtMetadata;
 
 /**
  * A `package.json` containing extension metadata.

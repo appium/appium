@@ -1,5 +1,3 @@
-// transpile:mocha
-
 import {getDynamicLogger, restoreWriters, setupWriters, assertOutputContains} from './helpers';
 
 describe('logger with force log', function () {

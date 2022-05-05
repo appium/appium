@@ -1,8 +1,8 @@
 /* eslint-disable no-case-declarations */
 
 import _ from 'lodash';
-import {errors} from '@appium/base-driver';
-import BasePlugin from '@appium/base-plugin';
+import {errors} from 'appium/driver';
+import BasePlugin from 'appium/plugin';
 import {compareImages} from './compare';
 import ImageElementFinder from './finder';
 import {ImageElement, IMAGE_ELEMENT_PREFIX} from './image-element';

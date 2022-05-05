@@ -2,19 +2,19 @@
 /* eslint-disable require-await */
 /* eslint-disable no-unused-vars */
 
-import { DriverCore } from './core';
-import { util } from '@appium/support';
+import {DriverCore} from './core';
+import {util} from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
-import { fixCaps, isW3cCaps } from '../helpers/capabilities';
-import { DELETE_SESSION_COMMAND, determineProtocol, errors } from '../protocol';
+import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {
   APPIUM_OPTS_CAP,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
-  promoteAppiumOptions
+  promoteAppiumOptions,
 } from './capabilities';
-import { createBaseDriverClass } from './commands';
+import {createBaseDriverClass} from './commands';
 import helpers from './helpers';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
@@ -23,12 +23,10 @@ const EVENT_SESSION_QUIT_START = 'quitSessionRequested';
 const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
-
 /**
  * @implements {SessionHandler}
  */
 export class BaseDriverCore extends DriverCore {
-
   /** @type {Record<string,any>|undefined} */
   cliArgs;
 
@@ -37,11 +35,11 @@ export class BaseDriverCore extends DriverCore {
   // and ensuring that we execute commands one at a time. This method is called
   // by MJSONWP's express router.
   /**
-    * @param {string} cmd
-    * @param  {...any[]} args
-    * @returns {Promise<any>}
-    */
-  async executeCommand (cmd, ...args) {
+   * @param {string} cmd
+   * @param  {...any[]} args
+   * @returns {Promise<any>}
+   */
+  async executeCommand(cmd, ...args) {
     // get start time for this command, and log in special cases
     let startTime = Date.now();
 
@@ -58,9 +56,7 @@ export class BaseDriverCore extends DriverCore {
     await this.clearNewCommandTimeout();
 
     if (this.shutdownUnexpectedly) {
-      throw new errors.NoSuchDriverError(
-          'The driver was unexpectedly shut down!',
-      );
+      throw new errors.NoSuchDriverError('The driver was unexpectedly shut down!');
     }
 
     // If we don't have this command, it must not be implemented
@@ -74,17 +70,14 @@ export class BaseDriverCore extends DriverCore {
         this[cmd](...args),
         new B((resolve, reject) => {
           unexpectedShutdownListener = reject;
-          this.eventEmitter.on(
-              ON_UNEXPECTED_SHUTDOWN_EVENT,
-              unexpectedShutdownListener,
-          );
+          this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, unexpectedShutdownListener);
         }),
       ]).finally(() => {
         if (unexpectedShutdownListener) {
           // This is needed to prevent memory leaks
           this.eventEmitter.removeListener(
-              ON_UNEXPECTED_SHUTDOWN_EVENT,
-              unexpectedShutdownListener,
+            ON_UNEXPECTED_SHUTDOWN_EVENT,
+            unexpectedShutdownListener
           );
           unexpectedShutdownListener = null;
         }
@@ -117,13 +110,11 @@ export class BaseDriverCore extends DriverCore {
   }
 
   /**
-    *
-    * @param {Error} err
-    */
-  async startUnexpectedShutdown (
-    err = new errors.NoSuchDriverError(
-        'The driver was unexpectedly shut down!',
-    ),
+   *
+   * @param {Error} err
+   */
+  async startUnexpectedShutdown(
+    err = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')
   ) {
     this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
     this.shutdownUnexpectedly = true;
@@ -136,7 +127,7 @@ export class BaseDriverCore extends DriverCore {
     }
   }
 
-  async startNewCommandTimeout () {
+  async startNewCommandTimeout() {
     // make sure there are no rogue timeouts
     await this.clearNewCommandTimeout();
 
@@ -146,7 +137,7 @@ export class BaseDriverCore extends DriverCore {
     this.noCommandTimer = setTimeout(async () => {
       this.log.warn(
         `Shutting down because we waited ` +
-          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`,
+          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`
       );
       const errorMessage =
         `New Command Timeout of ` +
@@ -164,7 +155,7 @@ export class BaseDriverCore extends DriverCore {
    * @param {number} port
    * @param {string} path
    */
-  assignServer (server, host, port, path) {
+  assignServer(server, host, port, path) {
     this.server = server;
     this.serverHost = host;
     this.serverPort = port;
@@ -172,10 +163,10 @@ export class BaseDriverCore extends DriverCore {
   }
 
   /*
-    * Restart the session with the original caps,
-    * preserving the timeout config.
-    */
-  async reset () {
+   * Restart the session with the original caps,
+   * preserving the timeout config.
+   */
+  async reset() {
     this.log.debug('Resetting app mid-session');
     this.log.debug('Running generic full reset');
 
@@ -209,40 +200,33 @@ export class BaseDriverCore extends DriverCore {
   }
 
   /**
-     *
-     * Historically the first two arguments were reserved for JSONWP capabilities.
-     * Appium 2 has dropped the support of these, so now we only accept capability
-     * objects in W3C format and thus allow any of the three arguments to represent
-     * the latter.
-     * @param {W3CCapabilities} w3cCapabilities1
-     * @param {W3CCapabilities} [w3cCapabilities2]
-     * @param {W3CCapabilities} [w3cCapabilities]
-     * @param {DriverData[]} [driverData]
-     * @returns {Promise<[string,object]>}
-     */
-  async createSession (
-    w3cCapabilities1,
-    w3cCapabilities2,
-    w3cCapabilities,
-    driverData,
-  ) {
+   *
+   * Historically the first two arguments were reserved for JSONWP capabilities.
+   * Appium 2 has dropped the support of these, so now we only accept capability
+   * objects in W3C format and thus allow any of the three arguments to represent
+   * the latter.
+   * @param {W3CCapabilities} w3cCapabilities1
+   * @param {W3CCapabilities} [w3cCapabilities2]
+   * @param {W3CCapabilities} [w3cCapabilities]
+   * @param {DriverData[]} [driverData]
+   * @returns {Promise<[string,object]>}
+   */
+  async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities, driverData) {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError(
-           'Cannot create a new session while one is in progress',
+        'Cannot create a new session while one is in progress'
       );
     }
 
     this.log.debug();
 
-    const originalCaps = _.cloneDeep([
-      w3cCapabilities,
-      w3cCapabilities1,
-      w3cCapabilities2,
-    ].find(isW3cCaps));
+    const originalCaps = _.cloneDeep(
+      [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps)
+    );
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
-           'Appium only supports W3C-style capability objects. ' +
-             'Your client is sending an older capabilities format. Please update your client library.',
+        'Appium only supports W3C-style capability objects. ' +
+          'Your client is sending an older capabilities format. Please update your client library.'
       );
     }
 
@@ -250,23 +234,15 @@ export class BaseDriverCore extends DriverCore {
 
     this.originalCaps = _.cloneDeep(originalCaps);
     this.log.debug(
-      `Creating session with W3C capabilities: ${JSON.stringify(
-        originalCaps,
-        null,
-        2,
-      )}`,
+      `Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`
     );
 
     let caps;
     try {
-      caps = processCapabilities(
-           originalCaps,
-           this.desiredCapConstraints,
-           this.shouldValidateCaps,
-      );
+      caps = processCapabilities(originalCaps, this.desiredCapConstraints, this.shouldValidateCaps);
       if (caps[APPIUM_OPTS_CAP]) {
         this.log.debug(
-             `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`,
+          `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
         );
         caps = promoteAppiumOptions(caps);
       }
@@ -289,9 +265,9 @@ export class BaseDriverCore extends DriverCore {
     // both to true, but this is misguided and strange, so error here instead
     if (this.opts.noReset && this.opts.fullReset) {
       throw new Error(
-           "The 'noReset' and 'fullReset' capabilities are mutually " +
-             'exclusive and should not both be set to true. You ' +
-             "probably meant to just use 'fullReset' on its own",
+        "The 'noReset' and 'fullReset' capabilities are mutually " +
+          'exclusive and should not both be set to true. You ' +
+          "probably meant to just use 'fullReset' on its own"
       );
     }
     if (this.opts.noReset === true) {
@@ -320,12 +296,12 @@ export class BaseDriverCore extends DriverCore {
   }
 
   /**
-    *
-    * @param {string} [sessionId]
-    * @param {DriverData[]} [driverData]
-    * @returns {Promise<void>}
-    */
-  async deleteSession (sessionId, driverData) {
+   *
+   * @param {string} [sessionId]
+   * @param {DriverData[]} [driverData]
+   * @returns {Promise<void>}
+   */
+  async deleteSession(sessionId, driverData) {
     await this.clearNewCommandTimeout();
     if (this.isCommandsQueueEnabled && this.commandsQueueGuard.isBusy()) {
       // simple hack to release pending commands if they exist
@@ -345,7 +321,7 @@ export class BaseDriverCore extends DriverCore {
  * @implements {Driver}
  */
 class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
-export { BaseDriver };
+export {BaseDriver};
 export default BaseDriver;
 
 /**
@@ -356,7 +332,6 @@ export default BaseDriver;
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
  */
-
 
 /**
  * @callback UpdateServerCallback

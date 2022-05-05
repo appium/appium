@@ -182,20 +182,14 @@ export class Manifest {
     const walkOpts = _.defaults({depthLimit}, DEFAULT_FIND_EXTENSIONS_OPTS);
     // this could be parallelized, but we can't use fs.walk as an async iterator
     let didChange = false;
-    for await (const {stats, path: filepath} of fs.walk(
-      this._appiumHome,
-      walkOpts
-    )) {
+    for await (const {stats, path: filepath} of fs.walk(this._appiumHome, walkOpts)) {
       if (filepath !== this._appiumHome && stats.isDirectory()) {
         try {
           const pkg = await env.readPackageInDir(filepath);
           if (pkg && isExtension(pkg)) {
             // it's possible that this extension already exists in the manifest,
             // so only update `didChange` if it's new.
-            const added = this.addExtensionFromPackage(
-              pkg,
-              path.join(filepath, 'package.json')
-            );
+            const added = this.addExtensionFromPackage(pkg, path.join(filepath, 'package.json'));
             didChange = didChange || added;
           }
         } catch {}
@@ -262,9 +256,7 @@ export class Manifest {
       return false;
     } else {
       throw new TypeError(
-        `The extension in ${path.dirname(
-          pkgPath
-        )} is neither a valid driver nor a valid plugin.`
+        `The extension in ${path.dirname(pkgPath)} is neither a valid driver nor a valid plugin.`
       );
     }
   }
@@ -419,11 +411,7 @@ export class Manifest {
         );
       }
       try {
-        await fs.writeFile(
-          this._manifestPath,
-          YAML.stringify(this._data),
-          'utf8'
-        );
+        await fs.writeFile(this._manifestPath, YAML.stringify(this._data), 'utf8');
         return true;
       } catch (err) {
         throw new Error(

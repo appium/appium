@@ -1,9 +1,5 @@
 import {createSandbox} from 'sinon';
-import {
-  finalizeSchema,
-  resetSchema,
-  SchemaFinalizationError,
-} from '../../../lib/schema/schema';
+import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
 
 const expect = chai.expect;
@@ -19,9 +15,7 @@ describe('cli/schema-args', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    ({toParserArgs} = rewiremock.proxy(() =>
-      require('../../../lib/schema/cli-args')
-    ));
+    ({toParserArgs} = rewiremock.proxy(() => require('../../../lib/schema/cli-args')));
   });
 
   afterEach(function () {
@@ -35,10 +29,7 @@ describe('cli/schema-args', function () {
       afterEach(resetSchema);
 
       it('should return a Map', function () {
-        expect(toParserArgs())
-          .to.be.an.instanceof(Map)
-          .and.have.property('size')
-          .that.is.above(0);
+        expect(toParserArgs()).to.be.an.instanceof(Map).and.have.property('size').that.is.above(0);
       });
 
       it('should generate metavars in SCREAMING_SNAKE_CASE', function () {
@@ -46,9 +37,7 @@ describe('cli/schema-args', function () {
         const argDefsWithMetavar = [...argDefs].filter((arg) => arg[1].metavar);
         expect(argDefsWithMetavar).not.to.be.empty;
         // is there a more idiomatic way to do this?
-        expect(
-          argDefsWithMetavar.every((arg) => /[A-Z_]+/.test(arg[1].metavar))
-        ).to.be.true;
+        expect(argDefsWithMetavar.every((arg) => /[A-Z_]+/.test(arg[1].metavar))).to.be.true;
       });
     });
 

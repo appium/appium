@@ -71,12 +71,8 @@ export class ExtensionConfig {
    * @param {ExtRecord<ExtType>} exts - Extension data
    */
   validate(exts) {
-    const foundProblems =
-      /** @type {Record<ExtName<ExtType>,Problem[]>} */ ({});
-    for (const [
-      extName,
-      extData,
-    ] of /** @type {[ExtName<ExtType>, ExtManifest<ExtType>][]} */ (
+    const foundProblems = /** @type {Record<ExtName<ExtType>,Problem[]>} */ ({});
+    for (const [extName, extData] of /** @type {[ExtName<ExtType>, ExtManifest<ExtType>][]} */ (
       _.toPairs(exts)
     )) {
       foundProblems[extName] = [
@@ -94,13 +90,11 @@ export class ExtensionConfig {
       // remove this extension from the list since it's not valid
       delete exts[extName];
       problemSummaries.push(
-        `${this.extensionType} ${extName} had errors and will not ` +
-          `be available. Errors:`
+        `${this.extensionType} ${extName} had errors and will not ` + `be available. Errors:`
       );
       for (const problem of problems) {
         problemSummaries.push(
-          `  - ${problem.err} (Actual value: ` +
-            `${JSON.stringify(problem.val)})`
+          `  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`
         );
       }
     }
@@ -276,10 +270,7 @@ export class ExtensionConfig {
     }
 
     log.info(`Available ${this.configKey}:`);
-    for (const [
-      extName,
-      extData,
-    ] of /** @type {[string, ExtManifest<ExtType>][]} */ (
+    for (const [extName, extData] of /** @type {[string, ExtManifest<ExtType>][]} */ (
       _.toPairs(this.installedExtensions)
     )) {
       log.info(`  - ${this.extensionDesc(extName, extData)}`);
@@ -303,11 +294,7 @@ export class ExtensionConfig {
    * @returns {string}
    */
   getInstallPath(extName) {
-    return path.join(
-      this.appiumHome,
-      'node_modules',
-      this.installedExtensions[extName].pkgName
-    );
+    return path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName);
   }
 
   /**
@@ -355,18 +342,13 @@ export class ExtensionConfig {
     }
     let moduleObject;
     if (_.isString(argSchemaPath)) {
-      const schemaPath = resolveFrom(
-        appiumHome,
-        path.join(pkgName, argSchemaPath)
-      );
+      const schemaPath = resolveFrom(appiumHome, path.join(pkgName, argSchemaPath));
       moduleObject = require(schemaPath);
     } else {
       moduleObject = argSchemaPath;
     }
     // this sucks. default exports should be destroyed
-    const schema = moduleObject.__esModule
-      ? moduleObject.default
-      : moduleObject;
+    const schema = moduleObject.__esModule ? moduleObject.default : moduleObject;
     registerSchema(extType, extName, schema);
     return schema;
   }
@@ -399,13 +381,7 @@ export class ExtensionConfig {
   }
 }
 
-export {
-  INSTALL_TYPE_NPM,
-  INSTALL_TYPE_GIT,
-  INSTALL_TYPE_LOCAL,
-  INSTALL_TYPE_GITHUB,
-  INSTALL_TYPES,
-};
+export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB, INSTALL_TYPES};
 
 /**
  * Config problem

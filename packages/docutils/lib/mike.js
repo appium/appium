@@ -1,4 +1,4 @@
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import log from './logger';
 
 const DEFAULT_REMOTE = 'origin';
@@ -12,7 +12,7 @@ export class Mike {
   /** @type string */ configFile;
   /** @type boolean */ _mikeVerified = false;
 
-  constructor (/** @type MikeOpts */opts) {
+  constructor(/** @type MikeOpts */ opts) {
     this.remote = opts.remote || DEFAULT_REMOTE;
     this.branch = opts.branch || DEFAULT_BRANCH;
     this.prefix = opts.prefix;
@@ -24,7 +24,7 @@ export class Mike {
    *
    * @throws Error
    */
-  async verifyMike () {
+  async verifyMike() {
     if (this._mikeVerified) {
       return;
     }
@@ -48,13 +48,18 @@ export class Mike {
    *
    * @returns string[]
    */
-  getMikeArgs (cmdName, cmdArgs) {
+  getMikeArgs(cmdName, cmdArgs) {
     return [
-      cmdName, ...cmdArgs,
-      '--config-file', this.configFile,
-      '--remote', this.remote,
-      '--branch', this.branch,
-      '--prefix', this.prefix,
+      cmdName,
+      ...cmdArgs,
+      '--config-file',
+      this.configFile,
+      '--remote',
+      this.remote,
+      '--branch',
+      this.branch,
+      '--prefix',
+      this.prefix,
     ];
   }
 
@@ -67,7 +72,7 @@ export class Mike {
    *
    * @returns Promise<import('teen_process').ExecResult<string>>
    */
-  async exec (mikeCmd, mikeArgs = [], verify = true) {
+  async exec(mikeCmd, mikeArgs = [], verify = true) {
     if (verify) {
       await this.verifyMike();
     }
@@ -81,9 +86,12 @@ export class Mike {
    *
    * @returns string[]
    */
-  async list () {
+  async list() {
     const {stdout} = await this.exec('list');
-    return stdout.split('\n').map((s) => s.trim()).filter(Boolean);
+    return stdout
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
 
   /**
@@ -91,7 +99,7 @@ export class Mike {
    *
    * @param {string} alias - the version or alias
    */
-  async setDefault (alias) {
+  async setDefault(alias) {
     await this.exec('set-default', [alias]);
   }
 
@@ -100,7 +108,7 @@ export class Mike {
    *
    * @param {MikeDeployOpts} opts - the deploy options
    */
-  async deploy (opts) {
+  async deploy(opts) {
     const args = [opts.version];
     if (opts.alias) {
       args.push(opts.alias, '--update-aliases');
@@ -116,7 +124,6 @@ export class Mike {
     }
     await this.exec('deploy', args);
   }
-
 }
 
 /**

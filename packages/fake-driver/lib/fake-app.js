@@ -1,15 +1,15 @@
-import { fs } from '@appium/support';
-import { readFileSync } from 'fs';
+import {fs} from '@appium/support';
+import {readFileSync} from 'fs';
 import path from 'path';
 import XMLDom from '@xmldom/xmldom';
 import xpath from 'xpath';
 import log from './logger';
-import { FakeElement } from './fake-element';
+import {FakeElement} from './fake-element';
 
 const SCREENSHOT = path.join(__dirname, 'screen.png');
 
 class FakeApp {
-  constructor () {
+  constructor() {
     this.dom = null;
     this.activeDom = null;
     this.activeWebview = null;
@@ -24,7 +24,7 @@ class FakeApp {
     this.actionLog = [];
   }
 
-  get title () {
+  get title() {
     let nodes = this.xpathQuery('//title');
     if (nodes.length < 1) {
       throw new Error('No title!');
@@ -32,43 +32,43 @@ class FakeApp {
     return nodes[0].firstChild.data;
   }
 
-  get currentGeoLocation () {
+  get currentGeoLocation() {
     return {
       latitude: this.lat,
-      longitude: this.long
+      longitude: this.long,
     };
   }
 
-  get orientation () {
+  get orientation() {
     return this.currentOrientation;
   }
 
-  set orientation (o) {
+  set orientation(o) {
     this.currentOrientation = o;
   }
 
-  get width () {
+  get width() {
     if (this._width === null) {
       this.setDims();
     }
     return this._width;
   }
 
-  get height () {
+  get height() {
     if (this._width === null) {
       this.setDims();
     }
     return this._width;
   }
 
-  setDims () {
+  setDims() {
     const nodes = this.xpathQuery('//app');
     const app = new FakeElement(nodes[0], this);
     this._width = parseInt(app.nodeAttrs.width, 10);
     this._height = parseInt(app.nodeAttrs.height, 10);
   }
 
-  async loadApp (appPath) {
+  async loadApp(appPath) {
     log.info(`Loading Mock app model at ${appPath}`);
     let data = await fs.readFile(appPath);
     log.info('Parsing Mock app XML');
@@ -80,47 +80,45 @@ class FakeApp {
     this.activeDom = this.dom;
   }
 
-  getWebviews () {
+  getWebviews() {
     return this.xpathQuery('//MockWebView/*[1]').map((n) => new FakeWebView(n));
   }
 
-  activateWebview (wv) {
+  activateWebview(wv) {
     this.activeWebview = wv;
     let fragment = new XMLDom.XMLSerializer().serializeToString(wv.node);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment,
-        'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
   }
 
-  deactivateWebview () {
+  deactivateWebview() {
     this.activeWebview = null;
     this.activeDom = this.dom;
   }
 
-  activateFrame (frame) {
+  activateFrame(frame) {
     this.activeFrame = frame;
     let fragment = new XMLDom.XMLSerializer().serializeToString(frame);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment,
-        'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
   }
 
-  deactivateFrame () {
+  deactivateFrame() {
     this.activeFrame = null;
     this.activateWebview(this.activeWebview);
   }
 
-  xpathQuery (sel, ctx) {
+  xpathQuery(sel, ctx) {
     return xpath.select(sel, ctx || this.activeDom);
   }
 
-  idQuery (id, ctx) {
+  idQuery(id, ctx) {
     return this.xpathQuery(`//*[@id="${id}"]`, ctx);
   }
 
-  classQuery (className, ctx) {
+  classQuery(className, ctx) {
     return this.xpathQuery(`//${className}`, ctx);
   }
 
-  cssQuery (css, ctx) {
+  cssQuery(css, ctx) {
     if (css.startsWith('#')) {
       return this.idQuery(css.slice(1), ctx);
     }
@@ -130,18 +128,18 @@ class FakeApp {
     return this.classQuery(css, ctx);
   }
 
-  hasAlert () {
+  hasAlert() {
     return this.activeAlert !== null;
   }
 
-  setAlertText (text) {
+  setAlertText(text) {
     if (!this.activeAlert.hasPrompt()) {
       throw new Error('No prompt to set text of');
     }
     this.activeAlert.setAttr('prompt', text);
   }
 
-  showAlert (alertId) {
+  showAlert(alertId) {
     let nodes = this.xpathQuery(`//alert[@id="${alertId}"]`);
     if (nodes.length < 1) {
       throw new Error(`Alert ${alertId} doesn't exist!`);
@@ -149,25 +147,23 @@ class FakeApp {
     this.activeAlert = new FakeElement(nodes[0], this);
   }
 
-  alertText () {
-    return this.activeAlert.getAttr('prompt') ||
-           this.activeAlert.nodeAttrs.text;
+  alertText() {
+    return this.activeAlert.getAttr('prompt') || this.activeAlert.nodeAttrs.text;
   }
 
-  handleAlert () {
+  handleAlert() {
     this.activeAlert = null;
   }
 
-  getScreenshot () {
+  getScreenshot() {
     return readFileSync(SCREENSHOT, 'base64');
   }
-
 }
 
 class FakeWebView {
-  constructor (node) {
+  constructor(node) {
     this.node = node;
   }
 }
 
-export { FakeApp };
+export {FakeApp};

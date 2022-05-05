@@ -6,21 +6,17 @@
  */
 
 import path from 'path';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 
-export function initMocks (sandbox = createSandbox()) {
+export function initMocks(sandbox = createSandbox()) {
   /**
    * Mocks for package `@appium/support`
    * @type {MockAppiumSupport}
    */
   const MockAppiumSupport = {
     fs: {
-      readFile: /** @type {MockAppiumSupportFs['readFile']} */ (
-        sandbox.stub().resolves('{}')
-      ),
-      writeFile: /** @type {MockAppiumSupportFs['writeFile']} */ (
-        sandbox.stub().resolves(true)
-      ),
+      readFile: /** @type {MockAppiumSupportFs['readFile']} */ (sandbox.stub().resolves('{}')),
+      writeFile: /** @type {MockAppiumSupportFs['writeFile']} */ (sandbox.stub().resolves(true)),
       walk: /** @type {MockAppiumSupportFs['walk']} */ (
         sandbox.stub().returns({
           [Symbol.asyncIterator]: sandbox
@@ -28,28 +24,20 @@ export function initMocks (sandbox = createSandbox()) {
             .returns({next: sandbox.stub().resolves({done: true})}),
         })
       ),
-      mkdirp: /** @type {MockAppiumSupportFs['mkdirp']} */ (
-        sandbox.stub().resolves()
-      ),
+      mkdirp: /** @type {MockAppiumSupportFs['mkdirp']} */ (sandbox.stub().resolves()),
     },
     env: {
-      resolveAppiumHome:
-      /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
+      resolveAppiumHome: /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
         sandbox.stub().resolves('/some/path')
       ),
-      resolveManifestPath:
-      /** @type {MockAppiumSupportEnv['resolveManifestPath']} */ (
+      resolveManifestPath: /** @type {MockAppiumSupportEnv['resolveManifestPath']} */ (
         sandbox.stub().resolves('/some/path/extensions.yaml')
       ),
-      hasAppiumDependency:
-      /** @type {MockAppiumSupportEnv['hasAppiumDependency']} */ (
+      hasAppiumDependency: /** @type {MockAppiumSupportEnv['hasAppiumDependency']} */ (
         sandbox.stub().resolves(false)
       ),
-      readPackageInDir:
-      /** @type {MockAppiumSupportEnv['readPackageInDir']} */ (
-        sandbox
-            .stub()
-            .callsFake(async () => MockAppiumSupport.env.__pkg)
+      readPackageInDir: /** @type {MockAppiumSupportEnv['readPackageInDir']} */ (
+        sandbox.stub().callsFake(async () => MockAppiumSupport.env.__pkg)
       ),
       __pkg: {
         name: 'mock-package',
@@ -62,11 +50,7 @@ export function initMocks (sandbox = createSandbox()) {
       getLogger: /** @type {MockAppiumSupportLogger['getLogger']} */ (
         sandbox
           .stub()
-          .returns(
-            sandbox.stub(
-              new global.console.Console(process.stdout, process.stderr),
-            ),
-          )
+          .returns(sandbox.stub(new global.console.Console(process.stdout, process.stderr)))
       ),
     },
   };

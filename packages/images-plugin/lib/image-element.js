@@ -1,17 +1,14 @@
 import _ from 'lodash';
-import { errors } from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
 import log from './logger';
-import { util } from '@appium/support';
-import { DEFAULT_SETTINGS } from './finder';
+import {util} from '@appium/support';
+import {DEFAULT_SETTINGS} from './finder';
 
 const IMAGE_ELEMENT_PREFIX = 'appium-image-element-';
 const TAP_DURATION_MS = 125;
 const IMAGE_EL_TAP_STRATEGY_W3C = 'w3cActions';
 const IMAGE_EL_TAP_STRATEGY_MJSONWP = 'touchActions';
-const IMAGE_TAP_STRATEGIES = [
-  IMAGE_EL_TAP_STRATEGY_MJSONWP,
-  IMAGE_EL_TAP_STRATEGY_W3C
-];
+const IMAGE_TAP_STRATEGIES = [IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C];
 const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
 
 /**
@@ -31,7 +28,6 @@ const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
  * and methods that can be used on that set of coordinates via the driver
  */
 export default class ImageElement {
-
   /**
    * @param {string} b64Template - the base64-encoded image which was used to
    *                               find this ImageElement
@@ -42,7 +38,7 @@ export default class ImageElement {
    *                              Defaults to null.
    * @param {import('./finder').default?} finder - the finder we can use to re-check stale elements
    */
-  constructor (b64Template, rect, score, b64Result = null, finder = null) {
+  constructor(b64Template, rect, score, b64Result = null, finder = null) {
     this.template = b64Template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
@@ -54,21 +50,21 @@ export default class ImageElement {
   /**
    * @returns {Dimension} - dimension of element
    */
-  get size () {
+  get size() {
     return {width: this.rect.width, height: this.rect.height};
   }
 
   /**
    * @returns {Position} - coordinates of top-left corner of element
    */
-  get location () {
+  get location() {
     return {x: this.rect.x, y: this.rect.y};
   }
 
   /**
    * @returns {Position} - coordinates of center of element
    */
-  get center () {
+  get center() {
     return {
       x: this.rect.x + this.rect.width / 2,
       y: this.rect.y + this.rect.height / 2,
@@ -78,7 +74,7 @@ export default class ImageElement {
   /**
    * @returns {?string} - the base64-encoded image which has matched marks
    */
-  get matchedImage () {
+  get matchedImage() {
     return this.b64MatchedImage;
   }
 
@@ -88,7 +84,7 @@ export default class ImageElement {
    *
    * @returns {WebElement} - this image element as a WebElement
    */
-  asElement (protocolKey) {
+  asElement(protocolKey) {
     return {[protocolKey]: this.id};
   }
 
@@ -98,11 +94,13 @@ export default class ImageElement {
    * @returns {boolean} - whether the other element and this one have the same
    * properties
    */
-  equals (other) {
-    return this.rect.x === other.rect.x &&
-           this.rect.y === other.rect.y &&
-           this.rect.width === other.rect.width &&
-           this.rect.height === other.rect.height;
+  equals(other) {
+    return (
+      this.rect.x === other.rect.x &&
+      this.rect.y === other.rect.y &&
+      this.rect.width === other.rect.width &&
+      this.rect.height === other.rect.height
+    );
   }
 
   /**
@@ -111,7 +109,7 @@ export default class ImageElement {
    *
    * @param {BaseDriver} driver - driver for calling actions with
    */
-  async click (driver) {
+  async click(driver) {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
     let newImgEl;
@@ -124,9 +122,11 @@ export default class ImageElement {
 
     // validate tap strategy
     if (!IMAGE_TAP_STRATEGIES.includes(imageElementTapStrategy)) {
-      throw new Error(`Incorrect imageElementTapStrategy setting ` +
-                      `'${imageElementTapStrategy}'. Must be one of ` +
-                      JSON.stringify(IMAGE_TAP_STRATEGIES));
+      throw new Error(
+        `Incorrect imageElementTapStrategy setting ` +
+          `'${imageElementTapStrategy}'. Must be one of ` +
+          JSON.stringify(IMAGE_TAP_STRATEGIES)
+      );
     }
 
     if (checkForImageElementStaleness || updatePos) {
@@ -136,25 +136,29 @@ export default class ImageElement {
           shouldCheckStaleness: true,
           // Set ignoreDefaultImageTemplateScale because this.template is device screenshot based image
           // managed inside Appium after finidng image by template which managed by a user
-          ignoreDefaultImageTemplateScale: true
+          ignoreDefaultImageTemplateScale: true,
         });
       } catch (err) {
         throw new errors.StaleElementReferenceError();
       }
 
       if (!this.equals(newImgEl)) {
-        log.warn(`When trying to click on an image element, the image changed ` +
-                 `position from where it was originally found. It is now at ` +
-                 `${JSON.stringify(newImgEl.rect)} and was originally at ` +
-                 `${JSON.stringify(this.rect)}.`);
+        log.warn(
+          `When trying to click on an image element, the image changed ` +
+            `position from where it was originally found. It is now at ` +
+            `${JSON.stringify(newImgEl.rect)} and was originally at ` +
+            `${JSON.stringify(this.rect)}.`
+        );
         if (updatePos) {
           log.warn('Click will proceed at new coordinates');
           this.rect = _.clone(newImgEl.rect);
         } else {
-          log.warn('Click will take place at original coordinates. If you ' +
-                   'would like Appium to automatically click the new ' +
-                   "coordinates, set the 'autoUpdateImageElementPosition' " +
-                   'setting to true');
+          log.warn(
+            'Click will take place at original coordinates. If you ' +
+              'would like Appium to automatically click the new ' +
+              "coordinates, set the 'autoUpdateImageElementPosition' " +
+              'setting to true'
+          );
         }
       }
     }
@@ -174,7 +178,7 @@ export default class ImageElement {
           {type: 'pointerDown', button: 0},
           {type: 'pause', duration: TAP_DURATION_MS},
           {type: 'pointerUp', button: 0},
-        ]
+        ],
       };
 
       // check if the driver has the appropriate performActions method
@@ -183,8 +187,7 @@ export default class ImageElement {
       }
 
       // if not, warn and fall back to the other method
-      log.warn('Driver does not seem to implement W3C actions, falling back ' +
-               'to TouchActions');
+      log.warn('Driver does not seem to implement W3C actions, falling back ' + 'to TouchActions');
     }
 
     // if the w3c strategy was not requested, do the only other option (mjsonwp
@@ -192,16 +195,18 @@ export default class ImageElement {
     log.info('Will tap using MJSONWP TouchActions');
     const action = {
       action: 'tap',
-      options: {x, y}
+      options: {x, y},
     };
 
     if (driver.performTouch) {
       return await driver.performTouch([action]);
     }
 
-    throw new Error("Driver did not implement the 'performTouch' command. " +
-                    'For drivers to support finding image elements, they ' +
-                    "should support 'performTouch' and 'performActions'");
+    throw new Error(
+      "Driver did not implement the 'performTouch' command. " +
+        'For drivers to support finding image elements, they ' +
+        "should support 'performTouch' and 'performActions'"
+    );
   }
 
   /**
@@ -214,7 +219,7 @@ export default class ImageElement {
    *
    * @returns {object} - the result of running a command
    */
-  static async execute (driver, imgEl, cmd, ...args) {
+  static async execute(driver, imgEl, cmd, ...args) {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
@@ -239,14 +244,18 @@ export default class ImageElement {
           default:
             throw new errors.NotYetImplementedError();
         }
-      default: throw new errors.NotYetImplementedError();
+      default:
+        throw new errors.NotYetImplementedError();
     }
   }
 }
 
 export {
-  ImageElement, IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C,
-  DEFAULT_TEMPLATE_IMAGE_SCALE, IMAGE_ELEMENT_PREFIX
+  ImageElement,
+  IMAGE_EL_TAP_STRATEGY_MJSONWP,
+  IMAGE_EL_TAP_STRATEGY_W3C,
+  DEFAULT_TEMPLATE_IMAGE_SCALE,
+  IMAGE_ELEMENT_PREFIX,
 };
 
 /**

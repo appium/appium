@@ -1,17 +1,16 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
-const { Transform } = require('stream');
+const {Transform} = require('stream');
 const log = require('fancy-log');
 const yaml = require('js-yaml');
-const { EOL } = require('os');
+const {EOL} = require('os');
 const PluginError = require('plugin-error');
 const red = require('ansi-red');
 
-
-function gulpYamlLint () {
+function gulpYamlLint() {
   let errCount = 0;
   return new Transform({
     objectMode: true,
-    transform (file, enc, cb) {
+    transform(file, enc, cb) {
       try {
         yaml.load(file.contents.toString(enc));
       } catch (err) {
@@ -23,14 +22,16 @@ function gulpYamlLint () {
       }
       cb();
     },
-    flush (done) {
+    flush(done) {
       if (errCount > 0) {
         log.error(`YAML errors found. Due to the limitations of YAML linting, the error `);
         log.error(`is most likely in the line immediately ${red('before')} the line reported.`);
-        return done(new PluginError('gulp-yaml-lint', {
-          name: 'YAMLError',
-          message: `Failed with ${errCount} ${errCount === 1 ? 'error' : 'errors'}`,
-        }));
+        return done(
+          new PluginError('gulp-yaml-lint', {
+            name: 'YAMLError',
+            message: `Failed with ${errCount} ${errCount === 1 ? 'error' : 'errors'}`,
+          })
+        );
       }
       done();
     },

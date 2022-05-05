@@ -1,6 +1,6 @@
 // @ts-check
 import {LogMixin} from '../../../../lib/basedriver/commands/log';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 import _ from 'lodash';
 
 const expect = chai.expect;
@@ -28,11 +28,19 @@ describe('log commands -', function () {
   beforeEach(function () {
     sandbox = createSandbox();
     // @ts-expect-error
-    LogCommands = LogMixin(class { get log () { return this._log; }});
+    LogCommands = LogMixin(
+      class {
+        get log() {
+          return this._log;
+        }
+      }
+    );
     logCommands = new LogCommands();
     // reset the supported log types
     logCommands.supportedLogTypes = {};
-    logCommands._log = /** @type {import('@appium/types').AppiumLogger} */({debug: _.noop});
+    logCommands._log = /** @type {import('@appium/types').AppiumLogger} */ ({
+      debug: _.noop,
+    });
   });
 
   afterEach(function () {
@@ -71,7 +79,9 @@ describe('log commands -', function () {
         err = _err;
       }
       expect(err).to.exist;
-      err.message.should.eql(`Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`);
+      err.message.should.eql(
+        `Unsupported log type 'three'. Supported types: {"one":"First logs","two":"Seconds logs"}`
+      );
       one.called.should.be.false;
       two.called.should.be.false;
     });

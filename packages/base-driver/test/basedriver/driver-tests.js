@@ -1,12 +1,11 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import { DeviceSettings } from '../../lib';
-import { createSandbox } from 'sinon';
-
+import {DeviceSettings} from '../../lib';
+import {createSandbox} from 'sinon';
 
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
-function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
+function baseDriverUnitTests(DriverClass, defaultCaps = {}) {
   // to display the driver under test in report
   const className = DriverClass.name || '(unknown driver)';
 
@@ -19,7 +18,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
   });
 
   describe('Log prefix', function () {
-
     it('should setup log prefix', async function () {
       const d = new DriverClass();
       const previousPrefix = d.log.prefix;
@@ -37,7 +35,6 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         previousPrefix.should.eql(d.log.prefix);
       }
     });
-
   });
 
   describe(`BaseDriver (as ${className})`, function () {
@@ -79,7 +76,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     it('should not be able to start two sessions without closing the first', async function () {
       await d.createSession(null, null, _.cloneDeep(w3cCaps));
-      await d.createSession(null, null, _.cloneDeep(w3cCaps)).should.eventually.be.rejectedWith('session');
+      await d
+        .createSession(null, null, _.cloneDeep(w3cCaps))
+        .should.eventually.be.rejectedWith('session');
     });
 
     it('should be able to delete a session', async function () {
@@ -108,11 +107,11 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
       sessions.length.should.equal(1);
       sessions[0].should.include({
-        id: d.sessionId
+        id: d.sessionId,
       });
       sessions[0].capabilities.should.include({
         deviceName: 'Commodore 64',
-        platformName: 'Fake'
+        platformName: 'Fake',
       });
     });
 
@@ -125,7 +124,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       let cmdPromise = d.executeCommand('getStatus');
       await B.delay(10);
       const p = new B((resolve, reject) => {
-        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
+              )
+            ),
+          5000
+        );
         d.onUnexpectedShutdown(resolve);
       });
       d.startUnexpectedShutdown(new Error('We crashed'));
@@ -142,7 +149,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       }.bind(d);
       await d.createSession(null, null, w3cCaps);
       const p = new B((resolve, reject) => {
-        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
+              )
+            ),
+          5000
+        );
         d.onUnexpectedShutdown(resolve);
       });
       d.startUnexpectedShutdown(new Error('We crashed'));
@@ -160,7 +175,15 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
       await d.createSession(null, null, _.cloneDeep(w3cCaps));
       const p = new B((resolve, reject) => {
-        setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
+              )
+            ),
+          5000
+        );
         d.onUnexpectedShutdown(resolve);
       });
       d.startUnexpectedShutdown(new Error('We crashed'));
@@ -188,7 +211,10 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
 
     describe('protocol detection', function () {
       it('should use W3C if only W3C caps are provided', async function () {
-        await d.createSession(null, null, {alwaysMatch: _.clone(defaultCaps), firstMatch: [{}]});
+        await d.createSession(null, null, {
+          alwaysMatch: _.clone(defaultCaps),
+          firstMatch: [{}],
+        });
         d.protocol.should.equal('W3C');
       });
     });
@@ -328,11 +354,12 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
             platformName: 'Fake',
             'appium:deviceName': 'Commodore 64',
             'appium:fullReset': true,
-            'appium:noReset': true
+            'appium:noReset': true,
           }),
         };
-        await d.createSession(null, null, newCaps).should.eventually.be.rejectedWith(
-            /noReset.+fullReset/);
+        await d
+          .createSession(null, null, newCaps)
+          .should.eventually.be.rejectedWith(/noReset.+fullReset/);
       });
     });
 
@@ -349,7 +376,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           d.proxyActive(sessId).should.be.false;
         });
         it('should throw an error when sessionId is wrong', function () {
-          (() => { d.proxyActive('aaa'); }).should.throw;
+          (() => {
+            d.proxyActive('aaa');
+          }).should.throw;
         });
       });
 
@@ -361,7 +390,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           d.getProxyAvoidList(sessId).should.be.an.instanceof(Array);
         });
         it('should throw an error when sessionId is wrong', function () {
-          (() => { d.getProxyAvoidList('aaa'); }).should.throw;
+          (() => {
+            d.getProxyAvoidList('aaa');
+          }).should.throw;
         });
       });
 
@@ -373,7 +404,9 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
           d.canProxy(sessId).should.be.a('boolean');
         });
         it('should throw an error when sessionId is wrong', function () {
-          (() => { d.canProxy(); }).should.throw;
+          (() => {
+            d.canProxy();
+          }).should.throw;
         });
       });
 
@@ -381,21 +414,38 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
         it('should validate form of avoidance list', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([['POST', /\/foo/], ['GET']]);
-          (() => { d.proxyRouteIsAvoided(); }).should.throw;
-          avoidStub.returns([['POST', /\/foo/], ['GET', /^foo/, 'bar']]);
-          (() => { d.proxyRouteIsAvoided(); }).should.throw;
+          (() => {
+            d.proxyRouteIsAvoided();
+          }).should.throw;
+          avoidStub.returns([
+            ['POST', /\/foo/],
+            ['GET', /^foo/, 'bar'],
+          ]);
+          (() => {
+            d.proxyRouteIsAvoided();
+          }).should.throw;
           avoidStub.restore();
         });
         it('should reject bad http methods', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
-          avoidStub.returns([['POST', /^foo/], ['BAZETE', /^bar/]]);
-          (() => { d.proxyRouteIsAvoided(); }).should.throw;
+          avoidStub.returns([
+            ['POST', /^foo/],
+            ['BAZETE', /^bar/],
+          ]);
+          (() => {
+            d.proxyRouteIsAvoided();
+          }).should.throw;
           avoidStub.restore();
         });
         it('should reject non-regex routes', function () {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
-          avoidStub.returns([['POST', /^foo/], ['GET', '/bar']]);
-          (() => { d.proxyRouteIsAvoided(); }).should.throw;
+          avoidStub.returns([
+            ['POST', /^foo/],
+            ['GET', '/bar'],
+          ]);
+          (() => {
+            d.proxyRouteIsAvoided();
+          }).should.throw;
           avoidStub.restore();
         });
         it('should return true for routes in the avoid list', function () {
@@ -425,7 +475,10 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
       beforeEach(async function () {
         beforeStartTime = Date.now();
         d.shouldValidateCaps = false;
-        await d.executeCommand('createSession', null, null, {alwaysMatch: {...defaultCaps}, firstMatch: [{}]});
+        await d.executeCommand('createSession', null, null, {
+          alwaysMatch: {...defaultCaps},
+          firstMatch: [{}],
+        });
       });
       describe('#eventHistory', function () {
         it('should have an eventHistory property', function () {
@@ -492,12 +545,16 @@ function baseDriverUnitTests (DriverClass, defaultCaps = {}) {
     describe('.reset', function () {
       it('should reset as W3C if the original session was W3C', async function () {
         const caps = {
-          alwaysMatch: Object.assign({}, {
-            'appium:app': 'Fake',
-            'appium:deviceName': 'Fake',
-            'appium:automationName': 'Fake',
-            platformName: 'Fake',
-          }, defaultCaps),
+          alwaysMatch: Object.assign(
+            {},
+            {
+              'appium:app': 'Fake',
+              'appium:deviceName': 'Fake',
+              'appium:automationName': 'Fake',
+              platformName: 'Fake',
+            },
+            defaultCaps
+          ),
           firstMatch: [{}],
         };
         await d.createSession(undefined, undefined, caps);

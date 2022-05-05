@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import log from './logger';
 import B from 'bluebird';
-import { getJimpImage, MIME_PNG } from './image-util';
-import { Writable } from 'stream';
-import { requirePackage } from './node';
+import {getJimpImage, MIME_PNG} from './image-util';
+import {Writable} from 'stream';
+import {requirePackage} from './node';
 import axios from 'axios';
 
 // lazy load this, as it might not be available
@@ -12,15 +12,17 @@ let MJpegConsumer = null;
 /**
  * @throws {Error} If `mjpeg-consumer` module is not installed or cannot be loaded
  */
-async function initMJpegConsumer () {
+async function initMJpegConsumer() {
   if (!MJpegConsumer) {
     try {
       MJpegConsumer = await requirePackage('mjpeg-consumer');
     } catch (ign) {}
   }
   if (!MJpegConsumer) {
-    throw new Error('mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
-                    'Please install it first (npm i -g mjpeg-consumer) and restart Appium.');
+    throw new Error(
+      'mjpeg-consumer module is required to use MJPEG-over-HTTP features. ' +
+        'Please install it first (npm i -g mjpeg-consumer) and restart Appium.'
+    );
   }
 }
 
@@ -29,7 +31,6 @@ const MJPEG_SERVER_TIMEOUT_MS = 10000;
 
 /** Class which stores the last bit of data streamed into it */
 class MJpegStream extends Writable {
-
   /**
    * @type {number}
    */
@@ -42,7 +43,7 @@ class MJpegStream extends Writable {
    * called in the case of any errors.
    * @param {object} [options={}] - Options to pass to the Writable constructor
    */
-  constructor (mJpegUrl, errorHandler = _.noop, options = {}) {
+  constructor(mJpegUrl, errorHandler = _.noop, options = {}) {
     super(options);
 
     this.errorHandler = errorHandler;
@@ -56,8 +57,8 @@ class MJpegStream extends Writable {
    * @returns {?string} base64-encoded JPEG image data
    * or `null` if no image can be parsed
    */
-  get lastChunkBase64 () {
-    const lastChunk = /** @type {Buffer} */(this.lastChunk);
+  get lastChunkBase64() {
+    const lastChunk = /** @type {Buffer} */ (this.lastChunk);
     return !_.isEmpty(this.lastChunk) && _.isBuffer(this.lastChunk)
       ? lastChunk.toString('base64')
       : null;
@@ -69,8 +70,8 @@ class MJpegStream extends Writable {
    * @returns {Promise<Buffer?>} PNG image data or `null` if no PNG
    * image can be parsed
    */
-  async lastChunkPNG () {
-    const lastChunk = /** @type {Buffer} */(this.lastChunk);
+  async lastChunkPNG() {
+    const lastChunk = /** @type {Buffer} */ (this.lastChunk);
     if (_.isEmpty(lastChunk) || !_.isBuffer(lastChunk)) {
       return null;
     }
@@ -89,7 +90,7 @@ class MJpegStream extends Writable {
    * @returns {Promise<string?>} base64-encoded PNG image data
    * or `null` if no image can be parsed
    */
-  async lastChunkPNGBase64 () {
+  async lastChunkPNGBase64() {
     const png = await this.lastChunkPNG();
     return png ? png.toString('base64') : null;
   }
@@ -97,7 +98,7 @@ class MJpegStream extends Writable {
   /**
    * Reset internal state
    */
-  clear () {
+  clear() {
     this.registerStartSuccess = null;
     this.registerStartFailure = null;
     this.responseStream = null;
@@ -109,7 +110,7 @@ class MJpegStream extends Writable {
   /**
    * Start reading the MJpeg stream and storing the last image
    */
-  async start (serverTimeout = MJPEG_SERVER_TIMEOUT_MS) {
+  async start(serverTimeout = MJPEG_SERVER_TIMEOUT_MS) {
     // ensure we're not started already
     this.stop();
 
@@ -123,10 +124,12 @@ class MJpegStream extends Writable {
       this.registerStartSuccess = res;
       this.registerStartFailure = rej;
     })
-    // start a timeout so that if the server does not return data, we don't
-    // block forever.
-      .timeout(serverTimeout,
-        `Waited ${serverTimeout}ms but the MJPEG server never sent any images`);
+      // start a timeout so that if the server does not return data, we don't
+      // block forever.
+      .timeout(
+        serverTimeout,
+        `Waited ${serverTimeout}ms but the MJPEG server never sent any images`
+      );
 
     const url = this.url;
     const onErr = (err) => {
@@ -145,11 +148,13 @@ class MJpegStream extends Writable {
     };
 
     try {
-      this.responseStream = (await axios({
-        url,
-        responseType: 'stream',
-        timeout: serverTimeout,
-      })).data;
+      this.responseStream = (
+        await axios({
+          url,
+          responseType: 'stream',
+          timeout: serverTimeout,
+        })
+      ).data;
     } catch (e) {
       return onErr(e);
     }
@@ -167,7 +172,7 @@ class MJpegStream extends Writable {
    * Stop reading the MJpeg stream. Ensure we disconnect all the pipes and stop
    * the HTTP request itself. Then reset the state.
    */
-  stop () {
+  stop() {
     if (!this.consumer) {
       return;
     }
@@ -184,7 +189,7 @@ class MJpegStream extends Writable {
    * @override
    * @param {Buffer} data - binary data streamed from the MJpeg consumer
    */
-  write (data) {
+  write(data) {
     this.lastChunk = data;
     this.updateCount++;
 
@@ -197,4 +202,4 @@ class MJpegStream extends Writable {
   }
 }
 
-export { MJpegStream };
+export {MJpegStream};

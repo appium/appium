@@ -64,23 +64,14 @@ export default {
       'XCUIElementTypeStatusItem',
       'XCUIElementTypeTimeline',
     ],
-    android: [
-      'android.widget.Space',
-      'android.widget.TwoLineListItem',
-    ],
+    android: ['android.widget.Space', 'android.widget.TwoLineListItem'],
   },
   Grid: {
     ios: 'XCUIElementTypeGrid',
-    android: [
-      'android.widget.GridLayout',
-      'android.widget.GridView',
-    ],
+    android: ['android.widget.GridLayout', 'android.widget.GridView'],
   },
   Icon: {
-    ios: [
-      'XCUIElementTypeIcon',
-      'XCUIElementTypeDockItem',
-    ],
+    ios: ['XCUIElementTypeIcon', 'XCUIElementTypeDockItem'],
   },
   Image: {
     ios: 'XCUIElementTypeImage',
@@ -94,17 +85,11 @@ export default {
       'XCUIElementTypeRelevanceIndicator',
       'XCUIElementTypeValueIndicator',
     ],
-    android: [
-      'android.widget.RatingBar',
-      'android.widget.ProgressBar',
-    ],
+    android: ['android.widget.RatingBar', 'android.widget.ProgressBar'],
   },
   Input: {
-    ios: [
-      'XCUIElementTypeColorWell',
-    ],
-    android: [
-    ]
+    ios: ['XCUIElementTypeColorWell'],
+    android: [],
   },
   List: {
     android: [
@@ -112,18 +97,13 @@ export default {
       'android.widget.ExpandableListView',
       'android.widget.Gallery',
     ],
-    ios: [
-      'XCUIElementTypeCollectionView'
-    ],
+    ios: ['XCUIElementTypeCollectionView'],
   },
   Map: {
     ios: 'XCUIElementTypeMap',
   },
   Menu: {
-    ios: [
-      'XCUIElementTypeMenu',
-      'XCUIElementTypeMenuBar',
-    ],
+    ios: ['XCUIElementTypeMenu', 'XCUIElementTypeMenuBar'],
     android: ['android.widget.ActionMenuView', 'android.widget.PopupMenu'],
   },
   Modal: {
@@ -133,11 +113,7 @@ export default {
       'android.widget.SlidingDrawer',
       'android.widget.Magnifier',
     ],
-    ios: [
-      'XCUIElementTypeDrawer',
-      'XCUIElementTypeDialog',
-      'XCUIElementTypePopover',
-    ],
+    ios: ['XCUIElementTypeDrawer', 'XCUIElementTypeDialog', 'XCUIElementTypePopover'],
   },
   Nav: {
     ios: 'XCUIElementTypeNavigationBar',
@@ -173,11 +149,7 @@ export default {
   },
   SliderInput: {
     android: 'android.widget.SeekBar',
-    ios: [
-      'XCUIElementTypeSlider',
-      'XCUIElementTypeStepper',
-      'XCUIElementTypeScrollBar',
-    ],
+    ios: ['XCUIElementTypeSlider', 'XCUIElementTypeStepper', 'XCUIElementTypeScrollBar'],
   },
   Spinner: {
     ios: 'XCUIElementTypeActivityIndicator',
@@ -192,23 +164,11 @@ export default {
     android: 'android.widget.TableLayout',
   },
   Text: {
-    ios: [
-      'XCUIElementTypeStaticText',
-      'XCUIElementTypeTextView',
-      'XCUIElementTypeHelpTag',
-    ],
-    android: [
-      'android.widget.TextView',
-      'android.widget.Chronometer',
-      'android.widget.TextClock',
-    ],
+    ios: ['XCUIElementTypeStaticText', 'XCUIElementTypeTextView', 'XCUIElementTypeHelpTag'],
+    android: ['android.widget.TextView', 'android.widget.Chronometer', 'android.widget.TextClock'],
   },
   TextInput: {
-    ios: [
-      'XCUIElementTypeTextField',
-      'XCUIElementTypeSecureTextField',
-      'XCUIElementTypeComboBox',
-    ],
+    ios: ['XCUIElementTypeTextField', 'XCUIElementTypeSecureTextField', 'XCUIElementTypeComboBox'],
     android: [
       'android.widget.EditText',
       'android.widget.AutoCompleteTextView',
@@ -217,11 +177,7 @@ export default {
   },
   ToggleInput: {
     ios: 'XCUIElementTypeToggle',
-    android: [
-      'android.widget.CheckedTextView',
-      'android.widget.ToggleButton',
-    ],
-
+    android: ['android.widget.CheckedTextView', 'android.widget.ToggleButton'],
   },
   Toolbar: {
     ios: 'XCUIElementTypeToolbar',

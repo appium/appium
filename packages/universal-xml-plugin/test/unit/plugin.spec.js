@@ -1,7 +1,7 @@
 import UniversalXMLPlugin from '../../lib/plugin';
 import BaseDriver from '@appium/base-driver';
-import { XML_IOS, XML_ANDROID, XML_IOS_TRANSFORMED, XML_ANDROID_TRANSFORMED } from '../fixtures';
-import { runQuery, getNodeAttrVal } from '../../lib/xpath';
+import {XML_IOS, XML_ANDROID, XML_IOS_TRANSFORMED, XML_ANDROID_TRANSFORMED} from '../fixtures';
+import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 
 describe('UniversalXMLPlugin', function () {
   let next;

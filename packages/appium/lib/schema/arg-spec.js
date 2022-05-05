@@ -96,7 +96,7 @@ export class ArgSpec {
    * @param {string} name
    * @param {ArgSpecOptions<D>} [opts]
    */
-  constructor (name, {extType, extName, dest, defaultValue} = {}) {
+  constructor(name, {extType, extName, dest, defaultValue} = {}) {
     // we must normalize the extension name to fit into our convention for CLI
     // args.
     const arg = ArgSpec.toArg(name, extType, extName);
@@ -107,8 +107,7 @@ export class ArgSpec {
     // to use bracket syntax when accessing props on the parsed args object.
     const rawDest = _.camelCase(dest ?? name);
 
-    const destKeypath =
-      extType && extName ? [extType, extName, rawDest].join('.') : rawDest;
+    const destKeypath = extType && extName ? [extType, extName, rawDest].join('.') : rawDest;
 
     this.defaultValue = defaultValue;
     this.name = name;
@@ -129,7 +128,7 @@ export class ArgSpec {
    * @param {string} [extName] - Extension name
    * @returns {string} Schema ID
    */
-  static toSchemaRef (name, extType, extName) {
+  static toSchemaRef(name, extType, extName) {
     const baseRef = ArgSpec.toSchemaBaseRef(extType, extName);
     if (extType && extName) {
       return [`${baseRef}#`, PROPERTIES, name].join('/');
@@ -142,7 +141,7 @@ export class ArgSpec {
    * @param {ExtensionType} [extType] - Extension type
    * @param {string} [extName] - Extension name
    */
-  static toSchemaBaseRef (extType, extName) {
+  static toSchemaBaseRef(extType, extName) {
     if (extType && extName) {
       return `${extType}-${ArgSpec.toNormalizedExtName(extName)}.json`;
     }
@@ -156,7 +155,7 @@ export class ArgSpec {
    * @param {string} [extName] - Extension name
    * @returns {string} Unique ID
    */
-  static toArg (name, extType, extName) {
+  static toArg(name, extType, extName) {
     const properName = _.kebabCase(name.replace(/^--?/, ''));
     if (extType && extName) {
       return [extType, _.kebabCase(extName), properName].join('-');
@@ -169,7 +168,7 @@ export class ArgSpec {
    * @param {string} extName - Extension name
    * @returns {string} Normalized extension name
    */
-  static toNormalizedExtName (extName) {
+  static toNormalizedExtName(extName) {
     return _.kebabCase(extName);
   }
 
@@ -178,13 +177,11 @@ export class ArgSpec {
    * @param {string} schemaId - Root schema ID
    * @returns { {extType?: ExtensionType, normalizedExtName?: string} }
    */
-  static extensionInfoFromRootSchemaId (schemaId) {
+  static extensionInfoFromRootSchemaId(schemaId) {
     const matches = schemaId.match(SCHEMA_ID_REGEXP);
     if (matches?.groups) {
       const {extType, normalizedExtName} =
-        /** @type { {extType: ExtensionType, normalizedExtName: string} } */ (
-          matches.groups
-        );
+        /** @type { {extType: ExtensionType, normalizedExtName: string} } */ (matches.groups);
       return {extType, normalizedExtName};
     }
     return {};
@@ -199,7 +196,7 @@ export class ArgSpec {
    * @param {ArgSpecOptions<D>} [opts] - Options
    * @returns {Readonly<ArgSpec>}
    */
-  static create (name, opts) {
+  static create(name, opts) {
     return Object.freeze(new ArgSpec(name, opts));
   }
 
@@ -208,7 +205,7 @@ export class ArgSpec {
    * @returns {string}
    */
   /* istanbul ignore next */
-  toString () {
+  toString() {
     let str = `[ArgSpec] ${this.name} (${this.ref})`;
     if (this.extType && this.extName) {
       str += ` (ext: ${this.extType}/${this.extName})`;

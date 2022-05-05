@@ -2,8 +2,8 @@
 
 import _ from 'lodash';
 import log from './logger';
-import { node, util } from '@appium/support';
-import { errors } from '../protocol/errors';
+import {node, util} from '@appium/support';
+import {errors} from '../protocol/errors';
 
 /**
  * Maximum size (in bytes) of a given driver's settings object (which is internal to {@linkcode DriverSettings}).
@@ -15,7 +15,6 @@ export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
  * @implements {IDeviceSettings<T>}
  */
 class DeviceSettings {
-
   /**
    * @protected
    * @type {T}
@@ -33,8 +32,8 @@ class DeviceSettings {
    * @param {T} [defaultSettings]
    * @param {import('@appium/types').SettingsUpdateListener<T>} [onSettingsUpdate]
    */
-  constructor (defaultSettings, onSettingsUpdate) {
-    this._settings = /** @type {T} */({...(defaultSettings ?? {})});
+  constructor(defaultSettings, onSettingsUpdate) {
+    this._settings = /** @type {T} */ ({...(defaultSettings ?? {})});
     this._onSettingsUpdate = onSettingsUpdate ?? (async () => {});
   }
 
@@ -42,18 +41,22 @@ class DeviceSettings {
    * calls updateSettings from implementing driver every time a setting is changed.
    * @param {T} newSettings
    */
-  async update (newSettings) {
+  async update(newSettings) {
     if (!_.isPlainObject(newSettings)) {
-      throw new errors.InvalidArgumentError(`Settings update should be called with valid JSON. Got ` +
-        `${JSON.stringify(newSettings)} instead`);
+      throw new errors.InvalidArgumentError(
+        `Settings update should be called with valid JSON. Got ` +
+          `${JSON.stringify(newSettings)} instead`
+      );
     }
 
     if (node.getObjectSize({...this._settings, ...newSettings}) >= MAX_SETTINGS_SIZE) {
-      throw new errors.InvalidArgumentError(`New settings cannot be applied, because the overall ` +
-        `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`);
+      throw new errors.InvalidArgumentError(
+        `New settings cannot be applied, because the overall ` +
+          `object size exceeds the allowed limit of ${util.toReadableSizeString(MAX_SETTINGS_SIZE)}`
+      );
     }
 
-    const props = /** @type {(keyof T & string)[]} */(_.keys(newSettings));
+    const props = /** @type {(keyof T & string)[]} */ (_.keys(newSettings));
     for (const prop of props) {
       if (!_.isUndefined(this._settings[prop])) {
         if (this._settings[prop] === newSettings[prop]) {
@@ -66,13 +69,13 @@ class DeviceSettings {
     }
   }
 
-  getSettings () {
+  getSettings() {
     return this._settings;
   }
 }
 
 export default DeviceSettings;
-export { DeviceSettings };
+export {DeviceSettings};
 
 /**
  * @template T

@@ -2,45 +2,23 @@
 
 import {DRIVER_TYPE} from '../../lib/constants';
 import {readConfigFile, normalizeConfig} from '../../lib/config-file';
-import {
-  finalizeSchema,
-  registerSchema,
-  resetSchema,
-} from '../../lib/schema/schema';
+import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver.schema.js';
 import {resolveFixture} from '../helpers';
 
 describe('config file behavior', function () {
   const GOOD_FILEPATH = resolveFixture('config', 'appium.config.good.json');
-  const BAD_NODECONFIG_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.bad-nodeconfig.json'
-  );
+  const BAD_NODECONFIG_FILEPATH = resolveFixture('config', 'appium.config.bad-nodeconfig.json');
   const BAD_FILEPATH = resolveFixture('config', 'appium.config.bad.json');
-  const INVALID_JSON_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.invalid.json'
-  );
-  const SECURITY_ARRAY_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.security-array.json'
-  );
+  const INVALID_JSON_FILEPATH = resolveFixture('config', 'appium.config.invalid.json');
+  const SECURITY_ARRAY_FILEPATH = resolveFixture('config', 'appium.config.security-array.json');
   const SECURITY_DELIMITED_FILEPATH = resolveFixture(
     'config',
     'appium.config.security-delimited.json'
   );
-  const SECURITY_PATH_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.security-path.json'
-  );
-  const UNKNOWN_PROPS_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.ext-unknown-props.json'
-  );
-  const EXT_PROPS_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.ext-good.json'
-  );
+  const SECURITY_PATH_FILEPATH = resolveFixture('config', 'appium.config.security-path.json');
+  const UNKNOWN_PROPS_FILEPATH = resolveFixture('config', 'appium.config.ext-unknown-props.json');
+  const EXT_PROPS_FILEPATH = resolveFixture('config', 'appium.config.ext-good.json');
 
   beforeEach(function () {
     finalizeSchema();
@@ -65,10 +43,7 @@ describe('config file behavior', function () {
         describe('when a string', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
-            result.should.have.nested.property(
-              'errors[0].instancePath',
-              '/server/nodeconfig'
-            );
+            result.should.have.nested.property('errors[0].instancePath', '/server/nodeconfig');
           });
         });
 
@@ -84,20 +59,14 @@ describe('config file behavior', function () {
         describe('when a string path', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_PATH_FILEPATH);
-            result.should.have.nested.property(
-              'errors[0].instancePath',
-              '/server/allow-insecure'
-            );
+            result.should.have.nested.property('errors[0].instancePath', '/server/allow-insecure');
           });
         });
 
         describe('when a comma-delimited string', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_DELIMITED_FILEPATH);
-            result.should.have.nested.property(
-              'errors[0].instancePath',
-              '/server/allow-insecure'
-            );
+            result.should.have.nested.property('errors[0].instancePath', '/server/allow-insecure');
           });
         });
 
@@ -118,10 +87,7 @@ describe('config file behavior', function () {
       describe('without extensions', function () {
         it('should return an object containing errors', async function () {
           const result = await readConfigFile(BAD_FILEPATH);
-          result.should.have.deep.property(
-            'config',
-            normalizeConfig(require(BAD_FILEPATH))
-          );
+          result.should.have.deep.property('config', normalizeConfig(require(BAD_FILEPATH)));
           result.should.have.property('filepath', BAD_FILEPATH);
           result.should.have.deep
             .property('errors')
@@ -147,8 +113,7 @@ describe('config file behavior', function () {
               },
               {
                 instancePath: '/server/allow-insecure',
-                schemaPath:
-                  '#/properties/server/properties/allow-insecure/type',
+                schemaPath: '#/properties/server/properties/allow-insecure/type',
                 keyword: 'type',
                 params: {
                   type: 'array',
@@ -157,8 +122,7 @@ describe('config file behavior', function () {
               },
               {
                 instancePath: '/server/callback-port',
-                schemaPath:
-                  '#/properties/server/properties/callback-port/maximum',
+                schemaPath: '#/properties/server/properties/callback-port/maximum',
                 keyword: 'maximum',
                 params: {
                   comparison: '<=',

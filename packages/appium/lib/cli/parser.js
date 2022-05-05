@@ -12,15 +12,7 @@ import {getExtensionArgs, getServerArgs} from './args';
  * will automatially inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([
-    DRIVER_TYPE,
-    PLUGIN_TYPE,
-    SERVER_SUBCOMMAND,
-    '-h',
-    '--help',
-    '-v',
-    '--version',
-  ])
+  new Set([DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;
@@ -138,9 +130,7 @@ class ArgParser {
       args,
       (unpacked, value, key) => {
         if (!_.isUndefined(value) && hasArgSpec(key)) {
-          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */ (
-            getArgSpec(key)
-          );
+          const {dest} = /** @type {import('../schema/arg-spec').ArgSpec} */ (getArgSpec(key));
           _.set(unpacked, dest, value);
         } else {
           // this could be anything that _isn't_ a server arg

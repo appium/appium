@@ -1,4 +1,4 @@
-import { getLogger } from './logging';
+import {getLogger} from './logging';
 
 let log = getLogger('Support');
 

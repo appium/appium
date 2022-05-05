@@ -89,9 +89,7 @@ export class PluginConfig extends ExtensionConfig {
     }
 
     log.info(`Available plugins:`);
-    for (const [pluginName, pluginData] of _.toPairs(
-      this.installedExtensions
-    )) {
+    for (const [pluginName, pluginData] of _.toPairs(this.installedExtensions)) {
       const activeTxt = _.includes(activeNames, pluginName) ? ' (ACTIVE)' : '';
       log.info(`  - ${this.extensionDesc(pluginName, pluginData)}${activeTxt}`);
     }

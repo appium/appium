@@ -1,29 +1,29 @@
 import _ from 'lodash';
-import { logger, util } from '@appium/support';
+import {logger, util} from '@appium/support';
 import axios from 'axios';
-import { getSummaryByCode } from '../jsonwp-status/status';
+import {getSummaryByCode} from '../jsonwp-status/status';
 import {
-  errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode,
+  errors,
+  isErrorType,
+  errorFromMJSONWPStatusCode,
+  errorFromW3CJsonCode,
   getResponseForW3CError,
 } from '../protocol/errors';
-import { routeToCommandName } from '../protocol';
-import { MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS } from '../constants';
+import {routeToCommandName} from '../protocol';
+import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import ProtocolConverter from './protocol-converter';
-import { formatResponseValue, formatStatus } from '../protocol/helpers';
+import {formatResponseValue, formatStatus} from '../protocol/helpers';
 import http from 'http';
 import https from 'https';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMPACT_ERROR_PATTERNS = [
-  /\bECONNREFUSED\b/,
-  /socket hang up/,
-];
+const COMPACT_ERROR_PATTERNS = [/\bECONNREFUSED\b/, /socket hang up/];
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
 class JWProxy {
-  constructor (opts = {}) {
+  constructor(opts = {}) {
     _.defaults(this, opts, {
       scheme: 'http',
       server: 'localhost',
@@ -47,7 +47,7 @@ class JWProxy {
     this._log = opts.log;
   }
 
-  get log () {
+  get log() {
     return this._log ?? DEFAULT_LOG;
   }
 
@@ -60,7 +60,7 @@ class JWProxy {
    * @param {AxiosRequestConfig} requestConfig
    * @returns {AxiosResponse}
    */
-  async request (requestConfig) {
+  async request(requestConfig) {
     const reqPromise = axios(requestConfig);
     this._activeRequests.push(reqPromise);
     try {
@@ -70,28 +70,28 @@ class JWProxy {
     }
   }
 
-  getActiveRequestsCount () {
+  getActiveRequestsCount() {
     return this._activeRequests.length;
   }
 
-  cancelActiveRequests () {
+  cancelActiveRequests() {
     this._activeRequests = [];
   }
 
-  endpointRequiresSessionId (endpoint) {
+  endpointRequiresSessionId(endpoint) {
     return !_.includes(['/session', '/sessions', '/status'], endpoint);
   }
 
-  set downstreamProtocol (value) {
+  set downstreamProtocol(value) {
     this._downstreamProtocol = value;
     this.protocolConverter.downstreamProtocol = value;
   }
 
-  get downstreamProtocol () {
+  get downstreamProtocol() {
     return this._downstreamProtocol;
   }
 
-  getUrlForProxy (url) {
+  getUrlForProxy(url) {
     if (url === '') {
       url = '/';
     }
@@ -99,12 +99,12 @@ class JWProxy {
     const endpointRe = '(/(session|status))';
     let remainingUrl = '';
     if (/^http/.test(url)) {
-      const first = (new RegExp(`(https?://.+)${endpointRe}`)).exec(url);
+      const first = new RegExp(`(https?://.+)${endpointRe}`).exec(url);
       if (!first) {
         throw new Error('Got a complete url but could not extract JWP endpoint');
       }
       remainingUrl = url.replace(first[1], '');
-    } else if ((new RegExp('^/')).test(url)) {
+    } else if (new RegExp('^/').test(url)) {
       remainingUrl = url;
     } else {
       throw new Error(`Did not know what to do with url '${url}'`);
@@ -115,7 +115,7 @@ class JWProxy {
       remainingUrl = stripPrefixRe.exec(remainingUrl)[1];
     }
 
-    if (!(new RegExp(endpointRe)).test(remainingUrl)) {
+    if (!new RegExp(endpointRe).test(remainingUrl)) {
       remainingUrl = `/session/${this.sessionId}${remainingUrl}`;
     }
 
@@ -139,12 +139,13 @@ class JWProxy {
     return proxyBase + remainingUrl;
   }
 
-  async proxy (url, method, body = null) {
+  async proxy(url, method, body = null) {
     method = method.toUpperCase();
     const newUrl = this.getUrlForProxy(url);
-    const truncateBody = (content) => _.truncate(
-      _.isString(content) ? content : JSON.stringify(content),
-      { length: MAX_LOG_BODY_LENGTH });
+    const truncateBody = (content) =>
+      _.truncate(_.isString(content) ? content : JSON.stringify(content), {
+        length: MAX_LOG_BODY_LENGTH,
+      });
     const reqOpts = {
       url: newUrl,
       method,
@@ -171,14 +172,16 @@ class JWProxy {
       }
     }
 
-    this.log.debug(`Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
-      (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body'));
+    this.log.debug(
+      `Proxying [${method} ${url || '/'}] to [${method} ${newUrl}] ` +
+        (reqOpts.data ? `with body: ${truncateBody(reqOpts.data)}` : 'with no body')
+    );
 
     const throwProxyError = (error) => {
       const err = new Error(`The request to ${url} has failed`);
       err.response = {
         data: error,
-        status: 500
+        status: 500,
       };
       throw err;
     };
@@ -216,9 +219,11 @@ class JWProxy {
       if (util.hasValue(e.response)) {
         if (!isResponseLogged) {
           const error = truncateBody(e.response.data);
-          this.log.info(util.hasValue(e.response.status)
-            ? `Got response with status ${e.response.status}: ${error}`
-            : `Got response with unknown status: ${error}`);
+          this.log.info(
+            util.hasValue(e.response.status)
+              ? `Got response with status ${e.response.status}: ${error}`
+              : `Got response with unknown status: ${error}`
+          );
         }
       } else {
         proxyErrorMsg = `Could not proxy command to the remote server. Original error: ${e.message}`;
@@ -232,7 +237,7 @@ class JWProxy {
     }
   }
 
-  getProtocolFromResBody (resObj) {
+  getProtocolFromResBody(resObj) {
     if (_.isInteger(resObj.status)) {
       return MJSONWP;
     }
@@ -241,14 +246,16 @@ class JWProxy {
     }
   }
 
-  requestToCommandName (url, method) {
+  requestToCommandName(url, method) {
     const extractCommandName = (pattern) => {
       const pathMatch = pattern.exec(url);
       return pathMatch ? routeToCommandName(pathMatch[1], method, this.reqBasePath) : null;
     };
     let commandName = routeToCommandName(url, method, this.reqBasePath);
     if (!commandName && _.includes(url, `${this.reqBasePath}/session/`)) {
-      commandName = extractCommandName(new RegExp(`${_.escapeRegExp(this.reqBasePath)}/session/[^/]+(.+)`));
+      commandName = extractCommandName(
+        new RegExp(`${_.escapeRegExp(this.reqBasePath)}/session/[^/]+(.+)`)
+      );
     }
     if (!commandName && _.includes(url, this.reqBasePath)) {
       commandName = extractCommandName(new RegExp(`${_.escapeRegExp(this.reqBasePath)}(/.+)`));
@@ -256,7 +263,7 @@ class JWProxy {
     return commandName;
   }
 
-  async proxyCommand (url, method, body = null) {
+  async proxyCommand(url, method, body = null) {
     const commandName = this.requestToCommandName(url, method);
     if (!commandName) {
       return await this.proxy(url, method, body);
@@ -266,7 +273,7 @@ class JWProxy {
     return await this.protocolConverter.convertAndProxy(commandName, url, method, body);
   }
 
-  async command (url, method, body = null) {
+  async command(url, method, body = null) {
     let response;
     let resBodyObj;
     try {
@@ -289,7 +296,10 @@ class JWProxy {
         if (_.has(message, 'message')) {
           message = message.message;
         }
-        throw errorFromMJSONWPStatusCode(status, _.isEmpty(message) ? getSummaryByCode(status) : message);
+        throw errorFromMJSONWPStatusCode(
+          status,
+          _.isEmpty(message) ? getSummaryByCode(status) : message
+        );
       }
     } else if (protocol === W3C) {
       // Got response in W3C format
@@ -297,22 +307,30 @@ class JWProxy {
         return resBodyObj.value;
       }
       if (_.isPlainObject(resBodyObj.value) && resBodyObj.value.error) {
-        throw errorFromW3CJsonCode(resBodyObj.value.error, resBodyObj.value.message, resBodyObj.value.stacktrace);
+        throw errorFromW3CJsonCode(
+          resBodyObj.value.error,
+          resBodyObj.value.message,
+          resBodyObj.value.stacktrace
+        );
       }
     } else if (response.statusCode === 200) {
       // Unknown protocol. Keeping it because of the backward compatibility
       return resBodyObj;
     }
-    throw new errors.UnknownError(`Did not know what to do with response code '${response.statusCode}' ` +
-                                  `and response body '${_.truncate(JSON.stringify(resBodyObj), {length: 300})}'`);
+    throw new errors.UnknownError(
+      `Did not know what to do with response code '${response.statusCode}' ` +
+        `and response body '${_.truncate(JSON.stringify(resBodyObj), {
+          length: 300,
+        })}'`
+    );
   }
 
-  getSessionIdFromUrl (url) {
+  getSessionIdFromUrl(url) {
     const match = url.match(/\/session\/([^/]+)/);
     return match ? match[1] : null;
   }
 
-  async proxyReqRes (req, res) {
+  async proxyReqRes(req, res) {
     // ! this method must not throw any exceptions
     // ! make sure to call res.send before return
     let statusCode;
@@ -331,7 +349,7 @@ class JWProxy {
     if (!_.isPlainObject(resBodyObj)) {
       const error = new errors.UnknownError(
         `The downstream server response with the status code ${statusCode} is not a valid JSON object: ` +
-        _.truncate(`${resBodyObj}`, {length: 300})
+          _.truncate(`${resBodyObj}`, {length: 300})
       );
       [statusCode, resBodyObj] = getResponseForW3CError(error);
     }
@@ -354,5 +372,5 @@ class JWProxy {
   }
 }
 
-export { JWProxy };
+export {JWProxy};
 export default JWProxy;

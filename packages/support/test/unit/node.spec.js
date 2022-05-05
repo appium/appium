@@ -1,5 +1,5 @@
-import { should } from 'chai';
-import { node } from '../../lib';
+import {should} from 'chai';
+import {node} from '../../lib';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -10,13 +10,15 @@ describe('node utilities', function () {
       node.getObjectSize(null).should.eql(0);
       node.getObjectSize({}).should.eql(0);
       node.getObjectSize(Buffer.from([1, 2, 3])).should.eql(3);
-      node.getObjectSize({
-        'a': 1,
-        'b': 2,
-        'c': {
-          'd': 4,
-        }
-      }).should.eql(32);
+      node
+        .getObjectSize({
+          a: 1,
+          b: 2,
+          c: {
+            d: 4,
+          },
+        })
+        .should.eql(32);
     });
   });
 
@@ -37,7 +39,7 @@ describe('node utilities', function () {
       const obj1 = {};
       node.deepFreeze(obj1).should.eql(obj1);
       const obj2 = node.deepFreeze({a: {b: 'c'}});
-      should().throw(() => obj2.a.b = 'd');
+      should().throw(() => (obj2.a.b = 'd'));
       node.deepFreeze(1).should.eql(1);
       should().equal(node.deepFreeze(null), null);
       const obj3 = [1, {}, 3];

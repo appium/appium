@@ -1,6 +1,4 @@
-
-import { tempDir, fs } from '../../lib/index.js';
-
+import {tempDir, fs} from '../../lib/index.js';
 
 describe('tempdir', function () {
   afterEach(function () {

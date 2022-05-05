@@ -3,11 +3,10 @@
 const path = require('path');
 const log = require('fancy-log');
 const _ = require('lodash');
-const { exec } = require('../utils');
+const {exec} = require('../utils');
 const B = require('bluebird');
 const fs = require('fs');
 const rimraf = B.promisify(require('rimraf'));
-
 
 const renameFile = B.promisify(fs.rename, {context: fs});
 
@@ -15,7 +14,7 @@ const MAX_BUFFER_SIZE = 524288;
 
 const REAL_DEVICE_FLAGS = ['IOS_REAL_DEVICE', 'REAL_DEVICE'];
 
-function configure (gulp, opts) {
+function configure(gulp, opts) {
   if (_.isEmpty(opts.iosApps)) {
     // nothing to do
     return;
@@ -29,20 +28,20 @@ function configure (gulp, opts) {
     iphonesimulator: {
       name: 'iphonesimulator',
       buildPath: path.resolve('build', 'Release-iphonesimulator', opts.iosApps.appName),
-      finalPath: relativeLocations.iphonesimulator
+      finalPath: relativeLocations.iphonesimulator,
     },
     iphoneos: {
       name: 'iphoneos',
       buildPath: path.resolve('build', 'Release-iphoneos', opts.iosApps.appName),
-      finalPath: relativeLocations.iphoneos
-    }
+      finalPath: relativeLocations.iphoneos,
+    },
   };
 
   // the sdks against which we will build
   let sdks = ['iphonesimulator'];
 
   let sdkVer;
-  async function getIOSSDK () {
+  async function getIOSSDK() {
     if (!sdkVer) {
       try {
         const {stdout} = await exec('xcrun', ['--sdk', 'iphonesimulator', '--show-sdk-version']);
@@ -55,14 +54,14 @@ function configure (gulp, opts) {
     return sdkVer;
   }
 
-  function logErrorLines (str = '') {
+  function logErrorLines(str = '') {
     str = `${str}`;
     for (const line of str.split('\n')) {
       log.error(`    ${line}`);
     }
   }
 
-  function logError (err, prefix = 'Failed:') {
+  function logError(err, prefix = 'Failed:') {
     log.error(`${prefix}: ${err.message}`);
     log.error('Stdout:');
     logErrorLines(err.stdout);
@@ -70,7 +69,7 @@ function configure (gulp, opts) {
     logErrorLines(err.stderr);
   }
 
-  async function cleanApp (appRoot, sdk) {
+  async function cleanApp(appRoot, sdk) {
     log(`Cleaning app for ${sdk} at app root '${appRoot}'`);
     try {
       const cmd = 'xcodebuild';
@@ -83,12 +82,14 @@ function configure (gulp, opts) {
     }
   }
 
-  gulp.task('ios-apps:sdks', function findSDKs (done) {
+  gulp.task('ios-apps:sdks', function findSDKs(done) {
     // determine if the real device sdk should be used, too
     for (const flag of REAL_DEVICE_FLAGS) {
       const value = process.env[flag];
       if (!_.isEmpty(value) && !!parseInt(value, 10)) {
-        log(`Enabling real device build because '${flag}' environment variable set (value is '${value}')`);
+        log(
+          `Enabling real device build because '${flag}' environment variable set (value is '${value}')`
+        );
         sdks.push('iphoneos');
       }
     }
@@ -96,7 +97,7 @@ function configure (gulp, opts) {
     done();
   });
 
-  gulp.task('ios-apps:clean', async function cleanAll () {
+  gulp.task('ios-apps:clean', async function cleanAll() {
     log('Cleaning all sdks');
     const sdkVer = await getIOSSDK();
     for (const sdk of sdks) {
@@ -116,7 +117,7 @@ function configure (gulp, opts) {
     }
   });
 
-  async function buildApp (appRoot, sdk) {
+  async function buildApp(appRoot, sdk) {
     log(`Building app for ${sdk} at app root '${appRoot}'`);
     try {
       const cmd = 'xcodebuild';
@@ -133,7 +134,7 @@ function configure (gulp, opts) {
     }
   }
 
-  gulp.task('ios-apps:build', async function buildAll () {
+  gulp.task('ios-apps:build', async function buildAll() {
     log('Building all apps');
     const sdkVer = await getIOSSDK();
     for (const sdk of sdks) {
@@ -141,7 +142,7 @@ function configure (gulp, opts) {
     }
   });
 
-  gulp.task('ios-apps:rename', async function iosAppsRename () {
+  gulp.task('ios-apps:rename', async function iosAppsRename() {
     log('Renaming apps');
     for (const sdk of sdks) {
       log(`    Renaming for ${sdk}`);
@@ -150,7 +151,10 @@ function configure (gulp, opts) {
     }
   });
 
-  gulp.task('ios-apps:install', gulp.series('ios-apps:sdks', 'ios-apps:clean', 'ios-apps:build', 'ios-apps:rename'));
+  gulp.task(
+    'ios-apps:install',
+    gulp.series('ios-apps:sdks', 'ios-apps:clean', 'ios-apps:build', 'ios-apps:rename')
+  );
 }
 
 module.exports = {

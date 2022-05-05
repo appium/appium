@@ -2,7 +2,6 @@
 
 const boilerplate = require('./index').boilerplate.use(require('gulp'));
 
-
 require('./test/gulpfile-js');
 
 boilerplate({
@@ -12,10 +11,15 @@ boilerplate({
     files: ['${testDir}/**/*-specs.js', '!${testDir}/fixtures', '!${testDir}/**/*-e2e-specs.js'],
   },
   coverage: {
-    files: ['./build/test/**/*-specs.js', '!./build/test/fixtures', '!./build/test/**/*-e2e-specs.js', '!./build/test/generated'],
+    files: [
+      './build/test/**/*-specs.js',
+      '!./build/test/fixtures',
+      '!./build/test/**/*-e2e-specs.js',
+      '!./build/test/generated',
+    ],
     verbose: true,
   },
   build: 'Appium Gulp Plugins',
   extraDefaultTasks: ['e2e-test', 'test-transpile-lots-of-files'],
-  testReporter: 'dot'
+  testReporter: 'dot',
 });

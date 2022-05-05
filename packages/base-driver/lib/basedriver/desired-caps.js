@@ -9,53 +9,50 @@ let desiredCapabilityConstraints = {
     isString: true,
   },
   deviceName: {
-    isString: true
+    isString: true,
   },
   platformVersion: {
-    isString: true
+    isString: true,
   },
   newCommandTimeout: {
-    isNumber: true
+    isNumber: true,
   },
   automationName: {
-    isString: true
+    isString: true,
   },
   autoLaunch: {
-    isBoolean: true
+    isBoolean: true,
   },
   udid: {
-    isString: true
+    isString: true,
   },
   orientation: {
-    inclusion: [
-      'LANDSCAPE',
-      'PORTRAIT'
-    ]
+    inclusion: ['LANDSCAPE', 'PORTRAIT'],
   },
   autoWebview: {
-    isBoolean: true
+    isBoolean: true,
   },
   noReset: {
-    isBoolean: true
+    isBoolean: true,
   },
   fullReset: {
-    isBoolean: true
+    isBoolean: true,
   },
   language: {
-    isString: true
+    isString: true,
   },
   locale: {
-    isString: true
+    isString: true,
   },
   eventTimings: {
-    isBoolean: true
+    isBoolean: true,
   },
   printPageSourceOnFindFailure: {
-    isBoolean: true
+    isBoolean: true,
   },
 };
 
-validator.validators.isString = function isString (value) {
+validator.validators.isString = function isString(value) {
   if (typeof value === 'string') {
     return null;
   }
@@ -66,7 +63,7 @@ validator.validators.isString = function isString (value) {
 
   return 'must be of type string';
 };
-validator.validators.isNumber = function isNumber (value) {
+validator.validators.isNumber = function isNumber(value) {
   if (typeof value === 'number') {
     return null;
   }
@@ -83,7 +80,7 @@ validator.validators.isNumber = function isNumber (value) {
 
   return 'must be of type number';
 };
-validator.validators.isBoolean = function isBoolean (value) {
+validator.validators.isBoolean = function isBoolean(value) {
   if (typeof value === 'boolean') {
     return null;
   }
@@ -99,7 +96,7 @@ validator.validators.isBoolean = function isBoolean (value) {
 
   return 'must be of type boolean';
 };
-validator.validators.isObject = function isObject (value) {
+validator.validators.isObject = function isObject(value) {
   if (typeof value === 'object') {
     return null;
   }
@@ -110,7 +107,7 @@ validator.validators.isObject = function isObject (value) {
 
   return 'must be of type object';
 };
-validator.validators.isArray = function isArray (value) {
+validator.validators.isArray = function isArray(value) {
   if (Array.isArray(value)) {
     return null;
   }
@@ -121,13 +118,13 @@ validator.validators.isArray = function isArray (value) {
 
   return 'must be of type array';
 };
-validator.validators.deprecated = function deprecated (value, options, key) {
+validator.validators.deprecated = function deprecated(value, options, key) {
   if (options) {
     log.warn(`${key} is a deprecated capability`);
   }
   return null;
 };
-validator.validators.inclusionCaseInsensitive = function inclusionCaseInsensitive (value, options) {
+validator.validators.inclusionCaseInsensitive = function inclusionCaseInsensitive(value, options) {
   if (typeof value === 'undefined') {
     return null;
   } else if (typeof value !== 'string') {
@@ -142,9 +139,8 @@ validator.validators.inclusionCaseInsensitive = function inclusionCaseInsensitiv
 };
 
 validator.promise = B;
-validator.prettify = function prettify (val) {
+validator.prettify = function prettify(val) {
   return val;
 };
 
-
-export { desiredCapabilityConstraints, validator };
+export {desiredCapabilityConstraints, validator};

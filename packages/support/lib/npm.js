@@ -2,31 +2,23 @@
 
 import path from 'path';
 import semver from 'semver';
-import { hasAppiumDependency } from './env';
-import { exec } from 'teen_process';
-import { fs } from './fs';
+import {hasAppiumDependency} from './env';
+import {exec} from 'teen_process';
+import {fs} from './fs';
 import * as util from './util';
 import * as system from './system';
 import resolveFrom from 'resolve-from';
-
 
 /**
  * Relative path to directory containing any Appium internal files
  * XXX: this is duplicated in `appium/lib/constants.js`.
  */
-export const CACHE_DIR_RELATIVE_PATH = path.join(
-  'node_modules',
-  '.cache',
-  'appium',
-);
+export const CACHE_DIR_RELATIVE_PATH = path.join('node_modules', '.cache', 'appium');
 
 /**
  * Relative path to lockfile used when installing an extension via `appium`
  */
-export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(
-  CACHE_DIR_RELATIVE_PATH,
-  '.install.lock',
-);
+export const INSTALL_LOCKFILE_RELATIVE_PATH = path.join(CACHE_DIR_RELATIVE_PATH, '.install.lock');
 
 /**
  * XXX: This should probably be a singleton, but it isn't.  Maybe this module should just export functions?
@@ -37,7 +29,7 @@ export class NPM {
    * @private
    * @param {string} cwd
    */
-  _getInstallLockfilePath (cwd) {
+  _getInstallLockfilePath(cwd) {
     return path.join(cwd, INSTALL_LOCKFILE_RELATIVE_PATH);
   }
 
@@ -51,8 +43,8 @@ export class NPM {
    * @param {ExecOpts} opts
    * @param {ExecOpts} [execOpts]
    */
-  async exec (cmd, args, opts, execOpts = /** @type {ExecOpts} */({})) {
-    let { cwd, json, lockFile } = opts;
+  async exec(cmd, args, opts, execOpts = /** @type {ExecOpts} */ ({})) {
+    let {cwd, json, lockFile} = opts;
 
     // make sure we perform the current operation in cwd
     execOpts = {...execOpts, cwd};
@@ -81,8 +73,12 @@ export class NPM {
         ret.json = JSON.parse(stdout);
       } catch (ign) {}
     } catch (e) {
-      const {stdout = '', stderr = '', code = null} = /** @type {TeenProcessExecError} */(e);
-      const err = new Error(`npm command '${args.join(' ')}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`);
+      const {stdout = '', stderr = '', code = null} = /** @type {TeenProcessExecError} */ (e);
+      const err = new Error(
+        `npm command '${args.join(
+          ' '
+        )}' failed with code ${code}.\n\nSTDOUT:\n${stdout.trim()}\n\nSTDERR:\n${stderr.trim()}`
+      );
       throw err;
     }
     return ret;
@@ -92,11 +88,13 @@ export class NPM {
    * @param {string} cwd
    * @param {string} pkg
    */
-  async getLatestVersion (cwd, pkg) {
-    return (await this.exec('view', [pkg, 'dist-tags'], {
-      json: true,
-      cwd
-    })).json?.latest;
+  async getLatestVersion(cwd, pkg) {
+    return (
+      await this.exec('view', [pkg, 'dist-tags'], {
+        json: true,
+        cwd,
+      })
+    ).json?.latest;
   }
 
   /**
@@ -104,11 +102,13 @@ export class NPM {
    * @param {string} pkg
    * @param {string} curVersion
    */
-  async getLatestSafeUpgradeVersion (cwd, pkg, curVersion) {
-    const allVersions = (await this.exec('view', [pkg, 'versions'], {
-      json: true,
-      cwd
-    })).json;
+  async getLatestSafeUpgradeVersion(cwd, pkg, curVersion) {
+    const allVersions = (
+      await this.exec('view', [pkg, 'versions'], {
+        json: true,
+        cwd,
+      })
+    ).json;
     return this.getLatestSafeUpgradeFromVersions(curVersion, allVersions);
   }
 
@@ -117,7 +117,7 @@ export class NPM {
    * @param {string} cwd
    * @param {string} [pkg]
    */
-  async list (cwd, pkg) {
+  async list(cwd, pkg) {
     return (await this.exec('list', pkg ? [pkg] : [], {cwd, json: true})).json;
   }
 
@@ -131,7 +131,7 @@ export class NPM {
    *
    * @return {string|null} - the highest safely-upgradable version, or null if there isn't one
    */
-  getLatestSafeUpgradeFromVersions (curVersion, allVersions) {
+  getLatestSafeUpgradeFromVersions(curVersion, allVersions) {
     let safeUpgradeVer = null;
     const curSemver = semver.parse(curVersion);
     if (curSemver === null) {
@@ -173,7 +173,7 @@ export class NPM {
    * @param {InstallPackageOpts} [opts]
    * @returns {Promise<import('type-fest').PackageJson>}
    */
-  async installPackage (cwd, pkgName, {pkgVer} = {}) {
+  async installPackage(cwd, pkgName, {pkgVer} = {}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -199,18 +199,19 @@ export class NPM {
      * "dummy" and is controlled by the user.  So we'll just add it as a dev
      * dep; whatever else it does is up to the user's npm config.
      */
-    const installOpts = await hasAppiumDependency(cwd) ?
-      ['--save-dev'] :
-      ['--save-dev', '--save-exact', '--global-style', '--no-package-lock'];
+    const installOpts = (await hasAppiumDependency(cwd))
+      ? ['--save-dev']
+      : ['--save-dev', '--save-exact', '--global-style', '--no-package-lock'];
 
-    const res = await this.exec('install', [
-      ...installOpts,
-      pkgVer ? `${pkgName}@${pkgVer}` : pkgName
-    ], {
-      cwd,
-      json: true,
-      lockFile: this._getInstallLockfilePath(cwd)
-    });
+    const res = await this.exec(
+      'install',
+      [...installOpts, pkgVer ? `${pkgName}@${pkgVer}` : pkgName],
+      {
+        cwd,
+        json: true,
+        lockFile: this._getInstallLockfilePath(cwd),
+      }
+    );
 
     if (res.json) {
       // we parsed a valid json response, so if we got an error here, return that
@@ -228,9 +229,11 @@ export class NPM {
     try {
       return require(pkgJsonPath);
     } catch {
-      throw new Error('The package was not downloaded correctly; its package.json ' +
-                      'did not exist or was unreadable. We looked for it at ' +
-                      pkgJsonPath);
+      throw new Error(
+        'The package was not downloaded correctly; its package.json ' +
+          'did not exist or was unreadable. We looked for it at ' +
+          pkgJsonPath
+      );
     }
   }
 
@@ -238,10 +241,10 @@ export class NPM {
    * @param {string} cwd
    * @param {string} pkg
    */
-  async uninstallPackage (cwd, pkg) {
+  async uninstallPackage(cwd, pkg) {
     await this.exec('uninstall', [pkg], {
       cwd,
-      lockFile: this._getInstallLockfilePath(cwd)
+      lockFile: this._getInstallLockfilePath(cwd),
     });
   }
 }

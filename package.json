@@ -77,7 +77,8 @@
   },
   "prettier": {
     "bracketSpacing": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "printWidth": 100
   },
   "dependencies": {
     "@appium/base-driver": "file:packages/base-driver",

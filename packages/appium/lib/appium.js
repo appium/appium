@@ -115,9 +115,7 @@ class AppiumDriver extends DriverCore {
    */
   get log() {
     if (!this._log) {
-      const instanceName = `${this.constructor.name}@${node
-        .getObjectId(this)
-        .substring(0, 4)}`;
+      const instanceName = `${this.constructor.name}@${node.getObjectId(this).substring(0, 4)}`;
       this._log = logger.getLogger(instanceName);
     }
     return this._log;
@@ -191,9 +189,7 @@ class AppiumDriver extends DriverCore {
       const defaults = getDefaultsForExtension(extType, extName);
       const cliArgs = _.isEmpty(defaults)
         ? allCliArgsForExt
-        : _.omitBy(allCliArgsForExt, (value, key) =>
-            _.isEqual(defaults[key], value)
-          );
+        : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
       if (!_.isEmpty(cliArgs)) {
         extInstance.cliArgs = cliArgs;
       }
@@ -236,14 +232,10 @@ class AppiumDriver extends DriverCore {
         defaultCapabilities
       );
 
-      const {
-        desiredCaps,
-        processedJsonwpCapabilities,
-        processedW3CCapabilities,
-      } = /** @type {import('./utils').ParsedDriverCaps} */ (parsedCaps);
+      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
+        /** @type {import('./utils').ParsedDriverCaps} */ (parsedCaps);
       protocol = parsedCaps.protocol;
-      const error = /** @type {import('./utils').InvalidCaps} */ (parsedCaps)
-        .error;
+      const error = /** @type {import('./utils').InvalidCaps} */ (parsedCaps).error;
       // If the parsing of the caps produced an error, throw it in here
       if (error) {
         throw error;
@@ -254,11 +246,7 @@ class AppiumDriver extends DriverCore {
         version: driverVersion,
         driverName,
       } = this.driverConfig.findMatchingDriver(desiredCaps);
-      this.printNewSessionAnnouncement(
-        InnerDriver.name,
-        driverVersion,
-        InnerDriver.baseVersion
-      );
+      this.printNewSessionAnnouncement(InnerDriver.name, driverVersion, InnerDriver.baseVersion);
 
       if (this.args.sessionOverride) {
         await this.deleteAllSessions();
@@ -314,14 +302,12 @@ class AppiumDriver extends DriverCore {
       driverInstance.serverPath = this.args.basePath;
 
       try {
-        runningDriversData =
-          (await this.curSessionDataForDriver(InnerDriver)) ?? [];
+        runningDriversData = (await this.curSessionDataForDriver(InnerDriver)) ?? [];
       } catch (e) {
         throw new errors.SessionNotCreatedError(e.message);
       }
       await pendingDriversGuard.acquire(AppiumDriver.name, () => {
-        this.pendingDrivers[InnerDriver.name] =
-          this.pendingDrivers[InnerDriver.name] || [];
+        this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
         otherPendingDriversData = _.compact(
           this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData)
         );
@@ -360,10 +346,7 @@ class AppiumDriver extends DriverCore {
             JSON.stringify(w3cSettings)
         );
         await driverInstance.updateSettings(w3cSettings);
-      } else if (
-        driverInstance.isMjsonwpProtocol() &&
-        !_.isEmpty(jwpSettings)
-      ) {
+      } else if (driverInstance.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
         this.log.info(
           `Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
             JSON.stringify(jwpSettings)
@@ -401,16 +384,12 @@ class AppiumDriver extends DriverCore {
               );
             }
           } else {
-            this.log.debug(
-              `Plugin ${plugin.name} does not define an unexpected shutdown handler`
-            );
+            this.log.debug(`Plugin ${plugin.name} does not define an unexpected shutdown handler`);
           }
         }
       }
 
-      this.log.info(
-        `Removing session '${innerSessionId}' from our master session list`
-      );
+      this.log.info(`Removing session '${innerSessionId}' from our master session list`);
       delete this.sessions[innerSessionId];
       delete this.sessionPlugins[innerSessionId];
     };
@@ -455,33 +434,26 @@ class AppiumDriver extends DriverCore {
     let protocol;
     try {
       let otherSessionsData;
-      const dstSession = await sessionsListGuard.acquire(
-        AppiumDriver.name,
-        () => {
-          if (!this.sessions[sessionId]) {
-            return;
-          }
-          const curConstructorName = this.sessions[sessionId].constructor.name;
-          otherSessionsData = _.toPairs(this.sessions)
-            .filter(
-              ([key, value]) =>
-                value.constructor.name === curConstructorName &&
-                key !== sessionId
-            )
-            .map(([, value]) => value.driverData);
-          const dstSession = this.sessions[sessionId];
-          protocol = dstSession.protocol;
-          this.log.info(
-            `Removing session ${sessionId} from our master session list`
-          );
-          // regardless of whether the deleteSession completes successfully or not
-          // make the session unavailable, because who knows what state it might
-          // be in otherwise
-          delete this.sessions[sessionId];
-          delete this.sessionPlugins[sessionId];
-          return dstSession;
+      const dstSession = await sessionsListGuard.acquire(AppiumDriver.name, () => {
+        if (!this.sessions[sessionId]) {
+          return;
         }
-      );
+        const curConstructorName = this.sessions[sessionId].constructor.name;
+        otherSessionsData = _.toPairs(this.sessions)
+          .filter(
+            ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId
+          )
+          .map(([, value]) => value.driverData);
+        const dstSession = this.sessions[sessionId];
+        protocol = dstSession.protocol;
+        this.log.info(`Removing session ${sessionId} from our master session list`);
+        // regardless of whether the deleteSession completes successfully or not
+        // make the session unavailable, because who knows what state it might
+        // be in otherwise
+        delete this.sessions[sessionId];
+        delete this.sessionPlugins[sessionId];
+        return dstSession;
+      });
       // this may not be correct, but if `dstSession` was falsy, the call to `deleteSession()` would
       // throw anyway.
       if (!dstSession) {
@@ -508,9 +480,7 @@ class AppiumDriver extends DriverCore {
     }
 
     const {force = false, reason} = opts;
-    this.log.debug(
-      `Cleaning up ${util.pluralize('active session', sessionsCount, true)}`
-    );
+    this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
     const cleanupPromises = force
       ? _.values(this.sessions).map((drv) =>
           drv.startUnexpectedShutdown(reason && new Error(reason))
@@ -639,10 +609,7 @@ class AppiumDriver extends DriverCore {
       // if we're running with plugins, make sure we log that the default behavior is actually
       // happening so we can tell when the plugin call chain is unwrapping to the default behavior
       // if that's what happens
-      plugins.length &&
-        this.log.info(
-          `Executing default handling behavior for command '${cmd}'`
-        );
+      plugins.length && this.log.info(`Executing default handling behavior for command '${cmd}'`);
 
       // if we make it here, we know that the default behavior is handled
       cmdHandledBy.default = true;
@@ -669,11 +636,7 @@ class AppiumDriver extends DriverCore {
       if (isUmbrellaCmd) {
         // some commands, like deleteSession, we want to make sure to handle on *this* driver,
         // not the platform driver
-        return await BaseDriver.prototype.executeCommand.call(
-          this,
-          cmd,
-          ...args
-        );
+        return await BaseDriver.prototype.executeCommand.call(this, cmd, ...args);
       }
 
       // here we know that we are executing a session command, and have a valid session driver
@@ -698,11 +661,7 @@ class AppiumDriver extends DriverCore {
     // And finally, if the command was createSession, we want to migrate any plugins which were
     // previously sessionless to use the new sessionId, so that plugins can share state between
     // their createSession method and other instance methods
-    if (
-      cmd === CREATE_SESSION_COMMAND &&
-      this.sessionlessPlugins.length &&
-      !res.error
-    ) {
+    if (cmd === CREATE_SESSION_COMMAND && this.sessionlessPlugins.length && !res.error) {
       const sessionId = _.first(res.value);
       this.log.info(
         `Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
@@ -717,9 +676,7 @@ class AppiumDriver extends DriverCore {
 
   wrapCommandWithPlugins({driver, cmd, args, next, cmdHandledBy, plugins}) {
     plugins.length &&
-      this.log.info(
-        `Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`
-      );
+      this.log.info(`Plugins which can handle cmd '${cmd}': ${plugins.map((p) => p.name)}`);
 
     // now we can go through each plugin and wrap `next` around its own handler, passing the *old*
     // next in so that it can call it if it wants to
@@ -755,15 +712,11 @@ class AppiumDriver extends DriverCore {
     // interact well together, and it would be hard to debug otherwise without this kind of
     // message).
     const didHandle = Object.keys(cmdHandledBy).filter((k) => cmdHandledBy[k]);
-    const didntHandle = Object.keys(cmdHandledBy).filter(
-      (k) => !cmdHandledBy[k]
-    );
+    const didntHandle = Object.keys(cmdHandledBy).filter((k) => !cmdHandledBy[k]);
     if (didntHandle.length > 0) {
       this.log.info(
         `Command '${cmd}' was *not* handled by the following behaviours or plugins, even ` +
-          `though they were registered to handle it: ${JSON.stringify(
-            didntHandle
-          )}. The ` +
+          `though they were registered to handle it: ${JSON.stringify(didntHandle)}. The ` +
           `command *was* handled by these: ${JSON.stringify(didHandle)}.`
       );
     }
@@ -797,11 +750,7 @@ class AppiumDriver extends DriverCore {
 
   proxyActive(sessionId) {
     const dstSession = this.sessions[sessionId];
-    return (
-      dstSession &&
-      _.isFunction(dstSession.proxyActive) &&
-      dstSession.proxyActive(sessionId)
-    );
+    return dstSession && _.isFunction(dstSession.proxyActive) && dstSession.proxyActive(sessionId);
   }
 
   getProxyAvoidList(sessionId) {

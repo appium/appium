@@ -3,12 +3,7 @@ import ExtensionCommand from './extension-command';
 import {KNOWN_DRIVERS} from '../constants';
 import '@colors/colors';
 
-const REQ_DRIVER_FIELDS = [
-  'driverName',
-  'automationName',
-  'platformNames',
-  'mainClass',
-];
+const REQ_DRIVER_FIELDS = ['driverName', 'automationName', 'platformNames', 'mainClass'];
 
 /**
  * @extends {ExtensionCommand<DriverType>}

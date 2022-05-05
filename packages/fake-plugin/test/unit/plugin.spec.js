@@ -2,15 +2,15 @@ import FakePlugin from '../../lib/plugin';
 import B from 'bluebird';
 
 class FakeExpress {
-  constructor () {
+  constructor() {
     this.routes = {};
   }
 
-  all (route, handler) {
+  all(route, handler) {
     this.routes[route] = handler;
   }
 
-  async get (route) {
+  async get(route) {
     return await new B((resolve, reject) => {
       try {
         const res = {
@@ -38,17 +38,19 @@ describe('fake plugin', function () {
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    await p.findElement(() => ({el: 'fakeEl'}), {}, 'arg1', 'arg2').should.eventually.eql({
-      el: 'fakeEl',
-      fake: true,
-    });
+    await p
+      .findElement(() => ({el: 'fakeEl'}), {}, 'arg1', 'arg2')
+      .should.eventually.eql({
+        el: 'fakeEl',
+        fake: true,
+      });
   });
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await p.getPageSource(() => {}, {}, 'arg1', 'arg2').should.eventually.eql(
-      '<Fake>["arg1","arg2"]</Fake>'
-    );
+    await p
+      .getPageSource(() => {}, {}, 'arg1', 'arg2')
+      .should.eventually.eql('<Fake>["arg1","arg2"]</Fake>');
   });
 
   it('should handle getFakeSessionData', async function () {

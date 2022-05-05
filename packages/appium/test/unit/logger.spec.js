@@ -1,8 +1,6 @@
-
-import { init as logsinkInit, clear as logsinkClear } from '../../lib/logsink';
-import { createSandbox } from 'sinon';
-import { logger } from '@appium/support';
-
+import {init as logsinkInit, clear as logsinkClear} from '../../lib/logsink';
+import {createSandbox} from 'sinon';
+import {logger} from '@appium/support';
 
 // temporarily turn on logging to stdio, so we can catch and query
 const forceLogs = process.env._FORCE_LOGS;
@@ -30,7 +28,7 @@ describe('logging', function () {
   const warnMsg = 'some warning';
   const debugMsg = 'some debug';
 
-  function doLogging () {
+  function doLogging() {
     log.error(errorMsg);
     log.warn(warnMsg);
     log.debug(debugMsg);

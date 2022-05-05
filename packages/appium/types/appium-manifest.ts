@@ -1,18 +1,18 @@
-import { CommonMetadata, ExtMetadata, SchemaMetadata } from './external-manifest';
-import { ExtensionType, DriverType, PluginType } from '.';
+import {CommonMetadata, ExtMetadata, SchemaMetadata} from './external-manifest';
+import {ExtensionType, DriverType, PluginType} from '.';
 
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
 
 export interface InternalMetadata {
   /**
    * Package name of extension
-   * 
+   *
    * `name` from its `package.json`
    */
   pkgName: string;
   /**
    * Version of extension
-   * 
+   *
    * `version` from its `package.json`
    */
   version: string;
@@ -32,11 +32,7 @@ export interface InternalMetadata {
  */
 export type ExtManifest<ExtType extends ExtensionType> = Omit<
   ExtMetadata<ExtType>,
-  ExtType extends DriverType
-    ? 'driverName'
-    : ExtType extends PluginType
-    ? 'pluginName'
-    : never
+  ExtType extends DriverType ? 'driverName' : ExtType extends PluginType ? 'pluginName' : never
 > &
   InternalMetadata &
   CommonMetadata; // XXX: ExtMetadata should be a union with CommonMetadata. why is this needed?
@@ -48,16 +44,13 @@ export type WithSchemaManifest = {
 /**
  * This is just a {@linkcode ExtManifest} except it _for sure_ has a `schema` prop.
  */
-export type ExtManifestWithSchema<ExtType extends ExtensionType> =
-  ExtManifest<ExtType> & WithSchemaManifest;
+export type ExtManifestWithSchema<ExtType extends ExtensionType> = ExtManifest<ExtType> &
+  WithSchemaManifest;
 
 /**
  * Generic type for an object keyed by extension name, with values of type {@linkcode ExtData}
  */
-export type ExtRecord<ExtType extends ExtensionType> = Record<
-  string,
-  ExtManifest<ExtType>
->;
+export type ExtRecord<ExtType extends ExtensionType> = Record<string, ExtManifest<ExtType>>;
 
 export type DriverRecord = ExtRecord<DriverType>;
 export type PluginRecord = ExtRecord<PluginType>;

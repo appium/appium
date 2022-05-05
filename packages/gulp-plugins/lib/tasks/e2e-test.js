@@ -8,16 +8,18 @@ const gulpIf = require('gulp-if');
 const log = require('fancy-log');
 const utils = require('../utils');
 
+const {isVerbose} = utils;
 
-const { isVerbose } = utils;
-
-const configure = function configure (gulp, opts, env) {
-  const e2eTestFiles = utils.translatePaths([opts.e2eTest.files || opts.e2eTestFiles], env.fileAliases);
-  gulp.task('e2e-test:run', async function e2eTestRun () {
+const configure = function configure(gulp, opts, env) {
+  const e2eTestFiles = utils.translatePaths(
+    [opts.e2eTest.files || opts.e2eTestFiles],
+    env.fileAliases
+  );
+  gulp.task('e2e-test:run', async function e2eTestRun() {
     const mochaOpts = {
       reporter: utils.getTestReporter(opts),
       timeout: opts.testTimeout,
-      'require': opts.testRequire || [],
+      require: opts.testRequire || [],
       exit: true,
       color: true,
       traceWarnings: opts.e2eTest.traceWarnings,
@@ -27,15 +29,15 @@ const configure = function configure (gulp, opts, env) {
     process.env._TESTING = 1;
 
     const mochaCmd = function () {
-      return new B(function runCmd (resolve, reject) {
+      return new B(function runCmd(resolve, reject) {
         gulp
           .src(e2eTestFiles, {read: true, allowEmpty: true})
           .pipe(gulpIf(isVerbose(), debug()))
           .pipe(mocha(mochaOpts))
-          .on('error', function onError (err) {
+          .on('error', function onError(err) {
             reject(err);
           })
-          .once('_result', function onResult (...args) {
+          .once('_result', function onResult(...args) {
             resolve(...args);
           });
       });

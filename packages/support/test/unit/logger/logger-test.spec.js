@@ -1,7 +1,6 @@
 // transpile:mocha
 
-import { getDynamicLogger, restoreWriters, setupWriters,
-         assertOutputDoesntContain } from './helpers';
+import {getDynamicLogger, restoreWriters, setupWriters, assertOutputDoesntContain} from './helpers';
 
 describe('test logger', function () {
   let writers, log;
@@ -32,7 +31,9 @@ describe('test logger', function () {
     log.http(text);
     log.warn(text);
     log.error(text);
-    (() => { log.errorAndThrow(text); }).should.throw(text);
+    (() => {
+      log.errorAndThrow(text);
+    }).should.throw(text);
     assertOutputDoesntContain(writers, text);
   });
 });

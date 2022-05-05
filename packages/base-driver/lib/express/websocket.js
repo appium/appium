@@ -1,9 +1,8 @@
 import _ from 'lodash';
-import { URL } from 'url';
+import {URL} from 'url';
 import B from 'bluebird';
 
 const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
-
 
 /**
  * Adds websocket handler to express server instance.
@@ -18,14 +17,15 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * https://github.com/websockets/ws/pull/885 for more details
  * on how to configure the handler properly.
  */
-async function addWebSocketHandler (handlerPathname, handlerServer) { // eslint-disable-line require-await
+// eslint-disable-next-line require-await
+async function addWebSocketHandler(handlerPathname, handlerServer) {
   if (_.isUndefined(this.webSocketsMapping)) {
     this.webSocketsMapping = {};
     // https://github.com/websockets/ws/pull/885
     this.on('upgrade', (request, socket, head) => {
       let currentPathname;
       try {
-        currentPathname = (new URL(request.url)).pathname;
+        currentPathname = new URL(request.url).pathname;
       } catch (ign) {
         currentPathname = request.url;
       }
@@ -54,7 +54,8 @@ async function addWebSocketHandler (handlerPathname, handlerServer) { // eslint-
  * @returns {Object} pathnames to websocket server isntances mapping
  * matching the search criteria or an empty object otherwise.
  */
-async function getWebSocketHandlers (keysFilter = null) { // eslint-disable-line require-await
+// eslint-disable-next-line require-await
+async function getWebSocketHandlers(keysFilter = null) {
   if (_.isEmpty(this.webSocketsMapping)) {
     return {};
   }
@@ -77,7 +78,8 @@ async function getWebSocketHandlers (keysFilter = null) { // eslint-disable-line
  * @param {string} handlerPathname - Websocket endpoint path.
  * @returns {boolean} true if the handlerPathname was found and deleted
  */
-async function removeWebSocketHandler (handlerPathname) { // eslint-disable-line require-await
+// eslint-disable-next-line require-await
+async function removeWebSocketHandler(handlerPathname) {
   const wsServer = this.webSocketsMapping?.[handlerPathname];
   if (!wsServer) {
     return false;
@@ -85,7 +87,7 @@ async function removeWebSocketHandler (handlerPathname) { // eslint-disable-line
 
   try {
     wsServer.close();
-    for (const client of (wsServer.clients || [])) {
+    for (const client of wsServer.clients || []) {
       client.terminate();
     }
     return true;
@@ -104,7 +106,7 @@ async function removeWebSocketHandler (handlerPathname) { // eslint-disable-line
  *
  * @returns {boolean} true if at least one handler has been deleted
  */
-async function removeAllWebSocketHandlers () {
+async function removeAllWebSocketHandlers() {
   if (_.isEmpty(this.webSocketsMapping)) {
     return false;
   }
@@ -117,6 +119,9 @@ async function removeAllWebSocketHandlers () {
 }
 
 export {
-  addWebSocketHandler, removeWebSocketHandler, removeAllWebSocketHandlers,
-  getWebSocketHandlers, DEFAULT_WS_PATHNAME_PREFIX,
+  addWebSocketHandler,
+  removeWebSocketHandler,
+  removeAllWebSocketHandlers,
+  getWebSocketHandlers,
+  DEFAULT_WS_PATHNAME_PREFIX,
 };

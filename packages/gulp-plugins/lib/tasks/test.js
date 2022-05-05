@@ -3,11 +3,10 @@
 const e2eTest = require('./e2e-test');
 const unitTest = require('./unit-test');
 
-
-const configure = function configure (gulp, opts, env) {
+const configure = function configure(gulp, opts, env) {
   const testEnv = {
     testDeps: opts.transpile ? ['transpile'] : [],
-    ...env
+    ...env,
   };
 
   let testTasks = [];

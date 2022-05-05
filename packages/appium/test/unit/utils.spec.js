@@ -1,11 +1,14 @@
 import {
-  parseCapsForInnerDriver, insertAppiumPrefixes, pullSettings,
-  removeAppiumPrefixes, inspect
+  parseCapsForInnerDriver,
+  insertAppiumPrefixes,
+  pullSettings,
+  removeAppiumPrefixes,
+  inspect,
 } from '../../lib/utils';
-import { BASE_CAPS, W3C_CAPS } from '../helpers';
+import {BASE_CAPS, W3C_CAPS} from '../helpers';
 import _ from 'lodash';
-import { stripColors } from '@colors/colors';
-import { createSandbox } from 'sinon';
+import {stripColors} from '@colors/colors';
+import {createSandbox} from 'sinon';
 import logger from '../../lib/logger';
 
 describe('utils', function () {
@@ -16,14 +19,16 @@ describe('utils', function () {
       error.message.should.match(/W3C/);
     });
     it('should return W3C caps unchanged if only W3C caps were provided', function () {
-      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} = parseCapsForInnerDriver(undefined, W3C_CAPS);
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} =
+        parseCapsForInnerDriver(undefined, W3C_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
       should.not.exist(processedJsonwpCapabilities);
       processedW3CCapabilities.should.deep.equal(W3C_CAPS);
       protocol.should.equal('W3C');
     });
     it('should return JSONWP and W3C caps if both were provided', function () {
-      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS);
+      let {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol} =
+        parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS);
       desiredCaps.should.deep.equal(BASE_CAPS);
       processedJsonwpCapabilities.should.deep.equal(BASE_CAPS);
       processedW3CCapabilities.should.deep.equal(W3C_CAPS);
@@ -38,54 +43,68 @@ describe('utils', function () {
         foo: 'bar',
         baz: 'bla',
       };
-      const {
-        desiredCaps,
-        processedJsonwpCapabilities,
-        processedW3CCapabilities
-      } = parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, defaultW3CCaps);
+      const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
+        parseCapsForInnerDriver(BASE_CAPS, W3C_CAPS, {}, defaultW3CCaps);
       desiredCaps.should.deep.equal({
         ...expectedDefaultCaps,
         ...BASE_CAPS,
       });
       processedJsonwpCapabilities.should.deep.equal({
         ...expectedDefaultCaps,
-        ...BASE_CAPS
+        ...BASE_CAPS,
       });
       processedW3CCapabilities.alwaysMatch.should.deep.equal({
         ...insertAppiumPrefixes(expectedDefaultCaps),
-        ...insertAppiumPrefixes(BASE_CAPS)
+        ...insertAppiumPrefixes(BASE_CAPS),
       });
     });
     it('should allow valid default capabilities', function () {
-      const res = parseCapsForInnerDriver(null, W3C_CAPS, {}, {
-        'appium:foo': 'bar2',
-      });
+      const res = parseCapsForInnerDriver(
+        null,
+        W3C_CAPS,
+        {},
+        {
+          'appium:foo': 'bar2',
+        }
+      );
       res.processedW3CCapabilities.alwaysMatch['appium:foo'].should.eql('bar2');
     });
     it('should not allow invalid default capabilities', function () {
-      const res = parseCapsForInnerDriver(null, W3C_CAPS, {}, {
-        foo: 'bar', 'appium:foo2': 'bar2',
-      });
+      const res = parseCapsForInnerDriver(
+        null,
+        W3C_CAPS,
+        {},
+        {
+          foo: 'bar',
+          'appium:foo2': 'bar2',
+        }
+      );
       res.error.should.eql({
-        jsonwpCode: 61, error: 'invalid argument', w3cStatus: 400, _stacktrace: null
+        jsonwpCode: 61,
+        error: 'invalid argument',
+        w3cStatus: 400,
+        _stacktrace: null,
       });
     });
     it('should reject if W3C caps are not passing constraints', function () {
-      const err = parseCapsForInnerDriver(undefined, W3C_CAPS, {hello: {presence: true}}).error;
+      const err = parseCapsForInnerDriver(undefined, W3C_CAPS, {
+        hello: {presence: true},
+      }).error;
       err.message.should.match(/'hello' can't be blank/);
       _.isError(err).should.be.true;
-
     });
     it('should only accept W3C caps that have passing constraints', function () {
       let w3cCaps = {
         ...W3C_CAPS,
-        firstMatch: [
-          {foo: 'bar'},
-          {'appium:hello': 'world'},
-        ],
+        firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
       };
-      parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {hello: {presence: true}}).error.should.eql({
-        jsonwpCode: 61, error: 'invalid argument', w3cStatus: 400, _stacktrace: null
+      parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {
+        hello: {presence: true},
+      }).error.should.eql({
+        jsonwpCode: 61,
+        error: 'invalid argument',
+        w3cStatus: 400,
+        _stacktrace: null,
       });
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
@@ -105,7 +124,7 @@ describe('utils', function () {
         'ms:cap2': 'value2',
         someCap: 'someCap',
       }).should.eql({
-        'cap1': 'value1',
+        cap1: 'value1',
         'ms:cap2': 'value2',
         someCap: 'someCap',
       });
@@ -213,7 +232,6 @@ describe('utils', function () {
   });
 
   describe('inspect()', function () {
-
     /**
      * @type {sinon.SinonSandbox}
      */
@@ -229,8 +247,9 @@ describe('utils', function () {
 
     it('should log the result of inspecting a value', function () {
       inspect({foo: 'bar'});
-      stripColors(/** @type {sinon.SinonStub} */(logger.info).firstCall.firstArg)
-        .should.match(/\{\s*\n*foo:\s'bar'\s*\n*\}/);
+      stripColors(/** @type {sinon.SinonStub} */ (logger.info).firstCall.firstArg).should.match(
+        /\{\s*\n*foo:\s'bar'\s*\n*\}/
+      );
     });
   });
 });

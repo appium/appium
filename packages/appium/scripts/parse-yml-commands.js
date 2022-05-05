@@ -4,21 +4,21 @@
 
 const path = require('path');
 const yaml = require('yaml');
-const { fs, util } = require('@appium/support');
+const {fs, util} = require('@appium/support');
 const validate = require('validate.js');
 const Handlebars = require('handlebars');
 const _ = require('lodash');
-const { asyncify } = require('asyncbox');
+const {asyncify} = require('asyncbox');
 const url = require('url');
 const log = require('fancy-log');
 
-validate.validators.array = function array (value, options, key, attributes) {
+validate.validators.array = function array(value, options, key, attributes) {
   if (attributes[key] && !validate.isArray(attributes[key])) {
     return `must be an array`;
   }
 };
 
-validate.validators.hasAttributes = function hasAttributes (value, options) {
+validate.validators.hasAttributes = function hasAttributes(value, options) {
   if (!value) {
     return;
   }
@@ -36,7 +36,7 @@ validate.validators.hasAttributes = function hasAttributes (value, options) {
   }
 };
 
-validate.validators.hasPossibleAttributes = function hasPossibleAttributes (value, options) {
+validate.validators.hasPossibleAttributes = function hasPossibleAttributes(value, options) {
   if (!value) {
     return;
   }
@@ -62,30 +62,40 @@ const CLIENT_URL_TYPES = {
 };
 
 const validator = {
-  'name': {presence: true},
-  'short_description': {presence: true},
-  'example_usage': {},
+  name: {presence: true},
+  short_description: {presence: true},
+  example_usage: {},
   'example_usage.java': {},
   'example_usage.javascript_wdio': {},
   'example_usage.javascript_wd': {},
   'example_usage.ruby': {},
   'example_usage.ruby_core': {},
   'example_usage.csharp': {},
-  'description': {},
+  description: {},
   'client_docs.java': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
-  'client_docs.javascript_wdio': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
-  'client_docs.javascript_wd': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
+  'client_docs.javascript_wdio': {
+    hasPossibleAttributes: _.keys(CLIENT_URL_TYPES),
+  },
+  'client_docs.javascript_wd': {
+    hasPossibleAttributes: _.keys(CLIENT_URL_TYPES),
+  },
   'client_docs.ruby': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.ruby_core': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
   'client_docs.csharp': {hasPossibleAttributes: _.keys(CLIENT_URL_TYPES)},
-  'endpoint': {presence: true},
-  'driver_support': {presence: true},
+  endpoint: {presence: true},
+  driver_support: {presence: true},
   'endpoint.url': {presence: true},
-  'endpoint.url_parameters': {array: true, hasAttributes: ['name', 'description']},
-  'endpoint.json_parameters': {array: true, hasAttributes: ['name', 'description']},
-  'endpoint.response': {hasAttributes: ['type', 'description'] },
-  'specifications': {presence: true},
-  'links': {array: true, hasAttributes: ['name', 'url']},
+  'endpoint.url_parameters': {
+    array: true,
+    hasAttributes: ['name', 'description'],
+  },
+  'endpoint.json_parameters': {
+    array: true,
+    hasAttributes: ['name', 'description'],
+  },
+  'endpoint.response': {hasAttributes: ['type', 'description']},
+  specifications: {presence: true},
+  links: {array: true, hasAttributes: ['name', 'url']},
 };
 
 // What range of platforms do the driver's support
@@ -111,7 +121,7 @@ const appiumRanges = {
 const rootFolder = path.join(__dirname, '..', '..', '..');
 
 // Create Handlebars helper that shows a version range
-Handlebars.registerHelper('versions', function versionHelper (object, name, driverName) {
+Handlebars.registerHelper('versions', function versionHelper(object, name, driverName) {
   if (!object) {
     return 'None';
   }
@@ -153,7 +163,7 @@ Handlebars.registerHelper('versions', function versionHelper (object, name, driv
 Handlebars.registerHelper('hyphenate', (str) => str.replace('_', '-'));
 Handlebars.registerHelper('uppercase', (str) => str.toUpperCase());
 
-Handlebars.registerHelper('capitalize', function capitalizeDriver (driverName) {
+Handlebars.registerHelper('capitalize', function capitalizeDriver(driverName) {
   switch (driverName.toLowerCase()) {
     case 'xcuitest':
       return 'XCUITest';
@@ -166,11 +176,13 @@ Handlebars.registerHelper('capitalize', function capitalizeDriver (driverName) {
     case 'espresso':
       return 'Espresso';
     default:
-      return driverName.length === 0 ? driverName : driverName[0].toUpperCase() + driverName.substr(1);
+      return driverName.length === 0
+        ? driverName
+        : driverName[0].toUpperCase() + driverName.substr(1);
   }
 });
 
-Handlebars.registerHelper('if_eq', function ifEq (a, b, opts) {
+Handlebars.registerHelper('if_eq', function ifEq(a, b, opts) {
   if (a === b) {
     return opts.fn(this);
   } else {
@@ -178,21 +190,21 @@ Handlebars.registerHelper('if_eq', function ifEq (a, b, opts) {
   }
 });
 
-function getBaseHostname (fullUrl) {
+function getBaseHostname(fullUrl) {
   const baseUrl = url.parse(fullUrl);
   return baseUrl.hostname;
 }
 
-Handlebars.registerHelper('base_url', function baseUrl (fullUrl) {
+Handlebars.registerHelper('base_url', function baseUrl(fullUrl) {
   return getBaseHostname(fullUrl);
 });
 
-Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
+Handlebars.registerHelper('client_url', function clientUrl(clientUrl) {
   if (!clientUrl) {
     return;
   }
 
-  const createUrlString = function createUrlString (clientUrl, name = getBaseHostname(clientUrl)) {
+  const createUrlString = function createUrlString(clientUrl, name = getBaseHostname(clientUrl)) {
     return `[${name}](${clientUrl})`;
   };
 
@@ -204,20 +216,24 @@ Handlebars.registerHelper('client_url', function clientUrl (clientUrl) {
   for (const item of clientUrl) {
     for (let [key, value] of _.toPairs(item)) {
       key = key.toLowerCase();
-      const urlStr = CLIENT_URL_TYPES[key] === 'hostname'
-        ? createUrlString(value)
-        : createUrlString(value, CLIENT_URL_TYPES[key]);
+      const urlStr =
+        CLIENT_URL_TYPES[key] === 'hostname'
+          ? createUrlString(value)
+          : createUrlString(value, CLIENT_URL_TYPES[key]);
       urlStrings.push(urlStr);
     }
   }
   return urlStrings.join(' ');
 });
 
-async function registerSpecUrlHelper () {
-  const routesFile = await fs.readFile(require.resolve('@appium/base-driver/lib/protocol/routes.js'), 'utf8');
+async function registerSpecUrlHelper() {
+  const routesFile = await fs.readFile(
+    require.resolve('@appium/base-driver/lib/protocol/routes.js'),
+    'utf8'
+  );
   const routesFileLines = routesFile.split('\n');
 
-  Handlebars.registerHelper('spec_url', function specUrl (specUrl, endpoint) {
+  Handlebars.registerHelper('spec_url', function specUrl(specUrl, endpoint) {
     // return the url if it is not a link to our routes doc
     if (!specUrl.includes('routes.js')) {
       return specUrl;
@@ -245,7 +261,9 @@ async function registerSpecUrlHelper () {
       }
     }
     if (_.isUndefined(index)) {
-      throw new Error(`Unable to find entry in 'appium-base-driver#routes' for endpoint '${endpoint}'`);
+      throw new Error(
+        `Unable to find entry in 'appium-base-driver#routes' for endpoint '${endpoint}'`
+      );
     }
 
     return `${specUrl}#L${index}`;
@@ -254,7 +272,7 @@ async function registerSpecUrlHelper () {
 
 const YAML_DIR = path.join(__dirname, '..', 'commands-yml');
 
-async function generateCommands () {
+async function generateCommands() {
   await registerSpecUrlHelper();
 
   const commands = path.resolve(YAML_DIR, 'commands/**/*.yml');
@@ -262,7 +280,10 @@ async function generateCommands () {
   await fs.rimraf(path.resolve(rootFolder, 'docs', 'en', 'commands'));
 
   // get the template from which the md files will be created
-  const template = Handlebars.compile(await fs.readFile(path.resolve(YAML_DIR, 'template.md'), 'utf8'), {noEscape: true, strict: true});
+  const template = Handlebars.compile(
+    await fs.readFile(path.resolve(YAML_DIR, 'template.md'), 'utf8'),
+    {noEscape: true, strict: true}
+  );
 
   let fileCount = 0;
   for (const filename of await fs.glob(commands)) {
@@ -283,7 +304,10 @@ async function generateCommands () {
 
     // Write the markdown to its right place
     const ext = path.extname(relativeFilename);
-    const markdownPath = `${relativeFilename.substring(0, relativeFilename.length - ext.length)}.md`;
+    const markdownPath = `${relativeFilename.substring(
+      0,
+      relativeFilename.length - ext.length
+    )}.md`;
     const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
     log(`    Writing to: ${outfile}`);
     await fs.mkdirp(path.dirname(outfile));
@@ -294,8 +318,8 @@ async function generateCommands () {
   log(`Done writing ${fileCount} command documents`);
 }
 
-async function generateCommandIndex () {
-  function getTree (element, path) {
+async function generateCommandIndex() {
+  function getTree(element, path) {
     let node = {
       name: element[0],
     };
@@ -321,9 +345,12 @@ async function generateCommandIndex () {
     commands.push(getTree(el, '/docs/en/commands'));
   }
 
-  const commandTemplate = Handlebars.compile(await fs.readFile(path.resolve(YAML_DIR, 'api-template.md'), 'utf8'), {noEscape: true, strict: true});
+  const commandTemplate = Handlebars.compile(
+    await fs.readFile(path.resolve(YAML_DIR, 'api-template.md'), 'utf8'),
+    {noEscape: true, strict: true}
+  );
 
-  async function writeIndex (index, commands, indexPath) {
+  async function writeIndex(index, commands, indexPath) {
     log(`Creating API index '${index}'`);
     const commandMarkdown = commandTemplate({
       commands,
@@ -336,7 +363,7 @@ async function generateCommandIndex () {
   await writeIndex(apiIndex, commands);
   log(`Done writing main API index`);
 
-  async function writeIndividualIndexes (command) {
+  async function writeIndividualIndexes(command) {
     if (!util.hasValue(command.commands)) {
       // this is a leaf, so end
       return;
@@ -361,7 +388,7 @@ async function generateCommandIndex () {
   }
 }
 
-async function main () {
+async function main() {
   await generateCommands();
   await generateCommandIndex();
 }

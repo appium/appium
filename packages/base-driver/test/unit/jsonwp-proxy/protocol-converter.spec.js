@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import { PROTOCOLS } from '../../../lib/constants';
-import ProtocolConverter, {COMMAND_URLS_CONFLICTS} from '../../../lib/jsonwp-proxy/protocol-converter';
+import {PROTOCOLS} from '../../../lib/constants';
+import ProtocolConverter, {
+  COMMAND_URLS_CONFLICTS,
+} from '../../../lib/jsonwp-proxy/protocol-converter';
 
 const {MJSONWP, W3C} = PROTOCOLS;
-
 
 describe('Protocol Converter', function () {
   describe('getTimeoutRequestObjects', function () {
@@ -30,7 +31,11 @@ describe('Protocol Converter', function () {
     });
     it('should take multiple W3C timeouts and produce multiple MJSONWP compatible objects', function () {
       converter.downstreamProtocol = MJSONWP;
-      let [scriptTimeout, pageLoadTimeout, implicitTimeout] = converter.getTimeoutRequestObjects({script: 100, pageLoad: 200, implicit: 300});
+      let [scriptTimeout, pageLoadTimeout, implicitTimeout] = converter.getTimeoutRequestObjects({
+        script: 100,
+        pageLoad: 200,
+        implicit: 300,
+      });
       scriptTimeout.should.eql({
         type: 'script',
         ms: 100,
@@ -46,19 +51,28 @@ describe('Protocol Converter', function () {
     });
     it('should take MJSONWP input and produce W3C compatible object', function () {
       converter.downstreamProtocol = W3C;
-      let timeoutObjects = converter.getTimeoutRequestObjects({type: 'implicit', ms: 300});
+      let timeoutObjects = converter.getTimeoutRequestObjects({
+        type: 'implicit',
+        ms: 300,
+      });
       timeoutObjects.length.should.equal(1);
       timeoutObjects[0].should.eql({implicit: 300});
     });
     it('should not change the input if protocol name is unknown', function () {
       converter.downstreamProtocol = null;
-      let timeoutObjects = converter.getTimeoutRequestObjects({type: 'implicit', ms: 300});
+      let timeoutObjects = converter.getTimeoutRequestObjects({
+        type: 'implicit',
+        ms: 300,
+      });
       timeoutObjects.length.should.equal(1);
       timeoutObjects[0].should.eql({type: 'implicit', ms: 300});
     });
     it('should not change the input if protocol name is unchanged', function () {
       converter.downstreamProtocol = MJSONWP;
-      let timeoutObjects = converter.getTimeoutRequestObjects({type: 'implicit', ms: 300});
+      let timeoutObjects = converter.getTimeoutRequestObjects({
+        type: 'implicit',
+        ms: 300,
+      });
       timeoutObjects.length.should.equal(1);
       timeoutObjects[0].should.eql({type: 'implicit', ms: 300});
     });
@@ -117,14 +131,22 @@ describe('Protocol Converter', function () {
       }
     });
     it('should convert "property/value" to "attribute/value"', function () {
-      jsonwpConverter('/session/123/element/456/property/value').should.equal('/session/123/element/456/attribute/value');
+      jsonwpConverter('/session/123/element/456/property/value').should.equal(
+        '/session/123/element/456/attribute/value'
+      );
     });
     it('should convert "property/:somePropName" to "attribute/:somePropName"', function () {
-      jsonwpConverter('/session/123/element/456/property/somePropName').should.equal('/session/123/element/456/attribute/somePropName');
+      jsonwpConverter('/session/123/element/456/property/somePropName').should.equal(
+        '/session/123/element/456/attribute/somePropName'
+      );
     });
     it('should not convert from JSONWP to W3C', function () {
-      w3cConverter('/session/123/element/456/attribute/someAttr').should.equal('/session/123/element/456/attribute/someAttr');
-      w3cConverter('/session/123/element/456/property/someProp').should.equal('/session/123/element/456/property/someProp');
+      w3cConverter('/session/123/element/456/attribute/someAttr').should.equal(
+        '/session/123/element/456/attribute/someAttr'
+      );
+      w3cConverter('/session/123/element/456/property/someProp').should.equal(
+        '/session/123/element/456/property/someProp'
+      );
     });
   });
 });

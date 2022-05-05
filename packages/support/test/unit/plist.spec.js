@@ -1,7 +1,5 @@
 import path from 'path';
-import { plist, tempDir, fs } from '../../lib/index.js';
-
-
+import {plist, tempDir, fs} from '../../lib/index.js';
 
 const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');
 const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');
@@ -9,7 +7,9 @@ const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');
 describe('plist', function () {
   it('should parse plist file as binary', async function () {
     let content = await plist.parsePlistFile(binaryPlistPath);
-    content.should.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    content.should.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
   });
 
   it(`should return an empty object if file doesn't exist and mustExist is set to false`, async function () {
@@ -26,7 +26,7 @@ describe('plist', function () {
 
     // write some data
     let updatedFields = {
-      'io.appium.test': true
+      'io.appium.test': true,
     };
     await plist.updatePlistFile(plistFile, updatedFields, true);
 
@@ -38,12 +38,16 @@ describe('plist', function () {
   it('should read binary plist', async function () {
     const content = await fs.readFile(binaryPlistPath);
     const object = plist.parsePlist(content);
-    object.should.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    object.should.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
   });
 
   it('should read text plist', async function () {
     const content = await fs.readFile(textPlistPath);
     const object = plist.parsePlist(content);
-    object.should.have.property('com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework');
+    object.should.have.property(
+      'com.apple.locationd.bundle-/System/Library/PrivateFrameworks/Parsec.framework'
+    );
   });
 });

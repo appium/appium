@@ -1,7 +1,7 @@
-import { node } from '@appium/support';
+import {node} from '@appium/support';
 import sinon from 'sinon';
-import { DeviceSettings, MAX_SETTINGS_SIZE } from '../../../lib/basedriver/device-settings';
-import { InvalidArgumentError } from '../../../lib/protocol/errors';
+import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
+import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
 const {expect} = chai;
 
@@ -41,7 +41,8 @@ describe('DeviceSettings', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
           await expect(deviceSettings.update()).to.be.rejectedWith(
-            InvalidArgumentError, /with valid JSON/i
+            InvalidArgumentError,
+            /with valid JSON/i
           );
         });
       });
@@ -50,7 +51,8 @@ describe('DeviceSettings', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
           await expect(deviceSettings.update(null)).to.be.rejectedWith(
-            InvalidArgumentError, /with valid JSON/i
+            InvalidArgumentError,
+            /with valid JSON/i
           );
         });
       });
@@ -64,7 +66,8 @@ describe('DeviceSettings', function () {
         it('should reject with an InvalidArgumentError', async function () {
           const deviceSettings = new DeviceSettings();
           await expect(deviceSettings.update({stuff: 'things'})).to.be.rejectedWith(
-            InvalidArgumentError, /object size exceeds/i
+            InvalidArgumentError,
+            /object size exceeds/i
           );
         });
       });
@@ -88,7 +91,11 @@ describe('DeviceSettings', function () {
           it('should call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings({}, onSettingsUpdate);
             await deviceSettings.update({stuff: 'things'});
-            expect(onSettingsUpdate).to.have.been.calledOnceWithExactly('stuff', 'things', undefined);
+            expect(onSettingsUpdate).to.have.been.calledOnceWithExactly(
+              'stuff',
+              'things',
+              undefined
+            );
           });
         });
       });

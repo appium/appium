@@ -19,7 +19,7 @@ const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;
 
 export default class RelaxedCapsPlugin extends BasePlugin {
-  transformCaps (caps) {
+  transformCaps(caps) {
     const newCaps = {};
 
     // if this doesn't look like a caps object just return it
@@ -39,13 +39,15 @@ export default class RelaxedCapsPlugin extends BasePlugin {
       }
     }
     if (adjustedKeys.length) {
-      this.logger.info(`Adjusted keys to conform to capability prefix requirements: ` +
-                       JSON.stringify(adjustedKeys));
+      this.logger.info(
+        `Adjusted keys to conform to capability prefix requirements: ` +
+          JSON.stringify(adjustedKeys)
+      );
     }
     return newCaps;
   }
 
-  async createSession (next, driver, jwpDesCaps, jwpReqCaps, caps) {
+  async createSession(next, driver, jwpDesCaps, jwpReqCaps, caps) {
     const newCaps = {};
     if (_.isArray(caps.firstMatch)) {
       newCaps.firstMatch = caps.firstMatch.map(this.transformCaps.bind(this));

@@ -29,7 +29,7 @@ module.exports = {
       2,
       '1tbs',
       {
-      allowSingleLine: true,
+        allowSingleLine: true,
       },
     ],
     'comma-dangle': 0,
@@ -58,7 +58,7 @@ module.exports = {
     'comma-spacing': [
       2,
       {
-      before: false,
+        before: false,
         after: true,
       },
     ],
@@ -70,17 +70,17 @@ module.exports = {
     'space-unary-ops': [
       2,
       {
-      words: true,
-      nonwords: false,
+        words: true,
+        nonwords: false,
       },
     ],
     'space-infix-ops': 2,
     'key-spacing': [
       2,
       {
-      mode: 'strict',
-      beforeColon: false,
-      afterColon: true,
+        mode: 'strict',
+        beforeColon: false,
+        afterColon: true,
       },
     ],
     'no-multi-spaces': 2,
@@ -88,8 +88,8 @@ module.exports = {
       2,
       'single',
       {
-      avoidEscape: true,
-      allowTemplateLiterals: true,
+        avoidEscape: true,
+        allowTemplateLiterals: true,
       },
     ],
     'no-buffer-constructor': 1,
@@ -100,14 +100,12 @@ module.exports = {
       'warn',
       {
         selector: 'AssignmentExpression[left.object.property.name="prototype"]',
-        message:
-          'Avoid assignment to prototype; use class fields, methods or mixins instead.',
+        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.',
       },
       {
         selector:
           'CallExpression[callee.object.name="Object"][callee.property.name="assign"][arguments.0.property.name="prototype"]',
-        message:
-          'Avoid assignment to prototype; use class fields, methods or mixins instead.',
+        message: 'Avoid assignment to prototype; use class fields, methods or mixins instead.',
       },
     ],
   },

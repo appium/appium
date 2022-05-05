@@ -1,29 +1,28 @@
 import sinon from 'sinon';
 import _ from 'lodash';
-import { logger } from '../../../lib';
-
+import {logger} from '../../../lib';
 
 let sandbox;
 
-function setupWriters () {
+function setupWriters() {
   sandbox = sinon.createSandbox();
   return {
     stdout: sandbox.spy(process.stdout, 'write'),
-    stderr: sandbox.spy(process.stderr, 'write')
+    stderr: sandbox.spy(process.stderr, 'write'),
   };
 }
 
-function getDynamicLogger (testingMode, forceLogs, prefix = null) {
+function getDynamicLogger(testingMode, forceLogs, prefix = null) {
   process.env._TESTING = testingMode ? '1' : '0';
   process.env._FORCE_LOGS = forceLogs ? '1' : '0';
   return logger.getLogger(prefix);
 }
 
-function restoreWriters () {
+function restoreWriters() {
   sandbox.restore();
 }
 
-function someoneHadOutput (writers, output) {
+function someoneHadOutput(writers, output) {
   let hadOutput = false;
   let matchOutput = sinon.match(function (value) {
     return value && value.indexOf(output) >= 0;
@@ -38,19 +37,22 @@ function someoneHadOutput (writers, output) {
   return hadOutput;
 }
 
-function assertOutputContains (writers, output) {
+function assertOutputContains(writers, output) {
   if (!someoneHadOutput(writers, output)) {
     throw new Error(`Expected something to have been called with: '${output}'`);
   }
 }
 
-function assertOutputDoesntContain (writers, output) {
+function assertOutputDoesntContain(writers, output) {
   if (someoneHadOutput(writers, output)) {
     throw new Error(`Expected nothing to have been called with: '${output}'`);
   }
 }
 
 export {
-  setupWriters, restoreWriters, assertOutputContains, assertOutputDoesntContain,
+  setupWriters,
+  restoreWriters,
+  assertOutputContains,
+  assertOutputDoesntContain,
   getDynamicLogger,
 };

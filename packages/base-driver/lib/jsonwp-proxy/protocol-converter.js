@@ -1,33 +1,37 @@
 import _ from 'lodash';
-import { logger, util } from '@appium/support';
-import { duplicateKeys } from '../basedriver/helpers';
-import {
-  MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS
-} from '../constants';
+import {logger, util} from '@appium/support';
+import {duplicateKeys} from '../basedriver/helpers';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, PROTOCOLS} from '../constants';
 
 export const COMMAND_URLS_CONFLICTS = [
   {
     commandNames: ['execute', 'executeAsync'],
-    jsonwpConverter: (url) => url.replace(/\/execute.*/,
-      url.includes('async') ? '/execute_async' : '/execute'),
-    w3cConverter: (url) => url.replace(/\/execute.*/,
-      url.includes('async') ? '/execute/async' : '/execute/sync'),
+    jsonwpConverter: (url) =>
+      url.replace(
+        /\/execute.*/,
+        url.includes('async') ? '/execute_async' : '/execute'
+      ),
+    w3cConverter: (url) =>
+      url.replace(
+        /\/execute.*/,
+        url.includes('async') ? '/execute/async' : '/execute/sync'
+      ),
   },
   {
     commandNames: ['getElementScreenshot'],
-    jsonwpConverter: (url) => url.replace(/\/element\/([^/]+)\/screenshot$/,
-      '/screenshot/$1'),
-    w3cConverter: (url) => url.replace(/\/screenshot\/([^/]+)/,
-      '/element/$1/screenshot'),
+    jsonwpConverter: (url) =>
+      url.replace(/\/element\/([^/]+)\/screenshot$/, '/screenshot/$1'),
+    w3cConverter: (url) =>
+      url.replace(/\/screenshot\/([^/]+)/, '/element/$1/screenshot'),
   },
   {
     commandNames: ['getWindowHandles', 'getWindowHandle'],
-    jsonwpConverter (url) {
+    jsonwpConverter(url) {
       return /\/window$/.test(url)
         ? url.replace(/\/window$/, '/window_handle')
         : url.replace(/\/window\/handle(s?)$/, '/window_handle$1');
     },
-    w3cConverter (url) {
+    w3cConverter(url) {
       return /\/window_handle$/.test(url)
         ? url.replace(/\/window_handle$/, '/window')
         : url.replace(/\/window_handles$/, '/window/handles');
@@ -37,32 +41,34 @@ export const COMMAND_URLS_CONFLICTS = [
     commandNames: ['getProperty'],
     jsonwpConverter: (w3cUrl) => {
       const w3cPropertyRegex = /\/element\/([^/]+)\/property\/([^/]+)/;
-      const jsonwpUrl = w3cUrl.replace(w3cPropertyRegex, '/element/$1/attribute/$2');
+      const jsonwpUrl = w3cUrl.replace(
+        w3cPropertyRegex,
+        '/element/$1/attribute/$2'
+      );
       return jsonwpUrl;
     },
-    w3cConverter: (jsonwpUrl) => jsonwpUrl // Don't convert JSONWP URL to W3C. W3C accepts /attribute and /property
-  }
+    w3cConverter: (jsonwpUrl) => jsonwpUrl, // Don't convert JSONWP URL to W3C. W3C accepts /attribute and /property
+  },
 ];
 const {MJSONWP, W3C} = PROTOCOLS;
 const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
-
 class ProtocolConverter {
-  constructor (proxyFunc, log = null) {
+  constructor(proxyFunc, log = null) {
     this.proxyFunc = proxyFunc;
     this._downstreamProtocol = null;
     this._log = log;
   }
 
-  get log () {
+  get log() {
     return this._log ?? DEFAULT_LOG;
   }
 
-  set downstreamProtocol (value) {
+  set downstreamProtocol(value) {
     this._downstreamProtocol = value;
   }
 
-  get downstreamProtocol () {
+  get downstreamProtocol() {
     return this._downstreamProtocol;
   }
 
@@ -74,25 +80,36 @@ class ProtocolConverter {
    * @param {Object} body Request body
    * @return {Array} Array of W3C + MJSONWP compatible timeout objects
    */
-  getTimeoutRequestObjects (body) {
-    if (this.downstreamProtocol === W3C && _.has(body, 'ms') && _.has(body, 'type')) {
-      const typeToW3C = (x) => x === 'page load' ? 'pageLoad' : x;
-      return [{
-        [typeToW3C(body.type)]: body.ms,
-      }];
+  getTimeoutRequestObjects(body) {
+    if (
+      this.downstreamProtocol === W3C &&
+      _.has(body, 'ms') &&
+      _.has(body, 'type')
+    ) {
+      const typeToW3C = (x) => (x === 'page load' ? 'pageLoad' : x);
+      return [
+        {
+          [typeToW3C(body.type)]: body.ms,
+        },
+      ];
     }
 
-    if (this.downstreamProtocol === MJSONWP && (!_.has(body, 'ms') || !_.has(body, 'type'))) {
-      const typeToJSONWP = (x) => x === 'pageLoad' ? 'page load' : x;
-      return _.toPairs(body)
-        // Only transform the entry if ms value is a valid positive float number
-        .filter((pair) => /^\d+(?:[.,]\d*?)?$/.test(`${pair[1]}`))
-        .map(function (pair) {
-          return {
-            type: typeToJSONWP(pair[0]),
-            ms: pair[1],
-          };
-        });
+    if (
+      this.downstreamProtocol === MJSONWP &&
+      (!_.has(body, 'ms') || !_.has(body, 'type'))
+    ) {
+      const typeToJSONWP = (x) => (x === 'pageLoad' ? 'page load' : x);
+      return (
+        _.toPairs(body)
+          // Only transform the entry if ms value is a valid positive float number
+          .filter((pair) => /^\d+(?:[.,]\d*?)?$/.test(`${pair[1]}`))
+          .map(function (pair) {
+            return {
+              type: typeToJSONWP(pair[0]),
+              ms: pair[1],
+            };
+          })
+      );
     }
 
     return [body];
@@ -104,11 +121,15 @@ class ProtocolConverter {
    * @param {String} method Endpoint method
    * @param {Object} body Request body
    */
-  async proxySetTimeouts (url, method, body) {
+  async proxySetTimeouts(url, method, body) {
     let response, resBody;
 
     const timeoutRequestObjects = this.getTimeoutRequestObjects(body);
-    this.log.debug(`Will send the following request bodies to /timeouts: ${JSON.stringify(timeoutRequestObjects)}`);
+    this.log.debug(
+      `Will send the following request bodies to /timeouts: ${JSON.stringify(
+        timeoutRequestObjects
+      )}`
+    );
     for (const timeoutObj of timeoutRequestObjects) {
       [response, resBody] = await this.proxyFunc(url, method, timeoutObj);
 
@@ -127,18 +148,30 @@ class ProtocolConverter {
     return [response, resBody];
   }
 
-  async proxySetWindow (url, method, body) {
+  async proxySetWindow(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     if (_.isPlainObject(bodyObj)) {
-      if (this.downstreamProtocol === W3C && _.has(bodyObj, 'name') && !_.has(bodyObj, 'handle')) {
-        this.log.debug(`Copied 'name' value '${bodyObj.name}' to 'handle' as per W3C spec`);
+      if (
+        this.downstreamProtocol === W3C &&
+        _.has(bodyObj, 'name') &&
+        !_.has(bodyObj, 'handle')
+      ) {
+        this.log.debug(
+          `Copied 'name' value '${bodyObj.name}' to 'handle' as per W3C spec`
+        );
         return await this.proxyFunc(url, method, {
           ...bodyObj,
           handle: bodyObj.name,
         });
       }
-      if (this.downstreamProtocol === MJSONWP && _.has(bodyObj, 'handle') && !_.has(bodyObj, 'name')) {
-        this.log.debug(`Copied 'handle' value '${bodyObj.handle}' to 'name' as per JSONWP spec`);
+      if (
+        this.downstreamProtocol === MJSONWP &&
+        _.has(bodyObj, 'handle') &&
+        !_.has(bodyObj, 'name')
+      ) {
+        this.log.debug(
+          `Copied 'handle' value '${bodyObj.handle}' to 'name' as per JSONWP spec`
+        );
         return await this.proxyFunc(url, method, {
           ...bodyObj,
           name: bodyObj.handle,
@@ -149,48 +182,67 @@ class ProtocolConverter {
     return await this.proxyFunc(url, method, body);
   }
 
-  async proxySetValue (url, method, body) {
+  async proxySetValue(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
-    if (_.isPlainObject(bodyObj) && (util.hasValue(bodyObj.text) || util.hasValue(bodyObj.value))) {
+    if (
+      _.isPlainObject(bodyObj) &&
+      (util.hasValue(bodyObj.text) || util.hasValue(bodyObj.value))
+    ) {
       let {text, value} = bodyObj;
       if (util.hasValue(text) && !util.hasValue(value)) {
-        value = _.isString(text)
-          ? [...text]
-          : (_.isArray(text) ? text : []);
-        this.log.debug(`Added 'value' property ${JSON.stringify(value)} to 'setValue' request body`);
+        value = _.isString(text) ? [...text] : _.isArray(text) ? text : [];
+        this.log.debug(
+          `Added 'value' property ${JSON.stringify(
+            value
+          )} to 'setValue' request body`
+        );
       } else if (!util.hasValue(text) && util.hasValue(value)) {
         text = _.isArray(value)
           ? value.join('')
-          : (_.isString(value) ? value : '');
-        this.log.debug(`Added 'text' property ${JSON.stringify(text)} to 'setValue' request body`);
+          : _.isString(value)
+          ? value
+          : '';
+        this.log.debug(
+          `Added 'text' property ${JSON.stringify(
+            text
+          )} to 'setValue' request body`
+        );
       }
-      return await this.proxyFunc(url, method, Object.assign({}, bodyObj, {
-        text,
-        value,
-      }));
+      return await this.proxyFunc(
+        url,
+        method,
+        Object.assign({}, bodyObj, {
+          text,
+          value,
+        })
+      );
     }
 
     return await this.proxyFunc(url, method, body);
   }
 
-  async proxySetFrame (url, method, body) {
+  async proxySetFrame(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     return _.has(bodyObj, 'id') && _.isPlainObject(bodyObj.id)
       ? await this.proxyFunc(url, method, {
-        ...bodyObj,
-        id: duplicateKeys(bodyObj.id, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY),
-      })
+          ...bodyObj,
+          id: duplicateKeys(bodyObj.id, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY),
+        })
       : await this.proxyFunc(url, method, body);
   }
 
-  async proxyPerformActions (url, method, body) {
+  async proxyPerformActions(url, method, body) {
     const bodyObj = util.safeJsonParse(body);
     return _.isPlainObject(bodyObj)
-      ? await this.proxyFunc(url, method, duplicateKeys(bodyObj, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY))
+      ? await this.proxyFunc(
+          url,
+          method,
+          duplicateKeys(bodyObj, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY)
+        )
       : await this.proxyFunc(url, method, body);
   }
 
-  async proxyReleaseActions (url, method) {
+  async proxyReleaseActions(url, method) {
     return await this.proxyFunc(url, method);
   }
 
@@ -204,7 +256,7 @@ class ProtocolConverter {
    * @param {?string|object} body
    * @returns The proxyfying result as [response, responseBody] tuple
    */
-  async convertAndProxy (commandName, url, method, body) {
+  async convertAndProxy(commandName, url, method, body) {
     if (!this.downstreamProtocol) {
       return await this.proxyFunc(url, method, body);
     }
@@ -228,21 +280,30 @@ class ProtocolConverter {
     }
 
     // Same arguments, but different URLs
-    for (const {commandNames, jsonwpConverter, w3cConverter} of COMMAND_URLS_CONFLICTS) {
+    for (const {
+      commandNames,
+      jsonwpConverter,
+      w3cConverter,
+    } of COMMAND_URLS_CONFLICTS) {
       if (!commandNames.includes(commandName)) {
         continue;
       }
 
-      const rewrittenUrl = this.downstreamProtocol === MJSONWP
-        ? jsonwpConverter(url)
-        : w3cConverter(url);
+      const rewrittenUrl =
+        this.downstreamProtocol === MJSONWP
+          ? jsonwpConverter(url)
+          : w3cConverter(url);
       if (rewrittenUrl === url) {
-        this.log.debug(`Did not know how to rewrite the original URL '${url}' ` +
-          `for ${this.downstreamProtocol} protocol`);
+        this.log.debug(
+          `Did not know how to rewrite the original URL '${url}' ` +
+            `for ${this.downstreamProtocol} protocol`
+        );
         break;
       }
-      this.log.info(`Rewrote the original URL '${url}' to '${rewrittenUrl}' ` +
-        `for ${this.downstreamProtocol} protocol`);
+      this.log.info(
+        `Rewrote the original URL '${url}' to '${rewrittenUrl}' ` +
+          `for ${this.downstreamProtocol} protocol`
+      );
       return await this.proxyFunc(rewrittenUrl, method, body);
     }
 

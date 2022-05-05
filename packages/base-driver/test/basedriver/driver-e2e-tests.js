@@ -1,12 +1,17 @@
 import _ from 'lodash';
-import { BaseDriver, server, routeConfiguringFunction, DeviceSettings } from '../../lib';
+import {
+  BaseDriver,
+  server,
+  routeConfiguringFunction,
+  DeviceSettings,
+} from '../../lib';
 import axios from 'axios';
 import B from 'bluebird';
-import { TEST_HOST, getTestPort, createAppiumURL, METHODS } from '../helpers';
-import { PREFIXED_APPIUM_OPTS_CAP } from '../../lib/basedriver/capabilities';
+import {TEST_HOST, getTestPort, createAppiumURL, METHODS} from '../helpers';
+import {PREFIXED_APPIUM_OPTS_CAP} from '../../lib/basedriver/capabilities';
 const {POST, DELETE} = METHODS;
 
-function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
+function baseDriverE2ETests(DriverClass, defaultCaps = {}) {
   let address = defaultCaps['appium:address'] ?? TEST_HOST;
   let port = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
@@ -14,9 +19,9 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
   describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer, d;
     /**
-       * This URL creates a new session
-       * @type {string}
-       **/
+     * This URL creates a new session
+     * @type {string}
+     **/
     let newSessionURL;
 
     /**
@@ -33,13 +38,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
     let createSessionURL;
 
     before(async function () {
-      port = port ?? await getTestPort();
+      port = port ?? (await getTestPort());
       defaultCaps = {...defaultCaps, 'appium:port': port};
       d = new DriverClass({port, address});
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
         port,
-        hostname: TEST_HOST
+        hostname: TEST_HOST,
       });
       createAppiumTestURL = createAppiumURL(address, port);
       newSessionURL = createAppiumTestURL('', 'session');
@@ -50,26 +55,32 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       await baseServer.close();
     });
 
-    async function startSession (caps) {
-      return (await axios({
-        url: newSessionURL,
-        method: POST,
-        data: {capabilities: {alwaysMatch: caps, firstMatch: [{}]}},
-      })).data.value;
+    async function startSession(caps) {
+      return (
+        await axios({
+          url: newSessionURL,
+          method: POST,
+          data: {capabilities: {alwaysMatch: caps, firstMatch: [{}]}},
+        })
+      ).data.value;
     }
 
-    async function endSession (id) {
-      return (await axios({
-        url: createSessionURL(id),
-        method: DELETE,
-        validateStatus: null,
-      })).data.value;
+    async function endSession(id) {
+      return (
+        await axios({
+          url: createSessionURL(id),
+          method: DELETE,
+          validateStatus: null,
+        })
+      ).data.value;
     }
 
-    async function getSession (id) {
-      return (await axios({
-        url: createSessionURL(id),
-      })).data.value;
+    async function getSession(id) {
+      return (
+        await axios({
+          url: createSessionURL(id),
+        })
+      ).data.value;
     }
 
     describe('session handling', function () {
@@ -77,16 +88,20 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         const sessionIds = [];
         let times = 0;
         do {
-          const {sessionId} = (await axios({
-            url: newSessionURL,
-            headers: {
-              'X-Idempotency-Key': '123456',
-            },
-            method: POST,
-            data: {capabilities: {alwaysMatch: defaultCaps, firstMatch: [{}]}},
-            simple: false,
-            resolveWithFullResponse: true
-          })).data.value;
+          const {sessionId} = (
+            await axios({
+              url: newSessionURL,
+              headers: {
+                'X-Idempotency-Key': '123456',
+              },
+              method: POST,
+              data: {
+                capabilities: {alwaysMatch: defaultCaps, firstMatch: [{}]},
+              },
+              simple: false,
+              resolveWithFullResponse: true,
+            })
+          ).data.value;
 
           sessionIds.push(sessionId);
           times++;
@@ -105,17 +120,23 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         const reqs = [];
         let times = 0;
         do {
-          reqs.push(axios({
-            url: newSessionURL,
-            headers: {
-              'X-Idempotency-Key': '12345',
-            },
-            method: POST,
-            data: {capabilities: {alwaysMatch: defaultCaps, firstMatch: [{}]}},
-          }));
+          reqs.push(
+            axios({
+              url: newSessionURL,
+              headers: {
+                'X-Idempotency-Key': '12345',
+              },
+              method: POST,
+              data: {
+                capabilities: {alwaysMatch: defaultCaps, firstMatch: [{}]},
+              },
+            })
+          );
           times++;
         } while (times < 2);
-        const sessionIds = (await B.all(reqs)).map((x) => x.data.value.sessionId);
+        const sessionIds = (await B.all(reqs)).map(
+          (x) => x.data.value.sessionId
+        );
         _.uniq(sessionIds).length.should.equal(1);
 
         const {status, data} = await axios({
@@ -135,8 +156,12 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
 
         status.should.equal(200);
         should.exist(data.value.sessionId);
-        data.value.capabilities.platformName.should.equal(defaultCaps.platformName);
-        data.value.capabilities.deviceName.should.equal(defaultCaps['appium:deviceName']);
+        data.value.capabilities.platformName.should.equal(
+          defaultCaps.platformName
+        );
+        data.value.capabilities.deviceName.should.equal(
+          defaultCaps['appium:deviceName']
+        );
 
         ({status, data} = await axios({
           url: createSessionURL(d.sessionId),
@@ -149,13 +174,12 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       });
     });
 
-    it.skip('should throw NYI for commands not implemented', async function () {
-    });
+    it.skip('should throw NYI for commands not implemented', async function () {});
 
     describe('command timeouts', function () {
       let originalFindElement, originalFindElements;
 
-      async function startTimeoutSession (timeout) {
+      async function startTimeoutSession(timeout) {
         const caps = _.cloneDeep(defaultCaps);
         caps['appium:newCommandTimeout'] = timeout;
         return await startSession(caps);
@@ -178,7 +202,6 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         d.findElement = originalFindElement;
         d.findElements = originalFindElements;
       });
-
 
       it('should set a default commandTimeout', async function () {
         let newSession = await startTimeoutSession();
@@ -210,11 +233,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
       it('should not timeout with commandTimeout of false', async function () {
         let newSession = await startTimeoutSession(0.1);
         let start = Date.now();
-        const {value} = (await axios({
-          url: createAppiumTestURL(d.sessionId, 'elements'),
-          method: POST,
-          data: {using: 'name', value: 'foo'},
-        })).data;
+        const {value} = (
+          await axios({
+            url: createAppiumTestURL(d.sessionId, 'elements'),
+            method: POST,
+            data: {using: 'name', value: 'foo'},
+          })
+        ).data;
         (Date.now() - start).should.be.above(150);
         value.should.eql(['foo']);
         await endSession(newSession.sessionId);
@@ -230,9 +255,11 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
-        const {value} = (await axios({
-          url: createSessionURL(d.sessionId),
-        })).data;
+        const {value} = (
+          await axios({
+            url: createSessionURL(d.sessionId),
+          })
+        ).data;
         value.platformName.should.equal(defaultCaps.platformName);
         const resp = await endSession(newSession.sessionId);
         should.equal(resp, null);
@@ -251,10 +278,12 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           data: {using: 'name', value: 'foo'},
         });
         await B.delay(400);
-        const {value} = (await axios({
-          url: sessionURL,
-          validateStatus: null,
-        })).data;
+        const {value} = (
+          await axios({
+            url: sessionURL,
+            validateStatus: null,
+          })
+        ).data;
         value.error.should.equal('invalid session id');
         should.equal(d.sessionId, null);
         const resp = await endSession(newSession.sessionId);
@@ -269,7 +298,6 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         await endSession(newSession.sessionId);
         should.not.exist(d.noCommandTimer);
       });
-
     });
 
     describe('settings api', function () {
@@ -280,11 +308,13 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         d.settings.getSettings().ignoreUnimportantViews.should.be.false;
       });
       it('should not reject when `updateSettings` method is not provided', async function () {
-        await d.settings.update({ignoreUnimportantViews: true}).should.not.be.rejected;
+        await d.settings.update({ignoreUnimportantViews: true}).should.not.be
+          .rejected;
       });
       it('should reject for invalid update object', async function () {
-        await d.settings.update('invalid json').should.eventually
-                .be.rejectedWith('JSON');
+        await d.settings
+          .update('invalid json')
+          .should.eventually.be.rejectedWith('JSON');
       });
     });
 
@@ -302,7 +332,15 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
           // make sure that the request gets to the server before our shutdown
           await B.delay(100);
           const shutdownEventPromise = new B((resolve, reject) => {
-            setTimeout(() => reject(new Error('onUnexpectedShutdown event is expected to be fired within 5 seconds timeout')), 5000);
+            setTimeout(
+              () =>
+                reject(
+                  new Error(
+                    'onUnexpectedShutdown event is expected to be fired within 5 seconds timeout'
+                  )
+                ),
+              5000
+            );
             d.onUnexpectedShutdown(resolve);
           });
           d.startUnexpectedShutdown(new Error('Crashytimes'));
@@ -323,9 +361,11 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
         await endSession(session.sessionId);
       });
       it('should add start session timings', async function () {
-        const caps = Object.assign({}, defaultCaps, {'appium:eventTimings': true});
+        const caps = Object.assign({}, defaultCaps, {
+          'appium:eventTimings': true,
+        });
         const session = await startSession(caps);
-        const res = (await getSession(session.sessionId));
+        const res = await getSession(session.sessionId);
         should.exist(res.events);
         should.exist(res.events.newSessionRequested);
         should.exist(res.events.newSessionStarted);
@@ -346,7 +386,7 @@ function baseDriverE2ETests (DriverClass, defaultCaps = {}) {
             [PREFIXED_APPIUM_OPTS_CAP]: {
               platformVersion: '11.4',
               'appium:deviceName': 'iPhone 11',
-            }
+            },
           });
           d.opts.platformVersion.should.eql('11.4');
           d.opts.deviceName.should.eql('iPhone 11');

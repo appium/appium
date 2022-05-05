@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { duplicateKeys } from '../basedriver/helpers';
-import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../constants';
+import {duplicateKeys} from '../basedriver/helpers';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../constants';
 
 /**
  * Preprocesses the resulting value for API responses,
@@ -11,7 +11,7 @@ import { MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY } from '../constants';
  * @returns {?Object} Either modified value or the same one if
  * nothing has been modified
  */
-function formatResponseValue (resValue) {
+function formatResponseValue(resValue) {
   if (_.isUndefined(resValue)) {
     // convert undefined to null
     return null;
@@ -28,11 +28,15 @@ function formatResponseValue (resValue) {
  * @param {Object} responseBody
  * @returns {Object} The fixed response body
  */
-function formatStatus (responseBody) {
-  return _.isPlainObject(responseBody) ? _.omit(responseBody, ['status']) : responseBody;
+function formatStatus(responseBody) {
+  return _.isPlainObject(responseBody)
+    ? _.omit(responseBody, ['status'])
+    : responseBody;
 }
 
-
 export {
-  MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY, formatResponseValue, formatStatus
+  MJSONWP_ELEMENT_KEY,
+  W3C_ELEMENT_KEY,
+  formatResponseValue,
+  formatStatus,
 };

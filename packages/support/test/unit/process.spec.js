@@ -1,7 +1,7 @@
 import * as teenProcess from 'teen_process';
-import { createSandbox } from 'sinon';
-import { process } from '../../lib/index.js';
-import { retryInterval } from 'asyncbox';
+import {createSandbox} from 'sinon';
+import {process} from '../../lib/index.js';
+import {retryInterval} from 'asyncbox';
 
 const SubProcess = teenProcess.SubProcess;
 
@@ -41,7 +41,9 @@ describe('process', function () {
       let tpMock = sandbox.mock(teenProcess);
       tpMock.expects('exec').throws({message: 'Oops', code: 2});
 
-      await process.getProcessIds('tail').should.eventually.be.rejectedWith(/Oops/);
+      await process
+        .getProcessIds('tail')
+        .should.eventually.be.rejectedWith(/Oops/);
 
       tpMock.restore();
     });
@@ -63,15 +65,16 @@ describe('process', function () {
       await process.killProcess('tail');
 
       // it may take a moment to actually be registered as killed
-      await retryInterval(10, 100, async () => { // eslint-disable-line require-await
+      // eslint-disable-next-line require-await
+      await retryInterval(10, 100, async () => {
         proc.isRunning.should.be.false;
       });
     });
     it('should do nothing if the process does not exist', async function () {
       proc.isRunning.should.be.true;
       await process.killProcess('asdfasdfasdf');
-
-      await retryInterval(10, 100, async () => { // eslint-disable-line require-await
+      // eslint-disable-next-line require-await
+      await retryInterval(10, 100, async () => {
         proc.isRunning.should.be.false;
       }).should.eventually.be.rejected;
     });
@@ -79,17 +82,25 @@ describe('process', function () {
       let tpMock = sandbox.mock(teenProcess);
       tpMock.expects('exec').throws({message: 'Oops', code: 2});
 
-      await process.killProcess('tail').should.eventually.be.rejectedWith(/Oops/);
+      await process
+        .killProcess('tail')
+        .should.eventually.be.rejectedWith(/Oops/);
 
       tpMock.restore();
     });
     it('should throw an error if pkill fails', async function () {
       let tpMock = sandbox.mock(teenProcess);
-      tpMock.expects('exec').twice()
-        .onFirstCall().returns({stdout: '42\n'})
-        .onSecondCall().throws({message: 'Oops', code: 2});
+      tpMock
+        .expects('exec')
+        .twice()
+        .onFirstCall()
+        .returns({stdout: '42\n'})
+        .onSecondCall()
+        .throws({message: 'Oops', code: 2});
 
-      await process.killProcess('tail').should.eventually.be.rejectedWith(/Oops/);
+      await process
+        .killProcess('tail')
+        .should.eventually.be.rejectedWith(/Oops/);
 
       tpMock.restore();
     });

@@ -1,21 +1,22 @@
 import {
-  base64ToImage, imageToBase64, cropImage,
-  getJimpImage, MIME_PNG,
+  base64ToImage,
+  imageToBase64,
+  cropImage,
+  getJimpImage,
+  MIME_PNG,
 } from '../../lib/image-util';
 import path from 'path';
 import _ from 'lodash';
-import { fs } from '../../lib';
-
+import {fs} from '../../lib';
 
 const FIXTURES_ROOT = path.resolve(__dirname, 'fixture', 'images');
 
-async function getImage (name) {
+async function getImage(name) {
   const imagePath = path.resolve(FIXTURES_ROOT, name);
   return await fs.readFile(imagePath, 'utf8');
 }
 
 describe('image-util', function () {
-
   describe('cropBase64Image', function () {
     let originalImage = null;
 
@@ -29,7 +30,12 @@ describe('image-util', function () {
     });
 
     it('should verify that an image is cropped correctly', async function () {
-      const croppedImage = await cropImage(originalImage, {left: 35, top: 107, width: 323, height: 485});
+      const croppedImage = await cropImage(originalImage, {
+        left: 35,
+        top: 107,
+        width: 323,
+        height: 485,
+      });
 
       // verify cropped image size, it should be less than original image according to crop region
       croppedImage.width.should.be.equal(323, 'unexpected width');
@@ -59,10 +65,14 @@ describe('image-util', function () {
       jimpImg.bitmap.width.should.eql(323);
     });
     it('should error with incorrect data type', async function () {
-      await getJimpImage(1234).should.eventually.be.rejectedWith(/string or buffer/);
+      await getJimpImage(1234).should.eventually.be.rejectedWith(
+        /string or buffer/
+      );
     });
     it('should error with incorrect image data', async function () {
-      await getJimpImage('foo').should.eventually.be.rejectedWith(/Could not find MIME for Buffer/);
+      await getJimpImage('foo').should.eventually.be.rejectedWith(
+        /Could not find MIME for Buffer/
+      );
     });
     it('should get an image buffer via the overridden getBuffer method', async function () {
       const base64Image = await getImage('cropped-image.b64');

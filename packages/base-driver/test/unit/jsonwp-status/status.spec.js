@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import { statusCodes, getSummaryByCode } from '../../../lib';
-
-
+import {statusCodes, getSummaryByCode} from '../../../lib';
 
 describe('jsonwp-status', function () {
   describe('codes', function () {

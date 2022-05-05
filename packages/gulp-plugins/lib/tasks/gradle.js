@@ -6,16 +6,17 @@ const log = require('fancy-log');
 const semver = require('semver');
 const globby = require('globby');
 
-
-function logFileChanges (changes = []) {
+function logFileChanges(changes = []) {
   // `changes` will have entries like
   //   { file: "app/build.gradle", hasChanged: true }
-  changes = changes.filter((entry) => entry.hasChanged).map((entry) => entry.file);
+  changes = changes
+    .filter((entry) => entry.hasChanged)
+    .map((entry) => entry.file);
   log(`Updated files: ${changes.join(', ')}`);
 }
 
-const configure = function configure (gulp) {
-  gulp.task('gradle-version-update', async function gradleVersionUpdate () {
+const configure = function configure(gulp) {
+  gulp.task('gradle-version-update', async function gradleVersionUpdate() {
     const files = await globby(['app/build.gradle']);
     if (!files.length) {
       throw new Error('No app/build.gradle file found');
@@ -24,10 +25,14 @@ const configure = function configure (gulp) {
 
     const version = argv['package-version'];
     if (!version) {
-      throw new Error('No package version argument (use `--package-version=xxx`)');
+      throw new Error(
+        'No package version argument (use `--package-version=xxx`)'
+      );
     }
     if (!semver.valid(version)) {
-      throw new Error(`Invalid version specified '${version}'. Version should be in the form '1.2.3'`);
+      throw new Error(
+        `Invalid version specified '${version}'. Version should be in the form '1.2.3'`
+      );
     }
 
     let changedFiles = await replace({

@@ -1,8 +1,7 @@
 import npmlog from 'npmlog';
-import { createLogger, format, transports } from 'winston';
-import { fs, logger } from '@appium/support';
+import {createLogger, format, transports} from 'winston';
+import {fs, logger} from '@appium/support';
 import _ from 'lodash';
-
 
 // set up distributed logging before everything else
 logger.patchLogger(npmlog);
@@ -39,16 +38,13 @@ let useLocalTimeZone = false;
 
 // add the timestamp in the correct format to the log info object
 const timestampFormat = format.timestamp({
-  format () {
+  format() {
     let date = new Date();
     if (useLocalTimeZone) {
       date = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
     }
     // '2012-11-04T14:51:06.157Z' -> '2012-11-04 14:51:06:157'
-    return date.toISOString()
-      .replace(/[TZ]/g, ' ')
-      .replace(/\./g, ':')
-      .trim();
+    return date.toISOString().replace(/[TZ]/g, ' ').replace(/\./g, ':').trim();
   },
 });
 
@@ -58,14 +54,14 @@ const colorizeFormat = format.colorize({
 });
 
 // Strip the color marking within messages
-const stripColorFormat = format(function stripColor (info) {
+const stripColorFormat = format(function stripColor(info) {
   const code = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
   info.message = info.message.replace(code, '');
   return info;
 })();
 
-function createConsoleTransport (args, logLvl) {
-  return new (transports.Console)({
+function createConsoleTransport(args, logLvl) {
+  return new transports.Console({
     // `name` is unsupported per winston's type declarations
     // @ts-expect-error
     name: 'console',
@@ -75,7 +71,7 @@ function createConsoleTransport (args, logLvl) {
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
-      format(function adjustDebug (info) {
+      format(function adjustDebug(info) {
         // prepend debug marker, and shift to `info` log level
         if (info.level === 'debug') {
           info.level = 'info';
@@ -85,15 +81,17 @@ function createConsoleTransport (args, logLvl) {
       })(),
       timestampFormat,
       args.logNoColors ? stripColorFormat : colorizeFormat,
-      format.printf(function printInfo (info) {
-        return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
+      format.printf(function printInfo(info) {
+        return `${
+          args.logTimestamp ? `${info.timestamp} - ` : ''
+        }${info.message}`;
       })
     ),
   });
 }
 
-function createFileTransport (args, logLvl) {
-  return new (transports.File)({
+function createFileTransport(args, logLvl) {
+  return new transports.File({
     // @ts-expect-error
     name: 'file',
     filename: args.logFile,
@@ -105,14 +103,14 @@ function createFileTransport (args, logLvl) {
     format: format.combine(
       stripColorFormat,
       timestampFormat,
-      format.printf(function printInfo (info) {
+      format.printf(function printInfo(info) {
         return `${info.timestamp} ${info.message}`;
       })
-    )
+    ),
   });
 }
 
-function createHttpTransport (args, logLvl) {
+function createHttpTransport(args, logLvl) {
   let host = '127.0.0.1';
   let port = 9003;
 
@@ -122,7 +120,7 @@ function createHttpTransport (args, logLvl) {
     port = parseInt(hostAndPort[1], 10);
   }
 
-  return new (transports.Http)({
+  return new transports.Http({
     // @ts-expect-error
     name: 'http',
     host,
@@ -134,14 +132,14 @@ function createHttpTransport (args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      format.printf(function printInfo (info) {
+      format.printf(function printInfo(info) {
         return `${info.timestamp} ${info.message}`;
       })
     ),
   });
 }
 
-async function createTransports (args) {
+async function createTransports(args) {
   let transports = [];
   let consoleLogLevel = null;
   let fileLogLevel = null;
@@ -169,8 +167,10 @@ async function createTransports (args) {
       transports.push(createFileTransport(args, fileLogLevel));
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(`Tried to attach logging to file '${args.logFile}' but an error ` +
-                  `occurred: ${e.message}`);
+      console.log(
+        `Tried to attach logging to file '${args.logFile}' but an error ` +
+          `occurred: ${e.message}`
+      );
     }
   }
 
@@ -179,15 +179,17 @@ async function createTransports (args) {
       transports.push(createHttpTransport(args, fileLogLevel));
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.log(`Tried to attach logging to Http at ${args.webhook} but ` +
-                  `an error occurred: ${e.message}`);
+      console.log(
+        `Tried to attach logging to Http at ${args.webhook} but ` +
+          `an error occurred: ${e.message}`
+      );
     }
   }
 
   return transports;
 }
 
-async function init (args) {
+async function init(args) {
   // set de facto param passed to timestamp function
   useLocalTimeZone = args.localTimezone;
 
@@ -211,11 +213,10 @@ async function init (args) {
     if (args.logHandler && _.isFunction(args.logHandler)) {
       args.logHandler(logObj.level, msg);
     }
-
   });
 }
 
-function clear () {
+function clear() {
   if (log) {
     for (let transport of _.keys(log.transports)) {
       log.remove(transport);
@@ -224,6 +225,5 @@ function clear () {
   npmlog.removeAllListeners('log');
 }
 
-
-export { init, clear };
+export {init, clear};
 export default init;

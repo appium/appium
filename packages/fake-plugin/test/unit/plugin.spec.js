@@ -2,15 +2,15 @@ import FakePlugin from '../../lib/plugin';
 import B from 'bluebird';
 
 class FakeExpress {
-  constructor () {
+  constructor() {
     this.routes = {};
   }
 
-  all (route, handler) {
+  all(route, handler) {
     this.routes[route] = handler;
   }
 
-  async get (route) {
+  async get(route) {
     return await new B((resolve, reject) => {
       try {
         const res = {
@@ -33,34 +33,44 @@ describe('fake plugin', function () {
     const app = new FakeExpress();
     await app.get('/fake').should.eventually.be.rejected;
     FakePlugin.updateServer(app);
-    await app.get('/fake').should.eventually.eql(JSON.stringify({fake: 'fakeResponse'}));
+    await app
+      .get('/fake')
+      .should.eventually.eql(JSON.stringify({fake: 'fakeResponse'}));
   });
 
   it('should wrap find element', async function () {
     const p = new FakePlugin('fake');
-    await p.findElement(() => ({el: 'fakeEl'}), {}, 'arg1', 'arg2').should.eventually.eql({
-      el: 'fakeEl',
-      fake: true,
-    });
+    await p
+      .findElement(() => ({el: 'fakeEl'}), {}, 'arg1', 'arg2')
+      .should.eventually.eql({
+        el: 'fakeEl',
+        fake: true,
+      });
   });
 
   it('should handle page source', async function () {
     const p = new FakePlugin('fake');
-    await p.getPageSource(() => {}, {}, 'arg1', 'arg2').should.eventually.eql(
-      '<Fake>["arg1","arg2"]</Fake>'
-    );
+    await p
+      .getPageSource(() => {}, {}, 'arg1', 'arg2')
+      .should.eventually.eql('<Fake>["arg1","arg2"]</Fake>');
   });
 
   it('should handle getFakeSessionData', async function () {
     const p = new FakePlugin('fake');
-    await p.getFakeSessionData(() => {}, {fakeSessionData: 'hi'}).should.eventually.eql('hi');
+    await p
+      .getFakeSessionData(() => {}, {fakeSessionData: 'hi'})
+      .should.eventually.eql('hi');
     await p.getFakeSessionData(() => {}, {}).should.eventually.eql(null);
   });
 
   it('should handle setFakeSessionData', async function () {
     const p = new FakePlugin('fake');
     const driver = {};
-    await p.setFakeSessionData(() => {}, driver, 'foobar').should.eventually.eql(null);
-    await p.getFakeSessionData(() => {}, driver).should.eventually.eql('foobar');
+    await p
+      .setFakeSessionData(() => {}, driver, 'foobar')
+      .should.eventually.eql(null);
+    await p
+      .getFakeSessionData(() => {}, driver)
+      .should.eventually.eql('foobar');
   });
 });

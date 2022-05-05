@@ -1,12 +1,11 @@
-
 // @ts-check
 
 /* eslint-disable no-console */
-import { fs } from '@appium/support';
-import { main as appiumServer } from 'appium';
+import {fs} from '@appium/support';
+import {main as appiumServer} from 'appium';
 import getPort from 'get-port';
-import { info, success, warning } from 'log-symbols';
-import { exec } from 'teen_process';
+import {info, success, warning} from 'log-symbols';
+import {exec} from 'teen_process';
 
 const APPIUM_BIN = require.resolve('appium');
 
@@ -15,7 +14,7 @@ const APPIUM_BIN = require.resolve('appium');
  * @param {E2ESetupOpts} opts
  * @returns {void}
  */
-function e2eSetup (opts) {
+function e2eSetup(opts) {
   let {
     appiumHome,
     before,
@@ -62,20 +61,20 @@ function e2eSetup (opts) {
       console.log(`${info} Checking if driver "${driverName}" is installed...`);
       const driverListArgs = [APPIUM_BIN, 'driver', 'list', '--json'];
       console.log(
-        `${info} Running: ${process.execPath} ${driverListArgs.join(' ')}`,
+        `${info} Running: ${process.execPath} ${driverListArgs.join(' ')}`
       );
       const {stdout: driverListJson} = await exec(
         process.execPath,
         driverListArgs,
         {
           env,
-        },
+        }
       );
       const installedDrivers = JSON.parse(driverListJson);
 
       if (!installedDrivers[driverName]?.installed) {
         console.log(
-          `${warning} Driver "${driverName}" not installed; installing...`,
+          `${warning} Driver "${driverName}" not installed; installing...`
         );
         const driverArgs = [
           APPIUM_BIN,
@@ -89,7 +88,7 @@ function e2eSetup (opts) {
           driverArgs.push('--package', driverPackage);
         }
         console.log(
-          `${info} Running: ${process.execPath} ${driverArgs.join(' ')}`,
+          `${info} Running: ${process.execPath} ${driverArgs.join(' ')}`
         );
         await exec(process.execPath, driverArgs, {
           env,
@@ -110,13 +109,13 @@ function e2eSetup (opts) {
         pluginListArgs,
         {
           env,
-        },
+        }
       );
       const installedPlugins = JSON.parse(pluginListJson);
 
       if (!installedPlugins[pluginName]?.installed) {
         console.log(
-          `${warning} Plugin "${pluginName}" not installed; installing...`,
+          `${warning} Plugin "${pluginName}" not installed; installing...`
         );
         const pluginArgs = [
           APPIUM_BIN,
@@ -130,7 +129,7 @@ function e2eSetup (opts) {
           pluginArgs.push('--package', pluginPackage);
         }
         console.log(
-          `${info} Running: ${process.execPath} ${pluginArgs.join(' ')}`,
+          `${info} Running: ${process.execPath} ${pluginArgs.join(' ')}`
         );
         await exec(process.execPath, pluginArgs, {
           env,
@@ -153,9 +152,9 @@ function e2eSetup (opts) {
         usePlugins: [pluginName],
         useDrivers: [driverName],
         appiumHome,
-        ...serverArgs
+        ...serverArgs,
       };
-      server = /** @type {AppiumServer} */(await appiumServer(args));
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     };
 
     const env = await setupAppiumHome();
@@ -171,7 +170,7 @@ function e2eSetup (opts) {
   });
 }
 
-export { e2eSetup };
+export {e2eSetup};
 
 /**
  * @typedef E2ESetupOpts
@@ -190,7 +189,6 @@ export { e2eSetup };
  * @property {number} [port] - Port to use for Appium server
  * @property {string} [host] - Host to use for Appium server
  */
-
 
 /**
  * @typedef {import('@appium/types').AppiumServer} AppiumServer

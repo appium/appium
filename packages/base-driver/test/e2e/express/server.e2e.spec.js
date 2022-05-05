@@ -1,12 +1,11 @@
 // transpile:mocha
 
-import { server } from '../../../lib';
+import {server} from '../../../lib';
 import axios from 'axios';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
 import {TEST_HOST, getTestPort} from '../../helpers';
-
 
 describe('server', function () {
   let hwServer;
@@ -15,7 +14,7 @@ describe('server', function () {
   before(async function () {
     port = await getTestPort(true);
 
-    function configureRoutes (app) {
+    function configureRoutes(app) {
       app.get('/', (req, res) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send('Hello World!');
@@ -57,8 +56,8 @@ describe('server', function () {
       url: `http://${TEST_HOST}:${port}/python`,
       headers: {
         'user-agent': 'Python',
-        'content-type': 'application/x-www-form-urlencoded'
-      }
+        'content-type': 'application/x-www-form-urlencoded',
+      },
     });
     data.should.eql('application/json; charset=utf-8');
   });
@@ -67,12 +66,14 @@ describe('server', function () {
   });
   it('should error if we try to start again on a port that is used', async function () {
     await server({
-      routeConfiguringFunction () {},
+      routeConfiguringFunction() {},
       port,
     }).should.be.rejectedWith(/EADDRINUSE/);
   });
   it('should not wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get(`http://${TEST_HOST}:${port}/pause`).catch(() => {});
+    let bodyPromise = axios
+      .get(`http://${TEST_HOST}:${port}/pause`)
+      .catch(() => {});
 
     // relinquish control so that we don't close before the request is received
     await B.delay(100);
@@ -113,8 +114,9 @@ describe('server plugins', function () {
     } catch (ign) {}
   });
 
-  function updaterWithGetRoute (route, reply) {
-    return async (app, httpServer) => { // eslint-disable-line require-await
+  function updaterWithGetRoute(route, reply) {
+    // eslint-disable-next-line require-await
+    return async (app, httpServer) => {
       app.get(`/${route}`, (req, res) => {
         res.header['content-type'] = 'text/html';
         res.status(200).send(reply);
@@ -130,7 +132,7 @@ describe('server plugins', function () {
       serverUpdaters: [
         updaterWithGetRoute('plugin1', 'res from plugin1 route'),
         updaterWithGetRoute('plugin2', 'res from plugin2 route'),
-      ]
+      ],
     });
     let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
     data.should.eql('res from plugin1 route');
@@ -143,7 +145,11 @@ describe('server plugins', function () {
     await server({
       routeConfiguringFunction: _.noop,
       port,
-      serverUpdaters: [() => { throw new Error('ugh');}]
+      serverUpdaters: [
+        () => {
+          throw new Error('ugh');
+        },
+      ],
     }).should.eventually.be.rejectedWith(/ugh/);
   });
 });

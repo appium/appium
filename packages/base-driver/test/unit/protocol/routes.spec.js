@@ -1,13 +1,10 @@
 // transpile:mocha
 
-import { _ } from 'lodash';
-import { METHOD_MAP, routeToCommandName } from '../../../lib/protocol';
+import {_} from 'lodash';
+import {METHOD_MAP, routeToCommandName} from '../../../lib/protocol';
 import crypto from 'crypto';
 
-
-
 describe('Protocol', function () {
-
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol
 
@@ -24,7 +21,9 @@ describe('Protocol', function () {
           if (methodMapping.payloadParams) {
             let allParams = _.flatten(methodMapping.payloadParams.required);
             if (methodMapping.payloadParams.optional) {
-              allParams = allParams.concat(_.flatten(methodMapping.payloadParams.optional));
+              allParams = allParams.concat(
+                _.flatten(methodMapping.payloadParams.optional)
+              );
             }
             for (let param of allParams) {
               shasum.update(param);
@@ -69,11 +68,14 @@ describe('Protocol', function () {
     });
 
     it('should not find command name if incorrect input data has been specified', function () {
-      for (let [route, method] of [['/status', 'POST'], ['/xstatus', 'GET'], ['status', 'POST']]) {
+      for (let [route, method] of [
+        ['/status', 'POST'],
+        ['/xstatus', 'GET'],
+        ['status', 'POST'],
+      ]) {
         const cmdName = routeToCommandName(route, method);
         chai.should().equal(cmdName, undefined);
       }
     });
   });
-
 });

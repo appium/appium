@@ -3,13 +3,13 @@
 import * as driver from './driver';
 import * as server from './server';
 
-const { FakeDriver } = driver;
-const { startServer } = server;
+const {FakeDriver} = driver;
+const {startServer} = server;
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;
 
-async function main () {
+async function main() {
   const getArgValue = (argName) => {
     const argIndex = process.argv.indexOf(argName);
     return argIndex > 0 ? process.argv[argIndex + 1] : null;
@@ -19,4 +19,4 @@ async function main () {
   return await startServer(port, host);
 }
 
-export { FakeDriver, startServer, main };
+export {FakeDriver, startServer, main};

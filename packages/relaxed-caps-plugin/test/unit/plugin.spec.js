@@ -64,7 +64,6 @@ describe('relaxed caps plugin', function () {
     it('should not transform already prefixed caps', function () {
       rcp.transformCaps(VENDOR_CAPS).should.eql(ADJUSTED_VENDOR_CAPS);
     });
-
   });
 
   describe('#createSession', function () {
@@ -75,7 +74,10 @@ describe('relaxed caps plugin', function () {
       const mock = sandbox.mock(driver);
       const w3c = {firstMatch: [MIXED_CAPS]};
       const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS]};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
+      mock
+        .expects('createSession')
+        .once()
+        .withExactArgs(null, null, w3cAdjusted);
       await rcp.createSession(next, driver, null, null, w3c);
       mock.verify();
     });
@@ -83,8 +85,13 @@ describe('relaxed caps plugin', function () {
     it('should work with multiple firstMatch', async function () {
       const mock = sandbox.mock(driver);
       const w3c = {firstMatch: [MIXED_CAPS, STD_CAPS, MIXED_CAPS]};
-      const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS, STD_CAPS, ADJUSTED_CAPS]};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
+      const w3cAdjusted = {
+        firstMatch: [ADJUSTED_CAPS, STD_CAPS, ADJUSTED_CAPS],
+      };
+      mock
+        .expects('createSession')
+        .once()
+        .withExactArgs(null, null, w3cAdjusted);
       await rcp.createSession(next, driver, null, null, w3c);
       mock.verify();
     });
@@ -93,7 +100,10 @@ describe('relaxed caps plugin', function () {
       const mock = sandbox.mock(driver);
       const w3c = {alwaysMatch: MIXED_CAPS};
       const w3cAdjusted = {alwaysMatch: ADJUSTED_CAPS};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
+      mock
+        .expects('createSession')
+        .once()
+        .withExactArgs(null, null, w3cAdjusted);
       await rcp.createSession(next, driver, null, null, w3c);
       mock.verify();
     });
@@ -101,8 +111,14 @@ describe('relaxed caps plugin', function () {
     it('should work with alwaysMatch and firstMatch', async function () {
       const mock = sandbox.mock(driver);
       const w3c = {alwaysMatch: MIXED_CAPS, firstMatch: [MIXED_CAPS]};
-      const w3cAdjusted = {alwaysMatch: ADJUSTED_CAPS, firstMatch: [ADJUSTED_CAPS]};
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
+      const w3cAdjusted = {
+        alwaysMatch: ADJUSTED_CAPS,
+        firstMatch: [ADJUSTED_CAPS],
+      };
+      mock
+        .expects('createSession')
+        .once()
+        .withExactArgs(null, null, w3cAdjusted);
       await rcp.createSession(next, driver, null, null, w3c);
       mock.verify();
     });

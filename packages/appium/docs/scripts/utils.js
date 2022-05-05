@@ -1,6 +1,6 @@
 // for simplicity this file is not transpiled and is run directly via an npm script
 //
-const { logger } = require('@appium/support');
+const {logger} = require('@appium/support');
 const path = require('path');
 
 const log = logger.getLogger('Docs');

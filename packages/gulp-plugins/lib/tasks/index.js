@@ -12,7 +12,7 @@ const ci = require('./ci');
 const iosApps = require('./ios-apps');
 const prepublish = require('./prepublish');
 
-const configure = function configure (gulp, opts, env) {
+const configure = function configure(gulp, opts, env) {
   clean.configure(gulp, opts);
 
   transpile.configure(gulp, opts, env);

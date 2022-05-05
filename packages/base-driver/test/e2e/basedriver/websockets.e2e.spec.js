@@ -1,12 +1,13 @@
 import _ from 'lodash';
 import {
-  server, routeConfiguringFunction, DEFAULT_WS_PATHNAME_PREFIX
+  server,
+  routeConfiguringFunction,
+  DEFAULT_WS_PATHNAME_PREFIX,
 } from '../../../lib';
-import { FakeDriver } from '../protocol/fake-driver';
+import {FakeDriver} from '../protocol/fake-driver';
 import WebSocket from 'ws';
 import B from 'bluebird';
 import {TEST_HOST, getTestPort} from '../../helpers';
-
 
 describe('Websockets (e2e)', function () {
   let baseServer;
@@ -42,7 +43,9 @@ describe('Websockets (e2e)', function () {
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
-      baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
+      baseServer
+        .listenerCount('upgrade')
+        .should.be.above(previousListenerCount);
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
@@ -60,8 +63,15 @@ describe('Websockets (e2e)', function () {
           resolve();
         });
         client.once('error', reject);
-        setTimeout(() => reject(new Error('No websocket messages have been received after the timeout')),
-          timeout);
+        setTimeout(
+          () =>
+            reject(
+              new Error(
+                'No websocket messages have been received after the timeout'
+              )
+            ),
+          timeout
+        );
       });
 
       (await baseServer.removeWebSocketHandler(endpoint)).should.be.true;
@@ -69,13 +79,19 @@ describe('Websockets (e2e)', function () {
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
         client.on('message', (data) =>
-          reject(new Error(`No websocket messages are expected after the handler ` +
-            `has been removed. '${data}' is received instead. `))
+          reject(
+            new Error(
+              `No websocket messages are expected after the handler ` +
+                `has been removed. '${data}' is received instead. `
+            )
+          )
         );
         client.on('error', resolve);
         setTimeout(resolve, timeout);
       });
-      baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
+      baseServer
+        .listenerCount('upgrade')
+        .should.be.above(previousListenerCount);
     });
   });
 });

@@ -3,9 +3,8 @@ import _ from 'lodash';
 
 const DEFAULT_REPLACER = '**SECURE**';
 
-
 class SecureValuesPreprocessor {
-  constructor () {
+  constructor() {
     this._rules = [];
   }
 
@@ -13,7 +12,7 @@ class SecureValuesPreprocessor {
    * @returns {Array<SecureValuePreprocessingRule>} The list of successfully
    * parsed preprocessing rules
    */
-  get rules () {
+  get rules() {
     return this._rules;
   }
 
@@ -25,29 +24,43 @@ class SecureValuesPreprocessor {
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
-  parseRule (rule) {
+  parseRule(rule) {
     let pattern;
     let replacer = DEFAULT_REPLACER;
     let flags = ['g'];
     if (_.isString(rule)) {
       if (rule.length === 0) {
-        throw new Error(`${JSON.stringify(rule)} -> The value must not be empty`);
+        throw new Error(
+          `${JSON.stringify(rule)} -> The value must not be empty`
+        );
       }
       pattern = `\\b${_.escapeRegExp(rule)}\\b`;
     } else if (_.isPlainObject(rule)) {
       if (_.has(rule, 'pattern')) {
         if (!_.isString(rule.pattern) || rule.pattern.length === 0) {
-          throw new Error(`${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`);
+          throw new Error(
+            `${JSON.stringify(
+              rule
+            )} -> The value of 'pattern' must be a valid non-empty string`
+          );
         }
         pattern = rule.pattern;
       } else if (_.has(rule, 'text')) {
         if (!_.isString(rule.text) || rule.text.length === 0) {
-          throw new Error(`${JSON.stringify(rule)} -> The value of 'text' must be a valid non-empty string`);
+          throw new Error(
+            `${JSON.stringify(
+              rule
+            )} -> The value of 'text' must be a valid non-empty string`
+          );
         }
         pattern = `\\b${_.escapeRegExp(rule.text)}\\b`;
       }
       if (!pattern) {
-        throw new Error(`${JSON.stringify(rule)} -> Must either have a field named 'pattern' or 'text'`);
+        throw new Error(
+          `${JSON.stringify(
+            rule
+          )} -> Must either have a field named 'pattern' or 'text'`
+        );
       }
 
       if (_.has(rule, 'flags')) {
@@ -64,7 +77,9 @@ class SecureValuesPreprocessor {
         replacer = rule.replacer;
       }
     } else {
-      throw new Error(`${JSON.stringify(rule)} -> Must either be a string or an object`);
+      throw new Error(
+        `${JSON.stringify(rule)} -> Must either be a string or an object`
+      );
     }
 
     return {
@@ -83,18 +98,20 @@ class SecureValuesPreprocessor {
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules (source) {
+  async loadRules(source) {
     let rules;
     if (_.isArray(source)) {
       rules = source;
     } else {
-      if (!await fs.exists(source)) {
+      if (!(await fs.exists(source))) {
         throw new Error(`'${source}' does not exist or is not accessible`);
       }
       try {
         rules = JSON.parse(await fs.readFile(source, 'utf8'));
       } catch (e) {
-        throw new Error(`'${source}' must be a valid JSON file. Original error: ${e.message}`);
+        throw new Error(
+          `'${source}' must be a valid JSON file. Original error: ${e.message}`
+        );
       }
       if (!_.isArray(rules)) {
         throw new Error(`'${source}' must contain a valid JSON array`);
@@ -121,7 +138,7 @@ class SecureValuesPreprocessor {
    * @param {string} str The string to make replacements in
    * @returns {string} The string with replacements made
    */
-  preprocess (str) {
+  preprocess(str) {
     if (this._rules.length === 0 || !_.isString(str)) {
       return str;
     }
@@ -136,7 +153,7 @@ class SecureValuesPreprocessor {
 
 const SECURE_VALUES_PREPROCESSOR = new SecureValuesPreprocessor();
 
-export { SECURE_VALUES_PREPROCESSOR, SecureValuesPreprocessor };
+export {SECURE_VALUES_PREPROCESSOR, SecureValuesPreprocessor};
 export default SECURE_VALUES_PREPROCESSOR;
 
 /**

@@ -5,26 +5,28 @@
  * @param {ReturnType<import('./log').LogMixin>} Base
  * @returns {SettingsBase}
  */
-export function SettingsMixin (Base) {
+export function SettingsMixin(Base) {
   /**
    * @implements {ISettingsCommands}
    */
   class SettingsCommands extends Base {
-
-    async updateSettings (newSettings) {
+    async updateSettings(newSettings) {
       if (!this.settings) {
-        this.log.errorAndThrow('Cannot update settings; settings object not found');
+        this.log.errorAndThrow(
+          'Cannot update settings; settings object not found'
+        );
       }
       return await this.settings.update(newSettings);
     }
 
-    async getSettings () {
+    async getSettings() {
       if (!this.settings) {
-        this.log.errorAndThrow('Cannot get settings; settings object not found');
+        this.log.errorAndThrow(
+          'Cannot get settings; settings object not found'
+        );
       }
       return await this.settings.getSettings();
     }
-
   }
 
   return SettingsCommands;

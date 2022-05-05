@@ -1,15 +1,14 @@
-
 import betterAjvErrors from '@sidvind/better-ajv-errors';
-import { lilconfig } from 'lilconfig';
+import {lilconfig} from 'lilconfig';
 import _ from 'lodash';
 import yaml from 'yaml';
-import { getSchema, validate } from './schema/schema';
+import {getSchema, validate} from './schema/schema';
 
 /**
  * lilconfig loader to handle `.yaml` files
  * @type {import('lilconfig').LoaderSync}
  */
-function yamlLoader (filepath, content) {
+function yamlLoader(filepath, content) {
   return yaml.parse(content);
 }
 
@@ -26,7 +25,7 @@ const rawConfig = new Map();
  * If it weren't for this cache, this would be unnecessary.
  * @type {import('lilconfig').LoaderSync}
  */
-function jsonLoader (filepath, content) {
+function jsonLoader(filepath, content) {
   rawConfig.set(filepath, content);
   return JSON.parse(content);
 }
@@ -37,13 +36,15 @@ function jsonLoader (filepath, content) {
  * @param {string} filepath - Path to config file
  * @returns {Promise<import('lilconfig').LilconfigResult>}
  */
-async function loadConfigFile (lc, filepath) {
+async function loadConfigFile(lc, filepath) {
   try {
     // removing "await" will cause any rejection to _not_ be caught in this block!
     return await lc.load(filepath);
-  } catch (/** @type {unknown} */err) {
-    if (/** @type {NodeJS.ErrnoException} */(err).code === 'ENOENT') {
-      /** @type {NodeJS.ErrnoException} */(err).message = `Config file not found at user-provided path: ${filepath}`;
+  } catch (/** @type {unknown} */ err) {
+    if (/** @type {NodeJS.ErrnoException} */ (err).code === 'ENOENT') {
+      /** @type {NodeJS.ErrnoException} */ (
+        err
+      ).message = `Config file not found at user-provided path: ${filepath}`;
       throw err;
     } else if (err instanceof SyntaxError) {
       // generally invalid JSON
@@ -59,7 +60,7 @@ async function loadConfigFile (lc, filepath) {
  * @param {LilconfigAsyncSearcher} lc - lilconfig instance
  * @returns {Promise<import('lilconfig').LilconfigResult>}
  */
-async function searchConfigFile (lc) {
+async function searchConfigFile(lc) {
   return await lc.search();
 }
 
@@ -78,7 +79,7 @@ async function searchConfigFile (lc) {
  * @throws {TypeError} If `errors` is empty
  * @returns {string}
  */
-export function formatErrors (errors = [], config = {}, opts = {}) {
+export function formatErrors(errors = [], config = {}, opts = {}) {
   if (errors && !errors.length) {
     throw new TypeError('Array of errors must be non-empty');
   }
@@ -97,7 +98,7 @@ export function formatErrors (errors = [], config = {}, opts = {}) {
  * @public
  * @returns {Promise<ReadConfigFileResult>} Contains config and filepath, if found, and any errors
  */
-export async function readConfigFile (filepath, opts = {}) {
+export async function readConfigFile(filepath, opts = {}) {
   const lc = lilconfig('appium', {
     loaders: {
       '.yaml': yamlLoader,
@@ -105,7 +106,7 @@ export async function readConfigFile (filepath, opts = {}) {
       '.json': jsonLoader,
       noExt: jsonLoader,
     },
-    packageProp: 'appiumConfig'
+    packageProp: 'appiumConfig',
   });
 
   const result = filepath
@@ -131,7 +132,7 @@ export async function readConfigFile (filepath, opts = {}) {
 
       // normalize (to camel case) all top-level property names of the config file
       configResult.config = normalizeConfig(
-        /** @type {AppiumConfig} */ (configResult.config),
+        /** @type {AppiumConfig} */ (configResult.config)
       );
 
       return configResult;
@@ -148,7 +149,7 @@ export async function readConfigFile (filepath, opts = {}) {
  * @param {AppiumConfig} config - Configuration object
  * @returns {NormalizedAppiumConfig} New object with camel-cased keys (or `dest` keys).
  */
-export function normalizeConfig (config) {
+export function normalizeConfig(config) {
   const schema = getSchema();
   /**
    * @param {AppiumConfig} config
@@ -157,10 +158,13 @@ export function normalizeConfig (config) {
    * @returns Normalized section of config
    */
   const normalize = (config, section) => {
-    const obj = _.isUndefined(section) ? config : _.get(config, section, config);
+    const obj = _.isUndefined(section)
+      ? config
+      : _.get(config, section, config);
 
-    const mappedObj = _.mapKeys(obj, (__, prop) =>
-      schema.properties[prop]?.appiumCliDest ?? _.camelCase(prop),
+    const mappedObj = _.mapKeys(
+      obj,
+      (__, prop) => schema.properties[prop]?.appiumCliDest ?? _.camelCase(prop)
     );
 
     return _.mapValues(mappedObj, (value, property) => {

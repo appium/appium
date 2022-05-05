@@ -1,7 +1,11 @@
 // transpile:mocha
 
-import { getDynamicLogger, restoreWriters, setupWriters,
-         assertOutputContains } from './helpers';
+import {
+  getDynamicLogger,
+  restoreWriters,
+  setupWriters,
+  assertOutputContains,
+} from './helpers';
 
 describe('logger with force log', function () {
   let writers, log;
@@ -30,7 +34,9 @@ describe('logger with force log', function () {
     assertOutputContains(writers, 'warn');
     log.error('error');
     assertOutputContains(writers, 'error');
-    (() => { log.errorAndThrow('msg'); }).should.throw('msg');
+    (() => {
+      log.errorAndThrow('msg');
+    }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, 'msg');
   });

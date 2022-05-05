@@ -1,7 +1,6 @@
-
 import AppiumSupport from '../../lib/index.js';
 
-let { system, tempDir, util } = AppiumSupport;
+let {system, tempDir, util} = AppiumSupport;
 
 describe('index', function () {
   describe('default', function () {

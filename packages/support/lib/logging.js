@@ -1,11 +1,19 @@
 import npmlog from 'npmlog';
 import _ from 'lodash';
-import { unleakString } from './util';
+import {unleakString} from './util';
 import moment from 'moment';
 import SECURE_VALUES_PREPROCESSOR from './log-internal';
 
 // levels that are available from `npmlog`
-const NPM_LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
+const NPM_LEVELS = [
+  'silly',
+  'verbose',
+  'debug',
+  'info',
+  'http',
+  'warn',
+  'error',
+];
 const MAX_LOG_RECORDS_COUNT = 3000;
 
 const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
@@ -16,9 +24,9 @@ for (let level of NPM_LEVELS) {
   mockLog[level] = () => {};
 }
 
-function patchLogger (logger) {
+function patchLogger(logger) {
   if (!logger.debug) {
-    logger.addLevel('debug', 1000, { fg: 'blue', bg: 'black' }, 'dbug');
+    logger.addLevel('debug', 1000, {fg: 'blue', bg: 'black'}, 'dbug');
   }
 }
 
@@ -26,7 +34,7 @@ function patchLogger (logger) {
  *
  * @returns {[npmlog.Logger, boolean]}
  */
-function _getLogger () {
+function _getLogger() {
   // check if the user set the `_TESTING` or `_FORCE_LOGS` flag
   const testingMode = process.env._TESTING === '1';
   const forceLogMode = process.env._FORCE_LOGS === '1';
@@ -53,7 +61,7 @@ function _getLogger () {
  * @param {boolean} logTimestamp whether to include timestamps into log prefixes
  * @returns {string}
  */
-function getActualPrefix (prefix, logTimestamp = false) {
+function getActualPrefix(prefix, logTimestamp = false) {
   const result = (_.isFunction(prefix) ? prefix() : prefix) ?? '';
   return logTimestamp
     ? `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}] ${result}`
@@ -65,7 +73,7 @@ function getActualPrefix (prefix, logTimestamp = false) {
  * @param {Prefix?} prefix
  * @returns {AppiumLogger}
  */
-function getLogger (prefix = null) {
+function getLogger(prefix = null) {
   let [logger, usingGlobalLog] = _getLogger();
 
   // wrap the logger so that we can catch and modify any logging
@@ -77,14 +85,14 @@ function getLogger (prefix = null) {
 
   // allow access to the level of the underlying logger
   Object.defineProperty(wrappedLogger, 'level', {
-    get () {
+    get() {
       return logger.level;
     },
-    set (newValue) {
+    set(newValue) {
       logger.level = newValue;
     },
     enumerable: true,
-    configurable: true
+    configurable: true,
   });
 
   const logTimestamp = process.env._LOG_TIMESTAMP === '1';
@@ -94,12 +102,15 @@ function getLogger (prefix = null) {
     wrappedLogger[level] = function (...args) {
       const actualPrefix = getActualPrefix(this.prefix, logTimestamp);
       for (const arg of args) {
-        const out = (_.isError(arg) && arg.stack) ? arg.stack : `${arg}`;
+        const out = _.isError(arg) && arg.stack ? arg.stack : `${arg}`;
         for (const line of out.split('\n')) {
           // it is necessary to unleak each line because `split` call
           // creates "views" to the original string as well as the `substring` one
           const unleakedLine = unleakString(line);
-          logger[level](actualPrefix, SECURE_VALUES_PREPROCESSOR.preprocess(unleakedLine));
+          logger[level](
+            actualPrefix,
+            SECURE_VALUES_PREPROCESSOR.preprocess(unleakedLine)
+          );
         }
       }
     };
@@ -108,7 +119,7 @@ function getLogger (prefix = null) {
   wrappedLogger.errorAndThrow = function (err) {
     this.error(err);
     // make sure we have an `Error` object. Wrap if necessary
-    throw (_.isError(err) ? err : new Error(unleakString(err)));
+    throw _.isError(err) ? err : new Error(unleakString(err));
   };
   if (!usingGlobalLog) {
     // if we're not using a global log specified from some top-level package,
@@ -116,7 +127,7 @@ function getLogger (prefix = null) {
     // package set the log level
     wrappedLogger.level = 'verbose';
   }
-  return /** @type {AppiumLogger} */(wrappedLogger);
+  return /** @type {AppiumLogger} */ (wrappedLogger);
 }
 
 /**
@@ -140,7 +151,7 @@ function getLogger (prefix = null) {
  * @throws {Error} If the given file cannot be loaded
  * @returns {Promise<LoadResult>}
  */
-async function loadSecureValuesPreprocessingRules (rulesJsonPath) {
+async function loadSecureValuesPreprocessingRules(rulesJsonPath) {
   const issues = await SECURE_VALUES_PREPROCESSOR.loadRules(rulesJsonPath);
   return {
     issues,
@@ -151,7 +162,7 @@ async function loadSecureValuesPreprocessingRules (rulesJsonPath) {
 // export a default logger with no prefix
 const log = getLogger();
 
-export { log, patchLogger, getLogger, loadSecureValuesPreprocessingRules };
+export {log, patchLogger, getLogger, loadSecureValuesPreprocessingRules};
 export default log;
 
 /**

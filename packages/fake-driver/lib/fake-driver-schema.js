@@ -14,7 +14,6 @@
 //   }
 // }
 
-
 export default {
   type: 'object',
   title: 'Fake Driver Configuration',
@@ -30,7 +29,7 @@ export default {
     sillyWebServerHost: {
       type: 'string',
       description: 'The host to use for the fake web server',
-      default: 'sillyhost'
-    }
-  }
+      default: 'sillyhost',
+    },
+  },
 };

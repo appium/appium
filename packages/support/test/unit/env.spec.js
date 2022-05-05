@@ -47,7 +47,7 @@ describe('env', function () {
 
       it('should return a path relative to the default APPIUM_HOME', async function () {
         expect(await env.resolveManifestPath()).to.equal(
-          path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH),
+          path.join(env.DEFAULT_APPIUM_HOME, env.MANIFEST_RELATIVE_PATH)
         );
       });
     });
@@ -56,12 +56,9 @@ describe('env', function () {
       describe('when a manifest file exists there', function () {
         it('it should return the existing path', async function () {
           expect(
-            await env.resolveManifestPath('/somewhere/over/the/rainbow'),
+            await env.resolveManifestPath('/somewhere/over/the/rainbow')
           ).to.equal(
-            path.join(
-              '/somewhere/over/the/rainbow',
-              env.MANIFEST_RELATIVE_PATH,
-            ),
+            path.join('/somewhere/over/the/rainbow', env.MANIFEST_RELATIVE_PATH)
           );
         });
       });
@@ -73,7 +70,7 @@ describe('env', function () {
       it('should reject', async function () {
         await expect(env.resolveAppiumHome('foo')).to.be.rejectedWith(
           TypeError,
-          /absolute/i,
+          /absolute/i
         );
       });
     });
@@ -85,7 +82,7 @@ describe('env', function () {
 
       it('should resolve APPIUM_HOME from env', async function () {
         await expect(env.resolveAppiumHome()).to.eventually.equal(
-          process.env.APPIUM_HOME,
+          process.env.APPIUM_HOME
         );
       });
     });
@@ -102,7 +99,7 @@ describe('env', function () {
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
             await expect(
-              env.resolveAppiumHome('/somewhere'),
+              env.resolveAppiumHome('/somewhere')
             ).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
           });
         });
@@ -115,7 +112,7 @@ describe('env', function () {
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(
-                env.resolveAppiumHome('/somewhere'),
+                env.resolveAppiumHome('/somewhere')
               ).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
@@ -140,7 +137,7 @@ describe('env', function () {
 
             it('should resolve with the identity', async function () {
               await expect(
-                env.resolveAppiumHome('/somewhere'),
+                env.resolveAppiumHome('/somewhere')
               ).to.eventually.equal('/somewhere');
             });
           });
@@ -164,7 +161,7 @@ describe('env', function () {
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(
-                env.resolveAppiumHome('/somewhere'),
+                env.resolveAppiumHome('/somewhere')
               ).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
@@ -188,7 +185,7 @@ describe('env', function () {
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(
-                env.resolveAppiumHome('/somewhere'),
+                env.resolveAppiumHome('/somewhere')
               ).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
@@ -213,7 +210,7 @@ describe('env', function () {
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(
-                env.resolveAppiumHome('/somewhere'),
+                env.resolveAppiumHome('/somewhere')
               ).to.eventually.equal(env.DEFAULT_APPIUM_HOME);
             });
           });
@@ -228,7 +225,7 @@ describe('env', function () {
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
           await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME,
+            env.DEFAULT_APPIUM_HOME
           );
         });
       });
@@ -240,7 +237,7 @@ describe('env', function () {
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
           await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-            env.DEFAULT_APPIUM_HOME,
+            env.DEFAULT_APPIUM_HOME
           );
         });
       });
@@ -268,9 +265,9 @@ describe('env', function () {
         });
 
         it('should resolve `false``', async function () {
-          await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(
-            false,
-          );
+          await expect(
+            env.hasAppiumDependency('/somewhere')
+          ).to.eventually.equal(false);
         });
       });
 
@@ -283,12 +280,14 @@ describe('env', function () {
 
           describe('when the `appium` dependency spec begins with `file:`', function () {
             beforeEach(function () {
-              MockReadPkg.resolves({dependencies: {'appium': 'file:packges/appium'}});
+              MockReadPkg.resolves({
+                dependencies: {appium: 'file:packges/appium'},
+              });
             });
 
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });
@@ -296,13 +295,13 @@ describe('env', function () {
           describe('when `appium` dep is current`', function () {
             beforeEach(function () {
               MockReadPkg.resolves({
-                devDependencies: {'appium': '2.0.0'}
+                devDependencies: {appium: '2.0.0'},
               });
             });
 
             it('should resolve `true`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(true);
             });
           });
@@ -310,12 +309,12 @@ describe('env', function () {
           describe('when `appium` dep is v1.x', function () {
             beforeEach(function () {
               MockReadPkg.resolves({
-                optionalDependencies: {'appium': '1.x'}
+                optionalDependencies: {appium: '1.x'},
               });
             });
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });
@@ -323,13 +322,13 @@ describe('env', function () {
           describe('when `appium` dep is v0.x', function () {
             beforeEach(function () {
               MockReadPkg.resolves({
-                dependencies: {'appium': '0.x'}
+                dependencies: {appium: '0.x'},
               });
             });
 
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });
@@ -356,7 +355,7 @@ describe('env', function () {
 
             it('should resolve `true`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(true);
             });
           });
@@ -380,7 +379,7 @@ describe('env', function () {
             });
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });
@@ -404,7 +403,7 @@ describe('env', function () {
             });
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });
@@ -429,7 +428,7 @@ describe('env', function () {
 
             it('should resolve `false`', async function () {
               await expect(
-                env.hasAppiumDependency('/somewhere'),
+                env.hasAppiumDependency('/somewhere')
               ).to.eventually.equal(false);
             });
           });

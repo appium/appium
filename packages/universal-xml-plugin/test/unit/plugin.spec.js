@@ -1,7 +1,12 @@
 import UniversalXMLPlugin from '../../lib/plugin';
 import BaseDriver from '@appium/base-driver';
-import { XML_IOS, XML_ANDROID, XML_IOS_TRANSFORMED, XML_ANDROID_TRANSFORMED } from '../fixtures';
-import { runQuery, getNodeAttrVal } from '../../lib/xpath';
+import {
+  XML_IOS,
+  XML_ANDROID,
+  XML_IOS_TRANSFORMED,
+  XML_ANDROID_TRANSFORMED,
+} from '../fixtures';
+import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 
 describe('UniversalXMLPlugin', function () {
   let next;
@@ -11,13 +16,17 @@ describe('UniversalXMLPlugin', function () {
     it('should transform page source for ios', async function () {
       next = driver.getPageSource = () => XML_IOS;
       driver.caps = {platformName: 'iOS'};
-      await p.getPageSource(next, driver).should.eventually.eql(XML_IOS_TRANSFORMED);
+      await p
+        .getPageSource(next, driver)
+        .should.eventually.eql(XML_IOS_TRANSFORMED);
     });
     it('should transform page source for android', async function () {
       next = driver.getPageSourcce = () => XML_ANDROID;
       driver.caps = {platformName: 'Android'};
       driver.opts = {appPackage: 'io.cloudgrey.the_app'};
-      await p.getPageSource(next, driver).should.eventually.eql(XML_ANDROID_TRANSFORMED);
+      await p
+        .getPageSource(next, driver)
+        .should.eventually.eql(XML_ANDROID_TRANSFORMED);
     });
   });
 
@@ -31,7 +40,12 @@ describe('UniversalXMLPlugin', function () {
         const nodes = runQuery(selector, XML_IOS.replace(/<\/?AppiumAUT>/, ''));
         return nodes[0];
       };
-      const node = await p.findElement(next, driver, 'xpath', '//TextInput[@axId="username"]');
+      const node = await p.findElement(
+        next,
+        driver,
+        'xpath',
+        '//TextInput[@axId="username"]'
+      );
       getNodeAttrVal(node, 'value').should.eql('alice');
       node.nodeName.should.eql('XCUIElementTypeTextField');
     });
@@ -44,7 +58,12 @@ describe('UniversalXMLPlugin', function () {
         const nodes = runQuery(selector, XML_ANDROID);
         return nodes[0];
       };
-      const node = await p.findElement(next, driver, 'xpath', '//TextInput[@axId="username"]');
+      const node = await p.findElement(
+        next,
+        driver,
+        'xpath',
+        '//TextInput[@axId="username"]'
+      );
       getNodeAttrVal(node, 'content-desc').should.eql('username');
       node.nodeName.should.eql('android.widget.EditText');
     });

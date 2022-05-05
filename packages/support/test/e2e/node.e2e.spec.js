@@ -1,6 +1,4 @@
-import { node } from '../../lib';
-
-
+import {node} from '../../lib';
 
 describe('node utilities', function () {
   describe('requirePackage', function () {
@@ -12,7 +10,9 @@ describe('node utilities', function () {
       await node.requirePackage('npm').should.not.be.rejected;
     });
     it('should fail to find uninstalled package', async function () {
-      await node.requirePackage('appium-foo-driver').should.eventually.be.rejectedWith(/Unable to load package/);
+      await node
+        .requirePackage('appium-foo-driver')
+        .should.eventually.be.rejectedWith(/Unable to load package/);
     });
   });
 });

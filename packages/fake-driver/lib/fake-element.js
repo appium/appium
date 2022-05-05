@@ -2,7 +2,7 @@ import _ from 'lodash';
 import XMLDom from '@xmldom/xmldom';
 
 class FakeElement {
-  constructor (xmlNode, app) {
+  constructor(xmlNode, app) {
     this.app = app;
     this.node = xmlNode;
     this.nodeAttrs = {};
@@ -15,7 +15,7 @@ class FakeElement {
     this.parseCss();
   }
 
-  parseCss () {
+  parseCss() {
     if (this.nodeAttrs.style) {
       let segments = this.nodeAttrs.style.split(';');
       for (let s of segments) {
@@ -27,49 +27,49 @@ class FakeElement {
     }
   }
 
-  get tagName () {
+  get tagName() {
     return this.node.tagName;
   }
 
-  setAttr (k, v) {
+  setAttr(k, v) {
     this.attrs[k] = v;
   }
 
-  getAttr (k) {
+  getAttr(k) {
     return this.attrs[k] || '';
   }
 
-  isVisible () {
+  isVisible() {
     return this.nodeAttrs.visible !== 'false';
   }
 
-  isEnabled () {
+  isEnabled() {
     return this.nodeAttrs.enabled !== 'false';
   }
 
-  isSelected () {
+  isSelected() {
     return this.nodeAttrs.selected === 'true';
   }
 
-  getLocation () {
+  getLocation() {
     return {
       x: parseFloat(this.nodeAttrs.left || 0),
-      y: parseFloat(this.nodeAttrs.top || 0)
+      y: parseFloat(this.nodeAttrs.top || 0),
     };
   }
 
-  getElementRect () {
+  getElementRect() {
     return {...this.getLocation(), ...this.getSize()};
   }
 
-  getSize () {
+  getSize() {
     return {
       width: parseFloat(this.nodeAttrs.width || 0),
-      height: parseFloat(this.nodeAttrs.height || 0)
+      height: parseFloat(this.nodeAttrs.height || 0),
     };
   }
 
-  click () {
+  click() {
     let curClicks = this.getAttr('clicks') || 0;
     this.setAttr('clicks', curClicks + 1);
     let alertId = this.nodeAttrs.showAlert;
@@ -78,26 +78,25 @@ class FakeElement {
     }
   }
 
-  equals (other) {
+  equals(other) {
     return this.node === other.node;
   }
 
-  hasPrompt () {
+  hasPrompt() {
     return this.nodeAttrs.hasPrompt === 'true';
   }
 
-  getCss (prop) {
+  getCss(prop) {
     if (_.has(this.css, prop)) {
       return this.css[prop];
     }
     return null;
   }
 
-  get xmlFragment () {
+  get xmlFragment() {
     let frag = new XMLDom.XMLSerializer().serializeToString(this.node);
     return new XMLDom.DOMParser().parseFromString(frag, 'application/xml');
   }
-
 }
 
-export { FakeElement };
+export {FakeElement};

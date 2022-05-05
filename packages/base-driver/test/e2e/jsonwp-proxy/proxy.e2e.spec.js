@@ -1,5 +1,5 @@
-import { JWProxy, server, routeConfiguringFunction } from '../../../lib';
-import { FakeDriver } from '../protocol/fake-driver';
+import {JWProxy, server, routeConfiguringFunction} from '../../../lib';
+import {FakeDriver} from '../protocol/fake-driver';
 
 describe('proxy', function () {
   const jwproxy = new JWProxy();
@@ -29,7 +29,9 @@ describe('proxy', function () {
     });
     it('should start a new session', async function () {
       const caps = {browserName: 'fake'};
-      const res = await jwproxy.command('/session', 'POST', {capabilities: {alwaysMatch: caps}});
+      const res = await jwproxy.command('/session', 'POST', {
+        capabilities: {alwaysMatch: caps},
+      });
       res.capabilities.alwaysMatch.should.have.property('browserName');
       jwproxy.sessionId.should.have.length(48);
     });

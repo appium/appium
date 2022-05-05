@@ -5,11 +5,10 @@ const red = require('ansi-red');
 const notifier = require('node-notifier');
 const moment = require('moment');
 
-
 const COLOR_CODE_REGEXP = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
 module.exports = {
-  use (gulp, opts = {}) {
+  use(gulp, opts = {}) {
     this.gulp = gulp;
     this.title = opts.build || 'Appium';
 
@@ -19,7 +18,7 @@ module.exports = {
     return this;
   },
 
-  notify (subtitle, message) {
+  notify(subtitle, message) {
     if (process.argv.includes('--no-notif')) {
       return;
     }
@@ -35,11 +34,11 @@ module.exports = {
     }
   },
 
-  notifyOK () {
+  notifyOK() {
     this.notify('Build success!', 'All Good!');
   },
 
-  handleError (err) {
+  handleError(err) {
     this.errored = true;
 
     // log the error
@@ -56,7 +55,7 @@ module.exports = {
     }
   },
 
-  configure (taskName, filePattern, sequence) {
+  configure(taskName, filePattern, sequence) {
     const notifyWatch = (done) => {
       if (!this.errored) {
         this.notifyOK();
@@ -67,10 +66,14 @@ module.exports = {
     this.gulp.task(taskName, () => {
       this.exitOnError = false;
 
-      return this.gulp.watch(filePattern, {
-        ignoreInitial: false,
-        ignored: '**/gulpfile.js'
-      }, this.gulp.series(sequence, notifyWatch));
+      return this.gulp.watch(
+        filePattern,
+        {
+          ignoreInitial: false,
+          ignored: '**/gulpfile.js',
+        },
+        this.gulp.series(sequence, notifyWatch)
+      );
     });
-  }
+  },
 };

@@ -1,26 +1,26 @@
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import _ from 'lodash';
 import os from 'os';
 
 const VERSION_PATTERN = /^(\d+\.\d+)/m;
 
-function isWindows () {
+function isWindows() {
   return os.type() === 'Windows_NT';
 }
 
-function isMac () {
+function isMac() {
   return os.type() === 'Darwin';
 }
 
-function isLinux () {
+function isLinux() {
   return !isWindows() && !isMac();
 }
 
-function isOSWin64 () {
+function isOSWin64() {
   return process.arch === 'x64' || _.has(process.env, 'PROCESSOR_ARCHITEW6432');
 }
 
-async function arch () {
+async function arch() {
   if (isLinux() || isMac()) {
     let {stdout} = await exec('uname', ['-m']);
     return stdout.trim() === 'i686' ? '32' : '64';
@@ -30,7 +30,7 @@ async function arch () {
   }
 }
 
-async function macOsxVersion () {
+async function macOsxVersion() {
   let stdout;
   try {
     stdout = (await exec('sw_vers', ['-productVersion'])).stdout.trim();
@@ -40,9 +40,11 @@ async function macOsxVersion () {
 
   const versionMatch = VERSION_PATTERN.exec(stdout);
   if (!versionMatch) {
-    throw new Error(`Could not detect Mac OS X Version from sw_vers output: '${stdout}'`);
+    throw new Error(
+      `Could not detect Mac OS X Version from sw_vers output: '${stdout}'`
+    );
   }
   return versionMatch[1];
 }
 
-export { isWindows, isMac, isLinux, isOSWin64, arch, macOsxVersion };
+export {isWindows, isMac, isLinux, isOSWin64, arch, macOsxVersion};

@@ -1,10 +1,10 @@
 // @ts-check
 
 import _ from 'lodash';
-import { PLUGIN_TYPE } from '../../../lib/constants';
-import { finalizeSchema, registerSchema, resetSchema } from '../../../lib/schema';
-import { toParserArgs } from '../../../lib/schema/cli-args';
-import { transformers } from '../../../lib/schema/cli-transformers';
+import {PLUGIN_TYPE} from '../../../lib/constants';
+import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
+import {toParserArgs} from '../../../lib/schema/cli-args';
+import {transformers} from '../../../lib/schema/cli-transformers';
 
 const {expect} = chai;
 
@@ -15,7 +15,7 @@ describe('cli-args', function () {
      * @param {*} opts
      * @returns
      */
-    function getArgs (opts = {}) {
+    function getArgs(opts = {}) {
       let {extName, extType, schema} = opts;
       if (schema && extName && extType) {
         registerSchema(extType, extName, schema);
@@ -37,14 +37,17 @@ describe('cli-args', function () {
 
         describe('boolean', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'boolean'}}, type: 'object'};
+            const schema = {
+              properties: {foo: {type: 'boolean'}},
+              type: 'object',
+            };
             result = getArgs({schema, extName, extType});
           });
 
           it('should return options containing `action` prop of `store_const` and no `type`', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'action',
-              'store_const',
+              'store_const'
             );
           });
 
@@ -55,21 +58,24 @@ describe('cli-args', function () {
 
         describe('object', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'object'}}, type: 'object'};
+            const schema = {
+              properties: {foo: {type: 'object'}},
+              type: 'object',
+            };
             result = getArgs({schema, extName, extType});
           });
 
           it('should use the `json` transformer', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'type',
-              transformers.json,
+              transformers.json
             );
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'metavar',
-              'FOO',
+              'FOO'
             );
           });
         });
@@ -83,21 +89,24 @@ describe('cli-args', function () {
           it('should use the `csv` transformer', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'type',
-              transformers.csv,
+              transformers.csv
             );
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'metavar',
-              'FOO',
+              'FOO'
             );
           });
         });
 
         describe('number', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'number'}}, type: 'object'};
+            const schema = {
+              properties: {foo: {type: 'number'}},
+              type: 'object',
+            };
             result = getArgs({schema, extName, extType});
           });
 
@@ -108,14 +117,17 @@ describe('cli-args', function () {
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'metavar',
-              'FOO',
+              'FOO'
             );
           });
         });
 
         describe('integer', function () {
           beforeEach(function () {
-            const schema = {properties: {foo: {type: 'integer'}}, type: 'object'};
+            const schema = {
+              properties: {foo: {type: 'integer'}},
+              type: 'object',
+            };
             result = getArgs({schema, extName, extType});
           });
 
@@ -126,7 +138,7 @@ describe('cli-args', function () {
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'metavar',
-              'FOO',
+              'FOO'
             );
           });
         });
@@ -147,7 +159,7 @@ describe('cli-args', function () {
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
             expect(result['--plugin-blob-foo']).to.have.property(
               'metavar',
-              'FOO',
+              'FOO'
             );
           });
         });
@@ -157,7 +169,7 @@ describe('cli-args', function () {
             const schema = {properties: {foo: {type: 'null'}}, type: 'object'};
             expect(() => getArgs({extType, extName, schema})).to.throw(
               TypeError,
-              /unknown or disallowed/,
+              /unknown or disallowed/
             );
           });
         });
@@ -170,7 +182,7 @@ describe('cli-args', function () {
             };
             expect(() => getArgs({extType, extName, schema})).to.throw(
               Error,
-              /schema is invalid/,
+              /schema is invalid/
             );
           });
         });
@@ -188,7 +200,7 @@ describe('cli-args', function () {
           };
           result = getArgs({schema, extName, extType});
           expect(result).to.have.property(
-            '--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F',
+            '--plugin-blob-foo,--plugin-blob-fooooo,--plugin-blob-F'
           );
         });
       });
@@ -233,7 +245,7 @@ describe('cli-args', function () {
           };
           result = getArgs({schema, extName, extType});
           expect(() => result['--plugin-blob-foo'].type('123')).to.throw(
-            /must be a valid json/i,
+            /must be a valid json/i
           );
         });
 
@@ -254,7 +266,7 @@ describe('cli-args', function () {
                 };
                 result = getArgs({schema, extName, extType});
                 expect(() => result['--plugin-blob-foo'].type('herp')).to.throw(
-                  /must be a valid json/i,
+                  /must be a valid json/i
                 );
               });
             });
@@ -275,7 +287,7 @@ describe('cli-args', function () {
                 };
                 result = getArgs({schema, extName, extType});
                 expect(
-                  result['--plugin-blob-foo'].type('{"herp": "derp"}'),
+                  result['--plugin-blob-foo'].type('{"herp": "derp"}')
                 ).to.eql({herp: 'derp'});
               });
             });
@@ -294,7 +306,7 @@ describe('cli-args', function () {
                 };
                 result = getArgs({schema, extName, extType});
                 expect(() =>
-                  result['--plugin-blob-foo'].type('{"georgy": "porgy"}'),
+                  result['--plugin-blob-foo'].type('{"georgy": "porgy"}')
                 ).to.throw(/one of the allowed values/i);
               });
             });
@@ -316,12 +328,12 @@ describe('cli-args', function () {
             };
             expect(() => getArgs({schema, extName, extType})).to.throw(
               TypeError,
-              /`enum` is only supported for `type: 'string'`/i,
+              /`enum` is only supported for `type: 'string'`/i
             );
           });
 
           it(
-            'should actually throw earlier by failing schema validation, but that would mean overriding the behavior of `enum` which sounds inadvisable',
+            'should actually throw earlier by failing schema validation, but that would mean overriding the behavior of `enum` which sounds inadvisable'
           );
         });
 
@@ -339,7 +351,7 @@ describe('cli-args', function () {
             const result = getArgs({schema, extName, extType});
             expect(result['--plugin-blob-foo']).to.have.deep.property(
               'choices',
-              ['herp', 'derp'],
+              ['herp', 'derp']
             );
           });
         });

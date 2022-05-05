@@ -1,14 +1,14 @@
-function fakeTime (sandbox) {
+function fakeTime(sandbox) {
   let clock = sandbox.useFakeTimers();
   return new TimeLord(clock);
 }
 
 class TimeLord {
-  constructor (clock) {
+  constructor(clock) {
     this.clock = clock;
   }
 
-  speedup (interval, times) {
+  speedup(interval, times) {
     let tick = (n) => {
       if (n === 0) return; // eslint-disable-line curly
       process.nextTick(() => {
@@ -20,4 +20,4 @@ class TimeLord {
     tick(times);
   }
 }
-export { fakeTime };
+export {fakeTime};

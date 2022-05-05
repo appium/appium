@@ -1,7 +1,5 @@
 import _ from 'lodash';
-import { BaseDriver } from '../../../../lib';
-
-
+import {BaseDriver} from '../../../../lib';
 
 describe('logging custom events', function () {
   it('should allow logging of events', async function () {
@@ -26,7 +24,8 @@ describe('#getLogEvents', function () {
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
     (await d.getLogEvents()).should.eql({
-      commands: [], testCommand: ['1', '2', '3']
+      commands: [],
+      testCommand: ['1', '2', '3'],
     });
   });
 
@@ -35,7 +34,7 @@ describe('#getLogEvents', function () {
     d._eventHistory.should.eql({commands: []});
     d._eventHistory.testCommand = ['1', '2', '3'];
     (await d.getLogEvents('testCommand')).should.eql({
-      testCommand: ['1', '2', '3']
+      testCommand: ['1', '2', '3'],
     });
   });
 
@@ -52,7 +51,8 @@ describe('#getLogEvents', function () {
     d._eventHistory.testCommand = ['1', '2', '3'];
     d._eventHistory.testCommand2 = ['4', '5'];
     (await d.getLogEvents(['testCommand', 'testCommand2'])).should.eql({
-      testCommand: ['1', '2', '3'], testCommand2: ['4', '5']
+      testCommand: ['1', '2', '3'],
+      testCommand2: ['4', '5'],
     });
   });
 
@@ -61,7 +61,7 @@ describe('#getLogEvents', function () {
     d._eventHistory.should.eql({commands: []});
     d._eventHistory['custom:appiumEvent'] = ['1', '2', '3'];
     (await d.getLogEvents(['custom:appiumEvent'])).should.eql({
-      'custom:appiumEvent': ['1', '2', '3']
+      'custom:appiumEvent': ['1', '2', '3'],
     });
   });
 

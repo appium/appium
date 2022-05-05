@@ -8,19 +8,18 @@ import _ from 'lodash';
  * @param {FindBase} Base
  * @returns {LogBase}
  */
-export function LogMixin (Base) {
+export function LogMixin(Base) {
   /**
    * @implements {ILogCommands}
    */
   class LogCommands extends Base {
-
-    constructor (...args) {
+    constructor(...args) {
       super(...args);
       /** @type {Record<string, LogType<Driver>>} */
       this.supportedLogTypes = this.supportedLogTypes ?? {};
     }
 
-    async getLogTypes () {
+    async getLogTypes() {
       this.log.debug('Retrieving supported log types');
       return _.keys(this.supportedLogTypes);
     }
@@ -29,14 +28,17 @@ export function LogMixin (Base) {
      * @this {Driver}
      * @param {string} logType
      */
-    async getLog (logType) {
+    async getLog(logType) {
       this.log.debug(`Retrieving '${logType}' logs`);
 
       if (!(await this.getLogTypes()).includes(logType)) {
-        const logsTypesWithDescriptions = _.mapValues(this.supportedLogTypes, 'description');
+        const logsTypesWithDescriptions = _.mapValues(
+          this.supportedLogTypes,
+          'description'
+        );
         throw new Error(
           `Unsupported log type '${logType}'. ` +
-            `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`,
+            `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`
         );
       }
 
@@ -45,7 +47,6 @@ export function LogMixin (Base) {
   }
   return LogCommands;
 }
-
 
 /**
  * @typedef {import('@appium/types').LogCommands} ILogCommands

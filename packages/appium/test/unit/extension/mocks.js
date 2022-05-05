@@ -6,9 +6,9 @@
  */
 
 import path from 'path';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 
-export function initMocks (sandbox = createSandbox()) {
+export function initMocks(sandbox = createSandbox()) {
   /**
    * Mocks for package `@appium/support`
    * @type {MockAppiumSupport}
@@ -34,23 +34,21 @@ export function initMocks (sandbox = createSandbox()) {
     },
     env: {
       resolveAppiumHome:
-      /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
-        sandbox.stub().resolves('/some/path')
-      ),
+        /** @type {MockAppiumSupportEnv['resolveAppiumHome']} */ (
+          sandbox.stub().resolves('/some/path')
+        ),
       resolveManifestPath:
-      /** @type {MockAppiumSupportEnv['resolveManifestPath']} */ (
-        sandbox.stub().resolves('/some/path/extensions.yaml')
-      ),
+        /** @type {MockAppiumSupportEnv['resolveManifestPath']} */ (
+          sandbox.stub().resolves('/some/path/extensions.yaml')
+        ),
       hasAppiumDependency:
-      /** @type {MockAppiumSupportEnv['hasAppiumDependency']} */ (
-        sandbox.stub().resolves(false)
-      ),
+        /** @type {MockAppiumSupportEnv['hasAppiumDependency']} */ (
+          sandbox.stub().resolves(false)
+        ),
       readPackageInDir:
-      /** @type {MockAppiumSupportEnv['readPackageInDir']} */ (
-        sandbox
-            .stub()
-            .callsFake(async () => MockAppiumSupport.env.__pkg)
-      ),
+        /** @type {MockAppiumSupportEnv['readPackageInDir']} */ (
+          sandbox.stub().callsFake(async () => MockAppiumSupport.env.__pkg)
+        ),
       __pkg: {
         name: 'mock-package',
         version: '1.0.0',
@@ -64,8 +62,8 @@ export function initMocks (sandbox = createSandbox()) {
           .stub()
           .returns(
             sandbox.stub(
-              new global.console.Console(process.stdout, process.stderr),
-            ),
+              new global.console.Console(process.stdout, process.stderr)
+            )
           )
       ),
     },

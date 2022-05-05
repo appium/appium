@@ -1,11 +1,10 @@
-import { initSession, deleteSession, W3C_PREFIXED_CAPS } from '../helpers';
+import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
 
-
-function findElementTests () {
+function findElementTests() {
   describe('finding elements', function () {
     let driver;
-    before (async function () {
+    before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS);
       chai.use(chaiWebdriverIOAsync(driver));
     });
@@ -37,11 +36,15 @@ function findElementTests () {
 
     describe('using bad selectors', function () {
       it('should not find a single element with bad selector', async function () {
-        await chai.expect(driver.$('badsel')).to.eventually.be.rejectedWith({code: 32});
+        await chai
+          .expect(driver.$('badsel'))
+          .to.eventually.be.rejectedWith({code: 32});
       });
 
       it('should not find multiple elements with bad selector', async function () {
-        await chai.expect(driver.$$('badsel')).to.eventually.be.rejectedWith({code: 32});
+        await chai
+          .expect(driver.$$('badsel'))
+          .to.eventually.be.rejectedWith({code: 32});
       });
     });
 
@@ -66,7 +69,9 @@ function findElementTests () {
       });
       it('should not find elements if root element does not exist', async function () {
         let el = await driver.$('#blub');
-        await chai.expect(el.$('body')).to.eventually.be.rejectedWith(/Can't call \$/);
+        await chai
+          .expect(el.$('body'))
+          .to.eventually.be.rejectedWith(/Can't call \$/);
       });
     });
   });

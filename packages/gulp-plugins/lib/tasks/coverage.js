@@ -10,10 +10,9 @@ const path = require('path');
 const utils = require('../utils');
 const log = require('fancy-log');
 
-
-const configure = function configure (gulp, opts, env) {
+const configure = function configure(gulp, opts, env) {
   let npmBin;
-  gulp.task('npm-bin', async function getNpmBin () {
+  gulp.task('npm-bin', async function getNpmBin() {
     if (npmBin) {
       return B.resolve();
     }
@@ -25,12 +24,12 @@ const configure = function configure (gulp, opts, env) {
     log(`Determined npm bin: ${npmBin}`);
   });
 
-  const doCoverage = function doCoverage (taskName, filePatterns, targetDir) {
+  const doCoverage = function doCoverage(taskName, filePatterns, targetDir) {
     const subTaskName = `${taskName}:run`;
     const covTestFiles = utils.translatePaths([filePatterns], env.fileAliases);
-    gulp.task(subTaskName, async function doSubTask () {
+    gulp.task(subTaskName, async function doSubTask() {
       const files = await globby(covTestFiles);
-      const bins = ['nyc', '_mocha'].reduce(function getFullPaths (bins, item) {
+      const bins = ['nyc', '_mocha'].reduce(function getFullPaths(bins, item) {
         bins[item] = path.resolve(npmBin, item);
         return bins;
       }, {});
@@ -50,34 +49,40 @@ const configure = function configure (gulp, opts, env) {
       env._TESTING = 1;
       env.NODE_ENV = 'coverage';
       log(`Running command: ${bins.nyc} ${args.join(' ')}`);
-      return new B(function runCmd (resolve, reject) {
+      return new B(function runCmd(resolve, reject) {
         const proc = spawn(bins.nyc, args, {
           env,
           stdio: opts.coverage.verbose ? 'inherit' : 'ignore',
         });
-        proc.on('close', function onClose (code) {
+        proc.on('close', function onClose(code) {
           if (code === 0) {
             resolve();
           } else {
             reject(new Error(`Coverage command exit code: ${code}`));
           }
         });
-        proc.on('error', function onError (err) {
+        proc.on('error', function onError(err) {
           reject(new Error(`Coverage error: ${err}`));
         });
       });
     });
-    gulp.task(taskName, gulp.series('clean', 'transpile', 'npm-bin', subTaskName));
+    gulp.task(
+      taskName,
+      gulp.series('clean', 'transpile', 'npm-bin', subTaskName)
+    );
   };
 
   if (opts.coverage) {
     doCoverage('coverage', opts.coverage.files, 'coverage');
-    ['coveralls:run', 'coveralls']
-      .map((taskName) => gulp.task(taskName, function reportDeprecatedCoveralls () {
-        log(`Coveralls integration has been removed as per ` +
-          `https://github.com/appium/appium/issues/14648. ` +
-          `Nothing will be done in scope of '${taskName}' task`);
-      }));
+    ['coveralls:run', 'coveralls'].map((taskName) =>
+      gulp.task(taskName, function reportDeprecatedCoveralls() {
+        log(
+          `Coveralls integration has been removed as per ` +
+            `https://github.com/appium/appium/issues/14648. ` +
+            `Nothing will be done in scope of '${taskName}' task`
+        );
+      })
+    );
   }
   if (opts['coverage-e2e']) {
     doCoverage('coverage-e2e', opts['coverage-e2e'].files, 'coverage-e2e');

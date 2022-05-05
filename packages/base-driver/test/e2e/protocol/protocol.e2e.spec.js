@@ -1,16 +1,18 @@
 // transpile:mocha
 
 import {
-  server, routeConfiguringFunction, errors, JWProxy, BaseDriver
+  server,
+  routeConfiguringFunction,
+  errors,
+  JWProxy,
+  BaseDriver,
 } from '../../../lib';
-import { FakeDriver } from './fake-driver';
+import {FakeDriver} from './fake-driver';
 import axios from 'axios';
-import { createSandbox } from 'sinon';
-import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
-import { createProxyServer } from './helpers';
-import {
-  MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY
-} from '../../../lib/constants';
+import {createSandbox} from 'sinon';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import {createProxyServer} from './helpers';
+import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
 import {TEST_HOST, getTestPort} from '../../helpers';
 
 let port;
@@ -63,11 +65,11 @@ describe('Protocol', function () {
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: {url: 'http://google.com'}
+        data: {url: 'http://google.com'},
       });
       data.should.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -79,7 +81,7 @@ describe('Protocol', function () {
       });
       data.should.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -96,7 +98,7 @@ describe('Protocol', function () {
       });
       data.should.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -108,7 +110,7 @@ describe('Protocol', function () {
       });
       data.should.eql({
         value: 'foo',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -143,19 +145,18 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: 'oh hello'
+        data: 'oh hello',
       }).should.eventually.be.rejected;
 
       const {data} = await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: {url: 'http://google.com'}
+        data: {url: 'http://google.com'},
       });
       data.should.eql({
         value: 'Navigated to: http://google.com',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
-
     });
 
     it('should get 404 for bad routes', async function () {
@@ -203,7 +204,7 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/url`,
         method: 'POST',
-        data: {}
+        data: {},
       }).should.eventually.be.rejectedWith(/400/);
     });
 
@@ -211,13 +212,13 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/element/bar/value`,
         method: 'POST',
-        data: {id: 'baz', sessionId: 'lol', value: ['a']}
+        data: {id: 'baz', sessionId: 'lol', value: ['a']},
       });
 
       await axios({
         url: `${baseUrl}/session/foo/element/bar/value`,
         method: 'POST',
-        data: {id: 'baz'}
+        data: {id: 'baz'},
       }).should.eventually.be.rejectedWith(/400/);
 
       // make sure adding the optional 'id' doesn't clobber a route where we
@@ -225,7 +226,7 @@ describe('Protocol', function () {
       await axios({
         url: `${baseUrl}/session/foo/frame`,
         method: 'POST',
-        data: {id: 'baz'}
+        data: {id: 'baz'},
       });
     });
 
@@ -238,8 +239,10 @@ describe('Protocol', function () {
       });
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Mishandled Driver Error');
+      data.value.message.should.eql(
+        'An unknown server-side error occurred while processing ' +
+          'the command. Original error: Mishandled Driver Error'
+      );
       data.sessionId.should.eql('foo');
     });
 
@@ -248,7 +251,7 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: {value: 'text to type'}
+          data: {value: 'text to type'},
         });
         data.value.should.eql(['text to type', 'bar']);
       });
@@ -256,7 +259,7 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: {text: 'text to type'}
+          data: {text: 'text to type'},
         });
         data.value.should.eql(['text to type', 'bar']);
       });
@@ -264,7 +267,7 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/element/bar/value`,
           method: 'POST',
-          data: {value: 'text to type', text: 'text to ignore'}
+          data: {value: 'text to type', text: 'text to ignore'},
         });
         data.value.should.eql(['text to type', 'bar']);
       });
@@ -276,7 +279,7 @@ describe('Protocol', function () {
           const {data} = await axios({
             url: `${baseUrl}/session/foo/moveto`,
             method: 'POST',
-            data: {element: '3'}
+            data: {element: '3'},
           });
           data.value.should.eql(['3', null, null]);
         });
@@ -284,7 +287,7 @@ describe('Protocol', function () {
           const {data} = await axios({
             url: `${baseUrl}/session/foo/moveto`,
             method: 'POST',
-            data: {xoffset: 42, yoffset: 17}
+            data: {xoffset: 42, yoffset: 17},
           });
           data.value.should.eql([null, 42, 17]);
         });
@@ -294,7 +297,7 @@ describe('Protocol', function () {
           const {data} = await axios({
             url: `${baseUrl}/session/foo/appium/device/remove_app`,
             method: 'POST',
-            data: {appId: 42}
+            data: {appId: 42},
           });
           data.value.should.eql(42);
         });
@@ -302,7 +305,7 @@ describe('Protocol', function () {
           const {data} = await axios({
             url: `${baseUrl}/session/foo/appium/device/remove_app`,
             method: 'POST',
-            data: {bundleId: 42}
+            data: {bundleId: 42},
           });
           data.value.should.eql(42);
         });
@@ -314,20 +317,25 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          data: [{'action': 'tap', 'options': {'element': '3'}}]
+          data: [{action: 'tap', options: {element: '3'}}],
         });
-        data.value.should.deep.equal([[{'action': 'tap', 'options': {'element': '3'}}], 'foo']);
+        data.value.should.deep.equal([
+          [{action: 'tap', options: {element: '3'}}],
+          'foo',
+        ]);
       });
 
       it('should not wrap twice', async function () {
         const {data} = await axios({
           url: `${baseUrl}/session/foo/touch/perform`,
           method: 'POST',
-          data: {actions: [{'action': 'tap', 'options': {'element': '3'}}]}
+          data: {actions: [{action: 'tap', options: {element: '3'}}]},
         });
-        data.value.should.deep.equal([[{'action': 'tap', 'options': {'element': '3'}}], 'foo']);
+        data.value.should.deep.equal([
+          [{action: 'tap', options: {element: '3'}}],
+          'foo',
+        ]);
       });
-
     });
 
     describe('create sessions via HTTP endpoint', function () {
@@ -347,7 +355,7 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
-          data: {desiredCapabilities}
+          data: {desiredCapabilities},
         });
         should.equal(data.value, null);
       });
@@ -363,7 +371,7 @@ describe('Protocol', function () {
         const {data} = await axios({
           url: `${baseUrl}/session`,
           method: 'POST',
-          data: {capabilities: w3cCapabilities}
+          data: {capabilities: w3cCapabilities},
         });
         should.not.exist(data.status);
         should.not.exist(data.sessionId);
@@ -372,10 +380,15 @@ describe('Protocol', function () {
         sessionId = data.value.sessionId;
       });
       it('should raise an error if the driver does not support W3C yet', async function () {
-        const createSessionStub = sandbox.stub(driver, 'createSession').callsFake(function (capabilities) {
-          driver.sessionId = null;
-          return BaseDriver.prototype.createSession.call(driver, capabilities);
-        });
+        const createSessionStub = sandbox
+          .stub(driver, 'createSession')
+          .callsFake(function (capabilities) {
+            driver.sessionId = null;
+            return BaseDriver.prototype.createSession.call(
+              driver,
+              capabilities
+            );
+          });
         try {
           // let {status, value, sessionId} = await request({
           await axios({
@@ -389,7 +402,7 @@ describe('Protocol', function () {
                 },
                 firstMatch: [{}],
               },
-            }
+            },
           }).should.eventually.be.rejectedWith(/500/);
         } finally {
           createSessionStub.restore();
@@ -401,19 +414,21 @@ describe('Protocol', function () {
 
         beforeEach(async function () {
           // Start a W3C session
-          const {value} = (await axios({
-            url: `${baseUrl}/session`,
-            method: 'POST',
-            data: {
-              capabilities: {
-                alwaysMatch: {
-                  platformName: 'Fake',
-                  'appium:deviceName': 'Commodore 64',
+          const {value} = (
+            await axios({
+              url: `${baseUrl}/session`,
+              method: 'POST',
+              data: {
+                capabilities: {
+                  alwaysMatch: {
+                    platformName: 'Fake',
+                    'appium:deviceName': 'Commodore 64',
+                  },
+                  firstMatch: [{}],
                 },
-                firstMatch: [{}],
               },
-            },
-          })).data;
+            })
+          ).data;
           sessionId = value.sessionId;
           sessionUrl = `${baseUrl}/session/${sessionId}`;
         });
@@ -425,7 +440,7 @@ describe('Protocol', function () {
             validateStatus: null,
             data: {
               bad: 'params',
-            }
+            },
           });
           status.should.equal(400);
 
@@ -456,14 +471,16 @@ describe('Protocol', function () {
         });
 
         it(`should throw 500 Unknown Error if the command throws an unexpected exception`, async function () {
-          driver.performActions = () => { throw new Error(`Didn't work`); };
+          driver.performActions = () => {
+            throw new Error(`Didn't work`);
+          };
           const {status, data} = await axios({
             url: `${sessionUrl}/actions`,
             method: 'POST',
             validateStatus: null,
             data: {
               actions: [],
-            }
+            },
           });
           status.should.equal(500);
 
@@ -481,10 +498,11 @@ describe('Protocol', function () {
             {
               something: {
                 [MJSONWP_ELEMENT_KEY]: 'fooo',
-                other: 'bar'
-              }
-            }, {
-              [MJSONWP_ELEMENT_KEY]: 'bar'
+                other: 'bar',
+              },
+            },
+            {
+              [MJSONWP_ELEMENT_KEY]: 'bar',
             },
             'ignore',
           ];
@@ -494,11 +512,12 @@ describe('Protocol', function () {
               something: {
                 [MJSONWP_ELEMENT_KEY]: 'fooo',
                 [W3C_ELEMENT_KEY]: 'fooo',
-                other: 'bar'
-              }
-            }, {
+                other: 'bar',
+              },
+            },
+            {
               [MJSONWP_ELEMENT_KEY]: 'bar',
-              [W3C_ELEMENT_KEY]: 'bar'
+              [W3C_ELEMENT_KEY]: 'bar',
             },
             'ignore',
           ];
@@ -514,16 +533,18 @@ describe('Protocol', function () {
         });
 
         it(`should fail with a 408 error if it throws a TimeoutError exception`, async function () {
-          let setUrlStub = sandbox.stub(driver, 'setUrl').callsFake(function () {
-            throw new errors.TimeoutError;
-          });
+          let setUrlStub = sandbox
+            .stub(driver, 'setUrl')
+            .callsFake(function () {
+              throw new errors.TimeoutError();
+            });
           const {status, data} = await axios({
             url: `${sessionUrl}/url`,
             method: 'POST',
             validateStatus: null,
             data: {
               url: 'https://example.com/',
-            }
+            },
           });
           status.should.equal(408);
 
@@ -531,16 +552,20 @@ describe('Protocol', function () {
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.TimeoutError.error());
-          message.should.match(/An operation did not complete before its timeout expired/);
+          message.should.match(
+            /An operation did not complete before its timeout expired/
+          );
 
           setUrlStub.restore();
         });
 
         it(`should pass with 200 HTTP status code if the command returns a value`, async function () {
           driver.performActions = (actions) => 'It works ' + actions.join('');
-          const {status, value, sessionId} = (await axios.post(`${sessionUrl}/actions`, {
-            actions: ['a', 'b', 'c'],
-          })).data;
+          const {status, value, sessionId} = (
+            await axios.post(`${sessionUrl}/actions`, {
+              actions: ['a', 'b', 'c'],
+            })
+          ).data;
           should.not.exist(sessionId);
           should.not.exist(status);
           value.should.equal('It works abc');
@@ -561,7 +586,8 @@ describe('Protocol', function () {
             app = res.app;
             jwproxy = new JWProxy({host: TEST_HOST, port});
             jwproxy.sessionId = sessionId;
-            driver.performActions = async (actions) => await jwproxy.command('/perform-actions', 'POST', actions);
+            driver.performActions = async (actions) =>
+              await jwproxy.command('/perform-actions', 'POST', actions);
           });
 
           afterEach(async function () {
@@ -578,9 +604,11 @@ describe('Protocol', function () {
               });
             });
 
-            const {status, value, sessionId} = (await axios.post(`${sessionUrl}/actions`, {
-              actions: [1, 2, 3],
-            })).data;
+            const {status, value, sessionId} = (
+              await axios.post(`${sessionUrl}/actions`, {
+                actions: [1, 2, 3],
+              })
+            ).data;
             value.should.eql([1, 2, 3]);
             should.not.exist(status);
             should.not.exist(sessionId);
@@ -600,7 +628,7 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {
                 actions: [1, 2, 3],
-              }
+              },
             });
             status.should.equal(HTTPStatusCodes.NOT_FOUND);
             JSON.stringify(data).should.match(/A problem occurred/);
@@ -609,10 +637,12 @@ describe('Protocol', function () {
           it('should return W3C error if a proxied request returns a W3C error response', async function () {
             const error = new Error(`Some error occurred`);
             error.w3cStatus = 414;
-            const executeCommandStub = sandbox.stub(driver, 'executeCommand').returns({
-              protocol: 'W3C',
-              error,
-            });
+            const executeCommandStub = sandbox
+              .stub(driver, 'executeCommand')
+              .returns({
+                protocol: 'W3C',
+                error,
+              });
             const {status, data} = await axios({
               url: `${sessionUrl}/actions`,
               method: 'POST',
@@ -620,7 +650,11 @@ describe('Protocol', function () {
               data: {actions: [1, 2, 3]},
             });
             status.should.equal(414);
-            const {error: w3cError, message: errMessage, stacktrace} = data.value;
+            const {
+              error: w3cError,
+              message: errMessage,
+              stacktrace,
+            } = data.value;
             w3cError.should.equal('unknown error');
             stacktrace.should.match(/Some error occurred/);
             errMessage.should.equal('Some error occurred');
@@ -641,10 +675,14 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {
                 actions: [1, 2, 3],
-              }
+              },
             });
             status.should.equal(HTTPStatusCodes.NOT_FOUND);
-            const {error: w3cError, message: errMessage, stacktrace} = data.value;
+            const {
+              error: w3cError,
+              message: errMessage,
+              stacktrace,
+            } = data.value;
             w3cError.should.equal('no such element');
             errMessage.should.match(/A problem occurred/);
             stacktrace.should.exist;
@@ -666,7 +704,7 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {
                 actions: [1, 2, 3],
-              }
+              },
             });
             status.should.equal(HTTPStatusCodes.NOT_FOUND);
             const {error: w3cError, stacktrace} = data.value;
@@ -691,14 +729,13 @@ describe('Protocol', function () {
               validateStatus: null,
               data: {
                 actions: [1, 2, 3],
-              }
+              },
             });
             status.should.equal(HTTPStatusCodes.INTERNAL_SERVER_ERROR);
             const {error: w3cError, stacktrace} = data.value;
             w3cError.should.equal('unknown error');
             stacktrace.should.match(/arbitrary stacktrace/);
           });
-
         });
       });
     });
@@ -710,7 +747,7 @@ describe('Protocol', function () {
       });
       data.should.eql({
         value: null,
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -720,7 +757,7 @@ describe('Protocol', function () {
       });
       data.should.eql({
         value: '',
-        sessionId: 'foo'
+        sessionId: 'foo',
       });
     });
 
@@ -733,8 +770,10 @@ describe('Protocol', function () {
 
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Too Fresh!');
+      data.value.message.should.eql(
+        'An unknown server-side error occurred while processing ' +
+          'the command. Original error: Too Fresh!'
+      );
       data.sessionId.should.eql('foo');
     });
 
@@ -746,7 +785,9 @@ describe('Protocol', function () {
 
       status.should.equal(404);
       data.value.error.should.eql('invalid session id');
-      data.value.message.should.eql('A session is either terminated or not started');
+      data.value.message.should.eql(
+        'A session is either terminated or not started'
+      );
       data.sessionId.should.eql('foo');
     });
   });
@@ -785,7 +826,7 @@ describe('Protocol', function () {
       const {data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
-        data: {url: 'http://google.com'}
+        data: {url: 'http://google.com'},
       });
 
       should.exist(data.sessionId);
@@ -833,8 +874,10 @@ describe('Protocol', function () {
 
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Too Fresh!');
+      data.value.message.should.eql(
+        'An unknown server-side error occurred while processing ' +
+          'the command. Original error: Too Fresh!'
+      );
       data.sessionId.should.eql('Vader Sessions');
     });
 
@@ -842,12 +885,20 @@ describe('Protocol', function () {
       const {data} = await axios({
         url: `${baseUrl}/session`,
         method: 'POST',
-        data: {capabilities: {alwaysMatch: {'appium:greeting': 'hello'}, firstMatch: [{}]}}
+        data: {
+          capabilities: {
+            alwaysMatch: {'appium:greeting': 'hello'},
+            firstMatch: [{}],
+          },
+        },
       });
 
       should.exist(data.value.sessionId);
       data.value.sessionId.indexOf('fakeSession_').should.equal(0);
-      data.value.capabilities.should.eql({alwaysMatch: {'appium:greeting': 'hello'}, firstMatch: [{}]});
+      data.value.capabilities.should.eql({
+        alwaysMatch: {'appium:greeting': 'hello'},
+        firstMatch: [{}],
+      });
     });
   });
 
@@ -865,7 +916,7 @@ describe('Protocol', function () {
       mjsonwpServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(driver),
         port,
-        extraMethodMap: FakeDriver.newMethodMap
+        extraMethodMap: FakeDriver.newMethodMap,
       });
     });
 
@@ -884,14 +935,17 @@ describe('Protocol', function () {
 
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Trying to proxy to a ' +
-        'server but the driver is unable to proxy');
+      data.value.message.should.eql(
+        'An unknown server-side error occurred while processing ' +
+          'the command. Original error: Trying to proxy to a ' +
+          'server but the driver is unable to proxy'
+      );
       data.sessionId.should.eql('foo');
     });
 
     it('should pass on any errors in proxying', async function () {
-      driver.proxyReqRes = async function () { // eslint-disable-line require-await
+      // eslint-disable-next-line require-await
+      driver.proxyReqRes = async function () {
         throw new Error('foo');
       };
       const {status, data} = await axios({
@@ -903,15 +957,25 @@ describe('Protocol', function () {
 
       status.should.equal(500);
       data.value.error.should.eql('unknown error');
-      data.value.message.should.eql('An unknown server-side error occurred while processing ' +
-        'the command. Original error: Could not proxy. Proxy error: foo');
+      data.value.message.should.eql(
+        'An unknown server-side error occurred while processing ' +
+          'the command. Original error: Could not proxy. Proxy error: foo'
+      );
       data.sessionId.should.eql('foo');
     });
 
     it('should able to throw ProxyRequestError in proxying', async function () {
-      driver.proxyReqRes = async function () { // eslint-disable-line require-await
-        let jsonwp = {status: 35, value: 'No such context found.', sessionId: 'foo'};
-        throw new errors.ProxyRequestError(`Could not proxy command to remote server. `, jsonwp);
+      // eslint-disable-next-line require-await
+      driver.proxyReqRes = async function () {
+        let jsonwp = {
+          status: 35,
+          value: 'No such context found.',
+          sessionId: 'foo',
+        };
+        throw new errors.ProxyRequestError(
+          `Could not proxy command to remote server. `,
+          jsonwp
+        );
       };
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
@@ -927,13 +991,14 @@ describe('Protocol', function () {
     });
 
     it('should let the proxy handle req/res', async function () {
-      driver.proxyReqRes = async function (req, res) { // eslint-disable-line require-await
+      // eslint-disable-next-line require-await
+      driver.proxyReqRes = async function (req, res) {
         res.status(200).json({custom: 'data'});
       };
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
-        data: {url: 'http://google.com'}
+        data: {url: 'http://google.com'},
       });
 
       status.should.equal(200);
@@ -941,7 +1006,9 @@ describe('Protocol', function () {
     });
 
     it('should avoid jsonwp proxying when path matches avoidance list', async function () {
-      driver.getProxyAvoidList = () => [['POST', new RegExp('^/session/[^/]+/url$')]];
+      driver.getProxyAvoidList = () => [
+        ['POST', new RegExp('^/session/[^/]+/url$')],
+      ];
       const {status, data} = await axios({
         url: `${baseUrl}/session/${sessionId}/url`,
         method: 'POST',
@@ -951,12 +1018,12 @@ describe('Protocol', function () {
       status.should.equal(200);
       data.should.eql({
         value: 'Navigated to: http://google.com',
-        sessionId
+        sessionId,
       });
     });
 
     it('should fail if avoid proxy list is malformed in some way', async function () {
-      async function badProxyAvoidanceList (list) {
+      async function badProxyAvoidanceList(list) {
         driver.getProxyAvoidList = () => list;
         const {status, data} = await axios({
           url: `${baseUrl}/session/${sessionId}/url`,
@@ -968,12 +1035,7 @@ describe('Protocol', function () {
         status.should.equal(500);
         data.value.message.should.contain('roxy');
       }
-      const lists = [
-        'foo',
-        [['foo']],
-        [['BAR', /lol/]],
-        [['GET', 'foo']]
-      ];
+      const lists = ['foo', [['foo']], [['BAR', /lol/]], [['GET', 'foo']]];
       for (let list of lists) {
         await badProxyAvoidanceList(list);
       }
@@ -989,7 +1051,7 @@ describe('Protocol', function () {
       status.should.equal(200);
       data.should.eql({
         value: "I'm fine",
-        sessionId: null
+        sessionId: null,
       });
     });
 
@@ -1013,9 +1075,8 @@ describe('Protocol', function () {
       status.should.equal(200);
       data.should.eql({
         value: 'This was not proxied',
-        sessionId
+        sessionId,
       });
     });
-
   });
 });

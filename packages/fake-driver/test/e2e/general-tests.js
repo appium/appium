@@ -1,7 +1,7 @@
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
-import { initSession, deleteSession, W3C_PREFIXED_CAPS } from '../helpers';
+import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
-function generalTests () {
+function generalTests() {
   describe('generic actions', function () {
     let driver;
 
@@ -37,8 +37,9 @@ function generalTests () {
       (await driver.getOrientation()).should.equal('LANDSCAPE');
     });
     it('should not set the orientation to something invalid', async function () {
-      await driver.setOrientation('INSIDEOUT')
-              .should.eventually.be.rejectedWith(/Orientation must be/);
+      await driver
+        .setOrientation('INSIDEOUT')
+        .should.eventually.be.rejectedWith(/Orientation must be/);
     });
 
     it('should get a screenshot', async function () {
@@ -56,8 +57,9 @@ function generalTests () {
       await driver.setTimeout({implicit: 1000});
     });
     it('should not set invalid implicit wait timeout', async function () {
-      await driver.setTimeout({implicit: 'foo'})
-              .should.eventually.be.rejectedWith(/values are not valid/);
+      await driver
+        .setTimeout({implicit: 'foo'})
+        .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     // skip these until basedriver supports these timeouts
@@ -65,16 +67,18 @@ function generalTests () {
       await driver.setTimeout({script: 1000});
     });
     it.skip('should not set invalid async script timeout', async function () {
-      await driver.setTimeout({script: 'foo'})
-              .should.eventually.be.rejectedWith(/values are not valid/);
+      await driver
+        .setTimeout({script: 'foo'})
+        .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     it.skip('should set page load timeout', async function () {
       await driver.setTimeout({pageLoad: 1000});
     });
     it.skip('should not set page load script timeout', async function () {
-      await driver.setTimeout({pageLoad: 'foo'})
-              .should.eventually.be.rejectedWith(/values are not valid/);
+      await driver
+        .setTimeout({pageLoad: 'foo'})
+        .should.eventually.be.rejectedWith(/values are not valid/);
     });
 
     it('should allow performing actions that do nothing but save them', async function () {
@@ -83,19 +87,19 @@ function generalTests () {
           type: 'pointer',
           id: 'finger1',
           parameters: {
-            pointerType: 'touch'
+            pointerType: 'touch',
           },
           actions: [
             {
               type: 'pointerDown',
-              button: 0
+              button: 0,
             },
             {
               type: 'pointerUp',
-              button: 0
-            }
-          ]
-        }
+              button: 0,
+            },
+          ],
+        },
       ];
       await driver.performActions(actions);
       const [res] = await driver.getLogs('actions');

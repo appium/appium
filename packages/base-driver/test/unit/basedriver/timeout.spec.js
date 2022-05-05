@@ -1,7 +1,7 @@
 // @ts-check
 
 import BaseDriver from '../../../lib';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 
 describe('timeout', function () {
   let driver = new BaseDriver();
@@ -19,19 +19,24 @@ describe('timeout', function () {
   describe('timeouts', function () {
     describe('errors', function () {
       it('should throw an error if something random is sent', async function () {
-        await driver.timeouts('random timeout', 'howdy').should.eventually.be.rejected;
+        await driver.timeouts('random timeout', 'howdy').should.eventually.be
+          .rejected;
       });
       it('should throw an error if timeout is negative', async function () {
-        await driver.timeouts('random timeout', -42).should.eventually.be.rejected;
+        await driver.timeouts('random timeout', -42).should.eventually.be
+          .rejected;
       });
       it('should throw an errors if timeout type is unknown', async function () {
-        await driver.timeouts('random timeout', 42).should.eventually.be.rejected;
+        await driver.timeouts('random timeout', 42).should.eventually.be
+          .rejected;
       });
       it('should throw an error if something random is sent to scriptDuration', async function () {
-        await driver.timeouts(undefined, undefined, 123, undefined, undefined).should.eventually.be.rejected;
+        await driver.timeouts(undefined, undefined, 123, undefined, undefined)
+          .should.eventually.be.rejected;
       });
       it('should throw an error if something random is sent to pageLoadDuration', async function () {
-        await driver.timeouts(undefined, undefined, undefined, 123, undefined).should.eventually.be.rejected;
+        await driver.timeouts(undefined, undefined, undefined, 123, undefined)
+          .should.eventually.be.rejected;
       });
     });
     describe('implicit wait', function () {

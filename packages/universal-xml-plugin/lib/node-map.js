@@ -64,23 +64,14 @@ export default {
       'XCUIElementTypeStatusItem',
       'XCUIElementTypeTimeline',
     ],
-    android: [
-      'android.widget.Space',
-      'android.widget.TwoLineListItem',
-    ],
+    android: ['android.widget.Space', 'android.widget.TwoLineListItem'],
   },
   Grid: {
     ios: 'XCUIElementTypeGrid',
-    android: [
-      'android.widget.GridLayout',
-      'android.widget.GridView',
-    ],
+    android: ['android.widget.GridLayout', 'android.widget.GridView'],
   },
   Icon: {
-    ios: [
-      'XCUIElementTypeIcon',
-      'XCUIElementTypeDockItem',
-    ],
+    ios: ['XCUIElementTypeIcon', 'XCUIElementTypeDockItem'],
   },
   Image: {
     ios: 'XCUIElementTypeImage',
@@ -94,17 +85,11 @@ export default {
       'XCUIElementTypeRelevanceIndicator',
       'XCUIElementTypeValueIndicator',
     ],
-    android: [
-      'android.widget.RatingBar',
-      'android.widget.ProgressBar',
-    ],
+    android: ['android.widget.RatingBar', 'android.widget.ProgressBar'],
   },
   Input: {
-    ios: [
-      'XCUIElementTypeColorWell',
-    ],
-    android: [
-    ]
+    ios: ['XCUIElementTypeColorWell'],
+    android: [],
   },
   List: {
     android: [
@@ -112,18 +97,13 @@ export default {
       'android.widget.ExpandableListView',
       'android.widget.Gallery',
     ],
-    ios: [
-      'XCUIElementTypeCollectionView'
-    ],
+    ios: ['XCUIElementTypeCollectionView'],
   },
   Map: {
     ios: 'XCUIElementTypeMap',
   },
   Menu: {
-    ios: [
-      'XCUIElementTypeMenu',
-      'XCUIElementTypeMenuBar',
-    ],
+    ios: ['XCUIElementTypeMenu', 'XCUIElementTypeMenuBar'],
     android: ['android.widget.ActionMenuView', 'android.widget.PopupMenu'],
   },
   Modal: {
@@ -165,7 +145,10 @@ export default {
   },
   Scrollable: {
     ios: 'XCUIElementTypeScrollView',
-    android: ['android.widget.ScrollView', 'android.widget.HorizontalScrollView'],
+    android: [
+      'android.widget.ScrollView',
+      'android.widget.HorizontalScrollView',
+    ],
   },
   SearchInput: {
     android: 'android.widget.SearchView',
@@ -217,11 +200,7 @@ export default {
   },
   ToggleInput: {
     ios: 'XCUIElementTypeToggle',
-    android: [
-      'android.widget.CheckedTextView',
-      'android.widget.ToggleButton',
-    ],
-
+    android: ['android.widget.CheckedTextView', 'android.widget.ToggleButton'],
   },
   Toolbar: {
     ios: 'XCUIElementTypeToolbar',

@@ -4,7 +4,7 @@
  * This defines _both_ what the CLI supports and what the config files support.
  */
 
-export const AppiumConfigJsonSchema = /** @type {const} */({
+export const AppiumConfigJsonSchema = /** @type {const} */ ({
   $schema: 'http://json-schema.org/draft-07/schema',
   additionalProperties: false,
   description: 'A schema for Appium configuration files',
@@ -96,7 +96,8 @@ export const AppiumConfigJsonSchema = /** @type {const} */({
         driver: {
           description:
             'Driver-specific configuration. Keys should correspond to driver package names',
-          properties: /** @type {Record<string,import('json-schema').JSONSchema7>} */({}),
+          properties:
+            /** @type {Record<string,import('json-schema').JSONSchema7>} */ ({}),
           title: 'driver config',
           type: 'object',
         },
@@ -197,7 +198,8 @@ export const AppiumConfigJsonSchema = /** @type {const} */({
         plugin: {
           description:
             'Plugin-specific configuration. Keys should correspond to plugin package names',
-          properties: /** @type {Record<string,import('json-schema').JSONSchema7>} */({}),
+          properties:
+            /** @type {Record<string,import('json-schema').JSONSchema7>} */ ({}),
           title: 'plugin config',
           type: 'object',
         },
@@ -216,7 +218,7 @@ export const AppiumConfigJsonSchema = /** @type {const} */({
             'Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it\'s not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"',
           title: 'relaxed-security config',
           type: 'boolean',
-          appiumCliDest: 'relaxedSecurityEnabled'
+          appiumCliDest: 'relaxedSecurityEnabled',
         },
         'session-override': {
           default: false,

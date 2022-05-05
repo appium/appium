@@ -1,8 +1,7 @@
 import B from 'bluebird';
 import path from 'path';
 import * as util from '../../lib/util';
-import { tempDir, fs } from '../../lib/index';
-
+import {tempDir, fs} from '../../lib/index';
 
 describe('#util', function () {
   let tmpRoot;
@@ -35,13 +34,13 @@ describe('#util', function () {
     let lockFile;
     let testFile;
 
-    async function guardedBehavior (text, msBeforeActing) {
+    async function guardedBehavior(text, msBeforeActing) {
       await B.delay(msBeforeActing);
       await fs.appendFile(testFile, text, 'utf8');
       return text;
     }
 
-    async function testFileContents () {
+    async function testFileContents() {
       return (await fs.readFile(testFile)).toString('utf8');
     }
 
@@ -100,8 +99,12 @@ describe('#util', function () {
 
     it('should return the result of the guarded behavior', async function () {
       const guard = util.getLockFileGuard(lockFile);
-      const guardPromise1 = guard(async () => await guardedBehavior('hello', 500));
-      const guardPromise2 = guard(async () => await guardedBehavior('world', 100));
+      const guardPromise1 = guard(
+        async () => await guardedBehavior('hello', 500)
+      );
+      const guardPromise2 = guard(
+        async () => await guardedBehavior('world', 100)
+      );
       const ret1 = await guardPromise1;
       const ret2 = await guardPromise2;
       ret1.should.eql('hello');
@@ -129,5 +132,4 @@ describe('#util', function () {
       await p2.should.eventually.eql('world');
     });
   });
-
 });

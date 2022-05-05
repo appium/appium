@@ -15,16 +15,20 @@ const RDWR_EXCL = cnst.O_CREAT | cnst.O_TRUNC | cnst.O_RDWR | cnst.O_EXCL;
  *
  * @returns {Promise<string>} A path to the temporary directory
  */
-async function tempDir () {
+async function tempDir() {
   const now = new Date();
-  const filePath = nodePath.join(process.env.APPIUM_TMP_DIR || os.tmpdir(),
+  const filePath = nodePath.join(
+    process.env.APPIUM_TMP_DIR || os.tmpdir(),
     [
-      now.getFullYear(), now.getMonth(), now.getDate(),
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
       '-',
       process.pid,
       '-',
       (Math.random() * 0x100000000 + 1).toString(36),
-    ].join(''));
+    ].join('')
+  );
   // creates a temp directory using the date and a random string
 
   await fs.mkdir(filePath);
@@ -46,7 +50,7 @@ async function tempDir () {
  * @param {string} [defaultPrefix]
  * @returns {Promise<string>}  A path to the temporary directory with rawAffixes and defaultPrefix
  */
-async function path (rawAffixes, defaultPrefix) {
+async function path(rawAffixes, defaultPrefix) {
   const affixes = parseAffixes(rawAffixes, defaultPrefix);
   const name = `${affixes.prefix || ''}${affixes.suffix || ''}`;
   const tempDirectory = await tempDir();
@@ -66,7 +70,7 @@ async function path (rawAffixes, defaultPrefix) {
  * @param {Affixes} affixes
  * @returns {Promise<OpenedAffixes>}
  */
-async function open (affixes) {
+async function open(affixes) {
   const filePath = await path(affixes, 'f-');
   try {
     let fd = await fs.open(filePath, RDWR_EXCL, 0o600);
@@ -85,7 +89,7 @@ async function open (affixes) {
  * @param {string} [defaultPrefix]
  * @returns {Affixes}
  */
-function parseAffixes (rawAffixes, defaultPrefix) {
+function parseAffixes(rawAffixes, defaultPrefix) {
   /** @type {Affixes} */
   let affixes = {};
   if (rawAffixes) {
@@ -119,8 +123,9 @@ const openDir = tempDir;
  *
  * @returns {Promise<string>} A temp directory path whcih is defined as static in the same process
  */
-async function staticDir () { // eslint-disable-line require-await
+// eslint-disable-next-line require-await
+async function staticDir() {
   return _static;
 }
 
-export { open, path, openDir, staticDir };
+export {open, path, openDir, staticDir};

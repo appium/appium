@@ -1,4 +1,4 @@
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 import {
   getGitRev,
   getBuildInfo,
@@ -6,8 +6,7 @@ import {
   APPIUM_VER,
 } from '../../lib/config';
 import axios from 'axios';
-import { fs } from '@appium/support';
-
+import {fs} from '@appium/support';
 
 describe('Config', function () {
   let sandbox;
@@ -29,7 +28,7 @@ describe('Config', function () {
     });
   });
   describe('getBuildInfo', function () {
-    async function verifyBuildInfoUpdate (useLocalGit) {
+    async function verifyBuildInfoUpdate(useLocalGit) {
       const buildInfo = getBuildInfo();
       mockFs.expects('exists').atLeast(1).returns(useLocalGit);
       buildInfo['git-sha'] = undefined;

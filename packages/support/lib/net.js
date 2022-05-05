@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import fs from './fs';
 import B from 'bluebird';
-import { toReadableSizeString } from './util';
+import {toReadableSizeString} from './util';
 import log from './logger';
 import Ftp from 'jsftp';
 import Timer from './timing';
@@ -15,7 +15,7 @@ const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
  * @param {AuthCredentials | import('axios').AxiosBasicCredentials} auth
  * @returns {import('axios').AxiosBasicCredentials?}
  */
-function toAxiosAuth (auth) {
+function toAxiosAuth(auth) {
   if (!_.isPlainObject(auth)) {
     return null;
   }
@@ -24,7 +24,7 @@ function toAxiosAuth (auth) {
     username: _.get(auth, 'username', _.get(auth, 'user')),
     password: _.get(auth, 'password', _.get(auth, 'pass')),
   };
-  return (axiosAuth.username && axiosAuth.password) ? axiosAuth : null;
+  return axiosAuth.username && axiosAuth.password ? axiosAuth : null;
 }
 
 /**
@@ -32,7 +32,11 @@ function toAxiosAuth (auth) {
  * @param {URL} parsedUri
  * @param {HttpUploadOptions & NetOptions} [uploadOptions]
  */
-async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /** @type {HttpUploadOptions & NetOptions} */({})) {
+async function uploadFileToHttp(
+  localFileStream,
+  parsedUri,
+  uploadOptions = /** @type {HttpUploadOptions & NetOptions} */ ({})
+) {
   const {
     method = 'POST',
     timeout = DEFAULT_TIMEOUT_MS,
@@ -41,7 +45,7 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /**
     fileFieldName = 'file',
     formFields,
   } = uploadOptions;
-  const { href } = parsedUri;
+  const {href} = parsedUri;
 
   /** @type {import('axios').AxiosRequestConfig} */
   const requestOpts = {
@@ -73,7 +77,7 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /**
     }
     requestOpts.headers = {
       ...(_.isPlainObject(headers) ? headers : {}),
-      ...form.getHeaders()
+      ...form.getHeaders(),
     };
     requestOpts.data = form;
   } else {
@@ -82,8 +86,10 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /**
     }
     requestOpts.data = localFileStream;
   }
-  log.debug(`Performing ${method} to ${href} with options (excluding data): ` +
-    JSON.stringify(_.omit(requestOpts, ['data'])));
+  log.debug(
+    `Performing ${method} to ${href} with options (excluding data): ` +
+      JSON.stringify(_.omit(requestOpts, ['data']))
+  );
 
   const {status, statusText} = await axios(requestOpts);
   log.info(`Server response: ${status} ${statusText}`);
@@ -94,16 +100,13 @@ async function uploadFileToHttp (localFileStream, parsedUri, uploadOptions = /**
  * @param {URL} parsedUri
  * @param {NotHttpUploadOptions & NetOptions} [uploadOptions]
  */
-async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = /** @type {NotHttpUploadOptions & NetOptions} */({})) {
-  const {
-    auth,
-  } = uploadOptions;
-  const {
-    hostname,
-    port,
-    protocol,
-    pathname,
-  } = parsedUri;
+async function uploadFileToFtp(
+  localFileStream,
+  parsedUri,
+  uploadOptions = /** @type {NotHttpUploadOptions & NetOptions} */ ({})
+) {
+  const {auth} = uploadOptions;
+  const {hostname, port, protocol, pathname} = parsedUri;
 
   const ftpOpts = {
     host: hostname,
@@ -131,7 +134,7 @@ async function uploadFileToFtp (localFileStream, parsedUri, uploadOptions = /** 
  * @param {URL} url
  * @returns {opts is HttpUploadOptions & NetOptions}
  */
-function isHttpUploadOptions (opts, url) {
+function isHttpUploadOptions(opts, url) {
   try {
     const {protocol} = new URL(url);
     return protocol === 'http:' || protocol === 'https:';
@@ -146,7 +149,7 @@ function isHttpUploadOptions (opts, url) {
  * @param {URL} url
  * @returns {opts is NotHttpUploadOptions & NetOptions}
  */
-function isNotHttpUploadOptions (opts, url) {
+function isNotHttpUploadOptions(opts, url) {
   try {
     const {protocol} = new URL(url);
     return protocol === 'ftp:';
@@ -163,38 +166,50 @@ function isNotHttpUploadOptions (opts, url) {
  * @param {(HttpUploadOptions|NotHttpUploadOptions) & NetOptions} [uploadOptions]
  * @returns {Promise<void>}
  */
-async function uploadFile (localPath, remoteUri, uploadOptions = /** @type {(HttpUploadOptions|NotHttpUploadOptions) & NetOptions} */({})) {
-  if (!await fs.exists(localPath)) {
-    throw new Error (`'${localPath}' does not exists or is not accessible`);
+async function uploadFile(
+  localPath,
+  remoteUri,
+  uploadOptions = /** @type {(HttpUploadOptions|NotHttpUploadOptions) & NetOptions} */ ({})
+) {
+  if (!(await fs.exists(localPath))) {
+    throw new Error(`'${localPath}' does not exists or is not accessible`);
   }
 
-  const {
-    isMetered = true,
-  } = uploadOptions;
+  const {isMetered = true} = uploadOptions;
   const url = new URL(remoteUri);
   const {size} = await fs.stat(localPath);
   if (isMetered) {
-    log.info(`Uploading '${localPath}' of ${toReadableSizeString(size)} size to '${remoteUri}'`);
+    log.info(
+      `Uploading '${localPath}' of ${toReadableSizeString(
+        size
+      )} size to '${remoteUri}'`
+    );
   }
   const timer = new Timer().start();
   if (isHttpUploadOptions(uploadOptions, url)) {
     if (!uploadOptions.fileFieldName) {
       uploadOptions.headers = {
-        ...(_.isPlainObject(uploadOptions.headers) ? uploadOptions.headers : {}),
-        'Content-Length': size
+        ...(_.isPlainObject(uploadOptions.headers)
+          ? uploadOptions.headers
+          : {}),
+        'Content-Length': size,
       };
     }
     await uploadFileToHttp(fs.createReadStream(localPath), url, uploadOptions);
   } else if (isNotHttpUploadOptions(uploadOptions, url)) {
     await uploadFileToFtp(fs.createReadStream(localPath), url, uploadOptions);
   } else {
-    throw new Error(`Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
-      `Unsupported remote protocol '${url.protocol}'. ` +
-      `Only http/https and ftp/ftps protocols are supported.`);
+    throw new Error(
+      `Cannot upload the file at '${localPath}' to '${remoteUri}'. ` +
+        `Unsupported remote protocol '${url.protocol}'. ` +
+        `Only http/https and ftp/ftps protocols are supported.`
+    );
   }
   if (isMetered) {
-    log.info(`Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
-      `${timer.getDuration().asSeconds.toFixed(3)}s`);
+    log.info(
+      `Uploaded '${localPath}' of ${toReadableSizeString(size)} size in ` +
+        `${timer.getDuration().asSeconds.toFixed(3)}s`
+    );
   }
 }
 
@@ -206,7 +221,11 @@ async function uploadFile (localPath, remoteUri, uploadOptions = /** @type {(Htt
  * @param {DownloadOptions & NetOptions} [downloadOptions]
  * @throws {Error} If download operation fails
  */
-async function downloadFile (remoteUrl, dstPath, downloadOptions = /** @type {DownloadOptions & NetOptions} */({})) {
+async function downloadFile(
+  remoteUrl,
+  dstPath,
+  downloadOptions = /** @type {DownloadOptions & NetOptions} */ ({})
+) {
   const {
     isMetered = true,
     auth,
@@ -234,10 +253,9 @@ async function downloadFile (remoteUrl, dstPath, downloadOptions = /** @type {Do
   let responseLength;
   try {
     const writer = fs.createWriteStream(dstPath);
-    const {
-      data: responseStream,
-      headers: responseHeaders,
-    } = await axios(requestOpts);
+    const {data: responseStream, headers: responseHeaders} = await axios(
+      requestOpts
+    );
     responseLength = parseInt(responseHeaders['content-length'], 10);
     responseStream.pipe(writer);
 
@@ -250,27 +268,35 @@ async function downloadFile (remoteUrl, dstPath, downloadOptions = /** @type {Do
       });
     });
   } catch (err) {
-    throw new Error(`Cannot download the file from ${remoteUrl}: ${err.message}`);
+    throw new Error(
+      `Cannot download the file from ${remoteUrl}: ${err.message}`
+    );
   }
 
   const {size} = await fs.stat(dstPath);
   if (responseLength && size !== responseLength) {
     await fs.rimraf(dstPath);
-    throw new Error(`The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
-      `differs from the one in Content-Length response header (${responseLength} bytes)`);
+    throw new Error(
+      `The size of the file downloaded from ${remoteUrl} (${size} bytes) ` +
+        `differs from the one in Content-Length response header (${responseLength} bytes)`
+    );
   }
   if (isMetered) {
     const secondsElapsed = timer.getDuration().asSeconds;
-    log.debug(`${remoteUrl} (${toReadableSizeString(size)}) ` +
-      `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`);
+    log.debug(
+      `${remoteUrl} (${toReadableSizeString(size)}) ` +
+        `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+    );
     if (secondsElapsed >= 2) {
       const bytesPerSec = Math.floor(size / secondsElapsed);
-      log.debug(`Approximate download speed: ${toReadableSizeString(bytesPerSec)}/s`);
+      log.debug(
+        `Approximate download speed: ${toReadableSizeString(bytesPerSec)}/s`
+      );
     }
   }
 }
 
-export { uploadFile, downloadFile };
+export {uploadFile, downloadFile};
 
 /**
  * Common options for {@linkcode uploadFile} and {@linkcode downloadFile}.
@@ -316,4 +342,3 @@ export { uploadFile, downloadFile };
  * to be included into the upload request. This property is only considered if
  * `fileFieldName` is set
  */
-

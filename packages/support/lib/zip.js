@@ -2,17 +2,17 @@ import _ from 'lodash';
 import B from 'bluebird';
 import yauzl from 'yauzl';
 import archiver from 'archiver';
-import { createWriteStream } from 'fs';
+import {createWriteStream} from 'fs';
 import path from 'path';
 import stream from 'stream';
 import fs from './fs';
-import { isWindows } from './system';
-import { Base64Encode } from 'base64-stream';
-import { toReadableSizeString, GiB } from './util';
+import {isWindows} from './system';
+import {Base64Encode} from 'base64-stream';
+import {toReadableSizeString, GiB} from './util';
 import Timer from './timing';
 import log from './logger';
 import getStream from 'get-stream';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 
 /**
  * @type {(path: string, options?: yauzl.Options) => Promise<yauzl.ZipFile>}
@@ -32,21 +32,20 @@ class ZipExtractor {
   /** @type {yauzl.ZipFile} */
   zipfile;
 
-  constructor (sourcePath, opts = {}) {
+  constructor(sourcePath, opts = {}) {
     this.zipPath = sourcePath;
     this.opts = opts;
     this.canceled = false;
   }
 
-  extractFileName (entry) {
-    return _.isBuffer(entry.fileName) ? entry.fileName.toString(this.opts.fileNamesEncoding) : entry.fileName;
+  extractFileName(entry) {
+    return _.isBuffer(entry.fileName)
+      ? entry.fileName.toString(this.opts.fileNamesEncoding)
+      : entry.fileName;
   }
 
-  async extract () {
-    const {
-      dir,
-      fileNamesEncoding,
-    } = this.opts;
+  async extract() {
+    const {dir, fileNamesEncoding} = this.opts;
     this.zipfile = await openZip(this.zipPath, {
       lazyEntries: true,
       // https://github.com/thejoshwolfe/yauzl/commit/cc7455ac789ba84973184e5ebde0581cdc4c3b39#diff-04c6e90faac2675aa89e2176d2eec7d8R95
@@ -86,7 +85,9 @@ class ZipExtractor {
           const relativeDestDir = path.relative(dir, canonicalDestDir);
 
           if (relativeDestDir.split(path.sep).includes('..')) {
-            new Error(`Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`);
+            new Error(
+              `Out of bound path "${canonicalDestDir}" found while processing file ${fileName}`
+            );
           }
 
           await this.extractEntry(entry);
@@ -100,32 +101,31 @@ class ZipExtractor {
     });
   }
 
-  async extractEntry (entry) {
+  async extractEntry(entry) {
     if (this.canceled) {
       return;
     }
 
-    const {
-      dir,
-    } = this.opts;
+    const {dir} = this.opts;
 
     const fileName = this.extractFileName(entry);
     const dest = path.join(dir, fileName);
 
     // convert external file attr int into a fs stat mode int
-    const mode = (entry.externalFileAttributes >> 16) & 0xFFFF;
+    const mode = (entry.externalFileAttributes >> 16) & 0xffff;
     // check if it's a symlink or dir (using stat mode constants)
     const isSymlink = (mode & IFMT) === IFLNK;
-    const isDir = (mode & IFMT) === IFDIR
+    const isDir =
+      (mode & IFMT) === IFDIR ||
       // Failsafe, borrowed from jsZip
-      || fileName.endsWith('/')
+      fileName.endsWith('/') ||
       // check for windows weird way of specifying a directory
       // https://github.com/maxogden/extract-zip/issues/13#issuecomment-154494566
-      || (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
+      (entry.versionMadeBy >> 8 === 0 && entry.externalFileAttributes === 16);
     const procMode = this.getExtractedMode(mode, isDir) & 0o777;
     // always ensure folders are created
     const destDir = isDir ? dest : path.dirname(dest);
-    const mkdirOptions = { recursive: true };
+    const mkdirOptions = {recursive: true};
     if (isDir) {
       mkdirOptions.mode = procMode;
     }
@@ -135,21 +135,20 @@ class ZipExtractor {
     }
 
     /** @type {(entry: yauzl.Entry) => Promise<NodeJS.ReadableStream>} */
-    const openReadStream = B.promisify(this.zipfile.openReadStream.bind(this.zipfile));
+    const openReadStream = B.promisify(
+      this.zipfile.openReadStream.bind(this.zipfile)
+    );
     const readStream = await openReadStream(entry);
     if (isSymlink) {
       const link = await getStream(readStream);
       await fs.symlink(link, dest);
     } else {
-      await pipeline(readStream, fs.createWriteStream(dest, { mode: procMode }));
+      await pipeline(readStream, fs.createWriteStream(dest, {mode: procMode}));
     }
   }
 
-  getExtractedMode (entryMode, isDir) {
-    const {
-      defaultDirMode,
-      defaultFileMode,
-    } = this.opts;
+  getExtractedMode(entryMode, isDir) {
+    const {defaultDirMode, defaultFileMode} = this.opts;
 
     let mode = entryMode;
     // Set defaults, if necessary
@@ -177,7 +176,6 @@ class ZipExtractor {
   }
 }
 
-
 /**
  * @typedef ExtractAllOptions
  * @property {?string} fileNamesEncoding The encoding to use for extracted file names.
@@ -196,7 +194,11 @@ class ZipExtractor {
  * @param {string} destDir The full path to the destination folder
  * @param {ExtractAllOptions} [opts]
  */
-async function extractAllTo (zipFilePath, destDir, opts = /** @type {ExtractAllOptions} */({})) {
+async function extractAllTo(
+  zipFilePath,
+  destDir,
+  opts = /** @type {ExtractAllOptions} */ ({})
+) {
   if (!path.isAbsolute(destDir)) {
     throw new Error(`Target path '${destDir}' is expected to be absolute`);
   }
@@ -208,7 +210,10 @@ async function extractAllTo (zipFilePath, destDir, opts = /** @type {ExtractAllO
       await extractWithSystemUnzip(zipFilePath, dir);
       return;
     } catch (err) {
-      log.warn('unzip failed; falling back to JS: %s', err.stderr || err.message);
+      log.warn(
+        'unzip failed; falling back to JS: %s',
+        err.stderr || err.message
+      );
     }
   }
   const extractor = new ZipExtractor(zipFilePath, {
@@ -227,7 +232,7 @@ async function extractAllTo (zipFilePath, destDir, opts = /** @type {ExtractAllO
  * @param {string} destDir The full path to the destination folder.
  * This folder is expected to already exist before extracting the archive.
  */
-async function extractWithSystemUnzip (zipFilePath, destDir) {
+async function extractWithSystemUnzip(zipFilePath, destDir) {
   const isWindowsHost = isWindows();
   let executablePath;
   try {
@@ -241,20 +246,19 @@ async function extractWithSystemUnzip (zipFilePath, destDir) {
   if (isWindowsHost) {
     // on Windows we use PowerShell to unzip files
     await exec(executablePath, [
-      '-command', 'Expand-Archive',
-      '-LiteralPath', zipFilePath,
-      '-DestinationPath', destDir,
-      '-Force'
+      '-command',
+      'Expand-Archive',
+      '-LiteralPath',
+      zipFilePath,
+      '-DestinationPath',
+      destDir,
+      '-Force',
     ]);
   } else {
     // -q means quiet (no stdout)
     // -o means overwrite
     // -d is the dest dir
-    await exec(executablePath, [
-      '-q',
-      '-o', zipFilePath,
-      '-d', destDir
-    ]);
+    await exec(executablePath, ['-q', '-o', zipFilePath, '-d', destDir]);
   }
 }
 
@@ -265,16 +269,16 @@ async function extractWithSystemUnzip (zipFilePath, destDir) {
  * @param {yauzl.Entry} entry The entry instance
  * @param {string} destDir The full path to the destination folder
  */
-async function _extractEntryTo (zipFile, entry, destDir) {
+async function _extractEntryTo(zipFile, entry, destDir) {
   const dstPath = path.resolve(destDir, entry.fileName);
 
   // Create dest directory if doesn't exist already
   if (/\/$/.test(entry.fileName)) {
-    if (!await fs.exists(dstPath)) {
+    if (!(await fs.exists(dstPath))) {
       await fs.mkdirp(dstPath);
     }
     return;
-  } else if (!await fs.exists(path.dirname(dstPath))) {
+  } else if (!(await fs.exists(path.dirname(dstPath)))) {
     await fs.mkdirp(path.dirname(dstPath));
   }
 
@@ -288,7 +292,9 @@ async function _extractEntryTo (zipFile, entry, destDir) {
   // Create zipReadStream and pipe data to the write stream
   // (for some odd reason B.promisify doesn't work on zipfile.openReadStream, it causes an error 'closed')
   const zipReadStream = await new B((resolve, reject) => {
-    zipFile.openReadStream(entry, (err, readStream) => err ? reject(err) : resolve(readStream));
+    zipFile.openReadStream(entry, (err, readStream) =>
+      err ? reject(err) : resolve(readStream)
+    );
   });
   const zipReadStreamPromise = new B((resolve, reject) => {
     zipReadStream.once('end', resolve);
@@ -297,10 +303,7 @@ async function _extractEntryTo (zipFile, entry, destDir) {
   zipReadStream.pipe(writeStream);
 
   // Wait for the zipReadStream and writeStream to end before returning
-  return await B.all([
-    zipReadStreamPromise,
-    writeStreamPromise,
-  ]);
+  return await B.all([zipReadStreamPromise, writeStreamPromise]);
 }
 
 /**
@@ -319,7 +322,7 @@ async function _extractEntryTo (zipFile, entry, destDir) {
  * The iteration through the source zip file will bi terminated as soon as
  * the result of this function equals to `false`.
  */
-async function readEntries (zipFilePath, onEntry) {
+async function readEntries(zipFilePath, onEntry) {
   // Open a zip file and start reading entries
   const zipfile = await openZip(zipFilePath, {lazyEntries: true});
   const zipReadStreamPromise = new B((resolve, reject) => {
@@ -330,7 +333,8 @@ async function readEntries (zipFilePath, onEntry) {
     zipfile.on('entry', async (entry) => {
       const res = await onEntry({
         entry,
-        extractEntryTo: async (destDir) => await _extractEntryTo(zipfile, entry, destDir)
+        extractEntryTo: async (destDir) =>
+          await _extractEntryTo(zipfile, entry, destDir),
       });
       if (res === false) {
         return zipfile.emit('end');
@@ -370,8 +374,8 @@ async function readEntries (zipFilePath, onEntry) {
  * @throws {Error} if there was an error while reading the source
  * or the source is too big
  */
-async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
-  if (!await fs.exists(srcPath)) {
+async function toInMemoryZip(srcPath, opts = /** @type {ZipOptions} */ ({})) {
+  if (!(await fs.exists(srcPath))) {
     throw new Error(`No such file or folder: ${srcPath}`);
   }
 
@@ -389,8 +393,15 @@ async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
       resultBuffers.push(buffer);
       resultBuffersSize += buffer.length;
       if (maxSize > 0 && resultBuffersSize > maxSize) {
-        resultWriteStream.emit('error', new Error(`The size of the resulting ` +
-          `archive must not be greater than ${toReadableSizeString(maxSize)}`));
+        resultWriteStream.emit(
+          'error',
+          new Error(
+            `The size of the resulting ` +
+              `archive must not be greater than ${toReadableSizeString(
+                maxSize
+              )}`
+          )
+        );
       }
       next();
     },
@@ -398,7 +409,7 @@ async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
 
   // Zip 'srcDir' and stream it to the above writable stream
   const archive = archiver('zip', {
-    zlib: {level}
+    zlib: {level},
   });
   let srcSize = null;
   const base64EncoderStream = encodeToBase64 ? new Base64Encode() : null;
@@ -421,8 +432,9 @@ async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
   });
   const archiveStreamPromise = new B((resolve, reject) => {
     archive.once('finish', resolve);
-    archive.once('error', (e) => reject(
-      new Error(`Failed to archive '${srcPath}': ${e.message}`)));
+    archive.once('error', (e) =>
+      reject(new Error(`Failed to archive '${srcPath}': ${e.message}`))
+    );
   });
   const timer = isMetered ? new Timer().start() : null;
   if ((await fs.stat(srcPath)).isDirectory()) {
@@ -444,11 +456,13 @@ async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
   await B.all([archiveStreamPromise, resultWriteStreamPromise]);
 
   if (timer) {
-    log.debug(`Zipped ${encodeToBase64 ? 'and base64-encoded ' : ''}` +
-      `'${path.basename(srcPath)}' ` +
-      (srcSize ? `(${toReadableSizeString(srcSize)}) ` : '') +
-      `in ${timer.getDuration().asSeconds.toFixed(3)}s ` +
-      `(compression level: ${level})`);
+    log.debug(
+      `Zipped ${encodeToBase64 ? 'and base64-encoded ' : ''}` +
+        `'${path.basename(srcPath)}' ` +
+        (srcSize ? `(${toReadableSizeString(srcSize)}) ` : '') +
+        `in ${timer.getDuration().asSeconds.toFixed(3)}s ` +
+        `(compression level: ${level})`
+    );
   }
   // Return the array of zip buffers concatenated into one buffer
   return Buffer.concat(resultBuffers);
@@ -460,14 +474,16 @@ async function toInMemoryZip (srcPath, opts = /** @type {ZipOptions} */({})) {
  * @param {string} filePath - Full path to the file
  * @throws {Error} If the file does not exist or is not a valid ZIP archive
  */
-async function assertValidZip (filePath) {
-  if (!await fs.exists(filePath)) {
+async function assertValidZip(filePath) {
+  if (!(await fs.exists(filePath))) {
     throw new Error(`The file at '${filePath}' does not exist`);
   }
 
   const {size} = await fs.stat(filePath);
   if (size < 4) {
-    throw new Error(`The file at '${filePath}' is too small to be a ZIP archive`);
+    throw new Error(
+      `The file at '${filePath}' is too small to be a ZIP archive`
+    );
   }
   const fd = await fs.open(filePath, 'r');
   try {
@@ -475,8 +491,10 @@ async function assertValidZip (filePath) {
     await fs.read(fd, buffer, 0, ZIP_MAGIC.length, 0);
     const signature = buffer.toString('ascii');
     if (signature !== ZIP_MAGIC) {
-      throw new Error(`The file signature '${signature}' of '${filePath}' ` +
-        `is not equal to the expected ZIP archive signature '${ZIP_MAGIC}'`);
+      throw new Error(
+        `The file signature '${signature}' of '${filePath}' ` +
+          `is not equal to the expected ZIP archive signature '${ZIP_MAGIC}'`
+      );
     }
     return true;
   } finally {
@@ -506,16 +524,14 @@ async function assertValidZip (filePath) {
  * @param {ZipCompressionOptions} opts - Compression options
  * @throws {Error} If there was an error while creating the archive
  */
-async function toArchive (dstPath, src = /** @type {ZipSourceOptions} */({}), opts = /** @type {ZipCompressionOptions} */({})) {
-  const {
-    level = 9,
-  } = opts;
-  const {
-    pattern = '**/*',
-    cwd = path.dirname(dstPath),
-    ignore = [],
-  } = src;
-  const archive = archiver('zip', { zlib: { level }});
+async function toArchive(
+  dstPath,
+  src = /** @type {ZipSourceOptions} */ ({}),
+  opts = /** @type {ZipCompressionOptions} */ ({})
+) {
+  const {level = 9} = opts;
+  const {pattern = '**/*', cwd = path.dirname(dstPath), ignore = []} = src;
+  const archive = archiver('zip', {zlib: {level}});
   const stream = fs.createWriteStream(dstPath);
   return await new B((resolve, reject) => {
     archive
@@ -545,13 +561,25 @@ const getExecutablePath = _.memoize(
   /**
    * @returns {Promise<string>} Full Path to the executable
    */
-  async function getExecutablePath (binaryName) {
+  async function getExecutablePath(binaryName) {
     const fullPath = await fs.which(binaryName);
     log.debug(`Found '%s' at '%s'`, binaryName, fullPath);
     return fullPath;
   }
 );
 
-export { extractAllTo, readEntries, toInMemoryZip, _extractEntryTo,
-  assertValidZip, toArchive };
-export default { extractAllTo, readEntries, toInMemoryZip, assertValidZip, toArchive };
+export {
+  extractAllTo,
+  readEntries,
+  toInMemoryZip,
+  _extractEntryTo,
+  assertValidZip,
+  toArchive,
+};
+export default {
+  extractAllTo,
+  readEntries,
+  toInMemoryZip,
+  assertValidZip,
+  toArchive,
+};

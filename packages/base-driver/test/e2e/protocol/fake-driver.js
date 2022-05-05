@@ -1,42 +1,40 @@
 /* eslint-disable require-await */
-import { errors, BaseDriver, determineProtocol } from '../../../lib';
-import { PROTOCOLS } from '../../../lib/constants';
-import { util } from '@appium/support';
-
+import {errors, BaseDriver, determineProtocol} from '../../../lib';
+import {PROTOCOLS} from '../../../lib/constants';
+import {util} from '@appium/support';
 
 class FakeDriver extends BaseDriver {
-
   static newMethodMap = {
     '/session/:sessionId/noproxy': {
-      GET: {command: 'notProxiedCommand', neverProxy: true}
-    }
+      GET: {command: 'notProxiedCommand', neverProxy: true},
+    },
   };
 
-  constructor () {
+  constructor() {
     super();
     this.protocol = PROTOCOLS.MJSONWP;
     this.sessionId = null;
     this.jwpProxyActive = false;
   }
 
-  sessionExists (sessionId) {
+  sessionExists(sessionId) {
     if (!sessionId) {
       return false;
     }
     return sessionId === this.sessionId;
   }
 
-  driverForSession (/*sessionId*/) {
+  driverForSession(/*sessionId*/) {
     return this;
   }
 
-  async createSession (desiredCapabilities, requiredCapabilities, capabilities) {
+  async createSession(desiredCapabilities, requiredCapabilities, capabilities) {
     // Use a counter to make sure each session has a unique id
     this.sessionId = `fakeSession_${util.uuidV4()}`;
     return [this.sessionId, capabilities];
   }
 
-  async executeCommand (cmd, ...args) {
+  async executeCommand(cmd, ...args) {
     if (!this[cmd]) {
       throw new errors.NotYetImplementedError();
     }
@@ -46,101 +44,101 @@ class FakeDriver extends BaseDriver {
     return await this[cmd](...args);
   }
 
-  async deleteSession () {
+  async deleteSession() {
     this.jwpProxyActive = false;
     this.sessionId = null;
   }
 
-  async getStatus () {
+  async getStatus() {
     return "I'm fine";
   }
 
-  async setUrl (url) {
+  async setUrl(url) {
     return `Navigated to: ${url}`;
   }
 
-  async getUrl () {
+  async getUrl() {
     return 'http://foobar.com';
   }
 
-  async back (sessionId) {
+  async back(sessionId) {
     return sessionId;
   }
 
-  async forward () {}
+  async forward() {}
 
-  async refresh () {
+  async refresh() {
     throw new Error('Too Fresh!');
   }
 
-  async getSession () {
+  async getSession() {
     throw new errors.NoSuchDriverError();
   }
 
-  async click (elementId, sessionId) {
+  async click(elementId, sessionId) {
     return [elementId, sessionId];
   }
 
-  async implicitWait (ms) {
+  async implicitWait(ms) {
     return ms;
   }
 
-  async clickCurrent (button) {
+  async clickCurrent(button) {
     return button;
   }
 
-  async setNetworkConnection (type) {
+  async setNetworkConnection(type) {
     return type;
   }
 
-  async moveTo (element, xOffset, yOffset) {
+  async moveTo(element, xOffset, yOffset) {
     return [element, xOffset, yOffset];
   }
 
-  async getText () {
+  async getText() {
     return '';
   }
 
-  async getAttribute (attr, elementId, sessionId) {
+  async getAttribute(attr, elementId, sessionId) {
     return [attr, elementId, sessionId];
   }
 
-  async setValue (value, elementId) {
+  async setValue(value, elementId) {
     return [value, elementId];
   }
 
-  async performTouch (...args) {
+  async performTouch(...args) {
     return args;
   }
 
-  async setFrame (frameId) {
+  async setFrame(frameId) {
     return frameId;
   }
 
-  async removeApp (app) {
+  async removeApp(app) {
     return app;
   }
 
-  async receiveAsyncResponse () {
+  async receiveAsyncResponse() {
     // this is here to test a failing command that does not throw an error
     return {status: 13, value: 'Mishandled Driver Error'};
   }
 
-  proxyActive (/*sessionId*/) {
+  proxyActive(/*sessionId*/) {
     return false;
   }
 
-  getProxyAvoidList (/*sessionId*/) {
+  getProxyAvoidList(/*sessionId*/) {
     return [];
   }
 
-  canProxy (/*sessionId*/) {
+  canProxy(/*sessionId*/) {
     return false;
   }
 
-  async notProxiedCommand () {
+  async notProxiedCommand() {
     return 'This was not proxied';
   }
 }
 
-export { FakeDriver };
+export {FakeDriver};

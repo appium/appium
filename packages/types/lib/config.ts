@@ -1,5 +1,5 @@
-import type { AppiumConfigJsonSchema } from '@appium/schema';
-import { AppiumConfiguration, ServerConfig } from './appium-config';
+import type {AppiumConfigJsonSchema} from '@appium/schema';
+import {AppiumConfiguration, ServerConfig} from './appium-config';
 
 /**
  * The Appium configuration as it would be in a user-provided configuration file.
@@ -9,8 +9,8 @@ export type AppiumConfig = Partial<AppiumConfiguration>;
 /**
  * Derive the "constant" type of the server properties from the schema.
  */
- type AppiumServerJsonSchema =
- typeof AppiumConfigJsonSchema['properties']['server']['properties'];
+type AppiumServerJsonSchema =
+  typeof AppiumConfigJsonSchema['properties']['server']['properties'];
 
 /**
  * This type associates the types generated from the schema ({@linkcode AppiumConfiguration})
@@ -67,35 +67,38 @@ export type ServerArgs = {
 /**
  * Converts a kebab-cased string into a camel-cased string.
  */
- type KebabToCamel<S extends string> =
- S extends `${infer P1}-${infer P2}${infer P3}`
-   ? `${Lowercase<P1>}${Uppercase<P2>}${KebabToCamel<P3>}`
-   : Lowercase<S>;
+type KebabToCamel<S extends string> =
+  S extends `${infer P1}-${infer P2}${infer P3}`
+    ? `${Lowercase<P1>}${Uppercase<P2>}${KebabToCamel<P3>}`
+    : Lowercase<S>;
 
 /**
-* Converts an object with kebab-cased keys into camel-cased keys.
-*/
-type ObjectToCamel<T> = {
- [K in keyof T as KebabToCamel<string & K>]: T[K] extends Record<string, any>
-   ? KeysToCamelCase<T[K]>
-   : T[K];
-};
-
-/**
-* Converts an object or array to have camel-cased keys.
-*/
-type KeysToCamelCase<T> = {
- [K in keyof T as KebabToCamel<string & K>]: T[K] extends Array<any>
-   ? KeysToCamelCase<T[K][number]>[]
-   : ObjectToCamel<T[K]>;
-};
-
-/**
- * Object `B` has all the keys as object `A` (even if those keys in `A` are otherwise optional). 
+ * Converts an object with kebab-cased keys into camel-cased keys.
  */
-type Associated<A extends object, B extends { [key in keyof Required<A>]: unknown }> = {
+type ObjectToCamel<T> = {
+  [K in keyof T as KebabToCamel<string & K>]: T[K] extends Record<string, any>
+    ? KeysToCamelCase<T[K]>
+    : T[K];
+};
+
+/**
+ * Converts an object or array to have camel-cased keys.
+ */
+type KeysToCamelCase<T> = {
+  [K in keyof T as KebabToCamel<string & K>]: T[K] extends Array<any>
+    ? KeysToCamelCase<T[K][number]>[]
+    : ObjectToCamel<T[K]>;
+};
+
+/**
+ * Object `B` has all the keys as object `A` (even if those keys in `A` are otherwise optional).
+ */
+type Associated<
+  A extends object,
+  B extends {[key in keyof Required<A>]: unknown}
+> = {
   [Prop in keyof Required<A>]: B[Prop];
-}
+};
 
 // end utils
 
@@ -109,7 +112,7 @@ type Associated<A extends object, B extends { [key in keyof Required<A>]: unknow
  *
  * See `appium/lib/schema/keywords` for definition of `appiumCliDest`.
  */
- interface WithDest {
+interface WithDest {
   appiumCliDest: string;
 }
 
@@ -125,4 +128,3 @@ interface WithDefault<T = any> {
 }
 
 // end conditionals
-

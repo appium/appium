@@ -6,22 +6,23 @@ const streamCombiner = require('./stream-combiner');
 const path = require('path');
 const sourcemaps = require('./sourcemaps');
 
-
 const BABEL_OPTS = {
   configFile: path.resolve(__dirname, '..', '.babelrc'),
 };
 
 const renameEsX = function () {
-  return rename(function renameEs (path) {
+  return rename(function renameEs(path) {
     path.basename = path.basename.replace(/\.es[67]$/, '');
   });
 };
 
-module.exports = function transpiler (opts = {}) {
-  const {sourceMapInit, sourceMapHeader, sourceMapWrite} = sourcemaps(opts.sourceMapOpts);
+module.exports = function transpiler(opts = {}) {
+  const {sourceMapInit, sourceMapHeader, sourceMapWrite} = sourcemaps(
+    opts.sourceMapOpts
+  );
 
-  this.stream = function stream () {
-    return streamCombiner(function combine (source) {
+  this.stream = function stream() {
+    return streamCombiner(function combine(source) {
       return source
         .pipe(sourceMapInit)
         .pipe(babel(Object.assign({}, BABEL_OPTS, opts.babelOpts)))

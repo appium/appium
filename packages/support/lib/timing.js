@@ -1,19 +1,17 @@
 import _ from 'lodash';
 
-
 const NS_PER_S = 1e9;
 const NS_PER_MS = 1e6;
-
 
 /**
  * Class representing a duration, encapsulating the number and units.
  */
 class Duration {
-  constructor (nanos) {
+  constructor(nanos) {
     this._nanos = nanos;
   }
 
-  get nanos () {
+  get nanos() {
     return this._nanos;
   }
 
@@ -22,7 +20,7 @@ class Duration {
    *
    * @returns {number} The duration as nanoseconds
    */
-  get asNanoSeconds () {
+  get asNanoSeconds() {
     return this.nanos;
   }
 
@@ -31,7 +29,7 @@ class Duration {
    *
    * @returns {number} The duration as milliseconds
    */
-  get asMilliSeconds () {
+  get asMilliSeconds() {
     return this.nanos / NS_PER_MS;
   }
 
@@ -40,11 +38,11 @@ class Duration {
    *
    * @returns {number} The duration fas seconds
    */
-  get asSeconds () {
+  get asSeconds() {
     return this.nanos / NS_PER_S;
   }
 
-  toString () {
+  toString() {
     // default to milliseconds, rounded
     return this.asMilliSeconds.toFixed(0);
   }
@@ -54,11 +52,11 @@ class Timer {
   /**
    * Creates a timer
    */
-  constructor () {
+  constructor() {
     this._startTime = null;
   }
 
-  get startTime () {
+  get startTime() {
     return this._startTime;
   }
 
@@ -67,7 +65,7 @@ class Timer {
    *
    * @return {Timer} The current instance, for chaining
    */
-  start () {
+  start() {
     if (!_.isNull(this.startTime)) {
       throw new Error('Timer has already been started.');
     }
@@ -83,7 +81,7 @@ class Timer {
    *
    * @return {Duration} the duration
    */
-  getDuration () {
+  getDuration() {
     if (_.isNull(this.startTime)) {
       throw new Error(`Unable to get duration. Timer was not started`);
     }
@@ -93,19 +91,24 @@ class Timer {
       // startTime was created using process.hrtime()
       const [seconds, nanos] = process.hrtime(this.startTime);
       nanoDuration = seconds * NS_PER_S + nanos;
-    } else if (typeof this.startTime === 'bigint' && _.isFunction(process.hrtime.bigint)) {
+    } else if (
+      typeof this.startTime === 'bigint' &&
+      _.isFunction(process.hrtime.bigint)
+    ) {
       // startTime was created using process.hrtime.bigint()
       const endTime = process.hrtime.bigint();
       // get the difference, and convert to number
       nanoDuration = Number(endTime - this.startTime);
     } else {
-      throw new Error(`Unable to get duration. Start time '${this.startTime}' cannot be parsed`);
+      throw new Error(
+        `Unable to get duration. Start time '${this.startTime}' cannot be parsed`
+      );
     }
 
     return new Duration(nanoDuration);
   }
 
-  toString () {
+  toString() {
     try {
       return this.getDuration().toString();
     } catch (err) {
@@ -114,6 +117,5 @@ class Timer {
   }
 }
 
-
-export { Timer, Duration };
+export {Timer, Duration};
 export default Timer;

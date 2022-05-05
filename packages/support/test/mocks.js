@@ -6,14 +6,14 @@
  */
 
 import path from 'path';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 
-export function initMocks (sandbox = createSandbox()) {
+export function initMocks(sandbox = createSandbox()) {
   const MockResolveFrom = /** @type {MockResolveFrom} */ (
     sandbox.stub().callsFake((cwd, id) => path.join(cwd, id))
   );
 
-  const MockPkgDir = /** @type {MockPkgDir} */(sandbox.stub().resolvesArg(0));
+  const MockPkgDir = /** @type {MockPkgDir} */ (sandbox.stub().resolvesArg(0));
 
   const MockReadPkg = /** @type {MockReadPkg} */ (
     sandbox.stub().callsFake(async () => MockReadPkg.__pkg)
@@ -31,7 +31,7 @@ export function initMocks (sandbox = createSandbox()) {
     access: sandbox.stub().resolves(true),
   });
 
-  const MockTeenProcess = /** @type {MockTeenProcess} */({
+  const MockTeenProcess = /** @type {MockTeenProcess} */ ({
     exec: sandbox.stub().callsFake(async () => ({
       stdout: MockTeenProcess.__stdout,
       stderr: MockTeenProcess.__stderr,

@@ -1,0 +1,12 @@
+**/node_modules/**
+**/build/**
+**/fixtures/**
+**/*.min.*
+**/*.md
+**/*.yml
+**/*.json
+**/.vscode/**
+**/*.html
+**/generated/**
+# generated
+packages/types/lib/appium-config.ts

@@ -1,25 +1,27 @@
-import { errors } from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
 
-let commands = {}, helpers = {}, extensions = {};
+let commands = {},
+  helpers = {},
+  extensions = {};
 
-helpers.assertNoAlert = function assertNoAlert () {
+helpers.assertNoAlert = function assertNoAlert() {
   if (this.appModel.hasAlert()) {
     throw new errors.UnexpectedAlertOpenError();
   }
 };
 
-helpers.assertAlert = function assertAlert () {
+helpers.assertAlert = function assertAlert() {
   if (!this.appModel.hasAlert()) {
     throw new errors.NoAlertOpenError();
   }
 };
 
-commands.getAlertText = async function getAlertText () {
+commands.getAlertText = async function getAlertText() {
   this.assertAlert();
   return this.appModel.alertText();
 };
 
-commands.setAlertText = async function setAlertText (text) {
+commands.setAlertText = async function setAlertText(text) {
   this.assertAlert();
   try {
     this.appModel.setAlertText(text);
@@ -28,7 +30,7 @@ commands.setAlertText = async function setAlertText (text) {
   }
 };
 
-commands.postAcceptAlert = async function postAcceptAlert () {
+commands.postAcceptAlert = async function postAcceptAlert() {
   this.assertAlert();
   this.appModel.handleAlert();
 };
@@ -36,5 +38,5 @@ commands.postAcceptAlert = async function postAcceptAlert () {
 commands.postDismissAlert = commands.postAcceptAlert;
 
 Object.assign(extensions, commands, helpers);
-export { commands, helpers };
+export {commands, helpers};
 export default extensions;

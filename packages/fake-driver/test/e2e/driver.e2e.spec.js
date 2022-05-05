@@ -1,18 +1,23 @@
 // transpile:mocha
 
 import axios from 'axios';
-import { baseDriverE2ETests } from '@appium/base-driver/build/test/basedriver';
-import { FakeDriver, startServer } from '../../lib/index.js';
-import { BASE_CAPS, deleteSession, initSession, TEST_HOST, TEST_PORT, W3C_PREFIXED_CAPS } from '../helpers';
+import {baseDriverE2ETests} from '@appium/base-driver/build/test/basedriver';
+import {FakeDriver, startServer} from '../../lib/index.js';
+import {
+  BASE_CAPS,
+  deleteSession,
+  initSession,
+  TEST_HOST,
+  TEST_PORT,
+  W3C_PREFIXED_CAPS,
+} from '../helpers';
 import contextTests from './context-tests';
 import findElementTests from './find-element-tests';
 import elementInteractionTests from './element-interaction-tests';
 import alertTests from './alert-tests';
 import generalTests from './general-tests';
 
-
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
-
 
 // test the same things as for base driver
 baseDriverE2ETests(FakeDriver, W3C_PREFIXED_CAPS);
@@ -53,22 +58,24 @@ describe('FakeDriver - via HTTP', function () {
       const res = await axios.post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
         capabilities: {
           alwaysMatch: W3C_PREFIXED_CAPS,
-          firstMatch: [
-            {'appium:fakeCap': 'Foo', }
-          ]
-        }});
+          firstMatch: [{'appium:fakeCap': 'Foo'}],
+        },
+      });
       const {value, status} = res.data;
       value.capabilities.should.deep.equal({...BASE_CAPS, fakeCap: 'Foo'});
       value.sessionId.should.exist;
       should.not.exist(status);
-      await axios.delete(`http://${TEST_HOST}:${TEST_PORT}/session/${value.sessionId}`);
+      await axios.delete(
+        `http://${TEST_HOST}:${TEST_PORT}/session/${value.sessionId}`
+      );
     });
 
     it('should fail if given unsupported desiredCapabilities', async function () {
-      await axios.post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
-        desiredCapabilities: W3C_PREFIXED_CAPS
-      }).should.eventually.be.rejectedWith(/500/);
+      await axios
+        .post(`http://${TEST_HOST}:${TEST_PORT}/session`, {
+          desiredCapabilities: W3C_PREFIXED_CAPS,
+        })
+        .should.eventually.be.rejectedWith(/500/);
     });
   });
-
 });

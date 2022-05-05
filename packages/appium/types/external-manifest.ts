@@ -2,9 +2,9 @@
  * These types describe information about external extensions and the contents of their `package.json` files
  */
 
-import type { SchemaObject } from 'ajv';
-import type { PackageJson, SetRequired } from 'type-fest';
-import { DriverType, ExtensionType, PluginType } from './index';
+import type {SchemaObject} from 'ajv';
+import type {PackageJson, SetRequired} from 'type-fest';
+import {DriverType, ExtensionType, PluginType} from './index';
 
 /**
  * This is what is allowed in the `appium.schema` prop of an extension's `package.json`.

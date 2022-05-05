@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import BaseDriver from '@appium/base-driver';
 import ImageElementFinder from '../../lib/finder';
-import { getImgElFromArgs } from '../../lib/plugin';
-import ImageElement, { IMAGE_ELEMENT_PREFIX } from '../../lib/image-element';
+import {getImgElFromArgs} from '../../lib/plugin';
+import ImageElement, {IMAGE_ELEMENT_PREFIX} from '../../lib/image-element';
 import sinon from 'sinon';
 
 const defRect = {x: 100, y: 110, width: 50, height: 25};
@@ -40,7 +40,7 @@ describe('ImageElement', function () {
       const el = new ImageElement(defTemplate, defRect);
       el.center.should.eql({
         x: defRect.x + defRect.width / 2,
-        y: defRect.y + defRect.height / 2
+        y: defRect.y + defRect.height / 2,
       });
     });
   });
@@ -72,7 +72,9 @@ describe('ImageElement', function () {
       const d = new BaseDriver();
       const el = new ImageElement(defTemplate, defRect);
       await d.settings.update({imageElementTapStrategy: 'bad'});
-      await el.click(d).should.be.rejectedWith(/Incorrect imageElementTapStrategy/);
+      await el
+        .click(d)
+        .should.be.rejectedWith(/Incorrect imageElementTapStrategy/);
     });
     it('should try to check for image element staleness, and throw if stale', async function () {
       const d = new BaseDriver();
@@ -82,14 +84,14 @@ describe('ImageElement', function () {
       // we need to check for staleness if explicitly requested to do so
       await d.settings.update({
         checkForImageElementStaleness: true,
-        autoUpdateImageElementPosition: false
+        autoUpdateImageElementPosition: false,
       });
       await el.click(d).should.be.rejectedWith(/no longer attached/);
 
       // and also if we are updating the element position
       await d.settings.update({
         checkForImageElementStaleness: false,
-        autoUpdateImageElementPosition: true
+        autoUpdateImageElementPosition: true,
       });
       await el.click(d).should.be.rejectedWith(/no longer attached/);
     });
@@ -169,7 +171,13 @@ describe('ImageElement', function () {
   describe('#execute', function () {
     // aGFwcHkgdGVzdGluZw== is 'happy testing'
     const f = new ImageElementFinder(driver);
-    const imgEl = new ImageElement(defTemplate, defRect, 0, 'aGFwcHkgdGVzdGluZw==', f);
+    const imgEl = new ImageElement(
+      defTemplate,
+      defRect,
+      0,
+      'aGFwcHkgdGVzdGluZw==',
+      f
+    );
     let clickStub;
 
     before(function () {
@@ -183,49 +191,80 @@ describe('ImageElement', function () {
     });
 
     it('should reject executions for unsupported commands', async function () {
-      await ImageElement.execute(driver, imgEl, 'foobar')
-        .should.be.rejectedWith(/not yet been implemented/);
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'foobar'
+      ).should.be.rejectedWith(/not yet been implemented/);
     });
     it('should get displayed status of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'elementDisplayed')
-        .should.eventually.be.true;
+      await ImageElement.execute(driver, imgEl, 'elementDisplayed').should
+        .eventually.be.true;
     });
     it('should get size of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getSize')
-        .should.eventually.eql({width: defRect.width, height: defRect.height});
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getSize'
+      ).should.eventually.eql({width: defRect.width, height: defRect.height});
     });
     it('should get location of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getLocation')
-        .should.eventually.eql({x: defRect.x, y: defRect.y});
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getLocation'
+      ).should.eventually.eql({x: defRect.x, y: defRect.y});
     });
     it('should get location in view of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getLocation')
-        .should.eventually.eql({x: defRect.x, y: defRect.y});
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getLocation'
+      ).should.eventually.eql({x: defRect.x, y: defRect.y});
     });
     it('should get rect of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getElementRect')
-        .should.eventually.eql(defRect);
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getElementRect'
+      ).should.eventually.eql(defRect);
     });
     it('should get score of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getAttribute', 'score')
-        .should.eventually.eql(0);
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getAttribute',
+        'score'
+      ).should.eventually.eql(0);
     });
     it('should get visual of element', async function () {
-      await ImageElement.execute(driver, imgEl, 'getAttribute', 'visual')
-        .should.eventually.eql('aGFwcHkgdGVzdGluZw==');
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getAttribute',
+        'visual'
+      ).should.eventually.eql('aGFwcHkgdGVzdGluZw==');
     });
     it('should get null as visual of element by default', async function () {
       const imgElement = new ImageElement(defTemplate, defRect);
-      await ImageElement.execute(driver, imgElement, 'getAttribute', 'visual')
-        .should.eventually.eql(null);
+      await ImageElement.execute(
+        driver,
+        imgElement,
+        'getAttribute',
+        'visual'
+      ).should.eventually.eql(null);
     });
     it('should not get other attribute', async function () {
-      await ImageElement.execute(driver, imgEl, 'getAttribute', 'content-desc')
-        .should.eventually.rejectedWith('Method has not yet been implemented');
+      await ImageElement.execute(
+        driver,
+        imgEl,
+        'getAttribute',
+        'content-desc'
+      ).should.eventually.rejectedWith('Method has not yet been implemented');
     });
     it('should click element', async function () {
-      await ImageElement.execute(driver, imgEl, 'click')
-        .should.eventually.be.true;
+      await ImageElement.execute(driver, imgEl, 'click').should.eventually.be
+        .true;
     });
   });
 });
@@ -234,7 +273,7 @@ describe('image element LRU cache', function () {
   it('should accept and cache image elements', function () {
     const el1 = new ImageElement(defTemplate, defRect);
     const el2 = new ImageElement(defTemplate, defRect);
-    const cache = (new ImageElementFinder()).imgElCache;
+    const cache = new ImageElementFinder().imgElCache;
     cache.set(el1.id, el1);
     el1.equals(cache.get(el1.id)).should.be.true;
     _.isUndefined(cache.get(el2.id)).should.be.true;
@@ -244,7 +283,8 @@ describe('image element LRU cache', function () {
   it('once cache reaches max size, should eject image elements', function () {
     const el1 = new ImageElement(defTemplate, defRect);
     const el2 = new ImageElement(defTemplate, defRect);
-    const cache = (new ImageElementFinder(null, defTemplate.length + 1)).imgElCache;
+    const cache = new ImageElementFinder(null, defTemplate.length + 1)
+      .imgElCache;
     cache.set(el1.id, el1);
     cache.has(el1.id).should.be.true;
     cache.set(el2.id, el2);

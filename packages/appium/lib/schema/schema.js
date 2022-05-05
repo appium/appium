@@ -1,12 +1,11 @@
-
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import _ from 'lodash';
 import path from 'path';
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../constants';
-import { AppiumConfigJsonSchema } from '@appium/schema';
-import { APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME } from './arg-spec';
-import { keywords } from './keywords';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {AppiumConfigJsonSchema} from '@appium/schema';
+import {APPIUM_CONFIG_SCHEMA_ID, ArgSpec, SERVER_PROP_NAME} from './arg-spec';
+import {keywords} from './keywords';
 
 /**
  * Key/value pairs go in... but they don't come out.
@@ -19,7 +18,7 @@ export class RoachHotelMap extends Map {
    * @param {K} key
    * @param {V} value
    */
-  set (key, value) {
+  set(key, value) {
     if (this.has(key)) {
       throw new Error(`${key} is already set`);
     }
@@ -30,11 +29,11 @@ export class RoachHotelMap extends Map {
    * @param {K} key
    */
   // eslint-disable-next-line no-unused-vars
-  delete (key) {
+  delete(key) {
     return false;
   }
 
-  clear () {
+  clear() {
     throw new Error(`Cannot clear RoachHotelMap`);
   }
 }
@@ -100,7 +99,7 @@ class AppiumSchema {
    * @see https://npm.im/ajv-formats
    * @private
    */
-  constructor () {
+  constructor() {
     this._ajv = AppiumSchema._instantiateAjv();
   }
 
@@ -111,7 +110,7 @@ class AppiumSchema {
    * Binds public methods to the instance.
    * @returns {AppiumSchema}
    */
-  static create () {
+  static create() {
     if (!AppiumSchema._instance) {
       const instance = new AppiumSchema();
       AppiumSchema._instance = instance;
@@ -143,7 +142,7 @@ class AppiumSchema {
    * @param {string} extName - Name
    * @returns {boolean} If registered
    */
-  hasRegisteredSchema (extType, extName) {
+  hasRegisteredSchema(extType, extName) {
     return this._registeredSchemas[extType].has(extName);
   }
 
@@ -152,11 +151,11 @@ class AppiumSchema {
    * successfully and {@link AppiumSchema.reset reset} has not been called since.
    * @returns {boolean} If finalized
    */
-  isFinalized () {
+  isFinalized() {
     return Boolean(this._finalizedSchemas);
   }
 
-  getAllArgSpecs () {
+  getAllArgSpecs() {
     return this._argSpecs;
   }
 
@@ -179,7 +178,7 @@ class AppiumSchema {
    * @throws {Error} If the schema is not valid
    * @returns {Readonly<Record<string,StrictSchemaObject>>} Record of schema IDs to full schema objects
    */
-  finalize () {
+  finalize() {
     if (this.isFinalized()) {
       return /** @type {NonNullable<typeof this._finalizedSchemas>} */ (
         this._finalizedSchemas
@@ -214,7 +213,7 @@ class AppiumSchema {
       _.omit(baseSchema.properties.server.properties, [
         DRIVER_TYPE,
         PLUGIN_TYPE,
-      ]),
+      ])
     );
 
     /**
@@ -243,7 +242,7 @@ class AppiumSchema {
         });
         return baseSchema;
       },
-      baseSchema,
+      baseSchema
     );
 
     ajv.addSchema(finalSchema, APPIUM_CONFIG_SCHEMA_ID);
@@ -259,12 +258,12 @@ class AppiumSchema {
    * @private
    * @returns {Ajv}
    */
-  static _instantiateAjv () {
+  static _instantiateAjv() {
     const ajv = addFormats(
       new Ajv({
         // without this not much validation actually happens
         allErrors: true,
-      }),
+      })
     );
 
     // add custom keywords to ajv. see schema-keywords.js
@@ -286,7 +285,7 @@ class AppiumSchema {
    * If you need to call {@link AppiumSchema.finalize} again, you'll want to call this first.
    * @returns {void}
    */
-  reset () {
+  reset() {
     for (const schemaId of Object.keys(this._finalizedSchemas ?? {})) {
       this._ajv.removeSchema(schemaId);
     }
@@ -313,10 +312,10 @@ class AppiumSchema {
    * @throws {SchemaNameConflictError} If the schema is an invalid
    * @returns {void}
    */
-  registerSchema (extType, extName, schema) {
+  registerSchema(extType, extName, schema) {
     if (!(extType && extName) || _.isUndefined(schema)) {
       throw new TypeError(
-        'Expected extension type, extension name, and a defined schema',
+        'Expected extension type, extension name, and a defined schema'
       );
     }
     if (!AppiumSchema.isSupportedSchemaType(schema)) {
@@ -341,7 +340,7 @@ class AppiumSchema {
    * @param {string} [extName] - Extension name
    * @returns {ArgSpec|undefined} ArgSpec or `undefined` if not found
    */
-  getArgSpec (name, extType, extName) {
+  getArgSpec(name, extType, extName) {
     return this._argSpecs.get(ArgSpec.toArg(name, extType, extName));
   }
 
@@ -352,7 +351,7 @@ class AppiumSchema {
    * @param {string} [extName] - Extension name
    * @returns {boolean} `true` if such an {@link ArgSpec} exists
    */
-  hasArgSpec (name, extType, extName) {
+  hasArgSpec(name, extType, extName) {
     return this._argSpecs.has(ArgSpec.toArg(name, extType, extName));
   }
 
@@ -368,7 +367,7 @@ class AppiumSchema {
    * properties. Base arguments (server arguments) are always at the top level.
    * @returns {DefaultValues<Flattened>}
    */
-  getDefaults (flatten = /** @type {Flattened} */ (true)) {
+  getDefaults(flatten = /** @type {Flattened} */ (true)) {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
@@ -383,17 +382,17 @@ class AppiumSchema {
     /** @type {DefaultReducer} */
     const reducer = flatten
       ? (defaults, {defaultValue, dest}) => {
-        if (!_.isUndefined(defaultValue)) {
-          defaults[dest] = defaultValue;
+          if (!_.isUndefined(defaultValue)) {
+            defaults[dest] = defaultValue;
+          }
+          return defaults;
         }
-        return defaults;
-      }
       : (defaults, {defaultValue, dest}) => {
-        if (!_.isUndefined(defaultValue)) {
-          _.set(defaults, dest, defaultValue);
-        }
-        return defaults;
-      };
+          if (!_.isUndefined(defaultValue)) {
+            _.set(defaults, dest, defaultValue);
+          }
+          return defaults;
+        };
 
     /** @type {DefaultValues<Flattened>} */
     const retval = {};
@@ -407,12 +406,12 @@ class AppiumSchema {
    * @param {string} extName - Extension name
    * @returns {Record<string,ArgSpecDefaultValue>}
    */
-  getDefaultsForExtension (extType, extName) {
+  getDefaultsForExtension(extType, extName) {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
     const specs = [...this._argSpecs.values()].filter(
-      (spec) => spec.extType === extType && spec.extName === extName,
+      (spec) => spec.extType === extType && spec.extName === extName
     );
     return specs.reduce((defaults, {defaultValue, rawDest}) => {
       if (!_.isUndefined(defaultValue)) {
@@ -436,7 +435,7 @@ class AppiumSchema {
    * @throws If {@link AppiumSchema.finalize} has not been called yet.
    * @returns {FlattenedSchema}
    */
-  flatten () {
+  flatten() {
     const schema = this.getSchema();
 
     /** @type { {properties: SchemaObject, prefix: string[]}[] } */
@@ -468,7 +467,7 @@ class AppiumSchema {
           if (!normalizedExtName) {
             /* istanbul ignore next */
             throw new ReferenceError(
-              `Could not determine extension name from schema ID ${$ref}. This is a bug.`,
+              `Could not determine extension name from schema ID ${$ref}. This is a bug.`
             );
           }
           stack.push({
@@ -480,12 +479,12 @@ class AppiumSchema {
           const argSpec = this.getArgSpec(
             key,
             /** @type {ExtensionType} */ (extType),
-            extName,
+            extName
           );
           if (!argSpec) {
             /* istanbul ignore next */
             throw new ReferenceError(
-              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`,
+              `Unknown argument with key ${key}, extType ${extType} and extName ${extName}. This is a bug.`
             );
           }
           flattened.push({schema: _.cloneDeep(value), argSpec});
@@ -503,7 +502,7 @@ class AppiumSchema {
    * @throws If the schema has not yet been finalized
    * @returns {SchemaObject}
    */
-  getSchema (ref = APPIUM_CONFIG_SCHEMA_ID) {
+  getSchema(ref = APPIUM_CONFIG_SCHEMA_ID) {
     return /** @type {SchemaObject} */ (this._getValidator(ref).schema);
   }
 
@@ -513,7 +512,7 @@ class AppiumSchema {
    * @private
    * @returns {import('ajv').ValidateFunction}
    */
-  _getValidator (id = APPIUM_CONFIG_SCHEMA_ID) {
+  _getValidator(id = APPIUM_CONFIG_SCHEMA_ID) {
     const validator = this._ajv.getSchema(id);
     if (!validator) {
       if (id === APPIUM_CONFIG_SCHEMA_ID) {
@@ -533,7 +532,7 @@ class AppiumSchema {
    * @public
    * @returns {import('ajv').ErrorObject[]} Array of errors, if any.
    */
-  validate (value, ref = APPIUM_CONFIG_SCHEMA_ID) {
+  validate(value, ref = APPIUM_CONFIG_SCHEMA_ID) {
     const validator = this._getValidator(ref);
     return !validator(value) && _.isArray(validator.errors)
       ? [...validator.errors]
@@ -545,7 +544,7 @@ class AppiumSchema {
    * @param {string} filename
    * @returns {boolean}
    */
-  static isAllowedSchemaFileExtension (filename) {
+  static isAllowedSchemaFileExtension(filename) {
     return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename));
   }
 
@@ -554,7 +553,7 @@ class AppiumSchema {
    * @param {any} schema - Schema to check
    * @returns {schema is SchemaObject}
    */
-  static isSupportedSchemaType (schema) {
+  static isSupportedSchemaType(schema) {
     return _.isPlainObject(schema) && schema.$async !== true;
   }
 }
@@ -569,7 +568,7 @@ export class SchemaFinalizationError extends Error {
    */
   code = 'APPIUMERR_SCHEMA_FINALIZATION';
 
-  constructor () {
+  constructor() {
     super('Schema not yet finalized; `finalize()` must be called first.');
   }
 }
@@ -594,9 +593,9 @@ export class SchemaNameConflictError extends Error {
    * @param {ExtensionType} extType
    * @param {string} extName
    */
-  constructor (extType, extName) {
+  constructor(extType, extName) {
     super(
-      `Name for ${extType} schema "${extName}" conflicts with an existing schema`,
+      `Name for ${extType} schema "${extName}" conflicts with an existing schema`
     );
     this.data = {extType, extName};
   }
@@ -619,7 +618,7 @@ export class SchemaUnknownSchemaError extends ReferenceError {
   /**
    * @param {string} schemaId
    */
-  constructor (schemaId) {
+  constructor(schemaId) {
     super(`Unknown schema: "${schemaId}"`);
     this.data = {schemaId};
   }
@@ -647,7 +646,7 @@ export class SchemaUnsupportedSchemaError extends TypeError {
    * @param {ExtensionType} extType
    * @param {string} extName
    */
-  constructor (schema, extType, extName) {
+  constructor(schema, extType, extName) {
     // https://github.com/Microsoft/TypeScript/issues/8277
     super(
       (() => {
@@ -662,12 +661,12 @@ export class SchemaUnsupportedSchemaError extends TypeError {
           /* istanbul ignore next */
           throw new TypeError(
             `schema IS supported; this error should not be thrown (this is a bug). value of schema: ${JSON.stringify(
-              schema,
-            )}`,
+              schema
+            )}`
           );
         }
         return `${msg} schema must be a plain object without a true "$async" property`;
-      })(),
+      })()
     );
     this.data = {schema, extType, extName};
   }

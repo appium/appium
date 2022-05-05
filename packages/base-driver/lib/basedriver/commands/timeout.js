@@ -13,16 +13,15 @@ const MIN_TIMEOUT = 0;
  * @param {import('../driver').BaseDriverBase} Base
  * @returns {TimeoutBase}
  */
-export function TimeoutMixin (Base) {
-
+export function TimeoutMixin(Base) {
   /**
    * @implements {ITimeoutCommands}
    */
   class TimeoutCommands extends Base {
-    async timeouts (type, ms, script, pageLoad, implicit) {
+    async timeouts(type, ms, script, pageLoad, implicit) {
       if (util.hasValue(type) && util.hasValue(ms)) {
         this.log.debug(
-          `MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`,
+          `MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`
         );
 
         switch (type) {
@@ -40,7 +39,7 @@ export function TimeoutMixin (Base) {
             return;
           default:
             throw new Error(
-              `'${type}' type is not supported for MJSONWP timeout`,
+              `'${type}' type is not supported for MJSONWP timeout`
             );
         }
       }
@@ -51,7 +50,7 @@ export function TimeoutMixin (Base) {
           script,
           pageLoad,
           implicit,
-        })}}`,
+        })}}`
       );
       if (util.hasValue(script)) {
         await this.scriptTimeoutW3C(script);
@@ -64,7 +63,7 @@ export function TimeoutMixin (Base) {
       }
     }
 
-    async getTimeouts () {
+    async getTimeouts() {
       return {
         command: this.newCommandTimeoutMs,
         implicit: this.implicitWaitMs,
@@ -72,42 +71,42 @@ export function TimeoutMixin (Base) {
     }
 
     // implicit
-    async implicitWaitW3C (ms) {
+    async implicitWaitW3C(ms) {
       await this.implicitWait(ms);
     }
 
-    async implicitWaitMJSONWP (ms) {
+    async implicitWaitMJSONWP(ms) {
       await this.implicitWait(ms);
     }
 
-    async implicitWait (ms) {
+    async implicitWait(ms) {
       await this.setImplicitWait(this.parseTimeoutArgument(ms));
     }
 
     // pageLoad
-    async pageLoadTimeoutW3C (ms) {
+    async pageLoadTimeoutW3C(ms) {
       throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
     }
 
-    async pageLoadTimeoutMJSONWP (ms) {
+    async pageLoadTimeoutMJSONWP(ms) {
       throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
     }
 
     // script
-    async scriptTimeoutW3C (ms) {
+    async scriptTimeoutW3C(ms) {
       throw new errors.NotImplementedError('Not implemented yet for script.');
     }
 
-    async scriptTimeoutMJSONWP (ms) {
+    async scriptTimeoutMJSONWP(ms) {
       throw new errors.NotImplementedError('Not implemented yet for script.');
     }
 
     // command
-    async newCommandTimeout (ms) {
+    async newCommandTimeout(ms) {
       this.setNewCommandTimeout(this.parseTimeoutArgument(ms));
     }
 
-    setImplicitWait (ms) {
+    setImplicitWait(ms) {
       // eslint-disable-line require-await
       this.implicitWaitMs = ms;
       this.log.debug(`Set implicit wait to ${ms}ms`);
@@ -121,7 +120,7 @@ export function TimeoutMixin (Base) {
       }
     }
 
-    setNewCommandTimeout (ms) {
+    setNewCommandTimeout(ms) {
       this.newCommandTimeoutMs = ms;
       this.log.debug(`Set new command timeout to ${ms}ms`);
       if (this.managedDrivers && this.managedDrivers.length) {
@@ -134,7 +133,7 @@ export function TimeoutMixin (Base) {
       }
     }
 
-    async implicitWaitForCondition (condFn) {
+    async implicitWaitForCondition(condFn) {
       this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
       let wrappedCondFn = async (...args) => {
         // reset command timeout
@@ -149,7 +148,7 @@ export function TimeoutMixin (Base) {
       });
     }
 
-    parseTimeoutArgument (ms) {
+    parseTimeoutArgument(ms) {
       let duration = parseInt(ms, 10);
       if (_.isNaN(duration) || duration < MIN_TIMEOUT) {
         throw new errors.UnknownError(`Invalid timeout value '${ms}'`);

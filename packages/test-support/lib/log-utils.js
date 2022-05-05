@@ -1,16 +1,16 @@
 // TODO move that to @appium/support
-function stripColors (msg) {
+function stripColors(msg) {
   let code = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
   msg = ('' + msg).replace(code, '');
   return msg;
 }
 
 class LogStub {
-  constructor (opts = {}) {
+  constructor(opts = {}) {
     this.output = '';
     this.stripColors = opts.stripColors;
   }
-  log (level, message) {
+  log(level, message) {
     if (this.stripColors) {
       message = stripColors(message);
     }
@@ -21,14 +21,14 @@ class LogStub {
   }
 }
 
-function stubLog (sandbox, log, opts = {}) {
+function stubLog(sandbox, log, opts = {}) {
   let logStub = new LogStub(opts);
   for (let l of log.levels) {
-    sandbox.stub(log, l).callsFake(function doLogging (mess) {
+    sandbox.stub(log, l).callsFake(function doLogging(mess) {
       logStub.log(l, mess);
     });
   }
   return logStub;
 }
 
-export { stubLog };
+export {stubLog};

@@ -7,7 +7,7 @@ import _ from 'lodash';
  * @param {SettingsBase} Base
  * @returns {SessionBase}
  */
-export function SessionMixin (Base) {
+export function SessionMixin(Base) {
   /**
    * @implements {ISessionCommands}
    */
@@ -15,7 +15,7 @@ export function SessionMixin (Base) {
     /**
      * @returns {Promise<MultiSessionData[]>}
      */
-    async getSessions () {
+    async getSessions() {
       let ret = [];
 
       if (this.sessionId) {
@@ -31,7 +31,7 @@ export function SessionMixin (Base) {
     /**
      * @returns {Promise<SingularSessionData>}
      */
-    async getSession () {
+    async getSession() {
       if (this.caps.eventTimings) {
         return {...this.caps, events: this.eventHistory};
       }

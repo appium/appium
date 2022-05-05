@@ -140,7 +140,7 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
   return [...driverClasses, ...pluginClasses].reduce(
     (map, klass) => ({
       ...map,
-      .../** @type {DriverClass} */ ((klass).newMethodMap ?? {}),
+      .../** @type {DriverClass} */ (klass.newMethodMap ?? {}),
     }),
     {}
   );

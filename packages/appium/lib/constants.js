@@ -1,4 +1,3 @@
-
 import path from 'path';
 
 /**
@@ -30,7 +29,7 @@ export const KNOWN_PLUGINS = Object.freeze(
     images: '@appium/images-plugin',
     'execute-driver': '@appium/execute-driver-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
-  }),
+  })
 );
 
 // This is a map of driver names to npm packages representing those drivers.
@@ -50,7 +49,7 @@ export const KNOWN_DRIVERS = Object.freeze(
     flutter: 'appium-flutter-driver',
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
-  }),
+  })
 );
 
 /**
@@ -59,7 +58,7 @@ export const KNOWN_DRIVERS = Object.freeze(
 export const CACHE_DIR_RELATIVE_PATH = path.join(
   'node_modules',
   '.cache',
-  'appium',
+  'appium'
 );
 
 /**
@@ -67,9 +66,8 @@ export const CACHE_DIR_RELATIVE_PATH = path.join(
  */
 export const PKG_HASHFILE_RELATIVE_PATH = path.join(
   CACHE_DIR_RELATIVE_PATH,
-  'package.hash',
+  'package.hash'
 );
-
 
 export const EXT_SUBCOMMAND_LIST = 'list';
 export const EXT_SUBCOMMAND_INSTALL = 'install';

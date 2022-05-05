@@ -1,4 +1,4 @@
-import { inquirer } from './utils';
+import {inquirer} from './utils';
 
 let persistentResponse;
 
@@ -7,12 +7,12 @@ const fixItQuestion = {
   name: 'confirmation',
   message: 'Fix it:',
   choices: ['yes', 'no', 'always', 'never'],
-  filter (val) {
+  filter(val) {
     return val.toLowerCase();
-  }
+  },
 };
 
-function configure (opts) {
+function configure(opts) {
   if (opts.yes) {
     persistentResponse = 'yes';
   }
@@ -21,18 +21,20 @@ function configure (opts) {
   }
 }
 
-function clear () {
+function clear() {
   persistentResponse = undefined;
 }
 
-async function fixIt () {
+async function fixIt() {
   if (persistentResponse) {
     return persistentResponse;
   }
   let resp = await inquirer.prompt(fixItQuestion);
-  persistentResponse = resp.confirmation === 'always' ? 'yes' : persistentResponse;
-  persistentResponse = resp.confirmation === 'never' ? 'no' : persistentResponse;
+  persistentResponse =
+    resp.confirmation === 'always' ? 'yes' : persistentResponse;
+  persistentResponse =
+    resp.confirmation === 'never' ? 'no' : persistentResponse;
   return persistentResponse || resp.confirmation;
 }
 
-export { configure, fixIt, clear };
+export {configure, fixIt, clear};

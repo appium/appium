@@ -7,12 +7,12 @@ import alertCommands from './alert';
 let commands = {};
 
 Object.assign(
-    commands,
-    contextCommands,
-    findCommands,
-    elementCommands,
-    generalCommands,
-    alertCommands
+  commands,
+  contextCommands,
+  findCommands,
+  elementCommands,
+  generalCommands,
+  alertCommands
 );
 
 export default commands;

@@ -1,4 +1,4 @@
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 
 // The default maximum length of a single log record
 // containing http request/response body
@@ -17,8 +17,10 @@ const PROTOCOLS = {
 // Before Appium 2.0, this default value was '/wd/hub' by historical reasons.
 const DEFAULT_BASE_PATH = '';
 
-
 export {
-  MAX_LOG_BODY_LENGTH, MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY,
-  PROTOCOLS, DEFAULT_BASE_PATH
+  MAX_LOG_BODY_LENGTH,
+  MJSONWP_ELEMENT_KEY,
+  W3C_ELEMENT_KEY,
+  PROTOCOLS,
+  DEFAULT_BASE_PATH,
 };

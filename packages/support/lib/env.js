@@ -1,10 +1,10 @@
 // @ts-check
 import _ from 'lodash';
-import { homedir } from 'os';
+import {homedir} from 'os';
 import path from 'path';
 import pkgDir from 'pkg-dir';
 import readPkg from 'read-pkg';
-import { npm } from './npm';
+import {npm} from './npm';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -26,7 +26,7 @@ export const MANIFEST_RELATIVE_PATH = path.join(
   'node_modules',
   '.cache',
   'appium',
-  MANIFEST_BASENAME,
+  MANIFEST_BASENAME
 );
 
 /**
@@ -45,7 +45,7 @@ export const MANIFEST_RELATIVE_PATH = path.join(
  * @param {string} cwd
  * @returns {Promise<boolean>}
  */
-export async function hasAppiumDependency (cwd) {
+export async function hasAppiumDependency(cwd) {
   /**
    * @todo type this
    * @type {object}
@@ -78,7 +78,7 @@ export async function hasAppiumDependency (cwd) {
       // doing any further checking here may be a fool's errand, because you can pin the version
       // to a _lot_ of different things (tags, URLs, etc).
       !version.startsWith('1') &&
-      !version.startsWith('0'),
+      !version.startsWith('0')
   );
 }
 
@@ -91,9 +91,9 @@ export const readPackageInDir = _.memoize(
    * @param {string} cwd - Directory ostensibly having a `package.json`
    * @returns {Promise<import('read-pkg').NormalizedPackageJson|undefined>}
    */
-  async function _readPackageInDir (cwd) {
+  async function _readPackageInDir(cwd) {
     return await readPkg({cwd, normalize: true});
-  },
+  }
 );
 
 /**
@@ -108,7 +108,7 @@ export const resolveAppiumHome = _.memoize(
    * @param {string} [cwd] - Current working directory.  _Must_ be absolute, if specified.
    * @returns {Promise<string>}
    */
-  async function _resolveAppiumHome (cwd = process.cwd()) {
+  async function _resolveAppiumHome(cwd = process.cwd()) {
     if (process.env.APPIUM_HOME) {
       return process.env.APPIUM_HOME;
     }
@@ -136,7 +136,7 @@ export const resolveAppiumHome = _.memoize(
     return (await hasAppiumDependency(currentPkgDir))
       ? currentPkgDir
       : DEFAULT_APPIUM_HOME;
-  },
+  }
 );
 
 /**
@@ -150,11 +150,11 @@ export const resolveManifestPath = _.memoize(
    * @param {string} [appiumHome] - Appium home directory
    * @returns {Promise<string>}
    */
-  async function _resolveManifestPath (appiumHome) {
+  async function _resolveManifestPath(appiumHome) {
     // can you "await" in a default parameter? is that a good idea?
     appiumHome = appiumHome ?? (await resolveAppiumHome());
     return path.join(appiumHome, MANIFEST_RELATIVE_PATH);
-  },
+  }
 );
 
 /**

@@ -1,9 +1,8 @@
-import type { BaseDriverBase } from '@appium/base-driver/lib/basedriver/driver';
-import { Class, Driver, ExternalDriver } from '@appium/types';
-import { DriverType, ExtensionType, PluginType } from '.';
+import type {BaseDriverBase} from '@appium/base-driver/lib/basedriver/driver';
+import {Class, Driver, ExternalDriver} from '@appium/types';
+import {DriverType, ExtensionType, PluginType} from '.';
 
-export type DriverClass = BaseDriverBase<ExternalDriver, 
-  ExternalDriverStatic>;
+export type DriverClass = BaseDriverBase<ExternalDriver, ExternalDriverStatic>;
 
 /**
  * Additional static props for external driver classes
@@ -42,7 +41,7 @@ export interface PluginProto {
    */
   onUnexpectedShutdown?: (
     driver: Driver,
-    cause: Error | string,
+    cause: Error | string
   ) => Promise<void>;
 }
 

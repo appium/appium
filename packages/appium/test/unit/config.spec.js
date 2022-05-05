@@ -1,12 +1,25 @@
 // @ts-check
 
 import _ from 'lodash';
-import { createSandbox } from 'sinon';
-import { getParser } from '../../lib/cli/parser';
-import { checkNodeOk, getBuildInfo, getNonDefaultServerArgs, showBuildInfo, showConfig, validateTmpDir, warnNodeDeprecations } from '../../lib/config';
-import { PLUGIN_TYPE } from '../../lib/constants';
+import {createSandbox} from 'sinon';
+import {getParser} from '../../lib/cli/parser';
+import {
+  checkNodeOk,
+  getBuildInfo,
+  getNonDefaultServerArgs,
+  showBuildInfo,
+  showConfig,
+  validateTmpDir,
+  warnNodeDeprecations,
+} from '../../lib/config';
+import {PLUGIN_TYPE} from '../../lib/constants';
 import logger from '../../lib/logger';
-import { finalizeSchema, getDefaultsForSchema, registerSchema, resetSchema } from '../../lib/schema/schema';
+import {
+  finalizeSchema,
+  getDefaultsForSchema,
+  registerSchema,
+  resetSchema,
+} from '../../lib/schema/schema';
 
 describe('Config', function () {
   /** @type {sinon.SinonSandbox} */
@@ -44,9 +57,11 @@ describe('Config', function () {
         it('should dump the current Appium config', function () {
           showConfig(
             {address: 'bar'},
-            {config: {
-              // @ts-expect-error
-              server: {callbackAddress: 'quux'}}
+            {
+              config: {
+                // @ts-expect-error
+                server: {callbackAddress: 'quux'},
+              },
             },
             {port: 1234},
             {allowCors: false}
@@ -103,9 +118,17 @@ describe('Config', function () {
     describe('checkNodeOk', function () {
       describe('unsupported nodes', function () {
         const unsupportedVersions = [
-          'v0.1', 'v0.9.12', 'v0.10.36', 'v0.12.14',
-          'v4.4.7', 'v5.7.0', 'v6.3.1', 'v7.1.1',
-          'v8.0.0', 'v9.2.3', 'v10.1.0',
+          'v0.1',
+          'v0.9.12',
+          'v0.10.36',
+          'v0.12.14',
+          'v4.4.7',
+          'v5.7.0',
+          'v6.3.1',
+          'v7.1.1',
+          'v8.0.0',
+          'v9.2.3',
+          'v10.1.0',
         ];
         for (const version of unsupportedVersions) {
           it(`should fail if node is ${version}`, function () {
@@ -188,7 +211,10 @@ describe('Config', function () {
       describe('with extension schemas', function () {
         beforeEach(function () {
           resetSchema();
-          registerSchema(PLUGIN_TYPE, 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean', default: true}}});
+          registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
+            type: 'object',
+            properties: {elite: {type: 'boolean', default: true}},
+          });
           finalizeSchema();
           getParser(true);
           args = getDefaultsForSchema();
@@ -202,7 +228,9 @@ describe('Config', function () {
         it('should catch a non-default argument', function () {
           args['plugin.crypto-fiend.elite'] = false;
           const nonDefaultArgs = getNonDefaultServerArgs(args);
-          nonDefaultArgs.should.eql(_.set({}, 'plugin.crypto-fiend.elite', false));
+          nonDefaultArgs.should.eql(
+            _.set({}, 'plugin.crypto-fiend.elite', false)
+          );
         });
       });
     });
@@ -210,14 +238,17 @@ describe('Config', function () {
 
   describe('validateTmpDir', function () {
     it('should fail to use a tmp dir with incorrect permissions', function () {
-      validateTmpDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(/could not ensure/);
+      validateTmpDir(
+        '/private/if_you_run_with_sudo_this_wont_fail'
+      ).should.be.rejectedWith(/could not ensure/);
     });
     it('should fail to use an undefined tmp dir', function () {
       // @ts-expect-error
       validateTmpDir().should.be.rejectedWith(/could not ensure/);
     });
     it('should be able to use a tmp dir with correct permissions', function () {
-      validateTmpDir('/tmp/test_tmp_dir/with/any/number/of/levels').should.not.be.rejected;
+      validateTmpDir('/tmp/test_tmp_dir/with/any/number/of/levels').should.not
+        .be.rejected;
     });
   });
 

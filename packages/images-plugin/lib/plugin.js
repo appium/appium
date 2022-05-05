@@ -1,15 +1,15 @@
 /* eslint-disable no-case-declarations */
 
 import _ from 'lodash';
-import { errors } from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
 import BasePlugin from '@appium/base-plugin';
-import { compareImages } from './compare';
+import {compareImages} from './compare';
 import ImageElementFinder from './finder';
-import { ImageElement, IMAGE_ELEMENT_PREFIX } from './image-element';
+import {ImageElement, IMAGE_ELEMENT_PREFIX} from './image-element';
 
 const IMAGE_STRATEGY = '-image';
 
-function getImgElFromArgs (args) {
+function getImgElFromArgs(args) {
   for (let arg of args) {
     if (_.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX)) {
       return arg;
@@ -18,8 +18,7 @@ function getImgElFromArgs (args) {
 }
 
 export default class ImageElementPlugin extends BasePlugin {
-
-  constructor (pluginName) {
+  constructor(pluginName) {
     super(pluginName);
     this.finder = new ImageElementFinder();
   }
@@ -31,26 +30,26 @@ export default class ImageElementPlugin extends BasePlugin {
         command: 'compareImages',
         payloadParams: {
           required: ['mode', 'firstImage', 'secondImage'],
-          optional: ['options']
+          optional: ['options'],
         },
         neverProxy: true,
-      }
+      },
     },
   };
 
-  async compareImages (next, driver, ...args) {
+  async compareImages(next, driver, ...args) {
     return await compareImages(...args);
   }
 
-  async findElement (next, driver, ...args) {
+  async findElement(next, driver, ...args) {
     return await this._find(false, next, driver, ...args);
   }
 
-  async findElements (next, driver, ...args) {
+  async findElements(next, driver, ...args) {
     return await this._find(true, next, driver, ...args);
   }
 
-  async _find (multiple, next, driver, ...args) {
+  async _find(multiple, next, driver, ...args) {
     const [strategy, selector] = args;
 
     // if we're not actually finding by image, just do the normal thing
@@ -62,7 +61,7 @@ export default class ImageElementPlugin extends BasePlugin {
     return await this.finder.findByImage(selector, {multiple});
   }
 
-  async handle (next, driver, cmdName, ...args) {
+  async handle(next, driver, cmdName, ...args) {
     // if we have a command that involves an image element id, attempt to find the image element
     // and execute the command on it
     const imgElId = getImgElFromArgs(args);
@@ -79,4 +78,4 @@ export default class ImageElementPlugin extends BasePlugin {
   }
 }
 
-export { ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY };
+export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};

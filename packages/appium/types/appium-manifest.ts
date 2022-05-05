@@ -1,18 +1,18 @@
-import { CommonMetadata, ExtMetadata, SchemaMetadata } from './external-manifest';
-import { ExtensionType, DriverType, PluginType } from '.';
+import {CommonMetadata, ExtMetadata, SchemaMetadata} from './external-manifest';
+import {ExtensionType, DriverType, PluginType} from '.';
 
 export type InstallType = 'npm' | 'git' | 'local' | 'github';
 
 export interface InternalMetadata {
   /**
    * Package name of extension
-   * 
+   *
    * `name` from its `package.json`
    */
   pkgName: string;
   /**
    * Version of extension
-   * 
+   *
    * `version` from its `package.json`
    */
   version: string;

@@ -7,7 +7,7 @@ const {sync: findRoot} = require('pkg-dir');
 const axios = require('axios');
 const B = require('bluebird');
 const os = require('os');
-const { Octokit } = require('@octokit/rest');
+const {Octokit} = require('@octokit/rest');
 const _ = require('lodash');
 const FormData = require('form-data');
 
@@ -24,7 +24,7 @@ const OUTPUT_INTERVAL = 60000;
 const MOCHA_PARALLEL_TEST_BROKEN_LINE = `if (value.type === 'test') {`;
 const MOCHA_PARALLEL_TEST_FIXED_LINE = `if (value.type === 'test') {\n        delete value.fn;`;
 
-const configure = function configure (gulp, opts) {
+const configure = function configure(gulp, opts) {
   const owner = opts.ci.owner || GITHUB_OWNER;
   const repo = opts.ci.repo || GITHUB_REPO;
 
@@ -34,15 +34,25 @@ const configure = function configure (gulp, opts) {
    * `mocha-parallel-tests` is broken at the moment, so skipped describe blocks fail
    * the fix is simple, and this patches the error until they fix the package
    **/
-  gulp.task('fix-mocha-parallel-tests', async function fixMochaParallelTests () {
+  gulp.task('fix-mocha-parallel-tests', async function fixMochaParallelTests() {
     log(`Updating 'mocha-parallel-tests'`);
-    const filePath = path.resolve(root, 'node_modules', 'mocha-parallel-tests', 'dist', 'main', 'util.js');
+    const filePath = path.resolve(
+      root,
+      'node_modules',
+      'mocha-parallel-tests',
+      'dist',
+      'main',
+      'util.js'
+    );
 
     log(`File: '${filePath}'`);
 
     try {
       let script = await readFile(filePath, {encoding: 'utf8'});
-      script = await script.replace(MOCHA_PARALLEL_TEST_BROKEN_LINE, MOCHA_PARALLEL_TEST_FIXED_LINE);
+      script = await script.replace(
+        MOCHA_PARALLEL_TEST_BROKEN_LINE,
+        MOCHA_PARALLEL_TEST_FIXED_LINE
+      );
       await writeFile(filePath, script);
     } catch (err) {
       const msg = err.message.includes('ENOENT')
@@ -52,7 +62,7 @@ const configure = function configure (gulp, opts) {
     }
   });
 
-  gulp.task('github:upload', async function githubUpload () {
+  gulp.task('github:upload', async function githubUpload() {
     const githubToken = process.env.GITHUB_TOKEN;
     if (_.isEmpty(githubToken)) {
       log.warn('No GitHub token found in GITHUB_TOKEN environment variable');
@@ -61,7 +71,8 @@ const configure = function configure (gulp, opts) {
     const octokit = new Octokit({auth: githubToken});
 
     const buildName = process.env.BUILD_NAME || `${Date.now()}`;
-    const commitMessage = process.env.COMMIT_MESSAGE || 'No commit message provided';
+    const commitMessage =
+      process.env.COMMIT_MESSAGE || 'No commit message provided';
 
     const releaseTag = `appium-build-${buildName}`;
     const releaseFile = `appium-${buildName}.zip`;
@@ -114,7 +125,7 @@ const configure = function configure (gulp, opts) {
 
   gulp.task('github-upload', gulp.series(['github:upload']));
 
-  gulp.task('github:download', async function githubDownload () {
+  gulp.task('github:download', async function githubDownload() {
     const githubToken = process.env.GITHUB_TOKEN;
     if (_.isEmpty(githubToken)) {
       log.warn('No GitHub token found in GITHUB_TOKEN environment variable');
@@ -134,10 +145,12 @@ const configure = function configure (gulp, opts) {
         log.info(`Downloading asset from '${asset.browser_download_url}'`);
         const url = asset.browser_download_url;
         const writer = fs.createWriteStream(`${tempDir}/appium.zip`);
-        const responseStream = (await axios({
-          url,
-          responseType: 'stream',
-        })).data;
+        const responseStream = (
+          await axios({
+            url,
+            responseType: 'stream',
+          })
+        ).data;
         responseStream.pipe(writer);
 
         return await new B((resolve, reject) => {
@@ -153,7 +166,7 @@ const configure = function configure (gulp, opts) {
     throw new Error(`Unable to find Appium build asset`);
   });
 
-  gulp.task('saucelabs:upload', async function sauceLabsUpload () {
+  gulp.task('saucelabs:upload', async function sauceLabsUpload() {
     // Find the latest bundle
     log.info('Uploading to Sauce Storage');
     const tempDir = os.tmpdir();
@@ -176,8 +189,10 @@ const configure = function configure (gulp, opts) {
     log.info(`File uploaded: ${JSON.stringify(body)}`);
   });
 
-  gulp.task('sauce-storage-upload', gulp.series(['github:download', 'saucelabs:upload']));
-
+  gulp.task(
+    'sauce-storage-upload',
+    gulp.series(['github:download', 'saucelabs:upload'])
+  );
 
   /**
    * This task is meant to be backgrounded, and killed using OS tools, so it
@@ -189,10 +204,10 @@ const configure = function configure (gulp, opts) {
    *   $ kill 38060
    *   [1]  + 38060 terminated  $(npm bin)/gulp periodic-output
    */
-  gulp.task('periodic-output', function periodicOutput () {
+  gulp.task('periodic-output', function periodicOutput() {
     const interval = opts.ci.interval || OUTPUT_INTERVAL;
-    return new B(function writeToStdout () {
-      setInterval(function print () {
+    return new B(function writeToStdout() {
+      setInterval(function print() {
         process.stdout.write('.');
       }, interval);
     });

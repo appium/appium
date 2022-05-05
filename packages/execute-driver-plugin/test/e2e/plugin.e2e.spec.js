@@ -2,30 +2,41 @@
 
 import path from 'path';
 
-import { e2eSetup as _e2eSetup } from '@appium/base-plugin/build/test/helpers';
-import { remote as wdio } from 'webdriverio';
-import { W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY } from '../../lib/execute-child';
-import { fs } from '@appium/support';
+import {e2eSetup as _e2eSetup} from '@appium/base-plugin/build/test/helpers';
+import {remote as wdio} from 'webdriverio';
+import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
+import {fs} from '@appium/support';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
 const FAKE_DRIVER_DIR = path.join(THIS_PLUGIN_DIR, '..', 'fake-driver');
 const TEST_HOST = 'localhost';
-const TEST_FAKE_APP = path.join(APPIUM_HOME, 'node_modules', '@appium', 'fake-driver', 'test', 'fixtures', 'app.xml');
+const TEST_FAKE_APP = path.join(
+  APPIUM_HOME,
+  'node_modules',
+  '@appium',
+  'fake-driver',
+  'test',
+  'fixtures',
+  'app.xml'
+);
 
 // XXX: remove when the test files get a proper TS configuration
-const e2eSetup = /** @type {import('@appium/base-plugin/test/helpers').e2eSetup} */(_e2eSetup);
+const e2eSetup =
+  /** @type {import('@appium/base-plugin/test/helpers').e2eSetup} */ (
+    _e2eSetup
+  );
 
 const TEST_CAPS = {
   platformName: 'Fake',
   'appium:automationName': 'Fake',
   'appium:deviceName': 'Fake',
-  'appium:app': TEST_FAKE_APP
+  'appium:app': TEST_FAKE_APP,
 };
 const WDIO_OPTS = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
-  capabilities: TEST_CAPS
+  capabilities: TEST_CAPS,
 };
 
 describe('ExecuteDriverPlugin', function () {
@@ -37,9 +48,16 @@ describe('ExecuteDriverPlugin', function () {
    * @type {import('@appium/base-plugin/test/helpers').E2ESetupOpts}
    */
   const e2eSetupOpts = {
-    before, after, host: TEST_HOST, driverName: 'fake', driverSource: 'local',
-    driverSpec: FAKE_DRIVER_DIR, pluginName: 'execute-driver', pluginSource: 'local',
-    pluginSpec: THIS_PLUGIN_DIR, appiumHome: APPIUM_HOME
+    before,
+    after,
+    host: TEST_HOST,
+    driverName: 'fake',
+    driverSource: 'local',
+    driverSpec: FAKE_DRIVER_DIR,
+    pluginName: 'execute-driver',
+    pluginSource: 'local',
+    pluginSpec: THIS_PLUGIN_DIR,
+    appiumHome: APPIUM_HOME,
   };
 
   after(async function () {
@@ -47,22 +65,30 @@ describe('ExecuteDriverPlugin', function () {
   });
 
   describe('without --allow-insecure set', function () {
-    after(async function () { driver && await driver.deleteSession(); });
+    after(async function () {
+      driver && (await driver.deleteSession());
+    });
     e2eSetup({...e2eSetupOpts});
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});
-      await driver.driverScript(basicScript).should.be
-        .rejectedWith(/allow-insecure.+execute_driver_script/i);
+      await driver
+        .driverScript(basicScript)
+        .should.be.rejectedWith(/allow-insecure.+execute_driver_script/i);
     });
-
   });
 
   describe('with --allow-insecure set', function () {
-
-    after(async function () { driver && await driver.deleteSession(); });
-    e2eSetup({...e2eSetupOpts, serverArgs: {allowInsecure: ['execute_driver_script']}});
-    before(async function () { driver = await wdio({...WDIO_OPTS, port: this.port}); });
+    after(async function () {
+      driver && (await driver.deleteSession());
+    });
+    e2eSetup({
+      ...e2eSetupOpts,
+      serverArgs: {allowInsecure: ['execute_driver_script']},
+    });
+    before(async function () {
+      driver = await wdio({...WDIO_OPTS, port: this.port});
+    });
 
     it('should execute a webdriverio script in the context of session', async function () {
       const script = `
@@ -80,7 +106,8 @@ describe('ExecuteDriverPlugin', function () {
 
     it('should fail with any script type other than webdriverio currently', async function () {
       const script = `return 'foo'`;
-      await driver.driverScript(script, 'wd')
+      await driver
+        .driverScript(script, 'wd')
         .should.be.rejectedWith(/webdriverio/);
     });
 
@@ -103,7 +130,7 @@ describe('ExecuteDriverPlugin', function () {
       const {result} = await driver.driverScript(script);
       const elObj = {
         [W3C_ELEMENT_KEY]: '1',
-        [MJSONWP_ELEMENT_KEY]: '1'
+        [MJSONWP_ELEMENT_KEY]: '1',
       };
       result.should.eql({element: elObj, elements: [elObj, elObj]});
     });
@@ -144,8 +171,11 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return {;
       `;
-      await driver.driverScript(script).should.be.rejectedWith(
-         /Could not execute driver script.+Unexpected token/);
+      await driver
+        .driverScript(script)
+        .should.be.rejectedWith(
+          /Could not execute driver script.+Unexpected token/
+        );
     });
 
     it('should be able to set a timeout on a driver script', async function () {
@@ -153,7 +183,8 @@ describe('ExecuteDriverPlugin', function () {
         await Promise.delay(1000);
         return true;
       `;
-      await driver.driverScript(script, 'webdriverio', 50)
+      await driver
+        .driverScript(script, 'webdriverio', 50)
         .should.be.rejectedWith(/.+50.+timeout.+/);
     });
   });

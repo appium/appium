@@ -13,26 +13,27 @@ import {
 } from 'shell-quote';
 import pluralizeLib from 'pluralize';
 import stream from 'stream';
-import { Base64Encode } from 'base64-stream';
+import {Base64Encode} from 'base64-stream';
 import {
   // https://www.npmjs.com/package/uuid
-  v1 as uuidV1, v3 as uuidV3,
-  v4 as uuidV4, v5 as uuidV5
+  v1 as uuidV1,
+  v3 as uuidV3,
+  v4 as uuidV4,
+  v5 as uuidV5,
 } from 'uuid';
 import _lockfile from 'lockfile';
-
 
 const W3C_WEB_ELEMENT_IDENTIFIER = 'element-6066-11e4-a52e-4f735466cecf';
 const KiB = 1024;
 const MiB = KiB * 1024;
 const GiB = MiB * 1024;
 
-export function hasContent (val) {
+export function hasContent(val) {
   return _.isString(val) && val !== '';
 }
 
 // return true if the the value is not undefined, null, or NaN.
-function hasValue (val) {
+function hasValue(val) {
   let hasVal = false;
   // avoid incorrectly evaluating `0` as false
   if (_.isNumber(val)) {
@@ -45,11 +46,11 @@ function hasValue (val) {
 }
 
 // escape spaces in string, for commandline calls
-function escapeSpace (str) {
+function escapeSpace(str) {
   return str.split(/ /).join('\\ ');
 }
 
-function escapeSpecialChars (str, quoteEscape) {
+function escapeSpecialChars(str, quoteEscape) {
   if (typeof str !== 'string') {
     return str;
   }
@@ -73,13 +74,13 @@ function escapeSpecialChars (str, quoteEscape) {
   return str;
 }
 
-function localIp () {
+function localIp() {
   let ip = _.chain(os.networkInterfaces())
     .values()
     .flatten()
     // @ts-ignore
     .filter(function (val) {
-      return (val.family === 'IPv4' && val.internal === false);
+      return val.family === 'IPv4' && val.internal === false;
     })
     .map('address')
     .first()
@@ -91,7 +92,7 @@ function localIp () {
  * Creates a promise that is cancellable, and will timeout
  * after `ms` delay
  */
-function cancellableDelay (ms) {
+function cancellableDelay(ms) {
   let timer;
   let resolve;
   let reject;
@@ -113,14 +114,14 @@ function cancellableDelay (ms) {
   return delay;
 }
 
-function multiResolve (roots, ...args) {
+function multiResolve(roots, ...args) {
   return roots.map((root) => path.resolve(root, ...args));
 }
 
 /*
  * Parses an object if possible. Otherwise returns the object without parsing.
  */
-function safeJsonParse (obj) {
+function safeJsonParse(obj) {
   try {
     return JSON.parse(obj);
   } catch (ign) {
@@ -141,7 +142,7 @@ function safeJsonParse (obj) {
  *                                 string for readability purposes. Defaults to 2
  * returns {string} - the JSON object serialized as a string
  */
-function jsonStringify (obj, replacer, space = 2) {
+function jsonStringify(obj, replacer, space = 2) {
   // if no replacer is passed, or it is not a function, just use a pass-through
   if (!_.isFunction(replacer)) {
     replacer = (k, v) => v;
@@ -151,12 +152,16 @@ function jsonStringify (obj, replacer, space = 2) {
   const bufferToJSON = Buffer.prototype.toJSON;
   delete Buffer.prototype.toJSON;
   try {
-    return JSON.stringify(obj, (key, value) => {
-      const updatedValue = Buffer.isBuffer(value)
-        ? value.toString('utf8')
-        : value;
-      return replacer(key, updatedValue);
-    }, space);
+    return JSON.stringify(
+      obj,
+      (key, value) => {
+        const updatedValue = Buffer.isBuffer(value)
+          ? value.toString('utf8')
+          : value;
+        return replacer(key, updatedValue);
+      },
+      space
+    );
   } finally {
     // restore the function, so as to not break further serialization
     Buffer.prototype.toJSON = bufferToJSON;
@@ -168,7 +173,7 @@ function jsonStringify (obj, replacer, space = 2) {
  *   { ELEMENT: 4 } becomes 4
  *   { element-6066-11e4-a52e-4f735466cecf: 5 } becomes 5
  */
-function unwrapElement (el) {
+function unwrapElement(el) {
   for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
     if (_.has(el, propName)) {
       return el[propName];
@@ -177,7 +182,7 @@ function unwrapElement (el) {
   return el;
 }
 
-function wrapElement (elementId) {
+function wrapElement(elementId) {
   return {
     ELEMENT: elementId,
     [W3C_WEB_ELEMENT_IDENTIFIER]: elementId,
@@ -192,7 +197,7 @@ function wrapElement (elementId) {
  *   * a scalar - it will test all properties' values against that value
  *   * a function - it will pass each value and the original object into the function
  */
-function filterObject (obj, predicate) {
+function filterObject(obj, predicate) {
   let newObj = _.clone(obj);
   if (_.isUndefined(predicate)) {
     // remove any element from the object whose value is undefined
@@ -219,7 +224,7 @@ function filterObject (obj, predicate) {
  * @throws {Error} If bytes count cannot be converted to an integer or
  *                 if it is less than zero.
  */
-function toReadableSizeString (bytes) {
+function toReadableSizeString(bytes) {
   const intBytes = parseInt(String(bytes), 10);
   if (isNaN(intBytes) || intBytes < 0) {
     throw new Error(`Cannot convert '${bytes}' to a readable size format`);
@@ -244,7 +249,7 @@ function toReadableSizeString (bytes) {
  * @returns {boolean} true if the given original path is the subpath of the root folder
  * @throws {Error} if any of the given paths is not absolute
  */
-function isSubPath (originalPath, root, forcePosix = null) {
+function isSubPath(originalPath, root, forcePosix = null) {
   const pathObj = forcePosix ? path.posix : path;
   for (const p of [originalPath, root]) {
     if (!pathObj.isAbsolute(p)) {
@@ -265,20 +270,25 @@ function isSubPath (originalPath, root, forcePosix = null) {
  * @param {...string} pathN - Zero or more absolute or relative paths to files/folders
  * @returns {Promise<boolean>} true if all paths are pointing to the same file system item
  */
-async function isSameDestination (path1, path2, ...pathN) {
+async function isSameDestination(path1, path2, ...pathN) {
   const allPaths = [path1, path2, ...pathN];
-  if (!await B.reduce(allPaths, async (a, b) => a && await fs.exists(b), true)) {
+  if (
+    !(await B.reduce(allPaths, async (a, b) => a && (await fs.exists(b)), true))
+  ) {
     return false;
   }
 
-  const areAllItemsEqual = (arr) => !!arr.reduce((a, b) => a === b ? a : NaN);
+  const areAllItemsEqual = (arr) => !!arr.reduce((a, b) => (a === b ? a : NaN));
   if (areAllItemsEqual(allPaths)) {
     return true;
   }
 
-  let mapCb = async (x) => (await fs.stat(x, {
-    bigint: true,
-  })).ino;
+  let mapCb = async (x) =>
+    (
+      await fs.stat(x, {
+        bigint: true,
+      })
+    ).ino;
   return areAllItemsEqual(await B.map(allPaths, mapCb));
 }
 
@@ -293,12 +303,12 @@ async function isSameDestination (path1, path2, ...pathN) {
  * coerced and strict mode is disabled
  * @throws {Error} if strict mode is enabled and `ver` cannot be coerced
  */
-function coerceVersion (ver, strict = /** @type {Strict} */(true)) {
+function coerceVersion(ver, strict = /** @type {Strict} */ (true)) {
   const result = semver.valid(semver.coerce(`${ver}`));
   if (strict && !result) {
     throw new Error(`'${ver}' cannot be coerced to a valid version number`);
   }
-  return /** @type {Strict extends true ? string : string?} */(result);
+  return /** @type {Strict extends true ? string : string?} */ (result);
 }
 
 const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
@@ -316,14 +326,19 @@ const SUPPORTED_OPERATORS = ['==', '!=', '>', '<', '>=', '<=', '='];
  * @throws {Error} if an unsupported operator is supplied or any of the supplied
  * version strings cannot be coerced
  */
-function compareVersions (ver1, operator, ver2) {
+function compareVersions(ver1, operator, ver2) {
   if (!SUPPORTED_OPERATORS.includes(operator)) {
-    throw new Error(`The '${operator}' comparison operator is not supported. ` +
-      `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`);
+    throw new Error(
+      `The '${operator}' comparison operator is not supported. ` +
+        `Only '${JSON.stringify(SUPPORTED_OPERATORS)}' operators are supported`
+    );
   }
 
   const semverOperator = ['==', '!='].includes(operator) ? '=' : operator;
-  const result = semver.satisfies(coerceVersion(ver1), `${semverOperator}${coerceVersion(ver2)}`);
+  const result = semver.satisfies(
+    coerceVersion(ver1),
+    `${semverOperator}${coerceVersion(ver2)}`
+  );
   return operator === '!=' ? !result : result;
 }
 
@@ -334,7 +349,7 @@ function compareVersions (ver1, operator, ver2) {
  * @param {string|string[]} args - The arguments that will be parsed
  * @returns {string} - The arguments, quoted
  */
-function quote (args) {
+function quote(args) {
   return shellQuote(_.castArray(args));
 }
 
@@ -346,10 +361,9 @@ function quote (args) {
  * @param {*} s - The string to unleak
  * @return {string} Either the unleaked string or the original object converted to string
  */
-function unleakString (s) {
+function unleakString(s) {
   return ` ${s}`.substr(1);
 }
-
 
 /**
  * @typedef PluralizeOptions
@@ -365,7 +379,7 @@ function unleakString (s) {
  *   or a boolean indicating the options.inclusive property
  * @returns {string} The word pluralized according to the number
  */
-function pluralize (word, count, options = {}) {
+function pluralize(word, count, options = {}) {
   let inclusive = false;
   if (_.isBoolean(options)) {
     // if passed in as a boolean
@@ -397,14 +411,12 @@ function pluralize (word, count, options = {}) {
  * @throws {Error} if there was an error while reading the source file
  * or the source file is too
  */
-async function toInMemoryBase64 (srcPath, opts = {}) {
+async function toInMemoryBase64(srcPath, opts = {}) {
   if (!(await fs.exists(srcPath)) || (await fs.stat(srcPath)).isDirectory()) {
     throw new Error(`No such file: ${srcPath}`);
   }
 
-  const {
-    maxSize = 1 * GiB,
-  } = opts;
+  const {maxSize = 1 * GiB} = opts;
   const resultBuffers = [];
   let resultBuffersSize = 0;
   const resultWriteStream = new stream.Writable({
@@ -412,8 +424,13 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
       resultBuffers.push(buffer);
       resultBuffersSize += buffer.length;
       if (maxSize > 0 && resultBuffersSize > maxSize) {
-        resultWriteStream.emit('error', new Error(`The size of the resulting ` +
-          `buffer must not be greater than ${toReadableSizeString(maxSize)}`));
+        resultWriteStream.emit(
+          'error',
+          new Error(
+            `The size of the resulting ` +
+              `buffer must not be greater than ${toReadableSizeString(maxSize)}`
+          )
+        );
       }
       next();
     },
@@ -432,8 +449,9 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
   });
   const readStreamPromise = new B((resolve, reject) => {
     readerStream.once('close', resolve);
-    readerStream.once('error', (e) => reject(
-      new Error(`Failed to read '${srcPath}': ${e.message}`)));
+    readerStream.once('error', (e) =>
+      reject(new Error(`Failed to read '${srcPath}': ${e.message}`))
+    );
   });
   readerStream.pipe(base64EncoderStream);
   base64EncoderStream.pipe(resultWriteStream);
@@ -460,13 +478,13 @@ async function toInMemoryBase64 (srcPath, opts = {}) {
  * @returns async function that takes another async function defining the locked
  * behavior
  */
-function getLockFileGuard (lockFile, opts = {}) {
-  const {
-    timeout = 120,
-    tryRecovery = false,
-  } = opts;
+function getLockFileGuard(lockFile, opts = {}) {
+  const {timeout = 120, tryRecovery = false} = opts;
 
-  const lock = /** @type {(lockfile: string, opts: import('lockfile').Options)=>B<void>} */(B.promisify(_lockfile.lock));
+  const lock =
+    /** @type {(lockfile: string, opts: import('lockfile').Options)=>B<void>} */ (
+      B.promisify(_lockfile.lock)
+    );
   const check = B.promisify(_lockfile.check);
   const unlock = B.promisify(_lockfile.unlock);
 
@@ -495,10 +513,12 @@ function getLockFileGuard (lockFile, opts = {}) {
           triedRecovery = true;
           continue;
         }
-        throw new Error(`Could not acquire lock on '${lockFile}' after ${timeout}s. ` +
-          `Original error: ${e.message}`);
+        throw new Error(
+          `Could not acquire lock on '${lockFile}' after ${timeout}s. ` +
+            `Original error: ${e.message}`
+        );
       }
-    // eslint-disable-next-line no-constant-condition
+      // eslint-disable-next-line no-constant-condition
     } while (true);
     try {
       return await behavior();
@@ -514,10 +534,34 @@ function getLockFileGuard (lockFile, opts = {}) {
 }
 
 export {
-  hasValue, escapeSpace, escapeSpecialChars, localIp, cancellableDelay,
-  multiResolve, safeJsonParse, wrapElement, unwrapElement, filterObject,
-  toReadableSizeString, isSubPath, W3C_WEB_ELEMENT_IDENTIFIER,
-  isSameDestination, compareVersions, coerceVersion, quote, unleakString,
-  jsonStringify, pluralize, GiB, MiB, KiB, toInMemoryBase64,
-  uuidV1, uuidV3, uuidV4, uuidV5, shellParse, getLockFileGuard
+  hasValue,
+  escapeSpace,
+  escapeSpecialChars,
+  localIp,
+  cancellableDelay,
+  multiResolve,
+  safeJsonParse,
+  wrapElement,
+  unwrapElement,
+  filterObject,
+  toReadableSizeString,
+  isSubPath,
+  W3C_WEB_ELEMENT_IDENTIFIER,
+  isSameDestination,
+  compareVersions,
+  coerceVersion,
+  quote,
+  unleakString,
+  jsonStringify,
+  pluralize,
+  GiB,
+  MiB,
+  KiB,
+  toInMemoryBase64,
+  uuidV1,
+  uuidV3,
+  uuidV4,
+  uuidV5,
+  shellParse,
+  getLockFileGuard,
 };

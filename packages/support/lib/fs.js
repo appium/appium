@@ -2,7 +2,16 @@
 
 import B from 'bluebird';
 import crypto from 'crypto';
-import { close, constants, createReadStream, createWriteStream, promises as fsPromises, read, write, open } from 'fs';
+import {
+  close,
+  constants,
+  createReadStream,
+  createWriteStream,
+  promises as fsPromises,
+  read,
+  write,
+  open,
+} from 'fs';
 import glob from 'glob';
 import klaw from 'klaw';
 import _ from 'lodash';
@@ -16,9 +25,12 @@ import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
 import Timer from './timing';
-import { pluralize } from './util';
+import {pluralize} from './util';
 
-const ncpAsync = /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */(B.promisify(ncp));
+const ncpAsync =
+  /** @type {(source: string, dest: string, opts: ncp.Options|undefined) => B<void>} */ (
+    B.promisify(ncp)
+  );
 const findRootCached = _.memoize(pkgDir.sync);
 
 const fs = {
@@ -27,7 +39,7 @@ const fs = {
    * @param {import('fs').PathLike} path
    * @returns {Promise<boolean>}
    */
-  async hasAccess (path) {
+  async hasAccess(path) {
     try {
       await fsPromises.access(path, constants.R_OK);
     } catch (err) {
@@ -40,7 +52,7 @@ const fs = {
    * Alias for {@linkcode fs.hasAccess}
    * @param {import('fs').PathLike} path
    */
-  async exists (path) {
+  async exists(path) {
     return await fs.hasAccess(path);
   },
 
@@ -48,7 +60,10 @@ const fs = {
    * Remove a directory and all its contents, recursively
    * @todo Replace with `rm()` from `fs.promises` when Node.js v12 support is dropped.
    */
-  rimraf: /** @type {(dirpath: string, opts?: import('rimraf').Options) => Promise<void>} */(B.promisify(rimrafIdx)),
+  rimraf:
+    /** @type {(dirpath: string, opts?: import('rimraf').Options) => Promise<void>} */ (
+      B.promisify(rimrafIdx)
+    ),
 
   /**
    * Alias of {@linkcode rimrafIdx.sync}
@@ -64,7 +79,7 @@ const fs = {
    * @returns {Promise<string|undefined>}
    * @see https://nodejs.org/api/fs.html#fspromisesmkdirpath-options
    */
-  async mkdir (filepath, opts = {}) {
+  async mkdir(filepath, opts = {}) {
     try {
       return await fsPromises.mkdir(filepath, opts);
     } catch (err) {
@@ -81,9 +96,11 @@ const fs = {
    * @see https://npm.im/ncp
    * @returns {Promise<void>}
    */
-  async copyFile (source, destination, opts = {}) {
-    if (!await fs.hasAccess(source)) {
-      throw new Error(`The file at '${source}' does not exist or is not accessible`);
+  async copyFile(source, destination, opts = {}) {
+    if (!(await fs.hasAccess(source))) {
+      throw new Error(
+        `The file at '${source}' does not exist or is not accessible`
+      );
     }
     return await ncpAsync(source, destination, opts);
   },
@@ -93,14 +110,16 @@ const fs = {
    * @param {import('fs').PathLike} filePath
    * @returns {Promise<string>}
    */
-  async md5 (filePath) {
+  async md5(filePath) {
     return await fs.hash(filePath, 'md5');
   },
 
   /**
    * Move a file
    */
-  mv: /** @type {(from: string, to: string, opts?: mv.Options) => B<void>} */(B.promisify(mv)),
+  mv: /** @type {(from: string, to: string, opts?: mv.Options) => B<void>} */ (
+    B.promisify(mv)
+  ),
 
   /**
    * Find path to an executable in system `PATH`
@@ -112,7 +131,9 @@ const fs = {
    * Given a glob pattern, resolve with list of files matching that pattern
    * @see https://github.com/isaacs/node-glob
    */
-  glob: /** @type {(pattern: string, opts?: glob.IOptions) => B<string[]>} */(B.promisify(glob)),
+  glob: /** @type {(pattern: string, opts?: glob.IOptions) => B<string[]>} */ (
+    B.promisify(glob)
+  ),
 
   /**
    * Sanitize a filename
@@ -126,12 +147,17 @@ const fs = {
    * @param {string} [algorithm]
    * @returns {Promise<string>}
    */
-  async hash (filePath, algorithm = 'sha1') {
+  async hash(filePath, algorithm = 'sha1') {
     return await new B((resolve, reject) => {
       const fileHash = crypto.createHash(algorithm);
       const readStream = createReadStream(filePath);
-      readStream.on('error', (e) => reject(
-        new Error(`Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`)));
+      readStream.on('error', (e) =>
+        reject(
+          new Error(
+            `Cannot calculate ${algorithm} hash for '${filePath}'. Original error: ${e.message}`
+          )
+        )
+      );
       readStream.on('data', (chunk) => fileHash.update(chunk));
       readStream.on('end', () => resolve(fileHash.digest('hex')));
     });
@@ -145,7 +171,7 @@ const fs = {
    * @returns {import('klaw').Walker}
    * @see https://www.npmjs.com/package/klaw
    */
-  walk (dir, opts) {
+  walk(dir, opts) {
     return klaw(dir, opts);
   },
 
@@ -154,7 +180,7 @@ const fs = {
    * @param {import('fs').PathLike} dir
    * @returns {Promise<string|undefined>}
    */
-  async mkdirp (dir) {
+  async mkdirp(dir) {
     return await fs.mkdir(dir, {recursive: true});
   },
 
@@ -166,7 +192,8 @@ const fs = {
    * @throws {Error} If the `dir` parameter contains a path to an invalid folder
    * @returns {Promise<string?>} returns the found path or null if the item was not found
    */
-  async walkDir (dir, recursive, callback) { //eslint-disable-line promise/prefer-await-to-callbacks
+  async walkDir(dir, recursive, callback) {
+    //eslint-disable-line promise/prefer-await-to-callbacks
     let isValidRoot = false;
     let errMsg = null;
     try {
@@ -175,7 +202,10 @@ const fs = {
       errMsg = e.message;
     }
     if (!isValidRoot) {
-      throw Error(`'${dir}' is not a valid root directory` + (errMsg ? `. Original error: ${errMsg}` : ''));
+      throw Error(
+        `'${dir}' is not a valid root directory` +
+          (errMsg ? `. Original error: ${errMsg}` : '')
+      );
     }
 
     let walker;
@@ -187,48 +217,53 @@ const fs = {
       walker = klaw(dir, {
         depthLimit: recursive ? -1 : 0,
       });
-      walker.on('data', function (item) {
-        walker.pause();
+      walker
+        .on('data', function (item) {
+          walker.pause();
 
-        if (!item.stats.isDirectory()) {
-          fileCount++;
-        } else {
-          directoryCount++;
-        }
+          if (!item.stats.isDirectory()) {
+            fileCount++;
+          } else {
+            directoryCount++;
+          }
 
-        // eslint-disable-next-line promise/prefer-await-to-callbacks
-        lastFileProcessed = B.try(async () => await callback(item.path, item.stats.isDirectory()))
-          .then(function (done = false) {
-            if (done) {
-              resolve(item.path);
-            } else {
-              walker.resume();
-            }
-          })
-          .catch(reject);
-      })
-      .on('error', function (err, item) {
-        log.warn(`Got an error while walking '${item.path}': ${err.message}`);
-        // klaw cannot get back from an ENOENT error
-        if (err.code === 'ENOENT') {
-          log.warn('All files may not have been accessed');
-          reject(err);
-        }
-      })
-      .on('end', function () {
-        lastFileProcessed
-          .then((file) => {
-            resolve(/** @type {string|undefined} */(file) ?? null);
-          })
-          .catch(function (err) {
-            log.warn(`Unexpected error: ${err.message}`);
+          // eslint-disable-next-line promise/prefer-await-to-callbacks
+          lastFileProcessed = B.try(
+            async () => await callback(item.path, item.stats.isDirectory())
+          )
+            .then(function (done = false) {
+              if (done) {
+                resolve(item.path);
+              } else {
+                walker.resume();
+              }
+            })
+            .catch(reject);
+        })
+        .on('error', function (err, item) {
+          log.warn(`Got an error while walking '${item.path}': ${err.message}`);
+          // klaw cannot get back from an ENOENT error
+          if (err.code === 'ENOENT') {
+            log.warn('All files may not have been accessed');
             reject(err);
-          });
-      });
+          }
+        })
+        .on('end', function () {
+          lastFileProcessed
+            .then((file) => {
+              resolve(/** @type {string|undefined} */ (file) ?? null);
+            })
+            .catch(function (err) {
+              log.warn(`Unexpected error: ${err.message}`);
+              reject(err);
+            });
+        });
     }).finally(function () {
-      log.debug(`Traversed ${pluralize('directory', directoryCount, true)} ` +
-        `and ${pluralize('file', fileCount, true)} ` +
-        `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`);
+      log.debug(
+        `Traversed ${pluralize('directory', directoryCount, true)} ` +
+          `and ${pluralize('file', fileCount, true)} ` +
+          `in ${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
+      );
       if (walker) {
         walker.destroy();
       }
@@ -241,7 +276,7 @@ const fs = {
    * @throws {Error} If there were problems finding or reading a `package.json` file
    * @returns {object} A parsed `package.json`
    */
-  readPackageJsonFrom (dir, opts = {}) {
+  readPackageJsonFrom(dir, opts = {}) {
     const cwd = fs.findRoot(dir);
     try {
       return readPkg.sync({...opts, cwd});
@@ -257,13 +292,17 @@ const fs = {
    * @throws {Error} If there were problems finding the project root
    * @returns {string} The closeset parent dir containing `package.json`
    */
-  findRoot (dir) {
+  findRoot(dir) {
     if (!dir || !path.isAbsolute(dir)) {
-      throw new TypeError('`findRoot()` must be provided a non-empty, absolute path');
+      throw new TypeError(
+        '`findRoot()` must be provided a non-empty, absolute path'
+      );
     }
     const result = findRootCached(dir);
     if (!result) {
-      throw new Error(`\`findRoot()\` could not find \`package.json\` from ${dir}`);
+      throw new Error(
+        `\`findRoot()\` could not find \`package.json\` from ${dir}`
+      );
     }
     return result;
   },
@@ -320,10 +359,10 @@ const fs = {
    * Use `constants.X_OK` instead.
    * @deprecated
    */
-  X_OK: constants.X_OK
+  X_OK: constants.X_OK,
 };
 
-export { fs };
+export {fs};
 export default fs;
 
 /**
@@ -332,7 +371,7 @@ export default fs;
  * @param {string} itemPath The path of the file or folder
  * @param {boolean} isDirectory Shows if it is a directory or a file
  * @return {boolean} return true if you want to stop walking
-*/
+ */
 
 /**
  * @typedef {import('glob')} glob

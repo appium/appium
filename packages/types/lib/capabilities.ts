@@ -1,4 +1,4 @@
-import type { Capabilities as WdioCaps } from '@wdio/types';
+import type {Capabilities as WdioCaps} from '@wdio/types';
 
 /**
  * The mask of a W3C-style namespaced capability proped name.
@@ -24,7 +24,7 @@ type BaseCapabilities<OptionalCaps extends StringRecord = StringRecord> =
 
 /**
  * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumCapabilities} type, accepting additional optional caps.
- * 
+ *
  * In practice, the properties `platformName` and `automationName` are required by Appium.
  */
 export type Capabilities<OptionalCaps extends StringRecord = StringRecord> =
@@ -34,7 +34,7 @@ export type Capabilities<OptionalCaps extends StringRecord = StringRecord> =
  * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumW3CCapabilities} type, accepting additional optional _namespaced_ caps.
  */
 export type AppiumW3CCapabilities<
-  OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord,
+  OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord
 > = BaseCapabilities<WdioCaps.AppiumW3CCapabilities & OptionalNamespacedCaps>;
 
 /**
@@ -42,7 +42,7 @@ export type AppiumW3CCapabilities<
  * In practice, the properties `appium:platformName` and `appium:automationName` are required by Appium _somewhere_ in this object; this cannot be expressed in TypeScript.
  */
 export type W3CCapabilities<
-  OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord,
+  OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord
 > = {
   alwaysMatch: AppiumW3CCapabilities<OptionalNamespacedCaps>;
   firstMatch: AppiumW3CCapabilities<OptionalNamespacedCaps>[];

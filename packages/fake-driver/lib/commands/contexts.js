@@ -1,9 +1,11 @@
 import _ from 'lodash';
-import { errors } from '@appium/base-driver';
+import {errors} from '@appium/base-driver';
 
-let commands = {}, helpers = {}, extensions = {};
+let commands = {},
+  helpers = {},
+  extensions = {};
 
-helpers.getRawContexts = function getRawContexts () {
+helpers.getRawContexts = function getRawContexts() {
   let contexts = {NATIVE_APP: null, PROXY: null};
   let wvs = this.appModel.getWebviews();
   for (let i = 1; i < wvs.length + 1; i++) {
@@ -12,21 +14,21 @@ helpers.getRawContexts = function getRawContexts () {
   return contexts;
 };
 
-helpers.assertWebviewContext = function assertWebviewContext () {
+helpers.assertWebviewContext = function assertWebviewContext() {
   if (this.curContext === 'NATIVE_APP') {
     throw new errors.InvalidContextError();
   }
 };
 
-commands.getCurrentContext = async function getCurrentContext () {
+commands.getCurrentContext = async function getCurrentContext() {
   return this.curContext;
 };
 
-commands.getContexts = async function getContexts () {
+commands.getContexts = async function getContexts() {
   return _.keys(this.getRawContexts());
 };
 
-commands.setContext = async function setContext (context) {
+commands.setContext = async function setContext(context) {
   let contexts = this.getRawContexts();
   if (_.includes(_.keys(contexts), context)) {
     this.curContext = context;
@@ -44,7 +46,7 @@ commands.setContext = async function setContext (context) {
   }
 };
 
-commands.setFrame = async function setFrame (frameId) {
+commands.setFrame = async function setFrame(frameId) {
   this.assertWebviewContext();
   if (frameId === null) {
     this.appModel.deactivateFrame();
@@ -58,5 +60,5 @@ commands.setFrame = async function setFrame (frameId) {
 };
 
 Object.assign(extensions, commands, helpers);
-export { commands, helpers };
+export {commands, helpers};
 export default extensions;

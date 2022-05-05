@@ -4,7 +4,6 @@ const _ = require('lodash');
 const tasks = require('./tasks/');
 const log = require('fancy-log');
 
-
 if (process.env.TRAVIS || process.env.CI) {
   process.env.REAL_DEVICE = 0;
 }
@@ -48,7 +47,15 @@ const DEFAULT_OPTS = {
   },
   yamllint: true,
   yaml: {
-    files: ['**/.*.yml', '**/*.yml', '**/.*.yaml', '**/*.yaml', '!test/**', '!node_modules/**', '!**/node_modules/**'],
+    files: [
+      '**/.*.yml',
+      '**/*.yml',
+      '**/.*.yaml',
+      '**/*.yaml',
+      '!test/**',
+      '!node_modules/**',
+      '!**/node_modules/**',
+    ],
     safe: false,
   },
 };
@@ -99,14 +106,16 @@ const boilerplate = function (gulp, opts) {
 
   if (opts.watch) {
     if (opts.eslintOnWatch) {
-      log.warn(`The 'eslintOnWatch' option is deprecated. Use 'lintOnWatch' instead`);
+      log.warn(
+        `The 'eslintOnWatch' option is deprecated. Use 'lintOnWatch' instead`
+      );
       opts.lintOnWatch = true;
     }
     const watchSequence = opts.lintOnWatch
       ? defaultSequence
-      : defaultSequence.filter(function filterLintTasks (step) {
-        return step !== 'lint';
-      });
+      : defaultSequence.filter(function filterLintTasks(step) {
+          return step !== 'lint';
+        });
     spawnWatcher.configure('watch', opts.files, watchSequence);
   }
 
@@ -115,12 +124,11 @@ const boilerplate = function (gulp, opts) {
   gulp.task('default', gulp.series(opts.watch ? 'watch' : 'once'));
 };
 
-
 module.exports = {
   DEFAULTS: _.cloneDeep(DEFAULT_OPTS),
-  use (gulp) {
-    return function callBoilerplate (opts) {
+  use(gulp) {
+    return function callBoilerplate(opts) {
       boilerplate(gulp, opts);
     };
-  }
+  },
 };

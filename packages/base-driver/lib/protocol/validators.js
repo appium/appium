@@ -1,10 +1,10 @@
 import _ from 'lodash';
 
-function isNumber (o) {
+function isNumber(o) {
   return _.isNumber(o) || !_.isNaN(parseInt(o, 10)) || !_.isNaN(parseFloat(o));
 }
 
-function msValidator (ms) {
+function msValidator(ms) {
   if (!_.isNumber(ms) || ms < 0) {
     throw new Error('Wait ms must be a number equal to 0 or greater');
   }
@@ -24,7 +24,11 @@ const validators = {
     msValidator(ms);
   },
   clickCurrent: (button) => {
-    if (!(isNumber(button) || _.isUndefined(button)) || (button < 0 || button > 2)) {
+    if (
+      !(isNumber(button) || _.isUndefined(button)) ||
+      button < 0 ||
+      button > 2
+    ) {
       throw new Error('Click button must be 0, 1, or 2');
     }
   },
@@ -32,7 +36,7 @@ const validators = {
     if (!isNumber(type) || [0, 1, 2, 4, 6].indexOf(type) === -1) {
       throw new Error('Network type must be one of 0, 1, 2, 4, 6');
     }
-  }
+  },
 };
 
-export { validators };
+export {validators};

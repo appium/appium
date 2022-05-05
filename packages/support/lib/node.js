@@ -1,9 +1,9 @@
-import { isWindows } from './system';
+import {isWindows} from './system';
 import log from './logger';
 import _ from 'lodash';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 import path from 'path';
-import { v4 as uuidV4 } from 'uuid';
+import {v4 as uuidV4} from 'uuid';
 
 const ECMA_SIZES = Object.freeze({
   STRING: 2,
@@ -17,7 +17,7 @@ const ECMA_SIZES = Object.freeze({
  * @param {string} packageName - name of the package to link
  * @throws {Error} If the command fails
  */
-async function linkGlobalPackage (packageName) {
+async function linkGlobalPackage(packageName) {
   try {
     log.debug(`Linking package '${packageName}'`);
     const cmd = isWindows() ? 'npm.cmd' : 'npm';
@@ -43,7 +43,7 @@ async function linkGlobalPackage (packageName) {
  * @returns {Promise<unknown>} - the package object
  * @throws {Error} If the package is not found locally or globally
  */
-async function requirePackage (packageName) {
+async function requirePackage(packageName) {
   // first, get it in the normal way (see https://nodejs.org/api/modules.html#modules_all_together)
   try {
     log.debug(`Loading local package '${packageName}'`);
@@ -54,7 +54,12 @@ async function requirePackage (packageName) {
 
   // second, get it from where it ought to be in the global node_modules
   try {
-    const globalPackageName = path.resolve(process.env.npm_config_prefix ?? '', 'lib', 'node_modules', packageName);
+    const globalPackageName = path.resolve(
+      process.env.npm_config_prefix ?? '',
+      'lib',
+      'node_modules',
+      packageName
+    );
     log.debug(`Loading global package '${globalPackageName}'`);
     return require(globalPackageName);
   } catch (err) {
@@ -67,22 +72,24 @@ async function requirePackage (packageName) {
     log.debug(`Retrying load of linked package '${packageName}'`);
     return require(packageName);
   } catch (err) {
-    log.errorAndThrow(`Unable to load package '${packageName}': ${err.message}`);
+    log.errorAndThrow(
+      `Unable to load package '${packageName}': ${err.message}`
+    );
   }
 }
 
-function extractAllProperties (obj) {
+function extractAllProperties(obj) {
   const stringProperties = [];
   for (const prop in obj) {
     stringProperties.push(prop);
   }
   if (_.isFunction(Object.getOwnPropertySymbols)) {
-    stringProperties.push(...(Object.getOwnPropertySymbols(obj)));
+    stringProperties.push(...Object.getOwnPropertySymbols(obj));
   }
   return stringProperties;
 }
 
-function _getSizeOfObject (seen, object) {
+function _getSizeOfObject(seen, object) {
   if (_.isNil(object)) {
     return 0;
   }
@@ -113,13 +120,13 @@ function _getSizeOfObject (seen, object) {
   return bytes;
 }
 
-function getCalculator (seen) {
-  return function calculator (obj) {
+function getCalculator(seen) {
+  return function calculator(obj) {
     if (_.isBuffer(obj)) {
       return obj.length;
     }
 
-    switch (typeof (obj)) {
+    switch (typeof obj) {
       case 'string':
         return obj.length * ECMA_SIZES.STRING;
       case 'boolean':
@@ -128,7 +135,8 @@ function getCalculator (seen) {
         return ECMA_SIZES.NUMBER;
       case 'symbol':
         return _.isFunction(Symbol.keyFor) && Symbol.keyFor(obj)
-          ? /** @type {string} */(Symbol.keyFor(obj)).length * ECMA_SIZES.STRING
+          ? /** @type {string} */ (Symbol.keyFor(obj)).length *
+              ECMA_SIZES.STRING
           : (obj.toString().length - 8) * ECMA_SIZES.STRING;
       case 'object':
         return _.isArray(obj)
@@ -147,7 +155,7 @@ function getCalculator (seen) {
  * @param {*} obj An object whose size should be calculated
  * @returns {number} Object size in bytes.
  */
-function getObjectSize (obj) {
+function getObjectSize(obj) {
   return getCalculator(new WeakSet())(obj);
 }
 
@@ -159,7 +167,7 @@ const OBJECTS_MAPPING = new WeakMap();
  * @param {object} object Any valid ECMA object
  * @returns {string} A uuidV4 string that uniquely identifies given object
  */
-function getObjectId (object) {
+function getObjectId(object) {
   if (!OBJECTS_MAPPING.has(object)) {
     OBJECTS_MAPPING.set(object, uuidV4());
   }
@@ -179,7 +187,7 @@ function getObjectId (object) {
  * @returns {*} The same object that was passed to the
  * function after it was made immutable.
  */
-function deepFreeze (object) {
+function deepFreeze(object) {
   let propNames;
   try {
     propNames = Object.getOwnPropertyNames(object);
@@ -195,4 +203,4 @@ function deepFreeze (object) {
   return Object.freeze(object);
 }
 
-export { requirePackage, getObjectSize, getObjectId, deepFreeze };
+export {requirePackage, getObjectSize, getObjectId, deepFreeze};

@@ -1,6 +1,5 @@
-
-import { ArgumentTypeError } from 'argparse';
-import { readFileSync } from 'fs';
+import {ArgumentTypeError} from 'argparse';
+import {readFileSync} from 'fs';
 import _ from 'lodash';
 
 /**
@@ -17,7 +16,7 @@ import _ from 'lodash';
  * @param {string} value
  * @returns {string[]}
  */
-function parseCsvLine (value) {
+function parseCsvLine(value) {
   return value
     .split(',')
     .map((v) => v.trim())
@@ -29,7 +28,7 @@ function parseCsvLine (value) {
  * @param {string} value
  * @returns {string[]}
  */
-function parseCsvFile (value) {
+function parseCsvFile(value) {
   return value
     .split(/\r?\n/)
     .map((v) => v.trim())
@@ -68,7 +67,7 @@ export const transformers = {
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw new ArgumentTypeError(
-          `Could not read file ${body}: ${err.message}`,
+          `Could not read file ${body}: ${err.message}`
         );
       }
     }
@@ -77,7 +76,7 @@ export const transformers = {
       return body ? parseCsvFile(body) : parseCsvLine(value);
     } catch (err) {
       throw new ArgumentTypeError(
-        'Must be a comma-delimited string, e.g., "foo,bar,baz"',
+        'Must be a comma-delimited string, e.g., "foo,bar,baz"'
       );
     }
   },
@@ -108,7 +107,7 @@ export const transformers = {
       const result = JSON.parse(json);
       if (!_.isPlainObject(result)) {
         throw new Error(
-          `'${_.truncate(result, {length: 100})}' is not an object`,
+          `'${_.truncate(result, {length: 100})}' is not an object`
         );
       }
       return result;

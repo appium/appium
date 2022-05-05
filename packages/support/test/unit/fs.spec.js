@@ -1,7 +1,7 @@
-import { fs, tempDir } from '../../lib/index.js';
+import {fs, tempDir} from '../../lib/index.js';
 import path from 'path';
-import { createSandbox } from 'sinon';
-import { exec } from 'teen_process';
+import {createSandbox} from 'sinon';
+import {exec} from 'teen_process';
 import _ from 'lodash';
 
 // TODO: normalize test organization
@@ -69,7 +69,8 @@ describe('fs', function () {
     it('should be able to copy a directory');
 
     it('should throw an error if the source does not exist', async function () {
-      await fs.copyFile('/sdfsdfsdfsdf', '/tmp/bla').should.eventually.be.rejected;
+      await fs.copyFile('/sdfsdfsdfsdf', '/tmp/bla').should.eventually.be
+        .rejected;
     });
   });
 
@@ -146,8 +147,8 @@ describe('fs', function () {
       npmPath.should.equal(systemNpmPath);
     });
     it('should fail gracefully', async function () {
-      await fs.which('something_that_does_not_exist')
-        .should.eventually.be.rejected;
+      await fs.which('something_that_does_not_exist').should.eventually.be
+        .rejected;
     });
   });
   it('glob()', async function () {
@@ -159,19 +160,29 @@ describe('fs', function () {
 
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
-      await chai.expect(fs.walkDir(__dirname, true, (item) => item.endsWith('logger/helpers.js'))).to.eventually.not.be.null;
+      await chai.expect(
+        fs.walkDir(__dirname, true, (item) =>
+          item.endsWith('logger/helpers.js')
+        )
+      ).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {
-      await chai.expect(fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, _.noop)).to.eventually.be.null;
+      await chai.expect(
+        fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, _.noop)
+      ).to.eventually.be.null;
     });
     it('should throw error through callback', async function () {
       const err = new Error('Callback error');
       const stub = sandbox.stub().rejects(err);
-      await (fs.walkDir(__dirname, true, stub)).should.eventually.be.rejectedWith(err);
+      await fs
+        .walkDir(__dirname, true, stub)
+        .should.eventually.be.rejectedWith(err);
       stub.should.have.been.calledOnce;
     });
     it('should traverse non-recursively', async function () {
-      const filePath = await fs.walkDir(__dirname, false, (item) => item.endsWith('logger/helpers.js'));
+      const filePath = await fs.walkDir(__dirname, false, (item) =>
+        item.endsWith('logger/helpers.js')
+      );
       _.isNil(filePath).should.be.true;
     });
   });
@@ -213,7 +224,10 @@ describe('fs', function () {
   describe('readPackageJsonFrom()', function () {
     describe('when not provided an argument', function () {
       it('should throw', function () {
-        (() => fs.readPackageJsonFrom()).should.throw(TypeError, /non-empty, absolute path/);
+        (() => fs.readPackageJsonFrom()).should.throw(
+          TypeError,
+          /non-empty, absolute path/
+        );
       });
     });
 

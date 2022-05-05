@@ -46,8 +46,6 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "file:../base-driver",
-    "@appium/support": "file:../support",
     "@babel/runtime": "7.17.9",
     "@xmldom/xmldom": "0.8.2",
     "asyncbox": "2.9.2",
@@ -55,6 +53,9 @@
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "xpath": "0.0.32"
+  },
+  "peerDependencies": {
+    "appium": "file:../appium"
   },
   "engines": {
     "node": ">=12",

@@ -1,4 +1,4 @@
-import {errors} from '@appium/base-driver';
+import {errors} from 'appium/driver';
 
 let commands = {},
   helpers = {},

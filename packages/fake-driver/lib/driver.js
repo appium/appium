@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import _ from 'lodash';
-import {BaseDriver, errors} from '@appium/base-driver';
+import {BaseDriver, errors} from 'appium/driver';
 import {FakeApp} from './fake-app';
 import commands from './commands';
 

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {errors} from '@appium/base-driver';
+import {errors} from 'appium/driver';
 import {FakeElement} from '../fake-element';
 
 let commands = {},

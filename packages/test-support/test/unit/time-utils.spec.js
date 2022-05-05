@@ -1,13 +1,12 @@
-import { fakeTime } from '../../lib';
+import {fakeTime} from '../../lib';
 
 import sinon from 'sinon';
 import B from 'bluebird';
 
-
-function doSomething () {
+function doSomething() {
   return new B.Promise((resolve) => {
     let ret = '';
-    function appendOneByOne () {
+    function appendOneByOne() {
       if (ret.length >= 10) {
         return resolve(ret);
       }

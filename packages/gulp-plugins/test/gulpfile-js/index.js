@@ -1,17 +1,14 @@
 'use strict';
 
 const gulp = require('gulp');
-const { Transpiler, isVerbose, spawnWatcher } = require('../..');
+const {Transpiler, isVerbose, spawnWatcher} = require('../..');
 const vinylPaths = require('vinyl-paths');
 const del = require('del');
 const debug = require('gulp-debug');
 const gulpIf = require('gulp-if');
 
-
 gulp.task('clean-fixtures', function () {
-  return gulp
-    .src('build-fixtures', {read: false, allowEmpty: true})
-    .pipe(vinylPaths(del));
+  return gulp.src('build-fixtures', {read: false, allowEmpty: true}).pipe(vinylPaths(del));
 });
 
 gulp.task('transpile-es7-fixtures', function () {

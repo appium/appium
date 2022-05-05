@@ -1,11 +1,10 @@
-import { initSession, deleteSession, W3C_PREFIXED_CAPS } from '../helpers';
+import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 import chaiWebdriverIOAsync from 'chai-webdriverio-async';
 
-
-function findElementTests () {
+function findElementTests() {
   describe('finding elements', function () {
     let driver;
-    before (async function () {
+    before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS);
       chai.use(chaiWebdriverIOAsync(driver));
     });

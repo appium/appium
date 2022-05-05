@@ -5,11 +5,10 @@ const vinylPaths = require('vinyl-paths');
 const del = require('del');
 const debug = require('gulp-debug');
 const gulpIf = require('gulp-if');
-const { isVerbose } = require('../utils');
+const {isVerbose} = require('../utils');
 
-
-const configure = function configure (gulp, opts) {
-  gulp.task('clean', function clean () {
+const configure = function configure(gulp, opts) {
+  gulp.task('clean', function clean() {
     if (opts.transpile) {
       return gulp
         .src(opts.transpileOut, {

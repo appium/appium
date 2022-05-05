@@ -9,7 +9,7 @@ const JSON_SPACES = 4;
  * @param {boolean} json - whether we should log json or text
  * @param {any} msg - error message, object, Error instance, etc.
  */
-function errAndQuit (json, msg) {
+function errAndQuit(json, msg) {
   if (json) {
     console.log(JSON.stringify({error: `${msg}`}, null, JSON_SPACES));
   } else {
@@ -26,7 +26,7 @@ function errAndQuit (json, msg) {
  * @param {boolean} json - whether we are in json mode (and should therefore not log)
  * @param {string} msg - string to log
  */
-function log (json, msg) {
+function log(json, msg) {
   !json && console.log(msg);
 }
 
@@ -36,7 +36,7 @@ function log (json, msg) {
  * @param {string} msg - string to log
  * @param {function} fn - function to wrap with spinning
  */
-async function spinWith (json, msg, fn) {
+async function spinWith(json, msg, fn) {
   if (json) {
     return await fn();
   }
@@ -53,17 +53,17 @@ async function spinWith (json, msg, fn) {
 }
 
 class RingBuffer {
-  constructor (size = 50) {
+  constructor(size = 50) {
     this.size = size;
     this.buffer = [];
   }
-  getBuff () {
+  getBuff() {
     return this.buffer;
   }
-  dequeue () {
+  dequeue() {
     this.buffer.shift();
   }
-  enqueue (item) {
+  enqueue(item) {
     if (this.buffer.length >= this.size) {
       this.dequeue();
     }
@@ -71,10 +71,4 @@ class RingBuffer {
   }
 }
 
-export {
-  errAndQuit,
-  log,
-  spinWith,
-  JSON_SPACES,
-  RingBuffer
-};
+export {errAndQuit, log, spinWith, JSON_SPACES, RingBuffer};

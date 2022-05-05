@@ -136,13 +136,7 @@ export const runAppiumJson = /**
 export async function installLocalExtension(appiumHome, type, pathToExtension) {
   return /** @type {import('appium/types').ExtRecord<ExtType>} */ (
     /** @type {unknown} */ (
-      await runAppiumJson(appiumHome, [
-        type,
-        'install',
-        '--source',
-        'local',
-        pathToExtension,
-      ])
+      await runAppiumJson(appiumHome, [type, 'install', '--source', 'local', pathToExtension])
     )
   );
 }

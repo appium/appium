@@ -1,13 +1,11 @@
-import { errors } from '../protocol';
+import {errors} from '../protocol';
 
-
-function produceError () {
+function produceError() {
   throw new errors.UnknownCommandError('Produced generic error for testing');
 }
 
-function produceCrash () {
+function produceCrash() {
   throw new Error('We just tried to crash Appium!');
 }
 
-
-export { produceError, produceCrash };
+export {produceError, produceCrash};

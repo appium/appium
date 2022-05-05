@@ -32,19 +32,17 @@ const JSON_SCHEMA_PATH = path.join(SCHEMA_ROOT, 'lib', 'appium-config.schema.jso
  *
  * This is a `.ts` file, _not_ a `.d.ts`; this is so it will be output as a `.d.ts` into `build` by `tsc`.
  */
-const OUTPUT_PATH = path.join(
-  TYPES_ROOT,
-  'lib',
-  'appium-config.ts'
-);
+const OUTPUT_PATH = path.join(TYPES_ROOT, 'lib', 'appium-config.ts');
 
-async function main () {
+async function main() {
   try {
     let ts;
     try {
       ts = await compileFromFile(JSON_SCHEMA_PATH);
     } catch (err) {
-      throw new Error(`${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`);
+      throw new Error(
+        `${error} Could not convert Appium schema JSON to TypeScript: ${err.message}. Does it exist?`
+      );
     }
     try {
       await fs.writeFile(OUTPUT_PATH, ts);

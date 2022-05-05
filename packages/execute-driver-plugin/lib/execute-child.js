@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import { NodeVM } from 'vm2';
-import { logger, util } from '@appium/support';
-import { attach } from 'webdriverio';
+import {NodeVM} from 'vm2';
+import {logger, util} from '@appium/support';
+import {attach} from 'webdriverio';
 
 const log = logger.getLogger('ExecuteDriver Child');
 let send;
@@ -12,7 +12,7 @@ let send;
 export const W3C_ELEMENT_KEY = util.W3C_WEB_ELEMENT_IDENTIFIER;
 export const MJSONWP_ELEMENT_KEY = 'ELEMENT';
 
-async function runScript (driverOpts, script, timeoutMs) {
+async function runScript(driverOpts, script, timeoutMs) {
   if (!_.isNumber(timeoutMs)) {
     throw new TypeError('Timeout parameter must be a number');
   }
@@ -52,7 +52,7 @@ async function runScript (driverOpts, script, timeoutMs) {
  *
  * @return {string} - the full script to execute
  */
-function buildScript (script) {
+function buildScript(script) {
   return `module.exports = async function execute (driver, console, Promise) {
     ${script}
   }`;
@@ -68,14 +68,16 @@ function buildScript (script) {
  *
  * @return {Object} - safely converted object
  */
-function coerceScriptResult (obj) {
+function coerceScriptResult(obj) {
   // first ensure obj is of a type that can be JSON encoded safely. This will
   // get rid of custom objects, functions, etc... and turn them into POJOs
   try {
     obj = JSON.parse(JSON.stringify(obj));
   } catch (e) {
-    log.warn('Could not convert executeDriverScript to safe response!' +
-             `Result was: ${JSON.stringify(obj)}. Will make it null`);
+    log.warn(
+      'Could not convert executeDriverScript to safe response!' +
+        `Result was: ${JSON.stringify(obj)}. Will make it null`
+    );
     return null;
   }
 
@@ -120,7 +122,7 @@ function coerceScriptResult (obj) {
   return obj;
 }
 
-async function main (driverOpts, script, timeoutMs) {
+async function main(driverOpts, script, timeoutMs) {
   let res;
   try {
     res = {success: await runScript(driverOpts, script, timeoutMs)};

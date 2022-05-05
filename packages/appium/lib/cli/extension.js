@@ -28,9 +28,7 @@ async function runExtensionCommand(args, configObject) {
   const {extensionType: type} = configObject;
   const extCmd = args[`${type}Command`];
   if (!extCmd) {
-    throw new TypeError(
-      `Cannot call ${type} command without a subcommand like 'install'`
-    );
+    throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
   }
   let {json, suppressOutput} = args;
   if (suppressOutput) {
@@ -39,9 +37,7 @@ async function runExtensionCommand(args, configObject) {
   const logFn = (msg) => log(json, msg);
   let config = configObject;
   config.log = logFn;
-  const CommandClass = /** @type {ExtCommand<ExtType>} */ (
-    commandClasses[type]
-  );
+  const CommandClass = /** @type {ExtCommand<ExtType>} */ (commandClasses[type]);
   const cmd = new CommandClass({config, json});
   try {
     jsonResult = await cmd.execute(args);

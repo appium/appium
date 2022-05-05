@@ -1,13 +1,10 @@
-import {
-  errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType
-} from '../../../lib';
-import { getResponseForW3CError } from '../../../lib/protocol/errors';
+import {errors, errorFromMJSONWPStatusCode, errorFromW3CJsonCode, isErrorType} from '../../../lib';
+import {getResponseForW3CError} from '../../../lib/protocol/errors';
 import _ from 'lodash';
-import { StatusCodes as HTTPStatusCodes } from 'http-status-codes';
+import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import path from 'path';
 
 const basename = path.basename(__filename);
-
 
 // Error codes and messages have been added according to JsonWireProtocol see
 // https://code.google.com/p/selenium/wiki/JsonWireProtocol#Response_Status_Codes
@@ -16,21 +13,24 @@ let errorsList = [
     errorName: 'NoSuchDriverError',
     errorMsg: 'A session is either terminated or not started',
     error: 'invalid session id',
-    errorCode: 6
+    errorCode: 6,
   },
   {
     errorName: 'ElementClickInterceptedError',
-    errorMsg: 'The Element Click command could not be completed because the element receiving the events is obscuring the element that was requested clicked',
+    errorMsg:
+      'The Element Click command could not be completed because the element receiving the events is obscuring the element that was requested clicked',
     error: 'element click intercepted',
   },
   {
     errorName: 'ElementNotInteractableError',
-    errorMsg: 'A command could not be completed because the element is not pointer- or keyboard interactable',
+    errorMsg:
+      'A command could not be completed because the element is not pointer- or keyboard interactable',
     error: 'element not interactable',
   },
   {
     errorName: 'InsecureCertificateError',
-    errorMsg: 'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
+    errorMsg:
+      'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
     error: 'insecure certificate',
   },
   {
@@ -40,91 +40,95 @@ let errorsList = [
   },
   {
     errorName: 'NoSuchElementError',
-    errorMsg: 'An element could not be located on the page using the ' +
-        'given search parameters.',
+    errorMsg: 'An element could not be located on the page using the ' + 'given search parameters.',
     error: 'no such element',
-    errorCode: 7
+    errorCode: 7,
   },
   {
     errorName: 'NoSuchFrameError',
-    errorMsg: 'A request to switch to a frame could not be satisfied ' +
-        'because the frame could not be found.',
+    errorMsg:
+      'A request to switch to a frame could not be satisfied ' +
+      'because the frame could not be found.',
     error: 'no such frame',
-    errorCode: 8
+    errorCode: 8,
   },
   {
     errorName: 'UnknownCommandError',
-    errorMsg: 'The requested resource could not be found, or a request ' +
-        'was received using an HTTP method that is not supported by ' +
-        'the mapped resource.',
+    errorMsg:
+      'The requested resource could not be found, or a request ' +
+      'was received using an HTTP method that is not supported by ' +
+      'the mapped resource.',
     error: 'unknown command',
-    errorCode: 9
+    errorCode: 9,
   },
   {
     errorName: 'StaleElementReferenceError',
-    errorMsg: 'An element command failed because the referenced element is ' +
-        'no longer attached to the DOM.',
+    errorMsg:
+      'An element command failed because the referenced element is ' +
+      'no longer attached to the DOM.',
     error: 'stale element reference',
-    errorCode: 10
+    errorCode: 10,
   },
   {
     errorName: 'ElementNotVisibleError',
-    errorMsg: 'An element command could not be completed because the ' +
-        'element is not visible on the page.',
-    errorCode: 11
+    errorMsg:
+      'An element command could not be completed because the ' +
+      'element is not visible on the page.',
+    errorCode: 11,
   },
   {
     errorName: 'InvalidElementStateError',
-    errorMsg: 'An element command could not be completed because the element ' +
-        'is in an invalid state (e.g. attempting to click a disabled ' +
-        'element).',
+    errorMsg:
+      'An element command could not be completed because the element ' +
+      'is in an invalid state (e.g. attempting to click a disabled ' +
+      'element).',
     error: 'invalid element state',
-    errorCode: 12
+    errorCode: 12,
   },
   {
     errorName: 'UnknownError',
-    errorMsg: 'An unknown server-side error occurred while processing the ' +
-        'command.',
+    errorMsg: 'An unknown server-side error occurred while processing the ' + 'command.',
     error: 'unknown error',
-    errorCode: 13
+    errorCode: 13,
   },
   {
     errorName: 'ElementIsNotSelectableError',
-    errorMsg: 'An attempt was made to select an element that cannot ' +
-        'be selected.',
+    errorMsg: 'An attempt was made to select an element that cannot ' + 'be selected.',
     error: 'element not selectable',
-    errorCode: 15
+    errorCode: 15,
   },
   {
     errorName: 'JavaScriptError',
     errorMsg: 'An error occurred while executing user supplied JavaScript.',
     error: 'javascript error',
-    errorCode: 17
+    errorCode: 17,
   },
   {
     errorName: 'XPathLookupError',
     errorMsg: 'An error occurred while searching for an element by XPath.',
-    errorCode: 19
+    errorCode: 19,
   },
   {
     errorName: 'TimeoutError',
     errorMsg: 'An operation did not complete before its timeout expired.',
     error: 'timeout',
-    errorCode: 21
+    errorCode: 21,
   },
   {
     errorName: 'NoSuchWindowError',
-    errorMsg: 'A request to switch to a different window could not be ' +
-        'satisfied because the window could not be found.',
+    errorMsg:
+      'A request to switch to a different window could not be ' +
+      'satisfied because the window could not be found.',
     error: 'no such window',
-    errorCode: 23
+    errorCode: 23,
   },
   {
     errorName: 'InvalidCookieDomainError',
-    errorMsg: 'An illegal attempt was made to set a cookie under a different ' +
-        'domain than the current page.',
+    errorMsg:
+      'An illegal attempt was made to set a cookie under a different ' +
+      'domain than the current page.',
     error: 'invalid cookie domain',
-    errorCode: 24
+    errorCode: 24,
   },
   {
     errorName: 'InvalidCoordinatesError',
@@ -135,59 +139,57 @@ let errorsList = [
     errorName: 'UnableToSetCookieError',
     errorMsg: `A request to set a cookie's value could not be satisfied.`,
     error: 'unable to set cookie',
-    errorCode: 25
+    errorCode: 25,
   },
   {
     errorName: 'UnexpectedAlertOpenError',
     errorMsg: 'A modal dialog was open, blocking this operation',
     error: 'unexpected alert open',
-    errorCode: 26
+    errorCode: 26,
   },
   {
     errorName: 'NoAlertOpenError',
-    errorMsg: 'An attempt was made to operate on a modal dialog when one was ' +
-        'not open.',
-    errorCode: 27
+    errorMsg: 'An attempt was made to operate on a modal dialog when one was ' + 'not open.',
+    errorCode: 27,
   },
   {
     errorName: 'ScriptTimeoutError',
     errorMsg: 'A script did not complete before its timeout expired.',
     error: 'script timeout',
-    errorCode: 28
+    errorCode: 28,
   },
   {
     errorName: 'InvalidElementCoordinatesError',
-    errorMsg: 'The coordinates provided to an interactions operation are ' +
-        'invalid.',
-    errorCode: 29
+    errorMsg: 'The coordinates provided to an interactions operation are ' + 'invalid.',
+    errorCode: 29,
   },
   {
     errorName: 'IMENotAvailableError',
     errorMsg: 'IME was not available.',
-    errorCode: 30
+    errorCode: 30,
   },
   {
     errorName: 'IMEEngineActivationFailedError',
     errorMsg: 'An IME engine could not be started.',
-    errorCode: 31
+    errorCode: 31,
   },
   {
     errorName: 'InvalidSelectorError',
     errorMsg: 'Argument was an invalid selector (e.g. XPath/CSS).',
     error: 'invalid selector',
-    errorCode: 32
+    errorCode: 32,
   },
   {
     errorName: 'SessionNotCreatedError',
     errorMsg: 'A new session could not be created.',
     error: 'session not created',
-    errorCode: 33
+    errorCode: 33,
   },
   {
     errorName: 'MoveTargetOutOfBoundsError',
     errorMsg: 'Target provided for a move action is out of bounds.',
     error: 'move target out of bounds',
-    errorCode: 34
+    errorCode: 34,
   },
   {
     errorName: 'NoSuchAlertError',
@@ -196,18 +198,20 @@ let errorsList = [
   },
   {
     errorName: 'NoSuchCookieError',
-    errorMsg: 'No cookie matching the given path name was found amongst the associated cookies of the current browsing context’s active document',
+    errorMsg:
+      'No cookie matching the given path name was found amongst the associated cookies of the current browsing context’s active document',
     error: 'no such cookie',
   },
   {
     errorName: 'NotYetImplementedError',
     errorMsg: 'Method has not yet been implemented',
     error: 'unknown method',
-    errorCode: 405
+    errorCode: 405,
   },
   {
     errorName: 'UnknownCommandError',
-    errorMsg: 'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
+    errorMsg:
+      'The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource.',
     error: 'unknown command',
   },
   {
@@ -226,27 +230,20 @@ describe('errors', function () {
   for (let error of errorsList) {
     it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
       if (error.errorCode) {
-        new errors[error.errorName]()
-          .should.have.property('jsonwpCode', error.errorCode);
+        new errors[error.errorName]().should.have.property('jsonwpCode', error.errorCode);
       } else {
-        new errors[error.errorName]()
-          .should.have.property('error', error.error);
+        new errors[error.errorName]().should.have.property('error', error.error);
       }
-      new errors[error.errorName]()
-        .should.have.property('message', error.errorMsg);
+      new errors[error.errorName]().should.have.property('message', error.errorMsg);
     });
   }
   it('BadParametersError should not have code and should have messg', function () {
-    new errors.BadParametersError()
-      .should.not.have.property('jsonwpCode');
-    new errors.BadParametersError()
-      .should.have.property('message');
+    new errors.BadParametersError().should.not.have.property('jsonwpCode');
+    new errors.BadParametersError().should.have.property('message');
   });
   it('ProxyRequestError should have message and jsonwp', function () {
-    new errors.ProxyRequestError()
-        .should.have.property('jsonwp');
-    new errors.ProxyRequestError()
-        .should.have.property('message');
+    new errors.ProxyRequestError().should.have.property('jsonwp');
+    new errors.ProxyRequestError().should.have.property('message');
   });
 });
 describe('errorFromMJSONWPStatusCode', function () {
@@ -254,28 +251,37 @@ describe('errorFromMJSONWPStatusCode', function () {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorCode + ' should return correct error', function () {
         if (error.errorCode) {
-          errorFromMJSONWPStatusCode(error.errorCode)
-            .should.have.property('jsonwpCode', error.errorCode);
-          errorFromMJSONWPStatusCode(error.errorCode)
-            .should.have.property('message', error.errorMsg);
+          errorFromMJSONWPStatusCode(error.errorCode).should.have.property(
+            'jsonwpCode',
+            error.errorCode
+          );
+          errorFromMJSONWPStatusCode(error.errorCode).should.have.property(
+            'message',
+            error.errorMsg
+          );
           if (!_.includes([13, 33], error.errorCode)) {
-            errorFromMJSONWPStatusCode(error.errorCode, 'abcd')
-              .should.have.property('jsonwpCode', error.errorCode);
-            errorFromMJSONWPStatusCode(error.errorCode, 'abcd')
-              .should.have.property('message', 'abcd');
+            errorFromMJSONWPStatusCode(error.errorCode, 'abcd').should.have.property(
+              'jsonwpCode',
+              error.errorCode
+            );
+            errorFromMJSONWPStatusCode(error.errorCode, 'abcd').should.have.property(
+              'message',
+              'abcd'
+            );
           }
         } else {
-          isErrorType(errorFromMJSONWPStatusCode(error.errorCode), errors.UnknownError).should.be.true;
+          isErrorType(errorFromMJSONWPStatusCode(error.errorCode), errors.UnknownError).should.be
+            .true;
         }
       });
     }
   }
   it('should throw unknown error for unknown code', function () {
-    errorFromMJSONWPStatusCode(99)
-      .should.have.property('jsonwpCode', 13);
-    errorFromMJSONWPStatusCode(99)
-      .should.have.property('message', 'An unknown server-side error occurred ' +
-                                       'while processing the command.');
+    errorFromMJSONWPStatusCode(99).should.have.property('jsonwpCode', 13);
+    errorFromMJSONWPStatusCode(99).should.have.property(
+      'message',
+      'An unknown server-side error occurred ' + 'while processing the command.'
+    );
   });
 });
 describe('errorFromW3CJsonCode', function () {
@@ -294,7 +300,9 @@ describe('errorFromW3CJsonCode', function () {
   }
   it('should parse unknown errors', function () {
     isErrorType(errorFromW3CJsonCode('not a real error code'), errors.UnknownError).should.be.true;
-    errorFromW3CJsonCode('not a real error code').message.should.match(/An unknown server-side error occurred/);
+    errorFromW3CJsonCode('not a real error code').message.should.match(
+      /An unknown server-side error occurred/
+    );
     errorFromW3CJsonCode('not a real error code').error.should.equal('unknown error');
   });
 });
@@ -325,11 +333,11 @@ describe('w3c Status Codes', function () {
     // Test the errors that we don't expect to return 400 code
     for (let [errorName, expectedErrorCode] of non400Errors) {
       errors[errorName].should.exist;
-      (new errors[errorName]()).should.have.property('w3cStatus', expectedErrorCode);
+      new errors[errorName]().should.have.property('w3cStatus', expectedErrorCode);
     }
 
     // Test an error that we expect to return 400 code
-    (new errors.ElementClickInterceptedError()).should.have.property('w3cStatus', 400);
+    new errors.ElementClickInterceptedError().should.have.property('w3cStatus', 400);
   });
 });
 describe('.getResponseForW3CError', function () {
@@ -398,53 +406,70 @@ describe('.getActualError', function () {
     it('should map an unknown error to UnknownError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {
         value: 'Does not matter',
-        status: -100
+        status: -100,
       }).getActualError();
       isErrorType(actualError, errors.UnknownError).should.be.true;
     });
     it('should parse a JSON string', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', JSON.stringify({
-        value: 'Does not matter',
-        status: -100
-      })).getActualError();
+      const actualError = new errors.ProxyRequestError(
+        'Error message does not matter',
+        JSON.stringify({
+          value: 'Does not matter',
+          status: -100,
+        })
+      ).getActualError();
       isErrorType(actualError, errors.UnknownError).should.be.true;
     });
   });
 
   describe('W3C', function () {
     it('should map a 404 no such element error as a NoSuchElementError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: {
-          error: errors.NoSuchElementError.error(),
+      const actualError = new errors.ProxyRequestError(
+        'Error message does not matter',
+        {
+          value: {
+            error: errors.NoSuchElementError.error(),
+          },
         },
-      }, HTTPStatusCodes.NOT_FOUND).getActualError();
+        HTTPStatusCodes.NOT_FOUND
+      ).getActualError();
       isErrorType(actualError, errors.NoSuchElementError).should.be.true;
     });
     it('should map a 400 StaleElementReferenceError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', {
-        value: {
-          error: errors.StaleElementReferenceError.error(),
-
+      const actualError = new errors.ProxyRequestError(
+        'Error message does not matter',
+        {
+          value: {
+            error: errors.StaleElementReferenceError.error(),
+          },
         },
-      }, HTTPStatusCodes.BAD_REQUEST).getActualError();
+        HTTPStatusCodes.BAD_REQUEST
+      ).getActualError();
       isErrorType(actualError, errors.StaleElementReferenceError).should.be.true;
     });
     it('should map an unknown error to UnknownError', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', null, {
-        value: {
-          error: 'Not a valid w3c JSON code'
-
+      const actualError = new errors.ProxyRequestError(
+        'Error message does not matter',
+        null,
+        {
+          value: {
+            error: 'Not a valid w3c JSON code',
+          },
         },
-      }, 456).getActualError();
+        456
+      ).getActualError();
       isErrorType(actualError, errors.UnknownError).should.be.true;
     });
     it('should parse a JSON string', function () {
-      const actualError = new errors.ProxyRequestError('Error message does not matter', JSON.stringify({
-        value: {
-          error: errors.StaleElementReferenceError.error(),
-
-        },
-      }), HTTPStatusCodes.BAD_REQUEST).getActualError();
+      const actualError = new errors.ProxyRequestError(
+        'Error message does not matter',
+        JSON.stringify({
+          value: {
+            error: errors.StaleElementReferenceError.error(),
+          },
+        }),
+        HTTPStatusCodes.BAD_REQUEST
+      ).getActualError();
       isErrorType(actualError, errors.StaleElementReferenceError).should.be.true;
     });
   });

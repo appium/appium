@@ -1,9 +1,8 @@
-
-import { tempDir, fs, npm } from '@appium/support';
-import { loadExtensions } from '../../../lib/extension';
-import { Manifest } from '../../../lib/extension/manifest';
+import {tempDir, fs, npm} from '@appium/support';
+import {loadExtensions} from '../../../lib/extension';
+import {Manifest} from '../../../lib/extension/manifest';
 import DriverCommand from '../../../lib/cli/driver-command';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 
 describe('DriverCommand', function () {
   /**
@@ -40,12 +39,14 @@ describe('DriverCommand', function () {
       npmMock = sandbox.mock(npm);
     });
 
-    function setupDriverUpdate (curVersion, latestVersion, latestSafeVersion) {
-      npmMock.expects('getLatestVersion')
+    function setupDriverUpdate(curVersion, latestVersion, latestSafeVersion) {
+      npmMock
+        .expects('getLatestVersion')
         .once()
         .withExactArgs(appiumHome, pkgName)
         .returns(latestVersion);
-      npmMock.expects('getLatestSafeUpgradeVersion')
+      npmMock
+        .expects('getLatestSafeUpgradeVersion')
         .once()
         .withExactArgs(appiumHome, pkgName, curVersion)
         .returns(latestSafeVersion);

@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import { createSandbox } from 'sinon';
-import { timing } from '../../lib';
-
+import {createSandbox} from 'sinon';
+import {timing} from '../../lib';
 
 const expect = chai.expect;
 
@@ -44,27 +43,39 @@ describe('timing', function () {
       _.isNumber(duration.nanos).should.be.true;
     });
     it('should get correct seconds', function () {
-      processMock.expects('hrtime').twice()
-        .onFirstCall().returns([12, 12345])
-        .onSecondCall().returns([13, 54321]);
+      processMock
+        .expects('hrtime')
+        .twice()
+        .onFirstCall()
+        .returns([12, 12345])
+        .onSecondCall()
+        .returns([13, 54321]);
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       duration.asSeconds.should.eql(13.000054321);
     });
     it('should get correct milliseconds', function () {
-      processMock.expects('hrtime').twice()
-        .onFirstCall().returns([12, 12345])
-        .onSecondCall().returns([13, 54321]);
+      processMock
+        .expects('hrtime')
+        .twice()
+        .onFirstCall()
+        .returns([12, 12345])
+        .onSecondCall()
+        .returns([13, 54321]);
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
       duration.asMilliSeconds.should.eql(13000.054321);
     });
     it('should get correct nanoseconds', function () {
-      processMock.expects('hrtime').twice()
-        .onFirstCall().returns([12, 12345])
-        .onSecondCall().returns([13, 54321]);
+      processMock
+        .expects('hrtime')
+        .twice()
+        .onFirstCall()
+        .returns([12, 12345])
+        .onSecondCall()
+        .returns([13, 54321]);
 
       const timer = new timing.Timer().start();
       const duration = timer.getDuration();
@@ -72,14 +83,12 @@ describe('timing', function () {
     });
     it('should error if the timer was not started', function () {
       const timer = new timing.Timer();
-      expect(() => timer.getDuration())
-        .to.throw('Unable to get duration');
+      expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
     it('should error if start time is a number', function () {
       const timer = new timing.Timer();
       timer._startTime = 12345;
-      expect(() => timer.getDuration())
-        .to.throw('Unable to get duration');
+      expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
   });
   describe('bigint', function () {
@@ -94,14 +103,17 @@ describe('timing', function () {
       processMock = sandbox.mock(process.hrtime);
     });
 
-    function setupMocks (once = false) {
+    function setupMocks(once = false) {
       if (once) {
-        processMock.expects('bigint').once()
-          .onFirstCall().returns(BigInt(1172941153404030));
+        processMock.expects('bigint').once().onFirstCall().returns(BigInt(1172941153404030));
       } else {
-        processMock.expects('bigint').twice()
-          .onFirstCall().returns(BigInt(1172941153404030))
-          .onSecondCall().returns(BigInt(1172951164887132));
+        processMock
+          .expects('bigint')
+          .twice()
+          .onFirstCall()
+          .returns(BigInt(1172941153404030))
+          .onSecondCall()
+          .returns(BigInt(1172951164887132));
       }
     }
 
@@ -135,14 +147,12 @@ describe('timing', function () {
     });
     it('should error if the timer was not started', function () {
       const timer = new timing.Timer();
-      expect(() => timer.getDuration())
-        .to.throw('Unable to get duration');
+      expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
     it('should error if passing in a non-bigint', function () {
       const timer = new timing.Timer();
       timer._startTime = 12345;
-      expect(() => timer.getDuration())
-        .to.throw('Unable to get duration');
+      expect(() => timer.getDuration()).to.throw('Unable to get duration');
     });
   });
 });

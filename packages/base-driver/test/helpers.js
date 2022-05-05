@@ -8,7 +8,7 @@ const TEST_HOST = '127.0.0.1';
  */
 const METHODS = {
   POST: 'POST',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
 };
 
 let testPort;
@@ -17,7 +17,7 @@ let testPort;
  * @param {boolean} [force] - If true, do not reuse the port (if it already exists)
  * @returns {Promise<number>} a free port
  */
-async function getTestPort (force = false) {
+async function getTestPort(force = false) {
   if (force || !testPort) {
     let port = await getPort();
     if (!testPort) {
@@ -66,7 +66,7 @@ const createAppiumURL = curry(
     let url = new URL(path, `${address}:${port}`);
     return url.href;
   },
-  4,
+  4
 );
 
 export {TEST_HOST, METHODS, getTestPort, createAppiumURL};

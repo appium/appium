@@ -36,14 +36,14 @@ const SCHEMA_SRC = path.join(SCHEMA_ROOT, 'build', 'appium-config-schema.js');
  */
 const OUTPUT_PATH = path.join(OUTPUT_DIR, JSON_FILENAME);
 
-async function write () {
+async function write() {
   /** @type {typeof import('../lib/appium-config-schema').AppiumConfigJsonSchema} */
   let schema;
   try {
     ({AppiumConfigJsonSchema: schema} = require(SCHEMA_SRC));
   } catch (err) {
     throw new Error(
-      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`,
+      `${error} Failed to read ${SCHEMA_SRC}; did you execute \`npm run build\` first?`
     );
   }
 
@@ -54,13 +54,11 @@ async function write () {
     await writeFile(OUTPUT_PATH, json);
     console.log(`${info} Wrote JSON schema to ${OUTPUT_PATH}`);
   } catch (err) {
-    throw new Error(
-      `${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`,
-    );
+    throw new Error(`${error} Failed to write JSON schema to ${OUTPUT_PATH}: ${err.message}`);
   }
 }
 
-async function main () {
+async function main() {
   try {
     await write();
   } catch (err) {

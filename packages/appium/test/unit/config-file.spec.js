@@ -9,26 +9,12 @@ import {resolveFixture, rewiremock} from '../helpers';
 const expect = chai.expect;
 
 describe('config-file', function () {
-  const GOOD_YAML_CONFIG_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.good.yaml'
-  );
-  const GOOD_JSON_CONFIG_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.good.json'
-  );
-  const GOOD_JS_CONFIG_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.good.js'
-  );
-  const GOOD_YAML_CONFIG = YAML.parse(
-    fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8')
-  );
+  const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.yaml');
+  const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.json');
+  const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.js');
+  const GOOD_YAML_CONFIG = YAML.parse(fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8'));
   const GOOD_JSON_CONFIG = require(GOOD_JSON_CONFIG_FILEPATH);
-  const BAD_JSON_CONFIG_FILEPATH = resolveFixture(
-    'config',
-    'appium.config.bad.json'
-  );
+  const BAD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.bad.json');
   const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
 
   /**
@@ -192,9 +178,7 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate).to.have.been.calledOnceWith(
-              GOOD_JSON_CONFIG
-            );
+            expect(schema.validate).to.have.been.calledOnceWith(GOOD_JSON_CONFIG);
           });
 
           describe('when the config file is valid', function () {
@@ -274,9 +258,7 @@ describe('config-file', function () {
         });
 
         it('should pass error through', async function () {
-          await expect(readConfigFile('appium.json')).to.be.rejectedWith(
-            /guru meditation/
-          );
+          await expect(readConfigFile('appium.json')).to.be.rejectedWith(/guru meditation/);
         });
       });
 
@@ -298,9 +280,7 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate).to.have.been.calledOnceWith(
-              GOOD_JSON_CONFIG
-            );
+            expect(schema.validate).to.have.been.calledOnceWith(GOOD_JSON_CONFIG);
           });
 
           describe('when the config file is valid', function () {
@@ -334,19 +314,13 @@ describe('config-file', function () {
   describe('formatErrors()', function () {
     describe('when provided `errors` as an empty array', function () {
       it('should throw', function () {
-        expect(() => formatErrors([])).to.throw(
-          TypeError,
-          'Array of errors must be non-empty'
-        );
+        expect(() => formatErrors([])).to.throw(TypeError, 'Array of errors must be non-empty');
       });
     });
 
     describe('when provided `errors` as `undefined`', function () {
       it('should throw', function () {
-        expect(() => formatErrors()).to.throw(
-          TypeError,
-          'Array of errors must be non-empty'
-        );
+        expect(() => formatErrors()).to.throw(TypeError, 'Array of errors must be non-empty');
       });
     });
 

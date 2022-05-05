@@ -34,9 +34,7 @@ describe('CLI behavior', function () {
    */
   let appiumHome;
 
-  const testDriverPath = path.dirname(
-    resolveFixture('test-driver/package.json')
-  );
+  const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
   beforeEach(function () {
     this.timeout(30000);
@@ -80,10 +78,7 @@ describe('CLI behavior', function () {
       appiumHomePkgPath = path.join(appiumHome, 'package.json');
       runJson = runAppiumJson(appiumHome);
       // an example package.json referencing appium dependency
-      await fs.copyFile(
-        resolveFixture('cli/appium-dependency.package.json'),
-        appiumHomePkgPath
-      );
+      await fs.copyFile(resolveFixture('cli/appium-dependency.package.json'), appiumHomePkgPath);
     });
 
     after(async function () {
@@ -92,9 +87,7 @@ describe('CLI behavior', function () {
 
     describe('without drivers installed', function () {
       it('should list no drivers', async function () {
-        const res = /** @type {ExtensionListData} */ (
-          await runJson([DRIVER_TYPE, LIST])
-        );
+        const res = /** @type {ExtensionListData} */ (await runJson([DRIVER_TYPE, LIST]));
         res.should.satisfy(
           /** @param {typeof res} value */ (value) =>
             Object.values(value).every(({installed}) => !installed)
@@ -108,18 +101,12 @@ describe('CLI behavior', function () {
       });
 
       it('should list the driver', async function () {
-        const res = /** @type {ExtensionListData} */ (
-          await runJson([DRIVER_TYPE, LIST])
-        );
+        const res = /** @type {ExtensionListData} */ (await runJson([DRIVER_TYPE, LIST]));
         res.should.have.property('fake');
       });
 
       it('should be resolvable from the local directory', function () {
-        (() =>
-          resolveFrom(
-            appiumHome,
-            '@appium/fake-driver/package.json'
-          )).should.not.throw();
+        (() => resolveFrom(appiumHome, '@appium/fake-driver/package.json')).should.not.throw();
       });
     });
 
@@ -139,9 +126,7 @@ describe('CLI behavior', function () {
         let res;
 
         beforeEach(async function () {
-          res = /** @type {ExtensionListData} */ (
-            await runJson([DRIVER_TYPE, LIST])
-          );
+          res = /** @type {ExtensionListData} */ (await runJson([DRIVER_TYPE, LIST]));
         });
         it('should list the driver', function () {
           res.should.have.property('fake');
@@ -168,9 +153,7 @@ describe('CLI behavior', function () {
         });
 
         it('should update package.json', async function () {
-          const newPkg = JSON.parse(
-            await fs.readFile(appiumHomePkgPath, 'utf8')
-          );
+          const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
           expect(newPkg).to.have.nested.property('devDependencies.test-driver');
         });
 
@@ -188,8 +171,7 @@ describe('CLI behavior', function () {
         });
 
         it('should actually install both drivers', function () {
-          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to
-            .throw;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
           expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
       });
@@ -234,21 +216,15 @@ describe('CLI behavior', function () {
       before(function () {
         const run = runAppiumJson(appiumHome);
         runInstall = async (args) =>
-          /** @type {ReturnType<typeof runInstall>} */ (
-            await run([DRIVER_TYPE, INSTALL, ...args])
-          );
+          /** @type {ReturnType<typeof runInstall>} */ (await run([DRIVER_TYPE, INSTALL, ...args]));
         runUninstall = async (args) =>
           /** @type {ReturnType<typeof runUninstall>} */ (
             await run([DRIVER_TYPE, UNINSTALL, ...args])
           );
         runList = async (args = []) =>
-          /** @type {ReturnType<typeof runList>} */ (
-            await run([DRIVER_TYPE, LIST, ...args])
-          );
+          /** @type {ReturnType<typeof runList>} */ (await run([DRIVER_TYPE, LIST, ...args]));
         runRun = async (args) =>
-          /** @type {ReturnType<typeof runRun>} */ (
-            await run([DRIVER_TYPE, RUN, ...args])
-          );
+          /** @type {ReturnType<typeof runRun>} */ (await run([DRIVER_TYPE, RUN, ...args]));
       });
 
       describe(LIST, function () {
@@ -290,14 +266,8 @@ describe('CLI behavior', function () {
             penultimateFakeDriverVersionAsOfRightNow
           ).should.be.true;
           // TODO: this could probably be replaced by looking at updateVersion in the JSON
-          const stdout = await runAppium(appiumHome, [
-            DRIVER_TYPE,
-            LIST,
-            '--updates',
-          ]);
-          stdout.should.match(
-            new RegExp(`fake.+[${fake.updateVersion} available]`)
-          );
+          const stdout = await runAppium(appiumHome, [DRIVER_TYPE, LIST, '--updates']);
+          stdout.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
         });
       });
 
@@ -314,11 +284,7 @@ describe('CLI behavior', function () {
         });
         it('should install a driver from npm', async function () {
           await clear();
-          const ret = await runInstall([
-            '@appium/fake-driver',
-            '--source',
-            'npm',
-          ]);
+          const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
           ret.fake.pkgName.should.eql('@appium/fake-driver');
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql('@appium/fake-driver');
@@ -334,9 +300,7 @@ describe('CLI behavior', function () {
           const list = await runList(['--installed']);
           expect(list.fake).to.exist;
           expect(list.test).to.exist;
-          expect(() =>
-            resolveFrom(appiumHome, '@appium/fake-driver')
-          ).not.to.throw;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
           expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
 
@@ -348,12 +312,8 @@ describe('CLI behavior', function () {
           const list = await runList(['--installed']);
           expect(list.fake).to.exist;
           expect(list.uiautomator2).to.exist;
-          expect(() =>
-            resolveFrom(appiumHome, '@appium/fake-driver')
-          ).not.to.throw;
-          expect(() =>
-            resolveFrom(appiumHome, 'appium-uiautomator2-driver')
-          ).not.to.throw;
+          expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, 'appium-uiautomator2-driver')).not.to.throw;
         });
 
         it('should install a driver from npm with a specific version/tag', async function () {
@@ -411,9 +371,7 @@ describe('CLI behavior', function () {
           ]);
           ret.fake.pkgName.should.eql('appium-fake-driver');
           ret.fake.installType.should.eql('git');
-          ret.fake.installSpec.should.eql(
-            'git+https://github.com/appium/appium-fake-driver'
-          );
+          ret.fake.installSpec.should.eql('git+https://github.com/appium/appium-fake-driver');
           const list = await runList(['--installed']);
           delete list.fake.installed;
           list.should.eql(ret);
@@ -422,11 +380,7 @@ describe('CLI behavior', function () {
           await clear();
           // take advantage of the fact that we know we have fake driver installed as a dependency in
           // this module, so we know its local path on disk
-          const ret = await installLocalExtension(
-            appiumHome,
-            DRIVER_TYPE,
-            FAKE_DRIVER_DIR
-          );
+          const ret = await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
           ret.fake.pkgName.should.eql('@appium/fake-driver');
           ret.fake.installType.should.eql('local');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
@@ -446,11 +400,7 @@ describe('CLI behavior', function () {
       describe('uninstall', function () {
         it('should uninstall a driver based on its driver name', async function () {
           await clear();
-          const ret = await runInstall([
-            '@appium/fake-driver',
-            '--source',
-            'npm',
-          ]);
+          const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
           // this will throw if the file doesn't exist
           const installPath = resolveFrom(appiumHome, ret.fake.pkgName);
           let list = await runList(['--installed']);
@@ -479,34 +429,24 @@ describe('CLI behavior', function () {
         });
         it('should take a valid driver, invalid script, and throw an error', async function () {
           const driverName = 'fake';
-          await expect(
-            runRun([driverName, 'foo'])
-          ).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([driverName, 'foo'])).to.eventually.be.rejectedWith(Error);
         });
         it('should take an invalid driver, invalid script, and throw an error', async function () {
           const driverName = 'foo';
-          await expect(
-            runRun([driverName, 'bar'])
-          ).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([driverName, 'bar'])).to.eventually.be.rejectedWith(Error);
         });
       });
     });
 
     describe('Plugin CLI', function () {
-      const FAKE_PLUGIN_DIR = path.dirname(
-        require.resolve('@appium/fake-plugin/package.json')
-      );
+      const FAKE_PLUGIN_DIR = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
 
       before(function () {
         const run = runAppiumJson(appiumHome);
         runList = async (args = []) =>
-          /** @type {ReturnType<typeof runList>} */ (
-            await run([PLUGIN_TYPE, LIST, ...args])
-          );
+          /** @type {ReturnType<typeof runList>} */ (await run([PLUGIN_TYPE, LIST, ...args]));
         runRun = async (args) =>
-          /** @type {ReturnType<typeof runRun>} */ (
-            await run([PLUGIN_TYPE, RUN, ...args])
-          );
+          /** @type {ReturnType<typeof runRun>} */ (await run([PLUGIN_TYPE, RUN, ...args]));
       });
 
       describe('run', function () {
@@ -527,14 +467,10 @@ describe('CLI behavior', function () {
         });
         it('should take a valid plugin, invalid script, and throw an error', async function () {
           const pluginName = 'fake';
-          await expect(
-            runRun([pluginName, 'foo', '--json'])
-          ).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([pluginName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
         });
         it('should take an invalid plugin, invalid script, and throw an error', async function () {
-          await expect(
-            runRun(['foo', 'bar', '--json'])
-          ).to.eventually.be.rejectedWith(Error);
+          await expect(runRun(['foo', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
         });
       });
     });

@@ -3,10 +3,7 @@
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
-import {
-  routeConfiguringFunction as makeRouter,
-  server as baseServer,
-} from '@appium/base-driver';
+import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
 import {logger as logFactory, util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
@@ -115,8 +112,7 @@ async function logStartupInfo(args) {
  * @returns {void}
  */
 function logServerPort(address, port) {
-  let logMessage =
-    `Appium REST http interface listener started on ` + `${address}:${port}`;
+  let logMessage = `Appium REST http interface listener started on ` + `${address}:${port}`;
   logger.info(logMessage);
 }
 
@@ -140,7 +136,7 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
   return [...driverClasses, ...pluginClasses].reduce(
     (map, klass) => ({
       ...map,
-      .../** @type {DriverClass} */ ((klass).newMethodMap ?? {}),
+      .../** @type {DriverClass} */ (klass.newMethodMap ?? {}),
     }),
     {}
   );
@@ -228,29 +224,19 @@ async function init(args) {
     const defaults = getDefaultsForSchema(false);
 
     /** @type {ParsedArgs} */
-    const serverArgs = _.defaultsDeep(
-      preConfigArgs,
-      configResult.config?.server,
-      defaults
-    );
+    const serverArgs = _.defaultsDeep(preConfigArgs, configResult.config?.server, defaults);
 
     if (preConfigArgs.showConfig) {
-      showConfig(
-        getNonDefaultServerArgs(preConfigArgs),
-        configResult,
-        defaults,
-        serverArgs
-      );
+      showConfig(getNonDefaultServerArgs(preConfigArgs), configResult, defaults, serverArgs);
       return {};
     }
 
     await logsinkInit(serverArgs);
 
     if (serverArgs.logFilters) {
-      const {issues, rules} =
-        await logFactory.loadSecureValuesPreprocessingRules(
-          serverArgs.logFilters
-        );
+      const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
+        serverArgs.logFilters
+      );
       if (!_.isEmpty(issues)) {
         throw new Error(
           `The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
@@ -263,11 +249,9 @@ async function init(args) {
         );
       } else {
         logger.info(
-          `Loaded ${util.pluralize(
-            'filtering rule',
-            rules.length,
-            true
-          )} from '${serverArgs.logFilters}'`
+          `Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${
+            serverArgs.logFilters
+          }'`
         );
       }
     }
@@ -294,8 +278,9 @@ async function init(args) {
  * @returns {Promise<import('@appium/types').AppiumServer|undefined>}
  */
 async function main(args) {
-  const {appiumDriver, parsedArgs, pluginConfig, driverConfig} =
-    /** @type {ServerInitResult} */ (await init(args));
+  const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */ (
+    await init(args)
+  );
 
   if (!appiumDriver || !parsedArgs || !pluginConfig || !driverConfig) {
     // if this branch is taken, we've run a different subcommand, so there's nothing

@@ -1,8 +1,7 @@
-
 import _ from 'lodash';
 import logger from './logger';
-import { processCapabilities, PROTOCOLS } from '@appium/base-driver';
-import { inspect as dump } from 'util';
+import {processCapabilities, PROTOCOLS} from '@appium/base-driver';
+import {inspect as dump} from 'util';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -22,12 +21,13 @@ const isStdoutTTY = process.stdout.isTTY;
  */
 const inspect = _.flow(
   _.partialRight(
-    /** @type {(object: any, options: import('util').InspectOptions) => string} */(dump),
+    /** @type {(object: any, options: import('util').InspectOptions) => string} */ (dump),
     {colors: true, depth: null, compact: !isStdoutTTY}
   ),
   (...args) => {
     logger.info(...args);
-  });
+  }
+);
 
 /**
  * Takes the caps that were provided in the request and translates them
@@ -39,19 +39,25 @@ const inspect = _.flow(
  * @param {import('@appium/types').DefaultCapabilitiesConfig} [defaultCapabilities]
  * @returns {ParsedDriverCaps|InvalidCaps}
  */
-function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constraints = {}, defaultCapabilities = {}) {
+function parseCapsForInnerDriver(
+  jsonwpCapabilities,
+  w3cCapabilities,
+  constraints = {},
+  defaultCapabilities = {}
+) {
   // Check if the caller sent JSONWP caps, W3C caps, or both
-  const hasW3CCaps = _.isPlainObject(w3cCapabilities) &&
+  const hasW3CCaps =
+    _.isPlainObject(w3cCapabilities) &&
     (_.has(w3cCapabilities, 'alwaysMatch') || _.has(w3cCapabilities, 'firstMatch'));
   const hasJSONWPCaps = _.isPlainObject(jsonwpCapabilities);
-  let desiredCaps = /** @type {ParsedDriverCaps['desiredCaps']} */({});
+  let desiredCaps = /** @type {ParsedDriverCaps['desiredCaps']} */ ({});
   /** @type {ParsedDriverCaps['processedW3CCapabilities']} */
   let processedW3CCapabilities;
   /** @type {ParsedDriverCaps['processedJsonwpCapabilities']} */
   let processedJsonwpCapabilities;
 
   if (!hasW3CCaps) {
-    return /** @type {InvalidCaps} */({
+    return /** @type {InvalidCaps} */ ({
       protocol: PROTOCOLS.W3C,
       error: new Error('W3C capabilities should be provided'),
     });
@@ -70,16 +76,23 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
       for (const [defaultCapKey, defaultCapValue] of _.toPairs(defaultCapabilities)) {
         let isCapAlreadySet = false;
         // Check if the key is already present in firstMatch entries
-        for (const firstMatchEntry of (w3cCapabilities.firstMatch || [])) {
-          if (_.isPlainObject(firstMatchEntry)
-              && _.has(removeAppiumPrefixes(firstMatchEntry), removeAppiumPrefix(defaultCapKey))) {
+        for (const firstMatchEntry of w3cCapabilities.firstMatch || []) {
+          if (
+            _.isPlainObject(firstMatchEntry) &&
+            _.has(removeAppiumPrefixes(firstMatchEntry), removeAppiumPrefix(defaultCapKey))
+          ) {
             isCapAlreadySet = true;
             break;
           }
         }
         // Check if the key is already present in alwaysMatch entries
-        isCapAlreadySet = isCapAlreadySet || (_.isPlainObject(w3cCapabilities.alwaysMatch)
-          && _.has(removeAppiumPrefixes(w3cCapabilities.alwaysMatch), removeAppiumPrefix(defaultCapKey)));
+        isCapAlreadySet =
+          isCapAlreadySet ||
+          (_.isPlainObject(w3cCapabilities.alwaysMatch) &&
+            _.has(
+              removeAppiumPrefixes(w3cCapabilities.alwaysMatch),
+              removeAppiumPrefix(defaultCapKey)
+            ));
         if (isCapAlreadySet) {
           // Skip if the key is already present in the provided caps
           continue;
@@ -94,7 +107,10 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
       }
     }
     if (hasJSONWPCaps) {
-      jsonwpCapabilities = {...removeAppiumPrefixes(defaultCapabilities), ...jsonwpCapabilities};
+      jsonwpCapabilities = {
+        ...removeAppiumPrefixes(defaultCapabilities),
+        ...jsonwpCapabilities,
+      };
     }
   }
 
@@ -111,7 +127,7 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
       desiredCaps = processCapabilities(w3cCapabilities, constraints, true);
     } catch (error) {
       logger.info(`Could not parse W3C capabilities: ${error.message}`);
-      return /** @type {InvalidCaps} */({
+      return /** @type {InvalidCaps} */ ({
         desiredCaps,
         processedJsonwpCapabilities,
         processedW3CCapabilities,
@@ -127,7 +143,12 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
     };
   }
 
-  return /** @type {ParsedDriverCaps} */({desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities, protocol});
+  return /** @type {ParsedDriverCaps} */ ({
+    desiredCaps,
+    processedJsonwpCapabilities,
+    processedW3CCapabilities,
+    protocol,
+  });
 }
 
 /**
@@ -135,7 +156,7 @@ function parseCapsForInnerDriver (jsonwpCapabilities, w3cCapabilities, constrain
  * @param {Capabilities} caps Desired capabilities object
  * @returns {AppiumW3CCapabilities}
  */
-function insertAppiumPrefixes (caps) {
+function insertAppiumPrefixes(caps) {
   // Standard, non-prefixed capabilities (see https://www.w3.org/TR/webdriver/#dfn-table-of-standard-capabilities)
   const STANDARD_CAPS = [
     'browserName',
@@ -146,7 +167,7 @@ function insertAppiumPrefixes (caps) {
     'proxy',
     'setWindowRect',
     'timeouts',
-    'unhandledPromptBehavior'
+    'unhandledPromptBehavior',
   ];
 
   let prefixedCaps = {};
@@ -165,7 +186,7 @@ function insertAppiumPrefixes (caps) {
  * @param {AppiumW3CCapabilities} caps
  * @returns {Capabilities}
  */
-function removeAppiumPrefixes (caps) {
+function removeAppiumPrefixes(caps) {
   if (!_.isPlainObject(caps)) {
     return caps;
   }
@@ -178,12 +199,12 @@ function removeAppiumPrefixes (caps) {
   return fixedCaps;
 }
 
-function removeAppiumPrefix (key) {
+function removeAppiumPrefix(key) {
   const prefix = `${W3C_APPIUM_PREFIX}:`;
   return _.startsWith(key, prefix) ? key.substring(prefix.length) : key;
 }
 
-function getPackageVersion (pkgName) {
+function getPackageVersion(pkgName) {
   const pkgInfo = require(`${pkgName}/package.json`) || {};
   return pkgInfo.version;
 }
@@ -204,7 +225,7 @@ function getPackageVersion (pkgName) {
  * setting items or a dictionary containing parsed Appium setting names along with
  * their values.
  */
-function pullSettings (caps) {
+function pullSettings(caps) {
   if (!_.isPlainObject(caps) || _.isEmpty(caps)) {
     return {};
   }
@@ -223,8 +244,12 @@ function pullSettings (caps) {
 }
 
 export {
-  inspect, parseCapsForInnerDriver, insertAppiumPrefixes,
-  getPackageVersion, pullSettings, removeAppiumPrefixes
+  inspect,
+  parseCapsForInnerDriver,
+  insertAppiumPrefixes,
+  getPackageVersion,
+  pullSettings,
+  removeAppiumPrefixes,
 };
 
 /**

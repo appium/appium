@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { errors } from '@appium/base-driver';
-import { getImagesMatches, getImagesSimilarity, getImageOccurrence } from '@appium/opencv';
+import {errors} from '@appium/base-driver';
+import {getImagesMatches, getImagesSimilarity, getImageOccurrence} from '@appium/opencv';
 
 const MATCH_FEATURES_MODE = 'matchFeatures';
 const GET_SIMILARITY_MODE = 'getSimilarity';
@@ -29,7 +29,7 @@ const DEFAULT_MATCH_THRESHOLD = 0.4;
  * if `mode` value is incorrect or if there was an unexpected issue while
  * matching the images.
  */
-async function compareImages (mode, firstImage, secondImage, options = {}) {
+async function compareImages(mode, firstImage, secondImage, options = {}) {
   const img1 = Buffer.from(firstImage, 'base64');
   const img2 = Buffer.from(secondImage, 'base64');
   let result = null;
@@ -53,8 +53,14 @@ async function compareImages (mode, firstImage, secondImage, options = {}) {
       }
       break;
     default:
-      throw new errors.InvalidArgumentError(`'${mode}' images comparison mode is unknown. ` +
-        `Only ${JSON.stringify([MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE])} modes are supported.`);
+      throw new errors.InvalidArgumentError(
+        `'${mode}' images comparison mode is unknown. ` +
+          `Only ${JSON.stringify([
+            MATCH_FEATURES_MODE,
+            GET_SIMILARITY_MODE,
+            MATCH_TEMPLATE_MODE,
+          ])} modes are supported.`
+      );
   }
   return convertVisualizationToBase64(result);
 }
@@ -65,8 +71,8 @@ async function compareImages (mode, firstImage, secondImage, options = {}) {
  *
  * @param {OccurrenceResult} element - occurrence result
  *
-**/
-function convertVisualizationToBase64 (element) {
+ **/
+function convertVisualizationToBase64(element) {
   if (!_.isEmpty(element.visualization)) {
     element.visualization = element.visualization.toString('base64');
   }
@@ -74,8 +80,13 @@ function convertVisualizationToBase64 (element) {
   return element;
 }
 
-export { compareImages, DEFAULT_MATCH_THRESHOLD, MATCH_TEMPLATE_MODE, MATCH_FEATURES_MODE,
-  GET_SIMILARITY_MODE };
+export {
+  compareImages,
+  DEFAULT_MATCH_THRESHOLD,
+  MATCH_TEMPLATE_MODE,
+  MATCH_FEATURES_MODE,
+  GET_SIMILARITY_MODE,
+};
 
 /**
  * @typedef {import('@appium/opencv').OccurrenceResult} OccurrenceResult

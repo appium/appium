@@ -1,16 +1,15 @@
 import log from './logger';
 import LRU from 'lru-cache';
-import { fs, util } from '@appium/support';
+import {fs, util} from '@appium/support';
 import os from 'os';
 import path from 'path';
-import { EventEmitter } from 'events';
-
+import {EventEmitter} from 'events';
 
 const CACHE_SIZE = 1024;
 const IDEMPOTENT_RESPONSES = new LRU({
   max: CACHE_SIZE,
   updateAgeOnGet: true,
-  dispose (key, {response}) {
+  dispose(key, {response}) {
     if (response) {
       fs.rimrafSync(response);
     }
@@ -20,9 +19,7 @@ const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 
 process.on('exit', () => {
-  const resPaths = [...IDEMPOTENT_RESPONSES.values()]
-    .map(({response}) => response)
-    .filter(Boolean);
+  const resPaths = [...IDEMPOTENT_RESPONSES.values()].map(({response}) => response).filter(Boolean);
   for (const resPath of resPaths) {
     try {
       // Asynchronous calls are not supported in onExit handler
@@ -31,8 +28,7 @@ process.on('exit', () => {
   }
 });
 
-
-function cacheResponse (key, req, res) {
+function cacheResponse(key, req, res) {
   const responseStateListener = new EventEmitter();
   IDEMPOTENT_RESPONSES.set(key, {
     method: req.method,
@@ -72,8 +68,10 @@ function cacheResponse (key, req, res) {
     }
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
-      log.info(`Could not cache the response identified by '${key}'. ` +
-        `Cache consistency has been damaged`);
+      log.info(
+        `Could not cache the response identified by '${key}'. ` +
+          `Cache consistency has been damaged`
+      );
       return responseStateListener.emit('ready', null);
     }
     if (writeError) {
@@ -82,8 +80,10 @@ function cacheResponse (key, req, res) {
       return responseStateListener.emit('ready', null);
     }
     if (!isResponseFullySent) {
-      log.info(`Could not cache the response identified by '${key}', ` +
-        `because it has not been completed`);
+      log.info(
+        `Could not cache the response identified by '${key}', ` +
+          `because it has not been completed`
+      );
       log.info('Does the client terminate connections too early?');
       IDEMPOTENT_RESPONSES.delete(key);
       return responseStateListener.emit('ready', null);
@@ -94,7 +94,7 @@ function cacheResponse (key, req, res) {
   });
 }
 
-async function handleIdempotency (req, res, next) {
+async function handleIdempotency(req, res, next) {
   const key = req.headers[IDEMPOTENCY_KEY_HEADER];
   if (!key) {
     return next();
@@ -124,7 +124,7 @@ async function handleIdempotency (req, res, next) {
   }
 
   const rerouteCachedResponse = async (cachedResPath) => {
-    if (!await fs.exists(cachedResPath)) {
+    if (!(await fs.exists(cachedResPath))) {
       IDEMPOTENT_RESPONSES.delete(key);
       log.warn(`Could not read the cached response identified by key '${key}'`);
       log.warn('The temporary storage is not accessible anymore');
@@ -149,4 +149,4 @@ async function handleIdempotency (req, res, next) {
   }
 }
 
-export { handleIdempotency };
+export {handleIdempotency};

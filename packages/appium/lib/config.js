@@ -25,9 +25,7 @@ const BUILD_INFO = {
 };
 
 function getNodeVersion() {
-  return /** @type {import('semver').SemVer} */ (
-    semver.coerce(process.version)
-  );
+  return /** @type {import('semver').SemVer} */ (semver.coerce(process.version));
 }
 
 async function updateBuildInfo(useGithubApiFallback = false) {
@@ -96,13 +94,9 @@ async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();
   if (gitRoot) {
     try {
-      const {stdout} = await exec(
-        GIT_BINARY,
-        ['show', '-s', '--format=%ci', commitSha],
-        {
-          cwd: gitRoot,
-        }
-      );
+      const {stdout} = await exec(GIT_BINARY, ['show', '-s', '--format=%ci', commitSha], {
+        cwd: gitRoot,
+      });
       return stdout.trim();
     } catch (ign) {}
   }
@@ -145,9 +139,7 @@ function getBuildInfo() {
 function checkNodeOk() {
   const version = getNodeVersion();
   if (!semver.satisfies(version, MIN_NODE_VERSION)) {
-    logger.errorAndThrow(
-      `Node version must be ${MIN_NODE_VERSION}. Currently ${version.version}`
-    );
+    logger.errorAndThrow(`Node version must be ${MIN_NODE_VERSION}. Currently ${version.version}`);
   }
 }
 
@@ -206,8 +198,7 @@ function getNonDefaultServerArgs(parsedArgs) {
   const defaultValueIsArray = /** @param {string} dest */ (dest) =>
     _.isArray(defaultsFromSchema[dest]);
 
-  const argsValueIsArray = /** @param {string} dest */ (dest) =>
-    _.isArray(args[dest].value);
+  const argsValueIsArray = /** @param {string} dest */ (dest) => _.isArray(args[dest].value);
 
   const arraysDiffer = /** @param {string} dest */ (dest) =>
     _.gt(_.size(_.difference(args[dest].value, defaultsFromSchema[dest])), 0);
@@ -220,10 +211,7 @@ function getNonDefaultServerArgs(parsedArgs) {
 
   // note that `_.overEvery` is like an "AND", and `_.overSome` is like an "OR"
 
-  const argValueNotArrayOrArraysDiffer = _.overSome([
-    _.negate(argsValueIsArray),
-    arraysDiffer,
-  ]);
+  const argValueNotArrayOrArraysDiffer = _.overSome([_.negate(argsValueIsArray), arraysDiffer]);
 
   const defaultValueNotArrayAndValuesDiffer = _.overEvery([
     _.negate(defaultValueIsArray),
@@ -272,9 +260,7 @@ const compactConfig = _.partial(
   _.omitBy,
   _,
   (value, key) =>
-    key === 'subcommand' ||
-    _.isUndefined(value) ||
-    (_.isObject(value) && _.isEmpty(value))
+    key === 'subcommand' || _.isUndefined(value) || (_.isObject(value) && _.isEmpty(value))
 );
 
 /**
@@ -288,12 +274,7 @@ const compactConfig = _.partial(
  * @param {Partial<ParsedArgs>} defaults - Configuration defaults from schemas
  * @param {ParsedArgs} parsedArgs - Entire parsed args object
  */
-function showConfig(
-  nonDefaultPreConfigParsedArgs,
-  configResult,
-  defaults,
-  parsedArgs
-) {
+function showConfig(nonDefaultPreConfigParsedArgs, configResult, defaults, parsedArgs) {
   console.log('Appium Configuration\n');
   console.log('from defaults:\n');
   console.dir(compactConfig(defaults));

@@ -1,14 +1,14 @@
 // transpile:mocha
 
-import { server, routeConfiguringFunction } from '../../../lib';
-import { configureServer, normalizeBasePath } from '../../../lib/express/server';
-import { createSandbox } from 'sinon';
-import { getTestPort } from '../../helpers';
+import {server, routeConfiguringFunction} from '../../../lib';
+import {configureServer, normalizeBasePath} from '../../../lib/express/server';
+import {createSandbox} from 'sinon';
+import {getTestPort} from '../../helpers';
 
 const newMethodMap = {
   '/session/:sessionId/fake': {
     GET: {command: 'fakeGet'},
-    POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}}
+    POST: {command: 'fakePost', payloadParams: {required: ['fakeParam']}},
   },
 };
 
@@ -17,7 +17,7 @@ const updateServer = (app, httpServer) => {
   httpServer.updated = true;
 };
 
-function fakeDriver () {
+function fakeDriver() {
   return {sessionExists: () => {}, executeCommand: () => {}};
 }
 
@@ -26,17 +26,19 @@ describe('server configuration', function () {
 
   let sandbox;
 
-  function fakeApp () {
+  function fakeApp() {
     const app = {
       use: sandbox.spy(),
       all: sandbox.spy(),
       get: sandbox.spy(),
       post: sandbox.spy(),
       delete: sandbox.spy(),
-      totalCount: () => (
-        app.use.callCount + app.all.callCount + app.get.callCount + app.post.callCount +
-        app.delete.callCount
-      )
+      totalCount: () =>
+        app.use.callCount +
+        app.all.callCount +
+        app.get.callCount +
+        app.post.callCount +
+        app.delete.callCount,
     };
     return app;
   }
@@ -87,7 +89,7 @@ describe('server configuration', function () {
       routeConfiguringFunction: routeConfiguringFunction(driver),
       port,
       extraMethodMap: newMethodMap,
-      serverUpdaters: [updateServer]
+      serverUpdaters: [updateServer],
     });
     try {
       _server.updated.should.be.true;

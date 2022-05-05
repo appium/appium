@@ -2,11 +2,11 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const { fs } = require('@appium/support');
-const { log, LANGS, DOCS_DIR, ASSETS_DIR } = require('./utils');
+const {fs} = require('@appium/support');
+const {log, LANGS, DOCS_DIR, ASSETS_DIR} = require('./utils');
 const path = require('path');
 
-async function main () {
+async function main() {
   log.info('Copying generic assets to docs language dirs');
 
   for (const lang of LANGS) {

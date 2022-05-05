@@ -36,10 +36,7 @@ describe('Manifest', function () {
     ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
 
-    ({Manifest} = rewiremock.proxy(
-      () => require('../../../lib/extension/manifest'),
-      overrides
-    ));
+    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
 
     Manifest.getInstance.cache = new Map();
   });
@@ -71,9 +68,7 @@ describe('Manifest', function () {
   describe('property', function () {
     describe('appiumHome', function () {
       it('should return the `appiumHome` path', function () {
-        expect(Manifest.getInstance('/some/path').appiumHome).to.equal(
-          '/some/path'
-        );
+        expect(Manifest.getInstance('/some/path').appiumHome).to.equal('/some/path');
       });
 
       it('should not be writable', function () {
@@ -88,8 +83,7 @@ describe('Manifest', function () {
     describe('manifestPath', function () {
       describe('before `read()` has been called', function () {
         it('should be undefined', function () {
-          expect(Manifest.getInstance('/some/path').manifestPath).to.be
-            .undefined;
+          expect(Manifest.getInstance('/some/path').manifestPath).to.be.undefined;
         });
       });
 
@@ -348,10 +342,7 @@ describe('Manifest', function () {
         });
 
         it('should add an extension to the internal data', function () {
-          manifest.addExtensionFromPackage(
-            packageJson,
-            '/some/path/to/package.json'
-          );
+          manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           expect(manifest.getExtensionData('driver')).to.deep.equal({
             myDriver: {
               automationName: 'derp',
@@ -366,29 +357,18 @@ describe('Manifest', function () {
         });
 
         it('should return `true`', function () {
-          expect(
-            manifest.addExtensionFromPackage(
-              packageJson,
-              '/some/path/to/package.json'
-            )
-          ).to.be.true;
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
+            .true;
         });
 
         describe('when the driver has already been registered', function () {
           beforeEach(function () {
-            manifest.addExtensionFromPackage(
-              packageJson,
-              '/some/path/to/package.json'
-            );
+            manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           });
 
           it('should return `false`', function () {
-            expect(
-              manifest.addExtensionFromPackage(
-                packageJson,
-                '/some/path/to/package.json'
-              )
-            ).to.be.false;
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
+              .be.false;
           });
         });
       });
@@ -408,10 +388,7 @@ describe('Manifest', function () {
         });
 
         it('should add an extension to the internal data', function () {
-          manifest.addExtensionFromPackage(
-            packageJson,
-            '/some/path/to/package.json'
-          );
+          manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           expect(manifest.getExtensionData(PLUGIN_TYPE)).to.deep.equal({
             myPlugin: {
               mainClass: 'SomeClass',
@@ -424,29 +401,18 @@ describe('Manifest', function () {
         });
 
         it('should return `true`', function () {
-          expect(
-            manifest.addExtensionFromPackage(
-              packageJson,
-              '/some/path/to/package.json'
-            )
-          ).to.be.true;
+          expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to.be
+            .true;
         });
 
         describe('when the plugin has already been registered', function () {
           beforeEach(function () {
-            manifest.addExtensionFromPackage(
-              packageJson,
-              '/some/path/to/package.json'
-            );
+            manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json');
           });
 
           it('should return `false`', function () {
-            expect(
-              manifest.addExtensionFromPackage(
-                packageJson,
-                '/some/path/to/package.json'
-              )
-            ).to.be.false;
+            expect(manifest.addExtensionFromPackage(packageJson, '/some/path/to/package.json')).to
+              .be.false;
           });
         });
       });
@@ -504,9 +470,7 @@ describe('Manifest', function () {
 
       it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
-        expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property(
-          'myDriver'
-        );
+        expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property('myDriver');
       });
     });
 

@@ -1,11 +1,10 @@
 import _ from 'lodash';
-import { Doctor } from './doctor';
+import {Doctor} from './doctor';
 import generalChecks from './general';
 import iosChecks from './ios';
 import androidChecks from './android';
 import devChecks from './dev';
 import demoChecks from './demo';
-
 
 let checks = {generalChecks, iosChecks, androidChecks, devChecks, demoChecks};
 

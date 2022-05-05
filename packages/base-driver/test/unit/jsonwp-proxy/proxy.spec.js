@@ -1,15 +1,17 @@
 // transpile:mocha
 
-import { JWProxy } from '../../../lib';
+import {JWProxy} from '../../../lib';
 import request from './mock-request';
-import { isErrorType, errors } from '../../../lib/protocol/errors';
-import { getTestPort, TEST_HOST } from '../../helpers';
+import {isErrorType, errors} from '../../../lib/protocol/errors';
+import {getTestPort, TEST_HOST} from '../../helpers';
 
-function buildReqRes (url, method, body) {
+function buildReqRes(url, method, body) {
   let req = {originalUrl: url, method, body};
   let res = {};
   res.headers = {};
-  res.set = (k, v) => { res[k] = v; };
+  res.set = (k, v) => {
+    res[k] = v;
+  };
   res.status = (code) => {
     res.sentCode = code;
     return res;
@@ -26,7 +28,7 @@ function buildReqRes (url, method, body) {
 describe('proxy', function () {
   let port;
 
-  function mockProxy (opts = {}) {
+  function mockProxy(opts = {}) {
     // sets default server/port
     opts = {server: TEST_HOST, port, ...opts};
     let proxy = new JWProxy(opts);
@@ -47,7 +49,9 @@ describe('proxy', function () {
   });
   it('should save session id on session creation', async function () {
     let j = mockProxy();
-    let [res, body] = await j.proxy('/session', 'POST', {desiredCapabilities: {}});
+    let [res, body] = await j.proxy('/session', 'POST', {
+      desiredCapabilities: {},
+    });
     res.statusCode.should.equal(200);
     body.should.eql({status: 0, sessionId: '123', value: {browserName: 'boo'}});
     j.sessionId.should.equal('123');
@@ -55,27 +59,32 @@ describe('proxy', function () {
   describe('getUrlForProxy', function () {
     it('should modify session id, host, and port', function () {
       let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('http://host.com:1234/session/456/element/200/value')
-       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+      j.getUrlForProxy('http://host.com:1234/session/456/element/200/value').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
     });
     it('should prepend scheme, host and port if not provided', function () {
       let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('/session/456/element/200/value')
-       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+      j.getUrlForProxy('/session/456/element/200/value').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
     });
     it('should respect nonstandard incoming request base path', function () {
       let j = mockProxy({sessionId: '123', reqBasePath: ''});
-      j.getUrlForProxy('/session/456/element/200/value')
-       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+      j.getUrlForProxy('/session/456/element/200/value').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
 
       j = mockProxy({sessionId: '123', reqBasePath: '/my/base/path'});
-      j.getUrlForProxy('/my/base/path/session/456/element/200/value')
-       .should.eql(`http://${TEST_HOST}:${port}/session/123/element/200/value`);
+      j.getUrlForProxy('/my/base/path/session/456/element/200/value').should.eql(
+        `http://${TEST_HOST}:${port}/session/123/element/200/value`
+      );
     });
     it('should work with urls which do not have session ids', function () {
       let j = mockProxy({sessionId: '123'});
-      j.getUrlForProxy('http://host.com:1234/session')
-       .should.eql(`http://${TEST_HOST}:${port}/session`);
+      j.getUrlForProxy('http://host.com:1234/session').should.eql(
+        `http://${TEST_HOST}:${port}/session`
+      );
 
       let newUrl = j.getUrlForProxy('/session');
       newUrl.should.eql(`http://${TEST_HOST}:${port}/session`);
@@ -187,7 +196,7 @@ describe('proxy', function () {
       let j = mockProxy({sessionId: '123'});
       let [req, res] = buildReqRes('/status', 'GET');
       await j.proxyReqRes(req, res);
-      res.sentBody.should.eql({value: {'foo': 'bar'}});
+      res.sentBody.should.eql({value: {foo: 'bar'}});
     });
     it('should proxy strange responses', async function () {
       let j = mockProxy({sessionId: '123'});

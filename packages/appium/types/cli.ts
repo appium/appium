@@ -17,10 +17,7 @@ export type PluginSubcommand = typeof PLUGIN_SUBCOMMAND;
 /**
  * Possible subcommands for the `appium` CLI.
  */
-export type CliSubcommand =
-  | ServerSubcommand
-  | DriverSubcommand
-  | PluginSubcommand;
+export type CliSubcommand = ServerSubcommand | DriverSubcommand | PluginSubcommand;
 
 /**
  * Possible subcommands of {@linkcode DriverSubcommand} or
@@ -127,11 +124,7 @@ export interface WithExtSubcommand {
  */
 type CommonArgs<SArgs, T = WithServerSubcommand> = MoreArgs &
   ProgrammaticArgs &
-  (T extends WithServerSubcommand
-    ? SArgs
-    : T extends WithExtSubcommand
-    ? ExtArgs
-    : never);
+  (T extends WithServerSubcommand ? SArgs : T extends WithExtSubcommand ? ExtArgs : never);
 
 /**
  * Fully-parsed arguments, containing defaults, computed args, and config file values.

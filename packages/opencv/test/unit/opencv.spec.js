@@ -1,4 +1,4 @@
-import { initOpenCv } from '../../lib';
+import {initOpenCv} from '../../lib';
 
 describe('OpenCV', function () {
   it('should initialize opencv library', async function () {

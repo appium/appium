@@ -1,7 +1,7 @@
 // transpile:mocha
 
-import { JWProxy } from '../../../lib';
-import { getTestPort, TEST_HOST, createAppiumURL } from '../../helpers';
+import {JWProxy} from '../../../lib';
+import {getTestPort, TEST_HOST, createAppiumURL} from '../../helpers';
 import _ from 'lodash';
 
 describe('JWProxy', function () {
@@ -18,7 +18,7 @@ describe('JWProxy', function () {
   const createProxyURL = createAppiumURL(PROXY_HOST, PROXY_PORT);
   const PROXY_STATUS_URL = createProxyURL('', 'status');
 
-  function createJWProxy (opts = {}) {
+  function createJWProxy(opts = {}) {
     return new JWProxy({server: TEST_HOST, port, ...opts});
   }
 
@@ -58,7 +58,9 @@ describe('JWProxy', function () {
     it('should error when translating session commands without session id', function () {
       let incomingUrl = createProxyURL('foobar', 'element');
       let j = createJWProxy();
-      (() => { j.getUrlForProxy(incomingUrl); }).should.throw('session id');
+      (() => {
+        j.getUrlForProxy(incomingUrl);
+      }).should.throw('session id');
     });
   });
 
@@ -90,7 +92,9 @@ describe('JWProxy', function () {
     it('should error session commands based off /session without session id', function () {
       let incomingUrl = '/session/foobar/element';
       let j = createJWProxy();
-      (() => { j.getUrlForProxy(incomingUrl); }).should.throw('session id');
+      (() => {
+        j.getUrlForProxy(incomingUrl);
+      }).should.throw('session id');
     });
     it('should proxy session commands based off ', function () {
       let incomingUrl = '/session/3d001db2-7987-42a7-975d-8d5d5304083f/timeouts/implicit_wait';
@@ -101,7 +105,9 @@ describe('JWProxy', function () {
     it('should proxy session commands based off /session as ""', function () {
       let incomingUrl = '';
       let j = createJWProxy();
-      (() => { j.getUrlForProxy(incomingUrl); }).should.throw('session id');
+      (() => {
+        j.getUrlForProxy(incomingUrl);
+      }).should.throw('session id');
       j = createJWProxy({sessionId: '123'});
       let proxyUrl = j.getUrlForProxy(incomingUrl);
       proxyUrl.should.equal(createTestSessionURL('123'));
@@ -113,13 +119,15 @@ describe('JWProxy', function () {
       proxyUrl.should.equal(createTestURL('barbaz', 'element'));
     });
     it(`should proxy session commands when '/session' is in the url`, function () {
-      let incomingUrl = '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
+      let incomingUrl =
+        '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       let j = createJWProxy({sessionId: 'barbaz'});
       let proxyUrl = j.getUrlForProxy(incomingUrl);
       proxyUrl.should.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));
     });
     it(`should proxy session commands when '/session' is in the url and not base on the original url`, function () {
-      let incomingUrl = '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
+      let incomingUrl =
+        '/session/82a9b7da-faaf-4a1d-8ef3-5e4fb5812200/cookie/session-something-or-other';
       let j = createJWProxy({sessionId: 'barbaz'});
       let proxyUrl = j.getUrlForProxy(incomingUrl);
       proxyUrl.should.equal(createTestURL('barbaz', 'cookie/session-something-or-other'));
@@ -127,8 +135,9 @@ describe('JWProxy', function () {
     it('should error session commands without /session without session id', function () {
       let incomingUrl = '/element';
       let j = createJWProxy();
-      (() => { j.getUrlForProxy(incomingUrl); }).should.throw('session id');
+      (() => {
+        j.getUrlForProxy(incomingUrl);
+      }).should.throw('session id');
     });
   });
-
 });

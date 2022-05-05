@@ -1,4 +1,4 @@
-function resFixture (url, method) {
+function resFixture(url, method) {
   if (/\/status$/.test(url)) {
     return [200, {status: 0, value: {foo: 'bar'}}];
   }
@@ -20,7 +20,8 @@ function resFixture (url, method) {
   throw new Error("Can't handle url " + url);
 }
 
-async function request (opts) { // eslint-disable-line require-await
+// eslint-disable-next-line require-await
+async function request(opts) {
   const {url, method, json} = opts;
   if (/badurl$/.test(url)) {
     throw new Error('noworky');

@@ -2,9 +2,9 @@
  * These types describe information about external extensions and the contents of their `package.json` files
  */
 
-import type { SchemaObject } from 'ajv';
-import type { PackageJson, SetRequired } from 'type-fest';
-import { DriverType, ExtensionType, PluginType } from './index';
+import type {SchemaObject} from 'ajv';
+import type {PackageJson, SetRequired} from 'type-fest';
+import {DriverType, ExtensionType, PluginType} from './index';
 
 /**
  * This is what is allowed in the `appium.schema` prop of an extension's `package.json`.
@@ -40,13 +40,12 @@ export interface PluginMetadata {
  * Generic type to refer to either {@linkcode DriverMetadata} or {@linkcode PluginMetadata}
  * Corresponds to the `appium` prop in an extension's `package.json`.
  */
-export type ExtMetadata<ExtType extends ExtensionType> =
-  (ExtType extends DriverType
-    ? DriverMetadata
-    : ExtType extends PluginType
-    ? PluginMetadata
-    : never) &
-    CommonMetadata;
+export type ExtMetadata<ExtType extends ExtensionType> = (ExtType extends DriverType
+  ? DriverMetadata
+  : ExtType extends PluginType
+  ? PluginMetadata
+  : never) &
+  CommonMetadata;
 
 /**
  * A `package.json` containing extension metadata.

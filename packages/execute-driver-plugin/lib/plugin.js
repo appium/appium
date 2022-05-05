@@ -1,7 +1,7 @@
 import BasePlugin from '@appium/base-plugin';
 import _ from 'lodash';
 import cp from 'child_process';
-import { timing } from '@appium/support';
+import {timing} from '@appium/support';
 import B from 'bluebird';
 
 const FEAT_FLAG = 'execute_driver_script';
@@ -9,14 +9,13 @@ const DEFAULT_SCRIPT_TIMEOUT_MS = 1000 * 60 * 60; // default to 1 hour timeout
 const SCRIPT_TYPE_WDIO = 'webdriverio';
 
 export default class ExecuteDriverPlugin extends BasePlugin {
-
   static newMethodMap = {
     '/session/:sessionId/appium/execute_driver': {
       POST: {
         command: 'executeDriverScript',
-        payloadParams: {required: ['script'], optional: ['type', 'timeout']}
-      }
-    }
+        payloadParams: {required: ['script'], optional: ['type', 'timeout']},
+      },
+    },
   };
 
   /**
@@ -34,13 +33,19 @@ export default class ExecuteDriverPlugin extends BasePlugin {
    * @returns {Object} - a JSONifiable object representing the return value of
    * the script
    */
-  async executeDriverScript (next, driver, script, scriptType = 'webdriverio',
-    timeoutMs = DEFAULT_SCRIPT_TIMEOUT_MS) {
-
+  async executeDriverScript(
+    next,
+    driver,
+    script,
+    scriptType = 'webdriverio',
+    timeoutMs = DEFAULT_SCRIPT_TIMEOUT_MS
+  ) {
     if (!driver.isFeatureEnabled(FEAT_FLAG)) {
-      throw new Error(`Execute driver script functionality is not available ` +
-                      `unless server is started with --allow-insecure including ` +
-                      `the '${FEAT_FLAG}' flag, e.g., --allow-insecure=${FEAT_FLAG}`);
+      throw new Error(
+        `Execute driver script functionality is not available ` +
+          `unless server is started with --allow-insecure including ` +
+          `the '${FEAT_FLAG}' flag, e.g., --allow-insecure=${FEAT_FLAG}`
+      );
     }
 
     if (scriptType !== SCRIPT_TYPE_WDIO) {
@@ -48,8 +53,10 @@ export default class ExecuteDriverPlugin extends BasePlugin {
     }
 
     if (!driver.serverHost || !driver.serverPort) {
-      throw new Error('Address or port of running server were not defined; this ' +
-                      'is required. This is probably a programming error in the driver');
+      throw new Error(
+        'Address or port of running server were not defined; this ' +
+          'is required. This is probably a programming error in the driver'
+      );
     }
 
     if (!_.isNumber(timeoutMs)) {
@@ -66,10 +73,11 @@ export default class ExecuteDriverPlugin extends BasePlugin {
       path: driver.serverPath,
       isW3C: true,
       isMobile: true,
-      capabilities: driver.caps
+      capabilities: driver.caps,
     };
-    this.logger.info(`Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`);
-
+    this.logger.info(
+      `Constructed webdriverio driver options; W3C mode is ${driverOpts.isW3C ? 'on' : 'off'}`
+    );
 
     // fork the execution script as a child process
     const childScript = require.resolve('./execute-child.js');
@@ -90,7 +98,9 @@ export default class ExecuteDriverPlugin extends BasePlugin {
           scriptProc.on('message', res); // this is node IPC
         });
 
-        this.logger.info('Received execute driver script result from child process, shutting it down');
+        this.logger.info(
+          'Received execute driver script result from child process, shutting it down'
+        );
 
         if (res.error) {
           throw new Error(res.error.message);
@@ -111,8 +121,10 @@ export default class ExecuteDriverPlugin extends BasePlugin {
           return;
         }
 
-        throw new Error(`Execute driver script timed out after ${timeoutMs}ms. ` +
-                        `You can adjust this with the 'timeout' parameter.`);
+        throw new Error(
+          `Execute driver script timed out after ${timeoutMs}ms. ` +
+            `You can adjust this with the 'timeout' parameter.`
+        );
       };
 
       // now that the child script is alive, send it the data it needs to start
@@ -144,4 +156,4 @@ export default class ExecuteDriverPlugin extends BasePlugin {
   }
 }
 
-export { ExecuteDriverPlugin };
+export {ExecuteDriverPlugin};

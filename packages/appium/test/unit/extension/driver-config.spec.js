@@ -317,18 +317,17 @@ describe('DriverConfig', function () {
       describe('when the extension data is missing `schema`', function () {
         it('should throw', function () {
           delete extData.schema;
-          expect(() =>
-            driverConfig.readExtensionSchema(extName, extData)
-          ).to.throw(TypeError, /why is this function being called/i);
+          expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(
+            TypeError,
+            /why is this function being called/i
+          );
         });
       });
 
       describe('when the extension schema has already been registered (with the same schema)', function () {
         it('should not throw', function () {
           driverConfig.readExtensionSchema(extName, extData);
-          expect(() =>
-            driverConfig.readExtensionSchema(extName, extData)
-          ).not.to.throw();
+          expect(() => driverConfig.readExtensionSchema(extName, extData)).not.to.throw();
         });
       });
 

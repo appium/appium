@@ -1,15 +1,15 @@
-import type { Method as _Method } from 'axios';
-import type { EventEmitter } from 'events';
-import type { Server } from 'http';
-import type { Logger } from 'npmlog';
-import type { Class as _Class, MultidimensionalReadonlyArray } from 'type-fest';
-import { ServerArgs } from './config';
-import { Capabilities, W3CCapabilities } from './capabilities';
+import type {Method as _Method} from 'axios';
+import type {EventEmitter} from 'events';
+import type {Server} from 'http';
+import type {Logger} from 'npmlog';
+import type {Class as _Class, MultidimensionalReadonlyArray} from 'type-fest';
+import {ServerArgs} from './config';
+import {Capabilities, W3CCapabilities} from './capabilities';
 
-export { AppiumW3CCapabilities } from './capabilities';
-export { AppiumConfig, NormalizedAppiumConfig } from './config';
+export {AppiumW3CCapabilities} from './capabilities';
+export {AppiumConfig, NormalizedAppiumConfig} from './config';
 export * from './appium-config';
-export { ServerArgs, Capabilities, W3CCapabilities };
+export {ServerArgs, Capabilities, W3CCapabilities};
 
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
@@ -72,12 +72,7 @@ export interface Driver
   startNewCommandTimeout(): Promise<void>;
   reset(): Promise<void>;
 
-  assignServer?(
-    server: AppiumServer,
-    host: string,
-    port: number,
-    path: string,
-  ): void;
+  assignServer?(server: AppiumServer, host: string, port: number, path: string): void;
 }
 
 /**
@@ -104,12 +99,7 @@ export interface ExternalDriver extends Driver {
   getWindowHandles?(): Promise<string[]>;
   setFrame?(id: null | number | string): Promise<void>;
   getWindowRect?(): Promise<Rect>;
-  setWindowRect?(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-  ): Promise<Rect>;
+  setWindowRect?(x: number, y: number, width: number, height: number): Promise<Rect>;
   maximizeWindow?(): Promise<Rect>;
   minimizeWindow?(): Promise<Rect>;
   fullScreenWindow?(): Promise<Rect>;
@@ -155,18 +145,10 @@ export interface ExternalDriver extends Driver {
   getPerformanceData?(
     packageName: string,
     dataType: string,
-    dataReadTimeout?: number,
+    dataReadTimeout?: number
   ): Promise<string[]>;
-  pressKeyCode?(
-    keycode: number,
-    metastate?: number,
-    flags?: number,
-  ): Promise<void>;
-  longPressKeyCode?(
-    keycode: number,
-    metastate?: number,
-    flags?: number,
-  ): Promise<void>;
+  pressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
+  longPressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
   fingerprint?(fingerprintId: number): Promise<void>;
   sendSMS?(phoneNumber: string, message: string): Promise<void>;
   gsmCall?(phoneNumber: string, action: string): Promise<void>;
@@ -183,7 +165,7 @@ export interface ExternalDriver extends Driver {
     rotation: number,
     touchCount: number,
     duration: string,
-    elementId?: string,
+    elementId?: string
   ): Promise<void>;
   getCurrentActivity?(): Promise<string>;
   getCurrentPackage?(): Promise<string>;
@@ -193,12 +175,7 @@ export interface ExternalDriver extends Driver {
   terminateApp?(appId: string, options?: unknown): Promise<void>;
   isAppInstalled?(appId: string): Promise<boolean>;
   queryAppState?(appId: string): Promise<number>;
-  hideKeyboard?(
-    strategy?: string,
-    key?: string,
-    keyCode?: string,
-    keyName?: string,
-  ): Promise<void>;
+  hideKeyboard?(strategy?: string, key?: string, keyCode?: string, keyName?: string): Promise<void>;
   isKeyboardShown?(): Promise<boolean>;
   pushFile?(path: string, data: string): Promise<void>;
   pullFile?(path: string): Promise<string>;
@@ -217,7 +194,7 @@ export interface ExternalDriver extends Driver {
     intentCategory?: string,
     intentFlags?: string,
     optionalIntentArguments?: string,
-    dontStopAppOnReset?: boolean,
+    dontStopAppOnReset?: boolean
   ): Promise<void>;
   getSystemBars?(): Promise<unknown[]>;
   getDisplayDensity?(): Promise<number>;
@@ -227,18 +204,11 @@ export interface ExternalDriver extends Driver {
   closeApp?(): Promise<void>;
   background?(seconds: null | number): Promise<void>;
   endCoverage?(intent: string, path: string): Promise<void>;
-  getStrings?(
-    language?: string,
-    stringFile?: string,
-  ): Promise<Record<string, unknown>>;
+  getStrings?(language?: string, stringFile?: string): Promise<Record<string, unknown>>;
   setValueImmediate?(value: string, elementId: string): Promise<void>;
   replaceValue?(value: string, elementId: string): Promise<void>;
   receiveAsyncResponse?(response: unknown): Promise<void>;
-  setClipboard?(
-    content: string,
-    contentType?: string,
-    label?: string,
-  ): Promise<void>;
+  setClipboard?(content: string, contentType?: string, label?: string): Promise<void>;
   getClipboard?(contentType?: string): Promise<string>;
 
   // JSONWP
@@ -268,11 +238,7 @@ export interface ExternalDriver extends Driver {
   activateIMEEngine?(engine: string): Promise<void>;
   getOrientation?(): Promise<string>;
   setOrientation?(orientation: string): Promise<void>;
-  moveTo?(
-    element?: null | string,
-    xOffset?: number,
-    yOffset?: number,
-  ): Promise<void>;
+  moveTo?(element?: null | string, xOffset?: number, yOffset?: number): Promise<void>;
   buttonDown?(button?: number): Promise<void>;
   buttonUp?(button?: number): Promise<void>;
   clickCurrent?(button?: number): Promise<void>;
@@ -287,7 +253,7 @@ export interface ExternalDriver extends Driver {
     ySpeed?: number,
     xOffset?: number,
     yOffset?: number,
-    speed?: number,
+    speed?: number
   ): Promise<void>;
   getGeoLocation?(): Promise<Location>;
   setGeoLocation?(location: Partial<Location>): Promise<void>;
@@ -314,7 +280,7 @@ export interface ExternalDriver extends Driver {
     hasResidentKey?: boolean,
     hasUserVerification?: boolean,
     isUserConsenting?: boolean,
-    isUserVerified?: boolean,
+    isUserVerified?: boolean
   ): Promise<void>;
   removeVirtualAuthenticator?(): Promise<void>;
   addAuthCredential?(
@@ -323,18 +289,14 @@ export interface ExternalDriver extends Driver {
     rpId: string,
     privateKey: string,
     userHandle?: string,
-    signCount?: number,
+    signCount?: number
   ): Promise<void>;
   getAuthCredential?(): Promise<Credential[]>;
   removeAllAuthCredentials?(): Promise<void>;
   removeAuthCredential?(): Promise<void>;
   setUserAuthVerified?(isUserVerified: boolean): Promise<void>;
 
-  proxyCommand?(
-    url: string,
-    method: HTTPMethod,
-    body?: string,
-  ): Promise<unknown>;
+  proxyCommand?(url: string, method: HTTPMethod, body?: string): Promise<unknown>;
 }
 
 export interface Method<T extends ExternalDriver = ExternalDriver> {
@@ -352,7 +314,10 @@ export interface PayloadParams {
   makeArgs?: (obj: any) => any;
 }
 
-export type MethodMap<T extends ExternalDriver = ExternalDriver> = Record<string, Record<string, Method<T>>>;
+export type MethodMap<T extends ExternalDriver = ExternalDriver> = Record<
+  string,
+  Record<string, Method<T>>
+>;
 
 export interface Constraint {
   presence?: boolean | {allowEmpty: boolean};
@@ -371,23 +336,20 @@ export interface Element {
 }
 
 export interface DriverHelpers {
-  configureApp: (
-    app: string,
-    supportedAppExtensions: string[],
-  ) => Promise<string>;
+  configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
   generateDriverLogPrefix: (obj: Core, sessionId?: string) => string;
 }
 
-export type SettingsUpdateListener<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> = (prop: keyof T, newValue: unknown, curValue: unknown) => Promise<void>;
+export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
+  prop: keyof T,
+  newValue: unknown,
+  curValue: unknown
+) => Promise<void>;
 
-export interface DeviceSettings<
-  T extends Record<string, unknown> = Record<string, unknown>,
-> {
+export interface DeviceSettings<T extends Record<string, unknown> = Record<string, unknown>> {
   update(newSettings: T): Promise<void>;
   getSettings(): T;
 }
@@ -502,13 +464,13 @@ export interface EventHistoryCommand {
 }
 export type HTTPMethod = _Method;
 
-export type Prefix = string|(() => string);
+export type Prefix = string | (() => string);
 
 export interface AppiumLogger {
   unwrap(): Logger;
   level: string;
   levels: string[];
-  prefix?: Prefix,
+  prefix?: Prefix;
   debug: (...args: any[]) => void;
   info: (...args: any[]) => void;
   warn: (...args: any[]) => void;
@@ -529,7 +491,7 @@ export interface TimeoutCommands {
     ms: number | string,
     script?: number,
     pageLoad?: number,
-    implicit?: number | string,
+    implicit?: number | string
   ): Promise<void>;
   setNewCommandTimeout(ms: number): void;
   implicitWait(ms: number | string): Promise<void>;
@@ -566,29 +528,25 @@ export type SingularSessionData = Capabilities & {events?: EventHistory};
 export interface FindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
-  findElementFromElement(
-    strategy: string,
-    selector: string,
-    elementId: string,
-  ): Promise<Element>;
+  findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
   findElementsFromElement(
     strategy: string,
     selector: string,
-    elementId: string,
+    elementId: string
   ): Promise<Element[]>;
 
   findElOrEls<Mult extends boolean>(
     strategy: string,
     selector: string,
     mult: Mult,
-    context?: string,
+    context?: string
   ): Promise<Mult extends true ? Element[] : Element>;
 
   findElOrElsWithProcessing<Mult extends boolean>(
     strategy: string,
     selector: string,
     mult: Mult,
-    context?: string,
+    context?: string
   ): Promise<Mult extends true ? Element[] : Element>;
 
   getPageSource(): Promise<string>;
@@ -599,7 +557,7 @@ export interface LogCommands {
   getLogTypes(): Promise<string[]>;
   /**
    * Gets logs
-   * 
+   *
    * TODO: `logType` should be a key in `supportedLogTypes`, and the return value of this function
    * should be the associated `LogType` object's `LogEntry` parameterized type.
    * @param logType - Name/key of log type as defined in {@linkcode LogCommands.supportedLogTypes}.
@@ -617,13 +575,10 @@ export interface SessionHandler<CreateResult, DeleteResult> {
     w3cCaps1: W3CCapabilities,
     w3cCaps2?: W3CCapabilities,
     w3cCaps?: W3CCapabilities,
-    driverData?: DriverData[],
+    driverData?: DriverData[]
   ): Promise<CreateResult>;
 
-  deleteSession(
-    sessionId?: string,
-    driverData?: DriverData[],
-  ): Promise<DeleteResult>;
+  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult>;
 }
 
 export type DriverData = Record<string, unknown>;
@@ -634,5 +589,5 @@ export type DriverData = Record<string, unknown>;
 export type Class<
   Proto,
   StaticMembers extends object = {},
-  Args extends unknown[] = any[],
+  Args extends unknown[] = any[]
 > = _Class<Proto, Args> & StaticMembers;

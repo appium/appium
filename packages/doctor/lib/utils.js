@@ -1,32 +1,35 @@
 import B from 'bluebird';
 import _inquirer from 'inquirer';
 import log from '../lib/logger';
-import { fs, system } from '@appium/support';
-import { exec } from 'teen_process';
-import { isFunction } from 'lodash';
+import {fs, system} from '@appium/support';
+import {exec} from 'teen_process';
+import {isFunction} from 'lodash';
 
-function ok (message) {
+function ok(message) {
   return {ok: true, optional: false, message};
 }
-function nok (message) {
+function nok(message) {
   return {ok: false, optional: false, message};
 }
-function okOptional (message) {
+function okOptional(message) {
   return {ok: true, optional: true, message};
 }
-function nokOptional (message) {
+function nokOptional(message) {
   return {ok: false, optional: true, message};
 }
 
 const inquirer = {
-  prompt: B.promisify(function (question, cb) { // eslint-disable-line promise/prefer-await-to-callbacks
-    _inquirer.prompt(question, function (resp) { cb(null, resp); }); // eslint-disable-line promise/prefer-await-to-callbacks
-  })
+  prompt: B.promisify(function (question, cb) {
+    // eslint-disable-line promise/prefer-await-to-callbacks
+    _inquirer.prompt(question, function (resp) {
+      cb(null, resp);
+    }); // eslint-disable-line promise/prefer-await-to-callbacks
+  }),
 };
 
 let actualLog;
 
-function configureBinaryLog (opts) {
+function configureBinaryLog(opts) {
   actualLog = log.unwrap().log;
   log.unwrap().log = function (level, prefix, msg) {
     let l = this.levels[level];
@@ -43,7 +46,7 @@ function configureBinaryLog (opts) {
 /**
  * If {@link configureBinaryLog} was called, this will restore the original `log` function.
  */
-function resetLog () {
+function resetLog() {
   if (actualLog) {
     log.unwrap().log = actualLog;
   }
@@ -55,15 +58,15 @@ function resetLog () {
  * @param {string} cmd Standard output by command
  * @return {?string} The full path of cmd. `null` if the cmd is not found.
  */
-async function resolveExecutablePath (cmd) {
+async function resolveExecutablePath(cmd) {
   let executablePath;
   try {
     executablePath = await fs.which(cmd);
-    if (executablePath && await fs.exists(executablePath)) {
+    if (executablePath && (await fs.exists(executablePath))) {
       return executablePath;
     }
   } catch (err) {
-    if ((/not found/gi).test(err.message)) {
+    if (/not found/gi.test(err.message)) {
       log.debug(err);
     } else {
       log.warn(err);
@@ -86,7 +89,7 @@ async function resolveExecutablePath (cmd) {
  * @param {string} packageName A package name to get path and version data
  * @return {?NpmPackageInfo}
  */
-async function getNpmPackageInfo (packageName) {
+async function getNpmPackageInfo(packageName) {
   const npmPath = await resolveExecutablePath(`npm${system.isWindows() ? `.cmd` : ''}`);
   if (!npmPath) {
     return nokOptional(`'npm' binary not found in PATH: ${process.env.PATH}`);
@@ -109,6 +112,13 @@ async function getNpmPackageInfo (packageName) {
 }
 
 export {
-  ok, nok, okOptional, nokOptional, inquirer, configureBinaryLog,
-  resolveExecutablePath, getNpmPackageInfo, resetLog
+  ok,
+  nok,
+  okOptional,
+  nokOptional,
+  inquirer,
+  configureBinaryLog,
+  resolveExecutablePath,
+  getNpmPackageInfo,
+  resetLog,
 };

@@ -6,27 +6,31 @@ import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import log from './logger';
-import { startLogFormatter, endLogFormatter } from './express-logging';
+import {startLogFormatter, endLogFormatter} from './express-logging';
 import {
-  allowCrossDomain, fixPythonContentType, defaultToJSONContentType,
-  catchAllHandler, allowCrossDomainAsyncExecute, handleIdempotency,
+  allowCrossDomain,
+  fixPythonContentType,
+  defaultToJSONContentType,
+  catchAllHandler,
+  allowCrossDomainAsyncExecute,
+  handleIdempotency,
   catch404Handler,
 } from './middleware';
-import { guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR } from './static';
-import { produceError, produceCrash } from './crash';
+import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
+import {produceError, produceCrash} from './crash';
 import {
-  addWebSocketHandler, removeWebSocketHandler, removeAllWebSocketHandlers,
-  getWebSocketHandlers
+  addWebSocketHandler,
+  removeWebSocketHandler,
+  removeAllWebSocketHandlers,
+  getWebSocketHandlers,
 } from './websocket';
 import B from 'bluebird';
-import { DEFAULT_BASE_PATH } from '../constants';
-import { EventEmitter } from 'events';
-
+import {DEFAULT_BASE_PATH} from '../constants';
+import {EventEmitter} from 'events';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
-
-async function server (opts = {}) {
+async function server(opts = {}) {
   const {
     routeConfiguringFunction,
     port,
@@ -49,7 +53,13 @@ async function server (opts = {}) {
     // try/catch so any errors can be passed to reject.
     try {
       configureHttp({httpServer, reject, keepAliveTimeout});
-      configureServer({app, addRoutes: routeConfiguringFunction, allowCors, basePath, extraMethodMap});
+      configureServer({
+        app,
+        addRoutes: routeConfiguringFunction,
+        allowCors,
+        basePath,
+        extraMethodMap,
+      });
       // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {
         await updater(app, httpServer);
@@ -66,10 +76,9 @@ async function server (opts = {}) {
       reject(err);
     }
   });
-
 }
 
-function configureServer ({
+function configureServer({
   app,
   addRoutes,
   allowCors = true,
@@ -116,7 +125,7 @@ function configureServer ({
   app.all('/test/guinea-pig-app-banner', guineaPigAppBanner);
 }
 
-function configureHttp ({httpServer, reject, keepAliveTimeout}) {
+function configureHttp({httpServer, reject, keepAliveTimeout}) {
   const serverState = {
     notifier: new EventEmitter(),
     closed: false,
@@ -129,28 +138,32 @@ function configureHttp ({httpServer, reject, keepAliveTimeout}) {
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
   const close = httpServer.close.bind(httpServer);
-  httpServer.close = async () => await new B((resolve, reject) => {
-    // https://github.com/nodejs/node-v0.x-archive/issues/9066#issuecomment-124210576
-    serverState.closed = true;
-    serverState.notifier.emit('shutdown');
-    log.info('Waiting until the server is closed');
-    httpServer.on('close', () => {
-      log.info('Received server close event');
-      resolve();
+  httpServer.close = async () =>
+    await new B((resolve, reject) => {
+      // https://github.com/nodejs/node-v0.x-archive/issues/9066#issuecomment-124210576
+      serverState.closed = true;
+      serverState.notifier.emit('shutdown');
+      log.info('Waiting until the server is closed');
+      httpServer.on('close', () => {
+        log.info('Received server close event');
+        resolve();
+      });
+      close((err) => {
+        if (err) reject(err); // eslint-disable-line curly
+      });
     });
-    close((err) => {
-      if (err) reject(err); // eslint-disable-line curly
-    });
-  });
 
   httpServer.on('error', (err) => {
     if (err.code === 'EADDRNOTAVAIL') {
-      log.error('Could not start REST http interface listener. ' +
-                'Requested address is not available.');
+      log.error(
+        'Could not start REST http interface listener. ' + 'Requested address is not available.'
+      );
     } else {
-      log.error('Could not start REST http interface listener. The requested ' +
-                'port may already be in use. Please make sure there is no ' +
-                'other instance of this server running already.');
+      log.error(
+        'Could not start REST http interface listener. The requested ' +
+          'port may already be in use. Please make sure there is no ' +
+          'other instance of this server running already.'
+      );
     }
     reject(err);
   });
@@ -159,7 +172,7 @@ function configureHttp ({httpServer, reject, keepAliveTimeout}) {
     socket.setTimeout(keepAliveTimeout);
     socket.on('error', reject);
 
-    function destroy () {
+    function destroy() {
       socket.destroy();
     }
     socket._openReqCount = 0;
@@ -179,7 +192,7 @@ function configureHttp ({httpServer, reject, keepAliveTimeout}) {
   });
 }
 
-async function startServer ({httpServer, port, hostname, keepAliveTimeout}) {
+async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
   const serverArgs = [port];
   if (hostname) {
     // If the hostname is omitted, the server will accept
@@ -193,7 +206,7 @@ async function startServer ({httpServer, port, hostname, keepAliveTimeout}) {
   await startPromise;
 }
 
-function normalizeBasePath (basePath) {
+function normalizeBasePath(basePath) {
   if (!_.isString(basePath)) {
     throw new Error(`Invalid path prefix ${basePath}`);
   }
@@ -211,4 +224,4 @@ function normalizeBasePath (basePath) {
   return basePath;
 }
 
-export { server, configureServer, normalizeBasePath };
+export {server, configureServer, normalizeBasePath};

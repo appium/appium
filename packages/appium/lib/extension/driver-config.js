@@ -192,8 +192,7 @@ export class DriverConfig extends ExtensionConfig {
     const drivers = this.installedExtensions;
     for (const [driverName, driverData] of _.toPairs(drivers)) {
       const {automationName, platformNames} = driverData;
-      const aNameMatches =
-        automationName.toLowerCase() === matchAutomationName.toLowerCase();
+      const aNameMatches = automationName.toLowerCase() === matchAutomationName.toLowerCase();
       const pNameMatches = _.includes(
         platformNames.map(_.toLower),
         matchPlatformName.toLowerCase()

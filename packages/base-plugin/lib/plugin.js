@@ -1,8 +1,6 @@
-import { logger } from '@appium/support';
-
+import {logger} from '@appium/support';
 
 export default class BasePlugin {
-
   // plugins can define new methods for the Appium server to map to command names, of the same
   // format as used in Appium's routes.js, for example, this would be a valid newMethodMap:
   //
@@ -14,14 +12,13 @@ export default class BasePlugin {
   // }
   static newMethodMap = {};
 
-  constructor (pluginName, opts = {}) {
+  constructor(pluginName, opts = {}) {
     this.name = pluginName;
     this.logger = logger.getLogger(`Plugin [${pluginName}]`);
 
     // allow for args to be used by plugins
     this.opts = opts;
   }
-
 
   /**
    * Optionally updates an Appium express app and http server, by calling methods that may mutate
@@ -68,5 +65,4 @@ export default class BasePlugin {
   /*async handle (next, driver, cmdName, ...args) {
      return await next();
   }*/
-
 }

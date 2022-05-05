@@ -1,13 +1,7 @@
-import { createSandbox } from 'sinon';
-import {
-  getGitRev,
-  getBuildInfo,
-  updateBuildInfo,
-  APPIUM_VER,
-} from '../../lib/config';
+import {createSandbox} from 'sinon';
+import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
 import axios from 'axios';
-import { fs } from '@appium/support';
-
+import {fs} from '@appium/support';
 
 describe('Config', function () {
   let sandbox;
@@ -29,7 +23,7 @@ describe('Config', function () {
     });
   });
   describe('getBuildInfo', function () {
-    async function verifyBuildInfoUpdate (useLocalGit) {
+    async function verifyBuildInfoUpdate(useLocalGit) {
       const buildInfo = getBuildInfo();
       mockFs.expects('exists').atLeast(1).returns(useLocalGit);
       buildInfo['git-sha'] = undefined;
@@ -60,10 +54,8 @@ describe('Config', function () {
         data: [
           {
             name: `v${APPIUM_VER}`,
-            zipball_url:
-              'https://api.github.com/repos/appium/appium/zipball/v1.9.0-beta.1',
-            tarball_url:
-              'https://api.github.com/repos/appium/appium/tarball/v1.9.0-beta.1',
+            zipball_url: 'https://api.github.com/repos/appium/appium/zipball/v1.9.0-beta.1',
+            tarball_url: 'https://api.github.com/repos/appium/appium/tarball/v1.9.0-beta.1',
             commit: {
               sha: '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
               url: 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
@@ -72,10 +64,8 @@ describe('Config', function () {
           },
           {
             name: 'v1.8.2-beta',
-            zipball_url:
-              'https://api.github.com/repos/appium/appium/zipball/v1.8.2-beta',
-            tarball_url:
-              'https://api.github.com/repos/appium/appium/tarball/v1.8.2-beta',
+            zipball_url: 'https://api.github.com/repos/appium/appium/zipball/v1.8.2-beta',
+            tarball_url: 'https://api.github.com/repos/appium/appium/tarball/v1.8.2-beta',
             commit: {
               sha: '5b98b9197e75aa85e7507d21d3126c1a63d1ce8f',
               url: 'https://api.github.com/repos/appium/appium/commits/5b98b9197e75aa85e7507d21d3126c1a63d1ce8f',
@@ -87,8 +77,7 @@ describe('Config', function () {
       getStub.onCall(1).returns({
         data: {
           sha: '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-          node_id:
-            'MDY6Q29tbWl0NzUzMDU3MDozYzI3NTJmOWY5YzU2MDAwNzA1YTRhZTE1YjNiYTY4YTVkMmU2NDRj',
+          node_id: 'MDY6Q29tbWl0NzUzMDU3MDozYzI3NTJmOWY5YzU2MDAwNzA1YTRhZTE1YjNiYTY4YTVkMmU2NDRj',
           commit: {
             author: {
               name: 'Isaac Murchie',

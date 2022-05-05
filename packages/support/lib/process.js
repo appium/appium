@@ -1,5 +1,4 @@
-import { exec } from 'teen_process';
-
+import {exec} from 'teen_process';
 
 /*
  * Exit Status for pgrep and pkill (`man pkill`)
@@ -9,11 +8,14 @@ import { exec } from 'teen_process';
  *  3. Fatal error: out of memory etc.
  */
 
-async function getProcessIds (appName) {
+async function getProcessIds(appName) {
   let pids;
   try {
     let {stdout} = await exec('pgrep', ['-x', appName]);
-    pids = stdout.trim().split('\n').map((pid) => parseInt(pid, 10));
+    pids = stdout
+      .trim()
+      .split('\n')
+      .map((pid) => parseInt(pid, 10));
   } catch (err) {
     if (parseInt(err.code, 10) !== 1) {
       throw new Error(`Error getting process ids for app '${appName}': ${err.message}`);
@@ -23,7 +25,7 @@ async function getProcessIds (appName) {
   return pids;
 }
 
-async function killProcess (appName, force = false) {
+async function killProcess(appName, force = false) {
   let pids = await getProcessIds(appName);
   if (pids.length === 0) {
     // the process is not running
@@ -41,4 +43,4 @@ async function killProcess (appName, force = false) {
   }
 }
 
-export { getProcessIds, killProcess };
+export {getProcessIds, killProcess};

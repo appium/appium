@@ -1,4 +1,3 @@
-
 import {ArgumentTypeError} from 'argparse';
 import _ from 'lodash';
 import {formatErrors as formatErrors} from '../config-file';
@@ -36,7 +35,7 @@ const SHORT_ARG_CUTOFF = 3;
  * @param {string} [alias] - the alias to convert to a flag
  * @returns {string} the flag
  */
-function aliasToFlag (argSpec, alias) {
+function aliasToFlag(argSpec, alias) {
   const {extType, extName, name} = argSpec;
   const arg = alias ?? name;
   const isShort = arg.length < SHORT_ARG_CUTOFF;
@@ -64,7 +63,7 @@ const screamingSnakeCase = _.flow(_.snakeCase, _.toUpper);
  * constructor options
  * @returns
  */
-function getSchemaValidator ({ref: schemaId}, coerce = _.identity) {
+function getSchemaValidator({ref: schemaId}, coerce = _.identity) {
   /** @param {string} value */
   return (value) => {
     const coerced = coerce(value);
@@ -72,9 +71,7 @@ function getSchemaValidator ({ref: schemaId}, coerce = _.identity) {
     if (_.isEmpty(errors)) {
       return coerced;
     }
-    throw new ArgumentTypeError(
-      '\n\n' + formatErrors(errors, value, {schemaId}),
-    );
+    throw new ArgumentTypeError('\n\n' + formatErrors(errors, value, {schemaId}));
   };
 }
 
@@ -83,7 +80,7 @@ function getSchemaValidator ({ref: schemaId}, coerce = _.identity) {
  * @param {AppiumJSONSchema} schema
  * @returns {string}
  */
-function makeDescription (schema) {
+function makeDescription(schema) {
   const {appiumCliDescription, description = '', appiumDeprecated} = schema;
   let desc = appiumCliDescription ?? description;
   if (appiumDeprecated) {
@@ -99,27 +96,20 @@ function makeDescription (schema) {
  * @param {ArgSpec} argSpec - Argument spec tuple
  * @returns {[string[], import('argparse').ArgumentOptions]} Tuple of flag and options
  */
-function subSchemaToArgDef (subSchema, argSpec) {
-  let {
-    type,
-    appiumCliAliases,
-    appiumCliTransformer,
-    enum: enumValues,
-  } = subSchema;
+function subSchemaToArgDef(subSchema, argSpec) {
+  let {type, appiumCliAliases, appiumCliTransformer, enum: enumValues} = subSchema;
 
   const {name, arg} = argSpec;
 
   const aliases = [
     aliasToFlag(argSpec),
-    .../** @type {string[]} */ (appiumCliAliases ?? []).map((alias) =>
-      aliasToFlag(argSpec, alias),
-    ),
+    .../** @type {string[]} */ (appiumCliAliases ?? []).map((alias) => aliasToFlag(argSpec, alias)),
   ];
 
   /** @type {import('argparse').ArgumentOptions} */
   let argOpts = {
     required: false,
-    help: makeDescription(subSchema)
+    help: makeDescription(subSchema),
   };
 
   /**
@@ -182,9 +172,7 @@ function subSchemaToArgDef (subSchema, argSpec) {
     case TYPENAMES.NULL:
     // falls through
     default: {
-      throw new TypeError(
-        `Schema property "${arg}": \`${type}\` type unknown or disallowed`,
-      );
+      throw new TypeError(`Schema property "${arg}": \`${type}\` type unknown or disallowed`);
     }
   }
 
@@ -198,15 +186,8 @@ function subSchemaToArgDef (subSchema, argSpec) {
   // by ajv during schema validation in `finalizeSchema()`. the `array` &
   // `object` types have already added a formatter (see above, so we don't do it
   // twice).
-  if (
-    type !== TYPENAMES.ARRAY &&
-    type !== TYPENAMES.OBJECT &&
-    appiumCliTransformer
-  ) {
-    argTypeFunction = _.flow(
-      argTypeFunction ?? _.identity,
-      transformers[appiumCliTransformer],
-    );
+  if (type !== TYPENAMES.ARRAY && type !== TYPENAMES.OBJECT && appiumCliTransformer) {
+    argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
   }
 
   if (argTypeFunction) {
@@ -221,7 +202,7 @@ function subSchemaToArgDef (subSchema, argSpec) {
       argOpts.choices = enumValues.map(String);
     } else {
       throw new TypeError(
-        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``,
+        `Problem with schema for ${arg}; \`enum\` is only supported for \`type: 'string'\``
       );
     }
   }
@@ -237,13 +218,9 @@ function subSchemaToArgDef (subSchema, argSpec) {
  * @returns {import('../cli/args').ArgumentDefinitions} A map of arryas of
  * aliases to `argparse` arguments; empty if no schema found
  */
-export function toParserArgs () {
+export function toParserArgs() {
   const flattened = flattenSchema().filter(({schema}) => !schema.appiumCliIgnored);
-  return new Map(
-    _.map(flattened, ({schema, argSpec}) =>
-      subSchemaToArgDef(schema, argSpec),
-    ),
-  );
+  return new Map(_.map(flattened, ({schema, argSpec}) => subSchemaToArgDef(schema, argSpec)));
 }
 
 /**

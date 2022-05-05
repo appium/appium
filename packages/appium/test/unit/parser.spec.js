@@ -1,9 +1,9 @@
-import { DRIVER_TYPE, PLUGIN_TYPE } from '../../lib/constants';
-import { getParser } from '../../lib/cli/parser';
-import { INSTALL_TYPES } from '../../lib/extension/extension-config';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
+import {getParser} from '../../lib/cli/parser';
+import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
-import { readConfigFile } from '../../lib/config-file';
-import { resolveFixture } from '../helpers';
+import {readConfigFile} from '../../lib/config-file';
+import {resolveFixture} from '../helpers';
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
@@ -53,23 +53,33 @@ describe('parser', function () {
       // TODO: figure out how best to suppress color in error message
       describe('invalid arguments', function () {
         it('should throw an error with unknown argument', function () {
-          (() => {p.parseArgs(['--apple']);}).should.throw(/unrecognized arguments: --apple/i);
+          (() => {
+            p.parseArgs(['--apple']);
+          }).should.throw(/unrecognized arguments: --apple/i);
         });
 
         it('should throw an error for an invalid value ("hostname")', function () {
-          (() => {p.parseArgs(['--address', '-42']);}).should.throw(/must match format "hostname"/i);
+          (() => {
+            p.parseArgs(['--address', '-42']);
+          }).should.throw(/must match format "hostname"/i);
         });
 
         it('should throw an error for an invalid value ("uri")', function () {
-          (() => {p.parseArgs(['--webhook', 'blub']);}).should.throw(/must match format "uri"/i);
+          (() => {
+            p.parseArgs(['--webhook', 'blub']);
+          }).should.throw(/must match format "uri"/i);
         });
 
         it('should throw an error for an invalid value (using "enum")', function () {
-          (() => {p.parseArgs(['--log-level', '-42']);}).should.throw(/must be equal to one of the allowed values/i);
+          (() => {
+            p.parseArgs(['--log-level', '-42']);
+          }).should.throw(/must be equal to one of the allowed values/i);
         });
 
         it('should throw an error for incorrectly formatted arg (matching "dest")', function () {
-          (() => {p.parseArgs(['--loglevel', '-42']);}).should.throw(/unrecognized arguments: --loglevel/i);
+          (() => {
+            p.parseArgs(['--loglevel', '-42']);
+          }).should.throw(/unrecognized arguments: --loglevel/i);
         });
       });
 
@@ -86,10 +96,18 @@ describe('parser', function () {
       });
 
       it('should throw an error with invalid arg to default capabilities', function () {
-        (() => {p.parseArgs(['-dc', '42']);}).should.throw();
-        (() => {p.parseArgs(['-dc', 'false']);}).should.throw();
-        (() => {p.parseArgs(['-dc', 'null']);}).should.throw();
-        (() => {p.parseArgs(['-dc', 'does/not/exist.json']);}).should.throw();
+        (() => {
+          p.parseArgs(['-dc', '42']);
+        }).should.throw();
+        (() => {
+          p.parseArgs(['-dc', 'false']);
+        }).should.throw();
+        (() => {
+          p.parseArgs(['-dc', 'null']);
+        }).should.throw();
+        (() => {
+          p.parseArgs(['-dc', 'does/not/exist.json']);
+        }).should.throw();
       });
 
       it('should parse --allow-insecure correctly', function () {
@@ -110,7 +128,10 @@ describe('parser', function () {
 
       it('should parse --allow-insecure & --deny-insecure from files', function () {
         const parsed = p.parseArgs([
-          '--allow-insecure', ALLOW_FIXTURE, '--deny-insecure', DENY_FIXTURE
+          '--allow-insecure',
+          ALLOW_FIXTURE,
+          '--deny-insecure',
+          DENY_FIXTURE,
         ]);
         parsed.allowInsecure.should.eql(['feature1', 'feature2', 'feature3']);
         parsed.denyInsecure.should.eql(['nofeature1', 'nofeature2', 'nofeature3']);
@@ -119,7 +140,6 @@ describe('parser', function () {
       it('should allow a string for --use-drivers', function () {
         p.parseArgs(['--use-drivers', 'fake']).useDrivers.should.eql(['fake']);
       });
-
 
       it('should allow multiple --use-drivers', function () {
         p.parseArgs(['--use-drivers', 'fake,phony']).useDrivers.should.eql(['fake', 'phony']);
@@ -136,7 +156,11 @@ describe('parser', function () {
         // we have to require() here because babel will not compile stuff in node_modules
         // (even if it's in the monorepo; there may be a way around this)
         // anyway, if we do that, we need to use the `default` prop.
-        schema.registerSchema(DRIVER_TYPE, 'fake', require('@appium/fake-driver/build/lib/fake-driver-schema').default);
+        schema.registerSchema(
+          DRIVER_TYPE,
+          'fake',
+          require('@appium/fake-driver/build/lib/fake-driver-schema').default
+        );
         schema.finalizeSchema();
         p = getParser(true);
       });
@@ -147,12 +171,14 @@ describe('parser', function () {
         // the command-line flags are derived also from the schema.
         // the result should be that the parsed args should match the config file.
         const {config} = await readConfigFile(resolveFixture('config', 'driver-fake.config.json'));
-        const fakeDriverArgs = {fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'}};
+        const fakeDriverArgs = {
+          fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'},
+        };
         const args = p.parseArgs([
           '--driver-fake-silly-web-server-port',
           fakeDriverArgs.fake.sillyWebServerPort,
           '--driver-fake-silly-web-server-host',
-          fakeDriverArgs.fake.sillyWebServerHost
+          fakeDriverArgs.fake.sillyWebServerHost,
         ]);
 
         args.driver.fake.should.eql(config.driver.fake);
@@ -165,30 +191,36 @@ describe('parser', function () {
 
       it('should nicely handle extensions w/ dashes in them', function () {
         schema.resetSchema();
-        schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {type: 'object', properties: {elite: {type: 'boolean'}}});
+        schema.registerSchema(PLUGIN_TYPE, 'crypto-fiend', {
+          type: 'object',
+          properties: {elite: {type: 'boolean'}},
+        });
         schema.finalizeSchema();
         p = getParser(true);
-        const args = p.parseArgs([
-          '--plugin-crypto-fiend-elite'
-        ]);
+        const args = p.parseArgs(['--plugin-crypto-fiend-elite']);
 
         args.should.have.nested.property('plugin.crypto-fiend.elite', true);
       });
 
       describe('when user supplies invalid args', function () {
         it('should error out', function () {
-          (() => p.parseArgs(['--driver-fake-silly-web-server-port', 'foo'])).should.throw(/must be integer/i);
+          (() => p.parseArgs(['--driver-fake-silly-web-server-port', 'foo'])).should.throw(
+            /must be integer/i
+          );
         });
       });
 
       it('should not support --driver-args', function () {
-        (() => p.parseArgs(['--driver-args', '/some/file.json'])).should.throw(/unrecognized arguments/i);
+        (() => p.parseArgs(['--driver-args', '/some/file.json'])).should.throw(
+          /unrecognized arguments/i
+        );
       });
 
       it('should not support --plugin-args', function () {
-        (() => p.parseArgs(['--plugin-args', '/some/file.json'])).should.throw(/unrecognized arguments/i);
+        (() => p.parseArgs(['--plugin-args', '/some/file.json'])).should.throw(
+          /unrecognized arguments/i
+        );
       });
-
     });
   });
 

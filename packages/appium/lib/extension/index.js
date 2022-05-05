@@ -20,11 +20,9 @@ export async function loadExtensions(appiumHome) {
   const manifest = Manifest.getInstance(appiumHome);
   const {drivers, plugins} = await manifest.read();
   const driverConfig =
-    DriverConfig.getInstance(manifest) ??
-    DriverConfig.create(manifest, {extData: drivers});
+    DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest, {extData: drivers});
   const pluginConfig =
-    PluginConfig.getInstance(manifest) ??
-    PluginConfig.create(manifest, {extData: plugins});
+    PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest, {extData: plugins});
   return {driverConfig, pluginConfig};
 }
 
@@ -75,10 +73,7 @@ export function getActivePlugins(pluginConfig, usePlugins = []) {
 export function getActiveDrivers(driverConfig, useDrivers = []) {
   return _.compact(
     Object.keys(driverConfig.installedExtensions)
-      .filter(
-        (driverName) =>
-          _.includes(useDrivers, driverName) || useDrivers.length === 0
-      )
+      .filter((driverName) => _.includes(useDrivers, driverName) || useDrivers.length === 0)
       .map((driverName) => {
         try {
           log.info(`Attempting to load driver ${driverName}...`);

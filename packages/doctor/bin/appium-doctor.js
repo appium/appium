@@ -2,10 +2,9 @@
 
 import yargs from 'yargs';
 import newDoctor from '../lib/factory';
-import { configureBinaryLog } from '../lib/utils';
-import { configure as configurePrompt } from '../lib/prompt';
-import { system } from '@appium/support';
-
+import {configureBinaryLog} from '../lib/utils';
+import {configure as configurePrompt} from '../lib/prompt';
+import {system} from '@appium/support';
 
 yargs
   .strict()
@@ -35,13 +34,18 @@ yargs
   });
 
 // make sure we use the general checks for every test
-let opts = Object.assign({
-  general: true,
-}, yargs.argv);
+let opts = Object.assign(
+  {
+    general: true,
+  },
+  yargs.argv
+);
 
 configurePrompt(opts);
 configureBinaryLog(opts);
-newDoctor(opts).run().catch(function (e) {
-  console.error(e); // eslint-disable-line no-console
-  process.exit(1);
-});
+newDoctor(opts)
+  .run()
+  .catch(function (e) {
+    console.error(e); // eslint-disable-line no-console
+    process.exit(1);
+  });

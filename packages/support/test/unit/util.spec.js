@@ -1,14 +1,11 @@
-
-import { util, fs, tempDir } from '../../lib';
+import {util, fs, tempDir} from '../../lib';
 import B from 'bluebird';
-import { createSandbox } from 'sinon';
+import {createSandbox} from 'sinon';
 import os from 'os';
 import path from 'path';
 import _ from 'lodash';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
-
-
 
 describe('util', function () {
   let sandbox;
@@ -128,61 +125,58 @@ describe('util', function () {
   describe('localIp', function () {
     it('should find a local ip address', function () {
       let ifConfigOut = {
-        lo0:
-          [
-            {
-              address: '::1',
-              netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-              family: 'IPv6',
-              mac: '00:00:00:00:00:00',
-              scopeid: 0,
-              internal: true,
-            },
-            {
-              address: '127.0.0.1',
-              netmask: '255.0.0.0',
-              family: 'IPv4',
-              mac: '00:00:00:00:00:00',
-              internal: true,
-            },
-            {
-              address: 'fe80::1',
-              netmask: 'ffff:ffff:ffff:ffff::',
-              family: 'IPv6',
-              mac: '00:00:00:00:00:00',
-              scopeid: 1,
-              internal: true,
-            }
-          ],
-        en0:
-          [
-            {
-              address: 'xxx',
-              netmask: 'ffff:ffff:ffff:ffff::',
-              family: 'IPv6',
-              mac: 'd0:e1:40:93:56:9a',
-              scopeid: 4,
-              internal: false,
-            },
-            {
-              address: '123.123.123.123',
-              netmask: '255.255.254.0',
-              family: 'IPv4',
-              mac: 'xxx',
-              internal: false,
-            }
-          ],
-        awdl0:
-          [
-            {
-              address: 'xxx',
-              netmask: 'ffff:ffff:ffff:ffff::',
-              family: 'IPv6',
-              mac: 'xxx',
-              scopeid: 7,
-              internal: false,
-            }
-          ],
+        lo0: [
+          {
+            address: '::1',
+            netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+            family: 'IPv6',
+            mac: '00:00:00:00:00:00',
+            scopeid: 0,
+            internal: true,
+          },
+          {
+            address: '127.0.0.1',
+            netmask: '255.0.0.0',
+            family: 'IPv4',
+            mac: '00:00:00:00:00:00',
+            internal: true,
+          },
+          {
+            address: 'fe80::1',
+            netmask: 'ffff:ffff:ffff:ffff::',
+            family: 'IPv6',
+            mac: '00:00:00:00:00:00',
+            scopeid: 1,
+            internal: true,
+          },
+        ],
+        en0: [
+          {
+            address: 'xxx',
+            netmask: 'ffff:ffff:ffff:ffff::',
+            family: 'IPv6',
+            mac: 'd0:e1:40:93:56:9a',
+            scopeid: 4,
+            internal: false,
+          },
+          {
+            address: '123.123.123.123',
+            netmask: '255.255.254.0',
+            family: 'IPv4',
+            mac: 'xxx',
+            internal: false,
+          },
+        ],
+        awdl0: [
+          {
+            address: 'xxx',
+            netmask: 'ffff:ffff:ffff:ffff::',
+            family: 'IPv6',
+            mac: 'xxx',
+            scopeid: 7,
+            internal: false,
+          },
+        ],
       };
       let osMock = sandbox.mock(os);
       osMock.expects('networkInterfaces').returns(ifConfigOut);
@@ -264,7 +258,7 @@ describe('util', function () {
         k2: 'v2',
         k3: 'v3',
       };
-      function replacer (key, value) {
+      function replacer(key, value) {
         return _.isString(value) ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
@@ -278,7 +272,7 @@ describe('util', function () {
         k2: 'v2',
         k3: Buffer.from('hi how are you today'),
       };
-      function replacer (key, value) {
+      function replacer(key, value) {
         return _.isString(value) ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
@@ -295,7 +289,7 @@ describe('util', function () {
           k5: 'v5',
         },
       };
-      function replacer (key, value) {
+      function replacer(key, value) {
         return _.isString(value) ? value.toUpperCase() : value;
       }
       const jsonString = util.jsonStringify(obj, replacer);
@@ -321,7 +315,7 @@ describe('util', function () {
     });
     it('should unwrap a wrapped element that uses W3C element identifier', function () {
       let el = {
-        [W3C_WEB_ELEMENT_IDENTIFIER]: 5
+        [W3C_WEB_ELEMENT_IDENTIFIER]: 5,
       };
       util.unwrapElement(el).should.eql(5);
     });
@@ -408,10 +402,12 @@ describe('util', function () {
           b: 'b',
           c: 'c',
         };
-        util.filterObject(obj, (v) => v === 'a' || v === 'c').should.eql({
-          a: 'a',
-          c: 'c',
-        });
+        util
+          .filterObject(obj, (v) => v === 'a' || v === 'c')
+          .should.eql({
+            a: 'a',
+            c: 'c',
+          });
       });
     });
   });
@@ -450,8 +446,12 @@ describe('util', function () {
       await fs.rimraf(tmpDir);
     });
     it('should match paths to the same file/folder', async function () {
-      (await util.isSameDestination(path1, path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))))
-        .should.be.true;
+      (
+        await util.isSameDestination(
+          path1,
+          path.resolve(tmpDir, '..', path.basename(tmpDir), path.basename(path1))
+        )
+      ).should.be.true;
     });
     it('should not match paths if they point to non existing items', async function () {
       (await util.isSameDestination(path1, 'blabla')).should.be.false;
@@ -481,7 +481,7 @@ describe('util', function () {
 
   describe('quote', function () {
     it('should quote a string with a space', function () {
-      util.quote(['a', 'b', 'c d']).should.eql('a b \'c d\'');
+      util.quote(['a', 'b', 'c d']).should.eql("a b 'c d'");
     });
     it('should escape double quotes', function () {
       util.quote(['a', 'b', `it's a "neat thing"`]).should.eql(`a b "it's a \\"neat thing\\""`);

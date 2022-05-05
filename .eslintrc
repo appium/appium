@@ -11,11 +11,7 @@
       "rules": {"func-names": "off"}
     },
     {
-      "files": [
-        "./packages/*/index.js",
-        "./packages/*/scripts/**/*.js",
-        "./test/*.js"
-      ],
+      "files": ["./packages/*/index.js", "./packages/*/scripts/**/*.js", "./test/*.js"],
       "parserOptions": {
         "sourceType": "script"
       }

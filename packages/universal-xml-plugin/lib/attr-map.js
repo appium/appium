@@ -32,4 +32,4 @@ const REMOVE_ATTRS = [
   'rotation',
 ];
 
-export { ATTR_MAP, REMOVE_ATTRS };
+export {ATTR_MAP, REMOVE_ATTRS};

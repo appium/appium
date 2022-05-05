@@ -1,7 +1,12 @@
 // transpile:mocha
 
-import { getDynamicLogger, restoreWriters, setupWriters,
-         assertOutputContains, assertOutputDoesntContain } from './helpers';
+import {
+  getDynamicLogger,
+  restoreWriters,
+  setupWriters,
+  assertOutputContains,
+  assertOutputDoesntContain,
+} from './helpers';
 
 const LOG_LEVELS = ['silly', 'verbose', 'info', 'http', 'warn', 'error'];
 
@@ -24,8 +29,12 @@ describe('normal logger', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => { log.errorAndThrow('msg1'); }).should.throw('msg1');
-    (() => { log.errorAndThrow(new Error('msg2')); }).should.throw('msg2');
+    (() => {
+      log.errorAndThrow('msg1');
+    }).should.throw('msg1');
+    (() => {
+      log.errorAndThrow(new Error('msg2'));
+    }).should.throw('msg2');
     assertOutputContains(writers, 'msg1');
     assertOutputContains(writers, 'msg2');
   });
@@ -77,7 +86,9 @@ describe('normal logger with static prefix', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => { log.errorAndThrow('msg'); }).should.throw('msg');
+    (() => {
+      log.errorAndThrow('msg');
+    }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });
@@ -105,7 +116,9 @@ describe('normal logger with dynamic prefix', function () {
     }
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
-    (() => { log.errorAndThrow('msg'); }).should.throw('msg');
+    (() => {
+      log.errorAndThrow('msg');
+    }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
   });

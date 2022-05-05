@@ -1,10 +1,10 @@
-import { ATTR_PREFIX } from './source';
+import {ATTR_PREFIX} from './source';
 
-function ios (nodeObj/*, metadata*/) {
+function ios(nodeObj /*, metadata*/) {
   return nodeObj;
 }
 
-function android (nodeObj, metadata) {
+function android(nodeObj, metadata) {
   // strip android:id from front of id
   const resId = nodeObj[`${ATTR_PREFIX}resource-id`];
   if (resId && metadata.appPackage) {

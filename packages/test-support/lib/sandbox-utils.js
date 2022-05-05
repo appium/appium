@@ -5,15 +5,15 @@ import B from 'bluebird';
 let SANDBOX = Symbol();
 
 // use this one if using a mix of mocks/stub/spies
-function withSandbox (config, fn) {
+function withSandbox(config, fn) {
   return () => {
     const S = {
       mocks: {},
-      verify () {
+      verify() {
         return this.sandbox.verify();
       },
     };
-    beforeEach(function beforeEach () {
+    beforeEach(function beforeEach() {
       S.sandbox = sinon.createSandbox();
       S.sandbox.usingPromise(B);
       S.mocks[SANDBOX] = S.sandbox;
@@ -21,7 +21,7 @@ function withSandbox (config, fn) {
         S.mocks[key] = S.sandbox.mock(value);
       }
     });
-    afterEach(function afterEach () {
+    afterEach(function afterEach() {
       S.sandbox.restore();
       for (let k of _.keys(S.mocks)) {
         delete S.mocks[k];
@@ -32,9 +32,9 @@ function withSandbox (config, fn) {
   };
 }
 
-function verifySandbox (obj) {
+function verifySandbox(obj) {
   let sandbox = obj.sandbox ? obj.sandbox : obj[SANDBOX];
   sandbox.verify();
 }
 
-export { withSandbox, verifySandbox };
+export {withSandbox, verifySandbox};

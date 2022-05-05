@@ -147,8 +147,7 @@ function makeUninstallArgs(type) {
       {
         type: 'str',
         help:
-          'Name of the driver to uninstall, for example: ' + type ===
-          DRIVER_TYPE
+          'Name of the driver to uninstall, for example: ' + type === DRIVER_TYPE
             ? DRIVER_EXAMPLE
             : PLUGIN_EXAMPLE,
       },
@@ -205,8 +204,7 @@ function makeRunArgs(type) {
       {
         type: 'str',
         help:
-          `Name of the ${type} to run a script from, for example: ` + type ===
-          DRIVER_TYPE
+          `Name of the ${type} to run a script from, for example: ` + type === DRIVER_TYPE
             ? DRIVER_EXAMPLE
             : PLUGIN_EXAMPLE,
       },

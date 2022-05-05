@@ -1,10 +1,12 @@
 import _ from 'lodash';
-import { errors } from '@appium/base-driver';
-import { FakeElement } from '../fake-element';
+import {errors} from '@appium/base-driver';
+import {FakeElement} from '../fake-element';
 
-let commands = {}, helpers = {}, extensions = {};
+let commands = {},
+  helpers = {},
+  extensions = {};
 
-helpers.getExistingElementForNode = function getExistingElementForNode (node) {
+helpers.getExistingElementForNode = function getExistingElementForNode(node) {
   for (let [id, el] of _.toPairs(this.elMap)) {
     if (el.node === node) {
       return id;
@@ -13,7 +15,7 @@ helpers.getExistingElementForNode = function getExistingElementForNode (node) {
   return null;
 };
 
-helpers.wrapNewEl = function wrapNewEl (obj) {
+helpers.wrapNewEl = function wrapNewEl(obj) {
   // first check and see if we already have a ref to this element
   let existingElId = this.getExistingElementForNode(obj);
   if (existingElId) {
@@ -26,14 +28,14 @@ helpers.wrapNewEl = function wrapNewEl (obj) {
   return {ELEMENT: this.maxElId.toString()};
 };
 
-helpers.findElOrEls = async function findElOrEls (strategy, selector, mult, ctx) {
+helpers.findElOrEls = async function findElOrEls(strategy, selector, mult, ctx) {
   let qMap = {
-    'xpath': 'xpathQuery',
-    'id': 'idQuery',
+    xpath: 'xpathQuery',
+    id: 'idQuery',
     'accessibility id': 'idQuery',
     'class name': 'classQuery',
     'tag name': 'classQuery',
-    'css selector': 'cssQuery'
+    'css selector': 'cssQuery',
   };
   // TODO this error checking should probably be part of MJSONWP?
   if (!_.includes(_.keys(qMap), strategy)) {
@@ -60,24 +62,32 @@ helpers.findElOrEls = async function findElOrEls (strategy, selector, mult, ctx)
   }
 };
 
-commands.findElement = async function findElement (strategy, selector) {
+commands.findElement = async function findElement(strategy, selector) {
   return this.findElOrEls(strategy, selector, false);
 };
 
-commands.findElements = async function findElements (strategy, selector) {
+commands.findElements = async function findElements(strategy, selector) {
   return this.findElOrEls(strategy, selector, true);
 };
 
-commands.findElementFromElement = async function findElementFromElement (strategy, selector, elementId) {
+commands.findElementFromElement = async function findElementFromElement(
+  strategy,
+  selector,
+  elementId
+) {
   let el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, false, el.xmlFragment);
 };
 
-commands.findElementsFromElement = async function findElementsFromElement (strategy, selector, elementId) {
+commands.findElementsFromElement = async function findElementsFromElement(
+  strategy,
+  selector,
+  elementId
+) {
   let el = this.getElement(elementId);
   return this.findElOrEls(strategy, selector, true, el.xmlFragment);
 };
 
 Object.assign(extensions, commands, helpers);
-export { commands, helpers};
+export {commands, helpers};
 export default extensions;

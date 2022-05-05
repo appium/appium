@@ -33,9 +33,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
     if (mustExist) {
       log.errorAndThrow(`Plist file doesn't exist: '${plist}'`);
     } else {
-      log.debug(
-        `Plist file '${plist}' does not exist. Returning an empty plist.`
-      );
+      log.debug(`Plist file '${plist}' does not exist. Returning an empty plist.`);
       return {};
     }
   }
@@ -54,9 +52,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
       obj = await parseXmlPlistFile(plist);
       type = 'xml';
     } catch (err) {
-      log.errorAndThrow(
-        `Could not parse plist file '${plist}' as XML: ${err.message}`
-      );
+      log.errorAndThrow(`Could not parse plist file '${plist}' as XML: ${err.message}`);
     }
   }
 
@@ -121,8 +117,7 @@ function getXmlPlist(data) {
   }
   if (
     _.isBuffer(data) &&
-    PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) ===
-      0
+    PLIST_IDENTIFIER.BUFFER.compare(data, 0, PLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
     return data.toString();
   }
@@ -136,11 +131,7 @@ function getBinaryPlist(data) {
 
   if (
     _.isBuffer(data) &&
-    BPLIST_IDENTIFIER.BUFFER.compare(
-      data,
-      0,
-      BPLIST_IDENTIFIER.BUFFER.length
-    ) === 0
+    BPLIST_IDENTIFIER.BUFFER.compare(data, 0, BPLIST_IDENTIFIER.BUFFER.length) === 0
   ) {
     return data;
   }

@@ -250,8 +250,7 @@ describe('PluginConfig', function () {
           });
 
           it('should return an empty array', function () {
-            expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to
-              .be.empty;
+            expect(pluginConfig.getSchemaProblems(externalManifest, 'foo')).to.be.empty;
           });
         });
 
@@ -309,9 +308,10 @@ describe('PluginConfig', function () {
         it('should throw', function () {
           // @ts-expect-error
           delete extData.schema;
-          expect(() =>
-            pluginConfig.readExtensionSchema(extName, extData)
-          ).to.throw(TypeError, /why is this function being called/i);
+          expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
+            TypeError,
+            /why is this function being called/i
+          );
         });
       });
 
@@ -319,9 +319,7 @@ describe('PluginConfig', function () {
         describe('when the schema is identical (presumably the same extension)', function () {
           it('should not throw', function () {
             pluginConfig.readExtensionSchema(extName, extData);
-            expect(() =>
-              pluginConfig.readExtensionSchema(extName, extData)
-            ).not.to.throw();
+            expect(() => pluginConfig.readExtensionSchema(extName, extData)).not.to.throw();
           });
         });
 
@@ -329,9 +327,9 @@ describe('PluginConfig', function () {
           it('should throw', function () {
             pluginConfig.readExtensionSchema(extName, extData);
             MockResolveFrom.returns(resolveFixture('driver.schema.js'));
-            expect(() =>
-              pluginConfig.readExtensionSchema(extName, extData)
-            ).to.throw(/conflicts with an existing schema/i);
+            expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
+              /conflicts with an existing schema/i
+            );
           });
         });
       });

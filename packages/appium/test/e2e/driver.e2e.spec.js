@@ -7,13 +7,7 @@ import axios from 'axios';
 import {remote as wdio} from 'webdriverio';
 import {main as appiumServer} from '../../lib/main';
 import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {
-  W3C_PREFIXED_CAPS,
-  TEST_FAKE_APP,
-  TEST_HOST,
-  getTestPort,
-  PROJECT_ROOT,
-} from '../helpers';
+import {W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT} from '../helpers';
 import {BaseDriver} from '@appium/base-driver';
 import {loadExtensions} from '../../lib/extension';
 import {runExtensionCommand} from '../../lib/cli/extension';
@@ -127,9 +121,7 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(
-          `${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`
-        );
+        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
         should.not.exist(data.value.sillyWebServerPort);
         should.not.exist(data.value.sillyWebServerHost);
       } finally {
@@ -153,9 +145,7 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        const {data} = await axios.get(
-          `${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`
-        );
+        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
         data.value.sillyWebServerPort.should.eql(sillyWebServerPort);
         data.value.sillyWebServerHost.should.eql(sillyWebServerHost);
       } finally {
@@ -206,9 +196,7 @@ describe('FakeDriver - via HTTP', function () {
       should.exist(driver.sessionId);
 
       await B.delay(250);
-      await driver
-        .getPageSource()
-        .should.eventually.be.rejectedWith(/terminated/);
+      await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {
@@ -216,16 +204,12 @@ describe('FakeDriver - via HTTP', function () {
       const w3cCaps = {
         capabilities: {
           alwaysMatch: {'appium:automationName': 'Fake', platformName: 'Fake'},
-          firstMatch: [
-            {'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP},
-          ],
+          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
         },
       };
 
       // Create the session
-      const {status, value, sessionId} = (
-        await axios.post(testServerBaseSessionUrl, w3cCaps)
-      ).data;
+      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
       try {
         should.not.exist(status); // Test that it's a W3C session by checking that 'status' is not in the response
         should.not.exist(sessionId);
@@ -249,10 +233,10 @@ describe('FakeDriver - via HTTP', function () {
 
         // Now use that sessionID to call an arbitrary W3C-only endpoint that isn't implemented to see if it responds with correct error
         await axios
-          .post(
-            `${testServerBaseSessionUrl}/${value.sessionId}/execute/async`,
-            {script: '', args: ['a']}
-          )
+          .post(`${testServerBaseSessionUrl}/${value.sessionId}/execute/async`, {
+            script: '',
+            args: ['a'],
+          })
           .should.eventually.be.rejectedWith(/405/);
       } finally {
         // End session
@@ -264,9 +248,7 @@ describe('FakeDriver - via HTTP', function () {
       const badW3Ccaps = {
         capabilities: {
           alwaysMatch: {},
-          firstMatch: [
-            {'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP},
-          ],
+          firstMatch: [{'appium:deviceName': 'Fake', 'appium:app': TEST_FAKE_APP}],
         },
       };
 
@@ -291,9 +273,8 @@ describe('FakeDriver - via HTTP', function () {
         },
       };
 
-      const {status, value, sessionId} = (
-        await axios.post(testServerBaseSessionUrl, combinedCaps)
-      ).data;
+      const {status, value, sessionId} = (await axios.post(testServerBaseSessionUrl, combinedCaps))
+        .data;
       try {
         should.not.exist(status); // If it's a W3C session, should not respond with 'status'
         should.not.exist(sessionId);
@@ -317,9 +298,7 @@ describe('FakeDriver - via HTTP', function () {
           },
         },
       };
-      await axios
-        .post(testServerBaseSessionUrl, w3cCaps)
-        .should.eventually.be.rejectedWith(/500/);
+      await axios.post(testServerBaseSessionUrl, w3cCaps).should.eventually.be.rejectedWith(/500/);
     });
 
     it('should accept capabilities that are provided in the firstMatch array', async function () {
@@ -334,9 +313,7 @@ describe('FakeDriver - via HTTP', function () {
           ],
         },
       };
-      const {value, sessionId, status} = (
-        await axios.post(testServerBaseSessionUrl, w3cCaps)
-      ).data;
+      const {value, sessionId, status} = (await axios.post(testServerBaseSessionUrl, w3cCaps)).data;
       try {
         should.not.exist(status);
         should.not.exist(sessionId);
@@ -387,10 +364,7 @@ describe('FakeDriver - via HTTP', function () {
       const createSessionStub = sandbox
         .stub(FakeDriver.prototype, 'createSession')
         .callsFake(async function (jsonwpCaps) {
-          const res = await BaseDriver.prototype.createSession.call(
-            this,
-            jsonwpCaps
-          );
+          const res = await BaseDriver.prototype.createSession.call(this, jsonwpCaps);
           this.protocol.should.equal('MJSONWP');
           return res;
         });
@@ -409,10 +383,9 @@ describe('FakeDriver - via HTTP', function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {
-        await axios.post(
-          `${testServerBaseSessionUrl}/${sessionId}/fakedriver`,
-          {thing: {yes: 'lolno'}}
-        );
+        await axios.post(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`, {
+          thing: {yes: 'lolno'},
+        });
         (
           await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriver`)
         ).data.value.should.eql({yes: 'lolno'});

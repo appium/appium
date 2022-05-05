@@ -1,21 +1,22 @@
 import {
-  base64ToImage, imageToBase64, cropImage,
-  getJimpImage, MIME_PNG,
+  base64ToImage,
+  imageToBase64,
+  cropImage,
+  getJimpImage,
+  MIME_PNG,
 } from '../../lib/image-util';
 import path from 'path';
 import _ from 'lodash';
-import { fs } from '../../lib';
-
+import {fs} from '../../lib';
 
 const FIXTURES_ROOT = path.resolve(__dirname, 'fixture', 'images');
 
-async function getImage (name) {
+async function getImage(name) {
   const imagePath = path.resolve(FIXTURES_ROOT, name);
   return await fs.readFile(imagePath, 'utf8');
 }
 
 describe('image-util', function () {
-
   describe('cropBase64Image', function () {
     let originalImage = null;
 
@@ -29,7 +30,12 @@ describe('image-util', function () {
     });
 
     it('should verify that an image is cropped correctly', async function () {
-      const croppedImage = await cropImage(originalImage, {left: 35, top: 107, width: 323, height: 485});
+      const croppedImage = await cropImage(originalImage, {
+        left: 35,
+        top: 107,
+        width: 323,
+        height: 485,
+      });
 
       // verify cropped image size, it should be less than original image according to crop region
       croppedImage.width.should.be.equal(323, 'unexpected width');

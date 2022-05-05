@@ -29,12 +29,12 @@ const baseConfig = {
       'Events',
       'Namespaces',
       'Mixins',
-      'Interfaces'
+      'Interfaces',
     ],
     navLevel: 5,
     search: true,
     collapse: false,
-  }
+  },
 };
 
 export default baseConfig;

@@ -6,7 +6,6 @@ import fs from 'fs';
 import _ from 'lodash';
 import log from 'fancy-log';
 
-
 // XXX: this behavior is unsupported by Node.js (but is supported by Babel).
 // fix if dropping babel
 const GULP = require.resolve('gulp/bin/gulp');
@@ -15,7 +14,7 @@ const MOCHA = require.resolve('mocha/bin/mocha');
 const readFile = B.promisify(fs.readFile);
 
 // we do not care about exec errors
-async function exec (...args) {
+async function exec(...args) {
   return await new B(function (resolve) {
     // eslint-disable-next-line promise/prefer-await-to-callbacks
     cp.exec(args.join(' '), function (err, stdout, stderr) {
@@ -25,7 +24,7 @@ async function exec (...args) {
 }
 
 // some debug
-function print (stdout, stderr) {
+function print(stdout, stderr) {
   if (process.env.VERBOSE) {
     if ((stdout || '').length) {
       log(`stdout --> '${stdout}'`);
@@ -45,7 +44,7 @@ describe('transpile-specs', function () {
       classFile: 'a',
       throwFile: 'a-throw.es7.js:7',
       throwTestFile: 'a-throw-specs.es7.js:8',
-    }
+    },
   };
 
   for (const [name, files] of _.toPairs(tests)) {
@@ -73,7 +72,9 @@ describe('transpile-specs', function () {
       });
 
       it(`should be able to run transpiled ${name} tests`, async function () {
-        const [stdout, stderr] = await exec(`${MOCHA} build-fixtures/test/${files.classFile}-specs.js`);
+        const [stdout, stderr] = await exec(
+          `${MOCHA} build-fixtures/test/${files.classFile}-specs.js`
+        );
         print(stdout, stderr);
         stderr.should.equal('');
         stdout.should.include('1 passing');
@@ -88,7 +89,9 @@ describe('transpile-specs', function () {
       });
 
       it(`should use sourcemap when throwing within mocha (${name})`, async function () {
-        const [stdout, stderr] = await exec(`${MOCHA} build-fixtures/test/${files.classFile}-throw-specs.js`);
+        const [stdout, stderr] = await exec(
+          `${MOCHA} build-fixtures/test/${files.classFile}-throw-specs.js`
+        );
         print(stdout, stderr);
         let output = stdout + stderr;
         output.should.include('This is really bad!');

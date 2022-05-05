@@ -35,6 +35,9 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21"
   },
+  "peerDependencies": {
+    "appium": "file:../appium"
+  },
   "engines": {
     "node": ">=12",
     "npm": ">=6"

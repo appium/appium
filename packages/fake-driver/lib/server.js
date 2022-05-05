@@ -1,5 +1,5 @@
 import log from './logger';
-import {server as baseServer, routeConfiguringFunction} from '@appium/base-driver';
+import {server as baseServer, routeConfiguringFunction} from 'appium/driver';
 import {FakeDriver} from './driver';
 
 async function startServer(port, hostname) {

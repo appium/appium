@@ -1,14 +1,18 @@
+// @ts-check
 /* eslint-disable no-case-declarations */
 
-import BasePlugin from '@appium/base-plugin';
+import {BasePlugin} from 'appium/plugin';
 import B from 'bluebird';
 
-export default class FakePlugin extends BasePlugin {
+class FakePlugin extends BasePlugin {
   async getFakePluginArgs() {
     await B.delay(1);
     return this.cliArgs;
   }
 
+  /**
+   * @type {import('@appium/types').MethodMap<FakePlugin>}
+   */
   static newMethodMap = {
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData', neverProxy: true},
@@ -23,6 +27,7 @@ export default class FakePlugin extends BasePlugin {
     },
   };
 
+  /** @type {string?} */
   static _unexpectedData = null;
 
   static fakeRoute(req, res) {
@@ -33,8 +38,9 @@ export default class FakePlugin extends BasePlugin {
     res.send(JSON.stringify(FakePlugin._unexpectedData));
     FakePlugin._unexpectedData = null;
   }
-  // eslint-disable-next-line require-await
-  static async updateServer(expressApp /*, httpServer*/) {
+
+  // eslint-disable-next-line no-unused-vars,require-await
+  static async updateServer(expressApp, httpServer) {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);
   }
@@ -68,9 +74,11 @@ export default class FakePlugin extends BasePlugin {
     return `<<${handle}>>`;
   }
 
-  onUnexpectedShutdown(driver, cause) {
+  // eslint-disable-next-line require-await
+  async onUnexpectedShutdown(driver, cause) {
     FakePlugin._unexpectedData = `Session ended because ${cause}`;
   }
 }
 
 export {FakePlugin};
+export default FakePlugin;

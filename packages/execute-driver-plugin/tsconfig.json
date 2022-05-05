@@ -1,24 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "./build",
-    "paths": {
-      "@appium/base-plugin": ["../base-plugin"],
-      "@appium/support": ["../support"],
-      "appium": ["../appium"]
-    },
-    "types": ["webdriverio/async"]
+    "outDir": "build"
   },
-  "extends": "../../config/tsconfig.base.json",
-  "include": ["lib"],
-  "references": [
-    {
-      "path": "../base-plugin"
-    },
-    {
-      "path": "../support"
-    },
-    {
-      "path": "../appium"
-    }
-  ]
+  "extends": "../../config/tsconfig.plugin.json",
+  "include": ["lib"]
 }

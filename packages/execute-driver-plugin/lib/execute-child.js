@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import B from 'bluebird';
 import {NodeVM} from 'vm2';
-import {logger, util} from '@appium/support';
+import {logger, util} from 'appium/support';
 import {attach} from 'webdriverio';
 
 const log = logger.getLogger('ExecuteDriver Child');

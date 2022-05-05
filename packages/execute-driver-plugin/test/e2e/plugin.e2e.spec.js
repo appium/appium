@@ -2,10 +2,10 @@
 
 import path from 'path';
 
-import {e2eSetup as _e2eSetup} from '@appium/base-plugin/build/test/helpers';
+import {e2eSetup} from '@appium/base-plugin/build/test/helpers';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
-import {fs} from '@appium/support';
+import {fs} from 'appium/support';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -20,9 +20,6 @@ const TEST_FAKE_APP = path.join(
   'fixtures',
   'app.xml'
 );
-
-// XXX: remove when the test files get a proper TS configuration
-const e2eSetup = /** @type {import('@appium/base-plugin/test/helpers').e2eSetup} */ (_e2eSetup);
 
 const TEST_CAPS = {
   platformName: 'Fake',

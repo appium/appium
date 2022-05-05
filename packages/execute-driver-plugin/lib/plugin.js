@@ -1,7 +1,7 @@
-import BasePlugin from '@appium/base-plugin';
+import {BasePlugin} from 'appium/plugin';
 import _ from 'lodash';
 import cp from 'child_process';
-import {timing} from '@appium/support';
+import {timing} from 'appium/support';
 import B from 'bluebird';
 
 const FEAT_FLAG = 'execute_driver_script';

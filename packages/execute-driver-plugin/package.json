@@ -34,12 +34,13 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "file:../base-plugin",
-    "@appium/support": "file:../support",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "vm2": "3.9.9",
     "webdriverio": "7.19.7"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.35"
   },
   "publishConfig": {
     "access": "public"

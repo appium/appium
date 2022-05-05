@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import LRU from 'lru-cache';
-import {imageUtil, util} from '@appium/support';
-import {errors} from '@appium/base-driver';
+import {errors} from 'appium/driver';
+import {util, imageUtil} from 'appium/support';
 import {
   ImageElement,
   DEFAULT_TEMPLATE_IMAGE_SCALE,
@@ -73,6 +73,17 @@ const DEFAULT_SETTINGS = {
 };
 
 export default class ImageElementFinder {
+  /** @type {ExternalDriver} */
+  driver;
+
+  /** @type {LRU<string,ImageElement>} */
+  imgElCache;
+
+  /**
+   *
+   * @param {ExternalDriver} driver
+   * @param {number} [maxSize]
+   */
   constructor(driver, maxSize = MAX_CACHE_SIZE_BYTES) {
     this.driver = driver;
     this.imgElCache = new LRU({
@@ -86,6 +97,10 @@ export default class ImageElementFinder {
     this.driver = driver;
   }
 
+  /**
+   * @param {ImageElement} imgEl
+   * @returns {Element}
+   */
   registerImageElement(imgEl) {
     this.imgElCache.set(imgEl.id, imgEl);
     const protoKey = this.driver.isW3CProtocol() ? W3C_ELEMENT_KEY : MJSONWP_ELEMENT_KEY;
@@ -109,9 +124,9 @@ export default class ImageElementFinder {
    *
    * @param {string} b64Template - base64-encoded image used as a template to be
    * matched in the screenshot
-   * @param {FindByImageOptions} - additional options
+   * @param {FindByImageOptions} opts - additional options
    *
-   * @returns {WebElement} - WebDriver element with a special id prefix
+   * @returns {Promise<Element|Element[]|ImageElement>} - WebDriver element with a special id prefix
    */
   async findByImage(
     b64Template,
@@ -236,10 +251,10 @@ export default class ImageElementFinder {
    * Ensure that the image template sent in for a find is of a suitable size
    *
    * @param {string} b64Template - base64-encoded image
-   * @param {int} screenWidth - width of screen
-   * @param {int} screenHeight - height of screen
+   * @param {number} screenWidth - width of screen
+   * @param {number} screenHeight - height of screen
    *
-   * @returns {string} base64-encoded image, potentially resized
+   * @returns {Promise<string>} base64-encoded image, potentially resized
    */
   async ensureTemplateSize(b64Template, screenWidth, screenHeight) {
     let imgObj = await imageUtil.getJimpImage(b64Template);
@@ -263,22 +278,13 @@ export default class ImageElementFinder {
   }
 
   /**
-   * @typedef Screenshot
-   * @property {string} b64Screenshot - base64 based screenshot string
-   */
-  /**
-   * @typedef ScreenshotScale
-   * @property {float} xScale - Scale ratio for width
-   * @property {float} yScale - Scale ratio for height
-   */
-  /**
    * Get the screenshot image that will be used for find by element, potentially
    * altering it in various ways based on user-requested settings
    *
-   * @param {int} screenWidth - width of screen
-   * @param {int} screenHeight - height of screen
+   * @param {number} screenWidth - width of screen
+   * @param {number} screenHeight - height of screen
    *
-   * @returns { {b64Screenshot: Screenshot, scale: ScreenshotScale? } } base64-encoded screenshot and ScreenshotScale
+   * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind(screenWidth, screenHeight) {
     if (!this.driver.getScreenshot) {
@@ -400,12 +406,12 @@ export default class ImageElementFinder {
   /**
    * @typedef ImageTemplateSettings
    * @property {boolean} fixImageTemplateScale - fixImageTemplateScale in device-settings
-   * @property {float} defaultImageTemplateScale - defaultImageTemplateScale in device-settings
+   * @property {number} defaultImageTemplateScale - defaultImageTemplateScale in device-settings
    * @property {boolean} ignoreDefaultImageTemplateScale - Ignore defaultImageTemplateScale if it has true.
    * If b64Template has been scaled to defaultImageTemplateScale or should ignore the scale,
    * this parameter should be true. e.g. click in image-element module
-   * @property {float} xScale - Scale ratio for width
-   * @property {float} yScale - Scale ratio for height
+   * @property {number} xScale - Scale ratio for width
+   * @property {number} yScale - Scale ratio for height
 
    */
   /**
@@ -417,9 +423,9 @@ export default class ImageElementFinder {
    * matched in the screenshot
    * @param {ImageTemplateSettings} opts - Image template scale related options
    *
-   * @returns {string} base64-encoded scaled template screenshot
+   * @returns {Promise<string>} base64-encoded scaled template screenshot
    */
-  async fixImageTemplateScale(b64Template, opts = {}) {
+  async fixImageTemplateScale(b64Template, opts) {
     if (!opts) {
       return b64Template;
     }
@@ -450,7 +456,7 @@ export default class ImageElementFinder {
     }
 
     // xScale and yScale can be NaN if defaultImageTemplateScale is string, for example
-    if (!parseFloat(xScale) || !parseFloat(yScale)) {
+    if (!parseFloat(String(xScale)) || !parseFloat(String(yScale))) {
       return b64Template;
     }
 
@@ -459,7 +465,10 @@ export default class ImageElementFinder {
       Math.round(xScale * FLOAT_PRECISION) ===
         Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION) &&
       Math.round(
-        yScale * FLOAT_PRECISION === Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION)
+        Number(
+          yScale * FLOAT_PRECISION ===
+            Math.round(DEFAULT_FIX_IMAGE_TEMPLATE_SCALE * FLOAT_PRECISION)
+        )
       )
     ) {
       return b64Template;
@@ -481,3 +490,19 @@ export default class ImageElementFinder {
 }
 
 export {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY, DEFAULT_SETTINGS, DEFAULT_FIX_IMAGE_TEMPLATE_SCALE};
+
+/**
+ * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
+ * @typedef {import('@appium/types').Element} Element
+ */
+
+/**
+ * @typedef Screenshot
+ * @property {string} b64Screenshot - base64 based screenshot string
+ */
+
+/**
+ * @typedef ScreenshotScale
+ * @property {number} xScale - Scale ratio for width
+ * @property {number} yScale - Scale ratio for height
+ */

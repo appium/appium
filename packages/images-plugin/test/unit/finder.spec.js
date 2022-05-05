@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import {imageUtil} from '@appium/support';
-import BaseDriver from '@appium/base-driver';
+import {imageUtil} from 'appium/support';
+import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
 import ImageElementFinder from '../../lib/finder';
 import ImageElement from '../../lib/image-element';
@@ -58,9 +58,12 @@ describe('finding elements by image', function () {
     const size = {width: 100, height: 200};
     const screenshot = 'iVBORfoo';
     const template = 'iVBORbar';
+    /** @type {PluginDriver} */
+    let d;
+    /** @type {ImageElementFinder} */
+    let f;
+    /** @type {import('sinon').SinonStubbedMember<import('../../lib/compare').compareImages>} */
     let compareStub;
-    let d = new PluginDriver();
-    let f = new ImageElementFinder(d);
 
     function basicStub(driver, finder) {
       const sizeStub = sandbox.stub(driver, 'getWindowSize').returns(size);
@@ -81,7 +84,9 @@ describe('finding elements by image', function () {
     beforeEach(function () {
       d = new PluginDriver();
       f = new ImageElementFinder(d);
-      compareStub = sandbox.stub(compareModule, 'compareImages').resolves({rect, score});
+      compareStub = sandbox;
+      compareStub = sandbox.stub(compareModule, 'compareImages');
+      compareStub.resolves({rect, score});
       basicStub(d, f);
     });
 
@@ -90,8 +95,7 @@ describe('finding elements by image', function () {
       basicImgElVerify(imgElProto, f);
     });
     it('should find image elements happypath', async function () {
-      compareStub.restore();
-      compareStub = sandbox.stub(compareModule, 'compareImages').resolves([{rect, score}]);
+      compareStub.resolves([{rect, score}]);
       const els = await f.findByImage(template, {multiple: true});
       els.should.have.length(1);
       basicImgElVerify(els[0], f);
@@ -129,23 +133,23 @@ describe('finding elements by image', function () {
     });
 
     it('should throw an error if template match fails', async function () {
-      compareStub.throws(new Error('Cannot find any occurrences'));
+      compareStub.rejects(new Error('Cannot find any occurrences'));
       await f
         .findByImage(template, {multiple: false})
-        .should.eventually.be.rejectedWith(/element could not be located/);
+        .should.be.rejectedWith(/element could not be located/);
     });
     it('should return empty array for multiple elements if template match fails', async function () {
-      compareStub.throws(new Error('Cannot find any occurrences'));
+      compareStub.rejects(new Error('Cannot find any occurrences'));
       await f.findByImage(template, {multiple: true}).should.eventually.eql([]);
     });
     it('should respect implicit wait', async function () {
       d.setImplicitWait(10);
       compareStub.resetHistory();
-      compareStub.onCall(0).throws(new Error('Cannot find any occurrences'));
       compareStub.returns({rect, score});
+      compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));
       const imgElProto = await f.findByImage(template, {multiple: false});
       basicImgElVerify(imgElProto, f);
-      compareStub.callCount.should.eql(2);
+      compareStub.should.have.been.calledTwice;
     });
     it('should not add element to cache and return it directly when checking staleness', async function () {
       const imgEl = await f.findByImage(template, {
@@ -159,9 +163,14 @@ describe('finding elements by image', function () {
   });
 
   describe('fixImageTemplateScale', function () {
-    const d = new PluginDriver();
-    const f = new ImageElementFinder(d);
+    let d;
+    let f;
     const basicTemplate = 'iVBORbaz';
+
+    beforeEach(function () {
+      d = new PluginDriver();
+      f = new ImageElementFinder(d);
+    });
 
     it('should not fix template size scale if no scale value', async function () {
       await f

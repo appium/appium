@@ -1,6 +1,6 @@
 import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from '../../lib/compare';
-import BaseDriver from '@appium/base-driver';
+import BaseDriver from 'appium/driver';
 import {W3C_ELEMENT_KEY} from '../../lib/finder';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures';
 

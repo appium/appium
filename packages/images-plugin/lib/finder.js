@@ -73,7 +73,8 @@ export default class ImageElementFinder {
     this.driver = driver;
     this.imgElCache = new LRU({
       max,
-      length: (el) => el.template.length,
+      maxSize: max,
+      sizeCalculation: (el) => el.template.length,
     });
   }
 

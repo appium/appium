@@ -13,7 +13,8 @@ const DEFAULT_FIX_IMAGE_TEMPLATE_SCALE = 1;
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
 const FLOAT_PRECISION = 100000;
-const MAX_CACHE_SIZE = 1024 * 1024 * 40; // 40mb
+const MAX_CACHE_ITEMS = 100;
+const MAX_CACHE_SIZE_BYTES = 1024 * 1024 * 40; // 40mb
 
 const DEFAULT_SETTINGS = {
   // value between 0 and 1 representing match strength, below which an image
@@ -69,11 +70,12 @@ const DEFAULT_SETTINGS = {
 };
 
 export default class ImageElementFinder {
-  constructor (driver, max = MAX_CACHE_SIZE) {
+  constructor (driver, maxSize = MAX_CACHE_SIZE_BYTES) {
     this.driver = driver;
     this.imgElCache = new LRU({
-      max,
-      length: (el) => el.template.length,
+      max: MAX_CACHE_ITEMS,
+      maxSize,
+      sizeCalculation: (el) => el.template.length,
     });
   }
 

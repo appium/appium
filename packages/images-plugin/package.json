@@ -39,7 +39,7 @@
     "@appium/base-plugin": "file:../base-plugin",
     "@appium/opencv": "file:../opencv",
     "@appium/support": "file:../support",
-    "lru-cache": "6.0.0"
+    "lru-cache": "7.9.0"
   },
   "appium": {
     "pluginName": "images",

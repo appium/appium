@@ -1,19 +1,37 @@
 {
   "name": "@appium/relaxed-caps-plugin",
-  "description": "An Appium 2.0 plugin that loosens requirements for vendor prefixes on caps",
-  "tags": [
-    "appium"
-  ],
   "version": "1.0.0-beta.6",
-  "author": "Appium <maintainers@appium.io>",
-  "license": "Apache-2.0",
+  "description": "An Appium 2.0 plugin that loosens requirements for vendor prefixes on caps",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/appium/appium.git",
     "directory": "packages/relaxed-caps-plugin"
   },
-  "bugs": {
-    "url": "https://github.com/appium/appium/issues"
+  "license": "Apache-2.0",
+  "author": "Appium <maintainers@appium.io>",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build"
+  ],
+  "scripts": {
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "test": "npm run test:unit",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+  },
+  "dependencies": {
+    "@appium/base-plugin": "file:../base-plugin",
+    "lodash": "4.17.21"
   },
   "engines": {
     "node": ">=12",
@@ -23,25 +41,8 @@
     "pluginName": "relaxed-caps",
     "mainClass": "RelaxedCapsPlugin"
   },
-  "directories": {
-    "lib": "./lib"
-  },
-  "files": [
-    "index.js",
-    "lib",
-    "build"
-  ],
-  "dependencies": {
-    "@appium/base-plugin": "file:../base-plugin",
-    "lodash": "4.17.21"
-  },
-  "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
-    "dev": "npm run build -- --watch",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "test": "npm run test:unit",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
-  },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
+  "tags": [
+    "appium"
+  ]
 }

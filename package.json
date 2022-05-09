@@ -26,7 +26,6 @@
   "scripts": {
     "build": "run-s build:distfiles build:types",
     "build:distfiles": "lerna run --parallel --prefix --concurrency=8 build",
-    "build:loose": "run-s -c build:distfiles build:types || true",
     "build:types": "tsc -b",
     "clean": "run-s clean:artifacts clean:packages clean:monorepo",
     "clean:artifacts": "run-s clean:distfiles clean:types && npx rimraf \"packages/*/build\"",
@@ -39,7 +38,7 @@
     "dev:types": "tsc -b --watch",
     "doctor": "node ./packages/doctor",
     "generate-docs": "lerna run --scope=appium generate-docs",
-    "postinstall": "npm run build:loose",
+    "prepare": "npm run build:types || true",
     "install-fake-driver": "npm start -- driver install --source=local ./packages/fake-driver",
     "install-mjpeg-consumer": "npm install mjpeg-consumer --no-save",
     "lint": "eslint .",
@@ -77,8 +76,8 @@
   },
   "prettier": {
     "bracketSpacing": false,
-    "singleQuote": true,
-    "printWidth": 100
+    "printWidth": 100,
+    "singleQuote": true
   },
   "dependencies": {
     "@appium/base-driver": "file:packages/base-driver",
@@ -98,7 +97,8 @@
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",
     "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
-    "appium": "file:packages/appium"
+    "appium": "file:packages/appium",
+    "lru-cache": "7.9.0"
   },
   "devDependencies": {
     "@appium/fake-plugin": "1.3.1",

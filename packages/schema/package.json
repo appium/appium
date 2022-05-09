@@ -35,7 +35,8 @@
     "build:schema-json": "node ./scripts/generate-schema-json.js",
     "dev": "npm run build:distfiles -- --watch",
     "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore ."
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build"
   },
   "engines": {
     "node": ">=12",

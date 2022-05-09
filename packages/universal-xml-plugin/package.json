@@ -18,6 +18,7 @@
   },
   "license": "Apache-2.0",
   "author": "Appium <maintainers@appium.io>",
+  "types": "./build/lib/plugin.d.ts",
   "files": [
     "index.js",
     "build",
@@ -28,6 +29,7 @@
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
@@ -42,6 +44,5 @@
     "pluginName": "universal-xml",
     "mainClass": "UniversalXMLPlugin"
   },
-  "types": "./build/lib/plugin.d.ts",
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

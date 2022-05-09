@@ -37,6 +37,7 @@
   "scripts": {
     "dev": "gulp dev --no-notif",
     "build": "gulp transpile",
+    "prepare": "npm run build",
     "test": "gulp unit-test:run",
     "test:e2e": "gulp e2e-test:run"
   },

@@ -1,51 +1,127 @@
 #!/usr/bin/env node
+
 /* eslint-disable no-console, promise/prefer-await-to-then */
 
-async function main() {
-  const driverEnv = process.env.npm_config_drivers;
-  const pluginEnv = process.env.npm_config_plugins;
+/** @type {import('../lib/cli/extension').runExtensionCommand} */
+let runExtensionCommand;
+/** @type {import('../lib/constants').DRIVER_TYPE} */
+let DRIVER_TYPE;
+/** @type {import('../lib/constants').PLUGIN_TYPE} */
+let PLUGIN_TYPE;
+/** @type {import('../lib/extension').loadExtensions} */
+let loadExtensions;
 
-  if (!driverEnv && !pluginEnv) {
-    console.log('Not auto-installing any drivers or plugins');
+const {env, util, logger} = require('@appium/support');
+
+const ora = require('ora');
+
+const log = (message) => {
+  console.error(`[Appium] ${message}`);
+};
+
+const spinner = ora({
+  text: 'Checking Appium installation...',
+  prefixText: '[Appium]',
+}).start();
+
+try {
+  ({runExtensionCommand} = require('../build/lib/cli/extension'));
+  ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
+  ({loadExtensions} = require('../build/lib/extension'));
+  spinner.succeed('Appium installation OK');
+  // suppress logs from Appium, which mess up the script output
+  logger.getLogger('Appium').level = 'error';
+} catch (e) {
+  spinner.fail(`Could not load required module(s); has Appium been built? (${e.message})`);
+  if (process.env.CI) {
+    console.error('Detected CI environment, exiting with code 1');
+    process.exitCode = 1;
+  } else {
+    process.exitCode = 0;
+  }
+  process.exit();
+}
+
+async function main() {
+  if (await env.hasAppiumDependency()) {
+    log(`Found local Appium installation; skipping automatic installation of extensions.`);
     return;
   }
 
-  let extension;
-  try {
-    extension = require('../build/lib/cli/extension');
-  } catch (e) {
-    throw new Error(
-      `Could not load extension CLI file; has the project been transpiled? ` + `(${e.message})`
+  const driverEnv = process.env.npm_config_drivers;
+  const pluginEnv = process.env.npm_config_plugins;
+
+  const spinner = ora({
+    text: 'Looking for extensions to automatically install...',
+    prefixText: '[Appium]',
+  }).start();
+
+  if (!driverEnv && !pluginEnv) {
+    spinner.succeed(
+      'No drivers or plugins to automatically install. If desired, provide arguments with comma-separated values "--drivers=<known_driver>[,known_driver...]" and/or "--plugins=<known_plugin>[,known_plugin...]" to the "npm install appium" command. The specified extensions will be installed automatically with Appium.  Note: to see the list of known extensions, run "appium <driver|plugin> list".'
     );
+    return;
   }
 
-  const {DEFAULT_APPIUM_HOME, DRIVER_TYPE, PLUGIN_TYPE} = require('./build/lib/extension-config');
-  const {runExtensionCommand} = extension;
-  const appiumHome = process.env.npm_config_appium_home || DEFAULT_APPIUM_HOME;
   const specs = [
     [DRIVER_TYPE, driverEnv],
     [PLUGIN_TYPE, pluginEnv],
   ];
 
+  spinner.start('Resolving Appium home directory...');
+  const appiumHome = await env.resolveAppiumHome();
+  spinner.succeed(`Found Appium home: ${appiumHome}`);
+
+  spinner.start(`Loading extension data...`);
+  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+  spinner.succeed(`Loaded extension data.`);
+
+  const installedStats = {[DRIVER_TYPE]: 0, [PLUGIN_TYPE]: 0};
   for (const [type, extEnv] of specs) {
     if (extEnv) {
-      for (const ext of extEnv.split(',')) {
+      for await (let ext of extEnv.split(',')) {
+        ext = ext.trim();
         try {
           await checkAndInstallExtension({
             runExtensionCommand,
             appiumHome,
             type,
             ext,
+            driverConfig,
+            pluginConfig,
+            spinner,
           });
+          installedStats[type]++;
         } catch (e) {
-          console.log(`There was an error checking and installing ${type} ${ext}: ${e.message}`);
+          spinner.fail(`Could not install ${type} "${ext}": ${e.message}`);
+          if (process.env.CI) {
+            process.exitCode = 1;
+          }
+          return;
         }
       }
     }
   }
+  spinner.succeed(
+    `Done. ${installedStats[DRIVER_TYPE]} ${util.pluralize(
+      'driver',
+      installedStats[DRIVER_TYPE]
+    )} and ${installedStats[PLUGIN_TYPE]} ${util.pluralize(
+      'plugin',
+      installedStats[PLUGIN_TYPE]
+    )} are installed.`
+  );
 }
 
-async function checkAndInstallExtension({runExtensionCommand, appiumHome, type, ext}) {
+async function checkAndInstallExtension({
+  runExtensionCommand,
+  appiumHome,
+  type,
+  ext,
+  driverConfig,
+  pluginConfig,
+  spinner,
+}) {
   const extList = await runExtensionCommand(
     {
       appiumHome,
@@ -53,31 +129,33 @@ async function checkAndInstallExtension({runExtensionCommand, appiumHome, type, 
       showInstalled: true,
       suppressOutput: true,
     },
-    type
+    type === DRIVER_TYPE ? driverConfig : pluginConfig
   );
   if (extList[ext]) {
-    console.log(`The ${type} ${ext} was already installed, skipping...`);
+    spinner.info(`The ${type} "${ext}" is already installed.`);
     return;
   }
-  console.log(`Installing the ${type} ${ext}...`);
+  spinner.start(`Installing ${type} "${ext}"...`);
   await runExtensionCommand(
     {
       appiumHome,
       [`${type}Command`]: 'install',
-      [type]: ext,
       suppressOutput: true,
+      [type]: ext,
     },
-    type
+    type === DRIVER_TYPE ? driverConfig : pluginConfig
   );
+  spinner.succeed(`Installed ${type} "${ext}".`);
 }
 
 if (require.main === module) {
-  main()
-    .then(() => {
-      process.exit(0);
-    })
-    .catch((e) => {
-      console.error(e);
-      process.exit(1);
-    });
+  main().catch((e) => {
+    log(e);
+    if (process.env.CI) {
+      log('Detected CI environment, exiting with code 1');
+      process.exitCode = 1;
+    }
+  });
 }
+
+module.exports = main;

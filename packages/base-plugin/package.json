@@ -27,6 +27,7 @@
     "dev": "run-p \"build:distfiles -- --watch\" \"build:test -- --watch\"",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },

@@ -23,6 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
@@ -36,6 +37,7 @@
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
@@ -84,6 +86,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "types": "./build/lib/index.d.ts",
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

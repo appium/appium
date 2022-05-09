@@ -18,6 +18,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/index.d.ts",
   "files": [
     "build",
     "lib"
@@ -26,18 +27,18 @@
     "build": "node ./scripts/generate-schema-types.js",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore ."
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@appium/schema": "file:../schema"
   },
   "engines": {
     "node": ">=12",
     "npm": ">=6"
   },
-  "types": "./build/index.d.ts",
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
-  "dependencies": {
-    "@appium/schema": "file:../schema"
-  }
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

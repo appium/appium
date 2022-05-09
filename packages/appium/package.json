@@ -23,6 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/lib/main.d.ts",
   "bin": {
     "appium": "index.js"
   },
@@ -42,16 +43,17 @@
   ],
   "scripts": {
     "build": "babel lib --root-mode=upward --out-dir=build/lib",
-    "dev": "npm run build -- --watch",
-    "fix": "npm run lint -- --fix",
     "build:docs": "node docs/scripts/build-docs.js",
     "build:docs:assets": "node docs/scripts/copy-assets.js",
+    "dev": "npm run build -- --watch",
     "dev:docs": "npm run build:docs:assets && npm run dev:docs:en",
     "dev:docs:en": "mkdocs serve -f ./docs/mkdocs-en.yml",
     "dev:docs:ja": "mkdocs serve -f ./docs/mkdocs-ja.yml",
-    "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",
+    "fix": "npm run lint -- --fix",
     "postinstall": "node ./scripts/postinstall.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 30s --slow 15s \"./test/e2e/**/*.spec.js\"",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
@@ -95,6 +97,5 @@
     "access": "public",
     "tag": "next"
   },
-  "types": "./build/lib/main.d.ts",
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

@@ -40,6 +40,7 @@
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""

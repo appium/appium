@@ -2,31 +2,37 @@
   "name": "@appium/execute-driver-plugin",
   "version": "1.0.5",
   "description": "Plugin for batching and executing driver commands with Appiums",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/appium/appium.git",
-    "directory": "packages/execute-driver-plugin"
-  },
-  "appium": {
-    "pluginName": "execute-driver",
-    "mainClass": "ExecuteDriverPlugin"
-  },
   "keywords": [
     "appium",
     "automation",
     "webdriver"
   ],
-  "author": "Appium <maintainers@appium.io>",
-  "license": "Apache-2.0",
+  "homepage": "https://github.com/appium/appium#readme",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
-  "homepage": "https://github.com/appium/appium#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/execute-driver-plugin"
+  },
+  "license": "Apache-2.0",
+  "author": "Appium <maintainers@appium.io>",
   "files": [
     "build",
     "lib",
     "index.js"
   ],
+  "scripts": {
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "test": "npm run test:unit",
+    "test:e2e": "mocha -t 160s --slow 20s \"./test/e2e/**/*.spec.js\"",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+  },
   "dependencies": {
     "@appium/base-plugin": "file:../base-plugin",
     "@appium/support": "file:../support",
@@ -35,17 +41,12 @@
     "vm2": "3.9.9",
     "webdriverio": "7.19.7"
   },
-  "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
-    "dev": "npm run build -- --watch",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "test": "npm run test:unit",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
-    "test:e2e": "mocha -t 160s --slow 20s \"./test/e2e/**/*.spec.js\""
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "appium": {
+    "pluginName": "execute-driver",
+    "mainClass": "ExecuteDriverPlugin"
   },
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
 }

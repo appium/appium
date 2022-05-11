@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
-import pkgDir from 'pkg-dir';
+import fs from './fs';
 import readPkg from 'read-pkg';
 import {npm} from './npm';
 
@@ -42,45 +42,49 @@ export const MANIFEST_RELATIVE_PATH = path.join(
  *
  * _Also_ note that if `appium` appears as a dependency in `package.json` _but it is not yet installed_ this function will resolve `false`.  This may not be exactly what we want.
  *
- * @param {string} cwd
- * @returns {Promise<boolean>}
  */
-export async function hasAppiumDependency(cwd) {
+export const hasAppiumDependency = _.memoize(
   /**
-   * @todo type this
-   * @type {object}
+   * @param {string} cwd
+   * @returns {Promise<boolean>}
    */
-  let listResult;
-  /** @type {string|undefined} */
-  let resolved;
-  /** @type {string|undefined} */
-  let version;
-  try {
-    listResult = await npm.list(cwd, 'appium');
-    // if "resolved" is empty, then `appium` is in dependencies, but `npm install` has not been run.
-    // in other words, this function can resolve `true` even if `resolved` is empty...
-    resolved = listResult?.dependencies?.appium?.resolved ?? '';
-    // ...however, it cannot do so unless `version` is nonempty.
-    version = listResult?.dependencies?.appium?.version ?? '';
-  } catch {
+  async function _hasAppiumDependency(cwd) {
+    /**
+     * @todo type this
+     * @type {object}
+     */
+    let listResult;
+    /** @type {string|undefined} */
+    let resolved;
+    /** @type {string|undefined} */
+    let version;
     try {
-      const pkg = await readPackageInDir(cwd);
-      // we're only going to look at these three fields for now, but we can change it later if need be.
-      version = resolved =
-        pkg?.dependencies?.appium ??
-        pkg?.devDependencies?.appium ??
-        pkg?.optionalDependencies?.appium;
-    } catch {}
+      listResult = await npm.list(cwd, 'appium');
+      // if "resolved" is empty, then `appium` is in dependencies, but `npm install` has not been run.
+      // in other words, this function can resolve `true` even if `resolved` is empty...
+      resolved = listResult?.dependencies?.appium?.resolved ?? '';
+      // ...however, it cannot do so unless `version` is nonempty.
+      version = listResult?.dependencies?.appium?.version ?? '';
+    } catch {
+      try {
+        const pkg = await readPackageInDir(cwd);
+        // we're only going to look at these three fields for now, but we can change it later if need be.
+        version = resolved =
+          pkg?.dependencies?.appium ??
+          pkg?.devDependencies?.appium ??
+          pkg?.optionalDependencies?.appium;
+      } catch {}
+    }
+    return Boolean(
+      version &&
+        (!resolved || (resolved && !resolved.startsWith('file:'))) &&
+        // doing any further checking here may be a fool's errand, because you can pin the version
+        // to a _lot_ of different things (tags, URLs, etc).
+        !version.startsWith('1') &&
+        !version.startsWith('0')
+    );
   }
-  return Boolean(
-    version &&
-      (!resolved || (resolved && !resolved.startsWith('file:'))) &&
-      // doing any further checking here may be a fool's errand, because you can pin the version
-      // to a _lot_ of different things (tags, URLs, etc).
-      !version.startsWith('1') &&
-      !version.startsWith('0')
-  );
-}
+);
 
 /**
  * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
@@ -121,7 +125,7 @@ export const resolveAppiumHome = _.memoize(
     let currentPkgDir;
 
     try {
-      currentPkgDir = await pkgDir(cwd);
+      currentPkgDir = fs.findRoot(cwd);
 
       // if we can't find a `package.json`, use the default
       if (!currentPkgDir) {

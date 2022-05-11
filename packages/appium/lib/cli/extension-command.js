@@ -2,7 +2,7 @@
 
 import _ from 'lodash';
 import path from 'path';
-import {npm, fs, util, env} from '@appium/support';
+import {npm, fs, util} from '@appium/support';
 import {log, spinWith, RingBuffer} from './utils';
 import {SubProcess} from 'teen_process';
 import {
@@ -272,7 +272,7 @@ class ExtensionCommand {
     await this.config.addExtension(extName, extManifest);
 
     // update the if we've changed the local `package.json`
-    if (await env.hasAppiumDependency(this.config.appiumHome)) {
+    if (this.config.manifest.hasAppiumDependency && this.config.appiumHome) {
       await packageDidChange(this.config.appiumHome);
     }
 
@@ -298,6 +298,7 @@ class ExtensionCommand {
         async () =>
           await npm.installPackage(this.config.appiumHome, pkgName, {
             pkgVer,
+            hasAppiumDependency: this.config.manifest.hasAppiumDependency,
           })
       );
       return this.getExtensionFields(pkgJsonData, installSpec);
@@ -405,9 +406,11 @@ class ExtensionCommand {
     if (!this.config.isInstalled(installSpec)) {
       throw new Error(`Can't uninstall ${this.type} '${installSpec}'; it is not installed`);
     }
-    const installPath = this.config.getInstallPath(installSpec);
     try {
-      await fs.rimraf(installPath);
+      await npm.uninstallPackage(
+        this.config.appiumHome,
+        this.config.installedExtensions[installSpec].pkgName
+      );
     } finally {
       await this.config.removeExtension(installSpec);
     }

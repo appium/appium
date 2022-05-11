@@ -15,10 +15,11 @@ import B from 'bluebird';
  *
  * If `appiumHome` is needed, use `resolveAppiumHome` from the `env` module in `@appium/support`.
  * @param {string} appiumHome
+ * @param {boolean} [hasAppiumDependency]
  * @returns {Promise<ExtensionConfigs>}
  */
-export async function loadExtensions(appiumHome) {
-  const manifest = Manifest.getInstance(appiumHome);
+export async function loadExtensions(appiumHome, hasAppiumDependency) {
+  const manifest = Manifest.getInstance(appiumHome, hasAppiumDependency);
   await manifest.read();
   const driverConfig = DriverConfig.getInstance(manifest) ?? DriverConfig.create(manifest);
   const pluginConfig = PluginConfig.getInstance(manifest) ?? PluginConfig.create(manifest);

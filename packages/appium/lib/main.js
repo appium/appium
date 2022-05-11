@@ -4,7 +4,7 @@ import {init as logsinkInit} from './logsink'; // this import needs to come firs
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -26,8 +26,6 @@ import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
 import {inspect} from './utils';
-
-const {resolveAppiumHome} = env;
 
 /**
  *
@@ -168,9 +166,10 @@ function areServerCommandArgs(args) {
  * const schema = getSchema(); // entire config schema including plugins and drivers
  */
 async function init(args) {
-  const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+  const appiumHome = args?.appiumHome ?? (await env.resolveAppiumHome());
+  const hasAppiumDependency = await env.hasAppiumDependency(fs.findRoot(process.cwd()));
 
-  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
+  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome, hasAppiumDependency);
 
   const parser = getParser();
   let throwInsteadOfExit = false;
@@ -381,7 +380,9 @@ if (require.main === module) {
 // everything below here is intended to be a public API.
 export {readConfigFile} from './config-file';
 export {finalizeSchema, getSchema, validate} from './schema/schema';
-export {main, init, resolveAppiumHome};
+export {main, init};
+
+export const {resolveAppiumHome} = env;
 
 /**
  * @typedef {import('@appium/types').DriverType} DriverType

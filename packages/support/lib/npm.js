@@ -2,7 +2,7 @@
 
 import path from 'path';
 import semver from 'semver';
-import {hasAppiumDependency} from './env';
+import * as env from './env';
 import {exec} from 'teen_process';
 import {fs} from './fs';
 import * as util from './util';
@@ -173,7 +173,7 @@ export class NPM {
    * @param {InstallPackageOpts} [opts]
    * @returns {Promise<import('type-fest').PackageJson>}
    */
-  async installPackage(cwd, pkgName, {pkgVer} = {}) {
+  async installPackage(cwd, pkgName, {pkgVer, hasAppiumDependency} = {}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -188,6 +188,10 @@ export class NPM {
       }
     }
 
+    if (hasAppiumDependency === undefined) {
+      hasAppiumDependency = await env.hasAppiumDependency(cwd);
+    }
+
     /**
      * If we've found a `package.json` containined the `appiumCreated` property,
      * then we can do whatever we please with it, since we created it.  This is
@@ -199,10 +203,9 @@ export class NPM {
      * "dummy" and is controlled by the user.  So we'll just add it as a dev
      * dep; whatever else it does is up to the user's npm config.
      */
-    const installOpts = (await hasAppiumDependency(cwd))
+    const installOpts = hasAppiumDependency
       ? ['--save-dev']
       : ['--save-dev', '--save-exact', '--global-style', '--no-package-lock'];
-
     const res = await this.exec(
       'install',
       [...installOpts, pkgVer ? `${pkgName}@${pkgVer}` : pkgName],
@@ -255,6 +258,7 @@ export const npm = new NPM();
  * Options for {@link NPM.installPackage}
  * @typedef InstallPackageOpts
  * @property {string} [pkgVer] - the version of the package to install
+ * @property {boolean} [hasAppiumDependency] - whether to assume a local dependency on Appium; affects installation flags
  */
 
 /**

@@ -144,6 +144,11 @@ class JWProxy {
 
     const sessionBaseRe = new RegExp('^/session/([^/]+)');
     if (sessionBaseRe.test(remainingUrl)) {
+      if (this.sessionId === null) {
+        throw new ReferenceError(
+          `Session ID is not set, but saw a URL path referencing a session (${remainingUrl}). This may be a bug in your client.`
+        );
+      }
       // we have something like /session/:id/foobar, so we need to replace
       // the session id
       const match = sessionBaseRe.exec(remainingUrl);

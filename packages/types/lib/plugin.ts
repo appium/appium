@@ -9,6 +9,17 @@ export interface PluginStatic {
    * Allows a plugin to modify the Appium server instance.
    */
   updateServer?: UpdateServerCallback;
+  /**
+   * Plugins can define new methods for the Appium server to map to command names, of the same
+   * format as used in Appium's `routes.js`, for example, this would be a valid `newMethodMap`:
+   * @example
+   * {
+   *   '/session/:sessionId/new_method': {
+   *     GET: {command: 'getNewThing'},
+   *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
+   *   }
+   * }
+   */
   newMethodMap?: MethodMap<Plugin>;
 }
 
@@ -47,11 +58,6 @@ export interface Plugin {
 }
 
 /**
- * Plugin implementations implement this type.
- */
-// export type PluginClass<T extends Plugin> = Class<T, PluginStatic, [string]>;
-
-/**
  * A reference to an async function which encapsulates what would normally
  * happen if this plugin were not handling a command. Used by {@link PluginInterface.handle}.
  *
@@ -78,4 +84,7 @@ export type PluginCommand<TArgs = any> = (
   ...args: TArgs[]
 ) => Promise<void>;
 
+/**
+ * Mainly for internal use.
+ */
 export type PluginClass = Class<Plugin, PluginStatic & {pluginName: string}, [string]>;

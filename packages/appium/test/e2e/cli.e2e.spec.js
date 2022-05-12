@@ -37,7 +37,7 @@ describe('CLI behavior', function () {
   const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
   beforeEach(function () {
-    this.timeout(30000);
+    this.timeout(40000);
   });
 
   describe('when appium is a dependency of the project in the current working directory', function () {

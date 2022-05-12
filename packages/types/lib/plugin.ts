@@ -4,7 +4,7 @@ import {Driver, ExternalDriver} from './driver';
 /**
  * The interface describing the constructor and static properties of a Plugin.
  */
-export interface PluginStatic {
+export interface PluginStatic<T extends Plugin = Plugin> {
   /**
    * Allows a plugin to modify the Appium server instance.
    */
@@ -20,7 +20,7 @@ export interface PluginStatic {
    *   }
    * }
    */
-  newMethodMap?: MethodMap<Plugin>;
+  newMethodMap?: MethodMap<T>;
 }
 
 /**

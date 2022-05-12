@@ -4,7 +4,15 @@ import {logger} from '@appium/support';
  * @implements {Plugin}
  */
 class BasePlugin {
-  /** @type {import('@appium/types').PluginStatic['newMethodMap']} */
+  /**
+   * Subclasses should use type `import('@appium/types').MethodMap<SubclassName>`.
+   *
+   * This will verify that the commands in the `newMethodMap` property are
+   * valid.  It is impossible to use a generic type param here; the type of this should really
+   * be something like `MethodMap<T extends BasePlugin>` but that isn't a thing TS does.
+   *
+   * @type {import('@appium/types').MethodMap<any>}
+   */
   static newMethodMap = {};
 
   /** @type {Plugin['cliArgs']} */

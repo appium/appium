@@ -6,5 +6,5 @@
     "types": ["webdriverio/async"]
   },
   "extends": "./tsconfig.base.json",
-  "references": [{"path": "../packages/appium"}]
+  "references": [{"path": "../packages/appium"}, {"path": "../packages/base-plugin"}, {"path": "../packages/types"}]
 }

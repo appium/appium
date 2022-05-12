@@ -2,6 +2,22 @@
 
 /* eslint-disable no-console, promise/prefer-await-to-then */
 
+/**
+ * This script is intended to be run as a `postinstall` lifecycle script,
+ * and will automatically install extensions if requested by the user.
+ *
+ * If the current working directory is within a project which has `appium`
+ * as a dependency, this script does nothing; extensions must be managed
+ * via `npm` or another package manager.
+ *
+ * If `CI=1` is in the environment, this script will exit with a non-zero
+ * code upon failure (which will typically break a build).  Otherwise, it
+ * will always exit with code 0, even if errors occur.
+ *
+ * @example
+ * `npm install -g appium --drivers=uiautomator2,xcuitest --plugins=images`
+ */
+
 /** @type {import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
 /** @type {import('../lib/constants').DRIVER_TYPE} */

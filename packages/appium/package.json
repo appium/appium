@@ -38,7 +38,7 @@
     "support.*",
     "plugin.*",
     "test.*",
-    "scripts/postinstall.js",
+    "scripts/autoinstall-extensions.js",
     "types"
   ],
   "scripts": {
@@ -50,7 +50,7 @@
     "dev:docs:en": "mkdocs serve -f ./docs/mkdocs-en.yml",
     "dev:docs:ja": "mkdocs serve -f ./docs/mkdocs-ja.yml",
     "fix": "npm run lint -- --fix",
-    "postinstall": "node ./scripts/postinstall.js",
+    "postinstall": "node ./scripts/autoinstall-extensions.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",
     "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",

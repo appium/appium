@@ -179,7 +179,7 @@ describe('ImageElement', function () {
     });
 
     after(function () {
-      f.imgElCache.reset();
+      f.imgElCache.clear();
     });
 
     it('should reject executions for unsupported commands', async function () {

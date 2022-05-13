@@ -63,7 +63,7 @@
     "eslint-plugin-promise": "6.0.0",
     "fancy-log": "2.0.0",
     "form-data": "4.0.0",
-    "glob": "8.0.1",
+    "glob": "8.0.3",
     "globby": "11.1.0",
     "gulp-babel": "8.0.0",
     "gulp-debug": "4.0.0",

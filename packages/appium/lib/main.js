@@ -118,22 +118,22 @@ function logServerPort(address, port) {
 
 /**
  * Gets a list of `updateServer` functions from all extensions
- * @param {DriverClass[]} driverClasses
- * @param {PluginClass[]} pluginClasses
- * @returns {import('@appium/base-driver/lib/basedriver/driver').UpdateServerCallback[]}
+ * @param {DriverNameMap} driverClasses
+ * @param {PluginNameMap} pluginClasses
+ * @returns {import('@appium/types').UpdateServerCallback[]}
  */
 function getServerUpdaters(driverClasses, pluginClasses) {
-  return _.compact(_.map([...driverClasses, ...pluginClasses], 'updateServer'));
+  return _.compact(_.map([...driverClasses.keys(), ...pluginClasses.keys()], 'updateServer'));
 }
 
 /**
  * Makes a big `MethodMap` from all the little `MethodMap`s in the extensions
- * @param {DriverClass[]} driverClasses
- * @param {PluginClass[]} pluginClasses
+ * @param {DriverNameMap} driverClasses
+ * @param {PluginNameMap} pluginClasses
  * @returns {import('@appium/types').MethodMap}
  */
 function getExtraMethodMap(driverClasses, pluginClasses) {
-  return [...driverClasses, ...pluginClasses].reduce(
+  return [...driverClasses.keys(), ...pluginClasses.keys()].reduce(
     (map, klass) => ({
       ...map,
       ...(klass.newMethodMap ?? {}),
@@ -366,7 +366,7 @@ async function main(args) {
 
   logServerPort(parsedArgs.address, parsedArgs.port);
   driverConfig.print();
-  pluginConfig.print(pluginClasses.map((p) => p.pluginName));
+  pluginConfig.print([...pluginClasses.values()]);
 
   return server;
 }
@@ -389,6 +389,8 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('appium/types').WithServerSubcommand} WithServerSubcommand
+ * @typedef {import('./extension').DriverNameMap} DriverNameMap
+ * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */
 
 /**

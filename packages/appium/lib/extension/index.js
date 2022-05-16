@@ -35,31 +35,31 @@ export async function loadExtensions(appiumHome) {
  *
  * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
  * @param {string[]} usePlugins
- * @returns {import('@appium/types').PluginClass[]}
+ * @returns {PluginNameMap} Mapping of PluginClass to name
  */
 export function getActivePlugins(pluginConfig, usePlugins = []) {
-  return _.compact(
-    Object.keys(pluginConfig.installedExtensions)
-      .filter(
-        (pluginName) =>
-          _.includes(usePlugins, pluginName) ||
-          (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS)
-      )
-      .map((pluginName) => {
-        try {
-          log.info(`Attempting to load plugin ${pluginName}...`);
-          const PluginClass = pluginConfig.require(pluginName);
-
-          PluginClass.pluginName = pluginName; // store the plugin name on the class so it can be used later
-          return PluginClass;
-        } catch (err) {
-          log.error(
-            `Could not load plugin '${pluginName}', so it will not be available. Error ` +
-              `in loading the plugin was: ${err.message}`
-          );
-          log.debug(err.stack);
-        }
-      })
+  return new Map(
+    _.compact(
+      Object.keys(pluginConfig.installedExtensions)
+        .filter(
+          (pluginName) =>
+            _.includes(usePlugins, pluginName) ||
+            (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS)
+        )
+        .map((pluginName) => {
+          try {
+            log.info(`Attempting to load plugin ${pluginName}...`);
+            const PluginClass = pluginConfig.require(pluginName);
+            return [PluginClass, pluginName];
+          } catch (err) {
+            log.error(
+              `Could not load plugin '${pluginName}', so it will not be available. Error ` +
+                `in loading the plugin was: ${err.message}`
+            );
+            log.debug(err.stack);
+          }
+        })
+    )
   );
 }
 
@@ -70,25 +70,44 @@ export function getActivePlugins(pluginConfig, usePlugins = []) {
  *
  * @param {import('./driver-config').DriverConfig} driverConfig - a driver extension config
  * @param {string[]} [useDrivers] - optional list of drivers to load
+ * @returns {DriverNameMap}
  */
 export function getActiveDrivers(driverConfig, useDrivers = []) {
-  return _.compact(
-    Object.keys(driverConfig.installedExtensions)
-      .filter((driverName) => _.includes(useDrivers, driverName) || useDrivers.length === 0)
-      .map((driverName) => {
-        try {
-          log.info(`Attempting to load driver ${driverName}...`);
-          return driverConfig.require(driverName);
-        } catch (err) {
-          log.error(
-            `Could not load driver '${driverName}', so it will not be available. Error ` +
-              `in loading the driver was: ${err.message}`
-          );
-          log.debug(err.stack);
-        }
-      })
+  return new Map(
+    _.compact(
+      Object.keys(driverConfig.installedExtensions)
+        .filter((driverName) => _.includes(useDrivers, driverName) || useDrivers.length === 0)
+        .map((driverName) => {
+          try {
+            log.info(`Attempting to load driver ${driverName}...`);
+            const DriverClass = driverConfig.require(driverName);
+            return [DriverClass, driverName];
+          } catch (err) {
+            log.error(
+              `Could not load driver '${driverName}', so it will not be available. Error ` +
+                `in loading the driver was: ${err.message}`
+            );
+            log.debug(err.stack);
+          }
+        })
+    )
   );
 }
+
+/**
+ * A mapping of {@linkcode PluginClass} classes to their names.
+ * @typedef {Map<PluginClass,string>} PluginNameMap
+ */
+
+/**
+ * A mapping of {@linkcode DriverClass} classes to their names.
+ * @typedef {Map<DriverClass,string>} DriverNameMap
+ */
+
+/**
+ * @typedef {import('@appium/types').PluginClass} PluginClass
+ * @typedef {import('@appium/types').DriverClass} DriverClass
+ */
 
 /**
  * @typedef ExtensionConfigs

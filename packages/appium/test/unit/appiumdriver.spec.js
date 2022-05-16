@@ -10,6 +10,7 @@ import {createSandbox} from 'sinon';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import {insertAppiumPrefixes, removeAppiumPrefixes} from '../../lib/utils';
 import {rewiremock, BASE_CAPS, W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
+import BasePlugin from '@appium/base-plugin';
 
 const SESSION_ID = '1';
 
@@ -355,16 +356,13 @@ describe('AppiumDriver', function () {
       });
     });
     describe('createPluginInstances', function () {
-      class NoArgsPlugin {}
-      NoArgsPlugin.pluginName = 'noargs';
+      class NoArgsPlugin extends BasePlugin {}
       NoArgsPlugin.baseVersion = '1.0';
 
-      class ArgsPlugin {}
-      ArgsPlugin.pluginName = 'args';
+      class ArgsPlugin extends BasePlugin {}
       ArgsPlugin.baseVersion = '1.0';
 
-      class ArrayArgPlugin {}
-      ArrayArgPlugin.pluginName = 'arrayarg';
+      class ArrayArgPlugin extends BasePlugin {}
       ArrayArgPlugin.baseVersion = '1.0';
 
       beforeEach(function () {
@@ -372,7 +370,7 @@ describe('AppiumDriver', function () {
         // to establish defaults, we need to register a schema for the plugin.
         // note that the `noargs` plugin does not need a schema, because it
         // accepts no arguments.
-        registerSchema(PLUGIN_TYPE, ArgsPlugin.pluginName, {
+        registerSchema(PLUGIN_TYPE, 'args', {
           type: 'object',
           properties: {
             randomArg: {
@@ -381,7 +379,7 @@ describe('AppiumDriver', function () {
             },
           },
         });
-        registerSchema(PLUGIN_TYPE, ArrayArgPlugin.pluginName, {
+        registerSchema(PLUGIN_TYPE, 'arrayarg', {
           type: 'object',
           properties: {
             arr: {
@@ -396,7 +394,10 @@ describe('AppiumDriver', function () {
       describe('when args are not present', function () {
         it('should not set CLI args', function () {
           const appium = new AppiumDriver({});
-          appium.pluginClasses = [NoArgsPlugin, ArgsPlugin];
+          appium.pluginClasses = new Map([
+            [NoArgsPlugin, 'noargs'],
+            [ArgsPlugin, 'args'],
+          ]);
           for (const plugin of appium.createPluginInstances()) {
             chai.expect(plugin.cliArgs).not.to.exist;
           }
@@ -406,9 +407,12 @@ describe('AppiumDriver', function () {
       describe('when args are equal to the schema defaults', function () {
         it('should not set CLI args', function () {
           const appium = new AppiumDriver({
-            plugin: {[ArgsPlugin.pluginName]: {randomArg: 2000}},
+            plugin: {args: {randomArg: 2000}},
           });
-          appium.pluginClasses = [NoArgsPlugin, ArgsPlugin];
+          appium.pluginClasses = new Map([
+            [NoArgsPlugin, 'noargs'],
+            [ArgsPlugin, 'args'],
+          ]);
           for (const plugin of appium.createPluginInstances()) {
             chai.expect(plugin.cliArgs).not.to.exist;
           }
@@ -417,9 +421,13 @@ describe('AppiumDriver', function () {
         describe('when the default is an "object"', function () {
           it('should not set CLI args', function () {
             const appium = new AppiumDriver({
-              plugin: {[ArrayArgPlugin.pluginName]: {arr: []}},
+              plugin: {arrayarg: {arr: []}},
             });
-            appium.pluginClasses = [NoArgsPlugin, ArgsPlugin, ArrayArgPlugin];
+            appium.pluginClasses = new Map([
+              [NoArgsPlugin, 'noargs'],
+              [ArgsPlugin, 'args'],
+              [ArrayArgPlugin, 'arrayarg'],
+            ]);
             for (const plugin of appium.createPluginInstances()) {
               chai.expect(plugin.cliArgs).not.to.exist;
             }
@@ -430,7 +438,7 @@ describe('AppiumDriver', function () {
       describe('when args are not equal to the schema defaults', function () {
         it('should add cliArgs to the plugin', function () {
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}});
-          appium.pluginClasses = [ArgsPlugin];
+          appium.pluginClasses = new Map([[ArgsPlugin, 'args']]);
           const plugin = _.first(appium.createPluginInstances());
           plugin.cliArgs.should.eql({randomArg: 1234});
         });

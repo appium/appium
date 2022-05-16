@@ -14,6 +14,7 @@ import AsyncLock from 'async-lock';
 import {parseCapsForInnerDriver, pullSettings} from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
+import {DRIVER_TYPE, PLUGIN_TYPE} from './constants';
 
 /**
  * Invariant set of base constraints
@@ -62,9 +63,9 @@ class AppiumDriver extends DriverCore {
 
   /**
    * List of active plugins
-   * @type {PluginClass[]}
+   * @type {Map<PluginClass,string>}
    */
-  pluginClasses = [];
+  pluginClasses;
 
   /**
    * map of sessions to actual plugin instances per session
@@ -180,10 +181,9 @@ class AppiumDriver extends DriverCore {
    * @template {ExtensionType} ExtType
    * @param {ExtType} extType 'driver' or 'plugin'
    * @param {string} extName the name of the extension
-   * @param {InstanceType<import('appium/types').ExtClass<ExtType>>} extInstance the driver or plugin instance
-   * @returns {void}
+   * @returns {Record<string,any>|undefined}
    */
-  assignCliArgsToExtension(extType, extName, extInstance) {
+  getCliArgsForExtension(extType, extName) {
     const allCliArgsForExt = /** @type {Record<string,unknown>|undefined} */ (
       this.args[extType]?.[extName]
     );
@@ -193,7 +193,7 @@ class AppiumDriver extends DriverCore {
         ? allCliArgsForExt
         : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
       if (!_.isEmpty(cliArgs)) {
-        extInstance.cliArgs = cliArgs;
+        return cliArgs;
       }
     }
   }
@@ -292,7 +292,10 @@ class AppiumDriver extends DriverCore {
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
-      this.assignCliArgsToExtension('driver', driverName, driverInstance);
+      const cliArgs = this.getCliArgsForExtension(DRIVER_TYPE, driverName);
+      if (cliArgs !== undefined) {
+        driverInstance.cliArgs = cliArgs;
+      }
 
       // This assignment is required for correct web sockets functionality inside the driver
       // Drivers/plugins might also want to know where they are hosted
@@ -540,13 +543,19 @@ class AppiumDriver extends DriverCore {
     );
   }
 
+  /**
+   * Creates instances of all of the enabled Plugin classes
+   * @returns {Plugin[]}
+   */
   createPluginInstances() {
-    return this.pluginClasses.map((PluginClass) => {
-      const name = PluginClass.pluginName;
-      const plugin = new PluginClass(name);
-      this.assignCliArgsToExtension('plugin', name, plugin);
-      return plugin;
-    });
+    /** @type {Plugin[]} */
+    const pluginInstances = [];
+    for (const [PluginClass, name] of this.pluginClasses.entries()) {
+      const cliArgs = this.getCliArgsForExtension(PLUGIN_TYPE, name);
+      const plugin = new PluginClass(name, cliArgs);
+      pluginInstances.push(plugin);
+    }
+    return pluginInstances;
   }
 
   /**

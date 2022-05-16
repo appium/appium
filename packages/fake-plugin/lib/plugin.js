@@ -4,10 +4,6 @@ import BasePlugin from '@appium/base-plugin';
 import B from 'bluebird';
 
 export default class FakePlugin extends BasePlugin {
-  constructor(pluginName, opts = {}) {
-    super(pluginName, opts);
-  }
-
   async getFakePluginArgs() {
     await B.delay(1);
     return this.cliArgs;

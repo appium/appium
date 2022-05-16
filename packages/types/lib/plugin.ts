@@ -30,7 +30,7 @@ export interface PluginStatic<T extends Plugin = Plugin> {
  */
 export interface Plugin {
   /**
-   * Same value as {@linkcode PluginClass['pluginName'] `Plugin.pluginName`}.
+   * Name of the plugin.  Derived from the metadata.
    */
   name: string;
   /**
@@ -86,5 +86,11 @@ export type PluginCommand<TArgs = any> = (
 
 /**
  * Mainly for internal use.
+ *
+ * The third parameter is the possible constructor signatures for the plugin class.
  */
-export type PluginClass = Class<Plugin, PluginStatic & {pluginName: string}, [string]>;
+export type PluginClass = Class<
+  Plugin,
+  PluginStatic,
+  [string] | [string, Record<string, any> | undefined]
+>;

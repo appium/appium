@@ -15,15 +15,14 @@ class BasePlugin {
    */
   static newMethodMap = {};
 
-  /** @type {Plugin['cliArgs']} */
-  cliArgs;
-
   /**
-   * @param {string} pluginName
+   * @param {string} name
+   * @param {Record<string,any>} [cliArgs]
    */
-  constructor(pluginName) {
-    this.name = pluginName;
-    this.logger = logger.getLogger(`Plugin [${pluginName}]`);
+  constructor(name, cliArgs) {
+    this.name = name;
+    this.cliArgs = cliArgs;
+    this.logger = logger.getLogger(`Plugin [${name}]`);
   }
 }
 

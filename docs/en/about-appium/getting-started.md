@@ -213,6 +213,13 @@ const value = await field.getText();
 assert.strictEqual(value, "Hello World!");
 ```
 
+```
+const field = await client.$("id:resource-id");
+await field.setValue("Hello World!");
+const value = await field.getText();
+assert.strictEqual(value, "Hello World!");
+```
+
 What's going on here is that after creating a session and launching our app,
 we're instructing Appium to find an element in the app hierarchy and type into
 it. The same field is then queried for its text, which is asserted to be what we

@@ -87,6 +87,9 @@ class AppiumDriver extends DriverCore {
 
   desiredCapConstraints = desiredCapabilityConstraints;
 
+  /** @type {DriverOpts} */
+  args;
+
   /**
    * @param {DriverOpts} opts
    */
@@ -173,22 +176,30 @@ class AppiumDriver extends DriverCore {
   }
 
   /**
-   * Validate and assign CLI args for a driver or plugin
-   *
-   * If the extension has provided a schema, validation has already happened.
-   *
-   * Any arg which is equal to its default value will not be assigned to the extension.
-   * @template {ExtensionType} ExtType
-   * @param {ExtType} extType 'driver' or 'plugin'
-   * @param {string} extName the name of the extension
-   * @returns {Record<string,any>|undefined}
+   * Retrieves all CLI arguments for a specific plugin.
+   * @param {string} extName - Plugin name
+   * @returns {Record<string,unknown>} Arguments object. If none, an empty object.
    */
-  getCliArgsForExtension(extType, extName) {
+  getCliArgsForPlugin(extName) {
+    return /** @type {Record<string,unknown>} */ (this.args.plugin?.[extName] ?? {});
+  }
+
+  /**
+   * Retrieves CLI args for a specific driver.
+   *
+   * _Any arg which is equal to its default value will not be present in the returned object._
+   *
+   * _Note that this behavior currently (May 18 2022) differs from how plugins are handled_ (see {@linkcode AppiumDriver.getCliArgsForPlugin}).
+   * @param {string} extName - Driver name
+   * @returns {Record<string,unknown>|undefined} Arguments object. If none, `undefined`
+   */
+  getCliArgsForDriver(extName) {
     const allCliArgsForExt = /** @type {Record<string,unknown>|undefined} */ (
-      this.args[extType]?.[extName]
+      this.args.driver?.[extName]
     );
+
     if (!_.isEmpty(allCliArgsForExt)) {
-      const defaults = getDefaultsForExtension(extType, extName);
+      const defaults = getDefaultsForExtension(DRIVER_TYPE, extName);
       const cliArgs = _.isEmpty(defaults)
         ? allCliArgsForExt
         : _.omitBy(allCliArgsForExt, (value, key) => _.isEqual(defaults[key], value));
@@ -203,7 +214,7 @@ class AppiumDriver extends DriverCore {
    * @param {W3CCapabilities} jsonwpCaps JSONWP formatted desired capabilities
    * @param {W3CCapabilities} reqCaps Required capabilities (JSONWP standard)
    * @param {W3CCapabilities} w3cCapabilities W3C capabilities
-   * @param {import('@appium/types').DriverData[]} [driverData]
+   * @param {DriverData[]} [driverData]
    */
   async createSession(jsonwpCaps, reqCaps, w3cCapabilities, driverData) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
@@ -292,8 +303,8 @@ class AppiumDriver extends DriverCore {
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
-      const cliArgs = this.getCliArgsForExtension(DRIVER_TYPE, driverName);
-      if (cliArgs !== undefined) {
+      const cliArgs = this.getCliArgsForDriver(driverName);
+      if (!_.isEmpty(cliArgs)) {
         driverInstance.cliArgs = cliArgs;
       }
 
@@ -373,7 +384,7 @@ class AppiumDriver extends DriverCore {
 
   /**
    *
-   * @param {import('@appium/types').Driver} driver
+   * @param {Driver} driver
    * @param {string} innerSessionId
    */
   attachUnexpectedShutdownHandler(driver, innerSessionId) {
@@ -416,7 +427,7 @@ class AppiumDriver extends DriverCore {
 
   /**
    *
-   * @param {import('@appium/types').DriverClass} InnerDriver
+   * @param {DriverClass} InnerDriver
    * @returns {Promise<DriverData[]>}}
    */
   // eslint-disable-next-line require-await
@@ -551,7 +562,7 @@ class AppiumDriver extends DriverCore {
     /** @type {Plugin[]} */
     const pluginInstances = [];
     for (const [PluginClass, name] of this.pluginClasses.entries()) {
-      const cliArgs = this.getCliArgsForExtension(PLUGIN_TYPE, name);
+      const cliArgs = this.getCliArgsForPlugin(name);
       const plugin = new PluginClass(name, cliArgs);
       pluginInstances.push(plugin);
     }
@@ -562,7 +573,7 @@ class AppiumDriver extends DriverCore {
    *
    * @param {string} cmd
    * @param  {...any} args
-   * @returns {Promise<{value: any, error?: Error, protocol: string} | import('type-fest').AsyncReturnType<import('@appium/types').Driver['executeCommand']>>}
+   * @returns {Promise<{value: any, error?: Error, protocol: string} | import('type-fest').AsyncReturnType<Driver['executeCommand']>>}
    */
   async executeCommand(cmd, ...args) {
     // We have basically three cases for how to handle commands:
@@ -810,6 +821,8 @@ export {AppiumDriver};
 
 /**
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
+ * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').ServerArgs} DriverOpts
@@ -817,6 +830,11 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('./extension/driver-config').DriverConfig} DriverConfig
+ * @typedef {import('@appium/types').Plugin} Plugin
+ * @typedef {import('@appium/types').PluginClass} PluginClass
+ * @typedef {import('@appium/types').PluginType} PluginType
+ * @typedef {import('@appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').SessionHandler<SessionHandlerResult<any[]>,SessionHandlerResult<void>>} SessionHandler
  */
 
 /**
@@ -827,13 +845,4 @@ export {AppiumDriver};
  * @property {V} [value]
  * @property {Error} [error]
  * @property {string} [protocol]
- */
-
-/**
- * @typedef {import('@appium/types').SessionHandler<SessionHandlerResult<any[]>,SessionHandlerResult<void>>} SessionHandler
- */
-
-/**
- * @typedef {import('@appium/types').Plugin} Plugin
- * @typedef {import('@appium/types').PluginClass} PluginClass
  */

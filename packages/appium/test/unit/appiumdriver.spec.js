@@ -14,12 +14,16 @@ import BasePlugin from '@appium/base-plugin';
 
 const SESSION_ID = '1';
 
+const {expect} = chai;
+
 describe('AppiumDriver', function () {
-  /** @type {sinon.SinonSandbox} */
+  /** @type {import('sinon').SinonSandbox} */
   let sandbox;
 
+  /** @type {typeof import('appium/lib/appium').AppiumDriver} */
   let AppiumDriver;
 
+  /** @type {MockConfig} */
   let MockConfig;
 
   beforeEach(function () {
@@ -28,10 +32,10 @@ describe('AppiumDriver', function () {
     finalizeSchema();
 
     MockConfig = {
-      getBuildInfo: sandbox.stub().returns({
-        version: '2.0',
-      }),
-      updateBuildInfo: sandbox.stub().resolves(),
+      getBuildInfo: /** @type {MockConfig['getBuildInfo']} */ (
+        sandbox.stub().callsFake(() => ({version: MockConfig.APPIUM_VER}))
+      ),
+      updateBuildInfo: /** @type {MockConfig['updateBuildInfo']} */ (sandbox.stub().resolves()),
       APPIUM_VER: '2.0',
     };
     ({AppiumDriver} = rewiremock.proxy(() => require('../../lib/appium'), {
@@ -339,7 +343,7 @@ describe('AppiumDriver', function () {
       });
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
-        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value; // eslint-disable-line comma-spacing
+        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value;
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
         // let event loop spin so rejection is handled
@@ -392,20 +396,20 @@ describe('AppiumDriver', function () {
       });
 
       describe('when args are not present', function () {
-        it('should not set CLI args', function () {
+        it('the `cliArgs` prop should be an empty object', function () {
           const appium = new AppiumDriver({});
           appium.pluginClasses = new Map([
             [NoArgsPlugin, 'noargs'],
             [ArgsPlugin, 'args'],
           ]);
           for (const plugin of appium.createPluginInstances()) {
-            chai.expect(plugin.cliArgs).not.to.exist;
+            chai.expect(plugin.cliArgs).to.eql({});
           }
         });
       });
 
       describe('when args are equal to the schema defaults', function () {
-        it('should not set CLI args', function () {
+        it('the `cliArgs` prop should contain the schema defaults', function () {
           const appium = new AppiumDriver({
             plugin: {args: {randomArg: 2000}},
           });
@@ -413,13 +417,13 @@ describe('AppiumDriver', function () {
             [NoArgsPlugin, 'noargs'],
             [ArgsPlugin, 'args'],
           ]);
-          for (const plugin of appium.createPluginInstances()) {
-            chai.expect(plugin.cliArgs).not.to.exist;
-          }
+          const [noargs, args] = appium.createPluginInstances();
+          expect(noargs.cliArgs).to.eql({});
+          expect(args.cliArgs).to.eql({randomArg: 2000});
         });
 
         describe('when the default is an "object"', function () {
-          it('should not set CLI args', function () {
+          it('the `cliArgs` prop should contain the schema defaults', function () {
             const appium = new AppiumDriver({
               plugin: {arrayarg: {arr: []}},
             });
@@ -428,9 +432,10 @@ describe('AppiumDriver', function () {
               [ArgsPlugin, 'args'],
               [ArrayArgPlugin, 'arrayarg'],
             ]);
-            for (const plugin of appium.createPluginInstances()) {
-              chai.expect(plugin.cliArgs).not.to.exist;
-            }
+            const [noargs, args, arrayarg] = appium.createPluginInstances();
+            expect(noargs.cliArgs).to.eql({});
+            expect(args.cliArgs).to.eql({});
+            expect(arrayarg.cliArgs).to.eql({arr: []});
           });
         });
       });
@@ -446,3 +451,16 @@ describe('AppiumDriver', function () {
     });
   });
 });
+
+/**
+ * @typedef {import('appium/lib/config')} ConfigModule
+ * @typedef {import('appium/lib/appium').AppiumDriver} AppiumDriver
+ */
+
+/**
+ * Mocks some stuff in `lib/config`
+ * @typedef MockConfig
+ * @property {import('sinon').SinonStubbedMember<ConfigModule['getBuildInfo']>} getBuildInfo
+ * @property {import('sinon').SinonStubbedMember<ConfigModule['updateBuildInfo']>} updateBuildInfo
+ * @property {string} APPIUM_VER
+ */

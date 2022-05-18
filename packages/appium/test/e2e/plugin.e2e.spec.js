@@ -94,7 +94,7 @@ describe('FakePlugin', function () {
   });
 
   describe('without plugin registered', function () {
-    /** @type {import('http').Server} */
+    /** @type {AppiumServer} */
     let server;
 
     before(async function () {
@@ -104,10 +104,7 @@ describe('FakePlugin', function () {
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      server = /** @type {typeof server} */ (
-        // @ts-expect-error
-        await appiumServer(args)
-      );
+      server = await appiumServer(args);
     });
 
     after(async function () {
@@ -151,7 +148,7 @@ describe('FakePlugin', function () {
 
   for (const registrationType of ['explicit', 'all']) {
     describe(`with plugin registered via type ${registrationType}`, function () {
-      /** @type {import('http').Server} */
+      /** @type {AppiumServer} */
       let server;
       before(async function () {
         // then start server if we need to
@@ -163,10 +160,7 @@ describe('FakePlugin', function () {
           usePlugins,
           useDrivers: ['fake'],
         };
-        server = /** @type {typeof server} */ (
-          // @ts-expect-error
-          await appiumServer(args)
-        );
+        server = await appiumServer(args);
       });
       after(async function () {
         if (server) {
@@ -264,15 +258,12 @@ describe('FakePlugin', function () {
     });
   }
   describe('cli args handling for plugin args', function () {
-    /** @type {import('http').Server} */
+    /** @type {AppiumServer} */
     let server;
     before(async function () {
       // then start server if we need to
       const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
-      server = /** @type {typeof server} */ (
-        // @ts-expect-error
-        await appiumServer(args)
-      );
+      server = await appiumServer(args);
     });
     after(async function () {
       if (server) {
@@ -292,11 +283,10 @@ describe('FakePlugin', function () {
     });
   });
   describe('cli args handling for empty plugin args', function () {
-    /** @type {import('http').Server} */
+    /** @type {AppiumServer} */
     let server;
     before(async function () {
       // then start server if we need to
-      // @ts-expect-error
       server = await appiumServer(baseArgs);
     });
     after(async function () {
@@ -305,15 +295,21 @@ describe('FakePlugin', function () {
       }
     });
 
-    it('should not receive user cli args for plugin if none were passed in', async function () {
-      const driver = await wdio(wdOpts);
-      const {sessionId} = driver;
-      try {
-        const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
-        should.not.exist(data.value);
-      } finally {
-        await driver.deleteSession();
-      }
+    describe('when no cli args provided by user', function () {
+      it('should receive an empty `cliArgs` object', async function () {
+        const driver = await wdio(wdOpts);
+        const {sessionId} = driver;
+        try {
+          const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakepluginargs`);
+          data.value.should.eql({});
+        } finally {
+          await driver.deleteSession();
+        }
+      });
     });
   });
 });
+
+/**
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ */

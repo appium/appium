@@ -40,7 +40,7 @@ export interface Plugin {
   /**
    * CLI args for this plugin (if any are accepted and provided).
    */
-  cliArgs?: Record<string, any>;
+  cliArgs: Record<string, any>;
   /**
    * Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.
    */
@@ -89,8 +89,4 @@ export type PluginCommand<TArgs = any> = (
  *
  * The third parameter is the possible constructor signatures for the plugin class.
  */
-export type PluginClass = Class<
-  Plugin,
-  PluginStatic,
-  [string] | [string, Record<string, any> | undefined]
->;
+export type PluginClass = Class<Plugin, PluginStatic, [string, Record<string, unknown>]>;

@@ -17,9 +17,9 @@ class BasePlugin {
 
   /**
    * @param {string} name
-   * @param {Record<string,any>} [cliArgs]
+   * @param {Record<string,unknown>} [cliArgs]
    */
-  constructor(name, cliArgs) {
+  constructor(name, cliArgs = {}) {
     this.name = name;
     this.cliArgs = cliArgs;
     this.logger = logger.getLogger(`Plugin [${name}]`);

@@ -13,6 +13,7 @@ import * as mjpeg from './mjpeg';
 import * as node from './node';
 import * as timing from './timing';
 import * as env from './env';
+import * as console from './console';
 
 export {npm} from './npm';
 
@@ -35,6 +36,7 @@ export {
   node,
   timing,
   env,
+  console,
 };
 export default {
   tempDir,
@@ -53,4 +55,5 @@ export default {
   node,
   timing,
   env,
+  console,
 };

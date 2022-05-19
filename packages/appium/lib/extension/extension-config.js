@@ -1,7 +1,9 @@
 import _ from 'lodash';
+import B from 'bluebird';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';
+import {util} from '@appium/support';
 import {commandClasses} from '../cli/extension';
 import {APPIUM_VER} from '../config';
 import log from '../logger';
@@ -40,7 +42,7 @@ export class ExtensionConfig {
   /** @type {ExtRecord<ExtType>} */
   installedExtensions;
 
-  /** @type {ExtensionLogFn} */
+  /** @type {import('@appium/types').AppiumLogger} */
   log;
 
   /** @type {Manifest} */
@@ -55,14 +57,11 @@ export class ExtensionConfig {
    * @protected
    * @param {ExtType} extensionType - Type of extension
    * @param {Manifest} manifest - `Manifest` instance
-   * @param {ExtensionLogFn} [logFn]
    */
-  constructor(extensionType, manifest, logFn) {
-    const logger = _.isFunction(logFn) ? logFn : log.error.bind(log);
+  constructor(extensionType, manifest) {
     this.extensionType = extensionType;
     this.configKey = `${extensionType}s`;
     this.installedExtensions = manifest.getExtensionData(extensionType);
-    this.log = logger;
     this.manifest = manifest;
   }
 
@@ -75,51 +74,160 @@ export class ExtensionConfig {
   }
 
   /**
-   * Checks extensions for problems
-   * @param {ExtRecord<ExtType>} exts - Extension data
-   * @returns {Promise<ExtRecord<ExtType>>}
+   * Returns a list of errors for a given extension.
+   *
+   * @param {ExtName<ExtType>} extName
+   * @param {ExtManifest<ExtType>} extManifest
+   * @returns {ExtManifestProblem[]}
    */
-  async _validate(exts) {
-    const foundProblems = /** @type {Record<ExtName<ExtType>,Problem[]>} */ ({});
-    for (const [extName, extData] of /** @type {[ExtName<ExtType>, ExtManifest<ExtType>][]} */ (
-      _.toPairs(exts)
-    )) {
-      await this.displayConfigWarnings(extData, extName);
+  getProblems(extName, extManifest) {
+    return [
+      ...this.getGenericConfigProblems(extManifest, extName),
+      ...this.getConfigProblems(extManifest, extName),
+      ...this.getSchemaProblems(extManifest, extName),
+    ];
+  }
 
-      foundProblems[extName] = [
-        ...this.getGenericConfigProblems(extData, extName),
-        ...this.getConfigProblems(extData),
-        ...this.getSchemaProblems(extData, extName),
-      ];
-    }
+  /**
+   * Returns a list of warnings for a given extension.
+   *
+   * @param {ExtName<ExtType>} extName
+   * @param {ExtManifest<ExtType>} extManifest
+   * @returns {Promise<string[]>}
+   */
+  async getWarnings(extName, extManifest) {
+    const [genericConfigWarnings, configWarnings] = await B.all([
+      this.getGenericConfigWarnings(extManifest, extName),
+      this.getConfigWarnings(extManifest, extName),
+    ]);
 
-    /** @type {string[]} */
-    const problemSummaries = [];
-    for (const [extName, problems] of _.toPairs(foundProblems)) {
+    return [...genericConfigWarnings, ...configWarnings];
+  }
+
+  /**
+   * Returns a list of extension-type-specific issues. To be implemented by subclasses.
+   * @abstract
+   * @param {ExtManifest<ExtType>} extManifest
+   * @param {ExtName<ExtType>} extName
+   * @returns {Promise<string[]>}
+   */
+  // eslint-disable-next-line no-unused-vars,require-await
+  async getConfigWarnings(extManifest, extName) {
+    return [];
+  }
+
+  /**
+   *
+   * @param {Map<ExtName<ExtType>,ExtManifestProblem[]>} [errorMap]
+   * @param {Map<ExtName<ExtType>,string[]>} [warningMap]
+   */
+  getValidationResultSummaries(errorMap = new Map(), warningMap = new Map()) {
+    /**
+     * Array of computed strings
+     * @type {string[]}
+     */
+    const errorSummaries = [];
+    for (const [extName, problems] of errorMap.entries()) {
       if (_.isEmpty(problems)) {
         continue;
       }
       // remove this extension from the list since it's not valid
-      delete exts[extName];
-      problemSummaries.push(
-        `${this.extensionType} ${extName} had errors and will not ` + `be available. Errors:`
+      errorSummaries.push(
+        `${this.extensionType} "${extName}" had ${util.pluralize(
+          'error',
+          problems.length
+        )} and will not ` + `be available:`
       );
       for (const problem of problems) {
-        problemSummaries.push(
+        errorSummaries.push(
           `  - ${problem.err} (Actual value: ` + `${JSON.stringify(problem.val)})`
         );
       }
     }
-
-    if (!_.isEmpty(problemSummaries)) {
-      this.log(
-        `Appium encountered one or more unrecoverable errors while validating ${this.configKey} found in manifest ${this.manifestPath}`
-      );
-      for (const summary of problemSummaries) {
-        this.log(summary);
+    /** @type {string[]} */
+    const warningSummaries = [];
+    for (const [extName, warnings] of warningMap.entries()) {
+      if (_.isEmpty(warnings)) {
+        continue;
+      }
+      const extTypeText = _.capitalize(this.extensionType);
+      const problemEnumerationText = util.pluralize('potential problem', warnings.length, true);
+      warningSummaries.push(`${extTypeText} "${extName}" has ${problemEnumerationText}: `);
+      for (const warning of warnings) {
+        warningSummaries.push(`  - ${warning}`);
       }
     }
 
+    return {errorSummaries, warningSummaries};
+  }
+
+  /**
+   * Checks extensions for problems.  To be called by subclasses' `validate` method.
+   *
+   * Errors and warnings will be displayed to the user.
+   *
+   * This method mutates `exts`.
+   *
+   * @protected
+   * @param {ExtRecord<ExtType>} exts - Lookup of extension names to {@linkcode ExtManifest} objects
+   * @returns {Promise<ExtRecord<ExtType>>} The same lookup, but picking only error-free extensions
+   */
+  async _validate(exts) {
+    /**
+     * Lookup of extension names to {@linkcode ExtManifestProblem ExtManifestProblems}
+     * @type {Map<ExtName<ExtType>,ExtManifestProblem[]>}
+     */
+    const errorMap = new Map();
+    /**
+     * Lookup of extension names to warnings.
+     * @type {Map<ExtName<ExtType>,string[]>}
+     */
+    const warningMap = new Map();
+
+    for (const [extName, extManifest] of _.toPairs(exts)) {
+      const [errors, warnings] = await B.all([
+        this.getProblems(extName, extManifest),
+        this.getWarnings(extName, extManifest),
+      ]);
+      if (errors.length) {
+        delete exts[extName];
+      }
+      errorMap.set(extName, errors);
+      warningMap.set(extName, warnings);
+    }
+
+    const {errorSummaries, warningSummaries} = this.getValidationResultSummaries(
+      errorMap,
+      warningMap
+    );
+
+    if (!_.isEmpty(errorSummaries)) {
+      log.error(
+        `Appium encountered ${util.pluralize(
+          'error',
+          errorSummaries.length,
+          true
+        )} while validating ${this.configKey} found in manifest ${this.manifestPath}`
+      );
+      for (const summary of errorSummaries) {
+        log.error(summary);
+      }
+    } else {
+      // only display warnings if there are no errors!
+
+      if (!_.isEmpty(warningSummaries)) {
+        log.warn(
+          `Appium encountered ${util.pluralize(
+            'warning',
+            warningSummaries.length,
+            true
+          )} while validating ${this.configKey} found in manifest ${this.manifestPath}`
+        );
+        for (const summary of warningSummaries) {
+          log.warn(summary);
+        }
+      }
+    }
     return exts;
   }
 
@@ -141,84 +249,98 @@ export class ExtensionConfig {
   }
 
   /**
-   * Displays non-"fatal" warnings for the extension
+   * Returns a list of warnings for a particular extension.
    *
-   * This method uses Appium's logger, since the default extension logger uses the `error` log level.
+   * By definition, a non-empty list of warnings does _not_ imply the extension cannot be loaded,
+   * but it may not work as expected or otherwise throw an exception at runtime.
    *
-   * @param {ExtManifest<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extManifest
    * @param {ExtName<ExtType>} extName
-   * @returns {Promise<void>}
+   * @returns {Promise<string[]>}
    */
-  async displayConfigWarnings(extData, extName) {
-    const {appiumVersion, installSpec, installType, pkgName} = extData;
+  async getGenericConfigWarnings(extManifest, extName) {
+    const {appiumVersion, installSpec, installType, pkgName} = extManifest;
+    const warnings = [];
 
+    const invalidFields = [];
     if (!_.isString(installSpec)) {
-      log.warn(
-        `${_.capitalize(
-          this.extensionType
-        )} "${extName}" (package \`${pkgName}\`) has an invalid or missing \`installSpec\` property in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI to fail.`
-      );
+      invalidFields.push('installSpec');
     }
 
     if (!INSTALL_TYPES.has(installType)) {
-      log.warn(
-        `${_.capitalize(
-          this.extensionType
-        )} "${extName}" (package \`${pkgName}\`) has an invalid or missing \`installType\` property in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI to fail.`
-      );
-      extData.installType = INSTALL_TYPE_NPM;
+      invalidFields.push('installType');
     }
+
+    if (invalidFields.length) {
+      const extTypeText = _.capitalize(this.extensionType);
+      const invalidFieldsEnumerationText = util.pluralize(
+        'invalid or missing field',
+        invalidFields.length,
+        true
+      );
+      const invalidFieldsText = invalidFields.map((field) => `"${field}"`).join(', ');
+
+      warnings.push(
+        `${extTypeText} "${extName}" (package \`${pkgName}\`) has ${invalidFieldsEnumerationText} (${invalidFieldsText}) in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`
+      );
+    }
+
     if (_.isString(appiumVersion) && !satisfies(APPIUM_VER, appiumVersion)) {
       const listData = await this.getListData();
-
-      if (listData[extName]) {
-        const extListData =
-          /** @type {import('../cli/extension-command').InstalledExtensionListData} */ (
-            listData[extName]
-          );
-        const {unsafeUpdateVersion, updateVersion, upToDate} = extListData;
+      const extListData = /** @type {InstalledExtensionListData} */ (listData[extName]);
+      if (extListData?.installed) {
+        const {updateVersion, upToDate} = extListData;
         if (!upToDate) {
-          const upgradeText =
-            unsafeUpdateVersion === updateVersion
-              ? `v${updateVersion}`
-              : `v${updateVersion} or (potentially unsafe) v${unsafeUpdateVersion}`;
-          log.warn(
+          warnings.push(
             `${_.capitalize(
               this.extensionType
-            )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${appiumVersion}. Please upgrade \`${pkgName}\` to ${upgradeText}.`
+            )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${appiumVersion}. Please upgrade \`${pkgName}\` to v${updateVersion} or newer.`
           );
         } else {
-          log.warn(
+          warnings.push(
             `${_.capitalize(
               this.extensionType
-            )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${appiumVersion}. Please ask the developer of \`${pkgName}\` to update the peer dependency on Appium to ${APPIUM_VER}.`
+            )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${appiumVersion}. Please ask the developer of \`${pkgName}\` to update the peer dependency on Appium to v${APPIUM_VER}.`
           );
         }
       }
     } else if (!_.isString(appiumVersion)) {
-      log.warn(
-        `${_.capitalize(
-          this.extensionType
-        )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${pkgName}\` to add a peer dependency on \`appium@${APPIUM_VER}\`.`
-      );
+      const listData = await this.getListData();
+      const extListData = /** @type {InstalledExtensionListData} */ (listData[extName]);
+      if (!extListData?.upToDate && extListData?.updateVersion) {
+        warnings.push(
+          `${_.capitalize(
+            this.extensionType
+          )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${pkgName}\` is available; please attempt to upgrade "${extName}" to v${
+            extListData.updateVersion
+          } or newer.`
+        );
+      } else {
+        warnings.push(
+          `${_.capitalize(
+            this.extensionType
+          )} "${extName}" (package \`${pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`
+        );
+      }
     }
+    return warnings;
   }
   /**
    * Returns list of unrecoverable errors (if any) for the given extension _if_ it has a `schema` property.
    *
-   * @param {ExtManifest<ExtType>} extData - Extension data (from manifest)
+   * @param {ExtManifest<ExtType>} extManifest - Extension data (from manifest)
    * @param {ExtName<ExtType>} extName - Extension name (from manifest)
-   * @returns {Problem[]}
+   * @returns {ExtManifestProblem[]}
    */
-  getSchemaProblems(extData, extName) {
-    /** @type {Problem[]} */
+  getSchemaProblems(extManifest, extName) {
+    /** @type {ExtManifestProblem[]} */
     const problems = [];
-    const {schema: argSchemaPath} = extData;
-    if (ExtensionConfig.extDataHasSchema(extData)) {
+    const {schema: argSchemaPath} = extManifest;
+    if (ExtensionConfig.extDataHasSchema(extManifest)) {
       if (_.isString(argSchemaPath)) {
         if (isAllowedSchemaFileExtension(argSchemaPath)) {
           try {
-            this.readExtensionSchema(extName, extData);
+            this.readExtensionSchema(extName, extManifest);
           } catch (err) {
             problems.push({
               err: `Unable to register schema at path ${argSchemaPath}; ${err.message}`,
@@ -235,7 +357,7 @@ export class ExtensionConfig {
         }
       } else if (_.isPlainObject(argSchemaPath)) {
         try {
-          this.readExtensionSchema(extName, extData);
+          this.readExtensionSchema(extName, extManifest);
         } catch (err) {
           problems.push({
             err: `Unable to register embedded schema; ${err.message}`,
@@ -254,13 +376,13 @@ export class ExtensionConfig {
 
   /**
    * Return a list of generic unrecoverable errors for the given extension
-   * @param {ExtManifest<ExtType>} extData - Extension data (from manifest)
+   * @param {ExtManifest<ExtType>} extManifest - Extension data (from manifest)
    * @param {ExtName<ExtType>} extName - Extension name (from manifest)
-   * @returns {Problem[]}
+   * @returns {ExtManifestProblem[]}
    */
   // eslint-disable-next-line no-unused-vars
-  getGenericConfigProblems(extData, extName) {
-    const {version, pkgName, mainClass} = extData;
+  getGenericConfigProblems(extManifest, extName) {
+    const {version, pkgName, mainClass} = extManifest;
     const problems = [];
 
     if (!_.isString(version)) {
@@ -289,23 +411,24 @@ export class ExtensionConfig {
 
   /**
    * @abstract
-   * @param {ExtManifest<ExtType>} extData
-   * @returns {Problem[]}
+   * @param {ExtManifest<ExtType>} extManifest
+   * @param {ExtName<ExtType>} extName
+   * @returns {ExtManifestProblem[]}
    */
   // eslint-disable-next-line no-unused-vars
-  getConfigProblems(extData) {
+  getConfigProblems(extManifest, extName) {
     // shoud override this method if special validation is necessary for this extension type
     return [];
   }
 
   /**
    * @param {string} extName
-   * @param {ExtManifest<ExtType>} extData
+   * @param {ExtManifest<ExtType>} extManifest
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
-  async addExtension(extName, extData, {write = true} = {}) {
-    this.manifest.addExtension(this.extensionType, extName, extData);
+  async addExtension(extName, extManifest, {write = true} = {}) {
+    this.manifest.addExtension(this.extensionType, extName, extManifest);
     if (write) {
       await this.manifest.write();
     }
@@ -313,14 +436,14 @@ export class ExtensionConfig {
 
   /**
    * @param {ExtName<ExtType>} extName
-   * @param {ExtManifest<ExtType>|import('../cli/extension-command').ExtensionFields<ExtType>} extData
+   * @param {ExtManifest<ExtType>|import('../cli/extension-command').ExtensionFields<ExtType>} extManifest
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */
-  async updateExtension(extName, extData, {write = true} = {}) {
+  async updateExtension(extName, extManifest, {write = true} = {}) {
     this.installedExtensions[extName] = {
       ...this.installedExtensions[extName],
-      ...extData,
+      ...extManifest,
     };
     if (write) {
       await this.manifest.write();
@@ -328,6 +451,8 @@ export class ExtensionConfig {
   }
 
   /**
+   * Remove an extension from the list of installed extensions, and optionally avoid a write to the manifest file.
+   *
    * @param {ExtName<ExtType>} extName
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
@@ -354,22 +479,22 @@ export class ExtensionConfig {
     }
 
     log.info(`Available ${this.configKey}:`);
-    for (const [extName, extData] of /** @type {[string, ExtManifest<ExtType>][]} */ (
+    for (const [extName, extManifest] of /** @type {[string, ExtManifest<ExtType>][]} */ (
       _.toPairs(this.installedExtensions)
     )) {
-      log.info(`  - ${this.extensionDesc(extName, extData)}`);
+      log.info(`  - ${this.extensionDesc(extName, extManifest)}`);
     }
   }
 
   /**
    * Returns a string describing the extension. Subclasses must implement.
    * @param {ExtName<ExtType>} extName - Extension name
-   * @param {ExtManifest<ExtType>} extData - Extension data
+   * @param {ExtManifest<ExtType>} extManifest - Extension data
    * @returns {string}
    * @abstract
    */
   // eslint-disable-next-line no-unused-vars
-  extensionDesc(extName, extData) {
+  extensionDesc(extName, extManifest) {
     throw new Error('This must be implemented in a subclass');
   }
 
@@ -414,11 +539,11 @@ export class ExtensionConfig {
    * @param {string} appiumHome
    * @param {ExtType} extType
    * @param {ExtName<ExtType>} extName - Extension name (unique to its type)
-   * @param {ExtManifestWithSchema<ExtType>} extData - Extension config
+   * @param {ExtManifestWithSchema<ExtType>} extManifest - Extension config
    * @returns {import('ajv').SchemaObject|undefined}
    */
-  static _readExtensionSchema(appiumHome, extType, extName, extData) {
-    const {pkgName, schema: argSchemaPath} = extData;
+  static _readExtensionSchema(appiumHome, extType, extName, extManifest) {
+    const {pkgName, schema: argSchemaPath} = extManifest;
     if (!argSchemaPath) {
       throw new TypeError(
         `No \`schema\` property found in config for ${extType} ${pkgName} -- why is this function being called?`
@@ -441,26 +566,26 @@ export class ExtensionConfig {
    * Returns `true` if a specific {@link ExtManifest} object has a `schema` prop.
    * The {@link ExtManifest} object becomes a {@link ExtManifestWithSchema} object.
    * @template {ExtensionType} ExtType
-   * @param {ExtManifest<ExtType>} extData
-   * @returns {extData is ExtManifestWithSchema<ExtType>}
+   * @param {ExtManifest<ExtType>} extManifest
+   * @returns {extManifest is ExtManifestWithSchema<ExtType>}
    */
-  static extDataHasSchema(extData) {
-    return _.isString(extData?.schema) || _.isObject(extData?.schema);
+  static extDataHasSchema(extManifest) {
+    return _.isString(extManifest?.schema) || _.isObject(extManifest?.schema);
   }
 
   /**
    * If an extension provides a schema, this will load the schema and attempt to
    * register it with the schema registrar.
    * @param {ExtName<ExtType>} extName - Name of extension
-   * @param {ExtManifestWithSchema<ExtType>} extData - Extension data
+   * @param {ExtManifestWithSchema<ExtType>} extManifest - Extension data
    * @returns {import('ajv').SchemaObject|undefined}
    */
-  readExtensionSchema(extName, extData) {
+  readExtensionSchema(extName, extManifest) {
     return ExtensionConfig._readExtensionSchema(
       this.appiumHome,
       this.extensionType,
       extName,
-      extData
+      extManifest
     );
   }
 }
@@ -468,8 +593,10 @@ export class ExtensionConfig {
 export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB, INSTALL_TYPES};
 
 /**
- * Config problem
- * @typedef Problem
+ * An issue with the {@linkcode ExtManifest} for a particular extension.
+ *
+ * The existance of such an object implies that the extension cannot be loaded.
+ * @typedef ExtManifestProblem
  * @property {string} err - Error message
  * @property {any} val - Associated value
  */
@@ -529,4 +656,5 @@ export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GIT
 
 /**
  * @typedef {import('../cli/extension-command').ExtensionListData} ExtensionListData
+ * @typedef {import('../cli/extension-command').InstalledExtensionListData} InstalledExtensionListData
  */

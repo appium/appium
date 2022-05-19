@@ -8,8 +8,8 @@ import _ from 'lodash';
 import path from 'path';
 import {exec} from 'teen_process';
 import {PACKAGE_ROOT, resolveFixture} from '../helpers';
-import {fs, logger} from '@appium/support';
-import stripAnsi from 'strip-ansi';
+import {fs, console} from '@appium/support';
+import '@colors/colors';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.
@@ -18,10 +18,12 @@ import stripAnsi from 'strip-ansi';
  */
 export const EXECUTABLE = path.join(PACKAGE_ROOT, 'build', 'lib', 'main.js');
 
-const log = logger.getLogger('appium-e2e-helpers');
+const log = new console.CliConsole();
 
 /**
  * Runs the `appium` executable with the given args.
+ *
+ * Strips any color codes from the output.
  *
  * If the process exits with a nonzero code, the error will be a {@link AppiumRunError}.
  * @template {import('appium/types').CliExtensionSubcommand} ExtSubcommand
@@ -38,12 +40,16 @@ async function run(appiumHome, args, opts = {}) {
   };
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
-    log.debug(stripAnsi(`Running: ${process.execPath} ${args.join(' ')}`));
-    return await exec(process.execPath, args, {
+    log.debug('APPIUM_HOME: %s', appiumHome);
+    log.debug(`Running: ${process.execPath} ${args.join(' ')}`);
+    const retval = await exec(process.execPath, args, {
       cwd,
       env,
       ...opts,
     });
+    retval.stderr = retval.stderr.stripColors;
+    retval.stdout = retval.stdout.stripColors;
+    return retval;
   } catch (err) {
     const {stdout, stderr} = /** @type {TeenProcessExecError} */ (err);
     /**

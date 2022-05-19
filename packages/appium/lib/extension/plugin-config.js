@@ -25,10 +25,9 @@ export class PluginConfig extends ExtensionConfig {
    * Just calls the superclass' constructor with the correct extension type
    * @private
    * @param {Manifest} manifest - IO object
-   * @param {PluginConfigOptions} [opts]
    */
-  constructor(manifest, {logFn} = {}) {
-    super(PLUGIN_TYPE, manifest, logFn);
+  constructor(manifest) {
+    super(PLUGIN_TYPE, manifest);
   }
 
   async validate() {
@@ -39,12 +38,11 @@ export class PluginConfig extends ExtensionConfig {
    * Creates a new {@link PluginConfig} instance for a {@link Manifest} instance.
    *
    * @param {Manifest} manifest
-   * @param {PluginConfigOptions} [opts]
    * @throws If `manifest` already associated with a `PluginConfig`
    * @returns {PluginConfig}
    */
-  static create(manifest, {logFn} = {}) {
-    const instance = new PluginConfig(manifest, {logFn});
+  static create(manifest) {
+    const instance = new PluginConfig(manifest);
     if (PluginConfig.getInstance(manifest)) {
       throw new Error(
         `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a PluginConfig; use PluginConfig.getInstance() to retrieve it.`

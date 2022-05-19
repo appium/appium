@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
-
 import DriverCommand from './driver-command';
 import PluginCommand from './plugin-command';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import {errAndQuit, log, JSON_SPACES} from './utils';
+import {errAndQuit, JSON_SPACES} from './utils';
 
 export const commandClasses = Object.freeze(
   /** @type {const} */ ({
@@ -19,13 +18,13 @@ export const commandClasses = Object.freeze(
  * @param {Object} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
  * @template {import('../extension/manifest').ExtensionType} ExtType
- * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} configObject - Extension config object
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} config - Extension config object
  */
-async function runExtensionCommand(args, configObject) {
+async function runExtensionCommand(args, config) {
   // TODO driver config file should be locked while any of these commands are
   // running to prevent weird situations
   let jsonResult = null;
-  const {extensionType: type} = configObject;
+  const {extensionType: type} = config;
   const extCmd = args[`${type}Command`];
   if (!extCmd) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
@@ -34,9 +33,6 @@ async function runExtensionCommand(args, configObject) {
   if (suppressOutput) {
     json = true;
   }
-  const logFn = (msg) => log(json, msg);
-  let config = configObject;
-  config.log = logFn;
   const CommandClass = /** @type {ExtCommand<ExtType>} */ (commandClasses[type]);
   const cmd = new CommandClass({config, json});
   try {

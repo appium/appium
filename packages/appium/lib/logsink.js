@@ -8,7 +8,7 @@ logger.patchLogger(npmlog);
 global._global_npmlog = npmlog;
 
 // npmlog is used only for emitting, we use winston for output
-npmlog.level = 'silent';
+npmlog.level = 'info';
 const levels = {
   debug: 4,
   info: 3,
@@ -187,6 +187,7 @@ async function createTransports(args) {
 }
 
 async function init(args) {
+  npmlog.level = 'silent';
   // set de facto param passed to timestamp function
   useLocalTimeZone = args.localTimezone;
 

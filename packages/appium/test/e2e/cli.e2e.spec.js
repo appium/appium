@@ -18,7 +18,6 @@ import {
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {
   installLocalExtension,
-  runAppium,
   runAppiumJson,
   runAppiumRaw,
   readAppiumArgErrorFixture,
@@ -35,10 +34,9 @@ describe('CLI behavior', function () {
   let appiumHome;
 
   const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
-
-  beforeEach(function () {
-    this.timeout(40000);
-  });
+  const testDriverInvalidPeerDepsPath = path.dirname(
+    resolveFixture('test-driver-invalid-peer-dep/package.json')
+  );
 
   describe('when appium is a dependency of the project in the current working directory', function () {
     /** @type {string} */
@@ -230,9 +228,9 @@ describe('CLI behavior', function () {
       describe(LIST, function () {
         it('should list available drivers', async function () {
           // note this is raw, not json
-          const stdout = await runAppium(appiumHome, [DRIVER_TYPE, LIST]);
+          const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST], {});
           for (const d of Object.keys(KNOWN_DRIVERS)) {
-            stdout.should.match(new RegExp(`${d}.+[not installed]`));
+            stderr.should.match(new RegExp(`${d}.+[not installed]`));
           }
         });
         it('should list available drivers in json format', async function () {
@@ -266,14 +264,17 @@ describe('CLI behavior', function () {
             penultimateFakeDriverVersionAsOfRightNow
           ).should.be.true;
           // TODO: this could probably be replaced by looking at updateVersion in the JSON
-          const stdout = await runAppium(appiumHome, [DRIVER_TYPE, LIST, '--updates']);
-          stdout.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
+          const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
+          stderr.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
         });
       });
 
       describe(INSTALL, function () {
-        it('should install a driver from the list of known drivers', async function () {
+        beforeEach(async function () {
           await clear();
+        });
+
+        it('should install a driver from the list of known drivers', async function () {
           const ret = await runInstall(['uiautomator2']);
           ret.uiautomator2.pkgName.should.eql('appium-uiautomator2-driver');
           ret.uiautomator2.installType.should.eql('npm');
@@ -283,7 +284,6 @@ describe('CLI behavior', function () {
           list.should.eql(ret);
         });
         it('should install a driver from npm', async function () {
-          await clear();
           const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
           ret.fake.pkgName.should.eql('@appium/fake-driver');
           ret.fake.installType.should.eql('npm');
@@ -294,7 +294,6 @@ describe('CLI behavior', function () {
         });
 
         it('should install a driver from npm and a local driver', async function () {
-          await clear();
           await runInstall(['@appium/fake-driver', '--source', 'npm']);
           await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
           const list = await runList(['--installed']);
@@ -305,8 +304,6 @@ describe('CLI behavior', function () {
         });
 
         it('should install _two_ drivers from npm', async function () {
-          this.timeout('40s');
-          await clear();
           await runInstall(['@appium/fake-driver', '--source', 'npm']);
           await runInstall(['appium-uiautomator2-driver', '--source', 'npm']);
           const list = await runList(['--installed']);
@@ -318,7 +315,6 @@ describe('CLI behavior', function () {
 
         it('should install a driver from npm with a specific version/tag', async function () {
           const currentFakeDriverVersionAsOfRightNow = '3.0.5';
-          await clear();
           const installSpec = `@appium/fake-driver@${currentFakeDriverVersionAsOfRightNow}`;
           const ret = await runInstall([installSpec, '--source', 'npm']);
           ret.fake.pkgName.should.eql('@appium/fake-driver');
@@ -329,7 +325,6 @@ describe('CLI behavior', function () {
           list.should.eql(ret);
         });
         it('should install a driver from github', async function () {
-          await clear();
           const ret = await runInstall([
             'appium/appium-fake-driver',
             '--source',
@@ -345,7 +340,6 @@ describe('CLI behavior', function () {
           list.should.eql(ret);
         });
         it('should install a driver from a local git repo', async function () {
-          await clear();
           const ret = await runInstall([
             FAKE_DRIVER_DIR,
             '--source',
@@ -361,7 +355,6 @@ describe('CLI behavior', function () {
           list.should.eql(ret);
         });
         it('should install a driver from a remote git repo', async function () {
-          await clear();
           const ret = await runInstall([
             'git+https://github.com/appium/appium-fake-driver.git',
             '--source',
@@ -377,7 +370,6 @@ describe('CLI behavior', function () {
           list.should.eql(ret);
         });
         it('should install a driver from a local npm module', async function () {
-          await clear();
           // take advantage of the fact that we know we have fake driver installed as a dependency in
           // this module, so we know its local path on disk
           const ret = await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
@@ -395,11 +387,45 @@ describe('CLI behavior', function () {
           );
           expect(stat.isSymbolicLink()).to.be.true;
         });
+
+        describe('when peer dependencies are invalid', function () {
+          it('should install the driver anyway', async function () {
+            const ret = await installLocalExtension(
+              appiumHome,
+              DRIVER_TYPE,
+              testDriverInvalidPeerDepsPath
+            );
+            ret.test.pkgName.should.equal('test-driver-invalid-peer-dep');
+            const list = await runList(['--installed']);
+            list.test.pkgName.should.equal('test-driver-invalid-peer-dep');
+          });
+
+          it('should warn the user that peer deps are invalid', async function () {
+            const ret = await runAppiumRaw(
+              appiumHome,
+              [DRIVER_TYPE, INSTALL, '--source', 'local', testDriverInvalidPeerDepsPath],
+              {}
+            );
+            ret.stderr.should.match(/may be incompatible with the current version of Appium/i);
+            ret.stderr.should.match(/successfully installed/i);
+          });
+        });
+
+        describe('when peer dependencies are valid', function () {
+          it('should not display a warning', async function () {
+            const ret = await runAppiumRaw(
+              appiumHome,
+              [DRIVER_TYPE, INSTALL, '--source', 'local', testDriverPath],
+              {}
+            );
+            ret.stderr.should.not.match(/may be incompatible with the current version of Appium/i);
+            ret.stderr.should.match(/successfully installed/i);
+          });
+        });
       });
 
       describe('uninstall', function () {
         it('should uninstall a driver based on its driver name', async function () {
-          await clear();
           const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
           // this will throw if the file doesn't exist
           const installPath = resolveFrom(appiumHome, ret.fake.pkgName);
@@ -429,11 +455,11 @@ describe('CLI behavior', function () {
         });
         it('should take a valid driver, invalid script, and throw an error', async function () {
           const driverName = 'fake';
-          await expect(runRun([driverName, 'foo'])).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([driverName, 'foo'])).to.be.rejectedWith(Error);
         });
         it('should take an invalid driver, invalid script, and throw an error', async function () {
           const driverName = 'foo';
-          await expect(runRun([driverName, 'bar'])).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([driverName, 'bar'])).to.be.rejectedWith(Error);
         });
       });
     });
@@ -467,10 +493,10 @@ describe('CLI behavior', function () {
         });
         it('should take a valid plugin, invalid script, and throw an error', async function () {
           const pluginName = 'fake';
-          await expect(runRun([pluginName, 'foo', '--json'])).to.eventually.be.rejectedWith(Error);
+          await expect(runRun([pluginName, 'foo', '--json'])).to.be.rejectedWith(Error);
         });
         it('should take an invalid plugin, invalid script, and throw an error', async function () {
-          await expect(runRun(['foo', 'bar', '--json'])).to.eventually.be.rejectedWith(Error);
+          await expect(runRun(['foo', 'bar', '--json'])).to.be.rejectedWith(Error);
         });
       });
     });

@@ -29,10 +29,9 @@ export class DriverConfig extends ExtensionConfig {
    * Call {@link DriverConfig.create} instead.
    * @private
    * @param {import('./manifest').Manifest} manifest - Manifest instance
-   * @param {DriverConfigOptions} [opts]
    */
-  constructor(manifest, {logFn} = {}) {
-    super(DRIVER_TYPE, manifest, logFn);
+  constructor(manifest) {
+    super(DRIVER_TYPE, manifest);
 
     this.knownAutomationNames = new Set();
   }
@@ -41,12 +40,11 @@ export class DriverConfig extends ExtensionConfig {
    * Creates a new {@link DriverConfig} instance for a {@link Manifest} instance.
    *
    * @param {Manifest} manifest
-   * @param {DriverConfigOptions} [opts]
    * @throws If `manifest` already associated with a `DriverConfig`
    * @returns {DriverConfig}
    */
-  static create(manifest, {logFn} = {}) {
-    const instance = new DriverConfig(manifest, {logFn});
+  static create(manifest) {
+    const instance = new DriverConfig(manifest);
     if (DriverConfig.getInstance(manifest)) {
       throw new Error(
         `Manifest with APPIUM_HOME ${manifest.appiumHome} already has a DriverConfig; use DriverConfig.getInstance() to retrieve it.`
@@ -75,7 +73,7 @@ export class DriverConfig extends ExtensionConfig {
 
   /**
    * @param {ExtManifest<DriverType>} extData
-   * @returns {import('./extension-config').Problem[]}
+   * @returns {import('./extension-config').ExtManifestProblem[]}
    */
   getConfigProblems(extData) {
     const problems = [];
@@ -211,11 +209,6 @@ export class DriverConfig extends ExtensionConfig {
     throw new Error(`Could not find installed driver to support given caps`);
   }
 }
-
-/**
- * @typedef DriverConfigOptions
- * @property {import('./extension-config').ExtensionLogFn} [logFn] - Optional logging function
- */
 
 /**
  * @template T

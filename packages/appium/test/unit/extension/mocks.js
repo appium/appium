@@ -77,6 +77,14 @@ export function initMocks(sandbox = createSandbox()) {
       compareVersions: /** @type {MockAppiumSupportUtil['compareVersions']} */ (
         sandbox.stub().returns(true)
       ),
+      pluralize: require('pluralize'),
+    },
+    console: {
+      CliConsole: /** @type {MockAppiumSupportConsole['CliConsole']} */ (
+        sandbox
+          .stub()
+          .returns(sandbox.createStubInstance(require('@appium/support').console.CliConsole))
+      ),
     },
   };
 
@@ -126,65 +134,96 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {MockAppiumSupportSystem} system
  * @property {MockAppiumSupportNpm} npm
  * @property {MockAppiumSupportUtil} util
+ * @property {MockAppiumSupportConsole} console
  */
 
 /**
  * Mock of package `@appium/support`'s `logger` module
  * @typedef MockAppiumSupportLogger
- * @property {sinon.SinonStub<[string?], Console>} getLogger
- * @property {sinon.SinonStubbedInstance<Console>} __logger
+ * @property {SinonStub<[string?], Console>} getLogger
+ * @property {SinonStubbedInstance<Console>} __logger
  */
 
 /**
  * Mock of package `@appium/support`'s `fs` module
  * @typedef MockAppiumSupportFs
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['readFile']>} readFile
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['writeFile']>} writeFile
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['walk']>} walk
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['mkdirp']>} mkdirp
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['readPackageJsonFrom']>} readPackageJsonFrom
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/fs')['fs']['findRoot']>} findRoot
+ * @property {SinonStubbedMember<SupportFs['readFile']>} readFile
+ * @property {SinonStubbedMember<SupportFs['writeFile']>} writeFile
+ * @property {SinonStubbedMember<SupportFs['walk']>} walk
+ * @property {SinonStubbedMember<SupportFs['mkdirp']>} mkdirp
+ * @property {SinonStubbedMember<SupportFs['readPackageJsonFrom']>} readPackageJsonFrom
+ * @property {SinonStubbedMember<SupportFs['findRoot']>} findRoot
  */
 
 /**
  * Mock of package `@appium/support`'s `env` module.
  * @typedef MockAppiumSupportEnv
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveAppiumHome>} resolveAppiumHome
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').resolveManifestPath>} resolveManifestPath
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').readPackageInDir>} readPackageInDir
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/env').hasAppiumDependency>} hasAppiumDependency
+ * @property {SinonStubbedMember<SupportEnv['resolveAppiumHome']>} resolveAppiumHome
+ * @property {SinonStubbedMember<SupportEnv['resolveManifestPath']>} resolveManifestPath
+ * @property {SinonStubbedMember<SupportEnv['readPackageInDir']>} readPackageInDir
+ * @property {SinonStubbedMember<SupportEnv['hasAppiumDependency']>} hasAppiumDependency
  * @property {import('@appium/support/lib/env').NormalizedPackageJson} __pkg
  */
 
 /**
  * @typedef MockAppiumSupportSystem
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/system').isWindows>} isWindows
+ * @property {SinonStubbedMember<SupportSystem['isWindows']>} isWindows
  */
 
 /**
  * @typedef MockAppiumSupportNpm
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/npm').NPM['getLatestVersion']>} getLatestVersion
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/npm').NPM['getLatestSafeUpgradeVersion']>} getLatestSafeUpgradeVersion
+ * @property {SinonStubbedMember<SupportNpm['getLatestVersion']>} getLatestVersion
+ * @property {SinonStubbedMember<SupportNpm['getLatestSafeUpgradeVersion']>} getLatestSafeUpgradeVersion
  */
 
 /**
  * @typedef MockAppiumSupportUtil
- * @property {sinon.SinonStubbedMember<import('@appium/support/lib/util').compareVersions>} compareVersions
+ * @property {SinonStubbedMember<SupportUtil['compareVersions']>} compareVersions
+ * @property {import('pluralize')} pluralize
  */
 
 /**
  * Mock of package `package-changed`
  * @typedef MockPackageChanged
- * @property {sinon.SinonStubbedMember<import('package-changed').isPackageChanged>} isPackageChanged
- * @property {sinon.SinonStub<never, void>} __writeHash
+ * @property {SinonStubbedMember<import('package-changed').isPackageChanged>} isPackageChanged
+ * @property {SinonStub<never, void>} __writeHash
  */
 
 /**
  * Mock of package `resolve-from`
- * @typedef {sinon.SinonStubbedMember<import('resolve-from')>} MockResolveFrom
+ * @typedef {SinonStubbedMember<import('resolve-from')>} MockResolveFrom
  */
 
 /**
  * For passing into `rewiremock.proxy()`
  * @typedef { { '@appium/support': MockAppiumSupport, 'resolve-from': MockResolveFrom, 'package-changed': MockPackageChanged } } Overrides
+ */
+
+/**
+ * @typedef MockAppiumSupportConsole
+ * @property {SinonStubbedMember<Omit<SupportConsole['CliConsole'], 'symbolToColor'>>} CliConsole
+ */
+
+/**
+ * @template T
+ * @typedef {import('sinon').SinonStubbedInstance<T>} SinonStubbedInstance
+ */
+
+/**
+ * @template T,U
+ * @typedef {import('sinon').SinonStub<T,U>} SinonStub
+ */
+
+/**
+ * @template T
+ * @typedef {import('sinon').SinonStubbedMember<T>} SinonStubbedMember
+ */
+
+/**
+ * @typedef {import('@appium/support').fs} SupportFs
+ * @typedef {import('@appium/support').env} SupportEnv
+ * @typedef {import('@appium/support').npm} SupportNpm
+ * @typedef {import('@appium/support').system} SupportSystem
+ * @typedef {import('@appium/support').util} SupportUtil
+ * @typedef {import('@appium/support').console} SupportConsole
  */

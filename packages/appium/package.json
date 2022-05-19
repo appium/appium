@@ -55,7 +55,7 @@
     "prepare": "npm run build",
     "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --timeout 40s --slow 20s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --timeout 50s --slow 30s \"./test/e2e/**/*.spec.js\"",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
@@ -84,6 +84,7 @@
     "resolve-from": "5.0.0",
     "semver": "7.3.7",
     "source-map-support": "0.5.21",
+    "supports-color": "8.1.1",
     "teen_process": "1.16.0",
     "winston": "3.7.2",
     "word-wrap": "1.2.3",

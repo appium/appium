@@ -53,23 +53,25 @@ describe('ExtensionConfig', function () {
         installType: 'npm',
         appiumVersion: APPIUM_VER,
       };
-      config.addExtension('derp', extData);
+      config.addExtension(extData.pkgName, extData);
     });
 
     describe('getGenericConfigProblems()', function () {
       describe('when there are no problems with the extension data', function () {
         it('should return an empty array', function () {
-          expect(config.getGenericConfigProblems(extData, 'derp')).to.be.empty;
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.be.empty;
         });
       });
 
       describe('when the extension data is missing a "pkgName" field', function () {
+        let pkgName;
         beforeEach(function () {
+          ({pkgName} = extData);
           delete extData.pkgName;
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, 'derp')).to.eql([
+          expect(config.getGenericConfigProblems(extData, pkgName)).to.eql([
             {
               err: 'Invalid or missing `name` field in my `package.json` and/or `extensions.yaml` (must be a string)',
               val: undefined,
@@ -84,7 +86,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, 'derp')).to.eql([
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
             {
               err: 'Invalid or missing `version` field in my `package.json` and/or `extensions.yaml` (must be a string)',
               val: undefined,
@@ -99,7 +101,7 @@ describe('ExtensionConfig', function () {
         });
 
         it('should return a problem', function () {
-          expect(config.getGenericConfigProblems(extData, 'derp')).to.eql([
+          expect(config.getGenericConfigProblems(extData, extData.pkgName)).to.eql([
             {
               err: 'Invalid or missing `appium.mainClass` field in my `package.json` and/or `mainClass` field in `extensions.yaml` (must be a string)',
               val: undefined,
@@ -109,18 +111,9 @@ describe('ExtensionConfig', function () {
       });
     });
 
-    describe('displayConfigWarnings()', function () {
+    describe('getGenericConfigWarnings()', function () {
       /** @type {ExtManifest<DriverType>} */
-      const extData = {
-        version: '1.0.0',
-        automationName: 'Derp',
-        mainClass: 'SomeClass',
-        pkgName: 'derp',
-        platformNames: ['dogs', 'cats'],
-        installSpec: 'derp',
-        installType: 'npm',
-        appiumVersion: APPIUM_VER,
-      };
+      let extData;
 
       /**
        * @type {ExtensionConfig<DriverType>}
@@ -129,8 +122,19 @@ describe('ExtensionConfig', function () {
 
       beforeEach(function () {
         const manifest = Manifest.getInstance('/some/path');
-        manifest.addExtension(DRIVER_TYPE, 'derp', extData);
+        extData = {
+          version: '1.0.0',
+          automationName: 'Derp',
+          mainClass: 'SomeClass',
+          pkgName: 'derp',
+          platformNames: ['dogs', 'cats'],
+          installSpec: 'derp',
+          installType: 'npm',
+          appiumVersion: APPIUM_VER,
+        };
+        manifest.addExtension(DRIVER_TYPE, extData.pkgName, extData);
         config = new ExtensionConfig(DRIVER_TYPE, manifest);
+        delete this._listDataCache;
       });
 
       describe('when the extension data is missing an `installSpec` field', function () {
@@ -138,10 +142,11 @@ describe('ExtensionConfig', function () {
           delete extData.installSpec;
         });
 
-        it('should log a warning', async function () {
-          await config.displayConfigWarnings(extData, 'derp');
-          expect(MockAppiumSupport.logger.getLogger().warn).to.have.been.calledWith(
-            'Driver "derp" (package `derp`) has an invalid or missing `installSpec` property in `extensions.yaml`; this may cause upgrades done via the `appium` CLI to fail.'
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installSpec") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
           );
         });
       });
@@ -151,10 +156,26 @@ describe('ExtensionConfig', function () {
           delete extData.installType;
         });
 
-        it('should log a warning', async function () {
-          await config.displayConfigWarnings(extData, 'derp');
-          expect(MockAppiumSupport.logger.getLogger().warn).to.have.been.calledWith(
-            'Driver "derp" (package `derp`) has an invalid or missing `installType` property in `extensions.yaml`; this may cause upgrades done via the `appium` CLI to fail.'
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 1 invalid or missing field ("installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
+          );
+        });
+      });
+
+      describe('when the extension data is missing both `installType` and `installSpec` fields', function () {
+        beforeEach(function () {
+          delete extData.installType;
+          delete extData.installSpec;
+        });
+
+        it('should resolve w/ an appropriate warning', async function () {
+          await expect(config.getGenericConfigWarnings(extData, extData.pkgName)).to.eventually.eql(
+            [
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) has 2 invalid or missing fields ("installSpec", "installType") in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium driver uninstall ${extData.pkgName}\` and \`appium driver install ${extData.pkgName}\` to attempt a fix.`,
+            ]
           );
         });
       });
@@ -164,38 +185,75 @@ describe('ExtensionConfig', function () {
           delete extData.appiumVersion;
         });
 
-        it('should log a warning', async function () {
-          await config.displayConfigWarnings(extData, 'derp');
-          expect(MockAppiumSupport.logger.getLogger().warn).to.have.been.calledWith(
-            `Driver "derp" (package \`derp\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`derp\` to add a peer dependency on \`appium@${APPIUM_VER}\`.`
-          );
+        describe('when an upgrade is not available', function () {
+          beforeEach(function () {
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
+            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+          });
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. Please ask the developer of \`${extData.pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`,
+            ]);
+          });
+        });
+
+        describe('when an upgrade is available', function () {
+          let updateVersion;
+
+          beforeEach(function () {
+            updateVersion = '1.1.0';
+            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+          });
+
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to an invalid or missing peer dependency on Appium. A newer version of \`${extData.pkgName}\` is available; please attempt to upgrade "${extData.pkgName}" to v${updateVersion} or newer.`,
+            ]);
+          });
         });
       });
 
-      describe('when the extension data has an `appiumVersion` field which does not satisfy the current version of Appium, and an upgrade is available', function () {
+      describe('when the extension data has an `appiumVersion` field which does not satisfy the current version of Appium', function () {
         beforeEach(function () {
           extData.appiumVersion = '1.9.9';
         });
-        it('should log a warning', async function () {
-          await config.displayConfigWarnings(extData, 'derp');
-          expect(MockAppiumSupport.logger.getLogger().warn).to.have.been.calledWith(
-            `Driver "derp" (package \`derp\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please upgrade \`derp\` to v1.1.0 or (potentially unsafe) v2.0.0.`
-          );
-        });
-      });
 
-      describe('when the extension data has an `appiumVersion` field which does not satisfy the current version of Appium, and no upgrade is available', function () {
-        beforeEach(function () {
-          extData.appiumVersion = '1.9.9';
-          MockAppiumSupport.util.compareVersions.returns(false);
-          MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves('1.0.0');
-          MockAppiumSupport.npm.getLatestVersion.resolves('1.0.0');
+        describe('when an upgrade is available', function () {
+          let updateVersion;
+
+          beforeEach(function () {
+            updateVersion = '1.1.0';
+            MockAppiumSupport.npm.getLatestVersion.resolves(updateVersion);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(updateVersion);
+          });
+
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
+            ]);
+          });
         });
-        it('should log a warning', async function () {
-          await config.displayConfigWarnings(extData, 'derp');
-          expect(MockAppiumSupport.logger.getLogger().warn).to.have.been.calledWith(
-            `Driver "derp" (package \`derp\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please ask the developer of \`derp\` to update the peer dependency on Appium to ${APPIUM_VER}.`
-          );
+
+        describe('when no upgrade is available', function () {
+          beforeEach(function () {
+            MockAppiumSupport.util.compareVersions.returns(false);
+            MockAppiumSupport.npm.getLatestSafeUpgradeVersion.resolves(null);
+            MockAppiumSupport.npm.getLatestVersion.resolves(null);
+          });
+          it('should resolve w/ an appropriate warning', async function () {
+            await expect(
+              config.getGenericConfigWarnings(extData, extData.pkgName)
+            ).to.eventually.eql([
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please ask the developer of \`${extData.pkgName}\` to update the peer dependency on Appium to v${APPIUM_VER}.`,
+            ]);
+          });
         });
       });
     });

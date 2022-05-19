@@ -1,10 +1,7 @@
 {
-  "name": "test-driver",
+  "name": "test-driver-invalid-peer-dep",
   "version": "1.0.0",
   "private": true,
-  "peerDependencies": {
-    "appium": "^2.0.0"
-  },
   "appium": {
     "driverName": "test",
     "automationName": "Test",

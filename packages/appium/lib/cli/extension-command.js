@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
-
+import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
-import {npm, fs, util, env} from '@appium/support';
-import {log, spinWith, RingBuffer} from './utils';
+import {npm, util, env, console} from '@appium/support';
+import {spinWith, RingBuffer} from './utils';
 import {SubProcess} from 'teen_process';
 import {
   INSTALL_TYPE_NPM,
@@ -46,7 +46,8 @@ class ExtensionCommand {
    */
   constructor({config, json}) {
     this.config = config;
-    this.isJsonOutput = json;
+    this.log = new console.CliConsole({jsonMode: json});
+    this.isJsonOutput = Boolean(json);
   }
 
   /**
@@ -54,6 +55,20 @@ class ExtensionCommand {
    */
   get type() {
     return this.config.extensionType;
+  }
+
+  /**
+   * Logs a message and returns an {@linkcode Error} to throw.
+   *
+   * For TS to understand that a function throws an exception, it must actually throw an exception--
+   * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
+   * nor is something like `@returns {never}` which does not imply a thrown exception.
+   * @param {string} message
+   * @protected
+   * @returns {Error}
+   */
+  _createFatalError(message) {
+    return new Error(this.log.decorate(message, 'error'));
   }
 
   /**
@@ -65,17 +80,11 @@ class ExtensionCommand {
   async execute(args) {
     const cmd = args[`${this.type}Command`];
     if (!_.isFunction(this[cmd])) {
-      throw new Error(`Cannot handle ${this.type} command ${cmd}`);
+      throw this._createFatalError(`Cannot handle ${this.type} command ${cmd}`);
     }
     const executeCmd = this[cmd].bind(this);
     return await executeCmd(args);
   }
-
-  /**
-   * @typedef ListOptions
-   * @property {boolean} showInstalled - whether should show only installed extensions
-   * @property {boolean} showUpdates - whether should show available updates
-   */
 
   /**
    * List extensions
@@ -169,7 +178,7 @@ class ExtensionCommand {
         }
       }
 
-      console.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
+      this.log.log(`- ${name.yellow}${installTxt}${updateTxt}${upToDateTxt}${unsafeUpdateTxt}`);
     }
 
     return listData;
@@ -182,36 +191,52 @@ class ExtensionCommand {
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
   async _install({installSpec, installType, packageName}) {
-    /** @type {ExtensionFields<typeof this.type>} */
+    /** @type {ExtensionFields<ExtType>} */
     let extData;
 
     if (packageName && [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)) {
-      throw new Error(`When using --source=${installType}, cannot also use --package`);
+      throw this._createFatalError(`When using --source=${installType}, cannot also use --package`);
     }
 
     if (!packageName && [INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB].includes(installType)) {
-      throw new Error(`When using --source=${installType}, must also use --package`);
+      throw this._createFatalError(`When using --source=${installType}, must also use --package`);
     }
 
+    /**
+     * @type {InstallViaNpmArgs}
+     */
+    let installOpts;
+
+    /**
+     * The probable (?) name of the extension derived from the install spec.
+     *
+     * If using a local install type, this will remain empty.
+     * @type {string}
+     */
+    let probableExtName = '';
+
+    // depending on `installType`, build the options to pass into `installViaNpm`
     if (installType === INSTALL_TYPE_GITHUB) {
       if (installSpec.split('/').length !== 2) {
-        throw new Error(
+        throw this._createFatalError(
           `Github ${this.type} spec ${installSpec} appeared to be invalid; ` +
             'it should be of the form <org>/<repo>'
         );
       }
-      extData = await this.installViaNpm({
+      installOpts = {
         installSpec,
         pkgName: /** @type {string} */ (packageName),
-      });
+      };
+      probableExtName = installSpec;
     } else if (installType === INSTALL_TYPE_GIT) {
       // git urls can have '.git' at the end, but this is not necessary and would complicate the
       // way we download and name directories, so we can just remove it
       installSpec = installSpec.replace(/\.git$/, '');
-      extData = await this.installViaNpm({
+      installOpts = {
         installSpec,
         pkgName: /** @type {string} */ (packageName),
-      });
+      };
+      probableExtName = installSpec;
     } else {
       let pkgName, pkgVer;
       if (installType === INSTALL_TYPE_LOCAL) {
@@ -245,30 +270,68 @@ class ExtensionCommand {
             const msg =
               `Could not resolve ${this.type}; are you sure it's in the list ` +
               `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
-            throw new Error(msg);
+            throw this._createFatalError(msg);
           }
+          probableExtName = name;
           pkgName = this.knownExtensions[name];
           // given that we'll use the install type in the driver json, store it as
           // 'npm' now
           installType = INSTALL_TYPE_NPM;
         }
       }
-
-      extData = await this.installViaNpm({installSpec, pkgName, pkgVer});
+      installOpts = {installSpec, pkgName, pkgVer};
     }
 
-    const extName = extData[/** @type {string} */ (`${this.type}Name`)];
-    delete extData[/** @type {string} */ (`${this.type}Name`)];
-
-    if (this.config.isInstalled(extName)) {
-      throw new Error(
-        `A ${this.type} named '${extName}' is already installed. ` +
-          `Did you mean to update? 'appium ${this.type} update'. See ` +
-          `installed ${this.type}s with 'appium ${this.type} list --installed'.`
+    // fail fast here if we can
+    if (probableExtName && this.config.isInstalled(probableExtName)) {
+      throw this._createFatalError(
+        `A ${this.type} named "${probableExtName}" is already installed. ` +
+          `Did you mean to update? Run "appium ${this.type} update". See ` +
+          `installed ${this.type}s with "appium ${this.type} list --installed".`
       );
     }
 
+    extData = await this.installViaNpm(installOpts);
+
+    // this _should_ be the same as `probablyExtName` as the one derived above unless
+    // install type is local.
+    const extName = extData[/** @type {string} */ (`${this.type}Name`)];
+
+    // check _a second time_ with the more-accurate extName
+    if (this.config.isInstalled(extName)) {
+      throw this._createFatalError(
+        `A ${this.type} named "${extName}" is already installed. ` +
+          `Did you mean to update? Run "appium ${this.type} update". See ` +
+          `installed ${this.type}s with "appium ${this.type} list --installed".`
+      );
+    }
+
+    // this field does not exist as such in the manifest (it's used as a property name instead)
+    // so that's why it's being removed here.
+    delete extData[/** @type {string} */ (`${this.type}Name`)];
+
+    /** @type {ExtManifest<ExtType>} */
     const extManifest = {...extData, installType, installSpec};
+    const [errors, warnings] = await B.all([
+      this.config.getProblems(extName, extManifest),
+      this.config.getWarnings(extName, extManifest),
+    ]);
+    const errorMap = new Map([[extName, errors]]);
+    const warningMap = new Map([[extName, warnings]]);
+    const {errorSummaries, warningSummaries} = this.config.getValidationResultSummaries(
+      errorMap,
+      warningMap
+    );
+
+    if (!_.isEmpty(errorSummaries)) {
+      throw this._createFatalError(errorSummaries.join('\n'));
+    }
+
+    // note that we won't show any warnings if there were errors.
+    if (!_.isEmpty(warningSummaries)) {
+      this.log.warn(warningSummaries.join('\n'));
+    }
+
     await this.config.addExtension(extName, extManifest);
 
     // update the if we've changed the local `package.json`
@@ -277,7 +340,7 @@ class ExtensionCommand {
     }
 
     // log info for the user
-    log(this.isJsonOutput, this.getPostInstallText({extName, extData}));
+    this.log.info(this.getPostInstallText({extName, extData}));
 
     return this.config.installedExtensions;
   }
@@ -292,17 +355,17 @@ class ExtensionCommand {
     const specMsg = npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
     const msg = `Installing '${installSpec}'${specMsg}`;
     try {
-      const pkgJsonData = await spinWith(
-        this.isJsonOutput,
-        msg,
-        async () =>
-          await npm.installPackage(this.config.appiumHome, pkgName, {
-            pkgVer,
-          })
-      );
-      return this.getExtensionFields(pkgJsonData, installSpec);
+      const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => {
+        const pkgJsonData = await npm.installPackage(this.config.appiumHome, pkgName, {
+          pkgVer,
+        });
+        this.validatePackageJson(pkgJsonData, installSpec);
+        return pkgJsonData;
+      });
+
+      return this.getExtensionFields(pkgJsonData);
     } catch (err) {
-      throw new Error(`Encountered an error when installing package: ${err.message}`);
+      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
     }
   }
 
@@ -315,7 +378,7 @@ class ExtensionCommand {
    */
   // eslint-disable-next-line no-unused-vars
   getPostInstallText(args) {
-    throw new Error('Must be implemented in final class');
+    throw this._createFatalError('Must be implemented in final class');
   }
 
   /**
@@ -325,11 +388,9 @@ class ExtensionCommand {
    * appium versions.
    *
    * @param {ExtPackageJson<ExtType>} pkgJson - the package.json data for a driver module, as if it had been straightforwardly 'require'd
-   * @param {string} installSpec - Extension name/spec
    * @returns {ExtensionFields<ExtType>}
    */
-  getExtensionFields(pkgJson, installSpec) {
-    this.validatePackageJson(pkgJson, installSpec);
+  getExtensionFields(pkgJson) {
     const {appium, name, version, peerDependencies} = pkgJson;
 
     /** @type {unknown} */
@@ -392,26 +453,29 @@ class ExtensionCommand {
    */
   // eslint-disable-next-line no-unused-vars
   validateExtensionFields(extMetadata, installSpec) {
-    throw new Error('Must be implemented in final class');
+    throw this._createFatalError('Must be implemented in final class');
   }
 
   /**
-   * Uninstall an extension
+   * Uninstall an extension.
+   *
+   * First tries to do this via `npm uninstall`, but if that fails, just `rm -rf`'s the extension dir.
+   *
+   * Will only remove the extension from the manifest if it has been successfully removed.
    *
    * @param {UninstallOpts} opts
-   * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
+   * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data (without the extension just uninstalled)
    */
   async _uninstall({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
-      throw new Error(`Can't uninstall ${this.type} '${installSpec}'; it is not installed`);
+      throw this._createFatalError(
+        `Can't uninstall ${this.type} '${installSpec}'; it is not installed`
+      );
     }
-    const installPath = this.config.getInstallPath(installSpec);
-    try {
-      await fs.rimraf(installPath);
-    } finally {
-      await this.config.removeExtension(installSpec);
-    }
-    log(this.isJsonOutput, `Successfully uninstalled ${this.type} '${installSpec}'`.green);
+    const pkgName = this.config.installedExtensions[installSpec].pkgName;
+    await npm.uninstallPackage(this.config.appiumHome, pkgName);
+    await this.config.removeExtension(installSpec);
+    this.log.ok(`Successfully uninstalled ${this.type} '${installSpec}'`.green);
     return this.config.installedExtensions;
   }
 
@@ -425,7 +489,9 @@ class ExtensionCommand {
     const shouldUpdateAll = installSpec === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
-      throw new Error(`The ${this.type} '${installSpec}' was not installed, so can't be updated`);
+      throw this._createFatalError(
+        `The ${this.type} "${installSpec}" was not installed, so can't be updated`
+      );
     }
     const extsToUpdate = shouldUpdateAll
       ? Object.keys(this.config.installedExtensions)
@@ -459,7 +525,7 @@ class ExtensionCommand {
           }
         );
         if (!unsafe && !update.safeUpdate) {
-          throw new Error(
+          throw this._createFatalError(
             `The ${this.type} '${e}' has a major revision update ` +
               `(${update.current} => ${update.unsafeUpdate}), which could include ` +
               `breaking changes. If you want to apply this update, re-run with --unsafe`
@@ -477,24 +543,24 @@ class ExtensionCommand {
       }
     }
 
-    log(this.isJsonOutput, 'Update report:');
+    this.log.info('Update report:');
+
     for (const [e, update] of _.toPairs(updates)) {
-      log(this.isJsonOutput, `- ${this.type} ${e} updated: ${update.from} => ${update.to}`.green);
-    }
-    for (const [e, err] of _.toPairs(errors)) {
-      if (err instanceof NotUpdatableError) {
-        log(
-          this.isJsonOutput,
-          `- '${e}' was not installed via npm, so we could not check ` + `for updates`.yellow
-        );
-      } else if (err instanceof NoUpdatesAvailableError) {
-        log(this.isJsonOutput, `- '${e}' had no updates available`.yellow);
-      } else {
-        // otherwise, make it pop with red!
-        log(this.isJsonOutput, `- '${e}' failed to update: ${err}`.red);
-      }
+      this.log.ok(`  - ${this.type} ${e} updated: ${update.from} => ${update.to}`.green);
     }
 
+    for (const [e, err] of _.toPairs(errors)) {
+      if (err instanceof NotUpdatableError) {
+        this.log.warn(
+          `  - '${e}' was not installed via npm, so we could not check ` + `for updates`.yellow
+        );
+      } else if (err instanceof NoUpdatesAvailableError) {
+        this.log.info(`  - '${e}' had no updates available`.yellow);
+      } else {
+        // otherwise, make it pop with red!
+        this.log.error(`  - '${e}' failed to update: ${err}`.red);
+      }
+    }
     return {updates, errors};
   }
 
@@ -542,7 +608,6 @@ class ExtensionCommand {
    */
   async updateExtension(installSpec, version) {
     const {pkgName} = this.config.installedExtensions[installSpec];
-    await fs.rimraf(this.config.getInstallPath(installSpec));
     const extData = await this.installViaNpm({
       installSpec,
       pkgName,
@@ -564,15 +629,15 @@ class ExtensionCommand {
    * @return {Promise<RunOutput>}
    */
   async _run({installSpec, scriptName}) {
-    if (!_.has(this.config.installedExtensions, installSpec)) {
-      throw new Error(`please install the ${this.type} first`);
+    if (!this.config.isInstalled(installSpec)) {
+      throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
 
     const extConfig = this.config.installedExtensions[installSpec];
 
     // note: TS cannot understand that _.has() is a type guard
     if (!extConfig.scripts) {
-      throw new Error(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not contain the ` +
           `"scripts" field underneath the "appium" field in its package.json`
       );
@@ -581,13 +646,13 @@ class ExtensionCommand {
     const extScripts = extConfig.scripts;
 
     if (!_.isPlainObject(extScripts)) {
-      throw new Error(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' "scripts" field must be a plain object`
       );
     }
 
     if (!_.has(extScripts, scriptName)) {
-      throw new Error(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
       );
     }
@@ -600,20 +665,17 @@ class ExtensionCommand {
 
     runner.on('stream-line', (line) => {
       output.enqueue(line);
-      log(this.isJsonOutput, line);
+      this.log.log(line);
     });
 
     await runner.start(0);
 
     try {
       await runner.join();
-      log(this.isJsonOutput, `${scriptName} successfully ran`.green);
+      this.log.ok(`${scriptName} successfully ran`.green);
       return {output: output.getBuff()};
     } catch (err) {
-      log(
-        this.isJsonOutput,
-        `Encountered an error when running '${scriptName}': ${err.message}`.red
-      );
+      this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
       return {error: err.message, output: output.getBuff()};
     }
   }
@@ -770,4 +832,10 @@ export {ExtensionCommand};
 /**
  * @template {ExtensionType} ExtType
  * @typedef {ExtType extends DriverType ? typeof import('../constants').KNOWN_DRIVERS : ExtType extends PluginType ? typeof import('../constants').KNOWN_PLUGINS : never} KnownExtensions
+ */
+
+/**
+ * @typedef ListOptions
+ * @property {boolean} showInstalled - whether should show only installed extensions
+ * @property {boolean} showUpdates - whether should show available updates
  */

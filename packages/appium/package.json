@@ -65,7 +65,7 @@
     "@appium/schema": "file:../schema",
     "@appium/support": "file:../support",
     "@appium/test-support": "file:../test-support",
-    "@babel/runtime": "7.17.9",
+    "@babel/runtime": "7.18.0",
     "@sidvind/better-ajv-errors": "2.0.0",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",

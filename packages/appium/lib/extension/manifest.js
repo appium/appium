@@ -10,7 +10,6 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
 import {INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from './package-changed';
-import {APPIUM_VER} from '../config';
 
 /**
  * Default depth to search in directory tree for whatever it is we're looking for.
@@ -278,9 +277,6 @@ export class Manifest {
    */
   addExtension(extType, extName, extData) {
     const data = _.clone(extData);
-    if (data.appiumVersion?.startsWith('file:..')) {
-      data.appiumVersion = APPIUM_VER;
-    }
     this._data[`${extType}s`][extName] = data;
     return data;
   }

@@ -336,17 +336,6 @@ describe('Manifest', function () {
           expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.not.have.property('appiumVersion');
         });
       });
-
-      describe('when the extension has a peer dependency on `appium`, but it references a filepath', function () {
-        beforeEach(function () {
-          extData.appiumVersion = 'file:../appium';
-        });
-
-        it('should set `appiumVersion` to the current appium version', function () {
-          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
-          expect(manifest.getExtensionData(DRIVER_TYPE).foo.appiumVersion).to.equal(APPIUM_VER);
-        });
-      });
     });
 
     describe('getExtensionData()', function () {
@@ -499,7 +488,7 @@ describe('Manifest', function () {
               driverName: 'myDriver',
             },
             peerDependencies: {
-              appium: 'file:../appium',
+              appium: APPIUM_VER,
             },
           };
         });

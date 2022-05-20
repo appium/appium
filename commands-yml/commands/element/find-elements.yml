@@ -104,4 +104,4 @@ endpoint:
 # Links to specifications. Should link to at least one specification
 specifications:
   w3c: https://www.w3.org/TR/webdriver/#dfn-find-elements
-  jsonwp: https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelements
+  jsonwp: https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelements

@@ -43,7 +43,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.17.9",
+    "@babel/runtime": "7.18.0",
     "archiver": "5.3.1",
     "axios": "0.27.2",
     "base64-stream": "1.0.0",

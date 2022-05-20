@@ -55,7 +55,7 @@
     "prepare": "npm run build",
     "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
-    "test:e2e": "mocha --timeout 40s --slow 20s \"./test/e2e/**/*.spec.js\"",
+    "test:e2e": "mocha --timeout 50s --slow 30s \"./test/e2e/**/*.spec.js\"",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {

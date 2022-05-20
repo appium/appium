@@ -38,10 +38,6 @@ describe('CLI behavior', function () {
     resolveFixture('test-driver-invalid-peer-dep/package.json')
   );
 
-  beforeEach(function () {
-    this.timeout(40000);
-  });
-
   describe('when appium is a dependency of the project in the current working directory', function () {
     /** @type {string} */
     let hashPath;
@@ -308,7 +304,6 @@ describe('CLI behavior', function () {
         });
 
         it('should install _two_ drivers from npm', async function () {
-          this.timeout('40s');
           await runInstall(['@appium/fake-driver', '--source', 'npm']);
           await runInstall(['appium-uiautomator2-driver', '--source', 'npm']);
           const list = await runList(['--installed']);

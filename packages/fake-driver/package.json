@@ -55,7 +55,7 @@
     "xpath": "0.0.32"
   },
   "peerDependencies": {
-    "appium": "file:../appium"
+    "appium": "^2.0.0-beta.35"
   },
   "engines": {
     "node": ">=12",

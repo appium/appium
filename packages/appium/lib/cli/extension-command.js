@@ -60,21 +60,15 @@ class ExtensionCommand {
   /**
    * Logs a message and returns an {@linkcode Error} to throw.
    *
-   * For TS to understand that a function throws an exception, it must actually throw an exception;
-   * in other words, _calling_ a function which always throws an exception is not enough.
-   * @param {string|Error} msgOrError
+   * For TS to understand that a function throws an exception, it must actually throw an exception--
+   * in other words, _calling_ a function which is guaranteed to throw an exception is not enough--
+   * nor is something like `@returns {never}` which does not imply a thrown exception.
+   * @param {string} message
    * @protected
    * @returns {Error}
    */
-  _fatalError(msgOrError) {
-    if (_.isString(msgOrError)) {
-      return new Error(this.log.decorate(msgOrError, 'error'));
-    }
-    if (_.isString(msgOrError.message)) {
-      msgOrError.message = /** @type {string} */ (this.log.decorate(msgOrError.message, 'error'));
-    }
-
-    return msgOrError;
+  _createFatalError(message) {
+    return new Error(this.log.decorate(message, 'error'));
   }
 
   /**
@@ -86,7 +80,7 @@ class ExtensionCommand {
   async execute(args) {
     const cmd = args[`${this.type}Command`];
     if (!_.isFunction(this[cmd])) {
-      throw this._fatalError(`Cannot handle ${this.type} command ${cmd}`);
+      throw this._createFatalError(`Cannot handle ${this.type} command ${cmd}`);
     }
     const executeCmd = this[cmd].bind(this);
     return await executeCmd(args);
@@ -201,11 +195,11 @@ class ExtensionCommand {
     let extData;
 
     if (packageName && [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)) {
-      throw this._fatalError(`When using --source=${installType}, cannot also use --package`);
+      throw this._createFatalError(`When using --source=${installType}, cannot also use --package`);
     }
 
     if (!packageName && [INSTALL_TYPE_GIT, INSTALL_TYPE_GITHUB].includes(installType)) {
-      throw this._fatalError(`When using --source=${installType}, must also use --package`);
+      throw this._createFatalError(`When using --source=${installType}, must also use --package`);
     }
 
     /**
@@ -224,7 +218,7 @@ class ExtensionCommand {
     // depending on `installType`, build the options to pass into `installViaNpm`
     if (installType === INSTALL_TYPE_GITHUB) {
       if (installSpec.split('/').length !== 2) {
-        throw this._fatalError(
+        throw this._createFatalError(
           `Github ${this.type} spec ${installSpec} appeared to be invalid; ` +
             'it should be of the form <org>/<repo>'
         );
@@ -276,7 +270,7 @@ class ExtensionCommand {
             const msg =
               `Could not resolve ${this.type}; are you sure it's in the list ` +
               `of supported ${this.type}s? ${JSON.stringify(knownNames)}`;
-            throw this._fatalError(msg);
+            throw this._createFatalError(msg);
           }
           probablyExtName = name;
           pkgName = this.knownExtensions[name];
@@ -290,7 +284,7 @@ class ExtensionCommand {
 
     // fail fast here if we can
     if (probablyExtName && this.config.isInstalled(probablyExtName)) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `A ${this.type} named "${probablyExtName}" is already installed. ` +
           `Did you mean to update? Run "appium ${this.type} update". See ` +
           `installed ${this.type}s with "appium ${this.type} list --installed".`
@@ -305,7 +299,7 @@ class ExtensionCommand {
 
     // check _a second time_ with the more-accurate extName
     if (this.config.isInstalled(extName)) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `A ${this.type} named "${extName}" is already installed. ` +
           `Did you mean to update? Run "appium ${this.type} update". See ` +
           `installed ${this.type}s with "appium ${this.type} list --installed".`
@@ -330,7 +324,7 @@ class ExtensionCommand {
     );
 
     if (!_.isEmpty(errorSummaries)) {
-      throw this._fatalError(errorSummaries.join('\n'));
+      throw this._createFatalError(errorSummaries.join('\n'));
     }
 
     // note that we won't show any warnings if there were errors.
@@ -371,7 +365,7 @@ class ExtensionCommand {
 
       return this.getExtensionFields(pkgJsonData);
     } catch (err) {
-      throw this._fatalError(`Encountered an error when installing package: ${err.message}`);
+      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
     }
   }
 
@@ -384,7 +378,7 @@ class ExtensionCommand {
    */
   // eslint-disable-next-line no-unused-vars
   getPostInstallText(args) {
-    throw this._fatalError('Must be implemented in final class');
+    throw this._createFatalError('Must be implemented in final class');
   }
 
   /**
@@ -459,7 +453,7 @@ class ExtensionCommand {
    */
   // eslint-disable-next-line no-unused-vars
   validateExtensionFields(extMetadata, installSpec) {
-    throw this._fatalError('Must be implemented in final class');
+    throw this._createFatalError('Must be implemented in final class');
   }
 
   /**
@@ -474,7 +468,9 @@ class ExtensionCommand {
    */
   async _uninstall({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
-      throw this._fatalError(`Can't uninstall ${this.type} '${installSpec}'; it is not installed`);
+      throw this._createFatalError(
+        `Can't uninstall ${this.type} '${installSpec}'; it is not installed`
+      );
     }
     const pkgName = this.config.installedExtensions[installSpec].pkgName;
     await npm.uninstallPackage(this.config.appiumHome, pkgName);
@@ -493,7 +489,7 @@ class ExtensionCommand {
     const shouldUpdateAll = installSpec === UPDATE_ALL;
     // if we're specifically requesting an update for an extension, make sure it's installed
     if (!shouldUpdateAll && !this.config.isInstalled(installSpec)) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `The ${this.type} "${installSpec}" was not installed, so can't be updated`
       );
     }
@@ -529,7 +525,7 @@ class ExtensionCommand {
           }
         );
         if (!unsafe && !update.safeUpdate) {
-          throw this._fatalError(
+          throw this._createFatalError(
             `The ${this.type} '${e}' has a major revision update ` +
               `(${update.current} => ${update.unsafeUpdate}), which could include ` +
               `breaking changes. If you want to apply this update, re-run with --unsafe`
@@ -621,7 +617,7 @@ class ExtensionCommand {
     await this.config.updateExtension(installSpec, extData);
   }
 
-  /**Promise
+  /**
    * Runs a script cached inside the "scripts" field under "appium"
    * inside of the driver/plugins "package.json" file. Will throw
    * an error if the driver/plugin does not contain a "scripts" field
@@ -634,14 +630,14 @@ class ExtensionCommand {
    */
   async _run({installSpec, scriptName}) {
     if (!this.config.isInstalled(installSpec)) {
-      throw this._fatalError(`The ${this.type} "${installSpec}" is not installed`);
+      throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
 
     const extConfig = this.config.installedExtensions[installSpec];
 
     // note: TS cannot understand that _.has() is a type guard
     if (!extConfig.scripts) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not contain the ` +
           `"scripts" field underneath the "appium" field in its package.json`
       );
@@ -650,13 +646,13 @@ class ExtensionCommand {
     const extScripts = extConfig.scripts;
 
     if (!_.isPlainObject(extScripts)) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' "scripts" field must be a plain object`
       );
     }
 
     if (!_.has(extScripts, scriptName)) {
-      throw this._fatalError(
+      throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
       );
     }

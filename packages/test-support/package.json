@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@appium/support": "file:../support",
-    "@babel/runtime": "7.18.0",
+    "@babel/runtime": "7.18.2",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "loud-rejection": "2.2.0",

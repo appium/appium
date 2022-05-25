@@ -31,8 +31,8 @@
     "lint": "eslint index.js"
   },
   "peerDependencies": {
-    "@babel/core": "7.18.0",
-    "@babel/eslint-parser": "7.17.0",
+    "@babel/core": "7.18.2",
+    "@babel/eslint-parser": "7.18.2",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",

@@ -1,11 +1,13 @@
 import {DRIVER_TYPE} from '../../../lib/constants';
+import path from 'path';
 import {version as APPIUM_VER} from '../../../package.json';
-import {rewiremock} from '../../helpers';
+import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 
 const {expect} = chai;
 
 describe('ExtensionConfig', function () {
+  /** @type {import('sinon').SinonSandbox} */
   let sandbox;
 
   /** @type {typeof import('appium/lib/extension/extension-config').ExtensionConfig} */
@@ -260,6 +262,56 @@ describe('ExtensionConfig', function () {
 
     describe('validate()', function () {
       it('should have some tests');
+    });
+
+    describe('require()', function () {
+      beforeEach(function () {
+        // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
+        // loaded it.  all we need for the purposes of the `require()` function is a `mainClass`, so
+        // here we go.
+        config.installedExtensions.fake = {pkgName: 'flotsam', mainClass: 'Jetsam'};
+      });
+
+      describe('when the extension is not actually installed', function () {
+        it('should throw', function () {
+          expect(() => config.require('fake')).to.throw(
+            ReferenceError,
+            /^could not find a driver installed at \/some\/path\/node_modules\/flotsam/i
+          );
+        });
+      });
+
+      describe('when the extension does not export its main class', function () {
+        beforeEach(function () {
+          // since we can't easily mock `require.resolve()` and `require()`, we need to use a real thing.
+          // that real thing will be `@appium/fake-driver`.
+          // ()`config.appiumHome` is stubbed already, so we can't just run `getInstallPath` as-is)
+          sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
+        });
+        it('should throw', function () {
+          expect(() => config.require('fake')).to.throw(
+            ReferenceError,
+            /could not find a class named "Jetsam" exported by driver "fake"/i
+          );
+        });
+      });
+
+      describe('when extension is installed and correctly exports its main class', function () {
+        beforeEach(function () {
+          config.installedExtensions['relaxed-caps'] = {
+            mainClass: 'RelaxedCapsPlugin',
+          };
+          sandbox
+            .stub(config, 'getInstallPath')
+            .returns(path.join(PROJECT_ROOT, 'packages', 'relaxed-caps-plugin'));
+        });
+
+        it('should return the class', function () {
+          expect(config.require('relaxed-caps')).to.equal(
+            require('@appium/relaxed-caps-plugin').RelaxedCapsPlugin
+          );
+        });
+      });
     });
   });
 });

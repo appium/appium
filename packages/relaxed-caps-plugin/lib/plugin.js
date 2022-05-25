@@ -18,7 +18,7 @@ const STANDARD_CAPS = [
 const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;
 
-export default class RelaxedCapsPlugin extends BasePlugin {
+export class RelaxedCapsPlugin extends BasePlugin {
   transformCaps(caps) {
     const newCaps = {};
 

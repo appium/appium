@@ -389,14 +389,26 @@ export class ExtensionConfig {
   require(extName) {
     const {mainClass} = this.installedExtensions[extName];
     const reqPath = this.getInstallPath(extName);
-    const reqResolved = require.resolve(reqPath);
+    /** @type {string} */
+    let reqResolved;
+    try {
+      reqResolved = require.resolve(reqPath);
+    } catch (err) {
+      throw new ReferenceError(`Could not find a ${this.extensionType} installed at ${reqPath}`);
+    }
     // note: this will only reload the entry point
     if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[reqResolved]) {
       log.debug(`Removing ${reqResolved} from require cache`);
       delete require.cache[reqResolved];
     }
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
-    return require(reqPath)[mainClass];
+    const MainClass = require(reqPath)[mainClass];
+    if (!MainClass) {
+      throw new ReferenceError(
+        `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`
+      );
+    }
+    return MainClass;
   }
 
   /**

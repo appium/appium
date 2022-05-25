@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import log from './logger';
 import B from 'bluebird';
-import {getJimpImage, MIME_PNG} from './image-util';
+import {AppiumImage, MIME_PNG} from './image-util';
 import {Writable} from 'stream';
 import {requirePackage} from './node';
 import axios from 'axios';
@@ -77,7 +77,7 @@ class MJpegStream extends Writable {
     }
 
     try {
-      const jpg = await getJimpImage(lastChunk);
+      const jpg = await AppiumImage.from(lastChunk);
       return await jpg.getBuffer(MIME_PNG);
     } catch (e) {
       return null;

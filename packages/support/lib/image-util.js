@@ -1,12 +1,125 @@
 import _ from 'lodash';
 import Jimp from 'jimp';
-import {Buffer} from 'buffer';
 import {PNG} from 'pngjs';
 import B from 'bluebird';
 
 const BYTES_IN_PIXEL_BLOCK = 4;
 const SCANLINE_FILTER_METHOD = 4;
 const {MIME_JPEG, MIME_PNG, MIME_BMP} = Jimp;
+
+/**
+ * Wrapper around a {@linkcode Jimp} image object.
+ */
+
+export class AppiumImage {
+  /** @type {Jimp} */
+  #image;
+
+  /**
+   * @param {Jimp} image
+   */
+  constructor(image) {
+    this.#image = image;
+  }
+
+  toString() {
+    return `<AppiumImage <${this.#image.toString()}>`;
+  }
+
+  get bitmap() {
+    return this.#image.bitmap;
+  }
+
+  /**
+   * @param {string} mime
+   * @returns {Promise<Buffer>}
+   */
+  async getBuffer(mime) {
+    return await this.#image.getBufferAsync(mime);
+  }
+
+  /**
+   * @param {string} path
+   * @returns {Promise<AppiumImage>}
+   */
+  async write(path) {
+    await this.#image.writeAsync(path);
+    return this;
+  }
+
+  /**
+   * @param {string} mime
+   * @returns {Promise<string>}
+   */
+  async getBase64(mime) {
+    return await this.#image.getBase64Async(mime);
+  }
+
+  /**
+   *
+   * @param {number} width
+   * @param {number} height
+   * @returns {AppiumImage}
+   */
+  resize(width, height) {
+    this.#image.resize(width, height);
+    return this;
+  }
+
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @returns {AppiumImage}
+   */
+  scaleToFit(width, height) {
+    this.#image.scaleToFit(width, height);
+    return this;
+  }
+
+  /**
+   *
+   * @param {string|Buffer} strOrBuf
+   * @returns {Promise<AppiumImage>}
+   */
+  static async from(strOrBuf) {
+    return await (_.isString(strOrBuf)
+      ? AppiumImage.fromString(strOrBuf)
+      : AppiumImage.fromBuffer(strOrBuf));
+  }
+
+  /**
+   *
+   * @param {string} str
+   * @returns {Promise<AppiumImage>}
+   */
+  static async fromString(str) {
+    return await AppiumImage.fromBuffer(Buffer.from(str, 'base64'));
+  }
+
+  /**
+   *
+   * @param {Buffer} buf
+   * @returns {Promise<AppiumImage>}
+   */
+  static async fromBuffer(buf) {
+    const jimp = await new B((resolve, reject) => {
+      /**
+       * @param {Error?} err
+       * @param {Jimp} jimp
+       */
+      new Jimp(buf, (err, jimp) => {
+        if (err) {
+          return reject(err);
+        }
+        if (!jimp) {
+          return reject(new TypeError('Could not create image from data'));
+        }
+        resolve(jimp);
+      });
+    });
+    return new AppiumImage(jimp);
+  }
+}
 
 /**
  * Utility function to get a Jimp image object from buffer or base64 data. Jimp
@@ -16,6 +129,7 @@ const {MIME_JPEG, MIME_PNG, MIME_BMP} = Jimp;
  * @param {Buffer|string} data - binary image buffer or base64-encoded image
  * string
  * @returns {Promise<AppiumJimp>} - the jimp image object
+ * @deprecated Use {@linkcode AppiumImage.from} instead.
  */
 async function getJimpImage(data) {
   return await new B((resolve, reject) => {
@@ -142,6 +256,12 @@ function cropImage(image, rect) {
   return image;
 }
 
+/**
+ *
+ * @param {Region} rect
+ * @param {Size} imageSize
+ * @returns {Region}
+ */
 function getRectIntersection(rect, imageSize) {
   const left = rect.left >= imageSize.width ? imageSize.width : rect.left;
   const top = rect.top >= imageSize.height ? imageSize.height : rect.top;
@@ -162,7 +282,9 @@ export {
 };
 
 /**
- * @typedef {Omit<Jimp,'getBuffer'> & {getBuffer: Jimp['getBufferAsync']}} AppiumJimp
+ * @typedef Size
+ * @property {number} width - width of the image
+ * @property {number} height - height of the image
  */
 
 /**
@@ -171,4 +293,9 @@ export {
  * @property {number} top
  * @property {number} width
  * @property {number} height
+ */
+
+/**
+ * @typedef {import('@appium/types').Rect} Rect
+ * @typedef {Omit<Jimp,'getBuffer'> & {getBuffer: (mime: string) => Promise<Buffer>}} AppiumJimp
  */

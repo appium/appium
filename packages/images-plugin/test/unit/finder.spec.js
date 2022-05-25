@@ -2,8 +2,8 @@ import _ from 'lodash';
 import {imageUtil} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
-import ImageElementFinder from '../../lib/finder';
-import ImageElement from '../../lib/image-element';
+import {ImageElementFinder, W3C_ELEMENT_KEY} from '../../lib/finder';
+import {ImageElement} from '../../lib/image-element';
 import sinon from 'sinon';
 import {TINY_PNG, TINY_PNG_DIMS} from '../fixtures';
 
@@ -71,8 +71,14 @@ describe('finding elements by image', function () {
       return {sizeStub, screenStub};
     }
 
+    /**
+     *
+     * @param {Element} imgElProto
+     * @param {ImageElementFinder} finder
+     * @returns
+     */
     function basicImgElVerify(imgElProto, finder) {
-      const imgElId = imgElProto.ELEMENT;
+      const imgElId = imgElProto[W3C_ELEMENT_KEY];
       finder.imgElCache.has(imgElId).should.be.true;
       const imgEl = finder.imgElCache.get(imgElId);
       (imgEl instanceof ImageElement).should.be.true;
@@ -164,6 +170,7 @@ describe('finding elements by image', function () {
 
   describe('fixImageTemplateScale', function () {
     let d;
+    /** @type {ImageElementFinder} */
     let f;
     const basicTemplate = 'iVBORbaz';
 
@@ -291,6 +298,7 @@ describe('finding elements by image', function () {
 
   describe('getScreenshotForImageFind', function () {
     let d;
+    /** @type {ImageElementFinder} */
     let f;
 
     beforeEach(function () {

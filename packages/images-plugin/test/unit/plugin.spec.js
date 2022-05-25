@@ -48,7 +48,7 @@ describe('ImageElementPlugin#handle', function () {
     it('should throw an error if comparison mode is not supported', async function () {
       await p
         .compareImages(next, driver, 'some mode', '', '')
-        .should.eventually.be.rejectedWith(/comparison mode is unknown/);
+        .should.be.rejectedWith(/Image comparison mode "some mode" is invalid/i);
     });
   });
 
@@ -148,7 +148,7 @@ describe('ImageElementPlugin#handle', function () {
     it('should not allow any other attrs', async function () {
       await p
         .handle(next, driver, 'getAttribute', 'rando', elId)
-        .should.eventually.be.rejectedWith(/not yet/i);
+        .should.be.rejectedWith(/not yet/i);
     });
   });
 });

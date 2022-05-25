@@ -2,9 +2,9 @@
 
 import _ from 'lodash';
 import {errors} from 'appium/driver';
-import BasePlugin from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin';
 import {compareImages} from './compare';
-import ImageElementFinder from './finder';
+import {ImageElementFinder} from './finder';
 import {ImageElement, IMAGE_ELEMENT_PREFIX} from './image-element';
 
 const IMAGE_STRATEGY = '-image';
@@ -37,28 +37,38 @@ export default class ImageElementPlugin extends BasePlugin {
     },
   };
 
-  async compareImages(next, driver, ...args) {
-    return await compareImages(...args);
+  async compareImages(next, driver, mode, firstImage, secondImage, opts) {
+    return await compareImages(mode, firstImage, secondImage, opts);
   }
 
-  async findElement(next, driver, ...args) {
-    return await this._find(false, next, driver, ...args);
+  async findElement(next, driver, strategy, selector) {
+    return await this._find(false, next, driver, strategy, selector);
   }
 
-  async findElements(next, driver, ...args) {
-    return await this._find(true, next, driver, ...args);
+  async findElements(next, driver, strategy, selector) {
+    return await this._find(true, next, driver, strategy, selector);
   }
 
-  async _find(multiple, next, driver, ...args) {
-    const [strategy, selector] = args;
-
+  /**
+   * @template {boolean} Multiple
+   * @template {string} Strategy
+   * @param {Multiple} multiple
+   * @param {import('@appium/types').NextPluginCallback} next
+   * @param {import('@appium/types').ExternalDriver} driver
+   * @param {Strategy} strategy
+   * @param {string} selector
+   * @returns {Promise<FindResult<Strategy,Multiple>>}
+   */
+  async _find(multiple, next, driver, strategy, selector) {
     // if we're not actually finding by image, just do the normal thing
     if (strategy !== IMAGE_STRATEGY) {
-      return await next();
+      return /** @type {FindResult<Strategy,Multiple>} */ (await next());
     }
 
     this.finder.setDriver(driver);
-    return await this.finder.findByImage(selector, {multiple});
+    return /** @type {FindResult<Strategy,Multiple>} */ (
+      await this.finder.findByImage(selector, {multiple, shouldCheckStaleness: false})
+    );
   }
 
   async handle(next, driver, cmdName, ...args) {
@@ -69,7 +79,7 @@ export default class ImageElementPlugin extends BasePlugin {
       if (!this.finder.imgElCache.has(imgElId)) {
         throw new errors.NoSuchElementError();
       }
-      const imgEl = this.finder.imgElCache.get(imgElId);
+      const imgEl = /** @type {ImageElement} */ (this.finder.imgElCache.get(imgElId));
       return await ImageElement.execute(driver, imgEl, cmdName, ...args);
     }
 
@@ -79,3 +89,13 @@ export default class ImageElementPlugin extends BasePlugin {
 }
 
 export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};
+
+/**
+ * @typedef {import('@appium/types').Element} Element
+ */
+
+/**
+ * @template {string} Strategy
+ * @template {boolean} [Multiple=false]
+ * @typedef {Strategy extends typeof IMAGE_STRATEGY ? Multiple extends true ? Element[] : Element : void} FindResult
+ */

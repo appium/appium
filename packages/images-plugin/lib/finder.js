@@ -10,6 +10,7 @@ import {
 import {MATCH_TEMPLATE_MODE, compareImages, DEFAULT_MATCH_THRESHOLD} from './compare';
 import log from './logger';
 
+const {AppiumImage} = imageUtil;
 const MJSONWP_ELEMENT_KEY = 'ELEMENT';
 const W3C_ELEMENT_KEY = util.W3C_WEB_ELEMENT_IDENTIFIER;
 const DEFAULT_FIX_IMAGE_TEMPLATE_SCALE = 1;
@@ -72,8 +73,11 @@ const DEFAULT_SETTINGS = {
   getMatchedImageResult: false,
 };
 
-export default class ImageElementFinder {
-  /** @type {ExternalDriver} */
+export class ImageElementFinder {
+  /**
+   * Can be set post-instantiation
+   * @type {ExternalDriver|undefined}
+   */
   driver;
 
   /** @type {LRU<string,ImageElement>} */
@@ -81,7 +85,7 @@ export default class ImageElementFinder {
 
   /**
    *
-   * @param {ExternalDriver} driver
+   * @param {ExternalDriver} [driver]
    * @param {number} [maxSize]
    */
   constructor(driver, maxSize = MAX_CACHE_SIZE_BYTES) {
@@ -103,34 +107,30 @@ export default class ImageElementFinder {
    */
   registerImageElement(imgEl) {
     this.imgElCache.set(imgEl.id, imgEl);
-    const protoKey = this.driver.isW3CProtocol() ? W3C_ELEMENT_KEY : MJSONWP_ELEMENT_KEY;
-    return imgEl.asElement(protoKey);
+    if (!this.driver) {
+      throw new ReferenceError('No driver set!');
+    }
+    return imgEl.asElement();
   }
-
-  /**
-   * @typedef FindByImageOptions
-   * @property {boolean} [shouldCheckStaleness=false] - whether this call to find an
-   * image is merely to check staleness. If so we can bypass a lot of logic
-   * @property {boolean} [multiple=false] - Whether we are finding one element or
-   * multiple
-   * @property {boolean} [ignoreDefaultImageTemplateScale=false] - Whether we
-   * ignore defaultImageTemplateScale. It can be used when you would like to
-   * scale b64Template with defaultImageTemplateScale setting.
-   */
 
   /**
    * Find a screen rect represented by an ImageElement corresponding to an image
    * template sent in by the client
    *
+   * @template {boolean} [Multiple=false]
+   * @template {boolean} [CheckStaleness=false]
    * @param {string} b64Template - base64-encoded image used as a template to be
    * matched in the screenshot
-   * @param {FindByImageOptions} opts - additional options
-   *
-   * @returns {Promise<Element|Element[]|ImageElement>} - WebDriver element with a special id prefix
+   * @param {FindByImageOptions<Multiple,CheckStaleness>} opts - additional options
+   * @returns {Promise<FindByImageResult<Multiple,CheckStaleness>>} - WebDriver element with a special id prefix
    */
   async findByImage(
     b64Template,
-    {shouldCheckStaleness = false, multiple = false, ignoreDefaultImageTemplateScale = false}
+    {
+      shouldCheckStaleness = /** @type {CheckStaleness} */ (false),
+      multiple = /** @type {Multiple} */ (false),
+      ignoreDefaultImageTemplateScale = false,
+    }
   ) {
     if (!this.driver) {
       throw new Error(`Can't find without a driver!`);
@@ -162,9 +162,8 @@ export default class ImageElementFinder {
     const results = [];
     const condition = async () => {
       try {
-        const {b64Screenshot, scale} = await this.getScreenshotForImageFind(
-          screenWidth,
-          screenHeight
+        const {b64Screenshot, scale} = /** @type {Screenshot & {scale: ScreenshotScale}} */ (
+          await this.getScreenshotForImageFind(screenWidth, screenHeight)
         );
 
         b64Template = await this.fixImageTemplateScale(b64Template, {
@@ -184,12 +183,9 @@ export default class ImageElementFinder {
         }
         if (multiple) {
           results.push(
-            ...(await compareImages(
-              MATCH_TEMPLATE_MODE,
-              b64Screenshot,
-              b64Template,
-              comparisonOpts
-            ))
+            .../** @type {import('@appium/opencv').OccurrenceResult[]} */ (
+              await compareImages(MATCH_TEMPLATE_MODE, b64Screenshot, b64Template, comparisonOpts)
+            )
           );
         } else {
           results.push(
@@ -224,8 +220,10 @@ export default class ImageElementFinder {
     }
 
     if (_.isEmpty(results)) {
-      if (multiple) {
-        return [];
+      if (multiple === true) {
+        return /** @type {FindByImageResult<Multiple,CheckStaleness>} */ (
+          /** @type {Element[]} */ ([])
+        );
       }
       throw new errors.NoSuchElementError();
     }
@@ -239,12 +237,14 @@ export default class ImageElementFinder {
     // a new element to the cache. shouldCheckStaleness does not support multiple
     // elements, since it is a purely internal mechanism
     if (shouldCheckStaleness) {
-      return elements[0];
+      return /** @type {FindByImageResult<Multiple,CheckStaleness>} */ (elements[0]);
     }
 
     const registeredElements = elements.map((imgEl) => this.registerImageElement(imgEl));
 
-    return multiple ? registeredElements : registeredElements[0];
+    return /** @type {FindByImageResult<Multiple,CheckStaleness>} */ (
+      multiple ? registeredElements : registeredElements[0]
+    );
   }
 
   /**
@@ -257,7 +257,7 @@ export default class ImageElementFinder {
    * @returns {Promise<string>} base64-encoded image, potentially resized
    */
   async ensureTemplateSize(b64Template, screenWidth, screenHeight) {
-    let imgObj = await imageUtil.getJimpImage(b64Template);
+    let imgObj = await AppiumImage.fromString(b64Template);
     let {width: tplWidth, height: tplHeight} = imgObj.bitmap;
 
     log.info(
@@ -287,10 +287,10 @@ export default class ImageElementFinder {
    * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind(screenWidth, screenHeight) {
-    if (!this.driver.getScreenshot) {
+    if (!this.driver?.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
-    const settings = Object.assign({}, DEFAULT_SETTINGS, this.driver.settings.getSettings());
+    const settings = {...DEFAULT_SETTINGS, ...this.driver.settings.getSettings()};
     const {fixImageFindScreenshotDims} = settings;
 
     let b64Screenshot = await this.driver.getScreenshot();
@@ -314,7 +314,7 @@ export default class ImageElementFinder {
     // the screen size and aspect ratio
     log.info('Verifying screenshot size and aspect ratio');
 
-    let imgObj = await imageUtil.getJimpImage(b64Screenshot);
+    let imgObj = await AppiumImage.fromString(b64Screenshot);
     let {width: shotWidth, height: shotHeight} = imgObj.bitmap;
 
     if (shotWidth < 1 || shotHeight < 1) {
@@ -376,7 +376,6 @@ export default class ImageElementFinder {
           `greater chance of being correct.`
       );
       imgObj = imgObj.resize(shotWidth * scaleFactor, shotHeight * scaleFactor);
-
       scale.xScale *= scaleFactor;
       scale.yScale *= scaleFactor;
 
@@ -474,7 +473,7 @@ export default class ImageElementFinder {
       return b64Template;
     }
 
-    let imgTempObj = await imageUtil.getJimpImage(b64Template);
+    let imgTempObj = await AppiumImage.fromString(b64Template);
     let {width: baseTempWidth, height: baseTempHeigh} = imgTempObj.bitmap;
 
     const scaledWidth = baseTempWidth * xScale;
@@ -484,7 +483,7 @@ export default class ImageElementFinder {
         ` to ${scaledWidth}x${scaledHeight}`
     );
     log.info(`The ratio is ${xScale} and ${yScale}`);
-    imgTempObj = await imgTempObj.resize(scaledWidth, scaledHeight);
+    imgTempObj = imgTempObj.resize(scaledWidth, scaledHeight);
     return (await imgTempObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
   }
 }
@@ -505,4 +504,23 @@ export {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY, DEFAULT_SETTINGS, DEFAULT_FIX_IMAG
  * @typedef ScreenshotScale
  * @property {number} xScale - Scale ratio for width
  * @property {number} yScale - Scale ratio for height
+ */
+
+/**
+ * @template {boolean} [Multiple=false]
+ * @template {boolean} [CheckStaleness=false]
+ * @typedef FindByImageOptions
+ * @property {CheckStaleness} [shouldCheckStaleness] - whether this call to find an
+ * image is merely to check staleness. If so we can bypass a lot of logic
+ * @property {Multiple} [multiple] - Whether we are finding one element or
+ * multiple
+ * @property {boolean} [ignoreDefaultImageTemplateScale] - Whether we
+ * ignore defaultImageTemplateScale. It can be used when you would like to
+ * scale b64Template with defaultImageTemplateScale setting.
+ */
+
+/**
+ * @template {boolean} [Multiple=false]
+ * @template {boolean} [CheckStaleness=false]
+ * @typedef {Multiple extends true ? Element[] : CheckStaleness extends true ? ImageElement : Element} FindByImageResult
  */

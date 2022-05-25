@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import log from './logger';
-import {DEFAULT_SETTINGS} from './finder';
+import {DEFAULT_SETTINGS, W3C_ELEMENT_KEY} from './finder';
 
 const IMAGE_ELEMENT_PREFIX = 'appium-image-element-';
 const TAP_DURATION_MS = 125;
@@ -27,18 +27,35 @@ const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
  * Representation of an "image element", which is simply a set of coordinates
  * and methods that can be used on that set of coordinates via the driver
  */
-export default class ImageElement {
+export class ImageElement {
+  /** @type {string} */
+  template;
+
+  /** @type {Rect} */
+  rect;
+
+  /** @type {string} */
+  id;
+
+  /** @type {string|undefined} */
+  b64MatchedImage;
+
+  /** @type {import('./finder').ImageElementFinder|undefined} */
+  finder;
+
+  /** @type {number} */
+  score;
+
   /**
    * @param {string} b64Template - the base64-encoded image which was used to
    *                               find this ImageElement
    * @param {Rect} rect - bounds of matched image element
    * @param {number} score The similarity score as a float number in range [0.0, 1.0].
    * 1.0 is the highest score (means both images are totally equal).
-   * @param {string?} b64Result - the base64-encoded image which has matched marks.
-   *                              Defaults to null.
-   * @param {import('./finder').default?} finder - the finder we can use to re-check stale elements
+   * @param {string} [b64Result] - the base64-encoded image which has matched marks.
+   * @param {import('./finder').ImageElementFinder} [finder] - the finder we can use to re-check stale elements
    */
-  constructor(b64Template, rect, score, b64Result = null, finder = null) {
+  constructor(b64Template, rect, score, b64Result, finder) {
     this.template = b64Template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
@@ -72,20 +89,18 @@ export default class ImageElement {
   }
 
   /**
-   * @returns {?string} - the base64-encoded image which has matched marks
+   * @todo This returns `null` for backwards-compat reasons
+   * @returns {string?} - the base64-encoded image which has matched marks
    */
   get matchedImage() {
-    return this.b64MatchedImage;
+    return this.b64MatchedImage ?? null;
   }
 
   /**
-   * @param {string} protocolKey - the protocol-specific JSON key for
-   * a WebElement
-   *
    * @returns {Element} - this image element as a WebElement
    */
-  asElement(protocolKey) {
-    return {[protocolKey]: this.id};
+  asElement() {
+    return {[W3C_ELEMENT_KEY]: this.id};
   }
 
   /**
@@ -107,11 +122,12 @@ export default class ImageElement {
    * Use a driver to tap the screen at the center of this ImageElement's
    * position
    *
-   * @param {BaseDriver} driver - driver for calling actions with
+   * @param {import('@appium/types').ExternalDriver} driver - driver for calling actions with
    */
   async click(driver) {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
+    /** @type {ImageElement} */
     let newImgEl;
     const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
     const {
@@ -130,6 +146,9 @@ export default class ImageElement {
     }
 
     if (checkForImageElementStaleness || updatePos) {
+      if (!this.finder) {
+        throw new ReferenceError('No ImageFinder reference found!');
+      }
       log.info('Checking image element for staleness before clicking');
       try {
         newImgEl = await this.finder.findByImage(this.template, {
@@ -212,12 +231,12 @@ export default class ImageElement {
   /**
    * Handle various Appium commands that involve an image element
    *
-   * @param {import('appium/driver').BaseDriver} driver - the driver to use for commands
+   * @param {import('@appium/types').ExternalDriver} driver - the driver to use for commands
    * @param {string} cmd - the name of the driver command
-   * @param {string} imgElId - the id of the ImageElement to work with
+   * @param {ImageElement} imgEl - the id of the ImageElement to work with
    * @param {string[]} args - Rest of arguments for executeScripts
    *
-   * @returns {object} - the result of running a command
+   * @returns {Promise<object>} - the result of running a command
    */
   static async execute(driver, imgEl, cmd, ...args) {
     switch (cmd) {
@@ -251,7 +270,6 @@ export default class ImageElement {
 }
 
 export {
-  ImageElement,
   IMAGE_EL_TAP_STRATEGY_MJSONWP,
   IMAGE_EL_TAP_STRATEGY_W3C,
   DEFAULT_TEMPLATE_IMAGE_SCALE,

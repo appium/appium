@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import BaseDriver from 'appium/driver';
-import ImageElementFinder from '../../lib/finder';
+import {ImageElementFinder, W3C_ELEMENT_KEY} from '../../lib/finder';
 import {getImgElFromArgs} from '../../lib/plugin';
-import ImageElement, {IMAGE_ELEMENT_PREFIX} from '../../lib/image-element';
+import {ImageElement, IMAGE_ELEMENT_PREFIX} from '../../lib/image-element';
 import sinon from 'sinon';
 
 const defRect = {x: 100, y: 110, width: 50, height: 25};
@@ -48,7 +48,7 @@ describe('ImageElement', function () {
   describe('.asElement', function () {
     it('should get the webdriver object representation of the element', function () {
       const el = new ImageElement(defTemplate, defRect);
-      el.asElement('ELEMENT').ELEMENT.should.match(/^appium-image-el/);
+      el.asElement()[W3C_ELEMENT_KEY].should.match(/^appium-image-el/);
     });
   });
 
@@ -226,7 +226,7 @@ describe('ImageElement', function () {
         imgElement,
         'getAttribute',
         'visual'
-      ).should.eventually.eql(null);
+      ).should.eventually.equal(null);
     });
     it('should not get other attribute', async function () {
       await ImageElement.execute(
@@ -234,7 +234,7 @@ describe('ImageElement', function () {
         imgEl,
         'getAttribute',
         'content-desc'
-      ).should.eventually.rejectedWith('Method has not yet been implemented');
+      ).should.be.rejectedWith('Method has not yet been implemented');
     });
     it('should click element', async function () {
       await ImageElement.execute(driver, imgEl, 'click').should.eventually.be.true;

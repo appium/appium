@@ -4,7 +4,8 @@
     "paths": {
       "@appium/opencv": ["../opencv"],
       "appium": ["../appium"]
-    }
+    },
+    "checkJs": true
   },
   "extends": "../../config/tsconfig.base.json",
   "include": ["lib"],

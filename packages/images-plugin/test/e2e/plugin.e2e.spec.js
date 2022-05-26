@@ -2,7 +2,7 @@ import path from 'path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/compare';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
-import {e2eSetup} from '@appium/base-plugin/build/test/helpers';
+import {pluginE2EHarness} from 'appium/test';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -42,7 +42,7 @@ describe('ImageElementPlugin', function () {
     }
   });
 
-  e2eSetup({
+  pluginE2EHarness({
     before,
     after,
     server,

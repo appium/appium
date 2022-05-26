@@ -1,7 +1,5 @@
-// transpile:mocha
-
 import axios from 'axios';
-import {baseDriverE2ETests} from '@appium/base-driver/build/test/basedriver';
+import {driverE2ETestSuite} from 'appium/test';
 import {FakeDriver, startServer} from '../../lib/index.js';
 import {
   BASE_CAPS,
@@ -20,7 +18,7 @@ import generalTests from './general-tests';
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 
 // test the same things as for base driver
-baseDriverE2ETests(FakeDriver, W3C_PREFIXED_CAPS);
+driverE2ETestSuite(FakeDriver, W3C_PREFIXED_CAPS);
 
 describe('FakeDriver - via HTTP', function () {
   let server = null;

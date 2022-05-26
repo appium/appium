@@ -1,12 +1,10 @@
-// transpile:mocha
-
 import _ from 'lodash';
 import {FakeDriver} from '../../lib';
 import {W3C_CAPS, W3C_PREFIXED_CAPS} from '../helpers';
-import {baseDriverUnitTests} from '@appium/base-driver/build/test/basedriver';
+import {driverUnitTestSuite} from 'appium/test';
 
 // test the same things as for base driver
-baseDriverUnitTests(FakeDriver, _.cloneDeep(W3C_PREFIXED_CAPS));
+driverUnitTestSuite(FakeDriver, _.cloneDeep(W3C_PREFIXED_CAPS));
 
 describe('FakeDriver', function () {
   it('should not start a session when a unique session is already running', async function () {

@@ -7,7 +7,7 @@
     "automation",
     "webdriver"
   ],
-  "homepage": "https://github.com/appium/appium#readme",
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -17,7 +17,7 @@
     "directory": "packages/execute-driver-plugin"
   },
   "license": "Apache-2.0",
-  "author": "Appium <maintainers@appium.io>",
+  "author": "https://github.com/appium",
   "files": [
     "build",
     "lib",
@@ -49,5 +49,9 @@
     "pluginName": "execute-driver",
     "mainClass": "ExecuteDriverPlugin"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=6"
+  }
 }

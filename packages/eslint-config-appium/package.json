@@ -40,7 +40,7 @@
     "eslint-plugin-promise": "6.0.0"
   },
   "engines": {
-    "node": ">=12",
+    "node": ">=14",
     "npm": ">=6"
   },
   "publishConfig": {

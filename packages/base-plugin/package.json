@@ -11,7 +11,7 @@
     "directory": "packages/base-plugin"
   },
   "license": "Apache-2.0",
-  "author": "Appium <maintainers@appium.io>",
+  "author": "https://github.com/appium",
   "directories": {
     "lib": "./lib"
   },
@@ -35,12 +35,13 @@
     "@appium/support": "file:../support"
   },
   "engines": {
-    "node": ">=12",
+    "node": ">=14",
     "npm": ">=6"
   },
   "types": "./build/lib/plugin.d.ts",
   "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
   "tags": [
     "appium"
-  ]
+  ],
+  "homepage": "https://appium.io"
 }

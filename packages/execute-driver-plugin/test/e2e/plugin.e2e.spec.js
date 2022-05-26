@@ -2,7 +2,7 @@
 
 import path from 'path';
 
-import {e2eSetup} from '@appium/base-plugin/build/test/helpers';
+import {pluginE2EHarness} from 'appium/test';
 import {remote as wdio} from 'webdriverio';
 import {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY} from '../../lib/execute-child';
 import {fs} from 'appium/support';
@@ -39,7 +39,7 @@ describe('ExecuteDriverPlugin', function () {
 
   const basicScript = `return 'foo'`;
   /**
-   * @type {import('@appium/base-plugin/test/helpers').E2ESetupOpts}
+   * @type {import('appium/test').E2ESetupOpts}
    */
   const e2eSetupOpts = {
     before,
@@ -62,7 +62,7 @@ describe('ExecuteDriverPlugin', function () {
     after(async function () {
       driver && (await driver.deleteSession());
     });
-    e2eSetup({...e2eSetupOpts});
+    pluginE2EHarness({...e2eSetupOpts});
 
     it('should not work unless the allowInsecure feature flag is set', async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});
@@ -76,7 +76,7 @@ describe('ExecuteDriverPlugin', function () {
     after(async function () {
       driver && (await driver.deleteSession());
     });
-    e2eSetup({
+    pluginE2EHarness({
       ...e2eSetupOpts,
       serverArgs: {allowInsecure: ['execute_driver_script']},
     });

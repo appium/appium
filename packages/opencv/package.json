@@ -51,7 +51,7 @@
     "source-map-support": "0.5.21"
   },
   "engines": {
-    "node": ">=12",
+    "node": ">=14",
     "npm": ">=6"
   },
   "publishConfig": {

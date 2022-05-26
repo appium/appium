@@ -18,7 +18,7 @@
     "directory": "packages/images-plugin"
   },
   "license": "Apache-2.0",
-  "author": "Appium <maintainers@appium.io>",
+  "author": "https://github.com/appium",
   "files": [
     "build",
     "docs",
@@ -47,5 +47,10 @@
     "mainClass": "ImageElementPlugin"
   },
   "types": "./build/lib/plugin.d.ts",
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
+  "homepage": "https://appium.io",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=6"
+  }
 }

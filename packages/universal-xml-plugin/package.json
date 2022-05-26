@@ -8,16 +8,16 @@
     "xml",
     "webdriver"
   ],
-  "homepage": "https://github.com/appium/appium-plugins#readme",
+  "homepage": "https://appium.io",
   "bugs": {
-    "url": "https://github.com/appium/appium-plugins/issues"
+    "url": "https://github.com/appium/appium/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/appium/appium-plugins.git"
   },
   "license": "Apache-2.0",
-  "author": "Appium <maintainers@appium.io>",
+  "author": "https://github.com/appium",
   "types": "./build/lib/plugin.d.ts",
   "files": [
     "index.js",
@@ -45,5 +45,9 @@
     "pluginName": "universal-xml",
     "mainClass": "UniversalXMLPlugin"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=6"
+  }
 }

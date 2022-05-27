@@ -183,7 +183,7 @@
     "typescript": "4.7.2",
     "validate.js": "0.13.1",
     "webdriverio": "7.19.7",
-    "ws": "8.6.0",
+    "ws": "8.7.0",
     "yaml-js": "0.3.1"
   },
   "engines": {

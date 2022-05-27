@@ -82,7 +82,7 @@
     "nyc": "15.1.0",
     "pkg-dir": "5.0.0",
     "plugin-error": "1.0.1",
-    "replace-in-file": "6.3.2",
+    "replace-in-file": "6.3.3",
     "rimraf": "3.0.2",
     "semver": "7.3.7",
     "shell-quote": "1.7.3",

@@ -2,7 +2,8 @@
   "extends": [
     "config:base",
     ":semanticCommitTypeAll(chore)",
-    ":pinAllExceptPeerDependencies"
+    ":pinAllExceptPeerDependencies",
+    "helpers:pinGitHubActionDigests"
   ],
   "packageRules": [
     {

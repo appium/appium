@@ -46,7 +46,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "file:../support",
+    "@appium/support": "^2.59.0",
     "@babel/runtime": "7.18.3",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
@@ -61,5 +61,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

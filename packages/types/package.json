@@ -31,7 +31,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@appium/schema": "file:../schema"
+    "@appium/schema": "^0.0.6"
   },
   "engines": {
     "node": ">=14",
@@ -40,5 +40,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574"
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

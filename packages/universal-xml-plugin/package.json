@@ -45,7 +45,7 @@
     "pluginName": "universal-xml",
     "mainClass": "UniversalXMLPlugin"
   },
-  "gitHead": "722ae145fb40bf17b0168ea8b025763f120ad574",
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
   "engines": {
     "node": ">=14",
     "npm": ">=6"

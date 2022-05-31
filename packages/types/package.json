@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "appium",

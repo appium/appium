@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-plugin",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "description": "The base plugin used to create Appium 2.0 plugins",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

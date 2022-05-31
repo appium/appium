@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/appium/appium/compare/@appium/base-plugin@1.8.5...@appium/base-plugin@1.9.0) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+* **types,base-plugin:** fix static prop types for plugins ([2289b45](https://github.com/appium/appium/commit/2289b4527208c595b2758b9b14d86a2ab91ac15f))
+
+
+### Features
+
+* **base-plugin:** prepare for use by plugins ([5e96a6d](https://github.com/appium/appium/commit/5e96a6d2a7a79e96de03802b05406325765f15ab))
+
+
+
+
+
 ## [1.8.5](https://github.com/appium/appium/compare/@appium/base-plugin@1.8.4...@appium/base-plugin@1.8.5) (2022-05-02)
 
 **Note:** Version bump only for package @appium/base-plugin

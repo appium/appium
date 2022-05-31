@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/appium/appium/compare/@appium/fake-plugin@1.3.4...@appium/fake-plugin@2.0.0) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+### Features
+
+* **fake-plugin:** use peer deps ([eb460b9](https://github.com/appium/appium/commit/eb460b915aeb7c5eb781b73c2d12e2cde57409b8))
+
+
+### BREAKING CHANGES
+
+* **fake-plugin:** This now requires a peer dependency on `appium`
+
+
+
+
+
 ## [1.3.4](https://github.com/appium/appium/compare/@appium/fake-plugin@1.3.3...@appium/fake-plugin@1.3.4) (2022-05-02)
 
 **Note:** Version bump only for package @appium/fake-plugin

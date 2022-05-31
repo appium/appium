@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.59.0](https://github.com/appium/appium/compare/@appium/support@2.58.0...@appium/support@2.59.0) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+### Features
+
+* **appium,support:** extension check improvements ([6b224f5](https://github.com/appium/appium/commit/6b224f545f44b8e6ad9d587c7157bc67d7d11439))
+
+
+
+
+
 # [2.58.0](https://github.com/appium/appium/compare/@appium/support@2.57.4...@appium/support@2.58.0) (2022-05-02)
 
 

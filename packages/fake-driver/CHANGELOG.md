@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/appium/appium/compare/@appium/fake-driver@3.2.13...@appium/fake-driver@4.0.0) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+### Features
+
+* **fake-driver:** use peer deps ([189e85f](https://github.com/appium/appium/commit/189e85fc0b7376dbff383172525f63584da4cccf))
+
+
+### BREAKING CHANGES
+
+* **fake-driver:** This now requires a peer dependency on `appium`
+
+
+
+
+
 ## [3.2.13](https://github.com/appium/appium/compare/@appium/fake-driver@3.2.12...@appium/fake-driver@3.2.13) (2022-05-02)
 
 **Note:** Version bump only for package @appium/fake-driver

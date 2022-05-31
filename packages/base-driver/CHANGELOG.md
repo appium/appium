@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.5.4](https://github.com/appium/appium/compare/@appium/base-driver@8.5.3...@appium/base-driver@8.5.4) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+
+
+
 ## [8.5.3](https://github.com/appium/appium/compare/@appium/base-driver@8.5.2...@appium/base-driver@8.5.3) (2022-05-02)
 
 **Note:** Version bump only for package @appium/base-driver

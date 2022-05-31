@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.36](https://github.com/appium/appium/compare/appium@2.0.0-beta.35...appium@2.0.0-beta.36) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+### Features
+
+* **appium,support:** extension check improvements ([6b224f5](https://github.com/appium/appium/commit/6b224f545f44b8e6ad9d587c7157bc67d7d11439))
+* **appium:** appium now expects extensions to use peer dependencies ([48f1d99](https://github.com/appium/appium/commit/48f1d990871dbcd4ab3042c19dc4f43ca89bf80f))
+
+
+
+
+
 # [2.0.0-beta.35](https://github.com/appium/appium/compare/appium@2.0.0-beta.34...appium@2.0.0-beta.35) (2022-05-03)
 
 **Note:** Version bump only for package appium

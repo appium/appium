@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/appium/appium/compare/@appium/gulp-plugins@7.0.0...@appium/gulp-plugins@7.0.1) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+
+
+
 # [7.0.0](https://github.com/appium/appium/compare/@appium/gulp-plugins@6.0.10...@appium/gulp-plugins@7.0.0) (2022-05-03)
 
 

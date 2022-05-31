@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.20](https://github.com/appium/appium/compare/@appium/doctor@1.16.19...@appium/doctor@1.16.20) (2022-05-31)
+
+
+### Bug Fixes
+
+* **appium:** fix extension autoinstall postinstall script ([3e2c05d](https://github.com/appium/appium/commit/3e2c05d8a290072484afde34fe5fd968618f6359)), closes [#16924](https://github.com/appium/appium/issues/16924)
+
+
+
+
+
 ## [1.16.19](https://github.com/appium/appium/compare/@appium/doctor@1.16.18...@appium/doctor@1.16.19) (2022-05-03)
 
 **Note:** Version bump only for package @appium/doctor

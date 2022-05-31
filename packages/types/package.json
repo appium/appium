@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "appium",
@@ -31,7 +31,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@appium/schema": "^0.0.6"
+    "@appium/schema": "^0.0.7"
   },
   "engines": {
     "node": ">=14",

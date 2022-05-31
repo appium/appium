@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-plugin",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A fake Appium 2.0 plugin",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -30,8 +30,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-plugin": "^1.9.0",
-    "@appium/support": "^2.59.0",
+    "@appium/base-plugin": "^1.9.1",
+    "@appium/support": "^2.59.1",
     "bluebird": "3.7.2",
     "lodash": "4.17.21"
   },

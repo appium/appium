@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.5](https://github.com/appium/appium/compare/@appium/types@0.2.4...@appium/types@0.2.5) (2022-05-31)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
 ## [0.2.4](https://github.com/appium/appium/compare/@appium/types@0.2.3...@appium/types@0.2.4) (2022-05-31)
 
 

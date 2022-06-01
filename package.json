@@ -165,7 +165,7 @@
     "handlebars": "4.7.7",
     "json-schema-to-typescript": "10.1.5",
     "lerna": "4.0.0",
-    "lint-staged": "12.4.3",
+    "lint-staged": "12.5.0",
     "log-symbols": "4.1.0",
     "mjpeg-server": "0.3.1",
     "mocha": "10.0.0",

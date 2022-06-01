@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-beta.11](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.10...@appium/universal-xml-plugin@1.0.0-beta.11) (2022-06-01)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin,fake-plugin,images-plugin,relaxed-caps-plugin,universal-xml-plugin:** ensure babel runtime is present ([df64612](https://github.com/appium/appium-plugins/commit/df64612d98c35fd64219816269f83f628e538fe2))
+
+
+
+
+
 # [1.0.0-beta.10](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.9...@appium/universal-xml-plugin@1.0.0-beta.10) (2022-05-31)
 
 **Note:** Version bump only for package @appium/universal-xml-plugin

@@ -1,6 +1,6 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Plugin for batching and executing driver commands with Appiums",
   "keywords": [
     "appium",

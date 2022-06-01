@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@2.0.1...@appium/execute-driver-plugin@2.0.2) (2022-06-01)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin,fake-plugin,images-plugin,relaxed-caps-plugin,universal-xml-plugin:** ensure babel runtime is present ([df64612](https://github.com/appium/appium/commit/df64612d98c35fd64219816269f83f628e538fe2))
+
+
+
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@2.0.0...@appium/execute-driver-plugin@2.0.1) (2022-05-31)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

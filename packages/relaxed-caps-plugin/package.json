@@ -30,7 +30,9 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "lodash": "4.17.21"
+    "@babel/runtime": "7.18.3",
+    "lodash": "4.17.21",
+    "source-map-support": "0.5.21"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.35"

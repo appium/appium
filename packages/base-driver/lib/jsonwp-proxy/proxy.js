@@ -22,6 +22,18 @@ const COMPACT_ERROR_PATTERNS = [/\bECONNREFUSED\b/, /socket hang up/];
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
+const ALLOWED_OPTS = [
+  'scheme',
+  'server',
+  'port',
+  'base',
+  'reqBasePath',
+  'sessionId',
+  'timeout',
+  'log',
+  'keepAlive',
+];
+
 class JWProxy {
   /** @type {string} */
   scheme;
@@ -39,7 +51,11 @@ class JWProxy {
   timeout;
 
   constructor(opts = {}) {
-    const options = _.defaults(opts, {
+    opts = _.pick(opts, ALLOWED_OPTS);
+
+    // omit 'log' in the defaults assignment here because 'log' is a getter and we are going to set
+    // it to this._log (which lies behind the getter) further down
+    const options = _.defaults(_.omit(opts, 'log'), {
       scheme: 'http',
       server: 'localhost',
       port: 4444,

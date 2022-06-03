@@ -14,7 +14,7 @@ export default BaseDriver;
 
 // MJSONWP exports
 import * as protocol from './protocol';
-import {DEFAULT_BASE_PATH, PROTOCOLS} from './constants';
+import {DEFAULT_BASE_PATH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants';
 
 const {
   routeConfiguringFunction,
@@ -51,6 +51,7 @@ export {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  W3C_ELEMENT_KEY,
 };
 
 // Express exports

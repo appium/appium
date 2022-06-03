@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.5.6](https://github.com/appium/appium/compare/@appium/base-driver@8.5.5...@appium/base-driver@8.5.6) (2022-06-03)
+
+
+### Bug Fixes
+
+* **base-driver:** don't assign log to jwproxy from opts ([eae3efd](https://github.com/appium/appium/commit/eae3efd1d7d2bd515e8e2844e1e16324a91ae47d))
+
+
+
+
+
 ## [8.5.5](https://github.com/appium/appium/compare/@appium/base-driver@8.5.4...@appium/base-driver@8.5.5) (2022-05-31)
 
 **Note:** Version bump only for package @appium/base-driver

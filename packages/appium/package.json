@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "2.0.0-beta.38",
+  "version": "2.0.0-beta.39",
   "description": "Automation for Apps.",
   "keywords": [
     "automation",
@@ -59,7 +59,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^8.5.5",
+    "@appium/base-driver": "^8.5.6",
     "@appium/base-plugin": "^1.9.1",
     "@appium/docutils": "^0.0.6",
     "@appium/schema": "^0.0.7",

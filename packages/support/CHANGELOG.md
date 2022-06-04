@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.59.2](https://github.com/appium/appium/compare/@appium/support@2.59.1...@appium/support@2.59.2) (2022-06-04)
+
+
+### Bug Fixes
+
+* **support:** log-symbols is a prod dep ([5dd2e35](https://github.com/appium/appium/commit/5dd2e35ac99c8c8497ba30f882994a570a7521e9))
+* **support:** other color deps are also prod deps ([f3d3120](https://github.com/appium/appium/commit/f3d31202e03fce301c2d2006dde163a50cdd9eda))
+
+
+
+
+
 ## [2.59.1](https://github.com/appium/appium/compare/@appium/support@2.59.0...@appium/support@2.59.1) (2022-05-31)
 
 **Note:** Version bump only for package @appium/support

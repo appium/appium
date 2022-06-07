@@ -28,7 +28,8 @@
     "eslint:find:current-rules": "eslint-find-rules -c",
     "eslint:find:plugin-rules": "eslint-find-rules -p",
     "eslint:find:unused-rules": "eslint-find-rules -u -n",
-    "lint": "eslint index.js"
+    "lint": "eslint index.js",
+    "test:smoke": "node ./index.js"
   },
   "peerDependencies": {
     "@babel/core": "7.18.2",

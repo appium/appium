@@ -39,7 +39,8 @@
     "build": "gulp transpile",
     "prepare": "npm run build",
     "test": "gulp unit-test:run",
-    "test:e2e": "gulp e2e-test:run"
+    "test:e2e": "gulp e2e-test:run",
+    "test:smoke": "node ./index.js"
   },
   "dependencies": {
     "@appium/eslint-config-appium": "^6.0.2",

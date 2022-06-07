@@ -31,6 +31,7 @@
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",
     "test": "npm run test:unit",
+    "test:smoke": "node ./build/lib/index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {

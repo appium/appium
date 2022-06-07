@@ -28,7 +28,8 @@
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test:smoke": "echo 'No smoke test for this package'"
   },
   "dependencies": {
     "@appium/schema": "^0.0.7"

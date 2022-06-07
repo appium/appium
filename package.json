@@ -192,5 +192,8 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

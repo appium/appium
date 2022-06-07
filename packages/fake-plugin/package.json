@@ -2,6 +2,7 @@
   "name": "@appium/fake-plugin",
   "version": "2.0.3",
   "description": "A fake Appium 2.0 plugin",
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -27,6 +28,7 @@
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",
     "test": "npm run test:unit",
+    "test:smoke": "node ./index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
@@ -55,6 +57,5 @@
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
   "tags": [
     "appium"
-  ],
-  "homepage": "https://appium.io"
+  ]
 }

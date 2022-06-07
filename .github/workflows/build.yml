@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   test:
-    name: Test
+    name: Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,7 +27,12 @@ jobs:
         run: |
           npm install
           npm run install-mjpeg-consumer
-      - name: Run all tests
+      - name: Run smoke tests
+        uses: boneskull/nodejs-production-test-action@v1
+        with:
+          script: test:smoke
+          workspaces: true
+      - name: Run unit & E2E tests
         run: npm run test:ci
 
   lint:

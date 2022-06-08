@@ -18,6 +18,7 @@
     "lib": "./lib"
   },
   "files": [
+    "index.js",
     "lib",
     "build"
   ],

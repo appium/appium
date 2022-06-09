@@ -292,8 +292,19 @@ class DriverCore {
    * not
    *
    * @param {string} name - name of feature/command
+   * @deprecated
    */
   ensureFeatureEnabled(name) {
+    this.assertFeatureEnabled(name);
+  }
+
+  /**
+   * Assert that a given feature is enabled and throw a helpful error if it's
+   * not
+   *
+   * @param {string} name - name of feature/command
+   */
+  assertFeatureEnabled(name) {
     if (!this.isFeatureEnabled(name)) {
       throw new Error(
         `Potentially insecure feature '${name}' has not been ` +

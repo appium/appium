@@ -40,4 +40,4 @@ Please see also below links. They might have additional flags.
 2 methods exist on objects of classes which extend `BaseDriver`, which make the life of the driver developer easier when checking availability of insecure features:
 
 * `this.isFeatureEnabled(name)`: returns true or false depending on whether the server security flags combine to allow the feature in question.
-* `this.ensureFeatureEnabled(name)`: throws an error with the feature name and a link to this doc if the feature in question is not allowed.
+* `this.assertFeatureEnabled(name)`: throws an error with the feature name and a link to this doc if the feature in question is not allowed.

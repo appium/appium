@@ -303,7 +303,7 @@ export interface Core {
   isW3CProtocol(): boolean;
   isMjsonwpProtocol(): boolean;
   isFeatureEnabled(name: string): boolean;
-  ensureFeatureEnabled(name: string): void;
+  assertFeatureEnabled(name: string): void;
   validateLocatorStrategy(strategy: string, webContext?: boolean): void;
   proxyActive(sessionId?: string): boolean;
   getProxyAvoidList(sessionId?: string): [string, RegExp][];

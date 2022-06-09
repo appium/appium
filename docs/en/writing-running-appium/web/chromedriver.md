@@ -109,19 +109,19 @@ By default Chromedriver is retrieved from `https://chromedriver.storage.googleap
 To use a mirror of the ChromeDriver binaries use npm config property `chromedriver_cdnurl`.
 
 ```bash
-npm install appium-chromedriver --chromedriver_cdnurl=http://npm.taobao.org/mirrors/chromedriver
+npm install appium-chromedriver --chromedriver_cdnurl=https://npmmirror.com/mirrors/chromedriver
 ```
 
 Or add the property into your [`.npmrc`](https://docs.npmjs.com/files/npmrc) file.
 
 ```bash
-chromedriver_cdnurl=http://npm.taobao.org/mirrors/chromedriver
+chromedriver_cdnurl=https://npmmirror.com/mirrors/chromedriver
 ```
 
 Another option is to use PATH variable `CHROMEDRIVER_CDNURL`.
 
 ```bash
-CHROMEDRIVER_CDNURL=http://npm.taobao.org/mirrors/chromedriver npm install appium-chromedriver
+CHROMEDRIVER_CDNURL=https://npmmirror.com/mirrors/chromedriver npm install appium-chromedriver
 ```
 
 It may also be necessary to adjust network proxy and firewall settings to allow

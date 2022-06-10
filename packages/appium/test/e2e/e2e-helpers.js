@@ -37,7 +37,7 @@ async function run(appiumHome, args, opts = {}) {
   opts.env = _.defaults(opts.env, {APPIUM_HOME: appiumHome, PATH: process.env.PATH});
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
-    log.debug('APPIUM_HOME: %s', opts.env.appiumHome);
+    log.debug('APPIUM_HOME: %s', opts.env.APPIUM_HOME);
     log.debug(`Running: ${process.execPath} ${args.join(' ')}`);
     const retval = await exec(process.execPath, args, {
       ...opts,

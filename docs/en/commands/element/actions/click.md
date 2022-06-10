@@ -14,8 +14,8 @@ el.click();
 
 ```python
 # Python
-el = self.driver.find_element_by_accessibility_id('SomeId')
-el.click();
+el = self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value='SomeId')
+el.click()
 
 ```
 

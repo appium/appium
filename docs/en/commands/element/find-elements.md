@@ -127,4 +127,4 @@ A list of of JSON objects for the located elements (`Array<String>`)
 ## See Also
 
 * [W3C Specification](https://www.w3.org/TR/webdriver/#dfn-find-elements)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelements)
+* [JSONWP Specification](https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelements)

@@ -14,7 +14,7 @@ MobileElement elementTwo = (MobileElement) driver.findElementByClassName("SomeCl
 
 ```python
 # Python
-el = self.driver.find_element_by_accessibility_id('SomeAccessibilityID')
+el = self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value="SomeAccessibilityID")
 
 ```
 
@@ -113,4 +113,4 @@ A JSON object for the located element (`object`)
 ## See Also
 
 * [W3C Specification](https://www.w3.org/TR/webdriver/#find-element)
-* [JSONWP Specification](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelement)
+* [JSONWP Specification](https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement)

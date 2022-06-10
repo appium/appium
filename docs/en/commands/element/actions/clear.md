@@ -14,7 +14,7 @@ element.clear();
 
 ```python
 # Python
-self.driver.find_element_by_accessibility_id('SomeAccessibilityID').clear()
+self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value="SomeAccessibilityID").clear()
 
 ```
 

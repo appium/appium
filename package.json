@@ -143,6 +143,7 @@
     "@types/teen_process": "1.16.0",
     "@types/through2": "2.0.36",
     "@types/uuid": "8.3.4",
+    "@types/wrap-ansi": "3.0.0",
     "@types/ws": "8.5.3",
     "@types/xmldom": "0.1.31",
     "@wdio/types": "7.20.0",

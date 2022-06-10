@@ -28,11 +28,17 @@ let PLUGIN_TYPE;
 let loadExtensions;
 
 const {env, util, logger} = require('@appium/support');
+const _ = require('lodash');
+const wrap = _.partial(
+  require('wrap-ansi'),
+  _,
+  process.stderr.columns ?? process.stdout.columns ?? 25
+);
 
 const ora = require('ora');
 
 const log = (message) => {
-  console.error(`[Appium] ${message}`);
+  console.error(wrap(`[Appium] ${message}`));
 };
 
 const spinner = ora({
@@ -59,7 +65,8 @@ try {
 }
 
 async function main() {
-  if (await env.hasAppiumDependency()) {
+  // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
+  if (!process.env.npm_config_global && (await env.hasAppiumDependency())) {
     log(`Found local Appium installation; skipping automatic installation of extensions.`);
     return;
   }
@@ -74,7 +81,8 @@ async function main() {
 
   if (!driverEnv && !pluginEnv) {
     spinner.succeed(
-      'No drivers or plugins to automatically install. If desired, provide arguments with comma-separated values "--drivers=<known_driver>[,known_driver...]" and/or "--plugins=<known_plugin>[,known_plugin...]" to the "npm install appium" command. The specified extensions will be installed automatically with Appium.  Note: to see the list of known extensions, run "appium <driver|plugin> list".'
+      wrap(`No drivers or plugins to automatically install. 
+      If desired, provide arguments with comma-separated values "--drivers=<known_driver>[,known_driver...]" and/or "--plugins=<known_plugin>[,known_plugin...]" to the "npm install appium" command. The specified extensions will be installed automatically with Appium.  Note: to see the list of known extensions, run "appium <driver|plugin> list".`)
     );
     return;
   }

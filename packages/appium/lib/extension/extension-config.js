@@ -203,11 +203,9 @@ export class ExtensionConfig {
 
     if (!_.isEmpty(errorSummaries)) {
       log.error(
-        `Appium encountered ${util.pluralize(
-          'error',
-          errorSummaries.length,
-          true
-        )} while validating ${this.configKey} found in manifest ${this.manifestPath}`
+        `Appium encountered ${util.pluralize('error', errorMap.size, true)} while validating ${
+          this.configKey
+        } found in manifest ${this.manifestPath}`
       );
       for (const summary of errorSummaries) {
         log.error(summary);
@@ -219,7 +217,7 @@ export class ExtensionConfig {
         log.warn(
           `Appium encountered ${util.pluralize(
             'warning',
-            warningSummaries.length,
+            warningMap.size,
             true
           )} while validating ${this.configKey} found in manifest ${this.manifestPath}`
         );

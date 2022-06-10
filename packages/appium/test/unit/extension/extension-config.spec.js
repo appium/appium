@@ -260,14 +260,40 @@ describe('ExtensionConfig', function () {
       });
     });
 
-    describe('validate()', function () {
-      it('should have some tests');
+    describe('_validate()', function () {
+      describe('when there is a single warning', function () {
+        beforeEach(function () {
+          sandbox.stub(config, 'getProblems').resolves([]);
+          sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
+        });
+
+        it('should display a warning count of 1', async function () {
+          await config._validate({foo: {}});
+          expect(MockAppiumSupport.logger.__logger.warn).to.be.calledWith(
+            'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml'
+          );
+        });
+      });
+
+      describe('when there is a single error', function () {
+        beforeEach(function () {
+          sandbox.stub(config, 'getProblems').resolves([{err: 'some warning', val: 'whatever'}]);
+          sandbox.stub(config, 'getWarnings').resolves([]);
+        });
+
+        it('should display an error count of 1', async function () {
+          await config._validate({foo: {}});
+          expect(MockAppiumSupport.logger.__logger.error).to.be.calledWith(
+            'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml'
+          );
+        });
+      });
     });
 
     describe('require()', function () {
       beforeEach(function () {
         // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
-        // loaded it.  all we need for the purposes of the `require()` function is a `mainClass`, so
+        // loaded yet.  all we need for the purposes of the `require()` function is a `mainClass`, so
         // here we go.
         config.installedExtensions.fake = {pkgName: 'flotsam', mainClass: 'Jetsam'};
       });

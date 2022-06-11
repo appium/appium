@@ -182,7 +182,7 @@
     "type-fest": "2.13.0",
     "typescript": "4.7.3",
     "validate.js": "0.13.1",
-    "webdriverio": "7.20.1",
+    "webdriverio": "7.20.2",
     "ws": "8.8.0",
     "yaml-js": "0.3.1"
   },

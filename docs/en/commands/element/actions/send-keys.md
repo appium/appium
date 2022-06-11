@@ -14,7 +14,7 @@ element.sendKeys("Hello world!");
 
 ```python
 # Python
-self.driver.find_element_by_accessibility_id('SomeAccessibilityID').send_keys('Hello world!')
+self.driver.find_element(by=AppiumBy.ACCESSIBILITY_ID, value="SomeAccessibilityID").send_keys('Hello world!')
 
 ```
 

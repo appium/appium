@@ -26,6 +26,8 @@ driver.perform(Arrays.asList(dragNDrop));
 
 ```python
 # Python
+from selenium.webdriver.common.action_chains import ActionChains
+
 element = driver.find_element_by_accessibility_id("elId")
 actions = ActionChains(driver)
 actions.move_to_element(element)

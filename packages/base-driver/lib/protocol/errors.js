@@ -15,9 +15,9 @@ export class ProtocolError extends ES6Error {
   /**
    *
    * @param {string} [msg]
-   * @param {*} [jsonwpCode]
-   * @param {*} [w3cStatus]
-   * @param {*} [error]
+   * @param {number} [jsonwpCode]
+   * @param {number} [w3cStatus]
+   * @param {string} [error]
    */
   constructor(msg, jsonwpCode, w3cStatus, error) {
     super(msg);
@@ -216,7 +216,7 @@ export class UnknownError extends ProtocolError {
   }
   /** @param {string|Error} [errorOrMessage] */
   constructor(errorOrMessage) {
-    const origMessage = _.isString(/** @type {Error} */ ((errorOrMessage) || {}).message)
+    const origMessage = _.isString(/** @type {Error} */ (errorOrMessage || {}).message)
       ? /** @type {Error} */ (errorOrMessage).message
       : errorOrMessage;
     const message =

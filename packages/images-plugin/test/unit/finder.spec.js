@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import {imageUtil} from 'appium/support';
+import {imageUtil, util} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
-import {ImageElementFinder, W3C_ELEMENT_KEY} from '../../lib/finder';
+import {ImageElementFinder} from '../../lib/finder';
 import {ImageElement} from '../../lib/image-element';
 import sinon from 'sinon';
 import {TINY_PNG, TINY_PNG_DIMS} from '../fixtures';
@@ -10,6 +10,8 @@ import {TINY_PNG, TINY_PNG_DIMS} from '../fixtures';
 const compareModule = require('../../lib/compare');
 
 const plugin = new ImageElementPlugin();
+
+const {W3C_ELEMENT_IDENTIFIER} = util;
 
 class PluginDriver extends BaseDriver {
   async getWindowSize() {}
@@ -78,7 +80,7 @@ describe('finding elements by image', function () {
      * @returns
      */
     function basicImgElVerify(imgElProto, finder) {
-      const imgElId = imgElProto[W3C_ELEMENT_KEY];
+      const imgElId = imgElProto[W3C_ELEMENT_IDENTIFIER];
       finder.imgElCache.has(imgElId).should.be.true;
       const imgEl = finder.imgElCache.get(imgElId);
       (imgEl instanceof ImageElement).should.be.true;

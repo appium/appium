@@ -108,7 +108,7 @@ export class ImageElementFinder {
   registerImageElement(imgEl) {
     this.imgElCache.set(imgEl.id, imgEl);
     if (!this.driver) {
-      throw new ReferenceError('No driver set!');
+      throw new ReferenceError('Please call setDriver() before registerImageElement()');
     }
     return imgEl.asElement();
   }
@@ -220,7 +220,7 @@ export class ImageElementFinder {
     }
 
     if (_.isEmpty(results)) {
-      if (multiple === true) {
+      if (multiple) {
         return /** @type {FindByImageResult<Multiple,CheckStaleness>} */ (
           /** @type {Element[]} */ ([])
         );
@@ -287,7 +287,10 @@ export class ImageElementFinder {
    * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind(screenWidth, screenHeight) {
-    if (!this.driver?.getScreenshot) {
+    if (!this.driver) {
+      throw new Error('Please call setDriver() before calling getScreenshotForImageFind()');
+    }
+    if (!this.driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
     const settings = {...DEFAULT_SETTINGS, ...this.driver.settings.getSettings()};

@@ -116,7 +116,6 @@ export {
 /**
  * @template {boolean} Multiple
  * @typedef {import('@appium/opencv').OccurrenceOptions<Multiple>} OccurrenceOptions
-
  */
 
 /**

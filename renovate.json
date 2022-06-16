@@ -27,7 +27,7 @@
     }
   ],
   "baseBranches": ["2.0"],
-  "ignorePaths": ["sample-code"],
+  "ignorePaths": ["sample-code", "packages/appium/test/fixtures"],
   "semanticCommits": "enabled",
   "semanticCommitScope": "{{parentDir}}",
   "schedule": ["after 10pm and before 5:00am"],

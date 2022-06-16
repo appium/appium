@@ -134,7 +134,7 @@
     "@types/pluralize": "0.0.29",
     "@types/pngjs": "6.0.1",
     "@types/rimraf": "3.0.2",
-    "@types/semver": "7.3.9",
+    "@types/semver": "7.3.10",
     "@types/serve-favicon": "2.5.3",
     "@types/shell-quote": "1.7.1",
     "@types/sinon": "10.0.11",

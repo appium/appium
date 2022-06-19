@@ -108,10 +108,13 @@ class AppiumDriver extends DriverCore {
 
     // allow this to happen in the background, so no `await`
     // catch this to avoid an unhandled rejection
-    // eslint-disable-next-line promise/prefer-await-to-then,promise/prefer-await-to-callbacks
-    updateBuildInfo().catch((err) => {
-      this.log.debug(err);
-    });
+    (async () => {
+      try {
+        await updateBuildInfo();
+      } catch (e) {
+        this.log.debug(`Appium build into cannot be updated: ${e.message}`);
+      }
+    })();
   }
 
   /**

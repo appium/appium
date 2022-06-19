@@ -67,7 +67,7 @@ describe('AppiumDriver', function () {
       sandbox.stub(ad._log, 'debug');
       // finally, wait for `updateBuildInfo()` to finish up
       await promise;
-      ad._log.debug.should.have.been.calledOnceWith(err);
+      ad._log.debug.should.have.been.calledOnce;
     });
   });
 

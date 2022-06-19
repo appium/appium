@@ -54,7 +54,7 @@ describe('Config', function () {
         data: {
           ref: `refs/tags/appium@${APPIUM_VER}`,
           node_id: 'MDM6UmVmNzUzMDU3MDpyZWZzL3RhZ3MvYXBwaXVtQDIuMC4wLWJldGEuNDA=',
-          url: 'https://api.github.com/repos/appium/appium/git/refs/tags/appium@2.0.0-beta.40',
+          url: `https://api.github.com/repos/appium/appium/git/refs/tags/appium@${APPIUM_VER}`,
           object: {
             sha: 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a',
             type: 'tag',

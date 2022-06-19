@@ -1,7 +1,8 @@
 import {createSandbox} from 'sinon';
 import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
 import axios from 'axios';
-import {fs} from '@appium/support';
+import * as teenProcess from 'teen_process';
+
 
 describe('Config', function () {
   let sandbox;
@@ -23,27 +24,40 @@ describe('Config', function () {
     });
   });
   describe('getBuildInfo', function () {
-    async function verifyBuildInfoUpdate(useLocalGit) {
+    const SHA = 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a';
+    const DATE = '2022-06-04T02:08:17Z';
+
+    async function verifyBuildInfoUpdate(useLocalGit, {sha, built} = {}) {
       const buildInfo = getBuildInfo();
-      mockFs.expects('exists').atLeast(1).returns(useLocalGit);
+      if (!useLocalGit) {
+        mockTp.expects('exec').atLeast(1).throws();
+      }
       buildInfo['git-sha'] = undefined;
       buildInfo.built = undefined;
       await updateBuildInfo(true);
       buildInfo.should.be.an('object');
-      should.exist(buildInfo['git-sha']);
-      should.exist(buildInfo.built);
+      if (sha) {
+        buildInfo['git-sha'].should.equal(sha);
+      } else {
+        should.exist(buildInfo['git-sha']);
+      }
+      if (built) {
+        buildInfo.built.should.equal(built);
+      } else {
+        should.exist(buildInfo.built);
+      }
       should.exist(buildInfo.version);
     }
 
-    let mockFs;
     let getStub;
+    let mockTp;
     beforeEach(function () {
-      mockFs = sandbox.mock(fs);
       getStub = sandbox.stub(axios, 'get');
+      mockTp = sandbox.mock(teenProcess);
     });
     afterEach(function () {
       getStub.restore();
-      mockFs.restore();
+      mockTp.restore();
     });
 
     it('should get a configuration object if the local git metadata is present', async function () {
@@ -56,21 +70,21 @@ describe('Config', function () {
           node_id: 'MDM6UmVmNzUzMDU3MDpyZWZzL3RhZ3MvYXBwaXVtQDIuMC4wLWJldGEuNDA=',
           url: `https://api.github.com/repos/appium/appium/git/refs/tags/appium@${APPIUM_VER}`,
           object: {
-            sha: 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a',
+            sha: SHA,
             type: 'tag',
-            url: 'https://api.github.com/repos/appium/appium/git/tags/a7404fddd50ee1c6ff1aac3d2f259abab0d3291a'
+            url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`
           }
         }
       });
       getStub.onCall(1).returns({
         data: {
           node_id: 'TA_kwDOAHLoStoAKGE3NDA0ZmRkZDUwZWUxYzZmZjFhYWMzZDJmMjU5YWJhYjBkMzI5MWE',
-          sha: 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a',
-          url: 'https://api.github.com/repos/appium/appium/git/tags/a7404fddd50ee1c6ff1aac3d2f259abab0d3291a',
+          sha: SHA,
+          url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`,
           tagger: {
             name: 'Jonathan Lipps',
             email: 'jlipps@gmail.com',
-            date: '2022-06-04T02:08:17Z'
+            date: DATE
           },
           object: {
             sha: '4cf2cc92d066ed32adda27e0439547290a4b71ce',
@@ -87,7 +101,7 @@ describe('Config', function () {
           }
         }
       });
-      await verifyBuildInfoUpdate(false);
+      await verifyBuildInfoUpdate(false, {sha: SHA, built: DATE});
     });
   });
 });

@@ -112,7 +112,7 @@ class AppiumDriver extends DriverCore {
       try {
         await updateBuildInfo();
       } catch (e) {
-        this.log.debug(`Appium build into cannot be updated: ${e.message}`);
+        this.log.debug(`Cannot fetch Appium build info: ${e.message}`);
       }
     })();
   }

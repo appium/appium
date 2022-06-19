@@ -37,9 +37,9 @@ async function updateBuildInfo(useGithubApiFallback = false) {
     return;
   }
   BUILD_INFO['git-sha'] = sha;
-  const builtTimestamp = await getGitTimestamp(sha, useGithubApiFallback);
-  if (builtTimestamp) {
-    BUILD_INFO.built = builtTimestamp;
+  const buildTimestamp = await getGitTimestamp(sha, useGithubApiFallback);
+  if (buildTimestamp) {
+    BUILD_INFO.built = buildTimestamp;
   }
 }
 

@@ -107,11 +107,11 @@ class AppiumDriver extends DriverCore {
     this.args = {...opts};
 
     // allow this to happen in the background, so no `await`
-    // catch this to avoid an unhandled rejection
     (async () => {
       try {
         await updateBuildInfo();
       } catch (e) {
+        // make sure we catch any possible errors to avoid unhandled rejections
         this.log.debug(`Cannot fetch Appium build info: ${e.message}`);
       }
     })();

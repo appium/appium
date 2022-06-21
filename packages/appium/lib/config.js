@@ -28,15 +28,18 @@ function getNodeVersion() {
   return /** @type {import('semver').SemVer} */ (semver.coerce(process.version));
 }
 
+/**
+ * @param {boolean} [useGithubApiFallback]
+ */
 async function updateBuildInfo(useGithubApiFallback = false) {
   const sha = await getGitRev(useGithubApiFallback);
   if (!sha) {
     return;
   }
   BUILD_INFO['git-sha'] = sha;
-  const built = await getGitTimestamp(sha, useGithubApiFallback);
-  if (built) {
-    BUILD_INFO.built = built;
+  const buildTimestamp = await getGitTimestamp(sha, useGithubApiFallback);
+  if (buildTimestamp) {
+    BUILD_INFO.built = buildTimestamp;
   }
 }
 
@@ -51,6 +54,10 @@ async function findGitRoot() {
   return await findUp(GIT_META_ROOT, {cwd: rootDir, type: 'directory'});
 }
 
+/**
+ * @param {boolean} [useGithubApiFallback]
+ * @returns {Promise<string?>}
+ */
 async function getGitRev(useGithubApiFallback = false) {
   const gitRoot = await findGitRoot();
   if (gitRoot) {
@@ -66,21 +73,16 @@ async function getGitRev(useGithubApiFallback = false) {
     return null;
   }
 
+  // If the package folder is not a valid git repository
+  // then fetch the corresponding tag info from GitHub
   try {
-    const resBodyObj = (
-      await axios.get(`${GITHUB_API}/tags`, {
+    return (
+      await axios.get(`${GITHUB_API}/git/refs/tags/appium@${APPIUM_VER}`, {
         headers: {
           'User-Agent': `Appium ${APPIUM_VER}`,
         },
       })
-    ).data;
-    if (_.isArray(resBodyObj)) {
-      for (const {name, commit} of resBodyObj) {
-        if (name === `v${APPIUM_VER}` && commit && commit.sha) {
-          return commit.sha;
-        }
-      }
-    }
+    ).data?.object?.sha;
   } catch (ign) {}
   return null;
 }
@@ -106,21 +108,13 @@ async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
   }
 
   try {
-    const resBodyObj = (
-      await axios.get(`${GITHUB_API}/commits/${commitSha}`, {
+    return (
+      await axios.get(`${GITHUB_API}/git/tags/${commitSha}`, {
         headers: {
           'User-Agent': `Appium ${APPIUM_VER}`,
         },
       })
-    ).data;
-    if (resBodyObj && resBodyObj.commit) {
-      if (resBodyObj.commit.committer && resBodyObj.commit.committer.date) {
-        return resBodyObj.commit.committer.date;
-      }
-      if (resBodyObj.commit.author && resBodyObj.commit.author.date) {
-        return resBodyObj.commit.author.date;
-      }
-    }
+    ).data?.tagger?.date;
   } catch (ign) {}
   return null;
 }

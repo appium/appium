@@ -1,7 +1,8 @@
 import {createSandbox} from 'sinon';
 import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/config';
 import axios from 'axios';
-import {fs} from '@appium/support';
+import * as teenProcess from 'teen_process';
+
 
 describe('Config', function () {
   let sandbox;
@@ -23,27 +24,40 @@ describe('Config', function () {
     });
   });
   describe('getBuildInfo', function () {
-    async function verifyBuildInfoUpdate(useLocalGit) {
+    const SHA = 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a';
+    const DATE = '2022-06-04T02:08:17Z';
+
+    async function verifyBuildInfoUpdate(useLocalGit, {sha, built} = {}) {
       const buildInfo = getBuildInfo();
-      mockFs.expects('exists').atLeast(1).returns(useLocalGit);
+      if (!useLocalGit) {
+        mockTp.expects('exec').atLeast(1).throws();
+      }
       buildInfo['git-sha'] = undefined;
       buildInfo.built = undefined;
       await updateBuildInfo(true);
       buildInfo.should.be.an('object');
-      should.exist(buildInfo['git-sha']);
-      should.exist(buildInfo.built);
+      if (sha) {
+        buildInfo['git-sha'].should.equal(sha);
+      } else {
+        should.exist(buildInfo['git-sha']);
+      }
+      if (built) {
+        buildInfo.built.should.equal(built);
+      } else {
+        should.exist(buildInfo.built);
+      }
       should.exist(buildInfo.version);
     }
 
-    let mockFs;
     let getStub;
+    let mockTp;
     beforeEach(function () {
-      mockFs = sandbox.mock(fs);
       getStub = sandbox.stub(axios, 'get');
+      mockTp = sandbox.mock(teenProcess);
     });
     afterEach(function () {
       getStub.restore();
-      mockFs.restore();
+      mockTp.restore();
     });
 
     it('should get a configuration object if the local git metadata is present', async function () {
@@ -51,66 +65,43 @@ describe('Config', function () {
     });
     it('should get a configuration object if the local git metadata is not present', async function () {
       getStub.onCall(0).returns({
-        data: [
-          {
-            name: `v${APPIUM_VER}`,
-            zipball_url: 'https://api.github.com/repos/appium/appium/zipball/v1.9.0-beta.1',
-            tarball_url: 'https://api.github.com/repos/appium/appium/tarball/v1.9.0-beta.1',
-            commit: {
-              sha: '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-              url: 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-            },
-            node_id: 'MDM6UmVmNzUzMDU3MDp2MS45LjAtYmV0YS4x',
-          },
-          {
-            name: 'v1.8.2-beta',
-            zipball_url: 'https://api.github.com/repos/appium/appium/zipball/v1.8.2-beta',
-            tarball_url: 'https://api.github.com/repos/appium/appium/tarball/v1.8.2-beta',
-            commit: {
-              sha: '5b98b9197e75aa85e7507d21d3126c1a63d1ce8f',
-              url: 'https://api.github.com/repos/appium/appium/commits/5b98b9197e75aa85e7507d21d3126c1a63d1ce8f',
-            },
-            node_id: 'MDM6UmVmNzUzMDU3MDp2MS44LjItYmV0YQ==',
-          },
-        ],
+        data: {
+          ref: `refs/tags/appium@${APPIUM_VER}`,
+          node_id: 'MDM6UmVmNzUzMDU3MDpyZWZzL3RhZ3MvYXBwaXVtQDIuMC4wLWJldGEuNDA=',
+          url: `https://api.github.com/repos/appium/appium/git/refs/tags/appium@${APPIUM_VER}`,
+          object: {
+            sha: SHA,
+            type: 'tag',
+            url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`
+          }
+        }
       });
       getStub.onCall(1).returns({
         data: {
-          sha: '3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-          node_id: 'MDY6Q29tbWl0NzUzMDU3MDozYzI3NTJmOWY5YzU2MDAwNzA1YTRhZTE1YjNiYTY4YTVkMmU2NDRj',
-          commit: {
-            author: {
-              name: 'Isaac Murchie',
-              email: 'isaac@saucelabs.com',
-              date: '2018-08-17T19:48:00Z',
-            },
-            committer: {
-              name: 'Isaac Murchie',
-              email: 'isaac@saucelabs.com',
-              date: '2018-08-17T19:48:00Z',
-            },
-            message: 'v1.9.0-beta.1',
-            tree: {
-              sha: '2c0974727470eba419ea0b9951c52f72f8036b18',
-              url: 'https://api.github.com/repos/appium/appium/git/trees/2c0974727470eba419ea0b9951c52f72f8036b18',
-            },
-            url: 'https://api.github.com/repos/appium/appium/git/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-            comment_count: 0,
-            verification: {
-              verified: false,
-              reason: 'unsigned',
-              signature: null,
-              payload: null,
-            },
+          node_id: 'TA_kwDOAHLoStoAKGE3NDA0ZmRkZDUwZWUxYzZmZjFhYWMzZDJmMjU5YWJhYjBkMzI5MWE',
+          sha: SHA,
+          url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`,
+          tagger: {
+            name: 'Jonathan Lipps',
+            email: 'jlipps@gmail.com',
+            date: DATE
           },
-          url: 'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-          html_url:
-            'https://github.com/appium/appium/commit/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c',
-          comments_url:
-            'https://api.github.com/repos/appium/appium/commits/3c2752f9f9c56000705a4ae15b3ba68a5d2e644c/comments',
-        },
+          object: {
+            sha: '4cf2cc92d066ed32adda27e0439547290a4b71ce',
+            type: 'commit',
+            url: 'https://api.github.com/repos/appium/appium/git/commits/4cf2cc92d066ed32adda27e0439547290a4b71ce'
+          },
+          tag: `appium@${APPIUM_VER}`,
+          message: `appium@${APPIUM_VER}\n`,
+          verification: {
+            verified: false,
+            reason: 'unsigned',
+            signature: null,
+            payload: null
+          }
+        }
       });
-      await verifyBuildInfoUpdate(false);
+      await verifyBuildInfoUpdate(false, {sha: SHA, built: DATE});
     });
   });
 });

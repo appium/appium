@@ -37,24 +37,25 @@ export class NPM {
    * Execute `npm` with given args.
    *
    * If the process exits with a nonzero code, the contents of `STDOUT` and `STDERR` will be in the
-   * `message` of the {@link TeenProcessExecError} rejected.
+   * `message` of any rejected error.
    * @param {string} cmd
    * @param {string[]} args
    * @param {ExecOpts} opts
-   * @param {ExecOpts} [execOpts]
+   * @param {Omit<import('teen_process').ExecOptions, 'cwd'>} [execOpts]
    */
-  async exec(cmd, args, opts, execOpts = /** @type {ExecOpts} */ ({})) {
+  async exec(cmd, args, opts, execOpts = {}) {
     let {cwd, json, lockFile} = opts;
 
     // make sure we perform the current operation in cwd
-    execOpts = {...execOpts, cwd};
+    /** @type {import('teen_process').ExecOptions} */
+    const teenProcessExecOpts = {...execOpts, cwd};
 
     args.unshift(cmd);
     if (json) {
       args.push('--json');
     }
     const npmCmd = system.isWindows() ? 'npm.cmd' : 'npm';
-    let runner = async () => await exec(npmCmd, args, execOpts);
+    let runner = async () => await exec(npmCmd, args, teenProcessExecOpts);
     if (lockFile) {
       const acquireLock = util.getLockFileGuard(lockFile);
       const _runner = runner;
@@ -73,7 +74,11 @@ export class NPM {
         ret.json = JSON.parse(stdout);
       } catch (ign) {}
     } catch (e) {
-      const {stdout = '', stderr = '', code = null} = /** @type {TeenProcessExecError} */ (e);
+      const {
+        stdout = '',
+        stderr = '',
+        code = null,
+      } = /** @type {import('teen_process').ExecError} */ (e);
       const err = new Error(
         `npm command '${args.join(
           ' '
@@ -263,19 +268,4 @@ export const npm = new NPM();
  * @property {string} cwd - Current working directory
  * @property {boolean} [json] - If `true`, supply `--json` flag to npm and resolve w/ parsed JSON
  * @property {string} [lockFile] - Path to lockfile to use
- */
-
-// THESE TYPES SHOULD BE IN TEEN PROCESS, NOT HERE
-
-/**
- * Extra props `teen_process.exec` adds to its error objects
- * @typedef TeenProcessExecErrorProps
- * @property {string} stdout - STDOUT
- * @property {string} stderr - STDERR
- * @property {number?} code - Exit code
- */
-
-/**
- * Error thrown by `teen_process.exec`
- * @typedef {Error & TeenProcessExecErrorProps} TeenProcessExecError
  */

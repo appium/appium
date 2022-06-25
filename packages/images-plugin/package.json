@@ -39,7 +39,7 @@
   "dependencies": {
     "@appium/opencv": "^1.0.9",
     "@babel/runtime": "7.18.3",
-    "lru-cache": "7.10.1",
+    "lru-cache": "7.10.2",
     "source-map-support": "0.5.21"
   },
   "peerDependencies": {

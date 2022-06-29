@@ -137,7 +137,7 @@
     "@types/semver": "7.3.10",
     "@types/serve-favicon": "2.5.3",
     "@types/shell-quote": "1.7.1",
-    "@types/sinon": "10.0.11",
+    "@types/sinon": "10.0.12",
     "@types/sinon-chai": "3.2.8",
     "@types/supports-color": "8.1.1",
     "@types/teen_process": "1.16.0",

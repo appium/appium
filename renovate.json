@@ -19,6 +19,7 @@
         "log-symbols",
         "read-pkg",
         "strip-ansi",
+        "supports-color",
         "term-size",
         "wrap-ansi",
         "write-pkg"

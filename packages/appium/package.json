@@ -87,7 +87,7 @@
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "1.16.0",
-    "winston": "3.8.0",
+    "winston": "3.8.1",
     "wrap-ansi": "7.0.0",
     "yaml": "2.1.1"
   },

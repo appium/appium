@@ -1,5 +1,5 @@
 ---
-title: Additional Resources
+title: 更多 Appium 资源
 ---
 
 

@@ -3,11 +3,11 @@ site_url: https://appium.github.io/appium/docs/en
 edit_uri: edit/2.0/packages/appium/docs/en
 site_description: The Appium automation project documentation
 
-docs_dir: cn
-site_dir: site/docs/cn
+docs_dir: zh
+site_dir: site/docs/zh
 
 theme:
-  language: cn
+  language: zh
 
 nav:
   - 首页: index.md

@@ -49,6 +49,7 @@
     "dev:docs": "npm run build:docs:assets && npm run dev:docs:en",
     "dev:docs:en": "mkdocs serve -f ./docs/mkdocs-en.yml",
     "dev:docs:ja": "mkdocs serve -f ./docs/mkdocs-ja.yml",
+    "dev:docs:zh": "mkdocs serve -f ./docs/mkdocs-zh.yml",
     "fix": "npm run lint -- --fix",
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",

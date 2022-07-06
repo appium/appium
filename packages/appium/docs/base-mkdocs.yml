@@ -27,3 +27,6 @@ extra:
     - name: 日本
       link: /docs/ja/
       lang: ja
+    - name: 中文简体
+      link: /docs/zh/
+      lang: zh

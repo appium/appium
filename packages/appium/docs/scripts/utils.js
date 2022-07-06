@@ -11,7 +11,7 @@ const DOCS_PREFIX = 'docs';
 const DOCS_DIR = path.resolve(__dirname, '..');
 const LATEST_ALIAS = 'latest';
 const ASSETS_DIR = path.join(DOCS_DIR, 'assets');
-const LANGS = ['en', 'ja'];
+const LANGS = ['en', 'ja', 'zh'];
 
 module.exports = {
   log,

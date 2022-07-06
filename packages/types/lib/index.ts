@@ -1,4 +1,3 @@
-import type {Method as _Method} from 'axios';
 import type {Server} from 'http';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
@@ -152,4 +151,15 @@ export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServe
  *
  * @see https://npm.im/axios
  */
-export type HTTPMethod = _Method;
+export type HTTPMethod =
+  | 'get' | 'GET'
+  | 'delete' | 'DELETE'
+  | 'head' | 'HEAD'
+  | 'options' | 'OPTIONS'
+  | 'post' | 'POST'
+  | 'put' | 'PUT'
+  | 'patch' | 'PATCH'
+  | 'purge' | 'PURGE'
+  | 'link' | 'LINK'
+  | 'unlink' | 'UNLINK';
+

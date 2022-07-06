@@ -225,5 +225,5 @@ export class ArgSpec {
  */
 
 /**
- * @typedef {import('../extension/manifest').ExtensionType} ExtensionType
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  */

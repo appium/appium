@@ -1,0 +1,54 @@
+INHERIT: ./base-mkdocs.yml
+site_url: https://appium.github.io/appium/docs/en
+edit_uri: edit/2.0/packages/appium/docs/en
+site_description: The Appium automation project documentation
+
+docs_dir: cn
+site_dir: site/docs/cn
+
+theme:
+  language: cn
+
+nav:
+  - 首页: index.md
+  - 简介:
+      - 介绍 Appium:
+          - Appium 概述: intro/index.md
+          - intro/drivers.md
+          - intro/clients.md
+      - intro/requirements.md
+      - 历史: intro/history.md
+  - 快速开始:
+      - quickstart/index.md
+      - quickstart/install.md
+      - quickstart/uiauto2-driver.md
+      - 编写测试:
+          - quickstart/test-js.md
+          - quickstart/test-py.md
+          - quickstart/test-java.md
+      - quickstart/next-steps.md
+  - 命令行参考:
+      - cli/index.md
+      - cli/args.md
+      - cli/extensions.md
+  - 指南:
+      - guides/migrating-1-to-2.md
+      - guides/managing-exts.md
+      - guides/config.md
+      - guides/security.md
+      - guides/caps.md
+      - guides/context.md
+      - guides/settings.md
+      - guides/execute-script-overload.md
+      - guides/event-timing.md
+      - guides/log-filters.md
+      - guides/grid.md
+  - 生态系统:
+      - ecosystem/index.md
+      - 开发 Appium 扩展:
+          - ecosystem/build-drivers.md
+          - ecosystem/build-plugins.md
+          - ecosystem/build-docs.md
+  - 贡献: contributing/index.md
+  - 更多 Appium 资源: resources.md
+  - 问题: https://github.com/appium/appium/issues

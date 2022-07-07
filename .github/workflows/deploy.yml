@@ -29,7 +29,7 @@ jobs:
         run: npm i -g appium@next
       - name: Install drivers and plugins
         run: |
-          if grep -q windows <<< ${{ matrix.os }}; then
+          if grep -q macos <<< ${{ matrix.os }}; then
             appium driver install xcuitest
           fi
           appium driver install uiautomator2
@@ -37,7 +37,7 @@ jobs:
       - name: Verify installation
         run: |
           installed_drivers=$(appium driver list --installed 2>&1)
-          if grep -q windows <<< ${{ matrix.os }}; then
+          if grep -q macos <<< ${{ matrix.os }}; then
             grep -q xcuitest <<< $installed_drivers
           fi
           grep -q uiautomator2 <<< $installed_drivers

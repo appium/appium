@@ -40,7 +40,12 @@ export const MANIFEST_RELATIVE_PATH = path.join(
  * Note that we are _not_ performing the check "is the currently running Appium the same one as found in the list of dependencies", because I'm not sure it actually matters (assuming the versions are compatible).
  * Regardless we may want to make this more robust in the future, as we hit edge cases.
  *
- * _Also_ note that if `appium` appears as a dependency in `package.json` _but it is not yet installed_ this function will resolve `false`.  This may not be exactly what we want.
+ * _Also_ note that:
+ *
+ * - if `appium` appears as a dependency in `package.json` _but it is not yet installed_ this function will resolve `false`.
+ * - if `appium` _does not appear in `package.json`_, but is installed anyway (extraneous) this function will resolve `false`.
+ *
+ * This may not be exactly what we want.
  *
  * @param {string} cwd
  * @returns {Promise<boolean>}
@@ -57,6 +62,11 @@ export async function hasAppiumDependency(cwd) {
   let version;
   try {
     listResult = await npm.list(cwd, 'appium');
+
+    // short-circuit if `appium` is hanging around but the user hasn't added it to `package.json`.
+    if (listResult?.dependencies?.appium?.extraneous) {
+      return false;
+    }
     // if "resolved" is empty, then `appium` is in dependencies, but `npm install` has not been run.
     // in other words, this function can resolve `true` even if `resolved` is empty...
     resolved = listResult?.dependencies?.appium?.resolved ?? '';

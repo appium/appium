@@ -254,8 +254,32 @@ describe('env', function () {
           MockPkgDir.resolves();
         });
 
-        it('should resolve `false``', async function () {
+        it('should resolve `false`', async function () {
           await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+        });
+
+        describe('when it is installed, but extraneous', function () {
+          beforeEach(function () {
+            MockTeenProcess.exec.resolves({
+              stdout: JSON.stringify({
+                version: '0.0.0',
+                name: 'some-pkg',
+                dependencies: {
+                  appium: {
+                    extraneous: true,
+                    version: '2.0.0-beta.25',
+                    resolved: 'https://some/appium-tarball.tgz',
+                  },
+                },
+              }),
+              stderr: '',
+              code: 0,
+            });
+          });
+
+          it('should resolve `false`', async function () {
+            await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+          });
         });
       });
 

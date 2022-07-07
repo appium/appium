@@ -45,6 +45,6 @@ jobs:
           appium --use-plugins=images &
           pid=$(echo $!)
           sleep 5
-          ps axu | grep -q $pid
+          ps -p $pid || exit 1
           kill -2 $pid
         shell: bash

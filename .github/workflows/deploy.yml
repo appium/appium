@@ -3,7 +3,6 @@ on:
   push:
     tags:
       - appium@2*
-  pull_request:
   workflow_dispatch:
 
 

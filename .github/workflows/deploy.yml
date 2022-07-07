@@ -25,7 +25,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Appium
-        run: npm i -g appium@next
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            npm i -g $GITHUB_REF_NAME
+          else
+            npm i -g appium@next
+          fi
+        shell: bash
       - name: Install drivers and plugins
         run: |
           if grep -q macos <<< ${{ matrix.os }}; then

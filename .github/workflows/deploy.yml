@@ -29,17 +29,13 @@ jobs:
         run: npm i -g appium@next
       - name: Install drivers and plugins
         run: |
-          if [[ ${{ matrix.os }} == *windows* ]]; then
-            appium driver install xcuitest
-          fi
+          [[ ${{ matrix.os }} == windows* ]] && appium driver install xcuitest
           appium driver install uiautomator2
           appium plugin install images
       - name: Verify installation
         run: |
           installed_drivers=$(appium driver list --installed 2>&1)
-          if [[ ${{ matrix.os }} == windows* ]]; then
-            grep -q xcuitest <<< $installed_drivers
-          fi
+          [[ ${{ matrix.os }} == windows* ]] && grep -q xcuitest <<< $installed_drivers
           grep -q uiautomator2 <<< $installed_drivers
           installed_plugins=$(appium plugin list --installed 2>&1)
           grep -q images <<< $installed_plugins

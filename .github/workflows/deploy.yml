@@ -1,9 +1,10 @@
 name: Appium Deploy
 on:
-  - push:
-      tags:
-        - appium@2*
-  - pull_request
+  push:
+    tags:
+      - appium@2*
+  pull_request:
+
 
 
 permissions:

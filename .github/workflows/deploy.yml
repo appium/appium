@@ -4,6 +4,7 @@ on:
     tags:
       - appium@2*
   pull_request:
+  workflow_dispatch:
 
 
 
@@ -33,10 +34,10 @@ jobs:
           appium plugin install images
       - name: Verify installation
         run: |
-          installed_drivers=$(appium driver list --installed)
+          installed_drivers=$(appium driver list --installed 2>&1)
           grep -q xcuitest <<< $installed_drivers
           grep -q uiautomator2 <<< $installed_drivers
-          installed_plugins=$(appium plugin list --installed)
+          installed_plugins=$(appium plugin list --installed 2>&1)
           grep -q images <<< $installed_plugins
         shell: bash
       - name: Verify Appium could be executed

@@ -1,0 +1,47 @@
+name: Appium Deploy Check
+on:
+  push:
+    tags:
+      - appium@2*
+
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy Check
+    strategy:
+      matrix:
+        # node-version: [14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      runs-on: ${{ matrix.os }}
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Appium
+        run: npm i -g appium@next
+      - name: Install drivers and plugins
+        run: |
+          appium driver install xcuitest
+          appium driver install uiautomator2
+          appium plugin install images
+      - name: Verify installation
+        run: |
+          installed_drivers=$(appium driver list --installed)
+          grep -q xcuitest <<< $installed_drivers
+          grep -q uiautomator2 <<< $installed_drivers
+          installed_plugins=$(appium plugin list --installed)
+          grep -q images <<< $installed_plugins
+        shell: bash
+      - name: Verify Appium could be executed
+        run: |
+          appium --use-plugins=images &
+          pid=$(echo $!)
+          sleep 5
+          ps axu | grep -q $pid
+          kill -2 $pid
+        shell: bash

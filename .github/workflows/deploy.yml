@@ -34,6 +34,7 @@ jobs:
           fi
           appium driver install uiautomator2
           appium plugin install images
+        shell: bash
       - name: Verify installation
         run: |
           installed_drivers=$(appium driver list --installed 2>&1)

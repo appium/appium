@@ -1,16 +1,17 @@
-name: Appium Deploy Check
+name: Appium Deploy
 on:
-  push:
-    tags:
-      - appium@2*
+  - push:
+      tags:
+        - appium@2*
+  - pull_request
 
 
 permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy Check
+  check:
+    name: Check
     strategy:
       matrix:
         # node-version: [14.x, 16.x, 18.x]

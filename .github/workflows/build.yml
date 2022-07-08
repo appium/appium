@@ -21,12 +21,15 @@ jobs:
         uses: actions/setup-node@5b949b50c3461bbcd5a540b150c368278160234a # tag=v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
       - name: Install latest npm
         run: npm install -g npm
       - name: Install dependencies
-        run: |
-          npm install
-          npm run install-mjpeg-consumer
+        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        with:
+          useRollingCache: true
+      - name: Install mjpeg-consumer
+        run: npm run install-mjpeg-consumer
       - name: Run smoke tests
         uses: boneskull/nodejs-production-test-action@v1
         with:

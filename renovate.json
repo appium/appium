@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(chore)",
+    ":pinAllExceptPeerDependencies",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "@types/wrap-ansi",
+        "execa",
+        "find-up",
+        "globby",
+        "log-symbols",
+        "read-pkg",
+        "strip-ansi",
+        "supports-color",
+        "term-size",
+        "wrap-ansi",
+        "write-pkg"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    }
+  ],
+  "baseBranches": ["master"],
+  "ignorePaths": ["sample-code", "packages/appium/test/fixtures"],
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "{{parentDir}}",
+  "schedule": ["after 10pm and before 5:00am"],
+  "timezone": "America/Vancouver",
+  "transitiveRemediation": true
+}

@@ -538,7 +538,7 @@ const getExecutablePath = _.memoize(
    */
   async function getExecutablePath(binaryName) {
     const fullPath = await fs.which(binaryName);
-    log.debug(`Found '%s' at '%s'`, binaryName, fullPath);
+    log.debug(`Found '${binaryName}' at '${fullPath}'`);
     return fullPath;
   }
 );

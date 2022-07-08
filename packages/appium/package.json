@@ -83,7 +83,7 @@
     "asyncbox": "2.9.2",
     "axios": "0.27.2",
     "bluebird": "3.7.2",
-    "find-up": "5.0.0",
+    "find-up": "6.3.0",
     "lilconfig": "2.0.5",
     "lodash": "4.17.21",
     "longjohn": "0.2.12",

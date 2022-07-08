@@ -1,18 +1,7 @@
 import {ServerArgs} from '@appium/types';
-import type {
-  DRIVER_TYPE as DRIVER_SUBCOMMAND,
-  EXT_SUBCOMMAND_INSTALL,
-  EXT_SUBCOMMAND_LIST,
-  EXT_SUBCOMMAND_RUN,
-  EXT_SUBCOMMAND_UNINSTALL,
-  EXT_SUBCOMMAND_UPDATE,
-  PLUGIN_TYPE as PLUGIN_SUBCOMMAND,
-  SERVER_SUBCOMMAND,
-} from '../lib/constants';
-
-export type ServerSubcommand = typeof SERVER_SUBCOMMAND;
-export type DriverSubcommand = typeof DRIVER_SUBCOMMAND;
-export type PluginSubcommand = typeof PLUGIN_SUBCOMMAND;
+export type ServerSubcommand = 'server';
+export type DriverSubcommand = 'driver';
+export type PluginSubcommand = 'plugin';
 
 /**
  * Possible subcommands for the `appium` CLI.
@@ -24,11 +13,11 @@ export type CliSubcommand = ServerSubcommand | DriverSubcommand | PluginSubcomma
  * {@linkcode PluginSubcommand}.
  */
 export type CliExtensionSubcommand =
-  | typeof EXT_SUBCOMMAND_INSTALL
-  | typeof EXT_SUBCOMMAND_LIST
-  | typeof EXT_SUBCOMMAND_RUN
-  | typeof EXT_SUBCOMMAND_UPDATE
-  | typeof EXT_SUBCOMMAND_UNINSTALL;
+  | 'install'
+  | 'list'
+  | 'run'
+  | 'uninstall'
+  | 'update';
 
 /**
  * Random stuff that may appear in the parsed args which has no equivalent in a

@@ -37,7 +37,7 @@
   "dependencies": {
     "@babel/runtime": "7.18.6",
     "@types/xmldom": "0.1.31",
-    "fast-xml-parser": "3.21.1",
+    "fast-xml-parser": "4.0.8",
     "source-map-support": "0.5.21",
     "xmldom": "0.6.0",
     "xpath": "0.0.32"

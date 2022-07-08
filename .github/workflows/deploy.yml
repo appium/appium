@@ -1,0 +1,60 @@
+name: Appium Deploy
+on:
+  push:
+    tags:
+      - appium@2*
+  workflow_dispatch:
+
+
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # node-version: [14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Appium
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == tag ]]; then
+            npm i -g $GITHUB_REF_NAME
+          else
+            npm i -g appium@next
+          fi
+        shell: bash
+      - name: Install drivers and plugins
+        run: |
+          if grep -q macos <<< ${{ matrix.os }}; then
+            appium driver install xcuitest
+          fi
+          appium driver install uiautomator2
+          appium plugin install images
+        shell: bash
+      - name: Verify installation
+        run: |
+          installed_drivers=$(appium driver list --installed 2>&1)
+          if grep -q macos <<< ${{ matrix.os }}; then
+            grep -q xcuitest <<< $installed_drivers
+          fi
+          grep -q uiautomator2 <<< $installed_drivers
+          installed_plugins=$(appium plugin list --installed 2>&1)
+          grep -q images <<< $installed_plugins
+        shell: bash
+      - name: Verify Appium could be executed
+        run: |
+          appium --use-plugins=images &
+          pid=$(echo $!)
+          sleep 5
+          ps -p $pid || exit 1
+          kill -2 $pid
+        shell: bash

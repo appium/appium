@@ -28,8 +28,6 @@ jobs:
         uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
         with:
           useRollingCache: true
-      - name: Install mjpeg-consumer
-        run: npm run install-mjpeg-consumer
       - name: Run smoke tests
         uses: boneskull/nodejs-production-test-action@v1
         with:

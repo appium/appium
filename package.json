@@ -124,7 +124,7 @@
     "@types/json-schema": "7.0.11",
     "@types/klaw": "3.0.3",
     "@types/lockfile": "1.0.2",
-    "@types/lru-cache": "7.10.9",
+    "@types/lru-cache": "7.10.10",
     "@types/method-override": "0.0.32",
     "@types/mocha": "9.1.1",
     "@types/mv": "2.1.2",

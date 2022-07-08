@@ -75,7 +75,7 @@
     "@types/fancy-log": "2.0.0",
     "@types/semver": "7.3.10",
     "@types/teen_process": "1.16.1",
-    "@types/wrap-ansi": "3.0.0",
+    "@types/wrap-ansi": "8.0.1",
     "ajv": "8.11.0",
     "ajv-formats": "2.1.1",
     "argparse": "2.0.1",
@@ -96,7 +96,7 @@
     "teen_process": "1.16.0",
     "type-fest": "2.16.0",
     "winston": "3.8.1",
-    "wrap-ansi": "7.0.0",
+    "wrap-ansi": "8.0.1",
     "yaml": "2.1.1"
   },
   "engines": {

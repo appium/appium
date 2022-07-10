@@ -93,10 +93,10 @@ appium plugin install --source=npm appium-device-farm
 appium plugin list --installed
 
 # To update a plugins (it must be already installed)
-appium plugin update appium-xcuitest-driver
+appium plugin update appium-device-farm
 
 # To uninstall a plugin
-appium plugin uninstall appium-xcuitest-driver
+appium plugin uninstall appium-device-farm
 ```
 
 The main difference between drivers and plugins is that the latter must be explicitly enabled on server startup after it was installed (drivers are enabled by default after installation):

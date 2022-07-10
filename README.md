@@ -149,6 +149,12 @@ plugin then don't hesitate to create a PR and add a link to your plugin into the
    hybrid app support. Within the same script, you can switch seamlessly between native
    app automation and webview automation, all using the WebDriver model that's already
    the standard for web automation.
+5. You can run your automated tests locally and in a cloud. There are multiple
+   cloud providers that support various Appium drivers (mostly
+   targeting iOS and Android mobile automation).
+6. [Appium Inspector](https://github.com/appium/appium-inspector) allows
+   visual debugging of automated tests and could be extremely useful for
+   beginners.
 
 Investing in the
 [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html) protocol means
@@ -207,14 +213,13 @@ Interested in where Appium is heading in the future? Check out the [Roadmap](ROA
 
 ### User Forums
 
-Announcements and debates often take place on the [Discussion
-Group](https://discuss.appium.io), be sure to sign up!
+Announcements and debates often take place on the [Discussion Group](https://discuss.appium.io),
+be sure to sign up!
 
 ### Troubleshooting
 
-We put together a [troubleshooting
-guide](/docs/en/writing-running-appium/other/troubleshooting.md).  Please have a look
-here first if you run into any problems. It contains instructions for checking
+We put together a [troubleshooting guide](/docs/en/writing-running-appium/other/troubleshooting.md).
+Please have a look here first if you run into any problems. It contains instructions for checking
 a lot of common errors and how to get in touch with the community if you're
 stumped.
 

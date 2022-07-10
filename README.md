@@ -112,6 +112,7 @@ or suggestions regarding them to the corresponding GitHub issue tracker.
 Refer to the corresponding plugin Readme to know more on how to use it.
 
 Name | Description
+--- | ---
 [images](https://github.com/appium/appium/tree/master/packages/images-plugin) | This is an official Appium plugin designed to facilitate image comparison, visual testing, and image-based functional testing.
 [relaxed-caps](https://github.com/appium/appium/tree/master/packages/relaxed-caps-plugin) | With the advent of Appium 2.0, the Appium server begins to require that all capabilities conform to the W3C requirements for capabilities. Among these requirements is one that restricts capabilities to those found in a predetermined set. Appium supports many additional capabilities as extension capabilities, and these must be accessed with the prefix appium: in front of the capability name. There are a lot of test scripts out there that don't conform to the requirement, and so this plugin is designed to make it easy to keep running these scripts even with the new stricter capabilities requirements beginning with Appium 2.0. Basically, it inserts the appium: prefix for you!
 [universal-xml](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin) | This is an official Appium plugin designed to make XML source retrieved from iOS and Android use the same node and attribute names, to facilitate cross-platform test writing.

@@ -50,6 +50,7 @@ or suggestions regarding them to the corresponding GitHub issue tracker.
 Refer to the corresponding driver Readme to know more on how to use it and its requirements.
 
 Name | Description
+--- | ---
 [appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) | Allows to automate iOS native and web apps (via hybrid mode). Also supports tvOS. This driver is based on Apple [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
 [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) | Allows to automate Android native and web apps (via hybrid mode). The driver is based on Google's [UiAutomator](https://developer.android.com/training/testing/other-components/ui-automator) framework.
 [appium-espresso-driver](https://github.com/appium/appium-espresso-driver) | Allows to automate Android native apps. The driver is based on Google's [Espresso](https://developer.android.com/training/testing/espresso) framework.
@@ -70,6 +71,7 @@ your driver into the below list.
   <summary>Drivers List</summary>
 
   Name | Description
+  --- | ---
   [appium-youiengine-driver](https://github.com/YOU-i-Labs/appium-youiengine-driver) | Appium You.i Engine Driver is a test automation tool for devices of various platforms running applications built with [You.i Engine](http://www.youi.tv/youi-engine/)
   [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows to automate apps built using [Flutter](https://flutter.dev/) framework
   [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows to automate apps runningbuilt for devices running [Tizen OS](https://www.tizen.org/)
@@ -125,6 +127,7 @@ plugin then don't hesitate to create a PR and add a link to your plugin into the
   <summary>Plugins List</summary>
 
   Name | Description
+  --- | ---
   [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) | This is an Appium plugin designed to manage and create driver session on connected android devices and iOS Simulators.
 </details>
 

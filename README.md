@@ -138,12 +138,9 @@ plugin then don't hesitate to create a PR and add a link to your plugin into the
    to the use of standard automation APIs on all platforms.
 2. You can write tests with your favorite dev tools using any
    [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible
-   language such as:
-   - [Java](https://github.com/appium/java-client)
-   - [JavaScript](https://webdriver.io/)
-   - [Python](https://github.com/appium/python-client)
-   - [Ruby](https://github.com/appium/ruby_lib)
-   - [C#](https://github.com/appium/appium-dotnet-driver)
+   language such as [Java](https://github.com/appium/java-client),
+   [JavaScript](https://webdriver.io/), [Python](https://github.com/appium/python-client),
+   [Ruby](https://github.com/appium/ruby_lib), [C#](https://github.com/appium/appium-dotnet-driver)
    with the Selenium WebDriver API. There are also various third party
    client implementations for other languages.
 3. You can use any testing framework.

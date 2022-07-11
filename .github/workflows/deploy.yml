@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@5b949b50c3461bbcd5a540b150c368278160234a # tag=v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Appium

@@ -132,6 +132,30 @@ plugin then don't hesitate to create a PR and add a link to your plugin into the
   [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) | This is an Appium plugin designed to manage and create driver session on connected android devices and iOS Simulators.
 </details>
 
+### Server Command Line Interface
+
+In order to start sending commands to Appium over the wire it must be listening
+on the URL where your client library expects it to listen.
+Use the following commands to run and configure Appium server:
+
+```bash
+# Start the server on the default port and host (e.g. http://0.0.0.0:4723/)
+appium server
+# Start the server on the given port, host and use the base path prefix (the default prefix is /)
+appium server -p 9000 -a 127.0.0.1 -pa /wd/hub
+
+# Get the list of all supported command line parameters.
+# This list would also include descriptions of driver-specific
+# command line arguments for all installed drivers.
+# Each driver and plugin must have their command line arguments
+# exposed in a special JSON schema declared as a part of the corresponding
+# package.json file.
+appium server --help
+```
+
+Appium supports execution of parallel server processes as well as parallel driver sessions within
+single server process. Refer the corresponding driver documentations regarding which mode is optimal
+for the particular driver or whether it supports parallel sessions.
 
 ### Why Appium?
 

@@ -132,7 +132,7 @@
     "eslint-plugin-promise": "6.0.0",
     "fancy-log": "2.0.0",
     "finalhandler": "1.2.0",
-    "get-port": "5.1.1",
+    "get-port": "6.1.2",
     "gulp": "4.0.2",
     "handlebars": "4.7.7",
     "json-schema-to-typescript": "10.1.5",

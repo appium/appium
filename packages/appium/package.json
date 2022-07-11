@@ -84,7 +84,7 @@
     "axios": "0.27.2",
     "bluebird": "3.7.2",
     "find-up": "5.0.0",
-    "lilconfig": "2.0.5",
+    "lilconfig": "2.0.6",
     "lodash": "4.17.21",
     "longjohn": "0.2.12",
     "npmlog": "6.0.2",

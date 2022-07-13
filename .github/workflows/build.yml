@@ -48,6 +48,11 @@ jobs:
         run: npm run lint
       - name: Check types
         run: npm run build:types
+      - name: Archive generated config type declaration
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3
+        with:
+          name: appium-config-type-declaration
+          path: packages/types/build/appium-config.d.ts
 
   docs:
     name: Build Command Documentation

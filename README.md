@@ -20,10 +20,10 @@ Want to skip straight to the action? Check out our [getting started](/docs/en/ab
 Appium supports app automation across a variety of platforms, like iOS,
 Android, and Windows. Each platform is supported by one or more "drivers",
 which know how to automate that particular platform. Since version 2.0
-all drivers have been isolated from the Appium server app and could
-be managed independently using [appium driver](https://appiumpro.com/editions/122-installing-appium-20-and-the-driver-and-plugins-cli) command line interface.
+all drivers have been isolated from the Appium server app and can
+be managed independently using the [appium driver](https://appiumpro.com/editions/122-installing-appium-20-and-the-driver-and-plugins-cli) command line interface.
 
-In general, the drivers management in Appium2 is as simple as that:
+In general, the drivers management in Appium 2 is as simple as:
 
 ```bash
 # To install a new driver from npm
@@ -43,7 +43,7 @@ appium driver update xcuitest
 appium driver uninstall xcuitest
 ```
 
-#### Drivers Maintained By Appium Team
+#### Drivers Maintained By The Appium Team
 
 These drivers are supported by Appium core members. Please report any issues
 or suggestions regarding them to the corresponding GitHub issue tracker.
@@ -51,13 +51,13 @@ Refer to the corresponding driver Readme to know more on how to use it and its r
 
 Name | Description
 --- | ---
-[appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) | Allows to automate iOS native and web apps (via hybrid mode). Also supports tvOS. This driver is based on Apple [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
-[appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) | Allows to automate Android native and web apps (via hybrid mode). The driver is based on Google's [UiAutomator](https://developer.android.com/training/testing/other-components/ui-automator) framework.
-[appium-espresso-driver](https://github.com/appium/appium-espresso-driver) | Allows to automate Android native apps. The driver is based on Google's [Espresso](https://developer.android.com/training/testing/espresso) framework.
-[appium-mac2-driver](https://github.com/appium/appium-mac2-driver) | Allows to automate macOS native apps. Also supports tvOS. This driver is based on Apple [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
-[appium-windows-driver](https://github.com/appium/appium-windows-driver) | Allows to automate Windows native and UWP apps. This driver is based on Microsoft's [WinAppDriver](https://github.com/microsoft/WinAppDriver) implementation and can only use Windows 10 as the host system.
-[appium-gecko-driver](https://github.com/appium/appium-geckodriver) | Allows to automate Gecko-engine-based browsers, like Firefox on mobile and desktop platforms. Uses [geckodriver](https://github.com/mozilla/geckodriver/releases) command line tool provided by Mozilla for various platforms.
-[appium-safari-driver](https://github.com/appium/appium-safari-driver) | Allows to automate Safari browser on mobile and desktop platforms . Uses the [safaridriver](https://www.manpagez.com/man/1/safaridriver/) command line tool provided by Apple as part of macOS.
+[appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) | Allows automation of iOS native and web apps (via hybrid mode). Also supports tvOS. This driver is based on Apple's [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
+[appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) | Allows automation of Android native and web apps (via hybrid mode). The driver is based on Google's [UiAutomator](https://developer.android.com/training/testing/other-components/ui-automator) framework.
+[appium-espresso-driver](https://github.com/appium/appium-espresso-driver) | Allows automation of Android native apps. The driver is based on Google's [Espresso](https://developer.android.com/training/testing/espresso) framework.
+[appium-mac2-driver](https://github.com/appium/appium-mac2-driver) | Allows automation of macOS native apps. Also supports tvOS. This driver is based on Apple [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
+[appium-windows-driver](https://github.com/appium/appium-windows-driver) | Allows automation of Windows native and UWP apps. This driver is based on Microsoft's [WinAppDriver](https://github.com/microsoft/WinAppDriver) implementation and can only use Windows 10 as the host system.
+[appium-gecko-driver](https://github.com/appium/appium-geckodriver) | Allows automation of Gecko-engine-based browsers, like Firefox on mobile and desktop platforms. Uses [geckodriver](https://github.com/mozilla/geckodriver/releases) command line tool provided by Mozilla for various platforms.
+[appium-safari-driver](https://github.com/appium/appium-safari-driver) | Allows automation of Safari browser on mobile and desktop platforms . Uses the [safaridriver](https://www.manpagez.com/man/1/safaridriver/) command line tool provided by Apple as part of macOS.
 
 #### Drivers Provided By Third Parties
 
@@ -73,8 +73,8 @@ your driver into the below list.
   Name | Description
   --- | ---
   [appium-youiengine-driver](https://github.com/YOU-i-Labs/appium-youiengine-driver) | Appium You.i Engine Driver is a test automation tool for devices of various platforms running applications built with [You.i Engine](http://www.youi.tv/youi-engine/)
-  [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows to automate apps built using [Flutter](https://flutter.dev/) framework
-  [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows to automate apps runningbuilt for devices running [Tizen OS](https://www.tizen.org/)
+  [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows automation of apps built using [Flutter](https://flutter.dev/) framework
+  [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows automation of apps built for devices running [Tizen OS](https://www.tizen.org/)
 </details>
 
 ### Plugins
@@ -105,7 +105,7 @@ The main difference between drivers and plugins is that the latter must be expli
 appium server --use-plugins=device-farm,images
 ```
 
-#### Plugins Maintained By Appium Team
+#### Plugins Maintained By The Appium Team
 
 These plugins are supported by Appium core members. Please report any issues
 or suggestions regarding them to the corresponding GitHub issue tracker.
@@ -159,7 +159,7 @@ for the particular driver or whether it supports parallel sessions.
 
 ### Why Appium?
 
-1. You don't have to recompile your app or modify it in any way, due
+1. You usually don't have to recompile your app or modify it in any way, due
    to the use of standard automation APIs on all platforms.
 2. You can write tests with your favorite dev tools using any
    [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible

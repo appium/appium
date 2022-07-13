@@ -88,7 +88,7 @@
     "plist": "3.0.6",
     "pluralize": "8.0.0",
     "pngjs": "6.0.0",
-    "read-pkg": "5.2.0",
+    "read-pkg": "7.1.0",
     "resolve-from": "5.0.0",
     "rimraf": "3.0.2",
     "sanitize-filename": "1.6.3",

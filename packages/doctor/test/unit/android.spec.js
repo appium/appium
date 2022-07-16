@@ -64,7 +64,8 @@ describe('android', function () {
       });
       it('diagnose - success', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').returns(B.resolve('/path/to/binary'));
+        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
+          .returns(B.resolve('/path/to/binary'));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
@@ -78,14 +79,15 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message:
-            'adb, emulator, apkanalyzer could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!',
+          message: 'adb, emulator, apkanalyzer could not be found because ' +
+            'ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!',
         });
         mocks.verify();
       });
       it('diagnose - failure - path not valid', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').throws();
+        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
+          .throws();
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,

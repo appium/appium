@@ -40,7 +40,7 @@ class JavaOnPathCheck extends DoctorCheck {
 class AndroidToolCheck extends DoctorCheck {
   constructor() {
     super();
-    this.tools = ['adb', 'android', 'emulator', `apkanalyzer${system.isWindows() ? '.bat' : ''}`];
+    this.tools = ['adb', 'emulator', `apkanalyzer${system.isWindows() ? '.bat' : ''}`];
     this.noBinaries = [];
   }
 

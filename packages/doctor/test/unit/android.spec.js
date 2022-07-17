@@ -64,11 +64,12 @@ describe('android', function () {
       });
       it('diagnose - success', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').exactly(4).returns(B.resolve('/path/to/binary'));
+        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
+          .returns(B.resolve('/path/to/binary'));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
-          message: 'adb, android, emulator, apkanalyzer exist: /a/b/c/d',
+          message: 'adb, emulator, apkanalyzer exist: /a/b/c/d',
         });
         mocks.verify();
       });
@@ -78,18 +79,19 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message:
-            'adb, android, emulator, apkanalyzer could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!',
+          message: 'adb, emulator, apkanalyzer could not be found because ' +
+            'ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!',
         });
         mocks.verify();
       });
       it('diagnose - failure - path not valid', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').exactly(4).throws();
+        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
+          .throws();
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: 'adb, android, emulator, apkanalyzer could NOT be found in /a/b/c/d!',
+          message: 'adb, emulator, apkanalyzer could NOT be found in /a/b/c/d!',
         });
         mocks.verify();
       });
@@ -102,7 +104,7 @@ describe('android', function () {
       it('fix - install', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
         removeColors(await check.fix()).should.equal(
-          'Manually install adb, android, emulator, apkanalyzer and add it to PATH. ' +
+          'Manually install adb, emulator, apkanalyzer and add it to PATH. ' +
             'https://developer.android.com/studio#cmdline-tools and ' +
             'https://developer.android.com/studio/intro/update#sdk-manager may help to setup.'
         );

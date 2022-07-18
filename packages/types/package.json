@@ -35,7 +35,7 @@
     "@appium/schema": "^0.0.7",
     "@types/express": "4.17.13",
     "@types/npmlog": "4.1.4",
-    "@wdio/types": "7.20.3",
+    "@wdio/types": "7.20.7",
     "type-fest": "2.16.0"
   },
   "engines": {

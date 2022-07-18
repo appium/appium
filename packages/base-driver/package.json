@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@appium/support": "^2.59.2",
-    "@babel/runtime": "7.18.6",
+    "@babel/runtime": "7.18.9",
     "@colors/colors": "1.5.0",
     "@types/async-lock": "1.1.5",
     "@types/bluebird": "3.5.36",

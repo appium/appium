@@ -44,7 +44,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.18.6",
+    "@babel/runtime": "7.18.9",
     "@types/bluebird": "3.5.36",
     "bluebird": "3.7.2",
     "jimp": "0.16.1",

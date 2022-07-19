@@ -1,5 +1,4 @@
 /* eslint-disable require-await */
-// @ts-check
 
 /**
  * A collection of mocks reused across unit tests.

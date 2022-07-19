@@ -1,5 +1,3 @@
-// @ts-check
-
 import {npm, env, fs, tempDir, util} from '@appium/support';
 import B from 'bluebird';
 import path from 'path';
@@ -259,7 +257,7 @@ describe('CLI behavior', function () {
               await runList(['--updates'])
             );
           util.compareVersions(
-            fake.updateVersion,
+            /** @type {string} */ (fake.updateVersion),
             '>',
             penultimateFakeDriverVersionAsOfRightNow
           ).should.be.true;
@@ -280,8 +278,10 @@ describe('CLI behavior', function () {
           ret.uiautomator2.installType.should.eql('npm');
           ret.uiautomator2.installSpec.should.eql('uiautomator2');
           const list = await runList(['--installed']);
-          delete list.uiautomator2.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            uiautomator2: {...ret.uiautomator2, installed: list.uiautomator2.installed},
+          });
         });
         it('should install a driver from npm', async function () {
           const ret = await runInstall(['@appium/fake-driver', '--source', 'npm']);
@@ -289,8 +289,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql('@appium/fake-driver');
           const list = await runList(['--installed']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
         });
 
         it('should install a driver from npm and a local driver', async function () {
@@ -321,8 +323,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('npm');
           ret.fake.installSpec.should.eql(installSpec);
           const list = await runList(['--installed']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
         });
         it('should install a driver from github', async function () {
           const ret = await runInstall([
@@ -336,8 +340,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('github');
           ret.fake.installSpec.should.eql('appium/appium-fake-driver');
           const list = await runList(['--installed']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
         });
         it('should install a driver from a local git repo', async function () {
           const ret = await runInstall([
@@ -351,8 +357,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('git');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed', '--json']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
         });
         it('should install a driver from a remote git repo', async function () {
           const ret = await runInstall([
@@ -366,8 +374,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('git');
           ret.fake.installSpec.should.eql('git+https://github.com/appium/appium-fake-driver');
           const list = await runList(['--installed']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
         });
         it('should install a driver from a local npm module', async function () {
           // take advantage of the fact that we know we have fake driver installed as a dependency in
@@ -377,8 +387,10 @@ describe('CLI behavior', function () {
           ret.fake.installType.should.eql('local');
           ret.fake.installSpec.should.eql(FAKE_DRIVER_DIR);
           const list = await runList(['--installed']);
-          delete list.fake.installed;
-          list.should.eql(ret);
+          list.should.eql({
+            ...ret,
+            fake: {...ret.fake, installed: list.fake.installed},
+          });
 
           // it should be a link!  this may be npm-version dependent, but it's worked
           // this way for quite awhile

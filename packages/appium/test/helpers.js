@@ -1,9 +1,6 @@
-// @ts-check
-
 import getPort from 'get-port';
 import path from 'path';
 import rewiremock, {addPlugin, overrideEntryPoint, plugins} from 'rewiremock';
-import {insertAppiumPrefixes} from '../lib/utils';
 
 const TEST_HOST = '127.0.0.1';
 
@@ -12,14 +9,25 @@ const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');
 const PACKAGE_ROOT = path.join(PROJECT_ROOT, 'packages', 'appium');
 const TEST_FAKE_APP = path.join(FAKE_DRIVER_DIR, 'test', 'fixtures', 'app.xml');
 
+/** @type {import('@appium/types').Capabilities} */
 const BASE_CAPS = {
   automationName: 'Fake',
   platformName: 'Fake',
   deviceName: 'Fake',
   app: TEST_FAKE_APP,
 };
-const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
-/** @type {import('@appium/types').W3CCapabilities} */
+
+// XXX: Replaced use of `insertAppiumPrefixes()` with this due to TS failures.
+// I am not sure what it is about the `utils` module that's causing the issue,
+// as I cannot reproduce it outside of an Appium context.  Maybe try again
+// in the future??
+const W3C_PREFIXED_CAPS = {
+  'appium:automationName': 'Fake',
+  'appium:platformName': 'Fake',
+  'appium:deviceName': 'Fake',
+  'appium:app': TEST_FAKE_APP,
+};
+
 const W3C_CAPS = {
   alwaysMatch: {...W3C_PREFIXED_CAPS},
   firstMatch: [{}],

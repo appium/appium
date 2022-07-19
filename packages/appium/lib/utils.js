@@ -178,32 +178,45 @@ function insertAppiumPrefixes(caps) {
       prefixedCaps[`${W3C_APPIUM_PREFIX}:${name}`] = value;
     }
   }
-  return prefixedCaps;
+  // XXX dubious.  It's unclear to me what the type is.  this code accepts
+  // a set of capabilities which could include the standard caps plus any appium-namespaced caps, and
+  // it passes those through verbatim.  everything else is namespaced with appium...even if it's not
+  // an appium capability?
+  return /** @type {AppiumW3CCapabilities} */ (prefixedCaps);
 }
 
 /**
- *
- * @param {AppiumW3CCapabilities} caps
- * @returns {Capabilities}
+ * @template {NamespacedRecord} [T=NamespacedRecord]
+ * @param {AppiumW3CCapabilities<T>} caps
+ * @returns {Capabilities<T>}
  */
 function removeAppiumPrefixes(caps) {
   if (!_.isPlainObject(caps)) {
     return caps;
   }
 
-  /** @type {Capabilities} */
-  const fixedCaps = {};
+  const fixedCaps = /** @type {Capabilities<T>} */ ({});
   for (let [name, value] of _.toPairs(caps)) {
     fixedCaps[removeAppiumPrefix(name)] = value;
   }
   return fixedCaps;
 }
 
+/**
+ *
+ * @param {string} key
+ * @returns {string}
+ */
 function removeAppiumPrefix(key) {
   const prefix = `${W3C_APPIUM_PREFIX}:`;
   return _.startsWith(key, prefix) ? key.substring(prefix.length) : key;
 }
 
+/**
+ *
+ * @param {string} pkgName
+ * @returns {string}
+ */
 function getPackageVersion(pkgName) {
   const pkgInfo = require(`${pkgName}/package.json`) || {};
   return pkgInfo.version;
@@ -264,7 +277,7 @@ export {
 /**
  * @todo protocol is more specific
  * @typedef InvalidCaps
- * @property {Error} error
+ * @property {import('@appium/base-driver').ProtocolError} error
  * @property {string} protocol
  * @property {Capabilities} [desiredCaps]
  * @property {any} [processedJsonwpCapabilities]
@@ -273,6 +286,16 @@ export {
 
 /**
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
- * @typedef {import('@appium/types').Capabilities} Capabilities
- * @typedef {import('@appium/types').AppiumW3CCapabilities} AppiumW3CCapabilities
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ * @typedef {import('@appium/types').NamespacedRecord} NamespacedRecord
+ */
+
+/**
+ * @template {NamespacedRecord} [OptionalNamespacedCaps=NamespacedRecord]
+ * @typedef {import('@appium/types').AppiumW3CCapabilities<OptionalNamespacedCaps>} AppiumW3CCapabilities
+ */
+
+/**
+ * @template {StringRecord} [OptionalCaps=StringRecord]
+ * @typedef {import('@appium/types').Capabilities<OptionalCaps>} Capabilities
  */

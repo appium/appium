@@ -1,5 +1,3 @@
-// @ts-check
-
 import fs from 'fs';
 import {createSandbox} from 'sinon';
 import YAML from 'yaml';

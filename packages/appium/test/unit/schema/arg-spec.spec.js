@@ -1,5 +1,3 @@
-// @ts-check
-
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {ArgSpec} from '../../../lib/schema/arg-spec';
 

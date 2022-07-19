@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
@@ -131,7 +129,7 @@ describe('schema', function () {
       describe('when provided `type` and nonempty `schema`, but no `name`', function () {
         it('should throw a TypeError', function () {
           expect(() =>
-            registerSchema(DRIVER_TYPE, undefined, {
+            registerSchema(DRIVER_TYPE, '', {
               title: 'whoopeee',
             })
           ).to.throw(TypeError, /expected extension type/i);

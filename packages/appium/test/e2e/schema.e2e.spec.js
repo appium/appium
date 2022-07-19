@@ -1,4 +1,3 @@
-// @ts-check
 import {fs, tempDir} from '@appium/support';
 import path from 'path';
 import {DRIVER_TYPE} from '../../lib/constants';

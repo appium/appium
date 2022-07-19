@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import path from 'path';
 import B from 'bluebird';
@@ -17,7 +15,7 @@ const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
 
 const should = chai.should();
 
-/** @type {WebdriverIO.RemoteOptions} */
+/** @type {import('webdriverio').RemoteOptions} */
 const wdOpts = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
@@ -104,7 +102,7 @@ describe('FakePlugin', function () {
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      server = await appiumServer(args);
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     });
 
     after(async function () {
@@ -160,7 +158,7 @@ describe('FakePlugin', function () {
           usePlugins,
           useDrivers: ['fake'],
         };
-        server = await appiumServer(args);
+        server = /** @type {AppiumServer} */ (await appiumServer(args));
       });
       after(async function () {
         if (server) {
@@ -234,7 +232,7 @@ describe('FakePlugin', function () {
       });
 
       it('should handle unexpected driver shutdown', async function () {
-        /** @type {WebdriverIO.RemoteOptions} */
+        /** @type {import('webdriverio').RemoteOptions} */
         const newOpts = {...wdOpts};
         newOpts.capabilities = {
           ...(newOpts.capabilities ?? {}),
@@ -263,7 +261,7 @@ describe('FakePlugin', function () {
     before(async function () {
       // then start server if we need to
       const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
-      server = await appiumServer(args);
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     });
     after(async function () {
       if (server) {
@@ -287,7 +285,7 @@ describe('FakePlugin', function () {
     let server;
     before(async function () {
       // then start server if we need to
-      server = await appiumServer(baseArgs);
+      server = /** @type {AppiumServer} */ (await appiumServer(baseArgs));
     });
     after(async function () {
       if (server) {

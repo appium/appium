@@ -1,4 +1,3 @@
-// @ts-check
 import B from 'bluebird';
 import {promises as fs} from 'fs';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';

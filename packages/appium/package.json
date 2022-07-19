@@ -32,7 +32,8 @@
   },
   "files": [
     "lib",
-    "build",
+    "build/lib",
+    "build/types",
     "index.js",
     "driver.*",
     "support.*",

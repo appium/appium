@@ -3,7 +3,6 @@ import {getGitRev, getBuildInfo, updateBuildInfo, APPIUM_VER} from '../../lib/co
 import axios from 'axios';
 import * as teenProcess from 'teen_process';
 
-
 describe('Config', function () {
   let sandbox;
 
@@ -17,16 +16,22 @@ describe('Config', function () {
 
   describe('getGitRev', function () {
     it('should get a reasonable git revision', async function () {
-      let rev = await getGitRev();
+      let rev = /** @type {string} */ (await getGitRev());
       rev.should.be.a('string');
       rev.length.should.be.equal(40);
-      rev.match(/[0-9a-f]+/i)[0].should.eql(rev);
+      const matches = /** @type {RegExpMatchArray} */ (rev.match(/[0-9a-f]+/i));
+      matches[0].should.eql(rev);
     });
   });
   describe('getBuildInfo', function () {
     const SHA = 'a7404fddd50ee1c6ff1aac3d2f259abab0d3291a';
     const DATE = '2022-06-04T02:08:17Z';
 
+    /**
+     *
+     * @param {boolean} useLocalGit
+     * @param {{sha?: string, built?: string}} [opts]
+     */
     async function verifyBuildInfoUpdate(useLocalGit, {sha, built} = {}) {
       const buildInfo = getBuildInfo();
       if (!useLocalGit) {
@@ -37,12 +42,12 @@ describe('Config', function () {
       await updateBuildInfo(true);
       buildInfo.should.be.an('object');
       if (sha) {
-        buildInfo['git-sha'].should.equal(sha);
+        /** @type {string} */ (/** @type {unknown} */ (buildInfo['git-sha'])).should.equal(sha);
       } else {
         should.exist(buildInfo['git-sha']);
       }
       if (built) {
-        buildInfo.built.should.equal(built);
+        /** @type {string} */ (/** @type {unknown} */ (buildInfo.built)).should.equal(built);
       } else {
         should.exist(buildInfo.built);
       }
@@ -72,9 +77,9 @@ describe('Config', function () {
           object: {
             sha: SHA,
             type: 'tag',
-            url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`
-          }
-        }
+            url: `https://api.github.com/repos/appium/appium/git/tags/${SHA}`,
+          },
+        },
       });
       getStub.onCall(1).returns({
         data: {
@@ -84,12 +89,12 @@ describe('Config', function () {
           tagger: {
             name: 'Jonathan Lipps',
             email: 'jlipps@gmail.com',
-            date: DATE
+            date: DATE,
           },
           object: {
             sha: '4cf2cc92d066ed32adda27e0439547290a4b71ce',
             type: 'commit',
-            url: 'https://api.github.com/repos/appium/appium/git/commits/4cf2cc92d066ed32adda27e0439547290a4b71ce'
+            url: 'https://api.github.com/repos/appium/appium/git/commits/4cf2cc92d066ed32adda27e0439547290a4b71ce',
           },
           tag: `appium@${APPIUM_VER}`,
           message: `appium@${APPIUM_VER}\n`,
@@ -97,9 +102,9 @@ describe('Config', function () {
             verified: false,
             reason: 'unsigned',
             signature: null,
-            payload: null
-          }
-        }
+            payload: null,
+          },
+        },
       });
       await verifyBuildInfoUpdate(false, {sha: SHA, built: DATE});
     });

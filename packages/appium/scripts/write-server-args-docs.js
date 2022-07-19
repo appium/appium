@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
-// @ts-check
-
 const {writeFileSync} = require('fs');
 const path = require('path');
 let parser;

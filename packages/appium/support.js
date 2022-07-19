@@ -1,7 +1,5 @@
 'use strict';
 
-// @ts-check
-
 /**
  * This module is here to re-export `@appium/support` for Appium extensions.
  *

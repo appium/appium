@@ -4,7 +4,7 @@ import {logger} from '@appium/support';
 
 // temporarily turn on logging to stdio, so we can catch and query
 const forceLogs = process.env._FORCE_LOGS;
-process.env._FORCE_LOGS = 1;
+process.env._FORCE_LOGS = '1';
 const log = logger.getLogger('Appium');
 
 describe('logging', function () {

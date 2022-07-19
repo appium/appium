@@ -23,7 +23,17 @@ describe('DriverCommand', function () {
     Manifest.getInstance.cache = new Map();
     sandbox.stub(fs, 'exists').resolves(false);
     config = (await loadExtensions(appiumHome)).driverConfig;
-    config.installedExtensions = {[driver]: {version: '1.0.0', pkgName}};
+    config.installedExtensions = {
+      [driver]: {
+        version: '1.0.0',
+        pkgName,
+        automationName: 'foo',
+        platformNames: ['foo', 'bar'],
+        mainClass: 'buzzo',
+        installType: 'npm',
+        installSpec: 'gorgonzola',
+      },
+    };
     dc = new DriverCommand({config, json: true});
   });
 

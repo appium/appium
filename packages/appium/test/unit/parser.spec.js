@@ -10,6 +10,8 @@ const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
 const DENY_FIXTURE = resolveFixture('deny-feat.txt');
 const CAPS_FIXTURE = resolveFixture('caps.json');
 
+const should = chai.should();
+
 describe('parser', function () {
   let p;
 
@@ -181,7 +183,7 @@ describe('parser', function () {
           fakeDriverArgs.fake.sillyWebServerHost,
         ]);
 
-        args.driver.fake.should.eql(config.driver.fake);
+        args.driver.fake.should.eql(config?.server?.driver?.fake);
       });
 
       it('should not yet apply defaults', function () {

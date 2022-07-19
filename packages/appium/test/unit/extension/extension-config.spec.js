@@ -38,12 +38,13 @@ describe('ExtensionConfig', function () {
   describe('constructor', function () {});
 
   describe('instance method', function () {
-    /** @type {import('appium/lib/extension/extension-config').ExtensionConfig<DriverType>} */
+    /** @type {ExtensionConfig<DriverType>} */
     let config;
 
     let extData;
 
     beforeEach(function () {
+      // @ts-expect-error
       config = new ExtensionConfig(DRIVER_TYPE, new Manifest('/some/path'));
       extData = {
         version: '1.0.0',
@@ -52,7 +53,7 @@ describe('ExtensionConfig', function () {
         pkgName: 'derp',
         platformNames: ['dogs', 'cats'],
         installSpec: 'derp',
-        installType: 'npm',
+        installType: /** @type {import('appium/types').InstallType} */ ('npm'),
         appiumVersion: APPIUM_VER,
       };
       config.addExtension(extData.pkgName, extData);
@@ -114,7 +115,7 @@ describe('ExtensionConfig', function () {
     });
 
     describe('getGenericConfigWarnings()', function () {
-      /** @type {ExtManifest<DriverType>} */
+      /** @type {import('appium/types').ExtManifest<DriverType>} */
       let extData;
 
       /**
@@ -135,12 +136,14 @@ describe('ExtensionConfig', function () {
           appiumVersion: APPIUM_VER,
         };
         manifest.addExtension(DRIVER_TYPE, extData.pkgName, extData);
+        // @ts-expect-error
         config = new ExtensionConfig(DRIVER_TYPE, manifest);
         delete this._listDataCache;
       });
 
       describe('when the extension data is missing an `installSpec` field', function () {
         beforeEach(function () {
+          // @ts-expect-error
           delete extData.installSpec;
         });
 
@@ -155,6 +158,7 @@ describe('ExtensionConfig', function () {
 
       describe('when the extension data is missing an `installType` field', function () {
         beforeEach(function () {
+          // @ts-expect-error
           delete extData.installType;
         });
 
@@ -169,7 +173,9 @@ describe('ExtensionConfig', function () {
 
       describe('when the extension data is missing both `installType` and `installSpec` fields', function () {
         beforeEach(function () {
+          // @ts-expect-error
           delete extData.installType;
+          // @ts-expect-error
           delete extData.installSpec;
         });
 
@@ -264,11 +270,12 @@ describe('ExtensionConfig', function () {
       describe('when there is a single warning', function () {
         beforeEach(function () {
           sandbox.stub(config, 'getProblems').resolves([]);
-          sandbox.stub(config, 'getWarnings').resolves([{err: 'some warning', val: 'whatever'}]);
+          sandbox.stub(config, 'getWarnings').resolves(['some warning']);
         });
 
         it('should display a warning count of 1', async function () {
-          await config._validate({foo: {}});
+          // @ts-expect-error
+          await config._validate({foo: 'bar'});
           expect(MockAppiumSupport.logger.__logger.warn).to.be.calledWith(
             'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml'
           );
@@ -282,7 +289,8 @@ describe('ExtensionConfig', function () {
         });
 
         it('should display an error count of 1', async function () {
-          await config._validate({foo: {}});
+          // @ts-expect-error
+          await config._validate({foo: 'bar'});
           expect(MockAppiumSupport.logger.__logger.error).to.be.calledWith(
             'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml'
           );
@@ -293,9 +301,16 @@ describe('ExtensionConfig', function () {
     describe('require()', function () {
       beforeEach(function () {
         // the `ExtensionConfig` instance doesn't know about fake driver, since it hasn't been
-        // loaded yet.  all we need for the purposes of the `require()` function is a `mainClass`, so
-        // here we go.
-        config.installedExtensions.fake = {pkgName: 'flotsam', mainClass: 'Jetsam'};
+        // loaded yet.
+        config.installedExtensions.fake = {
+          pkgName: 'flotsam',
+          mainClass: 'Jetsam',
+          automationName: 'blah',
+          platformNames: ['fred', 'flintstone'],
+          installType: 'npm',
+          installSpec: 'meat',
+          version: '1.0.0',
+        };
       });
 
       describe('when the extension is not actually installed', function () {
@@ -325,7 +340,13 @@ describe('ExtensionConfig', function () {
       describe('when extension is installed and correctly exports its main class', function () {
         beforeEach(function () {
           config.installedExtensions['relaxed-caps'] = {
+            pkgName: 'relaxed-caps',
             mainClass: 'RelaxedCapsPlugin',
+            automationName: 'blah',
+            platformNames: ['fred', 'flintstone'],
+            installType: 'npm',
+            installSpec: 'meat',
+            version: '1.0.0',
           };
           sandbox
             .stub(config, 'getInstallPath')
@@ -344,4 +365,9 @@ describe('ExtensionConfig', function () {
 
 /**
  * @typedef {import('@appium/types').DriverType} DriverType
+ */
+
+/**
+ * @template T
+ * @typedef {import('appium/lib/extension/extension-config').ExtensionConfig<T>} ExtensionConfig
  */

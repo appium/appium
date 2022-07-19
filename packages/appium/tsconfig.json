@@ -12,9 +12,11 @@
       "@appium/test-support": ["../test-support"],
       "appium": ["."]
     },
-    "checkJs": true
+    "checkJs": true,
+    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised", "webdriverio/async", "../../test/types"]
   },
-  "include": ["lib", "types"],
+  "files": ["package.json"],
+  "include": ["lib", "types", "test"],
   "references": [
     {"path": "../schema"},
     {"path": "../types"},

@@ -37,7 +37,8 @@ describe('cli/schema-args', function () {
         const argDefsWithMetavar = [...argDefs].filter((arg) => arg[1].metavar);
         expect(argDefsWithMetavar).not.to.be.empty;
         // is there a more idiomatic way to do this?
-        expect(argDefsWithMetavar.every((arg) => /[A-Z_]+/.test(arg[1].metavar))).to.be.true;
+        expect(argDefsWithMetavar.every((arg) => /[A-Z_]+/.test(String(arg[1].metavar)))).to.be
+          .true;
       });
     });
 

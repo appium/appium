@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-// @ts-check
-
 const path = require('path');
 const yaml = require('yaml');
 const {fs, util} = require('@appium/support');

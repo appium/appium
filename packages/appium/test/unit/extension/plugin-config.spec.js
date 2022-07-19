@@ -1,5 +1,3 @@
-// @ts-check
-
 import {promises as fs} from 'fs';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
@@ -234,7 +232,7 @@ describe('PluginConfig', function () {
       });
 
       describe('when provided an object `schema` property', function () {
-        /** @type {ExtDataWithSchema<PluginType>} */
+        /** @type {ExtManifestWithSchema<PluginType>} */
         let externalManifest;
 
         describe('when the object is a valid schema', function () {
@@ -286,7 +284,7 @@ describe('PluginConfig', function () {
        */
       let pluginConfig;
 
-      /** @type {ExtDataWithSchema<PluginType>} */
+      /** @type {ExtManifestWithSchema<PluginType>} */
       let extData;
 
       const extName = 'stuff';
@@ -351,5 +349,5 @@ describe('PluginConfig', function () {
 
 /**
  * @template {import('@appium/types').ExtensionType} ExtType
- * @typedef {import('appium/types').ExtDataWithSchema<ExtType>} ExtDataWithSchema
+ * @typedef {import('appium/types').ExtManifestWithSchema<ExtType>} ExtManifestWithSchema
  */

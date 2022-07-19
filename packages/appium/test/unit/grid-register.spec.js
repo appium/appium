@@ -1,5 +1,3 @@
-// @ts-check
-
 import {createSandbox} from 'sinon';
 import {rewiremock} from '../helpers';
 

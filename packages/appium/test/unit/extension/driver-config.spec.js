@@ -1,5 +1,3 @@
-// @ts-check
-
 import {promises as fs} from 'fs';
 import {Manifest} from '../../../lib/extension/manifest';
 import {resetSchema} from '../../../lib/schema';
@@ -316,6 +314,7 @@ describe('DriverConfig', function () {
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', function () {
+          // @ts-expect-error
           delete extData.schema;
           expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(
             TypeError,

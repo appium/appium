@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';

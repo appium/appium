@@ -1,8 +1,10 @@
 {
-  "driver": {
-    "fake": {
-      "sillyWebServerPort": 1234,
-      "sillyWebServerHost": "hey"
+  "server": {
+    "driver": {
+      "fake": {
+        "sillyWebServerPort": 1234,
+        "sillyWebServerHost": "hey"
+      }
     }
   }
 }

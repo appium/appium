@@ -1,4 +1,3 @@
-// @ts-check
 import path from 'path';
 import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';

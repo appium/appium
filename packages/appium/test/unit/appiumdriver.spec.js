@@ -1,5 +1,3 @@
-// @ts-check
-
 import {PLUGIN_TYPE} from '../../lib/constants';
 import B from 'bluebird';
 import {BaseDriver} from '@appium/base-driver';
@@ -60,6 +58,7 @@ describe('AppiumDriver', function () {
         });
       });
 
+      // @ts-expect-error
       let ad = new AppiumDriver({});
       // triggers the `log` getter to set `_log`
       ad.log;
@@ -88,6 +87,7 @@ describe('AppiumDriver', function () {
         return fakeDriver;
       };
 
+      // @ts-expect-error
       appium.driverConfig = {
         findMatchingDriver: sandbox.stub().returns({
           driver: mockedDriverReturnerClass,
@@ -117,9 +117,11 @@ describe('AppiumDriver', function () {
           .once()
           .withExactArgs(undefined, null, W3C_CAPS, [])
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
+        // @ts-expect-error
         await appium.createSession(undefined, null, W3C_CAPS);
         mockFakeDriver.verify();
       });
+
       it(`should call inner driver's createSession with desired and default capabilities`, async function () {
         let defaultCaps = {'appium:someCap': 'hello'};
         let allCaps = {
@@ -132,6 +134,7 @@ describe('AppiumDriver', function () {
           .once()
           .withArgs(undefined, null, allCaps)
           .returns([SESSION_ID, removeAppiumPrefixes(allCaps.alwaysMatch)]);
+        // @ts-expect-error
         await appium.createSession(undefined, null, W3C_CAPS);
         mockFakeDriver.verify();
       });
@@ -145,6 +148,7 @@ describe('AppiumDriver', function () {
           .once()
           .withArgs(undefined, null, W3C_CAPS)
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
+        // @ts-expect-error
         await appium.createSession(undefined, null, W3C_CAPS);
         mockFakeDriver.verify();
       });
@@ -172,6 +176,7 @@ describe('AppiumDriver', function () {
           .once()
           .withExactArgs(undefined, null, W3C_CAPS, [])
           .returns([SESSION_ID, removeAppiumPrefixes(W3C_PREFIXED_CAPS)]);
+        // @ts-expect-error
         await appium.createSession(undefined, null, W3C_CAPS);
 
         sessions = await appium.getSessions();
@@ -188,6 +193,7 @@ describe('AppiumDriver', function () {
           .once()
           .withArgs(undefined, undefined, W3C_CAPS)
           .returns([SESSION_ID, BASE_CAPS]);
+        // @ts-expect-error
         await appium.createSession(undefined, undefined, W3C_CAPS);
         mockFakeDriver.verify();
       });
@@ -212,6 +218,7 @@ describe('AppiumDriver', function () {
           })
           .returns([SESSION_ID, insertAppiumPrefixes(BASE_CAPS)]);
 
+        // @ts-expect-error
         await appium.createSession(undefined, undefined, w3cCaps);
         mockFakeDriver.verify();
       });
@@ -230,6 +237,7 @@ describe('AppiumDriver', function () {
         };
 
         mockFakeDriver.expects('createSession').never();
+        // @ts-expect-error
         await appium.createSession(jsonwpCaps, undefined, w3cCaps);
         mockFakeDriver.verify();
       });
@@ -238,11 +246,12 @@ describe('AppiumDriver', function () {
         class ArgsDriver extends BaseDriver {}
         const args = {driver: {fake: {randomArg: 1234}}};
         [appium, mockFakeDriver] = getDriverAndFakeDriver(args, ArgsDriver);
+        // @ts-expect-error
         const {value} = await appium.createSession(undefined, undefined, W3C_CAPS);
         try {
           fakeDriver.cliArgs.should.eql({randomArg: 1234});
         } finally {
-          await appium.deleteSession(value[0]);
+          await appium.deleteSession(/** @type {any[]} */ (value)[0]);
         }
       });
     });
@@ -320,6 +329,7 @@ describe('AppiumDriver', function () {
     describe('getStatus', function () {
       let appium;
       before(function () {
+        // @ts-expect-error
         appium = new AppiumDriver({});
       });
       it('should return a status', async function () {
@@ -343,7 +353,10 @@ describe('AppiumDriver', function () {
       });
 
       it('should remove session if inner driver unexpectedly exits with an error', async function () {
-        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value;
+        let [sessionId] = /** @type {string[]} */ (
+          // @ts-expect-error
+          (await appium.createSession(null, null, _.clone(W3C_CAPS))).value
+        );
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown', new Error('Oops'));
         // let event loop spin so rejection is handled
@@ -351,7 +364,10 @@ describe('AppiumDriver', function () {
         _.keys(appium.sessions).should.not.contain(sessionId);
       });
       it('should remove session if inner driver unexpectedly exits with no error', async function () {
-        let [sessionId] = (await appium.createSession(null, null, _.clone(W3C_CAPS))).value; // eslint-disable-line comma-spacing
+        let [sessionId] = /** @type {string[]} */ (
+          // @ts-expect-error
+          (await appium.createSession(null, null, _.clone(W3C_CAPS))).value
+        ); // eslint-disable-line comma-spacing
         _.keys(appium.sessions).should.contain(sessionId);
         appium.sessions[sessionId].eventEmitter.emit('onUnexpectedShutdown');
         // let event loop spin so rejection is handled
@@ -397,6 +413,7 @@ describe('AppiumDriver', function () {
 
       describe('when args are not present', function () {
         it('the `cliArgs` prop should be an empty object', function () {
+          // @ts-expect-error
           const appium = new AppiumDriver({});
           appium.pluginClasses = new Map([
             [NoArgsPlugin, 'noargs'],
@@ -410,6 +427,7 @@ describe('AppiumDriver', function () {
 
       describe('when args are equal to the schema defaults', function () {
         it('the `cliArgs` prop should contain the schema defaults', function () {
+          // @ts-expect-error
           const appium = new AppiumDriver({
             plugin: {args: {randomArg: 2000}},
           });
@@ -424,6 +442,7 @@ describe('AppiumDriver', function () {
 
         describe('when the default is an "object"', function () {
           it('the `cliArgs` prop should contain the schema defaults', function () {
+            // @ts-expect-error
             const appium = new AppiumDriver({
               plugin: {arrayarg: {arr: []}},
             });
@@ -442,10 +461,13 @@ describe('AppiumDriver', function () {
 
       describe('when args are not equal to the schema defaults', function () {
         it('should add cliArgs to the plugin', function () {
+          // @ts-expect-error
           const appium = new AppiumDriver({plugin: {args: {randomArg: 1234}}});
           appium.pluginClasses = new Map([[ArgsPlugin, 'args']]);
           const plugin = _.first(appium.createPluginInstances());
-          plugin.cliArgs.should.eql({randomArg: 1234});
+          /** @type {import('@appium/types').Plugin} */ (plugin).cliArgs.should.eql({
+            randomArg: 1234,
+          });
         });
       });
     });

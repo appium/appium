@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * This module provides helper functions for E2E tests to spawn an `appium` subprocess.
  */
@@ -49,7 +47,7 @@ async function run(appiumHome, args, opts = {}) {
     }
     return retval;
   } catch (err) {
-    const {stdout, stderr} = /** @type {TeenProcessExecError} */ (err);
+    const {stdout, stderr} = /** @type {import('teen_process').ExecError} */ (err);
     /**
      * @type {AppiumRunError}
      */
@@ -176,12 +174,11 @@ export function formatAppiumArgErrorOutput(stderr) {
 
 /**
  * Error thrown by all of the functions in this file which execute `appium`.
- * @typedef {Error & AppiumRunErrorProps & import('@appium/support/lib/npm').TeenProcessExecErrorProps} AppiumRunError
+ * @typedef {Error & AppiumRunErrorProps & import('teen_process').ExecError} AppiumRunError
  */
 
 /**
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
- * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
  * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
  */
 

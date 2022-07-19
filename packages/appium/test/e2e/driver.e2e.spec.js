@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import path from 'path';
 import B from 'bluebird';
@@ -31,14 +29,14 @@ const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
 const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
 
-/** @type {WebdriverIO.RemoteOptions} */
+/** @type {Partial<import('webdriverio').RemoteOptions>} */
 const wdOpts = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
 };
 
 describe('FakeDriver - via HTTP', function () {
-  /** @type {import('http').Server} */
+  /** @type {AppiumServer} */
   let server;
   /** @type {string} */
   let appiumHome;
@@ -96,10 +94,7 @@ describe('FakeDriver - via HTTP', function () {
   async function serverStart(port, args = {}) {
     args = {...args, port, address: TEST_HOST};
     if (shouldStartServer) {
-      server = /** @type {typeof server} */ (
-        // @ts-expect-error
-        await appiumServer(args)
-      );
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     }
   }
 
@@ -399,7 +394,10 @@ describe('FakeDriver - via HTTP', function () {
 // TODO this test only works if the log has not previously been initialized in the same process.
 // there seems to be some global state that is not cleaned up between tests.
 describe.skip('Logsink', function () {
-  let server = null;
+  /**
+   * @type {AppiumServer}
+   */
+  let server;
   let logs = [];
   let logHandler = function (level, message) {
     logs.push([level, message]);
@@ -411,8 +409,7 @@ describe.skip('Logsink', function () {
   };
 
   before(async function () {
-    // @ts-expect-error
-    server = await appiumServer(args);
+    server = /** @type {AppiumServer} */ (await appiumServer(args));
   });
 
   after(async function () {
@@ -426,3 +423,7 @@ describe.skip('Logsink', function () {
     logs[welcomeIndex][1].should.include('Welcome to Appium');
   });
 });
+
+/**
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ */

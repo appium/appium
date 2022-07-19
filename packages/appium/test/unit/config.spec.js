@@ -1,5 +1,3 @@
-// @ts-check
-
 import _ from 'lodash';
 import {createSandbox} from 'sinon';
 import {getParser} from '../../lib/cli/parser';

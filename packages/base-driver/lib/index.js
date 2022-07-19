@@ -10,7 +10,6 @@ export {DriverCore} from './basedriver/core';
 export {DeviceSettings} from './basedriver/device-settings';
 
 export {BaseDriver};
-export default BaseDriver;
 
 // MJSONWP exports
 export * from './protocol';
@@ -37,3 +36,5 @@ export {
 
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
+
+export default BaseDriver;

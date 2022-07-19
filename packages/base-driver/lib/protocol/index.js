@@ -7,14 +7,10 @@ import {
   GET_STATUS_COMMAND,
 } from './protocol';
 import {NO_SESSION_ID_COMMANDS, ALL_COMMANDS, METHOD_MAP, routeToCommandName} from './routes';
-import {errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode} from './errors';
+export * from './errors';
 
 export {
   routeConfiguringFunction,
-  errors,
-  isErrorType,
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
   ALL_COMMANDS,
   METHOD_MAP,
   routeToCommandName,

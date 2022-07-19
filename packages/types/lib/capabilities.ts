@@ -1,46 +1,55 @@
-import type {Capabilities as WdioCaps} from '@wdio/types';
+import {
+  Capabilities as WdioCapabilities,
+  AppiumCapabilities as WdioAppiumCapabilities,
+  AppiumAndroidCapabilities as WdioAppiumAndroidCapabilities,
+  AppiumIOSCapabilities as WdioAppiumIOSCapabilities,
+  AppiumXCUICommandTimeouts as WdioAppiumXCUICommandTimeouts,
+  AppiumXCUIProcessArguments as WdioAppiumXCUIProcessArguments,
+  AppiumXCUISafariGlobalPreferences as WdioAppiumXCUISafariGlobalPreferences,
+  AppiumXCUITestCapabilities as WdioAppiumXCUITestCapabilities,
+  AppiumW3CCapabilities as WdioAppiumW3CCapabilities,
+} from '@wdio/types/build/Capabilities';
 
 /**
  * The mask of a W3C-style namespaced capability proped name.
  */
-type Namespaced = `${string}:${string}`;
+export type Namespaced = `${string}:${string}`;
 
 /**
  * An object with keys conforming to {@linkcode Namespaced}.
  */
-type NamespacedRecord = Record<Namespaced, any>;
+export type NamespacedRecord = Record<Namespaced, any>;
 
 /**
  * An object with keys for strings.
  */
-type StringRecord = Record<string, any>;
+export type StringRecord = Record<string, any>;
 
 /**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type, accepting additional optional caps.
+ * All known capabilities derived from wdio's {@linkcode WdioCapabilities Capabilities} type, accepting additional optional
  * All properties are optional.
  */
-type BaseCapabilities<OptionalCaps extends StringRecord = StringRecord> = Partial<
-  WdioCaps.Capabilities & OptionalCaps
->;
+export type BaseCapabilities<OptionalCaps extends StringRecord = StringRecord> = WdioCapabilities &
+  OptionalCaps;
 
 /**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumCapabilities} type, accepting additional optional caps.
+ * All known capabilities derived from wdio's {@linkcode WdioCapabilities Capabilities} type and wdio's {@linkcode WdioAppiumCapabilities} type, accepting additional optional
  *
  * In practice, the properties `platformName` and `automationName` are required by Appium.
  */
 export type Capabilities<OptionalCaps extends StringRecord = StringRecord> = BaseCapabilities<
-  WdioCaps.AppiumCapabilities & OptionalCaps
+  WdioAppiumCapabilities & OptionalCaps
 >;
 
 /**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumW3CCapabilities} type, accepting additional optional _namespaced_ caps.
+ * All known capabilities derived from wdio's {@linkcode WdioCapabilities Capabilities} type and wdio's {@linkcode WdioAppiumW3CCapabilities} type, accepting additional optional _namespaced_
  */
 export type AppiumW3CCapabilities<
   OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord
-> = BaseCapabilities<WdioCaps.AppiumW3CCapabilities & OptionalNamespacedCaps>;
+> = BaseCapabilities<WdioAppiumW3CCapabilities & OptionalNamespacedCaps>;
 
 /**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumW3Capabilities} type, accepting additional optional _namespaced_ caps, in W3C-compatible format (`alwaysMatch`/`firstMatch`).
+ * All known capabilities derived from wdio's {@linkcode WdioCapabilities Capabilities} type and wdio's {@linkcode WdioAppiumW3Capabilities} type, accepting additional optional _namespaced_ caps, in W3C-compatible format (`alwaysMatch`/`firstMatch`).
  * In practice, the properties `appium:platformName` and `appium:automationName` are required by Appium _somewhere_ in this object; this cannot be expressed in TypeScript.
  */
 export type W3CCapabilities<OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord> = {
@@ -51,9 +60,9 @@ export type W3CCapabilities<OptionalNamespacedCaps extends NamespacedRecord = Na
 /**
  * These may (or should) be reused by drivers.
  */
-export type AppiumAndroidCapabilities = WdioCaps.AppiumAndroidCapabilities;
-export type AppiumIOSCapabilities = WdioCaps.AppiumIOSCapabilities;
-export type AppiumXCUICommandTimeouts = WdioCaps.AppiumXCUICommandTimeouts;
-export type AppiumXCUIProcessArguments = WdioCaps.AppiumXCUIProcessArguments;
-export type AppiumXCUISafariGlobalPreferences = WdioCaps.AppiumXCUISafariGlobalPreferences;
-export type AppiumXCUITestCapabilities = WdioCaps.AppiumXCUITestCapabilities;
+export type AppiumAndroidCapabilities = WdioAppiumAndroidCapabilities;
+export type AppiumIOSCapabilities = WdioAppiumIOSCapabilities;
+export type AppiumXCUICommandTimeouts = WdioAppiumXCUICommandTimeouts;
+export type AppiumXCUIProcessArguments = WdioAppiumXCUIProcessArguments;
+export type AppiumXCUISafariGlobalPreferences = WdioAppiumXCUISafariGlobalPreferences;
+export type AppiumXCUITestCapabilities = WdioAppiumXCUITestCapabilities;

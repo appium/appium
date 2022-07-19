@@ -10,7 +10,7 @@ import type {Logger} from 'npmlog';
 
 export * from './driver';
 export * from './plugin';
-export {AppiumW3CCapabilities} from './capabilities';
+export * from './capabilities';
 export {AppiumConfig, NormalizedAppiumConfig} from './config';
 export * from './appium-config';
 export {ServerArgs, Capabilities, W3CCapabilities};

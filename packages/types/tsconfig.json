@@ -5,8 +5,7 @@
     "outDir": "build",
     "paths": {
       "@appium/schema": ["../schema"]
-    },
-    "lib": ["ES2015"]
+    }
   },
   "include": ["lib"],
   "references": [{"path": "../schema"}]

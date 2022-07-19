@@ -35,7 +35,7 @@
   "dependencies": {
     "@appium/base-plugin": "^1.9.2",
     "@appium/support": "^2.59.2",
-    "@babel/runtime": "7.18.6",
+    "@babel/runtime": "7.18.9",
     "@types/bluebird": "3.5.36",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",

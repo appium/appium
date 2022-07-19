@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "lib": ["es2016", "dom"]
+  },
   "files": [],
   "references": [
     {

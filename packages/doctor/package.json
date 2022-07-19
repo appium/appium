@@ -56,7 +56,7 @@
     "@types/teen_process": "1.16.1",
     "appium-adb": "9.10.1",
     "bluebird": "3.7.2",
-    "inquirer": "8.2.4",
+    "inquirer": "9.0.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "teen_process": "1.16.0",

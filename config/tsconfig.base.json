@@ -7,12 +7,13 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
-    "module": "es2015",
+    "module": "esnext",
+    "target": "es2015",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "removeComments": false,
-    "target": "es2015",
-    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
+    "lib": ["dom", "esnext"],
+    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised", "webdriverio/async"]
   }
 }

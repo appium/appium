@@ -3,7 +3,9 @@
     "paths": {
       "appium": ["../packages/appium"]
     },
-    "types": ["webdriverio/async"]
+    "types": [
+      "mocha", "chai", "sinon", "sinon-chai", "chai-as-promised", "webdriverio/async"
+    ]
   },
   "extends": "./tsconfig.base.json",
   "references": [{"path": "../packages/appium"}, {"path": "../packages/base-plugin"}, {"path": "../packages/types"}]

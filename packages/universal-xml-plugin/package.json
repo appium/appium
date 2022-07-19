@@ -21,7 +21,7 @@
   "types": "./build/lib/plugin.d.ts",
   "files": [
     "index.js",
-    "build",
+    "build/lib",
     "lib"
   ],
   "scripts": {

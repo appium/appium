@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "checkJs": true
   },
   "extends": "../../config/tsconfig.plugin.json",
-  "include": ["lib"]
+  "include": ["lib", "test"]
 }

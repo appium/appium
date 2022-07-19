@@ -16,10 +16,18 @@ const GEN_OPTS = {
 };
 
 export const ATTR_PREFIX = '@_';
+/** @type {Attr} */
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
+/** @type {Attr} */
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
+/**
+ *
+ * @param {any} k
+ * @returns {k is Attr}
+ */
 const isAttr = (k) => k.substring(0, 2) === ATTR_PREFIX;
+
 const isNode = (k) => !isAttr(k);
 
 export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
@@ -59,7 +67,13 @@ export function getUniversalAttrName(attrName, platform) {
   return getUniversalName(ATTR_MAP, attrName, platform);
 }
 
-export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath}) {
+/**
+ *
+ * @param {any} nodeObj
+ * @param {string} platform
+ * @param {TransformOptions} [opts]
+ */
+export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath} = {}) {
   const unknownNodes = [];
   const unknownAttrs = [];
   if (_.isPlainObject(nodeObj)) {
@@ -103,11 +117,18 @@ export function transformNode(nodeObj, platform, {metadata, addIndexPath, parent
   };
 }
 
+/**
+ *
+ * @param {any} nodeObj
+ * @param {string[]} childNodeNames
+ * @param {string} platform
+ * @param {TransformOptions} [opts]
+ */
 export function transformChildNodes(
   nodeObj,
   childNodeNames,
   platform,
-  {metadata, addIndexPath, parentPath}
+  {metadata, addIndexPath, parentPath} = {}
 ) {
   const unknownNodes = [];
   const unknownAttrs = [];
@@ -165,3 +186,14 @@ export function transformAttrs(nodeObj, attrs, platform) {
   }
   return unknownAttrs;
 }
+
+/**
+ * @typedef {`@_${string}`} Attr
+ */
+
+/**
+ * @typedef TransformOptions
+ * @property {any} [metadata]
+ * @property {boolean} [addIndexPath]
+ * @property {string} [parentPath]
+ */

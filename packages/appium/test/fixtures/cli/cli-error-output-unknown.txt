@@ -1,1 +1,1 @@
-main.js: error: unrecognized arguments: --pigs=sheep
+[ERROR] Unrecognized arguments: --pigs=sheep

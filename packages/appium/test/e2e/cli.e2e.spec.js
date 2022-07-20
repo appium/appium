@@ -438,28 +438,49 @@ describe('CLI behavior', function () {
       });
 
       describe('run', function () {
+        const driverName = 'fake';
         before(async function () {
           await clear();
           await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
         });
-        it('should run a valid driver, valid script, and result in success', async function () {
-          const driverName = 'fake';
+
+        describe('when the driver and script is valid', function () {
           const scriptName = 'fake-success';
-          const out = await runRun([driverName, scriptName]);
-          out.should.not.have.property('error');
+
+          describe('when the script completes successfully', function () {
+            it('should result in success', async function () {
+              const out = await runRun([driverName, scriptName]);
+              out.should.not.have.property('error');
+            });
+          });
+
+          describe('when the script fails', function () {
+            it('should return an error', async function () {
+              const out = await runRun([driverName, 'fake-error']);
+              out.should.have.property('error');
+            });
+          });
+
+          describe('when passed extra arguments', function () {
+            it('should pass them to the script', async function () {
+              const out = await runRun([driverName, scriptName, '--foo', '--bar']);
+              out.should.not.have.property('error');
+              out.output.should.match(/--foo --bar/);
+            });
+          });
         });
-        it('should run a valid driver, valid error prone script, and return error in json', async function () {
-          const driverName = 'fake';
-          const out = await runRun([driverName, 'fake-error']);
-          out.should.have.property('error');
+
+        describe('when the driver is valid but the script is not', function () {
+          it('should throw an error', async function () {
+            await expect(runRun([driverName, 'foo'])).to.be.rejectedWith(Error);
+          });
         });
-        it('should take a valid driver, invalid script, and throw an error', async function () {
-          const driverName = 'fake';
-          await expect(runRun([driverName, 'foo'])).to.be.rejectedWith(Error);
-        });
-        it('should take an invalid driver, invalid script, and throw an error', async function () {
-          const driverName = 'foo';
-          await expect(runRun([driverName, 'bar'])).to.be.rejectedWith(Error);
+
+        describe('when the driver and script are invalid', function () {
+          it('should throw an error', async function () {
+            const driverName = 'foo';
+            await expect(runRun([driverName, 'bar'])).to.be.rejectedWith(Error);
+          });
         });
       });
     });

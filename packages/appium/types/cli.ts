@@ -92,6 +92,21 @@ export interface ExtArgs extends WithExtSubcommand {
    * Subcommands of `plugin` subcommand
    */
   pluginCommand?: CliExtensionSubcommand;
+
+  /**
+   * Output JSON instead of human-readable text
+   */
+  json?: boolean;
+
+  /**
+   * Output nothing
+   */
+  suppressOutput?: boolean;
+
+  /**
+   * Extra args to pass to extension scripts
+   */
+  extraArgs?: string[];
 }
 
 /**

@@ -214,8 +214,8 @@ function makeRunArgs(type) {
         default: null,
         type: 'str',
         help:
-          `Name of the script to run from the ${type}. The script name must be cached ` +
-          `inside the "scripts" field under "appium" inside the ${type}'s "package.json" file`,
+          `Name of the script to run from the ${type}. The script name must be a key ` +
+          `inside the "appium.scripts" field inside the ${type}'s "package.json" file`,
       },
     ],
   ]);

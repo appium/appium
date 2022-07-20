@@ -7,6 +7,8 @@ import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
 
+export const EXTRA_ARGS = 'extraArgs';
+
 /**
  * If the parsed args do not contain any of these values, then we
  * will automatially inject the `server` subcommand.
@@ -97,8 +99,17 @@ class ArgParser {
     }
 
     try {
-      const parsed = this.parser.parse_args(args);
-      return ArgParser._transformParsedArgs(parsed);
+      const parsed = this.parser.parse_known_args(args);
+      const [knownArgs, unknownArgs] = parsed;
+      if (
+        unknownArgs?.length &&
+        (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
+      ) {
+        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
+      } else if (unknownArgs?.length) {
+        throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
+      }
+      return ArgParser._transformParsedArgs(knownArgs);
     } catch (err) {
       if (this.debug) {
         throw err;
@@ -123,10 +134,11 @@ class ArgParser {
    *
    * E.g., `{'driver-foo-bar': baz}` becomes `{driver: {foo: {bar: 'baz'}}}`
    * @param {object} args
+   * @param {string[]} [unknownArgs]
    * @returns {object}
    */
-  static _transformParsedArgs(args) {
-    return _.reduce(
+  static _transformParsedArgs(args, unknownArgs = []) {
+    const result = _.reduce(
       args,
       (unpacked, value, key) => {
         if (!_.isUndefined(value) && hasArgSpec(key)) {
@@ -140,6 +152,8 @@ class ArgParser {
       },
       {}
     );
+    result[EXTRA_ARGS] = unknownArgs;
+    return result;
   }
 
   /**
@@ -183,7 +197,7 @@ class ArgParser {
    * @param {import('argparse').SubParser} subParsers
    */
   static _addExtensionCommandsToParser(subParsers) {
-    for (const type of [DRIVER_TYPE, PLUGIN_TYPE]) {
+    for (const type of /** @type {[DriverType, PluginType]} */ ([DRIVER_TYPE, PLUGIN_TYPE])) {
       const extParser = subParsers.add_parser(type, {
         add_help: true,
         help: `Access the ${type} management CLI commands`,
@@ -195,6 +209,9 @@ class ArgParser {
         dest: `${type}Command`,
       });
       const extensionArgs = getExtensionArgs();
+      /**
+       * @type { {command: import('appium/types').CliExtensionSubcommand, args: import('./args').ArgumentDefinitions, help: string}[] }
+       */
       const parserSpecs = [
         {
           command: 'list',
@@ -254,3 +271,8 @@ function getParser(debug) {
 }
 
 export {getParser, ArgParser};
+
+/**
+ * @typedef {import('@appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').PluginType} PluginType
+ */

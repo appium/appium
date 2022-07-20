@@ -15,9 +15,9 @@ export const commandClasses = Object.freeze(
  * Run a subcommand of the 'appium driver' type. Each subcommand has its own set of arguments which
  * can be represented as a JS object.
  *
- * @param {Object} args - JS object where the key is the parameter name (as defined in
+ * @param {import('appium/types').Args<import('appium/types').WithExtSubcommand>} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
- * @template {import('../extension/manifest').ExtensionType} ExtType
+ * @template {ExtensionType} ExtType
  * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} config - Extension config object
  */
 async function runExtensionCommand(args, config) {
@@ -30,6 +30,7 @@ async function runExtensionCommand(args, config) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
   }
   let {json, suppressOutput} = args;
+  json = Boolean(json);
   if (suppressOutput) {
     json = true;
   }
@@ -56,6 +57,17 @@ async function runExtensionCommand(args, config) {
 export {runExtensionCommand};
 
 /**
- * @template {import('@appium/types').ExtensionType} ExtType
- * @typedef {ExtType extends import('@appium/types').DriverType ? import('@appium/types').Class<DriverCommand> : ExtType extends import('@appium/types').PluginType ? import('@appium/types').Class<PluginCommand> : never} ExtCommand
+ * @template {ExtensionType} ExtType
+ * @typedef {ExtType extends DriverType ? Class<DriverCommand> : ExtType extends PluginType ? Class<PluginCommand> : never} ExtCommand
+ */
+
+/**
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
+ * @typedef {import('@appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').PluginType} PluginType
+ */
+
+/**
+ * @template T
+ * @typedef {import('@appium/types').Class<T>} Class
  */

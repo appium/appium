@@ -33,8 +33,8 @@ export default class PluginCommand extends ExtensionCommand {
     return await super._update({installSpec: plugin, unsafe});
   }
 
-  async run({plugin, scriptName}) {
-    return await super._run({installSpec: plugin, scriptName});
+  async run({plugin, scriptName, extraArgs}) {
+    return await super._run({installSpec: plugin, scriptName, extraArgs});
   }
 
   getPostInstallText({extName, extData}) {

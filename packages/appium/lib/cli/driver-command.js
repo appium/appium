@@ -33,8 +33,8 @@ export default class DriverCommand extends ExtensionCommand {
     return await super._update({installSpec: driver, unsafe});
   }
 
-  async run({driver, scriptName}) {
-    return await super._run({installSpec: driver, scriptName});
+  async run({driver, scriptName, extraArgs}) {
+    return await super._run({installSpec: driver, scriptName, extraArgs});
   }
 
   getPostInstallText({extName, extData}) {

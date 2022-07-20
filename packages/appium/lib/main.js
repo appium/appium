@@ -207,20 +207,7 @@ async function init(args) {
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
-  if (!areServerCommandArgs(preConfigArgs)) {
-    // if the user has requested the 'driver' CLI, don't run the normal server,
-    // but instead pass control to the driver CLI
-    if (preConfigArgs.subcommand === DRIVER_TYPE) {
-      await runExtensionCommand(preConfigArgs, driverConfig);
-      return {};
-    }
-    if (preConfigArgs.subcommand === PLUGIN_TYPE) {
-      await runExtensionCommand(preConfigArgs, pluginConfig);
-      return {};
-    }
-    /* istanbul ignore next */
-    return {}; // should never happen
-  } else {
+  if (areServerCommandArgs(preConfigArgs)) {
     const defaults = getDefaultsForSchema(false);
 
     /** @type {ParsedArgs} */
@@ -267,6 +254,22 @@ async function init(args) {
       driverConfig,
       pluginConfig,
     });
+  } else {
+    const extensionCommandArgs = /** @type {Args<import('appium/types').WithExtSubcommand>} */ (
+      preConfigArgs
+    );
+    // if the user has requested the 'driver' CLI, don't run the normal server,
+    // but instead pass control to the driver CLI
+    if (preConfigArgs.subcommand === DRIVER_TYPE) {
+      await runExtensionCommand(extensionCommandArgs, driverConfig);
+      return {};
+    }
+    if (preConfigArgs.subcommand === PLUGIN_TYPE) {
+      await runExtensionCommand(extensionCommandArgs, pluginConfig);
+      return {};
+    }
+    /* istanbul ignore next */
+    return {}; // should never happen
   }
 }
 

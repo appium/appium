@@ -628,7 +628,7 @@ class ExtensionCommand {
    * @param {RunOptions} opts
    * @return {Promise<RunOutput>}
    */
-  async _run({installSpec, scriptName}) {
+  async _run({installSpec, scriptName, extraArgs = []}) {
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
@@ -657,7 +657,7 @@ class ExtensionCommand {
       );
     }
 
-    const runner = new SubProcess(process.execPath, [extScripts[scriptName]], {
+    const runner = new SubProcess(process.execPath, [extScripts[scriptName], ...extraArgs], {
       cwd: this.config.getInstallPath(installSpec),
     });
 
@@ -755,6 +755,7 @@ export {ExtensionCommand};
  * @typedef RunOptions
  * @property {string} installSpec - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
+ * @property {string[]} [extraArgs] - arguments to pass to the script
  */
 
 /**

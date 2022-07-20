@@ -45,7 +45,7 @@
     "@babel/runtime": "7.18.9",
     "docdash": "1.2.0",
     "jsdoc": "3.6.10",
-    "jsdoc-plugin-typescript": "2.0.7",
+    "jsdoc-plugin-typescript": "2.1.0",
     "source-map-support": "0.5.21",
     "teen_process": "1.16.0"
   },

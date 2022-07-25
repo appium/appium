@@ -27,7 +27,7 @@ Nothing in particular needs to be done to run your test.
 
 The best way to see what to do currently is to look at the example tests:
 
-[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
+[Node.js](https://github.com/appium/appium/tree/1.x/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/1.x/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/1.x/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/1.x/sample-code/java)
 
 Basically, first make sure Appium is running:
 

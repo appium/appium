@@ -114,7 +114,7 @@ additional dependencies.
 
 (Chances are, you'll eventually want to automate something other than Android
 using something other than JavaScript. In that case, check out our
-[sample-code](https://github.com/appium/appium/tree/master/sample-code), which has code
+[sample-code](https://github.com/appium/appium/tree/1.x/sample-code), which has code
 samples for many languages and platforms.)
 
 #### Prerequisites
@@ -123,7 +123,7 @@ samples for many languages and platforms.)
   example will work on lower versions, just fix the version numbers
   accordingly)
 - We'll assume you have [this test
-  APK](https://github.com/appium/appium/raw/master/sample-code/apps/ApiDemos-debug.apk)
+  APK](https://github.com/appium/appium/raw/1.x/sample-code/apps/ApiDemos-debug.apk)
   downloaded and available on your local filesystem
 
 #### Setting up the Appium Client
@@ -269,7 +269,7 @@ We've only scratched the surface of what you can do with Appium. Check out
 these resources to help you on your journey:
 
 - The Appium [command reference](https://appium.io/docs/en/commands/status/) - learn about what commands are available, how to use them with specific client libraries, etc...
-- The [sample-code](https://github.com/appium/appium/tree/master/sample-code) directory, where lots more code samples are available
+- The [sample-code](https://github.com/appium/appium/tree/1.x/sample-code) directory, where lots more code samples are available
 
 - [discuss.appium.io](https://discuss.appium.io) - this is the Appium community forum, which is a great first place to go for help getting started, or if you think you may have run into a bug
 - The Appium [issue tracker](https://github.com/appium/appium/issues) - let the Appium maintainers know here if you think you've found a bug

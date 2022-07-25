@@ -85,7 +85,7 @@ Appium クライアントを用意しています。
 
 ### Appium の開始
 
-(NPMのインストールが成功したと仮定して) 
+(NPMのインストールが成功したと仮定して)
 これで、以下のようにコマンドラインから実行することで、Appium サーバーをキックアップすることができます。
 
 ```
@@ -114,14 +114,14 @@ Android を選択したのは、すべてのプラットフォームで利用可
 (Android 以外のものを
 JavaScript 以外のものを使って自動化したいと思うこともあるでしょう。
 その場合は、多くの言語やプラットフォームに対応した
-[コードサンプル](https://github.com/appium/appium/tree/master/sample-code)を用意しています。)
+[コードサンプル](https://github.com/appium/appium/tree/1.x/sample-code)を用意しています。)
 
 #### 前提条件
 
 - あなたが Android 8.0 エミュレータを設定して実行していると仮定します
   (例は、バージョン番号を調整することで
   より低バージョンで動作します。)
-- あなたが[このテスト APK](https://github.com/appium/appium/raw/master/sample-code/apps/ApiDemos-debug.apk) をダウンロードして、
+- あなたが[このテスト APK](https://github.com/appium/appium/raw/1.x/sample-code/apps/ApiDemos-debug.apk) をダウンロードして、
   ローカルファイルシステム上で
   利用可能であると仮定します
 
@@ -268,7 +268,7 @@ Appium でできることについては、まだ表面上のことに過ぎま�
 これらのリソースをチェックして、あなたの旅に役立たせてください:
 
 - Appium [コマンドリファレンス](https://appium.io/docs/en/commands/status/) - どのようなコマンドが利用可能か、特定のクライアントライブラリでの使用方法などについて学びます
-- [サンプルコード](https://github.com/appium/appium/tree/master/sample-code) ディレクトリには、他にもたくさんのコードサンプルがあります
+- [サンプルコード](https://github.com/appium/appium/tree/1.x/sample-code) ディレクトリには、他にもたくさんのコードサンプルがあります
 
 - [discuss.appium.io](https://discuss.appium.io) - これは Appium コミュニティのフォーラムです。バグに遭遇したかもしれないと思った場合、または始めるための助けを得るために最初に行くのに最適な場所です
 - Appium [不具合トラッカー](https://github.com/appium/appium/issues) - バグを見つけたと思ったら、Appium メンテナに知らせてください

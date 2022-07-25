@@ -17,6 +17,7 @@ jobs:
         git clone https://triager:$GITHUB_TOKEN@github.com/appium/appium.io.git --branch=gh-pages
         pushd appium.io
         git remote add triager https://triager:$GITHUB_TOKEN@github.com/appium/appium.io
+        git checkout 1.x
         git checkout -b docs-$BUILD_SOURCEVERSION
         bundle install
         npm install

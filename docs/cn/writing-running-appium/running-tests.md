@@ -22,7 +22,7 @@
 
 想知道当前要做什么，最好的方法就是是查看示例代码：
 
-[Node.js](https://github.com/appium/appium/tree/master/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/master/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/master/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/master/sample-code/java)
+[Node.js](https://github.com/appium/appium/tree/1.x/sample-code/javascript-webdriverio) | [Python](https://github.com/appium/appium/tree/1.x/sample-code/python) | [Ruby](https://github.com/appium/appium/tree/1.x/sample-code/ruby) | [Java](https://github.com/appium/appium/tree/1.x/sample-code/java)
 
 基本上，首先确认 Appium 正在运行：
 

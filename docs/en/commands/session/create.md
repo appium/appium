@@ -36,13 +36,22 @@ self.driver = webdriver.Remote('http://127.0.0.1:4723/wd/hub', desired_caps)
 ```javascript
 // Javascript
 // webdriver.io example
+# MJSONWP,
 let options = { desiredCapabilities: {
   platformName: 'Android',
   platformVersion: '7.0',
   automationName: 'UiAutomator2',
   app: path.resolve('path', 'to', 'app.apk')
 }};
-let client = driver.newSession(options);
+# or W3C
+options = { capabilities: {
+  platformName: 'Android',
+  platformVersion: '7.0',
+  'appium:automationName': 'UiAutomator2',
+  'appium:app': path.resolve('path', 'to', 'app.apk')
+}};
+
+const client = driver.newSession(options);
 
 // wd example
 let driver = await wd.promiseChainRemote({

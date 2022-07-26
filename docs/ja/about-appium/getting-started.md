@@ -231,11 +231,11 @@ const opts = {
   capabilities: {
     platformName: "Android",
     platformVersion: "8",
-    deviceName: "Android Emulator",
-    app: "/path/to/the/downloaded/ApiDemos-debug.apk",
-    appPackage: "io.appium.android.apis",
-    appActivity: ".view.TextFields",
-    automationName: "UiAutomator2"
+    "appium:deviceName": "Android Emulator",
+    "appium:app": "/path/to/the/downloaded/ApiDemos-debug.apk",
+    "appium:appPackage": "io.appium.android.apis",
+    "appium:appActivity": ".view.TextFields",
+    "appium:automationName": "UiAutomator2"
   }
 };
 

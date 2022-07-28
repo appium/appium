@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.23](https://github.com/appium/appium/compare/@appium/doctor@1.16.22...@appium/doctor@1.16.23) (2022-07-28)
+
+
+### Bug Fixes
+
+* **doctor:** actually build bin dir, fix dev script ([10421fa](https://github.com/appium/appium/commit/10421fa5ad8c9d2e5916e5a701fefdeb3f5b9969))
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+
+
+
+
+
 ## [1.16.22](https://github.com/appium/appium/compare/@appium/doctor@1.16.21...@appium/doctor@1.16.22) (2022-06-04)
 
 **Note:** Version bump only for package @appium/doctor

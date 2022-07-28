@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.41](https://github.com/appium/appium/compare/appium@2.0.0-beta.40...appium@2.0.0-beta.41) (2022-07-28)
+
+
+### Bug Fixes
+
+* **appium,support:** fix installation problems ([2a6a056](https://github.com/appium/appium/commit/2a6a056187ce925d5776b7acc4954b10ecf9221b)), closes [#17073](https://github.com/appium/appium/issues/17073)
+* **appium,types:** include @appium/types in appium ([a0a6166](https://github.com/appium/appium/commit/a0a6166738f3db32f2512681914c4c5410cd4b28))
+* **appium:** fix incorrect count of errors and warnings ([1e42c23](https://github.com/appium/appium/commit/1e42c2378cb762d5f327139c027e2071918b5c17))
+* **appium:** postinstall: never assume local appium if it is being installed globally ([965752f](https://github.com/appium/appium/commit/965752f288ba5d74ab24f41d780c46cc8ff14984)), closes [#17054](https://github.com/appium/appium/issues/17054)
+* **appium:** remove references to js in typescript code ([d3f90d5](https://github.com/appium/appium/commit/d3f90d5ed6e887feffcabfc8aabd012e43c37e63))
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+* Update the way build info is fetched from GitHub ([#17078](https://github.com/appium/appium/issues/17078)) ([d2a3adc](https://github.com/appium/appium/commit/d2a3adc2e361d5f0cff11094e8884e3270f5c94c))
+
+
+### Features
+
+* **appium,base-driver,base-plugin,test-support,types:** move test fixtures into test-support ([70d88cb](https://github.com/appium/appium/commit/70d88cb86f28354efe313cc6be6a0afef20b38b3))
+
+
+
+
+
 # [2.0.0-beta.40](https://github.com/appium/appium/compare/appium@2.0.0-beta.39...appium@2.0.0-beta.40) (2022-06-04)
 
 **Note:** Version bump only for package appium

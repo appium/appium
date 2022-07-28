@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.10](https://github.com/appium/appium/compare/@appium/opencv@1.0.9...@appium/opencv@1.0.10) (2022-07-28)
+
+
+### Bug Fixes
+
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+
+
+
+
+
 ## [1.0.9](https://github.com/appium/appium/compare/@appium/opencv@1.0.8...@appium/opencv@1.0.9) (2022-05-31)
 
 **Note:** Version bump only for package @appium/opencv

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.59.3](https://github.com/appium/appium/compare/@appium/support@2.59.2...@appium/support@2.59.3) (2022-07-28)
+
+
+### Bug Fixes
+
+* **appium,support:** fix installation problems ([2a6a056](https://github.com/appium/appium/commit/2a6a056187ce925d5776b7acc4954b10ecf9221b)), closes [#17073](https://github.com/appium/appium/issues/17073)
+* Logs format ([#17156](https://github.com/appium/appium/issues/17156)) ([dbc4544](https://github.com/appium/appium/commit/dbc4544b72d80c4b711aeb65bffa2b9b14a73622))
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+* **support:** if appium is installed extraneously, do not consider it a dependency ([85c6526](https://github.com/appium/appium/commit/85c652690927ac7ae2a6cb4efe78c81fc1f952fd))
+
+
+
+
+
 ## [2.59.2](https://github.com/appium/appium/compare/@appium/support@2.59.1...@appium/support@2.59.2) (2022-06-04)
 
 

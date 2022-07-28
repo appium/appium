@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/appium/appium/compare/@appium/test-support@1.3.22...@appium/test-support@1.4.0) (2022-07-28)
+
+
+### Bug Fixes
+
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+
+
+### Features
+
+* **appium,base-driver,base-plugin,test-support,types:** move test fixtures into test-support ([70d88cb](https://github.com/appium/appium/commit/70d88cb86f28354efe313cc6be6a0afef20b38b3))
+
+
+
+
+
 ## [1.3.22](https://github.com/appium/appium/compare/@appium/test-support@1.3.21...@appium/test-support@1.3.22) (2022-06-04)
 
 **Note:** Version bump only for package @appium/test-support

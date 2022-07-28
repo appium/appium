@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
     "automation",

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.3](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@2.0.2...@appium/execute-driver-plugin@2.0.3) (2022-07-28)
+
+
+### Bug Fixes
+
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+
+
+
+
+
 ## [2.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@2.0.1...@appium/execute-driver-plugin@2.0.2) (2022-06-01)
 
 

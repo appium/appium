@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/appium/appium/compare/@appium/types@0.2.5...@appium/types@0.3.0) (2022-07-28)
+
+
+### Bug Fixes
+
+* **appium,types:** include @appium/types in appium ([a0a6166](https://github.com/appium/appium/commit/a0a6166738f3db32f2512681914c4c5410cd4b28))
+
+
+### Features
+
+* **appium,base-driver,base-plugin,test-support,types:** move test fixtures into test-support ([70d88cb](https://github.com/appium/appium/commit/70d88cb86f28354efe313cc6be6a0afef20b38b3))
+
+
+
+
+
 ## [0.2.5](https://github.com/appium/appium/compare/@appium/types@0.2.4...@appium/types@0.2.5) (2022-05-31)
 
 **Note:** Version bump only for package @appium/types

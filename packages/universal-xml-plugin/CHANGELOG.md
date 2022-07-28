@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-beta.12](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.11...@appium/universal-xml-plugin@1.0.0-beta.12) (2022-07-28)
+
+
+### Bug Fixes
+
+* moved type packages to deps of specific packages ([f9129df](https://github.com/appium/appium-plugins/commit/f9129dfee32fcc3f89ffcfa69fb83b7c2419c24f))
+
+
+
+
+
 # [1.0.0-beta.11](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.10...@appium/universal-xml-plugin@1.0.0-beta.11) (2022-06-01)
 
 

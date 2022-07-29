@@ -13,14 +13,18 @@
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
+        "del",
         "execa",
         "find-up",
+        "get-port",
         "globby",
+        "inquirer",
         "log-symbols",
         "read-pkg",
         "strip-ansi",
         "supports-color",
         "term-size",
+        "vinyl-paths",
         "wrap-ansi",
         "write-pkg"
       ],

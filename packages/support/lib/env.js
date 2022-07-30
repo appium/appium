@@ -63,7 +63,10 @@ export async function hasAppiumDependency(cwd) {
   try {
     listResult = await npm.list(cwd, 'appium');
 
+    // this is behavior for npm v7
+
     // short-circuit if `appium` is hanging around but the user hasn't added it to `package.json`.
+    // npm v7+
     if (listResult?.dependencies?.appium?.extraneous) {
       return false;
     }
@@ -72,6 +75,11 @@ export async function hasAppiumDependency(cwd) {
     resolved = listResult?.dependencies?.appium?.resolved ?? '';
     // ...however, it cannot do so unless `version` is nonempty.
     version = listResult?.dependencies?.appium?.version ?? '';
+
+    // npm v6 is dumb and doesn't have "extraneous", so
+    if ('appium-monorepo' === listResult?.name) {
+      return false;
+    }
   } catch {
     try {
       const pkg = await readPackageInDir(cwd);
@@ -142,7 +150,6 @@ export const resolveAppiumHome = _.memoize(
       /* istanbul ignore next */
       return DEFAULT_APPIUM_HOME;
     }
-
     return (await hasAppiumDependency(currentPkgDir)) ? currentPkgDir : DEFAULT_APPIUM_HOME;
   }
 );
@@ -161,7 +168,8 @@ export const resolveManifestPath = _.memoize(
   async function _resolveManifestPath(appiumHome) {
     // can you "await" in a default parameter? is that a good idea?
     appiumHome = appiumHome ?? (await resolveAppiumHome());
-    return path.join(appiumHome, MANIFEST_RELATIVE_PATH);
+    const retval = path.join(appiumHome, MANIFEST_RELATIVE_PATH);
+    return retval;
   }
 );
 

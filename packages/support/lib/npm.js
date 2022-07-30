@@ -206,7 +206,7 @@ export class NPM {
      */
     const installOpts = (await hasAppiumDependency(cwd))
       ? ['--save-dev']
-      : ['--save-dev', '--save-exact', '--global-style', '--no-package-lock'];
+      : ['--save-dev', '--save-exact', '--global-style', '--no-package-lock', '--legacy-peer-deps'];
 
     const res = await this.exec(
       'install',

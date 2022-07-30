@@ -96,11 +96,9 @@
     "@appium/test-support": "file:packages/test-support",
     "@appium/types": "file:packages/types",
     "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
-    "appium": "file:packages/appium",
-    "glob": "8.0.3"
+    "appium": "file:packages/appium"
   },
   "devDependencies": {
-    "@appium/fake-plugin": "1.3.1",
     "@babel/cli": "7.18.9",
     "@babel/core": "7.18.9",
     "@babel/eslint-parser": "7.18.9",

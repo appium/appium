@@ -201,6 +201,8 @@ to run tests on. Each of the drivers above documents the requirements for their
 particular brand of automation. At a minimum, you will need to be able to run
 the recent [LTS](https://nodejs.org/en/about/releases/) Node.js version.
 
+NPM version is v7+.
+
 ### Get Started
 
 Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide

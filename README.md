@@ -201,7 +201,7 @@ to run tests on. Each of the drivers above documents the requirements for their
 particular brand of automation. At a minimum, you will need to be able to run
 the recent [LTS](https://nodejs.org/en/about/releases/) Node.js version.
 
-NPM version is v7+.
+NPM version needs to be v7+.
 
 ### Get Started
 

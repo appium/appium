@@ -67,7 +67,7 @@
     "morgan": "1.10.0",
     "serve-favicon": "2.5.0",
     "source-map-support": "0.5.21",
-    "type-fest": "2.17.0",
+    "type-fest": "2.18.0",
     "validate.js": "0.13.1"
   },
   "engines": {

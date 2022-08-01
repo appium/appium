@@ -39,16 +39,17 @@
     "prepare": "npm run build",
     "test:smoke": "node ./index.js"
   },
+  "dependencies": {
+    "@types/json-schema": "7.0.11",
+    "json-schema": "0.4.0",
+    "source-map-support": "0.5.21"
+  },
   "engines": {
     "node": ">=14",
-    "npm": ">=6"
+    "npm": ">=8"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
-  "dependencies": {
-    "@types/json-schema": "7.0.11",
-    "json-schema": "0.4.0"
-  }
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

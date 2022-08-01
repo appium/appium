@@ -4,7 +4,7 @@ import {init as logsinkInit} from './logsink'; // this import needs to come firs
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env, fs} from '@appium/support';
+import {logger as logFactory, util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -15,7 +15,6 @@ import {
   checkNodeOk,
   getGitRev,
   getNonDefaultServerArgs,
-  rootDir,
   showConfig,
   showBuildInfo,
   validateTmpDir,
@@ -27,9 +26,8 @@ import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
 import {inspect} from './utils';
-import path from 'path';
 
-const {resolveAppiumHome, hasAppiumDependency} = env;
+const {resolveAppiumHome} = env;
 
 /**
  *
@@ -171,19 +169,6 @@ function areServerCommandArgs(args) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
-
-  // this is here so extensions installed in e.g., `~/.appium` can find the peer dependency
-  // of `appium`, which lives wherever it lives (see `rootDir`).
-  if (!(await hasAppiumDependency(appiumHome))) {
-    try {
-      await fs.mkdirp(path.join(appiumHome, 'node_modules'));
-      await fs.symlink(rootDir, path.join(appiumHome, 'node_modules', 'appium'), 'junction');
-    } catch (err) {
-      if (err.code !== 'EEXIST') {
-        throw new Error(`Unable to create symlink to appium: ${err.message}`);
-      }
-    }
-  }
 
   const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 

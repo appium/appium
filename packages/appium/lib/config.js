@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {system, fs} from '@appium/support';
 import axios from 'axios';
 import {exec} from 'teen_process';
-import logger from './logger';
 import semver from 'semver';
 import findUp from 'find-up';
 import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
@@ -12,6 +11,7 @@ const npmPackage = fs.readPackageJsonFrom(__dirname);
 
 const APPIUM_VER = npmPackage.version;
 const MIN_NODE_VERSION = npmPackage.engines.node;
+const MIN_NPM_VERSION = npmPackage.engines.npm;
 
 const GIT_META_ROOT = '.git';
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
@@ -26,6 +26,15 @@ const BUILD_INFO = {
 
 function getNodeVersion() {
   return /** @type {import('semver').SemVer} */ (semver.coerce(process.version));
+}
+
+/**
+ * Returns version of `npm`
+ * @returns {Promise<string>}
+ */
+async function getNpmVersion() {
+  const {stdout} = await exec(system.isWindows() ? 'npm.cmd' : 'npm', ['--version']);
+  return stdout.trim();
 }
 
 /**
@@ -133,7 +142,18 @@ function getBuildInfo() {
 function checkNodeOk() {
   const version = getNodeVersion();
   if (!semver.satisfies(version, MIN_NODE_VERSION)) {
-    logger.errorAndThrow(`Node version must be ${MIN_NODE_VERSION}. Currently ${version.version}`);
+    throw new Error(
+      `Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`
+    );
+  }
+}
+
+export async function checkNpmOk() {
+  const npmVersion = await getNpmVersion();
+  if (!semver.satisfies(npmVersion, MIN_NPM_VERSION)) {
+    throw new Error(
+      `npm version must be at least ${MIN_NPM_VERSION}; current is ${npmVersion}. Run "npm install -g npm" to upgrade.`
+    );
   }
 }
 

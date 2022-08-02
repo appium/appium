@@ -54,10 +54,10 @@
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
     "prepare": "npm run build",
-    "publish:docs": "APPIUM_DOCS_PUBLISH=1 npm run build:docs",
+    "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 1m --slow 30s \"./test/e2e/**/*.spec.js\"",
-    "test:smoke": "node ./index.js --show-build-info",
+    "test:smoke": "cross-env APPIUM_HOME=./local_appium_home node ./index.js driver install uiautomator2 && cross-env APPIUM_HOME=./local_appium_home node ./index.js driver list",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
@@ -83,6 +83,7 @@
     "asyncbox": "2.9.2",
     "axios": "0.27.2",
     "bluebird": "3.7.2",
+    "cross-env": "7.0.3",
     "find-up": "5.0.0",
     "lilconfig": "2.0.6",
     "lodash": "4.17.21",

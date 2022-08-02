@@ -14,7 +14,7 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 
 ## Breaking Changes
 
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases/tag/v2.0.0-beta) for a more comprehensive list of changes. Here we call out the breaking changes and what you need to do do account for them.
+Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do do account for them.
 
 ### :bangbang: Installing drivers during setup
 

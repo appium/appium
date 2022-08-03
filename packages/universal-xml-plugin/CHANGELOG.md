@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-beta.13](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.12...@appium/universal-xml-plugin@1.0.0-beta.13) (2022-08-03)
+
+
+### Bug Fixes
+
+* **appium,base-driver,base-plugin,doctor,docutils,eslint-config-appium,execute-driver-plugin,fake-driver,fake-plugin,gulp-plugins,images-plugin,opencv,relaxed-caps-plugin,schema,support,test-support,types,universal-xml-plugin:** update engines ([d8d2382](https://github.com/appium/appium-plugins/commit/d8d2382327ba7b7db8a4d1cad987c0e60184c92d))
+
+
+
+
+
 # [1.0.0-beta.12](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.11...@appium/universal-xml-plugin@1.0.0-beta.12) (2022-07-28)
 
 

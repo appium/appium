@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@4.0.2...@appium/fake-driver@4.1.0) (2022-08-03)
+
+
+### Bug Fixes
+
+* **appium,base-driver,base-plugin,doctor,docutils,eslint-config-appium,execute-driver-plugin,fake-driver,fake-plugin,gulp-plugins,images-plugin,opencv,relaxed-caps-plugin,schema,support,test-support,types,universal-xml-plugin:** update engines ([d8d2382](https://github.com/appium/appium/commit/d8d2382327ba7b7db8a4d1cad987c0e60184c92d))
+
+
+### Features
+
+* **appium:** pass unknown args to extension scripts ([faff3ce](https://github.com/appium/appium/commit/faff3ce3471abaea24d2cb4c3e3b75b1af5ac3a1)), closes [#17250](https://github.com/appium/appium/issues/17250)
+
+
+
+
+
 ## [4.0.2](https://github.com/appium/appium/compare/@appium/fake-driver@4.0.1...@appium/fake-driver@4.0.2) (2022-07-28)
 
 

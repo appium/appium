@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.4](https://github.com/appium/appium/compare/@appium/eslint-config-appium@6.0.3...@appium/eslint-config-appium@6.0.4) (2022-08-03)
+
+
+### Bug Fixes
+
+* **appium,base-driver,base-plugin,doctor,docutils,eslint-config-appium,execute-driver-plugin,fake-driver,fake-plugin,gulp-plugins,images-plugin,opencv,relaxed-caps-plugin,schema,support,test-support,types,universal-xml-plugin:** update engines ([d8d2382](https://github.com/appium/appium/commit/d8d2382327ba7b7db8a4d1cad987c0e60184c92d))
+
+
+
+
+
 ## [6.0.3](https://github.com/appium/appium/compare/@appium/eslint-config-appium@6.0.2...@appium/eslint-config-appium@6.0.3) (2022-07-28)
 
 **Note:** Version bump only for package @appium/eslint-config-appium

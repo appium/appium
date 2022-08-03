@@ -1,6 +1,6 @@
 {
   "name": "@appium/eslint-config-appium",
-  "version": "6.0.3",
+  "version": "6.0.4",
   "description": "Shared config for Appium's eslint style",
   "keywords": [
     "eslint",

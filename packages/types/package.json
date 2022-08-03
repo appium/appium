@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "appium",
@@ -32,7 +32,7 @@
     "test:smoke": "echo 'No smoke test for this package'"
   },
   "dependencies": {
-    "@appium/schema": "^0.0.8",
+    "@appium/schema": "^0.0.9",
     "@types/express": "4.17.13",
     "@types/npmlog": "4.1.4",
     "@wdio/types": "7.20.7",

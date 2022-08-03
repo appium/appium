@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.42](https://github.com/appium/appium/compare/appium@2.0.0-beta.41...appium@2.0.0-beta.42) (2022-08-03)
+
+
+### Bug Fixes
+
+* **appium,base-driver,base-plugin,doctor,docutils,eslint-config-appium,execute-driver-plugin,fake-driver,fake-plugin,gulp-plugins,images-plugin,opencv,relaxed-caps-plugin,schema,support,test-support,types,universal-xml-plugin:** update engines ([d8d2382](https://github.com/appium/appium/commit/d8d2382327ba7b7db8a4d1cad987c0e60184c92d))
+* **appium:** add npm version check ([27ac2fa](https://github.com/appium/appium/commit/27ac2fa125bbfbe2e2ad5a3e7bf31d518510aa2d))
+* **appium:** partially revert 2a6a056187ce925d5776b7acc4954b10ecf9221b ([b7e905e](https://github.com/appium/appium/commit/b7e905eaf188f0f23f279620d8ce7dfba60f0b25))
+
+
+### Features
+
+* **appium:** pass unknown args to extension scripts ([faff3ce](https://github.com/appium/appium/commit/faff3ce3471abaea24d2cb4c3e3b75b1af5ac3a1)), closes [#17250](https://github.com/appium/appium/issues/17250)
+
+
+
+
+
 # [2.0.0-beta.41](https://github.com/appium/appium/compare/appium@2.0.0-beta.40...appium@2.0.0-beta.41) (2022-07-28)
 
 

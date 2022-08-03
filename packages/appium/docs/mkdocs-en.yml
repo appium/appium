@@ -50,6 +50,8 @@ nav:
       - ecosystem/build-drivers.md
       - ecosystem/build-plugins.md
       - ecosystem/build-docs.md
-  - Contributing: contributing/index.md
+  - Contributing: 
+    - contributing/index.md
+    - contributing/config-system.md
   - More Appium Resources: resources.md
   - Issues: https://github.com/appium/appium/issues

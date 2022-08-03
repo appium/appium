@@ -397,7 +397,7 @@ a) be a schema itself, or b) be a path to a schema file.
 The rules for these schemas:
 
 - Schemas must conform to [JSON Schema Draft-07](https://ajv.js.org/json-schema.html#draft-07).
-- Schemas must be in JSON or JS (CommonJS) format.
+- If the `schema` property is a path to a schema file, the file must be in JSON or JS (CommonJS) format.
 - Custom `$id` values are unsupported. To use `$ref`, provide a value relative to the schema root, e.g., `/properties/foo`.
 - Known values of the `format` keyword are likely supported, but various other keywords may be unsupported. If you find a keyword that is unsupported which you need to use, please [ask for support](https://github.com/appium/appium/issues/new) or send a PR!
 - The schema must be of type `object` (`{"type": "object"}`), containing the arguments in a `properties` keyword. Nested properties are unsupported.

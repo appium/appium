@@ -99,18 +99,14 @@ capability could be used with an extension object value to denote this driver, f
 
 ```json
 {
-    ...,
     "$cloud:appiumOptions": {
-        ...,
         "automation": {
             "name": "git+https://some-git-host.com/custom-driver-project.git",
             "version": "some-git-sha",
             "source": "git",
             "package": "driver-npm-package-name"
-        },
-        ...
-    },
-    ...
+        }
+    }
 }
 ```
 

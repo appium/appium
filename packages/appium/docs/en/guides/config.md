@@ -57,8 +57,7 @@ A description of the format is available, as well:
 - [TypeScript declarations for Appium Configuration](https://github.com/appium/appium/blob/master/packages/types/lib/config.ts)
 
 To describe in words, the config file will have a root `server` property, and all arguments are
-child properties. For certain properties which must be supplied as comma-delimited lists, JSON
-strings, and/or external filepaths, these instead will be of their "native" type. For example,
+child properties. For certain properties which must be supplied on the command-line as comma-delimited lists, JSON strings, and/or external filepaths, these instead will be of their "native" type. For example,
 `--use-plugins <value>` needs `<value>` to be comma-delimited string or path to a delimited file.
 However, the config file just wants an array, e.g.,:
 

@@ -25,7 +25,7 @@ You can store your config data in the following kinds of files:
 Configuration files can be named anything, but the following filenames will be automatically
 discovered and loaded by Appium:
 
-- `.appiumrc.json`
+- `.appiumrc.json` (recommended)
 - `.appiumrc.yaml`
 - `.appiumrc.yml`
 - `.appiumrc.js`

@@ -390,7 +390,7 @@ You can add custom CLI args if you want your driver to receive data from the com
 Appium server is started (for example, ports that a server administrator should set that should not
 be passed in as capabilities.
 
-To define CLI arguments (or configuration properties), your extension must provide a _schema_. In
+To define CLI arguments (or configuration properties) for the Appium server, your extension must provide a _schema_. In
 the `appium` property of your extension's `package.json`, add a `schema` property. This will either
 a) be a schema itself, or b) be a path to a schema file.
 

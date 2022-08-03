@@ -116,9 +116,7 @@ requested:
 
 ```json
 {
-    ...,
     "$cloud:appiumOptions": {
-        ...,
         "plugins": [{
             "name": "images",
             "version": "1.1.0"
@@ -127,10 +125,8 @@ requested:
             "version": "a83f2e",
             "source": "github",
             "package": "custom-plugin"
-        }],
-        ...,
+        }]
     }
-    ...
 }
 ```
 

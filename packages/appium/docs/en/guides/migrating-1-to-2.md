@@ -29,7 +29,7 @@ At this point, your drivers are installed and ready. There's a lot more you can 
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 
 ```
-npm install -g appium --use-drivers=xcuitest,uiautomator2
+npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
 This will install Appium and the two drivers for you in one go.
@@ -59,6 +59,16 @@ APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
 
 With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either `driver` or `plugin`) and the name of the extension. For example, `--chromedriver-executable` becomes `--driver-uiautomator2-chromedriver-executable`.
+
+### :bangbang: Driver-specific automation commands
+
+The definition of certain commands that pertain only to specific drivers has been moved to those
+drivers' implementations. For example, `pressKeyCode` is specific to the UiAutomator2 driver and is
+now understood only by that driver. In practice, the only breaking change here is the kind of error
+you would encounter if the appropriate driver is not installed. Previously, you would get a `501
+Not Yet Implemented` error if using a driver that didn't implement the command. Now, you will get
+a `404 Not Found` error because if a driver that doesn't know about the command is not active, the
+main Appium server will not define the route corresponding to the command.
 
 ### :bangbang: Driver updates
 
@@ -112,9 +122,11 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 
 (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object.
 
+For more information on capabilities, have a look at the [Capabilities Guide](caps.md).
+
 ### :bangbang: _Removed Commands_
 
-Commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
+In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
 
 - TODO (these commands are being identified and removed and will be updated here when complete)
 
@@ -138,11 +150,11 @@ If you use the advanced Execute Driver Script feature (which allows you to send 
 1. Install the plugin: `appium plugin install execute-driver`
 2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=execute-driver`
 
-### :bangbang: External Files No Longer Supported for `--nodeconfig`, `--allow-insecure` and `--deny-insecure`
+### :bangbang: External Files No Longer Supported for `--nodeconfig`, `--default-capabilities`, `--allow-insecure` and `--deny-insecure`
 
 These options can be provided as strings on the command line (a JSON string for `--nodeconfig` and a comma-separated list of strings for `--allow-insecure` and `--deny-insecure`). Arguments provided on the command line will likely need to be quoted or escaped.
 
-The recommended method to provide these options is now via a [configuration file](#tada-configuration-files).  Please see [JSON](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.json), [YAML](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.yaml), and [JS](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.js) for example config files.
+The recommended method to provide these options is now via a [configuration file](#tada-configuration-files).
 
 In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property.  Any CSV-like files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files (respectively); both are arrays of strings.
 
@@ -184,231 +196,12 @@ TODO
 
 ### :tada: Configuration Files
 
-Appium now supports _configuration files_ in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format.
-
-Please note that CLI arguments have _precedence_ over configuration files; if a value is set in a config file _and_ via CLI argument, the CLI argument is preferred.
-
-#### Supported Config File Locations
-
-Configuration files can be named anything, but the following filenames will be automatically discovered and loaded by Appium:
-
-- `.appiumrc.json`
-- `.appiumrc.yaml`
-- `.appiumrc.yml`
-- `.appiumrc.js`
-- `.appiumrc.cjs`
-- `appium.config.js`
-- `appium.config.cjs`
-- `.appiumrc` (which is considered to be JSON)
-
-Further, the `appium` property in your project's `package.json` can contain the configuration.
-
-Appium will search _up_ the directory tree from the current working directory for one of these files. If it reaches the current user's home directory or filesystem root, it will stop looking.
-
-To specify a custom location for your config file (and avoid searching), use `appium --config-file /path/to/config/file`.
-
-> Note: Configuration files in ESM format are not currently supported.
-
-#### Configuration File Format
-
-You might want to see examples:
-
-- [Appium Configuration - JSON](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.json)
-- [Appium Configuration - YAML](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.yaml)
-- [Appium Configuration - JS](https://github.com/appium/appium/blob/master/packages/appium/sample-code/appium.config.sample.js)
-
-Description of the format is available, as well:
-
-- [Appium Configuration File JSON Schema](https://github.com/appium/appium/blob/master/packages/appium/lib/appium-config.schema.json)
-- [TypeScript declarations for Appium Configuration](https://github.com/appium/appium/blob/master/packages/types/lib/config.ts)
-
-To describe in words, the config file will have a root `server` property, and all arguments are child properties. For certain properties which must be supplied as comma-delimited lists, JSON strings, and/or external filepaths, these instead will be of their "native" type. For example, `--use-plugins <value>` needs `<value>` to be comma-delimited string or path to a delimited file. However, the config file just wants an array, e.g.,:
-
-```json
-{
-  "server": {
-    "use-plugins": ["my-plugin", "some-other-plugin"]
-  }
-}
-```
-
-For `driver`-and-`plugin`-specific configuration, these live under the `server.driver` and `server.plugin` properties, respectively. Each driver or plugin will have its own named property, and the values of any specific configuration it provides are under this. For example:
-
-```json
-{
-  "server": {
-    "driver": {
-      "xcuitest": {
-        "webkit-debug-proxy-port": 5400
-      }
-    }
-  }
-}
-```
-
-> Note: The above configuration corresponds to the `--driver-xcuitest-webkid-debug-proxy-port` CLI argument.
-
-All properties are case-sensitive and will be in kebab-case. For example, `callback-port` is allowed, but `callbackPort` is not.
-
-### :tada: Driver and Plugin CLI args
-
-TODO
-
-#### For Extension Authors
-
-To define CLI arguments (or configuration properties), your extension must provide a _schema_. In the `appium` property of your extension's `package.json`, add a `schema` property. This will either a) be a schema itself, or b) be a path to a schema.
-
-The rules for these schemas:
-
-- Schemas must conform to [JSON Schema Draft-07](https://ajv.js.org/json-schema.html#draft-07).
-- Schemas must be in JSON or JS (CommonJS) format.
-- Custom `$id` values are unsupported. To use `$ref`, provide a value relative to the schema root, e.g., `/properties/foo`.
-- Known values of the `format` keyword are likely supported, but various other keywords may be unsupported. If you find a keyword that is unsupported which you need to use, please [ask for support](https://github.com/appium/appium/issues/new) or send a PR!
-- The schema must be of type `object` (`{"type": "object"}`), containing the arguments in a `properties` keyword. Nested properties are unsupported.
-
-Example:
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "test-web-server-port": {
-      "type": "integer",
-      "minimum": 1,
-      "maximum": 65535,
-      "description": "The port to use for the test web server"
-    },
-    "test-web-server-host": {
-      "type": "string",
-      "description": "The host to use for the test web server",
-      "default": "sillyhost"
-    }
-  }
-}
-```
-
-The above schema defines two properties which can be set via CLI argument or configuration file. If this extension is a _driver_ and its name is "horace", the CLI args would be `--driver-horace-test-web-server-port` and `--driver-horace-test-web-server-host`, respectively. Alternatively, a user could provide a configuration file containing:
-
-```json
-{
-  "server": {
-    "driver": {
-      "horace": {
-        "test-web-server-port": 1234,
-        "test-web-server-host": "localhorse"
-      }
-    }
-  }
-}
-```
+Appium now supports _configuration files_ in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the [Config Guide](config.md) for a full explanation.
 
 ## Special Notes for Cloud Providers
 
 The rest of this document has applied to Appium generally, but some of the architectural changes in Appium 2.0 will constitute breaking changes for Appium-related service providers, whether a cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium server is responsible for installing and making available the various Appium drivers and plugins that end users may wish to use.
 
-With Appium 2.0, we enter a new era where end users may wish to target various independent versions of drivers and plugins. With Appium 1.x, this was never the case, since any given version of Appium would contain one and only one version of each driver. It is of course up to each service provider how they wish to implement the discovery, installation, and availability of any official or third party drivers or plugins. But the Appium team wants to make a recommendation in terms of the capabilities service providers support, for consistency across the industry. This is a recommendation only, and not a standard, but adopting it will help users to navigate the increased complexity that working with Appium 2.0 in a cloud environment may bring.
-
-### Suggested capabilities
-
-In addition to the standard `platformName`, `appium:deviceName`, `appium:automationName`, and `appium:platformVersion`, we recommend adopting the capability `$cloud:appiumOptions`, where the label `$cloud` is not meant to be interpreted literally but instead should be replaced by your vendor prefix (so for HeadSpin it would be `headspin`, Sauce Labs it would be `sauce`, and BrowserStack it would be `browserstack`, to name just a few examples). The `$cloud:appiumOptions` capability would itself be a JSON object, with the following internal keys:
-
-| Capability          | Used for                                                                                                                                                                                                  | Example                                                                         |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `version`           | Designating which version of the Appium server is used to host and manage drivers. If ommitted, behavior left up to the provider, but the recommendation would be to provide the latest official version. | `2.0.0`                                                                         |
-| `automationVersion` | Designating which version of the specified driver should be used.                                                                                                                                         | `1.55.2`                                                                        |
-| `automation`        | Designating a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`                                                                  | `{"name": "org/custom-driver", "source": "github", "package": "custom-driver"}` |
-| `plugins`           | Designating the list of plugins (and potentially versions of plugins) to be activated (see below for more info).                                                                                          | `["images", "universal-xml"]`                                                   |
-
-### Basic example
-
-Appium extensions (drivers and plugins) have a set of properties that specify where they can be installed from. Cloud providers are obviously under no obligation to provide support for arbitrarily specified extensions, seeing as these may represent untrusted code running in a managed environment. In the case where arbitrary extensions are not supported, the `appium:automationName`, `$cloud:automationVersion`, and `$cloud:appiumPlugins` capabilities should be sufficient. See the following JSON object representing capabilities for a session:
-
-```json
-{
-  "platformName": "iOS",
-  "appium:platformVersion": "14.4",
-  "appium:deviceName": "iPhone 11",
-  "appium:app": "Some-App.app.zip",
-  "appium:automationName": "XCUITest",
-  "$cloud:appiumOptions": {
-    "appiumVersion": "2.0.0",
-    "automationVersion": "3.52.0",
-    "plugins": ["images"]
-  }
-}
-```
-
-This set of capabilities requests an Appium 2.0 server supporting the XCUITest driver at version `3.52.0`, and the `images` plugin active. This set is easy for a cloud provider to verify. The cloud provider can obviously do anything it wants in response to these capabilities, including downloading Appium and driver and plugin packages on the fly, or erroring out if the versions requested are not in a supported set, or if the plugin is not supported, etc...
-
-### Basic example with `appium:options`
-
-The previous example still looks a bit disorganized, so of course we also recommend that cloud providers support the `appium:options` capability as detailed above, which could turn the previous set of capabilities into the following:
-
-```json
-{
-  "platformName": "iOS",
-  "appium:options": {
-    "platformVersion": "14.4",
-    "deviceName": "iPhone 11",
-    "app": "Some-App.app.zip",
-    "automationName": "XCUITest"
-  },
-  "$cloud:appiumOptions": {
-    "appiumVersion": "2.0.0",
-    "automationVersion": "3.52.0",
-    "plugins": ["images"]
-  }
-}
-```
-
-### Extension objects
-
-Some service providers may wish to dynamically allow access to all of the features of the Appium 2.0 CLI, including downloading arbitrary drivers and plugins. To represent these extensions, we can define special JSON "extension objects", with the following keys:
-
-- `name`: the name of the extension. This would be an NPM package name (if downloading from NPM), or a git or GitHub spec (if downloading from a git server or GitHub).
-- `version`: the version of the extension, e.g., the NPM package version or Git SHA.
-- (optional) `source`: a denotation of where the extension can be downloaded from. Recommended to support the following values: `appium`, `npm`, `git`, `github`. Here, `appium` means "Appium's own official list", and should be the default value if this key is not included.
-- (optional) `package`: when downloading extensions from git or github, the NPM package name of the extension must also be provided. This is optional for non-git sources.
-
-Since each session is handled by a single driver, the `$cloud:appiumOptions`/`$automation` capability could be used with an extension object value to denote this driver, for example:
-
-```json
-{
-    ...,
-    "$cloud:appiumOptions": {
-        ...,
-        "automation": {
-            "name": "git+https://some-git-host.com/custom-driver-project.git",
-            "version": "some-git-sha",
-            "source": "git",
-            "package": "driver-npm-package-name"
-        },
-        ...
-    },
-    ...
-}
-```
-
-And since sessions can handle multiple plugins, each value in the list of `$cloud:appiumPlugins` could also be an extension object rather than a string, so that specific versions could be requested:
-
-```json
-{
-    ...,
-    "$cloud:appiumOptions": {
-        ...,
-        "plugins": [{
-            "name": "images",
-            "version": "1.1.0"
-        }, {
-            "name": "my-github-org/my-custom-plugin",
-            "version": "a83f2e",
-            "source": "github",
-            "package": "custom-plugin"
-        }],
-        ...,
-    }
-    ...
-}
-```
-
-These serve as illustrative examples for the recommendations here. Of course it is up to the service providers to implement the handling of these capabilities at their front end / load balancer, to perform any error checking, or to actually run any of the `appium driver` or `appium plugin` CLI commands that support the end user's request. This section is merely a suggestion as to how service providers might design their user-facing capabilities API in a way which in principle supports all of the capabilities Appium itself would provide to the end user if they were running Appium on their own.
+We encourage cloud providers to thoroughly read and understand our [recommendation for cloud
+provider capabilities](caps.md#special-notes-for-cloud-providers) in order to support user needs in
+an industry-compatible way!

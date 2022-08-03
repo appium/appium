@@ -390,11 +390,56 @@ You can add custom CLI args if you want your driver to receive data from the com
 Appium server is started (for example, ports that a server administrator should set that should not
 be passed in as capabilities.
 
-To do this you define a `schema` field within the `appium` field in `package.json`, pointing to
-a JS or JSON file defining an argument schema. (See the schema in `fake-driver`, for example).
-Arguments you define there will be available as a `--driver-<name>-<arg-name>` flag on the command
-line. If you define `my-arg` in the schema, for example, and if your driver's name is `awesome`,
-then users will be able to set your arg via `--driver-awesome-my-arg`.
+To define CLI arguments (or configuration properties) for the Appium server, your extension must provide a _schema_. In
+the `appium` property of your extension's `package.json`, add a `schema` property. This will either
+a) be a schema itself, or b) be a path to a schema file.
+
+The rules for these schemas:
+
+- Schemas must conform to [JSON Schema Draft-07](https://ajv.js.org/json-schema.html#draft-07).
+- If the `schema` property is a path to a schema file, the file must be in JSON or JS (CommonJS) format.
+- Custom `$id` values are unsupported. To use `$ref`, provide a value relative to the schema root, e.g., `/properties/foo`.
+- Known values of the `format` keyword are likely supported, but various other keywords may be unsupported. If you find a keyword that is unsupported which you need to use, please [ask for support](https://github.com/appium/appium/issues/new) or send a PR!
+- The schema must be of type `object` (`{"type": "object"}`), containing the arguments in a `properties` keyword. Nested properties are unsupported.
+
+Example:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "test-web-server-port": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535,
+      "description": "The port to use for the test web server"
+    },
+    "test-web-server-host": {
+      "type": "string",
+      "description": "The host to use for the test web server",
+      "default": "sillyhost"
+    }
+  }
+}
+```
+
+The above schema defines two properties which can be set via CLI argument or configuration file. If
+this extension is a _driver_ and its name is "horace", the CLI args would be
+`--driver-horace-test-web-server-port` and `--driver-horace-test-web-server-host`, respectively.
+Alternatively, a user could provide a configuration file containing:
+
+```json
+{
+  "server": {
+    "driver": {
+      "horace": {
+        "test-web-server-port": 1234,
+        "test-web-server-host": "localhorse"
+      }
+    }
+  }
+}
+```
 
 ### Add driver scripts
 

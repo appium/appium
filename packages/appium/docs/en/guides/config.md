@@ -41,8 +41,7 @@ Further, _if your project uses Node.js,_ you can use store the configuration ins
 Appium will search _up_ the directory tree from the current working directory for one of these
 files. If it reaches the current user's home directory or filesystem root, it will stop looking.
 
-To specify a custom location for your config file (and avoid searching), use `appium --config-file
-/path/to/config/file`.
+To specify a _custom_ location for your config file, use `appium --config-file /path/to/config/file`.
 
 #### Configuration File Format
 

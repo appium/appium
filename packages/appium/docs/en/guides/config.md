@@ -69,6 +69,8 @@ However, the config file just wants an array, e.g.,:
 }
 ```
 
+## Configuring extensions (drivers and plugins)
+
 For `driver`-and-`plugin`-specific configuration, these live under the `server.driver` and
 `server.plugin` properties, respectively. Each driver or plugin will have its own named property,
 and the values of any specific configuration it provides are under this. For example:

@@ -29,7 +29,7 @@ At this point, your drivers are installed and ready. There's a lot more you can 
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 
 ```
-npm install -g appium --drivers=xcuitest,uiautomator2
+npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
 This will install Appium and the two drivers for you in one go.

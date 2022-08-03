@@ -89,5 +89,5 @@ and the values of any specific configuration it provides are under this. For exa
 
     The above configuration corresponds to the `--driver-xcuitest-webkit-debug-proxy-port` CLI argument.
 
-All properties are case-sensitive and will be in kebab-case. For example, `callback-port` is
+All properties are case-sensitive and will be in [kebab-case](https://en.wikipedia.org/wiki/Naming_convention_(programming)#Delimiter-separated_words). For example, `callback-port` is
 allowed, but `callbackPort` is not.

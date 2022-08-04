@@ -36,7 +36,7 @@ module.exports = (wallaby) => {
       '!**/local_appium_home/**',
     ],
     testFramework: 'mocha',
-    tests: ['./packages/*/test/unit/**/*.spec.js'],
+    tests: ['./packages/*/test/unit/**/*.spec.js', '!**/local_appium_home/**'],
     workers: {
       restart: true,
     },

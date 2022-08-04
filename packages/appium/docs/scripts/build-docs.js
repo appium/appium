@@ -19,7 +19,7 @@ const {version} = require('../../package.json');
 
 const branch = process.env.APPIUM_DOCS_BRANCH || DOCS_BRANCH;
 const prefix = process.env.APPIUM_DOCS_PREFIX || DOCS_PREFIX;
-const remote = process.env.APPIUM_DOCS_PREFIX || DOCS_REMOTE;
+const remote = process.env.APPIUM_DOCS_REMOTE || DOCS_REMOTE;
 
 const shouldPush = !!process.env.APPIUM_DOCS_PUBLISH;
 

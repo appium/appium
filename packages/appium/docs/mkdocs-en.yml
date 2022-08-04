@@ -1,6 +1,6 @@
 INHERIT: ./base-mkdocs.yml
 site_url: https://appium.github.io/appium/docs/en
-edit_uri: edit/2.0/packages/appium/docs/en
+edit_uri: edit/master/packages/appium/docs/en
 site_description: The Appium automation project documentation
 
 docs_dir: en

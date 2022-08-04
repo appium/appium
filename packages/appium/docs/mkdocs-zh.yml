@@ -1,6 +1,6 @@
 INHERIT: ./base-mkdocs.yml
 site_url: https://appium.github.io/appium/docs/zh
-edit_uri: edit/2.0/packages/appium/docs/zh
+edit_uri: edit/master/packages/appium/docs/zh
 site_description: The Appium automation project documentation
 
 docs_dir: zh

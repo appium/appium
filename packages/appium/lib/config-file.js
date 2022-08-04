@@ -161,7 +161,9 @@ export function normalizeConfig(config) {
 
     return _.mapValues(mappedObj, (value, property) => {
       const nextSection = section ? `${section}.${property}` : property;
-      return isSchemaTypeObject(value) ? normalize(config, nextSection) : value;
+      return isSchemaTypeObject(schema.properties?.[property])
+        ? normalize(config, nextSection)
+        : value;
     });
   };
 
@@ -169,7 +171,7 @@ export function normalizeConfig(config) {
    * Returns `true` if the schema prop references an object, or if it's an object itself
    * @param {import('ajv').SchemaObject|object} schema - Referencing schema object
    */
-  const isSchemaTypeObject = (schema) => Boolean(schema.properties);
+  const isSchemaTypeObject = (schema) => Boolean(schema?.properties || schema?.type === 'object');
 
   return normalize(config);
 }

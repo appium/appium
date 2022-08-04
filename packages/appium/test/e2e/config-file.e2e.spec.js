@@ -33,7 +33,7 @@ describe('config file behavior', function () {
       it('should return a valid config object', async function () {
         const result = await readConfigFile(GOOD_FILEPATH);
         result.should.deep.equal({
-          config: require(GOOD_FILEPATH),
+          config: normalizeConfig(require(GOOD_FILEPATH)),
           filepath: GOOD_FILEPATH,
           errors: [],
         });
@@ -74,7 +74,7 @@ describe('config file behavior', function () {
           it('should return a valid config object', async function () {
             const result = await readConfigFile(SECURITY_ARRAY_FILEPATH);
             result.should.deep.equal({
-              config: require(SECURITY_ARRAY_FILEPATH),
+              config: normalizeConfig(require(SECURITY_ARRAY_FILEPATH)),
               filepath: SECURITY_ARRAY_FILEPATH,
               errors: [],
             });

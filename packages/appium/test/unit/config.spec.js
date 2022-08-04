@@ -60,7 +60,7 @@ describe('Config', function () {
             {
               config: {
                 // @ts-expect-error
-                server: {callbackAddress: 'quux'},
+                server: {'callback-address': 'quux'},
               },
             },
             {port: 1234},

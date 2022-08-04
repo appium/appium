@@ -34,6 +34,11 @@ describe('config-file', function () {
   let formatErrors;
 
   /**
+   * @type {import('appium/lib/config-file').normalizeConfig}
+   */
+  let normalizeConfig;
+
+  /**
    * Mock instance of `lilconfig` containing stubs for
    * `lilconfig#search()` and `lilconfig#load`.
    * Not _actually_ a `SinonStubbedInstance`, but duck-typed.
@@ -93,7 +98,7 @@ describe('config-file', function () {
     // loads the `config-file` module using the lilconfig mock.
     // we only mock lilconfig because it'd otherwise be a pain in the rear to test
     // searching for config files, and it increases the likelihood that we'd load the wrong file.
-    ({readConfigFile, formatErrors} = rewiremock.proxy(
+    ({readConfigFile, formatErrors, normalizeConfig} = rewiremock.proxy(
       () => require('../../lib/config-file'),
       mocks
     ));
@@ -114,19 +119,19 @@ describe('config-file', function () {
 
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
-      expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(schema.validate).to.have.been.calledOnce;
     });
 
     it('should support json', async function () {
       const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
-      expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(schema.validate).to.have.been.calledOnce;
     });
 
     it('should support js', async function () {
       const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
-      expect(config).to.eql(GOOD_JSON_CONFIG);
+      expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
       expect(schema.validate).to.have.been.calledOnce;
     });
 
@@ -188,7 +193,7 @@ describe('config-file', function () {
 
             it('should resolve with an object having `config` property and empty array of errors', function () {
               expect(result).to.deep.equal({
-                config: GOOD_JSON_CONFIG,
+                config: normalizeConfig(GOOD_JSON_CONFIG),
                 errors: [],
                 filepath: GOOD_JSON_CONFIG_FILEPATH,
               });
@@ -291,7 +296,7 @@ describe('config-file', function () {
             it('should resolve with an object having `config` property and empty array of errors', function () {
               expect(result).to.deep.equal({
                 errors: [],
-                config: GOOD_JSON_CONFIG,
+                config: normalizeConfig(GOOD_JSON_CONFIG),
                 filepath: GOOD_JSON_CONFIG_FILEPATH,
               });
             });

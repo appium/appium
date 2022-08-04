@@ -113,6 +113,20 @@ class FakeDriver extends BaseDriver {
     },
   };
 
+  static executeMethodMap = {
+    'fake: addition': {
+      command: 'fakeAddition',
+      params: {required: ['num1', 'num2'], optional: ['num3']},
+    },
+    'fake: getThing': {
+      command: 'getFakeThing',
+    },
+    'fake: setThing': {
+      command: 'setFakeThing',
+      params: {required: ['thing']},
+    },
+  };
+
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }

@@ -44,6 +44,19 @@ export interface SessionCommands {
   getSession(): Promise<SingularSessionData>;
 }
 
+export interface ExecuteCommands {
+  executeMethod(script: string, args: [Record<string, any>]|[]): Promise<any>;
+}
+
+export interface ExecuteOverloadDef {
+  command: string,
+  params?: {
+    required?: string[],
+    optional?: string[],
+  }
+};
+export type ExecuteMethodMap = Record<string, ExecuteOverloadDef>;
+
 export interface MultiSessionData {
   id: string;
   capabilities: Capabilities;
@@ -574,6 +587,7 @@ export interface DriverStatic {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
   newMethodMap?: MethodMap<ExternalDriver>;
+  executeMethodMap: ExecuteMethodMap;
 }
 
 /**

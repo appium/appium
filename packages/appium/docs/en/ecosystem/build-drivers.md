@@ -537,7 +537,7 @@ behaviours that don't map to any of the existing commands, you can create new co
 two ways:
 
 1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
-1. Overloading the Execute Script command
+1. Overloading the Execute Script command by defining "Execute Methods"
 
 If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the `newMethodMap`
@@ -566,11 +566,11 @@ create and release client-side plugins for each language you want to support (di
 examples can be found at the relevant client docs).
 
 An alternative to this way of doing things is to overload a command which all WebDriver clients
-have access to already: Execute Script. A common driver pattern is to create a magic prefix which
-the driver looks for at the beginning of any Execute Script invocation, and if it's present, to
-treat the rest of the script string as the name of a custom command to execute. This works in large
-part because for most platforms beyond web browsers, executing arbitrary JavaScript isn't a thing
-that makes sense.
+have access to already: Execute Script. Appium provides some convenience methods for making this
+easy. The convention is to create a sort of magic prefix for your users, which the driver looks for
+at the beginning of any Execute Script invocation, and if it's present, to treat the rest of the
+script string as the name of a custom command to execute. This works in large part because for most
+platforms beyond web browsers, executing arbitrary JavaScript isn't a thing that makes sense.
 
 Let's say you are building a driver for stereo system called `soundz`, and you wanted to create
 a command for playing a song by name. You could expose this to your users in such a way that they
@@ -581,21 +581,37 @@ call something like:
 driver.executeScript('soundz: playSong', [{song: 'Stairway to Heaven', artist: 'Led Zeppelin'}]);
 ```
 
-Then in your driver code you could simply look for `soundz:` at the beginning of your
-`execute` override, and do the appropriate thing:
+Then in your driver code you could simply define the magic static field `executeMethodMap` as
+a mapping of script names to member functions on your driver. It has the same basic form as
+`newMethodMap`. All you need to do at that point is implement the `execute` the command to take
+advantage of the built-in `executeMethod` method available on all drivers:
 
 ```js
-async execute(script, args) {
-  if (script === 'soundz: playSong') {
-    const {song, artist} = args[0];
-    // play the song based on song and artist details
-    return;
-  }
+static executeMethodMap = {
+  command: 'soundz: playSong',
+  params: {required: ['song', 'artist'], optional: []},
+}
 
-  // otherwise do the normal thing, or throw errors.NotYetImplementedError if you have nothing to
-  // do (see the section on WebDriver errors in this guide)
+async soundzPlaySong(song, artist) {
+  // play the song based on song and artist details
+}
+
+async execute(script, args) {
+  return await this.executeMethod(script, args);
 }
 ```
+
+A couple notes about this system:
+1. Arguments sent via `executeScript` will be unwrapped, the first argument selected as containing
+   parameters, validated, and then applied to your overload method in the order specified in
+   `executeMethodMap`. I.e., this framework assumes only a single actual argument sent in via
+   `executeScript` (and this argument should be an object with keys/values representing the
+   parameters your Execute Method expects).
+1. Your overload will always be bound to the driver instance.
+1. Appium does not automatically implement `execute` for you. You may wish, for example, to only
+   call the `executeMethod` helper function when you're not in proxy mode!
+1. The `executeMethod` helper will throw an error if a script name doesn't match one of the
+   script names defined as a command in `executeMethodMap`, or if there are missing parameters.
 
 ### Implement handling of Appium settings
 

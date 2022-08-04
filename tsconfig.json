@@ -1,5 +1,8 @@
 {
   "files": [],
+  "compilerOptions": {
+    "esModuleInterop": true
+  },
   "references": [
     {
       "path": "packages/schema"

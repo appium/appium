@@ -40,6 +40,7 @@ async function server(opts) {
     routeConfiguringFunction,
     port,
     hostname,
+    cliArgs,
     allowCors = true,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
@@ -71,7 +72,7 @@ async function server(opts) {
       });
       // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {
-        await updater(app, appiumServer);
+        await updater(app, appiumServer, cliArgs);
       }
 
       // once all configurations and updaters have been applied, make sure to set up a catchall
@@ -292,6 +293,7 @@ export {server, configureServer, normalizeBasePath};
  * @typedef ServerOpts
  * @property {RouteConfiguringFunction} routeConfiguringFunction
  * @property {number} port
+ * @property {import('@appium/types').ServerArgs} cliArgs
  * @property {string} [hostname]
  * @property {boolean} [allowCors]
  * @property {string} [basePath]

@@ -136,6 +136,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         routeConfiguringFunction: routeConfiguringFunction(d),
         port,
         hostname: address,
+        // @ts-expect-error
+        cliArgs: {},
       });
       ({startSession, getSession, endSession, newSessionURL, getCommand, postCommand} =
         createSessionHelpers(port, address));

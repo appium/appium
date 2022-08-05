@@ -24,7 +24,7 @@ const wdOpts = {
   capabilities: W3C_PREFIXED_CAPS,
 };
 const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
-const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'node_modules', '@appium', 'fake-plugin');
+const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-plugin');
 
 describe('FakePlugin', function () {
   /** @type {string} */
@@ -150,9 +150,11 @@ describe('FakePlugin', function () {
     describe(`with plugin registered via type ${registrationType}`, function () {
       /** @type {AppiumServer} */
       let server;
+      /** @type {import('type-fest').LiteralUnion<'all', string>[]} */
+      let usePlugins;
       before(async function () {
         // then start server if we need to
-        const usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
+        usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
         const args = {
           appiumHome,
           port,
@@ -171,7 +173,12 @@ describe('FakePlugin', function () {
         const res = {fake: 'fakeResponse'};
         (await axios.post(`http://${TEST_HOST}:${port}/fake`)).data.should.eql(res);
       });
-
+      it('should update the server with cliArgs', async function () {
+        const res = usePlugins;
+        // we don't need to check the entire object, since it's large, but we can ensure an
+        // arg got through.
+        (await axios.post(`http://${TEST_HOST}:${port}/cliArgs`)).data.usePlugins.should.eql(res);
+      });
       it('should modify the method map with new commands', async function () {
         const driver = await wdio(wdOpts);
         const {sessionId} = driver;

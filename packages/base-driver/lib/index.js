@@ -37,3 +37,7 @@ export {
 
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
+
+/**
+ * @typedef {import('./express/server').ServerOpts} ServerOpts
+ */

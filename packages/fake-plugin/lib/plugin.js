@@ -40,9 +40,12 @@ class FakePlugin extends BasePlugin {
   }
 
   // eslint-disable-next-line no-unused-vars,require-await
-  static async updateServer(expressApp, httpServer) {
+  static async updateServer(expressApp, httpServer, cliArgs) {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);
+    expressApp.all('/cliArgs', (req, res) => {
+      res.send(JSON.stringify(cliArgs));
+    });
   }
 
   async getPageSource(next, driver, ...args) {

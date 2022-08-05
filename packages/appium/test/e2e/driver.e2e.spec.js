@@ -114,6 +114,14 @@ describe('FakeDriver - via HTTP', function () {
       const {data} = await axios.get(`${testServerBaseUrl}/fakedriver`);
       data.should.eql({fakedriver: 'fakeResponse'});
     });
+    it('should update the server with cliArgs', async function () {
+      // we don't need to check the entire object, since it's large, but we can ensure an
+      // arg got through.
+      (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data.should.have.property(
+        'appiumHome',
+        appiumHome
+      );
+    });
   });
 
   describe('cli args handling for empty args', function () {

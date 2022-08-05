@@ -161,8 +161,10 @@ export type ExtensionType = DriverType | PluginType;
  *
  * @param expressApp - the Express 'app' object used by Appium for route handling
  * @param httpServer - the node HTTP server that hosts the app
+ * @param cliArgs - Arguments from config files, CLI, etc.
  */
-export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServer) => Promise<void>;
+export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServer, cliArgs: ServerArgs) => Promise<void>;
+
 
 /**
  * Possible HTTP methods, as stolen from `axios`.

@@ -1,4 +1,4 @@
-import {MethodMap, UpdateServerCallback, Class, AppiumLogger} from '.';
+import {MethodMap, UpdateServerCallback, Class, AppiumLogger, PluginType} from '.';
 import {Driver, ExternalDriver} from './driver';
 
 /**

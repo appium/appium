@@ -304,6 +304,7 @@ async function main(args) {
   const serverUpdaters = getServerUpdaters(driverClasses, pluginClasses);
   const extraMethodMap = getExtraMethodMap(driverClasses, pluginClasses);
 
+  /** @type {import('@appium/base-driver').ServerOpts} */
   const serverOpts = {
     routeConfiguringFunction,
     port: parsedArgs.port,
@@ -312,6 +313,7 @@ async function main(args) {
     basePath: parsedArgs.basePath,
     serverUpdaters,
     extraMethodMap,
+    cliArgs: parsedArgs,
   };
   if (parsedArgs.keepAliveTimeout) {
     serverOpts.keepAliveTimeout = parsedArgs.keepAliveTimeout * 1000;

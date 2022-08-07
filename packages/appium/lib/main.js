@@ -4,7 +4,7 @@ import {init as logsinkInit} from './logsink'; // this import needs to come firs
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {logger as logFactory, util, env, system} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -27,6 +27,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
 import {inspect} from './utils';
+import path from 'path';
 
 const {resolveAppiumHome} = env;
 
@@ -119,6 +120,38 @@ function logServerPort(address, port) {
 }
 
 /**
+ * Adjusts NODE_PATH environment variable,
+ * so drivers and plugins could load their peer dependencies.
+ * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
+ * for more details.
+ * @returns {void}
+ */
+function adjustNodePath() {
+  const pathParts = __filename.split(path.delimiter);
+  const nodeModulesIdx = pathParts.findIndex((item) => item === 'node_modules');
+  if (nodeModulesIdx < 0) {
+    return;
+  }
+
+  const nodeModulesRoot = path.join(...(pathParts.slice(0, nodeModulesIdx + 1)));
+  if (!process.env.NODE_PATH) {
+    logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
+    process.env.NODE_PATH = nodeModulesRoot;
+    return;
+  }
+
+  const pathsSeparator = system.isWindows() ? ';' : ':';
+  const nodePathParts = process.env.NODE_PATH.split(pathsSeparator);
+  if (nodePathParts.includes(nodeModulesRoot)) {
+    return;
+  }
+
+  nodePathParts.push(nodeModulesRoot);
+  logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
+  process.env.NODE_PATH = nodePathParts.join(pathsSeparator);
+}
+
+/**
  * Gets a list of `updateServer` functions from all extensions
  * @param {DriverNameMap} driverClasses
  * @param {PluginNameMap} pluginClasses
@@ -171,6 +204,8 @@ function areServerCommandArgs(args) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+
+  adjustNodePath();
 
   const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 

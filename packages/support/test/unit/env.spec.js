@@ -70,12 +70,25 @@ describe('env', function () {
     });
 
     describe('when APPIUM_HOME is set in env', function () {
-      beforeEach(function () {
-        process.env.APPIUM_HOME = '/some/path/to/appium';
+      describe('when APPIUM_HOME is absolute', function () {
+        beforeEach(function () {
+          process.env.APPIUM_HOME = '/some/path/to/appium-home';
+        });
+
+        it('should resolve APPIUM_HOME from env', async function () {
+          await expect(env.resolveAppiumHome()).to.eventually.equal(process.env.APPIUM_HOME);
+        });
       });
 
-      it('should resolve APPIUM_HOME from env', async function () {
-        await expect(env.resolveAppiumHome()).to.eventually.equal(process.env.APPIUM_HOME);
+      describe('when APPIUM_HOME is relative', function () {
+        beforeEach(function () {
+          process.env.APPIUM_HOME = 'some/path/to/appium-home';
+        });
+        it('should resolve to an absolute path', async function () {
+          await expect(env.resolveAppiumHome()).to.eventually.equal(
+            path.join(process.cwd(), process.env.APPIUM_HOME)
+          );
+        });
       });
     });
 

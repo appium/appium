@@ -112,6 +112,8 @@ export const readPackageInDir = _.memoize(
  * - If `APPIUM_HOME` is set in the environment, use that
  * - If we have an `extensions.yaml` in {@linkcode DEFAULT_APPIUM_HOME}, then use that.
  * - If we find a `package.json` in or above `cwd` and {@linkcode shouldUseCwdForAppiumHome} returns `true`, then use the directory containing the `package.json`.
+ *
+ * All returned paths will be absolute.
  */
 export const resolveAppiumHome = _.memoize(
   /**
@@ -119,12 +121,12 @@ export const resolveAppiumHome = _.memoize(
    * @returns {Promise<string>}
    */
   async function _resolveAppiumHome(cwd = process.cwd()) {
-    if (process.env.APPIUM_HOME) {
-      return process.env.APPIUM_HOME;
-    }
-
     if (!path.isAbsolute(cwd)) {
       throw new TypeError('`cwd` parameter must be an absolute path');
+    }
+
+    if (process.env.APPIUM_HOME) {
+      return path.resolve(cwd, process.env.APPIUM_HOME);
     }
 
     /** @type {string|undefined} */
@@ -136,6 +138,10 @@ export const resolveAppiumHome = _.memoize(
       // if we can't find a `package.json`, use the default
       if (!currentPkgDir) {
         return DEFAULT_APPIUM_HOME;
+      } else {
+        // it's unclear from the contract of `pkgDir` whether or not it can return a relative path,
+        // so let's just be defensive.
+        currentPkgDir = path.resolve(cwd, currentPkgDir);
       }
     } catch {
       // unclear if this can actually happen

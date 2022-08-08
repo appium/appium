@@ -1,18 +1,12 @@
 module.exports = {
-  parser: '@babel/eslint-parser',
   parserOptions: {
     requireConfigFile: false,
-    ecmaVersion: 12,
     sourceType: 'module',
-    ecmaFeatures: {
-      impliedStrict: true,
-      experimentalObjectRestSpread: true,
-    },
   },
   env: {
     node: true,
     mocha: true,
-    es6: true,
+    es2022: true,
   },
   plugins: ['import', 'mocha', 'promise'],
   globals: {

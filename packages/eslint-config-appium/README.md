@@ -1,18 +1,16 @@
-## Appium ESLint Shared Configuation
+# @appium/eslint-config-appium
 
-This package works to provide [eslint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) to replace the need for a local `.eslintrc` file.
+> Provides a reusable [ESLint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
-It uses [babel-eslint](https://github.com/babel/babel-eslint) as a parser.
+## Usage
 
-### Usage
-
-Install the package
+Install the package with **`npm` v7 or newer** (for automatic installation of peer dependencies):
 
 ```bash
-npm install @appium/eslint-config-appium eslint-plugin-import eslint-plugin-mocha eslint-plugin-promise -D
+npm install @appium/eslint-config-appium --save-dev
 ```
 
-And then, in your `.eslintrc` file extend the configuration
+And then, in your `.eslintrc` file, extend the configuration:
 
 ```json
 {
@@ -20,18 +18,21 @@ And then, in your `.eslintrc` file extend the configuration
 }
 ```
 
-If you are using [@appium/gulp-plugins](https://www.npmjs.com/package/@appium/gulp-plugins) you can then run
+## Peer Dependencies
 
-```bash
-gulp eslint
-```
+This config requires the following packages be installed (as dev dependencies) in your project.  See the `package.json` for the required versions.
 
-### Peer Dependencies
+- [eslint](https://www.npmjs.com/package/eslint)
+- [eslint-config-prettier](https://www.npmjs.com/package/eslint-config-prettier)
+- [eslint-plugin-import](https://www.npmjs.com/package/eslint-plugin-import)
+- [eslint-plugin-mocha](https://www.npmjs.com/package/eslint-plugin-mocha)
+- [eslint-plugin-promise](https://www.npmjs.com/package/eslint-plugin-promise)
 
-This config requires the following packages be installed (as dev dependencies) in your project:
+## Notes
 
-* [babel-eslint](https://www.npmjs.com/package/babel-eslint)
-* [eslint](https://www.npmjs.com/package/eslint)
-* [eslint-plugin-import](https://www.npmjs.com/package/eslint-plugin-import)
-* [eslint-plugin-mocha](https://www.npmjs.com/package/eslint-plugin-mocha)
-* [eslint-plugin-promise](https://www.npmjs.com/package/eslint-plugin-promise)
+- This configuration is intended to be used alongside [Prettier](https://www.npmjs.com/package/prettier).
+- This package was previously published as `eslint-config-appium`.
+
+## License
+
+Copyright © 2016 OpenJS Foundation. Licensed Apache-2.0

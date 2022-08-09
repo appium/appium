@@ -223,14 +223,14 @@ async function adjustNodePath() {
     .split(path.sep)
     .map((x) => x === '' ? path.sep : x);
   let nodeModulesRoot = null;
-  for (let folderIdx = pathParts.length - 1; folderIdx > 0; --folderIdx) {
-    const manifestPath = path.join(...(pathParts.slice(0, folderIdx + 1)), 'package.json');
+  for (let pathItemIdx = pathParts.length - 1; pathItemIdx > 0; --pathItemIdx) {
+    const manifestPath = path.join(...(pathParts.slice(0, pathItemIdx)), 'package.json');
     if (!await fs.exists(manifestPath)) {
       continue;
     }
     try {
       if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
-        nodeModulesRoot = path.join(...(pathParts.slice(0, folderIdx)));
+        nodeModulesRoot = path.join(...(pathParts.slice(0, pathItemIdx - 1)));
         break;
       }
     } catch (ign) {}

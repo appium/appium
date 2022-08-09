@@ -4,7 +4,7 @@ import {init as logsinkInit} from './logsink'; // this import needs to come firs
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env, system} from '@appium/support';
+import {logger as logFactory, util, env, system, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -124,16 +124,30 @@ function logServerPort(address, port) {
  * so drivers and plugins could load their peer dependencies.
  * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
  * for more details.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function adjustNodePath() {
+async function adjustNodePath() {
   const pathParts = __filename.split(path.delimiter);
-  const nodeModulesIdx = pathParts.findIndex((item) => item === 'node_modules');
-  if (nodeModulesIdx < 0) {
+  let nodeModulesRoot = null;
+  for (let folderIdx = pathParts.length - 1; folderIdx >= 0; folderIdx--) {
+    const currentRoot = path.join(...(pathParts.slice(0, folderIdx + 1)));
+    const manifestPath = path.join(currentRoot, 'package.json');
+    if (await fs.exists(manifestPath)) {
+      try {
+        if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name !== 'appium') {
+          continue;
+        }
+      } catch (ign) {
+        continue;
+      }
+      nodeModulesRoot = currentRoot;
+      break;
+    }
+  }
+  if (!nodeModulesRoot) {
     return;
   }
 
-  const nodeModulesRoot = path.join(...(pathParts.slice(0, nodeModulesIdx + 1)));
   if (!process.env.NODE_PATH) {
     logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
     process.env.NODE_PATH = nodeModulesRoot;
@@ -205,7 +219,7 @@ function areServerCommandArgs(args) {
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
 
-  adjustNodePath();
+  await adjustNodePath();
 
   const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 

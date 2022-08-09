@@ -365,7 +365,8 @@ class ExtensionCommand {
 
       return this.getExtensionFields(pkgJsonData);
     } catch (err) {
-      throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
+      throw this._createFatalError(`Encountered an error when installing package: ${err.message}\n` +
+        `env: ${JSON.stringify(process.env)}`);
     }
   }
 

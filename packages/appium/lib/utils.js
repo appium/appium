@@ -219,17 +219,16 @@ function getPackageVersion(pkgName) {
  * @returns {Promise<void>}
  */
 async function adjustNodePath() {
-  const pathParts = __filename.split(path.sep);
+  const pathParts = path.resolve(...(__filename.split(path.sep))).split(path.sep);
   let nodeModulesRoot = null;
-  for (let folderIdx = pathParts.length - 1; folderIdx >= 0; folderIdx--) {
-    const currentRootParts = pathParts.slice(0, folderIdx + 1);
-    const manifestPath = path.join(...currentRootParts, 'package.json');
+  for (let folderIdx = pathParts.length - 1; folderIdx > 0; --folderIdx) {
+    const manifestPath = path.join(...(pathParts.slice(0, folderIdx + 1)), 'package.json');
     if (!await fs.exists(manifestPath)) {
       continue;
     }
     try {
       if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
-        nodeModulesRoot = path.resolve(...currentRootParts);
+        nodeModulesRoot = path.join(...(pathParts.slice(0, folderIdx)));
         break;
       }
     } catch (ign) {}

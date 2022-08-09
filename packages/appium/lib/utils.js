@@ -222,14 +222,14 @@ async function adjustNodePath() {
   const pathParts = __filename.split(path.sep);
   let nodeModulesRoot = null;
   for (let folderIdx = pathParts.length - 1; folderIdx >= 0; folderIdx--) {
-    const currentRoot = path.join(...(pathParts.slice(0, folderIdx + 1)));
-    const manifestPath = path.join(currentRoot, 'package.json');
+    const currentRootParts = pathParts.slice(0, folderIdx + 1);
+    const manifestPath = path.join(...currentRootParts, 'package.json');
     if (!await fs.exists(manifestPath)) {
       continue;
     }
     try {
       if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
-        nodeModulesRoot = currentRoot;
+        nodeModulesRoot = path.resolve(...currentRootParts);
         break;
       }
     } catch (ign) {}

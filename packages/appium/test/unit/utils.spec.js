@@ -256,7 +256,7 @@ describe('utils', function () {
   });
 
   describe('adjustNodePath()', function () {
-    let prevValue = process.env.NODE_PATH;
+    const prevValue = process.env.NODE_PATH;
 
     beforeEach(function () {
       if (process.env.NODE_PATH) {

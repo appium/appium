@@ -204,7 +204,7 @@ export class NPM {
      * "dummy" and is controlled by the user.  So we'll just add it as a dev
      * dep; whatever else it does is up to the user's npm config.
      */
-    const installOpts = ['--save-dev', '--omit=peer'];
+    const installOpts = ['--save-dev', '--omit', 'peer'];
     if (await hasAppiumDependency(cwd)) {
       installOpts.push('--save-exact', '--global-style', '--no-package-lock');
     }

@@ -219,7 +219,9 @@ function getPackageVersion(pkgName) {
  * @returns {Promise<void>}
  */
 async function adjustNodePath() {
-  const pathParts = path.resolve(...(__filename.split(path.sep))).split(path.sep);
+  const pathParts = path.resolve(...(__filename.split(path.sep)))
+    .split(path.sep)
+    .map((x) => x === '' ? path.sep : x);
   let nodeModulesRoot = null;
   for (let folderIdx = pathParts.length - 1; folderIdx > 0; --folderIdx) {
     const manifestPath = path.join(...(pathParts.slice(0, folderIdx + 1)), 'package.json');

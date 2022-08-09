@@ -2,6 +2,8 @@ import _ from 'lodash';
 import logger from './logger';
 import {processCapabilities, PROTOCOLS} from '@appium/base-driver';
 import {inspect as dump} from 'util';
+import {fs} from '@appium/support';
+import path from 'path';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -210,6 +212,49 @@ function getPackageVersion(pkgName) {
 }
 
 /**
+ * Adjusts NODE_PATH environment variable,
+ * so drivers and plugins could load their peer dependencies.
+ * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
+ * for more details.
+ * @returns {Promise<void>}
+ */
+async function adjustNodePath() {
+  const pathParts = __filename.split(path.sep);
+  let nodeModulesRoot = null;
+  for (let folderIdx = pathParts.length - 1; folderIdx >= 0; folderIdx--) {
+    const currentRoot = path.join(...(pathParts.slice(0, folderIdx + 1)));
+    const manifestPath = path.join(currentRoot, 'package.json');
+    if (!await fs.exists(manifestPath)) {
+      continue;
+    }
+    try {
+      if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
+        nodeModulesRoot = currentRoot;
+        break;
+      }
+    } catch (ign) {}
+  }
+  if (!nodeModulesRoot) {
+    return;
+  }
+
+  if (!process.env.NODE_PATH) {
+    logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
+    process.env.NODE_PATH = nodeModulesRoot;
+    return;
+  }
+
+  const nodePathParts = process.env.NODE_PATH.split(path.delimiter);
+  if (nodePathParts.includes(nodeModulesRoot)) {
+    return;
+  }
+
+  nodePathParts.push(nodeModulesRoot);
+  logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
+  process.env.NODE_PATH = nodePathParts.join(path.delimiter);
+}
+
+/**
  * Pulls the initial values of Appium settings from the given capabilities argument.
  * Each setting item must satisfy the following format:
  * `setting[setting_name]: setting_value`
@@ -250,6 +295,7 @@ export {
   getPackageVersion,
   pullSettings,
   removeAppiumPrefixes,
+  adjustNodePath,
 };
 
 /**

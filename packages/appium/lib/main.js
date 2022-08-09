@@ -4,7 +4,7 @@ import {init as logsinkInit} from './logsink'; // this import needs to come firs
 import logger from './logger'; // logger needs to remain second
 // @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env, system, fs} from '@appium/support';
+import {logger as logFactory, util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -26,8 +26,7 @@ import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
 import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
-import {inspect} from './utils';
-import path from 'path';
+import {inspect, adjustNodePath} from './utils';
 
 const {resolveAppiumHome} = env;
 
@@ -117,52 +116,6 @@ async function logStartupInfo(args) {
 function logServerPort(address, port) {
   let logMessage = `Appium REST http interface listener started on ` + `${address}:${port}`;
   logger.info(logMessage);
-}
-
-/**
- * Adjusts NODE_PATH environment variable,
- * so drivers and plugins could load their peer dependencies.
- * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
- * for more details.
- * @returns {Promise<void>}
- */
-async function adjustNodePath() {
-  const pathParts = __filename.split(path.delimiter);
-  let nodeModulesRoot = null;
-  for (let folderIdx = pathParts.length - 1; folderIdx >= 0; folderIdx--) {
-    const currentRoot = path.join(...(pathParts.slice(0, folderIdx + 1)));
-    const manifestPath = path.join(currentRoot, 'package.json');
-    if (await fs.exists(manifestPath)) {
-      try {
-        if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name !== 'appium') {
-          continue;
-        }
-      } catch (ign) {
-        continue;
-      }
-      nodeModulesRoot = currentRoot;
-      break;
-    }
-  }
-  if (!nodeModulesRoot) {
-    return;
-  }
-
-  if (!process.env.NODE_PATH) {
-    logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
-    process.env.NODE_PATH = nodeModulesRoot;
-    return;
-  }
-
-  const pathsSeparator = system.isWindows() ? ';' : ':';
-  const nodePathParts = process.env.NODE_PATH.split(pathsSeparator);
-  if (nodePathParts.includes(nodeModulesRoot)) {
-    return;
-  }
-
-  nodePathParts.push(nodeModulesRoot);
-  logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
-  process.env.NODE_PATH = nodePathParts.join(pathsSeparator);
 }
 
 /**

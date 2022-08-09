@@ -4,12 +4,14 @@ import {
   pullSettings,
   removeAppiumPrefixes,
   inspect,
+  adjustNodePath,
 } from '../../lib/utils';
 import {BASE_CAPS, W3C_CAPS} from '../helpers';
 import _ from 'lodash';
 import {stripColors} from '@colors/colors';
 import {createSandbox} from 'sinon';
 import logger from '../../lib/logger';
+import {fs} from '@appium/support';
 
 describe('utils', function () {
   describe('parseCapsForInnerDriver()', function () {
@@ -250,6 +252,27 @@ describe('utils', function () {
       stripColors(/** @type {sinon.SinonStub} */ (logger.info).firstCall.firstArg).should.match(
         /\{\s*\n*foo:\s'bar'\s*\n*\}/
       );
+    });
+  });
+
+  describe('adjustNodePath()', function () {
+    let prevValue = process.env.NODE_PATH;
+
+    beforeEach(function () {
+      if (process.env.NODE_PATH) {
+        delete process.env.NODE_PATH;
+      }
+    });
+
+    afterEach(function () {
+      if (prevValue) {
+        process.env.NODE_PATH = prevValue;
+      }
+    });
+
+    it('should ajust NODE_PATH', async function () {
+      await adjustNodePath();
+      (await fs.exists(process.env.NODE_PATH)).should.be.true;
     });
   });
 });

@@ -172,10 +172,6 @@ describe('CLI behavior', function () {
           expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
           expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
         });
-
-        it('should not install peer dependencies', async function () {
-          await fs.exists(path.join(appiumHome, 'node_modules', 'appium')).should.eventually.be.false;
-        });
       });
     });
   });

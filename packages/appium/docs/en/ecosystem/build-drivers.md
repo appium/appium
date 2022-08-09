@@ -609,7 +609,7 @@ A couple notes about this system:
 1. Your overload will always be bound to the driver instance.
 1. Appium does not automatically implement `execute` for you. You may wish, for example, to only
    call the `executeMethod` helper function when you're not in proxy mode!
-1. The `executeMethod` helper will throw an error if a script name doesn't match one of the
+1. The `executeMethod` helper will reject with an `Error` if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
 
 ### Implement handling of Appium settings

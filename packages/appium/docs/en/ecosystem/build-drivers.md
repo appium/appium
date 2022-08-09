@@ -582,7 +582,7 @@ driver.executeScript('soundz: playSong', [{song: 'Stairway to Heaven', artist: '
 ```
 
 Then in your driver code you could define the static property `executeMethodMap` as
-a mapping of script names to member functions on your driver. It has the same basic form as
+a mapping of script names to methods on your driver. It has the same basic form as
 `newMethodMap`. All you need to do at that point is implement the `execute` the command to take
 advantage of the built-in `executeMethod` method available on all drivers:
 

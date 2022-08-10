@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.59.5](https://github.com/appium/appium/compare/@appium/support@2.59.4...@appium/support@2.59.5) (2022-08-10)
+
+
+### Bug Fixes
+
+* **support:** add missing @appium/types ([888aac8](https://github.com/appium/appium/commit/888aac85ffcf9974023ad1173ae89ebf0f27d09a))
+* **support:** path to APPIUM_HOME must always be absolute ([8d6ffe0](https://github.com/appium/appium/commit/8d6ffe0932fd2aab0dbdf64e483bb906ad626e17)), closes [#17338](https://github.com/appium/appium/issues/17338)
+
+
+
+
+
 ## [2.59.4](https://github.com/appium/appium/compare/@appium/support@2.59.3...@appium/support@2.59.4) (2022-08-03)
 
 

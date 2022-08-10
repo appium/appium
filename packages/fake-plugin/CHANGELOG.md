@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/appium/appium/compare/@appium/fake-plugin@2.0.5...@appium/fake-plugin@2.1.0) (2022-08-10)
+
+
+### Features
+
+* **appium,base-driver,fake-driver,fake-plugin,test-support,types:** updateServer receives cliArgs param ([d4b9833](https://github.com/appium/appium/commit/d4b983328af21d1e5c27a91e438e7934eb152ab1)), closes [#17304](https://github.com/appium/appium/issues/17304)
+
+
+
+
+
 ## [2.0.5](https://github.com/appium/appium/compare/@appium/fake-plugin@2.0.4...@appium/fake-plugin@2.0.5) (2022-08-03)
 
 

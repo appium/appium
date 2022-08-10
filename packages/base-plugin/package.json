@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-plugin",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "description": "The base plugin used to create Appium 2.0 plugins",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -31,7 +31,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^2.59.4"
+    "@appium/support": "^2.59.5"
   },
   "engines": {
     "node": ">=14",

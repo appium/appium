@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.43](https://github.com/appium/appium/compare/appium@2.0.0-beta.42...appium@2.0.0-beta.43) (2022-08-10)
+
+
+### Bug Fixes
+
+* **appium:** fix busted config file normalization algorithm ([dc4835f](https://github.com/appium/appium/commit/dc4835f293f371c36873801a0060bb22eead2cc0))
+
+
+### Features
+
+* **appium,base-driver,fake-driver,fake-plugin,test-support,types:** updateServer receives cliArgs param ([d4b9833](https://github.com/appium/appium/commit/d4b983328af21d1e5c27a91e438e7934eb152ab1)), closes [#17304](https://github.com/appium/appium/issues/17304)
+* **base-driver,fake-driver,appium:** add convenience methods for defining execute script overloads ([#17321](https://github.com/appium/appium/issues/17321)) ([337ec3e](https://github.com/appium/appium/commit/337ec3e7ba216dd6f8cdc88143ecaa4c75f5d266))
+
+
+
+
+
 # [2.0.0-beta.42](https://github.com/appium/appium/compare/appium@2.0.0-beta.41...appium@2.0.0-beta.42) (2022-08-03)
 
 

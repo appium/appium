@@ -1,6 +1,6 @@
 {
   "name": "@appium/gulp-plugins",
-  "version": "7.0.4",
+  "version": "7.0.5",
   "description": "Custom gulp plugins to be used across all appium modules",
   "keywords": [
     "automation",

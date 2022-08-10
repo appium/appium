@@ -13,7 +13,11 @@ Appium is an open-source, cross-platform test automation tool for native,
 hybrid, mobile web and desktop apps. We support simulators (iOS), emulators
 (Android), and real devices (iOS, Android, Windows, Mac).
 
-Want to skip straight to the action? Check out our [getting started](/docs/en/about-appium/getting-started.md) doc.
+:bangbang: Major documentation revision in progress
+
+Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
+found around the web may not be correct. The current Appium 2.0 documentation is very much in
+progress. Currently, it can be found [here](https://appium.github.io/appium/docs/en/2.0/).
 
 ### Drivers
 

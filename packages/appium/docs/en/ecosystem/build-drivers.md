@@ -566,29 +566,31 @@ create and release client-side plugins for each language you want to support (di
 examples can be found at the relevant client docs).
 
 An alternative to this way of doing things is to overload a command which all WebDriver clients
-have access to already: Execute Script. Appium provides some convenience methods for making this
-easy. The convention is to create a sort of magic prefix for your users, which the driver looks for
-at the beginning of any Execute Script invocation, and if it's present, to treat the rest of the
-script string as the name of a custom command to execute. This works in large part because for most
-platforms beyond web browsers, executing arbitrary JavaScript isn't a thing that makes sense.
-
-Let's say you are building a driver for stereo system called `soundz`, and you wanted to create
-a command for playing a song by name. You could expose this to your users in such a way that they
-call something like:
+have access to already: Execute Script. Appium provides some a convenient tool for making this
+easy. Let's say you are building a driver for stereo system called `soundz`, and you wanted to
+create a command for playing a song by name. You could expose this to your users in such a way that
+they call something like:
 
 ```js
-// webdriverio example
+// webdriverio example. Calling webdriverio's `executeScript` command is what trigger's Appium's
+// Execute Script command handler
 driver.executeScript('soundz: playSong', [{song: 'Stairway to Heaven', artist: 'Led Zeppelin'}]);
 ```
 
-Then in your driver code you could define the static property `executeMethodMap` as
-a mapping of script names to methods on your driver. It has the same basic form as
-`newMethodMap`. Once `executeMethodMap` is defined, you'll need to implement the `execute` command:
+Then in your driver code you can define the static property `executeMethodMap` as a mapping of
+script names to methods on your driver. It has the same basic form as `newMethodMap`, described
+above. Once `executeMethodMap` is defined, you'll also need to implement the Execute Script command
+handler, which according to Appium's routes mapping is called `execute`. The implementation can
+call a single helper function, `this.executeMethod`, which takes care of looking at the script and
+arguments the user sent in and routing it to the correct custom handler you've defined. Here's an
+example:
 
 ```js
 static executeMethodMap = {
-  command: 'soundz: playSong',
-  params: {required: ['song', 'artist'], optional: []},
+  'soundz: playSong', {
+    command: 'soundzPlaySong',
+    params: {required: ['song', 'artist'], optional: []},
+  }
 }
 
 async soundzPlaySong(song, artist) {
@@ -601,15 +603,17 @@ async execute(script, args) {
 ```
 
 A couple notes about this system:
-1. Arguments sent via `executeScript` will be unwrapped, the first argument selected as containing
-   parameters, validated, and then applied to your overload method in the order specified in
-   `executeMethodMap`. I.e., this framework assumes only a single actual argument sent in via
-   `executeScript` (and this argument should be an object with keys/values representing the
-   parameters your Execute Method expects).
-1. Your overload will always be bound to the driver instance.
-1. Appium does not automatically implement `execute` for you. You may wish, for example, to only
-   call the `executeMethod` helper function when you're not in proxy mode!
-1. The `executeMethod` helper will reject with an `Error` if a script name doesn't match one of the
+1. The arguments array sent via the call to Execute Script must contain only zero or one element(s). The
+   first item in the list is considered to be the parameters object for your method. These parameters
+   will be parsed, validated, and then applied to your overload method in the order specified in
+   `executeMethodMap` (the order specified in the `required` parameters list, followed by the
+   `optional` parameters list). I.e., this framework assumes only a single actual argument sent in via
+   Execute Script (and this argument should be an object with keys/values representing the
+   parameters your execute method expects).
+1. Appium does not automatically implement `execute` (the Execute Script handler) for you. You may
+   wish, for example, to only call the `executeMethod` helper function when you're not in proxy
+   mode!
+1. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
 
 ### Implement handling of Appium settings

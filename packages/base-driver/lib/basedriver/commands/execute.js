@@ -1,4 +1,3 @@
-// @ts-check
 import _ from 'lodash';
 import {errors, makeArgs, checkParams} from '../../protocol';
 
@@ -12,7 +11,6 @@ export function ExecuteMixin(Base) {
    */
   class ExecuteCommands extends Base {
     /**
-     * @this {Driver}
      * @param {string} script
      * @param {[Record<string, any>]|[]} protoArgs
      */

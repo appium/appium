@@ -7,3 +7,4 @@ sample-code
 **/*.d.ts
 **/build-fixtures/**
 **/*.ts
+packages/appium/docs/**/assets/**

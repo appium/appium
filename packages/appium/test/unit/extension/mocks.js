@@ -5,6 +5,7 @@
  * A collection of mocks reused across unit tests.
  */
 
+import {EventEmitter} from 'events';
 import path from 'path';
 import {createSandbox} from 'sinon';
 import {version as APPIUM_VER} from '../../../package.json';
@@ -109,17 +110,32 @@ export function initMocks(sandbox = createSandbox()) {
     sandbox.stub().callsFake((cwd, id) => path.join(cwd, id))
   );
 
+  const MockGlob = /** @type {MockGlob} */ (
+    sandbox.stub().callsFake((spec, opts, done) => {
+      const ee = new EventEmitter();
+      setTimeout(() => {
+        ee.emit('match', path.join(opts.cwd, 'package.json'));
+        setTimeout(() => {
+          done();
+        });
+      });
+      return ee;
+    })
+  );
+
   /** @type {Overrides} */
   const overrides = {
     '@appium/support': MockAppiumSupport,
     'resolve-from': MockResolveFrom,
     'package-changed': MockPackageChanged,
+    glob: MockGlob,
   };
 
   return {
     MockAppiumSupport,
     MockPackageChanged,
     MockResolveFrom,
+    MockGlob,
     sandbox,
     overrides,
   };
@@ -195,8 +211,13 @@ export function initMocks(sandbox = createSandbox()) {
  */
 
 /**
+ * Mock of package `glob`
+ * @typedef {SinonStubbedMember<import('glob')>} MockGlob
+ */
+
+/**
  * For passing into `rewiremock.proxy()`
- * @typedef { { '@appium/support': MockAppiumSupport, 'resolve-from': MockResolveFrom, 'package-changed': MockPackageChanged } } Overrides
+ * @typedef { { '@appium/support': MockAppiumSupport, 'resolve-from': MockResolveFrom, 'package-changed': MockPackageChanged, glob: MockGlob } } Overrides
  */
 
 /**

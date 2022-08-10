@@ -36,6 +36,10 @@ describe('env', function () {
     delete process.env.APPIUM_HOME;
 
     env = rewiremock.proxy(() => require('../../lib/env'), overrides);
+
+    env.findAppiumDependencyPackage.cache = new Map();
+    env.resolveManifestPath.cache = new Map();
+    env.resolveAppiumHome.cache = new Map();
   });
 
   describe('resolveManifestPath()', function () {
@@ -94,12 +98,12 @@ describe('env', function () {
 
     describe('when APPIUM_HOME is not set in env', function () {
       describe('when Appium is not resolvable from cwd', function () {
-        describe('when `appium` is not a dependency of the local package', function () {
+        describe('when `appium` is not a dependency of the package in the cwd', function () {
           beforeEach(function () {
             // this is needed because the default behavior is `resolvesArg(0)`; `.resolves()`
             // does not override this behavior! I don't know why!
-            MockPkgDir.resetBehavior();
-            MockPkgDir.resolves();
+            // .resetBehavior();
+            MockReadPkg.resolves();
           });
 
           it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -109,35 +113,10 @@ describe('env', function () {
           });
         });
 
-        describe('when `appium` is a dependency of the local package', function () {
+        describe('when `appium` is a dependency of the package in the cwd', function () {
           describe('when the `appium` dependency spec begins with `file:`', function () {
             beforeEach(function () {
-              MockPkgDir.resolves('/some/path/to/package.json');
-            });
-
-            it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME
-              );
-            });
-          });
-
-          describe('when `appium` is a dependency which does not resolve to a file path`', function () {
-            beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '2.0.0-beta.25',
-                      resolved: 'https://some/appium-tarball.tgz',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
+              MockReadPkg.resolves({devDependencies: {appium: 'file:../appium'}});
             });
 
             it('should resolve with the identity', async function () {
@@ -145,46 +124,19 @@ describe('env', function () {
             });
           });
 
-          describe('when `appium` is a dependency which resolves to a file path`', function () {
+          describe('when `appium` is a dependency which does not resolve to a file path`', function () {
             beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '2.0.0-beta.25',
-                      resolved: 'file:../some/relative/path',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
+              MockReadPkg.resolves({devDependencies: {appium: '2.0.0-beta.25'}});
             });
-            it('should resolve with DEFAULT_APPIUM_HOME', async function () {
-              await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
-                env.DEFAULT_APPIUM_HOME
-              );
+
+            it('should resolve with the identity', async function () {
+              await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal('/somewhere');
             });
           });
 
           describe('when `appium` is a dependency for version 0.x', function () {
             beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '0.1.2',
-                      resolved: 'https://whatever',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
+              MockReadPkg.resolves({devDependencies: {appium: '0.9.0'}});
             });
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
               await expect(env.resolveAppiumHome('/somewhere')).to.eventually.equal(
@@ -195,20 +147,7 @@ describe('env', function () {
 
           describe('when `appium` is a dependency for version 1.x', function () {
             beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '1.x',
-                      resolved: 'https://whatever',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
+              MockReadPkg.resolves({devDependencies: {appium: '1.2.3'}});
             });
 
             it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -218,12 +157,29 @@ describe('env', function () {
             });
           });
         });
+
+        describe('when `appium` is a dependency of the workspace root of cwd', function () {
+          beforeEach(function () {
+            MockTeenProcess.exec.resolves({
+              stdout: JSON.stringify({
+                path: '/somewhere',
+              }),
+            });
+            MockReadPkg.resolves({devDependencies: {appium: '2.x'}});
+          });
+
+          it('should resolve with the workspace root', async function () {
+            await expect(env.resolveAppiumHome('/somewhere/else')).to.eventually.equal(
+              '/somewhere'
+            );
+          });
+        });
       });
 
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {
           // unclear if this is even possible
-          MockPkgDir.rejects(new Error('on the fritz'));
+          MockReadPkg.rejects(new Error('on the fritz'));
         });
 
         it('should resolve with DEFAULT_APPIUM_HOME', async function () {
@@ -310,8 +266,8 @@ describe('env', function () {
               });
             });
 
-            it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
+            it('should resolve `true`', async function () {
+              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(true);
             });
           });
 
@@ -352,51 +308,6 @@ describe('env', function () {
         });
 
         describe('when `appium` is installed', function () {
-          describe('when `appium` is a dependency which does not resolve to a file path`', function () {
-            beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '2.0.0-beta.25',
-                      resolved: 'https://some/appium-tarball.tgz',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
-            });
-
-            it('should resolve `true`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(true);
-            });
-          });
-
-          describe('when `appium` is a dependency which resolves to a file path`', function () {
-            beforeEach(function () {
-              MockTeenProcess.exec.resolves({
-                stdout: JSON.stringify({
-                  version: '0.0.0',
-                  name: 'some-pkg',
-                  dependencies: {
-                    appium: {
-                      version: '2.0.0-beta.25',
-                      resolved: 'file:../some/relative/path',
-                    },
-                  },
-                }),
-                stderr: '',
-                code: 0,
-              });
-            });
-            it('should resolve `false`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(false);
-            });
-          });
-
           describe('when `appium` is a dependency for version 0.x', function () {
             beforeEach(function () {
               MockTeenProcess.exec.resolves({

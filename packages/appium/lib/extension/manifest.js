@@ -2,6 +2,8 @@
  * Module containing {@link Manifest} which handles reading & writing of extension config files.
  */
 
+import B from 'bluebird';
+import glob from 'glob';
 import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
@@ -10,23 +12,6 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
 import {INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from './package-changed';
-
-/**
- * Default depth to search in directory tree for whatever it is we're looking for.
- *
- * It's 4 because smaller numbers didn't work.
- */
-const DEFAULT_SEARCH_DEPTH = 4;
-
-/**
- * Default options for {@link findExtensions}.
- * @type {Readonly<import('klaw').Options>}
- */
-const DEFAULT_FIND_EXTENSIONS_OPTS = Object.freeze({
-  depthLimit: DEFAULT_SEARCH_DEPTH,
-  /* istanbul ignore next */
-  filter: (filepath) => !path.basename(filepath).startsWith('.'),
-});
 
 /**
  * Current configuration schema revision!
@@ -175,26 +160,58 @@ export class Manifest {
 
   /**
    * Searches `APPIUM_HOME` for installed extensions and adds them to the manifest.
-   * @param {SyncWithInstalledExtensionsOpts} opts
    * @returns {Promise<boolean>} `true` if any extensions were added, `false` otherwise.
    */
-  async syncWithInstalledExtensions({depthLimit = DEFAULT_SEARCH_DEPTH} = {}) {
-    const walkOpts = _.defaults({depthLimit}, DEFAULT_FIND_EXTENSIONS_OPTS);
+  async syncWithInstalledExtensions() {
     // this could be parallelized, but we can't use fs.walk as an async iterator
     let didChange = false;
-    for await (const {stats, path: filepath} of fs.walk(this._appiumHome, walkOpts)) {
-      if (filepath !== this._appiumHome && stats.isDirectory()) {
-        try {
-          const pkg = await env.readPackageInDir(filepath);
-          if (pkg && isExtension(pkg)) {
-            // it's possible that this extension already exists in the manifest,
-            // so only update `didChange` if it's new.
-            const added = this.addExtensionFromPackage(pkg, path.join(filepath, 'package.json'));
-            didChange = didChange || added;
+
+    /**
+     * Listener for the `match` event of a `glob` instance
+     * @param {string} filepath - Path to a `package.json`
+     * @returns {Promise<void>}
+     */
+    const onMatch = async (filepath) => {
+      try {
+        const pkg = JSON.parse(await fs.readFile(filepath, 'utf8'));
+        if (isDriver(pkg) || isPlugin(pkg)) {
+          const changed = this.addExtensionFromPackage(pkg, filepath);
+          didChange = didChange || changed;
+        }
+      } catch {}
+    };
+
+    /**
+     * A list of `Promise`s which read `package.json` files looking for Appium extensions.
+     * @type {Promise<void>[]}
+     */
+    const queue = [
+      // look at `package.json` in `APPIUM_HOME` only
+      onMatch(path.join(this._appiumHome, 'package.json')),
+    ];
+
+    // add dependencies to the queue
+    await new B((resolve, reject) => {
+      glob(
+        'node_modules/{*,@*/*}/package.json',
+        {cwd: this._appiumHome, silent: true, absolute: true},
+        // eslint-disable-next-line promise/prefer-await-to-callbacks
+        (err) => {
+          if (err) {
+            reject(err);
           }
-        } catch {}
-      }
-    }
+          resolve();
+        }
+      )
+        .on('error', reject)
+        .on('match', (filepath) => {
+          queue.push(onMatch(filepath));
+        });
+    });
+
+    // wait for everything to finish
+    await B.all(queue);
+
     return didChange;
   }
 

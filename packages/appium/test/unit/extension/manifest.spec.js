@@ -5,6 +5,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 import {version as APPIUM_VER} from '../../../package.json';
+import EventEmitter from 'events';
 
 const {expect} = chai;
 
@@ -23,6 +24,9 @@ describe('Manifest', function () {
   /** @type {import('./mocks').MockAppiumSupport} */
   let MockAppiumSupport;
 
+  /** @type {import('./mocks').MockGlob} */
+  let MockGlob;
+
   before(async function () {
     yamlFixture = await fs.readFile(resolveFixture('extensions.yaml'), 'utf8');
   });
@@ -34,7 +38,7 @@ describe('Manifest', function () {
 
   beforeEach(function () {
     let overrides;
-    ({MockPackageChanged, MockAppiumSupport, overrides, sandbox} = initMocks());
+    ({MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
     ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
 
@@ -504,48 +508,59 @@ describe('Manifest', function () {
 
     describe('syncWithInstalledExtensions()', function () {
       beforeEach(function () {
-        const next = sandbox.stub();
-        next.onFirstCall().resolves({
-          value: {
-            stats: {
-              isDirectory: sandbox.stub().returns(true),
+        MockAppiumSupport.fs.readFile.resolves(
+          JSON.stringify({
+            name: 'foo',
+            version: '1.0.0',
+            readme: 'stuff!',
+            _id: 'totally unique',
+            appium: {
+              automationName: 'derp',
+              mainClass: 'SomeClass',
+              pkgName: 'derp',
+              platformNames: ['dogs', 'cats'],
+              driverName: 'myDriver',
             },
-            path: '/some/dir',
-          },
-        });
-        next.onSecondCall().resolves({
-          done: true,
-        });
-        MockAppiumSupport.fs.walk.returns(
-          /** @type {import('klaw').Walker} */ (
-            /** @type {unknown} */ ({
-              [Symbol.asyncIterator]: sandbox.stub().returns({
-                next,
-              }),
-            })
-          )
+            peerDependencies: {
+              appium: '2.0.0',
+            },
+          })
         );
-        MockAppiumSupport.env.readPackageInDir.resolves({
-          name: 'foo',
-          version: '1.0.0',
-          readme: 'stuff!',
-          _id: 'totally unique',
-          appium: {
-            automationName: 'derp',
-            mainClass: 'SomeClass',
-            pkgName: 'derp',
-            platformNames: ['dogs', 'cats'],
-            driverName: 'myDriver',
-          },
-          peerDependencies: {
-            appium: '2.0.0',
-          },
-        });
       });
 
       it('should add a found extension', async function () {
         await manifest.syncWithInstalledExtensions();
         expect(manifest.getExtensionData(DRIVER_TYPE)).to.have.property('myDriver');
+      });
+
+      describe('when the underyling implementation emits "error"', function () {
+        beforeEach(function () {
+          MockGlob.callsFake(() => {
+            const ee = new EventEmitter();
+            setTimeout(() => {
+              ee.emit('error', new Error('bogus'));
+            });
+            return ee;
+          });
+        });
+        it('should reject', function () {
+          expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'bogus');
+        });
+      });
+
+      describe('when the underlying implementation completes with an error', function () {
+        beforeEach(function () {
+          MockGlob.callsFake((spec, opts, done) => {
+            const ee = new EventEmitter();
+            setTimeout(() => {
+              done(new Error('wack'), []);
+            });
+            return ee;
+          });
+        });
+        it('should reject', function () {
+          expect(manifest.syncWithInstalledExtensions()).to.be.rejectedWith(Error, 'wack');
+        });
       });
     });
 

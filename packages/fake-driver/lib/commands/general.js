@@ -69,6 +69,14 @@ commands.getLog = async function getLog(type) {
   }
 };
 
+commands.execute = async function execute(script, args) {
+  return await this.executeMethod(script, args);
+};
+
+commands.fakeAddition = async function fakeAddition(num1, num2, num3) {
+  return num1 + num2 + (num3 ?? 0);
+};
+
 Object.assign(extensions, commands, helpers);
 export {commands, helpers};
 export default extensions;

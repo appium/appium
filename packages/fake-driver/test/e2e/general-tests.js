@@ -106,6 +106,45 @@ function generalTests() {
       res[0].type.should.eql('pointer');
       res[0].actions.should.have.length(2);
     });
+
+    it('should get and set a fake thing via execute overloads', async function () {
+      let thing = await driver.executeScript('fake: getThing', []);
+      should.not.exist(thing);
+      await driver.executeScript('fake: setThing', [{thing: 1234}]);
+      thing = await driver.executeScript('fake: getThing', []);
+      thing.should.eql(1234);
+    });
+
+    it('should add 2 numbers via execute overloads', async function () {
+      await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]).should.eventually.eql(5);
+      await driver
+        .executeScript('fake: addition', [{num1: 2, num2: 3, num3: 4}])
+        .should.eventually.eql(9);
+    });
+
+    it('should throw not implemented if an execute overload isnt supported', async function () {
+      await driver
+        .executeScript('fake: blarg', [])
+        .should.be.rejectedWith(/Unsupported execute method/);
+    });
+
+    it('should throw an error if a required overload param is missing', async function () {
+      await driver
+        .executeScript('fake: addition', [{num3: 4}])
+        .should.be.rejectedWith(/Parameters were incorrect/);
+    });
+
+    it('should throw an error if sending in wrong types of params', async function () {
+      await driver
+        .executeScript('fake: addition', [4, 5])
+        .should.be.rejectedWith(/correct format of arg/);
+      await driver
+        .executeScript('fake: addition', [4])
+        .should.be.rejectedWith(/not receive an appropriate execute/);
+      await driver
+        .executeScript('fake: addition', [{num1: 2}, {extra: 'bad'}])
+        .should.be.rejectedWith(/correct format of arg/);
+    });
   });
 }
 

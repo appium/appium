@@ -94,7 +94,7 @@ function unwrapParams(paramSets, jsonObj) {
   return res;
 }
 
-function checkParams(paramSets, jsonObj, protocol) {
+export function checkParams(paramSets, jsonObj, protocol) {
   let requiredParams = [];
   let optionalParams = [];
   let receivedParams = _.keys(jsonObj);
@@ -162,7 +162,7 @@ function checkParams(paramSets, jsonObj, protocol) {
  * on handling parameters. This method returns an array of arguments which will
  * be applied to a command.
  */
-function makeArgs(requestParams, jsonObj, payloadParams, protocol) {
+export function makeArgs(requestParams, jsonObj, payloadParams, protocol) {
   // We want to pass the "url" parameters to the commands in reverse order
   // since the command will sometimes want to ignore, say, the sessionId.
   // This has the effect of putting sessionId last, which means in JS we can

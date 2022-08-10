@@ -6,6 +6,7 @@ import {LogMixin} from './log';
 import {SessionMixin} from './session';
 import {SettingsMixin} from './settings';
 import {TimeoutMixin} from './timeout';
+import {ExecuteMixin} from './execute';
 
 /**
  * Applies all the mixins to the `BaseDriverBase` class.
@@ -19,7 +20,8 @@ export function createBaseDriverClass(Base) {
   const WithLogCommands = LogMixin(WithFindCommands);
   const WithSettingsCommands = SettingsMixin(WithLogCommands);
   const WithSessionCommands = SessionMixin(WithSettingsCommands);
-  return WithSessionCommands;
+  const WithExecuteCommands = ExecuteMixin(WithSessionCommands);
+  return WithExecuteCommands;
 }
 
 /**

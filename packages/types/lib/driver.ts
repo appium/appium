@@ -48,14 +48,14 @@ export interface ExecuteCommands {
   executeMethod(script: string, args: [Record<string, any>]|[]): Promise<any>;
 }
 
-export interface ExecuteOverloadDef {
+export interface ExecuteMethodDef {
   command: string,
   params?: {
     required?: string[],
     optional?: string[],
   }
 };
-export type ExecuteMethodMap = Record<string, ExecuteOverloadDef>;
+export type ExecuteMethodMap = Record<string, ExecuteMethodDef>;
 
 export interface MultiSessionData {
   id: string;

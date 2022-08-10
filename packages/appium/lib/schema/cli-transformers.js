@@ -94,8 +94,9 @@ export const transformers = {
       json = readFileSync(jsonOrPath, 'utf8');
       loadedFromFile = true;
     } catch (err) {
-      // unreadable files don't count... but other problems do.
-      if (err.code !== 'ENOENT') {
+      // unreadable files don't count.
+      // also `ENAMETOOLONG` can happen if we try to open a file that's a huge JSON string.
+      if (err.code !== 'ENOENT' && err.code !== 'ENAMETOOLONG') {
         throw err;
       }
     }

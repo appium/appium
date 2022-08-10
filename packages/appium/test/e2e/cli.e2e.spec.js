@@ -1,5 +1,7 @@
 // @ts-check
 
+import getPort from 'get-port';
+import {exec} from 'teen_process';
 import {npm, env, fs, tempDir, util} from '@appium/support';
 import B from 'bluebird';
 import path from 'path';
@@ -15,13 +17,14 @@ import {
   KNOWN_DRIVERS,
   PLUGIN_TYPE,
 } from '../../lib/constants';
-import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
+import {FAKE_DRIVER_DIR, PACKAGE_ROOT, resolveFixture} from '../helpers';
 import {
   installLocalExtension,
   runAppiumJson,
   runAppiumRaw,
   readAppiumArgErrorFixture,
   formatAppiumArgErrorOutput,
+  EXECUTABLE,
 } from './e2e-helpers';
 
 const {MANIFEST_RELATIVE_PATH} = env;
@@ -523,7 +526,41 @@ describe('CLI behavior', function () {
     });
   });
 
-  describe('argument error handling', function () {
+  describe('argument parsing', function () {
+    describe('when the user provides a very long string for an arg accepting a blob or filename', function () {
+      describe('when the very long string is a JSON blob', function () {
+        it('should not throw an ENAMETOOLONG exception', async function () {
+          this.timeout(10000);
+          const capsArg = JSON.stringify({
+            'appium:platformName': 'ANDROID',
+            'appium:platformVersion': '11',
+            'appium:deviceName':
+              'Spicy jalapeno bacon ipsum dolor amet deserunt tempor pork belly aliqua drumstick, occaecat dolor venison et labore. Rump meatball pork chop tail. Consequat adipisicing kielbasa occaecat laborum pig. Qui pork chop chicken nostrud boudin fugiat. Proident ut culpa, chuck nulla sunt pastrami ut tri-tip. Buffalo dolore adipisicing, labore venison elit beef fatback kevin burgdoggen tail pancetta filet mignon. Dolor turducken rump, anim kevin sunt exercitation ham filet mignon beef ribs ad officia eiusmod id cillum.',
+          });
+
+          await expect(
+            exec(
+              process.execPath,
+              [
+                EXECUTABLE,
+                '-pa=/wd/hub',
+                '--session-override',
+                '--local-timezone',
+                '--relaxed-security',
+                `--default-capabilities=${capsArg}`,
+                '--port',
+                await getPort(),
+              ],
+              {
+                env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
+                cwd: PACKAGE_ROOT,
+                timeout: 5000,
+              }
+            )
+          ).to.be.rejectedWith(Error, /timed out/);
+        });
+      });
+    });
     describe('when the user provides an string where a number was expected', function () {
       describe('when color output is supported', function () {
         it('should output a fancy error message', async function () {

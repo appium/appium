@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "peerDependencies": {
-    "appium": "^2.0.0"
+    "appium": "^2.0.0-beta.42"
+  },
+  "devDependencies": {
+    "appium": "next"
   },
   "appium": {
     "driverName": "test",

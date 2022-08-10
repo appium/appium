@@ -7,12 +7,15 @@ import {
   readPackageInDir,
   resolveAppiumHome,
   resolveManifestPath,
+  findAppiumDependencyPackage,
 } from '../../lib/env';
 
 const {expect} = chai;
 
 describe('environment', function () {
+  /** @type {string} */
   let cwd;
+  /** @type {string|undefined} */
   let oldEnvAppiumHome;
 
   before(async function () {
@@ -23,6 +26,7 @@ describe('environment', function () {
     // all of these functions are memoized, so we need to reset them before each test.
     resolveManifestPath.cache = new Map();
     resolveAppiumHome.cache = new Map();
+    findAppiumDependencyPackage.cache = new Map();
     readPackageInDir.cache = new Map();
   });
 
@@ -98,7 +102,10 @@ describe('environment', function () {
         await expect(resolveAppiumHome(cwd)).to.eventually.equal(DEFAULT_APPIUM_HOME);
       });
     });
-    describe('when `appium` is a dependency', function () {
+    describe('when `appium` is a dependency and APPIUM_HOME is unset', function () {
+      beforeEach(function () {
+        delete process.env.APPIUM_HOME;
+      });
       describe('when `appium` is installed', function () {
         before(async function () {
           await fs.mkdirp(path.join(cwd, 'node_modules'));
@@ -109,27 +116,34 @@ describe('environment', function () {
         });
 
         describe('when `appium` is at the current version', function () {
-          before(async function () {
+          beforeEach(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-dependency.package.json'),
               path.join(cwd, 'package.json')
             );
+            // await fs.symlink(path.join(__dirname, '..', 'appium'), path.join(cwd, 'node_modules', 'appium'), 'junction');
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v2-package'),
               path.join(cwd, 'node_modules', 'appium')
             );
           });
 
-          after(async function () {
+          afterEach(async function () {
             await fs.unlink(path.join(cwd, 'package.json'));
           });
 
           it('should resolve with `cwd`', async function () {
-            await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
+            // NOTE: resolveAppiumHome() can resolve w/ a _real_ path by way of output from npm.
+            // on macOS, /var/whatever is really /private/var/whatever.
+            if (process.platform === 'darwin' && cwd.startsWith('/var/')) {
+              await expect(resolveAppiumHome(cwd)).to.eventually.equal(path.join('/private', cwd));
+            } else {
+              await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
+            }
           });
         });
         describe('when `appium` is an old version', function () {
-          before(async function () {
+          beforeEach(async function () {
             await fs.copyFile(
               path.join(__dirname, 'fixture', 'appium-v1-dependency.package.json'),
               path.join(cwd, 'package.json')
@@ -140,7 +154,7 @@ describe('environment', function () {
             );
           });
 
-          after(async function () {
+          afterEach(async function () {
             await fs.unlink(path.join(cwd, 'package.json'));
           });
 

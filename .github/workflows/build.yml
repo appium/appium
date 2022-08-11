@@ -29,11 +29,10 @@ jobs:
         with:
           useRollingCache: true
       - name: Run smoke tests
-        uses: boneskull/nodejs-production-test-action@v1
+        uses: boneskull/nodejs-production-test-action@fb21ee0ae5c9e7213d795de9dfc1919332ffe9e1 # tag=v1
         with:
           script: test:smoke
           workspaces: true
-          quiet: true
       - name: Run unit & E2E tests
         run: npm run test:ci
 

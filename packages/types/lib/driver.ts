@@ -341,6 +341,7 @@ export interface Driver
     TimeoutCommands,
     EventCommands,
     SessionHandler<[string, any], void>,
+    ExecuteCommands,
     Core {
   cliArgs?: Record<string, any>;
   // The following methods are implemented by `BaseDriver`.

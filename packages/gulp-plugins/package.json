@@ -52,7 +52,7 @@
     "@octokit/rest": "18.12.0",
     "@types/fancy-log": "2.0.0",
     "@types/gulp": "4.0.9",
-    "@types/semver": "7.3.11",
+    "@types/semver": "7.3.12",
     "@types/through2": "2.0.36",
     "ansi-red": "0.1.1",
     "axios": "0.27.2",

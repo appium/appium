@@ -73,7 +73,7 @@
     "@types/argparse": "2.0.10",
     "@types/bluebird": "3.5.36",
     "@types/fancy-log": "2.0.0",
-    "@types/semver": "7.3.11",
+    "@types/semver": "7.3.12",
     "@types/teen_process": "1.16.1",
     "@types/wrap-ansi": "3.0.0",
     "ajv": "8.11.0",

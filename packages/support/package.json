@@ -60,7 +60,7 @@
     "@types/pluralize": "0.0.29",
     "@types/pngjs": "6.0.1",
     "@types/rimraf": "3.0.2",
-    "@types/semver": "7.3.11",
+    "@types/semver": "7.3.12",
     "@types/shell-quote": "1.7.1",
     "@types/supports-color": "8.1.1",
     "@types/teen_process": "1.16.1",

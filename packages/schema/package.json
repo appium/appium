@@ -31,7 +31,7 @@
   ],
   "scripts": {
     "build": "run-s build:*",
-    "build:distfiles": "babel lib --root-mode=upward --out-dir=build",
+    "build:distfiles": "babel lib --source-maps --root-mode=upward --out-dir=build",
     "build:schema-json": "node ./scripts/generate-schema-json.js",
     "dev": "npm run build:distfiles -- --watch",
     "fix": "npm run lint -- --fix",
@@ -50,6 +50,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "typedoc": {
+    "entryPoint": "./build/index.js"
   },
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

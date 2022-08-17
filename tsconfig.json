@@ -5,10 +5,7 @@
   },
   "references": [
     {
-      "path": "packages/schema"
-    },
-    {
-      "path": "packages/types"
+      "path": "packages/appium"
     },
     {
       "path": "packages/support"
@@ -20,10 +17,13 @@
       "path": "packages/base-plugin"
     },
     {
-      "path": "packages/test-support"
+      "path": "packages/schema"
     },
     {
-      "path": "packages/appium"
+      "path": "packages/types"
+    },
+    {
+      "path": "packages/test-support"
     },
     {
       "path": "packages/fake-plugin"

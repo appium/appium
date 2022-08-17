@@ -37,8 +37,8 @@
     "build"
   ],
   "scripts": {
-    "build:lib": "babel lib --root-mode=upward --out-dir=build/lib",
-    "build:bin": "babel bin --root-mode=upward --out-dir=build/bin",
+    "build:lib": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
+    "build:bin": "babel bin --source-maps --root-mode=upward --out-dir=build/bin",
     "build": "run-s build:*",
     "dev": "run-p \"build:lib -- --watch\" \"build:bin -- --watch\"",
     "fix": "npm run lint -- --fix",

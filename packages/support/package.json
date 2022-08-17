@@ -33,7 +33,7 @@
     "build"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
@@ -110,5 +110,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
+  "typedoc": {
+    "entryPoint": "./build/lib/index.js"
+  }
 }

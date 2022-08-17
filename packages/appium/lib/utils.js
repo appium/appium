@@ -239,9 +239,18 @@ async function adjustNodePath() {
     return;
   }
 
+  const refreshRequirePaths = () => {
+    try {
+      // https://gist.github.com/branneman/8048520#7-the-hack
+      // @ts-ignore
+      require('module').Module._initPaths();
+    } catch {}
+  };
+
   if (!process.env.NODE_PATH) {
     logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
     process.env.NODE_PATH = nodeModulesRoot;
+    refreshRequirePaths();
     return;
   }
 
@@ -253,6 +262,7 @@ async function adjustNodePath() {
   nodePathParts.push(nodeModulesRoot);
   logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
   process.env.NODE_PATH = nodePathParts.join(path.delimiter);
+  refreshRequirePaths();
 }
 
 /**

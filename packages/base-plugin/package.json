@@ -2,6 +2,7 @@
   "name": "@appium/base-plugin",
   "version": "1.10.3",
   "description": "The base plugin used to create Appium 2.0 plugins",
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -12,6 +13,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/lib/plugin.d.ts",
   "directories": {
     "lib": "./lib"
   },
@@ -21,7 +23,7 @@
     "index.js"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
@@ -37,11 +39,13 @@
     "node": ">=14",
     "npm": ">=8"
   },
-  "types": "./build/lib/plugin.d.ts",
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
   "tags": [
     "appium"
   ],
+  "typedoc": {
+    "entryPoint": "./build/lib/plugin.js"
+  },
   "homepage": "https://appium.io",
   "keywords": [
     "automation",

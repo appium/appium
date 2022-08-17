@@ -41,7 +41,7 @@
     "types"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
     "build:docs": "node docs/scripts/build-docs.js",
     "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
     "build:docs:assets": "node docs/scripts/copy-assets.js",
@@ -106,6 +106,9 @@
   "publishConfig": {
     "access": "public",
     "tag": "next"
+  },
+  "typedoc": {
+    "entryPoint": "./build/lib/main.js"
   },
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

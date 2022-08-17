@@ -193,19 +193,11 @@ export class NPM {
       }
     }
 
-    /**
-     * If we've found a `package.json` contained the `appiumCreated` property,
-     * then we can do whatever we please with it, since we created it.  This is
-     * likely when `APPIUM_HOME` is the default (in `~/.appium`).  In that case,
-     * we want `--global-style` to avoid deduping, and we also do not need a
-     * `package-lock.json`.
-     *
-     * If we _haven't_ found such a key, then this `package.json` isn't a
-     * "dummy" and is controlled by the user.  So we'll just add it as a dev
-     * dep; whatever else it does is up to the user's npm config.
-     */
-    const installOpts = ['--save-dev', '--omit=peer'];
+    const installOpts = ['--save-dev'];
     if (!await hasAppiumDependency(cwd)) {
+      if (process.env.APPIUM_OMIT_PEER_DEPS) {
+        installOpts.push('--omit=peer');
+      }
       installOpts.push('--save-exact', '--global-style', '--no-package-lock');
     }
 

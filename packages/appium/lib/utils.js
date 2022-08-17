@@ -244,25 +244,38 @@ async function adjustNodePath() {
       // https://gist.github.com/branneman/8048520#7-the-hack
       // @ts-ignore
       require('module').Module._initPaths();
-    } catch {}
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   if (!process.env.NODE_PATH) {
-    logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
     process.env.NODE_PATH = nodeModulesRoot;
-    refreshRequirePaths();
+    if (refreshRequirePaths()) {
+      logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
+      process.env.APPIUM_OMIT_PEER_DEPS = '1';
+    } else {
+      delete process.env.NODE_PATH;
+    }
     return;
   }
 
   const nodePathParts = process.env.NODE_PATH.split(path.delimiter);
   if (nodePathParts.includes(nodeModulesRoot)) {
+    logger.info(`NODE_PATH already includes '${nodeModulesRoot}'`);
+    process.env.APPIUM_OMIT_PEER_DEPS = '1';
     return;
   }
 
   nodePathParts.push(nodeModulesRoot);
-  logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
   process.env.NODE_PATH = nodePathParts.join(path.delimiter);
-  refreshRequirePaths();
+  if (refreshRequirePaths()) {
+    logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
+    process.env.APPIUM_OMIT_PEER_DEPS = '1';
+  } else {
+    process.env.NODE_PATH = _.without(nodePathParts, nodeModulesRoot).join(path.delimiter);
+  }
 }
 
 /**

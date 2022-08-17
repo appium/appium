@@ -41,7 +41,7 @@
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "vm2": "3.9.10",
-    "webdriverio": "7.20.9"
+    "webdriverio": "7.21.0"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.35"

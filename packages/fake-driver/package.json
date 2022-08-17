@@ -36,7 +36,7 @@
     "test/fixtures"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib --copy-files",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib --copy-files",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",

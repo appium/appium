@@ -320,7 +320,7 @@ export interface Core {
   assertFeatureEnabled(name: string): void;
   validateLocatorStrategy(strategy: string, webContext?: boolean): void;
   proxyActive(sessionId?: string): boolean;
-  getProxyAvoidList(sessionId?: string): [string, RegExp][];
+  getProxyAvoidList(sessionId?: string): RouteMatcher[];
   canProxy(sessionId?: string): boolean;
   proxyRouteIsAvoided(sessionId: string, method: string, url: string): boolean;
   addManagedDriver(driver: Driver): void;
@@ -615,3 +615,8 @@ export type DriverCommands<TArgs = any, TReturn = unknown> = Record<
   string,
   DriverCommand<TArgs, TReturn>
 >;
+
+/**
+ * Tuple of an HTTP method with a regex matching a request path
+ */
+export type RouteMatcher = [HTTPMethod, RegExp];

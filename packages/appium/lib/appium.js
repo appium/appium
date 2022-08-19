@@ -783,6 +783,11 @@ class AppiumDriver extends DriverCore {
     return dstSession && _.isFunction(dstSession.proxyActive) && dstSession.proxyActive(sessionId);
   }
 
+  /**
+   *
+   * @param {string} sessionId
+   * @returns {import('@appium/types').RouteMatcher[]}
+   */
   getProxyAvoidList(sessionId) {
     const dstSession = this.sessions[sessionId];
     return dstSession ? dstSession.getProxyAvoidList() : [];

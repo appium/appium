@@ -147,6 +147,7 @@ export interface Constraint {
   isArray?: boolean;
   deprecated?: boolean;
   inclusion?: any[];
+  inclusionCaseInsensitive?: any[];
 }
 export type Constraints = Record<string, Constraint>;
 

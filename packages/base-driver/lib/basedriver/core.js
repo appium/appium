@@ -351,7 +351,7 @@ class DriverCore {
   /**
    *
    * @param {string} sessionId
-   * @returns {[string, RegExp][]}
+   * @returns {import('@appium/types').RouteMatcher[]}
    */
   getProxyAvoidList(sessionId) {
     return [];

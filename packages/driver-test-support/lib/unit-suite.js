@@ -447,6 +447,7 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
           const avoidStub = sandbox.stub(d, 'getProxyAvoidList');
           avoidStub.returns([
             ['POST', /^foo/],
+            // @ts-expect-error
             ['BAZETE', /^bar/],
           ]);
           (() => {

@@ -241,11 +241,15 @@ async function adjustNodePath() {
 
   const refreshRequirePaths = () => {
     try {
-      // https://gist.github.com/branneman/8048520#7-the-hack
+      // ! This hack allows us to avoid modification of import
+      // ! statements in client modules. It uses a private API though,
+      // ! so it could break (maybe, eventually).
+      // See https://gist.github.com/branneman/8048520#7-the-hack
       // @ts-ignore
       require('module').Module._initPaths();
       return true;
-    } catch {
+    } catch (e) {
+      logger.info(`Module init paths cannot be refreshed. Original error: ${e.message}`);
       return false;
     }
   };

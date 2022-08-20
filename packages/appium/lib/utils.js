@@ -2,6 +2,8 @@ import _ from 'lodash';
 import logger from './logger';
 import {processCapabilities, PROTOCOLS} from '@appium/base-driver';
 import {inspect as dump} from 'util';
+import {fs} from '@appium/support';
+import path from 'path';
 
 const W3C_APPIUM_PREFIX = 'appium';
 
@@ -210,6 +212,77 @@ function getPackageVersion(pkgName) {
 }
 
 /**
+ * Adjusts NODE_PATH environment variable,
+ * so drivers and plugins could load their peer dependencies.
+ * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
+ * for more details.
+ * @returns {Promise<void>}
+ */
+async function adjustNodePath() {
+  const pathParts = path.resolve(...(__filename.split(path.sep)))
+    .split(path.sep)
+    .map((x) => x === '' ? path.sep : x);
+  let nodeModulesRoot = null;
+  for (let pathItemIdx = pathParts.length - 1; pathItemIdx > 0; --pathItemIdx) {
+    const manifestPath = path.join(...(pathParts.slice(0, pathItemIdx)), 'package.json');
+    if (!await fs.exists(manifestPath)) {
+      continue;
+    }
+    try {
+      if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
+        nodeModulesRoot = path.join(...(pathParts.slice(0, pathItemIdx - 1)));
+        break;
+      }
+    } catch (ign) {}
+  }
+  if (!nodeModulesRoot) {
+    return;
+  }
+
+  const refreshRequirePaths = () => {
+    try {
+      // ! This hack allows us to avoid modification of import
+      // ! statements in client modules. It uses a private API though,
+      // ! so it could break (maybe, eventually).
+      // See https://gist.github.com/branneman/8048520#7-the-hack
+      // @ts-ignore
+      require('module').Module._initPaths();
+      return true;
+    } catch (e) {
+      logger.info(`Module init paths cannot be refreshed. Original error: ${e.message}`);
+      return false;
+    }
+  };
+
+  if (!process.env.NODE_PATH) {
+    process.env.NODE_PATH = nodeModulesRoot;
+    if (refreshRequirePaths()) {
+      logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
+      process.env.APPIUM_OMIT_PEER_DEPS = '1';
+    } else {
+      delete process.env.NODE_PATH;
+    }
+    return;
+  }
+
+  const nodePathParts = process.env.NODE_PATH.split(path.delimiter);
+  if (nodePathParts.includes(nodeModulesRoot)) {
+    logger.info(`NODE_PATH already includes '${nodeModulesRoot}'`);
+    process.env.APPIUM_OMIT_PEER_DEPS = '1';
+    return;
+  }
+
+  nodePathParts.push(nodeModulesRoot);
+  process.env.NODE_PATH = nodePathParts.join(path.delimiter);
+  if (refreshRequirePaths()) {
+    logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
+    process.env.APPIUM_OMIT_PEER_DEPS = '1';
+  } else {
+    process.env.NODE_PATH = _.without(nodePathParts, nodeModulesRoot).join(path.delimiter);
+  }
+}
+
+/**
  * Pulls the initial values of Appium settings from the given capabilities argument.
  * Each setting item must satisfy the following format:
  * `setting[setting_name]: setting_value`
@@ -250,6 +323,7 @@ export {
   getPackageVersion,
   pullSettings,
   removeAppiumPrefixes,
+  adjustNodePath,
 };
 
 /**

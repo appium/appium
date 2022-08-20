@@ -41,6 +41,22 @@ describe('CLI behavior', function () {
     resolveFixture('test-driver-invalid-peer-dep/package.json')
   );
 
+  describe('when appium is already installed', function () {
+    before(async function () {
+      appiumHome = await tempDir.openDir();
+    });
+
+    after(async function () {
+      await fs.rimraf(appiumHome);
+    });
+
+    it('should not duplicate it as peer dependencies for drivers', async function () {
+      const run = runAppiumJson(appiumHome);
+      await run([DRIVER_TYPE, INSTALL, 'appium-fake-driver', '--source', 'npm']);
+      await fs.exists(path.join(appiumHome, 'node_modules', 'appium')).should.eventually.be.false;
+    });
+  });
+
   describe('when appium is a dependency of the project in the current working directory', function () {
     /** @type {string} */
     let hashPath;

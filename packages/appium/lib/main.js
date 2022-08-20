@@ -26,7 +26,7 @@ import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
 import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
-import {inspect} from './utils';
+import {inspect, adjustNodePath} from './utils';
 
 const {resolveAppiumHome} = env;
 
@@ -171,6 +171,8 @@ function areServerCommandArgs(args) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+
+  await adjustNodePath();
 
   const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 

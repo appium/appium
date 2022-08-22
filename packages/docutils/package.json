@@ -3,8 +3,14 @@
   "version": "0.0.10",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
-    "appium",
-    "docs"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "homepage": "https://appium.io",
   "bugs": {

@@ -1,5 +1,5 @@
 import BaseDriver from '../../../lib';
-import {driverUnitTestSuite} from '@appium/test-support';
+import {driverUnitTestSuite} from '@appium/driver-test-support';
 
 driverUnitTestSuite(BaseDriver, {
   platformName: 'iOS',

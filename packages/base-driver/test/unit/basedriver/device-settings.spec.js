@@ -22,6 +22,14 @@ describe('DeviceSettings', function () {
         expect(() => new DeviceSettings()).not.to.throw();
       });
     });
+
+    it('should not hold on to reference of defaults in constructor', function () {
+      let obj = {foo: 'bar'};
+      let d1 = new DeviceSettings(obj);
+      let d2 = new DeviceSettings(obj);
+      d1.getSettings().foo = 'baz';
+      expect(d1.getSettings()).to.not.eql(d2.getSettings());
+    });
   });
 
   describe('instance method', function () {

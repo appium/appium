@@ -1,0 +1,69 @@
+{
+  "name": "@appium/driver-test-support",
+  "version": "0.1.0",
+  "description": "Test utilities for Appium drivers",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/driver-test-support"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build"
+  ],
+  "scripts": {
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "test": "npm run test:unit",
+    "test:smoke": "node ./index.js",
+    "test:unit": "mocha \"test/unit/**/*.spec.js\""
+  },
+  "types": "./build/lib/index.d.ts",
+  "dependencies": {
+    "@appium/types": "0.4.0",
+    "@babel/runtime": "7.18.9",
+    "@types/lodash": "4.14.184",
+    "axios": "0.27.2",
+    "bluebird": "3.7.2",
+    "chai": "4.3.6",
+    "get-port": "5.1.1",
+    "lodash": "4.17.21",
+    "sinon": "14.0.0",
+    "source-map-support": "0.5.21"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.43",
+    "mocha": "*"
+  },
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

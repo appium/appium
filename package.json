@@ -83,6 +83,7 @@
     "@appium/base-plugin": "file:packages/base-plugin",
     "@appium/doctor": "file:packages/doctor",
     "@appium/docutils": "file:packages/docutils",
+    "@appium/driver-test-support": "file:packages/driver-test-support",
     "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
     "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
     "@appium/fake-driver": "file:packages/fake-driver",

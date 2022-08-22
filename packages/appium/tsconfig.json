@@ -9,7 +9,6 @@
       "@appium/base-plugin": ["../base-plugin"],
       "@appium/types": ["../types"],
       "@appium/schema": ["../schema"],
-      "@appium/test-support": ["../test-support"],
       "appium": ["."]
     },
     "checkJs": true

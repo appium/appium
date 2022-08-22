@@ -37,7 +37,9 @@ jobs:
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
       - name: Install dependencies
-        run: npm install
+        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        with:
+          useRollingCache: true
       - name: ESLint
         run: npm run lint
       - name: Check types
@@ -50,6 +52,8 @@ jobs:
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
       - name: Install dependencies
-        run: npm install
+        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        with:
+          useRollingCache: true
       - name: Generate docs
         run: npm run generate-docs

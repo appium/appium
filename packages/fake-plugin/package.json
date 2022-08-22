@@ -59,5 +59,15 @@
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
   "tags": [
     "appium"
+  ],
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ]
 }

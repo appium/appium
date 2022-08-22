@@ -91,6 +91,7 @@
     "@appium/gulp-plugins": "file:packages/gulp-plugins",
     "@appium/images-plugin": "file:packages/images-plugin",
     "@appium/opencv": "file:packages/opencv",
+    "@appium/plugin-test-support": "file:packages/plugin-test-support",
     "@appium/relaxed-caps-plugin": "file:packages/relaxed-caps-plugin",
     "@appium/schema": "file:packages/schema",
     "@appium/support": "file:packages/support",

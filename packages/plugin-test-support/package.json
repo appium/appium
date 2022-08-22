@@ -1,0 +1,65 @@
+{
+  "name": "@appium/plugin-test-support",
+  "version": "0.1.0",
+  "description": "Testing utilities for Appium plugins",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/plugin-test-support"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "main": "index.js",
+  "types": "build/lib/harness.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib",
+    "index.js",
+    "build"
+  ],
+  "scripts": {
+    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "test": "npm run test:unit",
+    "test:smoke": "node ./index.js",
+    "test:unit": "exit 0"
+  },
+  "dependencies": {
+    "@appium/types": "0.4.0",
+    "@babel/runtime": "7.18.9",
+    "get-port": "5.1.1",
+    "log-symbols": "4.1.0",
+    "source-map-support": "0.5.21",
+    "teen_process": "1.16.0"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.43",
+    "mocha": "*"
+  },
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

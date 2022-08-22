@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {driverE2ETestSuite} from 'appium/test';
+import {driverE2ETestSuite} from '@appium/driver-test-support';
 import {FakeDriver, startServer} from '../../lib/index.js';
 import {
   BASE_CAPS,

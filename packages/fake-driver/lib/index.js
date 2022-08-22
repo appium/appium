@@ -1,5 +1,3 @@
-// transpile:main
-
 import * as driver from './driver';
 import * as server from './server';
 

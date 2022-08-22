@@ -3,11 +3,14 @@
   "version": "1.3.5",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
-    "appium",
-    "opencv",
     "automation",
-    "image",
-    "webdriver"
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

@@ -4,7 +4,7 @@ import {
   getTestPort,
   TEST_HOST,
   createSessionHelpers,
-} from '@appium/test-support';
+} from '@appium/driver-test-support';
 
 const {expect} = chai;
 
@@ -68,5 +68,5 @@ describe('BaseDriver', function () {
 });
 
 /**
- * @typedef {import('@appium/test-support').SessionHelpers} SessionHelpers
+ * @typedef {import('@appium/driver-test-support').SessionHelpers} SessionHelpers
  */

@@ -5,10 +5,14 @@
     "paths": {
       "@appium/base-driver": ["."],
       "@appium/support": ["../support"],
-      "@appium/types": ["../types"]
+      "@appium/types": ["../types"],
+      "@appium/driver-test-support": ["../driver-test-support"]
     },
     "checkJs": true
   },
   "include": ["lib"],
-  "references": [{"path": "../support"}, {"path": "../types"}]
+  "references": [
+    {"path": "../support"},
+    {"path": "../types"}
+  ]
 }

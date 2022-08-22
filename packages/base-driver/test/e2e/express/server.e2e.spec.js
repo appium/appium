@@ -1,11 +1,9 @@
-// transpile:mocha
-
 import {server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
-import {TEST_HOST, getTestPort} from '@appium/test-support';
+import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
 describe('server', function () {
   let hwServer;

@@ -1,5 +1,5 @@
 import {JWProxy} from '../../../lib';
-import {getTestPort, TEST_HOST, createAppiumURL} from '@appium/test-support';
+import {getTestPort, TEST_HOST, createAppiumURL} from '@appium/driver-test-support';
 import _ from 'lodash';
 
 describe('JWProxy', function () {

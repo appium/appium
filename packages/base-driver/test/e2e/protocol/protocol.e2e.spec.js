@@ -1,5 +1,3 @@
-// transpile:mocha
-
 import {server, routeConfiguringFunction, errors, JWProxy, BaseDriver} from '../../../lib';
 import {FakeDriver} from './fake-driver';
 import axios from 'axios';
@@ -7,7 +5,7 @@ import {createSandbox} from 'sinon';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
 import {createProxyServer} from './helpers';
 import {MJSONWP_ELEMENT_KEY, W3C_ELEMENT_KEY} from '../../../lib/constants';
-import {TEST_HOST, getTestPort} from '@appium/test-support';
+import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
 
 let port;
 let baseUrl;

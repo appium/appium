@@ -1,4 +1,5 @@
 import type {EventEmitter} from 'events';
+import {Element, ActionSequence} from './action';
 import {
   HTTPMethod,
   Capabilities,
@@ -151,10 +152,6 @@ export interface Constraint {
 }
 export type Constraints = Record<string, Constraint>;
 
-export interface Element {
-  'element-6066-11e4-a52e-4f735466cecf': string;
-}
-
 export interface DriverHelpers {
   configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
@@ -204,24 +201,6 @@ export interface Cookie {
   httpOnly?: boolean;
   expiry?: number;
   sameSite?: 'Lax' | 'Strict';
-}
-
-export interface Actions {
-  type?: string;
-  actions: Action[];
-  parameters?: {
-    pointerType?: string;
-  };
-}
-
-export interface Action {
-  duration?: number;
-  type: string;
-  value?: string;
-  x?: number;
-  y?: number;
-  button?: number;
-  origin?: string;
 }
 
 // Appium W3C WebDriver Extension
@@ -405,7 +384,7 @@ export interface ExternalDriver extends Driver {
   setCookie?(cookie: Cookie): Promise<void>;
   deleteCookie?(name: string): Promise<void>;
   deleteCookies?(): Promise<void>;
-  performActions?(actions: Actions[]): Promise<void>;
+  performActions?(actions: ActionSequence[]): Promise<void>;
   releaseActions?(): Promise<void>;
   postDismissAlert?(): Promise<void>;
   postAcceptAlert?(): Promise<void>;

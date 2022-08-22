@@ -28,12 +28,7 @@ jobs:
         uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
         with:
           useRollingCache: true
-      - name: Run smoke tests
-        uses: boneskull/nodejs-production-test-action@fb21ee0ae5c9e7213d795de9dfc1919332ffe9e1 # tag=v1
-        with:
-          script: test:smoke
-          workspaces: true
-      - name: Run unit & E2E tests
+      - name: Run smoke, unit & E2E tests
         run: npm run test:ci
 
   lint:

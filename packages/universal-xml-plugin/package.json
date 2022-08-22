@@ -3,10 +3,14 @@
   "version": "1.0.0-beta.13",
   "description": "Appium plugin for making XML source and XPath queries the same across iOS and Android",
   "keywords": [
-    "appium",
     "automation",
-    "xml",
-    "webdriver"
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "homepage": "https://appium.io",
   "bugs": {

@@ -2,18 +2,14 @@
   "compilerOptions": {
     "outDir": "build",
     "paths": {
-      "@appium/opencv": ["../opencv"],
-      "appium": ["../appium"]
+      "@appium/opencv": ["../opencv"]
     }
   },
-  "extends": "../../config/tsconfig.base.json",
+  "extends": "../../config/tsconfig.plugin.json",
   "include": ["lib"],
   "references": [
     {
       "path": "../opencv"
-    },
-    {
-      "path": "../appium"
     }
   ]
 }

@@ -42,5 +42,15 @@
   "tags": [
     "appium"
   ],
-  "homepage": "https://appium.io"
+  "homepage": "https://appium.io",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ]
 }

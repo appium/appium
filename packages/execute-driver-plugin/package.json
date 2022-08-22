@@ -3,9 +3,14 @@
   "version": "2.0.4",
   "description": "Plugin for batching and executing driver commands with Appiums",
   "keywords": [
-    "appium",
     "automation",
-    "webdriver"
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "homepage": "https://appium.io",
   "bugs": {

@@ -1,0 +1,20 @@
+{
+  "extends": "../../config/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "checkJs": true,
+    "paths": {
+      "@appium/types": ["../types"],
+      "appium/driver": ["../base-driver"],
+    },
+    "types": [
+      "mocha", "chai", "chai-as-promised"
+    ]
+  },
+  "include": ["./lib"],
+  "references": [
+    {"path": "../types"},
+    {"path": "../base-driver"}
+  ]
+}

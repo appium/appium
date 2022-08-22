@@ -8,6 +8,9 @@
       "path": "packages/driver-test-support"
     },
     {
+      "path": "packages/plugin-test-support"
+    },
+    {
       "path": "packages/schema"
     },
     {

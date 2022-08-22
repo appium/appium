@@ -9,6 +9,7 @@ import {ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
 
 export * from './driver';
+export * from './action';
 export * from './plugin';
 export {AppiumW3CCapabilities} from './capabilities';
 export {AppiumConfig, NormalizedAppiumConfig} from './config';

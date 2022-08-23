@@ -171,7 +171,7 @@ describe('CLI behavior', function () {
 
         it('should update package.json', async function () {
           const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
-          expect(newPkg).to.have.nested.property('devDependencies.test-driver');
+          expect(newPkg).to.have.nested.property('devDependencies.@appium/test-driver');
         });
 
         it('should update the hash', async function () {
@@ -189,7 +189,7 @@ describe('CLI behavior', function () {
 
         it('should actually install both drivers', function () {
           expect(() => resolveFrom(appiumHome, '@appium/fake-driver')).not.to.throw;
-          expect(() => resolveFrom(appiumHome, 'test-driver')).not.to.throw;
+          expect(() => resolveFrom(appiumHome, '@appium/test-driver')).not.to.throw;
         });
       });
     });
@@ -285,6 +285,14 @@ describe('CLI behavior', function () {
           // TODO: this could probably be replaced by looking at updateVersion in the JSON
           const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
           stderr.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
+        });
+
+        describe('if a driver is not published to npm', function () {
+          it('should not throw an error', async function () {
+            await clear();
+            await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
+            await expect(runList(['--updates'])).not.to.be.rejected;
+          });
         });
       });
 

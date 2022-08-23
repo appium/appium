@@ -103,6 +103,11 @@
     "which": "2.0.2",
     "yauzl": "2.10.0"
   },
+  "overrides": {
+    "jimp": {
+      "jpeg-js": "0.4.4"
+    }
+  },
   "engines": {
     "node": ">=14",
     "npm": ">=8"

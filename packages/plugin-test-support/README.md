@@ -1,4 +1,4 @@
-# @appium/pluginb-test-support
+# @appium/plugin-test-support
 
 > Testing utilities for [Appium](https://appium.io) plugins
 

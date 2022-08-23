@@ -576,13 +576,14 @@ class ExtensionCommand {
     // this is a helper method, 'ext' is assumed to already be installed here, and of the npm
     // install type
     const {version, pkgName} = this.config.installedExtensions[ext];
+    /** @type {string?} */
     let unsafeUpdate = await npm.getLatestVersion(this.config.appiumHome, pkgName);
     let safeUpdate = await npm.getLatestSafeUpgradeVersion(
       this.config.appiumHome,
       pkgName,
       version
     );
-    if (!util.compareVersions(unsafeUpdate, '>', version)) {
+    if (unsafeUpdate !== null && !util.compareVersions(unsafeUpdate, '>', version)) {
       // the latest version is not greater than the current version, so there's no possible update
       unsafeUpdate = null;
       safeUpdate = null;

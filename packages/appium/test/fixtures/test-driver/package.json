@@ -1,5 +1,5 @@
 {
-  "name": "test-driver",
+  "name": "@appium/test-driver",
   "version": "1.0.0",
   "private": true,
   "peerDependencies": {

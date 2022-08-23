@@ -4,7 +4,7 @@
 version: 3
 
 project:
-  id: github.com/appium/appium
+  id: appium
   name: appium
 
 paths:
@@ -35,6 +35,26 @@ targets:
       path: ./packages/support
     - type: npm
       path: ./packages/test-support
+    - type: npm
+      path: ./packages/types
+    - type: npm
+      path: ./packages/schema
+    - type: npm
+      path: ./packages/universal-xmlplugin
+    - type: npm
+      path: ./packages/opencv
+    - type: npm
+      path: ./packages/images-plugin
+    - type: npm
+      path: ./packages/base-plugin
+    - type: npm
+      path: ./packages/relaxed-caps-plugin
+    - type: npm
+      path: ./packages/fake-plugin
+    - type: npm
+      path: ./packages/docutils
+
+
 
 revision:
-  branch: 2.0
+  branch: master

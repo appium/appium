@@ -13,11 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
         with:
-          ref: 'master'
-      - name: fossa analyze
-        run: |
-          npm install
-          curl -sS -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+          ref: master
+      - name: Install dependencies
+        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+      - name: Install fossa-cli
+        run: ./scripts/install-fossa.sh -d
+      - name: Run FOSSA analysis
           fossa analyze
           fossa test
     env:

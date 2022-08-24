@@ -20,6 +20,7 @@
         "globby",
         "inquirer",
         "log-symbols",
+        "pkg-dir",
         "read-pkg",
         "strip-ansi",
         "supports-color",

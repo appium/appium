@@ -92,29 +92,47 @@ export class NPM {
   /**
    * @param {string} cwd
    * @param {string} pkg
+   * @returns {Promise<string?>}
    */
   async getLatestVersion(cwd, pkg) {
-    return (
-      await this.exec('view', [pkg, 'dist-tags'], {
-        json: true,
-        cwd,
-      })
-    ).json?.latest;
+    try {
+      return (
+        (
+          await this.exec('view', [pkg, 'dist-tags'], {
+            json: true,
+            cwd,
+          })
+        ).json?.latest ?? null
+      );
+    } catch (err) {
+      if (!err?.message.includes('E404')) {
+        throw err;
+      }
+      return null;
+    }
   }
 
   /**
    * @param {string} cwd
    * @param {string} pkg
    * @param {string} curVersion
+   * @returns {Promise<string?>}
    */
   async getLatestSafeUpgradeVersion(cwd, pkg, curVersion) {
-    const allVersions = (
-      await this.exec('view', [pkg, 'versions'], {
-        json: true,
-        cwd,
-      })
-    ).json;
-    return this.getLatestSafeUpgradeFromVersions(curVersion, allVersions);
+    try {
+      const allVersions = (
+        await this.exec('view', [pkg, 'versions'], {
+          json: true,
+          cwd,
+        })
+      ).json;
+      return this.getLatestSafeUpgradeFromVersions(curVersion, allVersions);
+    } catch (err) {
+      if (!err?.message.includes('E404')) {
+        throw err;
+      }
+      return null;
+    }
   }
 
   /**
@@ -194,7 +212,7 @@ export class NPM {
     }
 
     const installOpts = ['--save-dev'];
-    if (!await hasAppiumDependency(cwd)) {
+    if (!(await hasAppiumDependency(cwd))) {
       if (process.env.APPIUM_OMIT_PEER_DEPS) {
         installOpts.push('--omit=peer');
       }

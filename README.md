@@ -134,6 +134,7 @@ plugin then don't hesitate to create a PR and add a link to your plugin into the
   Name | Description
   --- | ---
   [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) | This is an Appium plugin designed to manage and create driver session on connected android devices and iOS Simulators.
+  [appium-reporter-plugin](https://github.com/AppiumTestDistribution/appium-reporter-plugin) | This Plugin generates standalone consolidated html report with screenshots. Report can be fetched from appium server, without worrying about heavy lifting such as screenshot capturing, report generation etc.
 </details>
 
 ### Server Command Line Interface

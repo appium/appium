@@ -109,5 +109,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
+  "overrides": {
+    "jpeg-js": "0.4.4"
+  }
 }

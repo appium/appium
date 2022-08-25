@@ -20,14 +20,33 @@ helpers.assertWebviewContext = function assertWebviewContext() {
   }
 };
 
+/**
+ * Get the current appium context
+ *
+ * @appiumCommand
+ * @returns {Promise<string>}
+ */
 commands.getCurrentContext = async function getCurrentContext() {
   return this.curContext;
 };
 
+/**
+ * Get the list of available contexts
+ *
+ * @appiumCommand
+ * @returns {Promise<Array<string>>}
+ */
 commands.getContexts = async function getContexts() {
   return _.keys(this.getRawContexts());
 };
 
+/**
+ * Set the current context
+ *
+ * @appiumCommand
+ * @param {string} context - name of the context
+ * @returns {Promise<null>}
+ */
 commands.setContext = async function setContext(context) {
   let contexts = this.getRawContexts();
   if (_.includes(_.keys(contexts), context)) {
@@ -46,6 +65,13 @@ commands.setContext = async function setContext(context) {
   }
 };
 
+/**
+ * Set the active frame
+ *
+ * @appiumCommand
+ * @param {number}
+ * @returns {Promise<null>}
+ */
 commands.setFrame = async function setFrame(frameId) {
   this.assertWebviewContext();
   if (frameId === null) {

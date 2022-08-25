@@ -16,11 +16,24 @@ helpers.assertAlert = function assertAlert() {
   }
 };
 
+/**
+ * Get the text of an alert
+ *
+ * @appiumCommand
+ * @returns {Promise<string>}
+ */
 commands.getAlertText = async function getAlertText() {
   this.assertAlert();
   return this.appModel.alertText();
 };
 
+/**
+ * Set the text of an alert
+ *
+ * @appiumCommand
+ * @param {string} text
+ * @returns {Promise<null>}
+ */
 commands.setAlertText = async function setAlertText(text) {
   this.assertAlert();
   try {
@@ -30,11 +43,23 @@ commands.setAlertText = async function setAlertText(text) {
   }
 };
 
+/**
+ * Accept an alert
+ *
+ * @appiumCommand
+ * @returns {Promise<null>}
+ */
 commands.postAcceptAlert = async function postAcceptAlert() {
   this.assertAlert();
   this.appModel.handleAlert();
 };
 
+/**
+ * Dismiss an alert
+ *
+ * @appiumCommand
+ * @returns {Promise<null>}
+ */
 commands.postDismissAlert = commands.postAcceptAlert;
 
 Object.assign(extensions, commands, helpers);

@@ -131,7 +131,7 @@
     "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "10.1.0",
-    "eslint-plugin-promise": "6.0.0",
+    "eslint-plugin-promise": "6.0.1",
     "fancy-log": "2.0.0",
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",

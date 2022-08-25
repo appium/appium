@@ -23,6 +23,9 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "run-s build:distfiles build:types",
     "build:distfiles": "lerna run --parallel --prefix --concurrency=8 build",
@@ -81,29 +84,7 @@
     "printWidth": 100,
     "singleQuote": true
   },
-  "dependencies": {
-    "@appium/base-driver": "file:packages/base-driver",
-    "@appium/base-plugin": "file:packages/base-plugin",
-    "@appium/doctor": "file:packages/doctor",
-    "@appium/docutils": "file:packages/docutils",
-    "@appium/driver-test-support": "file:packages/driver-test-support",
-    "@appium/eslint-config-appium": "file:packages/eslint-config-appium",
-    "@appium/execute-driver-plugin": "file:packages/execute-driver-plugin",
-    "@appium/fake-driver": "file:packages/fake-driver",
-    "@appium/fake-plugin": "file:packages/fake-plugin",
-    "@appium/gulp-plugins": "file:packages/gulp-plugins",
-    "@appium/images-plugin": "file:packages/images-plugin",
-    "@appium/opencv": "file:packages/opencv",
-    "@appium/plugin-test-support": "file:packages/plugin-test-support",
-    "@appium/relaxed-caps-plugin": "file:packages/relaxed-caps-plugin",
-    "@appium/schema": "file:packages/schema",
-    "@appium/support": "file:packages/support",
-    "@appium/test-support": "file:packages/test-support",
-    "@appium/types": "file:packages/types",
-    "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
-    "appium": "file:packages/appium",
-    "glob": "8.0.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@appium/fake-plugin": "1.3.1",
     "@babel/cli": "7.19.3",
@@ -168,7 +149,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "overrides": {
+    "jpeg-js": "0.4.4"
+  }
 }

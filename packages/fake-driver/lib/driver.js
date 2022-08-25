@@ -92,12 +92,25 @@ class FakeDriver extends BaseDriver {
     return this.fakeThing;
   }
 
+  /**
+   * Set the 'thing' value (so that it can be retrieved later)
+   *
+   * @appiumCommand
+   * @param {any} thing
+   * @returns {Promise<null>}
+   */
   async setFakeThing(thing) {
     await B.delay(1);
     this.fakeThing = thing;
     return null;
   }
 
+  /**
+   * Get the driver args that were sent in via the CLI
+   *
+   * @appiumCommand
+   * @returns {Promise<Record<string, any>>}
+   */
   async getFakeDriverArgs() {
     await B.delay(1);
     return this.cliArgs;

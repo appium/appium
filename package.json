@@ -168,6 +168,11 @@
   "publishConfig": {
     "access": "public"
   },
+  "overrides": {
+    "jimp": {
+      "jpeg-js": "0.4.4"
+    }
+  },
   "workspaces": [
     "packages/*"
   ]

@@ -2,14 +2,14 @@
 jobs:
   - job: generate_docs
     pool: 
-      vmImage: "macOS 10.14"
+      vmImage: "macOS 11"
     variables:
       CC: gcc
       CXX: g++
     steps:
     - task: NodeTool@0
       inputs:
-        versionSpec: '12.x'
+        versionSpec: '16.x'
     - script: |
         # do git stuff
         npm install

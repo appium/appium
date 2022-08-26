@@ -2,7 +2,7 @@
 jobs:
   - job: bundle_and_upload_appium_zip
     pool:
-      vmImage: 'macOS 10.14'
+      vmImage: 'macOS 11'
     variables:
       CC: gcc
       CXX: g++
@@ -11,7 +11,7 @@ jobs:
       displayName: Print GCC Version
     - task: NodeTool@0
       inputs:
-        versionSpec: '12.x'
+        versionSpec: '16.x'
     - script: npm install
       displayName: Install NPM Dependencies
     - script: npm run build
@@ -19,13 +19,13 @@ jobs:
     - script: npm prune --production
       displayName: Get rid of dev dependencies
     - script: |
-        curl -o node-darwin.tar.gz https://nodejs.org/dist/v12.16.1/node-v12.16.1-darwin-x64.tar.gz
+        curl -o node-darwin.tar.gz https://nodejs.org/dist/v16.17.0/node-v16.17.0-darwin-x64.tar.gz
         mkdir node-darwin-unpacked
         tar -xzf node-darwin.tar.gz -C node-darwin-unpacked/ --strip-components 1
         rm -f node-darwin.tar.gz
         cp node-darwin-unpacked/bin/node node-darwin
         rm -rf node-darwin-unpacked
-      displayName: Download NodeJS
+      displayName: Download NodeJS to bundle it
     - script: npm run zip
       displayName: Create the bundle zip
     - script: npm install

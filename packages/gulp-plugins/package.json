@@ -60,7 +60,7 @@
     "babel-plugin-source-map-support": "2.2.0",
     "bluebird": "3.7.2",
     "del": "6.1.1",
-    "eslint": "8.22.0",
+    "eslint": "8.23.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "10.1.0",

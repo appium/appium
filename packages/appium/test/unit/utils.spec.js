@@ -271,7 +271,7 @@ describe('utils', function () {
     });
 
     it('should adjust NODE_PATH', async function () {
-      await adjustNodePath();
+      adjustNodePath();
       (await fs.exists(process.env.NODE_PATH)).should.be.true;
     });
   });

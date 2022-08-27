@@ -172,7 +172,7 @@ function areServerCommandArgs(args) {
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
 
-  await adjustNodePath();
+  adjustNodePath();
 
   const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
 

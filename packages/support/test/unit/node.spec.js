@@ -1,5 +1,7 @@
 import {should} from 'chai';
 import {node} from '../../lib';
+import path from 'path';
+import _ from 'lodash';
 
 describe('node utilities', function () {
   describe('getObjectSize', function () {
@@ -19,6 +21,16 @@ describe('node utilities', function () {
           },
         })
         .should.eql(32);
+    });
+  });
+
+  describe('getModuleRootSync', function () {
+    it('should be able to find current module\'s root', function () {
+      path.resolve(__dirname).should.contain(node.getModuleRootSync('@appium/support', __filename));
+    });
+
+    it('should return null if no root is found', function () {
+      _.isNull(node.getModuleRootSync('yolo', __filename)).should.be.true;
     });
   });
 

@@ -210,7 +210,7 @@ function deepFreeze(object) {
  * `__filename` to find the root of the module where this helper is called.
  * @returns {string?} Full path to the module root
  */
-const getModuleRootSync = _.memoize (function getModuleRootSync (moduleName, filePath) {
+function getModuleRootSync (moduleName, filePath) {
   let currentDir = path.dirname(path.resolve(filePath));
   let isAtFsRoot = false;
   while (!isAtFsRoot) {
@@ -225,6 +225,6 @@ const getModuleRootSync = _.memoize (function getModuleRootSync (moduleName, fil
     isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
   }
   return null;
-});
+}
 
 export {requirePackage, getObjectSize, getObjectId, deepFreeze, getModuleRootSync};

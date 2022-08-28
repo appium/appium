@@ -25,7 +25,7 @@ jobs:
     - script: npm prune --production
       displayName: Get rid of dev dependencies
     - script: |
-        curl -o node-darwin.tar.gz 'https://nodejs.org/dist/v${{parameters.bundleNodeJSVersion}}/node-v${{parameters.bundleNodeJSVersion}}-darwin-x64.tar.gz
+        curl -o node-darwin.tar.gz https://nodejs.org/dist/v${{ parameters.bundleNodeJSVersion }}/node-v${{ parameters.bundleNodeJSVersion }}-darwin-x64.tar.gz
         mkdir node-darwin-unpacked
         tar -xzf node-darwin.tar.gz -C node-darwin-unpacked/ --strip-components 1
         rm -f node-darwin.tar.gz

@@ -3,6 +3,7 @@ import log from './logger';
 import _ from 'lodash';
 import {exec} from 'teen_process';
 import path from 'path';
+import _fs from 'fs';
 import {v4 as uuidV4} from 'uuid';
 
 const ECMA_SIZES = Object.freeze({
@@ -200,4 +201,30 @@ function deepFreeze(object) {
   return Object.freeze(object);
 }
 
-export {requirePackage, getObjectSize, getObjectId, deepFreeze};
+/**
+ * Tries to synchronously detect the absolute path to the folder
+ * where the given `moduleName` is located.
+ *
+ * @param {string} moduleName The name of the module as it is written in package.json
+ * @param {string} filePath Full path to any of files that `moduleName` contains. Use
+ * `__filename` to find the root of the module where this helper is called.
+ * @returns {string?} Full path to the module root
+ */
+function getModuleRootSync (moduleName, filePath) {
+  let currentDir = path.dirname(path.resolve(filePath));
+  let isAtFsRoot = false;
+  while (!isAtFsRoot) {
+    const manifestPath = path.join(currentDir, 'package.json');
+    try {
+      if (_fs.existsSync(manifestPath) &&
+          JSON.parse(_fs.readFileSync(manifestPath, 'utf8')).name === moduleName) {
+        return currentDir;
+      }
+    } catch (ign) {}
+    currentDir = path.dirname(currentDir);
+    isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
+  }
+  return null;
+}
+
+export {requirePackage, getObjectSize, getObjectId, deepFreeze, getModuleRootSync};

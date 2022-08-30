@@ -2,7 +2,7 @@ import _ from 'lodash';
 import logger from './logger';
 import {processCapabilities, PROTOCOLS} from '@appium/base-driver';
 import {inspect as dump} from 'util';
-import {fs} from '@appium/support';
+import {node} from '@appium/support';
 import path from 'path';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -216,28 +216,14 @@ function getPackageVersion(pkgName) {
  * so drivers and plugins could load their peer dependencies.
  * Read https://nodejs.org/api/modules.html#loading-from-the-global-folders
  * for more details.
- * @returns {Promise<void>}
+ * @returns {void}
  */
-async function adjustNodePath() {
-  const pathParts = path.resolve(...(__filename.split(path.sep)))
-    .split(path.sep)
-    .map((x) => x === '' ? path.sep : x);
-  let nodeModulesRoot = null;
-  for (let pathItemIdx = pathParts.length - 1; pathItemIdx > 0; --pathItemIdx) {
-    const manifestPath = path.join(...(pathParts.slice(0, pathItemIdx)), 'package.json');
-    if (!await fs.exists(manifestPath)) {
-      continue;
-    }
-    try {
-      if (JSON.parse(await fs.readFile(manifestPath, 'utf8')).name === 'appium') {
-        nodeModulesRoot = path.join(...(pathParts.slice(0, pathItemIdx - 1)));
-        break;
-      }
-    } catch (ign) {}
-  }
-  if (!nodeModulesRoot) {
+function adjustNodePath() {
+  const selfRoot = node.getModuleRootSync('appium', __filename);
+  if (!selfRoot || path.dirname(selfRoot).length >= selfRoot.length) {
     return;
   }
+  const nodeModulesRoot = path.dirname(selfRoot);
 
   const refreshRequirePaths = () => {
     try {

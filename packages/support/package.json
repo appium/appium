@@ -50,7 +50,7 @@
     "@types/archiver": "5.3.1",
     "@types/base64-stream": "1.0.2",
     "@types/find-root": "1.1.2",
-    "@types/glob": "7.2.0",
+    "@types/glob": "8.0.0",
     "@types/jsftp": "2.1.2",
     "@types/klaw": "3.0.3",
     "@types/lockfile": "1.0.2",

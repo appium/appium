@@ -66,7 +66,7 @@
     "@appium/schema": "^0.0.9",
     "@appium/support": "^2.59.5",
     "@appium/types": "^0.4.0",
-    "@babel/runtime": "7.18.9",
+    "@babel/runtime": "7.19.0",
     "@sidvind/better-ajv-errors": "2.0.0",
     "@types/argparse": "2.0.10",
     "@types/bluebird": "3.5.36",

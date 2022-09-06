@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@appium/types": "0.4.0",
-    "@babel/runtime": "7.18.9",
+    "@babel/runtime": "7.19.0",
     "get-port": "5.1.1",
     "log-symbols": "4.1.0",
     "source-map-support": "0.5.21",

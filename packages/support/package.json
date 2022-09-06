@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@appium/types": "^0.4.0",
-    "@babel/runtime": "7.18.9",
+    "@babel/runtime": "7.19.0",
     "@colors/colors": "1.5.0",
     "@types/archiver": "5.3.1",
     "@types/base64-stream": "1.0.2",

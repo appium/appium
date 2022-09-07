@@ -1,5 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
-import {readFileSync, accessSync, constants} from 'fs';
+import {readFileSync, existsSync} from 'fs';
 import _ from 'lodash';
 
 /**
@@ -34,20 +34,6 @@ function parseCsvFile(value) {
     .map((v) => v.trim())
     .filter(Boolean)
     .flatMap(parseCsvLine);
-}
-
-/**
- * Check synchronously if the given path exists
- * @param {string} filePath full path to be checked for existence
- * @returns {boolean}
- */
-function existsSync(filePath) {
-  try {
-    accessSync(filePath, constants.R_OK);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /**

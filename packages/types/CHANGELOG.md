@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/appium/appium/compare/@appium/types@0.4.0...@appium/types@0.4.1) (2022-09-07)
+
+
+### Bug Fixes
+
+* **types:** add inclusionCaseInsensitive to Constraint type ([74378cc](https://github.com/appium/appium/commit/74378cca66b365083850d189e5922de3a2c5f488))
+* **types:** add missing @types/ws dep ([1597037](https://github.com/appium/appium/commit/159703744f18566bf3a46e0a2c5b9ac0073e5458))
+* **types:** Driver extends ExecuteCommands ([#17363](https://github.com/appium/appium/issues/17363)) ([b594799](https://github.com/appium/appium/commit/b5947991cff4f78fd4e0de4155d10f47f75a19f9)), closes [#17359](https://github.com/appium/appium/issues/17359)
+
+
+
+
+
 # [0.4.0](https://github.com/appium/appium/compare/@appium/types@0.3.1...@appium/types@0.4.0) (2022-08-10)
 
 

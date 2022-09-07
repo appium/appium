@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0](https://github.com/appium/appium/compare/@appium/test-support@1.5.0...@appium/test-support@2.0.0) (2022-09-07)
+
+
+### chore
+
+* **test-support:** remove driver/plugin-specific methods ([743c764](https://github.com/appium/appium/commit/743c764d5ea3211367fb2f338ecb5ec99af3ce86)), closes [#17398](https://github.com/appium/appium/issues/17398)
+
+
+### BREAKING CHANGES
+
+* **test-support:** This removes plugin/driver specific methods from `@appium/test-support`, and also removes the peer dep on `appium`.
+The methods can now be found in `@appium/plugin-test-support` and `@appium/driver-test-support`.
+
+
+
+
+
 # [1.5.0](https://github.com/appium/appium/compare/@appium/test-support@1.4.1...@appium/test-support@1.5.0) (2022-08-10)
 
 

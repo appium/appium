@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium@6.0.4...@appium/eslint-config-appium@7.0.0) (2022-09-07)
+
+
+### chore
+
+* **eslint-config-appium:** upgrade to ESLint v8 ([887cb44](https://github.com/appium/appium/commit/887cb449e61be585c084af2f6422d2e02be5028b))
+
+
+### BREAKING CHANGES
+
+* **eslint-config-appium:** This change upgrades to ESLint v8 and removes `@babel/eslint-parser`, which is only necessary if we're using mid-stage TC39 proposals (which we aren't).  I think `@babel/core` was a peer dep of `@babel/eslint-parser`, so I removed that too.  And removed cruft from the main configuration.
+
+ESLint rules _very likely_ had breaking changes, but I didn't experience any on our codebase.  However, this version of ESLint seems to be incompatible with `gulp-eslint`, so `@appium/gulp-plugins` should be held back from upgrading.
+
+In addition:
+
+- Updated `README.md`
+- Updated some fields in `package.json`
+- Loosened `peerDependencies`, as they're supposed to be loose.
+
+
+
+
+
 ## [6.0.4](https://github.com/appium/appium/compare/@appium/eslint-config-appium@6.0.3...@appium/eslint-config-appium@6.0.4) (2022-08-03)
 
 

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.60.0](https://github.com/appium/appium/compare/@appium/support@2.59.5...@appium/support@2.60.0) (2022-09-07)
+
+
+### Bug Fixes
+
+* **support:** update checks eat errors from non-existent packages ([89cf01f](https://github.com/appium/appium/commit/89cf01fda3e97adb5ef861c415406160df080020))
+
+
+### Features
+
+* **appium:** Adjust NODE_PATH so NPM could properly resolve component peer dependencies ([#17325](https://github.com/appium/appium/issues/17325)) ([39d5cee](https://github.com/appium/appium/commit/39d5cee1b71f611e810900d3faed8e0fed6e1ce0))
+* **support:** Move module root detection utility into support package ([#17427](https://github.com/appium/appium/issues/17427)) ([5ab7829](https://github.com/appium/appium/commit/5ab78297e172bc6a5751c636f81b3b202fbe2743))
+
+
+
+
+
 ## [2.59.5](https://github.com/appium/appium/compare/@appium/support@2.59.4...@appium/support@2.59.5) (2022-08-10)
 
 

@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.44](https://github.com/appium/appium/compare/appium@2.0.0-beta.43...appium@2.0.0-beta.44) (2022-09-07)
+
+
+### Bug Fixes
+
+* **appium:** do not throw ENAMETOOLONG on long cli arg ([cfdf898](https://github.com/appium/appium/commit/cfdf898e04e94032e3dd48b595caa4b6f0828289))
+* **appium:** eat update info errors ([7d7bb7a](https://github.com/appium/appium/commit/7d7bb7abc3173d29b843b3b238465d9914eaf091)), closes [#17357](https://github.com/appium/appium/issues/17357)
+
+
+### chore
+
+* **appium:** remove test export ([6820f5e](https://github.com/appium/appium/commit/6820f5ec4e62fbb5e91ce739d8aadb7f7b7a7a74)), closes [#17398](https://github.com/appium/appium/issues/17398)
+
+
+### Features
+
+* **appium:** Adjust NODE_PATH so NPM could properly resolve component peer dependencies ([#17325](https://github.com/appium/appium/issues/17325)) ([39d5cee](https://github.com/appium/appium/commit/39d5cee1b71f611e810900d3faed8e0fed6e1ce0))
+* **support:** Move module root detection utility into support package ([#17427](https://github.com/appium/appium/issues/17427)) ([5ab7829](https://github.com/appium/appium/commit/5ab78297e172bc6a5751c636f81b3b202fbe2743))
+
+
+### BREAKING CHANGES
+
+* **appium:** This removes the `test` export from `appium`.  `import * from 'appium/test'` is no longer supported.
+
+Use `@appium/test-support`, `@appium/driver-test-support` or `@appium/plugin-test-support` instead.
+
+
+
+
+
 # [2.0.0-beta.43](https://github.com/appium/appium/compare/appium@2.0.0-beta.42...appium@2.0.0-beta.43) (2022-08-10)
 
 

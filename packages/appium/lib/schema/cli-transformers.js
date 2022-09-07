@@ -1,5 +1,6 @@
 import {ArgumentTypeError} from 'argparse';
 import {readFileSync} from 'fs';
+import {fs} from '@appium/support';
 import _ from 'lodash';
 
 /**
@@ -62,10 +63,10 @@ export const transformers = {
     let body;
     // since this value could be a single string (no commas) _or_ a pathname, we will need
     // to attempt to parse it as a file _first_.
-    try {
-      body = readFileSync(value, 'utf8');
-    } catch (err) {
-      if (err.code !== 'ENOENT') {
+    if (fs.existsSync(body)) {
+      try {
+        body = readFileSync(value, 'utf8');
+      } catch (err) {
         throw new ArgumentTypeError(`Could not read file ${body}: ${err.message}`);
       }
     }
@@ -85,20 +86,18 @@ export const transformers = {
   json: (jsonOrPath) => {
     let json = jsonOrPath;
     let loadedFromFile = false;
-    try {
-      // use synchronous file access, as `argparse` provides no way of either
-      // awaiting or using callbacks. This step happens in startup, in what is
-      // effectively command-line code, so nothing is blocked in terms of
-      // sessions, so holding up the event loop does not incur the usual
-      // drawbacks.
-      json = readFileSync(jsonOrPath, 'utf8');
-      loadedFromFile = true;
-    } catch (err) {
-      // unreadable files don't count.
-      // also `ENAMETOOLONG` can happen if we try to open a file that's a huge JSON string.
-      if (err.code !== 'ENOENT' && err.code !== 'ENAMETOOLONG') {
-        throw err;
+    if (fs.existsSync(jsonOrPath)) {
+      try {
+        // use synchronous file access, as `argparse` provides no way of either
+        // awaiting or using callbacks. This step happens in startup, in what is
+        // effectively command-line code, so nothing is blocked in terms of
+        // sessions, so holding up the event loop does not incur the usual
+        // drawbacks.
+        json = readFileSync(jsonOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file ${jsonOrPath}: ${err.message}`);
       }
+      loadedFromFile = true;
     }
     try {
       const result = JSON.parse(json);

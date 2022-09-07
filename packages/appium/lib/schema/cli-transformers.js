@@ -1,6 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
-import {readFileSync} from 'fs';
-import {fs} from '@appium/support';
+import {readFileSync, accessSync, constants} from 'fs';
 import _ from 'lodash';
 
 /**
@@ -38,6 +37,20 @@ function parseCsvFile(value) {
 }
 
 /**
+ * Check synchronously if the given path exists
+ * @param {string} filePath full path to be checked for existence
+ * @returns {boolean}
+ */
+function existsSync(filePath) {
+  try {
+    accessSync(filePath, constants.R_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Namespace containing _transformers_ for CLI arguments.  "Validators" and
  * "formatters" do not actually modify the value, but these do.
  *
@@ -56,25 +69,30 @@ export const transformers = {
   /**
    * Given a CSV-style string or pathname, parse it into an array.
    * The file can also be split on newlines.
-   * @param {string} value
+   * @param {string} csvOrPath
    * @returns {string[]}
    */
-  csv: (value) => {
-    let body;
+  csv: (csvOrPath) => {
+    let csv = csvOrPath;
+    let loadedFromFile = false;
     // since this value could be a single string (no commas) _or_ a pathname, we will need
     // to attempt to parse it as a file _first_.
-    if (fs.existsSync(body)) {
+    if (existsSync(csvOrPath)) {
       try {
-        body = readFileSync(value, 'utf8');
+        csv = readFileSync(csvOrPath, 'utf8');
       } catch (err) {
-        throw new ArgumentTypeError(`Could not read file ${body}: ${err.message}`);
+        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${err.message}`);
       }
+      loadedFromFile = true;
     }
 
     try {
-      return body ? parseCsvFile(body) : parseCsvLine(value);
+      return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
     } catch (err) {
-      throw new ArgumentTypeError('Must be a comma-delimited string, e.g., "foo,bar,baz"');
+      const msg = loadedFromFile
+        ? `The provided value of '${csvOrPath}' must be a valid CSV`
+        : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
+      throw new TypeError(`${msg}. Original error: ${err.message}`);
     }
   },
 
@@ -86,7 +104,7 @@ export const transformers = {
   json: (jsonOrPath) => {
     let json = jsonOrPath;
     let loadedFromFile = false;
-    if (fs.existsSync(jsonOrPath)) {
+    if (existsSync(jsonOrPath)) {
       try {
         // use synchronous file access, as `argparse` provides no way of either
         // awaiting or using callbacks. This step happens in startup, in what is
@@ -95,7 +113,7 @@ export const transformers = {
         // drawbacks.
         json = readFileSync(jsonOrPath, 'utf8');
       } catch (err) {
-        throw new ArgumentTypeError(`Could not read file ${jsonOrPath}: ${err.message}`);
+        throw new ArgumentTypeError(`Could not read file '${jsonOrPath}': ${err.message}`);
       }
       loadedFromFile = true;
     }

@@ -79,7 +79,10 @@ setup and command reference):
 === "Ruby"
 
     ```rb
-    # TODO
+    element = driver.find_element :xpath, '//*[@text="Foo"]'
+    element.click
+    puts element.text
+    puts driver.page_source
     ```
 
 Each of these scripts, despite being in different languages, does the same thing under the hood:

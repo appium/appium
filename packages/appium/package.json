@@ -43,6 +43,7 @@
   "scripts": {
     "build": "babel lib --root-mode=upward --out-dir=build/lib",
     "build:docs": "node docs/scripts/build-docs.js",
+    "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
     "build:docs:assets": "node docs/scripts/copy-assets.js",
     "dev": "npm run build -- --watch",
     "dev:docs": "npm run build:docs:assets && npm run dev:docs:en",

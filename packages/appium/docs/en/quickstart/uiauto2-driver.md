@@ -3,10 +3,13 @@ title: Install the UiAutomator2 Driver
 ---
 
 You can't do much with Appium unless you have a [driver](../intro/drivers.md), which is an
-interface that allows Appium to automate a particular platform. For this quickstart guide, we're
-going to be automating an app on the Android platform, because the system requirements for Android
-automation via Appium are the same as for Appium itself (whereas the iOS driver, for example,
-requires you to be using macOS).
+interface that allows Appium to automate a particular platform.
+
+!!! info
+
+    For this quickstart guide, we're going to be automating an app on the Android platform, because
+    the system requirements for Android automation via Appium are the same as for Appium itself
+    (whereas the iOS driver, for example, requires you to be using macOS).
 
 The driver we're going to use is called the [UiAutomator2
 Driver](https://github.com/appium/appium-uiautomator2-driver). It's worth visiting that driver's

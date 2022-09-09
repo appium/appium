@@ -1,2 +1,0 @@
-jobs:
-  - template: templates/bundle-template.yml

@@ -1,5 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
-import {readFileSync} from 'fs';
+import {readFileSync, existsSync} from 'fs';
 import _ from 'lodash';
 
 /**
@@ -55,25 +55,30 @@ export const transformers = {
   /**
    * Given a CSV-style string or pathname, parse it into an array.
    * The file can also be split on newlines.
-   * @param {string} value
+   * @param {string} csvOrPath
    * @returns {string[]}
    */
-  csv: (value) => {
-    let body;
+  csv: (csvOrPath) => {
+    let csv = csvOrPath;
+    let loadedFromFile = false;
     // since this value could be a single string (no commas) _or_ a pathname, we will need
     // to attempt to parse it as a file _first_.
-    try {
-      body = readFileSync(value, 'utf8');
-    } catch (err) {
-      if (err.code !== 'ENOENT') {
-        throw new ArgumentTypeError(`Could not read file ${body}: ${err.message}`);
+    if (existsSync(csvOrPath)) {
+      try {
+        csv = readFileSync(csvOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${err.message}`);
       }
+      loadedFromFile = true;
     }
 
     try {
-      return body ? parseCsvFile(body) : parseCsvLine(value);
+      return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
     } catch (err) {
-      throw new ArgumentTypeError('Must be a comma-delimited string, e.g., "foo,bar,baz"');
+      const msg = loadedFromFile
+        ? `The provided value of '${csvOrPath}' must be a valid CSV`
+        : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
+      throw new TypeError(`${msg}. Original error: ${err.message}`);
     }
   },
 
@@ -85,20 +90,18 @@ export const transformers = {
   json: (jsonOrPath) => {
     let json = jsonOrPath;
     let loadedFromFile = false;
-    try {
-      // use synchronous file access, as `argparse` provides no way of either
-      // awaiting or using callbacks. This step happens in startup, in what is
-      // effectively command-line code, so nothing is blocked in terms of
-      // sessions, so holding up the event loop does not incur the usual
-      // drawbacks.
-      json = readFileSync(jsonOrPath, 'utf8');
-      loadedFromFile = true;
-    } catch (err) {
-      // unreadable files don't count.
-      // also `ENAMETOOLONG` can happen if we try to open a file that's a huge JSON string.
-      if (err.code !== 'ENOENT' && err.code !== 'ENAMETOOLONG') {
-        throw err;
+    if (existsSync(jsonOrPath)) {
+      try {
+        // use synchronous file access, as `argparse` provides no way of either
+        // awaiting or using callbacks. This step happens in startup, in what is
+        // effectively command-line code, so nothing is blocked in terms of
+        // sessions, so holding up the event loop does not incur the usual
+        // drawbacks.
+        json = readFileSync(jsonOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file '${jsonOrPath}': ${err.message}`);
       }
+      loadedFromFile = true;
     }
     try {
       const result = JSON.parse(json);

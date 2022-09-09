@@ -36,7 +36,7 @@ class DriverCore {
   sessionId = null;
 
   /**
-   * @type {import('@appium/types').DriverOpts}
+   * @type {DriverOpts}
    */
   opts;
 
@@ -126,6 +126,11 @@ class DriverCore {
    */
   settings = new DeviceSettings();
 
+  /**
+   *
+   * @param {ServerArgs} [opts]
+   * @param {boolean} [shouldValidateCaps]
+   */
   constructor(opts = /** @type {ServerArgs} */ ({}), shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
@@ -430,4 +435,5 @@ export {DriverCore};
  * @typedef {import('@appium/types').ServerArgs} ServerArgs
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ * @typedef {import('@appium/types').DriverOpts} DriverOpts
  */

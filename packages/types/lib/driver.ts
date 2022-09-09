@@ -270,7 +270,14 @@ export interface EventHistoryCommand {
 export interface Core {
   shouldValidateCaps: boolean;
   sessionId: string | null;
+  /**
+   * This contains {@linkcode ServerArgs} (see {@linkcode Core.initialOpts}) but also any {@linkcode Capabilities} provided
+   * by the session.
+   */
   opts: DriverOpts;
+  /**
+   * These are the options as passed in the driver's constructor.
+   */
   initialOpts: ServerArgs;
   caps?: Capabilities;
   originalCaps?: W3CCapabilities;
@@ -579,7 +586,7 @@ export interface DriverStatic {
 export type DriverClass<
   D extends Driver = ExternalDriver,
   S extends DriverStatic = DriverStatic
-> = Class<D, S, [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]>;
+> = Class<D, S, [] | [Partial<DriverOpts>] | [Partial<DriverOpts>, boolean]>;
 
 /**
  * Options as passed into a driver constructor, which is just a union of {@linkcode ServerArgs} and {@linkcode Capabilities}.

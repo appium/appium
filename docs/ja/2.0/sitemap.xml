@@ -2,27 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.github.io/appium/docs/ja/2.0/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/2.0/about/appium-clients/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/2.0/about/getting-started/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/2.0/about/intro/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/2.0/about/platform-support/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

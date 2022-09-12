@@ -2,177 +2,177 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/resources/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/cli/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/cli/args/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/cli/extensions/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/contributing/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/contributing/config-system/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/ecosystem/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/ecosystem/build-docs/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/ecosystem/build-drivers/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/ecosystem/build-plugins/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/caps/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/config/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/context/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/event-timing/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/execute-script-overload/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/grid/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/log-filters/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/managing-exts/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/migrating-1-to-2/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/security/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/guides/settings/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/intro/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/intro/clients/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/intro/drivers/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/intro/history/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/intro/requirements/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/install/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/next-steps/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/test-java/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/test-js/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/test-py/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/test-rb/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/2.0/quickstart/uiauto2-driver/</loc>
-         <lastmod>2022-08-04</lastmod>
+         <lastmod>2022-09-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

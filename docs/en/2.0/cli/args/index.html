@@ -544,8 +544,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/test-ruby.md" class="md-nav__link">
-        None
+      <a href="../../quickstart/test-rb/" class="md-nav__link">
+        Write a Test (Ruby)
       </a>
     </li>
   
@@ -1088,7 +1088,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/appium/appium/edit/2.0/packages/appium/docs/en/cli/args.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/cli/args.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
@@ -1096,7 +1096,245 @@
 
   <h1>Server CLI Args</h1>
 
-<p>TODO</p>
+<p>To start the Appium server, you may either run <code>appium</code> or <code>appium server</code>. The <code>server</code> subcommand
+is considered to be the default, so if you omit it, Appium will interpret this as your request to
+run the Appium server. (You could run different subcommands, like <code>appium driver</code> or <code>appium
+plugin</code>: see the <a href="../extensions/">Extensions CLI</a> for more info).</p>
+<p>The invocation of <code>appium</code> (or <code>appium server</code>) takes a number of arguments, which are detailed
+below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All of these arguments can be set via a <a href="../../guides/config/">Configuration File</a> instead if
+you want. Any arguments set on the command line will override any arguments found in
+a configuration file.</p>
+</div>
+<!-- WARNING: anything between the AUTOGEN-START and AUTOGEN-STOP tags will get replaced by
+automatic docs generation tooling! Do not edit by hand! -->
+<!-- AUTOGEN-START -->
+<table>
+<thead>
+<tr>
+<th>Argument&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+<th>Aliases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--address</code></td>
+<td>IP address to listen on</td>
+<td>string</td>
+<td><code>0.0.0.0</code></td>
+<td><code>-a</code></td>
+</tr>
+<tr>
+<td><code>--allow-cors</code></td>
+<td>Whether the Appium server should allow web browser connections from any host</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--allow-insecure</code></td>
+<td>Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.</td>
+<td>array<string></td>
+<td><code>[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--base-path</code></td>
+<td>Base path to use as the prefix for all webdriver routes running on the server</td>
+<td>string</td>
+<td><code>""</code></td>
+<td><code>-pa</code></td>
+</tr>
+<tr>
+<td><code>--callback-address</code></td>
+<td>Callback IP address (default: same as "address")</td>
+<td>string</td>
+<td></td>
+<td><code>-ca</code></td>
+</tr>
+<tr>
+<td><code>--callback-port</code></td>
+<td>Callback port (default: same as "port") (Value must be between <code>1</code> and <code>65535</code>)</td>
+<td>integer</td>
+<td><code>4723</code></td>
+<td><code>-cp</code></td>
+</tr>
+<tr>
+<td><code>--debug-log-spacing</code></td>
+<td>Add exaggerated spacing in logs to help with visual inspection</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--default-capabilities</code></td>
+<td>Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.</td>
+<td>object</td>
+<td></td>
+<td><code>-dc</code></td>
+</tr>
+<tr>
+<td><code>--deny-insecure</code></td>
+<td>Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.</td>
+<td>array<string></td>
+<td><code>[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--driver</code></td>
+<td>Driver-specific configuration. Keys should correspond to driver package names</td>
+<td>object</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--keep-alive-timeout</code></td>
+<td>Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.</td>
+<td>integer</td>
+<td><code>600</code></td>
+<td><code>-ka</code></td>
+</tr>
+<tr>
+<td><code>--local-timezone</code></td>
+<td>Use local timezone for timestamps</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--log</code></td>
+<td>Also send log output to this file</td>
+<td>string</td>
+<td></td>
+<td><code>-g</code></td>
+</tr>
+<tr>
+<td><code>--log-filters</code></td>
+<td>One or more log filtering rules</td>
+<td>array<string></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--log-level</code></td>
+<td>Log level (console[:file]) (Value must be one of: <code>info</code>, <code>info:debug</code>, <code>info:info</code>, <code>info:warn</code>, <code>info:error</code>, <code>warn</code>, <code>warn:debug</code>, <code>warn:info</code>, <code>warn:warn</code>, <code>warn:error</code>, <code>error</code>, <code>error:debug</code>, <code>error:info</code>, <code>error:warn</code>, <code>error:error</code>, <code>debug</code>, <code>debug:debug</code>, <code>debug:info</code>, <code>debug:warn</code>, <code>debug:error</code>)</td>
+<td>string</td>
+<td><code>debug</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--log-no-colors</code></td>
+<td>Do not use color in console output</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--log-timestamp</code></td>
+<td>Show timestamps in console output</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--long-stacktrace</code></td>
+<td>Add long stack traces to log entries. Recommended for debugging only.</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--no-perms-check</code></td>
+<td>Do not check that needed files are readable and/or writable</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--nodeconfig</code></td>
+<td>Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself</td>
+<td>object</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--plugin</code></td>
+<td>Plugin-specific configuration. Keys should correspond to plugin package names</td>
+<td>object</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--port</code></td>
+<td>Port to listen on (Value must be between <code>1</code> and <code>65535</code>)</td>
+<td>integer</td>
+<td><code>4723</code></td>
+<td><code>-p</code></td>
+</tr>
+<tr>
+<td><code>--relaxed-security</code></td>
+<td>Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it's not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--session-override</code></td>
+<td>Enables session override (clobbering)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--strict-caps</code></td>
+<td>Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--tmp</code></td>
+<td>Absolute path to directory Appium can use to manage temp files. Defaults to C:\Windows\Temp on Windows and /tmp otherwise.</td>
+<td>string</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--trace-dir</code></td>
+<td>Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments</td>
+<td>string</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--use-drivers</code></td>
+<td>A list of drivers to activate. By default, all installed drivers will be activated.</td>
+<td>array<string></td>
+<td><code>[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--use-plugins</code></td>
+<td>A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".</td>
+<td>array<string></td>
+<td><code>[]</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>--webhook</code></td>
+<td>Also send log output to this http listener</td>
+<td>string</td>
+<td></td>
+<td><code>-G</code></td>
+</tr>
+</tbody>
+</table>
+<!-- AUTOGEN-STOP -->
 
               
             </article>

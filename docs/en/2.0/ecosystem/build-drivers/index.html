@@ -549,8 +549,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../quickstart/test-ruby.md" class="md-nav__link">
-        None
+      <a href="../../quickstart/test-rb/" class="md-nav__link">
+        Write a Test (Ruby)
       </a>
     </li>
   
@@ -1583,7 +1583,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/appium/appium/edit/2.0/packages/appium/docs/en/ecosystem/build-drivers.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/ecosystem/build-drivers.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
@@ -1996,7 +1996,7 @@ behaviours that don't map to any of the existing commands, you can create new co
 two ways:</p>
 <ol>
 <li>Extending the WebDriver protocol and creating client-side plugins to access the extensions</li>
-<li>Overloading the Execute Script command</li>
+<li>Overloading the Execute Script command by defining "Execute Methods"</li>
 </ol>
 <p>If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the <code>newMethodMap</code>
@@ -2020,30 +2020,49 @@ won't have nice client-side functions designed to target these endpoints. So you
 create and release client-side plugins for each language you want to support (directions or
 examples can be found at the relevant client docs).</p>
 <p>An alternative to this way of doing things is to overload a command which all WebDriver clients
-have access to already: Execute Script. A common driver pattern is to create a magic prefix which
-the driver looks for at the beginning of any Execute Script invocation, and if it's present, to
-treat the rest of the script string as the name of a custom command to execute. This works in large
-part because for most platforms beyond web browsers, executing arbitrary JavaScript isn't a thing
-that makes sense.</p>
-<p>Let's say you are building a driver for stereo system called <code>soundz</code>, and you wanted to create
-a command for playing a song by name. You could expose this to your users in such a way that they
-call something like:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1">// webdriverio example</span>
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">&#39;soundz: playSong&#39;</span><span class="p">,</span> <span class="p">[{</span><span class="nx">song</span><span class="o">:</span> <span class="s1">&#39;Stairway to Heaven&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="o">:</span> <span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">}]);</span>
+have access to already: Execute Script. Appium provides some a convenient tool for making this
+easy. Let's say you are building a driver for stereo system called <code>soundz</code>, and you wanted to
+create a command for playing a song by name. You could expose this to your users in such a way that
+they call something like:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1">// webdriverio example. Calling webdriverio&#39;s `executeScript` command is what trigger&#39;s Appium&#39;s</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="c1">// Execute Script command handler</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">&#39;soundz: playSong&#39;</span><span class="p">,</span> <span class="p">[{</span><span class="nx">song</span><span class="o">:</span> <span class="s1">&#39;Stairway to Heaven&#39;</span><span class="p">,</span> <span class="nx">artist</span><span class="o">:</span> <span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">}]);</span>
 </code></pre></div>
-<p>Then in your driver code you could simply look for <code>soundz:</code> at the beginning of your
-<code>execute</code> override, and do the appropriate thing:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">async</span> <span class="nx">execute</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>  <span class="k">if</span> <span class="p">(</span><span class="nx">script</span> <span class="o">===</span> <span class="s1">&#39;soundz: playSong&#39;</span><span class="p">)</span> <span class="p">{</span>
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>    <span class="kd">const</span> <span class="p">{</span><span class="nx">song</span><span class="p">,</span> <span class="nx">artist</span><span class="p">}</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="mf">0</span><span class="p">];</span>
-<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>    <span class="c1">// play the song based on song and artist details</span>
-<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>    <span class="k">return</span><span class="p">;</span>
-<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>  <span class="p">}</span>
+<p>Then in your driver code you can define the static property <code>executeMethodMap</code> as a mapping of
+script names to methods on your driver. It has the same basic form as <code>newMethodMap</code>, described
+above. Once <code>executeMethodMap</code> is defined, you'll also need to implement the Execute Script command
+handler, which according to Appium's routes mapping is called <code>execute</code>. The implementation can
+call a single helper function, <code>this.executeMethod</code>, which takes care of looking at the script and
+arguments the user sent in and routing it to the correct custom handler you've defined. Here's an
+example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="k">static</span> <span class="nx">executeMethodMap</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>  <span class="s1">&#39;soundz: playSong&#39;</span><span class="p">,</span> <span class="p">{</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>    <span class="nx">command</span><span class="o">:</span> <span class="s1">&#39;soundzPlaySong&#39;</span><span class="p">,</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>    <span class="nx">params</span><span class="o">:</span> <span class="p">{</span><span class="nx">required</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;song&#39;</span><span class="p">,</span> <span class="s1">&#39;artist&#39;</span><span class="p">],</span> <span class="nx">optional</span><span class="o">:</span> <span class="p">[]},</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>  <span class="p">}</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="p">}</span>
 <a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>
-<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>  <span class="c1">// otherwise do the normal thing, or throw errors.NotYetImplementedError if you have nothing to</span>
-<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>  <span class="c1">// do (see the section on WebDriver errors in this guide)</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="k">async</span> <span class="nx">soundzPlaySong</span><span class="p">(</span><span class="nx">song</span><span class="p">,</span> <span class="nx">artist</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>  <span class="c1">// play the song based on song and artist details</span>
 <a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a><span class="p">}</span>
+<a id="__codelineno-26-11" name="__codelineno-26-11" href="#__codelineno-26-11"></a>
+<a id="__codelineno-26-12" name="__codelineno-26-12" href="#__codelineno-26-12"></a><span class="k">async</span> <span class="nx">execute</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+<a id="__codelineno-26-13" name="__codelineno-26-13" href="#__codelineno-26-13"></a>  <span class="k">return</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">executeMethod</span><span class="p">(</span><span class="nx">script</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+<a id="__codelineno-26-14" name="__codelineno-26-14" href="#__codelineno-26-14"></a><span class="p">}</span>
 </code></pre></div>
+<p>A couple notes about this system:
+1. The arguments array sent via the call to Execute Script must contain only zero or one element(s). The
+   first item in the list is considered to be the parameters object for your method. These parameters
+   will be parsed, validated, and then applied to your overload method in the order specified in
+   <code>executeMethodMap</code> (the order specified in the <code>required</code> parameters list, followed by the
+   <code>optional</code> parameters list). I.e., this framework assumes only a single actual argument sent in via
+   Execute Script (and this argument should be an object with keys/values representing the
+   parameters your execute method expects).
+1. Appium does not automatically implement <code>execute</code> (the Execute Script handler) for you. You may
+   wish, for example, to only call the <code>executeMethod</code> helper function when you're not in proxy
+   mode!
+1. The <code>executeMethod</code> helper will reject with an error if a script name doesn't match one of the
+   script names defined as a command in <code>executeMethodMap</code>, or if there are missing parameters.</p>
 <h3 id="implement-handling-of-appium-settings">Implement handling of Appium settings</h3>
 <p>Appium users can send parameters to your driver via CLI args as well as via capabilities. But these
 cannot change during the course of a test, and sometimes users want to adjust parameters mid-test.

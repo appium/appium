@@ -17,7 +17,7 @@
     
     
       
-        <title>Intro to Appium Clients - Appium Documentation</title>
+        <title>Appium客户端介绍 - Appium Documentation</title>
       
     
     
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Intro to Appium Clients
+              Appium客户端介绍
             
           </span>
         </div>
@@ -361,7 +361,7 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Intro to Appium Clients
+        Appium客户端介绍
       </a>
       
     </li>
@@ -1027,15 +1027,127 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/appium/appium/edit/2.0/packages/appium/docs/zh/intro/clients.md" title="编辑此页" class="md-content__button md-icon">
+<a href="https://github.com/appium/appium/edit/master/packages/appium/docs/zh/intro/clients.md" title="编辑此页" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-  <h1>Intro to Appium Clients</h1>
+  <h1>Appium客户端介绍</h1>
 
-<p>TODO</p>
+<p>由于<a href="../">概述</a>中讨论的全部原因, Appium基于<a href="https://w3c.github.io/webdriver/webdriver-spec.html">W3C
+WebDriver 规范</a>.
+这意味着Appium实现了客户端-服务器架构.
+服务器(由Appium本身和您用于自动化的任何驱动程序或插件) 连接到被测设备, 
+并且实际上负责在这些设备上实现自动化.
+客户端(由Appium测试作者 <em>您</em> 驱动) 
+负责通过网络向服务器发送命令, 
+并且接收从服务器响应的结果. 
+这些响应可用于表示自动化命令是否成功, 
+或者可能包含您查询的有关应用程序状态的信息. 
+本文档是等同于对客户端的概念介绍.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>有关服务端的更多信息(例如, Appium如何实际控制设备？) , 
+可以查看我们的<a href="../drivers/">Appium驱动简介</a>.
+要跳到Appium客户端的链接列表, 请查看<a href="../../ecosystem/">生态系统</a> 文档</p>
+</div>
+<p>有哪些类型的自动化命令可用？
+这取决于您在任何给定会话中使用的特定的驱动程序和插件. 
+一组标准命令将包括的内容, 如下所示:</p>
+<ul>
+<li>查找元素</li>
+<li>点击元素</li>
+<li>获取源码</li>
+<li>截图</li>
+</ul>
+<p>如果您在WebDriver规范中查看这些命令, 
+您会注意到它们不是根据任何特定编程语言定义. 
+它们不是Java命令或JavaScript命令或Python命令. 
+相反, 它们构成HTTP API的一部分, 
+可以从在<em>任何</em>编程语言中(或者没有!如果需要, 可以仅使用cURL) .</p>
+<p>因此, 例如, <code>Find Element</code>命令对应于发送到HTTP的HTTP <code>POST</code> 请求端点
+<code>/session/:sessionid/element</code>
+(在本例中, <code>:sessionid</code>是服务器在先前调用<code>创建会话</code>时生成的唯一会话ID) .</p>
+<p>这些信息主要对从事WebDriver规范开发的人有用.
+对于试图编写Appium或Selenium测试的人来说, 
+它不是特别有用. 当你编写一个Appium测试时, 
+你想使用你熟悉的编程语言. 
+幸运的是存在一组<a href="../../ecosystem/">Appium客户端库</a><sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>, 
+用于处理负责向Appium服务器发送HTTP请求.
+相反, 它们为特定编程语言公开了一组 "原生" 命令, 
+因此, 对于测试作者来说, 感觉就像是在编写Python、JavaScript或Java.</p>
+<p>举个例子, 下面是在四种不同编程语言中
+使用的同一组简单的Appium命令, 
+为每种语言使用推荐的Appium客户端绑定
+(注意, 这不是包括所需引用的可工作示例代码；
+请查看每个客户端库的说明设置和命令参考):</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">JavaScript (Webdriver.io)</label><label for="__tabbed_1_2">Java</label><label for="__tabbed_1_3">Python</label><label for="__tabbed_1_4">Ruby</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">const</span> <span class="nx">element</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;//*[@text=&quot;Foo&quot;]&#39;</span><span class="p">);</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">await</span> <span class="nx">element</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">await</span> <span class="nx">element</span><span class="p">.</span><span class="nx">getText</span><span class="p">())</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">getPageSource</span><span class="p">())</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">WebElement</span> <span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="na">findElement</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="na">Xpath</span><span class="p">(</span><span class="s">&quot;//*[@text=&#39;Foo&#39;]&quot;</span><span class="p">))</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">element</span><span class="p">.</span><span class="na">click</span><span class="p">()</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">element</span><span class="p">.</span><span class="na">getText</span><span class="p">())</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">driver</span><span class="p">.</span><span class="na">getPageSource</span><span class="p">())</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">By</span><span class="o">.</span><span class="n">XPATH</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s1">&#39;//*[@text=&quot;Foo&quot;]&#39;</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="nb">print</span><span class="p">(</span><span class="n">driver</span><span class="o">.</span><span class="n">page_source</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">element</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">find_element</span> <span class="ss">:xpath</span><span class="p">,</span> <span class="s1">&#39;//*[@text=&quot;Foo&quot;]&#39;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">element</span><span class="o">.</span><span class="n">click</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nb">puts</span> <span class="n">element</span><span class="o">.</span><span class="n">text</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nb">puts</span> <span class="n">driver</span><span class="o">.</span><span class="n">page_source</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>每一个脚本, 尽管使用不同的语言, 但在幕后做着相同的事情:</p>
+<ol>
+<li>使用<code>xpath</code>的 <code>using</code>参数和表示用于查找元素的XPath查询的<code>value</code>参数调用<code>查找元素</code>.<br />
+   (如果您对这些术语感到困惑, 您可能会发现对Appium或Selenium的介绍很有用) </li>
+<li>使用上一次调用中找到的元素的ID调用<code>点击元素</code>. </li>
+<li>使用相同元素的ID调用<code>获取元素文本</code>, 并将其打印到控制台. </li>
+<li>调用<code>获取源码</code>以检索页面/应用程序源码并将其打印到控制台.</li>
+</ol>
+<p>在选择或使用客户端之前, 要记住的另一件事是, 每个客户端都是独立维护的. 
+仅仅因为一个功能在一个客户端中可用, 并不意味着它在另一个客户端上可用
+(尽管所有客户端至少支持标准的W3C协议以及任何通用的appium扩展) . 
+仅仅因为一个客户端有组很好的辅助函数, 
+这并不意味着另一个会.
+一些客户经常保持及时最新, 而其他客户则不是!
+所以当考虑选择一个库时, 
+首先要考虑的是您想要使用的语言, 
+第二个考虑因素是类库功能齐全, 维护良好!</p>
+<p>为了学习如何使用Appium客户端, 
+请访问该客户的主页以了解更多信息. 
+在许多情况下, 
+给定语言的Appium客户端构建在该语言的<em>Selenium</em>客户端<em>之上</em>, 
+因此某些Appium客户端可能仅记录Appium客户机在Selenium客户端之上添加的功能. 
+所有这些都是为了全面参考, 
+您可能需要访问Appium客户端文档以及Selenium客户端文档.</p>
+<p>这就是您需要了解的关于Appium客户端的所有信息!
+转到<a href="../../ecosystem/">生态系统</a> 页面查看当前的客户端列表.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>这些库又称为 "客户端"、"客户端库" 或 "客户端绑定". 他们是同一种概念!&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
               
             </article>

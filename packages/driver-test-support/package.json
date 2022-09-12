@@ -46,7 +46,7 @@
   "dependencies": {
     "@appium/types": "^0.4.1",
     "@babel/runtime": "7.19.0",
-    "@types/lodash": "4.14.184",
+    "@types/lodash": "4.14.185",
     "axios": "0.27.2",
     "bluebird": "3.7.2",
     "chai": "4.3.6",

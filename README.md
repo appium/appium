@@ -208,7 +208,7 @@ the recent [LTS](https://nodejs.org/en/about/releases/) Node.js version.
 
 ### Get Started
 
-Check out our [Getting Started](/docs/en/about-appium/getting-started.md) guide
+Check out our [Getting Started](http://appium.io/docs/en/about-appium/getting-started) guide
 to get going with Appium.
 
 There is also a sample code that contains [many examples of tests in a variety

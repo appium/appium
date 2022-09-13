@@ -114,7 +114,7 @@ f2 = ::Selenium::WebDriver::Interactions.pointer(:touch, name: 'finger2')
 f2.create_pointer_move(duration: 1, x: 200, y: 500, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f2.create_pointer_down(:left)
 f2.create_pause(0.5)
-f2.create_pointer_move(duration: 1, x: 200, y: 800, origin: ::Selenium::Web@Driver::Interactions::PointerMove::VIEWPORT)
+f2.create_pointer_move(duration: 1, x: 200, y: 800, origin: ::Selenium::WebDriver::Interactions::PointerMove::VIEWPORT)
 f2.create_pointer_up(:left)
 
 perform_actions [f1, f2]

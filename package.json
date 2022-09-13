@@ -103,6 +103,7 @@
     "@appium/types": "file:packages/types",
     "@appium/universal-xml-plugin": "file:packages/universal-xml-plugin",
     "appium": "file:packages/appium",
+    "chalk": "4.1.2",
     "glob": "8.0.3"
   },
   "devDependencies": {

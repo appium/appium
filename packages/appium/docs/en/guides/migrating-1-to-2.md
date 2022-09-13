@@ -84,6 +84,9 @@ If any updates are available, you can then run the `update` command for any give
 appium driver update xcuitest
 ```
 
+(For a complete description of the update command, check out the [Extension
+CLI](../cli/extensions.md) doc)
+
 To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 
 ### :bangbang: Protocol changes
@@ -184,7 +187,10 @@ Apart from the breaking changes mentioned above, in this section is a list of so
 
 #### :tada: _Server Plugins_
 
-TODO
+Appium extension authors can now develop their own server plugins, which can intercept and modify
+any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
+more about plugins, read the new [Appium Introduction](../intro/index.md). Interested in building
+a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
 
 #### :tada: _Client Plugins_
 
@@ -192,7 +198,11 @@ TODO
 
 ### :tada: Install drivers and plugins from anywhere
 
-TODO
+You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
+about! Appium extension authors can now develop custom drivers, which can be downloaded or
+installed via Appium's [Extension CLI](../cli/extensions.md) from NPM, Git, GitHub, or even the
+local filesystem. Interested in building a driver? Check out the [Building
+Drivers](../ecosystem/build-drivers.md) guide.
 
 ### :tada: Configuration Files
 

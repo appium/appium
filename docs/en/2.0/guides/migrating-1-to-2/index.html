@@ -1570,6 +1570,8 @@ main Appium server will not define the route corresponding to the command.</p>
 <p>If any updates are available, you can then run the <code>update</code> command for any given driver:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium driver update xcuitest
 </code></pre></div>
+<p>(For a complete description of the update command, check out the <a href="../../cli/extensions/">Extension
+CLI</a> doc)</p>
 <p>To update the Appium server itself, you do the same thing as in the past: <code>npm install -g appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
 <h3 id="protocol-changes"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Protocol changes</h3>
 <p>Appium's API is based on the <a href="https://www.w3.org/TR/webdriver/">W3C WebDriver Protocol</a>, and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.</p>
@@ -1634,11 +1636,18 @@ main Appium server will not define the route corresponding to the command.</p>
 <p>Apart from the breaking changes mentioned above, in this section is a list of some of the major new features you may wish to take advantage of with Appium 2.0.</p>
 <h3 id="plugins">Plugins</h3>
 <h4 id="server-plugins"><img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> <em>Server Plugins</em></h4>
-<p>TODO</p>
+<p>Appium extension authors can now develop their own server plugins, which can intercept and modify
+any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
+more about plugins, read the new <a href="../../intro/">Appium Introduction</a>. Interested in building
+a plugin? Check out the <a href="../../ecosystem/build-plugins/">Building Plugins</a> guide.</p>
 <h4 id="client-plugins"><img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> <em>Client Plugins</em></h4>
 <p>TODO</p>
 <h3 id="install-drivers-and-plugins-from-anywhere"><img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> Install drivers and plugins from anywhere</h3>
-<p>TODO</p>
+<p>You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
+about! Appium extension authors can now develop custom drivers, which can be downloaded or
+installed via Appium's <a href="../../cli/extensions/">Extension CLI</a> from NPM, Git, GitHub, or even the
+local filesystem. Interested in building a driver? Check out the <a href="../../ecosystem/build-drivers/">Building
+Drivers</a> guide.</p>
 <h3 id="configuration-files"><img alt="🎉" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/1f389.svg" title=":tada:" /> Configuration Files</h3>
 <p>Appium now supports <em>configuration files</em> in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the <a href="../config/">Config Guide</a> for a full explanation.</p>
 <h2 id="special-notes-for-cloud-providers">Special Notes for Cloud Providers</h2>

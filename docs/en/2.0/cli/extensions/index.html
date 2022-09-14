@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#commands" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -652,9 +657,99 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          The Extension CLI
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         The Extension CLI
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    install
+  </a>
+  
+    <nav class="md-nav" aria-label="install">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#npm-based-install-spec" class="md-nav__link">
+    NPM-based &lt;install-spec&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uninstall" class="md-nav__link">
+    uninstall
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    run
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1083,6 +1178,98 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list" class="md-nav__link">
+    list
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    install
+  </a>
+  
+    <nav class="md-nav" aria-label="install">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#npm-based-install-spec" class="md-nav__link">
+    NPM-based &lt;install-spec&gt;
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uninstall" class="md-nav__link">
+    uninstall
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run" class="md-nav__link">
+    run
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -1096,7 +1283,205 @@
 
   <h1>The Extension CLI</h1>
 
-<p>TODO</p>
+<p>Appium allows for the flexible installation and management of <em>drivers</em> (which provide Appium with
+the capability to automate a given platform) and <em>plugins</em> (which can augment or alter the way
+individual Appium commands work). For a conceptual understanding of these entities, please review
+the <a href="../../intro/">Introduction</a>. Management of drivers and plugins is handled by Appium's
+Extension CLI.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This reference uses placeholders to refer to various options. Anywhere you see one of these
+placeholders in the reference, ensure you replace it with the correct type of actual content.</p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Placeholder</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;ext-type&gt;</code></td>
+<td>"Extension type". It should be either <code>driver</code> or <code>plugin</code>. All the Extension CLI commands can be used with either drivers or plugins, so you must specify which type of extension will be used</td>
+</tr>
+<tr>
+<td><code>&lt;ext-name&gt;</code></td>
+<td>"Extension name". This is the short name of the extension found in a call to <code>appium &lt;ext-type&gt; list</code>. This is distinct from the NPM package name of the extension or, in general, the "install spec" of the extension.</td>
+</tr>
+<tr>
+<td><code>&lt;install-spec&gt;</code></td>
+<td>"Install specification". This refers to the string used to indicate what extension Appium should install.</td>
+</tr>
+<tr>
+<td><code>&lt;install-source&gt;</code></td>
+<td>This refers to the method that Appium should use to install an extension.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="commands">Commands</h2>
+<p>All Extension CLI commands begin with <code>appium &lt;ext-type&gt;</code>, i.e., either <code>appium driver</code> or <code>appium
+plugin</code>.</p>
+<p>All Extension CLI commands can take an optional <code>--json</code> argument, which will return the result of
+the command as a machine-readable JSON string rather than the standard output, which is colourized
+and tuned for human consumption.</p>
+<h3 id="list"><code>list</code></h3>
+<p>List installed and available extensions. "Available" extensions include those which are officially
+recognized by the Appium team, but you are not limited to installing only the extensions displayed
+in this list.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium &lt;ext-type&gt; list [--installed] [--updates] [--json]
+</code></pre></div>
+<p>Required arguments:</p>
+<ul>
+<li><code>&lt;ext-type&gt;</code>: must be <code>driver</code> or <code>plugin</code></li>
+</ul>
+<p>Optional arguments:</p>
+<ul>
+<li><code>--installed</code>: show only installed extensions, not installed plus available extensions</li>
+<li><code>--updates</code>: for extensions installed via NPM, display a message if there are any updates</li>
+<li><code>--json</code>: return the result in JSON format</li>
+</ul>
+<h3 id="install"><code>install</code></h3>
+<p>Install an extension. If successful, respond with the short name of the extension which can be used
+in other invocations of the Extension CLI. If the extension is a driver, also note which platforms
+may be used with the driver.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium &lt;ext-type&gt; install &lt;install-spec&gt; [--source=&lt;install-source&gt;] [--package=&lt;package-name&gt;] [--json]
+</code></pre></div>
+<p>Required arguments:</p>
+<ul>
+<li><code>&lt;ext-type&gt;</code>: must be <code>driver</code> or <code>plugin</code></li>
+<li><code>&lt;install-spec&gt;</code>: this is the name, location, and/or version of the extension you want to
+  install. Its possible values are dependent on the <code>&lt;install-source&gt;</code> (see below).</li>
+</ul>
+<p>Optional arguments:</p>
+<ul>
+<li><code>--source</code>: this directs Appium where to find your extension. See below for a table of possible
+  source types and corresponding install specification.</li>
+<li><code>--package</code>: when <code>&lt;install-source&gt;</code> is <code>git</code> or <code>github</code>, <code>--package</code> is required. It should be
+  the Node.js package name of the extension. Without this information, Appium will not be able to
+  find the installed package.</li>
+<li><code>--json</code>: return the result in JSON format</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Install source type</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>This is the default behaviour when no <code>--source</code> is used. In this case, Appium will look at <code>&lt;install-spec&gt;</code> and match it against the name of extensions available when running <code>appium &lt;ext-type&gt; list</code>, i.e., against the officially recognized extension names. If found, it will install that extension at the latest version via NPM</td>
+</tr>
+<tr>
+<td><code>npm</code></td>
+<td>Install an extension based on its NPM package name. Here, <code>&lt;install-spec&gt;</code> must be the NPM package name with any additional NPM installation modifiers, like version (see below)</td>
+</tr>
+<tr>
+<td><code>github</code></td>
+<td>Install an extension via a GitHub spec of the form <code>&lt;org&gt;/&lt;repo&gt;</code></td>
+</tr>
+<tr>
+<td><code>git</code></td>
+<td>Install an extension via a Git URL (e.g., <code>git+ssh://git-host.com/repo.git</code>)</td>
+</tr>
+<tr>
+<td><code>local</code></td>
+<td>Install an extension via a local path. This must be a path to the directory where the Node.js package information for the driver is located.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="npm-based-install-spec">NPM-based <code>&lt;install-spec&gt;</code></h4>
+<p>When Appium is installing an extension via NPM (as is the case when <code>--source</code> is either omitted or
+set to <code>npm</code>), the <code>&lt;install-spec&gt;</code> can be complex, and can include any kind of information allowed
+by <code>npm install</code>:</p>
+<ul>
+<li><code>[@scope]/&lt;name&gt;</code></li>
+<li><code>[@scope]/&lt;name&gt;@&lt;version&gt;</code></li>
+<li><code>[@scope]/&lt;name&gt;@&lt;tag&gt;</code></li>
+<li><code>[@scope]/&lt;name&gt;@&lt;version range&gt;</code></li>
+</ul>
+<h4 id="examples">Examples</h4>
+<ul>
+<li>
+<p>Install the latest XCUITest driver:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>appium driver install xcuitest
+</code></pre></div>
+</li>
+<li>
+<p>Install the XCUITest driver at version 4.11.1:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>appium driver install xcuitest@4.11.1
+</code></pre></div>
+</li>
+<li>
+<p>Install the <code>beta</code> version of the <code>@appium/fake-driver</code> from NPM:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium driver install --source=npm @appium/fake-driver@beta
+</code></pre></div>
+</li>
+<li>
+<p>Install a locally-developed plugin:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium plugin install --source=local /path/to/my/plugin
+</code></pre></div>
+</li>
+</ul>
+<h3 id="update"><code>update</code></h3>
+<p>Update one or more extensions that have been installed via NPM. By default, Appium will not
+automatically update any extension that has a revision in its major version, so as to prevent
+unintended breaking changes.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium &lt;ext-type&gt; update &lt;ext-name&gt; [--unsafe] [--json]
+</code></pre></div>
+<p>Required arguments:</p>
+<ul>
+<li><code>&lt;ext-type&gt;</code>: must be <code>driver</code> or <code>plugin</code></li>
+<li><code>&lt;ext-name&gt;</code>: the name of the extension to update, or the string <code>installed</code> (which will update
+  all installed extensions)</li>
+</ul>
+<p>Optional arguments:</p>
+<ul>
+<li><code>--unsafe</code>: direct Appium to go ahead and update passed a major version boundary</li>
+<li><code>--json</code>: return the result in JSON format</li>
+</ul>
+<h3 id="uninstall"><code>uninstall</code></h3>
+<p>Remove an installed extension.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>appium &lt;ext-type&gt; uninstall &lt;ext-name&gt; [--json]
+</code></pre></div>
+<p>Required arguments:</p>
+<ul>
+<li><code>&lt;ext-type&gt;</code>: must be <code>driver</code> or <code>plugin</code></li>
+<li><code>&lt;ext-name&gt;</code>: the name of the extension to uninstall</li>
+</ul>
+<p>Optional arguments:</p>
+<ul>
+<li><code>--json</code>: return the result in JSON format</li>
+</ul>
+<h3 id="run"><code>run</code></h3>
+<p>Run a script included in an extension package. Extension authors can include runnable scripts that
+assist with setup or perform other tasks. These scripts are given names (called the <code>&lt;script-name&gt;</code>
+in this reference) by extension authors and will generally be documented in extension
+documentation.</p>
+<p>Usage:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium &lt;ext-type&gt; run &lt;ext-name&gt; [--json] &lt;script-name&gt; [script-args]
+</code></pre></div>
+<p>Required arguments:</p>
+<ul>
+<li><code>&lt;ext-type&gt;</code>: must be <code>driver</code> or <code>plugin</code></li>
+<li><code>&lt;ext-name&gt;</code>: the name of the extension whose script you want to run</li>
+<li><code>&lt;script-name&gt;</code>: the name of the script the extension has published</li>
+</ul>
+<p>Optional arguments:</p>
+<ul>
+<li><code>script-args</code>: any arguments that Appium does not interpret as belonging to its own set of
+  arguments will be passed along to the extension script</li>
+<li><code>--json</code>: return the result in JSON format</li>
+</ul>
+<p>Example (run the <code>reset</code> script included with the UiAutomator2 driver):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>appium driver run uiautomator2 reset
+</code></pre></div>
 
               
             </article>

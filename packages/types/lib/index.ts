@@ -11,7 +11,7 @@ import type {Logger} from 'npmlog';
 export * from './driver';
 export * from './action';
 export * from './plugin';
-export {AppiumW3CCapabilities} from './capabilities';
+export {AppiumW3CCapabilities, DriverCaps, DriverW3CCaps, NamespacedObject, AnyCase, ConstraintsToCaps} from './capabilities';
 export {AppiumConfig, NormalizedAppiumConfig} from './config';
 export * from './appium-config';
 export {ServerArgs, Capabilities, W3CCapabilities};

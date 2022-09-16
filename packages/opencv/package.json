@@ -47,7 +47,7 @@
     "@babel/runtime": "7.19.0",
     "@types/bluebird": "3.5.36",
     "bluebird": "3.7.2",
-    "jimp": "0.16.1",
+    "jimp": "0.16.2",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",
     "source-map-support": "0.5.21"

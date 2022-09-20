@@ -4,12 +4,20 @@ import type {Server} from 'http';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
 import type {Express} from 'express';
-import {ExternalDriver} from './driver';
+import {Driver, ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
+import {Plugin} from './plugin';
 
 export * from './driver';
 export * from './action';
 export * from './plugin';
+export {
+  AppiumW3CCapabilities,
+  DriverCaps,
+  DriverW3CCaps,
+  NamespacedObject,
+  AnyCase,
+  ConstraintsToCaps,
 export * from './capabilities';
 export * from './constraints';
 export * from './config';
@@ -79,7 +87,7 @@ export interface AppiumServerSocket extends Socket {
  * The definition of an extension method, which will be provided via Appium's API.
  *
  */
-export interface Method<T> {
+export interface MethodDef<T> {
   /**
    * Name of the command.
    */
@@ -95,31 +103,33 @@ export interface Method<T> {
 }
 
 /**
- * An instance method of a driver class, whose name may be referenced by {@linkcode Method.command}, and serves as an Appium command.
+ * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
  *
  * Note that this signature differs from a `PluginCommand`.
  */
 export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
 
 /**
- * Defines the shape of a payload for a {@linkcode Method}.
+ * Defines the shape of a payload for a {@linkcode MethodDef}.
  */
 export interface PayloadParams {
   wrap?: string;
   unwrap?: string;
-  required?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
-  optional?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
+  required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
+  optional?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   validate?: (obj: any, protocol: string) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 /**
- * A mapping of URL paths to HTTP methods to {@linkcode Method}s.
- *
- * @todo Should use {@linkcode HTTPMethod} here
+ * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
  */
-export type MethodMap<Extension = ExternalDriver> = Record<
+export type MethodMap<D = Driver> = Record<
   string,
-  Record<string, Method<Extension & ExternalDriver>>
+  {
+    GET?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+    POST?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+    DELETE?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+  }
 >;
 
 /**

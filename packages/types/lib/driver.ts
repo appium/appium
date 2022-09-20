@@ -11,6 +11,7 @@ import {
 } from '.';
 import {W3CCapabilities} from './capabilities';
 import {ServerArgs} from './config';
+import {ConditionalPick} from 'type-fest';
 
 export interface TimeoutCommands {
   timeouts(
@@ -46,18 +47,17 @@ export interface SessionCommands {
 }
 
 export interface ExecuteCommands {
-  executeMethod(script: string, args: [Record<string, any>]|[]): Promise<any>;
+  executeMethod(script: string, args: [Record<string, any>] | []): Promise<any>;
 }
 
-export interface ExecuteMethodDef {
-  command: string,
+export interface ExecuteMethodDef<D> {
+  command: keyof ConditionalPick<Required<D>, DriverCommand>;
   params?: {
-    required?: string[],
-    optional?: string[],
-  }
-};
-export type ExecuteMethodMap = Record<string, ExecuteMethodDef>;
-
+    required?: ReadonlyArray<string>;
+    optional?: ReadonlyArray<string>;
+  };
+}
+export type ExecuteMethodMap<D> = Readonly<Record<string, Readonly<ExecuteMethodDef<D>>>>;
 export interface MultiSessionData {
   id: string;
   capabilities: Capabilities;
@@ -150,7 +150,7 @@ export interface Constraint {
   inclusion?: any[];
   inclusionCaseInsensitive?: any[];
 }
-export type Constraints = Record<string, Constraint>;
+export type Constraints = Readonly<Record<string, Constraint>>;
 
 export interface DriverHelpers {
   configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
@@ -564,11 +564,11 @@ export interface ExternalDriver extends Driver {
  *
  * This is likely unusable by external consumers, but YMMV!
  */
-export interface DriverStatic {
+export interface DriverStatic<D extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
-  newMethodMap?: MethodMap<ExternalDriver>;
-  executeMethodMap: ExecuteMethodMap;
+  newMethodMap?: Readonly<MethodMap<D>>;
+  executeMethodMap?: Readonly<ExecuteMethodMap<D>>;
 }
 
 /**
@@ -578,7 +578,7 @@ export interface DriverStatic {
  */
 export type DriverClass<
   D extends Driver = ExternalDriver,
-  S extends DriverStatic = DriverStatic
+  S extends DriverStatic<D> = DriverStatic<D>
 > = Class<D, S, [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]>;
 
 /**

@@ -5,13 +5,21 @@ import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} fr
 import {ServerArgs} from './config';
 import {Capabilities, W3CCapabilities} from './capabilities';
 import type {Express} from 'express';
-import {ExternalDriver} from './driver';
+import {Driver, ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
+import {Plugin} from './plugin';
 
 export * from './driver';
 export * from './action';
 export * from './plugin';
-export {AppiumW3CCapabilities, DriverCaps, DriverW3CCaps, NamespacedObject, AnyCase, ConstraintsToCaps} from './capabilities';
+export {
+  AppiumW3CCapabilities,
+  DriverCaps,
+  DriverW3CCaps,
+  NamespacedObject,
+  AnyCase,
+  ConstraintsToCaps,
+} from './capabilities';
 export {AppiumConfig, NormalizedAppiumConfig} from './config';
 export * from './appium-config';
 export {ServerArgs, Capabilities, W3CCapabilities};
@@ -63,15 +71,10 @@ export type AppiumServer = Omit<Server, 'close'> & AppiumServerExtension;
 
 export interface AppiumServerExtension {
   close(): Promise<void>;
-  addWebSocketHandler(
-    handlerPathname: string,
-    handlerServer: WSServer
-  ): Promise<void>;
+  addWebSocketHandler(handlerPathname: string, handlerServer: WSServer): Promise<void>;
   removeWebSocketHandler(handlerPathname: string): Promise<boolean>;
   removeAllWebSocketHandlers(): Promise<boolean>;
-  getWebSocketHandlers(
-    keysFilter: string | null | undefined
-  ): Promise<Record<string, WSServer>>;
+  getWebSocketHandlers(keysFilter: string | null | undefined): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
 }
 
@@ -83,7 +86,7 @@ export interface AppiumServerSocket extends Socket {
  * The definition of an extension method, which will be provided via Appium's API.
  *
  */
-export interface Method<T> {
+export interface MethodDef<T> {
   /**
    * Name of the command.
    */
@@ -99,31 +102,33 @@ export interface Method<T> {
 }
 
 /**
- * An instance method of a driver class, whose name may be referenced by {@linkcode Method.command}, and serves as an Appium command.
+ * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
  *
  * Note that this signature differs from a `PluginCommand`.
  */
 export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
 
 /**
- * Defines the shape of a payload for a {@linkcode Method}.
+ * Defines the shape of a payload for a {@linkcode MethodDef}.
  */
 export interface PayloadParams {
   wrap?: string;
   unwrap?: string;
-  required?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
-  optional?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
+  required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
+  optional?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   validate?: (obj: any, protocol: string) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 /**
- * A mapping of URL paths to HTTP methods to {@linkcode Method}s.
- *
- * @todo Should use {@linkcode HTTPMethod} here
+ * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
  */
-export type MethodMap<Extension = ExternalDriver> = Record<
+export type MethodMap<D = Driver> = Record<
   string,
-  Record<string, Method<Extension & ExternalDriver>>
+  {
+    GET?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+    POST?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+    DELETE?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
+  }
 >;
 
 /**
@@ -164,8 +169,11 @@ export type ExtensionType = DriverType | PluginType;
  * @param httpServer - the node HTTP server that hosts the app
  * @param cliArgs - Arguments from config files, CLI, etc.
  */
-export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServer, cliArgs: ServerArgs) => Promise<void>;
-
+export type UpdateServerCallback = (
+  expressApp: Express,
+  httpServer: AppiumServer,
+  cliArgs: ServerArgs
+) => Promise<void>;
 
 /**
  * Possible HTTP methods, as stolen from `axios`.
@@ -173,14 +181,23 @@ export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServe
  * @see https://npm.im/axios
  */
 export type HTTPMethod =
-  | 'get' | 'GET'
-  | 'delete' | 'DELETE'
-  | 'head' | 'HEAD'
-  | 'options' | 'OPTIONS'
-  | 'post' | 'POST'
-  | 'put' | 'PUT'
-  | 'patch' | 'PATCH'
-  | 'purge' | 'PURGE'
-  | 'link' | 'LINK'
-  | 'unlink' | 'UNLINK';
-
+  | 'get'
+  | 'GET'
+  | 'delete'
+  | 'DELETE'
+  | 'head'
+  | 'HEAD'
+  | 'options'
+  | 'OPTIONS'
+  | 'post'
+  | 'POST'
+  | 'put'
+  | 'PUT'
+  | 'patch'
+  | 'PATCH'
+  | 'purge'
+  | 'PURGE'
+  | 'link'
+  | 'LINK'
+  | 'unlink'
+  | 'UNLINK';

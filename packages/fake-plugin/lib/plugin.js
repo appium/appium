@@ -10,10 +10,7 @@ class FakePlugin extends BasePlugin {
     return this.cliArgs;
   }
 
-  /**
-   * @type {import('@appium/types').MethodMap<FakePlugin>}
-   */
-  static newMethodMap = {
+  static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fake_data': {
       GET: {command: 'getFakeSessionData', neverProxy: true},
       POST: {
@@ -25,7 +22,7 @@ class FakePlugin extends BasePlugin {
     '/session/:sessionId/fakepluginargs': {
       GET: {command: 'getFakePluginArgs', neverProxy: true},
     },
-  };
+  });
 
   /** @type {string?} */
   static _unexpectedData = null;

@@ -10,10 +10,12 @@ class BasePlugin {
    * This will verify that the commands in the `newMethodMap` property are
    * valid.  It is impossible to use a generic type param here; the type of this should really
    * be something like `MethodMap<T extends BasePlugin>` but that isn't a thing TS does.
-   *
-   * @type {import('@appium/types').MethodMap<any>}
    */
-  static newMethodMap = {};
+  static newMethodMap = /** @type {const} */ ({
+    '/session/:sessionId/plugin': {
+      GET: {command: 'getPlugin'},
+    },
+  });
 
   /**
    * @param {string} name

@@ -33,9 +33,9 @@ export function ExecuteMixin(Base) {
       }
 
       const Driver = /** @type {DriverClass} */ (this.constructor);
-      const availableScripts = _.keys(Driver.executeMethodMap);
-      const commandMetadata = Driver.executeMethodMap[script];
-      if (!commandMetadata) {
+      const commandMetadata = {...Driver.executeMethodMap?.[script]};
+      if (!commandMetadata.command) {
+        const availableScripts = _.keys(Driver.executeMethodMap);
         throw new errors.UnsupportedOperationError(
           `Unsupported execute method '${script}'. Available methods ` +
             `are: ${availableScripts.join(', ')}`
@@ -50,7 +50,7 @@ export function ExecuteMixin(Base) {
         checkParams(commandMetadata.params, args, null);
       }
       argsToApply = makeArgs({}, args, commandMetadata.params, null);
-      return await this[Driver.executeMethodMap[script].command](...argsToApply);
+      return await this[commandMetadata.command](...argsToApply);
     }
   }
   return ExecuteCommands;

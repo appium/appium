@@ -80,6 +80,9 @@
       "fake-success": "./build/lib/scripts/fake-success.js"
     }
   },
+  "typedoc": {
+    "entryPoint": "./build/lib/index.js"
+  },
   "types": "./build/lib/index.d.ts",
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
 }

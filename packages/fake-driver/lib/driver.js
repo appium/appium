@@ -1,9 +1,22 @@
+// @ts-check
+
 import B from 'bluebird';
-import _ from 'lodash';
 import {BaseDriver, errors} from 'appium/driver';
 import {FakeApp} from './fake-app';
 import commands from './commands';
 
+const CONSTRAINTS = /** @type {const} */ ({
+  app: {
+    presence: true,
+    isString: true,
+  },
+  uniqueApp: {
+    isBoolean: true,
+  },
+});
+
+/**
+ */
 class FakeDriver extends BaseDriver {
   constructor(opts = {}, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -12,17 +25,11 @@ class FakeDriver extends BaseDriver {
     this.elMap = {};
     this.focusedElId = null;
     this.maxElId = 0;
-    this.caps = {};
     this.fakeThing = null;
     this.cliArgs = {};
     this._proxyActive = false;
 
-    this.desiredCapConstraints = {
-      app: {
-        presence: true,
-        isString: true,
-      },
-    };
+    this.desiredCapConstraints = CONSTRAINTS;
   }
 
   proxyActive() {
@@ -46,6 +53,14 @@ class FakeDriver extends BaseDriver {
     return 'proxied via proxyCommand';
   }
 
+  /**
+   *
+   * @param {W3CCapabilities} jsonwpDesiredCapabilities
+   * @param {W3CCapabilities} [jsonwpRequiredCaps]
+   * @param {W3CCapabilities} [w3cCapabilities]
+   * @param {import('@appium/types').DriverData[]} [otherSessionData]
+   * @returns {Promise<[string, any]>}
+   */
   async createSession(
     jsonwpDesiredCapabilities,
     jsonwpRequiredCaps,
@@ -66,16 +81,16 @@ class FakeDriver extends BaseDriver {
       }
     }
 
-    let [sessionId, caps] = await super.createSession(
-      jsonwpDesiredCapabilities,
-      jsonwpRequiredCaps,
-      w3cCapabilities,
-      otherSessionData
-    );
+    let [sessionId, caps] =
+      /** @type {[string, import('@appium/types').DriverCaps<FakeDriver>]} */ (
+        await super.createSession(
+          jsonwpDesiredCapabilities,
+          jsonwpRequiredCaps,
+          w3cCapabilities,
+          otherSessionData
+        )
+      );
     this.appModel = new FakeApp();
-    if (_.isArray(caps) === true && caps.length === 1) {
-      caps = caps[0];
-    }
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     return [sessionId, caps];
@@ -116,7 +131,7 @@ class FakeDriver extends BaseDriver {
     return this.cliArgs;
   }
 
-  static newMethodMap = {
+  static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},
       POST: {command: 'setFakeThing', payloadParams: {required: ['thing']}},
@@ -124,9 +139,9 @@ class FakeDriver extends BaseDriver {
     '/session/:sessionId/fakedriverargs': {
       GET: {command: 'getFakeDriverArgs'},
     },
-  };
+  });
 
-  static executeMethodMap = {
+  static executeMethodMap = /** @type {const} */ ({
     'fake: addition': {
       command: 'fakeAddition',
       params: {required: ['num1', 'num2'], optional: ['num3']},
@@ -138,7 +153,10 @@ class FakeDriver extends BaseDriver {
       command: 'setFakeThing',
       params: {required: ['thing']},
     },
-  };
+  });
+
+  // eslint-disable-next-line no-unused-vars
+  async fakeAddition(num1, num2, num3 = 0) {}
 
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
@@ -156,3 +174,13 @@ class FakeDriver extends BaseDriver {
 Object.assign(FakeDriver.prototype, commands);
 
 export {FakeDriver};
+
+/**
+ * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
+ * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
+ */
+
+/**
+ * @template {import('@appium/types').Driver} D
+ * @typedef {import('@appium/types').DriverClass<D>} DriverClass
+ */

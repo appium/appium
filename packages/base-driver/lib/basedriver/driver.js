@@ -383,12 +383,7 @@ export class BaseDriverCore extends DriverCore {
  * This ensures that all of the mixins correctly implement the interface described in {@linkcode Driver}.
  * @implements {Driver}
  */
-class _BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
-
-/**
- * @type {import('@appium/types').DriverClass<Driver>}
- */
-const BaseDriver = _BaseDriver;
+class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
 
 export {BaseDriver};
 export default BaseDriver;

@@ -18,9 +18,8 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
  * define the routes, mapping of HTTP methods to particular driver commands, and
  * any parameters that are expected in a request parameters can be `required` or
  * `optional`
- * @type {MethodMap}
  */
-const METHOD_MAP = {
+const METHOD_MAP = /** @type {const} */ ({
   '/status': {
     GET: {command: 'getStatus'},
   },
@@ -915,7 +914,7 @@ const METHOD_MAP = {
   },
 
   //endregion
-};
+});
 
 // driver command names
 let ALL_COMMANDS = [];
@@ -1005,8 +1004,3 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
 const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
 
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};
-
-/**
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').MethodMap} MethodMap
- */

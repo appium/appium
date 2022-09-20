@@ -24,7 +24,7 @@ export default class ImageElementPlugin extends BasePlugin {
   }
 
   // this plugin supports a non-standard 'compare images' command
-  static newMethodMap = {
+  static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/appium/compare_images': {
       POST: {
         command: 'compareImages',
@@ -35,7 +35,7 @@ export default class ImageElementPlugin extends BasePlugin {
         neverProxy: true,
       },
     },
-  };
+  });
 
   async compareImages(next, driver, ...args) {
     return await compareImages(...args);

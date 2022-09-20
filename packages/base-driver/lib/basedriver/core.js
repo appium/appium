@@ -27,7 +27,7 @@ class DriverCore {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  /** @type {ExecuteMethodMap} */
+  /** @type {import('@appium/types').ExecuteMethodMap<DriverCore>} */
   static executeMethodMap = {};
 
   /**
@@ -426,7 +426,6 @@ export {DriverCore};
  * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Core} Core
- * @typedef {import('@appium/types').ExecuteMethodMap} ExecuteMethodMap
  * @typedef {import('@appium/types').ServerArgs} ServerArgs
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger

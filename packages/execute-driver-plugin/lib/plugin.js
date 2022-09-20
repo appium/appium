@@ -9,14 +9,14 @@ const DEFAULT_SCRIPT_TIMEOUT_MS = 1000 * 60 * 60; // default to 1 hour timeout
 const SCRIPT_TYPE_WDIO = 'webdriverio';
 
 export default class ExecuteDriverPlugin extends BasePlugin {
-  static newMethodMap = {
+  static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/appium/execute_driver': {
       POST: {
         command: 'executeDriverScript',
         payloadParams: {required: ['script'], optional: ['type', 'timeout']},
       },
     },
-  };
+  });
 
   /**
    * This method takes a string which is executed as javascript in the context of

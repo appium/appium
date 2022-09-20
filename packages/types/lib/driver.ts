@@ -14,7 +14,7 @@ import {
   Capabilities,
 } from '.';
 import {ServerArgs} from './config';
-import {AsyncReturnType} from 'type-fest';
+import {AsyncReturnType, ConditionalPick} from 'type-fest';
 
 export interface ITimeoutCommands {
   timeouts(
@@ -53,15 +53,14 @@ export interface IExecuteCommands {
   executeMethod(script: string, args: [StringRecord] | []): Promise<any>;
 }
 
-export interface ExecuteMethodDef {
-  command: string;
+export interface ExecuteMethodDef<D> {
+  command: keyof ConditionalPick<Required<D>, DriverCommand>;
   params?: {
-    required?: string[];
-    optional?: string[];
+    required?: ReadonlyArray<string>;
+    optional?: ReadonlyArray<string>;
   };
 }
-export type ExecuteMethodMap = Record<string, ExecuteMethodDef>;
-
+export type ExecuteMethodMap<D> = Readonly<Record<string, Readonly<ExecuteMethodDef<D>>>>;
 export interface MultiSessionData<
   C extends Constraints = BaseDriverCapConstraints,
   Extra extends StringRecord | void = void
@@ -616,11 +615,11 @@ export interface ExternalDriver extends Driver {
  *
  * This is likely unusable by external consumers, but YMMV!
  */
-export interface DriverStatic {
+export interface DriverStatic<D extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
-  newMethodMap?: MethodMap<ExternalDriver>;
-  executeMethodMap: ExecuteMethodMap;
+  newMethodMap?: Readonly<MethodMap<D>>;
+  executeMethodMap?: Readonly<ExecuteMethodMap<D>>;
 }
 
 /**
@@ -630,7 +629,7 @@ export interface DriverStatic {
  */
 export type DriverClass<
   D extends Driver = ExternalDriver,
-  S extends DriverStatic = DriverStatic
+  S extends DriverStatic<D> = DriverStatic<D>
 > = Class<D, S, [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]>;
 
 export interface ExtraDriverOpts {

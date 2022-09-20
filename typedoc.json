@@ -1,11 +1,12 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["./packages/appium", "./packages/base-driver", "./packages/support", "./packages/types", "./packages/base-plugin"],
+  "entryPoints": ["./packages/appium", "./packages/base-driver", "./packages/support", "./packages/types", "./packages/base-plugin", "./packages/fake-driver", "./packages/typedoc-plugin-appium"],
   "entryPointStrategy": "packages",
   "name": "Appium",
   "includeVersion": false,
   "tsconfig": "./tsconfig.json",
   "out": "typedoc-docs",
   "cleanOutputDir": true,
-  "plugin": ["typedoc-plugin-resolve-crossmodule-references"]
+  "plugin": ["typedoc-plugin-resolve-crossmodule-references", "@appium/typedoc-plugin-appium"],
+  "extensionClasses": ["FakeDriver"]
 }

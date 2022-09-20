@@ -4,11 +4,11 @@ import {PROTOCOLS} from '../../../lib/constants';
 import {util} from '@appium/support';
 
 class FakeDriver extends BaseDriver {
-  static newMethodMap = {
+  static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/noproxy': {
       GET: {command: 'notProxiedCommand', neverProxy: true},
     },
-  };
+  });
 
   constructor() {
     super();

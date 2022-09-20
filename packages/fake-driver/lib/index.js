@@ -1,8 +1,5 @@
-import * as driver from './driver';
-import * as server from './server';
-
-const {FakeDriver} = driver;
-const {startServer} = server;
+import {FakeDriver} from './driver';
+import {startServer} from './server';
 
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 4774;

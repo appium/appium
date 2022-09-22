@@ -7,13 +7,13 @@
 |`automationName`| 自动化测试的引擎 |`Appium` （默认）或者 `Selendroid`|
 |`platformName`| 使用的手机操作系统 |`iOS`, `Android`, 或者 `FirefoxOS`|
 |`platformVersion`| 手机操作系统的版本 |例如  `7.1`, `4.4`|
-|`deviceName`| 使用的手机或模拟器类型 |`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, 等等.... 在 iOS 上，使用 Instruments 的 `instruments -s devices` 命令可返回一个有效的设备的列表。在 Andorid 上虽然这个参数目前已被忽略，但仍然需要添加上该参数 |
+|`deviceName`| 使用的手机或模拟器类型 |`iPhone Simulator`, `iPad Simulator`, `iPhone Retina 4-inch`, `Android Emulator`, `Galaxy S4`, 等等.... 在 iOS 上，使用 Instruments 的 `instruments -s devices` 命令可返回一个有效的设备的列表。在 Andorid 上虽然这个参数目前已被忽略，但仍然需要添加上该参数。 为确保在连接多个设备时连接到正确的 Android 设备，请使用 `udid` 功能。 |
 |`app`|本地绝对路径_或_远程 http URL 所指向的一个安装包（`.ipa`,`.apk`,或 `.zip` 文件）。Appium 将其安装到合适的设备上。请注意，如果您指定了 `appPackage` 和 `appActivity` 参数（见下文），Android 则不需要此参数了。该参数也与 `browserName` 不兼容。|`/abs/path/to/my.apk` 或 `http://myapp.com/app.ipa`|
 |`browserName`|做自动化时使用的浏览器名字。如果是一个应用则只需填写个空的字符串|'Safari' 对应 iOS，'Chrome', 'Chromium', 或 'Browser' 则对应 Android|
 |`newCommandTimeout`|用于客户端在退出或者结束 session 之前，Appium 等待客户端发送一条新命令所花费的时间（秒为单位）|例如  `60`|
 |`language`| (Sim/Emu-only) 为模拟器设置语言 |例如  `fr`|
 |`locale`| (Sim/Emu-only) 为模拟器设置所在区域 |例如  `fr_CA`|
-|`udid`| 连接真机的唯一设备号|例如  `1ae203187fc012g`|
+|`udid`| 连接真机的唯一设备号。 对于 Android，这是 `adb devices` 列出的设备名称 | 例如  `1ae203187fc012g`, `emulator-5554` | 
 |`orientation`| (Sim/Emu-only) 模拟器当前的方向|`竖屏` 或 `横屏`|
 |`autoWebview`| 直接转换到 Webview 上下文（context）。默认值为 `false`|`true`, `false`|
 |`noReset`|在当前 session 下不会重置应用的状态。默认值为 `false`|`true`, `false`|

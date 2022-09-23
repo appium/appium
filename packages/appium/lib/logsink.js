@@ -2,22 +2,6 @@ import npmlog from 'npmlog';
 import {createLogger, format, transports} from 'winston';
 import {fs, logger} from '@appium/support';
 import _ from 'lodash';
-import chalk from 'chalk';
-
-const COLOR_LIST = [
-  { hex: 'f38020' }, { hex: 'e2a10e' },
-  { hex: 'cac003' }, { hex: 'acda01' },
-  { hex: '8cee08' }, { hex: '6bfb17' },
-  { hex: '4bff2d' }, { hex: '2ffb49' },
-  { hex: '18ee68' }, { hex: '09da89' },
-  { hex: '02c0aa' }, { hex: '03a1c7' },
-  { hex: '0d80e0' }, { hex: '1e5ff2' },
-  { hex: '3641fd' }, { hex: '5426ff' },
-  { hex: '7412f8' }, { hex: '9505e9' },
-  { hex: 'b501d3' }, { hex: 'd105b7' },
-  { hex: 'e81298' }, { hex: 'f72677' },
-  { hex: 'fe4056' }, { hex: 'fd5f39' }
-];
 
 let nextColorIndex = 0;
 
@@ -209,14 +193,18 @@ let prefixesEncountered = [];
 function getPrefixColor(prefixId) {
   try {
     if (prefixesEncountered.indexOf(prefixId) > -1) {
-      return '#' + COLOR_LIST[prefixesEncountered.indexOf(prefixId)].hex;
+      return '\x1b[38;5;' + (prefixesEncountered.indexOf(prefixId) * 16) + 'm';
     }
     prefixesEncountered.push(prefixId);
-    const color = COLOR_LIST[nextColorIndex];
+    const colorNumber = (nextColorIndex * 16);
     nextColorIndex++;
-    return '#' + color.hex;
+    if (colorNumber > 256) {
+      return '';
+    }
+    const ansiColorCode = '\x1b[38;5;' + (colorNumber) + 'm';
+    return ansiColorCode;
   } catch (err) {
-    return '#bbb';
+    return '';
   }
 }
 
@@ -247,7 +235,7 @@ async function init(args) {
       } else {
         let prefixId = prefix.split('@')[0].trim();
         prefixId = prefixId.split(' (')[0].trim();
-        msg = `${chalk.hex(getPrefixColor(prefixId))(prefix)} ${msg}`;
+        msg = `${getPrefixColor(prefixId)}${prefix}\x1b[0m ${msg}`;
       }
       log[winstonLevel](msg);
       if (args.logHandler && _.isFunction(args.logHandler)) {

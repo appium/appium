@@ -3,8 +3,6 @@ import {createLogger, format, transports} from 'winston';
 import {fs, logger} from '@appium/support';
 import _ from 'lodash';
 
-let nextColorIndex = 0;
-
 // set up distributed logging before everything else
 logger.patchLogger(npmlog);
 global._global_npmlog = npmlog;
@@ -188,24 +186,21 @@ async function createTransports(args) {
   return transports;
 }
 
-let prefixesEncountered = [];
+let encounteredPrefixes = [];
 
-function getPrefixColor(prefixId) {
-  try {
-    if (prefixesEncountered.indexOf(prefixId) > -1) {
-      return '\x1b[38;5;' + (prefixesEncountered.indexOf(prefixId) * 16) + 'm';
-    }
-    prefixesEncountered.push(prefixId);
-    const colorNumber = (nextColorIndex * 16);
-    nextColorIndex++;
-    if (colorNumber > 256) {
-      return '';
-    }
-    const ansiColorCode = '\x1b[38;5;' + (colorNumber) + 'm';
-    return ansiColorCode;
-  } catch (err) {
-    return '';
+function getColorizedPrefix(prefix) {
+  let prefixId = prefix.split('@')[0].trim();
+  prefixId = prefixId.split(' (')[0].trim();
+  if (encounteredPrefixes.indexOf(prefixId) < 0) {
+    encounteredPrefixes.push(prefixId);
   }
+  // using a multiple of 16 should cause 16 colors to be created
+  const colorNumber = encounteredPrefixes.indexOf(prefixId) * 16;
+  // if colorNumber is within pre-defined color wheel colorizing will be done
+  if (colorNumber <= 256) {
+    return `\x1b[38;5;${colorNumber}m${prefix}\x1b[0m`;
+  }
+  return prefix;
 }
 
 async function init(args) {
@@ -233,9 +228,7 @@ async function init(args) {
       } if (prefix === '[Appium]') {
         msg = `${prefix.magenta} ${msg}`;
       } else {
-        let prefixId = prefix.split('@')[0].trim();
-        prefixId = prefixId.split(' (')[0].trim();
-        msg = `${getPrefixColor(prefixId)}${prefix}\x1b[0m ${msg}`;
+        msg = `${getColorizedPrefix(prefix)} ${msg}`;
       }
       log[winstonLevel](msg);
       if (args.logHandler && _.isFunction(args.logHandler)) {

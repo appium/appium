@@ -70,7 +70,7 @@
     "@babel/runtime": "7.19.0",
     "@sidvind/better-ajv-errors": "2.1.0",
     "@types/argparse": "2.0.10",
-    "@types/bluebird": "3.5.36",
+    "@types/bluebird": "3.5.37",
     "@types/fancy-log": "2.0.0",
     "@types/semver": "7.3.12",
     "@types/teen_process": "1.16.1",

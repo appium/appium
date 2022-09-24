@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@babel/runtime": "7.19.0",
-    "@types/bluebird": "3.5.36",
+    "@types/bluebird": "3.5.37",
     "@xmldom/xmldom": "0.8.2",
     "asyncbox": "2.9.2",
     "bluebird": "3.7.2",

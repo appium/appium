@@ -36,7 +36,7 @@
     "@appium/base-plugin": "^1.10.3",
     "@appium/support": "^2.60.0",
     "@babel/runtime": "7.19.0",
-    "@types/bluebird": "3.5.36",
+    "@types/bluebird": "3.5.37",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21"

@@ -79,6 +79,7 @@ your driver into the below list.
   [appium-youiengine-driver](https://github.com/YOU-i-Labs/appium-youiengine-driver) | Appium You.i Engine Driver is a test automation tool for devices of various platforms running applications built with [You.i Engine](http://www.youi.tv/youi-engine/)
   [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows automation of apps built using [Flutter](https://flutter.dev/) framework
   [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows automation of apps built for devices running [Tizen OS](https://www.tizen.org/)
+  [appium-linux-driver](https://github.com/fantonglang/appium-linux-driver) | Allows automation of Linux applications using [AtSpi2](https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/) framework
 </details>
 
 ### Plugins

@@ -49,7 +49,7 @@
     "get-port": "5.1.1",
     "log-symbols": "4.1.0",
     "source-map-support": "0.5.21",
-    "teen_process": "1.16.0"
+    "teen_process": "2.0.2"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.43",

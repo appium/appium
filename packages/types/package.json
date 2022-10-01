@@ -36,7 +36,7 @@
     "@types/express": "4.17.14",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.3",
-    "@wdio/types": "7.25.0",
+    "@wdio/types": "7.25.1",
     "type-fest": "2.19.0"
   },
   "engines": {

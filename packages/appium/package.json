@@ -97,7 +97,7 @@
     "type-fest": "2.19.0",
     "winston": "3.8.2",
     "wrap-ansi": "7.0.0",
-    "yaml": "2.1.1"
+    "yaml": "2.1.2"
   },
   "engines": {
     "node": ">=14",

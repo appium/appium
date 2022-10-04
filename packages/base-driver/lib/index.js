@@ -30,6 +30,7 @@ export {getSummaryByCode, codes as statusCodes} from './jsonwp-status/status';
 // W3C capabilities parser
 export {
   PREFIXED_APPIUM_OPTS_CAP,
+  STANDARD_CAPS,
   processCapabilities,
   isStandardCap,
   validateCaps,

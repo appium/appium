@@ -3,7 +3,6 @@ import type {Socket} from 'net';
 import type {Server} from 'http';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
-import {Capabilities, W3CCapabilities} from './capabilities';
 import type {Express} from 'express';
 import {ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
@@ -11,10 +10,12 @@ import type {Logger} from 'npmlog';
 export * from './driver';
 export * from './action';
 export * from './plugin';
-export {AppiumW3CCapabilities, DriverCaps, DriverW3CCaps, NamespacedObject, AnyCase, ConstraintsToCaps} from './capabilities';
-export {AppiumConfig, NormalizedAppiumConfig} from './config';
+export * from './capabilities';
+export * from './constraints';
+export * from './config';
 export * from './appium-config';
-export {ServerArgs, Capabilities, W3CCapabilities};
+
+export type StringRecord = Record<string, any>;
 
 /**
  * A log prefix for {@linkcode AppiumLogger}
@@ -63,15 +64,10 @@ export type AppiumServer = Omit<Server, 'close'> & AppiumServerExtension;
 
 export interface AppiumServerExtension {
   close(): Promise<void>;
-  addWebSocketHandler(
-    handlerPathname: string,
-    handlerServer: WSServer
-  ): Promise<void>;
+  addWebSocketHandler(handlerPathname: string, handlerServer: WSServer): Promise<void>;
   removeWebSocketHandler(handlerPathname: string): Promise<boolean>;
   removeAllWebSocketHandlers(): Promise<boolean>;
-  getWebSocketHandlers(
-    keysFilter: string | null | undefined
-  ): Promise<Record<string, WSServer>>;
+  getWebSocketHandlers(keysFilter: string | null | undefined): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
 }
 
@@ -164,8 +160,11 @@ export type ExtensionType = DriverType | PluginType;
  * @param httpServer - the node HTTP server that hosts the app
  * @param cliArgs - Arguments from config files, CLI, etc.
  */
-export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServer, cliArgs: ServerArgs) => Promise<void>;
-
+export type UpdateServerCallback = (
+  expressApp: Express,
+  httpServer: AppiumServer,
+  cliArgs: ServerArgs
+) => Promise<void>;
 
 /**
  * Possible HTTP methods, as stolen from `axios`.
@@ -173,14 +172,23 @@ export type UpdateServerCallback = (expressApp: Express, httpServer: AppiumServe
  * @see https://npm.im/axios
  */
 export type HTTPMethod =
-  | 'get' | 'GET'
-  | 'delete' | 'DELETE'
-  | 'head' | 'HEAD'
-  | 'options' | 'OPTIONS'
-  | 'post' | 'POST'
-  | 'put' | 'PUT'
-  | 'patch' | 'PATCH'
-  | 'purge' | 'PURGE'
-  | 'link' | 'LINK'
-  | 'unlink' | 'UNLINK';
-
+  | 'get'
+  | 'GET'
+  | 'delete'
+  | 'DELETE'
+  | 'head'
+  | 'HEAD'
+  | 'options'
+  | 'OPTIONS'
+  | 'post'
+  | 'POST'
+  | 'put'
+  | 'PUT'
+  | 'patch'
+  | 'PATCH'
+  | 'purge'
+  | 'PURGE'
+  | 'link'
+  | 'LINK'
+  | 'unlink'
+  | 'UNLINK';

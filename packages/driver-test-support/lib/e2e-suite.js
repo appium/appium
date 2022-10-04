@@ -101,7 +101,7 @@ export function createSessionHelpers(port, address = TEST_HOST) {
  * Creates E2E test suites for a driver.
  * @template {Driver} P
  * @param {DriverClass<P>} DriverClass
- * @param {AppiumW3CCapabilities} [defaultCaps]
+ * @param {Partial<BaseNSCapabilities>} [defaultCaps]
  */
 export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
   let address = defaultCaps['appium:address'] ?? TEST_HOST;
@@ -130,7 +130,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
     let postCommand;
     before(async function () {
       port = port ?? (await getTestPort());
-      defaultCaps = {...defaultCaps, 'appium:port': port};
+      defaultCaps = {...defaultCaps};
       d = new DriverClass({port, address});
       baseServer = await server({
         routeConfiguringFunction: routeConfiguringFunction(d),
@@ -320,7 +320,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
         });
         await B.delay(400);
         const value = await getSession(/** @type {string} */ (sessionId));
-        value.error.should.equal('invalid session id');
+        /** @type {string} */ (value.error).should.equal('invalid session id');
         should.equal(d.sessionId, null);
         const resp = (await endSession(newSession.sessionId)).data.value;
         /** @type {string} */ (/** @type { {error: string} } */ (resp).error).should.equal(
@@ -426,10 +426,12 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  */
 
 /**
- * @typedef {import('@appium/types').Capabilities} Capabilities
  * @typedef {import('@appium/types').Driver} Driver
+ * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').DriverStatic} DriverStatic
- * @typedef {import('@appium/types').AppiumW3CCapabilities} AppiumW3CCapabilities
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
  * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
  * @typedef {import('@appium/types').SingularSessionData} SingularSessionData
  */
@@ -440,14 +442,18 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  */
 
 /**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
  * @typedef NewSessionData
- * @property {import('type-fest').RequireAtLeastOne<import('@appium/types').W3CCapabilities, 'firstMatch'|'alwaysMatch'>} capabilities
+ * @property {import('type-fest').RequireAtLeastOne<import('@appium/types').W3CCapabilities<C, Extra>, 'firstMatch'|'alwaysMatch'>} capabilities
  */
 
 /**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
  * @typedef NewSessionResponse
  * @property {string} sessionId,
- * @property {import('@appium/types').Capabilities} capabilities
+ * @property {import('@appium/types').Capabilities<C, Extra>} capabilities
  */
 
 /**

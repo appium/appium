@@ -2,14 +2,17 @@ import type {EventEmitter} from 'events';
 import {Element, ActionSequence} from './action';
 import {
   HTTPMethod,
-  Capabilities,
   AppiumServer,
   UpdateServerCallback,
   Class,
   MethodMap,
   AppiumLogger,
+  StringRecord,
+  ConstraintsToCaps,
+  BaseDriverCapConstraints,
+  W3CCapabilities,
+  Capabilities,
 } from '.';
-import {W3CCapabilities} from './capabilities';
 import {ServerArgs} from './config';
 
 export interface TimeoutCommands {
@@ -46,24 +49,30 @@ export interface SessionCommands {
 }
 
 export interface ExecuteCommands {
-  executeMethod(script: string, args: [Record<string, any>]|[]): Promise<any>;
+  executeMethod(script: string, args: [StringRecord] | []): Promise<any>;
 }
 
 export interface ExecuteMethodDef {
-  command: string,
+  command: string;
   params?: {
-    required?: string[],
-    optional?: string[],
-  }
-};
+    required?: string[];
+    optional?: string[];
+  };
+}
 export type ExecuteMethodMap = Record<string, ExecuteMethodDef>;
 
-export interface MultiSessionData {
+export interface MultiSessionData<
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void
+> {
   id: string;
-  capabilities: Capabilities;
+  capabilities: Capabilities<C, Extra>;
 }
 
-export type SingularSessionData = Capabilities & {events?: EventHistory};
+export type SingularSessionData<
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void
+> = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
 
 export interface FindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
@@ -106,15 +115,20 @@ export interface LogCommands {
 }
 
 export interface SettingsCommands {
-  updateSettings: (settings: Record<string, any>) => Promise<void>;
-  getSettings(): Promise<Record<string, any>>;
+  updateSettings: (settings: StringRecord) => Promise<void>;
+  getSettings(): Promise<StringRecord>;
 }
 
-export interface SessionHandler<CreateResult, DeleteResult> {
+export interface SessionHandler<
+  CreateResult,
+  DeleteResult,
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void
+> {
   createSession(
-    w3cCaps1: W3CCapabilities,
-    w3cCaps2?: W3CCapabilities,
-    w3cCaps?: W3CCapabilities,
+    w3cCaps1: W3CCapabilities<C, Extra>,
+    w3cCaps2?: W3CCapabilities<C, Extra>,
+    w3cCaps?: W3CCapabilities<C, Extra>,
     driverData?: DriverData[]
   ): Promise<CreateResult>;
 
@@ -140,24 +154,24 @@ export type DriverData = Record<string, unknown>;
  * }
  */
 export interface Constraint {
-  presence?: boolean | {allowEmpty: boolean};
-  isString?: boolean;
-  isNumber?: boolean;
-  isBoolean?: boolean;
-  isObject?: boolean;
-  isArray?: boolean;
-  deprecated?: boolean;
-  inclusion?: any[];
-  inclusionCaseInsensitive?: any[];
+  readonly presence?: boolean | Readonly<{allowEmpty: boolean}>;
+  readonly isString?: boolean;
+  readonly isNumber?: boolean;
+  readonly isBoolean?: boolean;
+  readonly isObject?: boolean;
+  readonly isArray?: boolean;
+  readonly deprecated?: boolean;
+  readonly inclusion?: Readonly<[any, ...any[]]>;
+  readonly inclusionCaseInsensitive?: Readonly<[any, ...any[]]>;
 }
-export type Constraints = Record<string, Constraint>;
+export type Constraints = Readonly<Record<string, Constraint>>;
 
-export interface DriverHelpers {
+export interface DriverHelpers<C extends Constraints> {
   configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
-  generateDriverLogPrefix: (obj: Core, sessionId?: string) => string;
+  generateDriverLogPrefix: (obj: Core<C>, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
@@ -267,15 +281,13 @@ export interface EventHistoryCommand {
  *
  * This should not be used directly by external code.
  */
-export interface Core {
+export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   shouldValidateCaps: boolean;
   sessionId: string | null;
-  opts: DriverOpts;
+  opts: DriverOpts<C>;
   initialOpts: ServerArgs;
-  caps?: Capabilities;
-  originalCaps?: W3CCapabilities;
   protocol?: string;
-  helpers: DriverHelpers;
+  helpers: DriverHelpers<C>;
   basePath: string;
   relaxedSecurityEnabled: boolean;
   allowInsecure: string[];
@@ -313,25 +325,29 @@ export interface Core {
  * `BaseDriver` implements this.  It contains default behavior;
  * external drivers are expected to implement {@linkcode ExternalDriver} instead.
  */
-export interface Driver
-  extends SessionCommands,
+export interface Driver<
+  C extends Constraints = BaseDriverCapConstraints,
+  A extends StringRecord = StringRecord
+> extends SessionCommands,
     LogCommands,
     FindCommands,
     SettingsCommands,
     TimeoutCommands,
     EventCommands,
-    SessionHandler<[string, any], void>,
+    SessionHandler<[string, any], void, C>,
     ExecuteCommands,
     Core {
-  cliArgs?: Record<string, any>;
+  cliArgs?: A;
   // The following methods are implemented by `BaseDriver`.
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
   startUnexpectedShutdown(err?: Error): Promise<void>;
   startNewCommandTimeout(): Promise<void>;
   reset(): Promise<void>;
-  desiredCapConstraints: Constraints;
-  validateDesiredCaps(caps: Capabilities): boolean;
-  logExtraCaps(caps: Capabilities): void;
+  caps?: Capabilities<C>;
+  originalCaps?: W3CCapabilities<C>;
+  desiredCapConstraints: C;
+  validateDesiredCaps(caps: Capabilities<C>): boolean;
+  logExtraCaps(caps: Capabilities<C>): void;
   assignServer?(server: AppiumServer, host: string, port: number, path: string): void;
 }
 
@@ -581,12 +597,18 @@ export type DriverClass<
   S extends DriverStatic = DriverStatic
 > = Class<D, S, [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]>;
 
+export interface ExtraDriverOpts {
+  fastReset?: boolean;
+  skipUninstall?: boolean;
+}
 /**
  * Options as passed into a driver constructor, which is just a union of {@linkcode ServerArgs} and {@linkcode Capabilities}.
  *
  * The combination happens within Appium prior to calling the constructor.
  */
-export type DriverOpts = ServerArgs & Capabilities;
+export type DriverOpts<C extends Constraints = BaseDriverCapConstraints> = ServerArgs &
+  ExtraDriverOpts &
+  Partial<ConstraintsToCaps<C>>;
 
 export type DriverCommand<TArgs = any, TReturn = unknown> = (...args: TArgs[]) => Promise<TReturn>;
 

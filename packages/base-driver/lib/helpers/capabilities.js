@@ -26,19 +26,20 @@ function isW3cCaps(caps) {
 
 /**
  *
- * @param {Capabilities} originalCaps
- * @param {Constraints} desiredCapConstraints
+ * @template {Constraints} C
+ * @param {any} oldCaps
+ * @param {C} desiredCapConstraints
  * @param {AppiumLogger} log
- * @returns {Capabilities}
+ * @returns {Capabilities<C>}
  */
-function fixCaps(originalCaps, desiredCapConstraints, log) {
-  let caps = _.clone(originalCaps);
+function fixCaps(oldCaps, desiredCapConstraints, log) {
+  let caps = _.clone(oldCaps);
 
   // boolean capabilities can be passed in as strings 'false' and 'true'
   // which we want to translate into boolean values
   let booleanCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isBoolean === true));
   for (let cap of booleanCaps) {
-    let value = originalCaps[cap];
+    let value = oldCaps[cap];
     if (_.isString(value)) {
       value = value.toLowerCase();
       if (value === 'true' || value === 'false') {
@@ -51,9 +52,11 @@ function fixCaps(originalCaps, desiredCapConstraints, log) {
   }
 
   // int capabilities are often sent in as strings by frameworks
-  let intCaps = _.keys(_.pickBy(desiredCapConstraints, (k) => k.isNumber === true));
+  let intCaps = /** @type {import('type-fest').StringKeyOf<typeof caps>[]} */ (
+    _.keys(_.pickBy(desiredCapConstraints, (k) => k.isNumber === true))
+  );
   for (let cap of intCaps) {
-    let value = originalCaps[cap];
+    let value = oldCaps[cap];
     if (_.isString(value)) {
       value = value.trim();
       let newValue = parseInt(value, 10);
@@ -73,7 +76,14 @@ function fixCaps(originalCaps, desiredCapConstraints, log) {
 export {isW3cCaps, fixCaps};
 
 /**
- * @typedef {import('@appium/types').Capabilities} Capabilities
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ */
+
+/**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
+ * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
  */

@@ -1,6 +1,7 @@
 {
   "files": [],
   "compilerOptions": {
+    "noErrorTruncation": true,
     "esModuleInterop": true
   },
   "references": [

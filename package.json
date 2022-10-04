@@ -116,7 +116,7 @@
     "@colors/colors": "1.5.0",
     "@types/chai": "4.3.3",
     "@types/chai-as-promised": "7.1.5",
-    "@types/mocha": "9.1.1",
+    "@types/mocha": "10.0.0",
     "@types/node": "16.11.64",
     "@types/semver": "7.3.12",
     "@types/sinon": "10.0.13",

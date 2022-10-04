@@ -6,6 +6,8 @@
     "paths": {
       "@appium/schema": ["../schema"]
     },
+    "emitDeclarationOnly": false,
+    "module": "CommonJS",
     "lib": ["ES2015"]
   },
   "include": ["lib"],

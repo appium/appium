@@ -9,7 +9,7 @@ import {
   stripAppiumPrefixes,
 } from '../../../lib/basedriver/capabilities';
 import _ from 'lodash';
-import {desiredCapabilityConstraints} from '../../../lib/basedriver/desired-caps';
+import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import {isW3cCaps} from '../../../lib/helpers/capabilities';
 
 describe('caps', function () {
@@ -231,7 +231,9 @@ describe('caps', function () {
           },
         };
 
-        parseCaps(caps, constraints).validatedFirstMatchCaps.should.deep.equal(caps.firstMatch);
+        parseCaps(caps, constraints).validatedFirstMatchCaps.should.deep.equal(
+          caps.firstMatch.map(stripAppiumPrefixes)
+        );
       });
 
       it('returns no vendor prefix error if the firstMatch[2] does not have it because of no bject', function () {
@@ -353,7 +355,7 @@ describe('caps', function () {
     });
 
     describe('validate Appium constraints', function () {
-      const constraints = {...desiredCapabilityConstraints};
+      const constraints = {...BASE_DESIRED_CAP_CONSTRAINTS};
       const expectedMatchingCaps = {
         platformName: 'Fake',
         automationName: 'Fake',
@@ -547,8 +549,7 @@ describe('caps', function () {
     const nonAppiumCaps = {
       platformName: 'iOS',
     };
-    const appiumUnprefixedCaps = _.clone(appiumCaps);
-    stripAppiumPrefixes(appiumUnprefixedCaps);
+    const appiumUnprefixedCaps = stripAppiumPrefixes(appiumCaps);
     const simpleCaps = {
       ...nonAppiumCaps,
       ...appiumUnprefixedCaps,

@@ -23,6 +23,7 @@
     "build",
     "lib"
   ],
+  "main": "./build/index.js",
   "scripts": {
     "build": "node ./scripts/generate-schema-types.js",
     "dev": "npm run build -- --watch",

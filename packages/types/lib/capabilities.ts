@@ -1,53 +1,19 @@
 import type {Capabilities as WdioCaps} from '@wdio/types';
-import {Constraint, Constraints, Driver} from '.';
+import {StringRecord, Constraint, Constraints} from '.';
+import {BaseDriverCapConstraints} from './constraints';
+
+export type StandardCapabilities = WdioCaps.Capabilities;
+export type W3C_APPIUM_PREFIX = 'appium';
 
 /**
- * The mask of a W3C-style namespaced capability proped name.
+ * Base capabilities as derived from {@linkcode BaseDriverCapConstraints}.
  */
-type Namespaced = `${string}:${string}`;
+export type BaseCapabilities = ConstraintsToCaps<BaseDriverCapConstraints>;
 
 /**
- * An object with keys conforming to {@linkcode Namespaced}.
+ * Like {@linkcode BaseCapabilities}, except all Appium-specific keys are namespaced.
  */
-type NamespacedRecord = Record<Namespaced, any>;
-
-/**
- * An object with keys for strings.
- */
-type StringRecord = Record<string, any>;
-
-/**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type, accepting additional optional caps.
- * All properties are optional.
- */
-type BaseCapabilities<OptionalCaps extends StringRecord = StringRecord> = Partial<
-  WdioCaps.Capabilities & OptionalCaps
->;
-
-/**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumCapabilities} type, accepting additional optional caps.
- *
- * In practice, the properties `platformName` and `automationName` are required by Appium.
- */
-export type Capabilities<OptionalCaps extends StringRecord = StringRecord> = BaseCapabilities<
-  WdioCaps.AppiumCapabilities & OptionalCaps
->;
-
-/**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumW3CCapabilities} type, accepting additional optional _namespaced_ caps.
- */
-export type AppiumW3CCapabilities<
-  OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord
-> = BaseCapabilities<WdioCaps.AppiumW3CCapabilities & OptionalNamespacedCaps>;
-
-/**
- * All known capabilities derived from wdio's {@linkcode WdioCaps.Capabilities Capabilities} type and wdio's {@linkcode WdioCaps.AppiumW3Capabilities} type, accepting additional optional _namespaced_ caps, in W3C-compatible format (`alwaysMatch`/`firstMatch`).
- * In practice, the properties `appium:platformName` and `appium:automationName` are required by Appium _somewhere_ in this object; this cannot be expressed in TypeScript.
- */
-export type W3CCapabilities<OptionalNamespacedCaps extends NamespacedRecord = NamespacedRecord> = {
-  alwaysMatch: AppiumW3CCapabilities<OptionalNamespacedCaps>;
-  firstMatch: AppiumW3CCapabilities<OptionalNamespacedCaps>[];
-};
+export type BaseNSCapabilities = CapsToNSCaps<ConstraintsToCaps<BaseDriverCapConstraints>>;
 
 /**
  * These may (or should) be reused by drivers.
@@ -62,14 +28,21 @@ export type AppiumXCUITestCapabilities = WdioCaps.AppiumXCUITestCapabilities;
 /**
  * Given a {@linkcode Constraint} `C` and a type `T`, see if `inclusion`/`inclusionCaseInsensitive` is present, and create a union of its allowed literals; otherwise just use `T`.
  */
-type ConstraintChoice<C extends Constraint, T> = C['inclusionCaseInsensitive'] extends ReadonlyArray<T> ? AnyCase<C['inclusionCaseInsensitive'][number]> : C['inclusion'] extends ReadonlyArray<T> ? C['inclusion'][number] : T;
+type ConstraintChoice<
+  C extends Constraint,
+  T
+> = C['inclusionCaseInsensitive'] extends ReadonlyArray<T>
+  ? AnyCase<C['inclusionCaseInsensitive'][number]>
+  : C['inclusion'] extends ReadonlyArray<T>
+  ? C['inclusion'][number]
+  : T;
 
 /**
  * Given {@linkcode Constraint} `C`, determine the associated type of the capability.
- * 
+ *
  * Notes:
- * 
- * - Only `number` and `string` values can have "choices" (`inclusion`/`inclusionCaseInesnsitive`) associated with them. 
+ *
+ * - Only `number` and `string` values can have "choices" (`inclusion`/`inclusionCaseInesnsitive`) associated with them.
  * - If `isArray` is `true`, the type is always of type `string[]`. If this is incorrect, then it will be `any[]`.
  * - There is no way to express the shape of an object if `ifObject` is `true`.
  */
@@ -87,10 +60,12 @@ type ConstraintToCapKind<C extends Constraint> = C['isString'] extends true
 
 /**
  * Given {@linkcode Constraint} `C`, determine if it is required or optional.
- * 
+ *
  * In practice, _all_ capabilities are considered optional per types, but various errors might be thrown if some are not present.
  */
-type ConstraintToCap<C extends Constraint> = C['presence'] extends true | {allowEmpty: true}
+export type ConstraintToCap<C extends Constraint> = C['presence'] extends
+  | true
+  | {allowEmpty: boolean}
   ? ConstraintToCapKind<C>
   : ConstraintToCapKind<C> | undefined;
 
@@ -106,30 +81,111 @@ export type AnyCase<T extends string> = string extends T
   : '';
 
 /**
- * Given {@linkcode StringRecord} `T` and namespace string `NS`, a type with the key names prefixed by `${NS}:`.  `NS` defaults to `appium`.  If `T` is already namespaced, well, it'll get _double_-namespaced.
+ * Given {@linkcode StringRecord} `T` and namespace string `NS`, a type with the key names prefixed by `${NS}:` _except_ for standard capabilities.  `NS` defaults to `appium`.
+ *
+ * If `T` is already namespaced, well, it'll get _double_-namespaced.
  */
-export type NamespacedObject<T extends StringRecord, NS extends string = 'appium'> = {
-  [K in keyof T as K extends keyof WdioCaps.Capabilities ? K : `${NS}:${K & string}`]: T[K];
+export type CapsToNSCaps<T extends StringRecord, NS extends string = W3C_APPIUM_PREFIX> = {
+  [K in keyof T as K extends keyof StandardCapabilities
+    ? K
+    : NamespacedString<K & string, NS>]: T[K];
 };
+
+export type NamespacedString<
+  S extends string,
+  NS extends string = W3C_APPIUM_PREFIX
+> = `${NS}:${S}`;
 
 /**
  * Converts {@linkcode Constraint} `C` to a {@linkcode Capabilities} object.
  */
 export type ConstraintsToCaps<C extends Constraints> = {
-  [K in keyof C]: ConstraintToCap<C[K]>;
+  -readonly [K in keyof C]: ConstraintToCap<C[K]>;
 };
 
 /**
- * Given {@linkcode Driver} `D`, return the entire set of capabilities it supports (including whatever is in its desired caps).
+ * Given some constraints, return the entire set of supported capabilities it supports (including whatever is in its desired caps).
+ *
+ * Does not contain {@linkcode BaseCapabilities}; see {@linkcode DriverCaps}.
  */
-
-export type DriverCaps<D extends Driver> = 
-  ConstraintsToCaps<D['desiredCapConstraints']>;
+export type Capabilities<
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void
+> = Partial<ConstraintsToCaps<C> & Extra>;
 
 /**
- * Like {@linkcode DriverCaps}, except W3C-style.
+ * Like {@linkcode Capabilities}, except W3C-style.
+ *
+ * Does not contain {@linkcode BaseCapabilities}; see {@linkcode W3CDriverCaps}.
+ */
+export type W3CCapabilities<
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void
+> = {
+  alwaysMatch: NSCapabilities<C, Extra>;
+  firstMatch: NSCapabilities<C, Extra>[];
+};
+
+/**
+ * Namespaced caps (where appropriate).
+ *
+ * Does not contain {@linkcode BaseCapabilities}; see {@linkcode NSDriverCaps}.
+ */
+export type NSCapabilities<
+  C extends Constraints = BaseDriverCapConstraints,
+  Extra extends StringRecord | void = void,
+  NS extends string = W3C_APPIUM_PREFIX
+> = Partial<CapsToNSCaps<ConstraintsToCaps<C> & Extra, NS>>;
+
+/**
+ * Capabilities for drivers extending `BaseDriver`.
+ *
+ * Includes {@linkcode BaseCapabilities}.
+ *
+ * @example
+ * ```ts
+ * class MyDriver extends BaseDriver {
+ *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args: any[]) {
+ *     const [
+ *       sessionId: string,
+ *       caps: DriverCaps<MyDriverConstraints>
+ *     ] = await super.createSession(w3ccaps, ...args);
+ *     // ...
+ *   }
+ * }
+ * ```
  */
 
-export type DriverW3CCaps<D extends Driver> = W3CCapabilities<
-  NamespacedObject<ConstraintsToCaps<D['desiredCapConstraints']>>
->;
+export type DriverCaps<
+  C extends Constraints,
+  Extra extends StringRecord | void = void
+> = Capabilities<BaseDriverCapConstraints & C, Extra>;
+
+/**
+ * W3C-style capabilities for drivers extending `BaseDriver`.
+ *
+ * Includes {@linkcode BaseCapabilities}.
+ *
+ * @example
+ * ```js
+ * class MyDriver extends BaseDriver {
+ *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args) {
+ *     // ...
+ *   }
+ * }
+ * ```
+ */
+export type W3CDriverCaps<
+  C extends Constraints,
+  Extra extends StringRecord | void = void
+> = W3CCapabilities<BaseDriverCapConstraints & C, Extra>;
+
+/**
+ * Namespaced capabilities for drivers extending `BaseDriver`.
+ *
+ * Includes {@linkcode BaseCapabilities}.
+ */
+export type NSDriverCaps<
+  C extends Constraints,
+  Extra extends StringRecord | void = void
+> = NSCapabilities<BaseDriverCapConstraints & C, Extra>;

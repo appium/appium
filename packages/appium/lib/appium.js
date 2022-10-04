@@ -14,13 +14,9 @@ import AsyncLock from 'async-lock';
 import {parseCapsForInnerDriver, pullSettings} from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
-import {DRIVER_TYPE, PLUGIN_TYPE} from './constants';
+import {DRIVER_TYPE} from './constants';
 
-/**
- * Invariant set of base constraints
- * @type {Readonly<Constraints>}
- */
-const desiredCapabilityConstraints = Object.freeze({
+const desiredCapabilityConstraints = /** @type {const} */ ({
   automationName: {
     presence: true,
     isString: true,
@@ -30,6 +26,9 @@ const desiredCapabilityConstraints = Object.freeze({
     isString: true,
   },
 });
+/**
+ * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
+ */
 
 const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
@@ -181,10 +180,10 @@ class AppiumDriver extends DriverCore {
   /**
    * Retrieves all CLI arguments for a specific plugin.
    * @param {string} extName - Plugin name
-   * @returns {Record<string,unknown>} Arguments object. If none, an empty object.
+   * @returns {StringRecord} Arguments object. If none, an empty object.
    */
   getCliArgsForPlugin(extName) {
-    return /** @type {Record<string,unknown>} */ (this.args.plugin?.[extName] ?? {});
+    return /** @type {StringRecord} */ (this.args.plugin?.[extName] ?? {});
   }
 
   /**
@@ -194,12 +193,10 @@ class AppiumDriver extends DriverCore {
    *
    * _Note that this behavior currently (May 18 2022) differs from how plugins are handled_ (see {@linkcode AppiumDriver.getCliArgsForPlugin}).
    * @param {string} extName - Driver name
-   * @returns {Record<string,unknown>|undefined} Arguments object. If none, `undefined`
+   * @returns {StringRecord|undefined} Arguments object. If none, `undefined`
    */
   getCliArgsForDriver(extName) {
-    const allCliArgsForExt = /** @type {Record<string,unknown>|undefined} */ (
-      this.args.driver?.[extName]
-    );
+    const allCliArgsForExt = /** @type {StringRecord|undefined} */ (this.args.driver?.[extName]);
 
     if (!_.isEmpty(allCliArgsForExt)) {
       const defaults = getDefaultsForExtension(DRIVER_TYPE, extName);
@@ -214,9 +211,9 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Create a new session
-   * @param {W3CCapabilities} jsonwpCaps JSONWP formatted desired capabilities
-   * @param {W3CCapabilities} reqCaps Required capabilities (JSONWP standard)
-   * @param {W3CCapabilities} w3cCapabilities W3C capabilities
+   * @param {W3CCapabilities<AppiumDriverConstraints>} jsonwpCaps JSONWP formatted desired capabilities
+   * @param {W3CCapabilities<AppiumDriverConstraints>} reqCaps Required capabilities (JSONWP standard)
+   * @param {W3CCapabilities<AppiumDriverConstraints>} w3cCapabilities W3C capabilities
    * @param {DriverData[]} [driverData]
    */
   async createSession(jsonwpCaps, reqCaps, w3cCapabilities, driverData) {
@@ -249,9 +246,11 @@ class AppiumDriver extends DriverCore {
       );
 
       const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
-        /** @type {import('./utils').ParsedDriverCaps} */ (parsedCaps);
+        /** @type {import('./utils').ParsedDriverCaps<AppiumDriverConstraints>} */ (parsedCaps);
       protocol = parsedCaps.protocol;
-      const error = /** @type {import('./utils').InvalidCaps} */ (parsedCaps).error;
+      const error = /** @type {import('./utils').InvalidCaps<AppiumDriverConstraints>} */ (
+        parsedCaps
+      ).error;
       // If the parsing of the caps produced an error, throw it in here
       if (error) {
         throw error;
@@ -831,7 +830,6 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').DriverClass} DriverClass
- * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').ServerArgs} DriverOpts
  * @typedef {import('@appium/types').Constraints} Constraints
@@ -842,6 +840,7 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('@appium/types').DriverType} DriverType
+ * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').SessionHandler<SessionHandlerResult<any[]>,SessionHandlerResult<void>>} SessionHandler
  */
 
@@ -853,4 +852,14 @@ export {AppiumDriver};
  * @property {V} [value]
  * @property {Error} [error]
  * @property {string} [protocol]
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Capabilities<C>} Capabilities
  */

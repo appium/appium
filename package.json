@@ -154,7 +154,7 @@
     "rewiremock": "3.14.3",
     "rimraf": "3.0.2",
     "serve-static": "1.15.0",
-    "sinon": "14.0.0",
+    "sinon": "14.0.1",
     "sinon-chai": "3.7.0",
     "sync-monorepo-packages": "0.3.5",
     "through2": "4.0.2",

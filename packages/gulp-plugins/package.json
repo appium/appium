@@ -88,7 +88,7 @@
     "plugin-error": "2.0.0",
     "replace-in-file": "6.3.5",
     "rimraf": "3.0.2",
-    "semver": "7.3.7",
+    "semver": "7.3.8",
     "shell-quote": "1.7.3",
     "source-map-support": "0.5.21",
     "through2": "4.0.2",

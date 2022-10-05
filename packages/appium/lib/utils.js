@@ -166,13 +166,10 @@ function parseCapsForInnerDriver(
  */
 function insertAppiumPrefixes(caps) {
   return /** @type {NSCapabilities<C>} */ (
-    /** @type {unknown} */ (
-      _.mapKeys(caps, (value, key) => {
-        if (STANDARD_CAPS_LOWERCASE.has(key.toLowerCase()) || key.includes(':')) {
-          return key;
-        }
-        return `${W3C_APPIUM_PREFIX}:${key}`;
-      })
+    _.mapKeys(caps, (_, key) =>
+      STANDARD_CAPS_LOWERCASE.has(key.toLowerCase()) || key.includes(':')
+        ? key
+        : `${W3C_APPIUM_PREFIX}:${key}`
     )
   );
 }

@@ -31,7 +31,6 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.19.0",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21"
   },

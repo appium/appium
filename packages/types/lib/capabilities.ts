@@ -167,9 +167,9 @@ export type DriverCaps<
  * Includes {@linkcode BaseCapabilities}.
  *
  * @example
- * ```js
+ * ```ts
  * class MyDriver extends BaseDriver {
- *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args) {
+ *   async createSession (w3ccaps: W3CDriverCaps<MyDriverConstraints>, ...args: any[]) {
  *     // ...
  *   }
  * }

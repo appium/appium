@@ -318,7 +318,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   getManagedDrivers(): Driver[];
   clearNewCommandTimeout(): Promise<void>;
   logEvent(eventName: string): void;
-  driverForSession(sessionId: string): Core | null;
+  driverForSession(sessionId: string): Core<C> | null;
 }
 
 /**

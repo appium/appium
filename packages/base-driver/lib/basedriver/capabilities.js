@@ -62,10 +62,12 @@ function validateCaps(caps, constraints = /** @type {C} */ ({}), opts = {}) {
         ? /** @param {Constraint} constraint */
           (constraint) => _.omit(constraint, 'presence')
         : /** @param {Constraint} constraint */
-          (constraint) =>
-            constraint.presence === true
-              ? {..._.omit(constraint, 'presence'), presence: {allowEmpty: false}}
-              : constraint
+          (constraint) => {
+            if (constraint.presence === true) {
+              return {..._.omit(constraint, 'presence'), presence: {allowEmpty: false}};
+            }
+            return constraint;
+          }
     )
   );
 

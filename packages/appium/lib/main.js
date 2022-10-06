@@ -170,12 +170,6 @@ function areServerCommandArgs(args) {
  * const schema = getSchema(); // entire config schema including plugins and drivers
  */
 async function init(args) {
-  const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
-
-  adjustNodePath();
-
-  const {driverConfig, pluginConfig} = await loadExtensions(appiumHome);
-
   const parser = getParser();
   let throwInsteadOfExit = false;
   /** @type {Args<T>} */
@@ -205,6 +199,12 @@ async function init(args) {
       }`
     );
   }
+
+  const loadConfigs = _.memoize(async () => {
+    adjustNodePath();
+    const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+    return await loadExtensions(appiumHome);
+  });
 
   // merge config and apply defaults.
   // the order of precendece is:
@@ -247,6 +247,7 @@ async function init(args) {
       }
     }
 
+    const {driverConfig, pluginConfig} = await loadConfigs();
     const appiumDriver = new AppiumDriver(serverArgs);
     // set the config on the umbrella driver so it can match drivers to caps
     appiumDriver.driverConfig = driverConfig;
@@ -259,6 +260,8 @@ async function init(args) {
       pluginConfig,
     });
   } else {
+    const {driverConfig, pluginConfig} = await loadConfigs();
+
     const extensionCommandArgs = /** @type {Args<import('appium/types').WithExtSubcommand>} */ (
       preConfigArgs
     );

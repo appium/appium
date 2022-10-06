@@ -38,17 +38,11 @@ describe('CLI behavior controlled by schema', function () {
 
     describe('appiumCliIgnored', function () {
       it('should still support arguments without this keyword', function () {
-        expect(help).to.match(/oliver-boliver/);
+        expect(help).to.match(/^usage:/);
       });
 
       it('should cause the argument to be suppressed', function () {
         expect(help).not.to.match(/mcmonkey-mcbean/);
-      });
-    });
-
-    describe('appiumDeprecated', function () {
-      it('should mark the argument as deprecated', function () {
-        expect(help).to.match(/\[DEPRECATED\] funkytelechy/);
       });
     });
   });

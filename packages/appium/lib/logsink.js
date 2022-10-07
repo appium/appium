@@ -33,6 +33,8 @@ const npmToWinstonLevels = {
   error: 'error',
 };
 
+const encounteredPrefixes = [];
+
 let log = null;
 let useLocalTimeZone = false;
 
@@ -186,8 +188,6 @@ async function createTransports(args) {
   return transports;
 }
 
-let encounteredPrefixes = [];
-
 function getColorizedPrefix(prefix) {
   let prefixId = prefix.split('@')[0].trim();
   prefixId = prefixId.split(' (')[0].trim();
@@ -196,11 +196,8 @@ function getColorizedPrefix(prefix) {
   }
   // using a multiple of 16 should cause 16 colors to be created
   const colorNumber = encounteredPrefixes.indexOf(prefixId) * 16;
-  // if colorNumber is within pre-defined color wheel colorizing will be done
-  if (colorNumber <= 256) {
-    return `\x1b[38;5;${colorNumber}m${prefix}\x1b[0m`;
-  }
-  return prefix;
+  // use the modulus to cycle around color wheel
+  return `\x1b[38;5;${colorNumber % 256}m${prefix}\x1b[0m`;
 }
 
 async function init(args) {

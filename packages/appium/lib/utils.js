@@ -226,7 +226,6 @@ function adjustNodePath() {
       require('module').Module._initPaths();
       return true;
     } catch (e) {
-      logger.info(`Module init paths cannot be refreshed. Original error: ${e.message}`);
       return false;
     }
   };
@@ -234,7 +233,6 @@ function adjustNodePath() {
   if (!process.env.NODE_PATH) {
     process.env.NODE_PATH = nodeModulesRoot;
     if (refreshRequirePaths()) {
-      logger.info(`Setting NODE_PATH to '${nodeModulesRoot}'`);
       process.env.APPIUM_OMIT_PEER_DEPS = '1';
     } else {
       delete process.env.NODE_PATH;
@@ -244,7 +242,6 @@ function adjustNodePath() {
 
   const nodePathParts = process.env.NODE_PATH.split(path.delimiter);
   if (nodePathParts.includes(nodeModulesRoot)) {
-    logger.info(`NODE_PATH already includes '${nodeModulesRoot}'`);
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
     return;
   }
@@ -252,7 +249,6 @@ function adjustNodePath() {
   nodePathParts.push(nodeModulesRoot);
   process.env.NODE_PATH = nodePathParts.join(path.delimiter);
   if (refreshRequirePaths()) {
-    logger.info(`Adding '${nodeModulesRoot}' to NODE_PATH`);
     process.env.APPIUM_OMIT_PEER_DEPS = '1';
   } else {
     process.env.NODE_PATH = _.without(nodePathParts, nodeModulesRoot).join(path.delimiter);

@@ -38,7 +38,7 @@
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.3",
     "@wdio/types": "7.25.1",
-    "type-fest": "3.0.0"
+    "type-fest": "3.1.0"
   },
   "engines": {
     "node": ">=14",

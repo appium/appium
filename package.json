@@ -108,7 +108,7 @@
     "@appium/fake-plugin": "1.3.1",
     "@babel/cli": "7.19.3",
     "@babel/core": "7.19.3",
-    "@babel/preset-env": "7.19.3",
+    "@babel/preset-env": "7.19.4",
     "@babel/register": "7.18.9",
     "@colors/colors": "1.5.0",
     "@types/chai": "4.3.3",

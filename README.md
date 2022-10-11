@@ -222,13 +222,6 @@ automation, for mobile and beyond. Finally!
 If you're new to Appium or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium Concepts](/docs/en/about-appium/intro.md).
 
-### Requirements
-
-Your environment needs to be set up for the particular platforms that you want
-to run tests on. Each of the drivers above documents the requirements for their
-particular brand of automation. At a minimum, you will need to be able to run
-the recent [LTS](https://nodejs.org/en/about/releases/) Node.js version.
-
 ### Get Started
 
 Check out our [Getting Started](http://appium.io/docs/en/about-appium/getting-started) guide

@@ -44,11 +44,9 @@
   },
   "dependencies": {
     "@appium/eslint-config-appium": "^7.0.0",
-    "@babel/core": "7.19.1",
+    "@babel/core": "7.19.3",
     "@babel/eslint-parser": "7.19.1",
-    "@babel/plugin-transform-runtime": "7.19.1",
-    "@babel/preset-env": "7.19.1",
-    "@babel/runtime": "7.19.0",
+    "@babel/preset-env": "7.19.4",
     "@octokit/rest": "18.12.0",
     "@types/fancy-log": "2.0.0",
     "@types/gulp": "4.0.9",
@@ -60,7 +58,7 @@
     "babel-plugin-source-map-support": "2.2.0",
     "bluebird": "3.7.2",
     "del": "6.1.1",
-    "eslint": "8.23.1",
+    "eslint": "8.25.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "10.1.0",
@@ -88,12 +86,12 @@
     "plugin-error": "2.0.0",
     "replace-in-file": "6.3.5",
     "rimraf": "3.0.2",
-    "semver": "7.3.7",
+    "semver": "7.3.8",
     "shell-quote": "1.7.3",
     "source-map-support": "0.5.21",
     "through2": "4.0.2",
     "vinyl-paths": "3.0.1",
-    "yargs": "17.5.1"
+    "yargs": "17.6.0"
   },
   "peerDependencies": {
     "gulp": "^4.0.2"

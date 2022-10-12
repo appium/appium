@@ -40,13 +40,12 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@babel/runtime": "7.19.0",
-    "@types/bluebird": "3.5.36",
+    "@types/bluebird": "3.5.37",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "vm2": "3.9.11",
-    "webdriverio": "7.24.1"
+    "webdriverio": "7.25.1"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.35"

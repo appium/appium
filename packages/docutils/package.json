@@ -48,12 +48,11 @@
   },
   "dependencies": {
     "@appium/support": "^2.60.0",
-    "@babel/runtime": "7.19.0",
     "docdash": "1.2.0",
     "jsdoc": "3.6.11",
     "jsdoc-plugin-typescript": "2.2.0",
     "source-map-support": "0.5.21",
-    "teen_process": "1.16.0"
+    "teen_process": "2.0.2"
   },
   "engines": {
     "node": ">=14",

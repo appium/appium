@@ -17,8 +17,10 @@ const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+
 /**
- * @implements {Core}
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @implements {Core<C>}
  */
 class DriverCore {
   /**
@@ -36,7 +38,7 @@ class DriverCore {
   sessionId = null;
 
   /**
-   * @type {import('@appium/types').DriverOpts}
+   * @type {import('@appium/types').DriverOpts<C>}
    */
   opts;
 
@@ -44,16 +46,6 @@ class DriverCore {
    * @type {ServerArgs}
    */
   initialOpts;
-
-  /**
-   * @type {Capabilities}
-   */
-  caps;
-
-  /**
-   * @type {W3CCapabilities}
-   */
-  originalCaps;
 
   helpers = helpers;
 
@@ -126,7 +118,11 @@ class DriverCore {
    */
   settings = new DeviceSettings();
 
-  constructor(opts = /** @type {ServerArgs} */ ({}), shouldValidateCaps = true) {
+  /**
+   * @param {DriverOpts<C>} opts
+   * @param {boolean} [shouldValidateCaps]
+   */
+  constructor(opts = /** @type {DriverOpts<C>} */ ({}), shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
     // setup state
@@ -140,7 +136,7 @@ class DriverCore {
     this.shouldValidateCaps = shouldValidateCaps;
 
     // keeping track of initial opts
-    this.initialOpts = _.cloneDeep(this.opts);
+    this.initialOpts = _.cloneDeep(opts);
 
     this.sessionId = null;
   }
@@ -240,7 +236,7 @@ class DriverCore {
    * method required by MJSONWP in order to determine if the command should
    * be proxied directly to the driver
    * @param {string} sessionId
-   * @returns {Core | null}
+   * @returns {Core<C> | null}
    */
   driverForSession(sessionId) {
     return this;
@@ -422,12 +418,32 @@ class DriverCore {
 export {DriverCore};
 
 /**
- * @typedef {import('@appium/types').Capabilities} Capabilities
- * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').Core} Core
+ * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').ExecuteMethodMap} ExecuteMethodMap
  * @typedef {import('@appium/types').ServerArgs} ServerArgs
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ */
+
+/**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
+ * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
+ */
+/**
+ * @template {StringRecord} [T={}]
+ * @typedef {import('@appium/types').W3CCapabilities<T>} W3CCapabilities
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Core<C>} Core
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').DriverOpts<C>} DriverOpts
  */

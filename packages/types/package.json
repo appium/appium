@@ -23,6 +23,7 @@
     "build",
     "lib"
   ],
+  "main": "./build/index.js",
   "scripts": {
     "build": "node ./scripts/generate-schema-types.js",
     "dev": "npm run build -- --watch",
@@ -36,8 +37,8 @@
     "@types/express": "4.17.14",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.3",
-    "@wdio/types": "7.24.1",
-    "type-fest": "2.19.0"
+    "@wdio/types": "7.25.1",
+    "type-fest": "3.1.0"
   },
   "engines": {
     "node": ">=14",

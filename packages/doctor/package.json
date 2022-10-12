@@ -50,17 +50,16 @@
   },
   "dependencies": {
     "@appium/support": "^2.60.0",
-    "@babel/runtime": "7.19.0",
     "@colors/colors": "1.5.0",
-    "@types/bluebird": "3.5.36",
+    "@types/bluebird": "3.5.37",
     "@types/teen_process": "1.16.1",
-    "appium-adb": "9.10.10",
+    "appium-adb": "9.10.11",
     "bluebird": "3.7.2",
     "inquirer": "8.2.4",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
-    "teen_process": "1.16.0",
-    "yargs": "17.5.1"
+    "teen_process": "2.0.2",
+    "yargs": "17.6.0"
   },
   "engines": {
     "node": ">=14",

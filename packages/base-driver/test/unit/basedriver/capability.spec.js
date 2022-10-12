@@ -1,7 +1,7 @@
 // @ts-check
 
 import B from 'bluebird';
-import {BaseDriver, errors} from '../../../lib';
+import {BaseDriver, errors} from '../../../lib/index';
 import {validator} from '../../../lib/basedriver/desired-caps';
 import {createSandbox} from 'sinon';
 
@@ -78,7 +78,7 @@ describe('Desired Capabilities', function () {
   });
 
   it('should check added required caps in addition to base', async function () {
-    d.desiredCapConstraints = {
+    d.desiredCapConstraints = /** @type {const} */ ({
       necessary: {
         presence: true,
       },
@@ -87,7 +87,7 @@ describe('Desired Capabilities', function () {
         isString: true,
         inclusion: ['Delorean', 'Reventon'],
       },
-    };
+    });
 
     await d
       .createSession(null, null, {
@@ -100,15 +100,19 @@ describe('Desired Capabilities', function () {
   });
 
   it('should accept extra capabilities', async function () {
-    await d.createSession(null, null, {
-      alwaysMatch: {
-        platformName: 'iOS',
-        'appium:deviceName': 'Delorean',
-        'appium:extra': 'cheese',
-        'appium:hold the': 'sauce',
-      },
-      firstMatch: [{}],
-    }).should.be.fulfilled;
+    await d.createSession(
+      null,
+      null,
+      /** @type {import('@appium/types').W3CCapabilities<{'hold the':string}>} */ ({
+        alwaysMatch: {
+          platformName: 'iOS',
+          'appium:deviceName': 'Delorean',
+          'appium:extra': 'cheese',
+          'appium:hold the': 'sauce',
+        },
+        firstMatch: [{}],
+      })
+    ).should.be.fulfilled;
   });
 
   it('should log the use of extra caps', async function () {

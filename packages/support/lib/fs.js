@@ -25,6 +25,7 @@ import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
 import Timer from './timing';
+import {isWindows} from './system';
 import {pluralize} from './util';
 
 const ncpAsync =
@@ -36,13 +37,38 @@ const findRootCached = _.memoize(pkgDir.sync);
 const fs = {
   /**
    * Resolves `true` if `path` is _readable_, which differs from Node.js' default behavior of "can we see it?"
-   * @param {import('fs').PathLike} path
+   *
+   * On Windows, ACLs are not supported, so this becomes a simple check for existence.
+   *
+   * This function will never reject.
+   * @param {PathLike} path
    * @returns {Promise<boolean>}
    */
   async hasAccess(path) {
     try {
       await fsPromises.access(path, constants.R_OK);
-    } catch (err) {
+    } catch {
+      return false;
+    }
+    return true;
+  },
+
+  /**
+   * Resolves `true` if `path` is executable; `false` otherwise.
+   *
+   * On Windows, this function delegates to {@linkcode fs.hasAccess}.
+   *
+   * This function will never reject.
+   * @param {PathLike} path
+   * @returns {Promise<boolean>}
+   */
+  async isExecutable(path) {
+    try {
+      if (isWindows()) {
+        return await fs.hasAccess(path);
+      }
+      await fsPromises.access(path, constants.R_OK | constants.X_OK);
+    } catch {
       return false;
     }
     return true;
@@ -50,7 +76,7 @@ const fs = {
 
   /**
    * Alias for {@linkcode fs.hasAccess}
-   * @param {import('fs').PathLike} path
+   * @param {PathLike} path
    */
   async exists(path) {
     return await fs.hasAccess(path);
@@ -104,7 +130,7 @@ const fs = {
 
   /**
    * Create an MD5 hash of a file.
-   * @param {import('fs').PathLike} filePath
+   * @param {PathLike} filePath
    * @returns {Promise<string>}
    */
   async md5(filePath) {
@@ -136,7 +162,7 @@ const fs = {
 
   /**
    * Create a hex digest of some file at `filePath`
-   * @param {import('fs').PathLike} filePath
+   * @param {PathLike} filePath
    * @param {string} [algorithm]
    * @returns {Promise<string>}
    */
@@ -170,7 +196,7 @@ const fs = {
 
   /**
    * Recursively create a directory.
-   * @param {import('fs').PathLike} dir
+   * @param {PathLike} dir
    * @returns {Promise<string|undefined>}
    */
   async mkdirp(dir) {
@@ -305,7 +331,7 @@ const fs = {
   /**
    * Warning: this is a promisified {@linkcode open fs.open}.
    * It resolves w/a file descriptor instead of a {@linkcode fsPromises.FileHandle FileHandle} object, as {@linkcode fsPromises.open} does. Use {@linkcode fs.openFile} if you want a `FileHandle`.
-   * @type {(path: import('fs').PathLike, flags: import('fs').OpenMode, mode?: import('fs').Mode) => Promise<number>}
+   * @type {(path: PathLike, flags: import('fs').OpenMode, mode?: import('fs').Mode) => Promise<number>}
    */
   open: B.promisify(open),
   openFile: fsPromises.open,
@@ -362,4 +388,5 @@ export default fs;
 /**
  * @typedef {import('glob')} glob
  * @typedef {import('mv')} mv
+ * @typedef {import('fs').PathLike} PathLike
  */

@@ -41,7 +41,6 @@
   },
   "dependencies": {
     "@appium/opencv": "^1.0.12",
-    "@babel/runtime": "7.19.0",
     "lru-cache": "7.14.0",
     "source-map-support": "0.5.21"
   },

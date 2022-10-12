@@ -87,5 +87,5 @@ export function initMocks(sandbox = createSandbox()) {
  */
 
 /**
- * @typedef { { exec: sinon.SinonStub<[string, string[], import('../lib/npm').TeenProcessExecOpts], import('../lib/npm').TeenProcessExecResult>, __stdout: string, __stderr: string, __code: number} } MockTeenProcess
+ * @typedef { { exec: sinon.SinonStub<[string, string[], import('teen_process').ExecOptions], import('teen_process').ExecResult>, __stdout: string, __stderr: string, __code: number} } MockTeenProcess
  */

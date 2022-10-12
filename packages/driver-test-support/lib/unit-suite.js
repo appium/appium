@@ -13,7 +13,7 @@ const {expect} = chai;
 /**
  * Creates unit test suites for a driver.
  * @param {DriverClass} DriverClass
- * @param {AppiumW3CCapabilities} [defaultCaps]
+ * @param {Partial<BaseNSCapabilities>} [defaultCaps]
  */
 
 export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
@@ -627,6 +627,11 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
 
 /**
  * @typedef {import('@appium/types').DriverClass} DriverClass
- * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
- * @typedef {import('@appium/types').AppiumW3CCapabilities} AppiumW3CCapabilities
+ * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
+ */
+
+/**
+ * @template {import('@appium/types').Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
+ * @template {import('@appium/types').StringRecord|void} [Extra=void]
+ * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
  */

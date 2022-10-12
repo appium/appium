@@ -16,7 +16,7 @@ import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {createBaseDriverClass} from './commands';
 import helpers from './helpers';
-import {desiredCapabilityConstraints} from './desired-caps';
+import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -25,13 +25,51 @@ const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 /**
- * @implements {SessionHandler}
+ * @implements {SessionHandler<C>}
+ * @template {Constraints} C
+ * @template {StringRecord} [A=StringRecord]
+ * @extends {DriverCore<C>}
  */
 export class BaseDriverCore extends DriverCore {
-  _constraints = _.cloneDeep(desiredCapabilityConstraints);
-
-  /** @type {Record<string,any>|undefined} */
+  /**
+   * @type {A & ServerArgs}
+   */
   cliArgs;
+
+  /**
+   * @type {Capabilities<C>}
+   */
+  caps;
+
+  /**
+   * @type {W3CCapabilities<C>}
+   */
+  originalCaps;
+
+  /**
+   * @type {C}
+   */
+  desiredCapConstraints;
+
+  /**
+   * @type {DriverOpts<C> & DriverOpts<BaseDriverCapConstraints>}
+   */
+  opts;
+
+  /**
+   * Contains the base constraints plus whatever the subclass wants to add.
+   *
+   * Subclasses _shouldn't_ need to use this. If you need to use this, please create
+   * an issue:
+   * @see https://github.com/appium/appium/issues/new
+   * @type {Readonly<BaseDriverCapConstraints & C>}
+   * @protected
+   */
+  get _desiredCapConstraints() {
+    return Object.freeze(_.merge({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints));
+  }
+
+  static BASE_DESIRED_CAP_CONSTRAINTS = BASE_DESIRED_CAP_CONSTRAINTS;
 
   // This is the main command handler for the driver. It wraps command
   // execution with timeout logic, checking that we have a valid session,
@@ -114,7 +152,7 @@ export class BaseDriverCore extends DriverCore {
 
   /**
    *
-   * @param {Error} err
+   * @param {Error|import('../protocol/errors').NoSuchDriverError} err
    */
   async startUnexpectedShutdown(
     err = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')
@@ -208,11 +246,11 @@ export class BaseDriverCore extends DriverCore {
    * Appium 2 has dropped the support of these, so now we only accept capability
    * objects in W3C format and thus allow any of the three arguments to represent
    * the latter.
-   * @param {W3CCapabilities} w3cCapabilities1
-   * @param {W3CCapabilities} [w3cCapabilities2]
-   * @param {W3CCapabilities} [w3cCapabilities]
+   * @param {W3CCapabilities<C>} w3cCapabilities1
+   * @param {W3CCapabilities<C>} [w3cCapabilities2]
+   * @param {W3CCapabilities<C>} [w3cCapabilities]
    * @param {DriverData[]} [driverData]
-   * @returns {Promise<[string,object]>}
+   * @returns {Promise<[string,Capabilities<C>]>}
    */
   async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities, driverData) {
     if (this.sessionId !== null) {
@@ -235,21 +273,26 @@ export class BaseDriverCore extends DriverCore {
 
     this.setProtocolW3C();
 
-    this.originalCaps = _.cloneDeep(originalCaps);
+    this.originalCaps = originalCaps;
     this.log.debug(
       `Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`
     );
 
+    /** @type {Capabilities<C>} */
     let caps;
     try {
-      caps = processCapabilities(originalCaps, this.desiredCapConstraints, this.shouldValidateCaps);
+      caps = processCapabilities(
+        originalCaps,
+        this._desiredCapConstraints,
+        this.shouldValidateCaps
+      );
       if (caps[APPIUM_OPTS_CAP]) {
         this.log.debug(
           `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
         );
         caps = promoteAppiumOptions(caps);
       }
-      caps = fixCaps(caps, this.desiredCapConstraints, this.log);
+      caps = fixCaps(caps, this._desiredCapConstraints, this.log);
     } catch (e) {
       throw new errors.SessionNotCreatedError(e.message);
     }
@@ -258,10 +301,8 @@ export class BaseDriverCore extends DriverCore {
 
     this.sessionId = util.uuidV4();
     this.caps = caps;
-    this.opts = _.cloneDeep(this.initialOpts);
-
     // merge caps onto opts so we don't need to worry about what's where
-    Object.assign(this.opts, this.caps);
+    this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
@@ -288,7 +329,7 @@ export class BaseDriverCore extends DriverCore {
     }
 
     if (!_.isUndefined(this.caps.newCommandTimeout)) {
-      this.newCommandTimeoutMs = this.caps.newCommandTimeout * 1000;
+      this.newCommandTimeoutMs = /** @type {number} */ (this.caps.newCommandTimeout) * 1000;
     }
 
     this._log.prefix = helpers.generateDriverLogPrefix(this, this.sessionId);
@@ -323,7 +364,7 @@ export class BaseDriverCore extends DriverCore {
    * @param {Capabilities} caps
    */
   logExtraCaps(caps) {
-    let extraCaps = _.difference(_.keys(caps), _.keys(this._constraints));
+    let extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));
     if (extraCaps.length) {
       this.log.warn(
         `The following capabilities were provided, but are not ` + `recognized by Appium:`
@@ -336,7 +377,7 @@ export class BaseDriverCore extends DriverCore {
 
   /**
    *
-   * @param {Capabilities} caps
+   * @param {Capabilities<C>} caps
    * @returns {boolean}
    */
   validateDesiredCaps(caps) {
@@ -345,7 +386,7 @@ export class BaseDriverCore extends DriverCore {
     }
 
     try {
-      validateCaps(caps, this._constraints);
+      validateCaps(caps, this._desiredCapConstraints);
     } catch (e) {
       this.log.errorAndThrow(
         new errors.SessionNotCreatedError(
@@ -359,47 +400,25 @@ export class BaseDriverCore extends DriverCore {
 
     return true;
   }
-
-  // we only want subclasses to ever extend the contraints
-  set desiredCapConstraints(constraints) {
-    this._constraints = Object.assign(this._constraints, constraints);
-    // 'presence' means different things in different versions of the validator,
-    // when we say 'true' we mean that it should not be able to be empty
-    for (const [, value] of _.toPairs(this._constraints)) {
-      if (value && value.presence === true) {
-        value.presence = {
-          allowEmpty: false,
-        };
-      }
-    }
-  }
-
-  get desiredCapConstraints() {
-    return this._constraints;
-  }
 }
 
 /**
  * This ensures that all of the mixins correctly implement the interface described in {@linkcode Driver}.
- * @implements {Driver}
+ * @template {Constraints} [C={}]
+ * @implements {Driver<C>}
  */
-class _BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
-
-/**
- * @type {import('@appium/types').DriverClass<Driver>}
- */
-const BaseDriver = _BaseDriver;
-
-export {BaseDriver};
+export class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
 export default BaseDriver;
 
 /**
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
- * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
- * @typedef {import('@appium/types').Capabilities} Capabilities
- * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
  * @typedef {import('@appium/types').DriverData} DriverData
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').Constraint} Constraint
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ * @typedef {import('@appium/types').ServerArgs} ServerArgs
  */
 
 /**
@@ -417,5 +436,33 @@ export default BaseDriver;
  */
 
 /**
- * @typedef {import('@appium/types').SessionHandler<[string, object],void>} SessionHandler
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @typedef {import('@appium/types').SessionHandler<[string, object],void, C>} SessionHandler
+ */
+
+/**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
+ * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
+ */
+
+/**
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord|void} [Extra=void]
+ * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').ConstraintsToCaps<C>} ConstraintsToCaps
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Driver<C>} Driver
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').DriverOpts<C>} DriverOpts
  */

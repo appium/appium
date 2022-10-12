@@ -10,14 +10,36 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
 
 Appium is an open-source, cross-platform test automation tool for native,
-hybrid, mobile web and desktop apps. We support simulators (iOS), emulators
-(Android), and real devices (iOS, Android, Windows, Mac).
+hybrid, mobile web and desktop apps. Initially created to automate iOS and Android mobile
+applications Appium has grown to a full-featured platform that provides [WebDriver](https://www.w3.org/TR/webdriver/)-based automation possibilities for the whole set of different mobile and desktop platforms.
+See [Drivers Maintained By The Appium Team](#drivers-maintained-by-the-appium-team)
+and [Drivers Provided By Third Parties](#drivers-provided-by-third-parties) sections below for more details.
 
 :bangbang: Major documentation revision in progress
+
+:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run.
 
 Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
 found around the web may not be correct. The current Appium 2.0 documentation is very much in
 progress. Currently, it can be found [here](https://appium.github.io/appium/docs/en/2.0/).
+
+### Requirements
+
+- macOS, Linux or Windows operating system
+- Node.js 14+
+- NPM (Node Package Manager) 8+
+
+These are only server requirements. Each driver might have its own requirements. Consider checking the corresponding driver tutorial for more details.
+
+### Server
+
+To install Appium 2 server using Node Package Manager (npm) run the following command:
+
+```bash
+npm install -g appium@next
+```
+
+:bangbang: Running `npm install -g appium` would still install Appium 1 because version 2 is in its late beta stage.
 
 ### Drivers
 
@@ -79,6 +101,7 @@ your driver into the below list.
   [appium-youiengine-driver](https://github.com/YOU-i-Labs/appium-youiengine-driver) | Appium You.i Engine Driver is a test automation tool for devices of various platforms running applications built with [You.i Engine](http://www.youi.tv/youi-engine/)
   [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows automation of apps built using [Flutter](https://flutter.dev/) framework
   [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows automation of apps built for devices running [Tizen OS](https://www.tizen.org/)
+  [appium-linux-driver](https://github.com/fantonglang/appium-linux-driver) | Allows automation of Linux applications using [AtSpi2](https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/) framework
 </details>
 
 ### Plugins
@@ -198,13 +221,6 @@ automation, for mobile and beyond. Finally!
 
 If you're new to Appium or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium Concepts](/docs/en/about-appium/intro.md).
-
-### Requirements
-
-Your environment needs to be set up for the particular platforms that you want
-to run tests on. Each of the drivers above documents the requirements for their
-particular brand of automation. At a minimum, you will need to be able to run
-the recent [LTS](https://nodejs.org/en/about/releases/) Node.js version.
 
 ### Get Started
 

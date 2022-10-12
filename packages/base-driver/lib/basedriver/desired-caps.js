@@ -2,60 +2,10 @@ import log from './logger';
 import _validator from 'validate.js';
 import B from 'bluebird';
 
-const validator =
+export const validator =
   /** @type {import('validate.js').ValidateJS & {promise: typeof import('bluebird')}} */ (
     _validator
   );
-
-/** @type {import('@appium/types').Constraints} */
-let desiredCapabilityConstraints = {
-  platformName: {
-    presence: true,
-    isString: true,
-  },
-  deviceName: {
-    isString: true,
-  },
-  platformVersion: {
-    isString: true,
-  },
-  newCommandTimeout: {
-    isNumber: true,
-  },
-  automationName: {
-    isString: true,
-  },
-  autoLaunch: {
-    isBoolean: true,
-  },
-  udid: {
-    isString: true,
-  },
-  orientation: {
-    inclusion: ['LANDSCAPE', 'PORTRAIT'],
-  },
-  autoWebview: {
-    isBoolean: true,
-  },
-  noReset: {
-    isBoolean: true,
-  },
-  fullReset: {
-    isBoolean: true,
-  },
-  language: {
-    isString: true,
-  },
-  locale: {
-    isString: true,
-  },
-  eventTimings: {
-    isBoolean: true,
-  },
-  printPageSourceOnFindFailure: {
-    isBoolean: true,
-  },
-};
 
 validator.validators.isString = function isString(value) {
   if (typeof value === 'string') {
@@ -147,5 +97,3 @@ validator.promise = B;
 validator.prettify = function prettify(val) {
   return val;
 };
-
-export {desiredCapabilityConstraints, validator};

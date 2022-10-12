@@ -2,9 +2,9 @@
 import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
-import pkgDir from 'pkg-dir';
 import readPkg from 'read-pkg';
 import {npm} from './npm';
+import log from './logger';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -29,68 +29,72 @@ export const MANIFEST_RELATIVE_PATH = path.join(
   MANIFEST_BASENAME
 );
 
+const OLD_VERSION_REGEX = /^[01]/;
+
 /**
- * Returns `true` if appium is installed as a dependency of a local package at `cwd`.
- *
- * The following special cases are considered:
- *
- * - If `resolved` starts with `file:`, then `cwd` likely points to `appium-monorepo`, and (for now) we expect `APPIUM_HOME` to be the default.
- * - If the `version` begins with `0` or `1`, we're looking at an old version of `appium` (not this one!)
- *
- * Note that we are _not_ performing the check "is the currently running Appium the same one as found in the list of dependencies", because I'm not sure it actually matters (assuming the versions are compatible).
- * Regardless we may want to make this more robust in the future, as we hit edge cases.
- *
- * _Also_ note that:
- *
- * - if `appium` appears as a dependency in `package.json` _but it is not yet installed_ this function will resolve `false`.
- * - if `appium` _does not appear in `package.json`_, but is installed anyway (extraneous) this function will resolve `false`.
- *
- * This may not be exactly what we want.
+ * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
  *
  * @param {string} cwd
  * @returns {Promise<boolean>}
  */
 export async function hasAppiumDependency(cwd) {
-  /**
-   * @todo type this
-   * @type {object}
-   */
-  let listResult;
-  /** @type {string|undefined} */
-  let resolved;
-  /** @type {string|undefined} */
-  let version;
-  try {
-    listResult = await npm.list(cwd, 'appium');
-
-    // short-circuit if `appium` is hanging around but the user hasn't added it to `package.json`.
-    if (listResult?.dependencies?.appium?.extraneous) {
-      return false;
-    }
-    // if "resolved" is empty, then `appium` is in dependencies, but `npm install` has not been run.
-    // in other words, this function can resolve `true` even if `resolved` is empty...
-    resolved = listResult?.dependencies?.appium?.resolved ?? '';
-    // ...however, it cannot do so unless `version` is nonempty.
-    version = listResult?.dependencies?.appium?.version ?? '';
-  } catch {
-    try {
-      const pkg = await readPackageInDir(cwd);
-      // we're only going to look at these three fields for now, but we can change it later if need be.
-      version = resolved =
-        pkg?.dependencies?.appium ??
-        pkg?.devDependencies?.appium ??
-        pkg?.optionalDependencies?.appium;
-    } catch {}
-  }
-  return Boolean(
-    version &&
-      (!resolved || (resolved && !resolved.startsWith('file:'))) &&
-      // doing any further checking here may be a fool's errand, because you can pin the version
-      // to a _lot_ of different things (tags, URLs, etc).
-      !version.startsWith('1') &&
-      !version.startsWith('0')
-  );
+  return Boolean(await findAppiumDependencyPackage(cwd));
 }
+
+/**
+ * Given `cwd`, use `npm` to find the closest package _or workspace root_, and return the path if the root depends upon `appium`.
+ *
+ * Looks at `dependencies` and `devDependencies` for `appium`.
+ */
+export const findAppiumDependencyPackage = _.memoize(
+  /**
+   * @param {string} [cwd]
+   * @returns {Promise<string|undefined>}
+   */
+  async (cwd = process.cwd()) => {
+    /**
+     * Tries to read `package.json` in `cwd` and resolves the identity if it depends on `appium`;
+     * otherwise resolves `undefined`.
+     * @param {string} cwd
+     * @returns {Promise<string|undefined>}
+     */
+    const readPkg = async (cwd) => {
+      /** @type {string|undefined} */
+      let pkgPath;
+      try {
+        const pkg = await readPackageInDir(cwd);
+        const version =
+          pkg?.dependencies?.appium ??
+          pkg?.devDependencies?.appium ??
+          pkg?.peerDependencies?.appium;
+        pkgPath = version && !OLD_VERSION_REGEX.test(String(version)) ? cwd : undefined;
+      } catch {}
+      if (pkgPath) {
+        log.debug(`Found package.json having current Appium dep in ${pkgPath}`);
+      } else {
+        log.debug(`No package.json having current Appium dep in ${cwd}`);
+      }
+      return pkgPath;
+    };
+
+    cwd = path.resolve(cwd);
+
+    /** @type {string} */
+    let pkgDir;
+    try {
+      const {json: list} = await npm.exec('list', ['--long', '--json'], {cwd});
+      ({path: pkgDir} = list);
+      if (pkgDir) {
+        log.debug(`Determined package/workspace root from ${cwd} => ${pkgDir}`);
+      } else {
+        pkgDir = cwd;
+      }
+    } catch {
+      pkgDir = cwd;
+    }
+    return await readPkg(pkgDir);
+  }
+);
 
 /**
  * Read a `package.json` in dir `cwd`.  If none found, return `undefined`.
@@ -110,8 +114,7 @@ export const readPackageInDir = _.memoize(
  * Determines location of Appium's "home" dir
  *
  * - If `APPIUM_HOME` is set in the environment, use that
- * - If we have an `extensions.yaml` in {@linkcode DEFAULT_APPIUM_HOME}, then use that.
- * - If we find a `package.json` in or above `cwd` and {@linkcode shouldUseCwdForAppiumHome} returns `true`, then use the directory containing the `package.json`.
+ * - If we find a `package.json` in or above `cwd` and it has an `appium` dependency, use that.
  *
  * All returned paths will be absolute.
  */
@@ -126,30 +129,16 @@ export const resolveAppiumHome = _.memoize(
     }
 
     if (process.env.APPIUM_HOME) {
+      log.debug(`Using APPIUM_HOME from env: ${process.env.APPIUM_HOME}`);
       return path.resolve(cwd, process.env.APPIUM_HOME);
     }
 
-    /** @type {string|undefined} */
-    let currentPkgDir;
-
-    try {
-      currentPkgDir = await pkgDir(cwd);
-
-      // if we can't find a `package.json`, use the default
-      if (!currentPkgDir) {
-        return DEFAULT_APPIUM_HOME;
-      } else {
-        // it's unclear from the contract of `pkgDir` whether or not it can return a relative path,
-        // so let's just be defensive.
-        currentPkgDir = path.resolve(cwd, currentPkgDir);
-      }
-    } catch {
-      // unclear if this can actually happen
-      /* istanbul ignore next */
-      return DEFAULT_APPIUM_HOME;
+    const pkgPath = await findAppiumDependencyPackage(cwd);
+    if (pkgPath) {
+      return pkgPath;
     }
-
-    return (await hasAppiumDependency(currentPkgDir)) ? currentPkgDir : DEFAULT_APPIUM_HOME;
+    log.debug(`Using default APPIUM_HOME: ${DEFAULT_APPIUM_HOME}`);
+    return DEFAULT_APPIUM_HOME;
   }
 );
 

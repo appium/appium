@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.61.0](https://github.com/appium/appium/compare/@appium/support@2.60.0...@appium/support@2.61.0) (2022-10-13)
+
+
+### Features
+
+* **appium,support:** enable detection of local extensions for improved DX ([b186928](https://github.com/appium/appium/commit/b186928e60493e7603dc3b27725dad8ee20d3750))
+* **support:** add fs.isExecutable() ([08f0bc8](https://github.com/appium/appium/commit/08f0bc8839e774bd94da70c1e3df28b1d03d0911))
+
+
+
+
+
 # [2.60.0](https://github.com/appium/appium/compare/@appium/support@2.59.5...@appium/support@2.60.0) (2022-09-07)
 
 

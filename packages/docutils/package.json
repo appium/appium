@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -47,7 +47,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^2.60.0",
+    "@appium/support": "^2.61.0",
     "docdash": "1.2.0",
     "jsdoc": "3.6.11",
     "jsdoc-plugin-typescript": "2.2.0",

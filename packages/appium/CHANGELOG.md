@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.45](https://github.com/appium/appium/compare/appium@2.0.0-beta.44...appium@2.0.0-beta.45) (2022-10-13)
+
+
+### Features
+
+* **appium,support:** enable detection of local extensions for improved DX ([b186928](https://github.com/appium/appium/commit/b186928e60493e7603dc3b27725dad8ee20d3750))
+
+
+
+
+
 # [2.0.0-beta.44](https://github.com/appium/appium/compare/appium@2.0.0-beta.43...appium@2.0.0-beta.44) (2022-09-07)
 
 

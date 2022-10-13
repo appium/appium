@@ -47,7 +47,7 @@
     "@babel/core": "7.19.3",
     "@babel/eslint-parser": "7.19.1",
     "@babel/preset-env": "7.19.4",
-    "@octokit/rest": "18.12.0",
+    "@octokit/rest": "19.0.5",
     "@types/fancy-log": "2.0.0",
     "@types/gulp": "4.0.9",
     "@types/semver": "7.3.12",

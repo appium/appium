@@ -44,7 +44,7 @@ responsibility of speaking HTTP to the Appium server. Instead, they expose a set
 commands for a particular programming language, so that, to the test author, it just feels like
 you're writing Python, or JavaScript, or Java.
 
-As an example, here's the same simple set of Appium commands in four different programming
+As an example, here's the same simple set of Appium commands in five different programming
 languages, using the recommended Appium client binding for each language (note that this is not
 working sample code including all appropriate imports; see each client library's instructions for
 setup and command reference):
@@ -84,7 +84,16 @@ setup and command reference):
     puts element.text
     puts driver.page_source
     ```
+    
+=== "C#"
 
+    ```dotnet
+    AppiumElement element = driver.FindElement(MobileBy.AccessibilityId("Views"));   
+    element.click();
+    System.Console.WriteLine(element.Text);
+    System.Console.WriteLine(driver.PageSource);
+    ```
+    
 Each of these scripts, despite being in different languages, does the same thing under the hood:
 
 1. Call `Find Element` with a `using` parameter of `xpath` and a `value` parameter expressing the

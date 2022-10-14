@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.7.3](https://github.com/appium/appium/compare/@appium/base-driver@8.7.2...@appium/base-driver@8.7.3) (2022-10-14)
+
+
+### Bug Fixes
+
+* **basedriver:** ensure "opts" is defined at time of construction ([51d6d69](https://github.com/appium/appium/commit/51d6d69ff13a0cc23d612257926c02892685dcee))
+
+
+
+
+
 ## [8.7.2](https://github.com/appium/appium/compare/@appium/base-driver@8.7.1...@appium/base-driver@8.7.2) (2022-10-13)
 
 **Note:** Version bump only for package @appium/base-driver

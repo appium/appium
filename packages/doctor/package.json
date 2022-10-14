@@ -1,6 +1,6 @@
 {
   "name": "@appium/doctor",
-  "version": "1.16.27",
+  "version": "1.16.28",
   "description": "Test environment for fitness to run Appium",
   "keywords": [
     "automation",
@@ -49,7 +49,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^2.61.0",
+    "@appium/support": "^2.61.1",
     "@colors/colors": "1.5.0",
     "@types/bluebird": "3.5.37",
     "@types/teen_process": "1.16.1",

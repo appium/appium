@@ -93,7 +93,7 @@
     "rimraf": "3.0.2",
     "sanitize-filename": "1.6.3",
     "semver": "7.3.8",
-    "shell-quote": "1.7.3",
+    "shell-quote": "1.7.4",
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "2.0.2",

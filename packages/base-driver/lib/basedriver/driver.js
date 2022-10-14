@@ -27,12 +27,12 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 /**
  * @implements {SessionHandler<C>}
  * @template {Constraints} C
- * @template {StringRecord} [A=StringRecord]
+ * @template {StringRecord} [CArgs=StringRecord]
  * @extends {DriverCore<C>}
  */
 export class BaseDriverCore extends DriverCore {
   /**
-   * @type {A & ServerArgs}
+   * @type {CArgs & ServerArgs}
    */
   cliArgs;
 
@@ -56,6 +56,23 @@ export class BaseDriverCore extends DriverCore {
    */
   opts;
 
+  static BASE_DESIRED_CAP_CONSTRAINTS = BASE_DESIRED_CAP_CONSTRAINTS;
+
+  /**
+   *
+   * @param {DriverOpts<C>} opts
+   * @param {boolean} shouldValidateCaps
+   */
+  constructor(opts = /** @type {DriverOpts<C>} */ ({}), shouldValidateCaps = true) {
+    super(opts, shouldValidateCaps);
+
+    /**
+     * This must be assigned here because the declaration of {@linkcode BaseDriverCore.opts} above
+     * blows away {@linkcode DriverCore.opts}.
+     */
+    this.opts = opts;
+  }
+
   /**
    * Contains the base constraints plus whatever the subclass wants to add.
    *
@@ -68,8 +85,6 @@ export class BaseDriverCore extends DriverCore {
   get _desiredCapConstraints() {
     return Object.freeze(_.merge({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints));
   }
-
-  static BASE_DESIRED_CAP_CONSTRAINTS = BASE_DESIRED_CAP_CONSTRAINTS;
 
   // This is the main command handler for the driver. It wraps command
   // execution with timeout logic, checking that we have a valid session,

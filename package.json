@@ -114,7 +114,7 @@
     "@types/chai": "4.3.3",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "10.0.0",
-    "@types/node": "16.11.64",
+    "@types/node": "16.11.66",
     "@types/semver": "7.3.12",
     "@types/sinon": "10.0.13",
     "@types/sinon-chai": "3.2.8",

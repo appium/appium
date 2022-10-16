@@ -228,13 +228,13 @@ Check out our [Getting Started](http://appium.io/docs/en/about-appium/getting-st
 to get going with Appium.
 
 There is also a sample code that contains [many examples of tests in a variety
-of different languages](https://github.com/appium/appium/tree/master/sample-code)!
+of different languages](https://github.com/appium/appium/tree/1.x/sample-code)!
 
 ### Documentation
 
 For prettily-rendered docs, please visit [appium.io](http://appium.io). You can
 always find the full list of Appium doc pages at [Appium's GitHub
-Repo](https://github.com/appium/appium/tree/master/docs/en/) as well.
+Repo](https://github.com/appium/appium/tree/master/docs) as well.
 
 [update-appium-io.yml](https://github.com/appium/appium/blob/master/ci-jobs/update-appium-io.yml) creates a PR
 by [CI job](https://dev.azure.com/AppiumCI/Appium%20CI/_build?definitionId=37).

@@ -1,5 +1,5 @@
 import {select as xpathQuery} from 'xpath';
-import {DOMParser} from 'xmldom';
+import {DOMParser} from '@xmldom/xmldom';
 
 export function runQuery(query, xmlStr) {
   const dom = new DOMParser().parseFromString(xmlStr);

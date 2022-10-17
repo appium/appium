@@ -40,9 +40,9 @@
   },
   "dependencies": {
     "@types/xmldom": "0.1.31",
+    "@xmldom/xmldom": "0.8.3",
     "fast-xml-parser": "3.21.1",
     "source-map-support": "0.5.21",
-    "xmldom": "0.6.0",
     "xpath": "0.0.32"
   },
   "peerDependencies": {

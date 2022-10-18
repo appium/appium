@@ -98,8 +98,8 @@ a successful automation strategy using this driver are as follows:
 
 Following these steps should ensure your success! If you're using newer
 versions of Xcode (7.x, for example), you may wish to consult the [XCUITest
-Driver Real Device Docs](/docs/en/drivers/ios-xcuitest-real-devices.md) as they
-may contain some pertinent information as well.
+Driver Real Device Docs](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md)
+as they may contain some pertinent information as well.
 
 ### Real Device Hybrid / Web Testing
 

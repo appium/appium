@@ -104,7 +104,7 @@ pointing to your `.app` or `.app.zip` file, built for the sim.
 
 Automating a real device with XCUITest is considerably more complicated, due to
 Apple's restrictions around running apps on real devices. Please refer to the
-[XCUITest real device setup doc](ios-xcuitest-real-devices.md) for
+[XCUITest real device setup doc](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/real-device-config.md) for
 instructions.
 
 Once set up, running a session on a real device is achieved by using the

@@ -1,3 +1,1 @@
-## Touch ID
-
-(see [https://github.com/appium/appium-xcuitest-driver/blob/master/docs/touch-id.md](https://github.com/appium/appium-xcuitest-driver/blob/master/docs/touch-id.md))
+Please refer to https://github.com/appium/appium-xcuitest-driver/blob/master/docs/ios/ios-touch-id.md

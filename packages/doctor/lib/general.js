@@ -5,8 +5,20 @@ import NodeDetector from './node-detector';
 import {util} from '@appium/support';
 import {EOL} from 'os';
 import '@colors/colors';
+import {resolveAppiumHome} from '@appium/support/build/lib/env';
 
 let checks = [];
+
+class AppiumHomeCheck extends DoctorCheck {
+  async diagnose() {
+    return ok(`Default APPIUM_HOME is ${await resolveAppiumHome()}`);
+  }
+
+  fix() {
+    return;
+  }
+}
+checks.push(new AppiumHomeCheck());
 
 // Node Binary
 class NodeBinaryCheck extends DoctorCheck {
@@ -23,7 +35,7 @@ class NodeBinaryCheck extends DoctorCheck {
 }
 checks.push(new NodeBinaryCheck());
 
-const REQUIRED_NODE_VERSION = '10.0.0';
+const REQUIRED_NODE_VERSION = '14.0.0';
 
 // Node version
 class NodeVersionCheck extends DoctorCheck {
@@ -91,6 +103,7 @@ class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
 checks.push(new OptionalMjpegConsumerCommandCheck());
 
 export {
+  AppiumHomeCheck,
   NodeBinaryCheck,
   NodeVersionCheck,
   OptionalFfmpegCommandCheck,

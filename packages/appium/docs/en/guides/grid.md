@@ -22,7 +22,7 @@ In the node config file you have to define the `browserName`,
 will re-direct your test to the right device. You will also need to
 configure your **host** details and the **Selenium Grid** details. For
 a full list of all parameters and descriptions look
-[here](https://github.com/SeleniumHQ/selenium/wiki/Grid2)
+[here](https://www.selenium.dev/documentation/legacy/selenium_3/grid_setup/)
 
 Once you start the appium server and it registers with the grid,
 you will see your device on the grid console page:

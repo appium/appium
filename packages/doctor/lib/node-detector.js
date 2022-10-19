@@ -1,7 +1,6 @@
 import {fs, system} from '@appium/support';
 import {exec} from 'teen_process';
 import log from './logger';
-import path from 'path';
 import {resolveExecutablePath} from './utils';
 
 const NODE_COMMON_PATHS = [process.env.NODE_BIN, '/usr/local/bin/node', '/opt/local/bin/node'];
@@ -66,32 +65,11 @@ class NodeDetector {
     }
   }
 
-  static async retrieveUsingAppiumConfigFile() {
-    let jsonobj;
-    try {
-      const appiumConfigPath = path.resolve(__dirname, '..', '..', '.appiumconfig.json');
-      if (await fs.exists(appiumConfigPath)) {
-        jsonobj = JSON.parse(await fs.readFile(appiumConfigPath, 'utf8'));
-      }
-    } catch (err) {
-      log.debug(err);
-      return null;
-    }
-    if (jsonobj && jsonobj.node_bin && (await fs.exists(jsonobj.node_bin))) {
-      log.debug(`Node binary found using .appiumconfig.json at: ${jsonobj.node_bin}`);
-      return jsonobj.node_bin;
-    } else {
-      log.debug('Node binary not found in the .appiumconfig.json file.');
-      return null;
-    }
-  }
-
   static async detect() {
     let nodePath =
       (await NodeDetector.retrieveUsingSystemCall()) ||
       (await NodeDetector.retrieveInCommonPlaces()) ||
-      (await NodeDetector.retrieveUsingAppleScript()) ||
-      (await NodeDetector.retrieveUsingAppiumConfigFile());
+      (await NodeDetector.retrieveUsingAppleScript());
     if (nodePath) {
       return nodePath;
     } else {

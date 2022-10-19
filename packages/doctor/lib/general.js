@@ -2,21 +2,18 @@ import {ok, nok, okOptional, nokOptional, resolveExecutablePath, getNpmPackageIn
 import {exec} from 'teen_process';
 import {DoctorCheck} from './doctor';
 import NodeDetector from './node-detector';
-import {util} from '@appium/support';
+import {util, env} from '@appium/support';
 import {EOL} from 'os';
 import '@colors/colors';
-import {resolveAppiumHome} from '@appium/support/build/lib/env';
 
 let checks = [];
 
 class AppiumHomeCheck extends DoctorCheck {
   async diagnose() {
-    return ok(`Default APPIUM_HOME is ${await resolveAppiumHome()}`);
+    return ok(`APPIUM_HOME is ${await env.resolveAppiumHome()}`);
   }
 
-  fix() {
-    return;
-  }
+  fix() {}
 }
 checks.push(new AppiumHomeCheck());
 

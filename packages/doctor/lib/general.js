@@ -2,11 +2,20 @@ import {ok, nok, okOptional, nokOptional, resolveExecutablePath, getNpmPackageIn
 import {exec} from 'teen_process';
 import {DoctorCheck} from './doctor';
 import NodeDetector from './node-detector';
-import {util} from '@appium/support';
+import {util, env} from '@appium/support';
 import {EOL} from 'os';
 import '@colors/colors';
 
 let checks = [];
+
+class AppiumHomeCheck extends DoctorCheck {
+  async diagnose() {
+    return ok(`APPIUM_HOME is ${await env.resolveAppiumHome()}`);
+  }
+
+  fix() {}
+}
+checks.push(new AppiumHomeCheck());
 
 // Node Binary
 class NodeBinaryCheck extends DoctorCheck {
@@ -23,7 +32,7 @@ class NodeBinaryCheck extends DoctorCheck {
 }
 checks.push(new NodeBinaryCheck());
 
-const REQUIRED_NODE_VERSION = '10.0.0';
+const REQUIRED_NODE_VERSION = '14.0.0';
 
 // Node version
 class NodeVersionCheck extends DoctorCheck {
@@ -91,6 +100,7 @@ class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
 checks.push(new OptionalMjpegConsumerCommandCheck());
 
 export {
+  AppiumHomeCheck,
   NodeBinaryCheck,
   NodeVersionCheck,
   OptionalFfmpegCommandCheck,

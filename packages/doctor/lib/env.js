@@ -23,7 +23,7 @@ class EnvVarAndPathCheck extends DoctorCheck {
       // On Windows, when the env ver has %LOCALAPPDATA$, fs.exists cannot resolve the path.
       // Then, it would be safe to request the user to set the full path instead.
       if (varValue.includes('%LOCALAPPDATA%')) {
-        err_msg += `Please set "${process.env.LOCALAPPDATA}" instead of "%LOCALAPPDATA%".`;
+        err_msg += ` Please set "${process.env.LOCALAPPDATA}" instead of "%LOCALAPPDATA%" as the environment variable.`;
       }
       return nok(err_msg);
     }

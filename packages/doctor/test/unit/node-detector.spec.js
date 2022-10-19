@@ -1,5 +1,4 @@
 import {fs, system} from '@appium/support';
-import * as tp from 'teen_process';
 import NodeDetector from '../../lib/node-detector';
 import B from 'bluebird';
 import {withSandbox} from '@appium/test-support';
@@ -8,19 +7,7 @@ let expect = chai.expect;
 
 describe(
   'NodeDetector',
-  withSandbox({mocks: {fs, tp, system}}, (S) => {
-    it('retrieveInCommonPlaces - success', async function () {
-      S.mocks.fs.expects('exists').once().returns(B.resolve(true));
-      (await NodeDetector.retrieveInCommonPlaces()).should.equal('/usr/local/bin/node');
-      S.verify();
-    });
-
-    it('retrieveInCommonPlaces - failure', async function () {
-      S.mocks.fs.expects('exists').twice().returns(B.resolve(false));
-      expect(await NodeDetector.retrieveInCommonPlaces()).to.be.a('null');
-      S.verify();
-    });
-
+  withSandbox({mocks: {fs, system}}, (S) => {
     it('retrieveUsingSystemCall - success - where returns multiple lines ', async function () {
       S.mocks.fs.expects('which').once().returns(B.resolve('/a/b/node.exe'));
       S.mocks.fs.expects('exists').once().returns(B.resolve(true));
@@ -46,7 +33,6 @@ describe(
 
     it('checkForNodeBinary - failure', async function () {
       S.mocks.NodeDetector = S.sandbox.mock(NodeDetector);
-      S.mocks.NodeDetector.expects('retrieveInCommonPlaces').once().returns(null);
       S.mocks.NodeDetector.expects('retrieveUsingSystemCall').once().returns(null);
       expect(await NodeDetector.detect()).to.be.a('null');
       S.verify();

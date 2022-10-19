@@ -30,46 +30,10 @@ class NodeDetector {
     return nodePath;
   }
 
-  static async retrieveUsingAppleScript() {
-    if (!system.isMac()) {
-      log.debug('Not on Darwin, skipping Apple Script');
-      return null;
-    }
-
-    const appScript = [
-      'try',
-      '  set appiumIsRunning to false',
-      '  tell application "System Events"',
-      '    set appiumIsRunning to name of every process contains "Appium"',
-      '  end tell',
-      '  if appiumIsRunning then',
-      '    tell application "Appium" to return node path',
-      '  end if',
-      'end try',
-      'return "NULL"',
-    ].join('\n');
-    let stdout;
-    try {
-      stdout = (await exec('osascript', ['-e', appScript])).stdout;
-    } catch (err) {
-      log.debug(err);
-      return null;
-    }
-    let nodePath = stdout.replace('\n', '');
-    if (await fs.exists(nodePath)) {
-      log.debug(`Node binary found using AppleScript at: ${nodePath}`);
-      return nodePath;
-    } else {
-      log.debug('Node binary not found using AppleScript.');
-      return null;
-    }
-  }
-
   static async detect() {
     let nodePath =
       (await NodeDetector.retrieveUsingSystemCall()) ||
-      (await NodeDetector.retrieveInCommonPlaces()) ||
-      (await NodeDetector.retrieveUsingAppleScript());
+      (await NodeDetector.retrieveInCommonPlaces());
     if (nodePath) {
       return nodePath;
     } else {

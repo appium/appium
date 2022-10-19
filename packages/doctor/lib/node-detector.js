@@ -1,5 +1,4 @@
-import {fs, system} from '@appium/support';
-import {exec} from 'teen_process';
+import {fs} from '@appium/support';
 import log from './logger';
 import {resolveExecutablePath} from './utils';
 

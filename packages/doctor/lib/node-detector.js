@@ -16,7 +16,7 @@ class NodeDetector {
   }
 
   static async detect() {
-    let nodePath = await NodeDetector.retrieveUsingSystemCall();
+    const nodePath = await NodeDetector.retrieveUsingSystemCall();
     if (nodePath) {
       return nodePath;
     } else {

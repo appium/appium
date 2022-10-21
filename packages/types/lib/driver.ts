@@ -14,8 +14,9 @@ import {
   Capabilities,
 } from '.';
 import {ServerArgs} from './config';
+import {AsyncReturnType} from 'type-fest';
 
-export interface TimeoutCommands {
+export interface ITimeoutCommands {
   timeouts(
     type: string,
     ms: number | string,
@@ -38,7 +39,7 @@ export interface TimeoutCommands {
   parseTimeoutArgument(ms: number | string): number;
 }
 
-export interface EventCommands {
+export interface IEventCommands {
   logCustomEvent(vendor: string, event: string): Promise<void>;
   getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
@@ -48,7 +49,7 @@ export interface SessionCommands {
   getSession(): Promise<SingularSessionData>;
 }
 
-export interface ExecuteCommands {
+export interface IExecuteCommands {
   executeMethod(script: string, args: [StringRecord] | []): Promise<any>;
 }
 
@@ -74,7 +75,7 @@ export type SingularSessionData<
   Extra extends StringRecord | void = void
 > = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
 
-export interface FindCommands {
+export interface IFindCommands {
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
@@ -101,20 +102,60 @@ export interface FindCommands {
   getPageSource(): Promise<string>;
 }
 
-export interface LogCommands {
-  supportedLogTypes: Record<string, LogType<Driver>>;
-  getLogTypes(): Promise<string[]>;
+/**
+ * Log-related functionality of a {@linkcode Driver}. To be used as a mixin
+ */
+export interface ILogCommands<C extends Constraints> {
   /**
-   * Gets logs
-   *
-   * TODO: `logType` should be a key in `supportedLogTypes`, and the return value of this function
-   * should be the associated `LogType` object's `LogEntry` parameterized type.
-   * @param logType - Name/key of log type as defined in {@linkcode LogCommands.supportedLogTypes}.
+   * Definition of the available log types
    */
-  getLog(logType: string): Promise<any[]>;
+  supportedLogTypes: Readonly<LogDefRecord<C>>;
+
+  /**
+   * Get available log types as a list of strings
+   */
+  getLogTypes(): Promise<(keyof ILogCommands<C>['supportedLogTypes'])[]>;
+
+  /**
+   * Get the log for a given log type.
+   *
+   * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
+   */
+  getLog(
+    logType: keyof ILogCommands<C>['supportedLogTypes']
+  ): Promise<
+    AsyncReturnType<
+      ILogCommands<C>['supportedLogTypes'][keyof ILogCommands<C>['supportedLogTypes']]['getter']
+    >
+  >;
 }
 
-export interface SettingsCommands {
+/**
+ * A record of {@linkcode LogDef} objects, keyed by the log type name.
+ * Used in {@linkcode ILogCommands.supportedLogTypes}
+ */
+export type LogDefRecord<C extends Constraints> = Record<string, LogDef<C>>;
+
+/**
+ * A definition of a log type
+ */
+export interface LogDef<C extends Constraints, T = unknown> {
+  /**
+   * Description of the log type.
+   *
+   * The only place this is used is in error messages if the client provides an invalid log type
+   * via {@linkcode ILogCommands.getLog}.
+   */
+  description: string;
+  /**
+   * Returns all the log data for the given type
+   *
+   * This implementation *should* drain, truncate or otherwise reset the log buffer.
+   */
+  getter: (driver: Driver<C>) => Promise<T[]>;
+}
+
+export interface ISettingsCommands {
   updateSettings: (settings: StringRecord) => Promise<void>;
   getSettings(): Promise<StringRecord>;
 }
@@ -183,11 +224,6 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
 export interface DeviceSettings<T = any> {
   update(newSettings: Record<string, T>): Promise<void>;
   getSettings(): Record<string, T>;
-}
-
-export interface LogType<TDriver, LogEntry = string> {
-  description: string;
-  getter: (driver: TDriver) => Promise<LogEntry[]>;
 }
 
 // WebDriver
@@ -327,17 +363,17 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
  */
 export interface Driver<
   C extends Constraints = BaseDriverCapConstraints,
-  A extends StringRecord = StringRecord
+  CArgs extends StringRecord = StringRecord
 > extends SessionCommands,
-    LogCommands,
-    FindCommands,
-    SettingsCommands,
-    TimeoutCommands,
-    EventCommands,
+    ILogCommands<C>,
+    IFindCommands,
+    ISettingsCommands,
+    ITimeoutCommands,
+    IEventCommands,
+    IExecuteCommands,
     SessionHandler<[string, any], void, C>,
-    ExecuteCommands,
     Core {
-  cliArgs?: A;
+  cliArgs?: CArgs;
   // The following methods are implemented by `BaseDriver`.
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
   startUnexpectedShutdown(err?: Error): Promise<void>;

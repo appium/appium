@@ -445,9 +445,10 @@ export default BaseDriver;
 
 /**
  * This is used to extend {@linkcode BaseDriverCore} by the mixins and also external drivers.
+ * @template {Constraints} C
  * @template [Proto={}]
  * @template [Static={}]
- * @typedef {import('@appium/types').Class<BaseDriverCore & Proto,import('@appium/types').DriverStatic & Static>} BaseDriverBase
+ * @typedef {import('@appium/types').Class<BaseDriverCore<C> & Proto,import('@appium/types').DriverStatic & Static>} BaseDriverBase
  */
 
 /**
@@ -468,13 +469,9 @@ export default BaseDriver;
  */
 
 /**
- * @template {Constraints} C
- * @typedef {import('@appium/types').ConstraintsToCaps<C>} ConstraintsToCaps
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').Driver<C>} Driver
+ * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {StringRecord} [CArgs=StringRecord]
+ * @typedef {import('@appium/types').Driver<C, CArgs>} Driver
  */
 
 /**

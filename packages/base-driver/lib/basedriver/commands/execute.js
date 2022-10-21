@@ -2,8 +2,9 @@ import _ from 'lodash';
 import {errors, makeArgs, checkParams} from '../../protocol';
 
 /**
- * @param {SessionBase} Base
- * @returns {ExecuteBase}
+ * @template {Constraints} C
+ * @param {import('./session').SessionBase<C>} Base
+ * @returns {ExecuteBase<C>}
  */
 export function ExecuteMixin(Base) {
   /**
@@ -57,9 +58,13 @@ export function ExecuteMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').ExecuteCommands} IExecuteCommands
+ * @typedef {import('@appium/types').IExecuteCommands} IExecuteCommands
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').DriverClass} DriverClass
- * @typedef {import('./session').SessionBase} SessionBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & import('@appium/types').LogCommands & import('@appium/types').SettingsCommands & import('@appium/types').SessionCommands & IExecuteCommands>} ExecuteBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & import('@appium/types').ISettingsCommands & import('@appium/types').SessionCommands & IExecuteCommands>} ExecuteBase
  */

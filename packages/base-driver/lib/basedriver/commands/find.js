@@ -4,9 +4,9 @@
 import {errors} from '../../protocol';
 
 /**
- *
- * @param {EventBase} Base
- * @returns {FindBase}
+ * @template {Constraints} C
+ * @param {import('./event').EventBase<C>} Base
+ * @returns {FindBase<C>}
  */
 export function FindMixin(Base) {
   /**
@@ -96,7 +96,12 @@ export function FindMixin(Base) {
 
 /**
  * @typedef {import('@appium/types').Element} Element
- * @typedef {import('@appium/types').FindCommands} IFindCommands
- * @typedef {import('./event').EventBase} EventBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & IFindCommands>} FindBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').IFindCommands} IFindCommands
+ * @typedef {import('@appium/types').ITimeoutCommands} ITimeoutCommands
+ * @typedef {import('@appium/types').IEventCommands} IEventCommands
+ */
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, ITimeoutCommands & IEventCommands & IFindCommands>} FindBase
  */

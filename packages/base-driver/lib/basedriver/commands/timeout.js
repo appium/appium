@@ -10,8 +10,9 @@ import {errors} from '../../protocol';
 const MIN_TIMEOUT = 0;
 
 /**
- * @param {import('../driver').BaseDriverBase} Base
- * @returns {TimeoutBase}
+ * @template {Constraints} C
+ * @param {import('../driver').BaseDriverBase<C>} Base
+ * @returns {TimeoutBase<C>}
  */
 export function TimeoutMixin(Base) {
   /**
@@ -157,6 +158,11 @@ export function TimeoutMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').TimeoutCommands} ITimeoutCommands
- * @typedef {import('../driver').BaseDriverBase<ITimeoutCommands>} TimeoutBase
+ * @typedef {import('@appium/types').ITimeoutCommands} ITimeoutCommands
+ * @typedef {import('@appium/types').Constraints} Constraints
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, ITimeoutCommands>} TimeoutBase
  */

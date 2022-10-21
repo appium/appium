@@ -1,9 +1,9 @@
 // @ts-check
 
 /**
- *
- * @param {ReturnType<import('./log').LogMixin>} Base
- * @returns {SettingsBase}
+ * @template {Constraints} C
+ * @param {import('./log').LogBase<C>} Base
+ * @returns {SettingsBase<C>}
  */
 export function SettingsMixin(Base) {
   /**
@@ -29,7 +29,10 @@ export function SettingsMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').SettingsCommands} ISettingsCommands
- * @typedef {import('./log').LogBase} LogBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & import('@appium/types').LogCommands & ISettingsCommands>} SettingsBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').ISettingsCommands} ISettingsCommands
+ */
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & ISettingsCommands>} SettingsBase
  */

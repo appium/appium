@@ -1,5 +1,5 @@
 // @ts-check
-
+import _ from 'lodash';
 import {EventMixin} from './event';
 import {FindMixin} from './find';
 import {LogMixin} from './log';
@@ -9,22 +9,27 @@ import {TimeoutMixin} from './timeout';
 import {ExecuteMixin} from './execute';
 
 /**
- * Applies all the mixins to the `BaseDriverBase` class.
- * Returns a `BaseDriver` class.
- * @param {BaseDriverBase} Base
+ * Applies all the mixins to the `BaseDriverBase` class; returns a `BaseDriver` class definition.
+ * Each mixin is applied in the order it is listed here, and each type is a union with the previous.
+ *
+ * @template {Constraints} C
+ * @param {BaseDriverBase<C>} Base
  */
-export function createBaseDriverClass(Base) {
-  const WithTimeoutCommands = TimeoutMixin(Base);
-  const WithEventCommands = EventMixin(WithTimeoutCommands);
-  const WithFindCommands = FindMixin(WithEventCommands);
-  const WithLogCommands = LogMixin(WithFindCommands);
-  const WithSettingsCommands = SettingsMixin(WithLogCommands);
-  const WithSessionCommands = SessionMixin(WithSettingsCommands);
-  const WithExecuteCommands = ExecuteMixin(WithSessionCommands);
-  return WithExecuteCommands;
-}
+export const createBaseDriverClass = _.flow(
+  TimeoutMixin,
+  EventMixin,
+  FindMixin,
+  LogMixin,
+  SettingsMixin,
+  SessionMixin,
+  ExecuteMixin
+);
 
 /**
- * @template [T={}]
- * @typedef {import('../driver').BaseDriverBase<T>} BaseDriverBase
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C>} BaseDriverBase
+ */
+
+/**
+ * @typedef {import('@appium/types').Constraints} Constraints
  */

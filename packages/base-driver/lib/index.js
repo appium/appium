@@ -24,6 +24,9 @@ export {server, normalizeBasePath} from './express/server';
 // jsonwp-proxy exports
 export {JWProxy} from './jsonwp-proxy/proxy';
 
+// wd-proxy exports
+export {WDProxy} from './wd-proxy/proxy';
+
 // jsonwp-status exports
 export {getSummaryByCode, codes as statusCodes} from './jsonwp-status/status';
 

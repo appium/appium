@@ -1,5 +1,5 @@
 import getPort from 'get-port';
-import {curry} from 'lodash';
+import _, {curry} from 'lodash';
 
 /**
  * Default test host
@@ -65,4 +65,52 @@ const createAppiumURL = curry(
   }
 );
 
+/**
+ * Get a fake Express-like request and response object ready for mocking
+ *
+ * @param {string} url
+ * @param {import('axios').Method} method
+ * @param {any} body
+ * @returns [FakeRequest, FakeResponse]
+ */
+export function buildReqRes(url, method, body) {
+  /** @type FakeRequest */
+  let req = {originalUrl: url, method, body};
+  /** @type FakeResponse */
+  let res = {};
+  res.headers = {};
+  res.set = (k, v) => {
+    let newHeaders = {};
+    if (_.isPlainObject(k)) {
+      newHeaders = k;
+    } else if (_.isString(k)) {
+      newHeaders = {[k]: v};
+    }
+    res.headers = {...res.headers, ...newHeaders};
+  };
+  res.status = (code) => {
+    res.sentCode = code;
+    return res;
+  };
+  res.send = (body) => {
+    try {
+      body = JSON.parse(body);
+    } catch (e) {}
+    res.sentBody = body;
+  };
+  return [req, res];
+}
+
 export {TEST_HOST, getTestPort, createAppiumURL};
+
+/**
+ * @typedef {{originalUrl: string, method: import('axios').Method, body: any}} FakeRequest
+ * @typedef {{
+     headers: Record<string, any>,
+     set: (k: string | {}, v: any) => void,
+     status: (code: number) => FakeResponse,
+     send: (body: string) => void,
+     sentCode: number,
+     sentBody: any,
+    }} FakeResponse
+*/

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/appium/appium/compare/@appium/types@0.4.1...@appium/types@0.5.0) (2022-10-13)
+
+
+### Bug Fixes
+
+* **types:** fix driverForSession declaration ([4d7d8e4](https://github.com/appium/appium/commit/4d7d8e4d38563aca5e9070ecab30aecad3205937))
+
+
+### Features
+
+* **types:** adds types to derive capabilities from constraints ([4abe910](https://github.com/appium/appium/commit/4abe91004d4089e4280494a6d285b074c33a43c1))
+
+
+
+
+
 ## [0.4.1](https://github.com/appium/appium/compare/@appium/types@0.4.0...@appium/types@0.4.1) (2022-09-07)
 
 

@@ -55,11 +55,11 @@ describe('general', function () {
         mocks.tp
           .expects('exec')
           .once()
-          .returns(B.resolve({stdout: 'v10.0.0', stderr: ''}));
+          .returns(B.resolve({stdout: 'v14.0.0', stderr: ''}));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
-          message: 'Node version is 10.0.0',
+          message: 'Node version is 14.0.0',
         });
         mocks.verify();
       });
@@ -72,7 +72,7 @@ describe('general', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: 'Node version should be at least 10.0.0!',
+          message: 'Node version should be at least 14.0.0!',
         });
         mocks.verify();
       });
@@ -108,7 +108,7 @@ describe('general', function () {
           .once()
           .returns({
             stdout: `ffmpeg version 4.1 Copyright (c) 2000-2018 the FFmpeg developers
-      built with Apple LLVM version 10.0.0 (clang-1000.11.45.5)
+      built with Apple LLVM version 14.0.0 (clang-1000.11.45.5)
       configuration: --prefix=/usr/local/Cellar/ffmpeg/4.1_1 --enable-shared --enable-pthreads --enable-version3 --enable-hardcoded-tables --enable-avresample --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gpl --enable-libmp3lame --enable-libopus --enable-libsnappy --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-libxvid --enable-lzma --enable-opencl --enable-videotoolbox
       libavutil      56. 22.100 / 56. 22.100
       libpostproc    55.  3.100 / 55.  3.100`,

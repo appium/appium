@@ -4,6 +4,9 @@ This doc will get you up and running with a simple Appium test and introduce
 you to some basic Appium ideas. For a more comprehensive introduction to Appium concepts,
 please check out the [conceptual introduction](/docs/en/about-appium/intro.md).
 
+> Version 2.0 of Appium is in beta and documentation is being written. It is recommended to start with appium@2
+> The following documentation only apply for appium 1.x
+
 ### Installing Appium
 
 Appium can be installed in one of two ways: via [NPM](https://npmjs.com) or by

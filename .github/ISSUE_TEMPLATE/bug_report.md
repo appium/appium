@@ -1,3 +1,12 @@
+---
+name: Bug report
+about: File a bug report
+title: "[Bug]:"
+labels: bug
+assignees: ''
+
+---
+
 ## The problem
 
 Briefly describe the issue you are experiencing (or the feature you want to see added to Appium). Tell us what you were trying to do and what happened instead. Remember, this is _not_ a place to ask questions. For that, go to http://discuss.appium.io!
@@ -26,8 +35,8 @@ If you are reporting a bug, _always_ include Appium logs!
 
 ## Code To Reproduce Issue [ Good To Have ]
 
-Please remember that with sample code it's easier to reproduce the bug and it's much faster to fix it.
+Please remember that it's easier to reproduce the bug with sample code and much faster to fix it.
 
-Please git clone https://github.com/appium/appium and from the `examples` directory, use one of your favourite languages and sample apps to reproduce the issue.
+Please git clone https://github.com/appium/appium and from the `examples` directory, use one of your favorite languages and sample apps to reproduce the issue.
 
-In case a similar scenario is missing in examples, please submit a PR with one of the sample apps provided.
+If a similar scenario is missing in examples, please submit a PR with one of the sample apps provided.

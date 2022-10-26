@@ -1,16 +1,15 @@
 {
   "command": {
-    "exec": {
-      "ignore": ["@appium/eslint-config-appium", "appium"]
-    },
     "run": {
-      "prefix": false,
-      "concurrency": 1,
+      "concurrency": 8,
       "stream": true
     },
     "version": {
       "conventionalCommits": true,
-      "createRelease": "github"
+      "createRelease": "github",
+      "version": {
+        "allowBranch": "master"
+      }
     },
     "add": {
       "exact": true

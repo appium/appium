@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Common Renovate config for Appium packages",
+  "extends": [
+    "config:js-app",
+    ":semanticPrefixChore",
+    "helpers:pinGitHubActionDigests",
+    ":enableVulnerabilityAlerts",
+    ":rebaseStalePrs",
+    "group:definitelyTyped",
+    "workarounds:typesNodeVersioning"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "@types/wrap-ansi",
+        "delay",
+        "env-paths",
+        "execa",
+        "find-up",
+        "get-port",
+        "globby",
+        "got",
+        "log-symbols",
+        "p-retry",
+        "read-pkg",
+        "strip-ansi",
+        "supports-color",
+        "term-size",
+        "wrap-ansi",
+        "write-pkg"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "extends": ["packages:eslint"],
+      "matchPackageNames": ["@appium/eslint-config-appium"],
+      "groupName": "ESLint-related packages",
+      "groupSlug": "eslint"
+    }
+  ],
+  "baseBranches": ["main"],
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "{{parentDir}}",
+  "schedule": ["after 10pm and before 5:00am"],
+  "timezone": "America/Vancouver",
+  "transitiveRemediation": true
+}

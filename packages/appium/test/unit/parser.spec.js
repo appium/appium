@@ -148,6 +148,10 @@ describe('parser', function () {
       it('should respect --relaxed-security', function () {
         p.parseArgs(['--relaxed-security']).should.have.property('relaxedSecurityEnabled', true);
       });
+
+      it('should recognize --log-level', function () {
+        p.parseArgs(['--log-level', 'debug']).should.have.property('loglevel', 'debug');
+      });
     });
 
     describe('extension arguments', function () {

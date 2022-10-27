@@ -1,6 +1,5 @@
 // transpile:mocha
 
-import { should } from 'chai';
 import {NPM} from '../../lib/npm';
 
 describe('npm', function () {

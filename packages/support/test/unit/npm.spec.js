@@ -1,5 +1,6 @@
 // transpile:mocha
 
+import { should } from 'chai';
 import {NPM} from '../../lib/npm';
 
 describe('npm', function () {
@@ -34,7 +35,7 @@ describe('npm', function () {
       npm.getLatestSafeUpgradeFromVersions('0.1.0', ['', '0.2.0']).should.eql('0.2.0');
     });
     it('should return null if no newer version is found', function () {
-      npm.getLatestSafeUpgradeFromVersions('10', versions1).should.eql(null);
+      (null === npm.getLatestSafeUpgradeFromVersions('10', versions1)).should.be.true;
     });
   });
 

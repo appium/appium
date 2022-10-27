@@ -1,7 +1,7 @@
 // @ts-check
 
 import {DRIVER_TYPE} from '../../lib/constants';
-import {readConfigFile, normalizeConfig} from '../../lib/config-file';
+import {readConfigFile} from '../../lib/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
@@ -33,7 +33,39 @@ describe('config file behavior', function () {
       it('should return a valid config object', async function () {
         const result = await readConfigFile(GOOD_FILEPATH);
         result.should.deep.equal({
-          config: normalizeConfig(require(GOOD_FILEPATH)),
+          config: {
+            server: {
+              address: '0.0.0.0',
+              allowCors: false,
+              allowInsecure: [],
+              basePath: '/',
+              callbackAddress: '0.0.0.0',
+              callbackPort: 31337,
+              debugLogSpacing: false,
+              defaultCapabilities: {},
+              denyInsecure: [],
+              keepAliveTimeout: 600,
+              localTimezone: false,
+              logFile: '/tmp/appium.log',
+              loglevel: 'info',
+              logNoColors: false,
+              logTimestamp: false,
+              longStacktrace: false,
+              noPermsCheck: false,
+              nodeconfig: {
+                foo: 'bar',
+              },
+              port: 31337,
+              relaxedSecurityEnabled: false,
+              sessionOverride: false,
+              strictCaps: false,
+              tmpDir: '/tmp',
+              traceDir: '/tmp/appium-instruments',
+              useDrivers: [],
+              usePlugins: ['all'],
+              webhook: 'http://0.0.0.0/hook',
+            },
+          },
           filepath: GOOD_FILEPATH,
           errors: [],
         });
@@ -74,7 +106,11 @@ describe('config file behavior', function () {
           it('should return a valid config object', async function () {
             const result = await readConfigFile(SECURITY_ARRAY_FILEPATH);
             result.should.deep.equal({
-              config: normalizeConfig(require(SECURITY_ARRAY_FILEPATH)),
+              config: {
+                server: {
+                  allowInsecure: ['foo', 'bar', 'baz'],
+                },
+              },
               filepath: SECURITY_ARRAY_FILEPATH,
               errors: [],
             });
@@ -87,7 +123,38 @@ describe('config file behavior', function () {
       describe('without extensions', function () {
         it('should return an object containing errors', async function () {
           const result = await readConfigFile(BAD_FILEPATH);
-          result.should.have.deep.property('config', normalizeConfig(require(BAD_FILEPATH)));
+          result.should.have.deep.property('config', {
+            appiumHome: 'foo',
+            server: {
+              address: '0.0.0.0',
+              allowCors: 1,
+              allowInsecure: {},
+              basePath: '/',
+              callbackAddress: '0.0.0.0',
+              callbackPort: 43243234,
+              debugLogSpacing: false,
+              defaultCapabilities: {},
+              denyInsecure: [],
+              keepAliveTimeout: 0,
+              localTimezone: false,
+              logFile: '/tmp/appium.log',
+              loglevel: 'smoosh',
+              logNoColors: 1,
+              logTimestamp: false,
+              longStacktrace: false,
+              noPermsCheck: false,
+              nodeconfig: {},
+              port: '31337',
+              relaxedSecurityEnabled: false,
+              sessionOverride: false,
+              strictCaps: false,
+              tmpDir: '/tmp',
+              traceDir: '/tmp/appium-instruments',
+              useDrivers: [],
+              usePlugins: ['all'],
+              webhook: 'http://0.0.0.0/hook',
+            },
+          });
           result.should.have.property('filepath', BAD_FILEPATH);
           result.should.have.deep
             .property('errors')

@@ -27,7 +27,7 @@ describe('npm', function () {
     });
     it('should throw if the current version cannot be parsed', function () {
       should.throw(() => {
-        npm.getLatestSafeUpgradeFromVersions('', versions1).should.eql('0.2.5');
+        npm.getLatestSafeUpgradeFromVersions('', versions1);
       });
     });
     it('should ignore an error if one of versions cannot be parsed', function () {

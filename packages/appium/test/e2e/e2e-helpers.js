@@ -37,8 +37,10 @@ async function run(appiumHome, args, opts = {}) {
   opts.env = _.defaults(opts.env, {APPIUM_HOME: appiumHome, PATH: process.env.PATH});
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
-    log.debug('APPIUM_HOME: %s', opts.env.APPIUM_HOME);
-    log.debug(`Running: ${process.execPath} ${args.join(' ')}`);
+    if (process.env._FORCE_LOGS) {
+      log.debug('APPIUM_HOME: %s', opts.env.APPIUM_HOME);
+      log.debug(`Running: ${process.execPath} ${args.join(' ')}`);
+    }
     const retval = await exec(process.execPath, args, {
       ...opts,
       cwd,
@@ -49,7 +51,7 @@ async function run(appiumHome, args, opts = {}) {
     }
     return retval;
   } catch (err) {
-    const {stdout, stderr} = /** @type {TeenProcessExecError} */ (err);
+    const {stdout, stderr} = /** @type {ExecError} */ (err);
     /**
      * @type {AppiumRunError}
      */
@@ -176,13 +178,13 @@ export function formatAppiumArgErrorOutput(stderr) {
 
 /**
  * Error thrown by all of the functions in this file which execute `appium`.
- * @typedef {Error & AppiumRunErrorProps & import('@appium/support/lib/npm').TeenProcessExecErrorProps} AppiumRunError
+ * @typedef {Error & AppiumRunErrorProps & import('teen_process').ExecError} AppiumRunError
  */
 
 /**
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
- * @typedef {import('@appium/support/lib/npm').TeenProcessExecError} TeenProcessExecError
  * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
+ * @typedef {import('teen_process').ExecError} ExecError
  */
 
 /**

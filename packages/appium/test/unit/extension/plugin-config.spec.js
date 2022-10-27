@@ -212,7 +212,7 @@ describe('PluginConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.returns(resolveFixture('plugin.schema'));
+              MockResolveFrom.returns(resolveFixture('plugin-schema'));
             });
 
             it('should return an empty array', function () {
@@ -221,7 +221,7 @@ describe('PluginConfig', function () {
                   // @ts-expect-error
                   {
                     pkgName: '../fixtures',
-                    schema: 'plugin.schema.js',
+                    schema: 'plugin-schema.js',
                     mainClass: 'Yankovic',
                     version: '1.0.0',
                   },
@@ -234,7 +234,7 @@ describe('PluginConfig', function () {
       });
 
       describe('when provided an object `schema` property', function () {
-        /** @type {ExtDataWithSchema<PluginType>} */
+        /** @type {ExtManifestWithSchema<PluginType>} */
         let externalManifest;
 
         describe('when the object is a valid schema', function () {
@@ -286,7 +286,7 @@ describe('PluginConfig', function () {
        */
       let pluginConfig;
 
-      /** @type {ExtDataWithSchema<PluginType>} */
+      /** @type {ExtManifestWithSchema<PluginType>} */
       let extData;
 
       const extName = 'stuff';
@@ -294,13 +294,13 @@ describe('PluginConfig', function () {
       beforeEach(function () {
         extData = {
           pkgName: 'some-pkg',
-          schema: 'plugin.schema.js',
+          schema: 'plugin-schema.js',
           mainClass: 'SomeClass',
           version: '0.0.0',
           installType: 'npm',
           installSpec: 'some-pkg',
         };
-        MockResolveFrom.returns(resolveFixture('plugin.schema.js'));
+        MockResolveFrom.returns(resolveFixture('plugin-schema.js'));
         pluginConfig = PluginConfig.create(manifest);
       });
 
@@ -326,7 +326,7 @@ describe('PluginConfig', function () {
         describe('when the schema differs (presumably a different extension)', function () {
           it('should throw', function () {
             pluginConfig.readExtensionSchema(extName, extData);
-            MockResolveFrom.returns(resolveFixture('driver.schema.js'));
+            MockResolveFrom.returns(resolveFixture('driver-schema.js'));
             expect(() => pluginConfig.readExtensionSchema(extName, extData)).to.throw(
               /conflicts with an existing schema/i
             );
@@ -351,5 +351,5 @@ describe('PluginConfig', function () {
 
 /**
  * @template {import('@appium/types').ExtensionType} ExtType
- * @typedef {import('appium/types').ExtDataWithSchema<ExtType>} ExtDataWithSchema
+ * @typedef {import('appium/types').ExtManifestWithSchema<ExtType>} ExtManifestWithSchema
  */

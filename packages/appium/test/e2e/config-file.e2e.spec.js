@@ -3,22 +3,22 @@
 import {DRIVER_TYPE} from '../../lib/constants';
 import {readConfigFile, normalizeConfig} from '../../lib/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
-import extSchema from '../fixtures/driver.schema.js';
+import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
 
 describe('config file behavior', function () {
-  const GOOD_FILEPATH = resolveFixture('config', 'appium.config.good.json');
-  const BAD_NODECONFIG_FILEPATH = resolveFixture('config', 'appium.config.bad-nodeconfig.json');
-  const BAD_FILEPATH = resolveFixture('config', 'appium.config.bad.json');
-  const INVALID_JSON_FILEPATH = resolveFixture('config', 'appium.config.invalid.json');
-  const SECURITY_ARRAY_FILEPATH = resolveFixture('config', 'appium.config.security-array.json');
+  const GOOD_FILEPATH = resolveFixture('config', 'appium-config-good.json');
+  const BAD_NODECONFIG_FILEPATH = resolveFixture('config', 'appium-config-bad-nodeconfig.json');
+  const BAD_FILEPATH = resolveFixture('config', 'appium-config-bad.json');
+  const INVALID_JSON_FILEPATH = resolveFixture('config', 'appium-config-invalid.json');
+  const SECURITY_ARRAY_FILEPATH = resolveFixture('config', 'appium-config-security-array.json');
   const SECURITY_DELIMITED_FILEPATH = resolveFixture(
     'config',
-    'appium.config.security-delimited.json'
+    'appium-config-security-delimited.json'
   );
-  const SECURITY_PATH_FILEPATH = resolveFixture('config', 'appium.config.security-path.json');
-  const UNKNOWN_PROPS_FILEPATH = resolveFixture('config', 'appium.config.ext-unknown-props.json');
-  const EXT_PROPS_FILEPATH = resolveFixture('config', 'appium.config.ext-good.json');
+  const SECURITY_PATH_FILEPATH = resolveFixture('config', 'appium-config-security-path.json');
+  const UNKNOWN_PROPS_FILEPATH = resolveFixture('config', 'appium-config-ext-unknown-props.json');
+  const EXT_PROPS_FILEPATH = resolveFixture('config', 'appium-config-ext-good.json');
 
   beforeEach(function () {
     finalizeSchema();

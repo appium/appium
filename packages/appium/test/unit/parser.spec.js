@@ -174,7 +174,9 @@ describe('parser', function () {
         // the config file corresponds to that schema.
         // the command-line flags are derived also from the schema.
         // the result should be that the parsed args should match the config file.
-        const {config} = await readConfigFile(resolveFixture('config', 'driver-fake.config.json'));
+        const {config} = await readConfigFile(
+          resolveFixture('config', 'appium-config-driver-fake.json')
+        );
         const fakeDriverArgs = {
           fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'},
         };

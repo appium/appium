@@ -6,7 +6,7 @@ import {DRIVER_TYPE, PLUGIN_TYPE} from '../../../lib/constants';
 import {AppiumConfigJsonSchema} from '@appium/schema';
 import {APPIUM_CONFIG_SCHEMA_ID} from '../../../lib/schema/arg-spec';
 import defaultArgsFixture from '../../fixtures/default-args';
-import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver.schema';
+import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
 import {rewiremock} from '../../helpers';
 
@@ -131,6 +131,7 @@ describe('schema', function () {
       describe('when provided `type` and nonempty `schema`, but no `name`', function () {
         it('should throw a TypeError', function () {
           expect(() =>
+            // @ts-expect-error
             registerSchema(DRIVER_TYPE, undefined, {
               title: 'whoopeee',
             })

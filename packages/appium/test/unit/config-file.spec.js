@@ -9,12 +9,12 @@ import {resolveFixture, rewiremock} from '../helpers';
 const expect = chai.expect;
 
 describe('config-file', function () {
-  const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.yaml');
-  const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.json');
-  const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.good.js');
+  const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
+  const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
+  const GOOD_JS_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.js');
   const GOOD_YAML_CONFIG = YAML.parse(fs.readFileSync(GOOD_YAML_CONFIG_FILEPATH, 'utf8'));
   const GOOD_JSON_CONFIG = require(GOOD_JSON_CONFIG_FILEPATH);
-  const BAD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium.config.bad.json');
+  const BAD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-bad.json');
   const BAD_JSON_CONFIG = require(BAD_JSON_CONFIG_FILEPATH);
 
   /**

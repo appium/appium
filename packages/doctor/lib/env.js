@@ -20,7 +20,7 @@ class EnvVarAndPathCheck extends DoctorCheck {
       return ok(`${this.varName} is set to: ${varValue}`);
     } else {
       let err_msg = `${this.varName} is set to '${varValue}' but this is NOT a valid path!`;
-      // On Windows, when the env ver has %LOCALAPPDATA$, fs.exists cannot resolve the path.
+      // On Windows, when the env var has %LOCALAPPDATA%, fs.exists cannot resolve the path.
       // Then, it would be safe to request the user to set the full path instead.
       if (varValue.includes('%LOCALAPPDATA%')) {
         err_msg += ` Please set "${process.env.LOCALAPPDATA}" instead of "%LOCALAPPDATA%" as the environment variable.`;

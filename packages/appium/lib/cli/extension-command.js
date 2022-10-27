@@ -128,10 +128,14 @@ class ExtensionCommand {
           // also don't need to check for updates on non-npm exts
           continue;
         }
-        const updates = await this.checkForExtensionUpdate(ext);
-        data.updateVersion = updates.safeUpdate;
-        data.unsafeUpdateVersion = updates.unsafeUpdate;
-        data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
+        try {
+          const updates = await this.checkForExtensionUpdate(ext);
+          data.updateVersion = updates.safeUpdate;
+          data.unsafeUpdateVersion = updates.unsafeUpdate;
+          data.upToDate = updates.safeUpdate === null && updates.unsafeUpdate === null;
+        } catch (e) {
+          data.updateError = e.message;
+        }
       }
     });
 
@@ -149,8 +153,15 @@ class ExtensionCommand {
       let upToDateTxt = '';
       let unsafeUpdateTxt = '';
       if (data.installed) {
-        const {installType, installSpec, updateVersion, unsafeUpdateVersion, version, upToDate} =
-          data;
+        const {
+          installType,
+          installSpec,
+          updateVersion,
+          unsafeUpdateVersion,
+          version,
+          upToDate,
+          updateError,
+        } = data;
         let typeTxt;
         switch (installType) {
           case INSTALL_TYPE_GIT:
@@ -166,14 +177,18 @@ class ExtensionCommand {
         installTxt = `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
 
         if (showUpdates) {
-          if (updateVersion) {
-            updateTxt = ` [${updateVersion} available]`.magenta;
-          }
-          if (upToDate) {
-            upToDateTxt = ` [Up to date]`.green;
-          }
-          if (unsafeUpdateVersion) {
-            unsafeUpdateTxt = ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+          if (updateError) {
+            updateTxt = ` [Cannot check for updates: ${updateError}]`.red;
+          } else {
+            if (updateVersion) {
+              updateTxt = ` [${updateVersion} available]`.magenta;
+            }
+            if (upToDate) {
+              upToDateTxt = ` [Up to date]`.green;
+            }
+            if (unsafeUpdateVersion) {
+              unsafeUpdateTxt = ` [${unsafeUpdateVersion} available (potentially unsafe)]`.cyan;
+            }
           }
         }
       }
@@ -701,6 +716,7 @@ export {ExtensionCommand};
  * @property {string?} updateVersion - If the extension is installed, the version it can be updated to
  * @property {string?} unsafeUpdateVersion - Same as above, but a major version bump
  * @property {boolean} upToDate - If the extension is installed and the latest
+ * @property {string?} updateError - Update check error message (if present)
  */
 
 /**

@@ -268,7 +268,7 @@ describe('DriverConfig', function () {
 
           describe('when the property as a path is found', function () {
             beforeEach(function () {
-              MockResolveFrom.returns(resolveFixture('driver.schema.js'));
+              MockResolveFrom.returns(resolveFixture('driver-schema.js'));
             });
 
             it('should return an empty array', function () {
@@ -277,7 +277,7 @@ describe('DriverConfig', function () {
                   // @ts-expect-error
                   {
                     pkgName: 'whatever',
-                    schema: 'driver.schema.js',
+                    schema: 'driver-schema.js',
                   },
                   'foo'
                 )
@@ -302,7 +302,7 @@ describe('DriverConfig', function () {
       beforeEach(function () {
         extData = {
           pkgName: 'some-pkg',
-          schema: 'driver.schema.js',
+          schema: 'driver-schema.js',
           automationName: 'foo',
           mainClass: 'Gargle',
           platformNames: ['barnyard'],
@@ -310,12 +310,13 @@ describe('DriverConfig', function () {
           installSpec: 'some-pkg',
           installType: 'npm',
         };
-        MockResolveFrom.returns(resolveFixture('driver.schema.js'));
+        MockResolveFrom.returns(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);
       });
 
       describe('when the extension data is missing `schema`', function () {
         it('should throw', function () {
+          // @ts-expect-error
           delete extData.schema;
           expect(() => driverConfig.readExtensionSchema(extName, extData)).to.throw(
             TypeError,

@@ -29,8 +29,8 @@ const log = new console.CliConsole();
  * @template {import('appium/types').CliExtensionSubcommand} ExtSubcommand
  * @param {string} appiumHome - Path to `APPIUM_HOME`
  * @param {CliExtArgs<ExtSubcommand> | CliArgs} args - Args, including commands
- * @param {import('teen_process').ExecOptions} [opts] - Options for `teen_process`
- * @returns {Promise<import('teen_process').ExecResult<string>>}
+ * @param {TeenProcessExecOptions} [opts] - Options for `teen_process`
+ * @returns {Promise<TeenProcessExecOptions>}
  */
 async function run(appiumHome, args, opts = {}) {
   const cwd = PACKAGE_ROOT;
@@ -185,6 +185,7 @@ export function formatAppiumArgErrorOutput(stderr) {
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
  * @typedef {import('teen_process').ExecError} ExecError
+ * @typedef {import('teen_process').TeenProcessExecOptions} TeenProcessExecOptions
  */
 
 /**
@@ -225,6 +226,6 @@ export function formatAppiumArgErrorOutput(stderr) {
  * @callback AppiumOptsRunner
  * @param {string} appiumHome
  * @param {CliExtArgs<ExtSubcommand>|CliArgs} args
- * @param {import('teen_process').ExecOptions} opts
+ * @param {TeenProcessExecOptions} opts
  * @returns {Promise<Result>}
  */

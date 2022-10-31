@@ -99,7 +99,7 @@
     "@types/semver": "7.3.13",
     "@types/sinon": "10.0.13",
     "@types/sinon-chai": "3.2.8",
-    "@types/teen_process": "1.16.1",
+    "@types/teen_process": "2.0.0",
     "@types/ws": "8.5.3",
     "asyncbox": "2.9.2",
     "babel-plugin-istanbul": "6.1.1",

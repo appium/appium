@@ -42,6 +42,11 @@
       "matchPackageNames": ["@appium/eslint-config-appium"],
       "groupName": "ESLint-related packages",
       "groupSlug": "eslint"
+    },
+    {
+      "matchPatchNames": ["teen_process", "@types/teen_process"],
+      "groupName": "teen_process-related packages",
+      "groupSlug": "teen_process"
     }
   ],
   "baseBranches": ["main"],

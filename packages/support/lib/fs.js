@@ -336,7 +336,10 @@ const fs = {
   open: B.promisify(open),
   openFile: fsPromises.open,
   readdir: fsPromises.readdir,
-  read: B.promisify(read),
+
+  read: /**
+   * @type {ReadFn<NodeJS.ArrayBufferView>}
+   */ (/** @type {unknown} */ (B.promisify(read))),
   readFile: fsPromises.readFile,
   readlink: fsPromises.readlink,
   realpath: fsPromises.realpath,
@@ -389,4 +392,15 @@ export default fs;
  * @typedef {import('glob')} glob
  * @typedef {import('mv')} mv
  * @typedef {import('fs').PathLike} PathLike
+ */
+
+/**
+ * @template {NodeJS.ArrayBufferView} TBuffer
+ * @callback ReadFn
+ * @param {number} fd
+ * @param {TBuffer|import('node:fs').ReadAsyncOptions<TBuffer>} buffer
+ * @param {number} [offset]
+ * @param {number} [length]
+ * @param {number?} [position]
+ * @returns {B<{bytesRead: number, buffer: TBuffer}>}
  */

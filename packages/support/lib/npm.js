@@ -41,13 +41,13 @@ export class NPM {
    * @param {string} cmd
    * @param {string[]} args
    * @param {ExecOpts} opts
-   * @param {Omit<import('teen_process').ExecOptions, 'cwd'>} [execOpts]
+   * @param {Omit<TeenProcessExecOptions, 'cwd'>} [execOpts]
    */
   async exec(cmd, args, opts, execOpts = {}) {
     let {cwd, json, lockFile} = opts;
 
     // make sure we perform the current operation in cwd
-    /** @type {import('teen_process').ExecOptions} */
+    /** @type {TeenProcessExecOptions} */
     const teenProcessExecOpts = {...execOpts, cwd};
 
     args.unshift(cmd);
@@ -62,7 +62,7 @@ export class NPM {
       runner = async () => await acquireLock(_runner);
     }
 
-    /** @type {import('teen_process').ExecResult<string> & {json?: any}} */
+    /** @type {import('teen_process').TeenProcessExecResult<string> & {json?: any}} */
     let ret;
     try {
       const {stdout, stderr, code} = await runner();
@@ -279,4 +279,8 @@ export const npm = new NPM();
  * @property {string} cwd - Current working directory
  * @property {boolean} [json] - If `true`, supply `--json` flag to npm and resolve w/ parsed JSON
  * @property {string} [lockFile] - Path to lockfile to use
+ */
+
+/**
+ * @typedef {import('teen_process').TeenProcessExecOptions} TeenProcessExecOptions
  */

@@ -18,6 +18,8 @@
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
+        "chalk",
+        "del",
         "delay",
         "env-paths",
         "execa",
@@ -26,7 +28,9 @@
         "globby",
         "got",
         "log-symbols",
+        "ora",
         "p-retry",
+        "pkg-dir",
         "read-pkg",
         "strip-ansi",
         "supports-color",

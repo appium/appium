@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "local>//renovate/default"
+    "github>appium/appium//renovate/default"
   ]
 }

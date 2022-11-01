@@ -2,6 +2,5 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>appium/appium//renovate/default"
-  ],
-  "baseBranches": ["master"]
+  ]
 }

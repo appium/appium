@@ -44,7 +44,7 @@
       "groupSlug": "eslint"
     },
     {
-      "matchPatchNames": ["teen_process", "@types/teen_process"],
+      "matchPackageNames": ["teen_process", "@types/teen_process"],
       "groupName": "teen_process-related packages",
       "groupSlug": "teen_process"
     }

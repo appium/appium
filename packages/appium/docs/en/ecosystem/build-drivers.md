@@ -537,7 +537,8 @@ behaviours that don't map to any of the existing commands, you can create new co
 two ways:
 
 1. Extending the WebDriver protocol and creating client-side plugins to access the extensions
-1. Overloading the Execute Script command by defining "Execute Methods"
+1. Overloading the Execute Script command by defining [Execute
+   Methods](../guides/execute-methods.md)
 
 If you want to follow the first path, you can direct Appium to recognize new methods and add them
 to its set of allowed HTTP routes and command names. You do this by assigning the `newMethodMap`

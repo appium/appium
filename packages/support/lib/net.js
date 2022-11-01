@@ -243,7 +243,7 @@ async function downloadFile(
   try {
     const writer = fs.createWriteStream(dstPath);
     const {data: responseStream, headers: responseHeaders} = await axios(requestOpts);
-    responseLength = parseInt(responseHeaders['content-length'], 10);
+    responseLength = parseInt(responseHeaders['content-length'] || '0', 10);
     responseStream.pipe(writer);
 
     await new B((resolve, reject) => {

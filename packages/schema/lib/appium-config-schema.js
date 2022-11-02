@@ -128,13 +128,11 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           type: 'string',
         },
         'log-filters': {
-          $comment: 'TODO',
           description: 'One or more log filtering rules',
-          items: {
-            type: 'string',
-          },
           title: 'log-filters config',
           type: 'array',
+          items: {$ref: '#/$defs/logFilter'},
+          appiumCliTransformer: 'json',
         },
         'log-level': {
           appiumCliDest: 'loglevel',
@@ -289,4 +287,60 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
   },
   title: 'Appium Configuration',
   type: 'object',
+  $defs: {
+    logFilterText: {
+      type: 'object',
+      description: 'Log filter with plain text',
+      properties: {
+        text: {
+          description: 'Text to match',
+          type: 'string',
+        },
+      },
+      required: ['text'],
+      not: {
+        required: ['pattern'],
+      },
+    },
+    logFilterRegex: {
+      type: 'object',
+      description: 'Log filter with regular expression',
+      properties: {
+        pattern: {
+          description: 'Regex pattern to match',
+          type: 'string',
+          format: 'regex',
+        },
+      },
+      required: ['pattern'],
+      not: {
+        required: ['text'],
+      },
+    },
+    logFilter: {
+      type: 'object',
+      description: 'Log filtering rule',
+      allOf: [
+        {
+          type: 'object',
+          properties: {
+            replacer: {
+              description: 'Replacement string for matched text',
+              type: 'string',
+              default: '**SECURE**',
+            },
+            flags: {
+              description:
+                'Matching flags; see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags',
+              type: 'string',
+              pattern: '^[igmsduy](,[igmsduy])*$',
+            },
+          },
+        },
+        {
+          oneOf: [{$ref: '#/$defs/logFilterText'}, {$ref: '#/$defs/logFilterRegex'}],
+        },
+      ],
+    },
+  },
 });

@@ -69,15 +69,6 @@
     "precommit-msg",
     "precommit-lint"
   ],
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.ts*": [
-      "prettier --write"
-    ]
-  },
   "prettier": {
     "bracketSpacing": false,
     "printWidth": 100,

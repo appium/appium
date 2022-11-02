@@ -3,6 +3,15 @@ import _ from 'lodash';
 
 const DEFAULT_REPLACER = '**SECURE**';
 
+/**
+ * Type guard for log filter type
+ * @param {object} value
+ * @returns {value is import('@appium/types').LogFilterRegex}
+ */
+function isLogFilterRegex(value) {
+  return 'pattern' in value;
+}
+
 class SecureValuesPreprocessor {
   constructor() {
     this._rules = [];
@@ -19,7 +28,7 @@ class SecureValuesPreprocessor {
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|Rule} rule The rule might either be represented as a single string
+   * @param {string|import('@appium/types').LogFilter} rule The rule might either be represented as a single string
    * or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
@@ -34,7 +43,7 @@ class SecureValuesPreprocessor {
       }
       pattern = `\\b${_.escapeRegExp(rule)}\\b`;
     } else if (_.isPlainObject(rule)) {
-      if (_.has(rule, 'pattern')) {
+      if (isLogFilterRegex(rule)) {
         if (!_.isString(rule.pattern) || rule.pattern.length === 0) {
           throw new Error(
             `${JSON.stringify(rule)} -> The value of 'pattern' must be a valid non-empty string`
@@ -81,7 +90,7 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|Rule[]} source The full path to the JSON file containing secure
+   * @param {string|string[]|import('@appium/types').LogFiltersConfig} source The full path to the JSON file containing secure
    * values replacement rules or the rules themselves represented as an array
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
@@ -143,19 +152,6 @@ const SECURE_VALUES_PREPROCESSOR = new SecureValuesPreprocessor();
 
 export {SECURE_VALUES_PREPROCESSOR, SecureValuesPreprocessor};
 export default SECURE_VALUES_PREPROCESSOR;
-
-/**
- * @typedef Rule
- * @property {string} pattern A valid RegExp pattern to be replaced
- * @property {string} text A text match to replace. Either this property or the
- * above one must be provided. `pattern` has priority over `text` if both are provided.
- * @property {string} [flags] Regular expression flags for the given pattern.
- * Supported flag are the same as for the standard JavaScript RegExp constructor:
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2
- * The 'g' (global matching) is always enabled though.
- * @property {string} [replacer] The replacer value to use. By default
- * equals to `DEFAULT_SECURE_REPLACER`
- */
 
 /**
  * @typedef SecureValuePreprocessingRule

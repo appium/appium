@@ -5,20 +5,21 @@ import {readConfigFile} from '../../lib/config-file';
 import {finalizeSchema, registerSchema, resetSchema} from '../../lib/schema/schema';
 import extSchema from '../fixtures/driver-schema';
 import {resolveFixture} from '../helpers';
+import _ from 'lodash';
+
+const resolveConfigFixture = _.partial(resolveFixture, 'config');
 
 describe('config file behavior', function () {
-  const GOOD_FILEPATH = resolveFixture('config', 'appium-config-good.json');
-  const BAD_NODECONFIG_FILEPATH = resolveFixture('config', 'appium-config-bad-nodeconfig.json');
-  const BAD_FILEPATH = resolveFixture('config', 'appium-config-bad.json');
-  const INVALID_JSON_FILEPATH = resolveFixture('config', 'appium-config-invalid.json');
-  const SECURITY_ARRAY_FILEPATH = resolveFixture('config', 'appium-config-security-array.json');
-  const SECURITY_DELIMITED_FILEPATH = resolveFixture(
-    'config',
-    'appium-config-security-delimited.json'
-  );
-  const SECURITY_PATH_FILEPATH = resolveFixture('config', 'appium-config-security-path.json');
-  const UNKNOWN_PROPS_FILEPATH = resolveFixture('config', 'appium-config-ext-unknown-props.json');
-  const EXT_PROPS_FILEPATH = resolveFixture('config', 'appium-config-ext-good.json');
+  const GOOD_FILEPATH = resolveConfigFixture('appium-config-good.json');
+  const BAD_NODECONFIG_FILEPATH = resolveConfigFixture('appium-config-bad-nodeconfig.json');
+  const BAD_FILEPATH = resolveConfigFixture('appium-config-bad.json');
+  const INVALID_JSON_FILEPATH = resolveConfigFixture('appium-config-invalid.json');
+  const SECURITY_ARRAY_FILEPATH = resolveConfigFixture('appium-config-security-array.json');
+  const SECURITY_DELIMITED_FILEPATH = resolveConfigFixture('appium-config-security-delimited.json');
+  const SECURITY_PATH_FILEPATH = resolveConfigFixture('appium-config-security-path.json');
+  const UNKNOWN_PROPS_FILEPATH = resolveConfigFixture('appium-config-ext-unknown-props.json');
+  const EXT_PROPS_FILEPATH = resolveConfigFixture('appium-config-ext-good.json');
+  const LOG_FILTERS_FILEPATH = resolveConfigFixture('appium-config-log-filters.json');
 
   beforeEach(function () {
     finalizeSchema();
@@ -71,7 +72,7 @@ describe('config file behavior', function () {
         });
       });
 
-      describe('server.nodeconfig behavior', function () {
+      describe('`server.nodeconfig` behavior', function () {
         describe('when a string', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(BAD_NODECONFIG_FILEPATH);
@@ -87,7 +88,7 @@ describe('config file behavior', function () {
         });
       });
 
-      describe('server.allow-insecure behavior', function () {
+      describe('`server.allow-insecure` behavior', function () {
         describe('when a string path', function () {
           it('should return errors', async function () {
             const result = await readConfigFile(SECURITY_PATH_FILEPATH);
@@ -112,6 +113,26 @@ describe('config file behavior', function () {
                 },
               },
               filepath: SECURITY_ARRAY_FILEPATH,
+              errors: [],
+            });
+          });
+        });
+      });
+
+      describe('`server.log-filters` behavior', function () {
+        describe('when the log filters are valid', function () {
+          it('should return a valid config object', async function () {
+            const result = await readConfigFile(LOG_FILTERS_FILEPATH);
+            result.should.deep.equal({
+              config: {
+                server: {
+                  logFilters: [
+                    {text: 'foo', replacer: 'bar'},
+                    {pattern: '/foo/', flags: 'i'},
+                  ],
+                },
+              },
+              filepath: LOG_FILTERS_FILEPATH,
               errors: [],
             });
           });

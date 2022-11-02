@@ -9,6 +9,7 @@ import {resolveFixture} from '../helpers';
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
 const DENY_FIXTURE = resolveFixture('deny-feat.txt');
 const CAPS_FIXTURE = resolveFixture('caps.json');
+const LOG_FILTERS_FIXTURE = resolveFixture('log-filters.json');
 
 describe('parser', function () {
   let p;
@@ -151,6 +152,10 @@ describe('parser', function () {
 
       it('should recognize --log-level', function () {
         p.parseArgs(['--log-level', 'debug']).should.have.property('loglevel', 'debug');
+      });
+
+      it('should parse a file for --log-filters', function () {
+        p.parseArgs(['--log-filters', LOG_FILTERS_FIXTURE]).should.have.property('logFilters');
       });
     });
 

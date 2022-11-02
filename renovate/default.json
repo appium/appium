@@ -27,6 +27,7 @@
         "get-port",
         "globby",
         "got",
+        "inquirer",
         "log-symbols",
         "ora",
         "p-retry",
@@ -35,6 +36,7 @@
         "strip-ansi",
         "supports-color",
         "term-size",
+        "vinyl-paths",
         "wrap-ansi",
         "write-pkg"
       ],

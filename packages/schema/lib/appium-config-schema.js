@@ -9,6 +9,13 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
   additionalProperties: false,
   description: 'A schema for Appium configuration files',
   properties: {
+    $schema: {
+      description: 'The JSON schema for this file',
+      default:
+        'https://raw.githubusercontent.com/appium/appium/master/packages/schema/lib/appium-config.schema.json',
+      type: 'string',
+      format: 'uri',
+    },
     server: {
       additionalProperties: false,
       description: 'Configuration when running Appium as a server',

@@ -134,6 +134,10 @@ export type WebhookConfig = string;
  * A schema for Appium configuration files
  */
 export interface AppiumConfiguration {
+  /**
+   * The JSON schema for this file
+   */
+  $schema?: string;
   server?: ServerConfig;
 }
 /**

@@ -43,6 +43,8 @@ export class RoachHotelMap extends Map {
  */
 export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
 
+const SCHEMA_KEY = '$schema';
+
 /**
  * A wrapper around Ajv and schema-related functions.
  *
@@ -441,6 +443,9 @@ class AppiumSchema {
     for (const {properties, prefix} of stack) {
       const pairs = _.toPairs(properties);
       for (const [key, value] of pairs) {
+        if (key === SCHEMA_KEY) {
+          continue;
+        }
         const {properties, $ref} = value;
         if (properties) {
           stack.push({

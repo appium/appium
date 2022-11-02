@@ -1,0 +1,14 @@
+{
+  "server": {
+    "log-filters": [
+      {
+        "text": "foo",
+        "replacer": "bar"
+      },
+      {
+        "pattern": "/foo/",
+        "flags": "i"
+      }
+    ]
+  }
+}

@@ -6,6 +6,7 @@ import {SecureValuesPreprocessor} from '../../lib/log-internal';
 const CONFIG_PATH = path.resolve(os.tmpdir(), 'rules.json');
 
 describe('Log Internals', function () {
+  /** @type {import('../../lib/log-internal').SecureValuesPreprocessor} */
   let preprocessor;
 
   beforeEach(function () {
@@ -45,6 +46,7 @@ describe('Log Internals', function () {
   });
 
   it(`should preprocess a string and apply a rule where 'pattern' has priority over 'text'`, async function () {
+    // NOTE: this is disallowed in the config schema, but is currently allowed when using an external JSON file.
     const replacer = '***';
     const issues = await preprocessor.loadRules([{pattern: '^:', text: 'yo', replacer}]);
     issues.length.should.eql(0);

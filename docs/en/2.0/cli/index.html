@@ -801,8 +801,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../guides/execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../guides/execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1096,7 +1096,18 @@
 
   <h1>CLI Intro</h1>
 
-<p>TODO</p>
+<p>When you install Appium globally via <code>npm</code>, an executable shell script named <code>appium</code> is placed in
+your global Node <code>bin</code> folder, often also symlinked to places like <code>/usr/local/bin</code>. If your <code>PATH</code>
+is set up to look for programs in appropriate directory, then you will be able to run <code>appium</code> from
+the command line of your terminal, like any other executable. The <code>appium</code> program has three main
+subcommands, each of which has its own set of documentation:</p>
+<ol>
+<li>The <a href="args/"><code>server</code></a> subcommand starts an Appium server listening for new session requests,
+   and takes a variety of parameters related to the operation of the server and also those consumed
+   by active drivers or plugins.</li>
+<li>The <a href="./extensions">Extension</a> (<code>driver</code> and <code>plugin</code>) subcommands assist in managing Appium
+   drivers and plugins.</li>
+</ol>
 
               
             </article>

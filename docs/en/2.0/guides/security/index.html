@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#security-server-args" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -744,9 +749,52 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Appium Server Security
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Appium Server Security
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#security-server-args" class="md-nav__link">
+    Security Server Args
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#insecure-features" class="md-nav__link">
+    Insecure Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -801,8 +849,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1083,6 +1131,51 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#security-server-args" class="md-nav__link">
+    Security Server Args
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#insecure-features" class="md-nav__link">
+    Insecure Features
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -1096,7 +1189,92 @@
 
   <h1>Appium Server Security</h1>
 
-<p>TODO</p>
+<p>The Appium team makes every effort to ensure the security of the Appium server. This is especially
+important when Appium is run in a multitenant environment, or when multiple users are running
+sessions on the same Appium server. In general, you can only safely enable all Appium's features if
+all the following are true:</p>
+<ul>
+<li>You're running your own Appium server locally or within a protected internal network</li>
+<li>You're not sharing it with any untrusted parties</li>
+<li>You don't expose Appium's port(s) to the wider internet</li>
+</ul>
+<p>But because many Appium users might not be able to guarantee such a safe environment, the Appium
+team puts many features behind a security protection mechanism which forces system admins (the
+people that are in charge of starting the Appium server) to <em>explicitly opt-in</em> to these features.
+(Third-party driver and plugin authors can also <a href="../../ecosystem/build-drivers/">hide behaviour behind security
+flags</a>.)</p>
+<p>For security reasons, Appium client sessions can <em>not</em> request feature enablement via capabilities;
+this is the responsibility of the server admin who configures and launches the Appium server.</p>
+<h2 id="security-server-args">Security Server Args</h2>
+<p>The <a href="../../cli/args/">Server CLI Args</a> doc outlines three relevant arguments which may be passed to
+Appium when starting it from the command line:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--relaxed-security</code></td>
+<td>Setting this flag turns on <em>all</em> insecure features (unless blocked by <code>--deny-insecure</code>; see below)</td>
+</tr>
+<tr>
+<td><code>--allow-insecure</code></td>
+<td>Setting this flag to a comma-separated list of feature names or a path to a file containing a feature list (each name on a separate line) will allow <em>only</em> the features listed. For example, <code>--allow-insecure=adb_shell</code> will cause <em>only</em> the ADB shell execution feature to be enabled. This is true <em>unless</em> <code>--relaxed-security</code> is also used, in which case all features will still be enabled. It makes no sense to combine this flag with <code>--relaxed-security</code>.</td>
+</tr>
+<tr>
+<td><code>--deny-insecure</code></td>
+<td>This flag can likewise be set to a comma-separated list of feature names, or a path to a feature file. Any features listed here will be <em>disabled</em>, regardless of whether <code>--relaxed-security</code> is set and regardless of whether the names are also listed with <code>--allow-insecure</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="insecure-features">Insecure Features</h2>
+<p>Each Appium driver is responsible for its own security, and can create its own feature names. Thus
+you should read through the documentation for a particular driver to know which feature names it
+might use. Here is an incomplete list of examples from some of Appium's official drivers:</p>
+<table>
+<thead>
+<tr>
+<th>Feature Name</th>
+<th>Description</th>
+<th>Supported Extension(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_server_logs</code></td>
+<td>Allows retrieving of Appium server logs via the Webdriver log interface</td>
+<td>IOS, XCUITest, Android, UiAutomator2, Espresso</td>
+</tr>
+<tr>
+<td><code>adb_shell</code></td>
+<td>Allows execution of arbitrary shell commands via ADB, using the <code>mobile: shell</code> command</td>
+<td>Android, UiAutomator2, Espresso</td>
+</tr>
+<tr>
+<td><code>record_audio</code></td>
+<td>Allow recording of host machine audio inputs</td>
+<td>XCUITest</td>
+</tr>
+<tr>
+<td><code>execute_driver_script</code></td>
+<td>Allows to send a request which has multiple Appium commands.</td>
+<td>Execute Driver Plugin</td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples">Examples</h2>
+<p>To turn on the <code>get_server_logs</code> feature for my Appium server, I could start it like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium --allow-insecure<span class="o">=</span>get_server_logs
+</code></pre></div>
+<p>To turn on multiple features:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium --allow-insecure<span class="o">=</span>get_server_logs,record_audio
+</code></pre></div>
+<p>To allow all features except one:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>appium --relaxed-security --deny-insecure<span class="o">=</span>adb_shell
+</code></pre></div>
 
               
             </article>

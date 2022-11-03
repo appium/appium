@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#special-notes-for-cloud-providers" class="md-skip">
+        <a href="#appium-capabilities" class="md-skip">
           Skip to content
         </a>
       
@@ -786,11 +786,25 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
-    Special Notes for Cloud Providers
+  <a href="#appium-capabilities" class="md-nav__link">
+    Appium capabilities
   </a>
   
-    <nav class="md-nav" aria-label="Special Notes for Cloud Providers">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#always-match-and-first-match-capabilities" class="md-nav__link">
+    Always-match and first-match capabilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    Special notes for cloud providers
+  </a>
+  
+    <nav class="md-nav" aria-label="Special notes for cloud providers">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -869,8 +883,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1169,11 +1183,25 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
-    Special Notes for Cloud Providers
+  <a href="#appium-capabilities" class="md-nav__link">
+    Appium capabilities
   </a>
   
-    <nav class="md-nav" aria-label="Special Notes for Cloud Providers">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#always-match-and-first-match-capabilities" class="md-nav__link">
+    Always-match and first-match capabilities
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    Special notes for cloud providers
+  </a>
+  
+    <nav class="md-nav" aria-label="Special notes for cloud providers">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1229,8 +1257,179 @@
 
   <h1>Capabilities</h1>
 
-<p>TODO</p>
-<h2 id="special-notes-for-cloud-providers">Special Notes for Cloud Providers</h2>
+<p>"Capabilities" is the name given to the set of parameters used to start an Appium session. The
+information in the set is used to describe what sort of "capabilities" you want your session to
+have, for example, a certain mobile operating system or a certain version of a device. When you
+start your Appium session, your Appium client will include the set of capabilities you've defined
+as an object in the JSON-formatted body of the request. Capabilities are represented as key-value
+pairs, with values allowed to be any valid JSON type, including other objects. Appium will then
+examine the capabilities and make sure that it can satisfy them before proceeding to start the
+session and return an ID representing the session to your client library.</p>
+<p>The W3C WebDriver spec's <a href="https://w3c.github.io/webdriver/#capabilities">section on Capabilities</a>
+identifies a small set of 10 standard capabilities, including the following:</p>
+<table>
+<thead>
+<tr>
+<th>Capability Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>browserName</code></td>
+<td><code>string</code></td>
+<td>The name of the browser to launch and automate</td>
+</tr>
+<tr>
+<td><code>browserVersion</code></td>
+<td><code>string</code></td>
+<td>The specific version of the browser</td>
+</tr>
+<tr>
+<td><code>platformName</code></td>
+<td><code>string</code></td>
+<td>The type of platform hosting the browser</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appium-capabilities">Appium capabilities</h2>
+<p>Appium understands these browser-focused capabilities, but introduces a number of additional
+capabilities. According to the WebDriver spec, any
+non-standard "extension capabilities" must include a namespace prefix (signifying the vendor
+introducing the capability), ending in a <code>:</code>. Appium's vendor prefix is
+<code>appium:</code>, and so any Appium-specific capabilities must include this prefix. Depending on which
+client you are using, the prefix may be added automatically or in conjunction with certain
+interfaces, but it is always a good practice to explicitly include it for clarity.</p>
+<p>Here is a list of all the globally-recognized Appium capabilities. Notes:</p>
+<ul>
+<li>Individual drivers and plugins can support other capabilities, so refer to their documentation for lists of extension-specific
+capability names.</li>
+<li>Some drivers might not implement support for all of these capabilities</li>
+<li>A few Appium extension capabilities are required to start any Appium session; these are noted below as "Required"</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Capability&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<th>Type</th>
+<th>Required?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platformName</code></td>
+<td><code>string</code></td>
+<td>Required</td>
+<td>The type of platform hosting the app or browser</td>
+</tr>
+<tr>
+<td><code>appium:automationName</code></td>
+<td><code>string</code></td>
+<td>Required</td>
+<td>The name of the Appium driver to use</td>
+</tr>
+<tr>
+<td><code>browserName</code></td>
+<td><code>string</code></td>
+<td></td>
+<td>The name of the browser to launch and automate, if the driver supports web browsers as a special case</td>
+</tr>
+<tr>
+<td><code>appium:app</code></td>
+<td><code>string</code></td>
+<td></td>
+<td>The path to an installable application</td>
+</tr>
+<tr>
+<td><code>appium:deviceName</code></td>
+<td><code>string</code></td>
+<td></td>
+<td>The name of a particular device to automate, e.g., <code>iPhone 14</code> (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the <code>appium:udid</code> capability).</td>
+</tr>
+<tr>
+<td><code>appium:platformVersion</code></td>
+<td><code>string</code></td>
+<td></td>
+<td>The version of a platform, e.g., for iOS, <code>16.0</code></td>
+</tr>
+<tr>
+<td><code>appium:newCommandTimeout</code></td>
+<td><code>number</code></td>
+<td></td>
+<td>The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down</td>
+</tr>
+<tr>
+<td><code>appium:noReset</code></td>
+<td><code>boolean</code></td>
+<td></td>
+<td>If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:fullReset</code></td>
+<td><code>boolean</code></td>
+<td></td>
+<td>If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:eventTimings</code></td>
+<td><code>boolean</code></td>
+<td></td>
+<td>If true, instruct an Appium driver to collect <a href="../event-timing/">Event Timings</a> (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:printPageSourceOnFindFailure</code></td>
+<td><code>boolean</code></td>
+<td></td>
+<td>If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default <code>false</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Some drivers place more complex constraints on capabilities as a group. For example, while the
+<code>appium:app</code> and <code>browserName</code> capabilities are listed above as optional, if you want to launch
+a session with a specific app, the XCUITest driver requires that at least one of <code>appium:app</code>,
+<code>browserName</code>, or <code>appium:bundleId</code> are included in the capabilities (otherwise it will not know
+what app to install and/or launch and will simply open a session on the home screen). Each driver
+will document how it interprets these capabilities and any other platform-specific requirements.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Capabilities are like parameters used when starting a session. After the capabilities are sent
+and the session is started, they cannot be changed. If a driver supports updating aspects of
+its behaviour in the course of a session, it will provide a <a href="../settings/">Setting</a> for this
+purpose instead of, or in addition to, a capability.</p>
+</div>
+<p>Each Appium client has its own way of constructing capabilities and starting a session. For
+examples of doing this in each client library, head to the <a href="../../ecosystem/">Ecosystem</a> page
+and click through to the appropriate client documentation.</p>
+<h2 id="always-match-and-first-match-capabilities">Always-match and first-match capabilities</h2>
+<p>The W3C spec allows clients to give the Appium server some flexibility in the kind of session it
+creates in response to a new session request. This is through the concept of "always-match" and
+"first-match" capabilities:</p>
+<ul>
+<li>Always-match capabilities consist of a single set of capabilities, every member of which must be satisfied by the server in order for the new session request to proceed.</li>
+<li>First-match capabilities consist of an array of capability sets. Each set is merged with the always-match capabilities, and the first set that the server knows how to handle will be the set that is used to start the session.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Check out the <a href="https://w3c.github.io/webdriver/#processing-capabilities">spec itself</a> or
+a <a href="https://github.com/jlipps/simple-wd-spec#processing-capabilities">summarized version</a> for
+a more in-depth description of how capabilities are processed.</p>
+</div>
+<p>In practice, use of first-match capabilities is not necessary or recommended for use with Appium.
+Instead, we recommend that you define the explicit set of capabilities you want the Appium
+server to handle. These will be encoded as the always-match capabilities, and the array of
+first-match capabilities will be empty.</p>
+<p>That being said, Appium <em>does</em> understand always-match and first-match capabilities as
+defined in the W3C spec, so if you use these features, Appium will work as expected. The process of
+defining always-match and first-match capabilities is unique to each client library, so refer to
+the documentation for your client library to see examples of how it works.</p>
+<h2 id="special-notes-for-cloud-providers">Special notes for cloud providers</h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section is not intended for end-users of Appium; it is intended for developers building
+Appium-compatible cloud services.</p>
+</div>
 <p>When managing an Appium cloud, your users may wish to target various independent versions of Appium
 drivers and plugins. It is of course up to each service provider how they wish to implement the
 discovery, installation, and availability of any official or third party drivers or plugins. <em>But

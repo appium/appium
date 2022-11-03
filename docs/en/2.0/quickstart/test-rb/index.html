@@ -803,8 +803,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../../guides/execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1098,13 +1098,13 @@
 
   <h1>Write a Test (Ruby)</h1>
 
-<p>The <a href="https://github.com/appium/ruby_lib">AppiumLib</a> and the <a href="https://github.com/appium/ruby_lib_core">AppiumLibCore</a> are Appium officcial client libraries in Ruby, which are available via gem under the <a href="https://rubygems.org/gems/appium_lib">appium_lib</a> and the <a href="https://rubygems.org/gems/appium_lib_core">appium_lib_core</a> package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so intalling these libraries include the selenium binding.</p>
+<p>The <a href="https://github.com/appium/ruby_lib">AppiumLib</a> and the <a href="https://github.com/appium/ruby_lib_core">AppiumLibCore</a> (<strong>recommended</strong>) are official Appium client libraries in Ruby, which are available via gem under the <a href="https://rubygems.org/gems/appium_lib">appium_lib</a> and the <a href="https://rubygems.org/gems/appium_lib_core">appium_lib_core</a> package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so installing these libraries include the selenium binding. We recommend <code>appium_lib_core</code> if you need a less complex client-side solution. The <code>appium_lib</code> has some useful methods the core does not have, but for the cost of greater complexity.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>gem install appium_lib
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># or</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>gem install appium_lib_core
 </code></pre></div>
 <p>The <code>appium_lib_core</code> is the main part as an Appium client.
-<code>appium_lib</code> has various helper methods, but the driver instance was ordinally designed to be used as a global variable. It could causes an issue to handle the instance.
+<code>appium_lib</code> has various helper methods, but the driver instance was ordinary designed to be used as a global variable. It could causes an issue to handle the instance.
 <code>appium_lib_core</code> does not have such a global variable.</p>
 <p>This example is by the <code>appium_lib_core</code> with <code>test-unit</code> gem module.
 Tes code in <code>appium_lib</code> should be similar.</p>
@@ -1145,7 +1145,7 @@ library or everything that's happening here, so we'll leave the code itself unex
 <ul>
 <li>You may want to read up particularly on Appium <a href="../../guides/caps/">Capabilities</a>.</li>
 <li><a href="https://github.com/appium/ruby_lib_core/tree/master/test/functional">functional test code</a> in the appium_lib_core GitHub repository should help to find more working example.</li>
-<li>Documentation <a href="https://www.rubydoc.info/github/appium/ruby_lib_core">appium_lib_core</a> and <a href="https://www.rubydoc.info/github/appium/ruby_lib">appium_lib</a> also helps to find avvailable methods.</li>
+<li>Documentation <a href="https://www.rubydoc.info/github/appium/ruby_lib_core">appium_lib_core</a> and <a href="https://www.rubydoc.info/github/appium/ruby_lib">appium_lib</a> also helps to find available methods.</li>
 </ul>
 </div>
 <p>Basically, this code is doing the following:</p>

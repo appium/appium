@@ -1014,8 +1014,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1527,7 +1527,7 @@
 <h2 id="breaking-changes">Breaking Changes</h2>
 <p>Have a look at the <a href="https://github.com/appium/appium/releases">Appium 2.0 release notes</a> for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do do account for them.</p>
 <h3 id="installing-drivers-during-setup"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Installing drivers during setup</h3>
-<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by <code>npm install -g appium</code>), will install the Appium server only, but no drivers. To install drivers, you must instead use the new <a href="../../cli/extensions/">Appium extension CLI</a>. For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:</p>
+<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by <code>npm install -g appium@next</code>), will install the Appium server only, but no drivers. To install drivers, you must instead use the new <a href="../../cli/extensions/">Appium extension CLI</a>. For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium driver install xcuitest
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>appium driver install uiautomator2
 </code></pre></div>

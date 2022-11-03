@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#selenium-grid-4" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -793,8 +798,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -842,9 +847,45 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Appium and Selenium Grid
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Appium and Selenium Grid
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#selenium-grid-4" class="md-nav__link">
+    Selenium Grid 4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selenium-grid-3" class="md-nav__link">
+    Selenium Grid 3
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1083,6 +1124,44 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#selenium-grid-4" class="md-nav__link">
+    Selenium Grid 4
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selenium-grid-3" class="md-nav__link">
+    Selenium Grid 3
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -1096,7 +1175,66 @@
 
   <h1>Appium and Selenium Grid</h1>
 
-<p>TODO</p>
+<h2 id="selenium-grid-4">Selenium Grid 4</h2>
+<p>The <strong>relay</strong> feature in Grid 4 allows you to proxy Appium requests to an Appium server instance.</p>
+<p>Please check <a href="https://www.selenium.dev/documentation/grid/configuration/toml_options/#relaying-commands-to-a-service-endpoint-that-supports-webdriver">Relaying commands to a service endpoint that supports WebDriver</a> and <a href="https://www.youtube.com/watch?v=3_aP2rsqZD0">Selenium Grid 4 and Appium together in harmony</a> about the configuration and for more details.</p>
+<h2 id="selenium-grid-3">Selenium Grid 3</h2>
+<p>You are able to register your Appium server with a local <a href="https://www.selenium.dev/documentation/legacy/selenium_3/grid_3/">Selenium Grid 3</a>
+(<a href="https://www.selenium.dev/documentation/legacy/grid_3/setting_up_your_own_grid/">setup docs</a>) by using the
+<code>--nodeconfig</code> server argument.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium server --nodeconfig /path/to/nodeconfig.json --base-path<span class="o">=</span>/wd/hub
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>In the node config file you have to define the <span class="sb">`</span>browserName<span class="sb">`</span>,
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="sb">`</span>version<span class="sb">`</span> and <span class="sb">`</span>platform<span class="sb">`</span> and based on these parameters the grid
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>will re-direct your <span class="nb">test</span> to the right device. You will also need to
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>configure your **host** details and the **Selenium Grid** details. For
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>a full list of all parameters and descriptions look
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="o">[</span>here<span class="o">](</span>https://www.selenium.dev/documentation/legacy/selenium_3/grid_setup/<span class="o">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Once you start the appium server and it registers with the grid,
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>you will see your device on the grid console page:
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="sb">`</span>http://**<span class="se">\&lt;</span>grid-ip-adress<span class="se">\&gt;</span>**:**<span class="se">\&lt;</span>grid-port<span class="se">\&gt;</span>**/grid/console<span class="sb">`</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>New session capabilities should use an <span class="sb">`</span>appium:<span class="sb">`</span> prefix <span class="k">for</span> non-W3C-standard capabilities such as
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="sb">`</span>automationName<span class="sb">`</span>, since the grid appends the given capabilities <span class="k">in</span> both <span class="sb">`</span>desiredCapabilities<span class="sb">`</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>and <span class="sb">`</span>firstMatch<span class="sb">`</span> <span class="k">in</span> <span class="sb">`</span>capabilities<span class="sb">`</span>.
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="c1">### Example Grid Node Configuration JSON</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="sb">```</span>json
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="o">{</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>  <span class="s2">&quot;capabilities&quot;</span>:
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>      <span class="o">[</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="o">{</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>          <span class="s2">&quot;browserName&quot;</span>: <span class="s2">&quot;&lt;e.g._iPhone5_or_iPad4&gt;&quot;</span>,
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>          <span class="s2">&quot;version&quot;</span>:<span class="s2">&quot;&lt;version_of_iOS_e.g._7.1&gt;&quot;</span>,
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>          <span class="s2">&quot;maxInstances&quot;</span>: <span class="m">1</span>,
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>          <span class="s2">&quot;platform&quot;</span>:<span class="s2">&quot;&lt;platform_e.g._MAC_or_ANDROID&gt;&quot;</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>        <span class="o">}</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>      <span class="o">]</span>,
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>  <span class="s2">&quot;configuration&quot;</span>:
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>  <span class="o">{</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>    <span class="s2">&quot;cleanUpCycle&quot;</span>:2000,
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>    <span class="s2">&quot;timeout&quot;</span>:30000,
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>    <span class="s2">&quot;proxy&quot;</span>: <span class="s2">&quot;org.openqa.grid.selenium.proxy.DefaultRemoteProxy&quot;</span>,
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>    <span class="s2">&quot;url&quot;</span>:<span class="s2">&quot;http://&lt;host_name_appium_server_or_ip-address_appium_server&gt;:&lt;appium_port&gt;/wd/hub&quot;</span>,
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>    <span class="s2">&quot;host&quot;</span>: <span class="s2">&quot;&lt;host_name_appium_server_or_ip-address_appium_server&gt;&quot;</span>,
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    <span class="s2">&quot;port&quot;</span>: &lt;appium_port&gt;,
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    <span class="s2">&quot;maxSession&quot;</span>: <span class="m">1</span>,
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>    <span class="s2">&quot;register&quot;</span>: true,
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>    <span class="s2">&quot;registerCycle&quot;</span>: <span class="m">5000</span>,
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>    <span class="s2">&quot;hubPort&quot;</span>: &lt;grid_port&gt;,
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>    <span class="s2">&quot;hubHost&quot;</span>: <span class="s2">&quot;&lt;Grid_host_name_or_grid_ip-address&gt;&quot;</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>    <span class="s2">&quot;hubProtocol&quot;</span>: <span class="s2">&quot;&lt;Protocol_of_Grid_defaults_to_http&gt;&quot;</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>  <span class="o">}</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="o">}</span>
+</code></pre></div>
+<p>If <code>url</code>, <code>host</code>, and <code>port</code> are not given, the config will be auto updated
+to point to localhost:whatever-port-Appium-started-on.</p>
+<p>If your Appium server is running on a different machine to your Selenium Grid server, make sure you use an external name/IP address in your <code>host</code> &amp; <code>url</code> docs; <code>localhost</code> and <code>127.0.0.1</code> will prevent Selenium Grid from connecting correctly.</p>
 
               
             </article>

@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#using-appiums-extension-cli" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -716,9 +721,45 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Managing Appium Drivers and Plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Managing Appium Drivers and Plugins
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-appiums-extension-cli" class="md-nav__link">
+    Using Appium's Extension CLI
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#do-it-yourself-with-npm" class="md-nav__link">
+    Do-It-Yourself with npm
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -801,8 +842,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        Execute Script Overloads
+      <a href="../execute-methods/" class="md-nav__link">
+        Execute Methods
       </a>
     </li>
   
@@ -1083,6 +1124,44 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-appiums-extension-cli" class="md-nav__link">
+    Using Appium's Extension CLI
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#do-it-yourself-with-npm" class="md-nav__link">
+    Do-It-Yourself with npm
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -1096,7 +1175,65 @@
 
   <h1>Managing Appium Drivers and Plugins</h1>
 
-<p>TODO</p>
+<p>To do anything useful with Appium, you need to have at least one <a href="../../intro/drivers/">Driver</a>
+installed, otherwise Appium won't know how to automate anything. There is an entire
+<a href="../../ecosystem/">Ecosystem</a> of drivers and plugins out there! </p>
+<p>This guide helps explain how to manage these drivers and plugins. There are
+two basic strategies: using Appium's extension CLI interface, or managing extensions yourself in an
+npm-based project.</p>
+<blockquote>
+<p>Note: Alternative package managers are not supported by Appium at the time of this writing.</p>
+</blockquote>
+<h2 id="using-appiums-extension-cli">Using Appium's Extension CLI</h2>
+<p>With Appium's <a href="../../cli/extensions/">Extension CLI</a>, you let Appium manage drivers and plugins for
+you.  You will use CLI commands to tell Appium which extensions you would like to install, update,
+or remove. Here's an example of how you might install a driver using the CLI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium driver install xcuitest
+</code></pre></div>
+<p>This command will install the latest version of the <a href="https://github.com/appium/appium-xcuitest-driver">XCUITest Driver</a>. The Extension CLI comes with a variety
+of commands and parameters; see the documentation for that command for all the specifics.</p>
+<p>The all-important question when Appium is managing your extensions for you is: where are they installed?
+Appium manages extensions in a directory specified by the <code>APPIUM_HOME</code> environment variable. You
+can set that variable to anything you like, and Appium will manage its extensions there. You can
+therefore also use the <code>APPIUM_HOME</code> environment variable to manage different sets of extensions,
+for example if you want to have the same driver installed at conflicting versions:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">APPIUM_HOME</span><span class="o">=</span>/path/to/home1 appium driver install xcuitest@4.11.1
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">APPIUM_HOME</span><span class="o">=</span>/path/to/home2 appium driver install xcuitest@4.11.2
+</code></pre></div>
+<p>Running these commands will result in two separate <code>APPIUM_HOME</code> directories being created and
+populated with the corresponding version of the XCUITest driver. You can then use the same
+environment variables to direct Appium which version to use on launch:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">APPIUM_HOME</span><span class="o">=</span>/path/to/home1 appium  <span class="c1"># use xcuitest driver 4.11.1</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">APPIUM_HOME</span><span class="o">=</span>/path/to/home2 appium  <span class="c1"># use xcuitest driver 4.11.2</span>
+</code></pre></div>
+<p>You don't need to set <code>APPIUM_HOME</code> if you don't want to! By default, Appium will set <code>APPIUM_HOME</code>
+to the directory <code>.appium</code> in your user home directory.</p>
+<h2 id="do-it-yourself-with-npm">Do-It-Yourself with <code>npm</code></h2>
+<p>Because Appium and Appium drivers are Node.js programs, if you are integrating your Appium scripts
+into your own Node.js project, there is an alternative way to manage drivers and plugins: via <code>npm</code>, like any other dependency.
+Basically, whenever you run Appium, if you have not explicitly set <code>APPIUM_HOME</code>, it will:</p>
+<ol>
+<li>Try to determine whether the <em>current directory</em> is inside an <code>npm</code> package.</li>
+<li>If so, it will check whether <code>appium</code> is a dependency (dev, prod, or peer) in the project's
+   <code>package.json</code></li>
+<li>If so, <em>unless you have specified <code>APPIUM_HOME</code> in your environment</em>, Appium will ignore load drivers and plugins defined in that
+   <code>package.json</code> file instead.</li>
+</ol>
+<p>This means you are freely able to add Appium drivers and plugins as regular package dependencies or dev dependencies. For
+example, if your project has a <code>package.json</code> which includes the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;devDependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;appium&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^2.0.0&quot;</span><span class="p">,</span><span class="w"></span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;appium-xcuitest-driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;^4.11.1&quot;</span><span class="w"></span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Then, if you run <code>npx appium</code> inside your project, Appium will detect that it is a dependency of
+the project, and will load the XCUITest driver which is also listed as a dev dependency for the
+project.</p>
+<p>This strategy is <em>only</em> recommended if you are already using <code>npm</code> for your project.
+Otherwise, it is recommended that you use Appium's Extension CLI and, if necessary, adjust
+<code>APPIUM_HOME</code> to change the location of stored extensions.</p>
 
               
             </article>

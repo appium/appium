@@ -3,5 +3,8 @@
     "outDir": "build"
   },
   "extends": "../../config/tsconfig.plugin.json",
-  "include": ["lib"]
+  "include": ["lib"],
+  "references": [{
+    "path": "../base-plugin"
+  }]
 }

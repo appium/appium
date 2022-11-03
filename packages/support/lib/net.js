@@ -11,18 +11,27 @@ import FormData from 'form-data';
 const DEFAULT_TIMEOUT_MS = 4 * 60 * 1000;
 
 /**
+ * Type guard for param to {@linkcode toAxiosAuth}
+ * @param {any} value
+ * @returns {value is AuthCredentials | import('axios').AxiosBasicCredentials}
+ */
+function isAxiosAuth(value) {
+  return _.isPlainObject(value);
+}
+
+/**
  * Converts {@linkcode AuthCredentials} to credentials understood by {@linkcode axios}.
  * @param {AuthCredentials | import('axios').AxiosBasicCredentials} [auth]
  * @returns {import('axios').AxiosBasicCredentials?}
  */
 function toAxiosAuth(auth) {
-  if (!_.isPlainObject(auth)) {
+  if (!isAxiosAuth(auth)) {
     return null;
   }
 
   const axiosAuth = {
-    username: _.get(auth, 'username', _.get(auth, 'user')),
-    password: _.get(auth, 'password', _.get(auth, 'pass')),
+    username: 'username' in auth ? auth.username : auth.user,
+    password: 'password' in auth ? auth.password : auth.pass,
   };
   return axiosAuth.username && axiosAuth.password ? axiosAuth : null;
 }

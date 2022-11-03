@@ -102,7 +102,7 @@ Or by clicking the huge Start Server button inside of Appium Desktop.
 Appium will now show you a little welcome message showing the version of Appium
 you're running and what port it's listening on (the default is `4723`). This
 port information is vital since you will have to direct your test client to
-make sure to connect to Appium on this port. If you want to change, the port,
+make sure to connect to Appium on this port. If you want to change the port,
 you can do so by using the `-p` flag when starting Appium (be sure to check out
 the full list of [server
 parameters](/docs/en/writing-running-appium/server-args.md)).

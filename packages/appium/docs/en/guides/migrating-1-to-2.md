@@ -41,7 +41,7 @@ The path was `/path/to/appium/node_modules`.
 For example, `appium-webdriveragent` to build WebDriverAgent manually was `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
 
 Appium 2.0 installs such dependencies in `APPIUM_HOME` environment variable. The default path is `~/.appium`.
-Then, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
+So, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
 
 ### :bangbang: Chromedriver installation flags
 

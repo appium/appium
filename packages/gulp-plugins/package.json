@@ -44,9 +44,9 @@
   },
   "dependencies": {
     "@appium/eslint-config-appium": "^7.0.0",
-    "@babel/core": "7.19.6",
+    "@babel/core": "7.20.2",
     "@babel/eslint-parser": "7.19.1",
-    "@babel/preset-env": "7.19.4",
+    "@babel/preset-env": "7.20.2",
     "@octokit/rest": "19.0.5",
     "@types/fancy-log": "2.0.0",
     "@types/gulp": "4.0.9",

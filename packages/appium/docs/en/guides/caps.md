@@ -70,6 +70,33 @@ Each Appium client has its own way of constructing capabilities and starting a s
 examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
 and click through to the appropriate client documentation.
 
+## `appium:options`
+
+If you use a lot of `appium:` capabilities in your tests, it can get a little repetitive. You can
+combine all capabilities as an object value of a single `appium:options` capability instead, in
+which case you don't need to use prefixes on the capabilities inside the object. For example:
+
+```json
+{
+    "platformName": "iOS",
+    "appium:options": {
+        "automationName": "XCUITest",
+        "platformVersion": "16.0",
+        "app": "/path/to/your.app",
+        "deviceName": "iPhone 12",
+        "noReset": true
+    }
+}
+```
+
+Note that constructing a capability value which is itself an object differs by language; refer to
+your client documentation for further examples on how to achieve this.
+
+!!! warning
+
+    If you include the same capabilities both inside and outside of `appium:options`, the values
+    inside of `appium:options` take precedence.
+
 ## Always-match and first-match capabilities
 
 The W3C spec allows clients to give the Appium server some flexibility in the kind of session it

@@ -93,7 +93,7 @@
     "asyncbox": "2.9.2",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.2.0",
-    "chai": "4.3.6",
+    "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
     "eslint": "8.27.0",

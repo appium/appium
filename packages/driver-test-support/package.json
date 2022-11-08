@@ -51,7 +51,7 @@
     "chai": "4.3.7",
     "get-port": "5.1.1",
     "lodash": "4.17.21",
-    "sinon": "14.0.1",
+    "sinon": "14.0.2",
     "source-map-support": "0.5.21"
   },
   "peerDependencies": {

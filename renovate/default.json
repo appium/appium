@@ -3,18 +3,17 @@
   "description": "Common Renovate config for Appium packages",
   "extends": [
     "config:js-app",
-    ":semanticPrefixChore",
+    "group:definitelyTyped",
     "helpers:pinGitHubActionDigests",
+    "workarounds:typesNodeVersioning",
+    ":automergePatch",
+    ":automergeMinor",
+    ":automergeDigest",
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
-    "group:definitelyTyped",
-    "workarounds:typesNodeVersioning"
+    ":semanticPrefixChore"
   ],
   "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    },
     {
       "matchPackageNames": [
         "@types/wrap-ansi",
@@ -53,6 +52,12 @@
       "matchPackageNames": ["teen_process", "@types/teen_process"],
       "groupName": "teen_process-related packages",
       "groupSlug": "teen_process"
+    },
+    {
+      "matchPackagePrefixes": ["@appium/"],
+      "excludePackageNames": ["@appium/eslint-config-appium"],
+      "groupName": "Appium-related packages",
+      "groupSlug": "appium"
     }
   ],
   "semanticCommits": "enabled",

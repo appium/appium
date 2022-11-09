@@ -9,8 +9,6 @@ This is an official Appium plugin designed to facilitate image comparison, visua
 
 ## Prerequisites
 * Appium Server 2.0+
-* `@appium/opencv` (installed as part of this image plugin)
-    - Note that this plugin no longer needs `opencv4nodejs`
 
 ## Installation - Server
 

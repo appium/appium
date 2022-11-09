@@ -8,15 +8,11 @@ import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
 import YAML from 'yaml';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
 import {INSTALL_TYPE_NPM} from './extension-config';
 import {packageDidChange} from './package-changed';
-
-/**
- * Current configuration schema revision!
- */
-const CONFIG_SCHEMA_REV = 2;
+import {migrate} from './manifest-migrations';
 
 /**
  * The name of the prop (`drivers`) used in `extensions.yaml` for drivers.
@@ -36,7 +32,7 @@ const CONFIG_DATA_PLUGIN_KEY = `${PLUGIN_TYPE}s`;
 const INITIAL_MANIFEST_DATA = Object.freeze({
   [CONFIG_DATA_DRIVER_KEY]: Object.freeze({}),
   [CONFIG_DATA_PLUGIN_KEY]: Object.freeze({}),
-  schemaRev: CONFIG_SCHEMA_REV,
+  schemaRev: CURRENT_SCHEMA_REV,
 });
 
 /**
@@ -93,23 +89,21 @@ export class Manifest {
    *
    * Contains proxies for automatic persistence on disk
    * @type {ManifestData}
-   * @private
    */
-  _data;
+  #data;
 
   /**
    * Path to `APPIUM_HOME`.
-   * @private
    * @type {Readonly<string>}
    */
-  _appiumHome;
+  #appiumHome;
 
   /**
    * Path to `extensions.yaml`
    * @type {string}
    * Not set until {@link Manifest.read} is called.
    */
-  _manifestPath;
+  #manifestPath;
 
   /**
    * Helps avoid writing multiple times.
@@ -118,10 +112,9 @@ export class Manifest {
    * set to a `Promise`. When the call to `write()` is complete, the `Promise`
    * will resolve and then this value will be set to `undefined`.  Concurrent calls
    * made while this value is a `Promise` will return the `Promise` itself.
-   * @private
    * @type {Promise<boolean>|undefined}
    */
-  _writing;
+  #writing;
 
   /**
    * Helps avoid reading multiple times.
@@ -130,10 +123,9 @@ export class Manifest {
    * set to a `Promise`. When the call to `read()` is complete, the `Promise`
    * will resolve and then this value will be set to `undefined`.  Concurrent calls
    * made while this value is a `Promise` will return the `Promise` itself.
-   * @private
    * @type {Promise<void>|undefined}
    */
-  _reading;
+  #reading;
 
   /**
    * Sets internal data to a fresh clone of {@link INITIAL_MANIFEST_DATA}
@@ -143,8 +135,8 @@ export class Manifest {
    * @private
    */
   constructor(appiumHome) {
-    this._appiumHome = appiumHome;
-    this._data = _.cloneDeep(INITIAL_MANIFEST_DATA);
+    this.#appiumHome = appiumHome;
+    this.#data = _.cloneDeep(INITIAL_MANIFEST_DATA);
   }
 
   /**
@@ -187,14 +179,14 @@ export class Manifest {
      */
     const queue = [
       // look at `package.json` in `APPIUM_HOME` only
-      onMatch(path.join(this._appiumHome, 'package.json')),
+      onMatch(path.join(this.#appiumHome, 'package.json')),
     ];
 
     // add dependencies to the queue
     await new B((resolve, reject) => {
       glob(
         'node_modules/{*,@*/*}/package.json',
-        {cwd: this._appiumHome, silent: true, absolute: true},
+        {cwd: this.#appiumHome, silent: true, absolute: true},
         // eslint-disable-next-line promise/prefer-await-to-callbacks
         (err) => {
           if (err) {
@@ -221,7 +213,7 @@ export class Manifest {
    * @returns {boolean}
    */
   hasDriver(name) {
-    return Boolean(this._data.drivers[name]);
+    return Boolean(this.#data.drivers[name]);
   }
 
   /**
@@ -230,7 +222,7 @@ export class Manifest {
    * @returns {boolean}
    */
   hasPlugin(name) {
-    return Boolean(this._data.plugins[name]);
+    return Boolean(this.#data.plugins[name]);
   }
 
   /**
@@ -254,6 +246,7 @@ export class Manifest {
       appiumVersion: pkgJson.peerDependencies?.appium,
       installType: INSTALL_TYPE_NPM,
       installSpec: `${pkgJson.name}@${pkgJson.version}`,
+      installPath: extensionPath,
     };
 
     if (isDriver(pkgJson)) {
@@ -294,22 +287,22 @@ export class Manifest {
    */
   addExtension(extType, extName, extData) {
     const data = _.clone(extData);
-    this._data[`${extType}s`][extName] = data;
+    this.#data[`${extType}s`][extName] = data;
     return data;
   }
 
   /**
-   * Returns the APPIUM_HOME path
+   * Returns the `APPIUM_HOME` path
    */
   get appiumHome() {
-    return this._appiumHome;
+    return this.#appiumHome;
   }
 
   /**
-   * Returns the path to the manifest file
+   * Returns the path to the manifest file (`extensions.yaml`)
    */
   get manifestPath() {
-    return this._manifestPath;
+    return this.#manifestPath;
   }
 
   /**
@@ -320,7 +313,7 @@ export class Manifest {
    * @returns {ExtRecord<ExtType>}
    */
   getExtensionData(extType) {
-    return this._data[/** @type {string} */ (`${extType}s`)];
+    return this.#data[/** @type {string} */ (`${extType}s`)];
   }
 
   /**
@@ -330,23 +323,23 @@ export class Manifest {
    *
    * If `APPIUM_HOME` contains a `package.json` with an `appium` dependency, then a hash of the `package.json` will be taken. If this hash differs from the last hash, the contents of `APPIUM_HOME/node_modules` will be scanned for extensions that may have been installed outside of the `appium` CLI.  Any found extensions will be added to the manifest file, and if so, the manifest file will be written to disk.
    *
-   * Only one read operation should happen at a time.  This is controlled via the {@link Manifest._reading} property.
+   * Only one read operation should happen at a time.
    * @returns {Promise<ManifestData>} The data
    */
   async read() {
-    if (this._reading) {
-      await this._reading;
-      return this._data;
+    if (this.#reading) {
+      await this.#reading;
+      return this.#data;
     }
 
-    this._reading = (async () => {
+    this.#reading = (async () => {
       /** @type {ManifestData} */
       let data;
       let isNewFile = false;
-      await this._setManifestPath();
+      await this.#setManifestPath();
       try {
-        log.debug(`Reading ${this._manifestPath}...`);
-        const yaml = await fs.readFile(this._manifestPath, 'utf8');
+        log.debug(`Reading ${this.#manifestPath}...`);
+        const yaml = await fs.readFile(this.#manifestPath, 'utf8');
         data = YAML.parse(yaml);
         log.debug(`Parsed manifest file: ${JSON.stringify(data, null, 2)}`);
       } catch (err) {
@@ -354,10 +347,12 @@ export class Manifest {
           data = _.cloneDeep(INITIAL_MANIFEST_DATA);
           isNewFile = true;
         } else {
-          if (this._manifestPath) {
+          if (this.#manifestPath) {
             throw new Error(
               `Appium had trouble loading the extension installation ` +
-                `cache file (${this._manifestPath}). It may be invalid YAML. Specific error: ${err.message}`
+                `cache file (${this.#manifestPath}). It may be invalid YAML. Specific error: ${
+                  err.message
+                }`
             );
           } else {
             throw new Error(
@@ -367,47 +362,58 @@ export class Manifest {
         }
       }
 
-      this._data = data;
-      let installedExtensionsChanged = false;
-      if (
-        (await env.hasAppiumDependency(this.appiumHome)) &&
-        (await packageDidChange(this.appiumHome))
-      ) {
-        installedExtensionsChanged = await this.syncWithInstalledExtensions();
+      this.#data = data;
+
+      let shouldWrite = false;
+
+      if ((data.schemaRev ?? 0) < CURRENT_SCHEMA_REV) {
+        log.debug(
+          `Updating manifest schema from rev ${data.schemaRev ?? '(none)'} to ${CURRENT_SCHEMA_REV}`
+        );
+        shouldWrite = await migrate(this, this.#data);
       }
 
-      if (isNewFile || installedExtensionsChanged) {
+      if (
+        shouldWrite ||
+        ((await env.hasAppiumDependency(this.appiumHome)) &&
+          (await packageDidChange(this.appiumHome)))
+      ) {
+        shouldWrite = await this.syncWithInstalledExtensions();
+      }
+
+      if (isNewFile || shouldWrite) {
         await this.write();
       }
     })();
     try {
-      await this._reading;
-      return this._data;
+      await this.#reading;
+      return this.#data;
     } finally {
-      this._reading = undefined;
+      this.#reading = undefined;
     }
   }
 
   /**
-   * Ensures {@link Manifest._manifestPath} is set.
+   * Ensures the internal manifest path is set.
    *
    * Creates the directory if necessary.
-   * @private
    * @returns {Promise<string>}
    */
-  async _setManifestPath() {
-    if (!this._manifestPath) {
-      this._manifestPath = await env.resolveManifestPath(this._appiumHome);
+  async #setManifestPath() {
+    if (!this.#manifestPath) {
+      this.#manifestPath = await env.resolveManifestPath(this.#appiumHome);
 
       /* istanbul ignore if */
-      if (path.relative(this._appiumHome, this._manifestPath).startsWith('.')) {
+      if (path.relative(this.#appiumHome, this.#manifestPath).startsWith('.')) {
         throw new Error(
-          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${this.appiumHome}, manifest file: ${this._manifestPath}`
+          `Mismatch between location of APPIUM_HOME and manifest file. APPIUM_HOME: ${
+            this.appiumHome
+          }, manifest file: ${this.#manifestPath}`
         );
       }
     }
 
-    return this._manifestPath;
+    return this.#manifestPath;
   }
 
   /**
@@ -419,34 +425,35 @@ export class Manifest {
    * @returns {Promise<boolean>} Whether the data was written
    */
   async write() {
-    if (this._writing) {
-      return this._writing;
+    if (this.#writing) {
+      return this.#writing;
     }
-    this._writing = (async () => {
-      await this._setManifestPath();
+    this.#writing = (async () => {
+      await this.#setManifestPath();
       try {
-        await fs.mkdirp(path.dirname(this._manifestPath));
+        await fs.mkdirp(path.dirname(this.#manifestPath));
       } catch (err) {
         throw new Error(
           `Appium could not create the directory for the manifest file: ${path.dirname(
-            this._manifestPath
+            this.#manifestPath
           )}. Original error: ${err.message}`
         );
       }
       try {
-        await fs.writeFile(this._manifestPath, YAML.stringify(this._data), 'utf8');
+        await fs.writeFile(this.#manifestPath, YAML.stringify(this.#data), 'utf8');
         return true;
       } catch (err) {
         throw new Error(
-          `Appium could not write to manifest at ${this._manifestPath} using APPIUM_HOME ${this._appiumHome}. ` +
-            `Please ensure it is writable. Original error: ${err.message}`
+          `Appium could not write to manifest at ${this.#manifestPath} using APPIUM_HOME ${
+            this.#appiumHome
+          }. Please ensure it is writable. Original error: ${err.message}`
         );
       }
     })();
     try {
-      return await this._writing;
+      return await this.#writing;
     } finally {
-      this._writing = undefined;
+      this.#writing = undefined;
     }
   }
 }
@@ -472,18 +479,18 @@ export class Manifest {
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtPackageJson<T>} ExtPackageJson
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtPackageJson<ExtType>} ExtPackageJson
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifest<ExtType>} ExtManifest
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtRecord<ExtType>} ExtRecord
  */
 
 /**

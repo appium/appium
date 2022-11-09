@@ -32,7 +32,7 @@ describe('PluginConfig', function () {
   let PluginConfig;
 
   before(async function () {
-    yamlFixture = await fs.readFile(resolveFixture('extensions.yaml'), 'utf8');
+    yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
   beforeEach(function () {

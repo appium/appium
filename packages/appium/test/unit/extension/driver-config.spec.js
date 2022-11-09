@@ -27,12 +27,12 @@ describe('DriverConfig', function () {
   let MockResolveFrom;
 
   /**
-   * @type {typeof import('appium/lib/extension/driver-config').DriverConfig}
+   * @type {typeof import('../../../lib/extension/driver-config').DriverConfig}
    */
   let DriverConfig;
 
   before(async function () {
-    yamlFixture = await fs.readFile(resolveFixture('extensions.yaml'), 'utf8');
+    yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
   beforeEach(function () {

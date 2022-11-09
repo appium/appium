@@ -67,3 +67,8 @@ export const EXT_SUBCOMMAND_INSTALL = 'install';
 export const EXT_SUBCOMMAND_UNINSTALL = 'uninstall';
 export const EXT_SUBCOMMAND_UPDATE = 'update';
 export const EXT_SUBCOMMAND_RUN = 'run';
+
+/**
+ * Current revision of the manifest (`extensions.yaml`) schema
+ */
+export const CURRENT_SCHEMA_REV = 3;

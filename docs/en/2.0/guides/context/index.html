@@ -1096,7 +1096,66 @@
 
   <h1>The Context API</h1>
 
-<p>TODO</p>
+<p>A common feature of many app platforms is the ability for developers to embed web content inside of
+the platform-native app frame. This allows developers to leverage web technologies or existing web
+content for some or all of the app functionality. However, the additional complexity of mixing
+"modes" within a single application can make it difficult for automation tools that are designed to
+target the "native" elements and behaviours.</p>
+<p>Appium provides a set of APIs for working with different app modes, called "contexts", that Appium
+drivers can implement if they support automation commands in these different modes. There are three
+basic commands that Appium has added to the W3C WebDriver spec for this purpose:</p>
+<table>
+<thead>
+<tr>
+<th>Command Name</th>
+<th>Method/Route</th>
+<th>Params</th>
+<th>Description</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Get Contexts</code></td>
+<td><code>GET /session/:id/contexts</code></td>
+<td></td>
+<td>Get a list of the available contexts</td>
+<td><code>array&lt;string&gt;</code></td>
+</tr>
+<tr>
+<td><code>Get Current Context</code></td>
+<td><code>GET /session/:id/context</code></td>
+<td></td>
+<td>Get the name of the active context</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>Set Context</code></td>
+<td><code>POST /session/:id/context</code></td>
+<td><code>name</code> (<code>string)</code></td>
+<td>Switch into the context with the given <code>name</code></td>
+<td><code>null</code></td>
+</tr>
+</tbody>
+</table>
+<p>This API is flexible enough to handle a variety of semantic interpretations on the part of the
+driver. For example, the XCUITest driver includes two kinds of contexts: the native app context and
+any active webviews, as one context per webview. A call to <code>Get Contexts</code> will return the list of
+names, which you as a test author can sift through and use to switch into the appropriate context.
+As another example, the <a href="https://github.com/headspinio/appium-altunity-plugin">Appium Altunity
+Plugin</a> introduces the concept of a <code>UNITY</code>
+context, which encapsulates all the plugin's specific behaviour to ensure that when outside of the
+<code>UNITY</code> context, the active driver's usual command implementations are used.</p>
+<p>It is important to note that a call to <code>Get Contexts</code> will always contain at least one context,
+conventionally but not necessarily named <code>NATIVE_APP</code>. This is the default active context.</p>
+<p>Depending on the type of context you're in, the operation of the driver might change. The XCUITest
+driver, when targeting a webview context, will not run its typical routines for finding and
+interacting with elements. Instead, it will run a different set of routines appropriate to web
+elements. This might have a variety of consequences, like supporting a different set of locator
+strategies.</p>
+<p>The command names in the table above are generic references to the commands and not code examples.
+For examples of how to access the Context API in the language-specific client libraries, please
+visit the documentation for a given library.</p>
 
               
             </article>

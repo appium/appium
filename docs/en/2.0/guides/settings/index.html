@@ -68,6 +68,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#initializing-settings-via-capabilities" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -786,9 +791,38 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          The Settings API
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         The Settings API
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#initializing-settings-via-capabilities" class="md-nav__link">
+    Initializing Settings via Capabilities
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1083,6 +1117,37 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#initializing-settings-via-capabilities" class="md-nav__link">
+    Initializing Settings via Capabilities
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -1096,7 +1161,61 @@
 
   <h1>The Settings API</h1>
 
-<p>TODO</p>
+<p>Appium has introduced a set of extension APIs that allow you to adjust parameters for a given
+session during session execution. Called "Settings", these parameters mirror the role of
+<a href="../caps/">Capabilities</a>, but Capabilities cannot be adjusted once a session has started. Settings
+can be adjusted any number of times during the course of a session.</p>
+<p>There are 3 important points to the concept of Settings:
+ - Settings are mutable; they can be changed during a session using the Settings API
+ - Settings are only relevant during the session in which they are set. They are typically reset for each new session, though depending on the driver, some settings may persist between sessions.
+ - Settings adjust the way the appium server behaves during test automation. They don't refer to settings for the device or app under test</p>
+<p>An example of a setting would be the <code>ignoreUnimportantViews</code> setting recognized by the
+UiAutomator2 driver. The driver can be instructed to ignore lements in the view hierarchy which it
+deems irrelevant. Adjusting this setting to have a value of <code>true</code> can cause tests to run faster.
+But if you <em>want</em> to access elements which would be ignored under this setting, you could always
+reset it to <code>false</code> later in the session.</p>
+<p>Settings are implemented via the following API endpoints:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Method/Route</th>
+<th>Params</th>
+<th>Description</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Update Settings</code></td>
+<td><code>POST /session/:id/appium/settings</code></td>
+<td><code>settings</code> (<code>Record&lt;string, any&gt;</code>)</td>
+<td>Update setting values. The <code>settings</code> object needs to be a set of keys and values, where keys are the name of the settings and values are whatever value is documented as appropriate for that setting.</td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>Get Settings</code></td>
+<td><code>GET /session/:id/appium/settings</code></td>
+<td></td>
+<td>Return the current settings.</td>
+<td><code>Record&lt;string, any&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Which settings are available depends on the driver you are using. Refer to the driver's
+documentation for a list of supported settings.</p>
+<h2 id="initializing-settings-via-capabilities">Initializing Settings via Capabilities</h2>
+<p>When you want to start an Appium session with a setting in a certain state, you can do so by
+including a capability of the form <code>appium:settings[&lt;name&gt;]</code> with the appropriate value. So to turn
+on the <code>ignoreUnimportantViews</code> setting mentioned above from the very beginning of a session, you
+would construct a set of capabilities that includes the following in its JSON representation:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;appium:settings[ignoreUnimportantViews]&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"></span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Of course, initializing a setting via capabilities doesn't prevent you from changing it later on
+via the Settings API. To learn more about how to use the Settings API in the context of your
+specific client library, visit the documentation for that library.</p>
 
               
             </article>

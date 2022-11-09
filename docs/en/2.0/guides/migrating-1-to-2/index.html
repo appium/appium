@@ -752,6 +752,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#drivers-installation-path" class="md-nav__link">
+    Drivers installation path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#chromedriver-installation-flags" class="md-nav__link">
     Chromedriver installation flags
   </a>
@@ -1336,6 +1343,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#drivers-installation-path" class="md-nav__link">
+    Drivers installation path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#chromedriver-installation-flags" class="md-nav__link">
     Chromedriver installation flags
   </a>
@@ -1536,6 +1550,12 @@ If you're running in a CI environment or want to install Appium along with some 
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm install --global appium --drivers=xcuitest,uiautomator2
 </code></pre></div>
 <p>This will install Appium and the two drivers for you in one go.</p>
+<h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
+<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
+The path was <code>/path/to/appium/node_modules</code>.
+For example, <code>appium-webdriveragent</code> to build WebDriverAgent manually was <code>/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code>.</p>
+<p>Appium 2.0 installs such dependencies in <code>APPIUM_HOME</code> environment variable. The default path is <code>~/.appium</code>.
+So, the path to  <code>appium-webdriveragent</code> could be <code>$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code> after installing the XCUITest driver package.</p>
 <h3 id="chromedriver-installation-flags"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Chromedriver installation flags</h3>
 <p>In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:</p>
 <ul>

@@ -48,6 +48,7 @@
     "precommit-msg": "echo 'Pre-commit checks...'",
     "prepublishOnly": "run-s clean:artifacts build sync-pkgs",
     "reinstall": "run-s clean && npm ci",
+    "rebuild:types": "run-s clean:types build:types",
     "start": "appium",
     "sync-pkgs": "run-p sync-pkgs:*",
     "sync-pkgs:appium-readme": "sync-monorepo-packages --force --no-package-json --packages=packages/appium README.md",

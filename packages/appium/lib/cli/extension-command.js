@@ -19,6 +19,16 @@ class NotUpdatableError extends Error {}
 class NoUpdatesAvailableError extends Error {}
 
 /**
+ * Omits `driverName`/`pluginName` props from the receipt to make a {@linkcode ExtManifest}
+ * @template {ExtensionType} ExtType
+ * @param {ExtInstallReceipt<ExtType>} receipt
+ * @returns {ExtManifest<ExtType>}
+ */
+function receiptToManifest(receipt) {
+  return /** @type {ExtManifest<ExtType>} */ (_.omit(receipt, 'driverName', 'pluginName'));
+}
+
+/**
  * @template {ExtensionType} ExtType
  */
 class ExtensionCommand {
@@ -202,12 +212,12 @@ class ExtensionCommand {
   /**
    * Install an extension
    *
-   * @param {InstallArgs} args
+   * @param {InstallOpts} opts
    * @return {Promise<ExtRecord<ExtType>>} map of all installed extension names to extension data
    */
   async _install({installSpec, installType, packageName}) {
-    /** @type {ExtensionFields<ExtType>} */
-    let extData;
+    /** @type {ExtInstallReceipt<ExtType>} */
+    let receipt;
 
     if (packageName && [INSTALL_TYPE_LOCAL, INSTALL_TYPE_NPM].includes(installType)) {
       throw this._createFatalError(`When using --source=${installType}, cannot also use --package`);
@@ -220,7 +230,7 @@ class ExtensionCommand {
     /**
      * @type {InstallViaNpmArgs}
      */
-    let installOpts;
+    let installViaNpmOpts;
 
     /**
      * The probable (?) name of the extension derived from the install spec.
@@ -238,18 +248,19 @@ class ExtensionCommand {
             'it should be of the form <org>/<repo>'
         );
       }
-      installOpts = {
+      installViaNpmOpts = {
         installSpec,
-        pkgName: /** @type {string} */ (packageName),
         installType,
+        pkgName: /** @type {string} */ (packageName),
       };
       probableExtName = installSpec;
     } else if (installType === INSTALL_TYPE_GIT) {
       // git urls can have '.git' at the end, but this is not necessary and would complicate the
       // way we download and name directories, so we can just remove it
       installSpec = installSpec.replace(/\.git$/, '');
-      installOpts = {
+      installViaNpmOpts = {
         installSpec,
+        installType,
         pkgName: /** @type {string} */ (packageName),
         installType,
       };
@@ -296,7 +307,7 @@ class ExtensionCommand {
           installType = INSTALL_TYPE_NPM;
         }
       }
-      installOpts = {installSpec, pkgName, pkgVer, installType};
+      installViaNpmOpts = {installSpec, pkgName, pkgVer, installType};
     }
 
     // fail fast here if we can
@@ -308,11 +319,11 @@ class ExtensionCommand {
       );
     }
 
-    extData = await this.installViaNpm(installOpts);
+    receipt = await this.installViaNpm(installViaNpmOpts);
 
     // this _should_ be the same as `probablyExtName` as the one derived above unless
     // install type is local.
-    const extName = extData[/** @type {string} */ (`${this.type}Name`)];
+    const extName = receipt[/** @type {string} */ (`${this.type}Name`)];
 
     // check _a second time_ with the more-accurate extName
     if (this.config.isInstalled(extName)) {
@@ -325,10 +336,9 @@ class ExtensionCommand {
 
     // this field does not exist as such in the manifest (it's used as a property name instead)
     // so that's why it's being removed here.
-    delete extData[/** @type {string} */ (`${this.type}Name`)];
-
     /** @type {ExtManifest<ExtType>} */
-    const extManifest = {...extData, installType, installSpec};
+    const extManifest = receiptToManifest(receipt);
+
     const [errors, warnings] = await B.all([
       this.config.getProblems(extName, extManifest),
       this.config.getWarnings(extName, extManifest),
@@ -357,7 +367,7 @@ class ExtensionCommand {
     }
 
     // log info for the user
-    this.log.info(this.getPostInstallText({extName, extData}));
+    this.log.info(this.getPostInstallText({extName, extData: receipt}));
 
     return this.config.installedExtensions;
   }
@@ -366,22 +376,28 @@ class ExtensionCommand {
    * Install an extension via NPM
    *
    * @param {InstallViaNpmArgs} args
+   * @returns {Promise<ExtInstallReceipt<ExtType>>}
    */
   async installViaNpm({installSpec, pkgName, pkgVer, installType}) {
     const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
     const specMsg = npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
     const msg = `Installing '${installSpec}'${specMsg}`;
     try {
-      const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => {
-        const pkgJsonData = await npm.installPackage(this.config.appiumHome, pkgName, {
+      const {pkg, path} = await spinWith(this.isJsonOutput, msg, async () => {
+        const {pkg, installPath: path} = await npm.installPackage(this.config.appiumHome, pkgName, {
           pkgVer,
           installType,
         });
-        this.validatePackageJson(pkgJsonData, installSpec);
-        return pkgJsonData;
+        this.validatePackageJson(pkg, installSpec);
+        return {pkg, path};
       });
 
-      return this.getExtensionFields(pkgJsonData);
+      return this.getInstallationReceipt({
+        pkg,
+        installPath: path,
+        installType,
+        installSpec,
+      });
     } catch (err) {
       throw this._createFatalError(`Encountered an error when installing package: ${err.message}`);
     }
@@ -400,25 +416,31 @@ class ExtensionCommand {
   }
 
   /**
-   * Take an NPM module's package.json and extract Appium driver information from a special
-   * 'appium' field in the JSON data. We need this information to e.g. determine which class to
-   * load as the main driver class, or to be able to detect incompatibilities between driver and
-   * appium versions.
+   * Once a package is installed on-disk, this gathers some necessary metadata for validation.
    *
-   * @param {ExtPackageJson<ExtType>} pkgJson - the package.json data for a driver module, as if it had been straightforwardly 'require'd
-   * @returns {ExtensionFields<ExtType>}
+   * @param {GetInstallationReceiptOpts<ExtType>} opts
+   * @returns {ExtInstallReceipt<ExtType>}
    */
-  getExtensionFields(pkgJson) {
-    const {appium, name, version, peerDependencies} = pkgJson;
+  getInstallationReceipt({pkg, installPath, installType, installSpec}) {
+    const {appium, name, version, peerDependencies} = pkg;
 
-    /** @type {unknown} */
-    const result = {
-      ...appium,
+    /** @type {import('appium/types').InternalMetadata} */
+    const internal = {
       pkgName: name,
       version,
+      installType,
+      installSpec,
+      installPath,
       appiumVersion: peerDependencies?.appium,
     };
-    return /** @type {ExtensionFields<ExtType>} */ (result);
+
+    /** @type {ExtMetadata<ExtType>} */
+    const extMetadata = appium;
+
+    return {
+      ...internal,
+      ...extMetadata,
+    };
   }
 
   /**
@@ -428,13 +450,13 @@ class ExtensionCommand {
    * - `name`
    * - `version`
    * - `appium`
-   * @param {import('type-fest').PackageJson} pkgJson - `package.json` of extension
+   * @param {import('type-fest').PackageJson} pkg - `package.json` of extension
    * @param {string} installSpec - Extension name/spec
    * @throws {ReferenceError} If `package.json` has a missing or invalid field
-   * @returns {pkgJson is ExtPackageJson<ExtType>}
+   * @returns {pkg is ExtPackageJson<ExtType>}
    */
-  validatePackageJson(pkgJson, installSpec) {
-    const {appium, name, version} = /** @type {ExtPackageJson<ExtType>} */ (pkgJson);
+  validatePackageJson(pkg, installSpec) {
+    const {appium, name, version} = /** @type {ExtPackageJson<ExtType>} */ (pkg);
 
     /**
      *
@@ -626,7 +648,7 @@ class ExtensionCommand {
    * @returns {Promise<void>}
    */
   async updateExtension(installSpec, version) {
-    const {pkgName} = this.config.installedExtensions[installSpec];
+    const {pkgName, installType} = this.config.installedExtensions[installSpec];
     const extData = await this.installViaNpm({
       installSpec,
       installType: 'npm',
@@ -656,7 +678,7 @@ class ExtensionCommand {
     const extConfig = this.config.installedExtensions[installSpec];
 
     // note: TS cannot understand that _.has() is a type guard
-    if (!extConfig.scripts) {
+    if (!('scripts' in extConfig)) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not contain the ` +
           `"scripts" field underneath the "appium" field in its package.json`
@@ -665,13 +687,13 @@ class ExtensionCommand {
 
     const extScripts = extConfig.scripts;
 
-    if (!_.isPlainObject(extScripts)) {
+    if (!extScripts || !_.isPlainObject(extScripts)) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' "scripts" field must be a plain object`
       );
     }
 
-    if (!_.has(extScripts, scriptName)) {
+    if (!(scriptName in extScripts)) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
       );
@@ -752,6 +774,11 @@ export {ExtensionCommand};
 /**
  * @template {ExtensionType} ExtType
  * @typedef {import('appium/types').ExtPackageJson<ExtType>} ExtPackageJson
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtInstallReceipt<ExtType>} ExtInstallReceipt
  */
 
 /**
@@ -840,16 +867,10 @@ export {ExtensionCommand};
 
 /**
  * Options for {@linkcode ExtensionCommand._install}
- * @typedef InstallArgs
+ * @typedef InstallOpts
  * @property {string} installSpec - the name or spec of an extension to install
- * @property {import('appium/types').InstallType} installType - how to install this extension. One of the INSTALL_TYPES
+ * @property {InstallType} installType - how to install this extension. One of the INSTALL_TYPES
  * @property {string} [packageName] - for git/github installs, the extension node package name
- */
-
-/**
- * Returned by {@linkcode ExtensionCommand.getExtensionFields}
- * @template {ExtensionType} ExtType
- * @typedef {ExtMetadata<ExtType> & { pkgName: string, version: string, appiumVersion: string } & import('appium/types').CommonExtMetadata} ExtensionFields
  */
 
 /**
@@ -861,4 +882,18 @@ export {ExtensionCommand};
  * @typedef ListOptions
  * @property {boolean} showInstalled - whether should show only installed extensions
  * @property {boolean} showUpdates - whether should show available updates
+ */
+
+/**
+ * Opts for {@linkcode ExtensionCommand.getInstallationReceipt}
+ * @template {ExtensionType} ExtType
+ * @typedef GetInstallationReceiptOpts
+ * @property {string} installPath
+ * @property {string} installSpec
+ * @property {ExtPackageJson<ExtType>} pkg
+ * @property {InstallType} installType
+ */
+
+/**
+ * @typedef {import('appium/types').InstallType} InstallType
  */

@@ -244,6 +244,7 @@ describe('Manifest', function () {
           platformNames: ['dogs', 'cats'],
           installSpec: 'derp',
           installType: 'npm',
+          installPath: '/path/to/derp',
           appiumVersion: '2.0.0',
         };
 
@@ -303,6 +304,7 @@ describe('Manifest', function () {
         platformNames: ['dogs', 'cats'],
         installSpec: 'derp',
         installType: 'npm',
+        installPath: '/path/to/derp',
         appiumVersion: '2.0.0',
       };
 
@@ -352,6 +354,7 @@ describe('Manifest', function () {
         platformNames: ['dogs', 'cats'],
         installSpec: 'derp',
         installType: 'npm',
+        installPath: '/path/to/derp',
         appiumVersion: '2.0.0',
       };
 
@@ -395,6 +398,7 @@ describe('Manifest', function () {
               version: '1.0.0',
               installType: 'npm',
               installSpec: 'derp@1.0.0',
+              installPath: '/some/path/to',
               appiumVersion: '2.0.0',
             },
           });
@@ -443,6 +447,7 @@ describe('Manifest', function () {
               version: '1.0.0',
               installType: 'npm',
               installSpec: 'derp@1.0.0',
+              installPath: '/some/path/to',
               appiumVersion: '2.0.0',
             },
           });
@@ -535,6 +540,7 @@ describe('Manifest', function () {
 
       describe('when the underyling implementation emits "error"', function () {
         beforeEach(function () {
+          // @ts-expect-error
           MockGlob.callsFake(() => {
             const ee = new EventEmitter();
             setTimeout(() => {
@@ -550,6 +556,7 @@ describe('Manifest', function () {
 
       describe('when the underlying implementation completes with an error', function () {
         beforeEach(function () {
+          // @ts-expect-error
           MockGlob.callsFake((spec, opts, done) => {
             const ee = new EventEmitter();
             setTimeout(() => {

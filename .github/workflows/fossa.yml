@@ -19,6 +19,7 @@ jobs:
       - name: Install fossa-cli
         run: ./scripts/install-fossa.sh -d
       - name: Run FOSSA analysis
+        run: |
           fossa analyze
           fossa test
     env:

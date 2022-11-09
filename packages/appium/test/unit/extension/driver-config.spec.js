@@ -309,6 +309,7 @@ describe('DriverConfig', function () {
           version: '1.0.0',
           installSpec: 'some-pkg',
           installType: 'npm',
+          installPath: '/somewhere',
         };
         MockResolveFrom.returns(resolveFixture('driver-schema.js'));
         driverConfig = DriverConfig.create(manifest);

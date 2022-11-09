@@ -504,11 +504,17 @@ export class ExtensionConfig {
   }
 
   /**
-   * @param {string} extName
+   * Returns--with reasonable accuracy--the path on disk to the extension.
+   *
+   * If `installPath` is present in the manifest, then it is used; otherwise we just guess.
+   * @param {keyof typeof this.installedExtensions} extName
    * @returns {string}
    */
   getInstallPath(extName) {
-    return path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName);
+    return (
+      this.installedExtensions[extName]?.installPath ??
+      path.join(this.appiumHome, 'node_modules', this.installedExtensions[extName].pkgName)
+    );
   }
 
   /**

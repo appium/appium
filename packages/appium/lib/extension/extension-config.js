@@ -441,7 +441,7 @@ export class ExtensionConfig {
 
   /**
    * @param {ExtName<ExtType>} extName
-   * @param {ExtManifest<ExtType>|import('../cli/extension-command').ExtensionFields<ExtType>} extManifest
+   * @param {ExtManifest<ExtType>} extManifest
    * @param {ExtensionConfigMutationOpts} [opts]
    * @returns {Promise<void>}
    */

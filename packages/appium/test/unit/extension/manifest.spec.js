@@ -28,11 +28,11 @@ describe('Manifest', function () {
   let MockGlob;
 
   before(async function () {
-    yamlFixture = await fs.readFile(resolveFixture('extensions.yaml'), 'utf8');
+    yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
   /**
-   * @type {typeof import('appium/lib/extension/manifest').Manifest}
+   * @type {typeof import('../../../lib/extension/manifest').Manifest}
    */
   let Manifest;
 

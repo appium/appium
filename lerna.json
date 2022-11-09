@@ -1,8 +1,7 @@
 {
   "command": {
     "run": {
-      "concurrency": 8,
-      "stream": true
+      "concurrency": 8
     },
     "version": {
       "conventionalCommits": true,

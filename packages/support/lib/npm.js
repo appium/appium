@@ -194,7 +194,7 @@ export class NPM {
    * @param {string} cwd
    * @param {string} pkgName
    * @param {InstallPackageOpts} [opts]
-   * @returns {Promise<import('type-fest').PackageJson>}
+   * @returns {Promise<NpmInstallReceipt>}
    */
   async installPackage(cwd, pkgName, {pkgVer, installType}) {
     /** @type {any} */
@@ -240,7 +240,9 @@ export class NPM {
     // (even on Windows!)
     const pkgJsonPath = resolveFrom(cwd, `${pkgName}/package.json`);
     try {
-      return require(pkgJsonPath);
+      const pkgJson = await fs.readFile(pkgJsonPath, 'utf8');
+      const pkg = JSON.parse(pkgJson);
+      return {installPath: path.dirname(pkgJsonPath), pkg};
     } catch {
       throw new Error(
         'The package was not downloaded correctly; its package.json ' +
@@ -281,4 +283,10 @@ export const npm = new NPM();
 
 /**
  * @typedef {import('teen_process').TeenProcessExecOptions} TeenProcessExecOptions
+ */
+
+/**
+ * @typedef NpmInstallReceipt
+ * @property {string} installPath - Path to installed package
+ * @property {import('type-fest').PackageJson} pkg - Package data
  */

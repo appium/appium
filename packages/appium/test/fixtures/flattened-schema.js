@@ -252,11 +252,11 @@ export default [
       ref: 'appium.json#/properties/server/properties/log-filters',
     },
     schema: {
-      $comment: 'TODO',
       description: 'One or more log filtering rules',
-      items: {type: 'string'},
       title: 'log-filters config',
       type: 'array',
+      items: {$ref: '#/$defs/logFilter'},
+      appiumCliTransformer: 'json',
     },
   },
   {

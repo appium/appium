@@ -33,6 +33,8 @@ const npmToWinstonLevels = {
   error: 'error',
 };
 
+const encounteredPrefixes = [];
+
 let log = null;
 let useLocalTimeZone = false;
 
@@ -186,8 +188,21 @@ async function createTransports(args) {
   return transports;
 }
 
+function getColorizedPrefix(prefix) {
+  let prefixId = prefix.split('@')[0].trim();
+  prefixId = prefixId.split(' (')[0].trim();
+  if (encounteredPrefixes.indexOf(prefixId) < 0) {
+    encounteredPrefixes.push(prefixId);
+  }
+  // using a multiple of 16 should cause 16 colors to be created
+  const colorNumber = encounteredPrefixes.indexOf(prefixId) * 16;
+  // use the modulus to cycle around color wheel
+  return `\x1b[38;5;${colorNumber % 256}m${prefix}\x1b[0m`;
+}
+
 async function init(args) {
   npmlog.level = 'silent';
+
   // set de facto param passed to timestamp function
   useLocalTimeZone = args.localTimezone;
 
@@ -205,11 +220,17 @@ async function init(args) {
     let msg = logObj.message;
     if (logObj.prefix) {
       const prefix = `[${logObj.prefix}]`;
-      msg = `${args.logNoColors ? prefix : prefix.magenta} ${msg}`;
-    }
-    log[winstonLevel](msg);
-    if (args.logHandler && _.isFunction(args.logHandler)) {
-      args.logHandler(logObj.level, msg);
+      if (args.logNoColors) {
+        msg = `${prefix} ${msg}`;
+      } if (prefix === '[Appium]') {
+        msg = `${prefix.magenta} ${msg}`;
+      } else {
+        msg = `${getColorizedPrefix(prefix)} ${msg}`;
+      }
+      log[winstonLevel](msg);
+      if (args.logHandler && _.isFunction(args.logHandler)) {
+        args.logHandler(logObj.level, msg);
+      }
     }
   });
 }

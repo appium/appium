@@ -34,6 +34,15 @@ npm install --global appium --drivers=xcuitest,uiautomator2
 
 This will install Appium and the two drivers for you in one go.
 
+### :bangbang: Drivers installation path
+
+When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
+The path was `/path/to/appium/node_modules`.
+For example, `appium-webdriveragent` to build WebDriverAgent manually was `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
+
+Appium 2.0 installs such dependencies in `APPIUM_HOME` environment variable. The default path is `~/.appium`.
+So, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
+
 ### :bangbang: Chromedriver installation flags
 
 In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:

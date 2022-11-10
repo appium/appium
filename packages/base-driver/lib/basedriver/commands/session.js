@@ -4,8 +4,9 @@
 import _ from 'lodash';
 
 /**
- * @param {SettingsBase} Base
- * @returns {SessionBase}
+ * @template {Constraints} C
+ * @param {import('./settings').SettingsBase<C>} Base
+ * @returns {SessionBase<C>}
  */
 export function SessionMixin(Base) {
   /**
@@ -46,6 +47,10 @@ export function SessionMixin(Base) {
  * @typedef {import('@appium/types').SessionCommands} ISessionCommands
  * @typedef {import('@appium/types').SingularSessionData} SingularSessionData
  * @typedef {import('@appium/types').MultiSessionData} MultiSessionData
- * @typedef {import('./settings').SettingsBase} SettingsBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & import('@appium/types').LogCommands & import('@appium/types').SettingsCommands & ISessionCommands>} SessionBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & import('@appium/types').ISettingsCommands & ISessionCommands>} SessionBase
  */

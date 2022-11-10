@@ -3,8 +3,9 @@
 import _ from 'lodash';
 
 /**
- * @param {TimeoutBase} Base
- * @returns {EventBase}
+ * @template {Constraints} C
+ * @param {import('./timeout').TimeoutBase<C>} Base
+ * @returns {EventBase<C>}
  */
 export function EventMixin(Base) {
   /**
@@ -52,7 +53,11 @@ export function EventMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').EventCommands} IEventCommands
- * @typedef {import('./timeout').TimeoutBase} TimeoutBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & IEventCommands>} EventBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').IEventCommands} IEventCommands
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & IEventCommands>} EventBase
  */

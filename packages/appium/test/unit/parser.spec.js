@@ -9,6 +9,7 @@ import {resolveFixture} from '../helpers';
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
 const DENY_FIXTURE = resolveFixture('deny-feat.txt');
 const CAPS_FIXTURE = resolveFixture('caps.json');
+const LOG_FILTERS_FIXTURE = resolveFixture('log-filters.json');
 
 describe('parser', function () {
   let p;
@@ -148,6 +149,14 @@ describe('parser', function () {
       it('should respect --relaxed-security', function () {
         p.parseArgs(['--relaxed-security']).should.have.property('relaxedSecurityEnabled', true);
       });
+
+      it('should recognize --log-level', function () {
+        p.parseArgs(['--log-level', 'debug']).should.have.property('loglevel', 'debug');
+      });
+
+      it('should parse a file for --log-filters', function () {
+        p.parseArgs(['--log-filters', LOG_FILTERS_FIXTURE]).should.have.property('logFilters');
+      });
     });
 
     describe('extension arguments', function () {
@@ -170,7 +179,9 @@ describe('parser', function () {
         // the config file corresponds to that schema.
         // the command-line flags are derived also from the schema.
         // the result should be that the parsed args should match the config file.
-        const {config} = await readConfigFile(resolveFixture('config', 'driver-fake.config.json'));
+        const {config} = await readConfigFile(
+          resolveFixture('config', 'appium-config-driver-fake.json')
+        );
         const fakeDriverArgs = {
           fake: {sillyWebServerPort: 1234, sillyWebServerHost: 'hey'},
         };

@@ -3,7 +3,7 @@ title: Write a Test (Ruby)
 ---
 
 
-The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) are Appium officcial client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so intalling these libraries include the selenium binding.
+The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) (**recommended**) are official Appium client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so installing these libraries include the selenium binding. We recommend `appium_lib_core` if you need a less complex client-side solution. The `appium_lib` has some useful methods the core does not have, but for the cost of greater complexity.
 
 ```bash
 gem install appium_lib
@@ -12,7 +12,7 @@ gem install appium_lib_core
 ```
 
 The `appium_lib_core` is the main part as an Appium client.
-`appium_lib` has various helper methods, but the driver instance was ordinally designed to be used as a global variable. It could causes an issue to handle the instance.
+`appium_lib` has various helper methods, but the driver instance was ordinary designed to be used as a global variable. It could causes an issue to handle the instance.
 `appium_lib_core` does not have such a global variable.
 
 This example is by the `appium_lib_core` with `test-unit` gem module.
@@ -29,7 +29,7 @@ Tes code in `appium_lib` should be similar.
 
     - You may want to read up particularly on Appium [Capabilities](../guides/caps.md).
     - [functional test code](https://github.com/appium/ruby_lib_core/tree/master/test/functional) in the appium_lib_core GitHub repository should help to find more working example.
-    - Documentation [appium_lib_core](https://www.rubydoc.info/github/appium/ruby_lib_core) and [appium_lib](https://www.rubydoc.info/github/appium/ruby_lib) also helps to find avvailable methods.
+    - Documentation [appium_lib_core](https://www.rubydoc.info/github/appium/ruby_lib_core) and [appium_lib](https://www.rubydoc.info/github/appium/ruby_lib) also helps to find available methods.
 
 
 Basically, this code is doing the following:

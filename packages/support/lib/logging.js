@@ -137,10 +137,9 @@ function getLogger(prefix = null) {
  * appear in Appium logs.
  * Each call to this method replaces the previously loaded rules if any existed.
  *
- * @param {string|string[]|import('./log-internal').Rule[]} rulesJsonPath The full path to the JSON file containing
+ * @param {string|string[]|import('@appium/types').LogFiltersConfig} rulesJsonPath The full path to the JSON file containing
  * the replacement rules. Each rule could either be a string to be replaced
- * or an object with predefined properties. See the `Rule` type definition in
- * `log-internals.js` to get more details on its format.
+ * or an object with predefined properties.
  * @throws {Error} If the given file cannot be loaded
  * @returns {Promise<LoadResult>}
  */

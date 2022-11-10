@@ -154,9 +154,8 @@ export function normalizeConfig(config) {
   const normalize = (config, section) => {
     const obj = _.isUndefined(section) ? config : _.get(config, section, config);
 
-    const mappedObj = _.mapKeys(
-      obj,
-      (__, prop) => schema.properties[prop]?.appiumCliDest ?? _.camelCase(prop)
+    const mappedObj = _.mapKeys(obj, (__, prop) =>
+      _.get(schema, `properties.server.properties[${prop}].appiumCliDest`, _.camelCase(prop))
     );
 
     return _.mapValues(mappedObj, (value, property) => {

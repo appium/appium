@@ -1,0 +1,63 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Common Renovate config for Appium packages",
+  "extends": [
+    "config:js-app",
+    ":semanticPrefixChore",
+    "helpers:pinGitHubActionDigests",
+    ":enableVulnerabilityAlerts",
+    ":rebaseStalePrs",
+    "group:definitelyTyped",
+    "workarounds:typesNodeVersioning"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": [
+        "@types/wrap-ansi",
+        "chalk",
+        "del",
+        "delay",
+        "env-paths",
+        "execa",
+        "find-up",
+        "get-port",
+        "globby",
+        "got",
+        "inquirer",
+        "log-symbols",
+        "ora",
+        "p-retry",
+        "pkg-dir",
+        "read-pkg",
+        "strip-ansi",
+        "supports-color",
+        "term-size",
+        "vinyl-paths",
+        "wrap-ansi",
+        "write-pkg"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+    {
+      "extends": ["packages:eslint"],
+      "matchPackageNames": ["@appium/eslint-config-appium"],
+      "groupName": "ESLint-related packages",
+      "groupSlug": "eslint"
+    },
+    {
+      "matchPackageNames": ["teen_process", "@types/teen_process"],
+      "groupName": "teen_process-related packages",
+      "groupSlug": "teen_process"
+    }
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitScope": "{{parentDir}}",
+  "schedule": ["after 10pm and before 5:00am"],
+  "timezone": "America/Vancouver",
+  "transitiveRemediation": true
+}

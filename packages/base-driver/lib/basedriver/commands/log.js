@@ -4,37 +4,40 @@
 import _ from 'lodash';
 
 /**
- *
- * @param {FindBase} Base
- * @returns {LogBase}
+ * @template {Constraints} C
+ * @param {import('./find').FindBase<C>} Base
+ * @returns {LogBase<C>}
  */
 export function LogMixin(Base) {
   /**
-   * @implements {ILogCommands}
+   * @implements {ILogCommands<C>}
    */
   class LogCommands extends Base {
+    /** @type {Readonly<import('@appium/types').LogDefRecord<C>>} */
+    supportedLogTypes;
+
     constructor(...args) {
       super(...args);
-      /** @type {Record<string, LogType<Driver>>} */
-      this.supportedLogTypes = this.supportedLogTypes ?? {};
+      this.supportedLogTypes ??= {};
     }
 
     async getLogTypes() {
       this.log.debug('Retrieving supported log types');
-      return _.keys(this.supportedLogTypes);
+      return Object.keys(this.supportedLogTypes);
     }
 
     /**
-     * @this {Driver}
-     * @param {string} logType
+     * @this {import('@appium/types').Driver<C>}
+     * @param {keyof typeof this.supportedLogTypes} logType
+     * @returns {Promise<import('type-fest').AsyncReturnType<typeof this.supportedLogTypes[keyof typeof this.supportedLogTypes]['getter']>>}
      */
     async getLog(logType) {
-      this.log.debug(`Retrieving '${logType}' logs`);
+      this.log.debug(`Retrieving '${String(logType)}' logs`);
 
-      if (!(await this.getLogTypes()).includes(logType)) {
+      if (!(logType in this.supportedLogTypes)) {
         const logsTypesWithDescriptions = _.mapValues(this.supportedLogTypes, 'description');
         throw new Error(
-          `Unsupported log type '${logType}'. ` +
+          `Unsupported log type '${String(logType)}'. ` +
             `Supported types: ${JSON.stringify(logsTypesWithDescriptions)}`
         );
       }
@@ -46,13 +49,16 @@ export function LogMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').LogCommands} ILogCommands
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('./find').FindBase} FindBase
- * @typedef {import('../driver').BaseDriverBase<import('@appium/types').TimeoutCommands & import('@appium/types').EventCommands & import('@appium/types').FindCommands & ILogCommands>} LogBase
+ * @typedef {import('@appium/types').Constraints} Constraints
+ * @typedef {import('@appium/types').StringRecord} StringRecord
  */
 
 /**
- * @template T
- * @typedef {import('@appium/types').LogType<T>} LogType
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').ILogCommands<C>} ILogCommands
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & ILogCommands<C>>} LogBase
  */

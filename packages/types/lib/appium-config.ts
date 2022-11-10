@@ -50,9 +50,23 @@ export type LocalTimezoneConfig = boolean;
  */
 export type LogConfig = string;
 /**
+ * Log filtering rule
+ */
+export type LogFilter = {
+  /**
+   * Replacement string for matched text
+   */
+  replacer?: string;
+  /**
+   * Matching flags; see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags
+   */
+  flags?: string;
+  [k: string]: unknown;
+} & (LogFilterText | LogFilterRegex);
+/**
  * One or more log filtering rules
  */
-export type LogFiltersConfig = string[];
+export type LogFiltersConfig = LogFilter[];
 /**
  * Log level (console[:file])
  */
@@ -134,6 +148,10 @@ export type WebhookConfig = string;
  * A schema for Appium configuration files
  */
 export interface AppiumConfiguration {
+  /**
+   * The JSON schema for this file
+   */
+  $schema?: string;
   server?: ServerConfig;
 }
 /**
@@ -181,6 +199,26 @@ export interface DefaultCapabilitiesConfig {
  * Driver-specific configuration. Keys should correspond to driver package names
  */
 export interface DriverConfig {
+  [k: string]: unknown;
+}
+/**
+ * Log filter with plain text
+ */
+export interface LogFilterText {
+  /**
+   * Text to match
+   */
+  text: string;
+  [k: string]: unknown;
+}
+/**
+ * Log filter with regular expression
+ */
+export interface LogFilterRegex {
+  /**
+   * Regex pattern to match
+   */
+  pattern: string;
   [k: string]: unknown;
 }
 /**

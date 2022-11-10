@@ -1,4 +1,4 @@
-import {fs} from '@appium/support';
+import {fs, system} from '@appium/support';
 import {DoctorCheck} from './doctor';
 import {ok, nok} from './utils';
 import '@colors/colors';
@@ -22,7 +22,7 @@ class EnvVarAndPathCheck extends DoctorCheck {
       let err_msg = `${this.varName} is set to '${varValue}' but this is NOT a valid path!`;
       // On Windows, when the env var has %LOCALAPPDATA%, fs.exists cannot resolve the path.
       // Then, it would be safe to request the user to set the full path instead.
-      if (varValue.includes('%LOCALAPPDATA%')) {
+      if (system.isWindows() && varValue.includes('%LOCALAPPDATA%')) {
         err_msg += ` Please set "${process.env.LOCALAPPDATA}" instead of "%LOCALAPPDATA%" as the environment variable.`;
       }
       return nok(err_msg);

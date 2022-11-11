@@ -4,7 +4,7 @@ title: Managing Appium Drivers and Plugins
 
 To do anything useful with Appium, you need to have at least one [Driver](../intro/drivers.md)
 installed, otherwise Appium won't know how to automate anything. There is an entire
-[Ecosystem](../ecosystem/index.md) of drivers and plugins out there! 
+[Ecosystem](../ecosystem/index.md) of drivers and plugins out there!
 
 This guide helps explain how to manage these drivers and plugins. There are
 two basic strategies: using Appium's extension CLI interface, or managing extensions yourself in an
@@ -47,6 +47,8 @@ APPIUM_HOME=/path/to/home2 appium  # use xcuitest driver 4.11.2
 
 You don't need to set `APPIUM_HOME` if you don't want to! By default, Appium will set `APPIUM_HOME`
 to the directory `.appium` in your user home directory.
+
+These installed packages will be managed by `extensions.yaml` in `$APPIUM_HOME/node_modules/.cache/appium/extensions.yaml`.
 
 ## Do-It-Yourself with `npm`
 

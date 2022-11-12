@@ -71,6 +71,9 @@ const DEFAULT_SETTINGS = {
   // It is used for debugging purpose.
   getMatchedImageResult: false,
 };
+const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
+const CONDITION_UNMET_PATTERN = /Condition unmet/;
+
 
 export default class ImageElementFinder {
   /** @type {ExternalDriver} */
@@ -202,7 +205,7 @@ export default class ImageElementFinder {
         // retry, so trap that and just return false to trigger the next round of
         // implicitly waiting. For other errors, throw them to get out of the
         // implicit wait loop
-        if (err.message.match(/Cannot find any occurrences/)) {
+        if (NO_OCCURRENCES_PATTERN.test(err.message)) {
           return false;
         }
         throw err;
@@ -218,7 +221,7 @@ export default class ImageElementFinder {
       // _other_ kind of error, it means something blew up totally apart from the
       // implicit wait timeout. We should not mask that error and instead throw
       // it straightaway
-      if (!err.message.match(/Condition unmet/)) {
+      if (!CONDITION_UNMET_PATTERN.test(err.message)) {
         throw err;
       }
     }

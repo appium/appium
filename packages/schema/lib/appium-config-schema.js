@@ -247,7 +247,7 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
         },
         'use-drivers': {
           appiumCliDescription:
-            'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated.',
+            'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated. Windows environment may require to wrap comma separated string with quote to escape the comma.',
           default: [],
           description:
             'A list of drivers to activate. By default, all installed drivers will be activated.',
@@ -260,7 +260,7 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
         },
         'use-plugins': {
           appiumCliDescription:
-            'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins.',
+            'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins. Windows environment may require to wrap comma separated string with quote to escape the comma.',
           default: [],
           description:
             'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',

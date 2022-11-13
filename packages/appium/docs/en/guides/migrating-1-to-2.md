@@ -114,7 +114,7 @@ These standard capabilities continue to be used as-is. All other capabilities mu
 - `appium:noReset`
 - `appium:deviceName`
 
-This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least maintained by Appium team ones), the client will add the `appium:` prefix for you on all necessary capabilities automatically. [New versions of the Appium Inspector tool](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.
+This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the `appium:` prefix for you on all necessary capabilities automatically. [New versions of the Appium Inspector tool](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.
 
 On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).
 
@@ -132,7 +132,7 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 }
 ```
 
-(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support in cloud providers may varay.)
+(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support by cloud providers may varay.)
 
 For more information on capabilities, have a look at the [Capabilities Guide](caps.md).
 
@@ -184,7 +184,7 @@ For many years, some of Appium's authors maintained the [WD](https://github.com/
 
 ### :warning: Appium Inspector split out from Appium Desktop
 
-The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that the old Appium-Desktop's inspector feature depends on the deprecated [WD](https://github.com/admc/wd) client. It means the old one will not work for Appium 2.0.
+The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that the Appium-Desktop 1.21 and lower versions depend on the deprecated [WD](https://github.com/admc/wd) client. It means the old one will not work for Appium 2.0.
 
 You can also now use the Appium Inspector without downloading anything, by visiting the [web version of Appium Inspector](https://inspector.appiumpro.com). Note that to test against local servers, you'll need to start the server with `--allow-cors` so that the browser-based version of Appium Inspector can access your Appium server to start sessions.
 

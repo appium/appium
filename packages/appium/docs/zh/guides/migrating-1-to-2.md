@@ -48,6 +48,19 @@ npm install --global appium --drivers=xcuitest,uiautomator2
 
 这将一次性为您安装Appium和两种驱动程序.
 
+### :bangbang: 驱动安装路径
+
+当您安装 Appium 1.x 时, 
+所有可用的驱动程序将与主 Appium 服务器同时安装.
+路径是 `/path/to/appium/node_modules`.
+例如, 手动构建WebDriverAgent的`appium-webdriveragent` 
+是 `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
+
+Appium 2.0 在 `APPIUM_HOME` 环境变量中安装此类依赖项.
+默认路径为 `~/.appium`.
+因此，安装 XCUITest 驱动程序包后，
+`appium-webdriveragent` 的路径可能是 `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` .
+
 ### :bangbang: Chromedriver安装标志
 
 在Appium 1.x中, 可以使用以下命令行标志自定义Chromedriver的安装方式
@@ -303,7 +316,14 @@ Appium Desktop Server将继续在其原始站点
 
 #### :tada: _服务器插件_
 
-TODO
+Appium 扩展作者现在可以开发自己的服务器插件, 
+可以拦截和修改任何Appium命令,
+甚至调整底层 Appium HTTP 服务器本身的工作方式.
+了解有关插件的更多信息, 
+查询新的 [Appium 介绍](../intro/index.md).
+有兴趣构建插件? 
+请查阅 [构建插件](../ecosystem/build-plugins.md) 指南.
+
 
 #### :tada: _客户端插件_
 
@@ -311,7 +331,13 @@ TODO
 
 ### :tada: 从任何地方安装驱动程序和插件
 
-TODO
+您不再局限于 Appium 附带的驱动程序，
+或者通过Appium团队知晓!
+Appium 扩展作者现在可以开发自定义驱动程序,
+可以通过Appium的[扩展 CLI](../cli/extensions.md) 
+从NPM, Git, GitHub 乃至本地的文件系统下载或安装.
+有兴趣构建驱动程序? 
+请查阅 [构建驱动](../ecosystem/build-drivers.md) 指南.
 
 ### :tada: 配置文件
 

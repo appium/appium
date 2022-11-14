@@ -193,7 +193,7 @@ for the particular driver or whether it supports parallel sessions.
    [WebDriver](https://w3c.github.io/webdriver/webdriver-spec.html)-compatible
    language such as [Java](https://github.com/appium/java-client),
    [JavaScript](https://webdriver.io/), [Python](https://github.com/appium/python-client),
-   [Ruby](https://github.com/appium/ruby_lib), [C#](https://github.com/appium/appium-dotnet-driver)
+   [Ruby](https://github.com/appium/ruby_lib), [C#](https://github.com/appium/dotnet-client)
    with the Selenium WebDriver API. There are also various third party
    client implementations for other languages.
 3. You can use any testing framework.

@@ -48,7 +48,7 @@ the Appium client depends on) since that is what you will use as your primary in
 |[Appium Python client](https://github.com/appium/python-client)|Python|Appium Team|
 |[Appium Ruby client](https://github.com/appium/ruby_lib)|Ruby|Appium Team|
 |[WebDriverIO](https://webdriver.io)|Node.js|Community|
-|[Appium .NET client](https://github.com/appium/appium-dotnet-driver)|C#|Appium Team*|
+|[Appium .NET client](https://github.com/appium/dotnet-client)|C#|Appium Team*|
 |[RobotFramework](https://github.com/serhatbolsu/robotframework-appiumlibrary)|DSL|Community|
 
 !!! warning

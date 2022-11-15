@@ -66,5 +66,5 @@ export function ExecuteMixin(Base) {
 
 /**
  * @template {Constraints} C
- * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & import('@appium/types').ISettingsCommands & import('@appium/types').SessionCommands & IExecuteCommands>} ExecuteBase
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & import('@appium/types').ISettingsCommands & import('@appium/types').ISessionCommands & IExecuteCommands>} ExecuteBase
  */

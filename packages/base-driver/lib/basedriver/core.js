@@ -171,7 +171,7 @@ class DriverCore {
   }
 
   /**
-   * This property controls the way {#executeCommand} method
+   * This property controls the way the `executeCommand` method
    * handles new driver commands received from the client.
    * Override it for inherited classes only in special cases.
    *

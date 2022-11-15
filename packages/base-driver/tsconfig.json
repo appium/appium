@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "build",
     "paths": {
-      "@appium/base-driver": ["."],
       "@appium/support": ["../support"],
       "@appium/types": ["../types"],
       "@appium/driver-test-support": ["../driver-test-support"]

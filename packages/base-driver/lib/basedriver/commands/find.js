@@ -44,16 +44,16 @@ export function FindMixin(Base) {
     async findElementsFromElement(strategy, selector, elementId) {
       return await this.findElOrElsWithProcessing(strategy, selector, true, elementId);
     }
-    // Override the following function for your own driver, and the rest is taken
-    // care of!
-    // Returns an object which adheres to the way the JSON Wire Protocol represents elements:
-    // { ELEMENT: # }    eg: { ELEMENT: 3 }  or { ELEMENT: 1.023 }
     /**
+     * Returns an object which adheres to the way the JSON Wire Protocol represents elements:
+     *
+     * Override this for your own driver!
      * @template {boolean} Mult
+     * @template [Ctx=any]
      * @param {string} strategy
      * @param {string} selector
      * @param {Mult} mult
-     * @param {string} [context]
+     * @param {Ctx} [context]
      * @returns {Promise<Mult extends true ? Element[] : Element>}
      */
     async findElOrEls(strategy, selector, mult, context) {
@@ -68,10 +68,11 @@ export function FindMixin(Base) {
     }
     /**
      * @template {boolean} Mult
+     * @template [Ctx=any]
      * @param {string} strategy
      * @param {string} selector
      * @param {Mult} mult
-     * @param {string} [context]
+     * @param {Ctx} [context]
      * @returns {Promise<Mult extends true ? Element[] : Element>}
      */
     async findElOrElsWithProcessing(strategy, selector, mult, context) {

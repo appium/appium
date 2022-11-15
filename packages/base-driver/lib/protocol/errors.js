@@ -45,9 +45,12 @@ export class NoSuchDriverError extends ProtocolError {
   static error() {
     return 'invalid session id';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'A session is either terminated or not started',
+      message || 'A session is either terminated or not started',
       NoSuchDriverError.code(),
       NoSuchDriverError.w3cStatus(),
       NoSuchDriverError.error()
@@ -65,9 +68,13 @@ export class NoSuchElementError extends ProtocolError {
   static error() {
     return 'no such element';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'An element could not be located on the page using the given ' + 'search parameters.',
+      message ||
+        'An element could not be located on the page using the given ' + 'search parameters.',
       NoSuchElementError.code(),
       NoSuchElementError.w3cStatus(),
       NoSuchElementError.error()
@@ -85,9 +92,13 @@ export class NoSuchFrameError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'A request to switch to a frame could not be satisfied because ' +
           'the frame could not be found.',
       NoSuchFrameError.code(),
@@ -107,9 +118,13 @@ export class UnknownCommandError extends ProtocolError {
   static error() {
     return 'unknown command';
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'The requested resource could not be found, or a request was ' +
           'received using an HTTP method that is not supported by the mapped ' +
           'resource.',
@@ -130,9 +145,13 @@ export class StaleElementReferenceError extends ProtocolError {
   static error() {
     return 'stale element reference';
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'An element command failed because the referenced element is no ' +
           'longer attached to the DOM.',
       StaleElementReferenceError.code(),
@@ -152,9 +171,12 @@ export class ElementNotVisibleError extends ProtocolError {
   static error() {
     return 'element not visible';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'An element command could not be completed because the element is ' +
           'not visible on the page.',
       ElementNotVisibleError.code(),
@@ -174,9 +196,13 @@ export class InvalidElementStateError extends ProtocolError {
   static error() {
     return 'invalid element state';
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'An element command could not be completed because the element is ' +
           'in an invalid state (e.g. attempting to click a disabled element).',
       InvalidElementStateError.code(),
@@ -217,9 +243,13 @@ export class UnknownMethodError extends ProtocolError {
   static error() {
     return 'unknown method';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'The requested command matched a known URL but did not match an method for that URL',
+      message ||
+        'The requested command matched a known URL but did not match an method for that URL',
       UnknownMethodError.code(),
       UnknownMethodError.w3cStatus(),
       UnknownMethodError.error()
@@ -237,9 +267,12 @@ export class UnsupportedOperationError extends ProtocolError {
   static error() {
     return 'unsupported operation';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'A server-side error occurred. Command cannot be supported.',
+      message || 'A server-side error occurred. Command cannot be supported.',
       UnsupportedOperationError.code(),
       UnsupportedOperationError.w3cStatus(),
       UnsupportedOperationError.error()
@@ -257,9 +290,12 @@ export class ElementIsNotSelectableError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'An attempt was made to select an element that cannot be selected.',
+      message || 'An attempt was made to select an element that cannot be selected.',
       ElementIsNotSelectableError.code(),
       ElementIsNotSelectableError.w3cStatus(),
       ElementIsNotSelectableError.error()
@@ -277,9 +313,12 @@ export class ElementClickInterceptedError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'The Element Click command could not be completed because the element receiving ' +
           'the events is obscuring the element that was requested clicked',
       ElementClickInterceptedError.code(),
@@ -299,9 +338,12 @@ export class ElementNotInteractableError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'A command could not be completed because the element is not pointer- or keyboard interactable',
       ElementNotInteractableError.code(),
       ElementNotInteractableError.w3cStatus(),
@@ -314,9 +356,12 @@ export class InsecureCertificateError extends ProtocolError {
   static error() {
     return 'insecure certificate';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
       ElementIsNotSelectableError.code(),
       null,
@@ -335,9 +380,12 @@ export class JavaScriptError extends ProtocolError {
   static error() {
     return 'javascript error';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'An error occurred while executing user supplied JavaScript.',
+      message || 'An error occurred while executing user supplied JavaScript.',
       JavaScriptError.code(),
       JavaScriptError.w3cStatus(),
       JavaScriptError.error()
@@ -355,9 +403,12 @@ export class XPathLookupError extends ProtocolError {
   static error() {
     return 'invalid selector';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'An error occurred while searching for an element by XPath.',
+      message || 'An error occurred while searching for an element by XPath.',
       XPathLookupError.code(),
       XPathLookupError.w3cStatus(),
       XPathLookupError.error()
@@ -375,9 +426,12 @@ export class TimeoutError extends ProtocolError {
   static error() {
     return 'timeout';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'An operation did not complete before its timeout expired.',
+      message || 'An operation did not complete before its timeout expired.',
       TimeoutError.code(),
       TimeoutError.w3cStatus(),
       TimeoutError.error()
@@ -395,9 +449,12 @@ export class NoSuchWindowError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.NOT_FOUND;
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err ||
+      message ||
         'A request to switch to a different window could not be satisfied ' +
           'because the window could not be found.',
       NoSuchWindowError.code(),
@@ -417,6 +474,9 @@ export class InvalidArgumentError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'The arguments passed to the command are either invalid or malformed',
@@ -437,6 +497,9 @@ export class InvalidCookieDomainError extends ProtocolError {
   static w3cStatus() {
     return HTTPStatusCodes.BAD_REQUEST;
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err ||
@@ -459,6 +522,9 @@ export class NoSuchCookieError extends ProtocolError {
   static error() {
     return 'no such cookie';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err ||
@@ -480,6 +546,9 @@ export class UnableToSetCookieError extends ProtocolError {
   static error() {
     return 'unable to set cookie';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || "A request to set a cookie's value could not be satisfied.",
@@ -500,9 +569,12 @@ export class UnexpectedAlertOpenError extends ProtocolError {
   static error() {
     return 'unexpected alert open';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'A modal dialog was open, blocking this operation',
+      message || 'A modal dialog was open, blocking this operation',
       UnexpectedAlertOpenError.code(),
       UnexpectedAlertOpenError.w3cStatus(),
       UnexpectedAlertOpenError.error()
@@ -520,9 +592,13 @@ export class NoAlertOpenError extends ProtocolError {
   static error() {
     return 'no such alert';
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err || 'An attempt was made to operate on a modal dialog when one ' + 'was not open.',
+      message || 'An attempt was made to operate on a modal dialog when one ' + 'was not open.',
       NoAlertOpenError.code(),
       NoAlertOpenError.w3cStatus(),
       NoAlertOpenError.error()
@@ -542,6 +618,9 @@ export class ScriptTimeoutError extends ProtocolError {
   static error() {
     return 'script timeout';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'A script did not complete before its timeout expired.',
@@ -562,6 +641,9 @@ export class InvalidElementCoordinatesError extends ProtocolError {
   static error() {
     return 'invalid coordinates';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'The coordinates provided to an interactions operation are invalid.',
@@ -584,9 +666,12 @@ export class IMENotAvailableError extends ProtocolError {
   static error() {
     return 'unsupported operation';
   }
-  constructor(err) {
+  /**
+   * @param {string} [message] error message
+   */
+  constructor(message) {
     super(
-      err || 'IME was not available.',
+      message || 'IME was not available.',
       IMENotAvailableError.code(),
       IMENotAvailableError.w3cStatus(),
       IMENotAvailableError.error()
@@ -604,6 +689,9 @@ export class IMEEngineActivationFailedError extends ProtocolError {
   static error() {
     return 'unsupported operation';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'An IME engine could not be started.',
@@ -624,6 +712,9 @@ export class InvalidSelectorError extends ProtocolError {
   static error() {
     return 'invalid selector';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'Argument was an invalid selector (e.g. XPath/CSS).',
@@ -669,6 +760,9 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
   static error() {
     return 'move target out of bounds';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'Target provided for a move action is out of bounds.',
@@ -683,8 +777,12 @@ export class NoSuchContextError extends ProtocolError {
   static code() {
     return 35;
   }
-  constructor(err) {
-    super(err || 'No such context found.', NoSuchContextError.code());
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
+    super(message || 'No such context found.', NoSuchContextError.code());
   }
 }
 
@@ -692,9 +790,13 @@ export class InvalidContextError extends ProtocolError {
   static code() {
     return 36;
   }
-  constructor(err) {
+  /**
+   *
+   * @param {string} [message]
+   */
+  constructor(message) {
     super(
-      err || 'That command could not be executed in the current context.',
+      message || 'That command could not be executed in the current context.',
       InvalidContextError.code()
     );
   }
@@ -702,11 +804,17 @@ export class InvalidContextError extends ProtocolError {
 
 // These are aliases for UnknownMethodError
 export class NotYetImplementedError extends UnknownMethodError {
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(err || 'Method has not yet been implemented');
   }
 }
 export class NotImplementedError extends UnknownMethodError {
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(err || 'Method is not implemented');
   }
@@ -722,6 +830,9 @@ export class UnableToCaptureScreen extends ProtocolError {
   static error() {
     return 'unable to capture screen';
   }
+  /**
+   * @param {string} [err] error message
+   */
   constructor(err) {
     super(
       err || 'A screen capture was made impossible',

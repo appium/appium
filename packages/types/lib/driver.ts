@@ -44,7 +44,7 @@ export interface IEventCommands {
   getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
 
-export interface SessionCommands {
+export interface ISessionCommands {
   getSessions(): Promise<MultiSessionData[]>;
   getSession(): Promise<SingularSessionData>;
 }
@@ -74,7 +74,7 @@ export type SingularSessionData<
   Extra extends StringRecord | void = void
 > = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
 
-export interface IFindCommands {
+export interface IFindCommands<Ctx = any> {
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
@@ -88,22 +88,19 @@ export interface IFindCommands {
     strategy: string,
     selector: string,
     mult: Mult,
-    context?: string
+    context?: Ctx
   ): Promise<Mult extends true ? Element[] : Element>;
 
   findElOrElsWithProcessing<Mult extends boolean>(
     strategy: string,
     selector: string,
     mult: Mult,
-    context?: string
+    context?: Ctx
   ): Promise<Mult extends true ? Element[] : Element>;
 
   getPageSource(): Promise<string>;
 }
 
-/**
- * Log-related functionality of a {@linkcode Driver}. To be used as a mixin
- */
 export interface ILogCommands<C extends Constraints> {
   /**
    * Definition of the available log types
@@ -279,7 +276,7 @@ export type Position = Pick<Rect, 'x' | 'y'>;
 export interface Location {
   latitude: number;
   longitude: number;
-  altitude: number;
+  altitude?: number;
 }
 
 export interface Rotation {
@@ -359,13 +356,18 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
 /**
  * `BaseDriver` implements this.  It contains default behavior;
  * external drivers are expected to implement {@linkcode ExternalDriver} instead.
+ *
+ * `C` should be the constraints of the driver.
+ * `CArgs` would be the shape of `cliArgs`.
+ * `Ctx` would be the type of the element context (e.g., string, dictionary of some sort, etc.)
  */
 export interface Driver<
   C extends Constraints = BaseDriverCapConstraints,
-  CArgs extends StringRecord = StringRecord
-> extends SessionCommands,
+  CArgs extends StringRecord = StringRecord,
+  Ctx = any
+> extends ISessionCommands,
     ILogCommands<C>,
-    IFindCommands,
+    IFindCommands<Ctx>,
     ISettingsCommands,
     ITimeoutCommands,
     IEventCommands,
@@ -390,12 +392,13 @@ export interface Driver<
  * External drivers must subclass `BaseDriver`, and can implement any of these methods.
  * None of these are implemented within Appium itself.
  */
-export interface ExternalDriver extends Driver {
+export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints>
+  extends Driver<C> {
   // The following properties are assigned by appium */
-  server: AppiumServer;
-  serverHost: string;
-  serverPort: number;
-  serverPath: string;
+  server?: AppiumServer;
+  serverHost?: string;
+  serverPort?: number;
+  serverPath?: string;
 
   // WebDriver
   setUrl?(url: string): Promise<void>;
@@ -606,8 +609,7 @@ export interface ExternalDriver extends Driver {
   removeAllAuthCredentials?(): Promise<void>;
   removeAuthCredential?(): Promise<void>;
   setUserAuthVerified?(isUserVerified: boolean): Promise<void>;
-
-  proxyCommand?(url: string, method: HTTPMethod, body?: string): Promise<unknown>;
+  proxyCommand?<T = any>(url: string, method: HTTPMethod, body?: string): Promise<T>;
 }
 
 /**
@@ -618,8 +620,8 @@ export interface ExternalDriver extends Driver {
 export interface DriverStatic<D extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
-  newMethodMap?: Readonly<MethodMap<D>>;
-  executeMethodMap?: Readonly<ExecuteMethodMap<D>>;
+  newMethodMap?: MethodMap<D>;
+  executeMethodMap?: ExecuteMethodMap<D>;
 }
 
 /**
@@ -627,10 +629,11 @@ export interface DriverStatic<D extends Driver> {
  *
  * This is likely unusable by external consumers, but YMMV!
  */
-export type DriverClass<
-  D extends Driver = ExternalDriver,
-  S extends DriverStatic<D> = DriverStatic<D>
-> = Class<D, S, [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]>;
+export type DriverClass<D extends Driver = ExternalDriver> = Class<
+  D,
+  DriverStatic<D>,
+  [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]
+>;
 
 export interface ExtraDriverOpts {
   fastReset?: boolean;

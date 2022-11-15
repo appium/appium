@@ -420,7 +420,6 @@ export default BaseDriver;
 
 /**
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
- * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').Constraint} Constraint
@@ -465,6 +464,11 @@ export default BaseDriver;
  * @template {Constraints} [C=BaseDriverCapConstraints]
  * @template {StringRecord} [CArgs=StringRecord]
  * @typedef {import('@appium/types').Driver<C, CArgs>} Driver
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').ExternalDriver<C>} ExternalDriver
  */
 
 /**

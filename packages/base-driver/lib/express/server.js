@@ -40,7 +40,7 @@ async function server(opts) {
     routeConfiguringFunction,
     port,
     hostname,
-    cliArgs,
+    cliArgs = {},
     allowCors = true,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
@@ -277,7 +277,10 @@ export {server, configureServer, normalizeBasePath};
 /**
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
  * @typedef {import('@appium/types').AppiumServerSocket} AppiumServerSocket
- * @typedef {import('@appium/types').MethodMap} MethodMap
+ */
+
+/**
+ * @typedef {import('@appium/types').MethodMap<import('@appium/types').ExternalDriver>} MethodMap
  */
 
 /**
@@ -293,7 +296,7 @@ export {server, configureServer, normalizeBasePath};
  * @typedef ServerOpts
  * @property {RouteConfiguringFunction} routeConfiguringFunction
  * @property {number} port
- * @property {import('@appium/types').ServerArgs} cliArgs
+ * @property {import('@appium/types').ServerArgs} [cliArgs]
  * @property {string} [hostname]
  * @property {boolean} [allowCors]
  * @property {string} [basePath]

@@ -8,3 +8,4 @@ sample-code
 **/build-fixtures/**
 **/*.ts
 packages/appium/docs/**/assets/**
+**/*.tsx

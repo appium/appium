@@ -6,6 +6,9 @@
   },
   "references": [
     {
+      "path": "packages/appium"
+    },
+    {
       "path": "packages/driver-test-support"
     },
     {

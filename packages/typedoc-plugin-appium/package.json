@@ -1,0 +1,60 @@
+{
+  "name": "@appium/typedoc-plugin-appium",
+  "version": "0.1.0",
+  "description": "TypeDoc plugin for Appium & its extensions",
+  "homepage": "https://appium.io/",
+  "license": "Apache-2.0",
+  "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/support"
+  },
+  "keywords": [
+    "typedoc-plugin"
+  ],
+  "author": "https://github.com/appium",
+  "types": "./build/plugin.d.ts",
+  "scripts": {
+    "build": "exit 0",
+    "dev": "npm run build -- --watch",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
+    "prepare": "npm run build",
+    "test": "exit 0",
+    "test:e2e": "exit 0",
+    "test:smoke": "node ./index.js",
+    "test:unit": "exit 0"
+  },
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "build",
+    "resources"
+  ],
+  "engines": {
+    "node": ">=14",
+    "npm": ">=8"
+  },
+  "typedoc": {
+    "entryPoint": "./lib/plugin.ts"
+  },
+  "peerDependencies": {
+    "typedoc": ">=0.23.14"
+  },
+  "dependencies": {
+    "handlebars": "4.7.7",
+    "type-fest": "3.2.0",
+    "typedoc-plugin-markdown": "3.13.6"
+  }
+}

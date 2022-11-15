@@ -1,0 +1,33 @@
+{{#unless hasOwnDocument}}
+
+### {{#ifNamedAnchors}} <a id="{{anchor}}" name="{{this.anchor}}"></a> {{/ifNamedAnchors}}`{{httpMethod}}` `{{name}}`
+
+{{#if hasComment}}
+
+{{> comment}}
+
+{{/if}}
+
+{{#if hasRequiredParams}}
+
+#### Required Parameters
+
+{{#each requiredParams}}
+
+- `{{this}}`
+
+{{/each}}
+
+{{/if}}
+
+{{#if hasOptionalParams}}
+
+#### Optional Parameters
+
+{{#each optionalParams}}
+- `{{this}}`
+{{/each}}
+
+{{/if}}
+
+{{/unless}}

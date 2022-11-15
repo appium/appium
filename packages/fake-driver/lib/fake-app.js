@@ -29,9 +29,13 @@ class FakeApp {
     if (nodes.length < 1) {
       throw new Error('No title!');
     }
-    return nodes[0].firstChild.data;
+    const node = /** @type {Node} */ (nodes[0]);
+    return /** @type {ElementWithData} */ (node.firstChild).data;
   }
 
+  /**
+   * @type {import('@appium/types').Location}
+   */
   get currentGeoLocation() {
     return {
       latitude: this.lat,
@@ -47,18 +51,24 @@ class FakeApp {
     this.currentOrientation = o;
   }
 
+  /**
+   * @type {number}
+   */
   get width() {
     if (this._width === null) {
       this.setDims();
     }
-    return this._width;
+    return /** @type {number} */ (this._width);
   }
 
+  /**
+   * @type {number}
+   */
   get height() {
     if (this._width === null) {
       this.setDims();
     }
-    return this._width;
+    return /** @type {number} */ (this._width);
   }
 
   setDims() {
@@ -133,10 +143,10 @@ class FakeApp {
   }
 
   setAlertText(text) {
-    if (!this.activeAlert.hasPrompt()) {
+    if (!this.activeAlert?.hasPrompt()) {
       throw new Error('No prompt to set text of');
     }
-    this.activeAlert.setAttr('prompt', text);
+    this.activeAlert?.setAttr('prompt', text);
   }
 
   showAlert(alertId) {
@@ -148,7 +158,7 @@ class FakeApp {
   }
 
   alertText() {
-    return this.activeAlert.getAttr('prompt') || this.activeAlert.nodeAttrs.text;
+    return this.activeAlert?.getAttr('prompt') || this.activeAlert?.nodeAttrs.text;
   }
 
   handleAlert() {
@@ -167,3 +177,7 @@ class FakeWebView {
 }
 
 export {FakeApp};
+
+/**
+ * @typedef {Element & {data: any}} ElementWithData
+ */

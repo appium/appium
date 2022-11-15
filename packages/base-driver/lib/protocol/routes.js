@@ -990,9 +990,9 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
   }
   if (!dstRoute) return; // eslint-disable-line curly
 
-  const methods = _.get(METHOD_MAP, dstRoute);
+  const methods = METHOD_MAP[dstRoute];
   method = /** @type {Uppercase<typeof method>} */ (_.toUpper(method));
-  if (_.has(methods, method)) {
+  if (method in methods) {
     const dstMethod = _.get(methods, method);
     if (dstMethod.command) {
       return dstMethod.command;
@@ -1004,3 +1004,13 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
 const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
 
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};
+
+/**
+ * This checks compat with the `MethodMap` interface.
+ * @ignore
+ */
+// eslint-disable-next-line no-unused-vars
+const _validMethodMap =
+  /** @type {import('@appium/types').MethodMap<import('@appium/types').ExternalDriver<import('@appium/types').BaseDriverCapConstraints>>} */ (
+    METHOD_MAP
+  );

@@ -6,23 +6,18 @@ import {ServerArgs} from './config';
 import type {Express} from 'express';
 import {Driver, ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
-import {Plugin} from './plugin';
 
 export * from './driver';
 export * from './action';
 export * from './plugin';
-export {
-  AppiumW3CCapabilities,
-  DriverCaps,
-  DriverW3CCaps,
-  NamespacedObject,
-  AnyCase,
-  ConstraintsToCaps,
 export * from './capabilities';
 export * from './constraints';
 export * from './config';
 export * from './appium-config';
 
+/**
+ * Utility type for a object with string-only props
+ */
 export type StringRecord = Record<string, any>;
 
 /**
@@ -87,19 +82,19 @@ export interface AppiumServerSocket extends Socket {
  * The definition of an extension method, which will be provided via Appium's API.
  *
  */
-export interface MethodDef<T> {
+export interface MethodDef<E> {
   /**
    * Name of the command.
    */
-  command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<Required<E>, DriverCommand>;
   /**
    * If true, this `Method` will never proxy.
    */
-  neverProxy?: boolean;
+  readonly neverProxy?: boolean;
   /**
    * Specifies shape of payload
    */
-  payloadParams?: PayloadParams;
+  readonly payloadParams?: PayloadParams;
 }
 
 /**
@@ -123,13 +118,15 @@ export interface PayloadParams {
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
  */
-export type MethodMap<D = Driver> = Record<
-  string,
-  {
-    GET?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
-    POST?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
-    DELETE?: MethodDef<D extends Driver ? D & ExternalDriver : D>;
-  }
+export type MethodMap<E = any> = Readonly<
+  Record<
+    string,
+    {
+      GET?: MethodDef<E>;
+      POST?: MethodDef<E>;
+      DELETE?: MethodDef<E>;
+    }
+  >
 >;
 
 /**
@@ -173,7 +170,7 @@ export type ExtensionType = DriverType | PluginType;
 export type UpdateServerCallback = (
   expressApp: Express,
   httpServer: AppiumServer,
-  cliArgs: ServerArgs
+  cliArgs: Partial<ServerArgs>
 ) => Promise<void>;
 
 /**

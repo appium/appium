@@ -44,7 +44,7 @@ export function SessionMixin(Base) {
 }
 
 /**
- * @typedef {import('@appium/types').SessionCommands} ISessionCommands
+ * @typedef {import('@appium/types').ISessionCommands} ISessionCommands
  * @typedef {import('@appium/types').SingularSessionData} SingularSessionData
  * @typedef {import('@appium/types').MultiSessionData} MultiSessionData
  * @typedef {import('@appium/types').Constraints} Constraints

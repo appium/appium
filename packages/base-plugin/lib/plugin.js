@@ -10,12 +10,16 @@ class BasePlugin {
    * This will verify that the commands in the `newMethodMap` property are
    * valid.  It is impossible to use a generic type param here; the type of this should really
    * be something like `MethodMap<T extends BasePlugin>` but that isn't a thing TS does.
+   *
+   * ```ts
+   * static newMethodMap = {
+   *   '/session/:sessionId/fake_data': {
+   *     GET: {command: 'getFakeSessionData', neverProxy: true},
+   *   }
+   * } as const;
+   * ```
    */
-  static newMethodMap = /** @type {const} */ ({
-    '/session/:sessionId/plugin': {
-      GET: {command: 'getPlugin'},
-    },
-  });
+  static newMethodMap = {};
 
   /**
    * @param {string} name

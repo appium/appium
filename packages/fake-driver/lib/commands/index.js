@@ -1,21 +1,17 @@
-import contextCommands from './contexts';
-import findCommands from './find';
-import elementCommands from './element';
-import generalCommands from './general';
-import alertCommands from './alert';
+import {AlertMixin} from './alert';
+import {ContextsMixin} from './contexts';
+import {ElementMixin} from './element';
+import {FindMixin} from './find';
+import {GeneralMixin} from './general';
 
-let commands = {};
-
-Object.assign(
-  commands,
-  contextCommands,
-  findCommands,
-  elementCommands,
-  generalCommands,
-  alertCommands
-);
-
-export default commands;
+/**
+ *
+ * @param {import('@appium/types').Class<import('../driver').FakeDriverCore>} Base
+ * @returns
+ */
+export function FakeDriverMixin(Base) {
+  return GeneralMixin(FindMixin(ElementMixin(AlertMixin(ContextsMixin(Base)))));
+}
 
 /* // TODO:
   //rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);

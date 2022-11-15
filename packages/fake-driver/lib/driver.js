@@ -1,11 +1,9 @@
-// @ts-check
-
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
 import {FakeApp} from './fake-app';
-import commands from './commands';
+import {FakeDriverMixin} from './commands';
 
-const CONSTRAINTS = /** @type {const} */ ({
+const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
   app: {
     presence: true,
     isString: true,
@@ -16,20 +14,29 @@ const CONSTRAINTS = /** @type {const} */ ({
 });
 
 /**
+ * @typedef {typeof FAKE_DRIVER_CONSTRAINTS} FakeDriverConstraints
  */
-class FakeDriver extends BaseDriver {
+
+/**
+ * @extends {BaseDriver<FakeDriverConstraints>}
+ * @implements {ExternalDriver<FakeDriverConstraints>}
+ */
+export class FakeDriverCore extends BaseDriver {
+  desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
+
+  /** @type {string} */
+  curContext;
+
+  appModel = new FakeApp();
+
   constructor(opts = {}, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
-    this.appModel = null;
     this.curContext = 'NATIVE_APP';
     this.elMap = {};
     this.focusedElId = null;
     this.maxElId = 0;
     this.fakeThing = null;
-    this.cliArgs = {};
     this._proxyActive = false;
-
-    this.desiredCapConstraints = CONSTRAINTS;
   }
 
   proxyActive() {
@@ -49,17 +56,21 @@ class FakeDriver extends BaseDriver {
     res.status(200).send(JSON.stringify(resBodyObj));
   }
 
-  proxyCommand(/*url, method, body*/) {
-    return 'proxied via proxyCommand';
+  /**
+   * @template [T=any]
+   * @returns {Promise<T>}
+   */
+  async proxyCommand(/*url, method, body*/) {
+    return /** @type {T} */ (/** @type {unknown} */ ('proxied via proxyCommand'));
   }
 
   /**
    *
-   * @param {W3CCapabilities} jsonwpDesiredCapabilities
-   * @param {W3CCapabilities} [jsonwpRequiredCaps]
-   * @param {W3CCapabilities} [w3cCapabilities]
+   * @param {W3CFakeDriverCaps} jsonwpDesiredCapabilities
+   * @param {W3CFakeDriverCaps} [jsonwpRequiredCaps]
+   * @param {W3CFakeDriverCaps} [w3cCapabilities]
    * @param {import('@appium/types').DriverData[]} [otherSessionData]
-   * @returns {Promise<[string, any]>}
+   * @returns {Promise<[string,FakeDriverCaps]>}
    */
   async createSession(
     jsonwpDesiredCapabilities,
@@ -81,16 +92,14 @@ class FakeDriver extends BaseDriver {
       }
     }
 
-    let [sessionId, caps] =
-      /** @type {[string, import('@appium/types').DriverCaps<FakeDriver>]} */ (
-        await super.createSession(
-          jsonwpDesiredCapabilities,
-          jsonwpRequiredCaps,
-          w3cCapabilities,
-          otherSessionData
-        )
-      );
-    this.appModel = new FakeApp();
+    let [sessionId, caps] = /** @type {[string, FakeDriverCaps]} */ (
+      await super.createSession(
+        jsonwpDesiredCapabilities,
+        jsonwpRequiredCaps,
+        w3cCapabilities,
+        otherSessionData
+      )
+    );
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
     return [sessionId, caps];
@@ -110,7 +119,6 @@ class FakeDriver extends BaseDriver {
   /**
    * Set the 'thing' value (so that it can be retrieved later)
    *
-   * @appiumCommand
    * @param {any} thing
    * @returns {Promise<null>}
    */
@@ -123,8 +131,7 @@ class FakeDriver extends BaseDriver {
   /**
    * Get the driver args that were sent in via the CLI
    *
-   * @appiumCommand
-   * @returns {Promise<Record<string, any>>}
+   * @returns {Promise<typeof this.cliArgs>}
    */
   async getFakeDriverArgs() {
     await B.delay(1);
@@ -134,6 +141,9 @@ class FakeDriver extends BaseDriver {
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},
+      /**
+       * Sets a fake thing
+       */
       POST: {command: 'setFakeThing', payloadParams: {required: ['thing']}},
     },
     '/session/:sessionId/fakedriverargs': {
@@ -146,6 +156,9 @@ class FakeDriver extends BaseDriver {
       command: 'fakeAddition',
       params: {required: ['num1', 'num2'], optional: ['num3']},
     },
+    /**
+     * Gets a thing (a fake thing)
+     */
     'fake: getThing': {
       command: 'getFakeThing',
     },
@@ -155,8 +168,18 @@ class FakeDriver extends BaseDriver {
     },
   });
 
+  /**
+   * Add two or maybe even three numbers
+   *
+   * @param {number} num1
+   * @param {number} num2
+   * @param {number} [num3]
+   * @returns {Promise<number>}
+   */
   // eslint-disable-next-line no-unused-vars
-  async fakeAddition(num1, num2, num3 = 0) {}
+  async fakeAddition(num1, num2, num3 = 0) {
+    throw new errors.NotImplementedError();
+  }
 
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
@@ -164,23 +187,30 @@ class FakeDriver extends BaseDriver {
 
   static async updateServer(expressApp, httpServer, cliArgs) {
     // eslint-disable-line require-await
-    expressApp.all('/fakedriver', FakeDriver.fakeRoute);
+    expressApp.all('/fakedriver', FakeDriverCore.fakeRoute);
     expressApp.all('/fakedriverCliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
   }
 }
 
-Object.assign(FakeDriver.prototype, commands);
-
-export {FakeDriver};
+/**
+ * @extends FakeDriverCore
+ */
+export class FakeDriver extends FakeDriverMixin(FakeDriverCore) {}
+export default FakeDriver;
 
 /**
- * @typedef {import('@appium/types').W3CCapabilities} W3CCapabilities
- * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
+ * @typedef {import('./types').FakeDriverCaps} FakeDriverCaps
+ * @typedef {import('./types').W3CFakeDriverCaps} W3CFakeDriverCaps
  */
 
 /**
  * @template {import('@appium/types').Driver} D
  * @typedef {import('@appium/types').DriverClass<D>} DriverClass
+ */
+
+/**
+ * @template {import('@appium/types').Constraints} C
+ * @typedef {import('@appium/types').ExternalDriver<C>} ExternalDriver
  */

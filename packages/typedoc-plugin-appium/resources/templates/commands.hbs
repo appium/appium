@@ -1,0 +1,39 @@
+{{> header}}
+
+{{#ifShowPageTitle}}
+
+# {{{reflectionTitle true}}}
+
+{{/ifShowPageTitle}}
+
+{{#with model}}
+
+{{#if hasComment}}
+
+{{> comment}}
+
+{{/if}}
+
+{{/with}}
+
+{{#with model}}
+
+{{#if hasRoutes}}
+## Routes
+{{#each children}}
+{{#unless isExecuteCommand}}
+{{> command}}
+{{/unless}}
+{{/each}}
+{{/if}}
+
+{{#if hasExecuteCommands}}
+## Execute Scripts
+{{#each children}}
+{{#if isExecuteCommand}}
+{{> executeCommand}}
+{{/if}}
+{{/each}}
+{{/if}}
+
+{{/with}}

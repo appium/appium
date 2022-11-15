@@ -15,7 +15,7 @@ test/functional/_joined
 *.t
 artifacts
 input
-output
+./output
 lib/devices/android/bootstrap/bin/*
 lib/devices/android/bootstrap/local.properties
 lib/devices/android/bootstrap/project.properties

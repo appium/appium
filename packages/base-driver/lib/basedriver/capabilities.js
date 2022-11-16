@@ -7,8 +7,7 @@ import log from './logger';
 import {errors} from '../protocol/errors';
 
 const APPIUM_VENDOR_PREFIX = 'appium:';
-const APPIUM_OPTS_CAP = 'options';
-const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}${APPIUM_OPTS_CAP}`;
+const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}options`;
 
 /**
  * Takes primary caps object and merges it into a secondary caps object.
@@ -336,43 +335,70 @@ function processCapabilities(
 
 /**
  * Return a copy of a capabilities object which has taken everything within the 'options'
- * capability and promoted it to the top level. Note that this function is assumed to be run after
- * all vendor prefixes have already been stripped from the top level. So we are dealing with e.g.
- * 'options' and not 'appium:options' at this point. Any prefixes _inside_ the 'options' capability
- * will themselves be stripped. This is designed as an internal function, not one to operate on
- * user-constructed capabilities.
+ * capability and promoted it to the top level.
  *
- * @param {object} originalCaps - the capabilities to analyze and promote from 'options'
- * @return {object!} - the capabilities with 'options' promoted if necessary
+ * @template {Constraints} C
+ * @param {import('@appium/types').W3CCapabilities<C>} originalCaps
+ * @return {import('@appium/types').W3CCapabilities<C>} the capabilities with 'options' promoted if necessary
  */
 function promoteAppiumOptions(originalCaps) {
-  const appiumOptions = originalCaps[APPIUM_OPTS_CAP];
-  if (!appiumOptions) {
-    return originalCaps;
-  }
+  const promoteForObject = (obj) => {
+    const appiumOptions = obj[PREFIXED_APPIUM_OPTS_CAP];
+    if (!appiumOptions) {
+      return obj;
+    }
 
-  let caps = _.cloneDeep(originalCaps);
-  if (!_.isPlainObject(appiumOptions)) {
-    throw new errors.SessionNotCreatedError(`The ${APPIUM_OPTS_CAP} capability must be an object`);
-  }
+    if (!_.isPlainObject(appiumOptions)) {
+      throw new errors.SessionNotCreatedError(`The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`);
+    }
+    if (_.isEmpty(appiumOptions)) {
+      return obj;
+    }
 
-  // first get rid of any prefixes inside appium:options
-  const strippedAppiumOptions = stripAppiumPrefixes(appiumOptions);
-  // warn if we are going to overwrite any keys on the base caps object
-  const overwrittenKeys = _.intersection(Object.keys(caps), Object.keys(strippedAppiumOptions));
-  if (overwrittenKeys.length > 0) {
-    log.warn(
-      `Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
-        `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
+    log.debug(
+      `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
     );
+
+    const shouldAddVendorPrefix = (/** @type {string} */ capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
+    const verifyIfAcceptable = (/** @type {string} */ capName) => {
+      if (isStandardCap(capName)) {
+        throw new errors.SessionNotCreatedError(
+          `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' one is unexpected`
+        );
+      }
+      return capName;
+    };
+    const preprocessedOptions = _.toPairs(_.cloneDeep(appiumOptions))
+      .map(([name, value]) => [String(name), value])
+      .map(([name, value]) => [verifyIfAcceptable(name), value])
+      .map(([name, value]) => [shouldAddVendorPrefix(name) ? `${APPIUM_VENDOR_PREFIX}${name}` : name, value])
+      .reduce((acc, [name, value]) => {acc[name] = value; return acc;}, {});
+    // warn if we are going to overwrite any keys on the base caps object
+    const overwrittenKeys = _.intersection(Object.keys(obj), Object.keys(preprocessedOptions));
+    if (overwrittenKeys.length > 0) {
+      log.warn(
+        `Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
+          `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
+      );
+    }
+    const res = _.cloneDeep(obj);
+    delete res[PREFIXED_APPIUM_OPTS_CAP];
+    return {...res, ...preprocessedOptions};
+  };
+
+  const {alwaysMatch, firstMatch} = originalCaps;
+  const result = {};
+  if (_.isPlainObject(alwaysMatch)) {
+    result.alwaysMatch = promoteForObject(alwaysMatch);
+  } else if (_.has(originalCaps, 'alwaysMatch')) {
+    result.alwaysMatch = alwaysMatch;
   }
-
-  // now just apply them to the main caps object
-  caps = {...caps, ...strippedAppiumOptions};
-
-  // and remove all traces of the options cap
-  delete caps[APPIUM_OPTS_CAP];
-  return caps;
+  if (_.isArray(firstMatch)) {
+    result.firstMatch = firstMatch.map(promoteForObject);
+  } else if (_.has(originalCaps, 'firstMatch')) {
+    result.firstMatch = firstMatch;
+  }
+  return result;
 }
 
 export {
@@ -381,7 +407,6 @@ export {
   validateCaps,
   mergeCaps,
   APPIUM_VENDOR_PREFIX,
-  APPIUM_OPTS_CAP,
   findNonPrefixedCaps,
   isStandardCap,
   stripAppiumPrefixes,

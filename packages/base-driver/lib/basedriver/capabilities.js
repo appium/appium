@@ -360,16 +360,20 @@ function promoteAppiumOptions(originalCaps) {
     );
 
     const shouldAddVendorPrefix = (/** @type {string} */ capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
-    const verifyIfAcceptable = (/** @type {string} */ capName) => {
+    const verifyIfAcceptable = (capName) => {
+      if (!_.isString(capName)) {
+        throw new errors.SessionNotCreatedError(
+          `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`
+        );
+      }
       if (isStandardCap(capName)) {
         throw new errors.SessionNotCreatedError(
-          `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' one is unexpected`
+          `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' is unexpected`
         );
       }
       return capName;
     };
     const preprocessedOptions = _.toPairs(_.cloneDeep(appiumOptions))
-      .map(([name, value]) => [String(name), value])
       .map(([name, value]) => [verifyIfAcceptable(name), value])
       .map(([name, value]) => [shouldAddVendorPrefix(name) ? `${APPIUM_VENDOR_PREFIX}${name}` : name, value])
       .reduce((acc, [name, value]) => {acc[name] = value; return acc;}, {});

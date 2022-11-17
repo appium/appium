@@ -4,6 +4,7 @@ import {processCapabilities, PROTOCOLS, STANDARD_CAPS} from '@appium/base-driver
 import {inspect as dump} from 'util';
 import {node} from '@appium/support';
 import path from 'path';
+import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE} from './constants';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
@@ -289,6 +290,46 @@ function pullSettings(caps) {
   return result;
 }
 
+/**
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<ServerCommand>}
+ */
+export function isServerCommandArgs(args) {
+  return args.subcommand === SERVER_SUBCOMMAND;
+}
+
+/**
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<CliExtensionCommand, SubCmd>}
+ */
+export function isExtensionCommandArgs(args) {
+  return args.subcommand === DRIVER_TYPE || args.subcommand === PLUGIN_TYPE;
+}
+
+/**
+ * @template {CliCommand} Cmd
+ * @template {CliExtensionSubcommand} SubCmd
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<DriverCommand, SubCmd>}
+ */
+export function isDriverCommandArgs(args) {
+  return args.subcommand === DRIVER_TYPE;
+}
+
+/**
+ * @template {CliCommand} Cmd
+ * @template {CliExtensionSubcommand} SubCmd
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<PluginCommand, SubCmd>}
+ */
+export function isPluginCommandArgs(args) {
+  return args.subcommand === PLUGIN_TYPE;
+}
+
 export {
   inspect,
   parseCapsForInnerDriver,
@@ -356,4 +397,25 @@ export {
 
 /**
  * @typedef {import('@appium/types').Constraints} Constraints
+ */
+
+/**
+ * @typedef {import('appium/types').CliCommand} CliCommand
+ * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
+ * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
+ * @typedef {import('appium/types').ServerCommand} ServerCommand
+ * @typedef {import('appium/types').DriverCommand} DriverCommand
+ * @typedef {import('appium/types').PluginCommand} PluginCommand
+ */
+
+/**
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @typedef {import('appium/types').Args<Cmd, SubCmd>} Args
+ */
+
+/**
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @typedef {import('appium/types').ParsedArgs<Cmd, SubCmd>} ParsedArgs
  */

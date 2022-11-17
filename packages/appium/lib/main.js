@@ -23,10 +23,17 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from './constants';
+import {SERVER_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
-import {inspect, adjustNodePath} from './utils';
+import {
+  inspect,
+  adjustNodePath,
+  isDriverCommandArgs,
+  isExtensionCommandArgs,
+  isPluginCommandArgs,
+  isServerCommandArgs,
+} from './utils';
 
 const {resolveAppiumHome} = env;
 
@@ -143,16 +150,6 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
     {}
   );
 }
-
-/**
- * @template [T=WithServerSubcommand]
- * @param {Args<T>} args
- * @returns {args is Args<WithServerSubcommand>}
- */
-function areServerCommandArgs(args) {
-  return args.subcommand === SERVER_SUBCOMMAND;
-}
-
 /**
  * Initializes Appium, but does not start the server.
  *
@@ -160,9 +157,10 @@ function areServerCommandArgs(args) {
  *
  * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
  *
- * @template [T=WithServerSubcommand]
- * @param {Args<T>} [args] - Partial args (progammatic usage only)
- * @returns {Promise<ServerInitResult | ExtCommandInitResult>}
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} [args] - Partial args (progammatic usage only)
+ * @returns {Promise<InitResult<Cmd>>}
  * @example
  * import {init, getSchema} from 'appium';
  * const options = {}; // config object
@@ -178,7 +176,7 @@ async function init(args) {
 
   const parser = getParser();
   let throwInsteadOfExit = false;
-  /** @type {Args<T>} */
+  /** @type {Args<Cmd, SubCmd>} */
   let preConfigArgs;
 
   if (args) {
@@ -193,7 +191,7 @@ async function init(args) {
     preConfigArgs = {...args, subcommand: args.subcommand ?? SERVER_SUBCOMMAND};
   } else {
     // otherwise parse from CLI
-    preConfigArgs = /** @type {Args<T>} */ (parser.parseArgs());
+    preConfigArgs = /** @type {Args<Cmd, SubCmd>} */ (parser.parseArgs());
   }
 
   const configResult = await readConfigFile(preConfigArgs.configFile);
@@ -211,7 +209,7 @@ async function init(args) {
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
-  if (areServerCommandArgs(preConfigArgs)) {
+  if (isServerCommandArgs(preConfigArgs)) {
     const defaults = getDefaultsForSchema(false);
 
     /** @type {ParsedArgs} */
@@ -219,7 +217,7 @@ async function init(args) {
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs), configResult, defaults, serverArgs);
-      return {};
+      return /** @type {InitResult<Cmd>} */ ({});
     }
 
     await logsinkInit(serverArgs);
@@ -252,48 +250,48 @@ async function init(args) {
     appiumDriver.driverConfig = driverConfig;
     await preflightChecks(serverArgs, throwInsteadOfExit);
 
-    return /** @type {ServerInitResult} */ ({
+    return /** @type {InitResult<Cmd>} */ ({
       appiumDriver,
       parsedArgs: serverArgs,
       driverConfig,
       pluginConfig,
     });
   } else {
-    const extensionCommandArgs = /** @type {Args<import('appium/types').WithExtSubcommand>} */ (
-      preConfigArgs
-    );
-    // if the user has requested the 'driver' CLI, don't run the normal server,
-    // but instead pass control to the driver CLI
-    if (preConfigArgs.subcommand === DRIVER_TYPE) {
-      await runExtensionCommand(extensionCommandArgs, driverConfig);
-      return {};
+    if (isExtensionCommandArgs(preConfigArgs)) {
+      // if the user has requested the 'driver' CLI, don't run the normal server,
+      // but instead pass control to the driver CLI
+      if (isDriverCommandArgs(preConfigArgs)) {
+        await runExtensionCommand(preConfigArgs, driverConfig);
+      }
+      if (isPluginCommandArgs(preConfigArgs)) {
+        await runExtensionCommand(preConfigArgs, pluginConfig);
+      }
     }
-    if (preConfigArgs.subcommand === PLUGIN_TYPE) {
-      await runExtensionCommand(extensionCommandArgs, pluginConfig);
-      return {};
-    }
-    /* istanbul ignore next */
-    return {}; // should never happen
+    return /** @type {InitResult<Cmd>} */ ({});
   }
 }
 
 /**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
- * @template [T=WithServerSubcommand]
- * @param {Args<T>} [args] - Arguments from CLI or otherwise
- * @returns {Promise<import('@appium/types').AppiumServer|undefined>}
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} [args] - Arguments from CLI or otherwise
+ * @returns {Promise<Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void>}
  */
 async function main(args) {
-  const {appiumDriver, parsedArgs, pluginConfig, driverConfig} = /** @type {ServerInitResult} */ (
-    await init(args)
-  );
+  const initResult = await init(args);
 
-  if (!appiumDriver || !parsedArgs || !pluginConfig || !driverConfig) {
+  if (_.isEmpty(initResult)) {
     // if this branch is taken, we've run a different subcommand, so there's nothing
     // left to do here.
-    return;
+    return /** @type {Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void} */ (
+      undefined
+    );
   }
+
+  const {appiumDriver, pluginConfig, driverConfig, parsedArgs} =
+    /** @type {InitResult<ServerCommand>} */ (initResult);
 
   const pluginClasses = getActivePlugins(pluginConfig, parsedArgs.usePlugins);
   // set the active plugins on the umbrella driver so it can use them for commands
@@ -377,7 +375,9 @@ async function main(args) {
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);
 
-  return server;
+  return /** @type {Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void} */ (
+    server
+  );
 }
 
 // NOTE: this is here for backwards compat for any scripts referencing `main.js` directly
@@ -397,7 +397,12 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').PluginClass} PluginClass
- * @typedef {import('appium/types').WithServerSubcommand} WithServerSubcommand
+ * @typedef {import('appium/types').CliCommand} CliCommand
+ * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
+ * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
+ * @typedef {import('appium/types').ServerCommand} ServerCommand
+ * @typedef {import('appium/types').DriverCommand} DriverCommand
+ * @typedef {import('appium/types').PluginCommand} PluginCommand
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */
@@ -414,15 +419,18 @@ export {main, init, resolveAppiumHome};
  */
 
 /**
- * @typedef {ServerInitData & import('./extension').ExtensionConfigs} ServerInitResult
+ * @template {CliCommand} Cmd
+ * @typedef {Cmd extends ServerCommand ? ServerInitData & import('./extension').ExtensionConfigs : ExtCommandInitResult} InitResult
  */
 
 /**
- * @template [T=WithServerSubcommand]
- * @typedef {import('appium/types').Args<T>} Args
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @typedef {import('appium/types').Args<Cmd, SubCmd>} Args
  */
 
 /**
- * @template [T=WithServerSubcommand]
- * @typedef {import('appium/types').ParsedArgs<T>} ParsedArgs
+ * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @typedef {import('appium/types').ParsedArgs<Cmd, SubCmd>} ParsedArgs
  */

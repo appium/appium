@@ -1,23 +1,39 @@
-import {ServerArgs} from '@appium/types';
-export type ServerSubcommand = 'server';
-export type DriverSubcommand = 'driver';
-export type PluginSubcommand = 'plugin';
+import {DriverType, PluginType, ServerArgs} from '@appium/types';
+import {SetOptional} from 'type-fest';
+import {InstallType} from './appium-manifest';
+export type ServerCommand = 'server';
+export type DriverCommand = DriverType;
+export type PluginCommand = PluginType;
 
 /**
- * Possible subcommands for the `appium` CLI.
+ * Extension-specific commands
  */
-export type CliSubcommand = ServerSubcommand | DriverSubcommand | PluginSubcommand;
+export type CliExtensionCommand = DriverCommand | PluginCommand;
 
 /**
- * Possible subcommands of {@linkcode DriverSubcommand} or
- * {@linkcode PluginSubcommand}.
+ * Possible commands for the `appium` CLI.
  */
-export type CliExtensionSubcommand =
-  | 'install'
-  | 'list'
-  | 'run'
-  | 'uninstall'
-  | 'update';
+export type CliCommand = ServerCommand | CliExtensionCommand;
+
+/**
+ * Possible subcommands of {@linkcode DriverCommand} or
+ * {@linkcode PluginCommand}.
+ */
+export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update';
+
+export interface CliExtensionSubcommandListArgs {
+  showInstalled?: boolean;
+  showUpdates?: boolean;
+}
+
+export interface CliExtensionSubcommandInstallArgs {
+  installType: InstallType;
+  packageName?: string;
+}
+
+export interface CliExtensionSubcommandUpdateArgs {
+  unsafe?: boolean;
+}
 
 /**
  * Random stuff that may appear in the parsed args which has no equivalent in a
@@ -25,9 +41,9 @@ export type CliExtensionSubcommand =
  */
 export interface MoreArgs {
   /**
-   * Possible subcommands. If empty, defaults to {@linkcode ServerSubcommand}.
+   * Possible subcommands. If empty, defaults to {@linkcode ServerCommand}.
    */
-  subcommand?: CliSubcommand;
+  subcommand?: CliCommand;
 
   /**
    * Path to config file, if any. Does not make sense for this to be allowed in a config file!
@@ -79,19 +95,21 @@ export interface ProgrammaticArgs {
   showConfig?: boolean;
 }
 
+export interface DriverExtArgs {
+  driverCommand: CliExtensionSubcommand;
+  driver?: string;
+}
+
+export interface PluginExtArgs {
+  pluginCommand: CliExtensionSubcommand;
+  plugin?: string;
+}
+
 /**
  * These are args which the user will specify if using an extension command
  */
-export interface ExtArgs extends WithExtSubcommand {
-  /**
-   * Subcommands of `driver` subcommand
-   */
-  driverCommand?: CliExtensionSubcommand;
-
-  /**
-   * Subcommands of `plugin` subcommand
-   */
-  pluginCommand?: CliExtensionSubcommand;
+export interface BaseExtArgs<Cmd extends CliExtensionCommand> {
+  subcommand: Cmd;
 
   /**
    * Output JSON instead of human-readable text
@@ -110,35 +128,56 @@ export interface ExtArgs extends WithExtSubcommand {
 }
 
 /**
- * Args having the `server` subcommand
+ * Args for extension commands; includes a subcommand
  */
-export interface WithServerSubcommand {
-  subcommand?: ServerSubcommand;
-}
-
-/**
- * Args having the `driver` or `plugin` subcommand
- */
-export interface WithExtSubcommand {
-  subcommand: DriverSubcommand | PluginSubcommand;
-}
+export type ExtArgs<
+  Cmd extends CliExtensionCommand,
+  SubCmd extends CliExtensionSubcommand
+> = BaseExtArgs<Cmd> &
+  (Cmd extends DriverCommand ? DriverExtArgs : Cmd extends PluginCommand ? PluginExtArgs : never) &
+  (SubCmd extends 'install'
+    ? CliExtensionSubcommandInstallArgs
+    : SubCmd extends 'list'
+    ? CliExtensionSubcommandListArgs
+    : SubCmd extends 'update'
+    ? CliExtensionSubcommandUpdateArgs
+    : never);
 
 /**
  * Some generic bits of arguments; should not be used outside this declaration
  */
-type CommonArgs<SArgs, T = WithServerSubcommand> = MoreArgs &
+export type CommonArgs<
+  Cmd extends CliCommand = ServerCommand,
+  SubCmd extends CliExtensionSubcommand | void = void
+> = MoreArgs &
   ProgrammaticArgs &
-  (T extends WithServerSubcommand ? SArgs : T extends WithExtSubcommand ? ExtArgs : never);
+  (Cmd extends ServerCommand
+    ? ServerArgs
+    : Cmd extends CliExtensionCommand
+    ? SubCmd extends CliExtensionSubcommand
+      ? ExtArgs<Cmd, SubCmd>
+      : never
+    : never);
 
 /**
  * Fully-parsed arguments, containing defaults, computed args, and config file values.
  */
-export type ParsedArgs<T = WithServerSubcommand> = CommonArgs<ServerArgs, T>;
+export type ParsedArgs<
+  Cmd extends CliCommand = ServerCommand,
+  SubCmd extends CliExtensionSubcommand | void = void
+> = CommonArgs<Cmd, SubCmd>;
 
 /**
- * Partial arguments, as supplied by a user. _May_ have defaults applied; _may_ contain config values; _may_ contain computed args.
+ * Like {@linkcode ParsedArgs} except server arguments are all optional.
+ *
+ * _May_ have defaults applied; _may_ contain config values; _may_ contain computed args.
  */
-export type Args<T = WithServerSubcommand> = CommonArgs<Partial<ServerArgs>, T>;
+export type Args<
+  Cmd extends CliCommand = ServerCommand,
+  SubCmd extends CliExtensionSubcommand | void = void
+> = Cmd extends ServerCommand
+  ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs>
+  : ParsedArgs<Cmd, SubCmd>;
 
 /**
  * Shown by `appium --build-info`

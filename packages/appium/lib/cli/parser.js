@@ -89,9 +89,9 @@ class ArgParser {
    * If no subcommand is passed in, this method will inject the `server` subcommand.
    *
    * `ArgParser.prototype.parse_args` is an alias of this method.
-   * @template [T=import('appium/types').WithServerSubcommand]
+   * @template {import('appium/types').CliCommand} [Cmd=import('appium/types').ServerCommand]
    * @param {string[]} [args] - Array of arguments, ostensibly from `process.argv`. Gathers args from `process.argv` if not provided.
-   * @returns {import('appium/types').Args<T>} - The parsed arguments
+   * @returns {import('appium/types').Args<Cmd>} - The parsed arguments
    */
   parseArgs(args = process.argv.slice(2)) {
     if (!NON_SERVER_ARGS.has(args[0])) {

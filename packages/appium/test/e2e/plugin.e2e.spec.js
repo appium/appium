@@ -11,13 +11,14 @@ import {W3C_PREFIXED_CAPS, TEST_HOST, getTestPort, PROJECT_ROOT} from '../helper
 import {runExtensionCommand} from '../../lib/cli/extension';
 import {tempDir, fs} from '@appium/support';
 import {loadExtensions} from '../../lib/extension';
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
 
 const should = chai.should();
 
-/** @type {WebdriverIO.RemoteOptions} */
+/** @type {import('webdriverio').RemoteOptions} */
 const wdOpts = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
@@ -49,6 +50,8 @@ describe('FakePlugin', function () {
       {
         driverCommand: 'list',
         showInstalled: true,
+        subcommand: DRIVER_TYPE,
+        suppressOutput: true,
       },
       driverConfig
     );
@@ -58,6 +61,7 @@ describe('FakePlugin', function () {
           driverCommand: 'install',
           driver: FAKE_DRIVER_DIR,
           installType: INSTALL_TYPE_LOCAL,
+          subcommand: DRIVER_TYPE,
         },
         driverConfig
       );
@@ -67,6 +71,9 @@ describe('FakePlugin', function () {
       {
         pluginCommand: 'list',
         showInstalled: true,
+        subcommand: PLUGIN_TYPE,
+        json: true,
+        suppressOutput: true,
       },
       pluginConfig
     );
@@ -74,6 +81,7 @@ describe('FakePlugin', function () {
       await runExtensionCommand(
         {
           pluginCommand: 'install',
+          subcommand: 'plugin',
           plugin: FAKE_PLUGIN_DIR,
           installType: INSTALL_TYPE_LOCAL,
         },
@@ -104,7 +112,7 @@ describe('FakePlugin', function () {
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      server = await appiumServer(args);
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     });
 
     after(async function () {
@@ -162,7 +170,7 @@ describe('FakePlugin', function () {
           usePlugins,
           useDrivers: ['fake'],
         };
-        server = await appiumServer(args);
+        server = /** @type {AppiumServer} */ (await appiumServer(args));
       });
       after(async function () {
         if (server) {
@@ -241,7 +249,7 @@ describe('FakePlugin', function () {
       });
 
       it('should handle unexpected driver shutdown', async function () {
-        /** @type {WebdriverIO.RemoteOptions} */
+        /** @type {import('webdriverio').RemoteOptions} */
         const newOpts = {...wdOpts};
         newOpts.capabilities = {
           ...(newOpts.capabilities ?? {}),
@@ -270,7 +278,7 @@ describe('FakePlugin', function () {
     before(async function () {
       // then start server if we need to
       const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
-      server = await appiumServer(args);
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
     });
     after(async function () {
       if (server) {
@@ -294,7 +302,7 @@ describe('FakePlugin', function () {
     let server;
     before(async function () {
       // then start server if we need to
-      server = await appiumServer(baseArgs);
+      server = /** @type {AppiumServer} */ (await appiumServer(baseArgs));
     });
     after(async function () {
       if (server) {

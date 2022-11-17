@@ -1,5 +1,5 @@
 import {Comment} from 'typedoc';
-import {CommandRef, ExecuteCommandRef, ParentReflection, Route} from '../types';
+import {CommandData, ExecCommandData, ParentReflection, Route} from '../types';
 import {CommandsReflection} from './commands';
 import {AppiumPluginReflectionKind} from './kind';
 import {AppiumPluginReflection} from './plugin';
@@ -20,26 +20,27 @@ export class CommandReflection extends AppiumPluginReflection {
   public readonly comment?: Comment;
 
   constructor(
-    readonly commandRef: CommandRef | ExecuteCommandRef,
-    module: ParentReflection,
-    route: Route,
-    parent: CommandsReflection
+    readonly commandRef: CommandData | ExecCommandData,
+    parent: CommandsReflection,
+    route: Route = NAME_EXECUTE_ROUTE
   ) {
-    const name = CommandReflection.isExecuteCommandRef(commandRef) ? commandRef.script : route;
-    super(
-      name,
-      (CommandReflection.isExecuteCommandRef(commandRef)
-        ? AppiumPluginReflectionKind.EXECUTE_COMMAND
-        : AppiumPluginReflectionKind.COMMAND) as any,
-      module,
-      parent
-    );
+    let name: string;
+    let kind: AppiumPluginReflectionKind;
+
+    if (CommandReflection.isExecCommandData(commandRef)) {
+      name = commandRef.script;
+      kind = AppiumPluginReflectionKind.EXECUTE_COMMAND;
+    } else {
+      name = route;
+      kind = AppiumPluginReflectionKind.COMMAND;
+    }
+    super(name, kind as any, parent);
 
     this.route = route;
     this.httpMethod = 'httpMethod' in commandRef ? commandRef.httpMethod : HTTP_METHOD_EXECUTE;
     this.requiredParams = commandRef.requiredParams ?? [];
     this.optionalParams = commandRef.optionalParams ?? [];
-    this.script = 'script' in commandRef ? commandRef.script : undefined;
+    this.script = CommandReflection.isExecCommandData(commandRef) ? commandRef.script : undefined;
     this.comment = commandRef.comment;
   }
 
@@ -60,7 +61,7 @@ export class CommandReflection extends AppiumPluginReflection {
    * @param ref Command reference
    * @returns `true` if it's an execute command
    */
-  public static isExecuteCommandRef(ref: CommandRef | ExecuteCommandRef): ref is ExecuteCommandRef {
+  public static isExecCommandData(ref: CommandData | ExecCommandData): ref is ExecCommandData {
     return 'script' in ref;
   }
 }

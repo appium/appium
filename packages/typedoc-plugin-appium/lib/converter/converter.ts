@@ -1,23 +1,29 @@
-import {Context, DeclarationReflection, Logger, ReflectionKind} from 'typedoc';
+import {Context, DeclarationReflection, LiteralType, ReflectionKind} from 'typedoc';
+import {
+  isBaseDriverDeclarationReflection,
+  isCommandPropDeclarationReflection,
+  isExecMethodDefReflection,
+  isHTTPMethodDeclarationReflection,
+  isMethodMapDeclarationReflection,
+  isParamsArray,
+  isReflectionWithReflectedType,
+  isRoutePropDeclarationReflection,
+} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {
-  AllowedHttpMethod,
   CommandInfo,
   CommandMap,
-  ExecuteCommandSet,
+  ExecCommandDataSet,
+  ModuleCommands,
   ParentReflection,
-  ProjectCommands,
   RouteMap,
 } from '../model';
 import {
-  isDeclarationReflection,
-  isIntrinsicType,
-  isLiteralType,
-  isReflectionType,
-  isTupleType,
-  isTypeOperatorType,
-} from '../guards';
-import {BaseDriverDeclarationReflection, MethodMapDeclarationReflection} from './types';
+  BaseDriverDeclarationReflection,
+  DeclarationReflectionWithReflectedType,
+  Guard,
+  MethodMapDeclarationReflection,
+} from './types';
 
 /**
  * Name of the static `newMethodMap` property in a Driver
@@ -60,23 +66,6 @@ export const NAME_PAYLOAD_PARAMS = 'payloadParams';
  */
 export const NAME_BUILTIN_COMMAND_MODULE = '@appium/base-driver';
 
-function isBaseDriverDeclarationReflection(value: any): value is BaseDriverDeclarationReflection {
-  return (
-    value instanceof DeclarationReflection &&
-    value.name === NAME_BUILTIN_COMMAND_MODULE &&
-    value.kindOf(ReflectionKind.Module)
-  );
-}
-
-function isMethodMapDeclarationReflection(value: any): value is MethodMapDeclarationReflection {
-  return (
-    isDeclarationReflection(value) &&
-    ((value.name === NAME_NEW_METHOD_MAP && value.flags.isStatic) ||
-      value.name === NAME_METHOD_MAP) &&
-    isReflectionType(value.type) &&
-    isDeclarationReflection(value.type.declaration)
-  );
-}
 /**
  * Converts declarations to information about Appium commands
  */
@@ -94,10 +83,10 @@ export class CommandConverter {
    *
    * @returns Command info for entire project
    */
-  public convert(): ProjectCommands {
+  public convert(): ModuleCommands {
     const ctx = this.#ctx;
     const {project} = ctx;
-    const projectCommands: ProjectCommands = new Map();
+    const projectCommands: ModuleCommands = new Map();
 
     // handle baseDriver if it's present
     const baseDriver = project.getChildByName(NAME_BUILTIN_COMMAND_MODULE);
@@ -138,38 +127,38 @@ export class CommandConverter {
     return new CommandInfo(baseDriverRoutes);
   }
 
-  #convertExecuteMethodMap(refl: DeclarationReflection): ExecuteCommandSet {
-    const executeMethodMap = refl.getChildByName(NAME_EXECUTE_METHOD_MAP);
-    const commandRefs: ExecuteCommandSet = new Set();
-    if (
-      executeMethodMap?.flags.isStatic &&
-      isDeclarationReflection(executeMethodMap) &&
-      isReflectionType(executeMethodMap.type)
-    ) {
-      for (const newMethodProp of executeMethodMap.type.declaration.getChildrenByKind(
-        ReflectionKind.Property
-      )) {
+  #convertExecuteMethodMap(refl: DeclarationReflectionWithReflectedType): ExecCommandDataSet {
+    const executeMethodMap = findChildByNameAndGuard(
+      refl,
+      NAME_EXECUTE_METHOD_MAP,
+      isExecMethodDefReflection
+    );
+    const commandRefs: ExecCommandDataSet = new Set();
+    if (executeMethodMap) {
+      for (const newMethodProp of filterChildrenByKind(executeMethodMap, ReflectionKind.Property)) {
         const comment = newMethodProp.comment;
         const script = newMethodProp.originalName;
-        if (isDeclarationReflection(newMethodProp) && isReflectionType(newMethodProp.type)) {
-          const commandProp = newMethodProp.type.declaration.getChildByName(NAME_COMMAND);
-          if (isDeclarationReflection(commandProp) && isLiteralType(commandProp.type)) {
-            const command = String(commandProp.type.value);
-            const paramsProp = newMethodProp.type.declaration.getChildByName(NAME_PARAMS);
-            let requiredParams: string[] = [];
-            let optionalParams: string[] = [];
-            if (isDeclarationReflection(paramsProp)) {
-              requiredParams = this.#parseRequiredParams(paramsProp);
-              optionalParams = this.#parseOptionalParams(paramsProp);
-            }
-            commandRefs.add({
-              command,
-              requiredParams,
-              optionalParams,
-              script,
-              comment,
-            });
-          }
+        const commandProp = findChildByNameAndGuard(
+          newMethodProp,
+          NAME_COMMAND,
+          isCommandPropDeclarationReflection
+        );
+        if (commandProp) {
+          const command = String(commandProp.type.value);
+          const paramsProp = findChildByNameAndGuard(
+            newMethodProp,
+            NAME_PARAMS,
+            isReflectionWithReflectedType
+          );
+          const requiredParams = this.#parseRequiredParams(paramsProp);
+          const optionalParams = this.#parseOptionalParams(paramsProp);
+          commandRefs.add({
+            command,
+            requiredParams,
+            optionalParams,
+            script,
+            comment,
+          });
         }
       }
     }
@@ -191,65 +180,60 @@ export class CommandConverter {
 
     if (isMethodMapDeclarationReflection(child)) {
       methodMap = child;
-      const routeProps = methodMap.type.declaration.getChildrenByKind(ReflectionKind.Property);
+      const routeProps = filterChildrenByKind(methodMap, ReflectionKind.Property);
+
       if (!routeProps.length) {
         this.#log.warn(`No routes found in ${refl.name}`);
       }
+
       for (const routeProp of routeProps) {
         const route = routeProp.originalName;
-        if (isDeclarationReflection(routeProp) && isReflectionType(routeProp.type)) {
-          const httpMethodProps = routeProp.type.declaration.getChildrenByKind(
-            ReflectionKind.Property
-          );
-          if (!httpMethodProps.length) {
-            this.#log.warn(`No HTTP methods found in route ${refl.name}.${route}`);
-          }
-          for (const httpMethodProp of httpMethodProps) {
-            const comment = httpMethodProp.comment;
-            const httpMethod = httpMethodProp.originalName as AllowedHttpMethod;
-            if (isDeclarationReflection(httpMethodProp) && isReflectionType(httpMethodProp.type)) {
-              const commandProp = httpMethodProp.type.declaration.getChildByName(NAME_COMMAND);
-              // commandProp is optional.
-              if (commandProp) {
-                if (isDeclarationReflection(commandProp) && isLiteralType(commandProp.type)) {
-                  const command = String(commandProp.type.value);
-                  const payloadParamsProp =
-                    httpMethodProp.type.declaration.getChildByName(NAME_PAYLOAD_PARAMS);
-                  let requiredParams: string[] = [];
-                  let optionalParams: string[] = [];
-                  if (isDeclarationReflection(payloadParamsProp)) {
-                    requiredParams = this.#parseRequiredParams(payloadParamsProp);
-                    optionalParams = this.#parseOptionalParams(payloadParamsProp);
-                  }
-                  let commandMap: CommandMap = routes.get(route) ?? new Map();
-                  commandMap.set(command, {
-                    command,
-                    requiredParams,
-                    optionalParams,
-                    httpMethod,
-                    route,
-                    comment,
-                  });
-                  routes.set(route, commandMap);
-                } else if (
-                  isDeclarationReflection(commandProp) &&
-                  isIntrinsicType(commandProp.type)
-                ) {
-                  this.#log.warn(
-                    `Found intrinsic type for ${commandProp.originalName} ("${commandProp.type.name}").  ${refl.name} must be defined "as const" to associate with a method.`
-                  );
-                } else {
-                  this.#log.warn(
-                    `Found unknown type for ${commandProp.originalName}: ${commandProp}`
-                  );
-                }
-              }
-            } else {
-              this.#log.warn(`Invalid {MethodMap} found in ${refl.name}.${route}.${httpMethod}`);
-            }
-          }
-        } else {
+
+        if (!isRoutePropDeclarationReflection(routeProp)) {
           this.#log.warn(`Empty route in ${refl.name}.${route}`);
+          continue;
+        }
+
+        const httpMethodProps = filterChildrenByGuard(routeProp, isHTTPMethodDeclarationReflection);
+
+        if (!httpMethodProps.length) {
+          this.#log.warn(`No HTTP methods found in route ${refl.name}.${route}`);
+          continue;
+        }
+
+        for (const httpMethodProp of httpMethodProps) {
+          const comment = httpMethodProp.comment;
+          const httpMethod = httpMethodProp.originalName;
+
+          const commandProp = findChildByNameAndGuard(
+            httpMethodProp,
+            NAME_COMMAND,
+            isCommandPropDeclarationReflection
+          );
+
+          // commandProp is optional.
+          if (!commandProp) {
+            continue;
+          }
+
+          const command = String(commandProp.type.value);
+          const payloadParamsProp = findChildByNameAndGuard(
+            httpMethodProp,
+            NAME_PAYLOAD_PARAMS,
+            isReflectionWithReflectedType
+          );
+          const requiredParams = this.#parseRequiredParams(payloadParamsProp);
+          const optionalParams = this.#parseOptionalParams(payloadParamsProp);
+          let commandMap: CommandMap = routes.get(route) ?? new Map();
+          commandMap.set(command, {
+            command,
+            requiredParams,
+            optionalParams,
+            httpMethod,
+            route,
+            comment,
+          });
+          routes.set(route, commandMap);
         }
       }
     } else {
@@ -259,57 +243,75 @@ export class CommandConverter {
     return routes;
   }
 
-  #convertModuleClasses(mod: ParentReflection) {
+  #convertModuleClasses(parent: ParentReflection) {
     let routes: RouteMap = new Map();
-    let executeCommands: ExecuteCommandSet = new Set();
+    let executeCommands: ExecCommandDataSet = new Set();
 
-    const classReflections = mod.getChildrenByKind(ReflectionKind.Class);
-    for (const classRef of classReflections) {
-      this.#log.verbose(`Converting class ${classRef.name}`);
-      const newMethodMap = this.#convertMethodMap(classRef);
+    const classReflections = parent
+      .getChildrenByKind(ReflectionKind.Class)
+      .filter((child) =>
+        isReflectionWithReflectedType(child)
+      ) as DeclarationReflectionWithReflectedType[];
+
+    for (const classRefl of classReflections) {
+      this.#log.verbose(`Converting class ${classRefl.name}`);
+      const newMethodMap = this.#convertMethodMap(classRefl);
 
       if (newMethodMap.size) {
         routes = new Map([...routes, ...newMethodMap]);
       }
 
-      const executeMethodMap = this.#convertExecuteMethodMap(classRef);
+      const executeMethodMap = this.#convertExecuteMethodMap(classRefl);
       if (executeMethodMap.size) {
         executeCommands = new Set([...executeCommands, ...executeMethodMap]);
       }
-      this.#log.verbose(`Converted class ${classRef.name}`);
+      this.#log.verbose(`Converted class ${classRefl.name}`);
     }
 
     return new CommandInfo(routes, executeCommands);
   }
 
-  #parseOptionalParams(prop: DeclarationReflection): string[] {
-    return this.#parseParams(prop, NAME_OPTIONAL);
+  #parseOptionalParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+    return this.#parseParams(NAME_OPTIONAL, methodDefRefl);
   }
 
-  #parseParams(prop: DeclarationReflection, name: string): string[] {
-    const params = [];
-    if (isReflectionType(prop.type)) {
-      const requiredProp = prop.type.declaration.getChildByName(name);
-      if (
-        isDeclarationReflection(requiredProp) &&
-        isTypeOperatorType(requiredProp.type) &&
-        isTupleType(requiredProp.type.target)
-      ) {
-        for (const reqd of requiredProp.type.target.elements) {
-          if (isLiteralType(reqd)) {
-            params.push(String(reqd.value));
-          }
-        }
-      }
+  #parseParams(propName: string, refl?: DeclarationReflectionWithReflectedType): string[] {
+    if (refl) {
+      const props = findChildByNameAndGuard(refl, propName, isParamsArray);
+      return props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
     }
-    return params;
+    return [];
   }
 
-  #parseRequiredParams(prop: DeclarationReflection): string[] {
-    return this.#parseParams(prop, NAME_REQUIRED);
+  #parseRequiredParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+    return this.#parseParams(NAME_REQUIRED, methodDefRefl);
   }
 }
 
-export function convertCommands(ctx: Context, log: AppiumPluginLogger): ProjectCommands {
+export function convertCommands(ctx: Context, log: AppiumPluginLogger): ModuleCommands {
   return new CommandConverter(ctx, log).convert();
+}
+
+function findChildByNameAndGuard<T extends DeclarationReflection>(
+  refl: DeclarationReflectionWithReflectedType,
+  name: string,
+  guard: Guard<T>
+): T | undefined {
+  return refl.type.declaration.children?.find((child) => child.name === name && guard(child)) as T;
+}
+
+function filterChildrenByKind(
+  refl: DeclarationReflectionWithReflectedType,
+  kind: ReflectionKind
+): DeclarationReflectionWithReflectedType[] {
+  return (refl.type.declaration.children?.filter(
+    (child) => isReflectionWithReflectedType(child) && child.kindOf(kind)
+  ) ?? []) as DeclarationReflectionWithReflectedType[];
+}
+
+function filterChildrenByGuard<T extends DeclarationReflection>(
+  refl: DeclarationReflectionWithReflectedType,
+  guard: Guard<T>
+): T[] {
+  return refl.type.declaration.children?.filter(guard) ?? [];
 }

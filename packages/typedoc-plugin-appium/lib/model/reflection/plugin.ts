@@ -1,16 +1,6 @@
-import {DeclarationReflection, Reflection} from 'typedoc';
-import {ParentReflection} from '../types';
+import {DeclarationReflection} from 'typedoc';
 
 /**
- * Abstract base class for all reflections defined by this plugin
+ * This exists just to allow `instanceof` checks
  */
-export abstract class AppiumPluginReflection extends DeclarationReflection {
-  constructor(
-    name: string,
-    kind: number,
-    public readonly module: ParentReflection,
-    parent: Reflection = module
-  ) {
-    super(name, kind, parent);
-  }
-}
+export abstract class AppiumPluginReflection extends DeclarationReflection {}

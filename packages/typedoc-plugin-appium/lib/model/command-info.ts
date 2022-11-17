@@ -1,18 +1,18 @@
-import {ExecuteCommandSet, RouteMap} from './types';
+import {ExecCommandDataSet, RouteMap} from './types';
 
 /**
  * Data structure describing routes and commands for a particular module (or project)
  */
 export class CommandInfo {
   constructor(
-    public readonly routes: RouteMap,
-    public readonly executeCommands: ExecuteCommandSet = new Set()
+    public readonly routeMap: RouteMap,
+    public readonly execCommandDataSet: ExecCommandDataSet = new Set()
   ) {}
 
   /**
    * `true` if this instance has some actual data
    */
   public get hasCommands() {
-    return this.executeCommands.size > 0 || this.routes.size > 0;
+    return Boolean(this.execCommandDataSet.size + this.routeMap.size);
   }
 }

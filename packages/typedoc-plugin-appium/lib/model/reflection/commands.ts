@@ -1,38 +1,40 @@
 import {CommandInfo} from '../command-info';
-import {ExecuteCommandSet, ParentReflection, RouteMap} from '../types';
+import {ExecCommandDataSet, ParentReflection, RouteMap} from '../types';
 
 import {AppiumPluginReflectionKind} from './kind';
 import {AppiumPluginReflection} from './plugin';
 
+/**
+ * A Reflection representing a set of commands within a module or project
+ */
 export class CommandsReflection extends AppiumPluginReflection {
-  public readonly executeCommandRefs: ExecuteCommandSet;
+  /**
+   * A set of objects
+   */
+  public readonly execCommandDataSet: ExecCommandDataSet;
   public readonly routeMap: RouteMap;
 
-  constructor(
-    name: string,
-    module: ParentReflection,
-    commands: CommandInfo,
-    public override parent: ParentReflection = module
-  ) {
-    super(name, AppiumPluginReflectionKind.COMMANDS as any, module, parent);
+  constructor(name: string, parent: ParentReflection, commands: CommandInfo) {
+    super(name, AppiumPluginReflectionKind.COMMANDS as any, parent);
     this.parent = parent;
-    this.routeMap = commands.routes;
-    this.executeCommandRefs = commands.executeCommands;
+    this.routeMap = commands.routeMap;
+    this.execCommandDataSet = commands.execCommandDataSet;
   }
 
   /**
-   * Returns the name of the module to which this command belongs.
+   * Returns `true` if there are any "execute commands" in this set.
    *
-   * @see {CommandTreeBuilder.getName}
+   * Used by templates
    */
-  public get moduleName(): string {
-    return this.module.name;
-  }
-
   public get hasExecuteCommands(): boolean {
-    return Boolean(this.executeCommandRefs.size);
+    return Boolean(this.execCommandDataSet.size);
   }
 
+  /**
+   * Returns `true` if there are any "regular" commands in this set.
+   *
+   * Used by templates
+   */
   public get hasRoutes(): boolean {
     return Boolean(this.routeMap.size);
   }

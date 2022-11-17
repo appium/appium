@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
+import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {isExtensionCommandArgs} from '../utils';
 import DriverCommand from './driver-command';
 import PluginCommand from './plugin-command';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {errAndQuit, JSON_SPACES} from './utils';
 
 export const commandClasses = Object.freeze(
@@ -15,18 +16,18 @@ export const commandClasses = Object.freeze(
  * Run a subcommand of the 'appium driver' type. Each subcommand has its own set of arguments which
  * can be represented as a JS object.
  *
- * @param {import('appium/types').Args<import('appium/types').WithExtSubcommand>} args - JS object where the key is the parameter name (as defined in
+ * @template {import('appium/types').CliExtensionCommand} Cmd
+ * @template {import('appium/types').CliExtensionSubcommand} SubCmd
+ * @param {import('appium/types').Args<Cmd, SubCmd>} args - JS object where the key is the parameter name (as defined in
  * driver-parser.js)
- * @template {ExtensionType} ExtType
- * @param {import('../extension/extension-config').ExtensionConfig<ExtType>} config - Extension config object
+ * @param {import('../extension/extension-config').ExtensionConfig<Cmd>} config - Extension config object
  */
 async function runExtensionCommand(args, config) {
   // TODO driver config file should be locked while any of these commands are
   // running to prevent weird situations
   let jsonResult = null;
-  const {extensionType: type} = config;
-  const extCmd = args[`${type}Command`];
-  if (!extCmd) {
+  const {extensionType: type} = config; // NOTE this is the same as `args.subcommand`
+  if (!isExtensionCommandArgs(args)) {
     throw new TypeError(`Cannot call ${type} command without a subcommand like 'install'`);
   }
   let {json, suppressOutput} = args;
@@ -34,7 +35,7 @@ async function runExtensionCommand(args, config) {
   if (suppressOutput) {
     json = true;
   }
-  const CommandClass = /** @type {ExtCommand<ExtType>} */ (commandClasses[type]);
+  const CommandClass = /** @type {ExtCommand<Cmd>} */ (commandClasses[type]);
   const cmd = new CommandClass({config, json});
   try {
     jsonResult = await cmd.execute(args);

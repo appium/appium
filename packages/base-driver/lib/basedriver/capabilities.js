@@ -359,7 +359,10 @@ function promoteAppiumOptions(originalCaps) {
       `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
     );
 
-    const shouldAddVendorPrefix = (/** @type {string} */ capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
+    /**
+     * @param {string} capName
+     */
+    const shouldAddVendorPrefix = (capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
     const verifyIfAcceptable = (capName) => {
       if (!_.isString(capName)) {
         throw new errors.SessionNotCreatedError(
@@ -373,10 +376,10 @@ function promoteAppiumOptions(originalCaps) {
       }
       return capName;
     };
-    const preprocessedOptions = _.toPairs(_.cloneDeep(appiumOptions))
-      .map(([name, value]) => [verifyIfAcceptable(name), value])
-      .map(([name, value]) => [shouldAddVendorPrefix(name) ? `${APPIUM_VENDOR_PREFIX}${name}` : name, value])
-      .reduce((acc, [name, value]) => {acc[name] = value; return acc;}, {});
+    const preprocessedOptions = _(appiumOptions)
+      .mapKeys(verifyIfAcceptable)
+      .mapKeys((key) => shouldAddVendorPrefix(key) ? `${APPIUM_VENDOR_PREFIX}${key}` : key)
+      .value();
     // warn if we are going to overwrite any keys on the base caps object
     const overwrittenKeys = _.intersection(Object.keys(obj), Object.keys(preprocessedOptions));
     if (overwrittenKeys.length > 0) {
@@ -385,21 +388,22 @@ function promoteAppiumOptions(originalCaps) {
           `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
       );
     }
-    const res = _.cloneDeep(obj);
-    delete res[PREFIXED_APPIUM_OPTS_CAP];
-    return {...res, ...preprocessedOptions};
+    return _.cloneDeep({
+      ...(_.omit(obj, PREFIXED_APPIUM_OPTS_CAP)),
+      ...preprocessedOptions
+    });
   };
 
   const {alwaysMatch, firstMatch} = originalCaps;
   const result = {};
   if (_.isPlainObject(alwaysMatch)) {
     result.alwaysMatch = promoteForObject(alwaysMatch);
-  } else if (_.has(originalCaps, 'alwaysMatch')) {
+  } else if ('alwaysMatch' in originalCaps) {
     result.alwaysMatch = alwaysMatch;
   }
   if (_.isArray(firstMatch)) {
     result.firstMatch = firstMatch.map(promoteForObject);
-  } else if (_.has(originalCaps, 'firstMatch')) {
+  } else if ('firstMatch' in originalCaps) {
     result.firstMatch = firstMatch;
   }
   return result;

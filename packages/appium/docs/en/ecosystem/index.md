@@ -27,7 +27,7 @@ Intro](../intro/drivers.md)
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native|Appium Team|
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|Appium Team|
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|Appium Team|
-|[Gecko](https://github.com/appium/appium-geckodriver)|`safari`|macOS, Windows, Linux, Android|Web|Appium Team|
+|[Gecko](https://github.com/appium/appium-geckodriver)|`gecko`|macOS, Windows, Linux, Android|Web|Appium Team|
 |[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|Community / Microsoft|
 |[Flutter](https://github.com/appium-userland/appium-flutter-driver)|`flutter`|iOS, Android|Native|Community|
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`tizen`|Android|Native|Community / Samsung|

@@ -46,15 +46,10 @@ the Appium client depends on) since that is what you will use as your primary in
 |-|-|-|
 |[Appium Java client](https://github.com/appium/java-client)|Java|Appium Team|
 |[Appium Python client](https://github.com/appium/python-client)|Python|Appium Team|
-|[Appium Ruby client](https://github.com/appium/ruby_lib)|Ruby|Appium Team|
+|[Appium Ruby Core client](https://github.com/appium/ruby_lib_core) (Recommended)<br>[Appium Ruby client](https://github.com/appium/ruby_lib)|Ruby|Appium Team|
 |[WebDriverIO](https://webdriver.io)|Node.js|Community|
 |[Appium .NET client](https://github.com/appium/dotnet-client)|C#|Appium Team*|
 |[RobotFramework](https://github.com/serhatbolsu/robotframework-appiumlibrary)|DSL|Community|
-
-!!! warning
-
-    Currently, the .NET client has a low level of maintenance/support. Expect bugs and
-    incompatibility. We're looking for help here, so please reach out if you know .NET!
 
 In general, any W3C WebDriver spec-compatible client will also integrate well with Appium, though
 some Appium-specific commands may not be implemented in other clients.

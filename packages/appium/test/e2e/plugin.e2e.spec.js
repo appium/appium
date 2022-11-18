@@ -1,17 +1,22 @@
 // @ts-check
 
-import _ from 'lodash';
-import path from 'path';
+import {fs, tempDir} from '@appium/support';
+import axios from 'axios';
 import B from 'bluebird';
 import {remote as wdio} from 'webdriverio';
-import axios from 'axios';
-import {main as appiumServer} from '../../lib/main';
-import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {W3C_PREFIXED_CAPS, TEST_HOST, getTestPort, PROJECT_ROOT} from '../helpers';
 import {runExtensionCommand} from '../../lib/cli/extension';
-import {tempDir, fs} from '@appium/support';
-import {loadExtensions} from '../../lib/extension';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
+import {loadExtensions} from '../../lib/extension';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
+import {main as appiumServer} from '../../lib/main';
+import {resetSchema} from '../../lib/schema';
+import {
+  FAKE_DRIVER_DIR,
+  FAKE_PLUGIN_DIR,
+  getTestPort,
+  TEST_HOST,
+  W3C_PREFIXED_CAPS,
+} from '../helpers';
 
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
@@ -24,14 +29,12 @@ const wdOpts = {
   connectionRetryCount: 0,
   capabilities: W3C_PREFIXED_CAPS,
 };
-const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
-const FAKE_PLUGIN_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-plugin');
 
-describe('FakePlugin', function () {
+describe('FakePlugin w/ FakeDriver via HTTP', function () {
   /** @type {string} */
   let appiumHome;
   /** @type {Partial<import('appium/types').ParsedArgs>} */
-  let baseArgs;
+  let baseServerArgs;
   /** @type {string} */
   let testServerBaseUrl;
   /** @type {number} */
@@ -40,6 +43,7 @@ describe('FakePlugin', function () {
   let testServerBaseSessionUrl;
 
   before(async function () {
+    resetSchema();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();
     testServerBaseUrl = `http://${TEST_HOST}:${port}`;
@@ -55,7 +59,7 @@ describe('FakePlugin', function () {
       },
       driverConfig
     );
-    if (!_.has(driverList, 'fake')) {
+    if (!('fake' in driverList)) {
       await runExtensionCommand(
         {
           driverCommand: 'install',
@@ -77,18 +81,19 @@ describe('FakePlugin', function () {
       },
       pluginConfig
     );
-    if (!_.has(pluginList, 'fake')) {
+    if (!('fake' in pluginList)) {
       await runExtensionCommand(
         {
           pluginCommand: 'install',
-          subcommand: 'plugin',
+          subcommand: PLUGIN_TYPE,
           plugin: FAKE_PLUGIN_DIR,
           installType: INSTALL_TYPE_LOCAL,
         },
         pluginConfig
       );
     }
-    baseArgs = {
+
+    baseServerArgs = {
       appiumHome,
       port,
       address: TEST_HOST,
@@ -277,7 +282,7 @@ describe('FakePlugin', function () {
     let server;
     before(async function () {
       // then start server if we need to
-      const args = {...baseArgs, plugin: FAKE_PLUGIN_ARGS};
+      const args = {...baseServerArgs, plugin: FAKE_PLUGIN_ARGS};
       server = /** @type {AppiumServer} */ (await appiumServer(args));
     });
     after(async function () {
@@ -302,7 +307,7 @@ describe('FakePlugin', function () {
     let server;
     before(async function () {
       // then start server if we need to
-      server = /** @type {AppiumServer} */ (await appiumServer(baseArgs));
+      server = /** @type {AppiumServer} */ (await appiumServer(baseServerArgs));
     });
     after(async function () {
       if (server) {

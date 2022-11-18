@@ -1,20 +1,25 @@
 // @ts-check
 
-import _ from 'lodash';
-import path from 'path';
-import B from 'bluebird';
-import axios from 'axios';
-import {remote as wdio} from 'webdriverio';
-import {main as appiumServer} from '../../lib/main';
-import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT} from '../helpers';
 import {BaseDriver} from '@appium/base-driver';
-import {loadExtensions} from '../../lib/extension';
-import {runExtensionCommand} from '../../lib/cli/extension';
-import {removeAppiumPrefixes} from '../../lib/utils';
+import {fs, tempDir} from '@appium/support';
+import axios from 'axios';
+import B from 'bluebird';
+import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import {tempDir, fs} from '@appium/support';
+import {remote as wdio} from 'webdriverio';
+import {runExtensionCommand} from '../../lib/cli/extension';
 import {DRIVER_TYPE} from '../../lib/constants';
+import {loadExtensions} from '../../lib/extension';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
+import {main as appiumServer} from '../../lib/main';
+import {removeAppiumPrefixes} from '../../lib/utils';
+import {
+  FAKE_DRIVER_DIR,
+  getTestPort,
+  TEST_FAKE_APP,
+  TEST_HOST,
+  W3C_PREFIXED_CAPS,
+} from '../helpers';
 
 const should = chai.should();
 
@@ -30,7 +35,6 @@ const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
 const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
-const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
 
 /** @type {Partial<import('webdriverio').RemoteOptions>} */
 const wdOpts = {
@@ -38,7 +42,7 @@ const wdOpts = {
   connectionRetryCount: 0,
 };
 
-describe('FakeDriver - via HTTP', function () {
+describe('FakeDriver via HTTP', function () {
   /** @type {AppiumServer} */
   let server;
   /** @type {string} */

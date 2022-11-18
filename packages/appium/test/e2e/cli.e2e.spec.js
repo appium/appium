@@ -17,7 +17,7 @@ import {
   KNOWN_DRIVERS,
   PLUGIN_TYPE,
 } from '../../lib/constants';
-import {FAKE_DRIVER_DIR, PACKAGE_ROOT, resolveFixture} from '../helpers';
+import {FAKE_DRIVER_DIR, APPIUM_ROOT, resolveFixture} from '../helpers';
 import {
   installLocalExtension,
   runAppiumJson,
@@ -598,7 +598,7 @@ describe('CLI behavior', function () {
               ],
               {
                 env: {APPIUM_HOME: appiumHome, PATH: process.env.PATH},
-                cwd: PACKAGE_ROOT,
+                cwd: APPIUM_ROOT,
                 timeout: 5000,
               }
             )

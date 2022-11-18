@@ -84,7 +84,7 @@ export const runAppium = _.curry(_runAppium);
 
 /**
  * See {@link runAppiumRaw}.
- * @type {AppiumOptsRunner<import('teen_process').ExecResult>}
+ * @type {AppiumOptsRunner<import('teen_process').TeenProcessExecResult>}
  */
 async function _runAppiumRaw(appiumHome, args, opts) {
   try {

@@ -60,30 +60,65 @@ Appiumはいくつものプラットフォームを跨いで標準化された�
 Appiumはそれらの自動化技術を1つの標準化されたインターフェースのもとで、広く使われるプログラミング言語（Java、Python、Ruby、JavaScriptなど）を通して利用できるように試みています。
 Appiumがどのようにこの目標を達成しているか、どのような要素が関係しているかを学ぶためには[導入](intro/)に進んでください。
 
+<!--
 ## Learning Appium
+--->
+## Appiumを学ぶ
 
+<!---
 This documentation is a great way to learn more about Appium:
 
 - Check out the [Introduction](intro/) first to make sure you understand all the concepts involved in Appium.
 - Go through the [Quickstart](quickstart/) to get set up and run a basic Android test.
 - Have a look at the various guides and references.
 - Using Appium for a real project means using an Appium driver for a specific platform, so you'll want to have a look at the [Ecosystem](ecosystem/) page where we keep links to the drivers and plugins you might want to use; you can refer to those projects for specific information about using Appium for a given platform.
+--->
 
+以下のドキュメントではAppiumについてより学ぶことができます
+
+- まずはAppiumの考え方、構成を理解するために[導入](intro/)を確認します
+- [クイックスタート](quickstart/)でAppiumの準備と基本的なAndroidのテスト実行を体験します
+- いくつもの手引き、リファレンスを確認します
+- 実プロジェクトでAppiumを使うということは特定のプラットフォームに向けたAppiumドライバー(Appium driver)を使うことを意味します。必要となるドライバー（drivers）やプラグイン（plugins）への各種リンクを持つ[エコシステム](ecosystem/)ページを確認します。そこでは対象とするプラットフォーム固有の情報を確認できます。
+
+<!---
 You can also check out a list of third-party [Resources](resources.md) to explore Appium around the
 web.
+--->
 
+[その他](resources.md)にはWeb上にあるサードパーティ製のリストもあります。
+これらもAppiumを使う上で役立つでしょう。
+
+
+<!---
 ## Contributing to Appium
+--->
+## Appiumに貢献する
 
+
+<!---
 Appium is open source, available under an Apache 2.0 license. Appium's copyright is held by the
 [OpenJS Foundation](https://openjsf.org), and Appium receives contributions from many companies
 across several software industries, regardless of their competitive status. (3rd-party drivers and
 plugins are available under the licenses provided by their authors.)
+--->
 
+AppiumはApache 2.0 ライセンスのもと利用可能なオープンソースプロジェクトです。
+Appiumのコピーライト（copyright）は[OpenJS Foundation](https://openjsf.org)にあり、
+競合状態に関わらず、様々なソフトウェア業界を跨いで多くの企業から助けを得ます。
+（サードパーティ製のドライバー（drivers）やプラグイン（plugins）は各々のライセンスを持ちます。）
+
+<!---
 As such, we welcome contributions! The project moves forward in relation to the investment of
 contributions of code, documentation, maintenance, and support from companies and volunteers. To
 learn more about contributing, check out our GitHub repo at
 [appium/appium](https://github.com/appium/appium) and read through our
 [Contributing](contributing/) guides.
+--->
+そのため、私たちは皆様からの貢献を歓迎しています！
+企業やボランティアによるコード、ドキュメント、メンテナンス、サポートといった貢献により、Appiumプロジェクトは発展していきます。
+貢献方法に関してより知るためには、AppiumのGitHubリポジトリ（[appium/appium](https://github.com/appium/appium)）と
+[貢献する](contributing/)を確認してください。
 
 ## 日本語訳によせて
 

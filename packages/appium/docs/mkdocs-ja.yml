@@ -28,11 +28,11 @@ nav:
   #     - quickstart/test-java.md
   #     - quickstart/test-rb.md
   #   - quickstart/next-steps.md
-  # - CLI Reference:
+  # - CLI Reference: # コマンドラインリファレンス
   #   - cli/index.md
   #   - cli/args.md
   #   - cli/extensions.md
-  # - Guides:
+  # - Guides:  # 手引き?
   #   - guides/migrating-1-to-2.md
   #   - guides/managing-exts.md
   #   - guides/config.md
@@ -50,8 +50,8 @@ nav:
   #     - ecosystem/build-drivers.md
   #     - ecosystem/build-plugins.md
   #     - ecosystem/build-docs.md
-  # - Contributing:
+  # - Contributing:  # 貢献する?
   #   - contributing/index.md
   #   - contributing/config-system.md
-  # - More Appium Resources: resources.md
+  # - More Appium Resources: resources.md  # その他Appiumする情報?
   # - Issues: https://github.com/appium/appium/issues

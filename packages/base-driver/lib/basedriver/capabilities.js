@@ -377,8 +377,8 @@ function promoteAppiumOptions(originalCaps) {
       return capName;
     };
     const preprocessedOptions = _(appiumOptions)
-      .mapKeys(verifyIfAcceptable)
-      .mapKeys((key) => shouldAddVendorPrefix(key) ? `${APPIUM_VENDOR_PREFIX}${key}` : key)
+      .mapKeys((value, key) => verifyIfAcceptable(key))
+      .mapKeys((value, key) => shouldAddVendorPrefix(key) ? `${APPIUM_VENDOR_PREFIX}${key}` : key)
       .value();
     // warn if we are going to overwrite any keys on the base caps object
     const overwrittenKeys = _.intersection(Object.keys(obj), Object.keys(preprocessedOptions));

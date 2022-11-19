@@ -547,7 +547,7 @@ describe('caps', function () {
       app: '/foo/bar.app.zip',
       automationName: 'XCUITest',
     };
-    const appiumCaps = _.mapKeys(nonPrefixedAppiumCaps, (key) => `${APPIUM_VENDOR_PREFIX}${key}`);
+    const appiumCaps = _.mapKeys(nonPrefixedAppiumCaps, (value, key) => `${APPIUM_VENDOR_PREFIX}${key}`);
     const standardCaps = {
       platformName: 'iOS',
     };

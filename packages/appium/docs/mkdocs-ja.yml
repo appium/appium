@@ -10,8 +10,48 @@ theme:
   language: ja
 
 nav:
-  - About:
-    - about/intro.md
-    - about/getting-started.md
-    - about/platform-support.md
-    - about/appium-clients.md
+  - はじめに: index.md
+  - Introduction:
+    - Intro to Appium:
+      - Overview of Appium: intro/index.md
+      - intro/drivers.md
+      - intro/clients.md
+    - intro/requirements.md
+    - intro/history.md
+  - Quickstart:
+    - quickstart/index.md
+    - quickstart/install.md
+    - quickstart/uiauto2-driver.md
+    - Write a Test:
+      - quickstart/test-js.md
+      - quickstart/test-py.md
+      - quickstart/test-java.md
+      - quickstart/test-rb.md
+    - quickstart/next-steps.md
+  - CLI Reference:
+    - cli/index.md
+    - cli/args.md
+    - cli/extensions.md
+  - Guides:
+    - guides/migrating-1-to-2.md
+    - guides/managing-exts.md
+    - guides/config.md
+    - guides/security.md
+    - guides/caps.md
+    - guides/context.md
+    - guides/settings.md
+    - guides/execute-methods.md
+    - guides/event-timing.md
+    - guides/log-filters.md
+    - guides/grid.md
+  - Ecosystem:
+    - ecosystem/index.md
+    - Developing Appium Extensions:
+      - ecosystem/build-drivers.md
+      - ecosystem/build-plugins.md
+      - ecosystem/build-docs.md
+  - Contributing:
+    - contributing/index.md
+    - contributing/config-system.md
+  - More Appium Resources: resources.md
+  - Issues: https://github.com/appium/appium/issues

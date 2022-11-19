@@ -91,4 +91,4 @@ learn more about contributing, check out our GitHub repo at
 
 ---
 
-- Written by 松尾和昭 (Kazuaki Matsuo)
+- Written by 松尾和昭 (Kazuaki Matsuo, @KazuCocoa)

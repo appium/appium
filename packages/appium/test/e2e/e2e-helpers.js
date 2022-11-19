@@ -3,22 +3,21 @@
 /**
  * This module provides helper functions for E2E tests to spawn an `appium` subprocess.
  */
-
+import {console, fs} from '@appium/support';
+import '@colors/colors';
 import _ from 'lodash';
 import path from 'path';
 import {exec} from 'teen_process';
-import {PACKAGE_ROOT, resolveFixture} from '../helpers';
-import {fs, console} from '@appium/support';
-import '@colors/colors';
+import {APPIUM_ROOT, resolveFixture} from '../helpers';
 
 /**
  * Path to the (compiled) main script of the `appium` executable.
  *
  * This means **you must build `appium` before running tests calling this code.**
  */
-export const EXECUTABLE = path.join(PACKAGE_ROOT, 'build', 'lib', 'main.js');
+export const EXECUTABLE = path.join(APPIUM_ROOT, 'build', 'lib', 'main.js');
 
-const log = new console.CliConsole();
+export const log = new console.CliConsole();
 
 /**
  * Runs the `appium` executable with the given args.
@@ -30,10 +29,10 @@ const log = new console.CliConsole();
  * @param {string} appiumHome - Path to `APPIUM_HOME`
  * @param {CliExtArgs<ExtSubcommand> | CliArgs} args - Args, including commands
  * @param {TeenProcessExecOptions} [opts] - Options for `teen_process`
- * @returns {Promise<TeenProcessExecOptions>}
+ * @returns {Promise<TeenProcessExecResult>}
  */
 async function run(appiumHome, args, opts = {}) {
-  const cwd = PACKAGE_ROOT;
+  const cwd = APPIUM_ROOT;
   opts.env = _.defaults(opts.env, {APPIUM_HOME: appiumHome, PATH: process.env.PATH});
   try {
     args = [...process.execArgv, '--', EXECUTABLE, ...args];
@@ -85,7 +84,7 @@ export const runAppium = _.curry(_runAppium);
 
 /**
  * See {@link runAppiumRaw}.
- * @type {AppiumOptsRunner<import('teen_process').ExecResult>}
+ * @type {AppiumOptsRunner<import('teen_process').TeenProcessExecResult>}
  */
 async function _runAppiumRaw(appiumHome, args, opts) {
   try {
@@ -186,6 +185,7 @@ export function formatAppiumArgErrorOutput(stderr) {
  * @typedef {import('appium/lib/cli/extension-command').ExtensionListData} ExtensionListData
  * @typedef {import('teen_process').ExecError} ExecError
  * @typedef {import('teen_process').TeenProcessExecOptions} TeenProcessExecOptions
+ * @typedef {import('teen_process').TeenProcessExecResult<string>} TeenProcessExecResult
  */
 
 /**

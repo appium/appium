@@ -522,7 +522,7 @@ export default [
     },
     schema: {
       appiumCliDescription:
-        'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated.',
+        'A list of drivers to activate. Can be a comma-delimited string or path to CSV file. By default, all installed drivers will be activated. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',
       default: [],
       description:
         'A list of drivers to activate. By default, all installed drivers will be activated.',
@@ -545,7 +545,7 @@ export default [
     },
     schema: {
       appiumCliDescription:
-        'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins.',
+        'A list of plugins to activate. Can be a comma-delimited string, path to CSV file, or the string "all" to use all installed plugins. Windows environments may require wrapping the comma-delimited string with quotes to escape the comma.',
       default: [],
       description:
         'A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".',

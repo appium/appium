@@ -318,7 +318,7 @@ class AppiumSchema {
     }
     const normalizedExtName = _.kebabCase(extName);
     if (this.hasRegisteredSchema(extType, normalizedExtName)) {
-      if (this._registeredSchemas[extType].get(normalizedExtName) === schema) {
+      if (_.isEqual(this._registeredSchemas[extType].get(normalizedExtName), schema)) {
         return;
       }
       throw new SchemaNameConflictError(extType, extName);

@@ -1,19 +1,25 @@
 // @ts-check
 
-import _ from 'lodash';
-import path from 'path';
-import B from 'bluebird';
-import axios from 'axios';
-import {remote as wdio} from 'webdriverio';
-import {main as appiumServer} from '../../lib/main';
-import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
-import {W3C_PREFIXED_CAPS, TEST_FAKE_APP, TEST_HOST, getTestPort, PROJECT_ROOT} from '../helpers';
 import {BaseDriver} from '@appium/base-driver';
-import {loadExtensions} from '../../lib/extension';
-import {runExtensionCommand} from '../../lib/cli/extension';
-import {removeAppiumPrefixes} from '../../lib/utils';
+import {fs, tempDir} from '@appium/support';
+import axios from 'axios';
+import B from 'bluebird';
+import _ from 'lodash';
 import {createSandbox} from 'sinon';
-import {tempDir, fs} from '@appium/support';
+import {remote as wdio} from 'webdriverio';
+import {runExtensionCommand} from '../../lib/cli/extension';
+import {DRIVER_TYPE} from '../../lib/constants';
+import {loadExtensions} from '../../lib/extension';
+import {INSTALL_TYPE_LOCAL} from '../../lib/extension/extension-config';
+import {main as appiumServer} from '../../lib/main';
+import {removeAppiumPrefixes} from '../../lib/utils';
+import {
+  FAKE_DRIVER_DIR,
+  getTestPort,
+  TEST_FAKE_APP,
+  TEST_HOST,
+  W3C_PREFIXED_CAPS,
+} from '../helpers';
 
 const should = chai.should();
 
@@ -29,16 +35,15 @@ const FAKE_ARGS = {sillyWebServerPort, sillyWebServerHost};
 const FAKE_DRIVER_ARGS = {driver: {fake: FAKE_ARGS}};
 const shouldStartServer = process.env.USE_RUNNING_SERVER !== '0';
 const caps = W3C_PREFIXED_CAPS;
-const FAKE_DRIVER_DIR = path.join(PROJECT_ROOT, 'packages', 'fake-driver');
 
-/** @type {WebdriverIO.RemoteOptions} */
+/** @type {Partial<import('webdriverio').RemoteOptions>} */
 const wdOpts = {
   hostname: TEST_HOST,
   connectionRetryCount: 0,
 };
 
-describe('FakeDriver - via HTTP', function () {
-  /** @type {import('http').Server} */
+describe('FakeDriver via HTTP', function () {
+  /** @type {AppiumServer} */
   let server;
   /** @type {string} */
   let appiumHome;
@@ -49,6 +54,7 @@ describe('FakeDriver - via HTTP', function () {
   /** @type {string} */
   let testServerBaseSessionUrl;
 
+  /** @type {import('sinon').SinonSandbox} */
   let sandbox;
 
   before(async function () {
@@ -62,6 +68,8 @@ describe('FakeDriver - via HTTP', function () {
     const driverList = await runExtensionCommand(
       {
         driverCommand: 'list',
+        subcommand: DRIVER_TYPE,
+        suppressOutput: true,
         showInstalled: true,
       },
       driverConfig
@@ -72,6 +80,7 @@ describe('FakeDriver - via HTTP', function () {
           driverCommand: 'install',
           driver: FAKE_DRIVER_DIR,
           installType: INSTALL_TYPE_LOCAL,
+          subcommand: DRIVER_TYPE,
         },
         driverConfig
       );
@@ -96,10 +105,7 @@ describe('FakeDriver - via HTTP', function () {
   async function serverStart(port, args = {}) {
     args = {...args, port, address: TEST_HOST};
     if (shouldStartServer) {
-      server = /** @type {typeof server} */ (
-        // @ts-expect-error
-        await appiumServer(args)
-      );
+      server = await appiumServer(args);
     }
   }
 
@@ -419,8 +425,7 @@ describe.skip('Logsink', function () {
   };
 
   before(async function () {
-    // @ts-expect-error
-    server = await appiumServer(args);
+    server = /** @type {AppiumServer} */ (await appiumServer(args));
   });
 
   after(async function () {
@@ -434,3 +439,7 @@ describe.skip('Logsink', function () {
     logs[welcomeIndex][1].should.include('Welcome to Appium');
   });
 });
+
+/**
+ * @typedef {import('@appium/types').AppiumServer} AppiumServer
+ */

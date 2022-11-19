@@ -8,8 +8,22 @@ import {insertAppiumPrefixes} from '../lib/utils';
 const TEST_HOST = '127.0.0.1';
 
 const FAKE_DRIVER_DIR = path.dirname(require.resolve('@appium/fake-driver/package.json'));
+
+const FAKE_PLUGIN_DIR = path.dirname(require.resolve('@appium/fake-plugin/package.json'));
+
+/**
+ * This is the monorepo root.
+ */
 const PROJECT_ROOT = path.join(FAKE_DRIVER_DIR, '..', '..');
-const PACKAGE_ROOT = path.join(PROJECT_ROOT, 'packages', 'appium');
+
+/**
+ * Path to Appium package
+ */
+const APPIUM_ROOT = path.join(PROJECT_ROOT, 'packages', 'appium');
+
+/**
+ * Path to fake app fixture `.xml` (as understood by `FakeDriver`)
+ */
 const TEST_FAKE_APP = path.join(FAKE_DRIVER_DIR, 'test', 'fixtures', 'app.xml');
 
 const BASE_CAPS = {
@@ -18,7 +32,9 @@ const BASE_CAPS = {
   deviceName: 'Fake',
   app: TEST_FAKE_APP,
 };
+
 const W3C_PREFIXED_CAPS = {...insertAppiumPrefixes(BASE_CAPS)};
+
 /** @type {import('@appium/types').W3CCapabilities} */
 const W3C_CAPS = {
   alwaysMatch: {...W3C_PREFIXED_CAPS},
@@ -58,5 +74,6 @@ export {
   rewiremock,
   resolveFixture,
   FAKE_DRIVER_DIR,
-  PACKAGE_ROOT,
+  FAKE_PLUGIN_DIR,
+  APPIUM_ROOT,
 };

@@ -64,7 +64,7 @@ This documentation is a great way to learn more about Appium:
 - Using Appium for a real project means using an Appium driver for a specific platform, so you'll want to have a look at the [Ecosystem](ecosystem/) page where we keep links to the drivers and plugins you might want to use; you can refer to those projects for specific information about using Appium for a given platform.
 --->
 
-以下のドキュメントではAppiumについてより学ぶことができます
+Appiumをより知るために：
 
 - まずはAppiumの考え方、構成を理解するために[導入](intro/)を確認します
 - [クイックスタート](quickstart/)でAppiumの準備と基本的なAndroidのテスト実行を体験します

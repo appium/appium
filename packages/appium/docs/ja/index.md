@@ -84,3 +84,11 @@ contributions of code, documentation, maintenance, and support from companies an
 learn more about contributing, check out our GitHub repo at
 [appium/appium](https://github.com/appium/appium) and read through our
 [Contributing](contributing/) guides.
+
+## 日本語訳によせて
+
+- 体裁は「です・ます」、コマンド名といった固有の文字はカタカナ表記、英語併記を残していく予定です。
+
+---
+
+- Written by 松尾和昭 (Kazuaki Matsuo)

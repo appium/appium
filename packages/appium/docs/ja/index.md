@@ -15,9 +15,9 @@ software, designed to facilitate UI automation of many app platforms, including 
 Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS,
 Android TV, Samsung), and more.
 --->
-Appiumのドキュメントにようこそ。
-Appiumはオープンソースプロジェクトであり、
-そのエコシステムは多様なプラットフォーム、例えばモバイル（iOS・Android・Tizen）やブラウザ（Chrome・Firefox・Safari）、
+Appiumのドキュメントにようこそ。<br>
+Appiumはオープンソースプロジェクトであり、<br>
+そのエコシステムは多様なプラットフォーム、例えばモバイル（iOS・Android・Tizen）やブラウザ（Chrome・Firefox・Safari）、<br>
 デスクトップ（macOS・Windows）、TV（Roku・tvOS・Android TV・Samsung）に対するUI自動化を支援するために設計されています。
 
 <!---
@@ -25,8 +25,8 @@ If you're new to Appium, it's recommended that you start off with the [Introduct
 move on to the [Quickstart](quickstart/). And you can always find Appium's code on GitHub at
 [appium/appium](https://github.com/appium/appium).
 --->
-もしあなたがAppiumを初めて学ぶのであれば、[はじめに](intro/)からとりかかり、[クイックスタート](quickstart/)
-へと進むとよいでしょう。GitHub上の[appium/appium](https://github.com/appium/appium)においてコードを
+もしあなたがAppiumを初めて学ぶのであれば、[はじめに](intro/)からとりかかり、[クイックスタート](quickstart/)<br>
+へと進むとよいでしょう。GitHub上の[appium/appium](https://github.com/appium/appium)においてコードを<br>
 確認することができます。
 
 <!---## What is Appium for?--->
@@ -41,8 +41,8 @@ UI of an application, mimicking as closely as possible what happens in the real 
 enabling the various benefits of automation, including speed, scale, and consistency.
 --->
 
-Appiumは主にソフトウェアの自動テスト領域において、テスト対象となるアプリが機能的に期待通りに動作するかを確認するために使用されます。
-他のソフトウェアテストとは対照的に、UI自動化ではテストエンジニアが実アプリケーションのUIをとおして、
+Appiumは主にソフトウェアの自動テスト領域において、テスト対象となるアプリが機能的に期待通りに動作するかを確認するために使用されます。<br>
+他のソフトウェアテストとは対照的に、UI自動化ではテストエンジニアが実アプリケーションのUIをとおして、<br>
 現実世界で実際に発生する事象になるべく近くなるようなユーザシナリオを構築しながらも、実行速度、拡張性、一貫性といった自動化の利点を実現します。
 
 
@@ -55,9 +55,9 @@ a single stable interface, accessible via most popular programming languages (yo
 scripts in Java, Python, Ruby, JS, and more).
 --->
 
-Appiumはいくつものプラットフォームを跨いで標準化された方法で自動化を実現するためのツール群を提供します。
-たいていのプラットフォームはUI自動化を大なり小なり実現可能ですが、通常はそれらはプラットフォーム固有であり、専用の知識やプログラミング言語経験、ツール群が要求されます。
-Appiumはそれらの自動化技術を1つの標準化されたインターフェースのもとで、広く使われるプログラミング言語（Java、Python、Ruby、JavaScriptなど）を通して利用できるように試みています。
+Appiumはいくつものプラットフォームを跨いで標準化された方法で自動化を実現するためのツール群を提供します。<br>
+たいていのプラットフォームはUI自動化を大なり小なり実現可能ですが、通常はそれらはプラットフォーム固有であり、専用の知識やプログラミング言語経験、ツール群が要求されます。<br>
+Appiumはそれらの自動化技術を1つの標準化されたインターフェースのもとで、広く使われるプログラミング言語（Java、Python、Ruby、JavaScriptなど）を通して利用できるように試みています。<br>
 Appiumがどのようにこの目標を達成しているか、どのような要素が関係しているかを学ぶためには[導入](intro/)に進んでください。
 
 <!--
@@ -86,7 +86,7 @@ You can also check out a list of third-party [Resources](resources.md) to explor
 web.
 --->
 
-[その他](resources.md)にはWeb上にあるサードパーティ製のリストもあります。
+[その他](resources.md)にはWeb上にあるサードパーティ製のリストもあります。<br>
 これらもAppiumを使う上で役立つでしょう。
 
 
@@ -103,9 +103,9 @@ across several software industries, regardless of their competitive status. (3rd
 plugins are available under the licenses provided by their authors.)
 --->
 
-AppiumはApache 2.0 ライセンスのもと利用可能なオープンソースプロジェクトです。
-Appiumのコピーライト（copyright）は[OpenJS Foundation](https://openjsf.org)にあり、
-競合状態に関わらず、様々なソフトウェア業界を跨いで多くの企業から助けを得ます。
+AppiumはApache 2.0 ライセンスのもと利用可能なオープンソースプロジェクトです。<br>
+Appiumのコピーライト（copyright）は[OpenJS Foundation](https://openjsf.org)にあり、<br>
+競合状態に関わらず、様々なソフトウェア業界を跨いで多くの企業から助けを得ます。<br>
 （サードパーティ製のドライバー（drivers）やプラグイン（plugins）は各々のライセンスを持ちます。）
 
 <!---
@@ -115,9 +115,9 @@ learn more about contributing, check out our GitHub repo at
 [appium/appium](https://github.com/appium/appium) and read through our
 [Contributing](contributing/) guides.
 --->
-そのため、私たちは皆様からの貢献を歓迎しています！
-企業やボランティアによるコード、ドキュメント、メンテナンス、サポートといった貢献により、Appiumプロジェクトは発展していきます。
-貢献方法に関してより知るためには、AppiumのGitHubリポジトリ（[appium/appium](https://github.com/appium/appium)）と
+そのため、私たちは皆様からの貢献を歓迎しています！<br>
+企業やボランティアによるコード、ドキュメント、メンテナンス、サポートといった貢献により、Appiumプロジェクトは発展していきます。<br>
+貢献方法に関してより知るためには、AppiumのGitHubリポジトリ（[appium/appium](https://github.com/appium/appium)）と<br>
 [貢献する](contributing/)を確認してください。
 
 ## 日本語訳によせて

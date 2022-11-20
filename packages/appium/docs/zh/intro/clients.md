@@ -48,7 +48,7 @@ WebDriver 规范](https://w3c.github.io/webdriver/webdriver-spec.html).
 相反, 它们为特定编程语言公开了一组 "原生" 命令, 
 因此, 对于测试作者来说, 感觉就像是在编写Python、JavaScript或Java.
 
-举个例子, 下面是在四种不同编程语言中
+举个例子, 下面是在五种不同编程语言中
 使用的同一组简单的Appium命令, 
 为每种语言使用推荐的Appium客户端绑定
 (注意, 这不是包括所需引用的可工作示例代码；
@@ -88,6 +88,15 @@ WebDriver 规范](https://w3c.github.io/webdriver/webdriver-spec.html).
     element.click
     puts element.text
     puts driver.page_source
+    ```
+
+=== "C#"
+
+    ```dotnet
+    AppiumElement element = driver.FindElement(MobileBy.AccessibilityId("Views"));   
+    element.click();
+    System.Console.WriteLine(element.Text);
+    System.Console.WriteLine(driver.PageSource);
     ```
 
 每一个脚本, 尽管使用不同的语言, 但在幕后做着相同的事情:

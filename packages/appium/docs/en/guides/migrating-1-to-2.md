@@ -98,7 +98,7 @@ CLI](../cli/extensions.md) doc)
 
 To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 
-If you would like to update to a specific version, not the latest, please unisntall the driver and install the specific version instead of `update` command.
+If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`.
 
 ```bash
 appium driver uninstall xcuitest

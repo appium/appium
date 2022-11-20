@@ -3,7 +3,6 @@
 
 import {
   validateCaps,
-  APPIUM_OPTS_CAP,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
   promoteAppiumOptions,
@@ -297,16 +296,10 @@ export class BaseDriverCore extends DriverCore {
     let caps;
     try {
       caps = processCapabilities(
-        originalCaps,
+        promoteAppiumOptions(originalCaps),
         this._desiredCapConstraints,
         this.shouldValidateCaps
       );
-      if (caps[APPIUM_OPTS_CAP]) {
-        this.log.debug(
-          `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
-        );
-        caps = promoteAppiumOptions(caps);
-      }
       caps = fixCaps(caps, this._desiredCapConstraints, this.log);
     } catch (e) {
       throw new errors.SessionNotCreatedError(e.message);

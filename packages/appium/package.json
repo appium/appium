@@ -74,7 +74,7 @@
     "@types/semver": "7.3.13",
     "@types/teen_process": "2.0.0",
     "@types/wrap-ansi": "3.0.0",
-    "ajv": "8.11.0",
+    "ajv": "8.11.2",
     "ajv-formats": "2.1.1",
     "argparse": "2.0.1",
     "async-lock": "1.4.0",

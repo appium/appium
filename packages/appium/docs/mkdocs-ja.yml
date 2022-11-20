@@ -11,9 +11,9 @@ theme:
 
 nav:
   - はじめに: index.md
-  # - Introduction:
-  #   - Intro to Appium:
-  #     - Overview of Appium: intro/index.md
+  - 導入:
+    - Appiumについて:
+      - Appiumの全体像: intro/index.md
   #     - intro/drivers.md
   #     - intro/clients.md
   #   - intro/requirements.md

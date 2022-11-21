@@ -11,9 +11,10 @@ export * from './driver';
 export * from './action';
 export * from './plugin';
 export * from './capabilities';
-export * from './constraints';
 export * from './config';
 export * from './appium-config';
+export type {BaseDriverCapConstraints} from './constraints';
+export {BASE_DESIRED_CAP_CONSTRAINTS} from './constraints';
 
 /**
  * Utility type for a object with string-only props

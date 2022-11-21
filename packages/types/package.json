@@ -18,14 +18,14 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/index.d.ts",
+  "types": "./build/lib/index.d.ts",
   "files": [
     "build",
-    "lib"
+    "lib",
+    "index.js"
   ],
-  "main": "./build/index.js",
   "scripts": {
-    "build": "node ./scripts/generate-schema-types.js",
+    "build": "babel lib --root-mode=upward --out-dir=build/lib && node ./scripts/generate-schema-types.js",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",

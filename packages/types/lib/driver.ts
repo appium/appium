@@ -374,7 +374,7 @@ export interface Driver<
     IExecuteCommands,
     SessionHandler<[string, any], void, C>,
     Core {
-  cliArgs?: CArgs;
+  cliArgs: CArgs;
   // The following methods are implemented by `BaseDriver`.
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
   startUnexpectedShutdown(err?: Error): Promise<void>;

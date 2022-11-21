@@ -306,7 +306,7 @@ class AppiumDriver extends DriverCore {
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to
       // the driver so that they cannot be mimicked by a malicious user sending in capabilities
       const cliArgs = this.getCliArgsForDriver(driverName);
-      if (!_.isEmpty(cliArgs)) {
+      if (!_.isUndefined(cliArgs)) {
         driverInstance.cliArgs = cliArgs;
       }
 

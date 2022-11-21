@@ -76,6 +76,9 @@ endpoint:
     - name: appWaitPackage
       type: string
       description: Automation will begin after this package starts
+    - name: appWaitActivity
+      type: string
+      description: Automation will begin after this activity starts
     - name: intentAction
       type: string
       description: "[Intent](https://developer.android.com/reference/android/content/Intent.html) action which will be used to start activity"

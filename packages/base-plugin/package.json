@@ -36,7 +36,7 @@
     "@appium/support": "^2.61.1"
   },
   "engines": {
-    "node": ">=14",
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",

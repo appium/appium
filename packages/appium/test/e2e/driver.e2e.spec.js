@@ -136,8 +136,7 @@ describe('FakeDriver via HTTP', function () {
       const {sessionId} = driver;
       try {
         const {data} = await axios.get(`${testServerBaseSessionUrl}/${sessionId}/fakedriverargs`);
-        should.not.exist(data.value.sillyWebServerPort);
-        should.not.exist(data.value.sillyWebServerHost);
+        data.value.should.eql({});
       } finally {
         await driver.deleteSession();
       }

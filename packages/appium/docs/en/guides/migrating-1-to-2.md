@@ -102,7 +102,7 @@ If you would like to update to a specific version, not the latest, please uninst
 
 ```bash
 appium driver uninstall xcuitest
-appium driver install xcuitest@4.11.1  # instead of newer the version
+appium driver install xcuitest@4.11.1
 ```
 
 ### :bangbang: Protocol changes

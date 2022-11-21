@@ -127,7 +127,7 @@
     "through2": "4.0.2",
     "typescript": "4.7.4",
     "validate.js": "0.13.1",
-    "webdriverio": "7.25.4",
+    "webdriverio": "7.26.0",
     "ws": "8.11.0",
     "yaml-js": "0.3.1"
   },

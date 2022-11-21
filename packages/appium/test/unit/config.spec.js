@@ -131,6 +131,8 @@ describe('Config', function () {
           'v10.1.0',
           'v11.0.0',
           'v12.0.0',
+          'v14.0.0',
+          'v16.0.0',
         ];
         for (const version of unsupportedVersions) {
           it(`should fail if node is ${version}`, function () {
@@ -142,14 +144,14 @@ describe('Config', function () {
       });
 
       describe('supported nodes', function () {
-        it('should succeed if node is 14+', function () {
+        it('should succeed if node is 14.17+', function () {
           // @ts-expect-error
-          process.version = 'v14.0.0';
+          process.version = 'v14.17.0';
           checkNodeOk.should.not.throw();
         });
-        it('should succeed if node is 16+', function () {
+        it('should succeed if node is 16.13+', function () {
           // @ts-expect-error
-          process.version = 'v16.0.0';
+          process.version = 'v16.13.0';
           checkNodeOk.should.not.throw();
         });
         it('should succeed if node is 18+', function () {

@@ -52,7 +52,7 @@
     "teen_process": "2.0.2"
   },
   "engines": {
-    "node": ">=14",
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
   "publishConfig": {

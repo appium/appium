@@ -20,15 +20,15 @@ Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/r
 
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 
-```
-appium driver install xcuitest
-appium driver install uiautomator2
+```bash
+appium driver install uiautomator2     # installs the latest driver version
+appium driver install xcuitest@4.12.2  # installs a specific driver version
 ```
 
 At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it.
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 
-```
+```bash
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
@@ -59,7 +59,7 @@ Because Appium 2.0 now installs drivers for you, and because these flags were im
 
 For example:
 
-```
+```bash
 APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 ```
 
@@ -97,6 +97,13 @@ appium driver update xcuitest
 CLI](../cli/extensions.md) doc)
 
 To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
+
+If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`.
+
+```bash
+appium driver uninstall xcuitest
+appium driver install xcuitest@4.11.1
+```
 
 ### :bangbang: Protocol changes
 

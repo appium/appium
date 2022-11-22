@@ -24,6 +24,9 @@ export function getTheme(log: AppiumPluginLogger): new (renderer: Renderer) => M
       super(renderer);
 
       this.#commandsTemplateRenderer = this.#getTemplate(Template.Commands);
+
+      this.hideBreadcrumbs = true;
+
       // this ensures we overwrite what MarkdownTheme does
       registerHelpers();
     }

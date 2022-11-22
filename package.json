@@ -60,7 +60,7 @@
     "test:e2e": "lerna run --concurrency=1 --max-buffer=128 test:e2e",
     "test:smoke": "smoker --all test:smoke",
     "test:unit": "lerna run test",
-    "typedoc": "typedoc",
+    "typedoc": "typedoc --logLevel Verbose",
     "upload": "gulp github-upload",
     "preversion": "run-s clean:artifacts build sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
     "zip": "zip -qr ./appium.zip ./packages/appium",

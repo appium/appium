@@ -1,6 +1,3 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Appium Build
 on: [push, pull_request]
 
@@ -25,9 +22,10 @@ jobs:
       - name: Install latest npm
         run: npm install -g npm
       - name: Install dependencies
-        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:
           useRollingCache: true
+          install-command: npm ci --foreground-scripts
       - name: Run smoke, unit & E2E tests
         run: npm run test:ci
 
@@ -37,9 +35,10 @@ jobs:
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - name: Install dependencies
-        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:
           useRollingCache: true
+          install-command: npm ci --foreground-scripts
       - name: ESLint
         run: npm run lint
       - name: Check types
@@ -56,8 +55,9 @@ jobs:
     steps:
       - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
       - name: Install dependencies
-        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:
           useRollingCache: true
+          install-command: npm ci --foreground-scripts
       - name: Generate docs
         run: npm run generate-docs

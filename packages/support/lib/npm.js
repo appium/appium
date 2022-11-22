@@ -196,7 +196,7 @@ export class NPM {
    * @param {InstallPackageOpts} [opts]
    * @returns {Promise<import('type-fest').PackageJson>}
    */
-  async installPackage(cwd, pkgName, {pkgVer} = {}) {
+  async installPackage(cwd, pkgName, {pkgVer, installType}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -219,15 +219,12 @@ export class NPM {
       installOpts.push('--save-exact', '--global-style', '--no-package-lock');
     }
 
-    const res = await this.exec(
-      'install',
-      [...installOpts, pkgVer ? `${pkgName}@${pkgVer}` : pkgName],
-      {
-        cwd,
-        json: true,
-        lockFile: this._getInstallLockfilePath(cwd),
-      }
-    );
+    const cmd = installType === 'local' ? 'link' : 'install';
+    const res = await this.exec(cmd, [...installOpts, pkgVer ? `${pkgName}@${pkgVer}` : pkgName], {
+      cwd,
+      json: true,
+      lockFile: this._getInstallLockfilePath(cwd),
+    });
 
     if (res.json) {
       // we parsed a valid json response, so if we got an error here, return that
@@ -270,6 +267,7 @@ export const npm = new NPM();
 /**
  * Options for {@link NPM.installPackage}
  * @typedef InstallPackageOpts
+ * @property {import('type-fest').LiteralUnion<'local', string>} [installType] - whether to install from a local path or from npm
  * @property {string} [pkgVer] - the version of the package to install
  */
 

@@ -19,7 +19,7 @@ class EnvVarAndPathCheck extends DoctorCheck {
     if (await fs.exists(varValue)) {
       return ok(`${this.varName} is set to: ${varValue}`);
     }
-    
+
     let err_msg = `${this.varName} is set to '${varValue}' but this is NOT a valid path!`;
     // On Windows, when the env var has %LOCALAPPDATA%, fs.exists cannot resolve the path.
     // Then, it would be safe to request the user to set the full path instead.

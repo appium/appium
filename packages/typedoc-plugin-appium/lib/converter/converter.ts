@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {Context, DeclarationReflection, LiteralType, ReflectionKind} from 'typedoc';
 import {
   isBaseDriverDeclarationReflection,
@@ -22,7 +23,6 @@ import {
   BaseDriverDeclarationReflection,
   DeclarationReflectionWithReflectedType,
   Guard,
-  MethodMapDeclarationReflection,
 } from './types';
 
 /**
@@ -73,6 +73,11 @@ export class CommandConverter {
   #ctx: Context;
   #log: AppiumPluginLogger;
 
+  /**
+   * Creates a child logger for this instance
+   * @param ctx Typedoc Context
+   * @param log Logger
+   */
   constructor(ctx: Context, log: AppiumPluginLogger) {
     this.#ctx = ctx;
     this.#log = log.createChildLogger('converter');
@@ -127,6 +132,36 @@ export class CommandConverter {
     return new CommandInfo(baseDriverRoutes);
   }
 
+  /**
+   * Finds names of parameters of a command in a method def
+   * @param propName Either required or optional params
+   * @param refl Parent reflection (`params` prop of method def)
+   * @returns List of parameter names
+   */
+
+  #convertCommandParams(
+    propName: typeof NAME_OPTIONAL | typeof NAME_REQUIRED,
+    refl?: DeclarationReflectionWithReflectedType
+  ): string[] {
+    if (refl) {
+      const props = findChildByNameAndGuard(refl, propName, isParamsArray);
+      const names = props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
+      return names.filter((name) => {
+        if (!name) {
+          this.#log.warn('Found empty %s parameter', propName);
+          return false;
+        }
+        return true;
+      });
+    }
+    return [];
+  }
+
+  /**
+   * Gathers info about an `executeMethodMap` prop in a driver
+   * @param refl A class which may contain an `executeMethodMap` static property
+   * @returns List of "execute commands", if any
+   */
   #convertExecuteMethodMap(refl: DeclarationReflectionWithReflectedType): ExecCommandDataSet {
     const executeMethodMap = findChildByNameAndGuard(
       refl,
@@ -134,33 +169,55 @@ export class CommandConverter {
       isExecMethodDefReflection
     );
     const commandRefs: ExecCommandDataSet = new Set();
-    if (executeMethodMap) {
-      for (const newMethodProp of filterChildrenByKind(executeMethodMap, ReflectionKind.Property)) {
-        const comment = newMethodProp.comment;
-        const script = newMethodProp.originalName;
-        const commandProp = findChildByNameAndGuard(
-          newMethodProp,
-          NAME_COMMAND,
-          isCommandPropDeclarationReflection
+    if (!executeMethodMap) {
+      // no execute commands in this class
+      return commandRefs;
+    }
+
+    const newMethodProps = filterChildrenByKind(executeMethodMap, ReflectionKind.Property);
+    for (const newMethodProp of newMethodProps) {
+      const {comment, originalName: script} = newMethodProp;
+
+      const commandProp = findChildByNameAndGuard(
+        newMethodProp,
+        NAME_COMMAND,
+        isCommandPropDeclarationReflection
+      );
+
+      if (!commandProp) {
+        // this is unusual
+        this.#log.warn(
+          'Execute method map in %s has no "command" property for %s',
+          refl.name,
+          script
         );
-        if (commandProp) {
-          const command = String(commandProp.type.value);
-          const paramsProp = findChildByNameAndGuard(
-            newMethodProp,
-            NAME_PARAMS,
-            isReflectionWithReflectedType
-          );
-          const requiredParams = this.#parseRequiredParams(paramsProp);
-          const optionalParams = this.#parseOptionalParams(paramsProp);
-          commandRefs.add({
-            command,
-            requiredParams,
-            optionalParams,
-            script,
-            comment,
-          });
-        }
+        continue;
       }
+
+      if (!_.isString(commandProp.type.value) || _.isEmpty(commandProp.type.value)) {
+        this.#log.warn(
+          'Execute method map in %s has an empty or invalid "command" property for %s',
+          refl.name,
+          script
+        );
+        continue;
+      }
+      const command = String(commandProp.type.value);
+
+      const paramsProp = findChildByNameAndGuard(
+        newMethodProp,
+        NAME_PARAMS,
+        isReflectionWithReflectedType
+      );
+      const requiredParams = this.#convertRequiredCommandParams(paramsProp);
+      const optionalParams = this.#convertOptionalCommandParams(paramsProp);
+      commandRefs.add({
+        command,
+        requiredParams,
+        optionalParams,
+        script,
+        comment,
+      });
     }
     return commandRefs;
   }
@@ -173,76 +230,89 @@ export class CommandConverter {
   #convertMethodMap(refl: DeclarationReflection): RouteMap {
     const routes: RouteMap = new Map();
 
-    let methodMap: MethodMapDeclarationReflection;
-    const child = isBaseDriverDeclarationReflection(refl)
+    const methodMap = isBaseDriverDeclarationReflection(refl)
       ? refl.getChildByName(NAME_METHOD_MAP)
       : refl.getChildByName(NAME_NEW_METHOD_MAP);
 
-    if (isMethodMapDeclarationReflection(child)) {
-      methodMap = child;
-      const routeProps = filterChildrenByKind(methodMap, ReflectionKind.Property);
+    if (!isMethodMapDeclarationReflection(methodMap)) {
+      // this is not unusual
+      this.#log.verbose('No {MethodMap} found in class %s', refl.name);
+      return routes;
+    }
 
-      if (!routeProps.length) {
-        this.#log.warn(`No routes found in ${refl.name}`);
+    const routeProps = filterChildrenByKind(methodMap, ReflectionKind.Property);
+
+    if (!routeProps.length) {
+      this.#log.warn('No routes found in {MethodMap} of class %s', refl.name);
+      return routes;
+    }
+
+    for (const routeProp of routeProps) {
+      const {originalName: route} = routeProp;
+
+      if (!isRoutePropDeclarationReflection(routeProp)) {
+        this.#log.warn('Empty route in %s.%s', refl.name, route);
+        continue;
       }
 
-      for (const routeProp of routeProps) {
-        const route = routeProp.originalName;
+      const httpMethodProps = filterChildrenByGuard(routeProp, isHTTPMethodDeclarationReflection);
 
-        if (!isRoutePropDeclarationReflection(routeProp)) {
-          this.#log.warn(`Empty route in ${refl.name}.${route}`);
+      if (!httpMethodProps.length) {
+        this.#log.warn('No HTTP methods found in route %s.%s', refl.name, route);
+        continue;
+      }
+
+      for (const httpMethodProp of httpMethodProps) {
+        const {comment, originalName: httpMethod} = httpMethodProp;
+
+        const commandProp = findChildByNameAndGuard(
+          httpMethodProp,
+          NAME_COMMAND,
+          isCommandPropDeclarationReflection
+        );
+
+        // commandProp is optional.
+        if (!commandProp) {
           continue;
         }
 
-        const httpMethodProps = filterChildrenByGuard(routeProp, isHTTPMethodDeclarationReflection);
-
-        if (!httpMethodProps.length) {
-          this.#log.warn(`No HTTP methods found in route ${refl.name}.${route}`);
+        if (!_.isString(commandProp.type.value) || _.isEmpty(commandProp.type.value)) {
+          this.#log.warn('Empty command name found in %s.%s.%s', refl.name, route, httpMethod);
           continue;
         }
+        const command = String(commandProp.type.value);
 
-        for (const httpMethodProp of httpMethodProps) {
-          const comment = httpMethodProp.comment;
-          const httpMethod = httpMethodProp.originalName;
+        const payloadParamsProp = findChildByNameAndGuard(
+          httpMethodProp,
+          NAME_PAYLOAD_PARAMS,
+          isReflectionWithReflectedType
+        );
+        const requiredParams = this.#convertRequiredCommandParams(payloadParamsProp);
+        const optionalParams = this.#convertOptionalCommandParams(payloadParamsProp);
 
-          const commandProp = findChildByNameAndGuard(
-            httpMethodProp,
-            NAME_COMMAND,
-            isCommandPropDeclarationReflection
-          );
+        const commandMap: CommandMap = routes.get(route) ?? new Map();
 
-          // commandProp is optional.
-          if (!commandProp) {
-            continue;
-          }
+        commandMap.set(command, {
+          command,
+          requiredParams,
+          optionalParams,
+          httpMethod,
+          route,
+          comment,
+        });
 
-          const command = String(commandProp.type.value);
-          const payloadParamsProp = findChildByNameAndGuard(
-            httpMethodProp,
-            NAME_PAYLOAD_PARAMS,
-            isReflectionWithReflectedType
-          );
-          const requiredParams = this.#parseRequiredParams(payloadParamsProp);
-          const optionalParams = this.#parseOptionalParams(payloadParamsProp);
-          let commandMap: CommandMap = routes.get(route) ?? new Map();
-          commandMap.set(command, {
-            command,
-            requiredParams,
-            optionalParams,
-            httpMethod,
-            route,
-            comment,
-          });
-          routes.set(route, commandMap);
-        }
+        routes.set(route, commandMap);
       }
-    } else {
-      this.#log.verbose(`No {MethodMap} found in class ${refl.name}`);
     }
 
     return routes;
   }
 
+  /**
+   * Finds commands in all classes within a project or module
+   * @param parent - Project or module
+   * @returns Info about the commands in given `parent`
+   */
   #convertModuleClasses(parent: ParentReflection) {
     let routes: RouteMap = new Map();
     let executeCommands: ExecCommandDataSet = new Set();
@@ -254,7 +324,7 @@ export class CommandConverter {
       ) as DeclarationReflectionWithReflectedType[];
 
     for (const classRefl of classReflections) {
-      this.#log.verbose(`Converting class ${classRefl.name}`);
+      this.#log.verbose('Converting class %s', classRefl.name);
       const newMethodMap = this.#convertMethodMap(classRefl);
 
       if (newMethodMap.size) {
@@ -265,33 +335,49 @@ export class CommandConverter {
       if (executeMethodMap.size) {
         executeCommands = new Set([...executeCommands, ...executeMethodMap]);
       }
-      this.#log.verbose(`Converted class ${classRefl.name}`);
+      this.#log.verbose('Converted class %s', classRefl.name);
     }
 
     return new CommandInfo(routes, executeCommands);
   }
 
-  #parseOptionalParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
-    return this.#parseParams(NAME_OPTIONAL, methodDefRefl);
+  /**
+   * Finds "optional" params in a method definition
+   * @param methodDefRefl - Reflection of a method definition
+   * @returns List of optional parameters
+   */
+  #convertOptionalCommandParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+    return this.#convertCommandParams(NAME_OPTIONAL, methodDefRefl);
   }
 
-  #parseParams(propName: string, refl?: DeclarationReflectionWithReflectedType): string[] {
-    if (refl) {
-      const props = findChildByNameAndGuard(refl, propName, isParamsArray);
-      return props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
-    }
-    return [];
-  }
-
-  #parseRequiredParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
-    return this.#parseParams(NAME_REQUIRED, methodDefRefl);
+  /**
+   * Finds "required" params in a method definition
+   * @param methodDefRefl - Reflection of a method definition
+   * @returns List of required parameters
+   */
+  #convertRequiredCommandParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+    return this.#convertCommandParams(NAME_REQUIRED, methodDefRefl);
   }
 }
 
+/**
+ * Converts declarations into information about the commands found within
+ * @param ctx - Current TypeDoc context
+ * @param log - Logger
+ * @returns All commands found in the project
+ */
 export function convertCommands(ctx: Context, log: AppiumPluginLogger): ModuleCommands {
   return new CommandConverter(ctx, log).convert();
 }
 
+/**
+ * Finds a child of a reflection by name and type guard
+ * @param refl - Reflection to check
+ * @param name - Name of child
+ * @param guard - Guard function to check child
+ * @returns Child if found, `undefined` otherwise
+ * @internal
+ */
 function findChildByNameAndGuard<T extends DeclarationReflection>(
   refl: DeclarationReflectionWithReflectedType,
   name: string,
@@ -300,6 +386,13 @@ function findChildByNameAndGuard<T extends DeclarationReflection>(
   return refl.type.declaration.children?.find((child) => child.name === name && guard(child)) as T;
 }
 
+/**
+ * Filters children of a reflection by kind and whether they are of type {@linkcode DeclarationReflectionWithReflectedType}
+ * @param refl - Reflection to check
+ * @param kind - Kind of child
+ * @returns Filtered children, if any
+ * @internal
+ */
 function filterChildrenByKind(
   refl: DeclarationReflectionWithReflectedType,
   kind: ReflectionKind
@@ -309,6 +402,13 @@ function filterChildrenByKind(
   ) ?? []) as DeclarationReflectionWithReflectedType[];
 }
 
+/**
+ * Filters children by a type guard
+ * @param refl - Reflection to check
+ * @param guard - Type guard function
+ * @returns Filtered children, if any
+ * @internal
+ */
 function filterChildrenByGuard<T extends DeclarationReflection>(
   refl: DeclarationReflectionWithReflectedType,
   guard: Guard<T>

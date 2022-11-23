@@ -2,92 +2,116 @@ import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {FakeElement} from '../fake-element';
 
-let commands = {},
-  helpers = {},
-  extensions = {};
-
-helpers.getExistingElementForNode = function getExistingElementForNode(node) {
-  for (let [id, el] of _.toPairs(this.elMap)) {
-    if (el.node === node) {
-      return id;
-    }
-  }
-  return null;
-};
-
-helpers.wrapNewEl = function wrapNewEl(obj) {
-  // first check and see if we already have a ref to this element
-  let existingElId = this.getExistingElementForNode(obj);
-  if (existingElId) {
-    return {ELEMENT: existingElId};
-  }
-
-  // otherwise add the element to the map
-  this.maxElId++;
-  this.elMap[this.maxElId.toString()] = new FakeElement(obj, this.appModel);
-  return {ELEMENT: this.maxElId.toString()};
-};
-
-helpers.findElOrEls = async function findElOrEls(strategy, selector, mult, ctx) {
-  let qMap = {
-    xpath: 'xpathQuery',
-    id: 'idQuery',
-    'accessibility id': 'idQuery',
-    'class name': 'classQuery',
-    'tag name': 'classQuery',
-    'css selector': 'cssQuery',
-  };
-  // TODO this error checking should probably be part of MJSONWP?
-  if (!_.includes(_.keys(qMap), strategy)) {
-    throw new errors.UnknownCommandError();
-  }
-  if (selector === 'badsel') {
-    throw new errors.InvalidSelectorError();
-  }
-  let els = this.appModel[qMap[strategy]](selector, ctx);
-  if (els.length) {
-    if (mult) {
-      let allEls = [];
-      for (let el of els) {
-        allEls.push(this.wrapNewEl(el));
+/**
+ * @template {Class<import('../types').IElementCommands>} T
+ * @param {T} Base
+ */
+export function FindMixin(Base) {
+  /**
+   * @implements {IFindCommands}
+   */
+  class FindCommands extends Base {
+    getExistingElementForNode(node) {
+      for (let [id, el] of _.toPairs(this.elMap)) {
+        if (el.node === node) {
+          return id;
+        }
       }
-      return allEls;
-    } else {
-      return this.wrapNewEl(els[0]);
+      return null;
     }
-  } else if (mult) {
-    return [];
-  } else {
-    throw new errors.NoSuchElementError();
+
+    wrapNewEl(obj) {
+      // first check and see if we already have a ref to this element
+      let existingElId = this.getExistingElementForNode(obj);
+      if (existingElId) {
+        return {ELEMENT: existingElId};
+      }
+
+      // otherwise add the element to the map
+      this.maxElId++;
+      this.elMap[this.maxElId.toString()] = new FakeElement(obj, this.appModel);
+      return {ELEMENT: this.maxElId.toString()};
+    }
+    /**
+     * @template {boolean} Mult
+     * @template [Ctx=any]
+     * @param {string} strategy
+     * @param {string} selector
+     * @param {Mult} mult
+     * @param {Ctx} [context]
+     * @returns {Promise<Mult extends true ? Element[] : Element>}
+     */
+    async findElOrEls(strategy, selector, mult, context) {
+      let qMap = {
+        xpath: 'xpathQuery',
+        id: 'idQuery',
+        'accessibility id': 'idQuery',
+        'class name': 'classQuery',
+        'tag name': 'classQuery',
+        'css selector': 'cssQuery',
+      };
+      // TODO this error checking should probably be part of MJSONWP?
+      if (!_.includes(_.keys(qMap), strategy)) {
+        throw new errors.UnknownCommandError();
+      }
+      if (selector === 'badsel') {
+        throw new errors.InvalidSelectorError();
+      }
+      let els = this.appModel[qMap[strategy]](selector, context);
+
+      let retval;
+      if (els.length) {
+        if (mult) {
+          let allEls = [];
+          for (let el of els) {
+            allEls.push(this.wrapNewEl(el));
+          }
+          retval = allEls;
+        } else {
+          retval = this.wrapNewEl(els[0]);
+        }
+      } else if (mult) {
+        retval = [];
+      } else {
+        throw new errors.NoSuchElementError();
+      }
+      return /** @type {Mult extends true ? Element[] : Element} */ (retval);
+    }
+
+    async findElement(strategy, selector) {
+      return this.findElOrEls(strategy, selector, false);
+    }
+
+    async findElements(strategy, selector) {
+      return this.findElOrEls(strategy, selector, true);
+    }
+
+    async findElementFromElement(strategy, selector, elementId) {
+      let el = this.getElement(elementId);
+      return this.findElOrEls(strategy, selector, false, el.xmlFragment);
+    }
+
+    async findElementsFromElement(strategy, selector, elementId) {
+      let el = this.getElement(elementId);
+      return this.findElOrEls(strategy, selector, true, el.xmlFragment);
+    }
   }
-};
 
-commands.findElement = async function findElement(strategy, selector) {
-  return this.findElOrEls(strategy, selector, false);
-};
+  return FindCommands;
+}
 
-commands.findElements = async function findElements(strategy, selector) {
-  return this.findElOrEls(strategy, selector, true);
-};
+/**
+ * @typedef {import('../driver').FakeDriverCore} FakeDriverCore
+ * @typedef {import('@appium/types').Element} Element
 
-commands.findElementFromElement = async function findElementFromElement(
-  strategy,
-  selector,
-  elementId
-) {
-  let el = this.getElement(elementId);
-  return this.findElOrEls(strategy, selector, false, el.xmlFragment);
-};
+ */
 
-commands.findElementsFromElement = async function findElementsFromElement(
-  strategy,
-  selector,
-  elementId
-) {
-  let el = this.getElement(elementId);
-  return this.findElOrEls(strategy, selector, true, el.xmlFragment);
-};
+/**
+ * @template T,[U={}],[V=Array<any>]
+ * @typedef {import('@appium/types').Class<T,U,V>} Class
+ */
 
-Object.assign(extensions, commands, helpers);
-export {commands, helpers};
-export default extensions;
+/**
+ * @template [Ctx=any]
+ * @typedef {import('@appium/types').IFindCommands<Ctx>} IFindCommands
+ */

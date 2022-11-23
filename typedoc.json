@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./packages/appium", "./packages/base-driver", "./packages/support", "./packages/types", "./packages/base-plugin"],
+  "entryPointStrategy": "packages",
+  "name": "Appium",
+  "includeVersion": false,
+  "tsconfig": "./tsconfig.json",
+  "out": "typedoc-docs",
+  "cleanOutputDir": true,
+  "plugin": ["typedoc-plugin-resolve-crossmodule-references"]
+}

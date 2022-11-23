@@ -20,15 +20,15 @@ Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/r
 
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 
-```
-appium driver install xcuitest
-appium driver install uiautomator2
+```bash
+appium driver install uiautomator2     # installs the latest driver version
+appium driver install xcuitest@4.12.2  # installs a specific driver version
 ```
 
 At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it.
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 
-```
+```bash
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
@@ -59,7 +59,7 @@ Because Appium 2.0 now installs drivers for you, and because these flags were im
 
 For example:
 
-```
+```bash
 APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 ```
 
@@ -98,6 +98,13 @@ CLI](../cli/extensions.md) doc)
 
 To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 
+If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`.
+
+```bash
+appium driver uninstall xcuitest
+appium driver install xcuitest@4.11.1
+```
+
 ### :bangbang: Protocol changes
 
 Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/), and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.
@@ -114,7 +121,7 @@ These standard capabilities continue to be used as-is. All other capabilities mu
 - `appium:noReset`
 - `appium:deviceName`
 
-This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client, the client will add the `appium:` prefix for you on all necessary capabilities. New versions of the Appium Inspector tool will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.
+This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the `appium:` prefix for you on all necessary capabilities automatically. New versions of [Appium Inspector](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.
 
 On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).
 
@@ -132,7 +139,7 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 }
 ```
 
-(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object.
+(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support by cloud providers may vary.)
 
 For more information on capabilities, have a look at the [Capabilities Guide](caps.md).
 
@@ -184,7 +191,7 @@ For many years, some of Appium's authors maintained the [WD](https://github.com/
 
 ### :warning: Appium Inspector split out from Appium Desktop
 
-The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it.
+The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated [WD](https://github.com/admc/wd) client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app.
 
 You can also now use the Appium Inspector without downloading anything, by visiting the [web version of Appium Inspector](https://inspector.appiumpro.com). Note that to test against local servers, you'll need to start the server with `--allow-cors` so that the browser-based version of Appium Inspector can access your Appium server to start sessions.
 

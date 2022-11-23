@@ -23,6 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/lib/index.d.ts",
   "directories": {
     "lib": "lib"
   },
@@ -34,7 +35,7 @@
     "build"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
@@ -53,7 +54,7 @@
     "@types/method-override": "0.0.32",
     "@types/serve-favicon": "2.5.3",
     "async-lock": "1.4.0",
-    "asyncbox": "2.9.2",
+    "asyncbox": "2.9.4",
     "axios": "1.1.3",
     "bluebird": "3.7.2",
     "body-parser": "1.20.1",
@@ -76,6 +77,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "types": "./build/lib/index.d.ts",
-  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"
+  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
+  "typedoc": {
+    "entryPoint": "./build/lib/index.js"
+  }
 }

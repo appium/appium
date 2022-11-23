@@ -1,11 +1,12 @@
 import {
+  APPIUM_VENDOR_PREFIX,
   parseCaps,
   validateCaps,
   mergeCaps,
   processCapabilities,
   findNonPrefixedCaps,
+  PREFIXED_APPIUM_OPTS_CAP,
   promoteAppiumOptions,
-  APPIUM_OPTS_CAP,
   stripAppiumPrefixes,
 } from '../../../lib/basedriver/capabilities';
 import _ from 'lodash';
@@ -540,67 +541,77 @@ describe('caps', function () {
   });
 
   describe('#promoteAppiumOptions', function () {
-    const appiumCaps = {
-      'appium:platformVersion': '14.4',
-      'appium:deviceName': 'iPhone 11',
-      'appium:app': '/foo/bar.app.zip',
-      'appium:automationName': 'XCUITest',
+    const nonPrefixedAppiumCaps = {
+      platformVersion: '14.4',
+      deviceName: 'iPhone 11',
+      app: '/foo/bar.app.zip',
+      automationName: 'XCUITest',
     };
-    const nonAppiumCaps = {
+    const appiumCaps = _.mapKeys(nonPrefixedAppiumCaps, (value, key) => `${APPIUM_VENDOR_PREFIX}${key}`);
+    const standardCaps = {
       platformName: 'iOS',
     };
-    const appiumUnprefixedCaps = stripAppiumPrefixes(appiumCaps);
-    const simpleCaps = {
-      ...nonAppiumCaps,
-      ...appiumUnprefixedCaps,
-    };
     it('should do nothing to caps that dont include the options', function () {
-      promoteAppiumOptions(simpleCaps).should.eql(simpleCaps);
+      promoteAppiumOptions({
+        alwaysMatch: {
+          ...standardCaps,
+          ...appiumCaps,
+        }
+      }).should.eql({
+        alwaysMatch: {
+          ...standardCaps,
+          ...appiumCaps,
+        }
+      });
     });
     it('should promote options', function () {
-      const caps = {
-        ...nonAppiumCaps,
-        [APPIUM_OPTS_CAP]: {
-          ...appiumUnprefixedCaps,
-        },
-      };
-      promoteAppiumOptions(caps).should.eql(simpleCaps);
-    });
-    it('should get rid of prefixes if caps inside options are prefixed', function () {
-      const caps = {
-        ...nonAppiumCaps,
-        [APPIUM_OPTS_CAP]: {
+      promoteAppiumOptions({
+        alwaysMatch: {
+          ...standardCaps,
+          [PREFIXED_APPIUM_OPTS_CAP]: {
+            ...nonPrefixedAppiumCaps
+          }
+        }
+      }).should.eql({
+        alwaysMatch: {
+          ...standardCaps,
           ...appiumCaps,
-        },
-      };
-      promoteAppiumOptions(caps).should.eql(simpleCaps);
+        }
+      });
     });
-    it('should preserve non-appium vendor prefixes', function () {
-      const googCaps = {'goog:chromeOptions': {foo: 'bar'}};
-      const caps = {
-        ...nonAppiumCaps,
-        [APPIUM_OPTS_CAP]: {
+    it('should promote options inside firstMatch', function () {
+      promoteAppiumOptions({
+        alwaysMatch: {},
+        firstMatch: [{
+          ...standardCaps,
+          [PREFIXED_APPIUM_OPTS_CAP]: {
+            ...nonPrefixedAppiumCaps
+          }
+        }]
+      }).should.eql({
+        alwaysMatch: {},
+        firstMatch: [{
+          ...standardCaps,
           ...appiumCaps,
-          ...googCaps,
-        },
-      };
-      promoteAppiumOptions(caps).should.eql({
-        ...simpleCaps,
-        ...googCaps,
+        }]
       });
     });
     it('should overwrite caps found on the top level', function () {
-      const caps = {
-        ...nonAppiumCaps,
-        foo: 'bar',
-        [APPIUM_OPTS_CAP]: {
+      promoteAppiumOptions({
+        alwaysMatch: {
+          ...standardCaps,
+          'appium:foo': 'bar',
+          [PREFIXED_APPIUM_OPTS_CAP]: {
+            ...nonPrefixedAppiumCaps,
+            'foo': 'baz',
+          }
+        }
+      }).should.eql({
+        alwaysMatch: {
+          ...standardCaps,
           ...appiumCaps,
-          foo: 'baz',
-        },
-      };
-      promoteAppiumOptions(caps).should.eql({
-        ...simpleCaps,
-        foo: 'baz',
+          'appium:foo': 'baz',
+        }
       });
     });
   });

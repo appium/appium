@@ -18,9 +18,8 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
  * define the routes, mapping of HTTP methods to particular driver commands, and
  * any parameters that are expected in a request parameters can be `required` or
  * `optional`
- * @type {MethodMap}
  */
-const METHOD_MAP = {
+const METHOD_MAP = /** @type {const} */ ({
   '/status': {
     GET: {command: 'getStatus'},
   },
@@ -915,7 +914,7 @@ const METHOD_MAP = {
   },
 
   //endregion
-};
+});
 
 // driver command names
 let ALL_COMMANDS = [];
@@ -991,9 +990,9 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
   }
   if (!dstRoute) return; // eslint-disable-line curly
 
-  const methods = _.get(METHOD_MAP, dstRoute);
+  const methods = METHOD_MAP[dstRoute];
   method = /** @type {Uppercase<typeof method>} */ (_.toUpper(method));
-  if (_.has(methods, method)) {
+  if (method in methods) {
     const dstMethod = _.get(methods, method);
     if (dstMethod.command) {
       return dstMethod.command;
@@ -1007,6 +1006,11 @@ const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};
 
 /**
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').MethodMap} MethodMap
+ * This checks compat with the `MethodMap` interface.
+ * @ignore
  */
+// eslint-disable-next-line no-unused-vars
+const _validMethodMap =
+  /** @type {import('@appium/types').MethodMap<import('@appium/types').ExternalDriver<import('@appium/types').BaseDriverCapConstraints>>} */ (
+    METHOD_MAP
+  );

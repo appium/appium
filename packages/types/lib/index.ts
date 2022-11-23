@@ -4,7 +4,7 @@ import type {Server} from 'http';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {ServerArgs} from './config';
 import type {Express} from 'express';
-import {ExternalDriver} from './driver';
+import {Driver, ExternalDriver} from './driver';
 import type {Logger} from 'npmlog';
 
 export * from './driver';
@@ -15,6 +15,9 @@ export * from './constraints';
 export * from './config';
 export * from './appium-config';
 
+/**
+ * Utility type for a object with string-only props
+ */
 export type StringRecord = Record<string, any>;
 
 /**
@@ -79,47 +82,51 @@ export interface AppiumServerSocket extends Socket {
  * The definition of an extension method, which will be provided via Appium's API.
  *
  */
-export interface Method<T> {
+export interface MethodDef<E> {
   /**
    * Name of the command.
    */
-  command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<Required<E>, DriverCommand>;
   /**
    * If true, this `Method` will never proxy.
    */
-  neverProxy?: boolean;
+  readonly neverProxy?: boolean;
   /**
    * Specifies shape of payload
    */
-  payloadParams?: PayloadParams;
+  readonly payloadParams?: PayloadParams;
 }
 
 /**
- * An instance method of a driver class, whose name may be referenced by {@linkcode Method.command}, and serves as an Appium command.
+ * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
  *
  * Note that this signature differs from a `PluginCommand`.
  */
 export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
 
 /**
- * Defines the shape of a payload for a {@linkcode Method}.
+ * Defines the shape of a payload for a {@linkcode MethodDef}.
  */
 export interface PayloadParams {
   wrap?: string;
   unwrap?: string;
-  required?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
-  optional?: Readonly<string[]> | MultidimensionalReadonlyArray<string, 2>;
+  required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
+  optional?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
   validate?: (obj: any, protocol: string) => boolean | string | undefined;
   makeArgs?: (obj: any) => any;
 }
 /**
- * A mapping of URL paths to HTTP methods to {@linkcode Method}s.
- *
- * @todo Should use {@linkcode HTTPMethod} here
+ * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
  */
-export type MethodMap<Extension = ExternalDriver> = Record<
-  string,
-  Record<string, Method<Extension & ExternalDriver>>
+export type MethodMap<E = any> = Readonly<
+  Record<
+    string,
+    {
+      GET?: MethodDef<E>;
+      POST?: MethodDef<E>;
+      DELETE?: MethodDef<E>;
+    }
+  >
 >;
 
 /**
@@ -163,7 +170,7 @@ export type ExtensionType = DriverType | PluginType;
 export type UpdateServerCallback = (
   expressApp: Express,
   httpServer: AppiumServer,
-  cliArgs: ServerArgs
+  cliArgs: Partial<ServerArgs>
 ) => Promise<void>;
 
 /**

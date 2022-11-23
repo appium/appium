@@ -11,7 +11,7 @@ Appium サーバー自体が公式プロトコルへのカスタム拡張を定�
 Ruby | [https://github.com/appium/ruby_lib_core](https://github.com/appium/ruby_lib_core)(推奨), [https://github.com/appium/ruby_lib](https://github.com/appium/ruby_lib)
 Python | [https://github.com/appium/python-client](https://github.com/appium/python-client)
 Java | [https://github.com/appium/java-client](https://github.com/appium/java-client)
-C# (.NET) | [https://github.com/appium/appium-dotnet-driver](https://github.com/appium/appium-dotnet-driver)
+C# (.NET) | [https://github.com/appium/dotnet-client](https://github.com/appium/dotnet-client)
 
 ### Community based
 

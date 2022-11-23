@@ -9,15 +9,24 @@
       "runtimeArgs": ["--require", "@babel/register"],
       "request": "launch",
       "skipFiles": ["<node_internals>/**", "**/node_modules/mocha/**"],
-      "type": "pwa-node",
+      "type": "node",
       "sourceMaps": true,
       "cwd": "${workspaceFolder}",
-      "outfiles": [],
       "env": {
         "NODE_ENV": "test",
         "BABEL_ENV": "test"
       },
       "autoAttachChildProcesses": true,
+    },
+    {
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "TypeDoc",
+      "program": "${workspaceFolder}/node_modules/.bin/typedoc",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "node",
+      "sourceMaps": true,
+      "cwd": "${workspaceFolder}",
     }
   ]
 }

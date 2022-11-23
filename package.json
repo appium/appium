@@ -55,11 +55,11 @@
     "sync-pkgs:keywords": "sync-monorepo-packages --field=keywords --packages=\"packages/*\" --packages=\"!packages/eslint-config-appium\" --packages=\"!packages/types\"",
     "sync-pkgs:license": "sync-monorepo-packages --force --no-package-json LICENSE",
     "test": "run-s build test:unit lint",
-    "test:ci": "run-s test:smoke test:unit test:ci:e2e",
-    "test:ci:e2e": "lerna run test:e2e",
-    "test:e2e": "lerna run --max-buffer=128 test:e2e",
+    "test:ci": "run-s test:smoke test:unit test:e2e",
+    "test:e2e": "lerna run --concurrency=1 --max-buffer=128 test:e2e",
     "test:smoke": "smoker --all test:smoke",
     "test:unit": "lerna run test",
+    "typedoc": "typedoc",
     "upload": "gulp github-upload",
     "preversion": "run-s clean:artifacts build sync-pkgs && git add -A packages/appium/README.md packages/*/package.json",
     "zip": "zip -qr ./appium.zip ./packages/appium",
@@ -90,13 +90,13 @@
     "@types/sinon-chai": "3.2.9",
     "@types/teen_process": "2.0.0",
     "@types/ws": "8.5.3",
-    "asyncbox": "2.9.2",
+    "asyncbox": "2.9.4",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.2.0",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
-    "eslint": "8.27.0",
+    "eslint": "8.28.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.26.0",
@@ -111,23 +111,26 @@
     "lerna": "4.0.0",
     "lint-staged": "13.0.3",
     "log-symbols": "4.1.0",
-    "midnight-smoker": "1.2.1",
+    "midnight-smoker": "1.2.2",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
     "mocha": "10.1.0",
     "npm-run-all": "4.1.5",
     "pre-commit": "1.2.2",
     "prettier": "2.7.1",
-    "rewiremock": "3.14.3",
+    "rewiremock": "3.14.4",
     "rimraf": "3.0.2",
     "serve-static": "1.15.0",
     "sinon": "14.0.2",
     "sinon-chai": "3.7.0",
     "sync-monorepo-packages": "0.3.5",
     "through2": "4.0.2",
+    "typedoc": "0.23.16",
+    "typedoc-plugin-markdown": "3.13.6",
+    "typedoc-plugin-resolve-crossmodule-references": "0.3.2",
     "typescript": "4.7.4",
     "validate.js": "0.13.1",
-    "webdriverio": "7.25.4",
+    "webdriverio": "7.26.0",
     "ws": "8.11.0",
     "yaml-js": "0.3.1"
   },
@@ -139,6 +142,12 @@
     "access": "public"
   },
   "overrides": {
-    "jpeg-js": "0.4.4"
+    "jpeg-js": "0.4.4",
+    "@sidvind/better-ajv-errors": {
+      "ajv": "8.11.2"
+    },
+    "ajv-formats": {
+      "ajv": "8.11.2"
+    }
   }
 }

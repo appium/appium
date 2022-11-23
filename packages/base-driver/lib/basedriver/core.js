@@ -29,7 +29,7 @@ class DriverCore {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  /** @type {ExecuteMethodMap} */
+  /** @type {import('@appium/types').ExecuteMethodMap<DriverCore>} */
   static executeMethodMap = {};
 
   /**
@@ -171,7 +171,7 @@ class DriverCore {
   }
 
   /**
-   * This property controls the way {#executeCommand} method
+   * This property controls the way the `executeCommand` method
    * handles new driver commands received from the client.
    * Override it for inherited classes only in special cases.
    *
@@ -420,7 +420,6 @@ export {DriverCore};
 /**
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Constraints} Constraints
- * @typedef {import('@appium/types').ExecuteMethodMap} ExecuteMethodMap
  * @typedef {import('@appium/types').ServerArgs} ServerArgs
  * @typedef {import('@appium/types').EventHistory} EventHistory
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger

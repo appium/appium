@@ -36,7 +36,7 @@
     "test/fixtures"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib --copy-files",
+    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib --copy-files",
     "dev": "npm run build -- --watch",
     "fix": "npm run lint -- --fix",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
@@ -49,7 +49,7 @@
   "dependencies": {
     "@types/bluebird": "3.5.37",
     "@xmldom/xmldom": "0.8.6",
-    "asyncbox": "2.9.2",
+    "asyncbox": "2.9.4",
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
@@ -78,6 +78,9 @@
       "fake-error": "./build/lib/scripts/fake-error.js",
       "fake-success": "./build/lib/scripts/fake-success.js"
     }
+  },
+  "typedoc": {
+    "entryPoint": "./build/lib/index.js"
   },
   "types": "./build/lib/index.d.ts",
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72"

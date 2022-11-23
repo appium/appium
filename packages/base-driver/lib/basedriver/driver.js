@@ -3,7 +3,6 @@
 
 import {
   validateCaps,
-  APPIUM_OPTS_CAP,
   PREFIXED_APPIUM_OPTS_CAP,
   processCapabilities,
   promoteAppiumOptions,
@@ -56,8 +55,6 @@ export class BaseDriverCore extends DriverCore {
    */
   opts;
 
-  static BASE_DESIRED_CAP_CONSTRAINTS = BASE_DESIRED_CAP_CONSTRAINTS;
-
   /**
    *
    * @param {DriverOpts<C>} opts
@@ -71,6 +68,10 @@ export class BaseDriverCore extends DriverCore {
      * blows away {@linkcode DriverCore.opts}.
      */
     this.opts = opts;
+
+    this.caps = {};
+
+    this.cliArgs = /** @type {CArgs & ServerArgs} */ ({});
   }
 
   /**
@@ -297,16 +298,10 @@ export class BaseDriverCore extends DriverCore {
     let caps;
     try {
       caps = processCapabilities(
-        originalCaps,
+        promoteAppiumOptions(originalCaps),
         this._desiredCapConstraints,
         this.shouldValidateCaps
       );
-      if (caps[APPIUM_OPTS_CAP]) {
-        this.log.debug(
-          `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
-        );
-        caps = promoteAppiumOptions(caps);
-      }
       caps = fixCaps(caps, this._desiredCapConstraints, this.log);
     } catch (e) {
       throw new errors.SessionNotCreatedError(e.message);
@@ -427,7 +422,6 @@ export default BaseDriver;
 
 /**
  * @typedef {import('@appium/types').HTTPMethod} HTTPMethod
- * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').Constraint} Constraint
@@ -472,6 +466,11 @@ export default BaseDriver;
  * @template {Constraints} [C=BaseDriverCapConstraints]
  * @template {StringRecord} [CArgs=StringRecord]
  * @typedef {import('@appium/types').Driver<C, CArgs>} Driver
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').ExternalDriver<C>} ExternalDriver
  */
 
 /**

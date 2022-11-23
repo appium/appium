@@ -241,6 +241,7 @@ class ExtensionCommand {
       installOpts = {
         installSpec,
         pkgName: /** @type {string} */ (packageName),
+        installType,
       };
       probableExtName = installSpec;
     } else if (installType === INSTALL_TYPE_GIT) {
@@ -250,6 +251,7 @@ class ExtensionCommand {
       installOpts = {
         installSpec,
         pkgName: /** @type {string} */ (packageName),
+        installType,
       };
       probableExtName = installSpec;
     } else {
@@ -294,7 +296,7 @@ class ExtensionCommand {
           installType = INSTALL_TYPE_NPM;
         }
       }
-      installOpts = {installSpec, pkgName, pkgVer};
+      installOpts = {installSpec, pkgName, pkgVer, installType};
     }
 
     // fail fast here if we can
@@ -365,7 +367,7 @@ class ExtensionCommand {
    *
    * @param {InstallViaNpmArgs} args
    */
-  async installViaNpm({installSpec, pkgName, pkgVer}) {
+  async installViaNpm({installSpec, pkgName, pkgVer, installType}) {
     const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
     const specMsg = npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
     const msg = `Installing '${installSpec}'${specMsg}`;
@@ -373,6 +375,7 @@ class ExtensionCommand {
       const pkgJsonData = await spinWith(this.isJsonOutput, msg, async () => {
         const pkgJsonData = await npm.installPackage(this.config.appiumHome, pkgName, {
           pkgVer,
+          installType,
         });
         this.validatePackageJson(pkgJsonData, installSpec);
         return pkgJsonData;
@@ -626,6 +629,7 @@ class ExtensionCommand {
     const {pkgName} = this.config.installedExtensions[installSpec];
     const extData = await this.installViaNpm({
       installSpec,
+      installType: 'npm',
       pkgName,
       pkgVer: version,
     });
@@ -822,6 +826,7 @@ export {ExtensionCommand};
  * @typedef InstallViaNpmArgs
  * @property {string} installSpec - the name or spec of an extension to install
  * @property {string} pkgName - the NPM package name of the extension
+ * @property {import('appium/types').InstallType} installType - type of install
  * @property {string} [pkgVer] - the specific version of the NPM package
  */
 

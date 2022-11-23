@@ -25,9 +25,10 @@ export function getTheme(log: AppiumPluginLogger): new (renderer: Renderer) => M
 
       this.#commandsTemplateRenderer = this.#getTemplate(Template.Commands);
 
+      // the intent is to have mkdocs render breadcrumbs
       this.hideBreadcrumbs = true;
 
-      // this ensures we overwrite what MarkdownTheme does
+      // this ensures we can overwrite MarkdownTheme's Handlebars helpers
       registerHelpers();
     }
 

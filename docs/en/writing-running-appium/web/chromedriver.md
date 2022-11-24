@@ -1,6 +1,6 @@
 This documentation is only for Appium 1.x.
 
-Please refer to https://github.com/appium/appium-uiautomator2-driver#chromedriverchrome-compatibility for Appium 2.0 and nwer Web testing with UiAutomator2 driver.
+Please refer to https://github.com/appium/appium-uiautomator2-driver#chromedriverchrome-compatibility for Appium 2.0 and newr Web testing with UiAutomator2 driver.
 
 ## Chromedriver
 

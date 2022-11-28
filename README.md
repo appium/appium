@@ -17,7 +17,7 @@ and [Drivers Provided By Third Parties](#drivers-provided-by-third-parties) sect
 
 :bangbang: Major documentation revision in progress
 
-:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run.
+:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://github.com/appium/appium/blob/master/packages/appium/docs/en/guides/migrating-1-to-2.md) to manage the Appium server.
 
 Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
 found around the web may not be correct. The current Appium 2.0 documentation is very much in

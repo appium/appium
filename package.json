@@ -108,7 +108,7 @@
     "gulp": "4.0.2",
     "handlebars": "4.7.7",
     "json-schema-to-typescript": "11.0.2",
-    "lerna": "4.0.0",
+    "lerna": "6.0.3",
     "lint-staged": "13.0.4",
     "log-symbols": "4.1.0",
     "midnight-smoker": "1.2.2",

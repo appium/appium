@@ -2,10 +2,8 @@ name: Appium Deploy
 on:
   push:
     tags:
-      - appium@2*
+      - master
   workflow_dispatch:
-
-
 
 permissions:
   contents: read

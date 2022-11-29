@@ -170,7 +170,7 @@ following JSON object representing capabilities for a session:
   "appium:app": "Some-App.app.zip",
   "appium:automationName": "XCUITest",
   "$cloud:appiumOptions": {
-    "appiumVersion": "2.0.0",
+    "version": "2.0.0",
     "automationVersion": "3.52.0",
     "plugins": ["images"]
   }
@@ -199,7 +199,7 @@ set of capabilities into the following:
     "automationName": "XCUITest"
   },
   "$cloud:appiumOptions": {
-    "appiumVersion": "2.0.0",
+    "version": "2.0.0",
     "automationVersion": "3.52.0",
     "plugins": ["images"]
   }

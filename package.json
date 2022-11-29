@@ -27,7 +27,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "run-s build:distfiles build:types",
+    "build": "run-s build:types build:distfiles",
     "build:distfiles": "lerna run build",
     "build:types": "tsc -b",
     "clean": "run-s clean:artifacts clean:packages clean:monorepo",

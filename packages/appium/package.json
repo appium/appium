@@ -41,7 +41,7 @@
     "types"
   ],
   "scripts": {
-    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
+    "build": "exit 0",
     "build:docs": "node docs/scripts/build-docs.js",
     "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
     "build:docs:assets": "node docs/scripts/copy-assets.js",
@@ -53,7 +53,7 @@
     "fix": "npm run lint -- --fix",
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build",
+    "prepare": "tsc -b",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 1m --slow 30s \"./test/e2e/**/*.spec.js\"",

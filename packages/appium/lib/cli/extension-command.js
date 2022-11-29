@@ -262,7 +262,6 @@ class ExtensionCommand {
         installSpec,
         installType,
         pkgName: /** @type {string} */ (packageName),
-        installType,
       };
       probableExtName = installSpec;
     } else {
@@ -651,7 +650,7 @@ class ExtensionCommand {
     const {pkgName, installType} = this.config.installedExtensions[installSpec];
     const extData = await this.installViaNpm({
       installSpec,
-      installType: 'npm',
+      installType,
       pkgName,
       pkgVer: version,
     });

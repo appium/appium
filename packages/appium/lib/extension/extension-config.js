@@ -634,50 +634,43 @@ export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GIT
 /**
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('./manifest').Manifest} Manifest
+ * @typedef {import('../cli/extension-command').ExtensionListData} ExtensionListData
+ * @typedef {import('../cli/extension-command').InstalledExtensionListData} InstalledExtensionListData
+ * @typedef {import('appium/types').InstallType} InstallType
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifest<ExtType>} ExtManifest
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtManifestWithSchema<T>} ExtManifestWithSchema
+ * @template {ExtensionType} ExtType
+ * @typedef {ExtManifest<ExtType> & {schema: NonNullable<ExtManifest<ExtType>['schema']>}} ExtManifestWithSchema
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtName<T>} ExtName
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtName<ExtType>} ExtName
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtClass<T>} ExtClass
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtClass<ExtType>} ExtClass
  */
 
 /**
- * @template T
- * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtRecord<ExtType>} ExtRecord
  */
 
 /**
- * @template T
- * @typedef {import('../cli/extension').ExtCommand<T>} ExtCommand
+ * @template {ExtensionType} ExtType
+ * @typedef {import('../cli/extension').ExtCommand<ExtType>} ExtCommand
  */
 
 /**
  * Options for various methods in {@link ExtensionConfig}
  * @typedef ExtensionConfigMutationOpts
  * @property {boolean} [write=true] Whether or not to write the manifest to disk after a mutation operation
- */
-
-/**
- * A valid install type
- * @typedef {typeof INSTALL_TYPE_NPM | typeof INSTALL_TYPE_GIT | typeof INSTALL_TYPE_LOCAL | typeof INSTALL_TYPE_GITHUB} InstallType
- */
-
-/**
- * @typedef {import('../cli/extension-command').ExtensionListData} ExtensionListData
- * @typedef {import('../cli/extension-command').InstalledExtensionListData} InstalledExtensionListData
  */

@@ -1,6 +1,6 @@
 import {DriverType, PluginType, ServerArgs} from '@appium/types';
 import {SetOptional} from 'type-fest';
-import {InstallType} from './appium-manifest';
+import {InstallType} from './manifest';
 export type ServerCommand = 'server';
 export type DriverCommand = DriverType;
 export type PluginCommand = PluginType;

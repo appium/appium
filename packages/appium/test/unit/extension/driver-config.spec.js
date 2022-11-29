@@ -348,14 +348,15 @@ describe('DriverConfig', function () {
 /**
  * @typedef {import('@appium/types').DriverType} DriverType
  * @typedef {import('appium/lib/extension/driver-config').DriverConfig} DriverConfig
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  */
 
 /**
- * @template {import('@appium/types').ExtensionType} ExtType
- * @typedef {import('appium/types').ExtManifestWithSchema<ExtType>} ExtManifestWithSchema
- */
-
-/**
- * @template {import('@appium/types').ExtensionType} ExtType
+ * @template {ExtensionType} ExtType
  * @typedef {import('appium/types').ExtManifest<ExtType>} ExtManifest
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifest<ExtType> & {schema: NonNullable<import('appium/types').ExtManifest<ExtType>['schema']>}} ExtManifestWithSchema
  */

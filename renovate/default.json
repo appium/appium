@@ -11,6 +11,7 @@
     ":automergeDigest",
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
+    ":sematicCommits",
     ":semanticPrefixChore"
   ],
   "packageRules": [
@@ -60,7 +61,6 @@
       "groupSlug": "appium"
     }
   ],
-  "semanticCommits": "enabled",
-  "semanticCommitScope": "{{parentDir}}",
+  "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}",
   "transitiveRemediation": true
 }

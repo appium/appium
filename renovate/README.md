@@ -43,7 +43,8 @@ Appium extension authors--or anyone else--may use this config as well.
 - `:automergeDigest` - Automatically merges "digest" updates (assuming they pass CI)
 - `:enableVulnerabilityAlerts` - For "security" purposes
 - `:rebaseStalePrs` - Renovate will automatically rebase its PRs
-- `:semanticPrefixChore` - Renovate's PRs have the `chore()` scope in its semantic commit message
+- `:semanticCommits` - Renovate will use semantic commit messages
+- `:semanticPrefixChore` - Renovate's PRs have the `chore` prefix in its semantic commit message
 
 ### Custom Rules
 
@@ -57,7 +58,7 @@ Appium extension authors--or anyone else--may use this config as well.
 
 ### Additional Config
 
-- Enables semantic commits
+- Uses the parent directory for the commit scope if applicable; otherwise uses `deps`. The parent directory is _typically_ only applicable in monorepos.
 - Attempts transititive remediation of vulns
 
 ## License

@@ -347,9 +347,10 @@ describe('PluginConfig', function () {
 /**
  * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('appium/lib/extension/plugin-config').PluginConfig} PluginConfig
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  */
 
 /**
- * @template {import('@appium/types').ExtensionType} ExtType
- * @typedef {import('appium/types').ExtManifestWithSchema<ExtType>} ExtManifestWithSchema
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtManifest<ExtType> & {schema: NonNullable<import('appium/types').ExtManifest<ExtType>['schema']>}} ExtManifestWithSchema
  */

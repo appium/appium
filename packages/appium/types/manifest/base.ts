@@ -130,14 +130,6 @@ export interface ManifestData {
 }
 
 /**
- * Like {@linkcode ExtManifest} but for-sure has a `schema` prop.
- */
-export type ExtManifestWithSchema<ExtType extends ExtensionType> = SetRequired<
-  ExtManifest<ExtType>,
-  'schema'
->;
-
-/**
  * The name of an installed extension, as it appears in `extensions.yaml`
  * (as a property name under `drivers` or `plugins`)
  */

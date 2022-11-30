@@ -3,8 +3,8 @@
 **/fixtures/**
 **/*.min.*
 **/*.md
-**/*.yml
-**/*.json
+package-lock.json
+package.json
 **/.vscode/**
 **/*.html
 **/generated/**

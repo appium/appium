@@ -7,4 +7,5 @@ module.exports = {
     'npm run --workspace=./packages/types build',
     'git add -A packages/types/lib/appium-config.ts',
   ],
+  '!(package|package-lock)*.json': ['prettier --write'],
 };

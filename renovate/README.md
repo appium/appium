@@ -58,7 +58,6 @@ Appium extension authors--or anyone else--may use this config as well.
 ### Additional Config
 
 - Enables semantic commits
-- Runs on a nightly schedule
 - Attempts transititive remediation of vulns
 
 ## License

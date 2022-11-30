@@ -44,6 +44,7 @@ nav:
     - guides/event-timing.md
     - guides/log-filters.md
     - guides/grid.md
+  - Reference: reference.md
   - Ecosystem:
     - ecosystem/index.md
     - Developing Appium Extensions:

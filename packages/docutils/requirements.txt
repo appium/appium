@@ -1,0 +1,4 @@
+mkdocs==1.4.0
+mkdocs-material==8.2.8
+mkdocs-material-extensions==1.0.3
+markdown-include==0.8.0

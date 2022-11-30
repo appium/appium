@@ -62,7 +62,5 @@
   ],
   "semanticCommits": "enabled",
   "semanticCommitScope": "{{parentDir}}",
-  "schedule": ["after 10pm and before 5:00am"],
-  "timezone": "America/Vancouver",
   "transitiveRemediation": true
 }

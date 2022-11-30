@@ -143,18 +143,18 @@ export class CommandConverter {
     propName: typeof NAME_OPTIONAL | typeof NAME_REQUIRED,
     refl?: DeclarationReflectionWithReflectedType
   ): string[] {
-    if (refl) {
-      const props = findChildByNameAndGuard(refl, propName, isParamsArray);
-      const names = props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
-      return names.filter((name) => {
-        if (!name) {
-          this.#log.warn('Found empty %s parameter', propName);
-          return false;
-        }
-        return true;
-      });
+    if (!refl) {
+      return [];
     }
-    return [];
+    const props = findChildByNameAndGuard(refl, propName, isParamsArray);
+    const names = props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
+    return names.filter((name) => {
+      if (!name) {
+        this.#log.warn('Found empty %s parameter', propName);
+        return false;
+      }
+      return true;
+    });
   }
 
   /**

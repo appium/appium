@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "removeComments": false,
-    "target": "ESNext",
+    "target": "ES2020",
     "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
   }
 }

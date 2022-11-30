@@ -6,6 +6,7 @@
  * @see https://github.com/KnodesCommunity/typedoc-plugins/blob/05717565fae14357b1c4be8122f3156e1d46d332/LICENSE
  */
 
+import _ from 'lodash';
 import {ReflectionKind} from 'typedoc';
 
 const getHigherBitMask = () =>
@@ -21,7 +22,7 @@ export const addReflectionKind = (ns: string, name: string, value?: number | nul
 
   const kindAny = ReflectionKind as any;
   const existingValue = kindAny[fullName];
-  if (existingValue !== null && existingValue !== undefined) {
+  if (_.isNil(existingValue)) {
     return existingValue;
   }
   const defaultedValue = value ?? getHigherBitMask() * 2;

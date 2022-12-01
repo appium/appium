@@ -19,3 +19,7 @@ npm run dev:docs:en
 ````
 
 See the `scripts` field of the `package.json` for other languages.
+
+## Using in Appium Extensions
+
+TODO: give an example of how this package is used in an extension outside the appium monorepo, for example when it's made a part of the XCUITest repo. Or link to the part of the Appium docs where this info will live.

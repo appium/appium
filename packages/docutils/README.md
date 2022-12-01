@@ -10,7 +10,7 @@
 
 Run `pip install -r requirements.txt` to install MkDocs & its deps.
 
-## Running
+## Running for Main Appium Docs
 
 This package does not need to be run directly. Instead, execute this command in the `packages/appium` folder of [this monorepo](https://github.com/appium/appium):
 

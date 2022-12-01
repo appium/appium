@@ -9,7 +9,7 @@ import {AppiumPluginReflectionKind} from '../model';
 import plural from 'pluralize';
 
 /**
- * Overwrites {@linkcode typedoc-plugin-markdown!MarkdownTheme}'s `reflectionPath` helper to handle {@linkcode AppiumPluginReflectionKind} reflection kinds
+ * Overwrites {@linkcode typedoc-plugin-markdown#MarkdownTheme}'s `reflectionPath` helper to handle {@linkcode AppiumPluginReflectionKind} reflection kinds
  * @param this Page event
  * @returns Reflection path, if any
  */

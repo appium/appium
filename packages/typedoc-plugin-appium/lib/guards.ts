@@ -187,7 +187,7 @@ export function isAllowedHTTPMethod(value: any): value is AllowedHttpMethod {
 }
 
 /**
- * Type guard for a {@linkcode CommandPropDeclarationReflection} corresponding to the `command` property of a {@linkcode @appium/types!MethodDef} object contained within a {@linkcode @appium/types!MethodMap}.
+ * Type guard for a {@linkcode CommandPropDeclarationReflection} corresponding to the `command` property of a {@linkcode @appium/types#MethodDef} object contained within a {@linkcode @appium/types#MethodMap}.
  * @param value any value
  */
 export function isCommandPropDeclarationReflection(
@@ -197,7 +197,7 @@ export function isCommandPropDeclarationReflection(
 }
 
 /**
- * Type guard for a {@linkcode ExecMethodData} derived from a {@linkcode @appium/types!ExecuteMethodMap} object.
+ * Type guard for a {@linkcode ExecMethodData} derived from a {@linkcode @appium/types#ExecuteMethodMap} object.
  * @param value any value
  */
 export function isExecMethodData(value: any): value is ExecMethodData {

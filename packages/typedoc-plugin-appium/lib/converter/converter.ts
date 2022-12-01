@@ -173,19 +173,24 @@ export class CommandConverter {
     if (!refl) {
       return [];
     }
+
     const props = findChildByNameAndGuard(
       refl,
       propName,
       isMethodDefParamNamesDeclarationReflection
     );
-    const names = props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
-    return names.filter((name) => {
-      if (!name) {
-        this.#log.warn('Found empty %s parameter', propName);
-        return false;
+
+    if (!props) {
+      return [];
+    }
+
+    return props.type.target.elements.reduce((names, el: LiteralType) => {
+      const stringValue = String(el.value);
+      if (stringValue) {
+        names.push(stringValue);
       }
-      return true;
-    });
+      return names;
+    }, [] as string[]);
   }
 
   /**

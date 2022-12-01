@@ -1,10 +1,14 @@
+/**
+ * A bunch of type guards. Because here is a place to put all of them.
+ * @module
+ */
+
 import {
   DeclarationReflection,
   ReflectionType,
   TypeOperatorType,
   TupleType,
   LiteralType,
-  IntrinsicType,
   ReflectionKind,
   Reflection,
 } from 'typedoc';
@@ -21,32 +25,70 @@ import {
   HTTPMethodDeclarationReflection,
   MethodDefParamsDeclarationReflection,
   MethodMapDeclarationReflection,
-  RoutePropDeclarationReflection,
+  PropDeclarationReflection,
 } from './converter/types';
-import {AllowedHttpMethod} from './model';
+import {AllowedHttpMethod, ExecMethodData} from './model';
 
+/**
+ * Set of HTTP methods allowed by WebDriver; see {@linkcode AllowedHttpMethod}
+ */
+const ALLOWED_HTTP_METHODS: Readonly<Set<AllowedHttpMethod>> = new Set([
+  'GET',
+  'POST',
+  'DELETE',
+] as const);
+
+/**
+ * Type guard for {@linkcode DeclarationReflection}
+ * @param value any value
+ */
 export function isDeclarationReflection(value: any): value is DeclarationReflection {
   return value instanceof DeclarationReflection;
 }
+
+/**
+ * Type guard for {@linkcode ReflectionType}
+ * @param value any value
+ */
 export function isReflectionType(value: any): value is ReflectionType {
   return value instanceof ReflectionType;
 }
+
+/**
+ * Type guard for {@linkcode TypeOperatorType}
+ * @param value any value
+ */
 export function isTypeOperatorType(value: any): value is TypeOperatorType {
   return value instanceof TypeOperatorType;
 }
+
+/**
+ * Type guard for {@linkcode LiteralType}
+ * @param value any value
+ */
 export function isLiteralType(value: any): value is LiteralType {
   return value instanceof LiteralType;
 }
-export function isIntrinsicType(value: any): value is IntrinsicType {
-  return value instanceof IntrinsicType;
-}
+
+/**
+ * Type guard for {@linkcode TupleType}
+ * @param value any value
+ */
 export function isTupleType(value: any): value is TupleType {
   return value instanceof TupleType;
 }
 
+/**
+ * Type guard for a {@linkcode DeclarationReflectionWithReflectedType} corresponding to
+ * the `executeMethodMap` static property of an extension class.
+ * @param value any
+ */
 export function isExecMethodDefReflection(
   value: any
-): value is DeclarationReflectionWithReflectedType {
+): value is DeclarationReflectionWithReflectedType & {
+  name: typeof NAME_EXECUTE_METHOD_MAP;
+  flags: {isStatic: true};
+} {
   return (
     isReflectionWithReflectedType(value) &&
     value.name === NAME_EXECUTE_METHOD_MAP &&
@@ -54,6 +96,10 @@ export function isExecMethodDefReflection(
   );
 }
 
+/**
+ * Type guard for a {@linkcode MethodDefParamsDeclarationReflection} corresponding to a list of required or optional parameters within a command or execute method definition.
+ * @param value any value
+ */
 export function isParamsArray(value: any): value is MethodDefParamsDeclarationReflection {
   return (
     isDeclarationReflection(value) &&
@@ -63,12 +109,18 @@ export function isParamsArray(value: any): value is MethodDefParamsDeclarationRe
   );
 }
 
-export function isRoutePropDeclarationReflection(
-  value: any
-): value is RoutePropDeclarationReflection {
+/**
+ * Type guard for a {@linkcode PropDeclarationReflection} corresponding to some property of a constant object.
+ * @param value any value
+ */
+export function isRoutePropDeclarationReflection(value: any): value is PropDeclarationReflection {
   return isReflectionWithReflectedType(value) && isPropertyKind(value);
 }
 
+/**
+ * Type guard for a {@linkcode BaseDriverDeclarationReflection} corresponding to the `@appium/base-driver` module (_not_ the class).
+ * @param value any value
+ */
 export function isBaseDriverDeclarationReflection(
   value: any
 ): value is BaseDriverDeclarationReflection {
@@ -79,10 +131,21 @@ export function isBaseDriverDeclarationReflection(
   );
 }
 
+/**
+ * Type guard for a property of an object (a {@linkcode Reflection} having kind {@linkcode ReflectionKind.Property}).
+ * @param value any value
+ * @returns
+ */
 export function isPropertyKind(value: any) {
   return value instanceof Reflection && value.kindOf(ReflectionKind.Property);
 }
 
+/**
+ * Type guard for a {@linkcode MethodMapDeclarationReflection} corresponding to the `newMethodMap` static property of an extension class _or_ the `METHOD_MAP` export within `@appium/base-driver`.
+ *
+ * Note that the type does not care about the `isStatic` flag, but this guard does.
+ * @param value any value
+ */
 export function isMethodMapDeclarationReflection(
   value: any
 ): value is MethodMapDeclarationReflection {
@@ -92,13 +155,18 @@ export function isMethodMapDeclarationReflection(
   );
 }
 
+/**
+ * Type guard for a {@linkcode DeclarationReflectionWithReflectedType} a declaration reflection having a reflection type.
+ *
+ * I don't know what that means, exactly, but there it is.
+ * @param value any value
+ */
 export function isReflectionWithReflectedType(
   value: any
 ): value is DeclarationReflectionWithReflectedType {
   return isDeclarationReflection(value) && isReflectionType(value.type);
 }
 
-const ALLOWED_HTTP_METHODS = Object.freeze(new Set(['GET', 'POST', 'DELETE']));
 export function isHTTPMethodDeclarationReflection(
   value: any
 ): value is HTTPMethodDeclarationReflection {
@@ -109,12 +177,29 @@ export function isHTTPMethodDeclarationReflection(
   );
 }
 
+/**
+ * Type guard for an {@linkcode AllowedHttpMethod}
+ *
+ * @param value any value
+ */
 export function isAllowedHTTPMethod(value: any): value is AllowedHttpMethod {
   return ALLOWED_HTTP_METHODS.has(value);
 }
 
+/**
+ * Type guard for a {@linkcode CommandPropDeclarationReflection} corresponding to the `command` property of a {@linkcode @appium/types!MethodDef} object contained within a {@linkcode @appium/types!MethodMap}.
+ * @param value any value
+ */
 export function isCommandPropDeclarationReflection(
   value: any
 ): value is CommandPropDeclarationReflection {
   return isDeclarationReflection(value) && isLiteralType(value.type);
+}
+
+/**
+ * Type guard for a {@linkcode ExecMethodData} derived from a {@linkcode @appium/types!ExecuteMethodMap} object.
+ * @param value any value
+ */
+export function isExecMethodData(value: any): value is ExecMethodData {
+  return value && typeof value === 'object' && value.script;
 }

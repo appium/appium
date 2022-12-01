@@ -12,12 +12,17 @@
 import {format} from 'node:util';
 import {Logger, LogLevel} from 'typedoc';
 
-const LogMethods = {
-  [LogLevel.Error]: 'error',
-  [LogLevel.Warn]: 'warn',
-  [LogLevel.Info]: 'info',
-  [LogLevel.Verbose]: 'verbose',
-} as const;
+/**
+ * Mapping of TypeDoc {@linkcode LogLevel}s to method names.
+ */
+const LogMethods: Readonly<
+  Map<LogLevel, keyof Pick<Logger, 'error' | 'warn' | 'info' | 'verbose'>>
+> = new Map([
+  [LogLevel.Error, 'error'],
+  [LogLevel.Warn, 'warn'],
+  [LogLevel.Info, 'info'],
+  [LogLevel.Verbose, 'verbose'],
+]);
 
 export class AppiumPluginLogger extends Logger {
   /**
@@ -142,10 +147,13 @@ export class AppiumPluginLogger extends Logger {
     if (this.#logThroughParent) {
       this.#logThroughParent(level, ns, message, ...args);
     } else {
-      const parentMethod = LogMethods[level];
+      const parentMethod = LogMethods.get(level)!;
       this.#parent[parentMethod](this.#formatMessage(ns, message, ...args));
     }
   }
 }
 
-type ParentLogger = (level: LogLevel, message: string, ...args: any[]) => void;
+/**
+ * Used internally by {@link AppiumPluginLogger.createChildLogger} to pass log messages to the parent.
+ */
+export type ParentLogger = (level: LogLevel, message: string, ...args: any[]) => void;

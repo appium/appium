@@ -18,20 +18,20 @@
 
 {{#with model}}
 
-{{#if hasRoutes}}
-## Routes
+{{#if hasRoute}}
+## {{pluralize 'Route' routeCount}}
 {{#each children}}
-{{#unless isExecuteCommand}}
+{{#unless isExecuteMethod}}
 {{> command}}
 {{/unless}}
 {{/each}}
 {{/if}}
 
-{{#if hasExecuteCommands}}
-## Execute Scripts
+{{#if hasExecuteMethod}}
+## Execute {{pluralize 'Method' execMethodCount}}
 {{#each children}}
-{{#if isExecuteCommand}}
-{{> executeCommand}}
+{{#if isExecuteMethod}}
+{{> executeMethod}}
 {{/if}}
 {{/each}}
 {{/if}}

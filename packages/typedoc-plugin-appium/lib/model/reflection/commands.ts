@@ -1,24 +1,28 @@
+import {DeclarationReflection} from 'typedoc';
 import {CommandInfo} from '../command-info';
-import {ExecCommandDataSet, ParentReflection, RouteMap} from '../types';
-
+import {ExecMethodDataSet, ParentReflection, RouteMap} from '../types';
 import {AppiumPluginReflectionKind} from './kind';
-import {AppiumPluginReflection} from './plugin';
 
 /**
- * A Reflection representing a set of commands within a module or project
+ * A reflection containing data about commands and/or execute methods.
+ *
+ * Methods may be invoked directly by Handlebars templates.
  */
-export class CommandsReflection extends AppiumPluginReflection {
+export class CommandsReflection extends DeclarationReflection {
   /**
-   * A set of objects
+   * Info about execute methods
    */
-  public readonly execCommandDataSet: ExecCommandDataSet;
+  public readonly execMethodDataSet: ExecMethodDataSet;
+  /**
+   * Info about routes/commands
+   */
   public readonly routeMap: RouteMap;
 
-  constructor(name: string, parent: ParentReflection, commands: CommandInfo) {
+  constructor(name: string, parent: ParentReflection, {routeMap, execMethodDataSet}: CommandInfo) {
     super(name, AppiumPluginReflectionKind.COMMANDS as any, parent);
     this.parent = parent;
-    this.routeMap = commands.routeMap;
-    this.execCommandDataSet = commands.execCommandDataSet;
+    this.routeMap = routeMap;
+    this.execMethodDataSet = execMethodDataSet;
   }
 
   /**
@@ -26,8 +30,8 @@ export class CommandsReflection extends AppiumPluginReflection {
    *
    * Used by templates
    */
-  public get hasExecuteCommands(): boolean {
-    return Boolean(this.execCommandDataSet.size);
+  public get hasExecuteMethod(): boolean {
+    return Boolean(this.execMethodCount);
   }
 
   /**
@@ -35,7 +39,21 @@ export class CommandsReflection extends AppiumPluginReflection {
    *
    * Used by templates
    */
-  public get hasRoutes(): boolean {
-    return Boolean(this.routeMap.size);
+  public get hasRoute(): boolean {
+    return Boolean(this.routeCount);
+  }
+
+  /**
+   * Returns number of routes ("commands") in this in this data
+   */
+  public get routeCount(): number {
+    return this.routeMap.size;
+  }
+
+  /**
+   * Returns number of execute methods in this data
+   */
+  public get execMethodCount(): number {
+    return this.execMethodDataSet.size;
   }
 }

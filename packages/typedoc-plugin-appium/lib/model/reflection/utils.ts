@@ -4,6 +4,7 @@
  * Copyright (c) 2022 KnodesCommunity
  * Licensed MIT
  * @see https://github.com/KnodesCommunity/typedoc-plugins/blob/05717565fae14357b1c4be8122f3156e1d46d332/LICENSE
+ * @module
  */
 
 import {ReflectionKind} from 'typedoc';

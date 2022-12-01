@@ -14,18 +14,24 @@ import {
 } from 'typedoc';
 import {
   NAME_BUILTIN_COMMAND_MODULE,
+  NAME_COMMAND,
   NAME_EXECUTE_METHOD_MAP,
   NAME_METHOD_MAP,
   NAME_NEW_METHOD_MAP,
+  NAME_PARAMS,
+  NAME_PAYLOAD_PARAMS,
 } from './converter';
 import {
   BaseDriverDeclarationReflection,
   CommandPropDeclarationReflection,
   DeclarationReflectionWithReflectedType,
+  ExecMethodDeclarationReflection,
   HTTPMethodDeclarationReflection,
-  MethodDefParamsDeclarationReflection,
+  MethodDefParamNamesDeclarationReflection,
   MethodMapDeclarationReflection,
+  MethodDefParamsPropDeclarationReflection,
   PropDeclarationReflection,
+  ExecMethodDefParamsPropDeclarationReflection,
 } from './converter/types';
 import {AllowedHttpMethod, ExecMethodData} from './model';
 
@@ -83,12 +89,7 @@ export function isTupleType(value: any): value is TupleType {
  * the `executeMethodMap` static property of an extension class.
  * @param value any
  */
-export function isExecMethodDefReflection(
-  value: any
-): value is DeclarationReflectionWithReflectedType & {
-  name: typeof NAME_EXECUTE_METHOD_MAP;
-  flags: {isStatic: true};
-} {
+export function isExecMethodDefReflection(value: any): value is ExecMethodDeclarationReflection {
   return (
     isReflectionWithReflectedType(value) &&
     value.name === NAME_EXECUTE_METHOD_MAP &&
@@ -97,10 +98,12 @@ export function isExecMethodDefReflection(
 }
 
 /**
- * Type guard for a {@linkcode MethodDefParamsDeclarationReflection} corresponding to a list of required or optional parameters within a command or execute method definition.
+ * Type guard for a {@linkcode MethodDefParamNamesDeclarationReflection} corresponding to a list of required or optional parameters within a command or execute method definition.
  * @param value any value
  */
-export function isParamsArray(value: any): value is MethodDefParamsDeclarationReflection {
+export function isMethodDefParamNamesDeclarationReflection(
+  value: any
+): value is MethodDefParamNamesDeclarationReflection {
   return (
     isDeclarationReflection(value) &&
     isTypeOperatorType(value.type) &&
@@ -193,7 +196,7 @@ export function isAllowedHTTPMethod(value: any): value is AllowedHttpMethod {
 export function isCommandPropDeclarationReflection(
   value: any
 ): value is CommandPropDeclarationReflection {
-  return isDeclarationReflection(value) && isLiteralType(value.type);
+  return isDeclarationReflection(value) && isLiteralType(value.type) && value.name === NAME_COMMAND;
 }
 
 /**
@@ -202,4 +205,24 @@ export function isCommandPropDeclarationReflection(
  */
 export function isExecMethodData(value: any): value is ExecMethodData {
   return value && typeof value === 'object' && value.script;
+}
+
+/**
+ * Type guard for a {@linkcode MethodDefParamsPropDeclarationReflection} corresponding to the `params` prop of a `MethodDef`
+ * @param value any value
+ */
+export function isMethodDefParamsPropDeclarationReflection(
+  value: any
+): value is MethodDefParamsPropDeclarationReflection {
+  return isReflectionWithReflectedType(value) && value.name === NAME_PARAMS;
+}
+
+/**
+ * Type guard for a {@linkcode ExecMethodDefParamsPropDeclarationReflection} corresponding to the `payloadParams` prop of an `ExecuteMethodDef`.
+ * @param value any value
+ */
+export function isExecMethodDefParamsPropDeclarationReflection(
+  value: any
+): value is ExecMethodDefParamsPropDeclarationReflection {
+  return isReflectionWithReflectedType(value) && value.name === NAME_PAYLOAD_PARAMS;
 }

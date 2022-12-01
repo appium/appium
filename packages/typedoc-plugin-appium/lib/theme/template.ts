@@ -28,7 +28,7 @@ const PARTIALS_PATH = path.join(RESOURCES_PATH, 'partials');
  */
 enum AppiumThemePartial {
   command = 'command.hbs',
-  executeMethod = 'execute-command.hbs',
+  executeMethod = 'execute-method.hbs',
 }
 
 /**

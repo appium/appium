@@ -22,7 +22,8 @@ import {
   isExecMethodDefReflection,
   isHTTPMethodDeclarationReflection,
   isMethodMapDeclarationReflection,
-  isParamsArray,
+  isMethodDefParamNamesDeclarationReflection,
+  isExecMethodDefParamsPropDeclarationReflection,
   isReflectionWithReflectedType,
   isRoutePropDeclarationReflection,
 } from '../guards';
@@ -38,7 +39,9 @@ import {
 import {
   BaseDriverDeclarationReflection,
   DeclarationReflectionWithReflectedType,
+  ExecMethodDeclarationReflection,
   Guard,
+  MethodDefParamsPropDeclarationReflection,
 } from './types';
 
 /**
@@ -165,12 +168,16 @@ export class CommandConverter {
 
   #convertCommandParams(
     propName: typeof NAME_OPTIONAL | typeof NAME_REQUIRED,
-    refl?: DeclarationReflectionWithReflectedType
+    refl?: MethodDefParamsPropDeclarationReflection
   ): string[] {
     if (!refl) {
       return [];
     }
-    const props = findChildByNameAndGuard(refl, propName, isParamsArray);
+    const props = findChildByNameAndGuard(
+      refl,
+      propName,
+      isMethodDefParamNamesDeclarationReflection
+    );
     const names = props?.type.target.elements.map((el: LiteralType) => String(el.value)) ?? [];
     return names.filter((name) => {
       if (!name) {
@@ -186,12 +193,9 @@ export class CommandConverter {
    * @param refl A class which may contain an `executeMethodMap` static property
    * @returns List of "execute commands", if any
    */
-  #convertExecuteMethodMap(refl: DeclarationReflectionWithReflectedType): ExecMethodDataSet {
-    const executeMethodMap = findChildByNameAndGuard(
-      refl,
-      NAME_EXECUTE_METHOD_MAP,
-      isExecMethodDefReflection
-    );
+  #convertExecuteMethodMap(refl: DeclarationReflection): ExecMethodDataSet {
+    const executeMethodMap = findChildByGuard(refl, isExecMethodDefReflection);
+
     const commandRefs: ExecMethodDataSet = new Set();
     if (!executeMethodMap) {
       // no execute commands in this class
@@ -202,11 +206,7 @@ export class CommandConverter {
     for (const newMethodProp of newMethodProps) {
       const {comment, originalName: script} = newMethodProp;
 
-      const commandProp = findChildByNameAndGuard(
-        newMethodProp,
-        NAME_COMMAND,
-        isCommandPropDeclarationReflection
-      );
+      const commandProp = findChildByGuard(newMethodProp, isCommandPropDeclarationReflection);
 
       if (!commandProp) {
         // this is unusual
@@ -228,10 +228,9 @@ export class CommandConverter {
       }
       const command = String(commandProp.type.value);
 
-      const paramsProp = findChildByNameAndGuard(
+      const paramsProp = findChildByGuard(
         newMethodProp,
-        NAME_PARAMS,
-        isReflectionWithReflectedType
+        isExecMethodDefParamsPropDeclarationReflection
       );
       const requiredParams = this.#convertRequiredCommandParams(paramsProp);
       const optionalParams = this.#convertOptionalCommandParams(paramsProp);
@@ -289,11 +288,7 @@ export class CommandConverter {
       for (const httpMethodProp of httpMethodProps) {
         const {comment, originalName: httpMethod} = httpMethodProp;
 
-        const commandProp = findChildByNameAndGuard(
-          httpMethodProp,
-          NAME_COMMAND,
-          isCommandPropDeclarationReflection
-        );
+        const commandProp = findChildByGuard(httpMethodProp, isCommandPropDeclarationReflection);
 
         // commandProp is optional.
         if (!commandProp) {
@@ -306,10 +301,9 @@ export class CommandConverter {
         }
         const command = String(commandProp.type.value);
 
-        const payloadParamsProp = findChildByNameAndGuard(
+        const payloadParamsProp = findChildByGuard(
           httpMethodProp,
-          NAME_PAYLOAD_PARAMS,
-          isReflectionWithReflectedType
+          isExecMethodDefParamsPropDeclarationReflection
         );
         const requiredParams = this.#convertRequiredCommandParams(payloadParamsProp);
         const optionalParams = this.#convertOptionalCommandParams(payloadParamsProp);
@@ -341,11 +335,7 @@ export class CommandConverter {
     let routes: RouteMap = new Map();
     let executeMethods: ExecMethodDataSet = new Set();
 
-    const classReflections = parent
-      .getChildrenByKind(ReflectionKind.Class)
-      .filter((child) =>
-        isReflectionWithReflectedType(child)
-      ) as DeclarationReflectionWithReflectedType[];
+    const classReflections = parent.getChildrenByKind(ReflectionKind.Class);
 
     for (const classRefl of classReflections) {
       this.#log.verbose('Converting class %s', classRefl.name);
@@ -370,7 +360,9 @@ export class CommandConverter {
    * @param methodDefRefl - Reflection of a method definition
    * @returns List of optional parameters
    */
-  #convertOptionalCommandParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+  #convertOptionalCommandParams(
+    methodDefRefl?: MethodDefParamsPropDeclarationReflection
+  ): string[] {
     return this.#convertCommandParams(NAME_OPTIONAL, methodDefRefl);
   }
 
@@ -379,7 +371,9 @@ export class CommandConverter {
    * @param methodDefRefl - Reflection of a method definition
    * @returns List of required parameters
    */
-  #convertRequiredCommandParams(methodDefRefl?: DeclarationReflectionWithReflectedType): string[] {
+  #convertRequiredCommandParams(
+    methodDefRefl?: MethodDefParamsPropDeclarationReflection
+  ): string[] {
     return this.#convertCommandParams(NAME_REQUIRED, methodDefRefl);
   }
 }
@@ -402,12 +396,34 @@ export function convertCommands(ctx: Context, log: AppiumPluginLogger): ModuleCo
  * @returns Child if found, `undefined` otherwise
  * @internal
  */
-function findChildByNameAndGuard<T extends DeclarationReflection>(
-  refl: DeclarationReflectionWithReflectedType,
+function findChildByNameAndGuard<T extends DeclarationReflection, G extends DeclarationReflection>(
+  refl: T,
   name: string,
-  guard: Guard<T>
-): T | undefined {
-  return refl.type.declaration.children?.find((child) => child.name === name && guard(child)) as T;
+  guard: Guard<G>
+): G | undefined {
+  return (
+    isReflectionWithReflectedType(refl)
+      ? refl.type.declaration.children?.find((child) => child.name === name && guard(child))
+      : refl.children?.find((child) => child.name === name && guard(child))
+  ) as G | undefined;
+}
+
+/**
+ * Finds a child of a reflection by type guard
+ * @param refl - Reflection to check
+ * @param guard - Guard function to check child
+ * @returns Child if found, `undefined` otherwise
+ * @internal
+ */
+function findChildByGuard<T extends DeclarationReflection, G extends DeclarationReflection>(
+  refl: T,
+  guard: Guard<G>
+): G | undefined {
+  return (
+    isReflectionWithReflectedType(refl)
+      ? refl.type.declaration.children?.find(guard)
+      : refl.children?.find(guard)
+  ) as G | undefined;
 }
 
 /**
@@ -417,13 +433,15 @@ function findChildByNameAndGuard<T extends DeclarationReflection>(
  * @returns Filtered children, if any
  * @internal
  */
-function filterChildrenByKind(
-  refl: DeclarationReflectionWithReflectedType,
+function filterChildrenByKind<T extends DeclarationReflection>(
+  refl: T,
   kind: ReflectionKind
-): DeclarationReflectionWithReflectedType[] {
-  return (refl.type.declaration.children?.filter(
-    (child) => isReflectionWithReflectedType(child) && child.kindOf(kind)
-  ) ?? []) as DeclarationReflectionWithReflectedType[];
+): DeclarationReflection[] {
+  return (
+    (isReflectionWithReflectedType(refl)
+      ? refl.type.declaration.getChildrenByKind(kind)
+      : refl.getChildrenByKind(kind)) ?? ([] as DeclarationReflection[])
+  );
 }
 
 /**
@@ -433,9 +451,13 @@ function filterChildrenByKind(
  * @returns Filtered children, if any
  * @internal
  */
-function filterChildrenByGuard<T extends DeclarationReflection>(
-  refl: DeclarationReflectionWithReflectedType,
-  guard: Guard<T>
-): T[] {
-  return refl.type.declaration.children?.filter(guard) ?? [];
+function filterChildrenByGuard<T extends DeclarationReflection, G extends DeclarationReflection>(
+  refl: T,
+  guard: Guard<G>
+): G[] {
+  return (
+    (isReflectionWithReflectedType(refl)
+      ? refl.type.declaration.children?.filter(guard)
+      : refl.children?.filter(guard)) ?? ([] as G[])
+  );
 }

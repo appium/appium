@@ -12,7 +12,7 @@ import {AllowedHttpMethod} from '../model';
 import {NAME_BUILTIN_COMMAND_MODULE, NAME_METHOD_MAP, NAME_NEW_METHOD_MAP} from './converter';
 
 /**
- * Type corresponding to a reflection of a {@linkcode @appium/types!MethodMap}
+ * Type corresponding to a reflection of a {@linkcode @appium/types#MethodMap}
  */
 export type MethodMapDeclarationReflection = Merge<
   DeclarationReflectionWithReflectedType,
@@ -20,7 +20,7 @@ export type MethodMapDeclarationReflection = Merge<
 >;
 
 /**
- * Type corresponding to a reflection of {@linkcode @appium/base-driver!}
+ * Type corresponding to a reflection of {@linkcode @appium/base-driver}
  */
 export type BaseDriverDeclarationReflection = Merge<
   DeclarationReflection,

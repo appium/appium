@@ -1,5 +1,5 @@
 /**
- * A thing that creates {@linkcode typedoc!DeclarationReflection} instances from parsed
+ * A thing that creates {@linkcode typedoc#DeclarationReflection} instances from parsed
  * command & execute method data.
  * @module
  */
@@ -90,7 +90,7 @@ function createCommandsReflection(
 }
 
 /**
- * Creates custom {@linkcode typedoc!DeclarationReflection}s from parsed command & execute method data.
+ * Creates custom {@linkcode typedoc#DeclarationReflection}s from parsed command & execute method data.
  *
  * These instances are added to the {@linkcode Context} object itself; this mutates TypeDoc's internal state. Nothing is returned.
  * @param ctx TypeDoc Context
@@ -109,12 +109,16 @@ export function createReflections(
   const modules = project.getChildrenByKind(ReflectionKind.Module);
 
   // the project itself may have commands, as well as any modules within the project
-  const parents = [...modules, project].filter((parent) => commandInfo.get(parent)?.hasData);
-  if (!parents.length) {
+  let hasCommands = false;
+  for (const parent of [...modules, project]) {
+    if (commandInfo.get(parent)?.hasData) {
+      hasCommands = true;
+      createCommandsReflection(log, ctx, parent, commandInfo.get(parent)!);
+    }
+  }
+
+  if (!hasCommands) {
     log.warn('No Appium commands found in the entire project');
     // TODO: maybe we should abort processing gracefully here? or throw?
-  }
-  for (const parent of parents) {
-    createCommandsReflection(log, ctx, parent, commandInfo.get(parent)!);
   }
 }

@@ -1,7 +1,7 @@
 import {Application, Context, Converter} from 'typedoc';
 import {convertCommands, createReflections} from './converter';
 import {AppiumPluginLogger} from './logger';
-import {getTheme, THEME_NAME} from './output';
+import {AppiumTheme, THEME_NAME} from './theme';
 
 /**
  * Loads the Appium TypeDoc plugin
@@ -11,7 +11,7 @@ export function load(app: Application) {
   const log = new AppiumPluginLogger(app.logger, 'appium');
 
   // register our custom theme.  the user still has to choose it
-  app.renderer.defineTheme(THEME_NAME, getTheme(log));
+  app.renderer.defineTheme(THEME_NAME, AppiumTheme);
 
   app.converter.on(Converter.EVENT_RESOLVE_BEGIN, (ctx: Context) => {
     // we don't want to do this work if we're not using the custom theme!
@@ -22,6 +22,10 @@ export function load(app: Application) {
       // this creates new custom reflections from the data we gathered and registers them
       // with TypeDoc
       createReflections(ctx, log, projectCommands);
+    } else {
+      log.warn('Not using the Appium theme; skipping command reflection creation');
     }
   });
 }
+
+export * from './theme';

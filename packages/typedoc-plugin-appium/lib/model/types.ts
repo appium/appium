@@ -32,7 +32,7 @@ export type CommandMap = Map<Command, CommandData>;
 export type ModuleCommands = Map<ParentReflection, CommandInfo>;
 
 /**
- * Common fields for a {@linkcode CommandData} or {@linkcode ExecCommandData}
+ * Common fields for a {@linkcode CommandData} or {@linkcode ExecMethodData}
  */
 export interface BaseCommandData {
   /**
@@ -76,7 +76,7 @@ export interface CommandData extends BaseCommandData {
  *
  * All of these share the same `execute` route, so it is omitted from this interface.
  */
-export interface ExecCommandData extends BaseCommandData {
+export interface ExecMethodData extends BaseCommandData {
   script: string;
 }
 
@@ -91,6 +91,6 @@ export type ParentReflection = DeclarationReflection | ProjectReflection;
 export type RouteMap = Map<Route, CommandMap>;
 
 /**
- * A set of {@linkcode ExecCommandData} objects
+ * A set of {@linkcode ExecMethodData} objects
  */
-export type ExecCommandDataSet = Set<ExecCommandData>;
+export type ExecMethodDataSet = Set<ExecMethodData>;

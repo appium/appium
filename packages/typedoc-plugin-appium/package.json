@@ -54,6 +54,7 @@
   },
   "dependencies": {
     "handlebars": "4.7.7",
+    "pluralize": "8.0.0",
     "type-fest": "3.2.0",
     "typedoc-plugin-markdown": "3.13.6"
   }

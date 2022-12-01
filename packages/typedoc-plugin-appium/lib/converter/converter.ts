@@ -1,3 +1,19 @@
+/**
+ * Converts code parsed by TypeDoc into a data structure describing the commands and execute methods, which will later be used to create new {@linkcode DeclarationReflection} instances in the TypeDoc context.
+ *
+ * The logic in this module is highly dependent on Appium's extension API, and is further dependent on specific usages of TS types.  Anything that will be parsed successfully by this module must use a `const` type alias in TS parlance.  For example:
+ *
+ * ```ts
+ * const METHOD_MAP = {
+ *   '/status': {
+ *     GET: {command: 'getStatus'}
+ *   },
+ *   // ...
+ * } as const; // <-- required
+ * ```
+ * @module
+ */
+
 import _ from 'lodash';
 import {Context, DeclarationReflection, LiteralType, ReflectionKind} from 'typedoc';
 import {
@@ -14,7 +30,7 @@ import {AppiumPluginLogger} from '../logger';
 import {
   CommandInfo,
   CommandMap,
-  ExecCommandDataSet,
+  ExecMethodDataSet,
   ModuleCommands,
   ParentReflection,
   RouteMap,
@@ -29,6 +45,7 @@ import {
  * Name of the static `newMethodMap` property in a Driver
  */
 export const NAME_NEW_METHOD_MAP = 'newMethodMap';
+
 /**
  * Name of the static `executeMethodMap` property in a Driver
  */
@@ -70,7 +87,14 @@ export const NAME_BUILTIN_COMMAND_MODULE = '@appium/base-driver';
  * Converts declarations to information about Appium commands
  */
 export class CommandConverter {
+  /**
+   * The project context of TypeDoc
+   */
   #ctx: Context;
+
+  /**
+   * Custom logger
+   */
   #log: AppiumPluginLogger;
 
   /**
@@ -108,7 +132,7 @@ export class CommandConverter {
       for (const mod of modules) {
         this.#log.verbose('Converting module %s', mod.name);
         const cmdInfo = this.#convertModuleClasses(mod);
-        if (cmdInfo.hasCommands) {
+        if (cmdInfo.hasData) {
           projectCommands.set(mod, this.#convertModuleClasses(mod));
         }
         this.#log.info('Converted module %s', mod.name);
@@ -162,13 +186,13 @@ export class CommandConverter {
    * @param refl A class which may contain an `executeMethodMap` static property
    * @returns List of "execute commands", if any
    */
-  #convertExecuteMethodMap(refl: DeclarationReflectionWithReflectedType): ExecCommandDataSet {
+  #convertExecuteMethodMap(refl: DeclarationReflectionWithReflectedType): ExecMethodDataSet {
     const executeMethodMap = findChildByNameAndGuard(
       refl,
       NAME_EXECUTE_METHOD_MAP,
       isExecMethodDefReflection
     );
-    const commandRefs: ExecCommandDataSet = new Set();
+    const commandRefs: ExecMethodDataSet = new Set();
     if (!executeMethodMap) {
       // no execute commands in this class
       return commandRefs;
@@ -315,7 +339,7 @@ export class CommandConverter {
    */
   #convertModuleClasses(parent: ParentReflection) {
     let routes: RouteMap = new Map();
-    let executeCommands: ExecCommandDataSet = new Set();
+    let executeMethods: ExecMethodDataSet = new Set();
 
     const classReflections = parent
       .getChildrenByKind(ReflectionKind.Class)
@@ -333,12 +357,12 @@ export class CommandConverter {
 
       const executeMethodMap = this.#convertExecuteMethodMap(classRefl);
       if (executeMethodMap.size) {
-        executeCommands = new Set([...executeCommands, ...executeMethodMap]);
+        executeMethods = new Set([...executeMethods, ...executeMethodMap]);
       }
       this.#log.verbose('Converted class %s', classRefl.name);
     }
 
-    return new CommandInfo(routes, executeCommands);
+    return new CommandInfo(routes, executeMethods);
   }
 
   /**

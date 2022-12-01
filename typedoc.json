@@ -11,6 +11,7 @@
     "./packages/fake-driver",
     "./packages/typedoc-plugin-appium"
   ],
+  "excludeInternal": true,
   "includeVersion": false,
   "name": "Appium",
   "out": "typedoc-docs",

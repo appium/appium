@@ -1,67 +1,117 @@
-import {Comment} from 'typedoc';
-import {CommandData, ExecCommandData, ParentReflection, Route} from '../types';
+import {Comment, DeclarationReflection} from 'typedoc';
+import {isExecMethodData} from '../../guards';
+import {AllowedHttpMethod, CommandData, ExecMethodData, Route} from '../types';
 import {CommandsReflection} from './commands';
 import {AppiumPluginReflectionKind} from './kind';
-import {AppiumPluginReflection} from './plugin';
 
 /**
- * The route will be this
+ * Execute Methods all have the same route.
  */
 export const NAME_EXECUTE_ROUTE = '/session/:sessionId/execute';
 
+/**
+ * Execute methods all have the same HTTP method.
+ */
 export const HTTP_METHOD_EXECUTE = 'POST';
 
-export class CommandReflection extends AppiumPluginReflection {
+/**
+ * A reflection containing data about a single command or execute method.
+ *
+ * Methods may be invoked directly by Handlebars templates.
+ */
+export class CommandReflection extends DeclarationReflection {
+  /**
+   * HTTP Method of the command or execute method
+   */
   public readonly httpMethod: string;
+
+  /**
+   * Optional parameters, if any
+   */
   public readonly optionalParams: string[];
+
+  /**
+   * Required parameters, if any
+   */
   public readonly requiredParams: string[];
+
+  /**
+   * Route name
+   */
   public readonly route: Route;
+
+  /**
+   * Script name, if any. Only used if kind is `EXECUTE_METHOD`
+   */
   public readonly script?: string;
+
+  /**
+   * Comment, if any.
+   */
   public readonly comment?: Comment;
 
+  /**
+   * Sets props depending on type of `data`
+   * @param data Command or execute method data
+   * @param parent Always a {@linkcode CommandsReflection}
+   * @param route Route, if not an execute method
+   */
   constructor(
-    readonly commandRef: CommandData | ExecCommandData,
+    readonly data: CommandData | ExecMethodData,
     parent: CommandsReflection,
-    route: Route = NAME_EXECUTE_ROUTE
+    route?: Route
   ) {
     let name: string;
     let kind: AppiumPluginReflectionKind;
+    let script: string | undefined;
+    let httpMethod: AllowedHttpMethod;
 
-    if (CommandReflection.isExecCommandData(commandRef)) {
-      name = commandRef.script;
-      kind = AppiumPluginReflectionKind.EXECUTE_COMMAND;
+    // common data
+    const {requiredParams, optionalParams, comment} = data;
+
+    // kind-specific data
+    if (isExecMethodData(data)) {
+      script = name = data.script;
+      kind = AppiumPluginReflectionKind.EXECUTE_METHOD;
+      route = NAME_EXECUTE_ROUTE;
+      httpMethod = HTTP_METHOD_EXECUTE;
     } else {
+      if (!route) {
+        throw new TypeError('"route" arg is required for a non-execute-method command');
+      }
       name = route;
       kind = AppiumPluginReflectionKind.COMMAND;
+      httpMethod = data.httpMethod;
     }
+
     super(name, kind as any, parent);
 
     this.route = route;
-    this.httpMethod = 'httpMethod' in commandRef ? commandRef.httpMethod : HTTP_METHOD_EXECUTE;
-    this.requiredParams = commandRef.requiredParams ?? [];
-    this.optionalParams = commandRef.optionalParams ?? [];
-    this.script = CommandReflection.isExecCommandData(commandRef) ? commandRef.script : undefined;
-    this.comment = commandRef.comment;
+    this.httpMethod = httpMethod;
+    this.requiredParams = requiredParams ?? [];
+    this.optionalParams = optionalParams ?? [];
+    this.script = script;
+    this.comment = comment;
   }
 
+  /**
+   * If `true`, this command has required parameters
+   */
   public get hasRequiredParams(): boolean {
     return Boolean(this.requiredParams.length);
   }
 
+  /**
+   * If `true`, this command has optional parameters
+   */
   public get hasOptionalParams(): boolean {
     return Boolean(this.optionalParams.length);
   }
 
-  public get isExecuteCommand(): boolean {
-    return Boolean(this.script && this.route === NAME_EXECUTE_ROUTE);
-  }
-
   /**
-   * Type guard for execute command refs
-   * @param ref Command reference
-   * @returns `true` if it's an execute command
+   * If `true`, this command contains data about an execute method
    */
-  public static isExecCommandData(ref: CommandData | ExecCommandData): ref is ExecCommandData {
-    return 'script' in ref;
+  public get isExecuteMethod(): boolean {
+    return this.kindOf(AppiumPluginReflectionKind.EXECUTE_METHOD as any);
   }
 }

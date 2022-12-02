@@ -1,0 +1,20 @@
+name: Lint PR Commit Messages
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # tag=v3
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        with:
+          useRollingCache: true
+          install-command: npm ci --foreground-scripts
+      - name: Run commitlint
+        run: npm run lint:commit -- --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose

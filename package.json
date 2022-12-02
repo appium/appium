@@ -44,6 +44,7 @@
     "prepare": "husky install && npm run build:types || true",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
+    "lint:commit": "commitlint",
     "lint:staged": "lint-staged",
     "prepublishOnly": "run-s clean:artifacts build sync-pkgs",
     "reinstall": "run-s clean && npm ci",

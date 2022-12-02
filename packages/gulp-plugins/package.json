@@ -35,6 +35,7 @@
     "build"
   ],
   "scripts": {
+    "clean": "npx rimraf build",
     "dev": "gulp dev --no-notif",
     "build": "gulp transpile",
     "prepare": "npm run build",

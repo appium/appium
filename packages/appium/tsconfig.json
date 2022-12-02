@@ -11,8 +11,7 @@
       "@appium/schema": ["../schema"],
       "appium": ["."]
     },
-    "checkJs": true,
-    "emitDeclarationOnly": false
+    "checkJs": true
   },
   "include": ["lib", "types"],
   "references": [

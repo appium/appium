@@ -6,7 +6,6 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "emitDeclarationOnly": true,
     "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,

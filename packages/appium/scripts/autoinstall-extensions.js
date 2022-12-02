@@ -14,9 +14,23 @@
  * code upon failure (which will typically break a build).  Otherwise, it
  * will always exit with code 0, even if errors occur.
  *
+ * @module
  * @example
  * `npm install -g appium --drivers=uiautomator2,xcuitest --plugins=images`
  */
+
+const path = require('path');
+const {exec} = require('teen_process');
+const B = require('bluebird');
+
+B.config({
+  cancellation: true,
+});
+
+/**
+ * This is only used if we're actually in the monorepo
+ */
+const MONOREPO_ROOT = path.join(__dirname, '..', '..', '..');
 
 /** @type {import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
@@ -27,44 +41,82 @@ let PLUGIN_TYPE;
 /** @type {import('../lib/extension').loadExtensions} */
 let loadExtensions;
 
-const {env, util, logger} = require('@appium/support');
 const _ = require('lodash');
 const wrap = _.partial(
   require('wrap-ansi'),
   _,
-  process.stderr.columns ?? process.stdout.columns ?? 25
+  process.stderr.columns ?? process.stdout.columns ?? 80
 );
-
 const ora = require('ora');
 
-const log = (message) => {
+let env, util, logger;
+
+function log(message) {
   console.error(wrap(`[Appium] ${message}`));
-};
+}
 
-const spinner = ora({
-  text: 'Checking Appium installation...',
-  prefixText: '[Appium]',
-}).start();
+async function init() {
+  /** @type {import('ora').Ora} */
+  let spinner;
 
-try {
-  ({runExtensionCommand} = require('../build/lib/cli/extension'));
-  ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
-  ({loadExtensions} = require('../build/lib/extension'));
-  spinner.succeed('Appium installation OK');
-  // suppress logs from Appium, which mess up the script output
-  logger.getLogger('Appium').level = 'error';
-} catch (e) {
-  spinner.fail(`Could not load required module(s); has Appium been built? (${e.message})`);
-  if (process.env.CI) {
-    console.error('Detected CI environment, exiting with code 1');
-    process.exitCode = 1;
-  } else {
-    process.exitCode = 0;
+  try {
+    ({env, util, logger} = require('@appium/support'));
+    require('..');
+  } catch {
+    spinner = ora({
+      text: 'Building Appium dev environment...',
+      prefixText: '[Appium]',
+    }).start();
+
+    try {
+      const {stderr, code} = await exec('npm', ['run', 'build'], {
+        cwd: MONOREPO_ROOT,
+        encoding: 'utf8',
+      });
+      if (!code) {
+        spinner.succeed('Appium build successfully.');
+      } else {
+        spinner.fail(`Building Appium failed!`);
+        log(stderr);
+      }
+    } catch (err) {
+      spinner.fail(`Building Appium failed!`);
+      log(err);
+    }
   }
-  process.exit();
+
+  spinner = ora({
+    text: 'Checking Appium installation...',
+    prefixText: '[Appium]',
+  }).start();
+
+  try {
+    ({env, util, logger} = require('@appium/support'));
+    ({runExtensionCommand} = require('../build/lib/cli/extension'));
+    ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
+    ({loadExtensions} = require('../build/lib/extension'));
+    spinner.succeed('Appium installation OK');
+    // suppress logs from Appium, which mess up the script output
+    logger.getLogger('Appium').level = 'error';
+  } catch (e) {
+    spinner.fail(`Could not load required module(s); has Appium been built? (${e.message})`);
+    if (process.env.CI) {
+      log('Detected CI environment, exiting with code 1');
+      process.exitCode = 1;
+    } else {
+      process.exitCode = 0;
+    }
+    return false;
+  }
+
+  return true;
 }
 
 async function main() {
+  if (!(await init())) {
+    return;
+  }
+
   // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
   if (!process.env.npm_config_global && (await env.hasAppiumDependency())) {
     log(`Found local Appium installation; skipping automatic installation of extensions.`);

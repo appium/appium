@@ -19,11 +19,6 @@
   "author": "https://github.com/appium",
   "types": "./build/plugin.d.ts",
   "scripts": {
-    "build": "tsc -b",
-    "dev": "exit 0",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build",
     "test": "exit 0",
     "test:e2e": "exit 0",
     "test:smoke": "node ./index.js",

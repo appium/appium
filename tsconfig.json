@@ -64,6 +64,12 @@
     },
     {
       "path": "packages/typedoc-plugin-appium"
+    },
+    {
+      "path": "packages/typedoc-plugin-appium"
+    },
+    {
+      "path": "packages/doctor"
     }
   ]
 }

@@ -29,11 +29,6 @@
     "lib"
   ],
   "scripts": {
-    "build": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
-    "dev": "npm run build -- --watch",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:smoke": "node ./build/lib/index.js",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""

@@ -11,7 +11,7 @@
     ":automergeDigest",
     ":enableVulnerabilityAlerts",
     ":rebaseStalePrs",
-    ":sematicCommits",
+    ":semanticCommits",
     ":semanticPrefixChore"
   ],
   "packageRules": [

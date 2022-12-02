@@ -7,9 +7,6 @@
     "emitDeclarationOnly": false,
     "module": "CommonJS",
     "sourceMap": true,
-    "jsx": "react",
-    "jsxFactory": "JSX.createElement",
-    "jsxFragmentFactory": "JSX.Fragment",
     "lib": ["ES2022"],
     "downlevelIteration": true
   },

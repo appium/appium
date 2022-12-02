@@ -25,12 +25,9 @@
     "index.js"
   ],
   "scripts": {
-    "build": "babel lib --root-mode=upward --out-dir=build/lib && node ./scripts/generate-schema-types.js",
-    "dev": "npm run build -- --watch",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build",
-    "test:smoke": "echo 'No smoke test for this package'"
+    "build": "node ./scripts/generate-schema-types.js",
+    "clean": "git checkout -- ./types/lib/appium-config.ts",
+    "test:smoke": "node ./index.js"
   },
   "dependencies": {
     "@appium/schema": "^0.0.9",

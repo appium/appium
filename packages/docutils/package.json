@@ -34,13 +34,6 @@
     "build"
   ],
   "scripts": {
-    "build": "npm run build:sources && npm run build:test",
-    "build:sources": "babel lib --source-maps --root-mode=upward --out-dir=build/lib",
-    "build:test": "babel test --source-maps --root-mode=upward --out-dir=build/test --copy-files",
-    "dev": "npm run build:sources -- --watch",
-    "fix": "npm run lint -- --fix",
-    "lint": "eslint -c ../../.eslintrc --ignore-path ../../.eslintignore .",
-    "prepare": "npm run build",
     "test": "npm run test:unit",
     "test:e2e": "echo \"No e2e tests for this package\"",
     "test:smoke": "node ./index.js",

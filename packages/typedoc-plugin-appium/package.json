@@ -56,6 +56,6 @@
     "handlebars": "4.7.7",
     "pluralize": "8.0.0",
     "type-fest": "3.3.0",
-    "typedoc-plugin-markdown": "3.13.6"
+    "typedoc-plugin-markdown": "3.14.0"
   }
 }

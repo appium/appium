@@ -36,6 +36,8 @@
     "test/fixtures"
   ],
   "scripts": {
+    "build": "cpy lib/screen.png build",
+    "clean": "npx rimraf build/lib/screen.png", 
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",

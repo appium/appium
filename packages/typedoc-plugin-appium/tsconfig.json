@@ -1,14 +1,8 @@
 {
   "extends": "../../config/tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "lib",
-    "outDir": "build",
-    "strict": true,
-    "module": "CommonJS",
-    "sourceMap": true,
-    "lib": ["ES2022"],
-    "downlevelIteration": true
+    "rootDir": ".",
+    "outDir": "build"
   },
-  "include": ["lib/**/*.ts*"],
-  "references": []
+  "include": ["lib", "test"]
 }

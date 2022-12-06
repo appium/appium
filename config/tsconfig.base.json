@@ -1,17 +1,20 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true
+  },
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "strictNullChecks": true,
+    "sourceMap": true,
     "removeComments": false,
-    "target": "ES2020",
+    "strict": false,
     "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
   }
 }

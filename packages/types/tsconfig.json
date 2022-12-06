@@ -3,6 +3,7 @@
   "compilerOptions": {
     "outDir": "build",
     "checkJs": true,
+    "strict": true,
     "paths": {
       "@appium/schema": ["../schema"]
     }

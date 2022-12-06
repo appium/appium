@@ -1,8 +1,12 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node14/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true
+  },
   "files": [],
   "compilerOptions": {
-    "noErrorTruncation": true,
-    "esModuleInterop": true
+    "noErrorTruncation": true
   },
   "references": [
     {
@@ -61,9 +65,6 @@
     },
     {
       "path": "packages/fake-driver"
-    },
-    {
-      "path": "packages/typedoc-plugin-appium"
     },
     {
       "path": "packages/typedoc-plugin-appium"

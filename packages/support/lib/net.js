@@ -145,7 +145,7 @@ async function uploadFileToFtp(
  */
 function isHttpUploadOptions(opts, url) {
   try {
-    const {protocol} = new URL(url);
+    const {protocol} = url;
     return protocol === 'http:' || protocol === 'https:';
   } catch {
     return false;
@@ -160,7 +160,7 @@ function isHttpUploadOptions(opts, url) {
  */
 function isNotHttpUploadOptions(opts, url) {
   try {
-    const {protocol} = new URL(url);
+    const {protocol} = url;
     return protocol === 'ftp:';
   } catch {
     return false;

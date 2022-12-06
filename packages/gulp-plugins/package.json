@@ -53,7 +53,7 @@
     "@types/semver": "7.3.13",
     "@types/through2": "2.0.38",
     "ansi-red": "0.1.1",
-    "axios": "1.2.0",
+    "axios": "1.2.1",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-source-map-support": "2.2.0",
     "bluebird": "3.7.2",

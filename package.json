@@ -57,7 +57,7 @@
     "stage-synced-pkgs": "git add -A packages/appium/README.md \"packages/*/package.json\"",
     "test": "npm-run-all -p lint build -s test:unit",
     "test:ci": "run-s test:smoke test:unit test:e2e",
-    "test:e2e": "lerna run --concurrency=1 --max-buffer=128 test:e2e",
+    "test:e2e": "lerna run --concurrency=2 test:e2e",
     "test:smoke": "smoker --all test:smoke",
     "test:unit": "lerna run test",
     "typedoc": "typedoc --logLevel Verbose",

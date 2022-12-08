@@ -29,6 +29,7 @@ export const KNOWN_PLUGINS = Object.freeze(
     images: '@appium/images-plugin',
     'execute-driver': '@appium/execute-driver-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
+    'universal-xml': '@appium/universal-xml-plugin',
   })
 );
 
@@ -40,13 +41,8 @@ export const KNOWN_DRIVERS = Object.freeze(
   /** @type {const} */ ({
     uiautomator2: 'appium-uiautomator2-driver',
     xcuitest: 'appium-xcuitest-driver',
-    youiengine: 'appium-youiengine-driver',
-    windows: 'appium-windows-driver',
-    mac: 'appium-mac-driver',
     mac2: 'appium-mac2-driver',
     espresso: 'appium-espresso-driver',
-    tizen: 'appium-tizen-driver',
-    flutter: 'appium-flutter-driver',
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
   })

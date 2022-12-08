@@ -45,14 +45,14 @@ nav:
     - guides/log-filters.md
     - guides/grid.md
   - Developer Reference:
-      - BaseDriver: reference.md
+      - BaseDriver: reference/base_driver.md
   - Ecosystem:
     - ecosystem/index.md
     - Developing Appium Extensions:
       - ecosystem/build-drivers.md
       - ecosystem/build-plugins.md
       - ecosystem/build-docs.md
-  - Contributing: 
+  - Contributing:
     - contributing/index.md
     - contributing/config-system.md
   - More Appium Resources: resources.md

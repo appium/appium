@@ -13,6 +13,7 @@ const {
   LATEST_ALIAS,
 } = require('./utils');
 const copyAssets = require('./copy-assets');
+const buildReference = require('./build-reference');
 const path = require('path');
 const semver = require('semver');
 const {version} = require('../../package.json');
@@ -27,6 +28,7 @@ async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   await copyAssets();
+  await buildReference();
 
   const semVersion = semver.parse(version);
   const majMinVer = `${semVersion.major}.${semVersion.minor}`;

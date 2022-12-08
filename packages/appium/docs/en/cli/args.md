@@ -35,7 +35,7 @@ automatic docs generation tooling! Do not edit by hand! -->
 |`--keep-alive-timeout`|Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.|integer|`600`|`-ka`|
 |`--local-timezone`|Use local timezone for timestamps|boolean|`false`||
 |`--log`|Also send log output to this file|string||`-g`|
-|`--log-filters`|One or more log filtering rules|array<string>|||
+|`--log-filters`|One or more log filtering rules|array|||
 |`--log-level`|Log level (console[:file]) (Value must be one of: `info`, `info:debug`, `info:info`, `info:warn`, `info:error`, `warn`, `warn:debug`, `warn:info`, `warn:warn`, `warn:error`, `error`, `error:debug`, `error:info`, `error:warn`, `error:error`, `debug`, `debug:debug`, `debug:info`, `debug:warn`, `debug:error`)|string|`debug`||
 |`--log-no-colors`|Do not use color in console output|boolean|`false`||
 |`--log-timestamp`|Show timestamps in console output|boolean|`false`||

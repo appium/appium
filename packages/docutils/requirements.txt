@@ -1,5 +1,4 @@
 mkdocs==1.4.2
 mkdocs-material==8.5.11
 mkdocs-material-extensions==1.1.1
-markdown-include==0.8.0
 mike==1.1.2

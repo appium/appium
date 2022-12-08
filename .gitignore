@@ -62,3 +62,4 @@ local_appium_home
 jsdoc-out
 *.tgz
 typedoc-docs
+packages/appium/docs/*/reference

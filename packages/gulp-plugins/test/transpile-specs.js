@@ -90,7 +90,7 @@ describe('transpile-specs', function () {
 
       it(`should use sourcemap when throwing within mocha (${name})`, async function () {
         const [stdout, stderr] = await exec(
-          `${MOCHA} build-fixtures/test/${files.classFile}-throw-specs.js`
+          `${MOCHA} --no-color build-fixtures/test/${files.classFile}-throw-specs.js`
         );
         print(stdout, stderr);
         let output = stdout + stderr;

@@ -57,7 +57,7 @@ describe('config file behavior', function () {
                 foo: 'bar',
               },
               port: 31337,
-              relaxedSecurityEnabled: false,
+              relaxedSecurityEnabled: true,
               sessionOverride: false,
               strictCaps: false,
               tmpDir: '/tmp',

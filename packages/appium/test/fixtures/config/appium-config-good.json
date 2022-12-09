@@ -21,7 +21,7 @@
       "foo": "bar"
     },
     "port": 31337,
-    "relaxed-security": false,
+    "relaxed-security": true,
     "session-override": false,
     "strict-caps": false,
     "tmp": "/tmp",

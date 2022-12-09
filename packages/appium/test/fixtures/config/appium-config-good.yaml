@@ -19,7 +19,7 @@ server:
   no-perms-check: false
   nodeconfig:
     foo: bar
-  relaxed-security: false
+  relaxed-security: true # not default
   session-override: false
   strict-caps: false
   tmp: /tmp

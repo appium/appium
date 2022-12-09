@@ -269,7 +269,7 @@ const serverArgsDisallowedInConfig = new Map([
     ['--config'],
     {
       dest: 'configFile',
-      type: 'string',
+      type: 'str',
       required: false,
       help: 'Explicit path to Appium configuration file',
     },

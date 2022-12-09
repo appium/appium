@@ -26,7 +26,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch((err) => {
-    console.error(err);
+    console.error(err); // eslint-disable-line no-console
     process.exitCode = 1;
   });
 }

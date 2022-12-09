@@ -1,32 +1,62 @@
 {
-  "version": "0.2.0",
   "configurations": [
     {
-      "args": ["--colors", "--timeout", "0", "${file}"],
-      "internalConsoleOptions": "openOnSessionStart",
-      "name": "Test - Current File",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-      "runtimeArgs": ["--require", "@babel/register"],
-      "request": "launch",
-      "skipFiles": ["<node_internals>/**", "**/node_modules/mocha/**"],
-      "type": "node",
-      "sourceMaps": true,
+      "args": [
+        "--log-level=debug"
+      ],
+      "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
       "env": {
-        "NODE_ENV": "test",
-        "BABEL_ENV": "test"
+        "_FORCE_LOGS": "1"
       },
-      "autoAttachChildProcesses": true,
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Run Appium",
+      "program": "${workspaceFolder}/node_modules/.bin/appium",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "sourceMaps": true,
+      "type": "node"
     },
     {
+      "args": [
+        "--colors",
+        "--no-timeout",
+        "${file}"
+      ],
+      "autoAttachChildProcesses": true,
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
-      "name": "TypeDoc",
+      "name": "Test Current File w/ Mocha",
+      "program": "${workspaceFolder}/node_modules/.bin/mocha",
+      "request": "launch",
+      "runtimeArgs": [
+        "--require",
+        "ts-node/register"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/mocha/**",
+        "**/node_modules/ts-node/**"
+      ],
+      "sourceMaps": true,
+      "type": "node"
+    },
+    {
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Typedoc",
       "program": "${workspaceFolder}/node_modules/.bin/typedoc",
       "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
-      "type": "node",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "sourceMaps": true,
-      "cwd": "${workspaceFolder}",
+      "type": "node"
     }
-  ]
+  ],
+  "version": "0.2.0"
 }

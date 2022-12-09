@@ -35,9 +35,9 @@
     "build"
   ],
   "scripts": {
+    "build": "gulp transpile",
     "clean": "npx rimraf build",
     "dev": "gulp dev --no-notif",
-    "build": "gulp transpile",
     "prepare": "npm run build",
     "test": "gulp unit-test:run",
     "test:e2e": "gulp e2e-test:run",
@@ -93,6 +93,9 @@
     "through2": "4.0.2",
     "vinyl-paths": "3.0.1",
     "yargs": "17.6.2"
+  },
+  "devDependencies": {
+    "@babel/register": "7.18.9"
   },
   "peerDependencies": {
     "gulp": "^4.0.2"

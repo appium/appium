@@ -1,12 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node14/tsconfig.json",
+  "files": [],
   "ts-node": {
     "transpileOnly": true
   },
-  "files": [],
   "compilerOptions": {
-    "noErrorTruncation": true
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "noEmit": true
   },
   "references": [
     {

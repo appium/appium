@@ -298,11 +298,12 @@ function showConfig(nonDefaultPreConfigParsedArgs, configResult, defaults, parse
   } else {
     console.log(`\n(no configuration file loaded)`);
   }
-  if (_.isEmpty(nonDefaultPreConfigParsedArgs)) {
+  const compactedNonDefaultPreConfigArgs = compactConfig(nonDefaultPreConfigParsedArgs);
+  if (_.isEmpty(compactedNonDefaultPreConfigArgs)) {
     console.log(`\n(no CLI parameters provided)`);
   } else {
     console.log('\nvia CLI or function call:\n');
-    console.dir(compactConfig(nonDefaultPreConfigParsedArgs));
+    console.dir(compactedNonDefaultPreConfigArgs);
   }
   console.log('\nfinal configuration:\n');
   console.dir(compactConfig(parsedArgs));

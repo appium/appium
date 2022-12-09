@@ -213,7 +213,7 @@ async function init(args) {
     const defaults = getDefaultsForSchema(false);
 
     /** @type {ParsedArgs} */
-    const serverArgs = _.defaultsDeep(preConfigArgs, configResult.config?.server, defaults);
+    const serverArgs = _.defaultsDeep({}, preConfigArgs, configResult.config?.server, defaults);
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs), configResult, defaults, serverArgs);

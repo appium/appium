@@ -120,7 +120,7 @@
     "sync-monorepo-packages": "1.0.1",
     "through2": "4.0.2",
     "ts-node": "10.9.1",
-    "typedoc": "0.23.21",
+    "typedoc": "0.23.22",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "4.7.4",

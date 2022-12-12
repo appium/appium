@@ -79,7 +79,7 @@
     "js-yaml": "4.1.0",
     "lodash": "4.17.21",
     "merge-stream": "2.0.0",
-    "mocha": "10.1.0",
+    "mocha": "10.2.0",
     "moment": "2.29.4",
     "node-notifier": "10.0.1",
     "nyc": "15.1.0",

@@ -17,6 +17,11 @@ export default class DriverCommand extends ExtensionCommand {
     this.knownExtensions = KNOWN_DRIVERS;
   }
 
+  /**
+   * Install a driver
+   *
+   * @param {DriverInstallOpts} opts
+   */
   async install({driver, installType, packageName}) {
     return await super._install({
       installSpec: driver,
@@ -77,4 +82,16 @@ export default class DriverCommand extends ExtensionCommand {
 
 /**
  * @typedef {import('@appium/types').DriverType} DriverType
+ */
+
+/**
+ * Options for {@linkcode ExtensionCommand._install}
+ * @typedef DriverInstallOpts
+ * @property {string} driver - the name or spec of a driver to install
+ * @property {InstallType} installType - how to install this driver. One of the INSTALL_TYPES
+ * @property {string} [packageName] - for git/github installs, the driver node package name
+ */
+
+/**
+ * @typedef {import('appium/types').InstallType} InstallType
  */

@@ -1,8 +1,11 @@
+/* eslint-disable promise/prefer-await-to-callbacks */
+/* eslint-disable promise/prefer-await-to-then */
+
 const {fs} = require('@appium/support');
 const {log, LANGS, DOCS_DIR} = require('./utils');
 const path = require('path');
 const monorepoRoot = path.resolve(__dirname, '..', '..', '..', '..');
-const typedocOut = path.resolve(monorepoRoot, 'typedoc-docs');
+const {out: typedocOut} = JSON.parse(fs.readFileSync(path.join(monorepoRoot, 'typedoc.json')));
 const {exec} = require('teen_process');
 
 const typedocMap = [[['commands', 'appium_base_driver.md'], ['base_driver.md']]];

@@ -2,7 +2,7 @@
   "name": "@appium/typedoc-plugin-appium",
   "version": "0.1.0",
   "description": "TypeDoc plugin for Appium & its extensions",
-  "homepage": "https://appium.io/",
+  "homepage": "https://appium.io",
   "license": "Apache-2.0",
   "main": "index.js",
   "publishConfig": {
@@ -14,7 +14,14 @@
     "directory": "packages/support"
   },
   "keywords": [
-    "typedoc-plugin"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "author": "https://github.com/appium",
   "types": "./build/plugin.d.ts",
@@ -41,7 +48,7 @@
     "resources"
   ],
   "engines": {
-    "node": ">=14",
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
   "typedoc": {

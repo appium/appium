@@ -17,7 +17,7 @@ and [Drivers Provided By Third Parties](#drivers-provided-by-third-parties) sect
 
 :bangbang: Major documentation revision in progress
 
-:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run.
+:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://github.com/appium/appium/blob/master/packages/appium/docs/en/guides/migrating-1-to-2.md) to manage the Appium server.
 
 Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
 found around the web may not be correct. The current Appium 2.0 documentation is very much in
@@ -69,40 +69,10 @@ appium driver update xcuitest
 appium driver uninstall xcuitest
 ```
 
-#### Drivers Maintained By The Appium Team
-
-These drivers are supported by Appium core members. Please report any issues
-or suggestions regarding them to the corresponding GitHub issue tracker.
-Refer to the corresponding driver Readme to know more on how to use it and its requirements.
-
-Name | Description
---- | ---
-[appium-xcuitest-driver](https://github.com/appium/appium-xcuitest-driver) | Allows automation of iOS native and web apps (via hybrid mode). Also supports tvOS. This driver is based on Apple's [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
-[appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) | Allows automation of Android native and web apps (via hybrid mode). The driver is based on Google's [UiAutomator](https://developer.android.com/training/testing/other-components/ui-automator) framework.
-[appium-espresso-driver](https://github.com/appium/appium-espresso-driver) | Allows automation of Android native apps. The driver is based on Google's [Espresso](https://developer.android.com/training/testing/espresso) framework.
-[appium-mac2-driver](https://github.com/appium/appium-mac2-driver) | Allows automation of macOS native apps. Also supports tvOS. This driver is based on Apple [XCTest framework](https://developer.apple.com/documentation/xctest) and can only use macOS as the host system.
-[appium-windows-driver](https://github.com/appium/appium-windows-driver) | Allows automation of Windows native and UWP apps. This driver is based on Microsoft's [WinAppDriver](https://github.com/microsoft/WinAppDriver) implementation and can only use Windows 10 as the host system.
-[appium-gecko-driver](https://github.com/appium/appium-geckodriver) | Allows automation of Gecko-engine-based browsers, like Firefox on mobile and desktop platforms. Uses [geckodriver](https://github.com/mozilla/geckodriver/releases) command line tool provided by Mozilla for various platforms.
-[appium-safari-driver](https://github.com/appium/appium-safari-driver) | Allows automation of Safari browser on mobile and desktop platforms . Uses the [safaridriver](https://www.manpagez.com/man/1/safaridriver/) command line tool provided by Apple as part of macOS.
-
-#### Drivers Provided By Third Parties
-
-These drivers are supported by different companies or communities.
-Please report any issues related to their functionality to their
-respective maintainers. If you are a developer yourself and have created a new useful
-Appium2-compatible driver then don't hesitate to create a PR and add a link to
-your driver into the below list.
-
-<details>
-  <summary>Drivers List</summary>
-
-  Name | Description
-  --- | ---
-  [appium-youiengine-driver](https://github.com/YOU-i-Labs/appium-youiengine-driver) | Appium You.i Engine Driver is a test automation tool for devices of various platforms running applications built with [You.i Engine](http://www.youi.tv/youi-engine/)
-  [appium-flutter-driver](https://github.com/appium-userland/appium-flutter-driver) | Allows automation of apps built using [Flutter](https://flutter.dev/) framework
-  [appium-tizen-driver](https://github.com/Samsung/appium-tizen-driver) | Allows automation of apps built for devices running [Tizen OS](https://www.tizen.org/)
-  [appium-linux-driver](https://github.com/fantonglang/appium-linux-driver) | Allows automation of Linux applications using [AtSpi2](https://www.freedesktop.org/wiki/Accessibility/AT-SPI2/) framework
-</details>
+You can find a full list of
+[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#drivers) and
+[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-drivers) drivers at
+the current Appium 2.0 documentation.
 
 ### Plugins
 
@@ -132,33 +102,11 @@ The main difference between drivers and plugins is that the latter must be expli
 appium server --use-plugins=device-farm,images
 ```
 
-#### Plugins Maintained By The Appium Team
+You can find a full list of
+[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#plugins) and
+[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-plugins) plugins at
+the current Appium 2.0 documentation.
 
-These plugins are supported by Appium core members. Please report any issues
-or suggestions regarding them to the corresponding GitHub issue tracker.
-Refer to the corresponding plugin Readme to know more on how to use it.
-
-Name | Description
---- | ---
-[images](https://github.com/appium/appium/tree/master/packages/images-plugin) | This is an official Appium plugin designed to facilitate image comparison, visual testing, and image-based functional testing.
-[relaxed-caps](https://github.com/appium/appium/tree/master/packages/relaxed-caps-plugin) | With the advent of Appium 2.0, the Appium server begins to require that all capabilities conform to the W3C requirements for capabilities. Among these requirements is one that restricts capabilities to those found in a predetermined set. Appium supports many additional capabilities as extension capabilities, and these must be accessed with the prefix appium: in front of the capability name. There are a lot of test scripts out there that don't conform to the requirement, and so this plugin is designed to make it easy to keep running these scripts even with the new stricter capabilities requirements beginning with Appium 2.0. Basically, it inserts the appium: prefix for you!
-[universal-xml](https://github.com/appium/appium/tree/master/packages/universal-xml-plugin) | This is an official Appium plugin designed to make XML source retrieved from iOS and Android use the same node and attribute names, to facilitate cross-platform test writing.
-
-#### Plugins Provided By Third Parties
-
-These plugins are supported by different companies or communities.
-Please report any issues related to their functionality to their
-respective maintainers. If you are a developer yourself and have created a new useful
-plugin then don't hesitate to create a PR and add a link to your plugin into the below list.
-
-<details>
-  <summary>Plugins List</summary>
-
-  Name | Description
-  --- | ---
-  [appium-device-farm](https://github.com/AppiumTestDistribution/appium-device-farm) | This is an Appium plugin designed to manage and create driver session on connected android devices and iOS Simulators.
-  [appium-reporter-plugin](https://github.com/AppiumTestDistribution/appium-reporter-plugin) | This Plugin generates standalone consolidated html report with screenshots. Report can be fetched from appium server, without worrying about heavy lifting such as screenshot capturing, report generation etc.
-</details>
 
 ### Server Command Line Interface
 

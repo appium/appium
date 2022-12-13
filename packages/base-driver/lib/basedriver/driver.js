@@ -371,7 +371,7 @@ export class BaseDriverCore extends DriverCore {
 
   /**
    *
-   * @param {Capabilities} caps
+   * @param {Capabilities<C>} caps
    */
   logExtraCaps(caps) {
     let extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));

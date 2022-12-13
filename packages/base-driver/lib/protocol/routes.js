@@ -303,6 +303,14 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {required: ['orientation']},
     },
   },
+  // w3c v2 https://www.w3.org/TR/webdriver2/#get-computed-role
+  'session/:sessionId/element/:elementId/computedrole': {
+    GET: {},
+  },
+  // W3C v2  https://www.w3.org/TR/webdriver2/#get-computed-label
+  'session/:sessionId/element/:elementId/computedlabel': {
+    GET: {},
+  },
   '/session/:sessionId/rotation': {
     GET: {command: 'getRotation'},
     POST: {command: 'setRotation', payloadParams: {required: ['x', 'y', 'z']}},

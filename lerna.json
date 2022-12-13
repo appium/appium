@@ -14,10 +14,8 @@
       "exact": true
     }
   },
-  "ignoreChanges": [
-    "**/test/**",
-    "**/*.md"
-  ],
+  "ignoreChanges": ["**/test/**", "**/*.md"],
   "version": "independent",
-  "useWorkspaces": true
+  "useWorkspaces": true,
+  "useNx": false
 }

@@ -12,6 +12,9 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = /** @type {const} */ ({
   platformVersion: {
     isString: true,
   },
+  webSocketUrl: {
+    isString: true,
+  },
   newCommandTimeout: {
     isNumber: true,
   },

@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "0.0.13",
+  "version": "0.1.0",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -40,7 +40,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^2.61.1",
+    "@appium/support": "^3.0.0",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2"
   },

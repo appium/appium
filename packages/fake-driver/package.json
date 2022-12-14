@@ -1,6 +1,6 @@
 {
   "name": "@appium/fake-driver",
-  "version": "4.2.2",
+  "version": "5.0.0",
   "description": "Mock driver used internally by Appium for testing. Ignore",
   "keywords": [
     "automation",
@@ -37,7 +37,7 @@
   ],
   "scripts": {
     "build": "cpy lib/screen.png build",
-    "clean": "npx rimraf build/lib/screen.png", 
+    "clean": "npx rimraf build/lib/screen.png",
     "test": "npm run test:unit",
     "test:e2e": "mocha --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./build/lib/index.js",

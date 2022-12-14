@@ -1,6 +1,6 @@
 {
   "name": "@appium/gulp-plugins",
-  "version": "7.0.8",
+  "version": "8.0.0",
   "description": "Custom gulp plugins to be used across all appium modules",
   "keywords": [
     "automation",
@@ -44,7 +44,7 @@
     "test:smoke": "node ./index.js"
   },
   "dependencies": {
-    "@appium/eslint-config-appium": "^7.0.0",
+    "@appium/eslint-config-appium": "^8.0.0",
     "@babel/core": "7.20.5",
     "@babel/eslint-parser": "7.19.1",
     "@babel/preset-env": "7.20.2",

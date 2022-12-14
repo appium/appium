@@ -1,11 +1,16 @@
 {
   "name": "@appium/eslint-config-appium",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "Shared ESLint config for Appium projects",
   "keywords": [
-    "eslint",
-    "eslintconfig",
-    "appium"
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
   ],
   "homepage": "https://appium.io",
   "bugs": {

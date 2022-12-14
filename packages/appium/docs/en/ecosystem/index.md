@@ -22,6 +22,7 @@ Intro](../intro/drivers.md)
 
 |Driver|Installation Key|Platform(s)|Mode(s)|
 |--|--|--|--|
+|[Chromium](https://github.com/appium/appium-chromium-driver)|`chromium`|macOS, Windows, Linux|Web|
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native|
 |[Gecko](https://github.com/appium/appium-geckodriver)|`gecko`|macOS, Windows, Linux, Android|Web|
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|

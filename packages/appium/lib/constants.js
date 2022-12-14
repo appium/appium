@@ -45,6 +45,7 @@ export const KNOWN_DRIVERS = Object.freeze(
     espresso: 'appium-espresso-driver',
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
+    chromium: 'appium-chromium-driver',
   })
 );
 

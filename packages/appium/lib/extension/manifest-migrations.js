@@ -26,7 +26,7 @@ const Migrations = {
    */
   [SCHEMA_REV_3]: (data) => {
     let shouldSync = false;
-    const allExtData = [...Object.values(data.drivers), ...Object.values(data.plugins)];
+    const allExtData = [...Object.values(data.drivers || {}), ...Object.values(data.plugins || {})];
     for (const metadata of allExtData) {
       if (!('installPath' in metadata)) {
         shouldSync = true;

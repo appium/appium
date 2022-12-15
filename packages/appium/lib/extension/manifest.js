@@ -378,7 +378,7 @@ export class Manifest {
         ((await env.hasAppiumDependency(this.appiumHome)) &&
           (await packageDidChange(this.appiumHome)))
       ) {
-        shouldWrite = await this.syncWithInstalledExtensions();
+        shouldWrite = (await this.syncWithInstalledExtensions()) || shouldWrite;
       }
 
       if (isNewFile || shouldWrite) {

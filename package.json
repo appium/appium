@@ -117,7 +117,7 @@
     "serve-static": "1.15.0",
     "sinon": "15.0.0",
     "sinon-chai": "3.7.0",
-    "sync-monorepo-packages": "1.0.1",
+    "sync-monorepo-packages": "1.0.2",
     "through2": "4.0.2",
     "ts-node": "10.9.1",
     "typedoc": "0.23.22",

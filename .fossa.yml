@@ -54,7 +54,5 @@ targets:
     - type: npm
       path: ./packages/docutils
 
-
-
 revision:
-  branch: master
+  - branch: master

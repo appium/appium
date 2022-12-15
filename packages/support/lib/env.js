@@ -84,10 +84,12 @@ export const findAppiumDependencyPackage = _.memoize(
     try {
       const {json: list} = await npm.exec('list', ['--long', '--json'], {cwd});
       ({path: pkgDir} = list);
-      if (pkgDir) {
-        log.debug(`Determined package/workspace root from ${cwd} => ${pkgDir}`);
-      } else {
-        pkgDir = cwd;
+      if (pkgDir !== cwd) {
+        if (pkgDir) {
+          log.debug(`Determined package/workspace root from ${cwd} => ${pkgDir}`);
+        } else {
+          pkgDir = cwd;
+        }
       }
     } catch {
       pkgDir = cwd;

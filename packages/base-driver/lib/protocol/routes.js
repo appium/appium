@@ -305,11 +305,11 @@ const METHOD_MAP = /** @type {const} */ ({
   },
   // w3c v2 https://www.w3.org/TR/webdriver2/#get-computed-role
   'session/:sessionId/element/:elementId/computedrole': {
-    GET: {},
+    GET: {command: 'getComputedRole'}
   },
   // W3C v2  https://www.w3.org/TR/webdriver2/#get-computed-label
   'session/:sessionId/element/:elementId/computedlabel': {
-    GET: {},
+    GET: {command: 'getComputedLabel'}
   },
   '/session/:sessionId/rotation': {
     GET: {command: 'getRotation'},

@@ -118,14 +118,15 @@ describe('Driver CLI', function () {
         /** @type {Record<string,import('appium/lib/cli/extension-command').InstalledExtensionListData>} */ (
           await runList(['--updates'])
         );
+      const updateVersion = String(fake.updateVersion || fake.unsafeUpdateVersion);
       util.compareVersions(
-        String(fake.updateVersion),
+        String(updateVersion),
         '>',
         penultimateFakeDriverVersionAsOfRightNow
       ).should.be.true;
       // TODO: this could probably be replaced by looking at updateVersion in the JSON
       const {stderr} = await runAppiumRaw(appiumHome, [DRIVER_TYPE, LIST, '--updates'], {});
-      stderr.should.match(new RegExp(`fake.+[${fake.updateVersion} available]`));
+      stderr.should.match(new RegExp(`fake.+[${updateVersion} available]`));
     });
 
     describe('if a driver is not published to npm', function () {

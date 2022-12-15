@@ -99,7 +99,6 @@
     "fancy-log": "2.0.0",
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
-    "gulp": "4.0.2",
     "handlebars": "4.7.7",
     "husky": "8.0.2",
     "json-schema-to-typescript": "11.0.2",

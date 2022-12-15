@@ -30,8 +30,6 @@ targets:
     - type: npm
       path: ./packages/fake-driver
     - type: npm
-      path: ./packages/gulp-plugins
-    - type: npm
       path: ./packages/support
     - type: npm
       path: ./packages/test-support

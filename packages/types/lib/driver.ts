@@ -446,8 +446,8 @@ export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints
   setAlertText?(text: string): Promise<void>;
   getScreenshot?(): Promise<string>;
   getElementScreenshot?(elementId: string): Promise<string>;
-  getComputedRole?(elementId: string): Promise<string?>;
-  getComputedLabel?(elementId: string): Promise<string?>;
+  getComputedRole?(elementId: string): Promise<string | null>;
+  getComputedLabel?(elementId: string): Promise<string | null>;
 
   // Appium W3C WebDriver Extension
   mobileShake?(): Promise<void>;

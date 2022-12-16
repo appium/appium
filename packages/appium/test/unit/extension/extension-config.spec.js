@@ -33,6 +33,8 @@ describe('ExtensionConfig', function () {
 
   afterEach(function () {
     sandbox.restore();
+    // avoids a warning about too many listeners, caused by an exit handler in base-driver
+    process.removeAllListeners('exit');
   });
 
   describe('constructor', function () {});
@@ -134,9 +136,8 @@ describe('ExtensionConfig', function () {
           installType: 'npm',
           appiumVersion: APPIUM_VER,
         };
-        manifest.addExtension(DRIVER_TYPE, extData.pkgName, extData);
+        manifest.setExtension(DRIVER_TYPE, extData.pkgName, extData);
         config = new ExtensionConfig(DRIVER_TYPE, manifest);
-        delete this._listDataCache;
       });
 
       describe('when the extension data is missing an `installSpec` field', function () {

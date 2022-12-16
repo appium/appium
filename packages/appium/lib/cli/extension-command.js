@@ -322,6 +322,7 @@ class ExtensionCommand {
 
     // this _should_ be the same as `probablyExtName` as the one derived above unless
     // install type is local.
+    /** @type {string} */
     const extName = receipt[/** @type {string} */ (`${this.type}Name`)];
 
     // check _a second time_ with the more-accurate extName
@@ -360,7 +361,7 @@ class ExtensionCommand {
 
     await this.config.addExtension(extName, extManifest);
 
-    // update the if we've changed the local `package.json`
+    // update the hash if we've changed the local `package.json`
     if (await env.hasAppiumDependency(this.config.appiumHome)) {
       await packageDidChange(this.config.appiumHome);
     }
@@ -782,9 +783,7 @@ export {ExtensionCommand};
 
 /**
  * Possible return value for {@linkcode ExtensionCommand.list}
- * @typedef UninstalledExtensionListData
- * @property {string} pkgName
- * @property {false} installed
+ * @typedef {Partial<InstalledExtensionListData> & {pkgName: string, installed: false}} UninstalledExtensionListData
  */
 
 /**

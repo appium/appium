@@ -33,13 +33,18 @@ const INSTALL_TYPES = new Set([
  * @template {ExtensionType} ExtType
  */
 export class ExtensionConfig {
-  /** @type {ExtType} */
+  /**
+   * The type of extension this class is responsible for.
+   * @type {ExtType}
+   */
   extensionType;
 
-  /** @type {`${ExtType}s`} */
-  configKey;
-
-  /** @type {ExtRecord<ExtType>} */
+  /**
+   * Manifest data for the extensions of this type.
+   *
+   * This data should _not_ be written to by anything but {@linkcode Manifest}.
+   * @type {Readonly<ExtRecord<ExtType>>}
+   */
   installedExtensions;
 
   /** @type {import('@appium/types').AppiumLogger} */
@@ -49,9 +54,9 @@ export class ExtensionConfig {
   manifest;
 
   /**
-   * @type {ExtensionListData}
+   * @type {ExtensionListData|undefined}
    */
-  _listDataCache;
+  #listDataCache;
 
   /**
    * @protected
@@ -60,7 +65,6 @@ export class ExtensionConfig {
    */
   constructor(extensionType, manifest) {
     this.extensionType = extensionType;
-    this.configKey = `${extensionType}s`;
     this.installedExtensions = manifest.getExtensionData(extensionType);
     this.manifest = manifest;
   }
@@ -204,8 +208,8 @@ export class ExtensionConfig {
     if (!_.isEmpty(errorSummaries)) {
       log.error(
         `Appium encountered ${util.pluralize('error', errorMap.size, true)} while validating ${
-          this.configKey
-        } found in manifest ${this.manifestPath}`
+          this.extensionType
+        }s found in manifest ${this.manifestPath}`
       );
       for (const summary of errorSummaries) {
         log.error(summary);
@@ -219,7 +223,7 @@ export class ExtensionConfig {
             'warning',
             warningMap.size,
             true
-          )} while validating ${this.configKey} found in manifest ${this.manifestPath}`
+          )} while validating ${this.extensionType}s found in manifest ${this.manifestPath}`
         );
         for (const summary of warningSummaries) {
           log.warn(summary);
@@ -231,18 +235,20 @@ export class ExtensionConfig {
 
   /**
    * Retrieves listing data for extensions via command class.
-   * Caches the result in {@linkcode ExtensionConfig._listDataCache}
+   *
+   * This is an expensive operation, so the result is cached.  Currently, there is no
+   * use case for invalidating the cache.
    * @protected
    * @returns {Promise<ExtensionListData>}
    */
   async getListData() {
-    if (this._listDataCache) {
-      return this._listDataCache;
+    if (this.#listDataCache) {
+      return this.#listDataCache;
     }
     const CommandClass = /** @type {ExtCommand<ExtType>} */ (commandClasses[this.extensionType]);
     const cmd = new CommandClass({config: this, json: true});
     const listData = await cmd.list({showInstalled: true, showUpdates: true});
-    this._listDataCache = listData;
+    this.#listDataCache = listData;
     return listData;
   }
 
@@ -433,7 +439,7 @@ export class ExtensionConfig {
    * @returns {Promise<void>}
    */
   async addExtension(extName, extManifest, {write = true} = {}) {
-    this.manifest.addExtension(this.extensionType, extName, extManifest);
+    this.manifest.setExtension(this.extensionType, extName, extManifest);
     if (write) {
       await this.manifest.write();
     }
@@ -446,10 +452,10 @@ export class ExtensionConfig {
    * @returns {Promise<void>}
    */
   async updateExtension(extName, extManifest, {write = true} = {}) {
-    this.installedExtensions[extName] = {
+    this.manifest.setExtension(this.extensionType, extName, {
       ...this.installedExtensions[extName],
       ...extManifest,
-    };
+    });
     if (write) {
       await this.manifest.write();
     }
@@ -463,7 +469,7 @@ export class ExtensionConfig {
    * @returns {Promise<void>}
    */
   async removeExtension(extName, {write = true} = {}) {
-    delete this.installedExtensions[extName];
+    this.manifest.deleteExtension(this.extensionType, extName);
     if (write) {
       await this.manifest.write();
     }
@@ -477,13 +483,13 @@ export class ExtensionConfig {
   print(activeNames) {
     if (_.isEmpty(this.installedExtensions)) {
       log.info(
-        `No ${this.configKey} have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
+        `No ${this.extensionType}s have been installed in ${this.appiumHome}. Use the "appium ${this.extensionType}" ` +
           'command to install the one(s) you want to use.'
       );
       return;
     }
 
-    log.info(`Available ${this.configKey}:`);
+    log.info(`Available ${this.extensionType}s:`);
     for (const [extName, extManifest] of /** @type {[string, ExtManifest<ExtType>][]} */ (
       _.toPairs(this.installedExtensions)
     )) {
@@ -552,7 +558,7 @@ export class ExtensionConfig {
    * @returns {boolean}
    */
   isInstalled(extName) {
-    return _.includes(Object.keys(this.installedExtensions), extName);
+    return extName in this.installedExtensions;
   }
 
   /**

@@ -38,6 +38,8 @@ const INITIAL_MANIFEST_DATA = Object.freeze({
 /**
  * Given a `package.json` return `true` if it represents an Appium Extension (either a driver or plugin).
  *
+ *  _This is a type guard; not a validator._
+ *
  * The `package.json` must have an `appium` property which is an object.
  * @param {any} value
  * @returns {value is ExtPackageJson<ExtensionType>}
@@ -50,32 +52,35 @@ function isExtension(value) {
     _.isString(value.version)
   );
 }
+
 /**
  * Given a `package.json`, return `true` if it represents an Appium Driver.
  *
- * To be considered a driver, a `package.json` must have a fields
- * `appium.driverName`, `appium.automationName` and `appium.platformNames`.
+ * _This is a type guard; not a validator._
+ *
+ * To be considered a driver, a `package.json` must have an `appium.driverName` field.
+ *
+ * Further validation of the `appium` property happens elsewhere.
  * @param {any} value - Value to test
  * @returns {value is ExtPackageJson<DriverType>}
  */
 function isDriver(value) {
-  return (
-    isExtension(value) &&
-    _.isString(_.get(value, 'appium.driverName')) &&
-    _.isString(_.get(value, 'appium.automationName')) &&
-    _.isArray(_.get(value, 'appium.platformNames'))
-  );
+  return isExtension(value) && 'driverName' in value.appium && _.isString(value.appium.driverName);
 }
 
 /**
  * Given a `package.json`, return `true` if it represents an Appium Plugin.
  *
+ * _This is a type guard; not a validator._
+ *
  * To be considered a plugin, a `package.json` must have an `appium.pluginName` field.
+ *
+ * Further validation of the `appium` property happens elsewhere.
  * @param {any} value - Value to test
  * @returns {value is ExtPackageJson<PluginType>}
  */
 function isPlugin(value) {
-  return isExtension(value) && _.isString(_.get(value, 'appium.pluginName'));
+  return isExtension(value) && 'pluginName' in value.appium && _.isString(value.appium.pluginName);
 }
 
 /**
@@ -166,7 +171,23 @@ export class Manifest {
     const onMatch = async (filepath) => {
       try {
         const pkg = JSON.parse(await fs.readFile(filepath, 'utf8'));
-        if (isDriver(pkg) || isPlugin(pkg)) {
+        if (isExtension(pkg)) {
+          const extType = isDriver(pkg) ? DRIVER_TYPE : PLUGIN_TYPE;
+          /**
+           * this should only be 'unknown' if the extension's `package.json` is invalid
+           * @type {string}
+           */
+          const name = isDriver(pkg)
+            ? pkg.appium.driverName
+            : isPlugin(pkg)
+            ? pkg.appium.pluginName
+            : '(unknown)';
+          if (
+            (isDriver(pkg) && !this.hasDriver(name)) ||
+            (isPlugin(pkg) && !this.hasPlugin(name))
+          ) {
+            log.info(`Discovered installed ${extType} "${name}"`);
+          }
           const changed = this.addExtensionFromPackage(pkg, filepath);
           didChange = didChange || changed;
         }
@@ -228,11 +249,10 @@ export class Manifest {
   /**
    * Given a path to a `package.json`, add it as either a driver or plugin to the manifest.
    *
-   * Will _not_ overwrite existing entries.
    * @template {ExtensionType} ExtType
    * @param {ExtPackageJson<ExtType>} pkgJson
    * @param {string} pkgPath
-   * @returns {boolean} - `true` upon success, `false` if the extension is already registered.
+   * @returns {boolean} - `true` if this method did anything.
    */
   addExtensionFromPackage(pkgJson, pkgPath) {
     const extensionPath = path.dirname(pkgPath);
@@ -250,26 +270,28 @@ export class Manifest {
     };
 
     if (isDriver(pkgJson)) {
-      if (!this.hasDriver(pkgJson.appium.driverName)) {
-        this.addExtension(DRIVER_TYPE, pkgJson.appium.driverName, {
-          ..._.omit(pkgJson.appium, 'driverName'),
-          ...internal,
-        });
+      const value = {
+        ..._.omit(pkgJson.appium, 'driverName'),
+        ...internal,
+      };
+      if (!_.isEqual(value, this.#data.drivers[pkgJson.appium.driverName])) {
+        this.setExtension(DRIVER_TYPE, pkgJson.appium.driverName, value);
         return true;
       }
       return false;
     } else if (isPlugin(pkgJson)) {
-      if (!this.hasPlugin(pkgJson.appium.pluginName)) {
-        this.addExtension(PLUGIN_TYPE, pkgJson.appium.pluginName, {
-          ..._.omit(pkgJson.appium, 'pluginName'),
-          ...internal,
-        });
+      const value = {
+        ..._.omit(pkgJson.appium, 'pluginName'),
+        ...internal,
+      };
+      if (!_.isEqual(value, this.#data.plugins[pkgJson.appium.pluginName])) {
+        this.setExtension(PLUGIN_TYPE, pkgJson.appium.pluginName, value);
         return true;
       }
       return false;
     } else {
       throw new TypeError(
-        `The extension in ${extensionPath} is neither a valid driver nor a valid plugin.`
+        `The extension in ${extensionPath} is neither a valid ${DRIVER_TYPE} nor a valid ${PLUGIN_TYPE}.`
       );
     }
   }
@@ -285,10 +307,27 @@ export class Manifest {
    * @param {ExtManifest<ExtType>} extData - Extension metadata
    * @returns {ExtManifest<ExtType>} A clone of `extData`, potentially with a mutated `appiumVersion` field
    */
-  addExtension(extType, extName, extData) {
-    const data = _.clone(extData);
+  setExtension(extType, extName, extData) {
+    const data = _.cloneDeep(extData);
     this.#data[`${extType}s`][extName] = data;
     return data;
+  }
+
+  /**
+   * Sets the schema revision
+   * @param {keyof import('./manifest-migrations').ManifestDataVersions} rev
+   */
+  setSchemaRev(rev) {
+    this.#data.schemaRev = rev;
+  }
+
+  /**
+   * Remove an extension from the manifest.
+   * @param {ExtensionType} extType
+   * @param {string} extName
+   */
+  deleteExtension(extType, extName) {
+    delete this.#data[`${extType}s`][extName];
   }
 
   /**
@@ -306,11 +345,18 @@ export class Manifest {
   }
 
   /**
+   * Returns the schema rev of this manifest
+   */
+  get schemaRev() {
+    return this.#data.schemaRev;
+  }
+
+  /**
    * Returns extension data for a particular type.
    *
    * @template {ExtensionType} ExtType
    * @param {ExtType} extType
-   * @returns {ExtRecord<ExtType>}
+   * @returns {Readonly<ExtRecord<ExtType>>}
    */
   getExtensionData(extType) {
     return this.#data[/** @type {string} */ (`${extType}s`)];
@@ -319,11 +365,18 @@ export class Manifest {
   /**
    * Reads manifest from disk and _overwrites_ the internal data.
    *
-   * If the manifest does not exist on disk, an {@link INITIAL_MANIFEST_DATA "empty"} manifest file will be created.
+   * If the manifest does not exist on disk, an
+   * {@link INITIAL_MANIFEST_DATA "empty"} manifest file will be created, as
+   * well as its directory if needed.
    *
-   * If `APPIUM_HOME` contains a `package.json` with an `appium` dependency, then a hash of the `package.json` will be taken. If this hash differs from the last hash, the contents of `APPIUM_HOME/node_modules` will be scanned for extensions that may have been installed outside of the `appium` CLI.  Any found extensions will be added to the manifest file, and if so, the manifest file will be written to disk.
+   * This will also, if necessary:
+   * 1. perform a migration of the manifest data
+   * 2. sync the manifest with extensions on-disk (kind of like "auto
+   *    discovery")
+   * 3. write the manifest to disk.
    *
-   * Only one read operation should happen at a time.
+   * Only one read operation can happen at a time.
+   *
    * @returns {Promise<ManifestData>} The data
    */
   async read() {
@@ -335,17 +388,23 @@ export class Manifest {
     this.#reading = (async () => {
       /** @type {ManifestData} */
       let data;
-      let isNewFile = false;
+      /**
+       * This will be `true` if, after reading, we need to update the manifest data
+       * and write it again to disk.
+       */
+      let shouldWrite = false;
       await this.#setManifestPath();
       try {
-        log.debug(`Reading ${this.#manifestPath}...`);
         const yaml = await fs.readFile(this.#manifestPath, 'utf8');
         data = YAML.parse(yaml);
-        log.debug(`Parsed manifest file: ${JSON.stringify(data, null, 2)}`);
+        log.debug(
+          `Parsed manifest file at ${this.#manifestPath}: ${JSON.stringify(data, null, 2)}`
+        );
       } catch (err) {
         if (err.code === 'ENOENT') {
+          log.debug(`No manifest file found at ${this.#manifestPath}; creating`);
           data = _.cloneDeep(INITIAL_MANIFEST_DATA);
-          isNewFile = true;
+          shouldWrite = true;
         } else {
           if (this.#manifestPath) {
             throw new Error(
@@ -364,27 +423,42 @@ export class Manifest {
 
       this.#data = data;
 
-      let shouldWrite = false;
-
-      if ((data.schemaRev ?? 0) < CURRENT_SCHEMA_REV) {
+      /**
+       * the only way `shouldWrite` is `true` is if we have a new file.  a new
+       * file will get the latest schema revision, so we can skip the migration.
+       */
+      if (!shouldWrite && (data.schemaRev ?? 0) < CURRENT_SCHEMA_REV) {
         log.debug(
           `Updating manifest schema from rev ${data.schemaRev ?? '(none)'} to ${CURRENT_SCHEMA_REV}`
         );
-        shouldWrite = await migrate(this, this.#data);
+        shouldWrite = await migrate(this);
       }
 
+      /**
+       * we still may want to sync with installed extensions even if we have a
+       * new file. right now this is limited to the following cases:
+       * 1. we have a brand new manifest file
+       * 2. we have performed a migration on a manifest file
+       * 3. `appium` is a dependency within `package.json`, and `package.json`
+       *    has changed since last time we checked.
+       *
+       * It may also make sense to sync with the extensions in an arbitrary
+       * `APPIUM_HOME`, but we don't do that here.
+       */
       if (
         shouldWrite ||
         ((await env.hasAppiumDependency(this.appiumHome)) &&
           (await packageDidChange(this.appiumHome)))
       ) {
+        log.debug('Discovering newly installed extensions...');
         shouldWrite = (await this.syncWithInstalledExtensions()) || shouldWrite;
       }
 
-      if (isNewFile || shouldWrite) {
+      if (shouldWrite) {
         await this.write();
       }
     })();
+
     try {
       await this.#reading;
       return this.#data;

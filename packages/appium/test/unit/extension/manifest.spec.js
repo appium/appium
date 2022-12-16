@@ -294,7 +294,7 @@ describe('Manifest', function () {
       });
     });
 
-    describe('addExtension()', function () {
+    describe('setExtension()', function () {
       /** @type {ExtManifest<DriverType>} */
       const extData = {
         automationName: 'derp',
@@ -309,7 +309,7 @@ describe('Manifest', function () {
       };
 
       it('should add a clone of the extension manifest to the internal data object', function () {
-        manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+        manifest.setExtension(DRIVER_TYPE, 'foo', extData);
         expect(manifest.getExtensionData(DRIVER_TYPE).foo)
           .to.eql(extData)
           .and.not.to.equal(extData);
@@ -319,7 +319,7 @@ describe('Manifest', function () {
         /** @type {ExtManifest<DriverType>} */
 
         beforeEach(function () {
-          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+          manifest.setExtension(DRIVER_TYPE, 'foo', extData);
         });
 
         it('should rewrite', function () {
@@ -327,7 +327,7 @@ describe('Manifest', function () {
             ...extData,
             automationName: 'BLAAHAH',
           };
-          manifest.addExtension(DRIVER_TYPE, 'foo', expected);
+          manifest.setExtension(DRIVER_TYPE, 'foo', expected);
           expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.eql(expected);
         });
       });
@@ -338,7 +338,7 @@ describe('Manifest', function () {
         });
 
         it('should work anyway', function () {
-          manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+          manifest.setExtension(DRIVER_TYPE, 'foo', extData);
           expect(manifest.getExtensionData(DRIVER_TYPE).foo).to.not.have.property('appiumVersion');
         });
       });
@@ -359,7 +359,7 @@ describe('Manifest', function () {
       };
 
       beforeEach(function () {
-        manifest.addExtension(DRIVER_TYPE, 'foo', extData);
+        manifest.setExtension(DRIVER_TYPE, 'foo', extData);
       });
 
       it('should return all extension data for an extension type', function () {
@@ -575,7 +575,7 @@ describe('Manifest', function () {
       describe('when the driver is registered', function () {
         beforeEach(function () {
           // @ts-expect-error
-          manifest.addExtension(DRIVER_TYPE, 'foo', {});
+          manifest.setExtension(DRIVER_TYPE, 'foo', {});
         });
 
         it('should return `true`', function () {
@@ -594,7 +594,7 @@ describe('Manifest', function () {
       describe('when the plugin is registered', function () {
         beforeEach(function () {
           // @ts-expect-error
-          manifest.addExtension(PLUGIN_TYPE, 'foo', {});
+          manifest.setExtension(PLUGIN_TYPE, 'foo', {});
         });
 
         it('should return `true`', function () {

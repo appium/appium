@@ -1,0 +1,3 @@
+drivers: {}
+plugins: {}
+schemaRev: 3 # this will need updating if the manifest version is bumped!!

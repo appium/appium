@@ -337,7 +337,7 @@ describe('Driver CLI', function () {
     });
   });
 
-  describe('uninstall', function () {
+  describe(UNINSTALL, function () {
     beforeEach(async function () {
       await resetAppiumHome();
       await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
@@ -346,8 +346,9 @@ describe('Driver CLI', function () {
     it('should uninstall a driver based on its driver name', async function () {
       const uninstall = await runUninstall(['fake']);
       uninstall.should.not.have.key('fake');
-      expect(fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'))).to
-        .eventually.be.false;
+      expect(
+        fs.exists(path.join(appiumHome, 'node_modules', '@appium', 'fake-driver'))
+      ).to.eventually.be.false;
     });
   });
 

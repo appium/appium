@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "outDir": "build"
+  },
+  "extends": "../../config/tsconfig.plugin.json",
+  "include": ["lib"],
+}

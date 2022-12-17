@@ -27,6 +27,7 @@ export const USE_ALL_PLUGINS = 'all';
 export const KNOWN_PLUGINS = Object.freeze(
   /** @type {const} */ ({
     images: '@appium/images-plugin',
+    ocr: '@appium/ocr-plugin',
     'execute-driver': '@appium/execute-driver-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
     'universal-xml': '@appium/universal-xml-plugin',

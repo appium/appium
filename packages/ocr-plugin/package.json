@@ -1,0 +1,56 @@
+{
+  "name": "@appium/ocr-plugin",
+  "version": "1.0.0",
+  "description": "Plugin for recognizing text on images",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing",
+    "ocr"
+  ],
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/ocr-plugin"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "files": [
+    "build",
+    "docs",
+    "lib",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:smoke": "node ./index.js",
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+  },
+  "dependencies": {
+    "bluebird": "3.7.2",
+    "lodash": "4.17.21",
+    "source-map-support": "0.5.21",
+    "tesseract.js": "4.0.1"
+  },
+  "peerDependencies": {
+    "appium": "^2.0.0-beta.35"
+  },
+  "appium": {
+    "pluginName": "ocr",
+    "mainClass": "OcrPlugin"
+  },
+  "types": "./build/lib/plugin.d.ts",
+  "homepage": "https://appium.io",
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "npm": ">=8"
+  }
+}

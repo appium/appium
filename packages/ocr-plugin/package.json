@@ -23,6 +23,9 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "directories": {
+    "lib": "./lib"
+  },
   "files": [
     "build",
     "docs",

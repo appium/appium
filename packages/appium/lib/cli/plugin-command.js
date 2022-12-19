@@ -45,7 +45,7 @@ export default class PluginCommand extends ExtensionCommand {
    * Update a plugin
    *
    * @param {PluginUpdateOpts} opts
-   * @return {Promise<import('./extension-command.js').ExtensionUpdateResult>}
+   * @return {Promise<import('./extension-command').ExtensionUpdateResult>}
    */
   async update({plugin, unsafe}) {
     return await super._update({installSpec: plugin, unsafe});
@@ -54,7 +54,7 @@ export default class PluginCommand extends ExtensionCommand {
   /**
    *
    * @param {PluginRunOptions} opts
-   * @return {Promise<import('./extension-command.js').RunOutput>}
+   * @return {Promise<import('./extension-command').RunOutput>}
    */
   async run({plugin, scriptName, extraArgs}) {
     return await super._run({installSpec: plugin, scriptName, extraArgs});
@@ -62,7 +62,7 @@ export default class PluginCommand extends ExtensionCommand {
 
   /**
    *
-   * @param {import('./extension-command.js').ExtensionArgs} opts
+   * @param {import('./extension-command').ExtensionArgs} opts
    * @returns {string}
    */
   getPostInstallText({extName, extData}) {

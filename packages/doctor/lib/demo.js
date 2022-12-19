@@ -7,6 +7,9 @@ import {DoctorCheck, FixSkippedError} from './doctor';
 import log from './logger';
 import {fixIt} from './prompt';
 
+/**
+ * @type {import('./factory').DoctorCheckList}
+ */
 let checks = [];
 
 class DirCheck extends DoctorCheck {

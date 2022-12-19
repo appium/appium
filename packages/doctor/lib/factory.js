@@ -6,6 +6,9 @@ import androidChecks from './android';
 import devChecks from './dev';
 import demoChecks from './demo';
 
+/**
+ * @type {DoctorGroup}
+ */
 let checks = {generalChecks, iosChecks, androidChecks, devChecks, demoChecks};
 
 let newDoctor = (opts) => {
@@ -19,3 +22,16 @@ let newDoctor = (opts) => {
 };
 
 export default newDoctor;
+
+/**
+ * @typedef {import('./doctor').DoctorCheck[]} DoctorCheckList
+ */
+
+/**
+ * @typedef DoctorGroup - Contain a group of Doctors
+ * @property {DoctorCheckList} generalChecks - Check AppiumHome, NodeBinary, NodeVersion, ffmpeg, mjpeg-consumer
+ * @property {DoctorCheckList} iosChecks - Check if iOS toolchains are installed
+ * @property {DoctorCheckList} androidChecks - Check if Android toolchains are installed
+ * @property {DoctorCheckList} devChecks - Check Path Binary and Android SDKs
+ * @property {DoctorCheckList} demoChecks - Check /tmp/appium-doctor/demo/*
+ */

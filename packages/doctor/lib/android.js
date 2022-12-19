@@ -7,6 +7,9 @@ import '@colors/colors';
 import {getAndroidBinaryPath, getSdkRootFromEnv} from 'appium-adb';
 import log from './logger';
 
+/**
+ * @type {import('./factory').DoctorCheckList}
+ */
 let checks = [];
 
 const javaHome = system.isWindows() ? '%JAVA_HOME%' : '$JAVA_HOME';

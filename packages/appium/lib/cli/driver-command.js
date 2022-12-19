@@ -46,7 +46,7 @@ export default class DriverCommand extends ExtensionCommand {
    * Update a driver
    *
    * @param {DriverUpdateOpts} opts
-   * @return {Promise<import('./extension-command.js').ExtensionUpdateResult>}
+   * @return {Promise<import('./extension-command').ExtensionUpdateResult>}
    */
   async update({driver, unsafe}) {
     return await super._update({installSpec: driver, unsafe});
@@ -55,7 +55,7 @@ export default class DriverCommand extends ExtensionCommand {
   /**
    *
    * @param {DriverRunOptions} opts
-   * @return {Promise<import('./extension-command.js').RunOutput>}
+   * @return {Promise<import('./extension-command').RunOutput>}
    */
   async run({driver, scriptName, extraArgs}) {
     return await super._run({installSpec: driver, scriptName, extraArgs});
@@ -63,7 +63,7 @@ export default class DriverCommand extends ExtensionCommand {
 
   /**
    *
-   * @param {import('./extension-command.js').ExtensionArgs} opts
+   * @param {import('./extension-command').ExtensionArgs} opts
    * @returns {string}
    */
   getPostInstallText({extName, extData}) {

@@ -7,6 +7,9 @@ import {fixIt} from './prompt';
 import EnvVarAndPathCheck from './env';
 import '@colors/colors';
 
+/**
+ * @type {import('./factory').DoctorCheckList}
+ */
 let checks = [];
 let fixes = {};
 

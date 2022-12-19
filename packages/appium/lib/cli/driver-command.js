@@ -8,6 +8,7 @@ const REQ_DRIVER_FIELDS = ['driverName', 'automationName', 'platformNames', 'mai
 /**
  * @extends {ExtensionCommand<DriverType>}
  */
+
 export default class DriverCommand extends ExtensionCommand {
   /**
    * @param {import('./extension-command').ExtensionCommandOptions<DriverType>} opts
@@ -21,6 +22,7 @@ export default class DriverCommand extends ExtensionCommand {
    * Install a driver
    *
    * @param {DriverInstallOpts} opts
+   * @return {Promise<ExtRecord<DriverType>>}
    */
   async install({driver, installType, packageName}) {
     return await super._install({
@@ -30,18 +32,40 @@ export default class DriverCommand extends ExtensionCommand {
     });
   }
 
+  /**
+   * Uninstall a driver
+   *
+   * @param {DriverUninstallOpts} opts
+   * @return {Promise<ExtRecord<DriverType>>}
+   */
   async uninstall({driver}) {
     return await super._uninstall({installSpec: driver});
   }
 
+  /**
+   * Update a driver
+   *
+   * @param {DriverUpdateOpts} opts
+   * @return {Promise<import('./extension-command.js').ExtensionUpdateResult>}
+   */
   async update({driver, unsafe}) {
     return await super._update({installSpec: driver, unsafe});
   }
 
+  /**
+   *
+   * @param {DriverRunOptions} opts
+   * @return {Promise<import('./extension-command.js').RunOutput>}
+   */
   async run({driver, scriptName, extraArgs}) {
     return await super._run({installSpec: driver, scriptName, extraArgs});
   }
 
+  /**
+   *
+   * @param {import('./extension-command.js').ExtensionArgs} opts
+   * @returns {string}
+   */
   getPostInstallText({extName, extData}) {
     return (
       `Driver ${extName}@${extData.version} successfully installed\n`.green +
@@ -75,17 +99,23 @@ export default class DriverCommand extends ExtensionCommand {
 }
 
 /**
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
+ * @typedef {import('@appium/types').DriverType} DriverType
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtRecord<ExtType>} ExtRecord
+ */
+
+/**
  * @typedef DriverCommandOptions
  * @property {import('../extension/extension-config').ExtensionConfig<DriverType>} config
  * @property {boolean} json
  */
 
 /**
- * @typedef {import('@appium/types').DriverType} DriverType
- */
-
-/**
- * Options for {@linkcode ExtensionCommand._install}
+ * Options for {@linkcode DriverCommand.install}
  * @typedef DriverInstallOpts
  * @property {string} driver - the name or spec of a driver to install
  * @property {InstallType} installType - how to install this driver. One of the INSTALL_TYPES
@@ -94,4 +124,25 @@ export default class DriverCommand extends ExtensionCommand {
 
 /**
  * @typedef {import('appium/types').InstallType} InstallType
+ */
+
+/**
+ * Options for {@linkcode DriverCommand.uninstall}
+ * @typedef DriverUninstallOpts
+ * @property {string} driver - the name or spec of a driver to uninstall
+ */
+
+/**
+ * Options for {@linkcode DriverCommand.update}
+ * @typedef DriverUpdateOpts
+ * @property {string} driver - the name of the driver to update
+ * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
+ */
+
+/**
+ * Options for {@linkcode DriverCommand.run}.
+ * @typedef DriverRunOptions
+ * @property {string} driver - name of the driver to run a script from
+ * @property {string} scriptName - name of the script to run
+ * @property {string[]} [extraArgs] - arguments to pass to the script
  */

@@ -17,6 +17,12 @@ export default class PluginCommand extends ExtensionCommand {
     this.knownExtensions = KNOWN_PLUGINS;
   }
 
+  /**
+   * Install a plugin
+   *
+   * @param {PluginInstallOpts} opts
+   * @return {Promise<ExtRecord<PluginType>>}
+   */
   async install({plugin, installType, packageName}) {
     return await super._install({
       installSpec: plugin,
@@ -25,26 +31,48 @@ export default class PluginCommand extends ExtensionCommand {
     });
   }
 
+  /**
+   * Uninstall a plugin
+   *
+   * @param {PluginUninstallOpts} opts
+   * @return {Promise<ExtRecord<PluginType>>}
+   */
   async uninstall({plugin}) {
     return await super._uninstall({installSpec: plugin});
   }
 
+  /**
+   * Update a plugin
+   *
+   * @param {PluginUpdateOpts} opts
+   * @return {Promise<import('./extension-command.js').ExtensionUpdateResult>}
+   */
   async update({plugin, unsafe}) {
     return await super._update({installSpec: plugin, unsafe});
   }
 
+  /**
+   *
+   * @param {PluginRunOptions} opts
+   * @return {Promise<import('./extension-command.js').RunOutput>}
+   */
   async run({plugin, scriptName, extraArgs}) {
     return await super._run({installSpec: plugin, scriptName, extraArgs});
   }
 
+  /**
+   *
+   * @param {import('./extension-command.js').ExtensionArgs} opts
+   * @returns {string}
+   */
   getPostInstallText({extName, extData}) {
     return `Plugin ${extName}@${extData.version} successfully installed`.green;
   }
 
   /**
-   * Validates fields in `appium` field of `driverMetadata`
+   * Validates fields in `appium` field of `pluginMetadata`
    *
-   * For any `package.json` fields which a driver requires, validate the type of
+   * For any `package.json` fields which a plugin requires, validate the type of
    * those fields on the `package.json` data, throwing an error if anything is
    * amiss.
    * @param {import('appium/types').ExtMetadata<PluginType>} pluginMetadata
@@ -67,5 +95,44 @@ export default class PluginCommand extends ExtensionCommand {
 }
 
 /**
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('@appium/types').PluginType} PluginType
+ */
+
+/**
+ * @template {ExtensionType} ExtType
+ * @typedef {import('appium/types').ExtRecord<ExtType>} ExtRecord
+ */
+
+/**
+ * Options for {@linkcode PluginCommand.install}
+ * @typedef PluginInstallOpts
+ * @property {string} plugin - the name or spec of a plugin to install
+ * @property {InstallType} installType - how to install this plugin. One of the INSTALL_TYPES
+ * @property {string} [packageName] - for git/github installs, the plugin node package name
+ */
+
+/**
+ * @typedef {import('appium/types').InstallType} InstallType
+ */
+
+/**
+ * Options for {@linkcode PluginCommand.uninstall}
+ * @typedef PluginUninstallOpts
+ * @property {string} plugin - the name or spec of a plugin to uninstall
+ */
+
+/**
+ * Options for {@linkcode PluginCommand.update}
+ * @typedef PluginUpdateOpts
+ * @property {string} plugin - the name of the plugin to update
+ * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
+ */
+
+/**
+ * Options for {@linkcode PluginCommand.run}.
+ * @typedef PluginRunOptions
+ * @property {string} plugin - name of the plugin to run a script from
+ * @property {string} scriptName - name of the script to run
+ * @property {string[]} [extraArgs] - arguments to pass to the script
  */

@@ -34,6 +34,7 @@ export {
   processCapabilities,
   isStandardCap,
   validateCaps,
+  promoteAppiumOptions,
 } from './basedriver/capabilities';
 
 // Web socket helpers

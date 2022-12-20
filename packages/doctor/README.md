@@ -2,7 +2,7 @@ appium-doctor
 ===================
 Attempts to diagnose and fix common Node, iOS and Android configuration issues before starting Appium.
 
-[![Build Status](https://travis-ci.com/appium/appium-doctor.svg?branch=master)](https://travis-ci.com/appium/appium-doctor)
+[![Build Status](https://travis-ci.com/appium/appium-doctor.svg?branch=master)](https://app.travis-ci.com/github/appium/appium-doctor)
 
 ### Install
 

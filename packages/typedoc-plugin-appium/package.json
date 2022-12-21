@@ -1,6 +1,6 @@
 {
   "name": "@appium/typedoc-plugin-appium",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "TypeDoc plugin for Appium & its extensions",
   "homepage": "https://appium.io",
   "license": "Apache-2.0",

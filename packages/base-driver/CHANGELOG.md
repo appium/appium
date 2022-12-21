@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.1.0](https://github.com/appium/appium/compare/@appium/base-driver@9.0.0...@appium/base-driver@9.1.0) (2022-12-21)
+
+### Bug Fixes
+
+- add 'webSocketUrl' as standard cap for bidi support ([#17936](https://github.com/appium/appium/issues/17936)) ([0e195ca](https://github.com/appium/appium/commit/0e195caafefe911586ee2f8be4ae33d402b2ba40))
+- **types:** update definitelytyped ([172fcb9](https://github.com/appium/appium/commit/172fcb9aff0afe5295650566c4fb92d0894bf879))
+- **types:** update dependency type-fest to v3.4.0 ([37f71c3](https://github.com/appium/appium/commit/37f71c327a7c1a6d882b5198af6fedc9e8d51496))
+
+### Features
+
+- **base:** add get computed role and label in W3C v2 ([#17928](https://github.com/appium/appium/issues/17928)) ([316ecca](https://github.com/appium/appium/commit/316ecca8b1f8e52806867a15ba8524a504751460))
+
 # [9.0.0](https://github.com/appium/appium/compare/@appium/base-driver@8.7.3...@appium/base-driver@9.0.0) (2022-12-14)
 
 ### Bug Fixes

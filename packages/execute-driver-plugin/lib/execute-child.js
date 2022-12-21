@@ -5,6 +5,9 @@ import {logger, util} from 'appium/support';
 import {attach} from 'webdriverio';
 
 const log = logger.getLogger('ExecuteDriver Child');
+/**
+ * @type {Promise<void>}
+ */
 let send;
 
 // duplicate defining these keys here so we don't need to re-load a huge appium
@@ -12,12 +15,22 @@ let send;
 export const W3C_ELEMENT_KEY = util.W3C_WEB_ELEMENT_IDENTIFIER;
 export const MJSONWP_ELEMENT_KEY = 'ELEMENT';
 
-async function runScript(driverOpts, script, timeoutMs) {
+/**
+ * Run the script in a VM.
+ * @param {DriverScriptMessageEvent} eventParams
+ * @returns {Promise<RunScriptResult>}
+ * @throws {TypeError}
+ */
+async function runScript(eventParams) {
+  const {driverOpts, script, timeoutMs} = eventParams;
   if (!_.isNumber(timeoutMs)) {
     throw new TypeError('Timeout parameter must be a number');
   }
 
-  // set up fake logger
+  /**
+   * set up fake logger
+   * @type {string[]}
+   */
   const logLevels = ['error', 'warn', 'log'];
   const logs = {};
   const consoleFns = {};
@@ -122,11 +135,22 @@ function coerceScriptResult(obj) {
   return obj;
 }
 
-async function main(driverOpts, script, timeoutMs) {
+/**
+ * Entry point to runScript
+ * @param {DriverScriptMessageEvent} eventParams
+ */
+async function main(eventParams) {
+  /**
+   * keep the response of runScript
+   * @type {ScriptResult}
+   */
   let res;
+  log.info('Parameters received from parent process');
   try {
-    res = {success: await runScript(driverOpts, script, timeoutMs)};
+    res = {success: await runScript(eventParams)};
+    log.info('runScript success');
   } catch (error) {
+    log.info('runScript error');
     res = {error: {message: error.message, stack: error.stack}};
   }
   await send(res);
@@ -136,8 +160,35 @@ async function main(driverOpts, script, timeoutMs) {
 if (require.main === module && _.isFunction(process.send)) {
   send = B.promisify(process.send, {context: process});
   log.info('Running driver execution in child process');
-  process.on('message', ({driverOpts, script, timeoutMs}) => {
-    log.info('Parameters received from parent process');
-    main(driverOpts, script, timeoutMs);
-  });
+  // When the 'message' event is emitted, call main function
+  process.on('message', main);
 }
+
+/**
+ * @typedef {import('webdriverio').AttachOptions} AttachOptions
+ */
+
+/**
+ * @typedef DriverScriptMessageEvent
+ * @property {AttachOptions} driverOpts - the driver options
+ * @property {string} script - the javascript to execute
+ * @property {number} timeoutMs - script timeout in milliseconds
+ */
+
+/**
+ * @typedef ScriptResult
+ * @property {any} success
+ * @property {ScriptResultError} error
+ */
+
+/**
+ * @typedef ScriptResultError
+ * @property {any} message
+ * @property {any} stack
+ */
+
+/**
+ * @typedef RunScriptResult
+ * @property {any} result
+ * @property {Object} logs
+ */

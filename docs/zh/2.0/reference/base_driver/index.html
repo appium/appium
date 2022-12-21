@@ -1,0 +1,4441 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium/docs/zh/2.0/reference/base_driver/">
+      
+      <link rel="icon" href="../../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+    
+    
+      
+        <title>appium: commands: @appium/base-driver - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.975780f9.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 7.775V2.75a.25.25 0 0 1 .25-.25h5.025a.25.25 0 0 1 .177.073l6.25 6.25a.25.25 0 0 1 0 .354l-5.025 5.025a.25.25 0 0 1-.354 0l-6.25-6.25a.25.25 0 0 1-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.75 1.75 0 0 1 1 7.775zM6 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 1.75a.25.25 0 0 1 .25-.25h8.5a.25.25 0 0 1 .25.25v7.736a.75.75 0 1 0 1.5 0V1.75A1.75 1.75 0 0 0 11.25 0h-8.5A1.75 1.75 0 0 0 1 1.75v11.5c0 .966.784 1.75 1.75 1.75h3.17a.75.75 0 0 0 0-1.5H2.75a.25.25 0 0 1-.25-.25V1.75zM4.75 4a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5zM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75zm11.774 3.537a.75.75 0 0 0-1.048-1.074L10.7 14.145 9.281 12.72a.75.75 0 0 0-1.062 1.058l1.943 1.95a.75.75 0 0 0 1.055.008l4.557-4.45z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm6.5-.25A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75zM8 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.489 4.489 0 0 1-.563-1.191 3.833 3.833 0 0 1-.05-2.063 4.636 4.636 0 0 1-2.025-.293.75.75 0 1 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.748.748 0 0 1 1.06 0 .75.75 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.404 2.404 0 0 1-.507-.441 3.063 3.063 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.753.753 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768a85.08 85.08 0 0 0-.317-.265c-.814-.68-1.75-1.462-2.692-2.619a3.74 3.74 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.75.75 0 0 1 1.06-1.06L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm9 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM6.92 6.085c.081-.16.19-.299.34-.398.145-.097.371-.187.74-.187.28 0 .553.087.738.225A.613.613 0 0 1 9 6.25c0 .177-.04.264-.077.318a.956.956 0 0 1-.277.245c-.076.051-.158.1-.258.161l-.007.004a7.728 7.728 0 0 0-.313.195 2.416 2.416 0 0 0-.692.661.75.75 0 0 0 1.248.832.956.956 0 0 1 .276-.245 6.3 6.3 0 0 1 .26-.16l.006-.004c.093-.057.204-.123.313-.195.222-.149.487-.355.692-.662.214-.32.329-.702.329-1.15 0-.76-.36-1.348-.863-1.725A2.76 2.76 0 0 0 8 4c-.631 0-1.155.16-1.572.438-.413.276-.68.638-.849.977a.75.75 0 1 0 1.342.67z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.22 1.754a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368L8.22 1.754zm-1.763-.707c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575L6.457 1.047zM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-.25-5.25a.75.75 0 0 0-1.5 0v2.5a.75.75 0 0 0 1.5 0v-2.5z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.404 12.596a6.5 6.5 0 1 1 9.192-9.192 6.5 6.5 0 0 1-9.192 9.192zM2.344 2.343a8 8 0 1 0 11.313 11.314A8 8 0 0 0 2.343 2.343zM6.03 4.97a.75.75 0 0 0-1.06 1.06L6.94 8 4.97 9.97a.75.75 0 1 0 1.06 1.06L8 9.06l1.97 1.97a.75.75 0 1 0 1.06-1.06L9.06 8l1.97-1.97a.75.75 0 1 0-1.06-1.06L8 6.94 6.03 4.97z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10.561 1.5a.016.016 0 0 0-.01.004L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.02.02 0 0 0-.004-.009.02.02 0 0 0-.006-.006L10.56 1.5zM9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.25 1.25 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.492 3.492 0 0 1 2.441 0l.999-1a.75.75 0 1 1 1.06 1.061l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.013 5.013 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.684 1.684 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06zM6.173 5h3.654A.173.173 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173zM5.25 6.5a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75h-5.5z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458L5 5.782zM9.5 2.5h-3V6a.75.75 0 0 1-.117.403L4.73 9h6.54L9.617 6.403A.75.75 0 0 1 9.5 6V2.5zm-6.9 9.847L3.775 10.5h8.45l1.175 1.847a.75.75 0 0 1-.633 1.153H3.233a.75.75 0 0 1-.633-1.153z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.75 2.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5H1.75zm4 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5zm0 5a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5zM2.5 7.75a.75.75 0 0 0-1.5 0v6a.75.75 0 0 0 1.5 0v-6z"/></svg>');}</style>
+
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#appium-commands-appiumbase-driver" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              appium: commands: @appium/base-driver
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent=""  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+          
+        
+      </form>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="选择当前语言">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        首页
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="简介" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1">
+          介绍 Appium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="介绍 Appium" data-md-level="2">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          介绍 Appium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/" class="md-nav__link">
+        Appium 概述
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/drivers/" class="md-nav__link">
+        Intro to Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/clients/" class="md-nav__link">
+        Appium客户端介绍
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/requirements/" class="md-nav__link">
+        Appium Requirements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/history/" class="md-nav__link">
+        历史
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          快速开始
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="快速开始" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          快速开始
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        快速开始
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/install/" class="md-nav__link">
+        Install Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/uiauto2-driver/" class="md-nav__link">
+        Install the UiAutomator2 Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_4" type="checkbox" id="__nav_3_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4">
+          编写测试
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="编写测试" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          编写测试
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-js/" class="md-nav__link">
+        Write a Test (JS)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-py/" class="md-nav__link">
+        Write a Test (Python)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-java/" class="md-nav__link">
+        Write a Test (Java)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/next-steps/" class="md-nav__link">
+        Next Steps
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          命令行参考
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="命令行参考" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          命令行参考
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        命令行介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/args/" class="md-nav__link">
+        Server CLI Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/extensions/" class="md-nav__link">
+        The Extension CLI
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          指南
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="指南" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          指南
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/migrating-1-to-2/" class="md-nav__link">
+        自 Appium 1.x 迁移到 Appium 2.x
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/managing-exts/" class="md-nav__link">
+        Managing Appium Drivers and Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/config/" class="md-nav__link">
+        The Appium Config File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/security/" class="md-nav__link">
+        Appium Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/caps/" class="md-nav__link">
+        Capabilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/context/" class="md-nav__link">
+        The Context API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/settings/" class="md-nav__link">
+        The Settings API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/execute-script-overload/" class="md-nav__link">
+        Execute Script Overloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/event-timing/" class="md-nav__link">
+        The Event Timing API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/log-filters/" class="md-nav__link">
+        Log Filtering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/grid/" class="md-nav__link">
+        Appium and Selenium Grid
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          生态系统
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="生态系统" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          生态系统
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecosystem/" class="md-nav__link">
+        Appium生态系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_2" type="checkbox" id="__nav_6_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2">
+          开发 Appium 扩展
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="开发 Appium 扩展" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          开发 Appium 扩展
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecosystem/build-drivers/" class="md-nav__link">
+        Building Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecosystem/build-plugins/" class="md-nav__link">
+        Building Appium Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecosystem/build-docs/" class="md-nav__link">
+        Building Docs for Appium Extensions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        贡献
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/" class="md-nav__link">
+        更多 Appium 资源
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/appium/appium/issues" class="md-nav__link">
+        问题
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-session" class="md-nav__link">
+    POST /session
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionid" class="md-nav__link">
+    GET /session/:sessionId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionid" class="md-nav__link">
+    DELETE /session/:sessionId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidvendorcdpexecute" class="md-nav__link">
+    POST /session/:sessionId/:vendor/cdp/execute
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/:vendor/cdp/execute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidaccept_alert" class="md-nav__link">
+    POST /session/:sessionId/accept_alert
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidactions" class="md-nav__link">
+    POST /session/:sessionId/actions
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_1" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidactions" class="md-nav__link">
+    DELETE /session/:sessionId/actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalertaccept" class="md-nav__link">
+    POST /session/:sessionId/alert/accept
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalertdismiss" class="md-nav__link">
+    POST /session/:sessionId/alert/dismiss
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidalerttext" class="md-nav__link">
+    GET /session/:sessionId/alert/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalerttext" class="md-nav__link">
+    POST /session/:sessionId/alert/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidalert_text" class="md-nav__link">
+    GET /session/:sessionId/alert_text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalert_text" class="md-nav__link">
+    POST /session/:sessionId/alert_text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappbackground" class="md-nav__link">
+    POST /session/:sessionId/appium/app/background
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/app/background">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_2" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappclose" class="md-nav__link">
+    POST /session/:sessionId/appium/app/close
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappend_test_coverage" class="md-nav__link">
+    POST /session/:sessionId/appium/app/end_test_coverage
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/app/end_test_coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_3" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumapplaunch" class="md-nav__link">
+    POST /session/:sessionId/appium/app/launch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappreset" class="md-nav__link">
+    POST /session/:sessionId/appium/app/reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappstrings" class="md-nav__link">
+    POST /session/:sessionId/appium/app/strings
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/app/strings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_1" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceactivate_app" class="md-nav__link">
+    POST /session/:sessionId/appium/device/activate_app
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/activate_app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_2" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceapp_installed" class="md-nav__link">
+    POST /session/:sessionId/appium/device/app_installed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceapp_state" class="md-nav__link">
+    POST /session/:sessionId/appium/device/app_state
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumdevicecurrent_activity" class="md-nav__link">
+    GET /session/:sessionId/appium/device/current_activity
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumdevicecurrent_package" class="md-nav__link">
+    GET /session/:sessionId/appium/device/current_package
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumdevicedisplay_density" class="md-nav__link">
+    GET /session/:sessionId/appium/device/display_density
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicefinger_print" class="md-nav__link">
+    POST /session/:sessionId/appium/device/finger_print
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/finger_print">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_4" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceget_clipboard" class="md-nav__link">
+    POST /session/:sessionId/appium/device/get_clipboard
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/get_clipboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_3" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicegsm_call" class="md-nav__link">
+    POST /session/:sessionId/appium/device/gsm_call
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/gsm_call">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_5" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicegsm_signal" class="md-nav__link">
+    POST /session/:sessionId/appium/device/gsm_signal
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/gsm_signal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_4" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicegsm_voice" class="md-nav__link">
+    POST /session/:sessionId/appium/device/gsm_voice
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/gsm_voice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_6" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicehide_keyboard" class="md-nav__link">
+    POST /session/:sessionId/appium/device/hide_keyboard
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/hide_keyboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_5" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceinstall_app" class="md-nav__link">
+    POST /session/:sessionId/appium/device/install_app
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/install_app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_7" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_6" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumdeviceis_keyboard_shown" class="md-nav__link">
+    GET /session/:sessionId/appium/device/is_keyboard_shown
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceis_locked" class="md-nav__link">
+    POST /session/:sessionId/appium/device/is_locked
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicekeyevent" class="md-nav__link">
+    POST /session/:sessionId/appium/device/keyevent
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/keyevent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_8" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_7" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicelock" class="md-nav__link">
+    POST /session/:sessionId/appium/device/lock
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/lock">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_8" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicelong_press_keycode" class="md-nav__link">
+    POST /session/:sessionId/appium/device/long_press_keycode
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/long_press_keycode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_9" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_9" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicenetwork_speed" class="md-nav__link">
+    POST /session/:sessionId/appium/device/network_speed
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/network_speed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_10" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceopen_notifications" class="md-nav__link">
+    POST /session/:sessionId/appium/device/open_notifications
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepower_ac" class="md-nav__link">
+    POST /session/:sessionId/appium/device/power_ac
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/power_ac">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_11" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepower_capacity" class="md-nav__link">
+    POST /session/:sessionId/appium/device/power_capacity
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/power_capacity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_12" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepress_keycode" class="md-nav__link">
+    POST /session/:sessionId/appium/device/press_keycode
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/press_keycode">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_13" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_10" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepull_file" class="md-nav__link">
+    POST /session/:sessionId/appium/device/pull_file
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/pull_file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_14" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepull_folder" class="md-nav__link">
+    POST /session/:sessionId/appium/device/pull_folder
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/pull_folder">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_15" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicepush_file" class="md-nav__link">
+    POST /session/:sessionId/appium/device/push_file
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/push_file">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_16" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceremove_app" class="md-nav__link">
+    POST /session/:sessionId/appium/device/remove_app
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/remove_app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_11" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicerotate" class="md-nav__link">
+    POST /session/:sessionId/appium/device/rotate
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/rotate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_17" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_12" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicesend_sms" class="md-nav__link">
+    POST /session/:sessionId/appium/device/send_sms
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/send_sms">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_18" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceset_clipboard" class="md-nav__link">
+    POST /session/:sessionId/appium/device/set_clipboard
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/set_clipboard">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_19" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_13" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceshake" class="md-nav__link">
+    POST /session/:sessionId/appium/device/shake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicestart_activity" class="md-nav__link">
+    POST /session/:sessionId/appium/device/start_activity
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/start_activity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_20" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_14" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumdevicesystem_bars" class="md-nav__link">
+    GET /session/:sessionId/appium/device/system_bars
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicesystem_time" class="md-nav__link">
+    POST /session/:sessionId/appium/device/system_time
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/system_time">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_15" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceterminate_app" class="md-nav__link">
+    POST /session/:sessionId/appium/device/terminate_app
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/device/terminate_app">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_16" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicetoggle_airplane_mode" class="md-nav__link">
+    POST /session/:sessionId/appium/device/toggle_airplane_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicetoggle_data" class="md-nav__link">
+    POST /session/:sessionId/appium/device/toggle_data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicetoggle_location_services" class="md-nav__link">
+    POST /session/:sessionId/appium/device/toggle_location_services
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdevicetoggle_wifi" class="md-nav__link">
+    POST /session/:sessionId/appium/device/toggle_wifi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceunlock" class="md-nav__link">
+    POST /session/:sessionId/appium/device/unlock
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumelementelementidreplace_value" class="md-nav__link">
+    POST /session/:sessionId/appium/element/:elementId/replace_value
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/element/:elementId/replace_value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_17" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumelementelementidvalue" class="md-nav__link">
+    POST /session/:sessionId/appium/element/:elementId/value
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/element/:elementId/value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_18" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumevents" class="md-nav__link">
+    POST /session/:sessionId/appium/events
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_19" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumgetperformancedata" class="md-nav__link">
+    POST /session/:sessionId/appium/getPerformanceData
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/getPerformanceData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_21" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_20" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumlog_event" class="md-nav__link">
+    POST /session/:sessionId/appium/log_event
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/log_event">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_22" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumperformancedatatypes" class="md-nav__link">
+    POST /session/:sessionId/appium/performanceData/types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumreceive_async_response" class="md-nav__link">
+    POST /session/:sessionId/appium/receive_async_response
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/receive_async_response">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_23" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumsettings" class="md-nav__link">
+    POST /session/:sessionId/appium/settings
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_24" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumsettings" class="md-nav__link">
+    GET /session/:sessionId/appium/settings
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumsimulatortoggle_touch_id_enrollment" class="md-nav__link">
+    POST /session/:sessionId/appium/simulator/toggle_touch_id_enrollment
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/simulator/toggle_touch_id_enrollment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_21" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumsimulatortouch_id" class="md-nav__link">
+    POST /session/:sessionId/appium/simulator/touch_id
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/simulator/touch_id">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_25" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumstart_recording_screen" class="md-nav__link">
+    POST /session/:sessionId/appium/start_recording_screen
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/start_recording_screen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_22" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumstop_recording_screen" class="md-nav__link">
+    POST /session/:sessionId/appium/stop_recording_screen
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/stop_recording_screen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_23" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidback" class="md-nav__link">
+    POST /session/:sessionId/back
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidbuttondown" class="md-nav__link">
+    POST /session/:sessionId/buttondown
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/buttondown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_24" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidbuttonup" class="md-nav__link">
+    POST /session/:sessionId/buttonup
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/buttonup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_25" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidclick" class="md-nav__link">
+    POST /session/:sessionId/click
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/click">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_26" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcontext" class="md-nav__link">
+    GET /session/:sessionId/context
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidcontext" class="md-nav__link">
+    POST /session/:sessionId/context
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_26" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcontexts" class="md-nav__link">
+    GET /session/:sessionId/contexts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcookie" class="md-nav__link">
+    GET /session/:sessionId/cookie
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidcookie" class="md-nav__link">
+    POST /session/:sessionId/cookie
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/cookie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_27" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidcookie" class="md-nav__link">
+    DELETE /session/:sessionId/cookie
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcookiename" class="md-nav__link">
+    GET /session/:sessionId/cookie/:name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidcookiename" class="md-nav__link">
+    DELETE /session/:sessionId/cookie/:name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessioniddismiss_alert" class="md-nav__link">
+    POST /session/:sessionId/dismiss_alert
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessioniddoubleclick" class="md-nav__link">
+    POST /session/:sessionId/doubleclick
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelement" class="md-nav__link">
+    POST /session/:sessionId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_28" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidattributename" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/attribute/:name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidclear" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/clear
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidclick" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/click
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidcsspropertyname" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/css/:propertyName
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementiddisplayed" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/displayed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidelement" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_29" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidelements" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_30" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidenabled" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/enabled
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidequalsotherid" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/equals/:otherId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidlocation" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidlocation_in_view" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/location_in_view
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidname" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidpageindex" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/pageIndex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidpropertyname" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/property/:name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidrect" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/rect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidscreenshot" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/screenshot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidselected" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/selected
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidshadow" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/shadow
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidsize" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidsubmit" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/submit
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidtext" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidvalue" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/value
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_27" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementactive" class="md-nav__link">
+    POST /session/:sessionId/element/active
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelements" class="md-nav__link">
+    POST /session/:sessionId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_31" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecute" class="md-nav__link">
+    POST /session/:sessionId/execute
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_32" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecuteasync" class="md-nav__link">
+    POST /session/:sessionId/execute/async
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute/async">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_33" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecutesync" class="md-nav__link">
+    POST /session/:sessionId/execute/sync
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute/sync">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_34" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecute_async" class="md-nav__link">
+    POST /session/:sessionId/execute_async
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute_async">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_35" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidforward" class="md-nav__link">
+    POST /session/:sessionId/forward
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidframe" class="md-nav__link">
+    POST /session/:sessionId/frame
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/frame">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_36" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidimeactivate" class="md-nav__link">
+    POST /session/:sessionId/ime/activate
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/ime/activate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_37" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidimeactivated" class="md-nav__link">
+    GET /session/:sessionId/ime/activated
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidimeactive_engine" class="md-nav__link">
+    GET /session/:sessionId/ime/active_engine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidimeavailable_engines" class="md-nav__link">
+    GET /session/:sessionId/ime/available_engines
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidimedeactivate" class="md-nav__link">
+    POST /session/:sessionId/ime/deactivate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidkeys" class="md-nav__link">
+    POST /session/:sessionId/keys
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_38" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidlocation" class="md-nav__link">
+    GET /session/:sessionId/location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidlocation" class="md-nav__link">
+    POST /session/:sessionId/location
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/location">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_39" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidlog" class="md-nav__link">
+    POST /session/:sessionId/log
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_40" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidlogtypes" class="md-nav__link">
+    GET /session/:sessionId/log/types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidmoveto" class="md-nav__link">
+    POST /session/:sessionId/moveto
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/moveto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_28" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidnetwork_connection" class="md-nav__link">
+    GET /session/:sessionId/network_connection
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidnetwork_connection" class="md-nav__link">
+    POST /session/:sessionId/network_connection
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/network_connection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_41" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidorientation" class="md-nav__link">
+    GET /session/:sessionId/orientation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidorientation" class="md-nav__link">
+    POST /session/:sessionId/orientation
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/orientation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_42" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidreceive_async_response" class="md-nav__link">
+    POST /session/:sessionId/receive_async_response
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/receive_async_response">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_43" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidrefresh" class="md-nav__link">
+    POST /session/:sessionId/refresh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidrotation" class="md-nav__link">
+    GET /session/:sessionId/rotation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidrotation" class="md-nav__link">
+    POST /session/:sessionId/rotation
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/rotation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_44" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidscreenshot" class="md-nav__link">
+    GET /session/:sessionId/screenshot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidscreenshotelementid" class="md-nav__link">
+    GET /session/:sessionId/screenshot/:elementId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidselog" class="md-nav__link">
+    POST /session/:sessionId/se/log
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/se/log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_45" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidselogtypes" class="md-nav__link">
+    GET /session/:sessionId/se/log/types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidshadowshadowidelement" class="md-nav__link">
+    POST /session/:sessionId/shadow/:shadowId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/shadow/:shadowId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_46" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidshadowshadowidelements" class="md-nav__link">
+    POST /session/:sessionId/shadow/:shadowId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/shadow/:shadowId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_47" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidsource" class="md-nav__link">
+    GET /session/:sessionId/source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidtimeouts" class="md-nav__link">
+    GET /session/:sessionId/timeouts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtimeouts" class="md-nav__link">
+    POST /session/:sessionId/timeouts
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/timeouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_29" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtimeoutsasync_script" class="md-nav__link">
+    POST /session/:sessionId/timeouts/async_script
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/timeouts/async_script">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_48" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtimeoutsimplicit_wait" class="md-nav__link">
+    POST /session/:sessionId/timeouts/implicit_wait
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/timeouts/implicit_wait">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_49" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidtitle" class="md-nav__link">
+    GET /session/:sessionId/title
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchclick" class="md-nav__link">
+    POST /session/:sessionId/touch/click
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/click">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_50" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchdown" class="md-nav__link">
+    POST /session/:sessionId/touch/down
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/down">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_51" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchflick" class="md-nav__link">
+    POST /session/:sessionId/touch/flick
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/flick">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_30" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchlongclick" class="md-nav__link">
+    POST /session/:sessionId/touch/longclick
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/longclick">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_52" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchmove" class="md-nav__link">
+    POST /session/:sessionId/touch/move
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/move">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_53" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchmultiperform" class="md-nav__link">
+    POST /session/:sessionId/touch/multi/perform
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/multi/perform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_54" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_31" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchperform" class="md-nav__link">
+    POST /session/:sessionId/touch/perform
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/perform">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_55" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchup" class="md-nav__link">
+    POST /session/:sessionId/touch/up
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_56" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidurl" class="md-nav__link">
+    GET /session/:sessionId/url
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidurl" class="md-nav__link">
+    POST /session/:sessionId/url
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/url">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_57" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwebauthnauthenticator" class="md-nav__link">
+    POST /session/:sessionId/webauthn/authenticator
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/webauthn/authenticator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_58" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_32" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidwebauthnauthenticatorauthenticatorid" class="md-nav__link">
+    DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwebauthnauthenticatorauthenticatoridcredential" class="md-nav__link">
+    POST /session/:sessionId/webauthn/authenticator/:authenticatorId/credential
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/webauthn/authenticator/:authenticatorId/credential">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_59" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_33" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwebauthnauthenticatorauthenticatoridcredentials" class="md-nav__link">
+    GET /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidwebauthnauthenticatorauthenticatoridcredentials" class="md-nav__link">
+    DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidwebauthnauthenticatorauthenticatoridcredentialscredentialid" class="md-nav__link">
+    DELETE /session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwebauthnauthenticatorauthenticatoriduv" class="md-nav__link">
+    POST /session/:sessionId/webauthn/authenticator/:authenticatorId/uv
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/webauthn/authenticator/:authenticatorId/uv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_60" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindow" class="md-nav__link">
+    GET /session/:sessionId/window
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindow" class="md-nav__link">
+    POST /session/:sessionId/window
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/window">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_34" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidwindow" class="md-nav__link">
+    DELETE /session/:sessionId/window
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowwindowhandlemaximize" class="md-nav__link">
+    POST /session/:sessionId/window/:windowhandle/maximize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowwindowhandlesize" class="md-nav__link">
+    GET /session/:sessionId/window/:windowhandle/size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowfullscreen" class="md-nav__link">
+    POST /session/:sessionId/window/fullscreen
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowhandle" class="md-nav__link">
+    GET /session/:sessionId/window/handle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowhandles" class="md-nav__link">
+    GET /session/:sessionId/window/handles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowmaximize" class="md-nav__link">
+    POST /session/:sessionId/window/maximize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowminimize" class="md-nav__link">
+    POST /session/:sessionId/window/minimize
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindownew" class="md-nav__link">
+    POST /session/:sessionId/window/new
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/window/new">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_35" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowrect" class="md-nav__link">
+    GET /session/:sessionId/window/rect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowrect" class="md-nav__link">
+    POST /session/:sessionId/window/rect
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/window/rect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_61" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindow_handle" class="md-nav__link">
+    GET /session/:sessionId/window_handle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindow_handles" class="md-nav__link">
+    GET /session/:sessionId/window_handles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessions" class="md-nav__link">
+    GET /sessions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-status" class="md-nav__link">
+    GET /status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidcomputedlabel" class="md-nav__link">
+    GET session/:sessionId/element/:elementId/computedlabel
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidcomputedrole" class="md-nav__link">
+    GET session/:sessionId/element/:elementId/computedrole
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/zh/reference/base_driver.md" title="编辑此页" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+<h1 id="appium-commands-appiumbase-driver">appium: commands: @appium/base-driver</h1>
+<h2 id="commands">Commands</h2>
+<h3 id="post-session"><code>POST</code> <code>/session</code></h3>
+<h4 id="optional-parameters">Optional Parameters</h4>
+<ul>
+<li><code>desiredCapabilities</code></li>
+<li><code>requiredCapabilities</code></li>
+<li><code>capabilities</code></li>
+</ul>
+<h3 id="get-sessionsessionid"><code>GET</code> <code>/session/:sessionId</code></h3>
+<h3 id="delete-sessionsessionid"><code>DELETE</code> <code>/session/:sessionId</code></h3>
+<h3 id="post-sessionsessionidvendorcdpexecute"><code>POST</code> <code>/session/:sessionId/:vendor/cdp/execute</code></h3>
+<h4 id="required-parameters">Required Parameters</h4>
+<ul>
+<li>
+<p><code>cmd</code></p>
+</li>
+<li>
+<p><code>params</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidaccept_alert"><code>POST</code> <code>/session/:sessionId/accept_alert</code></h3>
+<h3 id="post-sessionsessionidactions"><code>POST</code> <code>/session/:sessionId/actions</code></h3>
+<h4 id="required-parameters_1">Required Parameters</h4>
+<ul>
+<li><code>actions</code></li>
+</ul>
+<h3 id="delete-sessionsessionidactions"><code>DELETE</code> <code>/session/:sessionId/actions</code></h3>
+<h3 id="post-sessionsessionidalertaccept"><code>POST</code> <code>/session/:sessionId/alert/accept</code></h3>
+<h3 id="post-sessionsessionidalertdismiss"><code>POST</code> <code>/session/:sessionId/alert/dismiss</code></h3>
+<h3 id="get-sessionsessionidalerttext"><code>GET</code> <code>/session/:sessionId/alert/text</code></h3>
+<h3 id="post-sessionsessionidalerttext"><code>POST</code> <code>/session/:sessionId/alert/text</code></h3>
+<h3 id="get-sessionsessionidalert_text"><code>GET</code> <code>/session/:sessionId/alert_text</code></h3>
+<h3 id="post-sessionsessionidalert_text"><code>POST</code> <code>/session/:sessionId/alert_text</code></h3>
+<h3 id="post-sessionsessionidappiumappbackground"><code>POST</code> <code>/session/:sessionId/appium/app/background</code></h3>
+<h4 id="required-parameters_2">Required Parameters</h4>
+<ul>
+<li><code>seconds</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumappclose"><code>POST</code> <code>/session/:sessionId/appium/app/close</code></h3>
+<h3 id="post-sessionsessionidappiumappend_test_coverage"><code>POST</code> <code>/session/:sessionId/appium/app/end_test_coverage</code></h3>
+<h4 id="required-parameters_3">Required Parameters</h4>
+<ul>
+<li>
+<p><code>intent</code></p>
+</li>
+<li>
+<p><code>path</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidappiumapplaunch"><code>POST</code> <code>/session/:sessionId/appium/app/launch</code></h3>
+<h3 id="post-sessionsessionidappiumappreset"><code>POST</code> <code>/session/:sessionId/appium/app/reset</code></h3>
+<h3 id="post-sessionsessionidappiumappstrings"><code>POST</code> <code>/session/:sessionId/appium/app/strings</code></h3>
+<h4 id="optional-parameters_1">Optional Parameters</h4>
+<ul>
+<li><code>language</code></li>
+<li><code>stringFile</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceactivate_app"><code>POST</code> <code>/session/:sessionId/appium/device/activate_app</code></h3>
+<h4 id="optional-parameters_2">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceapp_installed"><code>POST</code> <code>/session/:sessionId/appium/device/app_installed</code></h3>
+<h3 id="post-sessionsessionidappiumdeviceapp_state"><code>POST</code> <code>/session/:sessionId/appium/device/app_state</code></h3>
+<h3 id="get-sessionsessionidappiumdevicecurrent_activity"><code>GET</code> <code>/session/:sessionId/appium/device/current_activity</code></h3>
+<h3 id="get-sessionsessionidappiumdevicecurrent_package"><code>GET</code> <code>/session/:sessionId/appium/device/current_package</code></h3>
+<h3 id="get-sessionsessionidappiumdevicedisplay_density"><code>GET</code> <code>/session/:sessionId/appium/device/display_density</code></h3>
+<h3 id="post-sessionsessionidappiumdevicefinger_print"><code>POST</code> <code>/session/:sessionId/appium/device/finger_print</code></h3>
+<h4 id="required-parameters_4">Required Parameters</h4>
+<ul>
+<li><code>fingerprintId</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceget_clipboard"><code>POST</code> <code>/session/:sessionId/appium/device/get_clipboard</code></h3>
+<h4 id="optional-parameters_3">Optional Parameters</h4>
+<ul>
+<li><code>contentType</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicegsm_call"><code>POST</code> <code>/session/:sessionId/appium/device/gsm_call</code></h3>
+<h4 id="required-parameters_5">Required Parameters</h4>
+<ul>
+<li>
+<p><code>phoneNumber</code></p>
+</li>
+<li>
+<p><code>action</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicegsm_signal"><code>POST</code> <code>/session/:sessionId/appium/device/gsm_signal</code></h3>
+<h4 id="optional-parameters_4">Optional Parameters</h4>
+<ul>
+<li><code>signalStrength</code></li>
+<li><code>signalStrengh</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicegsm_voice"><code>POST</code> <code>/session/:sessionId/appium/device/gsm_voice</code></h3>
+<h4 id="required-parameters_6">Required Parameters</h4>
+<ul>
+<li><code>state</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicehide_keyboard"><code>POST</code> <code>/session/:sessionId/appium/device/hide_keyboard</code></h3>
+<h4 id="optional-parameters_5">Optional Parameters</h4>
+<ul>
+<li><code>strategy</code></li>
+<li><code>key</code></li>
+<li><code>keyCode</code></li>
+<li><code>keyName</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceinstall_app"><code>POST</code> <code>/session/:sessionId/appium/device/install_app</code></h3>
+<h4 id="required-parameters_7">Required Parameters</h4>
+<ul>
+<li><code>appPath</code></li>
+</ul>
+<h4 id="optional-parameters_6">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="get-sessionsessionidappiumdeviceis_keyboard_shown"><code>GET</code> <code>/session/:sessionId/appium/device/is_keyboard_shown</code></h3>
+<h3 id="post-sessionsessionidappiumdeviceis_locked"><code>POST</code> <code>/session/:sessionId/appium/device/is_locked</code></h3>
+<h3 id="post-sessionsessionidappiumdevicekeyevent"><code>POST</code> <code>/session/:sessionId/appium/device/keyevent</code></h3>
+<h4 id="required-parameters_8">Required Parameters</h4>
+<ul>
+<li><code>keycode</code></li>
+</ul>
+<h4 id="optional-parameters_7">Optional Parameters</h4>
+<ul>
+<li><code>metastate</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicelock"><code>POST</code> <code>/session/:sessionId/appium/device/lock</code></h3>
+<h4 id="optional-parameters_8">Optional Parameters</h4>
+<ul>
+<li><code>seconds</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicelong_press_keycode"><code>POST</code> <code>/session/:sessionId/appium/device/long_press_keycode</code></h3>
+<h4 id="required-parameters_9">Required Parameters</h4>
+<ul>
+<li><code>keycode</code></li>
+</ul>
+<h4 id="optional-parameters_9">Optional Parameters</h4>
+<ul>
+<li><code>metastate</code></li>
+<li><code>flags</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicenetwork_speed"><code>POST</code> <code>/session/:sessionId/appium/device/network_speed</code></h3>
+<h4 id="required-parameters_10">Required Parameters</h4>
+<ul>
+<li><code>netspeed</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceopen_notifications"><code>POST</code> <code>/session/:sessionId/appium/device/open_notifications</code></h3>
+<h3 id="post-sessionsessionidappiumdevicepower_ac"><code>POST</code> <code>/session/:sessionId/appium/device/power_ac</code></h3>
+<h4 id="required-parameters_11">Required Parameters</h4>
+<ul>
+<li><code>state</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicepower_capacity"><code>POST</code> <code>/session/:sessionId/appium/device/power_capacity</code></h3>
+<h4 id="required-parameters_12">Required Parameters</h4>
+<ul>
+<li><code>percent</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicepress_keycode"><code>POST</code> <code>/session/:sessionId/appium/device/press_keycode</code></h3>
+<h4 id="required-parameters_13">Required Parameters</h4>
+<ul>
+<li><code>keycode</code></li>
+</ul>
+<h4 id="optional-parameters_10">Optional Parameters</h4>
+<ul>
+<li><code>metastate</code></li>
+<li><code>flags</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicepull_file"><code>POST</code> <code>/session/:sessionId/appium/device/pull_file</code></h3>
+<h4 id="required-parameters_14">Required Parameters</h4>
+<ul>
+<li><code>path</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicepull_folder"><code>POST</code> <code>/session/:sessionId/appium/device/pull_folder</code></h3>
+<h4 id="required-parameters_15">Required Parameters</h4>
+<ul>
+<li><code>path</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicepush_file"><code>POST</code> <code>/session/:sessionId/appium/device/push_file</code></h3>
+<h4 id="required-parameters_16">Required Parameters</h4>
+<ul>
+<li>
+<p><code>path</code></p>
+</li>
+<li>
+<p><code>data</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceremove_app"><code>POST</code> <code>/session/:sessionId/appium/device/remove_app</code></h3>
+<h4 id="optional-parameters_11">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicerotate"><code>POST</code> <code>/session/:sessionId/appium/device/rotate</code></h3>
+<h4 id="required-parameters_17">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+<li>
+<p><code>radius</code></p>
+</li>
+<li>
+<p><code>rotation</code></p>
+</li>
+<li>
+<p><code>touchCount</code></p>
+</li>
+<li>
+<p><code>duration</code></p>
+</li>
+</ul>
+<h4 id="optional-parameters_12">Optional Parameters</h4>
+<ul>
+<li><code>element</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicesend_sms"><code>POST</code> <code>/session/:sessionId/appium/device/send_sms</code></h3>
+<h4 id="required-parameters_18">Required Parameters</h4>
+<ul>
+<li>
+<p><code>phoneNumber</code></p>
+</li>
+<li>
+<p><code>message</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceset_clipboard"><code>POST</code> <code>/session/:sessionId/appium/device/set_clipboard</code></h3>
+<h4 id="required-parameters_19">Required Parameters</h4>
+<ul>
+<li><code>content</code></li>
+</ul>
+<h4 id="optional-parameters_13">Optional Parameters</h4>
+<ul>
+<li><code>contentType</code></li>
+<li><code>label</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceshake"><code>POST</code> <code>/session/:sessionId/appium/device/shake</code></h3>
+<h3 id="post-sessionsessionidappiumdevicestart_activity"><code>POST</code> <code>/session/:sessionId/appium/device/start_activity</code></h3>
+<h4 id="required-parameters_20">Required Parameters</h4>
+<ul>
+<li>
+<p><code>appPackage</code></p>
+</li>
+<li>
+<p><code>appActivity</code></p>
+</li>
+</ul>
+<h4 id="optional-parameters_14">Optional Parameters</h4>
+<ul>
+<li><code>appWaitPackage</code></li>
+<li><code>appWaitActivity</code></li>
+<li><code>intentAction</code></li>
+<li><code>intentCategory</code></li>
+<li><code>intentFlags</code></li>
+<li><code>optionalIntentArguments</code></li>
+<li><code>dontStopAppOnReset</code></li>
+</ul>
+<h3 id="get-sessionsessionidappiumdevicesystem_bars"><code>GET</code> <code>/session/:sessionId/appium/device/system_bars</code></h3>
+<h3 id="post-sessionsessionidappiumdevicesystem_time"><code>POST</code> <code>/session/:sessionId/appium/device/system_time</code></h3>
+<h4 id="optional-parameters_15">Optional Parameters</h4>
+<ul>
+<li><code>format</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdeviceterminate_app"><code>POST</code> <code>/session/:sessionId/appium/device/terminate_app</code></h3>
+<h4 id="optional-parameters_16">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumdevicetoggle_airplane_mode"><code>POST</code> <code>/session/:sessionId/appium/device/toggle_airplane_mode</code></h3>
+<h3 id="post-sessionsessionidappiumdevicetoggle_data"><code>POST</code> <code>/session/:sessionId/appium/device/toggle_data</code></h3>
+<h3 id="post-sessionsessionidappiumdevicetoggle_location_services"><code>POST</code> <code>/session/:sessionId/appium/device/toggle_location_services</code></h3>
+<h3 id="post-sessionsessionidappiumdevicetoggle_wifi"><code>POST</code> <code>/session/:sessionId/appium/device/toggle_wifi</code></h3>
+<h3 id="post-sessionsessionidappiumdeviceunlock"><code>POST</code> <code>/session/:sessionId/appium/device/unlock</code></h3>
+<h3 id="post-sessionsessionidappiumelementelementidreplace_value"><code>POST</code> <code>/session/:sessionId/appium/element/:elementId/replace_value</code></h3>
+<h4 id="optional-parameters_17">Optional Parameters</h4>
+<ul>
+<li><code>value</code></li>
+<li><code>text</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumelementelementidvalue"><code>POST</code> <code>/session/:sessionId/appium/element/:elementId/value</code></h3>
+<h4 id="optional-parameters_18">Optional Parameters</h4>
+<ul>
+<li><code>value</code></li>
+<li><code>text</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumevents"><code>POST</code> <code>/session/:sessionId/appium/events</code></h3>
+<h4 id="optional-parameters_19">Optional Parameters</h4>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumgetperformancedata"><code>POST</code> <code>/session/:sessionId/appium/getPerformanceData</code></h3>
+<h4 id="required-parameters_21">Required Parameters</h4>
+<ul>
+<li>
+<p><code>packageName</code></p>
+</li>
+<li>
+<p><code>dataType</code></p>
+</li>
+</ul>
+<h4 id="optional-parameters_20">Optional Parameters</h4>
+<ul>
+<li><code>dataReadTimeout</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumlog_event"><code>POST</code> <code>/session/:sessionId/appium/log_event</code></h3>
+<h4 id="required-parameters_22">Required Parameters</h4>
+<ul>
+<li>
+<p><code>vendor</code></p>
+</li>
+<li>
+<p><code>event</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidappiumperformancedatatypes"><code>POST</code> <code>/session/:sessionId/appium/performanceData/types</code></h3>
+<h3 id="post-sessionsessionidappiumreceive_async_response"><code>POST</code> <code>/session/:sessionId/appium/receive_async_response</code></h3>
+<h4 id="required-parameters_23">Required Parameters</h4>
+<ul>
+<li><code>response</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumsettings"><code>POST</code> <code>/session/:sessionId/appium/settings</code></h3>
+<h4 id="required-parameters_24">Required Parameters</h4>
+<ul>
+<li><code>settings</code></li>
+</ul>
+<h3 id="get-sessionsessionidappiumsettings"><code>GET</code> <code>/session/:sessionId/appium/settings</code></h3>
+<h3 id="post-sessionsessionidappiumsimulatortoggle_touch_id_enrollment"><code>POST</code> <code>/session/:sessionId/appium/simulator/toggle_touch_id_enrollment</code></h3>
+<h4 id="optional-parameters_21">Optional Parameters</h4>
+<ul>
+<li><code>enabled</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumsimulatortouch_id"><code>POST</code> <code>/session/:sessionId/appium/simulator/touch_id</code></h3>
+<h4 id="required-parameters_25">Required Parameters</h4>
+<ul>
+<li><code>match</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumstart_recording_screen"><code>POST</code> <code>/session/:sessionId/appium/start_recording_screen</code></h3>
+<h4 id="optional-parameters_22">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="post-sessionsessionidappiumstop_recording_screen"><code>POST</code> <code>/session/:sessionId/appium/stop_recording_screen</code></h3>
+<h4 id="optional-parameters_23">Optional Parameters</h4>
+<ul>
+<li><code>options</code></li>
+</ul>
+<h3 id="post-sessionsessionidback"><code>POST</code> <code>/session/:sessionId/back</code></h3>
+<h3 id="post-sessionsessionidbuttondown"><code>POST</code> <code>/session/:sessionId/buttondown</code></h3>
+<h4 id="optional-parameters_24">Optional Parameters</h4>
+<ul>
+<li><code>button</code></li>
+</ul>
+<h3 id="post-sessionsessionidbuttonup"><code>POST</code> <code>/session/:sessionId/buttonup</code></h3>
+<h4 id="optional-parameters_25">Optional Parameters</h4>
+<ul>
+<li><code>button</code></li>
+</ul>
+<h3 id="post-sessionsessionidclick"><code>POST</code> <code>/session/:sessionId/click</code></h3>
+<h4 id="optional-parameters_26">Optional Parameters</h4>
+<ul>
+<li><code>button</code></li>
+</ul>
+<h3 id="get-sessionsessionidcontext"><code>GET</code> <code>/session/:sessionId/context</code></h3>
+<h3 id="post-sessionsessionidcontext"><code>POST</code> <code>/session/:sessionId/context</code></h3>
+<h4 id="required-parameters_26">Required Parameters</h4>
+<ul>
+<li><code>name</code></li>
+</ul>
+<h3 id="get-sessionsessionidcontexts"><code>GET</code> <code>/session/:sessionId/contexts</code></h3>
+<h3 id="get-sessionsessionidcookie"><code>GET</code> <code>/session/:sessionId/cookie</code></h3>
+<h3 id="post-sessionsessionidcookie"><code>POST</code> <code>/session/:sessionId/cookie</code></h3>
+<h4 id="required-parameters_27">Required Parameters</h4>
+<ul>
+<li><code>cookie</code></li>
+</ul>
+<h3 id="delete-sessionsessionidcookie"><code>DELETE</code> <code>/session/:sessionId/cookie</code></h3>
+<h3 id="get-sessionsessionidcookiename"><code>GET</code> <code>/session/:sessionId/cookie/:name</code></h3>
+<h3 id="delete-sessionsessionidcookiename"><code>DELETE</code> <code>/session/:sessionId/cookie/:name</code></h3>
+<h3 id="post-sessionsessioniddismiss_alert"><code>POST</code> <code>/session/:sessionId/dismiss_alert</code></h3>
+<h3 id="post-sessionsessioniddoubleclick"><code>POST</code> <code>/session/:sessionId/doubleclick</code></h3>
+<h3 id="post-sessionsessionidelement"><code>POST</code> <code>/session/:sessionId/element</code></h3>
+<h4 id="required-parameters_28">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidelementelementidattributename"><code>GET</code> <code>/session/:sessionId/element/:elementId/attribute/:name</code></h3>
+<h3 id="post-sessionsessionidelementelementidclear"><code>POST</code> <code>/session/:sessionId/element/:elementId/clear</code></h3>
+<h3 id="post-sessionsessionidelementelementidclick"><code>POST</code> <code>/session/:sessionId/element/:elementId/click</code></h3>
+<h3 id="get-sessionsessionidelementelementidcsspropertyname"><code>GET</code> <code>/session/:sessionId/element/:elementId/css/:propertyName</code></h3>
+<h3 id="get-sessionsessionidelementelementiddisplayed"><code>GET</code> <code>/session/:sessionId/element/:elementId/displayed</code></h3>
+<h3 id="post-sessionsessionidelementelementidelement"><code>POST</code> <code>/session/:sessionId/element/:elementId/element</code></h3>
+<h4 id="required-parameters_29">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidelementelementidelements"><code>POST</code> <code>/session/:sessionId/element/:elementId/elements</code></h3>
+<h4 id="required-parameters_30">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidelementelementidenabled"><code>GET</code> <code>/session/:sessionId/element/:elementId/enabled</code></h3>
+<h3 id="get-sessionsessionidelementelementidequalsotherid"><code>GET</code> <code>/session/:sessionId/element/:elementId/equals/:otherId</code></h3>
+<h3 id="get-sessionsessionidelementelementidlocation"><code>GET</code> <code>/session/:sessionId/element/:elementId/location</code></h3>
+<h3 id="get-sessionsessionidelementelementidlocation_in_view"><code>GET</code> <code>/session/:sessionId/element/:elementId/location_in_view</code></h3>
+<h3 id="get-sessionsessionidelementelementidname"><code>GET</code> <code>/session/:sessionId/element/:elementId/name</code></h3>
+<h3 id="get-sessionsessionidelementelementidpageindex"><code>GET</code> <code>/session/:sessionId/element/:elementId/pageIndex</code></h3>
+<h3 id="get-sessionsessionidelementelementidpropertyname"><code>GET</code> <code>/session/:sessionId/element/:elementId/property/:name</code></h3>
+<h3 id="get-sessionsessionidelementelementidrect"><code>GET</code> <code>/session/:sessionId/element/:elementId/rect</code></h3>
+<h3 id="get-sessionsessionidelementelementidscreenshot"><code>GET</code> <code>/session/:sessionId/element/:elementId/screenshot</code></h3>
+<h3 id="get-sessionsessionidelementelementidselected"><code>GET</code> <code>/session/:sessionId/element/:elementId/selected</code></h3>
+<h3 id="get-sessionsessionidelementelementidshadow"><code>GET</code> <code>/session/:sessionId/element/:elementId/shadow</code></h3>
+<h3 id="get-sessionsessionidelementelementidsize"><code>GET</code> <code>/session/:sessionId/element/:elementId/size</code></h3>
+<h3 id="post-sessionsessionidelementelementidsubmit"><code>POST</code> <code>/session/:sessionId/element/:elementId/submit</code></h3>
+<h3 id="get-sessionsessionidelementelementidtext"><code>GET</code> <code>/session/:sessionId/element/:elementId/text</code></h3>
+<h3 id="post-sessionsessionidelementelementidvalue"><code>POST</code> <code>/session/:sessionId/element/:elementId/value</code></h3>
+<h4 id="optional-parameters_27">Optional Parameters</h4>
+<ul>
+<li><code>value</code></li>
+<li><code>text</code></li>
+</ul>
+<h3 id="post-sessionsessionidelementactive"><code>POST</code> <code>/session/:sessionId/element/active</code></h3>
+<h3 id="post-sessionsessionidelements"><code>POST</code> <code>/session/:sessionId/elements</code></h3>
+<h4 id="required-parameters_31">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidexecute"><code>POST</code> <code>/session/:sessionId/execute</code></h3>
+<h4 id="required-parameters_32">Required Parameters</h4>
+<ul>
+<li>
+<p><code>script</code></p>
+</li>
+<li>
+<p><code>args</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidexecuteasync"><code>POST</code> <code>/session/:sessionId/execute/async</code></h3>
+<h4 id="required-parameters_33">Required Parameters</h4>
+<ul>
+<li>
+<p><code>script</code></p>
+</li>
+<li>
+<p><code>args</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidexecutesync"><code>POST</code> <code>/session/:sessionId/execute/sync</code></h3>
+<h4 id="required-parameters_34">Required Parameters</h4>
+<ul>
+<li>
+<p><code>script</code></p>
+</li>
+<li>
+<p><code>args</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidexecute_async"><code>POST</code> <code>/session/:sessionId/execute_async</code></h3>
+<h4 id="required-parameters_35">Required Parameters</h4>
+<ul>
+<li>
+<p><code>script</code></p>
+</li>
+<li>
+<p><code>args</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidforward"><code>POST</code> <code>/session/:sessionId/forward</code></h3>
+<h3 id="post-sessionsessionidframe"><code>POST</code> <code>/session/:sessionId/frame</code></h3>
+<h4 id="required-parameters_36">Required Parameters</h4>
+<ul>
+<li><code>id</code></li>
+</ul>
+<h3 id="post-sessionsessionidimeactivate"><code>POST</code> <code>/session/:sessionId/ime/activate</code></h3>
+<h4 id="required-parameters_37">Required Parameters</h4>
+<ul>
+<li><code>engine</code></li>
+</ul>
+<h3 id="get-sessionsessionidimeactivated"><code>GET</code> <code>/session/:sessionId/ime/activated</code></h3>
+<h3 id="get-sessionsessionidimeactive_engine"><code>GET</code> <code>/session/:sessionId/ime/active_engine</code></h3>
+<h3 id="get-sessionsessionidimeavailable_engines"><code>GET</code> <code>/session/:sessionId/ime/available_engines</code></h3>
+<h3 id="post-sessionsessionidimedeactivate"><code>POST</code> <code>/session/:sessionId/ime/deactivate</code></h3>
+<h3 id="post-sessionsessionidkeys"><code>POST</code> <code>/session/:sessionId/keys</code></h3>
+<h4 id="required-parameters_38">Required Parameters</h4>
+<ul>
+<li><code>value</code></li>
+</ul>
+<h3 id="get-sessionsessionidlocation"><code>GET</code> <code>/session/:sessionId/location</code></h3>
+<h3 id="post-sessionsessionidlocation"><code>POST</code> <code>/session/:sessionId/location</code></h3>
+<h4 id="required-parameters_39">Required Parameters</h4>
+<ul>
+<li><code>location</code></li>
+</ul>
+<h3 id="post-sessionsessionidlog"><code>POST</code> <code>/session/:sessionId/log</code></h3>
+<h4 id="required-parameters_40">Required Parameters</h4>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3 id="get-sessionsessionidlogtypes"><code>GET</code> <code>/session/:sessionId/log/types</code></h3>
+<h3 id="post-sessionsessionidmoveto"><code>POST</code> <code>/session/:sessionId/moveto</code></h3>
+<h4 id="optional-parameters_28">Optional Parameters</h4>
+<ul>
+<li><code>element</code></li>
+<li><code>xoffset</code></li>
+<li><code>yoffset</code></li>
+</ul>
+<h3 id="get-sessionsessionidnetwork_connection"><code>GET</code> <code>/session/:sessionId/network_connection</code></h3>
+<h3 id="post-sessionsessionidnetwork_connection"><code>POST</code> <code>/session/:sessionId/network_connection</code></h3>
+<h4 id="required-parameters_41">Required Parameters</h4>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3 id="get-sessionsessionidorientation"><code>GET</code> <code>/session/:sessionId/orientation</code></h3>
+<h3 id="post-sessionsessionidorientation"><code>POST</code> <code>/session/:sessionId/orientation</code></h3>
+<h4 id="required-parameters_42">Required Parameters</h4>
+<ul>
+<li><code>orientation</code></li>
+</ul>
+<h3 id="post-sessionsessionidreceive_async_response"><code>POST</code> <code>/session/:sessionId/receive_async_response</code></h3>
+<h4 id="required-parameters_43">Required Parameters</h4>
+<ul>
+<li>
+<p><code>status</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidrefresh"><code>POST</code> <code>/session/:sessionId/refresh</code></h3>
+<h3 id="get-sessionsessionidrotation"><code>GET</code> <code>/session/:sessionId/rotation</code></h3>
+<h3 id="post-sessionsessionidrotation"><code>POST</code> <code>/session/:sessionId/rotation</code></h3>
+<h4 id="required-parameters_44">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+<li>
+<p><code>z</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidscreenshot"><code>GET</code> <code>/session/:sessionId/screenshot</code></h3>
+<h3 id="get-sessionsessionidscreenshotelementid"><code>GET</code> <code>/session/:sessionId/screenshot/:elementId</code></h3>
+<h3 id="post-sessionsessionidselog"><code>POST</code> <code>/session/:sessionId/se/log</code></h3>
+<h4 id="required-parameters_45">Required Parameters</h4>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3 id="get-sessionsessionidselogtypes"><code>GET</code> <code>/session/:sessionId/se/log/types</code></h3>
+<h3 id="post-sessionsessionidshadowshadowidelement"><code>POST</code> <code>/session/:sessionId/shadow/:shadowId/element</code></h3>
+<h4 id="required-parameters_46">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidshadowshadowidelements"><code>POST</code> <code>/session/:sessionId/shadow/:shadowId/elements</code></h3>
+<h4 id="required-parameters_47">Required Parameters</h4>
+<ul>
+<li>
+<p><code>using</code></p>
+</li>
+<li>
+<p><code>value</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidsource"><code>GET</code> <code>/session/:sessionId/source</code></h3>
+<h3 id="get-sessionsessionidtimeouts"><code>GET</code> <code>/session/:sessionId/timeouts</code></h3>
+<h3 id="post-sessionsessionidtimeouts"><code>POST</code> <code>/session/:sessionId/timeouts</code></h3>
+<h4 id="optional-parameters_29">Optional Parameters</h4>
+<ul>
+<li><code>type</code></li>
+<li><code>ms</code></li>
+<li><code>script</code></li>
+<li><code>pageLoad</code></li>
+<li><code>implicit</code></li>
+</ul>
+<h3 id="post-sessionsessionidtimeoutsasync_script"><code>POST</code> <code>/session/:sessionId/timeouts/async_script</code></h3>
+<h4 id="required-parameters_48">Required Parameters</h4>
+<ul>
+<li><code>ms</code></li>
+</ul>
+<h3 id="post-sessionsessionidtimeoutsimplicit_wait"><code>POST</code> <code>/session/:sessionId/timeouts/implicit_wait</code></h3>
+<h4 id="required-parameters_49">Required Parameters</h4>
+<ul>
+<li><code>ms</code></li>
+</ul>
+<h3 id="get-sessionsessionidtitle"><code>GET</code> <code>/session/:sessionId/title</code></h3>
+<h3 id="post-sessionsessionidtouchclick"><code>POST</code> <code>/session/:sessionId/touch/click</code></h3>
+<h4 id="required-parameters_50">Required Parameters</h4>
+<ul>
+<li><code>element</code></li>
+</ul>
+<h3 id="post-sessionsessionidtouchdown"><code>POST</code> <code>/session/:sessionId/touch/down</code></h3>
+<h4 id="required-parameters_51">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidtouchflick"><code>POST</code> <code>/session/:sessionId/touch/flick</code></h3>
+<h4 id="optional-parameters_30">Optional Parameters</h4>
+<ul>
+<li><code>element</code></li>
+<li><code>xspeed</code></li>
+<li><code>yspeed</code></li>
+<li><code>xoffset</code></li>
+<li><code>yoffset</code></li>
+<li><code>speed</code></li>
+</ul>
+<h3 id="post-sessionsessionidtouchlongclick"><code>POST</code> <code>/session/:sessionId/touch/longclick</code></h3>
+<h4 id="required-parameters_52">Required Parameters</h4>
+<ul>
+<li><code>elements</code></li>
+</ul>
+<h3 id="post-sessionsessionidtouchmove"><code>POST</code> <code>/session/:sessionId/touch/move</code></h3>
+<h4 id="required-parameters_53">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+</ul>
+<h3 id="post-sessionsessionidtouchmultiperform"><code>POST</code> <code>/session/:sessionId/touch/multi/perform</code></h3>
+<h4 id="required-parameters_54">Required Parameters</h4>
+<ul>
+<li><code>actions</code></li>
+</ul>
+<h4 id="optional-parameters_31">Optional Parameters</h4>
+<ul>
+<li><code>elementId</code></li>
+</ul>
+<h3 id="post-sessionsessionidtouchperform"><code>POST</code> <code>/session/:sessionId/touch/perform</code></h3>
+<h4 id="required-parameters_55">Required Parameters</h4>
+<ul>
+<li><code>actions</code></li>
+</ul>
+<h3 id="post-sessionsessionidtouchup"><code>POST</code> <code>/session/:sessionId/touch/up</code></h3>
+<h4 id="required-parameters_56">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidurl"><code>GET</code> <code>/session/:sessionId/url</code></h3>
+<h3 id="post-sessionsessionidurl"><code>POST</code> <code>/session/:sessionId/url</code></h3>
+<h4 id="required-parameters_57">Required Parameters</h4>
+<ul>
+<li><code>url</code></li>
+</ul>
+<h3 id="post-sessionsessionidwebauthnauthenticator"><code>POST</code> <code>/session/:sessionId/webauthn/authenticator</code></h3>
+<h4 id="required-parameters_58">Required Parameters</h4>
+<ul>
+<li>
+<p><code>protocol</code></p>
+</li>
+<li>
+<p><code>transport</code></p>
+</li>
+</ul>
+<h4 id="optional-parameters_32">Optional Parameters</h4>
+<ul>
+<li><code>hasResidentKey</code></li>
+<li><code>hasUserVerification</code></li>
+<li><code>isUserConsenting</code></li>
+<li><code>isUserVerified</code></li>
+</ul>
+<h3 id="delete-sessionsessionidwebauthnauthenticatorauthenticatorid"><code>DELETE</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId</code></h3>
+<h3 id="post-sessionsessionidwebauthnauthenticatorauthenticatoridcredential"><code>POST</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId/credential</code></h3>
+<h4 id="required-parameters_59">Required Parameters</h4>
+<ul>
+<li>
+<p><code>credentialId</code></p>
+</li>
+<li>
+<p><code>isResidentCredential</code></p>
+</li>
+<li>
+<p><code>rpId</code></p>
+</li>
+<li>
+<p><code>privateKey</code></p>
+</li>
+</ul>
+<h4 id="optional-parameters_33">Optional Parameters</h4>
+<ul>
+<li><code>userHandle</code></li>
+<li><code>signCount</code></li>
+</ul>
+<h3 id="get-sessionsessionidwebauthnauthenticatorauthenticatoridcredentials"><code>GET</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials</code></h3>
+<h3 id="delete-sessionsessionidwebauthnauthenticatorauthenticatoridcredentials"><code>DELETE</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials</code></h3>
+<h3 id="delete-sessionsessionidwebauthnauthenticatorauthenticatoridcredentialscredentialid"><code>DELETE</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId/credentials/:credentialId</code></h3>
+<h3 id="post-sessionsessionidwebauthnauthenticatorauthenticatoriduv"><code>POST</code> <code>/session/:sessionId/webauthn/authenticator/:authenticatorId/uv</code></h3>
+<h4 id="required-parameters_60">Required Parameters</h4>
+<ul>
+<li><code>isUserVerified</code></li>
+</ul>
+<h3 id="get-sessionsessionidwindow"><code>GET</code> <code>/session/:sessionId/window</code></h3>
+<h3 id="post-sessionsessionidwindow"><code>POST</code> <code>/session/:sessionId/window</code></h3>
+<h4 id="optional-parameters_34">Optional Parameters</h4>
+<ul>
+<li><code>name</code></li>
+<li><code>handle</code></li>
+</ul>
+<h3 id="delete-sessionsessionidwindow"><code>DELETE</code> <code>/session/:sessionId/window</code></h3>
+<h3 id="post-sessionsessionidwindowwindowhandlemaximize"><code>POST</code> <code>/session/:sessionId/window/:windowhandle/maximize</code></h3>
+<h3 id="get-sessionsessionidwindowwindowhandlesize"><code>GET</code> <code>/session/:sessionId/window/:windowhandle/size</code></h3>
+<h3 id="post-sessionsessionidwindowfullscreen"><code>POST</code> <code>/session/:sessionId/window/fullscreen</code></h3>
+<h3 id="get-sessionsessionidwindowhandle"><code>GET</code> <code>/session/:sessionId/window/handle</code></h3>
+<h3 id="get-sessionsessionidwindowhandles"><code>GET</code> <code>/session/:sessionId/window/handles</code></h3>
+<h3 id="post-sessionsessionidwindowmaximize"><code>POST</code> <code>/session/:sessionId/window/maximize</code></h3>
+<h3 id="post-sessionsessionidwindowminimize"><code>POST</code> <code>/session/:sessionId/window/minimize</code></h3>
+<h3 id="post-sessionsessionidwindownew"><code>POST</code> <code>/session/:sessionId/window/new</code></h3>
+<h4 id="optional-parameters_35">Optional Parameters</h4>
+<ul>
+<li><code>type</code></li>
+</ul>
+<h3 id="get-sessionsessionidwindowrect"><code>GET</code> <code>/session/:sessionId/window/rect</code></h3>
+<h3 id="post-sessionsessionidwindowrect"><code>POST</code> <code>/session/:sessionId/window/rect</code></h3>
+<h4 id="required-parameters_61">Required Parameters</h4>
+<ul>
+<li>
+<p><code>x</code></p>
+</li>
+<li>
+<p><code>y</code></p>
+</li>
+<li>
+<p><code>width</code></p>
+</li>
+<li>
+<p><code>height</code></p>
+</li>
+</ul>
+<h3 id="get-sessionsessionidwindow_handle"><code>GET</code> <code>/session/:sessionId/window_handle</code></h3>
+<h3 id="get-sessionsessionidwindow_handles"><code>GET</code> <code>/session/:sessionId/window_handles</code></h3>
+<h3 id="get-sessions"><code>GET</code> <code>/sessions</code></h3>
+<h3 id="get-status"><code>GET</code> <code>/status</code></h3>
+<h3 id="get-sessionsessionidelementelementidcomputedlabel"><code>GET</code> <code>session/:sessionId/element/:elementId/computedlabel</code></h3>
+<h3 id="get-sessionsessionidelementelementidcomputedrole"><code>GET</code> <code>session/:sessionId/element/:elementId/computedrole</code></h3>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      
+    
+    
+  </body>
+</html>

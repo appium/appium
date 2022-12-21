@@ -6,11 +6,11 @@ const DEFAULT_BRANCH = 'gh-pages';
 const MIKE_VER_STRING = 'mike 1.';
 
 export class Mike {
-  /** @type string */ remote;
-  /** @type string */ branch;
-  /** @type string? */ prefix;
-  /** @type string */ configFile;
-  /** @type boolean */ _mikeVerified = false;
+  /** @type {string} */ remote;
+  /** @type {string} */ branch;
+  /** @type {string?} */ prefix;
+  /** @type {string} */ configFile;
+  /** @type {boolean} */ _mikeVerified = false;
 
   constructor(/** @type MikeOpts */ opts) {
     this.remote = opts.remote || DEFAULT_REMOTE;
@@ -22,7 +22,7 @@ export class Mike {
   /**
    * Throw an error if the 'mike' binary cannot be found
    *
-   * @throws Error
+   * @throws {Error}
    */
   async verifyMike() {
     if (this._mikeVerified) {
@@ -46,7 +46,7 @@ export class Mike {
    * @param {string} cmdName - the name of the mike command to run
    * @param {string[]} cmdArgs - an array of command-specific arguments
    *
-   * @returns string[]
+   * @returns {string[]}
    */
   getMikeArgs(cmdName, cmdArgs) {
     return [
@@ -70,7 +70,7 @@ export class Mike {
    * @param {string[]} [mikeArgs=[]] - the arguments to pass to the mike command
    * @param {boolean?} [verify=true] - whether to verify mike exists first
    *
-   * @returns Promise<import('teen_process').ExecResult<string>>
+   * @returns {Promise<import('teen_process').ExecResult<string>>}
    */
   async exec(mikeCmd, mikeArgs = [], verify = true) {
     if (verify) {
@@ -84,7 +84,7 @@ export class Mike {
   /**
    * Return the list of mike deploys
    *
-   * @returns string[]
+   * @returns {string[]}
    */
   async list() {
     const {stdout} = await this.exec('list');

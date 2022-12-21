@@ -22,9 +22,9 @@ export async function verifyMkdocs() {
 /**
  * Run 'mkdocs build' on a project
  *
- * @param {string} configPath path to mkdocs config yml
- * @param {string} outputDir directory mkdocs should build into
- * @param {?string} theme theme name
+ * @param {string} configPath - path to mkdocs config yml
+ * @param {string} outputDir - directory mkdocs should build into
+ * @param {?string} theme - theme name
  */
 export async function mkdocsBuild(configPath, outputDir, theme = 'mkdocs') {
   await verifyMkdocs();
@@ -34,7 +34,7 @@ export async function mkdocsBuild(configPath, outputDir, theme = 'mkdocs') {
 /**
  * Run 'mkdocs serve' on a project
  *
- * @param {string} configPath path to mkdocs config yml
+ * @param {string} configPath - path to mkdocs config yml
  */
 export async function mkdocsServe(configPath) {
   await verifyMkdocs();

@@ -30,6 +30,7 @@
   "files": [
     "index.js",
     "index.d.ts",
+    "base-mkdocs.yml",
     "lib",
     "build"
   ],

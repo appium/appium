@@ -24,14 +24,14 @@
     "testing"
   ],
   "author": "https://github.com/appium",
-  "types": "./build/plugin.d.ts",
+  "types": "./build/lib/plugin.d.ts",
   "scripts": {
-    "build": "cpy resources build",
-    "clean": "npx rimraf build/resources",
-    "test": "exit 0",
+    "build": "cpy lib/theme/resources build",
+    "clean": "npx rimraf build/lib/theme/resources",
+    "test": "run-s test:unit",
     "test:e2e": "exit 0",
     "test:smoke": "node ./index.js",
-    "test:unit": "exit 0"
+    "test:unit": "mocha --no-timeout \"test/unit/**/*.spec.ts\""
   },
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

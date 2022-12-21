@@ -1,6 +1,8 @@
-import {Comment, DeclarationReflection} from 'typedoc';
+import {Comment, DeclarationReflection, ParameterReflection} from 'typedoc';
+import {AsyncMethodDeclarationReflection, CommentSourceType} from '../../converter';
 import {isExecMethodData} from '../../guards';
-import {AllowedHttpMethod, CommandData, ExecMethodData, Route} from '../types';
+import {CommandData, ExecMethodData} from '../command-data';
+import {AllowedHttpMethod, Route} from '../types';
 import {CommandsReflection} from './commands';
 import {AppiumPluginReflectionKind} from './kind';
 
@@ -50,6 +52,11 @@ export class CommandReflection extends DeclarationReflection {
    */
   public readonly comment?: Comment;
 
+  public readonly commentSource?: CommentSourceType;
+  public readonly refl?: AsyncMethodDeclarationReflection;
+
+  public readonly parameters?: ParameterReflection[];
+
   /**
    * Sets props depending on type of `data`
    * @param data Command or execute method data
@@ -67,7 +74,14 @@ export class CommandReflection extends DeclarationReflection {
     let httpMethod: AllowedHttpMethod;
 
     // common data
-    const {requiredParams, optionalParams, comment} = data;
+    const {
+      requiredParams,
+      optionalParams,
+      comment,
+      methodRefl: refl,
+      commentSource,
+      parameters,
+    } = data;
 
     // kind-specific data
     if (isExecMethodData(data)) {
@@ -92,6 +106,9 @@ export class CommandReflection extends DeclarationReflection {
     this.optionalParams = optionalParams ?? [];
     this.script = script;
     this.comment = comment;
+    this.refl = refl;
+    this.commentSource = commentSource;
+    this.parameters = parameters;
   }
 
   /**

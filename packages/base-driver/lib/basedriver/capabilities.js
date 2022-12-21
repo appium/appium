@@ -40,7 +40,7 @@ function mergeCaps(primary = {}, secondary = {}) {
 
 // Validates caps against a set of constraints
 /**
- * @template {Constraints} [C={}]
+ * @template {Constraints} [C=import('type-fest').EmptyObject]
  * @param {Capabilities<C>} caps
  * @param {C} [constraints]
  * @param {ValidateCapsOpts} [opts]

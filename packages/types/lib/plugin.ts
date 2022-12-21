@@ -70,7 +70,7 @@ export interface Plugin {
  * for managing new command timeouts and command logging, for example:
  * `driver.stopNewCommandTimeout()` -- before running plugin logic
  * `driver.startNewCommandTimeout()` -- after running plugin logic
- * `driver._eventHistory.commands.push({cmd: cmdName, startTime, endTime}) --
+ * `driver._eventHistory.commands.push({cmd: cmdName, startTime, endTime})` --
  * after running plugin logic
  */
 export type NextPluginCallback = () => Promise<void>;

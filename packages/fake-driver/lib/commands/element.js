@@ -64,6 +64,10 @@ export function ElementMixin(Base) {
       await this.setValue('', elementId);
     }
 
+    /**
+     * This comment should be displayed instead of the one from ExternalDriver
+     * @param {string} elementId
+     */
     async click(elementId) {
       this.assertNoAlert();
       let el = this.getElement(elementId);

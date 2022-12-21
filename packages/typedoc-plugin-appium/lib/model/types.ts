@@ -1,5 +1,6 @@
-import {Comment, DeclarationReflection, ProjectReflection} from 'typedoc';
-import {CommandInfo} from './command-info';
+import {DeclarationReflection, ProjectReflection} from 'typedoc';
+import {CommandData, ExecMethodData} from './command-data';
+import {ModuleCommands} from './module-commands';
 
 /**
  * WD spec allows these HTTP methods.
@@ -22,63 +23,9 @@ export type Route = string;
 export type Command = string;
 
 /**
- * Mapping of a command to its {@linkcode CommandData}
+ * All commands for a route.
  */
-export type CommandMap = Map<Command, CommandData>;
-
-/**
- * Map of a {@linkcode ParentReflection} to command info for that reflection
- */
-export type ModuleCommands = Map<ParentReflection, CommandInfo>;
-
-/**
- * Common fields for a {@linkcode CommandData} or {@linkcode ExecMethodData}
- */
-export interface BaseCommandData {
-  /**
-   * The method name of the command handler.
-   *
-   * This is sort of the "unique identifier"
-   */
-  command: string;
-  /**
-   * List of optional parameter names
-   */
-  optionalParams?: string[];
-  /**
-   * List of required parameter names
-   */
-  requiredParams?: string[];
-  /**
-   * The comment for the command, if any exists
-   */
-  comment?: Comment;
-}
-
-/**
- * Represents a generic WD or Appium-specific endpoint
- */
-export interface CommandData extends BaseCommandData {
-  /**
-   * The HTTP method of the route
-   */
-  httpMethod: AllowedHttpMethod;
-  /**
-   * The route of the command
-   */
-  route: Route;
-}
-
-/**
- * Represents an "execute command" ("execute method")
- *
- * Each will have a unique `script` property which is provided as the script to run via the `execute` WD endpoint.
- *
- * All of these share the same `execute` route, so it is omitted from this interface.
- */
-export interface ExecMethodData extends BaseCommandData {
-  script: string;
-}
+export type CommandSet = Set<CommandData>;
 
 /**
  * A reflection which can be the parent of a {@linkcode CommandsReflection}
@@ -86,9 +33,9 @@ export interface ExecMethodData extends BaseCommandData {
 export type ParentReflection = DeclarationReflection | ProjectReflection;
 
 /**
- * A map of routes to {@linkcode CommandMap} maps
+ * A map of routes to {@linkcode CommandSet} maps
  */
-export type RouteMap = Map<Route, CommandMap>;
+export type RouteMap = Map<Route, CommandSet>;
 
 /**
  * A set of {@linkcode ExecMethodData} objects

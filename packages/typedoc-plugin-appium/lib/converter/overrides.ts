@@ -1,0 +1,138 @@
+import _ from 'lodash';
+import {DeclarationReflection} from 'typedoc';
+import {AppiumPluginLogger} from '../logger';
+import {CommandSet, ExecMethodDataSet, ModuleCommands, RouteMap} from '../model';
+import {deriveComment} from './comment';
+import {KnownMethods} from './types';
+
+/**
+ * Returns routes pulled from `builtinCommands` if the driver implements them as methods.
+ *
+ * This makes up for the fact that `newMethodMap` only defines _new_ methods, not ones that already
+ * exist in `@appium/base-driver`.
+ *
+ * Sorry about all the arguments!
+ * @param args Required arguments
+ * @returns More routes pulled from `builtinCommands`, if the driver implements them
+ */
+export function convertOverrides({
+  log,
+  parentRefl,
+  classMethods,
+  builtinMethods,
+  newRouteMap,
+  newExecMethodMap,
+  builtinCommands,
+}: ConvertOverridesOpts): RouteMap {
+  const routes: RouteMap = new Map();
+
+  /**
+   * All command/method names associated with execute methods
+   */
+  const execMethodNames = [...newExecMethodMap].map((execData) => execData.command);
+
+  /**
+   * All method names in the class
+   */
+  const methodNames = [...classMethods.keys()];
+
+  /**
+   * All methods in the class which are not associated with execute methods
+   */
+  const methodsLessExecCommands = _.difference(methodNames, execMethodNames);
+
+  /**
+   * All methods in the class within its `newMethodMap`
+   */
+  const methodsInMethodMap = [...newRouteMap.values()].flatMap((commandSet) =>
+    [...commandSet].map((commandData) => commandData.command)
+  );
+
+  /**
+   * All methods in the class which are not associated with execute methods nor the class' method map
+   */
+  const unknownMethods = new Set(_.difference(methodsLessExecCommands, methodsInMethodMap));
+
+  // this discovers all of the ExternalDriver methods implemented in the driver class
+  // and adds them to the routes map.
+  for (const command of unknownMethods) {
+    const builtinRoutes = builtinCommands.routesByCommandName.get(command);
+    if (!builtinMethods.has(command) || !builtinRoutes) {
+      // actually unknown method
+      continue;
+    }
+
+    // the method is in ExternalDriver, so remove it
+    unknownMethods.delete(command);
+    for (const route of builtinRoutes) {
+      const newCommandSet: CommandSet = new Set();
+      // this must be defined, because if it wasn't then builtinRoutes would be empty and we'd continue the loop
+      const commandSet = builtinCommands.routeMap.get(route)!;
+      for (const commandData of commandSet) {
+        const method = classMethods.get(command)?.method;
+        if (!method) {
+          continue;
+        }
+        const commentData = deriveComment(command, builtinMethods, method, commandData.comment);
+        const newCommandData = commandData.clone({
+          refl: method,
+          parentRefl,
+          ...commentData,
+        });
+        log.verbose(
+          '(%s) Added %s builtin route %s for command "%s"',
+          parentRefl.name,
+          commandData.httpMethod,
+          route,
+          command
+        );
+        newCommandSet.add(newCommandData);
+      }
+      routes.set(route, newCommandSet);
+    }
+  }
+
+  if (unknownMethods.size) {
+    // this is quite likely, as any async method is inspected.
+    log.info(
+      '(%s) The following async methods were not found in any method map: %s',
+      parentRefl.name,
+      [...unknownMethods].join(', ')
+    );
+  }
+  return routes;
+}
+
+/**
+ * Options for {@link convertOverrides}
+ */
+export interface ConvertOverridesOpts {
+  /**
+   * Logger
+   */
+  log: AppiumPluginLogger;
+  /**
+   * Project/module reflection
+   */
+  parentRefl: DeclarationReflection;
+  /**
+   * Methods in the class
+   */
+  classMethods: KnownMethods;
+  /**
+   * Methods in `@appium/base-driver`
+   */
+  builtinMethods: KnownMethods;
+  /**
+   * New routes in the class via `newMethodMap`
+   */
+  newRouteMap: RouteMap;
+  /**
+   * Execute methods in the class via `executeMethodMap`
+   */
+  newExecMethodMap: ExecMethodDataSet;
+  /**
+   * Routes in `@appium/base-driver`
+   */
+  builtinCommands: ModuleCommands;
+}

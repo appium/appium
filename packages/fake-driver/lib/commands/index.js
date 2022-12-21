@@ -7,7 +7,6 @@ import {GeneralMixin} from './general';
 /**
  *
  * @param {import('@appium/types').Class<import('../driver').FakeDriverCore>} Base
- * @returns
  */
 export function FakeDriverMixin(Base) {
   return GeneralMixin(FindMixin(ElementMixin(AlertMixin(ContextsMixin(Base)))));

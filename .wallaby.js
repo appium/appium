@@ -3,24 +3,31 @@
 module.exports = (wallaby) => {
   return {
     compilers: {
-      '**/*.js': wallaby.compilers.babel(),
+      '**/*.js': wallaby.compilers.typeScript({
+        allowJs: true,
+        allowSyntheticDefaultImports: true,
+        resolveJsonModule: true,
+        isolatedModules: true,
+      }),
+      '**/*.ts?(x)': wallaby.compilers.typeScript(),
     },
     debug: true,
     env: {
       type: 'node',
     },
     files: [
-      './packages/**/*.js',
-      './packages/**/*.json',
-      '!./packages/**/build/**',
-      '!./packages/**/test/**/*-specs.js',
-      '!./packages/**/test/**/*.spec.js',
-      '!./packages/*/node_modules/**',
-      '!./packages/*/gulpfile.js',
-      '!./packages/*/scripts/**',
-      './packages/*/test/**/fixtures/**/*',
-      './babel.config.json',
-      // below this are fixtures
+      './packages/*/build/**/*',
+      './packages/*/lib/**/*.(j|t)s',
+      './packages/*/test/**/*helper*.(j|t)s',
+      './packages/*/test/**/*mock*.(j|t)s',
+      './packages/*/package.json',
+      './packages/*/tsconfig.json',
+      './config/**/*.json',
+      './packages/*/test/**/fixture?(s)/**/*',
+      {
+        instrument: false,
+        pattern: './packages/typedoc-plugin-appium/resources/**/*',
+      },
       {
         binary: true,
         pattern: './packages/support/test/unit/assets/sample_binary.plist',
@@ -33,17 +40,17 @@ module.exports = (wallaby) => {
         instrument: false,
         pattern: './packages/base-driver/static/**/*',
       },
+      '!./packages/*/test/**/*-specs.js',
+      '!./packages/*/test/**/*.e2e.spec.(j|t)s',
       '!**/local_appium_home/**',
     ],
     testFramework: 'mocha',
-    tests: ['./packages/*/test/unit/**/*.spec.js', '!**/local_appium_home/**'],
+    tests: ['./packages/*/test/unit/**/*.spec.(j|t)s', '!**/local_appium_home/**'],
     workers: {
-      restart: true,
+      // restart: true,
     },
-    setup() {
-      // This copied out of `./test/setup.js`, which uses `@babel/register`.
-      // Wallaby doesn't need `@babel/register` (and it probably makes Wallaby slow),
-      // but we need the other stuff, so here it is.
+    setup(wallaby) {
+      // copied out of `./test/setup.js`
 
       const chai = require('chai');
       const chaiAsPromised = require('chai-as-promised');
@@ -55,6 +62,9 @@ module.exports = (wallaby) => {
 
       // `should()` is only necessary when working with some `null` or `undefined` values.
       global.should = chai.should();
+
+      const mocha = wallaby.testFramework;
+      mocha.timeout(10000);
     },
     runMode: 'onsave',
   };

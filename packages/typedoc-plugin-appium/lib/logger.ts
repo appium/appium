@@ -28,7 +28,7 @@ export class AppiumPluginLogger extends Logger {
   /**
    * Function provided by `AppiumPluginLogger` parent loggers to log through them.
    */
-  readonly #logThroughParent?: ParentLogger;
+  readonly #logThroughParent?: AppiumPluginParentLogger;
   /**
    * Parent logger
    */
@@ -39,7 +39,7 @@ export class AppiumPluginLogger extends Logger {
    */
   public readonly ns: string;
 
-  public constructor(logger: Logger, ns: string, logThroughParent?: ParentLogger) {
+  public constructor(logger: Logger, ns: string, logThroughParent?: AppiumPluginParentLogger) {
     super();
     this.#parent = logger;
     this.ns = ns;
@@ -156,4 +156,4 @@ export class AppiumPluginLogger extends Logger {
 /**
  * Used internally by {@link AppiumPluginLogger.createChildLogger} to pass log messages to the parent.
  */
-export type ParentLogger = (level: LogLevel, message: string, ...args: any[]) => void;
+export type AppiumPluginParentLogger = (level: LogLevel, message: string, ...args: any[]) => void;

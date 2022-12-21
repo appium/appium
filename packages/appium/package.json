@@ -105,6 +105,6 @@
   },
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
   "typedoc": {
-    "entryPoint": "./build/lib/main.js"
+    "entryPoint": "./lib/main.js"
   }
 }

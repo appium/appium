@@ -3,19 +3,27 @@
 ### {{#ifNamedAnchors}} <a id="{{anchor}}" name="{{this.anchor}}"></a> {{/ifNamedAnchors}}`{{httpMethod}}` `{{name}}`
 
 {{#if hasComment}}
-
 {{> comment}}
-
+<!-- comment source: {{commentSource}} -->
 {{/if}}
 
+{{#if parameters}}
+
+#### Parameters
+
+{{#with parameters}}
+
+{{{parameterTable}}}
+
+{{/with}}
+
+{{else}}
 {{#if hasRequiredParams}}
 
 #### Required Parameters
 
 {{#each requiredParams}}
-
 - `{{this}}`
-
 {{/each}}
 
 {{/if}}
@@ -28,6 +36,7 @@
 - `{{this}}`
 {{/each}}
 
+{{/if}}
 {{/if}}
 
 {{/unless}}

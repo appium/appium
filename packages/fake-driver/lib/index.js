@@ -15,3 +15,8 @@ async function main() {
 }
 
 export {FakeDriver, startServer, main};
+
+/**
+ * @typedef {import('./types').W3CFakeDriverCaps} W3CFakeDriverCaps
+ * @typedef {import('./types').FakeDriverCaps} FakeDriverCaps
+ */

@@ -75,6 +75,11 @@ export type SingularSessionData<
 > = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
 
 export interface IFindCommands<Ctx = any> {
+  /**
+   * Finds an element
+   * @param strategy Strategy
+   * @param selector Selector
+   */
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
   findElementFromElement(strategy: string, selector: string, elementId: string): Promise<Element>;
@@ -162,10 +167,18 @@ export interface SessionHandler<
   C extends Constraints = BaseDriverCapConstraints,
   Extra extends StringRecord | void = void
 > {
+  /**
+   * Creates a new session
+   * @param w3cCaps1 W3C Capabilities
+   * @param w3cCaps2 W3C Capabilities (alternate)
+   * @param w3cCaps3 W3C Capabilities (alternate)
+   * @param driverData Driver data
+   * @returns Tuple of the session ID and normalized capabilities
+   */
   createSession(
     w3cCaps1: W3CCapabilities<C, Extra>,
     w3cCaps2?: W3CCapabilities<C, Extra>,
-    w3cCaps?: W3CCapabilities<C, Extra>,
+    w3cCaps3?: W3CCapabilities<C, Extra>,
     driverData?: DriverData[]
   ): Promise<CreateResult>;
 
@@ -486,6 +499,11 @@ export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints
   getCurrentActivity?(): Promise<string>;
   getCurrentPackage?(): Promise<string>;
   installApp?(appPath: string, options?: unknown): Promise<void>;
+  /**
+   * Activates the app
+   * @param appId Application ID
+   * @param options Options
+   */
   activateApp?(appId: string, options?: unknown): Promise<void>;
   removeApp?(appId: string, options?: unknown): Promise<void>;
   terminateApp?(appId: string, options?: unknown): Promise<void>;
@@ -575,6 +593,10 @@ export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints
   setGeoLocation?(location: Partial<Location>): Promise<void>;
 
   // MJSONWIRE
+  /**
+   * Get current context
+   * @deprecated
+   */
   getCurrentContext?(): Promise<string | null>;
   setContext?(name: string): Promise<void>;
   getContexts?(): Promise<string[]>;

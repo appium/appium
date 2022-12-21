@@ -11,7 +11,7 @@ import path from 'node:path';
 /**
  * Path to resources directory, containing all templates and partials.
  */
-const RESOURCES_PATH = path.join(__dirname, '..', '..', 'resources');
+const RESOURCES_PATH = path.join(__dirname, 'resources');
 
 /**
  * Path to templates directory within {@linkcode RESOURCES_PATH}
@@ -48,7 +48,6 @@ export enum AppiumThemeTemplate {
  */
 function registerPartials() {
   for (const [name, filename] of Object.entries(AppiumThemePartial)) {
-    console.log('registerPartials:', name, filename);
     Handlebars.registerPartial(name, fs.readFileSync(path.join(PARTIALS_PATH, filename), 'utf8'));
   }
 }

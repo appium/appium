@@ -1,5 +1,5 @@
 import {DeclarationReflection} from 'typedoc';
-import {CommandInfo} from '../command-info';
+import {ModuleCommands} from '../module-commands';
 import {ExecMethodDataSet, ParentReflection, RouteMap} from '../types';
 import {AppiumPluginReflectionKind} from './kind';
 
@@ -18,7 +18,11 @@ export class CommandsReflection extends DeclarationReflection {
    */
   public readonly routeMap: RouteMap;
 
-  constructor(name: string, parent: ParentReflection, {routeMap, execMethodDataSet}: CommandInfo) {
+  constructor(
+    name: string,
+    parent: ParentReflection,
+    {routeMap, execMethodDataSet}: ModuleCommands
+  ) {
     super(name, AppiumPluginReflectionKind.COMMANDS as any, parent);
     this.parent = parent;
     this.routeMap = routeMap;

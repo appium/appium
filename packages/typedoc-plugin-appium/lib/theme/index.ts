@@ -3,7 +3,7 @@ import {MarkdownTheme} from 'typedoc-plugin-markdown';
 import {AppiumPluginLogger} from '../logger';
 import {AppiumPluginReflectionKind, NS} from '../model';
 import {registerHelpers} from './helpers';
-import {compileTemplate, AppiumThemeTemplate} from './template';
+import {AppiumThemeTemplate, compileTemplate} from './template';
 
 /**
  * Name of the theme; used at definition time
@@ -15,7 +15,6 @@ export class AppiumTheme extends MarkdownTheme {
    * A template renderer for `CommandReflection`s
    */
   #commandsTemplateRenderer: TemplateRenderer;
-
   /**
    * Custom logger.  This is not the same as the one created by the plugin loader.
    */
@@ -85,10 +84,9 @@ export class AppiumTheme extends MarkdownTheme {
 export type TemplateRenderer = (pageEvent: PageEvent<ContainerReflection>) => string;
 
 /**
- * A mapping of {@linkcode ReflectionKind} to a template and other metadata.
+ * A mapping of `ReflectionKind` to a template and other metadata.
  *
- * Defined by {@linkcode MarkdownTheme}.
- * @public
+ * Defined by `MarkdownTheme`.
  */
 export type TemplateMapping = {
   kind: ReflectionKind[];
@@ -96,3 +94,5 @@ export type TemplateMapping = {
   directory: string;
   template: (pageEvent: PageEvent<ContainerReflection>) => string;
 };
+
+export type {AppiumThemeTemplate};

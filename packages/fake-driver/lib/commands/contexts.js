@@ -26,9 +26,8 @@ export function ContextsMixin(Base) {
       }
     }
 
-    /**
-     * Get the current appium context
-     *
+    // do not add a description to this method's docstring
+    /*
      * @returns {Promise<string>}
      */
     async getCurrentContext() {

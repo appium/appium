@@ -2,6 +2,16 @@
   "name": "@appium/fake-plugin",
   "version": "3.0.1",
   "description": "A fake Appium 2.0 plugin",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -13,7 +23,6 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "./build/index.js",
   "directories": {
     "lib": "./lib"
   },
@@ -54,14 +63,7 @@
   "tags": [
     "appium"
   ],
-  "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
-  ]
+  "typedoc": {
+    "entryPoint": "./lib/plugin.js"
+  }
 }

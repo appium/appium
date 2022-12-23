@@ -17,11 +17,11 @@ and [Drivers Provided By Third Parties](#drivers-provided-by-third-parties) sect
 
 :bangbang: Major documentation revision in progress
 
-:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://github.com/appium/appium/blob/master/packages/appium/docs/en/guides/migrating-1-to-2.md) to manage the Appium server.
+:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://appium.github.io/appium/docs/en/latest/guides/migrating-1-to-2/) to manage the Appium server.
 
 Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
 found around the web may not be correct. The current Appium 2.0 documentation is very much in
-progress. Currently, it can be found [here](https://appium.github.io/appium/docs/en/2.0/).
+progress. Currently, it can be found [here](https://appium.github.io/appium/docs/en/latest/).
 
 ### Requirements
 
@@ -172,7 +172,7 @@ about, please read our [Introduction to Appium Concepts](/docs/en/about-appium/i
 
 ### Quickstart
 
-Check out our [Quickstart](https://appium.github.io/appium/docs/en/2.0/quickstart/) guide
+Check out our [Quickstart](https://appium.github.io/appium/docs/en/latest/quickstart/) guide
 to get going with Appium.
 
 There is also a sample code that contains [many examples of tests in a variety
@@ -195,7 +195,7 @@ Interested in where Appium is heading in the future? Check out the [Roadmap](ROA
 
 ### Project History, Credits & Inspiration
 
-* [History](https://appium.github.io/appium/docs/en/2.0/intro/history/)
+* [History](https://appium.github.io/appium/docs/en/latest/intro/history/)
 
 ### User Forums
 

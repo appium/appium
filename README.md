@@ -170,9 +170,9 @@ automation, for mobile and beyond. Finally!
 If you're new to Appium or want a more comprehensive description of what this is all
 about, please read our [Introduction to Appium Concepts](/docs/en/about-appium/intro.md).
 
-### Get Started
+### Quickstart
 
-Check out our [Getting Started](http://appium.io/docs/en/about-appium/getting-started) guide
+Check out our [Quickstart](https://appium.github.io/appium/docs/en/2.0/quickstart/) guide
 to get going with Appium.
 
 There is also a sample code that contains [many examples of tests in a variety
@@ -180,15 +180,9 @@ of different languages](https://github.com/appium/appium/tree/1.x/sample-code)!
 
 ### Documentation
 
-For prettily-rendered docs, please visit [appium.io](http://appium.io). You can
-always find the full list of Appium doc pages at [Appium's GitHub
-Repo](https://github.com/appium/appium/tree/master/docs) as well.
-
-[update-appium-io.yml](https://github.com/appium/appium/blob/master/ci-jobs/update-appium-io.yml) creates a PR
-by [CI job](https://dev.azure.com/AppiumCI/Appium%20CI/_build?definitionId=37).
-in the appium.io repository with the documentation update.
-
-Once the PR has been merged, the latest documentation will be in [appium.io](http://appium.io)
+For prettily-rendered docs, please visit [Appium Documentation](https://appium.github.io/appium).
+You can always find the full list of Appium doc pages at [Appium's GitHub
+Repo](https://github.com/appium/appium/tree/master/packages/appium/docs) as well.
 
 ### Contributing
 
@@ -201,8 +195,7 @@ Interested in where Appium is heading in the future? Check out the [Roadmap](ROA
 
 ### Project History, Credits & Inspiration
 
-* [History](http://appium.io/history)
-* [Credits](/docs/en/contributing-to-appium/credits.md)
+* [History](https://appium.github.io/appium/docs/en/2.0/intro/history/)
 
 ### User Forums
 

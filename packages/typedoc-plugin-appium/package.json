@@ -60,7 +60,7 @@
   "dependencies": {
     "handlebars": "4.7.7",
     "pluralize": "8.0.0",
-    "type-fest": "3.4.0",
+    "type-fest": "3.5.0",
     "typedoc-plugin-markdown": "3.14.0"
   }
 }

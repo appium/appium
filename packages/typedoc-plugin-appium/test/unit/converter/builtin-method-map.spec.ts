@@ -3,11 +3,11 @@ import _ from 'lodash';
 import {createSandbox, SinonSandbox} from 'sinon';
 import {Comment, Context} from 'typedoc';
 import {
-  BuiltinCommandSource,
   BuiltinMethodMapConverter,
   KnownMethods,
   NAME_BUILTIN_COMMAND_MODULE,
 } from '../../../lib/converter';
+import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
@@ -36,7 +36,7 @@ describe('BaseDriverConverter', function () {
   describe('instance method', function () {
     describe('convert()', function () {
       describe('when provided the correct module', function () {
-        let builtinSource: BuiltinCommandSource;
+        let builtinSource: BuiltinCommands;
         before(async function () {
           const converter = await initConverter(
             BuiltinMethodMapConverter,
@@ -51,13 +51,13 @@ describe('BaseDriverConverter', function () {
         });
 
         it('should map a method name to a route', function () {
-          expect(builtinSource.moduleCmds.routesByCommandName.get('createSession')).to.eql(
+          expect(builtinSource.moduleCmds!.routesByCommandName.get('createSession')).to.eql(
             new Set(['/session'])
           );
         });
 
         it('should contain command data per route', function () {
-          const firstCommand = [...builtinSource.moduleCmds.routeMap.get('/session')!.values()][0];
+          const firstCommand = [...builtinSource.moduleCmds!.routeMap.get('/session')!.values()][0];
           expect(firstCommand).to.exist;
           expect(_.omit(firstCommand, 'methodRefl', 'parentRefl', 'comment', 'log')).to.eql({
             command: 'createSession',
@@ -78,7 +78,7 @@ describe('BaseDriverConverter', function () {
         const converter = await initConverter(BuiltinMethodMapConverter, NAME_FAKE_DRIVER_MODULE, {
           extraArgs: [new Map()],
         });
-        expect(converter.convert()).to.be.empty;
+        expect(converter.convert().toProjectCommands()).to.be.empty;
       });
     });
   });

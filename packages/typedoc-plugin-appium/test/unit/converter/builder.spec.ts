@@ -10,7 +10,12 @@ import {
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
 import {AppiumPluginLogger} from '../../../lib/logger';
-import {CommandReflection, CommandsReflection, ProjectCommands} from '../../../lib/model';
+import {
+  AppiumPluginReflectionKind,
+  CommandReflection,
+  CommandsReflection,
+  ProjectCommands,
+} from '../../../lib/model';
 import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE, ROOT_TSCONFIG} from '../helpers';
 
 const {expect} = chai;
@@ -67,15 +72,32 @@ describe('command data builder', function () {
       expect(() => (cmdsRefls = createReflections(ctx, log, moduleCommands))).not.to.throw();
     });
 
-    describe('when the parameters from the method map do not match the method parameters', function () {
-      it('should prefer the method map parameters', function () {
-        const fakeDriverCmdsRefl = cmdsRefls.find(({name}) => name === NAME_FAKE_DRIVER_MODULE)!;
-        expect(fakeDriverCmdsRefl).to.exist;
-        const sessionRouteRefl = fakeDriverCmdsRefl.children!.filter(
-          (child: CommandReflection) => child.name === '/session' && child.httpMethod === 'POST'
-        );
-        sessionRouteRefl; //?
-      });
+    it('should sort commands in ascending order by route', function () {
+      for (const cmdsRefl of cmdsRefls) {
+        let lastRoute = '';
+        for (const cmdRefl of cmdsRefl.getChildrenByKind(
+          AppiumPluginReflectionKind.COMMAND as any
+        ) as CommandReflection[]) {
+          if (lastRoute) {
+            expect(cmdRefl.route.localeCompare(lastRoute)).to.greaterThanOrEqual(0);
+          }
+          lastRoute = cmdRefl.route;
+        }
+      }
+    });
+
+    it('should sort exec methods in ascending order by script', function () {
+      for (const cmdsRefl of cmdsRefls) {
+        let lastScript = '';
+        for (const cmdRefl of cmdsRefl.getChildrenByKind(
+          AppiumPluginReflectionKind.EXECUTE_METHOD as any
+        ) as CommandReflection[]) {
+          if (lastScript) {
+            expect(cmdRefl.script!.localeCompare(lastScript)).to.greaterThanOrEqual(0);
+          }
+          lastScript = cmdRefl.script!;
+        }
+      }
     });
   });
 });

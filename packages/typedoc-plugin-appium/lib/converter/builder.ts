@@ -52,7 +52,11 @@ export function createCommandReflection(
 }
 
 /**
- * Create a new {@linkcode CommandsReflection} and all {@linkcode CommandReflection} children within it.
+ * Create a new {@linkcode CommandsReflection} and all {@linkcode CommandReflection} children within
+ * it.
+ *
+ * Note that the return value is mainly for informational purposes, since this method mutates
+ * TypeDoc's state.
  * @param log - Logger
  * @param ctx - Current context
  * @param parent - Parent module (or project)
@@ -75,16 +79,18 @@ export function createCommandsReflection(
   const parentCtx = ctx.withScope(commandsRefl);
   const {routeMap: routeMap, execMethodDataSet: execCommandsData} = moduleCmds;
 
-  // sort routes in alphabetical order
-  const sortedRouteMap = new Map([...routeMap.entries()].sort());
+  const sortedRouteMap = new Map([...routeMap].sort(([a], [b]) => a.localeCompare(b)));
+
   for (const [route, commandSet] of sortedRouteMap) {
     for (const data of commandSet) {
       createCommandReflection(log, parentCtx, data, commandsRefl, route);
     }
   }
 
-  // sort execute commands in alphabetical order
-  const sortedExecCommandsData = new Set([...execCommandsData].sort());
+  // sort execute methods in alphabetical order by script
+  const sortedExecCommandsData = [...execCommandsData].sort((a, b) =>
+    a.script.localeCompare(b.script)
+  );
   for (const data of sortedExecCommandsData) {
     createCommandReflection(log, parentCtx, data, commandsRefl);
   }

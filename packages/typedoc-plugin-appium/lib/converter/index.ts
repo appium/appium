@@ -16,7 +16,7 @@
 
 import {Context} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
-import {ModuleCommands, ProjectCommands} from '../model';
+import {ProjectCommands} from '../model';
 import {BuiltinExternalDriverConverter} from './builtin-external-driver';
 import {BuiltinMethodMapConverter} from './builtin-method-map';
 import {ExternalConverter} from './external';
@@ -44,22 +44,20 @@ export function convertCommands(ctx: Context, parentLog: AppiumPluginLogger): Pr
   );
   const externalCommands = externalConverter.convert();
 
-  const allCommands = [
-    ...([[builtinCommands.refl.name, builtinCommands.moduleCmds]] as [string, ModuleCommands][]),
-    ...externalCommands,
-  ];
+  const allCommands = [...builtinCommands.toProjectCommands(), ...externalCommands];
 
   return new ProjectCommands(allCommands);
 }
 
+export * from './base-converter';
 export * from './builder';
+export * from '../model/builtin-commands';
 export * from './builtin-external-driver';
 export * from './builtin-method-map';
 export * from './comment';
-export * from './base-converter';
+export * from './exec-method-map';
 export * from './external';
+export * from './method-map';
 export * from './overrides';
 export * from './types';
-export * from './method-map';
 export * from './utils';
-export * from './exec-method-map';

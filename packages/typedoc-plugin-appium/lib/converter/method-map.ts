@@ -23,6 +23,10 @@ import {
  */
 export interface ConvertMethodMapOpts {
   /**
+   * All builtin methods from `@appium/types`
+   */
+  knownMethods?: KnownMethods;
+  /**
    * Logger
    */
   log: AppiumPluginLogger;
@@ -31,17 +35,13 @@ export interface ConvertMethodMapOpts {
    */
   methodMapRef: MethodMapDeclarationReflection;
   /**
-   * The parent of `methodMapRef`; could be a class or module
-   */
-  parentRefl: DeclarationReflection;
-  /**
    * All async methods in `parentRefl`
    */
   methods: KnownMethods;
   /**
-   * All builtin methods from `@appium/types`
+   * The parent of `methodMapRef`; could be a class or module
    */
-  knownMethods?: KnownMethods;
+  parentRefl: DeclarationReflection;
   /**
    * If `true`, do not add a route if the method it references cannot be found
    */

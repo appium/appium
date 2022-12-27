@@ -11,7 +11,7 @@ import {
   TupleType,
   TypeOperatorType,
 } from 'typedoc';
-import {AllowedHttpMethod, ModuleCommands, ParentReflection} from '../model';
+import {AllowedHttpMethod, ParentReflection} from '../model';
 import {NAME_EXTERNAL_DRIVER, NAME_TYPES_MODULE} from './builtin-external-driver';
 import {NAME_BUILTIN_COMMAND_MODULE, NAME_METHOD_MAP} from './builtin-method-map';
 import {NAME_NEW_METHOD_MAP, NAME_EXECUTE_METHOD_MAP, NAME_PARAMS} from './external';
@@ -158,11 +158,6 @@ export interface MethodDefParam {
 }
 
 export type ClassDeclarationReflection = WithKind<ReflectionKind.Class, DeclarationReflection>;
-
-export type BuiltinCommandSource = {
-  refl: BaseDriverDeclarationReflection;
-  moduleCmds: ModuleCommands;
-};
 
 export type ParamsPropDeclarationReflection =
   | ExecMethodDefParamsPropDeclarationReflection

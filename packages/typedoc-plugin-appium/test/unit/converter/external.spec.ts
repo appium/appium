@@ -1,8 +1,7 @@
 import {expect} from 'chai';
 import {createSandbox, SinonSandbox} from 'sinon';
-import {Comment, Context, ReflectionFlag, ReflectionFlags} from 'typedoc';
+import {Comment, Context} from 'typedoc';
 import {
-  BuiltinCommandSource,
   BuiltinExternalDriverConverter,
   BuiltinMethodMapConverter,
   ExternalConverter,
@@ -10,9 +9,10 @@ import {
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
+import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {isCallSignatureReflectionWithParams} from '../../../lib/guards';
 import {AppiumPluginLogger} from '../../../lib/logger';
-import {ProjectCommands, ModuleCommands} from '../../../lib/model';
+import {ModuleCommands, ProjectCommands} from '../../../lib/model';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
 describe('ExternalConverter', function () {
@@ -40,7 +40,7 @@ describe('ExternalConverter', function () {
   describe('instance method', function () {
     describe('convert()', function () {
       let externalDriverMethods: KnownMethods;
-      let builtinCmdSrc: BuiltinCommandSource;
+      let builtinCmdSrc: BuiltinCommands;
 
       before(async function () {
         const bedConverter = await initConverter(BuiltinExternalDriverConverter, NAME_TYPES_MODULE);

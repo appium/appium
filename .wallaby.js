@@ -21,8 +21,7 @@ module.exports = (wallaby) => {
       './packages/*/test/**/*helper*.(j|t)s',
       './packages/*/test/**/*mock*.(j|t)s',
       './packages/*/package.json',
-      './packages/*/tsconfig.json',
-      './config/**/*.json',
+      './packages/*/tsconfig*.json',
       './packages/*/test/**/fixture?(s)/**/*',
       {
         instrument: false,

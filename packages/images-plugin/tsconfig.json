@@ -5,7 +5,7 @@
       "@appium/opencv": ["../opencv"]
     }
   },
-  "extends": "../../config/tsconfig.plugin.json",
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib"],
   "references": [
     {

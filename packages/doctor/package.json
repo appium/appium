@@ -34,7 +34,8 @@
     "appium-doctor.js",
     "lib",
     "bin",
-    "build"
+    "build",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",

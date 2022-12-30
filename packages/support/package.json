@@ -30,7 +30,8 @@
   "files": [
     "index.js",
     "lib",
-    "build"
+    "build",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
@@ -39,6 +40,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
+    "@appium/tsconfig": "^0.1.0",
     "@appium/types": "^0.7.0",
     "@colors/colors": "1.5.0",
     "@types/archiver": "5.3.1",

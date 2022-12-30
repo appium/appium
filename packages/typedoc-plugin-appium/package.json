@@ -45,7 +45,8 @@
     "lib",
     "build/lib",
     "build/resources",
-    "resources"
+    "resources",
+    "tsconfig.json"
   ],
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

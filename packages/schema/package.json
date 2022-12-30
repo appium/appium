@@ -27,7 +27,8 @@
   "files": [
     "build",
     "lib",
-    "index.js"
+    "index.js",
+    "tsconfig.json"
   ],
   "scripts": {
     "build": "node ./scripts/generate-schema-json.js",

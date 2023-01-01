@@ -32,7 +32,7 @@ If you're running in a CI environment or want to install Appium along with some 
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
-This will install Appium and the two drivers for you in one go.
+This will install Appium and the two drivers for you in one go. Please uninstall Appium 1.x npm package once if you get an error in the installation or Appium process failure. 
 
 ### :bangbang: Drivers installation path
 

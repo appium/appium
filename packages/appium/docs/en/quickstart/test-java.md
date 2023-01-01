@@ -2,4 +2,17 @@
 title: Write a Test (Java)
 ---
 
-TODO
+The Appium team maintains an official [client](https://github.com/appium/java-client) for Java programming language.
+It is built on top of [Selenium](https://github.com/SeleniumHQ/selenium)
+lib. You could also use this client in your Kotlin projects.
+
+Follow the [Add Appium java client to your test framework](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework)
+tutorial in order to connect the library to your test sources.
+
+Appium java client has dedicated classes to support most of the official Appium drivers. For other drivers
+you could simply use [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) class
+or build your custom derivatives from it. Check the [Drivers Support](https://github.com/appium/java-client#drivers-support)
+article to know more details about currently present driver class implementations.
+
+Follow the [Usage Examples](https://github.com/appium/java-client#usage-examples) article in order understand
+how to invoke java client features from your test framework.

@@ -8,17 +8,41 @@ This document is a guide for those who are using Appium 1.x and wish to migrate 
 このドキュメントは既にAppium 1.xを利用している人がAppium 2.xに移行するための手引きです。
 破壊的変更（breaking changes）の一覧や、実行環境・テストコードをAppium 2.0互換にするための方法が含まれます。
 
+<!---
 ## Overview of Appium 2.0
+--->
 
+## Appium 2.0の概要
+
+<!---
 Appium 2.0 is the most major new release of Appium in over 5 years. The changes in Appium 2.0 are _not_ primarily related to changes in automation behaviors for specific platforms. Instead, Appium 2.0 reenvisions Appium as a _platform_ where "drivers" (code projects that introduce support for automation of a given platform) and "plugins" (code projects that allow for overriding, altering, extending, or adding behaviors to Appium) can be easily created and shared.
+--->
 
+Appium 2.0は過去5年間におけるAppiumのリリース野中で最も大きなリリースです。Appium 2.0の主要な変更は特定のプラットフォームに対する自動化された動作に関するものでは**ありません**。Appium 2.0はAppiumをドライバー（drivers）（あるプラットフォームに対する自動化を支援するためのプロジェクト）とプラグイン（plugins）（Appiumの動作を上書き、代替、拡張、もしくは追加するためのプロジェクト）という容易に実装、共有できる**仕組みを提供するプラットフォーム**として再考しています。
+
+<!---
 At the same time, the Appium project is taking the opportunity to remove many old and deprecated bits of functionality.
+--->
 
+同時に、Appiumプロジェクトは多くの古くなったり非推奨となっている機能や依存を取り除こうとしています。
+
+<!---
 Together these do introduce a few breaking changes to how Appium is installed, how drivers and various features are managed, and protocol support. These are detailed below.
+--->
 
+これらに合わせて、Appiumのインストール方法、ドライバーやフィーチャーの管理、プロトコルサポートに関していくつかの破壊的変更をが導入されます。詳細は以下になります。
+
+<!---
 ## Breaking Changes
+--->
 
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do do account for them.
+## 破壊的変更
+
+<!---
+Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
+--->
+
+リリース毎の変更一覧に関しては[Appium 2.0リリースノート](https://github.com/appium/appium/releases)を確認してください。ここでは破壊的変更と何をする必要があるのかを示します。
 
 ### :bangbang: Installing drivers during setup
 

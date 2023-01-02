@@ -44,23 +44,38 @@ Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/r
 
 リリース毎の変更一覧に関しては[Appium 2.0リリースノート](https://github.com/appium/appium/releases)を確認してください。ここでは破壊的変更と何をする必要があるのかを示します。
 
+<!---
 ### :bangbang: Installing drivers during setup
+--->
 
+### :bangbang: ドライバーのインストール
+
+<!---
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+--->
+
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば `npm install -g appium@next`）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース（Appium extension CLI）](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
 appium driver install xcuitest@4.12.2  # installs a specific driver version
 ```
 
-At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it.
-If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
+<!---
+At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it. If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
+--->
+
+これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。
 
 ```bash
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
+<!---
 This will install Appium and the two drivers for you in one go.
+--->
+
+これはAppiumと2つのドライバーを一つのコマンドでインストールします。
 
 ### :bangbang: Drivers installation path
 

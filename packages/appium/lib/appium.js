@@ -9,6 +9,7 @@ import {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  promoteAppiumOptions,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
 import {parseCapsForInnerDriver, pullSettings} from './utils';
@@ -240,7 +241,7 @@ class AppiumDriver extends DriverCore {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver(
         jsonwpCaps,
-        w3cCapabilities,
+        promoteAppiumOptions(w3cCapabilities),
         this.desiredCapConstraints,
         defaultCapabilities
       );

@@ -41,7 +41,7 @@
   "dependencies": {
     "@appium/types": "^0.7.0",
     "@types/lodash": "4.14.191",
-    "axios": "1.2.1",
+    "axios": "1.2.2",
     "bluebird": "3.7.2",
     "chai": "4.3.7",
     "get-port": "5.1.1",

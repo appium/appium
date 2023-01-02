@@ -1,38 +1,81 @@
 ---
-title: Migrating from Appium 1.x to Appium 2.x
+title: Appium 1.xからAppium 2.xへ移行する
 ---
 
+<!---
 This document is a guide for those who are using Appium 1.x and wish to migrate to Appium 2.x. It contains a list of breaking changes and how to migrate your environments or test suites to ensure compatibility with Appium 2.0.
+--->
+このドキュメントは既にAppium 1.xを利用している人がAppium 2.xに移行するための手引きです。
+破壊的変更（breaking changes）の一覧や、実行環境・テストコードをAppium 2.0互換にするための方法が含まれます。
 
+<!---
 ## Overview of Appium 2.0
+--->
 
+## Appium 2.0の概要
+
+<!---
 Appium 2.0 is the most major new release of Appium in over 5 years. The changes in Appium 2.0 are _not_ primarily related to changes in automation behaviors for specific platforms. Instead, Appium 2.0 reenvisions Appium as a _platform_ where "drivers" (code projects that introduce support for automation of a given platform) and "plugins" (code projects that allow for overriding, altering, extending, or adding behaviors to Appium) can be easily created and shared.
+--->
 
+Appium 2.0は過去5年間におけるAppiumのリリース野中で最も大きなリリースです。Appium 2.0の主要な変更は特定のプラットフォームに対する自動化された動作に関するものでは**ありません**。Appium 2.0はAppiumをドライバー（drivers）（あるプラットフォームに対する自動化を支援するためのプロジェクト）とプラグイン（plugins）（Appiumの動作を上書き、代替、拡張、もしくは追加するためのプロジェクト）という容易に実装、共有できる**仕組みを提供するプラットフォーム**として再考しています。
+
+<!---
 At the same time, the Appium project is taking the opportunity to remove many old and deprecated bits of functionality.
+--->
 
+同時に、Appiumプロジェクトは多くの古くなったり非推奨となっている機能や依存を取り除こうとしています。
+
+<!---
 Together these do introduce a few breaking changes to how Appium is installed, how drivers and various features are managed, and protocol support. These are detailed below.
+--->
 
+これらに合わせて、Appiumのインストール方法、ドライバーやフィーチャーの管理、プロトコルサポートに関していくつかの破壊的変更をが導入されます。詳細は以下になります。
+
+<!---
 ## Breaking Changes
+--->
 
+## 破壊的変更
+
+<!---
 Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
+--->
 
+リリース毎の変更一覧に関しては[Appium 2.0リリースノート](https://github.com/appium/appium/releases)を確認してください。ここでは破壊的変更と何をする必要があるのかを示します。
+
+<!---
 ### :bangbang: Installing drivers during setup
+--->
 
+### :bangbang: ドライバーのインストール
+
+<!---
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+--->
+
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば `npm install -g appium@next`）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース（Appium extension CLI）](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
 appium driver install xcuitest@4.12.2  # installs a specific driver version
 ```
 
-At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it.
-If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
+<!---
+At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it. If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
+--->
+
+これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。
 
 ```bash
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
+<!---
 This will install Appium and the two drivers for you in one go.
+--->
+
+これはAppiumと2つのドライバーを一つのコマンドでインストールします。
 
 ### :bangbang: Drivers installation path
 

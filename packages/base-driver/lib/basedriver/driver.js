@@ -1,12 +1,7 @@
 /* eslint-disable require-await */
 /* eslint-disable no-unused-vars */
 
-import {
-  validateCaps,
-  PREFIXED_APPIUM_OPTS_CAP,
-  processCapabilities,
-  promoteAppiumOptions,
-} from './capabilities';
+import {validateCaps, PREFIXED_APPIUM_OPTS_CAP, processCapabilities} from './capabilities';
 import {DriverCore} from './core';
 import {util} from '@appium/support';
 import B from 'bluebird';
@@ -298,7 +293,7 @@ export class BaseDriverCore extends DriverCore {
     let caps;
     try {
       caps = processCapabilities(
-        promoteAppiumOptions(originalCaps),
+        originalCaps,
         this._desiredCapConstraints,
         this.shouldValidateCaps
       );

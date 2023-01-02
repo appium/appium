@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.2.0...@appium/typedoc-plugin-appium@0.2.1) (2022-12-21)
+
+### Bug Fixes
+
+- **types:** update dependency type-fest to v3.4.0 ([37f71c3](https://github.com/appium/appium/commit/37f71c327a7c1a6d882b5198af6fedc9e8d51496))
+
 # 0.2.0 (2022-12-14)
 
 ### Bug Fixes

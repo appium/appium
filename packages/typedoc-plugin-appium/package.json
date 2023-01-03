@@ -56,6 +56,7 @@
     "entryPoint": "./lib/plugin.ts"
   },
   "peerDependencies": {
+    "appium": "^2.0.0-beta.48",
     "typedoc": ">=0.23.14"
   },
   "dependencies": {

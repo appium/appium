@@ -12,6 +12,7 @@
     "declarationMap": true,
     "resolveJsonModule": true,
     "strictNullChecks": true,
+    "stripInternal": true,
     "sourceMap": true,
     "removeComments": false,
     "strict": false,

@@ -409,7 +409,7 @@ export class BaseDriverCore extends DriverCore {
 
 /**
  * This ensures that all of the mixins correctly implement the interface described in {@linkcode Driver}.
- * @template {Constraints} [C=import('type-fest').EmptyObject]
+ * @template {Constraints} [C={}]
  * @implements {Driver<C>}
  */
 export class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}

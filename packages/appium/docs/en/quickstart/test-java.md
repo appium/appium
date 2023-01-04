@@ -15,4 +15,4 @@ or build your custom derivatives from it. Check the [Drivers Support](https://gi
 article to learn more about the current driver class implementations.
 
 Follow the [Usage Examples](https://github.com/appium/java-client#usage-examples) article in order understand
-how to invoke java client features from your test framework.
+how to invoke Java client features from your test framework.

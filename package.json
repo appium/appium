@@ -138,10 +138,10 @@
   "overrides": {
     "jpeg-js": "0.4.4",
     "@sidvind/better-ajv-errors": {
-      "ajv": "8.11.2"
+      "ajv": "8.12.0"
     },
     "ajv-formats": {
-      "ajv": "8.11.2"
+      "ajv": "8.12.0"
     }
   }
 }

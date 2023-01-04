@@ -11,6 +11,7 @@ import {NAME_OPTIONAL, NAME_REQUIRED} from './external';
 import {
   ClassDeclarationReflection,
   Guard,
+  InterfaceDeclarationReflection,
   KnownMethods,
   ParamsPropDeclarationReflection,
 } from './types';
@@ -19,9 +20,7 @@ export function findParentReflectionByName(
   project: ProjectReflection,
   name: string
 ): ParentReflection | undefined {
-  return project.name === name
-    ? project
-    : findChildByNameAndGuard(project, name, isParentReflection);
+  return project.name === name ? project : (project.getChildByName(name) as ParentReflection);
 }
 
 /**
@@ -101,16 +100,17 @@ export function filterChildrenByKind<T extends DeclarationReflection>(
 }
 
 /**
- * Finds _all_ async methods in a class
- * @param classRefl Class reflection
+ * Finds _all_ async methods in a class or interface
+ * @param refl Class reflection
+ * @param knownMethods Known methods (if any)
  * @returns Map of method names to method reflections
  */
-export function findMethodsInClassReflection(
-  classRefl: ClassDeclarationReflection,
-  knownMethods: KnownMethods
+export function findAsyncMethodsInReflection(
+  refl: ClassDeclarationReflection | InterfaceDeclarationReflection,
+  knownMethods?: KnownMethods
 ): KnownMethods {
   return new Map(
-    filterChildrenByGuard(classRefl, isAsyncMethodDeclarationReflection).map((method) => {
+    filterChildrenByGuard(refl, isAsyncMethodDeclarationReflection).map((method) => {
       const commentData = deriveComment(method.name, knownMethods, method);
       const knownMethodData = {method, comment: commentData?.comment};
       return [method.name, knownMethodData];

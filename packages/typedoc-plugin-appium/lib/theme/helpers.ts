@@ -16,8 +16,10 @@ import plural from 'pluralize';
 function reflectionPath(this: PageEvent<ContainerReflection>) {
   if (this.model) {
     if (this.model.kind && this.model.kind !== ReflectionKind.Module) {
-      if (this.model.kind === (AppiumPluginReflectionKind.COMMANDS as any)) {
-        return `${this.model.name} Commands`;
+      if (this.model.kind === (AppiumPluginReflectionKind.Driver as any)) {
+        return `${this.model.name} Driver`;
+      } else if (this.model.kind === (AppiumPluginReflectionKind.Plugin as any)) {
+        return `${this.model.name} Plugin`;
       }
       const title: string[] = [];
       if (this.model.parent && this.model.parent.parent) {

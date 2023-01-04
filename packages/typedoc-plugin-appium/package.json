@@ -14,17 +14,14 @@
     "directory": "packages/typedoc-plugin-appium"
   },
   "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "typedoc-plugin",
+    "typedocplugin",
+    "typedoc-theme",
+    "appium",
+    "markdown"
   ],
   "author": "https://github.com/appium",
-  "types": "./build/lib/plugin.d.ts",
+  "types": "./build/lib/index.d.ts",
   "scripts": {
     "build": "cpy lib/theme/resources build",
     "clean": "npx rimraf build/lib/theme/resources",
@@ -53,16 +50,18 @@
     "npm": ">=8"
   },
   "typedoc": {
-    "entryPoint": "./lib/plugin.ts"
+    "entryPoint": "./lib/index.ts"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.48",
-    "typedoc": ">=0.23.14"
+    "typedoc": "^0.23.14",
+    "typescript": "~4.7.0",
+    "typedoc-plugin-markdown": "^3.14.0",
+    "typedoc-plugin-resolve-crossmodule-references": "~0.3.3"
   },
   "dependencies": {
     "handlebars": "4.7.7",
     "pluralize": "8.0.0",
-    "type-fest": "3.5.1",
-    "typedoc-plugin-markdown": "3.14.0"
+    "type-fest": "3.5.1"
   }
 }

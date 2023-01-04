@@ -17,16 +17,14 @@ const getHigherBitMask = () =>
       .filter((v) => v.match(/^0*10*$/))
       .map((v) => parseInt(v, 2))
   );
-export const addReflectionKind = (ns: string, name: string, value?: number | null) => {
-  const fullName = `${ns}:${name}`;
-
+export const addReflectionKind = (name: string, value?: number | null) => {
   const kindAny = ReflectionKind as any;
-  const existingValue = kindAny[fullName];
+  const existingValue = kindAny[name];
   if (existingValue !== null && existingValue !== undefined) {
     return existingValue;
   }
   const defaultedValue = value ?? getHigherBitMask() * 2;
-  kindAny[fullName] = defaultedValue;
-  kindAny[defaultedValue] = fullName;
+  kindAny[name] = defaultedValue;
+  kindAny[defaultedValue] = name;
   return defaultedValue;
 };

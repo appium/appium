@@ -3,7 +3,7 @@ import {AsyncMethodDeclarationReflection, CommentSourceType} from '../../convert
 import {isExecMethodData} from '../../guards';
 import {CommandData, ExecMethodData} from '../command-data';
 import {AllowedHttpMethod, Route} from '../types';
-import {CommandsReflection} from './commands';
+import {ExtensionReflection} from './extension';
 import {AppiumPluginReflectionKind} from './kind';
 
 /**
@@ -60,12 +60,12 @@ export class CommandReflection extends DeclarationReflection {
   /**
    * Sets props depending on type of `data`
    * @param data Command or execute method data
-   * @param parent Always a {@linkcode CommandsReflection}
+   * @param parent Always a {@linkcode ExtensionReflection}
    * @param route Route, if not an execute method
    */
   constructor(
     readonly data: CommandData | ExecMethodData,
-    parent: CommandsReflection,
+    parent: ExtensionReflection,
     route?: Route
   ) {
     let name: string;
@@ -86,7 +86,7 @@ export class CommandReflection extends DeclarationReflection {
     // kind-specific data
     if (isExecMethodData(data)) {
       script = name = data.script;
-      kind = AppiumPluginReflectionKind.EXECUTE_METHOD;
+      kind = AppiumPluginReflectionKind.ExecuteMethod;
       route = NAME_EXECUTE_ROUTE;
       httpMethod = HTTP_METHOD_EXECUTE;
     } else {
@@ -94,7 +94,7 @@ export class CommandReflection extends DeclarationReflection {
         throw new TypeError('"route" arg is required for a non-execute-method command');
       }
       name = route;
-      kind = AppiumPluginReflectionKind.COMMAND;
+      kind = AppiumPluginReflectionKind.Command;
       httpMethod = data.httpMethod;
     }
 
@@ -129,6 +129,6 @@ export class CommandReflection extends DeclarationReflection {
    * If `true`, this command contains data about an execute method
    */
   public get isExecuteMethod(): boolean {
-    return this.kindOf(AppiumPluginReflectionKind.EXECUTE_METHOD as any);
+    return this.kindOf(AppiumPluginReflectionKind.ExecuteMethod as any);
   }
 }

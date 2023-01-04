@@ -4,6 +4,7 @@ import {Context} from 'typedoc';
 import {
   BuiltinExternalDriverConverter,
   KnownMethods,
+  NAME_EXTERNAL_DRIVER,
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
 import {AppiumPluginLogger} from '../../../lib/logger';
@@ -40,7 +41,7 @@ describe('BuiltinExternalDriverConverter', function () {
         knownMethods = converter.convert();
       });
 
-      it(`should find ExternalDriver's method declarations in ${NAME_TYPES_MODULE}`, async function () {
+      it(`should find ${NAME_EXTERNAL_DRIVER}'s method declarations in ${NAME_TYPES_MODULE}`, async function () {
         expect(knownMethods.size).to.be.above(0);
       });
 
@@ -52,10 +53,10 @@ describe('BuiltinExternalDriverConverter', function () {
         expect(badConverter.convert()).to.be.empty;
       });
 
-      it('should contain methods in ExternalDriver', async function () {
+      it(`should contain methods in ${NAME_EXTERNAL_DRIVER}`, async function () {
         converter = await initConverter(BuiltinExternalDriverConverter, NAME_TYPES_MODULE);
         knownMethods = converter.convert();
-
+        expect(knownMethods.size).to.be.above(0);
         let {method, comment} = knownMethods.get('createSession')!;
         expect(method).to.exist;
         expect(comment).to.exist;

@@ -12,7 +12,7 @@ import {convertMethodMap} from './method-map';
 import {KnownMethods} from './types';
 import {
   findChildByNameAndGuard,
-  findMethodsInClassReflection,
+  findAsyncMethodsInReflection,
   findParentReflectionByName,
 } from './utils';
 
@@ -85,7 +85,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands | u
       log: this.log,
       methodMapRef: methodMap,
       parentRefl: baseDriverModuleRefl,
-      methods: findMethodsInClassReflection(baseDriverClassRefl, this.knownMethods),
+      methods: findAsyncMethodsInReflection(baseDriverClassRefl, this.knownMethods),
     });
 
     if (!baseDriverRoutes.size) {

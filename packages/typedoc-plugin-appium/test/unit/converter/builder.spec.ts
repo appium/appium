@@ -13,7 +13,7 @@ import {AppiumPluginLogger} from '../../../lib/logger';
 import {
   AppiumPluginReflectionKind,
   CommandReflection,
-  CommandsReflection,
+  ExtensionReflection,
   ProjectCommands,
 } from '../../../lib/model';
 import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE, ROOT_TSCONFIG} from '../helpers';
@@ -34,7 +34,7 @@ describe('command data builder', function () {
     let moduleCommands: ProjectCommands;
     let ctx: Context;
     let log: AppiumPluginLogger;
-    let cmdsRefls!: CommandsReflection[];
+    let cmdsRefls!: ExtensionReflection[];
 
     before(async function () {
       const app = await initAppForPkgs(
@@ -76,7 +76,7 @@ describe('command data builder', function () {
       for (const cmdsRefl of cmdsRefls) {
         let lastRoute = '';
         for (const cmdRefl of cmdsRefl.getChildrenByKind(
-          AppiumPluginReflectionKind.COMMAND as any
+          AppiumPluginReflectionKind.Command as any
         ) as CommandReflection[]) {
           if (lastRoute) {
             expect(cmdRefl.route.localeCompare(lastRoute)).to.greaterThanOrEqual(0);
@@ -90,7 +90,7 @@ describe('command data builder', function () {
       for (const cmdsRefl of cmdsRefls) {
         let lastScript = '';
         for (const cmdRefl of cmdsRefl.getChildrenByKind(
-          AppiumPluginReflectionKind.EXECUTE_METHOD as any
+          AppiumPluginReflectionKind.ExecuteMethod as any
         ) as CommandReflection[]) {
           if (lastScript) {
             expect(cmdRefl.script!.localeCompare(lastScript)).to.greaterThanOrEqual(0);

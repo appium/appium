@@ -1,19 +1,24 @@
-import {Context, ReflectionKind} from 'typedoc';
-import {
-  isAppiumTypesReflection,
-  isAsyncMethodDeclarationReflection,
-  isExternalDriverDeclarationReflection,
-} from '../guards';
+import pluralize from 'pluralize';
+import {Context} from 'typedoc';
+import {isAppiumTypesReflection, isExternalDriverDeclarationReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
-import {deriveComment} from './comment';
 import {BaseConverter} from './base-converter';
-import {AppiumTypesReflection, KnownMethodData, KnownMethods} from './types';
-import {findParentReflectionByName} from './utils';
+import {AppiumTypesReflection, KnownMethods} from './types';
+import {findAsyncMethodsInReflection, findParentReflectionByName} from './utils';
 
+/**
+ * Name of the module containing `ExternalDriver`
+ */
 export const NAME_TYPES_MODULE = '@appium/types';
 
+/**
+ * Name of `ExternalDriver` interface
+ */
 export const NAME_EXTERNAL_DRIVER = 'ExternalDriver';
 
+/**
+ * Converts `@appium/types` into a `KnownMethods`, if it can.
+ */
 export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> {
   /**
    * Creates a child logger for this instance
@@ -24,7 +29,7 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
     super(ctx, log.createChildLogger('interfaces'));
   }
 
-  public convertMethodDeclarations(refl: AppiumTypesReflection): KnownMethods {
+  #convertMethodDeclarations(refl: AppiumTypesReflection): KnownMethods {
     const externalDriver = refl.getChildByName(NAME_EXTERNAL_DRIVER);
     let methods: KnownMethods = new Map();
 
@@ -32,46 +37,29 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
       this.log.warn('Could not find %s in %s', NAME_EXTERNAL_DRIVER, NAME_TYPES_MODULE);
       return methods;
     }
-    const methodRefs = externalDriver.getChildrenByKind(ReflectionKind.Method);
 
-    if (!methodRefs.length) {
+    methods = findAsyncMethodsInReflection(externalDriver);
+
+    if (!methods.size) {
       this.log.warn('No methods found in %s', NAME_EXTERNAL_DRIVER);
       return methods;
     }
 
-    methods = new Map(
-      methodRefs.reduce((methods, method) => {
-        if (isAsyncMethodDeclarationReflection(method)) {
-          const commentData = deriveComment(method.name, undefined, method);
-          return [
-            ...methods,
-            [
-              method.name,
-              {
-                method,
-                comment: commentData?.comment,
-                commentSource: commentData?.commentSource,
-              },
-            ],
-          ];
-        }
-        this.log.verbose('(%s) Ignoring method %s', externalDriver.name, method.name);
-        return methods;
-      }, [] as [string, KnownMethodData][])
+    this.log.verbose(
+      'Found %s in %s',
+      pluralize('method declaration', methods.size, true),
+      NAME_EXTERNAL_DRIVER
     );
-
-    this.log.verbose('Found %d method declarations in %s', methods.size, NAME_EXTERNAL_DRIVER);
 
     return methods;
   }
 
-  public convert(): KnownMethods {
+  public override convert(): KnownMethods {
     const {project} = this.ctx;
     let methods: KnownMethods = new Map();
-
     const typesModule = findParentReflectionByName(project, NAME_TYPES_MODULE);
     if (!isAppiumTypesReflection(typesModule)) {
-      this.log.warn('Invalid or missing %s', NAME_TYPES_MODULE);
+      this.log.error('Could not find %s', NAME_TYPES_MODULE);
       return methods;
     }
 
@@ -81,6 +69,6 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
       NAME_EXTERNAL_DRIVER
     );
 
-    return this.convertMethodDeclarations(typesModule);
+    return this.#convertMethodDeclarations(typesModule);
   }
 }

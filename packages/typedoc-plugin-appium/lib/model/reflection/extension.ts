@@ -8,7 +8,7 @@ import {AppiumPluginReflectionKind} from './kind';
  *
  * Methods may be invoked directly by Handlebars templates.
  */
-export class CommandsReflection extends DeclarationReflection {
+export class ExtensionReflection extends DeclarationReflection {
   /**
    * Info about execute methods
    */
@@ -18,12 +18,23 @@ export class CommandsReflection extends DeclarationReflection {
    */
   public readonly routeMap: RouteMap;
 
-  constructor(
-    name: string,
-    parent: ParentReflection,
-    {routeMap, execMethodDataSet}: ModuleCommands
-  ) {
-    super(name, AppiumPluginReflectionKind.COMMANDS as any, parent);
+  /**
+   *
+   * @param name Name of module containing commands
+   * @param parent Module containing commands
+   * @param moduleCommands Data containing commands and execute methods
+   * @todo Determine the kind by inspecting `package.json` or smth
+   */
+  constructor(name: string, parent: ParentReflection, moduleCommands: ModuleCommands) {
+    const {routeMap, execMethodDataSet} = moduleCommands;
+    const kind = (
+      name.includes('driver')
+        ? AppiumPluginReflectionKind.Driver
+        : name.includes('plugin')
+        ? AppiumPluginReflectionKind.Plugin
+        : AppiumPluginReflectionKind.Extension
+    ) as any;
+    super(name, kind, parent);
     this.parent = parent;
     this.routeMap = routeMap;
     this.execMethodDataSet = execMethodDataSet;

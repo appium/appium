@@ -3,7 +3,7 @@ title: Write a Test (Java)
 ---
 
 The Appium team maintains an official [client](https://github.com/appium/java-client) for the Java programming language.
-It is built on top of [Selenium](https://github.com/SeleniumHQ/selenium)
+It is built on top of [Selenium](https://github.com/SeleniumHQ/selenium).
 lib. You could also use this client in your Kotlin projects.
 
 Follow the [Add Appium java client to your test framework](https://github.com/appium/java-client#add-appium-java-client-to-your-test-framework)

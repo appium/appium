@@ -10,7 +10,7 @@ Follow the [Add Appium java client to your test framework](https://github.com/ap
 tutorial in order to connect the library to your test framework sources.
 
 The Appium Java client has dedicated classes to support most of the official Appium drivers. For other drivers
-you could simply use [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) class
+you could simply use the [AppiumDriver](https://github.com/appium/java-client/blob/master/src/main/java/io/appium/java_client/AppiumDriver.java) class
 or build your custom derivatives from it. Check the [Drivers Support](https://github.com/appium/java-client#drivers-support)
 article to know more details about currently present driver class implementations.
 

@@ -28,7 +28,7 @@ export type Command = string;
 export type CommandSet = Set<CommandData>;
 
 /**
- * A reflection which can be the parent of a {@linkcode CommandsReflection}
+ * A reflection which can be the parent of a {@linkcode ExtensionReflection}
  */
 export type ParentReflection = DeclarationReflection | ProjectReflection;
 

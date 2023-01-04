@@ -14,9 +14,13 @@
  * @module
  */
 
-import {Context} from 'typedoc';
+import {Context, ProjectReflection, ReflectionKind} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
-import {ProjectCommands} from '../model';
+import {
+  AppiumPluginReflectionKind,
+  AppiumPluginReflectionKindGroupTitles,
+  ProjectCommands,
+} from '../model';
 import {BuiltinExternalDriverConverter} from './builtin-external-driver';
 import {BuiltinMethodMapConverter} from './builtin-method-map';
 import {ExternalConverter} from './external';
@@ -47,6 +51,36 @@ export function convertCommands(ctx: Context, parentLog: AppiumPluginLogger): Pr
   const allCommands = [...builtinCommands.toProjectCommands(), ...externalCommands];
 
   return new ProjectCommands(allCommands);
+}
+
+/**
+ * Removes any reflection _not_ created by this plugin from the TypeDoc project _except_ the main
+ * project and its module children (if any).
+ *
+ * This includes removal of groups from the main project.
+ * @param project - Current TypeDoc project
+ * @returns Project w/o the stuff in it.  It is mutated in place.
+ */
+export function omitDefaultReflections(project: ProjectReflection): ProjectReflection {
+  // find all modules under the project, then anything not created by this plugin, and remove it
+  for (const module of project.getChildrenByKind(ReflectionKind.Module)) {
+    for (const child of module.getChildrenByKind(~(AppiumPluginReflectionKind.Extension as any))) {
+      project.removeReflection(child);
+    }
+  }
+  // find anything under the project itself not created by this plugin (except modules) and remove it
+  for (const child of project.getChildrenByKind(
+    ~(AppiumPluginReflectionKind.Extension as any) & ~ReflectionKind.Module
+  )) {
+    project.removeReflection(child);
+  }
+
+  /// remove all groups except those created for the ReflectionKinds in this plugin
+  project.groups = project.groups?.filter((group) =>
+    AppiumPluginReflectionKindGroupTitles.has(group.title)
+  );
+
+  return project;
 }
 
 export * from './base-converter';

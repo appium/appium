@@ -1,3 +1,3 @@
 export * from './command';
-export * from './commands';
+export * from './extension';
 export * from './kind';

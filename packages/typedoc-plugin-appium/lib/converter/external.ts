@@ -23,7 +23,7 @@ import {
   filterChildrenByGuard,
   findChildByGuard,
   findChildByNameAndGuard,
-  findMethodsInClassReflection,
+  findAsyncMethodsInReflection,
 } from './utils';
 
 /**
@@ -139,7 +139,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     const classReflections = filterChildrenByGuard(parentRefl, isClassDeclarationReflection);
 
     for (const classRefl of classReflections) {
-      const methods = findMethodsInClassReflection(classRefl, this.knownMethods);
+      const methods = findAsyncMethodsInReflection(classRefl, this.knownMethods);
 
       if (!methods.size) {
         this.log.warn('(%s) No async methods found', classRefl.name);

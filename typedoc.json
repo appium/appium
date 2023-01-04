@@ -11,15 +11,7 @@
     "./packages/fake-driver",
     "./packages/typedoc-plugin-appium"
   ],
-  "excludeInternal": true,
-  "includeVersion": false,
   "name": "Appium",
   "out": "typedoc-docs",
-  "plugin": [
-    "typedoc-plugin-resolve-crossmodule-references",
-    "typedoc-plugin-markdown",
-    "./packages/typedoc-plugin-appium"
-  ],
-  "theme": "appium",
-  "tsconfig": "./tsconfig.json"
+  "outputBuiltinCommands": true
 }

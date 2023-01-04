@@ -38,7 +38,7 @@ export enum AppiumThemeTemplate {
   /**
    * Template to render a list of commands
    */
-  Commands = 'commands.hbs',
+  Extension = 'extension.hbs',
 }
 
 /**

@@ -48,6 +48,22 @@ export class AppiumPluginLogger extends Logger {
   }
 
   /**
+   * Create a new {@link AppiumPluginLogger} for the given context.
+   *
+   * @param ns - New sub-namespace; will be appended to the current namespace.
+   * @returns the new logger.
+   */
+  public createChildLogger(ns: string) {
+    const newLogger = new AppiumPluginLogger(
+      this.#parent,
+      `${this.ns}:${ns}`,
+      this.#logThrough.bind(this)
+    );
+    newLogger.level = this.level;
+    return newLogger;
+  }
+
+  /**
    * Log the given error message.
    *
    * @param text  - The error that should be logged.
@@ -75,22 +91,6 @@ export class AppiumPluginLogger extends Logger {
    */
   public log(text: string, level: LogLevel): void {
     this.#log(level, text);
-  }
-
-  /**
-   * Create a new {@link AppiumPluginLogger} for the given context.
-   *
-   * @param ns - New sub-namespace; will be appended to the current namespace.
-   * @returns the new logger.
-   */
-  public createChildLogger(ns: string) {
-    const newLogger = new AppiumPluginLogger(
-      this.#parent,
-      `${this.ns}:${ns}`,
-      this.#logThrough.bind(this)
-    );
-    newLogger.level = this.level;
-    return newLogger;
   }
 
   /**

@@ -12,7 +12,7 @@ import {
 import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {isCallSignatureReflectionWithParams} from '../../../lib/guards';
 import {AppiumPluginLogger} from '../../../lib/logger';
-import {ModuleCommands, ProjectCommands} from '../../../lib/model';
+import {CommandSet, ModuleCommands, ProjectCommands} from '../../../lib/model';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
 describe('ExternalConverter', function () {
@@ -55,6 +55,9 @@ describe('ExternalConverter', function () {
 
       describe('when run against an Appium extension', function () {
         let driverCmds: ProjectCommands;
+        let fakeDriverCmds: ModuleCommands;
+        let sessionCmdSet: CommandSet;
+
         beforeEach(async function () {
           const converter = await initConverter(ExternalConverter, NAME_FAKE_DRIVER_MODULE, {
             extraArgs: [externalDriverMethods, builtinCmdSrc.moduleCmds],
@@ -64,26 +67,23 @@ describe('ExternalConverter', function () {
 
         it('should find commands', function () {
           expect(driverCmds).not.to.be.empty;
+          fakeDriverCmds = driverCmds.get(NAME_FAKE_DRIVER_MODULE)!;
+          expect(fakeDriverCmds).to.exist;
+          sessionCmdSet = fakeDriverCmds.routeMap.get('/session')!;
+          expect(sessionCmdSet).to.exist;
         });
 
         it('should find commands from the new method map', function () {
-          expect(
-            driverCmds.get(NAME_FAKE_DRIVER_MODULE)!.routeMap.get('/session/:sessionId/fakedriver')
-          ).to.have.lengthOf(2);
+          expect(fakeDriverCmds.routeMap.get('/session/:sessionId/fakedriver')).to.have.lengthOf(2);
         });
 
         it('should find commands in the execute method map', function () {
-          const execCmds = [...driverCmds.get(NAME_FAKE_DRIVER_MODULE)!.execMethodDataSet];
-
+          const execCmds = [...fakeDriverCmds.execMethodDataSet];
           expect(execCmds.find((cmd) => cmd.script === 'fake: getThing')).to.exist;
         });
 
         it('should use the summary from the driver instead of from builtins', function () {
-          const commandData = [
-            ...driverCmds.get(NAME_FAKE_DRIVER_MODULE)!.routeMap.get('/session')!,
-          ];
-
-          const postRoute = commandData.find((cmdData) => cmdData.httpMethod === 'POST')!;
+          const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
 
           expect(Comment.combineDisplayParts(postRoute.comment!.summary)).to.equal(
             'Comment for `createSession` in `FakeDriver`'
@@ -91,11 +91,7 @@ describe('ExternalConverter', function () {
         });
 
         it('should prefer method map parameters over method parameters', function () {
-          const commandData = [
-            ...driverCmds.get(NAME_FAKE_DRIVER_MODULE)!.routeMap.get('/session')!,
-          ];
-
-          const postRoute = commandData.find((cmdData) => cmdData.httpMethod === 'POST')!;
+          const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
 
           const pRefls = postRoute.methodRefl!.signatures!.find(
             isCallSignatureReflectionWithParams

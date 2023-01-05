@@ -6,6 +6,10 @@ import {transformSourceXml} from './source';
 import {transformQuery} from './xpath';
 import log from './logger';
 
+/**
+ *
+ * @extends {BasePlugin}
+ */
 export default class UniversalXMLPlugin extends BasePlugin {
   commands = [
     'getPageSource',
@@ -15,7 +19,18 @@ export default class UniversalXMLPlugin extends BasePlugin {
     'findElementsFromElement',
   ];
 
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver
+   * @param {string} sessId
+   * @param {boolean} addIndexPath
+   * @returns
+   */
   async getPageSource(next, driver, sessId, addIndexPath = false) {
+    /**
+     * @type {string?}
+     */
     const source = next ? await next() : await driver.getPageSource();
     const metadata = {};
     const {platformName} = driver.caps;
@@ -45,14 +60,39 @@ export default class UniversalXMLPlugin extends BasePlugin {
     return xml;
   }
 
-  async findElement(...args) {
-    return await this._find(false, ...args);
+  /**
+   *
+   * @param {Function} next
+   * @param {ExtDriver} driver
+   * @param {string} strategy
+   * @param {string} selector
+   * @returns
+   */
+  async findElement(next, driver, strategy, selector) {
+    return await this._find(false, next, driver, strategy, selector);
   }
 
-  async findElements(...args) {
-    return await this._find(true, ...args);
+  /**
+   *
+   * @param {Function} next
+   * @param {ExtDriver} driver
+   * @param {string} strategy
+   * @param {string} selector
+   * @returns
+   */
+  async findElements(next, driver, strategy, selector) {
+    return await this._find(true, next, driver, strategy, selector);
   }
 
+  /**
+   *
+   * @param {boolean} multiple
+   * @param {Function} next
+   * @param {ExtDriver} driver
+   * @param {string} strategy
+   * @param {string} selector
+   * @returns
+   */
   async _find(multiple, next, driver, strategy, selector) {
     const {platformName} = driver.caps;
     if (strategy.toLowerCase() !== 'xpath') {
@@ -89,3 +129,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
 }
 
 export {UniversalXMLPlugin};
+
+/**
+ * @typedef {import('@appium/types').ExternalDriver} ExtDriver
+ */

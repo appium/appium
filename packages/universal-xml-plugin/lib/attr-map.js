@@ -1,4 +1,17 @@
-// uses the same format as NODE_MAP in node-map.js
+/**
+ * Uses the same format as NODE_MAP in node-map.js
+ *
+ * @typedef {Object} AttributeMap
+ * @property {Attribute} x
+ * @property {Attribute} y
+ * @property {Attribute} width
+ * @property {Attribute} height
+ * @property {Attribute} enabled
+ * @property {Attribute} axId
+ * @property {Attribute} text
+ * @property {Attribute} visible
+ * @property {Attribute} value
+ */
 const ATTR_MAP = {
   x: {ios: 'x', android: 'x'},
   y: {ios: 'y', android: 'y'},
@@ -12,7 +25,11 @@ const ATTR_MAP = {
   value: {ios: 'value'},
 };
 
-// these attributes shouldn't be mapped and should instead just be removed
+/**
+ * These attributes shouldn't be mapped and should instead just be removed
+ *
+ * @type {string[]}
+ */
 const REMOVE_ATTRS = [
   'index',
   'type',
@@ -33,3 +50,9 @@ const REMOVE_ATTRS = [
 ];
 
 export {ATTR_MAP, REMOVE_ATTRS};
+
+/**
+ * @typedef Attribute
+ * @property {string} [ios]
+ * @property {string} [android]
+ */

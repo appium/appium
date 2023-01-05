@@ -1,12 +1,25 @@
 import {select as xpathQuery} from 'xpath';
 import {DOMParser} from '@xmldom/xmldom';
 
+/**
+ *
+ * @param {string} query
+ * @param {string} xmlStr
+ * @returns {NodeSelectedValue[]}
+ */
 export function runQuery(query, xmlStr) {
   const dom = new DOMParser().parseFromString(xmlStr);
   const nodes = xpathQuery(query, dom);
   return nodes;
 }
 
+/**
+ *
+ * @param {string} query
+ * @param {string} xmlStr
+ * @param {boolean} multiple
+ * @returns {string | null}
+ */
 export function transformQuery(query, xmlStr, multiple) {
   const nodes = runQuery(query, xmlStr);
 
@@ -38,6 +51,13 @@ export function transformQuery(query, xmlStr, multiple) {
   return newSelector;
 }
 
+/**
+ *
+ * @param {NodeWithAttribute} node
+ * @param {string} attr
+ * @returns {string} - The value of the attribute.
+ * @throws {Error} - If the node does not have the attribute.
+ */
 export function getNodeAttrVal(node, attr) {
   const attrObjs = Object.values(node.attributes).filter((obj) => obj.name === attr);
   if (!attrObjs.length) {
@@ -45,3 +65,12 @@ export function getNodeAttrVal(node, attr) {
   }
   return attrObjs[0].value;
 }
+
+/**
+ * @typedef NodeWithAttribute
+ * @property {Object} attributes
+ */
+
+/**
+ * @typedef {Node | Attr | string | number | boolean} NodeSelectedValue
+ */

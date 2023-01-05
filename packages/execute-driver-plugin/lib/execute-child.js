@@ -160,7 +160,6 @@ async function main(eventParams) {
 if (require.main === module && _.isFunction(process.send)) {
   send = B.promisify(process.send, {context: process});
   log.info('Running driver execution in child process');
-  // When the 'message' event is emitted, call main function
   process.on('message', main);
 }
 

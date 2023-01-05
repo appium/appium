@@ -24,7 +24,7 @@ export async function verifyMkdocs() {
  *
  * @param {string} configPath - path to mkdocs config yml
  * @param {string} outputDir - directory mkdocs should build into
- * @param {?string} theme - theme name
+ * @param {string?} theme - theme name
  */
 export async function mkdocsBuild(configPath, outputDir, theme = 'mkdocs') {
   await verifyMkdocs();

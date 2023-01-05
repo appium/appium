@@ -24,7 +24,7 @@ export default class ExecuteDriverPlugin extends BasePlugin {
    * already been attached to the currently running session.
    *
    * @param {function} next - standard behaviour for executeDriverScript
-   * @param {import('@appium/base-driver').BaseDriver} driver - Appium driver handling this command
+   * @param {import('@appium/types').ExternalDriver} driver - Appium driver handling this command
    * @param {string} script - the string representing the driver script to run
    * @param {string} [scriptType='webdriverio'] - the name of the driver script
    * library (currently only webdriverio is supported)

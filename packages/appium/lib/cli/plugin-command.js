@@ -21,7 +21,7 @@ export default class PluginCommand extends ExtensionCommand {
    * Install a plugin
    *
    * @param {PluginInstallOpts} opts
-   * @return {Promise<ExtRecord<PluginType>>}
+   * @returns {Promise<ExtRecord<PluginType>>}
    */
   async install({plugin, installType, packageName}) {
     return await super._install({
@@ -35,7 +35,7 @@ export default class PluginCommand extends ExtensionCommand {
    * Uninstall a plugin
    *
    * @param {PluginUninstallOpts} opts
-   * @return {Promise<ExtRecord<PluginType>>}
+   * @returns {Promise<ExtRecord<PluginType>>}
    */
   async uninstall({plugin}) {
     return await super._uninstall({installSpec: plugin});
@@ -45,7 +45,7 @@ export default class PluginCommand extends ExtensionCommand {
    * Update a plugin
    *
    * @param {PluginUpdateOpts} opts
-   * @return {Promise<import('./extension-command').ExtensionUpdateResult>}
+   * @returns {Promise<import('./extension-command').ExtensionUpdateResult>}
    */
   async update({plugin, unsafe}) {
     return await super._update({installSpec: plugin, unsafe});
@@ -54,7 +54,7 @@ export default class PluginCommand extends ExtensionCommand {
   /**
    *
    * @param {PluginRunOptions} opts
-   * @return {Promise<import('./extension-command').RunOutput>}
+   * @returns {Promise<import('./extension-command').RunOutput>}
    */
   async run({plugin, scriptName, extraArgs}) {
     return await super._run({installSpec: plugin, scriptName, extraArgs});

@@ -18,7 +18,16 @@ const STANDARD_CAPS = [
 const VENDOR_PREFIX = 'appium';
 const HAS_VENDOR_PREFIX_RE = /^.+:/;
 
+/**
+ *
+ * @extends {BasePlugin}
+ */
 export class RelaxedCapsPlugin extends BasePlugin {
+  /**
+   *
+   * @param {Capabilities} caps
+   * @returns {Capabilities} - The transformed capability object.
+   */
   transformCaps(caps) {
     const newCaps = {};
 
@@ -47,6 +56,15 @@ export class RelaxedCapsPlugin extends BasePlugin {
     return newCaps;
   }
 
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one.
+   * @param {import('@appium/types').ExternalDriver} driver - The driver instance
+   * @param {W3CCapabilities} jwpDesCaps
+   * @param {W3CCapabilities} jwpReqCaps
+   * @param {Capabilities} caps
+   *
+   */
   async createSession(next, driver, jwpDesCaps, jwpReqCaps, caps) {
     const newCaps = {};
     if (_.isArray(caps.firstMatch)) {
@@ -58,3 +76,11 @@ export class RelaxedCapsPlugin extends BasePlugin {
     return await driver.createSession(jwpDesCaps, jwpReqCaps, newCaps);
   }
 }
+
+/**
+ * @typedef {import('@appium/types').Capabilities} Capabilities
+ */
+
+/**
+ * @typedef {import('@appium/types/lib/driver').W3CCapabilities<C, Extra>} W3CCapabilities
+ */

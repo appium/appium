@@ -9,6 +9,11 @@ import {ImageElement, IMAGE_ELEMENT_PREFIX} from './image-element';
 
 const IMAGE_STRATEGY = '-image';
 
+/**
+ *
+ * @param {Array} args - An array of arguments
+ * @returns {string}
+ */
 function getImgElFromArgs(args) {
   for (let arg of args) {
     if (_.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX)) {
@@ -17,13 +22,22 @@ function getImgElFromArgs(args) {
   }
 }
 
+/**
+ * A plugin for Appium that provides support for finding elements by image and comparing images.
+ *
+ * @extends {BasePlugin}
+ */
 export default class ImageElementPlugin extends BasePlugin {
+  /**
+   *
+   * @param {string} pluginName - The name of the plugin.
+   */
   constructor(pluginName) {
     super(pluginName);
     this.finder = new ImageElementFinder();
   }
 
-  // this plugin supports a non-standard 'compare images' command
+  // Map route path to  to HTTP methods and command details
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/appium/compare_images': {
       POST: {
@@ -37,21 +51,54 @@ export default class ImageElementPlugin extends BasePlugin {
     },
   });
 
-  async compareImages(next, driver, ...args) {
-    return await compareImages(...args);
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver - The driver instance
+   * @param {string} mode
+   * @param {string} firstImage
+   * @param {string} secondImage
+   * @param {Object} [options={}]
+   * @returns {Promise<any>}
+   */
+  async compareImages(next, driver, mode, firstImage, secondImage, options = {}) {
+    return await compareImages(mode, firstImage, secondImage, options);
   }
 
-  async findElement(next, driver, ...args) {
-    return await this._find(false, next, driver, ...args);
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver - The driver instance
+   * @param {string} strategy - The strategy used to locate the elements
+   * @param {string} selector - The image selector
+   * @returns {Promise<any>}
+   */
+  async findElement(next, driver, strategy, selector) {
+    return await this._find(false, next, driver, strategy, selector);
   }
 
-  async findElements(next, driver, ...args) {
-    return await this._find(true, next, driver, ...args);
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver - The driver instance
+   * @param {string} strategy - The strategy used to locate the elements
+   * @param {string} selector - The image selector
+   * @returns {Promise<any>}
+   */
+  async findElements(next, driver, strategy, selector) {
+    return await this._find(true, next, driver, strategy, selector);
   }
 
-  async _find(multiple, next, driver, ...args) {
-    const [strategy, selector] = args;
-
+  /**
+   *
+   * @param {boolean} multiple - True if finding multiple elements, false if finding a single element
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver - The driver instance
+   * @param {string} strategy - The strategy used to locate the elements
+   * @param {string} selector - The image selector
+   * @returns {Promise<any>}
+   */
+  async _find(multiple, next, driver, strategy, selector) {
     // if we're not actually finding by image, just do the normal thing
     if (strategy !== IMAGE_STRATEGY) {
       return await next();
@@ -61,6 +108,14 @@ export default class ImageElementPlugin extends BasePlugin {
     return await this.finder.findByImage(selector, {multiple});
   }
 
+  /**
+   *
+   * @param {Function} next - The function to be executed after this one
+   * @param {ExtDriver} driver - The driver instance
+   * @param {string} cmdName - The command name
+   * @param {any[]} args
+   * @returns {Promise<any>}
+   */
   async handle(next, driver, cmdName, ...args) {
     // if we have a command that involves an image element id, attempt to find the image element
     // and execute the command on it
@@ -79,3 +134,7 @@ export default class ImageElementPlugin extends BasePlugin {
 }
 
 export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};
+
+/**
+ * @typedef {import('@appium/types').ExternalDriver} ExtDriver
+ */

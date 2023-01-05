@@ -184,17 +184,17 @@ function highlightRegion(mat, region) {
 
 /**
  * @typedef MatchingOptions
- * @property {?string} detectorName ['ORB'] One of possible OpenCV feature detector names
+ * @property {string?} detectorName ['ORB'] One of possible OpenCV feature detector names
  * from keys of the `AVAILABLE_DETECTORS` object.
  * Some of these methods (FAST, AGAST, GFTT, FAST, SIFT and MSER) are not available
  * in the default OpenCV installation and have to be enabled manually before
  * library compilation.
- * @property {?string} matchFunc ['BruteForce'] The name of the matching function.
+ * @property {string?} matchFunc ['BruteForce'] The name of the matching function.
  * Should be one of the keys of the `AVAILABLE_MATCHING_FUNCTIONS` object.
- * @property {?number|Function} goodMatchesFactor The maximum count of "good" matches
+ * @property {number?|Function} goodMatchesFactor The maximum count of "good" matches
  * (e. g. with minimal distances) or a function, which accepts 3 arguments: the current distance,
  * minimal distance, maximum distance and returns true or false to include or exclude the match.
- * @property {?boolean} visualize [false] Whether to return the resulting visalization
+ * @property {boolean?} visualize [false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
  */
 
@@ -206,7 +206,7 @@ function highlightRegion(mat, region) {
  * It is equal to `count` if `goodMatchesFactor` does not limit the matches,
  * otherwise it contains the total count of matches before `goodMatchesFactor` is
  * applied.
- * @property {?Buffer} visualization The visualization of the matching result
+ * @property {Buffer?} visualization The visualization of the matching result
  * represented as PNG image buffer. This visualization looks like
  * https://user-images.githubusercontent.com/31125521/29702731-c79e3142-8972-11e7-947e-db109d415469.jpg
  * @property {Array<Point>} points1 The array of matching points on the first image
@@ -223,7 +223,7 @@ function highlightRegion(mat, region) {
  *
  * @param {Buffer} img1Data The data of the first image packed into a NodeJS buffer
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
- * @param {?MatchingOptions} options [{}] Set of matching options
+ * @param {MatchingOptions?} options [{}] Set of matching options
  *
  * @returns {MatchingResult} Maching result
  * @throws {Error} If `detectorName` value is unknown.
@@ -356,7 +356,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
 
 /**
  * @typedef SimilarityOptions
- * @property {?boolean} visualize [false] Whether to return the resulting visalization
+ * @property {boolean?} visualize [false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
  * @property {string} method [TM_CCOEFF_NORMED] The name of the template matching method.
  * Acceptable values are:
@@ -374,7 +374,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  * @typedef SimilarityResult
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {?Buffer} visualization The visualization of the matching result
+ * @property {Buffer?} visualization The visualization of the matching result
  * represented as PNG image buffer. This image includes both input pictures where
  * difference regions are highlighted with rectangles.
  */
@@ -385,7 +385,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  *
  * @param {Buffer} img1Data The data of the first image packed into a NodeJS buffer
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
- * @param {?SimilarityOptions} options [{}] Set of similarity calculation options
+ * @param {SimilarityOptions?} options [{}] Set of similarity calculation options
  *
  * @returns {SimilarityResult} The calculation result
  * @throws {Error} If the given images have different resolution.
@@ -623,7 +623,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
  * Convert an opencv image matrix into a Jimp image object
  *
  * @param {cv.Mat} mat the image matrix
- * @return {Jimp} the Jimp image
+ * @returns {Jimp} the Jimp image
  */
 function jimpImgFromCvMat(mat) {
   return new Jimp({
@@ -637,7 +637,7 @@ function jimpImgFromCvMat(mat) {
  * Take a binary image buffer and return a cv.Mat
  *
  * @param {Buffer} img the image data buffer
- * @return {cv.Mat} the opencv matrix
+ * @returns {cv.Mat} the opencv matrix
  */
 async function cvMatFromImage(img) {
   const jimpImg = await Jimp.read(img);
@@ -650,7 +650,7 @@ async function cvMatFromImage(img) {
  * @param {Array<Point>} nonZeroMatchResults matrix of image match results
  * @param {number} matchNeighbourThreshold The pixel distance within which we
  * consider an element being a neighbour of an existing match
- * @return {Array<Point>} the filtered array of matched points
+ * @returns {Array<Point>} the filtered array of matched points
  */
 function filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold) {
   return nonZeroMatchResults.reduce((acc, element) => {
@@ -666,7 +666,7 @@ function filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold) {
  *
  * @param {Point} point1 The first point
  * @param {Point} point2 The second point
- * @return {number} the distance
+ * @returns {number} the distance
  */
 function distance(point1, point2) {
   const a2 = Math.pow(point1.x - point2.x, 2);

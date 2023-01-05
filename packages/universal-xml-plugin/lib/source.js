@@ -9,6 +9,12 @@ const PARSE_OPTS = {
   arrayMode: true,
 };
 
+/**
+ * @typedef {GenOptions}
+ * @property {boolean} ignoreAttributes
+ * @property {boolean} arrayMode
+ * @property {boolean} format
+ */
 const GEN_OPTS = {
   ignoreAttributes: false,
   arrayMode: true,
@@ -19,9 +25,29 @@ export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
-const isAttr = (k) => k.substring(0, 2) === ATTR_PREFIX;
-const isNode = (k) => !isAttr(k);
+/**
+ * It is attribute if the first two character match ATTR_PREFIX.
+ *
+ * @param {string} key - The key to check.
+ * @return {boolean} - True if the first two character match ATTR_PREFIX.
+ */
+const isAttr = (key) => key.substring(0, 2) === ATTR_PREFIX;
 
+/**
+ * It is node if it is not attribute.
+ *
+ * @param {string} k - The key to check.
+ * @return {boolean} - True if it is not attribute.
+ */
+const isNode = (key) => !isAttr(key);
+
+/**
+ *
+ * @param {string} xmlStr
+ * @param {'ios' | 'android'} platform
+ * @param {XMLExtraParams} extraParams
+ * @returns {XMLSource}
+ */
 export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
@@ -33,11 +59,21 @@ export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPat
     parentPath: '',
   });
   const jParser = new j2xParser(GEN_OPTS);
+  /**
+   * @type {string}
+   */
   let transformedXml = jParser.parse(xmlObj).trim();
   transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
   return {xml: transformedXml, unknowns};
 }
 
+/**
+ *
+ * @param {import('./node-map').NodeNameMapping} nameMap
+ * @param {string} name
+ * @param {'ios' | 'android'} platform
+ * @returns {string | null}
+ */
 function getUniversalName(nameMap, name, platform) {
   for (const translatedName of Object.keys(nameMap)) {
     const sourceNodes = nameMap[translatedName]?.[platform];
@@ -51,14 +87,33 @@ function getUniversalName(nameMap, name, platform) {
   return null;
 }
 
+/**
+ *
+ * @param {string} nodeName
+ * @param {'ios' | 'android'} platform
+ * @returns {string | null}
+ */
 export function getUniversalNodeName(nodeName, platform) {
   return getUniversalName(NODE_MAP, nodeName, platform);
 }
 
+/**
+ *
+ * @param {string} attrName
+ * @param {'ios' | 'android'} platform
+ * @returns {string | null}
+ */
 export function getUniversalAttrName(attrName, platform) {
   return getUniversalName(ATTR_MAP, attrName, platform);
 }
 
+/**
+ *
+ * @param {Object} nodeObj
+ * @param {'ios' | 'android'} platform
+ * @param {XMLExtraParams} extraParams
+ * @returns {NodeAndAttribute}
+ */
 export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath}) {
   const unknownNodes = [];
   const unknownAttrs = [];
@@ -103,6 +158,14 @@ export function transformNode(nodeObj, platform, {metadata, addIndexPath, parent
   };
 }
 
+/**
+ *
+ * @param {Object} nodeObj
+ * @param {string[]} childNodeNames
+ * @param {'ios' | 'android'} platform
+ * @param {XMLExtraParams} extraParams
+ * @returns
+ */
 export function transformChildNodes(
   nodeObj,
   childNodeNames,
@@ -144,6 +207,13 @@ export function transformChildNodes(
   return {nodes: unknownNodes, attrs: unknownAttrs};
 }
 
+/**
+ *
+ * @param {Object} nodeObj
+ * @param {string[]} attrs
+ * @param {'ios' | 'android'} platform
+ * @returns
+ */
 export function transformAttrs(nodeObj, attrs, platform) {
   const unknownAttrs = [];
   for (const attr of attrs) {
@@ -165,3 +235,22 @@ export function transformAttrs(nodeObj, attrs, platform) {
   }
   return unknownAttrs;
 }
+
+/**
+ * @typedef XMLSource
+ * @property {string} xml
+ * @property {} unknowns
+ */
+
+/**
+ * @typedef XMLExtraParams
+ * @property {Object} metadata
+ * @property {boolean} addIndexPath
+ * @property {string?} parentPath
+ */
+
+/**
+ * @typedef NodeAndAttribute
+ * @property {} nodes
+ * @property {} attrs
+ */

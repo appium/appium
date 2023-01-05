@@ -234,7 +234,7 @@ export default class ImageElement {
         return imgEl.rect;
       case 'getAttribute':
         // /session/:sessionId/element/:elementId/attribute/:name
-        // /session/:sessionId/element/:elementId/attribute/visual should retun the visual data
+        // /session/:sessionId/element/:elementId/attribute/visual should return the visual data
         // e.g. ["content-desc","appium-image-element-xxxxx","xxxxx"], ["visual","appium-image-element-xxxxx","xxxxx"]
         switch (args[0]) {
           case 'visual':

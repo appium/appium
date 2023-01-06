@@ -44,6 +44,7 @@ nav:
     - guides/event-timing.md
     - guides/log-filters.md
     - guides/grid.md
+    - guides/caching.md
   - Developer Reference:
       - BaseDriver: reference/base_driver.md
   - Ecosystem:

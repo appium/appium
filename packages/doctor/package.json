@@ -1,6 +1,6 @@
 {
   "name": "@appium/doctor",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Test environment for fitness to run Appium",
   "keywords": [
     "automation",
@@ -34,7 +34,8 @@
     "appium-doctor.js",
     "lib",
     "bin",
-    "build"
+    "build",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
@@ -42,11 +43,11 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^3.0.0",
+    "@appium/support": "^3.0.1",
     "@colors/colors": "1.5.0",
     "@types/bluebird": "3.5.38",
     "@types/teen_process": "2.0.0",
-    "appium-adb": "9.10.19",
+    "appium-adb": "9.10.21",
     "bluebird": "3.7.2",
     "inquirer": "8.2.5",
     "lodash": "4.17.21",

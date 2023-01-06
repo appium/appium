@@ -1,5 +1,5 @@
 {
-  "extends": "../../config/tsconfig.base.json",
+  "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
     "paths": {
@@ -10,8 +10,5 @@
     "checkJs": true
   },
   "include": ["lib"],
-  "references": [
-    {"path": "../support"},
-    {"path": "../types"}
-  ]
+  "references": [{"path": "../support"}, {"path": "../types"}]
 }

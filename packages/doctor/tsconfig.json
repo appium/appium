@@ -1,13 +1,11 @@
 {
-  "extends": "../../config/tsconfig.base.json",
+  "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
     "paths": {
-      "@appium/support": ["../support"],
-    },
+      "@appium/support": ["../support"]
+    }
   },
   "include": ["lib", "bin"],
-  "references": [
-    {"path": "../support"}
-  ]
+  "references": [{"path": "../support"}]
 }

@@ -10,3 +10,4 @@ package.json
 **/generated/**
 # generated
 packages/types/lib/appium-config.ts
+**/*.hbs

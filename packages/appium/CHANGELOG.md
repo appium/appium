@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.48](https://github.com/appium/appium/compare/appium@2.0.0-beta.47...appium@2.0.0-beta.48) (2022-12-21)
+
+### Bug Fixes
+
+- **appium:** ensure migration always gets applied ([20667be](https://github.com/appium/appium/commit/20667be9a21e71963ecb7e25e1b8d51864bce011))
+- **appium:** fix manifest migrations ([df250cc](https://github.com/appium/appium/commit/df250cc1e024f4971abe7e756594f7feee32cba6))
+- **execute-driver-plugin:** update dependency webdriverio to v7.28.0 ([f81e2e9](https://github.com/appium/appium/commit/f81e2e92eff25c33d36f767209f423227d288218))
+- **types:** update dependency type-fest to v3.4.0 ([37f71c3](https://github.com/appium/appium/commit/37f71c327a7c1a6d882b5198af6fedc9e8d51496))
+
+### Features
+
+- **appium:** add chromium driver to list of officially supported drivers ([#17939](https://github.com/appium/appium/issues/17939)) ([fe67e4c](https://github.com/appium/appium/commit/fe67e4cb2fca977dd9994f1cfbba4a0edc61ef83))
+
 # [2.0.0-beta.47](https://github.com/appium/appium/compare/appium@2.0.0-beta.46...appium@2.0.0-beta.47) (2022-12-14)
 
 ### Bug Fixes

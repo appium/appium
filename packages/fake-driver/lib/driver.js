@@ -65,25 +65,26 @@ export class FakeDriverCore extends BaseDriver {
   }
 
   /**
-   *
-   * @param {W3CFakeDriverCaps} jsonwpDesiredCapabilities
-   * @param {W3CFakeDriverCaps} [jsonwpRequiredCaps]
-   * @param {W3CFakeDriverCaps} [w3cCapabilities]
-   * @param {import('@appium/types').DriverData[]} [otherSessionData]
-   * @returns {Promise<[string,FakeDriverCaps]>}
+   * Comment for `createSession` in `FakeDriver`
+   * @param {W3CFakeDriverCaps} w3cCapabilities1 W3C Capabilities
+   * @param {W3CFakeDriverCaps} [w3cCapabilities2] W3C Capabilities
+   * @param {W3CFakeDriverCaps} [w3cCapabilities3] W3C Capabilities
+   * @param {import('@appium/types').DriverData[]} [driverData] Other session data
+   * @override
+   * @returns {Promise<[string,FakeDriverCaps]>} Session ID and normalized capabilities
    */
   async createSession(
-    jsonwpDesiredCapabilities,
-    jsonwpRequiredCaps,
-    w3cCapabilities,
-    otherSessionData = []
+    w3cCapabilities1,
+    w3cCapabilities2,
+    w3cCapabilities3,
+    driverData = []
   ) {
     // TODO add validation on caps.app that we will get for free from
     // BaseDriver
 
     // check to see if any other sessions have set uniqueApp. If so, emulate
     // not being able to start a session because of system resources
-    for (let d of otherSessionData) {
+    for (let d of driverData) {
       if (d.isUnique) {
         throw new errors.SessionNotCreatedError(
           'Cannot start session; another ' +
@@ -94,10 +95,10 @@ export class FakeDriverCore extends BaseDriver {
 
     let [sessionId, caps] = /** @type {[string, FakeDriverCaps]} */ (
       await super.createSession(
-        jsonwpDesiredCapabilities,
-        jsonwpRequiredCaps,
-        w3cCapabilities,
-        otherSessionData
+        w3cCapabilities1,
+        w3cCapabilities2,
+        w3cCapabilities3,
+        driverData
       )
     );
     this.caps = caps;

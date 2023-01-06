@@ -1,6 +1,6 @@
 {
   "name": "@appium/typedoc-plugin-appium",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "TypeDoc plugin for Appium & its extensions",
   "homepage": "https://appium.io",
   "license": "Apache-2.0",
@@ -24,14 +24,14 @@
     "testing"
   ],
   "author": "https://github.com/appium",
-  "types": "./build/plugin.d.ts",
+  "types": "./build/lib/plugin.d.ts",
   "scripts": {
-    "build": "cpy resources build",
-    "clean": "npx rimraf build/resources",
-    "test": "exit 0",
+    "build": "cpy lib/theme/resources build",
+    "clean": "npx rimraf build/lib/theme/resources",
+    "test": "run-s test:unit",
     "test:e2e": "exit 0",
     "test:smoke": "node ./index.js",
-    "test:unit": "exit 0"
+    "test:unit": "mocha --no-timeout \"test/unit/**/*.spec.ts\""
   },
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -45,7 +45,8 @@
     "lib",
     "build/lib",
     "build/resources",
-    "resources"
+    "resources",
+    "tsconfig.json"
   ],
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
@@ -60,7 +61,7 @@
   "dependencies": {
     "handlebars": "4.7.7",
     "pluralize": "8.0.0",
-    "type-fest": "3.4.0",
+    "type-fest": "3.5.1",
     "typedoc-plugin-markdown": "3.14.0"
   }
 }

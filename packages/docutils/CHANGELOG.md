@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/appium/appium/compare/@appium/docutils@0.1.0...@appium/docutils@0.1.1) (2022-12-21)
+
+### Bug Fixes
+
+- **docutils:** package should publish the base mkdocs yml ([#17968](https://github.com/appium/appium/issues/17968)) ([aab4156](https://github.com/appium/appium/commit/aab415685ec5d5578cc8faae563f5cc5c0e4bb75))
+
 # [0.1.0](https://github.com/appium/appium/compare/@appium/docutils@0.0.13...@appium/docutils@0.1.0) (2022-12-14)
 
 - chore!: set engines to minimum Node.js v14.17.0 ([a1dbe6c](https://github.com/appium/appium/commit/a1dbe6c43efe76604943a607d402f4c8b864d652))

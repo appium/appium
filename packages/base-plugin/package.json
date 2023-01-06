@@ -1,7 +1,17 @@
 {
   "name": "@appium/base-plugin",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "The base plugin used to create Appium 2.0 plugins",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
   "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
@@ -20,7 +30,8 @@
   "files": [
     "lib",
     "build",
-    "index.js"
+    "index.js",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",
@@ -28,7 +39,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/support": "^3.0.0"
+    "@appium/support": "^3.0.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
@@ -39,16 +50,6 @@
     "appium"
   ],
   "typedoc": {
-    "entryPoint": "./build/lib/plugin.js"
-  },
-  "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
-  ]
+    "entryPoint": "./lib/plugin.js"
+  }
 }

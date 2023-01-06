@@ -14,7 +14,7 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 
 ## Breaking Changes
 
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do do account for them.
+Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
 
 ### :bangbang: Installing drivers during setup
 
@@ -32,7 +32,7 @@ If you're running in a CI environment or want to install Appium along with some 
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
-This will install Appium and the two drivers for you in one go.
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
 
 ### :bangbang: Drivers installation path
 

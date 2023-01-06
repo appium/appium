@@ -225,7 +225,7 @@ function parseCaps(caps, constraints = /** @type {C} */ ({}), shouldValidateCaps
   // In the future, reject 'firstMatch' argument if its array did not have one or more entries (#3.2)
   if (allFirstMatchCaps.length === 0) {
     log.warn(
-      `The firstMatch array in the given capabilities has no entries. Adding an empty entry fo rnow, ` +
+      `The firstMatch array in the given capabilities has no entries. Adding an empty entry for now, ` +
         `but it will require one or more entries as W3C spec.`
     );
     allFirstMatchCaps.push({});

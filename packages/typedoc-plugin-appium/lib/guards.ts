@@ -5,35 +5,46 @@
 
 import {
   DeclarationReflection,
-  ReflectionType,
-  TypeOperatorType,
-  TupleType,
   LiteralType,
-  ReflectionKind,
+  ProjectReflection,
+  ReferenceType,
   Reflection,
+  ReflectionKind,
+  ReflectionType,
+  SignatureReflection,
+  TupleType,
+  TypeOperatorType,
 } from 'typedoc';
 import {
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_COMMAND,
   NAME_EXECUTE_METHOD_MAP,
+  NAME_EXTERNAL_DRIVER,
   NAME_METHOD_MAP,
   NAME_NEW_METHOD_MAP,
   NAME_PARAMS,
   NAME_PAYLOAD_PARAMS,
+  NAME_TYPES_MODULE,
 } from './converter';
 import {
+  AppiumTypesReflection,
+  AsyncMethodDeclarationReflection,
   BaseDriverDeclarationReflection,
+  CallSignatureReflection,
+  ClassDeclarationReflection,
   CommandPropDeclarationReflection,
   DeclarationReflectionWithReflectedType,
   ExecMethodDeclarationReflection,
-  HTTPMethodDeclarationReflection,
-  MethodDefParamNamesDeclarationReflection,
-  MethodMapDeclarationReflection,
-  MethodDefParamsPropDeclarationReflection,
-  PropDeclarationReflection,
   ExecMethodDefParamsPropDeclarationReflection,
+  ExternalDriverDeclarationReflection,
+  HTTPMethodDeclarationReflection,
+  InterfaceDeclarationReflection,
+  MethodDefParamNamesDeclarationReflection,
+  MethodDefParamsPropDeclarationReflection,
+  MethodMapDeclarationReflection,
+  PropDeclarationReflection,
 } from './converter/types';
-import {AllowedHttpMethod, ExecMethodData} from './model';
+import {AllowedHttpMethod, ExecMethodData, ParentReflection} from './model';
 
 /**
  * Set of HTTP methods allowed by WebDriver; see {@linkcode AllowedHttpMethod}
@@ -50,6 +61,14 @@ const ALLOWED_HTTP_METHODS: Readonly<Set<AllowedHttpMethod>> = new Set([
  */
 export function isDeclarationReflection(value: any): value is DeclarationReflection {
   return value instanceof DeclarationReflection;
+}
+
+export function isParentReflection(value: any): value is ParentReflection {
+  return value instanceof DeclarationReflection || value instanceof ProjectReflection;
+}
+
+export function isAppiumTypesReflection(value: any): value is AppiumTypesReflection {
+  return isParentReflection(value) && value.name === NAME_TYPES_MODULE;
 }
 
 /**
@@ -106,6 +125,7 @@ export function isMethodDefParamNamesDeclarationReflection(
 ): value is MethodDefParamNamesDeclarationReflection {
   return (
     isDeclarationReflection(value) &&
+    value.kindOf(ReflectionKind.Property) &&
     isTypeOperatorType(value.type) &&
     isTupleType(value.type.target) &&
     value.type.target.elements.every(isLiteralType)
@@ -128,9 +148,9 @@ export function isBaseDriverDeclarationReflection(
   value: any
 ): value is BaseDriverDeclarationReflection {
   return (
-    isDeclarationReflection(value) &&
+    isParentReflection(value) &&
     value.name === NAME_BUILTIN_COMMAND_MODULE &&
-    value.kindOf(ReflectionKind.Module)
+    value.kindOf(ReflectionKind.Module | ReflectionKind.Project)
   );
 }
 
@@ -174,9 +194,7 @@ export function isHTTPMethodDeclarationReflection(
   value: any
 ): value is HTTPMethodDeclarationReflection {
   return (
-    isReflectionWithReflectedType(value) &&
-    isPropertyKind(value) &&
-    isAllowedHTTPMethod(value.originalName)
+    isReflectionWithReflectedType(value) && isPropertyKind(value) && isAllowedHTTPMethod(value.name)
   );
 }
 
@@ -225,4 +243,40 @@ export function isExecMethodDefParamsPropDeclarationReflection(
   value: any
 ): value is ExecMethodDefParamsPropDeclarationReflection {
   return isReflectionWithReflectedType(value) && value.name === NAME_PAYLOAD_PARAMS;
+}
+
+export function isInterfaceDeclarationReflection(
+  value: any
+): value is InterfaceDeclarationReflection {
+  return isDeclarationReflection(value) && value.kindOf(ReflectionKind.Interface);
+}
+
+export function isExternalDriverDeclarationReflection(
+  value: any
+): value is ExternalDriverDeclarationReflection {
+  return isInterfaceDeclarationReflection(value) && value.name === NAME_EXTERNAL_DRIVER;
+}
+
+export function isAsyncMethodDeclarationReflection(
+  value: any
+): value is AsyncMethodDeclarationReflection {
+  return Boolean(
+    isDeclarationReflection(value) &&
+      value.kindOf(ReflectionKind.Method) &&
+      value.signatures?.find(
+        (sig) => sig.type instanceof ReferenceType && sig.type.name === 'Promise'
+      )
+  );
+}
+
+export function isClassDeclarationReflection(value: any): value is ClassDeclarationReflection {
+  return Boolean(isDeclarationReflection(value) && value.kindOf(ReflectionKind.Class));
+}
+
+export function isCallSignatureReflectionWithParams(value: any): value is CallSignatureReflection {
+  return Boolean(
+    value instanceof SignatureReflection &&
+      value.kindOf(ReflectionKind.CallSignature) &&
+      value.parameters?.length
+  );
 }

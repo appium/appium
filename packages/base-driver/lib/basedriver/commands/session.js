@@ -30,6 +30,7 @@ export function SessionMixin(Base) {
     }
 
     /**
+     * Returns capabilities for the session and event history (if applicable)
      * @returns {Promise<SingularSessionData>}
      */
     async getSession() {

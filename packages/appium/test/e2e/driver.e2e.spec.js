@@ -258,6 +258,43 @@ describe('FakeDriver via HTTP', function () {
       }
     });
 
+    it('should allow appium-prefixed caps sent via appium:options', async function () {
+      // Try with valid capabilities and check that it returns a session ID
+      const appiumOptsCaps = {
+        capabilities: {
+          alwaysMatch: {
+            'appium:options': {
+              automationName: 'Fake',
+              deviceName: 'Fake',
+              app: TEST_FAKE_APP,
+            },
+            platformName: 'Fake',
+          },
+          firstMatch: [{}],
+        },
+      };
+
+      // Create the session
+      const {status, value, sessionId} = (
+        await axios.post(testServerBaseSessionUrl, appiumOptsCaps)
+      ).data;
+      try {
+        should.not.exist(status); // Test that it's a W3C session by checking that 'status' is not in the response
+        should.not.exist(sessionId);
+        value.sessionId.should.be.a.string;
+        value.should.exist;
+        value.capabilities.should.deep.equal({
+          automationName: 'Fake',
+          platformName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        });
+      } finally {
+        // End session
+        await axios.delete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+
     it('should reject invalid W3C capabilities and respond with a 400 Bad Parameters error', async function () {
       const badW3Ccaps = {
         capabilities: {

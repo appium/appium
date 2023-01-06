@@ -78,6 +78,11 @@ export function FindMixin(Base) {
       return /** @type {Mult extends true ? Element[] : Element} */ (retval);
     }
 
+    /**
+     * This should override whatever's in ExternalDriver
+     * @param {string} strategy Strategy
+     * @param {string} selector Selector
+     */
     async findElement(strategy, selector) {
       return this.findElOrEls(strategy, selector, false);
     }

@@ -50,6 +50,7 @@
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Typedoc",
       "program": "${workspaceFolder}/node_modules/.bin/typedoc",
+      "args": ["--logLevel", "Verbose"],
       "request": "launch",
       "skipFiles": [
         "<node_internals>/**"

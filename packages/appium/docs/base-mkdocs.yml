@@ -22,11 +22,11 @@ extra:
       link: https://twitter.com/AppiumDevs
   alternate:
     - name: English
-      link: /docs/en/ 
+      link: /appium/docs/en/ 
       lang: en
     - name: 日本
-      link: /docs/ja/
+      link: /appium/docs/ja/
       lang: ja
     - name: 中文简体
-      link: /docs/zh/
+      link: /appium/docs/zh/
       lang: zh

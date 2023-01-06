@@ -73,25 +73,25 @@
   },
   "devDependencies": {
     "@colors/colors": "1.5.0",
-    "@commitlint/cli": "17.3.0",
-    "@commitlint/config-conventional": "17.3.0",
+    "@commitlint/cli": "17.4.0",
+    "@commitlint/config-conventional": "17.4.0",
     "@tsconfig/node14": "1.0.3",
     "@types/chai": "4.3.4",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "10.0.1",
-    "@types/node": "18.11.17",
+    "@types/node": "18.11.18",
     "@types/semver": "7.3.13",
     "@types/sinon": "10.0.13",
     "@types/sinon-chai": "3.2.9",
     "@types/teen_process": "2.0.0",
-    "@types/ws": "8.5.3",
+    "@types/ws": "8.5.4",
     "asyncbox": "2.9.4",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
     "cpy-cli": "4.2.0",
-    "eslint": "8.30.0",
-    "eslint-config-prettier": "8.5.0",
+    "eslint": "8.31.0",
+    "eslint-config-prettier": "8.6.0",
     "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-mocha": "10.1.0",
@@ -100,9 +100,9 @@
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
     "handlebars": "4.7.7",
-    "husky": "8.0.2",
+    "husky": "8.0.3",
     "json-schema-to-typescript": "11.0.2",
-    "lerna": "6.1.0",
+    "lerna": "6.3.0",
     "lint-staged": "13.1.0",
     "log-symbols": "4.1.0",
     "midnight-smoker": "2.0.0",
@@ -124,7 +124,7 @@
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "4.7.4",
     "validate.js": "0.13.1",
-    "webdriverio": "7.28.0",
+    "webdriverio": "7.29.1",
     "ws": "8.11.0",
     "yaml-js": "0.3.1"
   },
@@ -138,10 +138,10 @@
   "overrides": {
     "jpeg-js": "0.4.4",
     "@sidvind/better-ajv-errors": {
-      "ajv": "8.11.2"
+      "ajv": "8.12.0"
     },
     "ajv-formats": {
-      "ajv": "8.11.2"
+      "ajv": "8.12.0"
     }
   }
 }

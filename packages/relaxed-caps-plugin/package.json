@@ -18,7 +18,8 @@
   "files": [
     "index.js",
     "lib",
-    "build"
+    "build",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "npm run test:unit",

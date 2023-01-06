@@ -7,7 +7,7 @@
     },
     "types": ["webdriverio/async"]
   },
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "references": [
     {"path": "../packages/appium"},
     {"path": "../packages/base-plugin"},

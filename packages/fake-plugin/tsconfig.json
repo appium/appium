@@ -2,9 +2,11 @@
   "compilerOptions": {
     "outDir": "build"
   },
-  "extends": "../../config/tsconfig.plugin.json",
+  "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib"],
-  "references": [{
-    "path": "../base-plugin"
-  }]
+  "references": [
+    {
+      "path": "../base-plugin"
+    }
+  ]
 }

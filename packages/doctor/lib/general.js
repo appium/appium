@@ -6,9 +6,16 @@ import {util, env} from '@appium/support';
 import {EOL} from 'os';
 import '@colors/colors';
 
+/**
+ * @type {import('./factory').DoctorCheckList}
+ */
 let checks = [];
 
 class AppiumHomeCheck extends DoctorCheck {
+  /**
+   *
+   * @returns {UtilsResult}
+   */
   async diagnose() {
     return ok(`APPIUM_HOME is ${await env.resolveAppiumHome()}`);
   }
@@ -59,6 +66,10 @@ class NodeVersionCheck extends DoctorCheck {
 checks.push(new NodeVersionCheck());
 
 class OptionalFfmpegCommandCheck extends DoctorCheck {
+  /**
+   *
+   * @returns {Promise<UtilsResult>}
+   */
   async diagnose() {
     const ffmpegPath = await resolveExecutablePath('ffmpeg');
     return ffmpegPath
@@ -69,8 +80,11 @@ class OptionalFfmpegCommandCheck extends DoctorCheck {
         )
       : nokOptional('ffmpeg cannot be found');
   }
-  // eslint-disable-next-line require-await
-  async fix() {
+  /**
+   *
+   * @returns {string}
+   */
+  fix() {
     return `${
       'ffmpeg'.bold
     } is needed to record screen features. Please read https://www.ffmpeg.org/ to install it`;
@@ -107,3 +121,7 @@ export {
   OptionalMjpegConsumerCommandCheck,
 };
 export default checks;
+
+/**
+ * @typedef {import('./utils').UtilsResult} UtilsResult
+ */

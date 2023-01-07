@@ -75,7 +75,7 @@ class ExtensionCommand {
    * nor is something like `@returns {never}` which does not imply a thrown exception.
    * @param {string} message
    * @protected
-   * @returns {Error}
+   * @throws {Error}
    */
   _createFatalError(message) {
     return new Error(this.log.decorate(message, 'error'));

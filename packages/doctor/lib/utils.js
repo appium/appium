@@ -5,15 +5,34 @@ import {fs, system} from '@appium/support';
 import {exec} from 'teen_process';
 import {isFunction} from 'lodash';
 
+/**
+ * @param {string} message
+ * @returns {UtilsResult}
+ */
 function ok(message) {
   return {ok: true, optional: false, message};
 }
+
+/**
+ * @param {string} message
+ * @returns {UtilsResult}
+ */
 function nok(message) {
   return {ok: false, optional: false, message};
 }
+
+/**
+ * @param {string} message
+ * @returns {UtilsResult}
+ */
 function okOptional(message) {
   return {ok: true, optional: true, message};
 }
+
+/**
+ * @param {string} message
+ * @returns {UtilsResult}
+ */
 function nokOptional(message) {
   return {ok: false, optional: true, message};
 }
@@ -122,3 +141,10 @@ export {
   getNpmPackageInfo,
   resetLog,
 };
+
+/**
+ * @typedef UtilsResult
+ * @property {boolean} ok
+ * @property {boolean} optional
+ * @property {string} message
+ */

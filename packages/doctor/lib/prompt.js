@@ -1,5 +1,8 @@
 import {inquirer} from './utils';
 
+/**
+ * @type {string}
+ */
 let persistentResponse;
 
 const fixItQuestion = {
@@ -7,6 +10,11 @@ const fixItQuestion = {
   name: 'confirmation',
   message: 'Fix it:',
   choices: ['yes', 'no', 'always', 'never'],
+  /**
+   *
+   * @param {string} val
+   * @returns {string}
+   */
   filter(val) {
     return val.toLowerCase();
   },

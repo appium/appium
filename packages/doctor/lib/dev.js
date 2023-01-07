@@ -4,6 +4,9 @@ import {fs, system} from '@appium/support';
 import path from 'path';
 import '@colors/colors';
 
+/**
+ * @type {import('./factory').DoctorCheckList}
+ */
 let checks = [];
 
 // Check PATH binaries

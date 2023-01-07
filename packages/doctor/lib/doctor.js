@@ -7,15 +7,29 @@ const {version} = fs.readPackageJsonFrom(__dirname);
 
 class FixSkippedError extends Error {}
 
+/**
+ * Create interface for other Doctors
+ */
 class DoctorCheck {
+  /**
+   * @param {DoctorOpts} opts
+   */
   constructor(opts = {}) {
     this.autofix = !!opts.autofix;
   }
 
+  /**
+   * Every doctor diagnose the symptoms
+   * @throws {Error}
+   */
   diagnose() {
     throw new Error('Not Implemented!');
   }
 
+  /**
+   * Every doctor suggest the solutions to fix the sickness
+   * @throws {Error}
+   */
   fix() {
     // return string for manual fixes.
     throw new Error('Not Implemented!');
@@ -24,17 +38,28 @@ class DoctorCheck {
 
 class Doctor {
   constructor() {
+    /**
+     * All the sub check goes here after register
+     * @type {DoctorCheck[]}
+     */
     this.checks = [];
     this.checkOptionals = [];
     this.toFix = [];
     this.toFixOptionals = [];
   }
 
+  /**
+   * Register all the sub check and combine them together
+   * @param {DoctorCheck[] | DoctorCheck} checks
+   */
   register(checks) {
     checks = Array.isArray(checks) ? checks : [checks];
     this.checks = this.checks.concat(checks);
   }
 
+  /**
+   * The doctor shows the report
+   */
   async diagnose() {
     log.info(`### Diagnostic for ${'necessary'.green} dependencies starting ###`);
     this.toFix = [];
@@ -211,3 +236,8 @@ class Doctor {
 }
 
 export {Doctor, DoctorCheck, FixSkippedError};
+
+/**
+ * @typedef DoctorOpts
+ * @property {boolean?} autofix
+ */

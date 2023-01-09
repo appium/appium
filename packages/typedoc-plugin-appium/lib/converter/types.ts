@@ -2,6 +2,7 @@ import {
   Comment,
   DeclarationReflection,
   LiteralType,
+  ParameterReflection,
   ReferenceType,
   ReflectionFlags,
   ReflectionKind,
@@ -110,6 +111,9 @@ export type ExecMethodDeclarationReflection = WithName<
   flags: ReflectionFlags & {isStatic: true};
 };
 
+export type WithStaticFlag = {flags: ReflectionFlags & {isStatic: true}};
+export type WithoutStaticFlag = {flags: ReflectionFlags & {isStatic: false}};
+
 /**
  * Type corresponding to the `params` prop of a `MethodDef`
  */
@@ -127,40 +131,109 @@ export type ExecMethodDefParamsPropDeclarationReflection = WithName<
   DeclarationReflectionWithReflectedType
 >;
 
+/**
+ * Type corresponding to `@appium/types` module
+ */
 export type AppiumTypesReflection = WithNameAndKind<
   typeof NAME_TYPES_MODULE,
   ReflectionKind.Module,
   ParentReflection
 >;
 
+/**
+ * Type corresponding to a TS `interface`
+ */
 export type InterfaceDeclarationReflection = WithKind<
   ReflectionKind.Interface,
   DeclarationReflection
 >;
 
+/**
+ * Type corresponding to the `ExternalDriver` `interface` of `@appium/types`
+ */
 export type ExternalDriverDeclarationReflection = WithName<
   typeof NAME_EXTERNAL_DRIVER,
   InterfaceDeclarationReflection
 >;
 
-export type AsyncMethodDeclarationReflection = WithSomeType<ReferenceType, DeclarationReflection> &
-  WithKind<ReflectionKind.Method, DeclarationReflection>;
+/**
+ * A call signature for a function that returns some sort of `Promise`.
+ */
+export type AsyncCallSignatureReflection = CallSignatureReflection & {
+  type: ReferenceType;
+  name: 'Promise';
+};
 
+/**
+ * An async method or reference to an async method.  A command's method must be of this type.
+ */
+export type AsyncMethodDeclarationReflection<
+  T extends ReferenceType | ReflectionType = ReferenceType
+> = WithSomeType<T, DeclarationReflection> &
+  WithKind<
+    T extends ReferenceType ? ReflectionKind.Method : ReflectionKind.Property,
+    DeclarationReflection
+  > &
+  WithoutStaticFlag &
+  (T extends ReferenceType
+    ? {
+        signatures: NonEmptyArray<AsyncCallSignatureReflection>;
+      }
+    : T extends ReflectionType
+    ? {
+        type: {
+          declaration: {
+            signatures: NonEmptyArray<AsyncCallSignatureReflection>;
+          };
+        };
+      }
+    : never);
+
+/**
+ * A little "struct" containing a method and potentially a derived comment (which may not have been derived from
+ * the method itself).
+ */
 export interface KnownMethodData {
   comment?: Comment;
   method: AsyncMethodDeclarationReflection;
 }
 
+/**
+ * A lookup of command names to {@linkcode KnownMethodData} objects.
+ */
 export type KnownMethods = Map<string, KnownMethodData>;
 
-export interface MethodDefParam {
-  name: string;
-}
-
+/**
+ * A {@linkcode DeclarationReflection} which is a `class`.
+ */
 export type ClassDeclarationReflection = WithKind<ReflectionKind.Class, DeclarationReflection>;
 
+/**
+ * One of {@linkcode ExecMethodDefParamsPropDeclarationReflection} or
+ * {@linkcode MethodDefParamsPropDeclarationReflection}, which are "parameters" properties of method
+ * definition objects (as in a `MethodMap`) or execute method definitions (in an `ExecMethodMap`)
+ */
 export type ParamsPropDeclarationReflection =
   | ExecMethodDefParamsPropDeclarationReflection
   | MethodDefParamsPropDeclarationReflection;
 
+/**
+ * A {@linkcode SignatureReflection} which is a call signature; a function signature.
+ *
+ * (Other types of signatures include things like "constructor signatures")
+ */
 export type CallSignatureReflection = WithKind<ReflectionKind.CallSignature, SignatureReflection>;
+
+/**
+ * An array with a nonzero number of items.
+ */
+export type NonEmptyArray<T> = [T, ...T[]];
+
+/**
+ * A {@linkcode CallSignatureReflection} with a nonzero number of parameters.
+ *
+ * This is used to rename parameters on commands to prefer the ones as defined in the method map.
+ */
+export type CallSignatureReflectionWithArity = CallSignatureReflection & {
+  parameters: NonEmptyArray<ParameterReflection>;
+};

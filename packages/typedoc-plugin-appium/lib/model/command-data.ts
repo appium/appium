@@ -13,7 +13,7 @@ import {
   ClassDeclarationReflection,
   CommentSourceType,
 } from '../converter';
-import {isCallSignatureReflectionWithParams} from '../guards';
+import {isCallSignatureReflectionWithArity} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {AllowedHttpMethod, Command, Route} from './types';
 
@@ -84,7 +84,7 @@ export abstract class BaseCommandData {
     if (this.#parameters) {
       return this.#parameters;
     }
-    const sig = this.methodRefl?.signatures?.find(isCallSignatureReflectionWithParams);
+    const sig = this.methodRefl?.signatures?.find(isCallSignatureReflectionWithArity);
 
     if (!sig) {
       return [];

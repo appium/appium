@@ -5,7 +5,6 @@ import {
   isMethodMapDeclarationReflection,
 } from '../guards';
 import {AppiumPluginLogger} from '../logger';
-import {ModuleCommands} from '../model';
 import {BaseConverter} from './base-converter';
 import {BuiltinCommands} from '../model/builtin-commands';
 import {convertMethodMap} from './method-map';
@@ -28,7 +27,7 @@ export const NAME_BASE_DRIVER_CLASS = 'BaseDriver';
  */
 export const NAME_BUILTIN_COMMAND_MODULE = '@appium/base-driver';
 
-export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands | undefined> {
+export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
   /**
    * Creates a child logger for this instance
    * @param ctx Typedoc Context

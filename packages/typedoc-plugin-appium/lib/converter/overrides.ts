@@ -59,6 +59,11 @@ export function convertOverrides({
     const builtinRoutes = builtinCommands.routesByCommandName.get(command);
     if (!builtinMethods.has(command) || !builtinRoutes) {
       // actually unknown method
+      log.verbose(
+        '(%s) No builtin route mapping to method "%s"; skipping',
+        parentRefl.name,
+        command
+      );
       continue;
     }
 
@@ -92,14 +97,6 @@ export function convertOverrides({
     }
   }
 
-  if (unknownMethods.size) {
-    // this is quite likely, as any async method is inspected.
-    log.info(
-      '(%s) The following async methods were not found in any method map: %s',
-      parentRefl.name,
-      [...unknownMethods].join(', ')
-    );
-  }
   return routes;
 }
 

@@ -260,12 +260,18 @@ export function isExternalDriverDeclarationReflection(
 export function isAsyncMethodDeclarationReflection(
   value: any
 ): value is AsyncMethodDeclarationReflection {
+  if (
+    !isDeclarationReflection(value) ||
+    !value.kindOf(ReflectionKind.Method | ReflectionKind.Property) ||
+    value.flags.isStatic
+  ) {
+    return false;
+  }
+  const signatures =
+    (value.type instanceof ReflectionType ? value.type.declaration.signatures : value.signatures) ??
+    [];
   return Boolean(
-    isDeclarationReflection(value) &&
-      value.kindOf(ReflectionKind.Method) &&
-      value.signatures?.find(
-        (sig) => sig.type instanceof ReferenceType && sig.type.name === 'Promise'
-      )
+    signatures.find((sig) => sig.type instanceof ReferenceType && sig.type.name === 'Promise')
   );
 }
 

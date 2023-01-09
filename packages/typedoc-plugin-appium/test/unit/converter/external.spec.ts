@@ -10,7 +10,7 @@ import {
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
 import {BuiltinCommands} from '../../../lib/model/builtin-commands';
-import {isCallSignatureReflectionWithParams} from '../../../lib/guards';
+import {isCallSignatureReflectionWithArity} from '../../../lib/guards';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {CommandSet, ModuleCommands, ProjectCommands} from '../../../lib/model';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
@@ -93,9 +93,8 @@ describe('ExternalConverter', function () {
         it('should prefer method map parameters over method parameters', function () {
           const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
 
-          const pRefls = postRoute.methodRefl!.signatures!.find(
-            isCallSignatureReflectionWithParams
-          )!.parameters!;
+          const pRefls = postRoute.methodRefl!.signatures!.find(isCallSignatureReflectionWithArity)!
+            .parameters!;
 
           // the method has 4 parameters, but the method map has 3
           expect(pRefls).to.have.lengthOf(4);

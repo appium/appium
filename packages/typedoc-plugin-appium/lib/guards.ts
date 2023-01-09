@@ -31,6 +31,7 @@ import {
   AsyncMethodDeclarationReflection,
   BaseDriverDeclarationReflection,
   CallSignatureReflection,
+  CallSignatureReflectionWithArity,
   ClassDeclarationReflection,
   CommandPropDeclarationReflection,
   DeclarationReflectionWithReflectedType,
@@ -157,7 +158,6 @@ export function isBaseDriverDeclarationReflection(
 /**
  * Type guard for a property of an object (a {@linkcode Reflection} having kind {@linkcode ReflectionKind.Property}).
  * @param value any value
- * @returns
  */
 export function isPropertyKind(value: any) {
   return value instanceof Reflection && value.kindOf(ReflectionKind.Property);
@@ -245,18 +245,36 @@ export function isExecMethodDefParamsPropDeclarationReflection(
   return isReflectionWithReflectedType(value) && value.name === NAME_PAYLOAD_PARAMS;
 }
 
+/**
+ * Type guard for a {@linkcode InterfaceDeclarationReflection} corresponding to a TS interface.
+ * @param value any value
+ */
 export function isInterfaceDeclarationReflection(
   value: any
 ): value is InterfaceDeclarationReflection {
   return isDeclarationReflection(value) && value.kindOf(ReflectionKind.Interface);
 }
 
+/**
+ * Type guard for a {@linkcode ExternalDriverDeclarationReflection} which is the `ExternalDriver`
+ * interface defined in `@appium/types`.
+ * @param value any value
+ */
 export function isExternalDriverDeclarationReflection(
   value: any
 ): value is ExternalDriverDeclarationReflection {
   return isInterfaceDeclarationReflection(value) && value.name === NAME_EXTERNAL_DRIVER;
 }
 
+/**
+ * Type guard for an {@linkcode AsyncMethodDeclarationReflection}, which is _potentially_ a method
+ * for a command.  Not all async methods in driver classes are mapped to commands, of course!
+ *
+ * A command method cannot be static, but it can be an actual (async) function or a reference to an
+ * (async) function; just depends how the code is written.  Either way, this asserts there's a
+ * call signature returning a `Promise`.
+ * @param value
+ */
 export function isAsyncMethodDeclarationReflection(
   value: any
 ): value is AsyncMethodDeclarationReflection {
@@ -275,14 +293,33 @@ export function isAsyncMethodDeclarationReflection(
   );
 }
 
+/**
+ * Type guard for a {@linkcode ClassDeclarationReflection} which is just a {@linkcode DeclarationReflection}
+ * with a `kind` of {@linkcode ReflectionKind.Class}.
+ * @param value any value
+ */
 export function isClassDeclarationReflection(value: any): value is ClassDeclarationReflection {
   return Boolean(isDeclarationReflection(value) && value.kindOf(ReflectionKind.Class));
 }
 
-export function isCallSignatureReflectionWithParams(value: any): value is CallSignatureReflection {
+/**
+ * Type guard for a {@linkcode CallSignatureReflection} which is just a
+ * {@linkcode SignatureReflection} with kind {@linkcode ReflectionKind.CallSignature}.
+ * @param value any value
+ */
+export function isCallSignatureReflection(value: any): value is CallSignatureReflection {
   return Boolean(
-    value instanceof SignatureReflection &&
-      value.kindOf(ReflectionKind.CallSignature) &&
-      value.parameters?.length
+    value instanceof SignatureReflection && value.kindOf(ReflectionKind.CallSignature)
   );
+}
+
+/**
+ * Type guard for a {@linkcode CallSignatureReflectionWithArity}, which is a
+ * {@linkcode CallSignatureReflection} with an arity greater than zero.
+ * @param value any value
+ */
+export function isCallSignatureReflectionWithArity(
+  value: any
+): value is CallSignatureReflectionWithArity {
+  return Boolean(isCallSignatureReflection(value) && value.parameters?.length);
 }

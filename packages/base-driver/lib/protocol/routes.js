@@ -135,7 +135,7 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'setFrame', payloadParams: {required: ['id']}},
   },
   '/session/:sessionId/frame/parent': {
-    POST: {},
+    POST: {command: 'switchToParentFrame'},
   },
   '/session/:sessionId/window': {
     GET: {command: 'getWindowHandle'},

@@ -68,10 +68,10 @@ const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId/timeouts/async_script': {
-    POST: {command: 'asyncScriptTimeout', payloadParams: {required: ['ms']}},
+    POST: {command: 'asyncScriptTimeout', payloadParams: {required: ['ms']}, deprecated: true},
   },
   '/session/:sessionId/timeouts/implicit_wait': {
-    POST: {command: 'implicitWait', payloadParams: {required: ['ms']}},
+    POST: {command: 'implicitWait', payloadParams: {required: ['ms']}, deprecated: true},
   },
   // JSONWP
   '/session/:sessionId/window_handle': {
@@ -117,19 +117,19 @@ const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getScreenshot'},
   },
   '/session/:sessionId/ime/available_engines': {
-    GET: {command: 'availableIMEEngines'},
+    GET: {command: 'availableIMEEngines', deprecated: true},
   },
   '/session/:sessionId/ime/active_engine': {
-    GET: {command: 'getActiveIMEEngine'},
+    GET: {command: 'getActiveIMEEngine', deprecated: true},
   },
   '/session/:sessionId/ime/activated': {
-    GET: {command: 'isIMEActivated'},
+    GET: {command: 'isIMEActivated', deprecated: true},
   },
   '/session/:sessionId/ime/deactivate': {
-    POST: {command: 'deactivateIMEEngine'},
+    POST: {command: 'deactivateIMEEngine', deprecated: true},
   },
   '/session/:sessionId/ime/activate': {
-    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}},
+    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}, deprecated: true},
   },
   '/session/:sessionId/frame': {
     POST: {command: 'setFrame', payloadParams: {required: ['id']}},
@@ -162,12 +162,11 @@ const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'closeWindow'},
   },
   '/session/:sessionId/window/:windowhandle/size': {
-    GET: {command: 'getWindowSize'},
-    POST: {},
+    GET: {command: 'getWindowSize', deprecated: true},
   },
   '/session/:sessionId/window/:windowhandle/position': {
-    POST: {},
-    GET: {},
+    POST: {deprecated: true},
+    GET: {deprecated: true},
   },
   '/session/:sessionId/window/:windowhandle/maximize': {
     POST: {command: 'maximizeWindow'},
@@ -222,7 +221,7 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'click'},
   },
   '/session/:sessionId/element/:elementId/submit': {
-    POST: {command: 'submit'},
+    POST: {command: 'submit', deprecated: true},
   },
   '/session/:sessionId/element/:elementId/text': {
     GET: {command: 'getText'},
@@ -246,7 +245,7 @@ const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId/keys': {
-    POST: {command: 'keys', payloadParams: {required: ['value']}},
+    POST: {command: 'keys', payloadParams: {required: ['value']}, deprecated: true},
   },
   '/session/:sessionId/element/:elementId/name': {
     GET: {command: 'getName'},
@@ -264,19 +263,19 @@ const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getAttribute'},
   },
   '/session/:sessionId/element/:elementId/equals/:otherId': {
-    GET: {command: 'equalsElement'},
+    GET: {command: 'equalsElement', deprecated: true},
   },
   '/session/:sessionId/element/:elementId/displayed': {
     GET: {command: 'elementDisplayed'},
   },
   '/session/:sessionId/element/:elementId/location': {
-    GET: {command: 'getLocation'},
+    GET: {command: 'getLocation', deprecated: true},
   },
   '/session/:sessionId/element/:elementId/location_in_view': {
-    GET: {command: 'getLocationInView'},
+    GET: {command: 'getLocationInView', deprecated: true},
   },
   '/session/:sessionId/element/:elementId/size': {
-    GET: {command: 'getSize'},
+    GET: {command: 'getSize', deprecated: true},
   },
   '/session/:sessionId/element/:elementId/shadow': {
     GET: {command: 'elementShadowRoot'},
@@ -319,34 +318,35 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'moveTo',
       payloadParams: {optional: ['element', 'xoffset', 'yoffset']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/click': {
-    POST: {command: 'clickCurrent', payloadParams: {optional: ['button']}},
+    POST: {command: 'clickCurrent', payloadParams: {optional: ['button']}, deprecated: true},
   },
   '/session/:sessionId/buttondown': {
-    POST: {command: 'buttonDown', payloadParams: {optional: ['button']}},
+    POST: {command: 'buttonDown', payloadParams: {optional: ['button']}, deprecated: true},
   },
   '/session/:sessionId/buttonup': {
-    POST: {command: 'buttonUp', payloadParams: {optional: ['button']}},
+    POST: {command: 'buttonUp', payloadParams: {optional: ['button']}, deprecated: true},
   },
   '/session/:sessionId/doubleclick': {
-    POST: {command: 'doubleClick'},
+    POST: {command: 'doubleClick', deprecated: true},
   },
   '/session/:sessionId/touch/click': {
-    POST: {command: 'click', payloadParams: {required: ['element']}},
+    POST: {command: 'click', payloadParams: {required: ['element']}, deprecated: true},
   },
   '/session/:sessionId/touch/down': {
-    POST: {command: 'touchDown', payloadParams: {required: ['x', 'y']}},
+    POST: {command: 'touchDown', payloadParams: {required: ['x', 'y']}, deprecated: true},
   },
   '/session/:sessionId/touch/up': {
-    POST: {command: 'touchUp', payloadParams: {required: ['x', 'y']}},
+    POST: {command: 'touchUp', payloadParams: {required: ['x', 'y']}, deprecated: true},
   },
   '/session/:sessionId/touch/move': {
-    POST: {command: 'touchMove', payloadParams: {required: ['x', 'y']}},
+    POST: {command: 'touchMove', payloadParams: {required: ['x', 'y']}, deprecated: true},
   },
   '/session/:sessionId/touch/scroll': {
-    POST: {},
+    POST: {deprecated: true},
   },
   '/session/:sessionId/touch/doubleclick': {
     POST: {},
@@ -356,7 +356,7 @@ const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'releaseActions'},
   },
   '/session/:sessionId/touch/longclick': {
-    POST: {command: 'touchLongClick', payloadParams: {required: ['elements']}},
+    POST: {command: 'touchLongClick', payloadParams: {required: ['elements']}, deprecated: true},
   },
   '/session/:sessionId/touch/flick': {
     POST: {
@@ -364,6 +364,7 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         optional: ['element', 'xspeed', 'yspeed', 'xoffset', 'yoffset', 'speed'],
       },
+      deprecated: true,
     },
   },
   '/session/:sessionId/location': {
@@ -371,28 +372,28 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'setGeoLocation', payloadParams: {required: ['location']}},
   },
   '/session/:sessionId/local_storage': {
-    GET: {},
-    POST: {},
-    DELETE: {},
+    GET: {deprecated: true},
+    POST: {deprecated: true},
+    DELETE: {deprecated: true},
   },
   '/session/:sessionId/local_storage/key/:key': {
-    GET: {},
-    DELETE: {},
+    GET: {deprecated: true},
+    DELETE: {deprecated: true},
   },
   '/session/:sessionId/local_storage/size': {
-    GET: {},
+    GET: {deprecated: true},
   },
   '/session/:sessionId/session_storage': {
-    GET: {},
-    POST: {},
-    DELETE: {},
+    GET: {deprecated: true},
+    POST: {deprecated: true},
+    DELETE: {deprecated: true},
   },
   '/session/:sessionId/session_storage/key/:key': {
-    GET: {},
-    DELETE: {},
+    GET: {deprecated: true},
+    DELETE: {deprecated: true},
   },
   '/session/:sessionId/session_storage/size': {
-    GET: {},
+    GET: {deprecated: true},
   },
   // Selenium 4 clients
   '/session/:sessionId/se/log': {
@@ -425,7 +426,7 @@ const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getContexts'},
   },
   '/session/:sessionId/element/:elementId/pageIndex': {
-    GET: {command: 'getPageIndex'},
+    GET: {command: 'getPageIndex', deprecated: true},
   },
   '/session/:sessionId/network_connection': {
     GET: {command: 'getNetworkConnection'},
@@ -438,12 +439,14 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'performTouch',
       payloadParams: {wrap: 'actions', required: ['actions']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/touch/multi/perform': {
     POST: {
       command: 'performMultiAction',
       payloadParams: {required: ['actions'], optional: ['elementId']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/receive_async_response': {
@@ -453,35 +456,37 @@ const METHOD_MAP = /** @type {const} */ ({
     },
   },
   '/session/:sessionId/appium/device/shake': {
-    POST: {command: 'mobileShake'},
+    POST: {command: 'mobileShake', deprecated: true},
   },
   '/session/:sessionId/appium/device/system_time': {
     GET: {command: 'getDeviceTime', payloadParams: {optional: ['format']}},
     POST: {command: 'getDeviceTime', payloadParams: {optional: ['format']}},
   },
   '/session/:sessionId/appium/device/lock': {
-    POST: {command: 'lock', payloadParams: {optional: ['seconds']}},
+    POST: {command: 'lock', payloadParams: {optional: ['seconds']}, deprecated: true},
   },
   '/session/:sessionId/appium/device/unlock': {
-    POST: {command: 'unlock'},
+    POST: {command: 'unlock', deprecated: true},
   },
   '/session/:sessionId/appium/device/is_locked': {
-    POST: {command: 'isLocked'},
+    POST: {command: 'isLocked', deprecated: true},
   },
   '/session/:sessionId/appium/start_recording_screen': {
     POST: {
       command: 'startRecordingScreen',
       payloadParams: {optional: ['options']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/stop_recording_screen': {
     POST: {
       command: 'stopRecordingScreen',
       payloadParams: {optional: ['options']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/performanceData/types': {
-    POST: {command: 'getPerformanceDataTypes'},
+    POST: {command: 'getPerformanceDataTypes', deprecated: true},
   },
   '/session/:sessionId/appium/getPerformanceData': {
     POST: {
@@ -490,70 +495,68 @@ const METHOD_MAP = /** @type {const} */ ({
         required: ['packageName', 'dataType'],
         optional: ['dataReadTimeout'],
       },
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/press_keycode': {
     POST: {
       command: 'pressKeyCode',
       payloadParams: {required: ['keycode'], optional: ['metastate', 'flags']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/long_press_keycode': {
     POST: {
       command: 'longPressKeyCode',
       payloadParams: {required: ['keycode'], optional: ['metastate', 'flags']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/finger_print': {
     POST: {
       command: 'fingerprint',
       payloadParams: {required: ['fingerprintId']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/send_sms': {
     POST: {
       command: 'sendSMS',
       payloadParams: {required: ['phoneNumber', 'message']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_call': {
     POST: {
       command: 'gsmCall',
       payloadParams: {required: ['phoneNumber', 'action']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_signal': {
     POST: {
       command: 'gsmSignal',
-      payloadParams: {
-        validate: (jsonObj) =>
-          !util.hasValue(jsonObj.signalStrength) &&
-          !util.hasValue(jsonObj.signalStrengh) &&
-          'we require one of "signalStrength" or "signalStrengh" params',
-        optional: ['signalStrength', 'signalStrengh'],
-        // backward-compatible. sonObj.signalStrength can be 0
-        makeArgs: (jsonObj) => [
-          util.hasValue(jsonObj.signalStrength) ? jsonObj.signalStrength : jsonObj.signalStrengh,
-        ],
-      },
+      payloadParams: {required: ['signalStrength']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/gsm_voice': {
-    POST: {command: 'gsmVoice', payloadParams: {required: ['state']}},
+    POST: {command: 'gsmVoice', payloadParams: {required: ['state']}, deprecated: true},
   },
   '/session/:sessionId/appium/device/power_capacity': {
-    POST: {command: 'powerCapacity', payloadParams: {required: ['percent']}},
+    POST: {command: 'powerCapacity', payloadParams: {required: ['percent']}, deprecated: true},
   },
   '/session/:sessionId/appium/device/power_ac': {
-    POST: {command: 'powerAC', payloadParams: {required: ['state']}},
+    POST: {command: 'powerAC', payloadParams: {required: ['state']}, deprecated: true},
   },
   '/session/:sessionId/appium/device/network_speed': {
-    POST: {command: 'networkSpeed', payloadParams: {required: ['netspeed']}},
+    POST: {command: 'networkSpeed', payloadParams: {required: ['netspeed']}, deprecated: true},
   },
   '/session/:sessionId/appium/device/keyevent': {
     POST: {
       command: 'keyevent',
       payloadParams: {required: ['keycode'], optional: ['metastate']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/rotate': {
@@ -563,13 +566,14 @@ const METHOD_MAP = /** @type {const} */ ({
         required: ['x', 'y', 'radius', 'rotation', 'touchCount', 'duration'],
         optional: ['element'],
       },
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/current_activity': {
-    GET: {command: 'getCurrentActivity'},
+    GET: {command: 'getCurrentActivity', deprecated: true},
   },
   '/session/:sessionId/appium/device/current_package': {
-    GET: {command: 'getCurrentPackage'},
+    GET: {command: 'getCurrentPackage', deprecated: true},
   },
   //region Applications Management
   '/session/:sessionId/appium/device/install_app': {
@@ -628,6 +632,7 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         required: [['appId'], ['bundleId']],
       },
+      deprecated: true,
     },
   },
   //endregion
@@ -650,19 +655,19 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'pullFolder', payloadParams: {required: ['path']}},
   },
   '/session/:sessionId/appium/device/toggle_airplane_mode': {
-    POST: {command: 'toggleFlightMode'},
+    POST: {command: 'toggleFlightMode', deprecated: true},
   },
   '/session/:sessionId/appium/device/toggle_data': {
-    POST: {command: 'toggleData'},
+    POST: {command: 'toggleData', deprecated: true},
   },
   '/session/:sessionId/appium/device/toggle_wifi': {
-    POST: {command: 'toggleWiFi'},
+    POST: {command: 'toggleWiFi', deprecated: true},
   },
   '/session/:sessionId/appium/device/toggle_location_services': {
-    POST: {command: 'toggleLocationServices'},
+    POST: {command: 'toggleLocationServices', deprecated: true},
   },
   '/session/:sessionId/appium/device/open_notifications': {
-    POST: {command: 'openNotifications'},
+    POST: {command: 'openNotifications', deprecated: true},
   },
   '/session/:sessionId/appium/device/start_activity': {
     POST: {
@@ -679,77 +684,63 @@ const METHOD_MAP = /** @type {const} */ ({
           'dontStopAppOnReset',
         ],
       },
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/system_bars': {
-    GET: {command: 'getSystemBars'},
+    GET: {command: 'getSystemBars', deprecated: true},
   },
   '/session/:sessionId/appium/device/display_density': {
-    GET: {command: 'getDisplayDensity'},
+    GET: {command: 'getDisplayDensity', deprecated: true},
   },
   '/session/:sessionId/appium/simulator/touch_id': {
-    POST: {command: 'touchId', payloadParams: {required: ['match']}},
+    POST: {command: 'touchId', payloadParams: {required: ['match']}, deprecated: true},
   },
   '/session/:sessionId/appium/simulator/toggle_touch_id_enrollment': {
     POST: {
       command: 'toggleEnrollTouchId',
       payloadParams: {optional: ['enabled']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/app/launch': {
-    POST: {command: 'launchApp'},
+    POST: {command: 'launchApp', deprecated: true},
   },
   '/session/:sessionId/appium/app/close': {
-    POST: {command: 'closeApp'},
+    POST: {command: 'closeApp', deprecated: true},
   },
   '/session/:sessionId/appium/app/reset': {
-    POST: {command: 'reset'},
+    POST: {command: 'reset', deprecated: true},
   },
   '/session/:sessionId/appium/app/background': {
-    POST: {command: 'background', payloadParams: {required: ['seconds']}},
+    POST: {command: 'background', payloadParams: {required: ['seconds']}, deprecated: true},
   },
   '/session/:sessionId/appium/app/end_test_coverage': {
     POST: {
       command: 'endCoverage',
       payloadParams: {required: ['intent', 'path']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/app/strings': {
     POST: {
       command: 'getStrings',
       payloadParams: {optional: ['language', 'stringFile']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/element/:elementId/value': {
     POST: {
       command: 'setValueImmediate',
-      payloadParams: {
-        validate: (jsonObj) =>
-          !util.hasValue(jsonObj.value) &&
-          !util.hasValue(jsonObj.text) &&
-          'we require one of "text" or "value" params',
-        optional: ['value', 'text'],
-        // We want to either a value (old JSONWP) or a text (new W3C) parameter,
-        // but only send one of them to the command (not both).
-        // Prefer 'value' since it's more backward-compatible.
-        makeArgs: (jsonObj) => [jsonObj.value || jsonObj.text],
-      },
+      payloadParams: {required: ['text']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/element/:elementId/replace_value': {
     POST: {
       command: 'replaceValue',
-      payloadParams: {
-        validate: (jsonObj) =>
-          !util.hasValue(jsonObj.value) &&
-          !util.hasValue(jsonObj.text) &&
-          'we require one of "text" or "value" params',
-        optional: ['value', 'text'],
-        // We want to either a value (old JSONWP) or a text (new W3C) parameter,
-        // but only send one of them to the command (not both).
-        // Prefer 'value' since it's more backward-compatible.
-        makeArgs: (jsonObj) => [jsonObj.value ?? jsonObj.text ?? ''],
-      },
+      payloadParams: {required: ['text']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/settings': {
@@ -760,6 +751,7 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {
       command: 'receiveAsyncResponse',
       payloadParams: {required: ['response']},
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/events': {
@@ -856,6 +848,7 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         required: ['content'],
         optional: ['contentType', 'label'],
+        deprecated: true,
       },
     },
   },
@@ -865,6 +858,7 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         optional: ['contentType'],
       },
+      deprecated: true,
     },
   },
 

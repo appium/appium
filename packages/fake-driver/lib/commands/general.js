@@ -79,6 +79,12 @@ export function GeneralMixin(Base) {
       }
     }
 
+    async mobileShake() {
+      this.shook = true;
+    }
+
+    async doubleClick() {}
+
     async execute(script, args) {
       return await this.executeMethod(script, args);
     }

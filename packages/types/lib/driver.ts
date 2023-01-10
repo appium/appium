@@ -1484,8 +1484,6 @@ export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints
    * @param key - the text of a key to use to hide the keyboard
    * @param keyCode - a key code to trigger to hide the keyboard
    * @param keyName - the name of a key to use to hide the keyboard
-   *
-   * @deprecated
    */
   hideKeyboard?(strategy?: string, key?: string, keyCode?: string, keyName?: string): Promise<void>;
 

@@ -18,6 +18,9 @@ const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
 const GET_STATUS_COMMAND = 'getStatus';
 
+/** type {Set<string>} */
+const deprecatedCommandsLogged = new Set();
+
 function determineProtocol(createSessionArgs) {
   return _.some(createSessionArgs, isW3cCaps) ? PROTOCOLS.W3C : PROTOCOLS.MJSONWP;
 }
@@ -262,6 +265,16 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
     let currentProtocol = extractProtocol(driver, req.params.sessionId);
 
     try {
+      // if the route accessed is deprecated, log a warning
+      if (spec.deprecated && !deprecatedCommandsLogged.has(spec.command)) {
+        deprecatedCommandsLogged.add(spec.command);
+        getLogger(driver, req.params.sessionId).warn(
+          `Command '${spec.command}' has been deprecated and will be removed in a future ` +
+            `version of Appium or your driver/plugin. Please use a different method or contact the ` +
+            `driver/plugin author to add explicit support for the command before it is removed`
+        );
+      }
+
       // if this is a session command but we don't have a session,
       // error out early (especially before proxying)
       if (isSessCmd && !driver.sessionExists(req.params.sessionId)) {
@@ -512,4 +525,5 @@ export {
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
+  deprecatedCommandsLogged,
 };

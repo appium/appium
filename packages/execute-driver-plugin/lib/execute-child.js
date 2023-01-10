@@ -6,7 +6,7 @@ import {attach} from 'webdriverio';
 
 const log = logger.getLogger('ExecuteDriver Child');
 /**
- * @type {Promise<void>}
+ * @type {(res: ScriptResult) => Promise<void>}
  */
 let send;
 
@@ -176,8 +176,8 @@ if (require.main === module && _.isFunction(process.send)) {
 
 /**
  * @typedef ScriptResult
- * @property {any} success
- * @property {ScriptResultError} error
+ * @property {any} [success]
+ * @property {ScriptResultError} [error]
  */
 
 /**
@@ -189,5 +189,5 @@ if (require.main === module && _.isFunction(process.send)) {
 /**
  * @typedef RunScriptResult
  * @property {any} result
- * @property {Object} logs
+ * @property {object} logs
  */

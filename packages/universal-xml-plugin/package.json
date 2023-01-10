@@ -44,13 +44,16 @@
   "peerDependencies": {
     "appium": "^2.0.0-beta.35"
   },
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "npm": ">=8"
+  },
   "appium": {
     "pluginName": "universal-xml",
     "mainClass": "UniversalXMLPlugin"
   },
   "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
-  "engines": {
-    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
-    "npm": ">=8"
+  "typedoc": {
+    "entryPoint": "./lib/index.js"
   }
 }

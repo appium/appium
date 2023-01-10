@@ -23,15 +23,16 @@ export default class ExecuteDriverPlugin extends BasePlugin {
    * a new nodejs VM, and which has available a webdriverio driver object, having
    * already been attached to the currently running session.
    *
-   * @param {function} next - standard behaviour for executeDriverScript
+   * @param {import('@appium/types').NextPluginCallback} next - standard behaviour for executeDriverScript
    * @param {import('@appium/types').ExternalDriver} driver - Appium driver handling this command
    * @param {string} script - the string representing the driver script to run
    * @param {string} [scriptType='webdriverio'] - the name of the driver script
    * library (currently only webdriverio is supported)
    * @param {number} [timeoutMs=3600000] - timeout for the script process
    *
-   * @returns {Object} - a JSONifiable object representing the return value of
+   * @returns {Promise<any>} - a JSONifiable object representing the return value of
    * the script
+   * @type {import('@appium/types').PluginCommand<[string, string?, number?]>}
    * @throws {Error}
    */
   async executeDriverScript(

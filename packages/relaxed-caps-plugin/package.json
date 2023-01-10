@@ -2,6 +2,17 @@
   "name": "@appium/relaxed-caps-plugin",
   "version": "1.0.0-beta.14",
   "description": "An Appium 2.0 plugin that loosens requirements for vendor prefixes on caps",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
   "bugs": {
     "url": "https://github.com/appium/appium/issues"
   },
@@ -12,6 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
+  "types": "./build/lib/plugin.d.ts",
   "directories": {
     "lib": "./lib"
   },
@@ -45,15 +57,7 @@
   "tags": [
     "appium"
   ],
-  "homepage": "https://appium.io",
-  "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
-  ]
+  "typedoc": {
+    "entryPoint": "./lib/plugin.js"
+  }
 }

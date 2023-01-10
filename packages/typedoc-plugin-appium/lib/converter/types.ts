@@ -28,6 +28,9 @@ type WithKind<K extends ReflectionKind, R> = R & {kind: K};
  */
 type WithSomeType<T extends SomeType, R> = R & {type: T};
 
+/**
+ * Utility to narrow by name and kind
+ */
 type WithNameAndKind<S extends string, K extends ReflectionKind, R> = R & {name: S; kind: K};
 
 /**
@@ -107,11 +110,16 @@ export type Guard<T> = (value: any) => value is T;
 export type ExecMethodDeclarationReflection = WithName<
   typeof NAME_EXECUTE_METHOD_MAP,
   DeclarationReflectionWithReflectedType
-> & {
-  flags: ReflectionFlags & {isStatic: true};
-};
+> &
+  WithStaticFlag;
 
+/**
+ * Whatever has this flag will be a static member
+ */
 export type WithStaticFlag = {flags: ReflectionFlags & {isStatic: true}};
+/**
+ * Whatever has this flag will _not_ be a static member
+ */
 export type WithoutStaticFlag = {flags: ReflectionFlags & {isStatic: false}};
 
 /**
@@ -165,9 +173,9 @@ export type AsyncCallSignatureReflection = CallSignatureReflection & {
 };
 
 /**
- * An async method or reference to an async method.  A command's method must be of this type.
+ * An async method or reference to an async method.  In a driver, a command's method must be of this type.
  */
-export type AsyncMethodDeclarationReflection<
+export type CommandMethodDeclarationReflection<
   T extends ReferenceType | ReflectionType = ReferenceType
 > = WithSomeType<T, DeclarationReflection> &
   WithKind<
@@ -195,7 +203,7 @@ export type AsyncMethodDeclarationReflection<
  */
 export interface KnownMethodData {
   comment?: Comment;
-  method: AsyncMethodDeclarationReflection;
+  method: CommandMethodDeclarationReflection;
 }
 
 /**
@@ -207,6 +215,33 @@ export type KnownMethods = Map<string, KnownMethodData>;
  * A {@linkcode DeclarationReflection} which is a `class`.
  */
 export type ClassDeclarationReflection = WithKind<ReflectionKind.Class, DeclarationReflection>;
+
+/**
+ * A constructor
+ */
+export type ConstructorDeclarationReflection = WithNameAndKind<
+  'constructor',
+  ReflectionKind.Constructor,
+  DeclarationReflection
+>;
+
+/**
+ * A {@linkcode ReferenceType} referencing the constructor of `BasePlugin`
+ */
+export type BasePluginConstructorReferenceType = ReferenceType & {name: 'BasePlugin.constructor'};
+
+/**
+ * A {@linkcode DeclarationReflection} for the constructor of a class extending `BasePlugin`
+ */
+export type BasePluginConstructorDeclarationReflection = WithSomeType<
+  ReferenceType,
+  DeclarationReflection
+> &
+  ConstructorDeclarationReflection &
+  (
+    | {inheritedFrom: BasePluginConstructorReferenceType}
+    | {overwrites: BasePluginConstructorReferenceType}
+  );
 
 /**
  * One of {@linkcode ExecMethodDefParamsPropDeclarationReflection} or

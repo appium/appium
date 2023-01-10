@@ -5,7 +5,7 @@
 
 import _ from 'lodash';
 import {Comment, CommentDisplayPart} from 'typedoc';
-import {AsyncMethodDeclarationReflection, KnownMethods} from './types';
+import {CommandMethodDeclarationReflection, KnownMethods} from './types';
 
 export const stats = _.fill(new Array(5), 0);
 
@@ -21,7 +21,7 @@ export const stats = _.fill(new Array(5), 0);
 export function deriveComment(
   command: string,
   knownMethods?: KnownMethods,
-  refl?: AsyncMethodDeclarationReflection,
+  refl?: CommandMethodDeclarationReflection,
   extraComment?: Comment
 ): CommentData | undefined {
   const commentFinders: CommentFinder[] = [

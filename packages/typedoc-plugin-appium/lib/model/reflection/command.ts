@@ -1,5 +1,5 @@
 import {Comment, DeclarationReflection, ParameterReflection} from 'typedoc';
-import {AsyncMethodDeclarationReflection, CommentSourceType} from '../../converter';
+import {CommandMethodDeclarationReflection, CommentSourceType} from '../../converter';
 import {isExecMethodData} from '../../guards';
 import {CommandData, ExecMethodData} from '../command-data';
 import {AllowedHttpMethod, Route} from '../types';
@@ -53,7 +53,7 @@ export class CommandReflection extends DeclarationReflection {
   public readonly comment?: Comment;
 
   public readonly commentSource?: CommentSourceType;
-  public readonly refl?: AsyncMethodDeclarationReflection;
+  public readonly refl?: CommandMethodDeclarationReflection;
 
   public readonly parameters?: ParameterReflection[];
 

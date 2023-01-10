@@ -46,6 +46,11 @@ export interface ConvertMethodMapOpts {
    * If `true`, do not add a route if the method it references cannot be found
    */
   strict?: boolean;
+
+  /**
+   * If `true`, handle commands as `PluginCommand`s, which affects which parameters get used
+   */
+  isPluginCommand?: boolean;
 }
 
 /**
@@ -60,6 +65,7 @@ export function convertMethodMap({
   methods,
   knownMethods = new Map(),
   strict = false,
+  isPluginCommand = false,
 }: ConvertMethodMapOpts): RouteMap {
   const routes: RouteMap = new Map();
 
@@ -129,6 +135,7 @@ export function convertMethodMap({
           commentSource: commentData?.commentSource,
           refl: method,
           parentRefl,
+          isPluginCommand,
         })
       );
 

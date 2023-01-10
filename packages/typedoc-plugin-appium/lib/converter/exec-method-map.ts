@@ -39,6 +39,10 @@ export interface ConvertExecuteMethodMapOpts {
    * If `true`, do not add a route if the method it references cannot be found
    */
   strict?: boolean;
+  /**
+   * If `true`, handle commands as `PluginCommand`s, which affects which parameters get used
+   */
+  isPluginCommand?: boolean;
 }
 
 /**
@@ -52,6 +56,7 @@ export function convertExecuteMethodMap({
   execMethodMapRefl,
   methods,
   strict = false,
+  isPluginCommand = false,
 }: ConvertExecuteMethodMapOpts): ExecMethodDataSet {
   const commandRefs: ExecMethodDataSet = new Set();
   if (!execMethodMapRefl) {
@@ -114,6 +119,7 @@ export function convertExecuteMethodMap({
         refl: method,
         comment: commentData?.comment,
         commentSource: commentData?.commentSource,
+        isPluginCommand,
       })
     );
 

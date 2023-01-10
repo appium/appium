@@ -11,7 +11,7 @@ import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
-describe('BaseDriverConverter', function () {
+describe('BuiltinMethodMapConverter', function () {
   let sandbox: SinonSandbox;
 
   beforeEach(function () {
@@ -66,6 +66,7 @@ describe('BaseDriverConverter', function () {
             requiredParams: [],
             route: '/session',
             optionalParams: ['desiredCapabilities', 'requiredCapabilities', 'capabilities'],
+            isPluginCommand: false,
           });
           expect(firstCommand.methodRefl!.name).to.equal('createSession');
           expect(firstCommand.comment).to.be.an.instanceof(Comment);

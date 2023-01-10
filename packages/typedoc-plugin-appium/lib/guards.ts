@@ -16,6 +16,7 @@ import {
   TypeOperatorType,
 } from 'typedoc';
 import {
+  NAME_BASE_PLUGIN,
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_COMMAND,
   NAME_EXECUTE_METHOD_MAP,
@@ -28,12 +29,14 @@ import {
 } from './converter';
 import {
   AppiumTypesReflection,
-  AsyncMethodDeclarationReflection,
   BaseDriverDeclarationReflection,
+  BasePluginConstructorDeclarationReflection,
   CallSignatureReflection,
   CallSignatureReflectionWithArity,
   ClassDeclarationReflection,
+  CommandMethodDeclarationReflection,
   CommandPropDeclarationReflection,
+  ConstructorDeclarationReflection,
   DeclarationReflectionWithReflectedType,
   ExecMethodDeclarationReflection,
   ExecMethodDefParamsPropDeclarationReflection,
@@ -267,7 +270,7 @@ export function isExternalDriverDeclarationReflection(
 }
 
 /**
- * Type guard for an {@linkcode AsyncMethodDeclarationReflection}, which is _potentially_ a method
+ * Type guard for an {@linkcode CommandMethodDeclarationReflection}, which is _potentially_ a method
  * for a command.  Not all async methods in driver classes are mapped to commands, of course!
  *
  * A command method cannot be static, but it can be an actual (async) function or a reference to an
@@ -277,7 +280,7 @@ export function isExternalDriverDeclarationReflection(
  */
 export function isAsyncMethodDeclarationReflection(
   value: any
-): value is AsyncMethodDeclarationReflection {
+): value is CommandMethodDeclarationReflection {
   if (
     !isDeclarationReflection(value) ||
     !value.kindOf(ReflectionKind.Method | ReflectionKind.Property) ||
@@ -289,7 +292,7 @@ export function isAsyncMethodDeclarationReflection(
     (value.type instanceof ReflectionType ? value.type.declaration.signatures : value.signatures) ??
     [];
   return Boolean(
-    signatures.find((sig) => sig.type instanceof ReferenceType && sig.type.name === 'Promise')
+    signatures.find((sig) => isReferenceType(sig.type) && sig.type.name === 'Promise')
   );
 }
 
@@ -322,4 +325,40 @@ export function isCallSignatureReflectionWithArity(
   value: any
 ): value is CallSignatureReflectionWithArity {
   return Boolean(isCallSignatureReflection(value) && value.parameters?.length);
+}
+
+/**
+ * Guard for {@linkcode ReferenceType}
+ * @param value any
+ */
+export function isReferenceType(value: any): value is ReferenceType {
+  return value instanceof ReferenceType;
+}
+
+/**
+ * Guard for {@linkcode ConstructorDeclarationReflection}
+ * @param value any
+ */
+export function isConstructorDeclarationReflection(
+  value: any
+): value is ConstructorDeclarationReflection {
+  return isDeclarationReflection(value) && value.kindOf(ReflectionKind.Constructor);
+}
+
+/**
+ * Guard for the constructor of a class extending {@linkcode BasePlugin}
+ * @param value
+ */
+export function isBasePluginConstructorDeclarationReflection(
+  value: any
+): value is BasePluginConstructorDeclarationReflection {
+  if (!(isDeclarationReflection(value) && value.kindOf(ReflectionKind.Constructor))) {
+    return false;
+  }
+  const ref = isReferenceType(value.inheritedFrom)
+    ? value.inheritedFrom
+    : isReferenceType(value.overwrites)
+    ? value.overwrites
+    : undefined;
+  return ref?.name === `${NAME_BASE_PLUGIN}.constructor`;
 }

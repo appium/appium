@@ -2,7 +2,9 @@ import _ from 'lodash';
 import pluralize from 'pluralize';
 import {Context, ReflectionKind} from 'typedoc';
 import {
+  isBasePluginConstructorDeclarationReflection,
   isClassDeclarationReflection,
+  isConstructorDeclarationReflection,
   isExecMethodDefReflection,
   isMethodMapDeclarationReflection,
 } from '../guards';
@@ -27,7 +29,7 @@ import {
 } from './utils';
 
 /**
- * Name of the static `newMethodMap` property in a Driver
+ * Name of the static `newMethodMap` property in a Driver or Plugin
  */
 export const NAME_NEW_METHOD_MAP = 'newMethodMap';
 
@@ -57,6 +59,8 @@ export const NAME_COMMAND = 'command';
  * Name of the field in a _regular_ method map which contains parameters
  */
 export const NAME_PAYLOAD_PARAMS = 'payloadParams';
+
+export const NAME_BASE_PLUGIN = 'BasePlugin';
 
 /**
  * Converts declarations to information about Appium commands
@@ -129,6 +133,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
    * 3. Parse the `newMethodMap` of each class, if any
    * 4. For each method, look for it in either `newMethodMap` or the known methods
    * 5. Handle execute methods
+   *
    * @param parentRefl - Project or module
    * @returns Info about the commands in given `parent`
    */
@@ -139,6 +144,10 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     const classReflections = filterChildrenByGuard(parentRefl, isClassDeclarationReflection);
 
     for (const classRefl of classReflections) {
+      const isPlugin = isBasePluginConstructorDeclarationReflection(
+        findChildByGuard(classRefl, isConstructorDeclarationReflection)
+      );
+
       const methods = findAsyncMethodsInReflection(classRefl, this.knownMethods);
 
       if (!methods.size) {
@@ -152,10 +161,10 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
         pluralize('potential method', methods.size, true)
       );
 
-      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, methods);
+      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, methods, isPlugin);
       routeMap = new Map([...routeMap, ...newRouteMap]);
 
-      const newExecMethodData = this.#findAndConvertExecMethodMap(classRefl, methods);
+      const newExecMethodData = this.#findAndConvertExecMethodMap(classRefl, methods, isPlugin);
       execMethodData = new Set([...execMethodData, ...newExecMethodData]);
 
       const overriddenRouteMap: RouteMap = this.builtinCommands
@@ -187,11 +196,13 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
    * If the class has an `executeMethodMap`, convert it
    * @param classRefl A class
    * @param methods Methods in said class
+   * @param isPluginCommand If `classRefl` represents an Appium Plugin or not
    * @returns A set of exec method data which may be empty
    */
   #findAndConvertExecMethodMap(
     classRefl: ClassDeclarationReflection,
-    methods: KnownMethods
+    methods: KnownMethods,
+    isPluginCommand?: boolean
   ): ExecMethodDataSet {
     const execMethodMapRefl = findChildByGuard(classRefl, isExecMethodDefReflection);
     if (!execMethodMapRefl) {
@@ -203,6 +214,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       execMethodMapRefl,
       methods,
       strict: true,
+      isPluginCommand,
     });
   }
 
@@ -210,11 +222,13 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
    * If the class has a `newMethodMap`, convert it
    * @param classRefl A class
    * @param methods Methods in said class
+   * @param isPluginCommand If `classRefl` represents an Appium Plugin or not
    * @returns A map of routes which may be empty
    */
   #findAndConvertNewMethodMap(
     classRefl: ClassDeclarationReflection,
-    methods: KnownMethods
+    methods: KnownMethods,
+    isPluginCommand?: boolean
   ): RouteMap {
     const newMethodMapRefl = findChildByNameAndGuard(
       classRefl,
@@ -232,6 +246,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       methods,
       knownMethods: this.knownMethods,
       strict: true,
+      isPluginCommand,
     });
   }
 }

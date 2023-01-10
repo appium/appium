@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import pluralize from 'pluralize';
 import {
   Comment,
   DeclarationReflection,
@@ -8,12 +7,8 @@ import {
   ReflectionFlags,
   ReflectionKind,
 } from 'typedoc';
-import {
-  AsyncMethodDeclarationReflection,
-  ClassDeclarationReflection,
-  CommentSourceType,
-} from '../converter';
-import {isCallSignatureReflectionWithArity} from '../guards';
+import {CommandMethodDeclarationReflection, CommentSourceType} from '../converter';
+import {isCallSignatureReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {AllowedHttpMethod, Command, Route} from './types';
 
@@ -44,7 +39,7 @@ export abstract class BaseCommandData {
    *
    * @todo Determine if this should be required
    */
-  public readonly methodRefl?: AsyncMethodDeclarationReflection;
+  public readonly methodRefl?: CommandMethodDeclarationReflection;
   /**
    * List of required parameter names derived from a method map
    */
@@ -61,6 +56,8 @@ export abstract class BaseCommandData {
    */
   #parameters: ParameterReflection[] | undefined;
 
+  public readonly isPluginCommand: boolean;
+
   constructor(log: AppiumPluginLogger, command: Command, opts: CommandDataOpts = {}) {
     this.command = command;
     this.optionalParams = opts.optionalParams;
@@ -70,6 +67,7 @@ export abstract class BaseCommandData {
     this.methodRefl = opts.refl;
     this.parentRefl = opts.parentRefl;
     this.log = log;
+    this.isPluginCommand = Boolean(opts.isPluginCommand);
   }
 
   /**
@@ -84,13 +82,14 @@ export abstract class BaseCommandData {
     if (this.#parameters) {
       return this.#parameters;
     }
-    const sig = this.methodRefl?.signatures?.find(isCallSignatureReflectionWithArity);
+    const sig = this.methodRefl?.signatures?.find(isCallSignatureReflection);
 
     if (!sig) {
       return [];
     }
 
-    const pRefls = [...sig.parameters!];
+    const pRefls =
+      (this.isPluginCommand ? sig.parameters?.slice(2) : sig.parameters?.slice()) ?? [];
 
     if (pRefls.length < this.requiredParams!.length + this.optionalParams!.length) {
       this.log.warn(
@@ -202,7 +201,7 @@ export interface CommandDataOpts {
    *
    * @todo Determine if this should be required
    */
-  refl?: AsyncMethodDeclarationReflection;
+  refl?: CommandMethodDeclarationReflection;
   /**
    * List of required parameter names derived from a method map
    */
@@ -211,6 +210,11 @@ export interface CommandDataOpts {
    * The thing which the method is a member of for documentation purposes
    */
   parentRefl?: DeclarationReflection;
+  /**
+   * If `true`, `refl` represents a `PluginCommand`, wherein we will ignore
+   * the first two parameters altogether.
+   */
+  isPluginCommand?: boolean;
 }
 
 /**

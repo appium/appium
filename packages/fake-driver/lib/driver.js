@@ -1,5 +1,6 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
+import {deprecatedCommandsLogged} from '@appium/base-driver/build/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
 import {FakeDriverMixin} from './commands';
 
@@ -37,6 +38,7 @@ export class FakeDriverCore extends BaseDriver {
     this.maxElId = 0;
     this.fakeThing = null;
     this._proxyActive = false;
+    this.shook = false;
   }
 
   proxyActive() {
@@ -73,12 +75,7 @@ export class FakeDriverCore extends BaseDriver {
    * @override
    * @returns {Promise<[string,FakeDriverCaps]>} Session ID and normalized capabilities
    */
-  async createSession(
-    w3cCapabilities1,
-    w3cCapabilities2,
-    w3cCapabilities3,
-    driverData = []
-  ) {
+  async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3, driverData = []) {
     // TODO add validation on caps.app that we will get for free from
     // BaseDriver
 
@@ -94,12 +91,7 @@ export class FakeDriverCore extends BaseDriver {
     }
 
     let [sessionId, caps] = /** @type {[string, FakeDriverCaps]} */ (
-      await super.createSession(
-        w3cCapabilities1,
-        w3cCapabilities2,
-        w3cCapabilities3,
-        driverData
-      )
+      await super.createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3, driverData)
     );
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
@@ -139,6 +131,25 @@ export class FakeDriverCore extends BaseDriver {
     return this.cliArgs;
   }
 
+  /**
+   * This is a command that will return a list of deprecated command names called
+   *
+   * @returns {Promise<string[]>}
+   */
+  async getDeprecatedCommandsCalled() {
+    await B.delay(1);
+    return Array.from(deprecatedCommandsLogged);
+  }
+
+  /**
+   * This is a command that exists just to be an example of a deprecated command
+   *
+   * @returns {Promise<void>}
+   */
+  async callDeprecatedCommand() {
+    await B.delay(1);
+  }
+
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fakedriver': {
       GET: {command: 'getFakeThing'},
@@ -149,6 +160,13 @@ export class FakeDriverCore extends BaseDriver {
     },
     '/session/:sessionId/fakedriverargs': {
       GET: {command: 'getFakeDriverArgs'},
+    },
+    '/session/:sessionId/deprecated': {
+      POST: {command: 'callDeprecatedCommand', deprecated: true},
+    },
+    // this next one exists to override a deprecated method
+    '/session/:sessionId/doubleclick': {
+      POST: {command: 'doubleClick'},
     },
   });
 
@@ -166,6 +184,9 @@ export class FakeDriverCore extends BaseDriver {
     'fake: setThing': {
       command: 'setFakeThing',
       params: {required: ['thing']},
+    },
+    'fake: getDeprecatedCommandsCalled': {
+      command: 'getDeprecatedCommandsCalled',
     },
   });
 

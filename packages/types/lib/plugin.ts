@@ -1,4 +1,4 @@
-import {MethodMap, UpdateServerCallback, Class, AppiumLogger, PluginType} from '.';
+import {MethodMap, UpdateServerCallback, Class, AppiumLogger} from '.';
 import {Driver, ExternalDriver} from './driver';
 
 /**
@@ -77,12 +77,14 @@ export type NextPluginCallback = () => Promise<void>;
 
 /**
  * Implementation of a command within a plugin
+ *
+ * At minimum, `D` must be `ExternalDriver`, but a plugin can be more narrow about which drivers it supports.
  */
-export type PluginCommand<TArgs = any> = (
-  next: NextPluginCallback,
-  driver: ExternalDriver,
-  ...args: TArgs[]
-) => Promise<void>;
+export type PluginCommand<
+  D extends ExternalDriver = ExternalDriver,
+  TArgs extends readonly any[] = any[],
+  TReturn = any
+> = (next: NextPluginCallback, driver: D, ...args: TArgs) => Promise<TReturn>;
 
 /**
  * Mainly for internal use.

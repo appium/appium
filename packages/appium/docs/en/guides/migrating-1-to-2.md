@@ -14,7 +14,20 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 
 ## Breaking Changes
 
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
+Here we call out the breaking changes and what you need to do to account for them.
+
+### :bangbang: Default server base path
+
+With Appium 1.x, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
+`/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
+2, and is no longer relevant. As such the default base path for the server is now `/`. If you want
+to retain the old behaviour, you can set the base path via a command line argument as follows:
+
+```
+appium --base-path=/wd/hub
+```
+
+You can also set server arguments as [Config file](./config.md) properties.
 
 ### :bangbang: Installing drivers during setup
 
@@ -32,7 +45,7 @@ If you're running in a CI environment or want to install Appium along with some 
 npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
-This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error.
 
 ### :bangbang: Drivers installation path
 

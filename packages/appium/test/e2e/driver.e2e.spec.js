@@ -131,7 +131,7 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for empty args', function () {
-    it('should not recieve user cli args if none passed in', async function () {
+    it('should not receive user cli args if none passed in', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
       try {

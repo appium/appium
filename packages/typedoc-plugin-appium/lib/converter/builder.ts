@@ -4,17 +4,17 @@
  * @module
  */
 
-import _ from 'lodash';
 import pluralize from 'pluralize';
-import {Context} from 'typedoc';
+import {ContainerReflection, Context, DeclarationReflection, ProjectReflection} from 'typedoc';
 import {isParentReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {
+  AppiumPluginReflectionKind,
   CommandData,
-  ModuleCommands,
   CommandReflection,
-  ExtensionReflection,
   ExecMethodData,
+  ExtensionReflection,
+  ModuleCommands,
   ParentReflection,
   ProjectCommands,
   Route,
@@ -116,8 +116,8 @@ export function createReflections(
   const log = parentLog.createChildLogger('builder');
   const {project} = ctx;
 
-  if (_.isEmpty(projectCmds)) {
-    log.warn('Nothing to do.');
+  if (!projectCmds.size) {
+    log.error('No reflections to create; nothing to do.');
     return [];
   }
 
@@ -137,4 +137,24 @@ export function createReflections(
     );
     return cmdsRefl;
   });
+}
+
+/**
+ * Removes any reflection _not_ created by this plugin from the TypeDoc refl _except_ those
+ * created by this plugin.
+ * @param project - Current TypeDoc project
+ * @param refl - A {@linkcode ContainerReflection} to remove children from; defaults to `project`
+ * @returns A set of removed {@linkcode DeclarationReflection DeclarationReflections}
+ */
+export function omitDefaultReflections(
+  project: ProjectReflection,
+  refl: ContainerReflection = project
+): Set<DeclarationReflection> {
+  let removed = new Set<DeclarationReflection>();
+  for (const childRefl of refl.getChildrenByKind(~(AppiumPluginReflectionKind.Extension as any))) {
+    project.removeReflection(childRefl);
+    removed.add(childRefl);
+  }
+
+  return removed;
 }

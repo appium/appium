@@ -3,6 +3,7 @@ import readPkg from 'read-pkg';
 import {Constructor} from 'type-fest';
 import {Application, Context, Converter, LogLevel, TSConfigReader} from 'typedoc';
 import ts from 'typescript';
+import {THEME_NAME} from '../../lib';
 import {BaseConverter} from '../../lib/converter';
 import {AppiumPluginLogger} from '../../lib/logger';
 
@@ -23,20 +24,27 @@ export async function getEntryPoint(pkgName: string): Promise<string> {
 export function getTypedocApp(
   tsconfig: string,
   entryPoints: string[] = [],
-  logger?: TestLogger
+  opts: GetTypedocAppOpts = {}
 ): Application {
   const app = new Application();
   app.options.addReader(new TSConfigReader());
+  const {logger, plugin = ['none']} = opts;
   app.bootstrap({
     excludeExternals: true,
     tsconfig,
-    plugin: ['none'],
+    plugin,
     logLevel: process.env._FORCE_LOGS ? LogLevel.Verbose : LogLevel.Info,
     logger,
     entryPoints,
     entryPointStrategy: entryPoints.length > 1 ? 'packages' : 'resolve',
+    theme: THEME_NAME,
   });
   return app;
+}
+
+export interface GetTypedocAppOpts {
+  logger?: TestLogger;
+  plugin?: string[];
 }
 
 export function getConverterProgram(app: Application): ts.Program {
@@ -49,13 +57,13 @@ export function getConverterProgram(app: Application): ts.Program {
 
 /**
  *
- * @param pkgName Name of package to get program for
+ * @param pkgName Name of package to get Application for
  * @returns Object with stuff you need to do things
  */
 export async function initAppForPkg(pkgName: string, logger?: TestLogger): Promise<Application> {
   const entryPoint = await getEntryPoint(pkgName);
   const tsconfig = require.resolve(`${pkgName}/tsconfig.json`);
-  return getTypedocApp(tsconfig, [entryPoint], logger);
+  return getTypedocApp(tsconfig, [entryPoint], {logger});
 }
 
 export async function initAppForPkgs(

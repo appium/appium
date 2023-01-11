@@ -39,6 +39,10 @@ module.exports = (wallaby) => {
         instrument: false,
         pattern: './packages/base-driver/static/**/*',
       },
+      {
+        instrument: false,
+        pattern: './packages/typedoc-plugin-appium/lib/theme/resources/**',
+      },
       '!./packages/*/test/**/*-specs.js',
       '!./packages/*/test/**/*.e2e.spec.(j|t)s',
       '!**/local_appium_home/**',

@@ -1,8 +1,12 @@
+/**
+ * Utilities for the various converters.
+ * @module
+ */
+
 import {DeclarationReflection, LiteralType, ProjectReflection, ReflectionKind} from 'typedoc';
 import {
   isAsyncMethodDeclarationReflection,
   isMethodDefParamNamesDeclarationReflection,
-  isParentReflection,
   isReflectionWithReflectedType,
 } from '../guards';
 import {ParentReflection} from '../model';

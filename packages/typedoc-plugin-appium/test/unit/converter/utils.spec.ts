@@ -1,7 +1,5 @@
 import {createSandbox, SinonSandbox} from 'sinon';
 import {
-  Application,
-  Comment,
   DeclarationReflection,
   LiteralType,
   ReflectionKind,
@@ -9,24 +7,19 @@ import {
   TypeOperatorType,
 } from 'typedoc';
 import {
-  BuiltinExternalDriverConverter,
   convertCommandParams,
-  deriveComment,
-  KnownMethods,
   MethodDefParamNamesDeclarationReflection,
   MethodDefParamsPropDeclarationReflection,
   NAME_OPTIONAL,
   NAME_PARAMS,
   NAME_REQUIRED,
-  NAME_TYPES_MODULE,
   TupleTypeWithLiteralElements,
   TypeOperatorTypeWithTupleTypeWithLiteralElements,
 } from '../../../lib/converter';
-import {initConverter} from '../helpers';
 
 const {expect} = chai;
 
-describe('converter - method map', function () {
+describe('utils', function () {
   let sandbox: SinonSandbox;
 
   beforeEach(function () {
@@ -36,10 +29,6 @@ describe('converter - method map', function () {
   afterEach(function () {
     sandbox.restore();
   });
-
-  describe('convertMethodMap()', function () {});
-
-  describe('convertExecuteMethodMap()', function () {});
 
   describe('convertCommandParams()', function () {
     describe('when not provided a MethodDefParamsPropDeclarationReflection', function () {
@@ -130,24 +119,6 @@ describe('converter - method map', function () {
             expect(convertCommandParams(NAME_REQUIRED, ref)).to.be.empty.and.an('array');
           });
         });
-      });
-    });
-  });
-
-  describe('deriveComment()', function () {
-    let knownMethods: KnownMethods;
-
-    before(async function () {
-      const converter = await initConverter(BuiltinExternalDriverConverter, NAME_TYPES_MODULE);
-      knownMethods = converter.convert();
-      expect(knownMethods.size).to.be.greaterThan(0);
-      expect(knownMethods.get('activateApp')!.comment).to.exist;
-    });
-
-    describe('when not provided a reflection nor `Comment` parameter', function () {
-      it('should derive the comment from KnownMethods', function () {
-        const commentData = deriveComment('activateApp', knownMethods);
-        expect(commentData).to.exist.and.to.have.keys('comment', 'commentSource');
       });
     });
   });

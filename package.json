@@ -106,7 +106,7 @@
     "lerna": "6.4.0",
     "lint-staged": "13.1.0",
     "log-symbols": "4.1.0",
-    "midnight-smoker": "2.0.0",
+    "midnight-smoker": "2.0.1",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
     "mocha": "10.2.0",

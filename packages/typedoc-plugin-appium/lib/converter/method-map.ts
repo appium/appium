@@ -33,7 +33,7 @@ export interface ConvertMethodMapOpts {
   /**
    * A `MethodMap` object whose parent is `parentRefl`
    */
-  methodMapRef: MethodMapDeclarationReflection;
+  methodMapRefl: MethodMapDeclarationReflection;
   /**
    * All async methods in `parentRefl`
    */
@@ -60,7 +60,7 @@ export interface ConvertMethodMapOpts {
  */
 export function convertMethodMap({
   log,
-  methodMapRef,
+  methodMapRefl,
   parentRefl,
   methods,
   knownMethods = new Map(),
@@ -69,7 +69,7 @@ export function convertMethodMap({
 }: ConvertMethodMapOpts): RouteMap {
   const routes: RouteMap = new Map();
 
-  const routeProps = filterChildrenByKind(methodMapRef, ReflectionKind.Property);
+  const routeProps = filterChildrenByKind(methodMapRefl, ReflectionKind.Property);
 
   if (!routeProps.length) {
     log.warn('(%s) No routes found in MethodMap; skipping', parentRefl.name);

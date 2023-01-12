@@ -82,7 +82,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
 
     const baseDriverRoutes = convertMethodMap({
       log: this.log,
-      methodMapRef: methodMap,
+      methodMapRefl: methodMap,
       parentRefl: baseDriverModuleRefl,
       methods: findAsyncMethodsInReflection(baseDriverClassRefl, this.knownMethods),
     });

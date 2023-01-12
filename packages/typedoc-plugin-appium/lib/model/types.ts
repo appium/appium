@@ -1,6 +1,5 @@
 import {DeclarationReflection, ProjectReflection} from 'typedoc';
 import {CommandData, ExecMethodData} from './command-data';
-import {ModuleCommands} from './module-commands';
 
 /**
  * WD spec allows these HTTP methods.

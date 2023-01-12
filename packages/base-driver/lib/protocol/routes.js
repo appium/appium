@@ -848,8 +848,8 @@ const METHOD_MAP = /** @type {const} */ ({
       payloadParams: {
         required: ['content'],
         optional: ['contentType', 'label'],
-        deprecated: true,
       },
+      deprecated: true,
     },
   },
   '/session/:sessionId/appium/device/get_clipboard': {

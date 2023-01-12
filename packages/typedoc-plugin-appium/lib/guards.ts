@@ -288,11 +288,11 @@ export function isAsyncMethodDeclarationReflection(
   ) {
     return false;
   }
-  const signatures =
-    (value.type instanceof ReflectionType ? value.type.declaration.signatures : value.signatures) ??
-    [];
+  const signatures = isReflectionType(value.type)
+    ? value.type.declaration.getAllSignatures()
+    : value.getAllSignatures();
   return Boolean(
-    signatures.find((sig) => isReferenceType(sig.type) && sig.type.name === 'Promise')
+    signatures?.find((sig) => isReferenceType(sig.type) && sig.type.name === 'Promise')
   );
 }
 
@@ -346,7 +346,7 @@ export function isConstructorDeclarationReflection(
 }
 
 /**
- * Guard for the constructor of a class extending {@linkcode BasePlugin}
+ * Guard for the constructor of a class extending `BasePlugin`
  * @param value
  */
 export function isBasePluginConstructorDeclarationReflection(

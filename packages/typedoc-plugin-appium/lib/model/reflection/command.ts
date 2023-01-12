@@ -1,4 +1,10 @@
-import {Comment, DeclarationReflection, ParameterReflection} from 'typedoc';
+import {
+  Comment,
+  DeclarationReflection,
+  ParameterReflection,
+  SignatureReflection,
+  SomeType,
+} from 'typedoc';
 import {CommandMethodDeclarationReflection, CommentSourceType} from '../../converter';
 import {isExecMethodData} from '../../guards';
 import {CommandData, ExecMethodData} from '../command-data';
@@ -52,10 +58,24 @@ export class CommandReflection extends DeclarationReflection {
    */
   public readonly comment?: Comment;
 
+  /**
+   * Metadata about where `comment` came from
+   */
   public readonly commentSource?: CommentSourceType;
+  /**
+   * Original method declaration
+   */
   public readonly refl?: CommandMethodDeclarationReflection;
 
+  /**
+   * Parameters for template display
+   */
   public readonly parameters?: ParameterReflection[];
+
+  /**
+   * Call signature for template display
+   */
+  public readonly signature?: SignatureReflection;
 
   /**
    * Sets props depending on type of `data`
@@ -81,6 +101,7 @@ export class CommandReflection extends DeclarationReflection {
       methodRefl: refl,
       commentSource,
       parameters,
+      signature,
     } = data;
 
     // kind-specific data
@@ -109,6 +130,7 @@ export class CommandReflection extends DeclarationReflection {
     this.refl = refl;
     this.commentSource = commentSource;
     this.parameters = parameters;
+    this.signature = signature;
   }
 
   /**

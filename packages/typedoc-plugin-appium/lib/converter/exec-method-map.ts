@@ -98,9 +98,9 @@ export function convertExecuteMethodMap({
     const requiredParams = convertRequiredCommandParams(paramsProp);
     const optionalParams = convertOptionalCommandParams(paramsProp);
 
-    const method = methods.get(command)?.method;
+    const methodRefl = methods.get(command)?.method;
 
-    if (strict && !method) {
+    if (strict && !methodRefl) {
       log.error(
         '(%s) No method found for command "%s" from script "%s"',
         parentRefl.name,
@@ -110,13 +110,13 @@ export function convertExecuteMethodMap({
       continue;
     }
 
-    const commentData = deriveComment(command, methods, method, comment);
+    const commentData = deriveComment(command, methods, methodRefl, comment);
 
     commandRefs.add(
       new ExecMethodData(log, command, script, {
         requiredParams,
         optionalParams,
-        refl: method,
+        refl: methodRefl,
         comment: commentData?.comment,
         commentSource: commentData?.commentSource,
         isPluginCommand,

@@ -241,7 +241,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     }
     return convertMethodMap({
       log: this.log,
-      methodMapRef: newMethodMapRefl,
+      methodMapRefl: newMethodMapRefl,
       parentRefl: classRefl,
       methods,
       knownMethods: this.knownMethods,

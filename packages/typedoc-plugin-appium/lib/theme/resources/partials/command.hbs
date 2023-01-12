@@ -20,7 +20,7 @@
 {{else}}
 {{#if hasRequiredParams}}
 
-#### Required Parameters
+##### Required Parameters
 
 {{#each requiredParams}}
 - `{{this}}`
@@ -30,7 +30,7 @@
 
 {{#if hasOptionalParams}}
 
-#### Optional Parameters
+##### Optional Parameters
 
 {{#each optionalParams}}
 - `{{this}}`
@@ -39,4 +39,38 @@
 {{/if}}
 {{/if}}
 
+{{#if signature}}
+
+#### Response
+
+{{#with signature}}
+
+{{#with type}}
+
+{{{type 'all'}}}
+
+{{/with}}
+
+{{#with comment}}
+
+{{{returns this}}}
+
+{{/with}}
+
+{{#with type}}
+
+{{#if declaration.signatures}}
+
+{{#each declaration.signatures}}
+
+{{> member.signature showSources=false }}
+
+{{/each}}
+
+{{/if}}
+
+{{/with}}
+
+{{/with}}
+{{/if}}
 {{/unless}}

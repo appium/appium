@@ -121,7 +121,7 @@ describe('@appium/typedoc-plugin-appium', function () {
         }
       });
       describe('when called with an empty ProjectCommands', function () {
-        it('should log an error and return an empty array', function () {});
+        it('should log an error and return an empty array');
       });
     });
 

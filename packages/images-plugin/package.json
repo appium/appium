@@ -54,7 +54,7 @@
     "pluginName": "images",
     "mainClass": "ImageElementPlugin"
   },
-  "gitHead": "5c7af8ee73078018e4ec52fccf19fe3f77249d72",
+  "gitHead": "422142302f2f540a31c7eaf5178e2642b53a30d2",
   "typedoc": {
     "entryPoint": "./lib/plugin.js"
   }

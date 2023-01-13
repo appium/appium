@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.1.0](https://github.com/appium/appium/compare/@appium/base-plugin@2.0.1...@appium/base-plugin@2.1.0) (2023-01-13)
+
+
+### Features
+
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/base-plugin@2.0.0...@appium/base-plugin@2.0.1) (2022-12-21)
 
 **Note:** Version bump only for package @appium/base-plugin

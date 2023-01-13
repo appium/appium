@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.2.0](https://github.com/appium/appium/compare/@appium/base-driver@9.1.0...@appium/base-driver@9.2.0) (2023-01-13)
+
+
+### Bug Fixes
+
+* **appium:** inability to find automationName inside appium:options ([#17966](https://github.com/appium/appium/issues/17966)) ([23224cf](https://github.com/appium/appium/commit/23224cf002b7dd9e4e5d8426b4bbe1cb28f62605))
+* **base-driver:** add missing dependency @appium/types ([edde488](https://github.com/appium/appium/commit/edde4882f0633c032a077861599c337132092daf)), closes [#18006](https://github.com/appium/appium/issues/18006)
+* **base-driver:** move setClipboard deprecation to correct place ([ad1dce5](https://github.com/appium/appium/commit/ad1dce5545acb61ce79e489783a95f2caebd753c))
+* **support:** update dependency axios to v1.2.2 ([5291ca6](https://github.com/appium/appium/commit/5291ca672b3b47c5270e9fd85de3e4ed76a650e0))
+* **types:** update dependency type-fest to v3.5.0 ([8c8bfe8](https://github.com/appium/appium/commit/8c8bfe824dbe062e24cfe9fc6e1afa2f68cc6e4c))
+* **types:** update dependency type-fest to v3.5.1 ([4b5ab4d](https://github.com/appium/appium/commit/4b5ab4da7be925d0592c18e8f46a9ce30fbddf8e))
+
+
+### Features
+
+* **base-driver:** deprecate non-standard routes ([7055a0b](https://github.com/appium/appium/commit/7055a0b28193f677b21541ddada3c4a314f90f5b))
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 # [9.1.0](https://github.com/appium/appium/compare/@appium/base-driver@9.0.0...@appium/base-driver@9.1.0) (2022-12-21)
 
 ### Bug Fixes

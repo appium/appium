@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "automation",
@@ -36,8 +36,8 @@
     "test:smoke": "node ./index.js"
   },
   "dependencies": {
-    "@appium/tsconfig": "^0.1.0",
-    "@appium/schema": "^0.1.0",
+    "@appium/schema": "^0.2.0",
+    "@appium/tsconfig": "^0.2.0",
     "@types/express": "4.17.15",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.4",

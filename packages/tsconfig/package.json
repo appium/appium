@@ -1,9 +1,18 @@
 {
   "name": "@appium/tsconfig",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Shared TypeScript Config for Appium",
   "main": "tsconfig.json",
-  "keywords": [],
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
   "license": "Apache-2.0",
   "files": [
     "tsconfig*.json"

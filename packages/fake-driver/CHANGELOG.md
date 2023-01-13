@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.0.0...@appium/fake-driver@5.1.0) (2023-01-13)
+
+
+### Features
+
+* **base-driver:** deprecate non-standard routes ([7055a0b](https://github.com/appium/appium/commit/7055a0b28193f677b21541ddada3c4a314f90f5b))
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 # [5.0.0](https://github.com/appium/appium/compare/@appium/fake-driver@4.2.2...@appium/fake-driver@5.0.0) (2022-12-14)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/appium/appium/compare/@appium/fake-plugin@3.0.1...@appium/fake-plugin@3.1.0) (2023-01-13)
+
+
+### Features
+
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/fake-plugin@3.0.0...@appium/fake-plugin@3.0.1) (2022-12-21)
 
 **Note:** Version bump only for package @appium/fake-plugin

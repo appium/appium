@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.1...@appium/execute-driver-plugin@3.0.2) (2023-01-13)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** fix bad types in execute-child module ([697b442](https://github.com/appium/appium/commit/697b4427e4e60821943e8c05292e8f6eb43aa22f))
+* **execute-driver-plugin:** update dependency webdriverio to v7.28.1 ([2bb4f32](https://github.com/appium/appium/commit/2bb4f32329938e15062e42b585dd760cca5ae17b))
+* **execute-driver-plugin:** update dependency webdriverio to v7.29.0 ([a3fad3e](https://github.com/appium/appium/commit/a3fad3ed28822b1dfaae72cbfb8d7906ec35e158))
+* **execute-driver-plugin:** update dependency webdriverio to v7.29.1 ([7c59380](https://github.com/appium/appium/commit/7c59380e6b97691ff16a8d98a912d67b7972593a))
+* **execute-driver-plugin:** use correct return type annotation ([7add23e](https://github.com/appium/appium/commit/7add23e4183e6982048cd653b2a47eb052ccc38a))
+
+
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.0...@appium/execute-driver-plugin@3.0.1) (2022-12-21)
 
 ### Bug Fixes

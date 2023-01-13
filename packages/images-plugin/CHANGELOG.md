@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.2](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.1...@appium/images-plugin@2.0.2) (2023-01-13)
+
+
+### Bug Fixes
+
+* **images-plugin,universal-xml-plugin,typedoc-plugin-appium:** add missing lodash dependency ([696c94f](https://github.com/appium/appium/commit/696c94f1abf1da15fb9e3a4d60b95cd2d69d9e7c))
+
+
+
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.0...@appium/images-plugin@2.0.1) (2022-12-21)
 
 **Note:** Version bump only for package @appium/images-plugin

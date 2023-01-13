@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.49](https://github.com/appium/appium/compare/appium@2.0.0-beta.48...appium@2.0.0-beta.49) (2023-01-13)
+
+
+### Bug Fixes
+
+* **appium:** inability to find automationName inside appium:options ([#17966](https://github.com/appium/appium/issues/17966)) ([23224cf](https://github.com/appium/appium/commit/23224cf002b7dd9e4e5d8426b4bbe1cb28f62605))
+* **appium:** update dependency ajv to v8.12.0 ([783989b](https://github.com/appium/appium/commit/783989b56c80ebc0eebf693c168754130627b55f))
+* **appium:** update dependency yaml to v2.2.0 ([28c6204](https://github.com/appium/appium/commit/28c6204b751ead304cce21d534c91381fa39d79d))
+* **appium:** update dependency yaml to v2.2.1 ([b763880](https://github.com/appium/appium/commit/b763880779abaea900ac2c129dfb009b0e8ed0a9))
+* **execute-driver-plugin:** update dependency webdriverio to v7.28.1 ([2bb4f32](https://github.com/appium/appium/commit/2bb4f32329938e15062e42b585dd760cca5ae17b))
+* **execute-driver-plugin:** update dependency webdriverio to v7.29.0 ([a3fad3e](https://github.com/appium/appium/commit/a3fad3ed28822b1dfaae72cbfb8d7906ec35e158))
+* **execute-driver-plugin:** update dependency webdriverio to v7.29.1 ([7c59380](https://github.com/appium/appium/commit/7c59380e6b97691ff16a8d98a912d67b7972593a))
+* **support:** update dependency axios to v1.2.2 ([5291ca6](https://github.com/appium/appium/commit/5291ca672b3b47c5270e9fd85de3e4ed76a650e0))
+* **types:** update dependency type-fest to v3.5.0 ([8c8bfe8](https://github.com/appium/appium/commit/8c8bfe824dbe062e24cfe9fc6e1afa2f68cc6e4c))
+* **types:** update dependency type-fest to v3.5.1 ([4b5ab4d](https://github.com/appium/appium/commit/4b5ab4da7be925d0592c18e8f46a9ce30fbddf8e))
+
+
+### Features
+
+* **base-driver:** deprecate non-standard routes ([7055a0b](https://github.com/appium/appium/commit/7055a0b28193f677b21541ddada3c4a314f90f5b))
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 # [2.0.0-beta.48](https://github.com/appium/appium/compare/appium@2.0.0-beta.47...appium@2.0.0-beta.48) (2022-12-21)
 
 ### Bug Fixes

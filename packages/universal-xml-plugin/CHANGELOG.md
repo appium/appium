@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.16...@appium/universal-xml-plugin@1.0.1) (2023-01-13)
+
+
+### Bug Fixes
+
+* **images-plugin,universal-xml-plugin,typedoc-plugin-appium:** add missing lodash dependency ([696c94f](https://github.com/appium/appium-plugins/commit/696c94f1abf1da15fb9e3a4d60b95cd2d69d9e7c))
+
+
+
+
+
 # [1.0.0-beta.16](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.0-beta.15...@appium/universal-xml-plugin@1.0.0-beta.16) (2022-12-14)
 
 ### Bug Fixes

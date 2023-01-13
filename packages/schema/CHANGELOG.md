@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/appium/appium/compare/@appium/schema@0.1.0...@appium/schema@0.2.0) (2023-01-13)
+
+
+### Features
+
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 # [0.1.0](https://github.com/appium/appium/compare/@appium/schema@0.0.9...@appium/schema@0.1.0) (2022-12-14)
 
 ### Bug Fixes

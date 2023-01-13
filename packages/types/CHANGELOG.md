@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/appium/appium/compare/@appium/types@0.7.0...@appium/types@0.8.0) (2023-01-13)
+
+
+### Bug Fixes
+
+* **types:** update dependency @types/ws to v8.5.4 ([6055f16](https://github.com/appium/appium/commit/6055f162d8781da99cbdff6859ca8af5a9538040))
+* **types:** update dependency type-fest to v3.5.0 ([8c8bfe8](https://github.com/appium/appium/commit/8c8bfe824dbe062e24cfe9fc6e1afa2f68cc6e4c))
+* **types:** update dependency type-fest to v3.5.1 ([4b5ab4d](https://github.com/appium/appium/commit/4b5ab4da7be925d0592c18e8f46a9ce30fbddf8e))
+
+
+### Features
+
+* **base-driver:** deprecate non-standard routes ([7055a0b](https://github.com/appium/appium/commit/7055a0b28193f677b21541ddada3c4a314f90f5b))
+* **typedoc-appium-plugin:** implement cross-referencing of methods ([8b33414](https://github.com/appium/appium/commit/8b334149018f7d49448da9e7982356c72bcd468e))
+
+
+
+
+
 # [0.7.0](https://github.com/appium/appium/compare/@appium/types@0.6.0...@appium/types@0.7.0) (2022-12-21)
 
 ### Bug Fixes

@@ -1,16 +1,8 @@
-import {AlertMixin} from './alert';
-import {ContextsMixin} from './contexts';
-import {ElementMixin} from './element';
-import {FindMixin} from './find';
-import {GeneralMixin} from './general';
-
-/**
- *
- * @param {import('@appium/types').Class<import('../driver').FakeDriverCore>} Base
- */
-export function FakeDriverMixin(Base) {
-  return GeneralMixin(FindMixin(ElementMixin(AlertMixin(ContextsMixin(Base)))));
-}
+export {default as alert} from './alert';
+export {default as contexts} from './contexts';
+export {default as element} from './element';
+export {default as find} from './find';
+export {default as general} from './general';
 
 /* // TODO:
   //rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);

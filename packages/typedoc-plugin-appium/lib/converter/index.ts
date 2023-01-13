@@ -27,7 +27,10 @@ import {ExternalConverter} from './external';
  * @param parentLog - Logger
  * @returns All commands found in the project
  */
-export function convertCommands(ctx: Context, parentLog: AppiumPluginLogger): ProjectCommands {
+export function convertCommands(
+  ctx: Context,
+  parentLog: AppiumPluginLogger
+): ProjectCommands | undefined {
   const log = parentLog.createChildLogger('converter');
 
   const bedConverter = new BuiltinExternalDriverConverter(ctx, log);
@@ -46,7 +49,13 @@ export function convertCommands(ctx: Context, parentLog: AppiumPluginLogger): Pr
 
   const allCommands = [...builtinCommands.toProjectCommands(), ...externalCommands];
 
-  return new ProjectCommands(allCommands);
+  const projectCmds = new ProjectCommands(allCommands);
+
+  if (projectCmds.empty) {
+    return;
+  }
+
+  return projectCmds;
 }
 
 export * from '../model/builtin-commands';

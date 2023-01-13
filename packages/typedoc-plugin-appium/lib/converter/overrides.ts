@@ -76,6 +76,7 @@ export function convertOverrides({
       for (const commandData of commandSet) {
         const method = classMethods.get(command)?.method;
         if (!method) {
+          log.verbose('(%s) No method "%s" found; skipping', parentRefl.name, command);
           continue;
         }
         const commentData = deriveComment(command, builtinMethods, method, commandData.comment);

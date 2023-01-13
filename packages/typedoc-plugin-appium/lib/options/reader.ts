@@ -26,37 +26,40 @@ const REQUIRED_PACKAGES: Readonly<Set<string>> = new Set(['@appium/base-driver',
  * It can do what has been undone and undo what has been done. It can make real your dreams... or nightmares.
  */
 export class AppiumPluginOptionsReader implements OptionsReader {
+  readonly #log: AppiumPluginLogger;
+
   /**
    * I don't know the point of `name`, but the interface requires it, so here.
    */
-  public name = 'naughty-appium-options-reader';
+  public readonly name = 'naughty-appium-options-reader';
   /**
    * This needs to be higher than the value in `MarkdownOptionsReader`.
    */
-  public priority = 2000;
+  public readonly priority = 2000;
+
+  constructor(logger: AppiumPluginLogger) {
+    this.#log = logger.createChildLogger('options-reader');
+  }
 
   /**
-   * Forces the theme to be {@linkcode THEME_NAME}
-   * @param container Options
-   * @param log Logger
+   * Calls various private methods to override option values or provide defaults.
+   * @param container - Options container
    */
-  #configureTheme(container: Options, log: AppiumPluginLogger) {
-    if (OVERRIDE_THEME_NAMES.has(container.getValue('theme'))) {
-      container.setValue('theme', THEME_NAME);
-      log.verbose('Set option "theme" to "appium"');
-    }
+  public read(container: Options) {
+    this.#configureTheme(container);
+    this.#configureEntryPointStrategy(container);
+    this.#configureEntryPoints(container);
   }
 
   /**
    * Forces the `entryPointStrategy` option to be {@linkcode EntryPointStrategy.Packages}
    * @param container Options
-   * @param log Logger
    */
-  #configureEntryPointStrategy(container: Options, log: AppiumPluginLogger) {
+  #configureEntryPointStrategy(container: Options) {
     const entryPointStrategy = container.getValue('entryPointStrategy');
     if (entryPointStrategy !== EntryPointStrategy.Packages) {
       container.setValue('entryPointStrategy', EntryPointStrategy.Packages);
-      log.verbose('Set option "entryPointStrategy" to "%s"', EntryPointStrategy.Packages);
+      this.#log.verbose('Set option "entryPointStrategy" to "%s"', EntryPointStrategy.Packages);
     }
   }
 
@@ -69,9 +72,8 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    *
    * If a required package cannot be resolved, an error occurs
    * @param container Options
-   * @param log Logger
    */
-  #configureEntryPoints(container: Options, log: AppiumPluginLogger) {
+  #configureEntryPoints(container: Options) {
     const entryPoints = container.getValue('entryPoints');
     const newEntryPoints: Set<string> = new Set(entryPoints);
 
@@ -79,9 +81,9 @@ export class AppiumPluginOptionsReader implements OptionsReader {
       try {
         const entryPointPath = path.dirname(require.resolve(`${entryPoint}/package.json`));
         newEntryPoints.add(entryPointPath);
-        log.verbose('Added %s to "entryPoint" option', entryPointPath);
+        this.#log.verbose('Added %s to "entryPoint" option', entryPointPath);
       } catch (err) {
-        log.error('Could not find required package "%s"', entryPoint);
+        this.#log.error('Could not find required package "%s"', entryPoint);
       }
     };
 
@@ -90,11 +92,11 @@ export class AppiumPluginOptionsReader implements OptionsReader {
       if (foundReqdEP) {
         try {
           require.resolve(foundReqdEP);
-          log.verbose('entryPoint %s already exists (%s)', reqdEntryPoint, foundReqdEP);
+          this.#log.verbose('entryPoint %s already exists (%s)', reqdEntryPoint, foundReqdEP);
         } catch {
           newEntryPoints.delete(foundReqdEP);
           addEntryPoint(reqdEntryPoint);
-          log.warn(
+          this.#log.warn(
             '"entryPoint" option item matching required package "%s" is invalid or missing (%s); it was replaced',
             reqdEntryPoint,
             foundReqdEP
@@ -106,19 +108,17 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     }
 
     container.setValue('entryPoints', [...newEntryPoints]);
-    log.verbose('Final value of "entryPoints" option: %O', container.getValue('entryPoints'));
+    this.#log.verbose('Final value of "entryPoints" option: %O', container.getValue('entryPoints'));
   }
 
   /**
-   * Calls various private methods to override option values or provide defaults.
-   * @param container - Options container
-   * @param logger - Logger
+   * Forces the theme to be {@linkcode THEME_NAME}
+   * @param container Options
    */
-  public read(container: Options, logger: Logger) {
-    const log = new AppiumPluginLogger(logger, `${NS}:options-reader`);
-
-    this.#configureTheme(container, log);
-    this.#configureEntryPointStrategy(container, log);
-    this.#configureEntryPoints(container, log);
+  #configureTheme(container: Options) {
+    if (OVERRIDE_THEME_NAMES.has(container.getValue('theme'))) {
+      container.setValue('theme', THEME_NAME);
+      this.#log.verbose('Set option "theme" to "appium"');
+    }
   }
 }

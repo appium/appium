@@ -7,7 +7,7 @@ import {
 } from '../../../lib/converter';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {ProjectCommands} from '../../../lib/model';
-import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE, ROOT_TSCONFIG} from '../helpers';
+import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
 const {expect} = chai;
 
@@ -24,12 +24,9 @@ describe('@appium/typedoc-plugin-appium', function () {
     let ctx: Context;
     let log: AppiumPluginLogger;
     before(async function () {
-      const app = await initAppForPkgs(
-        ROOT_TSCONFIG,
-        NAME_TYPES_MODULE,
-        NAME_FAKE_DRIVER_MODULE,
-        NAME_BUILTIN_COMMAND_MODULE
-      );
+      const app = initAppForPkgs({
+        entryPoints: [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
+      });
       ctx = await new Promise((resolve) => {
         app.converter.once(Converter.EVENT_RESOLVE_BEGIN, (ctx: Context) => {
           resolve(ctx);

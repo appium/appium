@@ -104,7 +104,7 @@
     "access": "public",
     "tag": "next"
   },
-  "gitHead": "35f4e2b7e4a82073389d6869cbfce8039b1b4ddd",
+  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
   "typedoc": {
     "entryPoint": "./lib/main.js"
   }

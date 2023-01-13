@@ -1,4 +1,4 @@
-import {ContainerReflection, PageEvent, ReflectionKind, Renderer} from 'typedoc';
+import {Application, ContainerReflection, PageEvent, ReflectionKind, Renderer} from 'typedoc';
 import {MarkdownTheme} from 'typedoc-plugin-markdown';
 import {AppiumPluginLogger} from '../logger';
 import {AppiumPluginReflectionKind, NS} from '../model';
@@ -115,3 +115,12 @@ export type TemplateMapping = {
 };
 
 export type {AppiumThemeTemplate};
+
+/**
+ * Registers {@linkcode AppiumTheme} with TypeDoc.
+ * @param app TypeDoc application
+ */
+export function configureTheme(app: Application): Application {
+  app.renderer.defineTheme(THEME_NAME, AppiumTheme);
+  return app;
+}

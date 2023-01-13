@@ -1,17 +1,37 @@
 import path from 'node:path';
 import readPkg from 'read-pkg';
-import {Constructor} from 'type-fest';
-import {Application, Context, Converter, LogLevel, TSConfigReader} from 'typedoc';
-import ts from 'typescript';
+import {Constructor, SetRequired} from 'type-fest';
+import {
+  Application,
+  Context,
+  Converter,
+  EntryPointStrategy,
+  LogLevel,
+  TSConfigReader,
+  TypeDocOptions,
+} from 'typedoc';
 import {THEME_NAME} from '../../lib';
 import {BaseConverter} from '../../lib/converter';
 import {AppiumPluginLogger} from '../../lib/logger';
 
 const {expect} = chai;
 
+/**
+ * Name of the fake driver package which is good for testing
+ */
+export const NAME_FAKE_DRIVER_MODULE = '@appium/fake-driver';
+
+/**
+ * Path to monorepo root tsconfig
+ */
 export const ROOT_TSCONFIG = path.join(__dirname, '..', '..', '..', '..', 'tsconfig.json');
 
-export async function getEntryPoint(pkgName: string): Promise<string> {
+/**
+ * Finds entry point for a single package.  To be used when the `entryPointStrategy` is `resolve`
+ * @param pkgName Name of package
+ * @returns Path to its entry point
+ */
+async function getEntryPoint(pkgName: string): Promise<string> {
   const pkgDir = path.dirname(require.resolve(`${pkgName}/package.json`));
   if (!pkgDir) {
     throw new TypeError(`Could not find package ${pkgName}!`);
@@ -21,62 +41,79 @@ export async function getEntryPoint(pkgName: string): Promise<string> {
   return path.resolve(pkgDir, pkg.typedoc.entryPoint);
 }
 
-export function getTypedocApp(
-  tsconfig: string,
-  entryPoints: string[] = [],
-  opts: GetTypedocAppOpts = {}
-): Application {
+/**
+ * Initializes a new TypeDoc application with some defaults
+ *
+ * If `_FORCE_LOGS` is in the env, use verbose logging
+ * @param opts - Opts
+ * @returns New TypeDoc app
+ * @todo Figure out how to get plugin-specific options into TypeDoc other than via `Options.setValue`
+ */
+function getTypedocApp(opts: Partial<TypeDocOptions> = {}): Application {
   const app = new Application();
   app.options.addReader(new TSConfigReader());
-  const {logger, plugin = ['none']} = opts;
-  app.bootstrap({
+
+  const forceLogs = Boolean(process.env._FORCE_LOGS);
+
+  const finalOpts = {
     excludeExternals: true,
-    tsconfig,
-    plugin,
-    logLevel: process.env._FORCE_LOGS ? LogLevel.Verbose : LogLevel.Info,
-    logger,
-    entryPoints,
-    entryPointStrategy: entryPoints.length > 1 ? 'packages' : 'resolve',
+    plugin: ['none'], // prevent any plugins from being auto-loaded
+    logLevel: forceLogs ? LogLevel.Verbose : LogLevel.Info,
+    logger: forceLogs ? undefined : 'none',
+    entryPointStrategy:
+      opts.entryPoints && opts.entryPoints.length > 1
+        ? EntryPointStrategy.Packages
+        : EntryPointStrategy.Resolve,
     theme: THEME_NAME,
-  });
+    skipErrorChecking: true,
+    ...opts,
+  };
+
+  app.bootstrap(finalOpts);
   return app;
 }
 
-export interface GetTypedocAppOpts {
-  logger?: TestLogger;
-  plugin?: string[];
-}
-
-export function getConverterProgram(app: Application): ts.Program {
-  const program = ts.createProgram(app.options.getFileNames(), app.options.getCompilerOptions());
-  const errors = ts.getPreEmitDiagnostics(program);
-  expect(errors).to.be.empty;
-
-  return program;
+/**
+ * Runs Typedoc against a single package
+ * @param pkgName Name of package to get Application for
+ * @returns TypeDoc application
+ */
+export async function initAppForPkg(
+  pkgName: string,
+  opts: Partial<TypeDocOptions> = {}
+): Promise<Application> {
+  const entryPoint = await getEntryPoint(pkgName);
+  const tsconfig = require.resolve(`${pkgName}/tsconfig.json`);
+  const entryPointStrategy = EntryPointStrategy.Resolve;
+  return getTypedocApp({...opts, tsconfig, entryPoints: [entryPoint], entryPointStrategy});
 }
 
 /**
- *
- * @param pkgName Name of package to get Application for
- * @returns Object with stuff you need to do things
+ * Runs Typedoc against multiple packages (using `entryPointStrategy` of `packages`)
+ * @param opts
+ * @returns Typedoc Application
  */
-export async function initAppForPkg(pkgName: string, logger?: TestLogger): Promise<Application> {
-  const entryPoint = await getEntryPoint(pkgName);
-  const tsconfig = require.resolve(`${pkgName}/tsconfig.json`);
-  return getTypedocApp(tsconfig, [entryPoint], {logger});
-}
-
-export async function initAppForPkgs(
-  tsconfig: string,
-  ...pkgNames: string[]
-): Promise<Application> {
-  const entryPoints = await Promise.all(
-    pkgNames.map((pkgName) => path.dirname(require.resolve(`${pkgName}/package.json`)))
+export function initAppForPkgs({
+  tsconfig = ROOT_TSCONFIG,
+  ...opts
+}: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Application {
+  let {entryPoints, ...typedocOpts} = opts;
+  entryPoints = entryPoints?.map((pkgName) =>
+    path.dirname(require.resolve(`${pkgName}/package.json`))
   );
-  return getTypedocApp(tsconfig, entryPoints);
+  // because entryPoints is a list of directories, this must be 'packages'
+  const entryPointStrategy = EntryPointStrategy.Packages;
+  return getTypedocApp({...typedocOpts, entryPoints, entryPointStrategy});
 }
 
-export async function convert<T, C extends BaseConverter<T>, Args extends any = any>(
+/**
+ * Starts the conversion process and returns the instance of the converter class once it is ready.
+ * @param app TypeDoc application
+ * @param cls Converter class
+ * @param extraArgs Extra args to `cls`' constructor
+ * @returns Converter class instance
+ */
+async function convert<T, C extends BaseConverter<T>, Args extends any = any>(
   app: Application,
   cls: Constructor<C, [Context, AppiumPluginLogger, ...Args[]]>,
   extraArgs: Args[] = []
@@ -88,7 +125,7 @@ export async function convert<T, C extends BaseConverter<T>, Args extends any = 
     };
     app.converter.once(Converter.EVENT_RESOLVE_BEGIN, listener);
     try {
-      app.converter.convert(app.getEntryPoints()!);
+      app.convert();
     } catch (err) {
       reject(err);
     } finally {
@@ -97,21 +134,25 @@ export async function convert<T, C extends BaseConverter<T>, Args extends any = 
   });
 }
 
+/**
+ * Gets a new TypeDoc app for a single package, begins the conversion process but resolves
+ * with the converter class instance once it is ready (with whatever TypeDoc already converted).
+ * @param cls Converter class
+ * @param pkgName Package to convert
+ * @param opts Extra args to `cls`' constructor and typedoc options
+ * @returns Converter class instance
+ */
 export async function initConverter<T, C extends BaseConverter<T>, Args extends any = any>(
   cls: Constructor<C, [Context, AppiumPluginLogger, ...Args[]]>,
   pkgName: string,
   opts: InitConverterOptions<Args> = {}
 ): Promise<C> {
-  const app = await initAppForPkg(pkgName, opts.logger);
+  const {extraArgs, ...typeDocOpts} = opts;
+  const app = await initAppForPkg(pkgName, typeDocOpts);
 
-  return await convert(app, cls, opts.extraArgs);
+  return await convert(app, cls, extraArgs);
 }
 
-export const NAME_FAKE_DRIVER_MODULE = '@appium/fake-driver';
-
-export interface InitConverterOptions<Args extends any = any> {
+export interface InitConverterOptions<Args extends any = any> extends Partial<TypeDocOptions> {
   extraArgs?: Args[];
-  logger?: TestLogger;
 }
-
-export type TestLogger = (...args: any[]) => any | 'none';

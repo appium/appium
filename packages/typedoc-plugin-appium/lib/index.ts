@@ -1,9 +1,10 @@
+import _ from 'lodash';
 import {Application, Context, Converter, DeclarationReflection} from 'typedoc';
 import {convertCommands, createReflections, omitDefaultReflections} from './converter';
 import {AppiumPluginLogger, AppiumPluginParentLogger} from './logger';
 import {ExtensionReflection, NS, ProjectCommands} from './model';
 import {configureOptions, declarations} from './options';
-import {AppiumTheme, THEME_NAME} from './theme';
+import {configureTheme, THEME_NAME} from './theme';
 
 /**
  * Loads the Appium TypeDoc plugin.
@@ -15,12 +16,16 @@ export function load(
   app: Application
 ): Promise<[PromiseSettledResult<ConvertResult>, PromiseSettledResult<PostProcessResult>]> {
   // register our custom theme.  the user still has to choose it
-  app.renderer.defineTheme(THEME_NAME, AppiumTheme);
+  setup(app);
 
-  configureOptions(app);
-
+  // TypeDoc does not expect a return value here, but it's useful for testing
   return Promise.allSettled([convert(app), postProcess(app)]);
 }
+
+/**
+ * Registers theme and options, then monkeys with the options
+ */
+export const setup: (app: Application) => Application = _.flow(configureTheme, configureOptions);
 
 /**
  * Finds commands and creates new reflections for them, adding them to the project.
@@ -44,11 +49,16 @@ export async function convert(app: Application): Promise<ConvertResult> {
         // this queries the declarations created by TypeDoc and extracts command information
         projectCommands = convertCommands(ctx, log);
 
+        if (!projectCommands) {
+          log.verbose('Skipping creation of reflections');
+          resolve({ctx});
+          return;
+        }
         // this creates new custom reflections from the data we gathered and registers them
         // with TypeDoc
         extensionReflections = createReflections(ctx, log, projectCommands);
       } else {
-        log.warn('Not using the Appium theme; skipping command reflection creation');
+        log.error(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
       }
       resolve({ctx, extensionReflections, projectCommands});
     });

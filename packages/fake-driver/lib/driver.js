@@ -2,7 +2,7 @@ import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
 import {deprecatedCommandsLogged} from '@appium/base-driver/build/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
-import {FakeDriverMixin} from './commands';
+import {alert, contexts, element, find, general} from './commands';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
   app: {
@@ -22,7 +22,7 @@ const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
  * @extends {BaseDriver<FakeDriverConstraints>}
  * @implements {ExternalDriver<FakeDriverConstraints>}
  */
-export class FakeDriverCore extends BaseDriver {
+export class FakeDriver extends BaseDriver {
   desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
 
   /** @type {string} */
@@ -190,36 +190,92 @@ export class FakeDriverCore extends BaseDriver {
     },
   });
 
-  /**
-   * Add two or maybe even three numbers
-   *
-   * @param {number} num1
-   * @param {number} num2
-   * @param {number} [num3]
-   * @returns {Promise<number>}
-   */
-  // eslint-disable-next-line no-unused-vars
-  async fakeAddition(num1, num2, num3 = 0) {
-    throw new errors.NotImplementedError();
-  }
-
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fakedriver: 'fakeResponse'}));
   }
 
   static async updateServer(expressApp, httpServer, cliArgs) {
     // eslint-disable-line require-await
-    expressApp.all('/fakedriver', FakeDriverCore.fakeRoute);
+    expressApp.all('/fakedriver', FakeDriver.fakeRoute);
     expressApp.all('/fakedriverCliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
   }
+
+  /*********
+   * ALERT *
+   *********/
+  assertNoAlert = alert.assertNoAlert;
+  assertAlert = alert.assertAlert;
+  getAlertText = alert.getAlertText;
+  setAlertText = alert.setAlertText;
+  postAcceptAlert = alert.postAcceptAlert;
+  postDismissAlert = alert.postDismissAlert;
+
+  /************
+   * CONTEXTS *
+   ************/
+  getRawContexts = contexts.getRawContexts;
+  assertWebviewContext = contexts.assertWebviewContext;
+  getCurrentContext = contexts.getCurrentContext;
+  getContexts = contexts.getContexts;
+  setContext = contexts.setContext;
+  setFrame = contexts.setFrame;
+
+  /************
+   * ELEMENTS *
+   ************/
+  getElements = element.getElements;
+  getElement = element.getElement;
+  getName = element.getName;
+  elementDisplayed = element.elementDisplayed;
+  elementEnabled = element.elementEnabled;
+  elementSelected = element.elementSelected;
+  setValue = element.setValue;
+  getText = element.getText;
+  clear = element.clear;
+  click = element.click;
+  getAttribute = element.getAttribute;
+  getElementRect = element.getElementRect;
+  getSize = element.getSize;
+  equalsElement = element.equalsElement;
+  getCssProperty = element.getCssProperty;
+  getLocation = element.getLocation;
+  getLocationInView = element.getLocationInView;
+
+  /********
+   * FIND *
+   ********/
+  getExistingElementForNode = find.getExistingElementForNode;
+  wrapNewEl = find.wrapNewEl;
+  findElOrEls = find.findElOrEls;
+  findElement = find.findElement;
+  findElements = find.findElements;
+  findElementFromElement = find.findElementFromElement;
+  findElementsFromElement = find.findElementsFromElement;
+
+  /***********
+   * GENERAL *
+   ***********/
+  title = general.title;
+  keys = general.keys;
+  setGeoLocation = general.setGeoLocation;
+  getGeoLocation = general.getGeoLocation;
+  getPageSource = general.getPageSource;
+  getOrientation = general.getOrientation;
+  setOrientation = general.setOrientation;
+  getScreenshot = general.getScreenshot;
+  getWindowSize = general.getWindowSize;
+  getWindowRect = general.getWindowRect;
+  performActions = general.performActions;
+  getLog = general.getLog;
+  mobileShake = general.mobileShake;
+  doubleClick = general.doubleClick;
+  execute = general.execute;
+  fakeAddition = general.fakeAddition;
+  releaseActions = general.releaseActions;
 }
 
-/**
- * @extends FakeDriverCore
- */
-export class FakeDriver extends FakeDriverMixin(FakeDriverCore) {}
 export default FakeDriver;
 
 /**

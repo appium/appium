@@ -1,6 +1,6 @@
 {
   "name": "@appium/typedoc-plugin-appium",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "TypeDoc plugin for Appium & its extensions",
   "homepage": "https://appium.io",
   "license": "Apache-2.0",
@@ -67,9 +67,6 @@
     "lodash": "4.17.21",
     "pluralize": "8.0.0",
     "type-fest": "3.5.1"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "gitHead": "422142302f2f540a31c7eaf5178e2642b53a30d2"
 }

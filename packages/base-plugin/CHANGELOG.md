@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/appium/appium/compare/@appium/base-plugin@2.1.1...@appium/base-plugin@2.1.2) (2023-01-13)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
 ## [2.1.1](https://github.com/appium/appium/compare/@appium/base-plugin@2.1.0...@appium/base-plugin@2.1.1) (2023-01-13)
 
 **Note:** Version bump only for package @appium/base-plugin

@@ -115,7 +115,13 @@ export function getUniversalAttrName(attrName, platform) {
  * @returns {NodeAndAttribute}
  */
 export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath}) {
+  /**
+   * @type {string[]}
+   */
   const unknownNodes = [];
+  /**
+   * @type {string[]}
+   */
   const unknownAttrs = [];
   if (_.isPlainObject(nodeObj)) {
     const keys = Object.keys(nodeObj);
@@ -172,7 +178,13 @@ export function transformChildNodes(
   platform,
   {metadata, addIndexPath, parentPath}
 ) {
+  /**
+   * @type {string[]}
+   */
   const unknownNodes = [];
+  /**
+   * @type {string[]}
+   */
   const unknownAttrs = [];
   for (const nodeName of childNodeNames) {
     // before modifying the name of this child node, recurse down and modify the subtree
@@ -212,7 +224,7 @@ export function transformChildNodes(
  * @param {Object} nodeObj
  * @param {string[]} attrs
  * @param {'ios' | 'android'} platform
- * @returns
+ * @returns {string[]}
  */
 export function transformAttrs(nodeObj, attrs, platform) {
   const unknownAttrs = [];
@@ -239,7 +251,7 @@ export function transformAttrs(nodeObj, attrs, platform) {
 /**
  * @typedef XMLSource
  * @property {string} xml
- * @property {} unknowns
+ * @property {NodeAndAttribute} unknowns
  */
 
 /**
@@ -251,6 +263,6 @@ export function transformAttrs(nodeObj, attrs, platform) {
 
 /**
  * @typedef NodeAndAttribute
- * @property {} nodes
- * @property {} attrs
+ * @property {string[]} nodes
+ * @property {string[]} attrs
  */

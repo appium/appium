@@ -42,7 +42,7 @@
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.4",
     "@wdio/types": "7.26.0",
-    "type-fest": "3.5.1"
+    "type-fest": "3.5.2"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

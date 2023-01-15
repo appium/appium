@@ -91,7 +91,7 @@
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
     "cpy-cli": "4.2.0",
-    "eslint": "8.31.0",
+    "eslint": "8.32.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-find-rules": "4.1.0",
     "eslint-plugin-import": "2.27.4",

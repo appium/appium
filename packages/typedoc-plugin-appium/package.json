@@ -14,14 +14,11 @@
     "directory": "packages/typedoc-plugin-appium"
   },
   "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "typedoc-plugin",
+    "typedocplugin",
+    "typedoc-theme",
+    "appium",
+    "markdown"
   ],
   "author": "https://github.com/appium",
   "types": "./build/lib/index.d.ts",

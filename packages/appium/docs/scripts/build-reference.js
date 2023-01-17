@@ -7,7 +7,9 @@ const path = require('path');
 const monorepoRoot = path.resolve(__dirname, '..', '..', '..', '..');
 const {exec} = require('teen_process');
 
-const typedocMap = [[['commands', 'appium_base_driver.md'], ['base_driver.md']]];
+const typedocMap = [
+  [['commands', 'appium_base_driver-1._appium_base_driver.md'], ['base_driver.md']],
+];
 
 async function main() {
   log.info('Generating typedoc reference material');

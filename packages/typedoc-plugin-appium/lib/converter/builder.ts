@@ -79,19 +79,13 @@ export function createExtensionReflection(
   const parentCtx = ctx.withScope(extRefl);
   const {routeMap: routeMap, execMethodDataSet: execCommandsData} = moduleCmds;
 
-  const sortedRouteMap = new Map([...routeMap].sort(([a], [b]) => a.localeCompare(b)));
-
-  for (const [route, commandSet] of sortedRouteMap) {
+  for (const [route, commandSet] of routeMap) {
     for (const data of commandSet) {
       createCommandReflection(log, parentCtx, data, extRefl, route);
     }
   }
 
-  // sort execute methods in alphabetical order by script
-  const sortedExecCommandsData = [...execCommandsData].sort((a, b) =>
-    a.script.localeCompare(b.script)
-  );
-  for (const data of sortedExecCommandsData) {
+  for (const data of execCommandsData) {
     createCommandReflection(log, parentCtx, data, extRefl);
   }
 

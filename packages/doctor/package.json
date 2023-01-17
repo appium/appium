@@ -47,7 +47,7 @@
     "@colors/colors": "1.5.0",
     "@types/bluebird": "3.5.38",
     "@types/teen_process": "2.0.0",
-    "appium-adb": "9.10.23",
+    "appium-adb": "9.10.24",
     "bluebird": "3.7.2",
     "inquirer": "8.2.5",
     "lodash": "4.17.21",

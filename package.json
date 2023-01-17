@@ -94,7 +94,7 @@
     "eslint": "8.32.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-find-rules": "4.1.0",
-    "eslint-plugin-import": "2.27.4",
+    "eslint-plugin-import": "2.27.5",
     "eslint-plugin-mocha": "10.1.0",
     "eslint-plugin-promise": "6.1.1",
     "fancy-log": "2.0.0",

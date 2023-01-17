@@ -21,15 +21,3 @@ export enum AppiumPluginReflectionKind {
   Extension = addReflectionKind('Extension', Driver | Plugin),
   Any = addReflectionKind('Any', Command | ExecuteMethod | Driver | Plugin),
 }
-
-/**
- * The values here are internally computed by TypeDoc, but we need to use them to filter on
- * "groups" for display (since there's no direct relationship from a `ReflectionGroup` back to a `ReflectionKind`).
- */
-export const AppiumPluginReflectionKindGroupTitles = new Set([
-  'Drivers',
-  'Plugins',
-  'Extensions',
-  'Execute methods',
-  'Commands',
-]);

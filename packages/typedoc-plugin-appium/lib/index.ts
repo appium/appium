@@ -58,7 +58,7 @@ export async function convert(app: Application): Promise<ConvertResult> {
         // with TypeDoc
         extensionReflections = createReflections(ctx, log, projectCommands);
       } else {
-        log.error(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
+        log.warn(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
       }
       resolve({ctx, extensionReflections, projectCommands});
     });

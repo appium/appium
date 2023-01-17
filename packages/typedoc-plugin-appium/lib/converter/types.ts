@@ -12,7 +12,12 @@ import {
   TupleType,
   TypeOperatorType,
 } from 'typedoc';
-import {AllowedHttpMethod, ParentReflection} from '../model';
+import {
+  AllowedHttpMethod,
+  AppiumPluginReflectionKind,
+  CommandReflection,
+  ParentReflection,
+} from '../model';
 import {NAME_EXTERNAL_DRIVER, NAME_TYPES_MODULE} from './builtin-external-driver';
 import {NAME_BUILTIN_COMMAND_MODULE, NAME_METHOD_MAP} from './builtin-method-map';
 import {NAME_NEW_METHOD_MAP, NAME_EXECUTE_METHOD_MAP, NAME_PARAMS} from './external';
@@ -21,7 +26,7 @@ type WithName<S extends string, R> = R & {
   name: S;
 };
 
-type WithKind<K extends ReflectionKind, R> = R & {kind: K};
+type WithKind<K extends ReflectionKind | AppiumPluginReflectionKind, R> = R & {kind: K};
 
 /**
  * Utility to narrow a declaration reflection to a specific `SomeType`
@@ -271,4 +276,12 @@ export type NonEmptyArray<T> = [T, ...T[]];
  */
 export type CallSignatureReflectionWithArity = CallSignatureReflection & {
   parameters: NonEmptyArray<ParameterReflection>;
+};
+
+/**
+ * Can be used to narrow a {@linkcode CommandReflection} to one representing an execute method.
+ */
+export type ExecuteMethodCommandReflection = CommandReflection & {
+  kind: typeof AppiumPluginReflectionKind.ExecuteMethod;
+  script: string;
 };

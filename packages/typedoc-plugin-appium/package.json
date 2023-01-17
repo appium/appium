@@ -26,9 +26,9 @@
     "build": "cpy lib/theme/resources build",
     "clean": "npx rimraf build/lib/theme/resources",
     "test": "run-s test:unit",
-    "test:e2e": "exit 0",
+    "test:e2e": "mocha --timeout 20s \"test/e2e/**/*.e2e.spec.ts\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha --no-timeout \"test/unit/**/*.spec.ts\""
+    "test:unit": "mocha --timeout 2s \"test/unit/**/*.spec.ts\""
   },
   "bugs": {
     "url": "https://github.com/appium/appium/issues"

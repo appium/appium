@@ -12,7 +12,7 @@ import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 const {expect} = chai;
 
 describe('@appium/typedoc-plugin-appium', function () {
-  describe('converter', function () {
+  describe('convertCommands()', function () {
     let sandbox: SinonSandbox;
     beforeEach(function () {
       sandbox = createSandbox();

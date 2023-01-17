@@ -111,7 +111,7 @@ export function convertMethodMap({
       const method = methods.get(command)?.method;
 
       if (strict && !method) {
-        log.error('(%s) No method found for command "%s"', parentRefl.name, command);
+        log.warn('(%s) No method found for command "%s"; this is a bug', parentRefl.name, command);
         continue;
       }
 

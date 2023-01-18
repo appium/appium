@@ -56,22 +56,28 @@ class BasePlugin {
    * `next` and `driver` objects since naturally we'd want to make sure to trigger the driver's own
    * `executeMethod` call if an execute method is not found on the plugin itself.
    *
+   * @template {Driver} D
    * @param {NextPluginCallback} next
-   * @param {Driver} driver
+   * @param {D} driver
    * @param {string} script
    * @param {[Record<string, any>]|[]} protoArgs
+   * @this {Plugin}
    */
   async executeMethod(next, driver, script, protoArgs) {
     const Plugin = /** @type {PluginClass} */ (this.constructor);
     const commandMetadata = {...Plugin.executeMethodMap?.[script]};
-    if (!commandMetadata.command) {
+
+    /** @type {import('@appium/types').PluginCommand<D>|undefined} */
+    let command;
+
+    if (!commandMetadata.command || !(command = this[commandMetadata.command])) {
       this.logger.info(
         `Plugin did not know how to handle method '${script}'. Passing control to next`
       );
       return await next();
     }
     const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);
-    return await this[commandMetadata.command](next, driver, ...args);
+    return await command.call(this, next, driver, ...args);
   }
 }
 

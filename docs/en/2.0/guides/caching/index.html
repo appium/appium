@@ -10,20 +10,20 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/guides/event-timing/">
+        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/guides/caching/">
       
       
-        <link rel="prev" href="../execute-methods/">
+        <link rel="prev" href="../grid/">
       
       
-        <link rel="next" href="../log-filters/">
+        <link rel="next" href="../../reference/base_driver/">
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.3">
     
     
       
-        <title>The Event Timing API - Appium Documentation</title>
+        <title>Application Bundles Caching Logic - Appium Documentation</title>
       
     
     
@@ -118,7 +118,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#add-a-custom-event" class="md-skip">
+        <a href="#why-caching-is-necessary" class="md-skip">
           Skip to content
         </a>
       
@@ -154,7 +154,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              The Event Timing API
+              Application Bundles Caching Logic
             
           </span>
         </div>
@@ -862,48 +862,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          The Event Timing API
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../event-timing/" class="md-nav__link">
         The Event Timing API
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#add-a-custom-event" class="md-nav__link">
-    Add a custom event
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -941,11 +904,76 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../caching/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Application Bundles Caching Logic
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Application Bundles Caching Logic
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#why-caching-is-necessary" class="md-nav__link">
+    Why Caching Is Necessary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-cached" class="md-nav__link">
+    What Is Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-remote-application-bundles-are-cached" class="md-nav__link">
+    How Remote Application Bundles Are Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-local-application-bundles-are-cached" class="md-nav__link">
+    How Local Application Bundles Are Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-cache-file-system-is-configured" class="md-nav__link">
+    How The Cache File System Is Configured
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1255,8 +1283,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#add-a-custom-event" class="md-nav__link">
-    Add a custom event
+  <a href="#why-caching-is-necessary" class="md-nav__link">
+    Why Caching Is Necessary
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-cached" class="md-nav__link">
+    What Is Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-remote-application-bundles-are-cached" class="md-nav__link">
+    How Remote Application Bundles Are Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-local-application-bundles-are-cached" class="md-nav__link">
+    How Local Application Bundles Are Cached
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-cache-file-system-is-configured" class="md-nav__link">
+    How The Cache File System Is Configured
   </a>
   
 </li>
@@ -1280,65 +1336,63 @@
 
 
 
-  <h1>The Event Timing API</h1>
+  <h1>Application Bundles Caching Logic</h1>
 
-<p>Appium comes with the ability to retrieve timing information about startup
-information and command length. This is an advanced feature that is controlled
-by the use of the <code>appium:eventTimings</code> capability (set it to <code>true</code> to log event
-timings).</p>
-<p>With this capability turned on, the <code>GET /session/:id</code> response (i.e., the
-response to <code>driver.getSessionDetails()</code> or similar, depending on client) will
-be decorated with an <code>events</code> property. This is the structure of that <code>events</code>
-property:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    &quot;&lt;event_type&gt;&quot;: [&lt;occurence_timestamp_1&gt;, ...],
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    &quot;commands&quot;: [
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        {
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>            &quot;cmd&quot;: &quot;&lt;command_name&gt;&quot;,
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>            &quot;startTime&quot;: &lt;js_timestamp&gt;,
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>            &quot;endTime&quot;: &lt;js_timestamp&gt;
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        },
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        ...
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    ]
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>}
-</code></pre></div>
-<p>In other words, the <code>events</code> property has 2 kinds of properties of its own:</p>
+<p>Appium Base driver provides a feature which enables caching of application builds provided, for example,
+as <code>app</code> capability value or to endpoints similar to the <code>installApp</code> one. This article explains common caching
+principles, so you could create more performant and efficient test suite execution strategies.</p>
+<h2 id="why-caching-is-necessary">Why Caching Is Necessary</h2>
+<p>Mobile application bundles could reach hundreds of megabytes is size. This could become a serious
+performance issue if a test suite is executed, and it is necessary to fetch/extract the same application
+bundle for each test.</p>
+<h2 id="what-is-cached">What Is Cached</h2>
+<p>Caching could be applied to application bundles generated by
+<a href="../../../../../packages/base-driver/lib/basedriver/helpers.js">configureApp</a> helper call. Inherited drivers
+can customize their caching logic by providing own <code>onPostProcess</code> property definition, but the general
+rule of thumb is that we need to cache locally all application bundles need to be downloaded and/or extracted
+first before they could be actually installed on the device under test. On iOS, for example, these are .ipa or
+.zip compressed application bundles or .aab on Android.</p>
+<h2 id="how-remote-application-bundles-are-cached">How Remote Application Bundles Are Cached</h2>
+<p>In order to validate whether an app bundle downloaded from the given URL could be (re)used from the cache the following
+steps are applied:</p>
+<ol>
+<li>The script is sending <code>HEAD</code> request to the given link in order to only fetch response headers. If this request fails/
+times out then no caching is applied.</li>
+<li>The following header values are being extracted: <code>Last-Modified</code>, <code>Cache-Control</code>. If no <code>Last-Modified</code> header is present
+or the header value cannot be parsed as a valid datetime then no caching is applied.</li>
+<li>The script checks if the given URL is already present in the cache. If the app is not cached yet then it gets downloaded
+and its current header values along with hashsum are added to the cache.</li>
+<li>If the URL was already in the cache then the script verifies that:</li>
+<li>the current <code>Last-Modified</code> datetime is not different from the previous one</li>
+<li>the difference between the current <code>Last-Modified</code> datetime and the cached one is not greater than max-age (if present)</li>
+<li>the hashsum of the cached file/folder is not changed (e.g. it was not corrupted while sitting in the cache)</li>
+<li>If all validations above succeed then the cached build is returned, otherwise the currently cached entry gets
+deleted and a new one is downloaded instead.</li>
+</ol>
+<h2 id="how-local-application-bundles-are-cached">How Local Application Bundles Are Cached</h2>
+<p>It only makes sense to cache application bundles if they need some preprocessing before being installed on the device under test.
+For example, on iOS .ipa bundles must be unzipped, because the system installer only works with .app folders.</p>
+<ol>
+<li>The script verifies if the given bundle path is already present in the cache. If the bundle was not in the cache yet
+then it gets preprocessed and added there.</li>
+<li>The script validates the hashsum of the bundle and compares it to the previously stored one. If hash sums don't match
+then the cached item gets deleted and the preprocessing of the bundle repeats.</li>
+</ol>
+<h2 id="how-the-cache-file-system-is-configured">How The Cache File System Is Configured</h2>
+<p>The cache where the base driver keeps all application bundles is located in the system temp folder. It is configured
+on per-process basis, so each test session initialized in scope of the same Appium server process takes advantages
+of it. It is a <a href="https://www.npmjs.com/package/lru-cache">LRU Cache</a> with the following limitations:</p>
 <ul>
-<li>Properties which are the names of event types</li>
-<li>The <code>commands</code> property</li>
+<li>Max items: 1024</li>
+<li>Max time to live (TTL) for each entry: 24 hours</li>
+<li>TTL is refreshed for each entry upon access</li>
 </ul>
-<p>Properties which are names of event types correspond to an array of timestamps
-when that event happened. It's an array because events might happen multiple
-times in the course of a session. Examples of event types include:</p>
-<ul>
-<li><code>newSessionRequested</code></li>
-<li><code>newSessionStarted</code></li>
-</ul>
-<p>(Individual drivers will define their own event types, so we do not have an
-exhaustive list to share here. It's best to actually get one of these responses
-from a real session to inspect the possible event types.)</p>
-<p>The <code>commands</code> property is an array of objects. Each object has the name of the
-Appium-internal command (for example <code>click</code>), as well as the time the command
-started processing and the time it finished processing.</p>
-<p>With this data, you can calculate the time between events, or a strict timeline
-of events, or statistical information about average length of a certain type of
-command, and so on.</p>
-<p>You can only receive data about events that have happened when you make the
-call to <code>/session/:id</code>, so the best time to get data about an entire session is
-right before quitting it.</p>
-<p>The Appium team maintains an event timings parser tool that can be used to
-generate various kinds of reports from event timings output:
-<a href="https://github.com/appium/appium-event-parser">appium/appium-event-parser</a>.</p>
-<h2 id="add-a-custom-event">Add a custom event</h2>
 <div class="admonition warning">
-<p class="admonition-title">TODO</p>
-<p>The links to the commands in the following paragraph do not yet work since these docs are under
-construction.</p>
+<p class="admonition-title">Warning</p>
+<p>Note: The cache root folder is set up for automatic deletion on Appium process termination. This would only
+work if Appium server is killed with SIGINT or SIGTERM. If SIGKILL is used then no cache cleanup
+would be performed.</p>
 </div>
-<p>You can add custom events that will show up in the event timings data. You can send a custom event
-name to the Appium server using the <a href="#TODO">Log Event API</a>, and the server will store the
-timestamp. The <a href="#TODO">Get Events</a> command can be used to retrieve named events' timestamps later
-on.</p>
 
 
 

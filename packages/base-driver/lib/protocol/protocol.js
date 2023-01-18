@@ -215,6 +215,34 @@ export function makeArgs(requestParams, jsonObj, payloadParams, protocol) {
   return args;
 }
 
+function validateExecuteMethodParams(params, paramSpec) {
+  // the w3c protocol will give us an array of arguments to apply to a javascript function.
+  // that's not what we're doing. we're going to look for a JS object as the first arg, so we
+  // can perform validation on it. we'll ignore everything else.
+  if (!params || !_.isArray(params) || params.length > 1) {
+    throw new errors.InvalidArgumentError(
+      `Did not get correct format of arguments for execute method. Expected zero or one ` +
+        `arguments to execute script and instead received: ${JSON.stringify(params)}`
+    );
+  }
+  const args = params[0] ?? {};
+  if (!_.isPlainObject(args)) {
+    throw new errors.InvalidArgumentError(
+      `Did not receive an appropriate execute method parameters object. It needs to be ` +
+        `deserializable as a plain JS object`
+    );
+  }
+  if (!paramSpec) {
+    paramSpec = {required: [], optional: []};
+  } else {
+    paramSpec.required ??= [];
+    paramSpec.optional ??= [];
+    checkParams(paramSpec, args, null);
+  }
+  const argsToApply = makeArgs({}, args, paramSpec, null);
+  return argsToApply;
+}
+
 /**
  *
  * @param {import('@appium/types').Core} driver
@@ -526,4 +554,5 @@ export {
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
   deprecatedCommandsLogged,
+  validateExecuteMethodParams,
 };

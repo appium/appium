@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {errors, makeArgs, checkParams} from '../../protocol';
+import {errors, validateExecuteMethodParams} from '../../protocol';
 
 /**
  * @template {Constraints} C
@@ -16,23 +16,6 @@ export function ExecuteMixin(Base) {
      * @param {[Record<string, any>]|[]} protoArgs
      */
     async executeMethod(script, protoArgs) {
-      // the w3c protocol will give us an array of arguments to apply to a javascript function.
-      // that's not what we're doing. we're going to look for a JS object as the first arg, so we
-      // can perform validation on it. we'll ignore everything else.
-      if (!protoArgs || !_.isArray(protoArgs) || protoArgs.length > 1) {
-        throw new errors.InvalidArgumentError(
-          `Did not get correct format of arguments for execute method. Expected zero or one ` +
-            `arguments to execute script and instead received: ${JSON.stringify(protoArgs)}`
-        );
-      }
-      let args = protoArgs[0] ?? {};
-      if (!_.isPlainObject(args)) {
-        throw new errors.InvalidArgumentError(
-          `Did not receive an appropriate execute method parameters object. It needs to be ` +
-            `deserializable as a plain JS object`
-        );
-      }
-
       const Driver = /** @type {DriverClass} */ (this.constructor);
       const commandMetadata = {...Driver.executeMethodMap?.[script]};
       if (!commandMetadata.command) {
@@ -42,16 +25,8 @@ export function ExecuteMixin(Base) {
             `are: ${availableScripts.join(', ')}`
         );
       }
-      let argsToApply = [];
-      if (!commandMetadata.params) {
-        commandMetadata.params = {required: [], optional: []};
-      } else {
-        commandMetadata.params.required ??= [];
-        commandMetadata.params.optional ??= [];
-        checkParams(commandMetadata.params, args, null);
-      }
-      argsToApply = makeArgs({}, args, commandMetadata.params, null);
-      return await this[commandMetadata.command](...argsToApply);
+      const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);
+      return await this[commandMetadata.command](...args);
     }
   }
   return ExecuteCommands;

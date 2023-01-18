@@ -139,7 +139,7 @@ function getServerUpdaters(driverClasses, pluginClasses) {
  * Makes a big `MethodMap` from all the little `MethodMap`s in the extensions
  * @param {DriverNameMap} driverClasses
  * @param {PluginNameMap} pluginClasses
- * @returns {import('@appium/types').MethodMap}
+ * @returns {import('@appium/types').MethodMap<import('@appium/types').Driver>}
  */
 function getExtraMethodMap(driverClasses, pluginClasses) {
   return [...driverClasses.keys(), ...pluginClasses.keys()].reduce(

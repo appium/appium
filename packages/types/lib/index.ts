@@ -5,6 +5,8 @@ import type {Logger} from 'npmlog';
 import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import type {Server as WSServer} from 'ws';
 import {ServerArgs} from './config';
+import {Driver} from './driver';
+import {Plugin, PluginCommand} from './plugin';
 
 export * from './action';
 export * from './appium-config';
@@ -82,11 +84,14 @@ export interface AppiumServerSocket extends Socket {
  * The definition of an extension method, which will be provided via Appium's API.
  *
  */
-export interface MethodDef<Ext> {
+export interface MethodDef<Ext extends Plugin | Driver> {
   /**
    * Name of the command.
    */
-  readonly command?: keyof ConditionalPick<Required<Ext>, DriverCommand>;
+  readonly command?: keyof ConditionalPick<
+    Required<Ext>,
+    Ext extends Plugin ? PluginCommand : Ext extends Driver ? DriverCommand : never
+  >;
   /**
    * If true, this `Method` will never proxy.
    */
@@ -96,6 +101,20 @@ export interface MethodDef<Ext> {
    */
   readonly payloadParams?: PayloadParams;
 }
+
+export interface ExecuteMethodDef<Ext extends Driver | Plugin> {
+  command: keyof ConditionalPick<
+    Required<Ext>,
+    Ext extends Plugin ? PluginCommand : Ext extends Driver ? DriverCommand : never
+  >;
+  params?: {
+    required?: ReadonlyArray<string>;
+    optional?: ReadonlyArray<string>;
+  };
+}
+export type ExecuteMethodMap<Ext extends Driver | Plugin> = Readonly<
+  Record<string, Readonly<ExecuteMethodDef<Ext>>>
+>;
 
 /**
  * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
@@ -118,7 +137,7 @@ export interface PayloadParams {
 /**
  * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
  */
-export type MethodMap<Ext = any> = Readonly<
+export type MethodMap<Ext extends Plugin | Driver> = Readonly<
   Record<
     string,
     {

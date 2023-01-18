@@ -12,6 +12,7 @@ import {
   BaseDriverCapConstraints,
   W3CCapabilities,
   Capabilities,
+  ExecuteMethodMap,
 } from '.';
 import {ServerArgs} from './config';
 import {AsyncReturnType, ConditionalPick} from 'type-fest';
@@ -185,14 +186,6 @@ export interface IExecuteCommands {
   executeMethod(script: string, args: [StringRecord] | []): Promise<any>;
 }
 
-export interface ExecuteMethodDef<D> {
-  command: keyof ConditionalPick<Required<D>, DriverCommand>;
-  params?: {
-    required?: ReadonlyArray<string>;
-    optional?: ReadonlyArray<string>;
-  };
-}
-export type ExecuteMethodMap<D> = Readonly<Record<string, Readonly<ExecuteMethodDef<D>>>>;
 export interface MultiSessionData<
   C extends Constraints = BaseDriverCapConstraints,
   Extra extends StringRecord | void = void

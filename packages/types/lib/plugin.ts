@@ -1,4 +1,4 @@
-import {MethodMap, UpdateServerCallback, Class, AppiumLogger} from '.';
+import {MethodMap, ExecuteMethodMap, UpdateServerCallback, Class, AppiumLogger} from '.';
 import {Driver, ExternalDriver} from './driver';
 
 /**
@@ -21,6 +21,7 @@ export interface PluginStatic<P extends Plugin> {
    * }
    */
   newMethodMap?: MethodMap<P>;
+  executeMethodMap?: ExecuteMethodMap<P>;
 }
 
 /**

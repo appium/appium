@@ -7,6 +7,7 @@ import {
   GET_STATUS_COMMAND,
   makeArgs,
   checkParams,
+  validateExecuteMethodParams,
 } from './protocol';
 import {NO_SESSION_ID_COMMANDS, ALL_COMMANDS, METHOD_MAP, routeToCommandName} from './routes';
 import {errors, isErrorType, errorFromMJSONWPStatusCode, errorFromW3CJsonCode} from './errors';
@@ -17,6 +18,7 @@ export {
   isErrorType,
   makeArgs,
   checkParams,
+  validateExecuteMethodParams,
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
   ALL_COMMANDS,

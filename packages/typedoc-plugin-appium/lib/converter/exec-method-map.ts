@@ -34,7 +34,7 @@ export interface ConvertExecuteMethodMapOpts {
   /**
    * Builtin methods from `@appium/types`
    */
-  methods: KnownMethods;
+  builtinMethods: KnownMethods;
   /**
    * If `true`, do not add a route if the method it references cannot be found
    */
@@ -54,7 +54,7 @@ export function convertExecuteMethodMap({
   log,
   parentRefl,
   execMethodMapRefl,
-  methods,
+  builtinMethods,
   strict = false,
   isPluginCommand = false,
 }: ConvertExecuteMethodMapOpts): ExecMethodDataSet {
@@ -98,19 +98,14 @@ export function convertExecuteMethodMap({
     const requiredParams = convertRequiredCommandParams(paramsProp);
     const optionalParams = convertOptionalCommandParams(paramsProp);
 
-    const methodRefl = methods.get(command)?.method;
+    const methodRefl = builtinMethods.get(command);
 
     if (strict && !methodRefl) {
-      log.error(
-        '(%s) No method found for command "%s" from script "%s"',
-        parentRefl.name,
-        command,
-        script
-      );
+      log.error('No method found for command "%s" from script "%s"', command, script);
       continue;
     }
 
-    const commentData = deriveComment(command, methods, methodRefl, comment);
+    const commentData = deriveComment({refl: methodRefl, comment, knownMethods: builtinMethods});
 
     commandRefs.add(
       new ExecMethodData(log, command, script, {
@@ -124,8 +119,7 @@ export function convertExecuteMethodMap({
     );
 
     log.verbose(
-      '(%s) Added POST route %s for command "%s" from script "%s"',
-      parentRefl.name,
+      'Added POST route %s for command "%s" from script "%s"',
       NAME_EXECUTE_ROUTE,
       command,
       script

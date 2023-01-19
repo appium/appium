@@ -39,6 +39,20 @@
 {{/if}}
 {{/if}}
 
+{{#if hasExample}}
+#### {{pluralize 'Example' examples.length}}
+
+<!-- BEGIN:EXAMPLES -->
+{{#each examples}}
+##### {{lang}}
+<!-- BEGIN:EXAMPLE lang={{lang}} -->
+
+{{{text}}}
+
+<!-- END:EXAMPLE -->
+{{/each}}
+{{/if}}
+<!-- END:EXAMPLES -->
 {{#if signature}}
 
 #### Response

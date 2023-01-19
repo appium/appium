@@ -26,7 +26,7 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
    * @param log Logger
    */
   constructor(protected ctx: Context, log: AppiumPluginLogger) {
-    super(ctx, log.createChildLogger('interfaces'));
+    super(ctx, log.createChildLogger(NAME_TYPES_MODULE));
   }
 
   #convertMethodDeclarations(refl: AppiumTypesReflection): KnownMethods {
@@ -34,20 +34,20 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
     let methods: KnownMethods = new Map();
 
     if (!isExternalDriverDeclarationReflection(externalDriver)) {
-      this.log.warn('Could not find %s in %s', NAME_EXTERNAL_DRIVER, NAME_TYPES_MODULE);
+      this.log.error('Could not find %s', NAME_EXTERNAL_DRIVER);
       return methods;
     }
 
     methods = findAsyncMethodsInReflection(externalDriver);
 
     if (!methods.size) {
-      this.log.warn('No methods found in %s', NAME_EXTERNAL_DRIVER);
+      this.log.error('No methods found in %s', NAME_EXTERNAL_DRIVER);
       return methods;
     }
 
     this.log.verbose(
-      'Found %s in %s',
-      pluralize('method declaration', methods.size, true),
+      'Done; found %s in %s',
+      pluralize('builtin command method', methods.size, true),
       NAME_EXTERNAL_DRIVER
     );
 
@@ -63,11 +63,7 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
       return methods;
     }
 
-    this.log.verbose(
-      'Found %s; gathering methods from %s',
-      NAME_TYPES_MODULE,
-      NAME_EXTERNAL_DRIVER
-    );
+    this.log.verbose('Found %s; converting', NAME_EXTERNAL_DRIVER);
 
     return this.#convertMethodDeclarations(typesModule);
   }

@@ -38,7 +38,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
     log: AppiumPluginLogger,
     protected readonly knownMethods: KnownMethods
   ) {
-    super(ctx, log.createChildLogger('builtins'));
+    super(ctx, log.createChildLogger(NAME_BUILTIN_COMMAND_MODULE));
   }
 
   /**
@@ -56,7 +56,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
       return new BuiltinCommands();
     }
 
-    this.log.verbose('Found %s', NAME_BUILTIN_COMMAND_MODULE);
+    this.log.verbose('Converting builtin method map');
 
     // we need base driver class to find methods implemented in it
     const baseDriverClassRefl = findChildByNameAndGuard(
@@ -65,11 +65,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
       isClassDeclarationReflection
     );
     if (!baseDriverClassRefl) {
-      this.log.error(
-        'Could not find %s in %s',
-        NAME_BASE_DRIVER_CLASS,
-        NAME_BUILTIN_COMMAND_MODULE
-      );
+      this.log.error('Could not find module %s', NAME_BUILTIN_COMMAND_MODULE);
       return new BuiltinCommands();
     }
 
@@ -84,7 +80,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
       log: this.log,
       methodMapRefl: methodMap,
       parentRefl: baseDriverModuleRefl,
-      methods: findAsyncMethodsInReflection(baseDriverClassRefl, this.knownMethods),
+      methods: findAsyncMethodsInReflection(baseDriverClassRefl),
     });
 
     if (!baseDriverRoutes.size) {

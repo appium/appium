@@ -66,13 +66,14 @@ describe('@appium/typedoc-plugin-appium', function () {
               extraArgs: [externalDriverMethods, builtinCmdSrc.moduleCmds],
             });
             driverCmds = converter.convert();
+
+            fakeDriverCmds = driverCmds.get(NAME_FAKE_DRIVER_MODULE)!;
+            sessionCmdSet = fakeDriverCmds.routeMap.get('/session')!;
           });
 
           it('should find commands', function () {
             expect(driverCmds).not.to.be.empty;
-            fakeDriverCmds = driverCmds.get(NAME_FAKE_DRIVER_MODULE)!;
             expect(fakeDriverCmds).to.exist;
-            sessionCmdSet = fakeDriverCmds.routeMap.get('/session')!;
             expect(sessionCmdSet).to.exist;
           });
 

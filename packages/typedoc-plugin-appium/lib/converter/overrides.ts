@@ -59,39 +59,33 @@ export function convertOverrides({
     const builtinRoutes = builtinCommands.routesByCommandName.get(command);
     if (!builtinMethods.has(command) || !builtinRoutes) {
       // actually unknown method
-      log.verbose(
-        '(%s) No builtin route mapping to method "%s"; skipping',
-        parentRefl.name,
-        command
-      );
+      log.verbose('No such route for method "%s"; not a command', command);
       continue;
     }
 
     // the method is in ExternalDriver, so remove it
     unknownMethods.delete(command);
+
     for (const route of builtinRoutes) {
       const newCommandSet: CommandSet = new Set();
       // this must be defined, because if it wasn't then builtinRoutes would be empty and we'd continue the loop
       const commandSet = builtinCommands.routeMap.get(route)!;
       for (const commandData of commandSet) {
-        const method = classMethods.get(command)?.method;
+        const method = classMethods.get(command);
         if (!method) {
-          log.verbose('(%s) No method "%s" found; skipping', parentRefl.name, command);
+          log.warn('No such method "%s"; this is a bug', command);
           continue;
         }
-        const commentData = deriveComment(command, builtinMethods, method, commandData.comment);
+        const commentData = deriveComment({
+          refl: method,
+          knownMethods: builtinMethods,
+        });
         const newCommandData = commandData.clone({
           refl: method,
           parentRefl,
           ...commentData,
         });
-        log.verbose(
-          '(%s) Added %s builtin route %s for command "%s"',
-          parentRefl.name,
-          commandData.httpMethod,
-          route,
-          command
-        );
+        log.verbose('Linked route %s %s for command "%s"', commandData.httpMethod, route, command);
         newCommandSet.add(newCommandData);
       }
       routes.set(route, newCommandSet);

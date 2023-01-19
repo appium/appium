@@ -57,15 +57,12 @@ describe('@appium/typedoc-plugin-appium', function () {
           converter = await initConverter(BuiltinExternalDriverConverter, NAME_TYPES_MODULE);
           knownMethods = converter.convert();
           expect(knownMethods.size).to.be.above(0);
-          let {method, comment} = knownMethods.get('createSession')!;
+          let method = knownMethods.get('createSession')!;
           expect(method).to.exist;
-          expect(comment).to.exist;
-          ({method, comment} = knownMethods.get('activateApp')!);
+          method = knownMethods.get('activateApp')!;
           expect(method).to.exist;
-          expect(comment).to.exist;
-          ({method, comment} = knownMethods.get('executeCdp')!);
+          method = knownMethods.get('executeCdp')!;
           expect(method).to.exist;
-          expect(comment).to.exist;
         });
       });
     });

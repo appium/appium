@@ -45,7 +45,7 @@ export function createCommandReflection(
   parent: ExtensionReflection,
   route?: Route
 ): void {
-  const commandRefl = new CommandReflection(data, parent, route);
+  const commandRefl = new CommandReflection(data, parent, log, route);
   // yes, the `undefined`s are needed
   ctx.postReflectionCreation(commandRefl, undefined, undefined);
   ctx.finalizeDeclarationReflection(commandRefl);

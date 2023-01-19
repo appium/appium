@@ -72,7 +72,7 @@ export function convertMethodMap({
   const routeProps = filterChildrenByKind(methodMapRefl, ReflectionKind.Property);
 
   if (!routeProps.length) {
-    log.warn('(%s) No routes found in MethodMap; skipping', parentRefl.name);
+    log.warn('No routes found in MethodMap; skipping');
     return routes;
   }
 
@@ -80,14 +80,14 @@ export function convertMethodMap({
     const {originalName: route} = routeProp;
 
     if (!isRoutePropDeclarationReflection(routeProp)) {
-      log.warn('Empty route in %s.%s', parentRefl.name, route);
+      log.warn('Empty route: %s', route);
       continue;
     }
 
     const httpMethodProps = filterChildrenByGuard(routeProp, isHTTPMethodDeclarationReflection);
 
     if (!httpMethodProps.length) {
-      log.warn('No HTTP methods found in route %s.%s', parentRefl.name, route);
+      log.warn('No HTTP methods found in route %s', route);
       continue;
     }
 
@@ -102,20 +102,24 @@ export function convertMethodMap({
       }
 
       if (!_.isString(commandProp.type.value) || _.isEmpty(commandProp.type.value)) {
-        log.warn('Empty command name found in %s.%s.%s', parentRefl.name, route, httpMethod);
+        log.warn('Empty command name found in %s - %s', route, httpMethod);
         continue;
       }
 
       const command = String(commandProp.type.value);
 
-      const method = methods.get(command)?.method;
+      const method = methods.get(command);
 
       if (strict && !method) {
         log.warn('(%s) No method found for command "%s"; this is a bug', parentRefl.name, command);
         continue;
       }
 
-      const commentData = deriveComment(command, knownMethods, method, mapComment);
+      const commentData = deriveComment({
+        refl: method,
+        comment: mapComment,
+        knownMethods,
+      });
 
       const payloadParamsProp = findChildByGuard(
         httpMethodProp,
@@ -139,13 +143,7 @@ export function convertMethodMap({
         })
       );
 
-      log.verbose(
-        '(%s) Added %s route %s for command "%s"',
-        parentRefl.name,
-        httpMethod,
-        route,
-        command
-      );
+      log.verbose('Registered route %s %s for command "%s"', httpMethod, route, command);
 
       routes.set(route, commandSet);
     }

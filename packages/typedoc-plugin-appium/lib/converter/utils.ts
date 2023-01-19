@@ -106,19 +106,16 @@ export function filterChildrenByKind<T extends DeclarationReflection>(
 /**
  * Finds _all_ async methods in a class or interface
  * @param refl Class reflection
- * @param knownMethods Known methods (if any)
  * @returns Map of method names to method reflections
  */
 export function findAsyncMethodsInReflection(
-  refl: ClassDeclarationReflection | InterfaceDeclarationReflection,
-  knownMethods?: KnownMethods
+  refl: ClassDeclarationReflection | InterfaceDeclarationReflection
 ): KnownMethods {
   return new Map(
-    filterChildrenByGuard(refl, isAsyncMethodDeclarationReflection).map((method) => {
-      const commentData = deriveComment(method.name, knownMethods, method);
-      const knownMethodData = {method, comment: commentData?.comment};
-      return [method.name, knownMethodData];
-    })
+    filterChildrenByGuard(refl, isAsyncMethodDeclarationReflection).map((method) => [
+      method.name,
+      method,
+    ])
   );
 }
 

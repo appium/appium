@@ -74,11 +74,10 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
   constructor(
     ctx: Context,
     log: AppiumPluginLogger,
-    protected readonly knownMethods: KnownMethods,
+    protected readonly builtinMethods: KnownMethods,
     protected readonly builtinCommands?: ModuleCommands
   ) {
-    super(ctx, log, builtinCommands);
-    this.log.verbose('Known method count: %d', knownMethods.size);
+    super(ctx, log.createChildLogger('extension'), builtinCommands);
   }
 
   /**
@@ -95,13 +94,18 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     const modules = project.getChildrenByKind(ReflectionKind.Module);
     if (modules.length) {
       for (const mod of modules) {
-        this.log.verbose('Converting module %s', mod.name);
-        const cmdInfo = this.#convertModuleClasses(mod);
+        const log = this.log.createChildLogger(mod.name);
+        log.verbose('Begin conversion');
+        const cmdInfo = this.#convertModuleClasses(mod, log);
         projectCommands.set(mod.name, cmdInfo);
+        log.verbose('End conversion');
       }
     } else {
-      const cmdInfo = this.#convertModuleClasses(project);
+      const log = this.log.createChildLogger(project.name);
+      log.verbose('Begin conversion');
+      const cmdInfo = this.#convertModuleClasses(project, log);
       projectCommands.set(project.name, cmdInfo);
+      log.verbose('End conversion');
     }
 
     if (projectCommands.size) {
@@ -137,7 +141,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
    * @param parentRefl - Project or module
    * @returns Info about the commands in given `parent`
    */
-  #convertModuleClasses(parentRefl: ParentReflection) {
+  #convertModuleClasses(parentRefl: ParentReflection, log: AppiumPluginLogger): ModuleCommands {
     let routeMap: RouteMap = new Map();
     let execMethodData: ExecMethodDataSet = new Set();
 
@@ -148,31 +152,33 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
         findChildByGuard(classRefl, isConstructorDeclarationReflection)
       );
 
-      const methods = findAsyncMethodsInReflection(classRefl, this.knownMethods);
+      const methods = findAsyncMethodsInReflection(classRefl);
 
       if (!methods.size) {
-        this.log.warn('(%s) No async methods found', classRefl.name);
+        // may or may not be expected
+        log.verbose('No methods found');
         continue;
       }
 
-      this.log.verbose(
-        '(%s) Converting %s',
-        classRefl.name,
-        pluralize('potential method', methods.size, true)
-      );
+      log.verbose('Analyzing %s', pluralize('method', methods.size, true));
 
-      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, methods, isPlugin);
+      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, methods, log, isPlugin);
       routeMap = new Map([...routeMap, ...newRouteMap]);
 
-      const newExecMethodData = this.#findAndConvertExecMethodMap(classRefl, methods, isPlugin);
+      const newExecMethodData = this.#findAndConvertExecMethodMap(
+        classRefl,
+        methods,
+        log,
+        isPlugin
+      );
       execMethodData = new Set([...execMethodData, ...newExecMethodData]);
 
       const overriddenRouteMap: RouteMap = this.builtinCommands
         ? convertOverrides({
-            log: this.log,
+            log,
             parentRefl: classRefl,
             classMethods: methods,
-            builtinMethods: this.knownMethods,
+            builtinMethods: this.builtinMethods,
             newRouteMap,
             newExecMethodMap: execMethodData,
             builtinCommands: this.builtinCommands,
@@ -181,9 +187,8 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
       routeMap = new Map([...routeMap, ...overriddenRouteMap]);
 
-      this.log.verbose(
-        '(%s) Done; found %s and %s',
-        classRefl.name,
+      log.verbose(
+        'Done; found %s and %s',
         pluralize('route', newRouteMap.size + overriddenRouteMap.size, true),
         pluralize('execute method', newExecMethodData.size, true)
       );
@@ -194,25 +199,28 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
   /**
    * If the class has an `executeMethodMap`, convert it
-   * @param classRefl A class
+   * @param parentRefl A class
    * @param methods Methods in said class
-   * @param isPluginCommand If `classRefl` represents an Appium Plugin or not
+   * @param isPluginCommand If `parentRefl` represents an Appium Plugin or not
+   * @param log Logger specific to `parentRefl`
    * @returns A set of exec method data which may be empty
    */
   #findAndConvertExecMethodMap(
-    classRefl: ClassDeclarationReflection,
+    parentRefl: ClassDeclarationReflection,
     methods: KnownMethods,
+    log: AppiumPluginLogger,
     isPluginCommand?: boolean
   ): ExecMethodDataSet {
-    const execMethodMapRefl = findChildByGuard(classRefl, isExecMethodDefReflection);
+    const execMethodMapRefl = findChildByGuard(parentRefl, isExecMethodDefReflection);
     if (!execMethodMapRefl) {
+      log.verbose('No execute method map found');
       return new Set();
     }
     return convertExecuteMethodMap({
-      log: this.log,
-      parentRefl: classRefl,
+      log,
+      parentRefl,
       execMethodMapRefl,
-      methods,
+      builtinMethods: methods,
       strict: true,
       isPluginCommand,
     });
@@ -220,31 +228,33 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
   /**
    * If the class has a `newMethodMap`, convert it
-   * @param classRefl A class
+   * @param parentRefl A class
    * @param methods Methods in said class
-   * @param isPluginCommand If `classRefl` represents an Appium Plugin or not
+   * @param log Logger specific to `parentRefl`
+   * @param isPluginCommand If `parentRefl` represents an Appium Plugin or not
    * @returns A map of routes which may be empty
    */
   #findAndConvertNewMethodMap(
-    classRefl: ClassDeclarationReflection,
+    parentRefl: ClassDeclarationReflection,
     methods: KnownMethods,
+    log: AppiumPluginLogger,
     isPluginCommand?: boolean
   ): RouteMap {
     const newMethodMapRefl = findChildByNameAndGuard(
-      classRefl,
+      parentRefl,
       NAME_NEW_METHOD_MAP,
       isMethodMapDeclarationReflection
     );
     if (!newMethodMapRefl) {
-      this.log.verbose('No new method map in %s', classRefl.name);
+      log.verbose('No new method map found');
       return new Map();
     }
     return convertMethodMap({
-      log: this.log,
+      log,
       methodMapRefl: newMethodMapRefl,
-      parentRefl: classRefl,
+      parentRefl,
       methods,
-      knownMethods: this.knownMethods,
+      knownMethods: this.builtinMethods,
       strict: true,
       isPluginCommand,
     });

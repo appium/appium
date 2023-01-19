@@ -15,7 +15,7 @@ export class ProjectCommands extends Map<string, ModuleCommands> {
     return this;
   }
 
-  get empty() {
+  get isEmpty() {
     return this.size === 0;
   }
 }

@@ -1,17 +1,17 @@
+import pluralize from 'pluralize';
+import {Comment, DeclarationReflection, ParameterReflection, SignatureReflection} from 'typedoc';
 import {
-  Comment,
-  DeclarationReflection,
-  ParameterReflection,
-  SignatureReflection,
-  SomeType,
-} from 'typedoc';
-import {CommandMethodDeclarationReflection, CommentSourceType} from '../../converter';
+  CommandMethodDeclarationReflection,
+  CommentSourceType,
+  Example,
+  extractExamples,
+} from '../../converter';
 import {isExecMethodData} from '../../guards';
+import {AppiumPluginLogger} from '../../logger';
 import {CommandData, ExecMethodData} from '../command-data';
 import {AllowedHttpMethod, Route} from '../types';
 import {ExtensionReflection} from './extension';
 import {AppiumPluginReflectionKind} from './kind';
-
 /**
  * Execute Methods all have the same route.
  */
@@ -77,6 +77,10 @@ export class CommandReflection extends DeclarationReflection {
    */
   public readonly signature?: SignatureReflection;
 
+  public readonly examples?: Example[];
+
+  #log: AppiumPluginLogger;
+
   /**
    * Sets props depending on type of `data`
    * @param data Command or execute method data
@@ -86,6 +90,7 @@ export class CommandReflection extends DeclarationReflection {
   constructor(
     readonly data: CommandData | ExecMethodData,
     parent: ExtensionReflection,
+    log: AppiumPluginLogger,
     route?: Route
   ) {
     let name: string;
@@ -121,20 +126,32 @@ export class CommandReflection extends DeclarationReflection {
 
     super(name, kind as any, parent);
 
+    this.#log = log;
     this.route = route;
     this.httpMethod = httpMethod;
     this.requiredParams = requiredParams ?? [];
     this.optionalParams = optionalParams ?? [];
     this.script = script;
-    this.comment = comment;
     this.refl = refl;
     this.commentSource = commentSource;
     this.parameters = parameters;
     this.signature = signature;
+    const extractedExamples = extractExamples(comment);
+    if (extractedExamples?.examples?.length) {
+      this.#log.verbose(
+        'Extracted %s from comment in %s',
+        pluralize('example', extractedExamples.examples.length, true),
+        this.name
+      );
+    }
+    this.examples = extractedExamples?.examples;
+    this.comment = extractedExamples?.comment;
   }
 
   /**
    * If `true`, this command has required parameters
+   *
+   * Used by templates
    */
   public get hasRequiredParams(): boolean {
     return Boolean(this.requiredParams.length);
@@ -142,6 +159,8 @@ export class CommandReflection extends DeclarationReflection {
 
   /**
    * If `true`, this command has optional parameters
+   *
+   * Used by templates
    */
   public get hasOptionalParams(): boolean {
     return Boolean(this.optionalParams.length);
@@ -149,8 +168,19 @@ export class CommandReflection extends DeclarationReflection {
 
   /**
    * If `true`, this command contains data about an execute method
+   *
+   * Used by templates
    */
   public get isExecuteMethod(): boolean {
     return this.kindOf(AppiumPluginReflectionKind.ExecuteMethod as any);
+  }
+
+  /**
+   * If `true`, this command contains one or more examples
+   *
+   * Used by templates
+   */
+  public get hasExample(): boolean {
+    return Boolean(this.examples?.length);
   }
 }

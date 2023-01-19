@@ -203,18 +203,9 @@ export type CommandMethodDeclarationReflection<
     : never);
 
 /**
- * A little "struct" containing a method and potentially a derived comment (which may not have been derived from
- * the method itself).
+ * A lookup of command names to their reflections.
  */
-export interface KnownMethodData {
-  comment?: Comment;
-  method: CommandMethodDeclarationReflection;
-}
-
-/**
- * A lookup of command names to {@linkcode KnownMethodData} objects.
- */
-export type KnownMethods = Map<string, KnownMethodData>;
+export type KnownMethods = Map<string, CommandMethodDeclarationReflection>;
 
 /**
  * A {@linkcode DeclarationReflection} which is a `class`.

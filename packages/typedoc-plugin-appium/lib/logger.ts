@@ -9,6 +9,7 @@
  *
  */
 
+import _ from 'lodash';
 import {format} from 'node:util';
 import {Logger, LogLevel} from 'typedoc';
 
@@ -48,19 +49,32 @@ export class AppiumPluginLogger extends Logger {
   }
 
   /**
+   * Creates or retrieves a child logger for the given namespace
+   * @param parent Parent logger
+   * @param ns Namespace
+   * @returns Child logger
+   */
+  static createChildLogger = _.memoize(
+    (parent: AppiumPluginLogger, ns: string) => {
+      const newLogger = new AppiumPluginLogger(
+        parent.#parent,
+        `${parent.ns}:${ns}`,
+        parent.#logThrough.bind(parent)
+      );
+      newLogger.level = parent.level;
+      return newLogger;
+    },
+    (parent: AppiumPluginLogger, ns: string) => `${parent.ns}:${ns}`
+  );
+
+  /**
    * Create a new {@link AppiumPluginLogger} for the given context.
    *
    * @param ns - New sub-namespace; will be appended to the current namespace.
    * @returns the new logger.
    */
   public createChildLogger(ns: string) {
-    const newLogger = new AppiumPluginLogger(
-      this.#parent,
-      `${this.ns}:${ns}`,
-      this.#logThrough.bind(this)
-    );
-    newLogger.level = this.level;
-    return newLogger;
+    return AppiumPluginLogger.createChildLogger(this, ns);
   }
 
   /**

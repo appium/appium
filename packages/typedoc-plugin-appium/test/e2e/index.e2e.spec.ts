@@ -7,15 +7,12 @@ import {
   TypeDocOptions,
 } from 'typedoc';
 import {convert, ConvertResult, postProcess, PostProcessResult, setup} from '../../lib';
-import {
-  ExecuteMethodCommandReflection,
-  NAME_BUILTIN_COMMAND_MODULE,
-  NAME_TYPES_MODULE,
-} from '../../lib/converter';
+import {NAME_BUILTIN_COMMAND_MODULE, NAME_TYPES_MODULE} from '../../lib/converter';
 import {AppiumPluginReflectionKind, CommandReflection, ExtensionReflection} from '../../lib/model';
 import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE} from './helpers';
 
 const {expect} = chai;
+
 describe('@appium/typedoc-plugin-appium', function () {
   /**
    * Result of {@linkcode convert}
@@ -73,6 +70,17 @@ describe('@appium/typedoc-plugin-appium', function () {
           const cmdRefls = extRefl.getChildrenByKind(AppiumPluginReflectionKind.Command as any);
           expect(cmdRefls).to.not.be.empty;
         }
+      });
+
+      it('should find examples', function () {
+        const baseDriverRefl = extensionReflections.find(
+          (refl) => refl.name === '@appium/base-driver'
+        )!;
+        expect(baseDriverRefl).to.exist;
+        const cmdRefl = baseDriverRefl.getChildByName('/status')! as CommandReflection;
+        expect(cmdRefl).to.have.property('comment').and.to.not.be.undefined;
+        cmdRefl;
+        expect(cmdRefl).to.have.property('hasExample', true);
       });
     });
 

@@ -51,7 +51,7 @@ export function convertCommands(
 
   const projectCmds = new ProjectCommands(allCommands);
 
-  if (projectCmds.empty) {
+  if (projectCmds.isEmpty) {
     return;
   }
 

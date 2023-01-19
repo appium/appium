@@ -68,7 +68,9 @@ export function isDeclarationReflection(value: any): value is DeclarationReflect
 }
 
 export function isParentReflection(value: any): value is ParentReflection {
-  return value instanceof DeclarationReflection || value instanceof ProjectReflection;
+  return (
+    value && (value instanceof DeclarationReflection || (value as ProjectReflection).isProject())
+  );
 }
 
 export function isAppiumTypesReflection(value: any): value is AppiumTypesReflection {

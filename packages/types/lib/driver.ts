@@ -608,6 +608,37 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
   onUnexpectedShutdown(handler: () => any): void;
+  /**
+   * @summary Retrieve the server's current status.
+   * @description
+   * Returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.
+   *
+   * The readiness state is represented by the ready property of the body, which is false if an attempt to create a session at the current time would fail. However, the value true does not guarantee that a New Session command will succeed.
+   *
+   * Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
+   *
+   * @example
+   * ```js
+   * // webdriver.io example
+   * await driver.status();
+   * ```
+   *
+   * ```python
+   * selenium.webdriver.common.utils.is_url_connectable(port)
+   * ```
+   *
+   * ```java
+   * driver.getStatus();
+   * ```
+   *
+   * ```ruby
+   * # ruby_lib example
+   * remote_status
+   *
+   * # ruby_lib_core example
+   * @driver.remote_status
+   * ```
+   */
   getStatus(): Promise<any>;
   sessionExists(sessionId: string): boolean;
   isW3CProtocol(): boolean;

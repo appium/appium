@@ -214,7 +214,7 @@ class DriverCore {
   }
 
   /**
-   * Overridden in appium driver, but here so that individual drivers can be
+   * @privateRemarks Overridden in appium driver, but here so that individual drivers can be
    * tested with clients that poll
    */
   async getStatus() {

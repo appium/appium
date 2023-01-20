@@ -1,23 +1,23 @@
 import {DriverType, PluginType, ServerArgs} from '@appium/types';
 import {SetOptional} from 'type-fest';
 import {InstallType} from './manifest';
-export type ServerCommand = 'server';
-export type DriverCommand = DriverType;
-export type PluginCommand = PluginType;
+export type CliCommandServer = 'server';
+export type CliCommandDriver = DriverType;
+export type CliCommandPlugin = PluginType;
 
 /**
  * Extension-specific commands
  */
-export type CliExtensionCommand = DriverCommand | PluginCommand;
+export type CliExtensionCommand = CliCommandDriver | CliCommandPlugin;
 
 /**
  * Possible commands for the `appium` CLI.
  */
-export type CliCommand = ServerCommand | CliExtensionCommand;
+export type CliCommand = CliCommandServer | CliExtensionCommand;
 
 /**
- * Possible subcommands of {@linkcode DriverCommand} or
- * {@linkcode PluginCommand}.
+ * Possible subcommands of {@linkcode CliCommandDriver} or
+ * {@linkcode CliCommandPlugin}.
  */
 export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update';
 
@@ -41,7 +41,7 @@ export interface CliExtensionSubcommandUpdateArgs {
  */
 export interface MoreArgs {
   /**
-   * Possible subcommands. If empty, defaults to {@linkcode ServerCommand}.
+   * Possible subcommands. If empty, defaults to {@linkcode CliCommandServer}.
    */
   subcommand?: CliCommand;
 
@@ -134,7 +134,11 @@ export type ExtArgs<
   Cmd extends CliExtensionCommand,
   SubCmd extends CliExtensionSubcommand
 > = BaseExtArgs<Cmd> &
-  (Cmd extends DriverCommand ? DriverExtArgs : Cmd extends PluginCommand ? PluginExtArgs : never) &
+  (Cmd extends CliCommandDriver
+    ? DriverExtArgs
+    : Cmd extends CliCommandPlugin
+    ? PluginExtArgs
+    : never) &
   (SubCmd extends 'install'
     ? CliExtensionSubcommandInstallArgs
     : SubCmd extends 'list'
@@ -147,11 +151,11 @@ export type ExtArgs<
  * Some generic bits of arguments; should not be used outside this declaration
  */
 export type CommonArgs<
-  Cmd extends CliCommand = ServerCommand,
+  Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | void = void
 > = MoreArgs &
   ProgrammaticArgs &
-  (Cmd extends ServerCommand
+  (Cmd extends CliCommandServer
     ? ServerArgs
     : Cmd extends CliExtensionCommand
     ? SubCmd extends CliExtensionSubcommand
@@ -163,7 +167,7 @@ export type CommonArgs<
  * Fully-parsed arguments, containing defaults, computed args, and config file values.
  */
 export type ParsedArgs<
-  Cmd extends CliCommand = ServerCommand,
+  Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | void = void
 > = CommonArgs<Cmd, SubCmd>;
 
@@ -173,9 +177,9 @@ export type ParsedArgs<
  * _May_ have defaults applied; _may_ contain config values; _may_ contain computed args.
  */
 export type Args<
-  Cmd extends CliCommand = ServerCommand,
+  Cmd extends CliCommand = CliCommandServer,
   SubCmd extends CliExtensionSubcommand | void = void
-> = Cmd extends ServerCommand
+> = Cmd extends CliCommandServer
   ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs>
   : ParsedArgs<Cmd, SubCmd>;
 

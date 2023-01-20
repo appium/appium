@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import _ from 'lodash';
 import {
   Comment,
   CommentTag,
@@ -11,6 +12,7 @@ import {
   deriveComment,
   CommandMethodDeclarationReflection,
   CommentSourceType,
+  cloneComment,
 } from '../../../lib/converter';
 import {AppiumPluginReflectionKind, ExtensionReflection, ModuleCommands} from '../../../lib/model';
 
@@ -89,6 +91,7 @@ describe('@appium/typedoc-plugin-appium', function () {
       beforeEach(function () {
         refl.comment = new Comment([{kind: 'text', text: 'a funny comment'}]);
         otherBlockTags = [new CommentTag('@example', [{kind: 'code', text: 'doStuff();'}])];
+        otherBlockTags[0].name = undefined;
         otherRefl = new DeclarationReflection(
           refl.name,
           AppiumPluginReflectionKind.Command as any
@@ -129,6 +132,35 @@ describe('@appium/typedoc-plugin-appium', function () {
         const {comment, commentSource} = deriveComment({refl, knownMethods})!;
         expect(comment).to.equal(refl.comment);
         expect(commentSource).to.equal(CommentSourceType.Method);
+      });
+    });
+  });
+
+  describe('cloneComment()', function () {
+    /**
+     * Asserts that `b` has all properties of `a` (recursively) and that each object in `a` is an
+     * in `b`, and each primitive is strictly equal in both places.
+     * @param a some thing
+     * @param b another thing
+     */
+    function assertDeepEqual(a: object, b: object) {
+      for (const [key, value] of Object.entries(a)) {
+        if (typeof value === 'object') {
+          expect(typeof b[key]).to.equal('object');
+          return assertDeepEqual(value, b[key]);
+        } else {
+          expect(value).to.equal(b[key]);
+        }
+      }
+    }
+    describe('when not provided any blockTags', function () {
+      it('should clone a Comment', function () {
+        const comment = new Comment(
+          [{kind: 'text', text: 'a funny comment'}],
+          [new CommentTag('@example', [{kind: 'code', text: 'doStuff();'}])]
+        );
+        const cloned = cloneComment(comment);
+        expect(assertDeepEqual(comment, cloned)).not.to.throw;
       });
     });
   });

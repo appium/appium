@@ -400,9 +400,9 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('appium/types').CliCommand} CliCommand
  * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
  * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
- * @typedef {import('appium/types').ServerCommand} ServerCommand
- * @typedef {import('appium/types').DriverCommand} DriverCommand
- * @typedef {import('appium/types').PluginCommand} PluginCommand
+ * @typedef {import('appium/types').CliCommandServer} ServerCommand
+ * @typedef {import('appium/types').CliCommandDriver} DriverCommand
+ * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */

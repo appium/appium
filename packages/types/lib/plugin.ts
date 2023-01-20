@@ -1,5 +1,5 @@
-import {MethodMap, ExecuteMethodMap, UpdateServerCallback, Class, AppiumLogger} from '.';
-import {Driver, ExternalDriver} from './driver';
+import {AppiumLogger, Class, ExecuteMethodMap, MethodMap, UpdateServerCallback} from '.';
+import {ExternalDriver} from './driver';
 
 /**
  * The interface describing the constructor and static properties of a Plugin.
@@ -45,17 +45,12 @@ export interface Plugin {
   /**
    * Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.
    */
-  onUnexpectedShutdown?: (driver: Driver, cause: Error | string) => Promise<void>;
+  onUnexpectedShutdown?: (driver: ExternalDriver, cause: Error | string) => Promise<void>;
   /**
    * Handle an Appium command, optionally running and using or throwing away the value of the
    * original Appium behavior (or the behavior of the next plugin in a plugin chain).
    */
-  handle?: (
-    next: NextPluginCallback,
-    driver: Driver,
-    cmdName: string,
-    ...args: any[]
-  ) => Promise<void>;
+  handle?: PluginCommand<ExternalDriver, [cmdName: string, ...args: any[]], void>;
 }
 
 /**

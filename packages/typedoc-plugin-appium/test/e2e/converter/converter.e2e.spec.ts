@@ -31,7 +31,7 @@ describe('@appium/typedoc-plugin-appium', function () {
         app.converter.once(Converter.EVENT_RESOLVE_BEGIN, (ctx: Context) => {
           resolve(ctx);
         });
-        app.converter.convert(app.getEntryPoints()!);
+        app.convert();
       });
       log = new AppiumPluginLogger(app.logger, 'appium-test');
     });

@@ -23,10 +23,12 @@ export function configureOptions(app: Application): Application {
   return app;
 }
 
+type OptionDeclarations = typeof declarations;
+
 export type AppiumPluginOptions = {
-  [O in keyof typeof declarations]: (typeof declarations)[O]['type'] extends ParameterType.Boolean
+  [O in keyof OptionDeclarations]: OptionDeclarations[O]['type'] extends ParameterType.Boolean
     ? boolean
-    : (typeof declarations)[O]['type'] extends ParameterType.String
+    : OptionDeclarations[O]['type'] extends ParameterType.String
     ? string
     : unknown;
 };

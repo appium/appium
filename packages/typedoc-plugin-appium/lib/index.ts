@@ -1,3 +1,8 @@
+/**
+ * Contains the {@link load entry point} for  `@appium/typedoc-plugin-appium`
+ * @module
+ */
+
 import _ from 'lodash';
 import {Application, Context, Converter, DeclarationReflection} from 'typedoc';
 import {convertCommands, createReflections, omitDefaultReflections} from './converter';
@@ -18,7 +23,9 @@ export function load(
   // register our custom theme.  the user still has to choose it
   setup(app);
 
-  // TypeDoc does not expect a return value here, but it's useful for testing
+  // TypeDoc does not expect a return value here, but it's useful for testing.
+  // note that this runs both methods "in parallel", but the `convert` method will always resolve
+  // first, and `postProcess` won't do any real work until that happens.
   return Promise.allSettled([convert(app), postProcess(app)]);
 }
 

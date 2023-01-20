@@ -16,6 +16,8 @@ import {AppiumPluginLogger} from '../../lib/logger';
 
 const {expect} = chai;
 
+const NAME_PACKAGE_JSON = 'package.json';
+
 /**
  * Name of the fake driver package which is good for testing
  */
@@ -32,7 +34,7 @@ export const ROOT_TSCONFIG = path.join(__dirname, '..', '..', '..', '..', 'tscon
  * @returns Path to its entry point
  */
 async function getEntryPoint(pkgName: string): Promise<string> {
-  const pkgDir = path.dirname(require.resolve(`${pkgName}/package.json`));
+  const pkgDir = path.dirname(require.resolve(`${pkgName}/${NAME_PACKAGE_JSON}`));
   if (!pkgDir) {
     throw new TypeError(`Could not find package ${pkgName}!`);
   }
@@ -42,9 +44,12 @@ async function getEntryPoint(pkgName: string): Promise<string> {
 }
 
 /**
- * Initializes a new TypeDoc application with some defaults
+ * Initializes a new TypeDoc application with some defaults.
  *
- * If `_FORCE_LOGS` is in the env, use verbose logging
+ * If `_FORCE_LOGS` is in the env, use verbose logging; otherwise logs are suppressed for your pleasure
+ *
+ * Note: if multiple entry points are provided, we assume that the `entryPointStrategy` should be `packages`
+ *
  * @param opts - Opts
  * @returns New TypeDoc app
  * @todo Figure out how to get plugin-specific options into TypeDoc other than via `Options.setValue`
@@ -61,9 +66,7 @@ function getTypedocApp(opts: Partial<TypeDocOptions> = {}): Application {
     logLevel: forceLogs ? LogLevel.Verbose : LogLevel.Info,
     logger: forceLogs ? undefined : 'none',
     entryPointStrategy:
-      opts.entryPoints && opts.entryPoints.length > 1
-        ? EntryPointStrategy.Packages
-        : EntryPointStrategy.Resolve,
+      opts.entryPoints?.length ?? 0 > 1 ? EntryPointStrategy.Packages : EntryPointStrategy.Resolve,
     theme: THEME_NAME,
     skipErrorChecking: true,
     ...opts,
@@ -90,7 +93,7 @@ export async function initAppForPkg(
 
 /**
  * Runs Typedoc against multiple packages (using `entryPointStrategy` of `packages`)
- * @param opts
+ * @param opts - Options; `entryPoints` is required
  * @returns Typedoc Application
  */
 export function initAppForPkgs({
@@ -98,8 +101,8 @@ export function initAppForPkgs({
   ...opts
 }: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Application {
   let {entryPoints, ...typedocOpts} = opts;
-  entryPoints = entryPoints?.map((pkgName) =>
-    path.dirname(require.resolve(`${pkgName}/package.json`))
+  entryPoints = entryPoints.map((pkgName) =>
+    path.dirname(require.resolve(`${pkgName}/${NAME_PACKAGE_JSON}`))
   );
   // because entryPoints is a list of directories, this must be 'packages'
   const entryPointStrategy = EntryPointStrategy.Packages;
@@ -113,11 +116,15 @@ export function initAppForPkgs({
  * @param extraArgs Extra args to `cls`' constructor
  * @returns Converter class instance
  */
-async function convert<T, C extends BaseConverter<T>, Args extends any = any>(
+async function convert<
+  ConvertResult,
+  SomeConverter extends BaseConverter<ConvertResult>,
+  Args extends any = any
+>(
   app: Application,
-  cls: Constructor<C, [Context, AppiumPluginLogger, ...Args[]]>,
+  cls: Constructor<SomeConverter, [Context, AppiumPluginLogger, ...Args[]]>,
   extraArgs: Args[] = []
-): Promise<C> {
+): Promise<SomeConverter> {
   return await new Promise((resolve, reject) => {
     const listener = (ctx: Context) => {
       const log = new AppiumPluginLogger(app.logger, `test-${cls.name}`);
@@ -142,7 +149,11 @@ async function convert<T, C extends BaseConverter<T>, Args extends any = any>(
  * @param opts Extra args to `cls`' constructor and typedoc options
  * @returns Converter class instance
  */
-export async function initConverter<T, C extends BaseConverter<T>, Args extends any = any>(
+export async function initConverter<
+  ConverterResult,
+  C extends BaseConverter<ConverterResult>,
+  Args extends any = any
+>(
   cls: Constructor<C, [Context, AppiumPluginLogger, ...Args[]]>,
   pkgName: string,
   opts: InitConverterOptions<Args> = {}
@@ -153,6 +164,9 @@ export async function initConverter<T, C extends BaseConverter<T>, Args extends 
   return await convert(app, cls, extraArgs);
 }
 
+/**
+ * Options for {@linkcode initConverter}
+ */
 export interface InitConverterOptions<Args extends any = any> extends Partial<TypeDocOptions> {
   extraArgs?: Args[];
 }

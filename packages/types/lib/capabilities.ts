@@ -1,8 +1,9 @@
-import type {Capabilities as WdioCaps} from '@wdio/types';
+import {StandardCapabilities} from './standard-caps';
 import {StringRecord, Constraint, Constraints} from '.';
 import {BaseDriverCapConstraints} from './constraints';
 
-export type StandardCapabilities = WdioCaps.Capabilities;
+export {StandardCapabilities};
+
 export type W3C_APPIUM_PREFIX = 'appium';
 
 /**
@@ -14,16 +15,6 @@ export type BaseCapabilities = ConstraintsToCaps<BaseDriverCapConstraints>;
  * Like {@linkcode BaseCapabilities}, except all Appium-specific keys are namespaced.
  */
 export type BaseNSCapabilities = CapsToNSCaps<ConstraintsToCaps<BaseDriverCapConstraints>>;
-
-/**
- * These may (or should) be reused by drivers.
- */
-export type AppiumAndroidCapabilities = WdioCaps.AppiumAndroidCapabilities;
-export type AppiumIOSCapabilities = WdioCaps.AppiumIOSCapabilities;
-export type AppiumXCUICommandTimeouts = WdioCaps.AppiumXCUICommandTimeouts;
-export type AppiumXCUIProcessArguments = WdioCaps.AppiumXCUIProcessArguments;
-export type AppiumXCUISafariGlobalPreferences = WdioCaps.AppiumXCUISafariGlobalPreferences;
-export type AppiumXCUITestCapabilities = WdioCaps.AppiumXCUITestCapabilities;
 
 /**
  * Given a {@linkcode Constraint} `C` and a type `T`, see if `inclusion`/`inclusionCaseInsensitive` is present, and create a union of its allowed literals; otherwise just use `T`.

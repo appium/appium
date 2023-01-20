@@ -5,46 +5,8 @@
  * (meaning that that platform-specific node name will be mapped to the universal node name), or an
  * array of strings. This means that there can be a many-to-one relationship between
  * platform-specific node names and universal node names.
- *
- * @typedef {Object} NodeNameMapping
- * @property {NodePrototype} Alert
- * @property {NodePrototype} App
- * @property {NodePrototype} Button
- * @property {NodePrototype} Cell
- * @property {NodePrototype} CheckBox
- * @property {NodePrototype} Column
- * @property {NodePrototype} DateInput
- * @property {NodePrototype} Element
- * @property {NodePrototype} Grid
- * @property {NodePrototype} Icon
- * @property {NodePrototype} Image
- * @property {NodePrototype} Indicator
- * @property {NodePrototype} Input
- * @property {NodePrototype} List
- * @property {NodePrototype} Map
- * @property {NodePrototype} Modal
- * @property {NodePrototype} Nav
- * @property {NodePrototype} PickerInput
- * @property {NodePrototype} RadioInput
- * @property {NodePrototype} Row
- * @property {NodePrototype} ScrollView
- * @property {NodePrototype} SearchField
- * @property {NodePrototype} SearchResult
- * @property {NodePrototype} SegmentedControl
- * @property {NodePrototype} Slider
- * @property {NodePrototype} StaticText
- * @property {NodePrototype} Switch
- * @property {NodePrototype} TabBar
- * @property {NodePrototype} Table
- * @property {NodePrototype} TextField
- * @property {NodePrototype} TextInput
- * @property {NodePrototype} TextView
- * @property {NodePrototype} Toggle
- * @property {NodePrototype} Toolbar
- * @property {NodePrototype} Web
- * @property {NodePrototype} WebView
  */
-export default {
+export default /** @type {const} */ {
   Alert: {
     ios: 'XCUIElementTypeAlert',
     android: 'android.widget.Toast',
@@ -260,11 +222,3 @@ export default {
     ios: 'XCUIElementTypeWindow',
   },
 };
-
-/**
- * A prototype for Node Map.
- *
- * @typedef NodePrototype
- * @property {string|string[]} [ios]
- * @property {string|string[]} [android]
- */

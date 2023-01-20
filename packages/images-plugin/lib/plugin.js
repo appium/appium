@@ -11,7 +11,7 @@ const IMAGE_STRATEGY = '-image';
 
 /**
  *
- * @param {Array} args - An array of arguments
+ * @param {any[]} args - An array of arguments
  * @returns {string}
  */
 function getImgElFromArgs(args) {
@@ -25,7 +25,7 @@ function getImgElFromArgs(args) {
 /**
  * A plugin for Appium that provides support for finding elements by image and comparing images.
  *
- * @extends {BasePlugin}
+ * @implements {Plugin}
  */
 export default class ImageElementPlugin extends BasePlugin {
   /**
@@ -59,7 +59,7 @@ export default class ImageElementPlugin extends BasePlugin {
    * @param {string} firstImage
    * @param {string} secondImage
    * @param {Object} [options={}]
-   * @returns {Promise<any>}
+   * @returns {Promise<OccurrenceResult>}
    */
   async compareImages(next, driver, mode, firstImage, secondImage, options = {}) {
     return await compareImages(mode, firstImage, secondImage, options);
@@ -137,4 +137,12 @@ export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};
 
 /**
  * @typedef {import('@appium/types').ExternalDriver} ExtDriver
+ */
+
+/**
+ * @typedef {import('@appium/types').Plugin} Plugin
+ */
+
+/**
+ * @typedef {import('@appium/opencv').OccurrenceResult} OccurrenceResult
  */

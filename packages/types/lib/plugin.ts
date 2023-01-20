@@ -80,7 +80,7 @@ export type PluginCommand<
   D extends ExternalDriver = ExternalDriver,
   TArgs extends readonly any[] = any[],
   TReturn = any
-> = (next: NextPluginCallback, driver: D, ...args: TArgs) => Promise<TReturn>;
+> = (next: NextPluginCallback, driver: D, ...args: TArgs) => Promise<TReturn | string>;
 
 /**
  * Mainly for internal use.

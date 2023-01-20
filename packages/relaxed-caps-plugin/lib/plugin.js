@@ -20,13 +20,13 @@ const HAS_VENDOR_PREFIX_RE = /^.+:/;
 
 /**
  *
- * @extends {BasePlugin}
+ * @implements {Plugin}
  */
 export class RelaxedCapsPlugin extends BasePlugin {
   /**
-   *
-   * @param {Capabilities} caps
-   * @returns {Capabilities} - The transformed capability object.
+   * @template {Constraints} C
+   * @param {Capabilities<C>} caps
+   * @returns {NSCapabilities<C>} - The transformed capability object.
    */
   transformCaps(caps) {
     const newCaps = {};
@@ -83,4 +83,8 @@ export class RelaxedCapsPlugin extends BasePlugin {
 
 /**
  * @typedef {import('@appium/types/lib/driver').W3CCapabilities<C, Extra>} W3CCapabilities
+ */
+
+/**
+ * @typedef {import('@appium/types').Plugin} Plugin
  */

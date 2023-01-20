@@ -7,7 +7,7 @@ import B from 'bluebird';
 /**
  * An example plugin for Appium that demonstrate the implementations.
  *
- * @extends {BasePlugin}
+ * @implements {Plugin}
  */
 class FakePlugin extends BasePlugin {
   fakeThing = 'PLUGIN_FAKE_THING';
@@ -43,6 +43,12 @@ class FakePlugin extends BasePlugin {
     },
   });
 
+  /**
+   * A route handler function for /fake that sends a JSON string representing a fake response.
+   *
+   * @param {Request} req - The request object
+   * @param {Response} res - The response object
+   */
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fake: 'fakeResponse'}));
   }
@@ -50,8 +56,8 @@ class FakePlugin extends BasePlugin {
   /**
    * A route handler function for /unexpected
    *
-   * @param {Object} req - The request object
-   * @param {Object} res - The response object
+   * @param {Request} req - The request object
+   * @param {Response} res - The response object
    */
   static unexpectedData(req, res) {
     res.send(JSON.stringify(FakePlugin._unexpectedData));
@@ -86,55 +92,47 @@ class FakePlugin extends BasePlugin {
     return this.cliArgs;
   }
 
+  /**
+   * @type {PluginCommand}
+   */
   async getPageSource(next, driver, ...args) {
     await B.delay(10);
     return `<Fake>${JSON.stringify(args)}</Fake>`;
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {import('@appium/types').ExternalDriver} driver - The driver instance
-   * @param {any[]} args - Additional arguments to be passed to the next function
-   * @returns {Promise<Object>}
+   * @type {PluginCommand}
    */
   async findElement(next, driver, ...args) {
     this.logger.info(`Before findElement is run with args ${JSON.stringify(args)}`);
     const originalRes = await next();
     this.logger.info(`After findElement is run`);
+    // @ts-ignore
     originalRes.fake = true;
     return originalRes;
   }
 
   /**
-   * Gets the fake session data, adding a delay.
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {Object} driver - The driver instance. Using Object because fakesession doesn't exist in BaseDriver
-   * @returns {Promise<Object?>}
+   * @type {PluginCommand}
    */
   async getFakeSessionData(next, driver) {
     await B.delay(1);
+    // @ts-ignore
     return driver.fakeSessionData || null;
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {Object} driver - The driver instance. Using Object because fakesession doesn't exist in BaseDriver
-   * @param {any[]} args - Additional arguments to be passed to the next function
-   * @returns {Promise<null>}
+   * @type {PluginCommand}
    */
   async setFakeSessionData(next, driver, ...args) {
     await B.delay(1);
+    // @ts-ignore
     driver.fakeSessionData = args[0];
     return null;
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @returns {Promise<string>}
+   * @type {PluginCommand}
    */
   async getWindowHandle(next) {
     const handle = await next();
@@ -162,4 +160,20 @@ export default FakePlugin;
 
 /**
  * @typedef {Record<string,unknown>} CLIArgs
+ */
+
+/**
+ * @typedef {import('@appium/types').Plugin} Plugin
+ */
+
+/**
+ * @typedef {import('express').Request} Request
+ */
+
+/**
+ * @typedef {import('express').Response} Response
+ */
+
+/**
+ * @typedef {import('@appium/types').PluginCommand} PluginCommand
  */

@@ -647,10 +647,10 @@ async function cvMatFromImage(img) {
 /**
  * Filter out match results which have a matched neighbour
  *
- * @param {Array<Point>} nonZeroMatchResults matrix of image match results
+ * @param {Point[]} nonZeroMatchResults matrix of image match results
  * @param {number} matchNeighbourThreshold The pixel distance within which we
  * consider an element being a neighbour of an existing match
- * @returns {Array<Point>} the filtered array of matched points
+ * @returns {Point[]} the filtered array of matched points
  */
 function filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold) {
   return nonZeroMatchResults.reduce((acc, element) => {

@@ -328,6 +328,50 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       });
     });
   });
+
+  describe('Execute Methods', function () {
+    /** @type {AppiumServer} */
+    let server;
+
+    /** @type {import('webdriverio').Browser<'async'>} */
+    let driver;
+
+    before(async function () {
+      // then start server if we need to
+      const args = {
+        appiumHome,
+        port,
+        address: TEST_HOST,
+        usePlugins: ['fake'],
+        useDrivers: ['fake'],
+      };
+      server = /** @type {AppiumServer} */ (await appiumServer(args));
+      driver = await wdio(wdOpts);
+    });
+    after(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+      if (server) {
+        await server.close();
+      }
+    });
+
+    it('should handle execute methods using executeMethodMap', async function () {
+      const res = await driver.executeScript('fake: plugMeIn', [{socket: 'electrical'}]);
+      res.should.eql('Plugged in to electrical');
+    });
+
+    it('should handle execute methods overridden on the driver', async function () {
+      const res = await driver.executeScript('fake: getThing', []);
+      res.should.eql('PLUGIN_FAKE_THING');
+    });
+
+    it('should let driver handle unknown execute methods', async function () {
+      const sum = await driver.executeScript('fake: addition', [{num1: 2, num2: 3}]);
+      sum.should.eql(5);
+    });
+  });
 });
 
 /**

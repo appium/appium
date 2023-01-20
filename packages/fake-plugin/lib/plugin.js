@@ -5,10 +5,7 @@ import {BasePlugin} from 'appium/plugin';
 import B from 'bluebird';
 
 class FakePlugin extends BasePlugin {
-  async getFakePluginArgs() {
-    await B.delay(1);
-    return this.cliArgs;
-  }
+  fakeThing = 'PLUGIN_FAKE_THING';
 
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fake_data': {
@@ -27,6 +24,19 @@ class FakePlugin extends BasePlugin {
   /** @type {string?} */
   static _unexpectedData = null;
 
+  static executeMethodMap = /** @type {const} */ ({
+    // this execute method overrides fake-drivers fake: getThing, for testing
+    'fake: getThing': {
+      command: 'getFakeThing',
+    },
+
+    // this is a totally new execute method
+    'fake: plugMeIn': {
+      command: 'plugMeIn',
+      params: {required: ['socket']},
+    },
+  });
+
   static fakeRoute(req, res) {
     res.send(JSON.stringify({fake: 'fakeResponse'}));
   }
@@ -43,6 +53,21 @@ class FakePlugin extends BasePlugin {
     expressApp.all('/cliArgs', (req, res) => {
       res.send(JSON.stringify(cliArgs));
     });
+  }
+
+  async getFakeThing() {
+    await B.delay(1);
+    return this.fakeThing;
+  }
+
+  async plugMeIn(next, driver, /** @type {string} */ socket) {
+    await B.delay(1);
+    return `Plugged in to ${socket}`;
+  }
+
+  async getFakePluginArgs() {
+    await B.delay(1);
+    return this.cliArgs;
   }
 
   async getPageSource(next, driver, ...args) {
@@ -77,6 +102,10 @@ class FakePlugin extends BasePlugin {
   // eslint-disable-next-line require-await
   async onUnexpectedShutdown(driver, cause) {
     FakePlugin._unexpectedData = `Session ended because ${cause}`;
+  }
+
+  async execute(next, driver, script, args) {
+    return await this.executeMethod(next, driver, script, args);
   }
 }
 

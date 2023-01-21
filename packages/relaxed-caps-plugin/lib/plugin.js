@@ -82,6 +82,10 @@ export class RelaxedCapsPlugin extends BasePlugin {
  */
 
 /**
+ * @typedef {import('@appium/types/lib/driver').Constraint} Constraints
+ */
+
+/**
  * @typedef {import('@appium/types/lib/driver').W3CCapabilities<C, Extra>} W3CCapabilities
  */
 

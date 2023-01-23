@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.53](https://github.com/appium/appium/compare/appium@2.0.0-beta.52...appium@2.0.0-beta.53) (2023-01-23)
+
+
+### Bug Fixes
+
+* **docs:** fix filename of basedriver commands ([18772f4](https://github.com/appium/appium/commit/18772f4f0d04d4c27135b6a66732bd9518568bdf))
+* **support:** update dependency glob to v8.1.0 ([d7b35ab](https://github.com/appium/appium/commit/d7b35ab28b8afd0f93f775a223373956a57ee881))
+* **types:** update dependency type-fest to v3.5.2 ([64fd8ce](https://github.com/appium/appium/commit/64fd8ce94018b0bb7ccb2baade8d525703f41c45))
+* **types:** update dependency type-fest to v3.5.3 ([6c4ba8c](https://github.com/appium/appium/commit/6c4ba8caa508840640f05eea1ab41ecb290312aa))
+
+
+
+
+
 # [2.0.0-beta.52](https://github.com/appium/appium/compare/appium@2.0.0-beta.51...appium@2.0.0-beta.52) (2023-01-13)
 
 **Note:** Version bump only for package appium

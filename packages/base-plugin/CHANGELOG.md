@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/appium/appium/compare/@appium/base-plugin@2.1.3...@appium/base-plugin@2.2.0) (2023-01-23)
+
+
+### Features
+
+* **base-plugin:** add ability for plugins to implement execute methods ([84abed9](https://github.com/appium/appium/commit/84abed920a1dc796ff09013ce86079de5a25fe50))
+
+
+
+
+
 ## [2.1.3](https://github.com/appium/appium/compare/@appium/base-plugin@2.1.2...@appium/base-plugin@2.1.3) (2023-01-13)
 
 **Note:** Version bump only for package @appium/base-plugin

@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/appium/appium/compare/@appium/types@0.8.3...@appium/types@0.9.0) (2023-01-23)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v3.5.2 ([64fd8ce](https://github.com/appium/appium/commit/64fd8ce94018b0bb7ccb2baade8d525703f41c45))
+* **types:** update dependency type-fest to v3.5.3 ([6c4ba8c](https://github.com/appium/appium/commit/6c4ba8caa508840640f05eea1ab41ecb290312aa))
+
+
+### Features
+
+* **base-plugin:** add ability for plugins to implement execute methods ([84abed9](https://github.com/appium/appium/commit/84abed920a1dc796ff09013ce86079de5a25fe50))
+
+
+
+
+
 ## [0.8.3](https://github.com/appium/appium/compare/@appium/types@0.8.2...@appium/types@0.8.3) (2023-01-13)
 
 **Note:** Version bump only for package @appium/types

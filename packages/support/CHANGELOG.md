@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.4](https://github.com/appium/appium/compare/@appium/support@3.1.3...@appium/support@3.1.4) (2023-01-23)
+
+
+### Bug Fixes
+
+* **support:** update dependency @types/glob to v8.0.1 ([854c5ec](https://github.com/appium/appium/commit/854c5ec9467a14e9ed7c5b18538413250a615716))
+* **support:** update dependency glob to v8.1.0 ([d7b35ab](https://github.com/appium/appium/commit/d7b35ab28b8afd0f93f775a223373956a57ee881))
+* **types:** update dependency type-fest to v3.5.2 ([64fd8ce](https://github.com/appium/appium/commit/64fd8ce94018b0bb7ccb2baade8d525703f41c45))
+* **types:** update dependency type-fest to v3.5.3 ([6c4ba8c](https://github.com/appium/appium/commit/6c4ba8caa508840640f05eea1ab41ecb290312aa))
+
+
+
+
+
 ## [3.1.3](https://github.com/appium/appium/compare/@appium/support@3.1.2...@appium/support@3.1.3) (2023-01-13)
 
 **Note:** Version bump only for package @appium/support

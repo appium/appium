@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.4](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.3.3...@appium/typedoc-plugin-appium@0.3.4) (2023-01-23)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** fix keywords for typedoc plugin autodetection ([ed1edab](https://github.com/appium/appium/commit/ed1edab2098eed8f36a23419a2cc91c699756ed7))
+* **typedoc-plugin-appium:** non-appium theme should not cause a fatal error ([ec48c9c](https://github.com/appium/appium/commit/ec48c9cea7949d5e05ab0f748265345d84007283))
+* **typedoc-plugin-appium:** reduce severity of "missing method" error ([d0e1cb2](https://github.com/appium/appium/commit/d0e1cb2f65d5da11dff251e445861a3d74585bb6))
+* **types:** update dependency type-fest to v3.5.2 ([64fd8ce](https://github.com/appium/appium/commit/64fd8ce94018b0bb7ccb2baade8d525703f41c45))
+* **types:** update dependency type-fest to v3.5.3 ([6c4ba8c](https://github.com/appium/appium/commit/6c4ba8caa508840640f05eea1ab41ecb290312aa))
+
+
+
+
+
 ## [0.3.3](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.3.2...@appium/typedoc-plugin-appium@0.3.3) (2023-01-13)
 
 **Note:** Version bump only for package @appium/typedoc-plugin-appium

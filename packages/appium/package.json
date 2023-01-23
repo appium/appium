@@ -39,7 +39,8 @@
     "plugin.*",
     "scripts/autoinstall-extensions.js",
     "types",
-    "tsconfig.json"
+    "tsconfig.json",
+    "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build:docs": "node docs/scripts/build-docs.js",

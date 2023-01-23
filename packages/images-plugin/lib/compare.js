@@ -29,6 +29,10 @@ const DEFAULT_MATCH_THRESHOLD = 0.4;
  * if `mode` value is incorrect or if there was an unexpected issue while
  * matching the images.
  */
+
+/**
+ * @type {import('@appium/types').PluginCommand<[string, string, string, object|undefined], Promise<OccurrenceResult>>}
+ */
 async function compareImages(mode, firstImage, secondImage, options = {}) {
   const img1 = Buffer.from(firstImage, 'base64');
   const img2 = Buffer.from(secondImage, 'base64');

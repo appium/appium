@@ -15,7 +15,7 @@ import {
   ExecuteMethodMap,
 } from '.';
 import {ServerArgs} from './config';
-import {AsyncReturnType, ConditionalPick} from 'type-fest';
+import {AsyncReturnType, Entries} from 'type-fest';
 
 export interface ITimeoutCommands {
   /**
@@ -411,7 +411,7 @@ export interface SessionHandler<
    *
    * @param w3cCaps1 - the new session capabilities
    * @param w3cCaps2 - another place the new session capabilities could be sent (typically left undefined)
-   * @param w3cCaps - another place the new session capabilities could be sent (typically left undefined)
+   * @param w3cCaps3 - another place the new session capabilities could be sent (typically left undefined)
    * @param driverData - a list of DriverData objects representing other sessions running for this
    * driver on the same Appium server. This information can be used to help ensure no conflict of
    * resources
@@ -537,7 +537,7 @@ export interface StopScreenRecordOptions {
   method?: string;
   headers?: Record<string, string>;
   fileFieldName?: string;
-  formFields: Record<string, string> | Array<[string, string]>;
+  formFields: Record<string, string> | Entries<Record<string, string>>;
 }
 
 // JSONWP
@@ -676,7 +676,7 @@ export interface Driver<
     ITimeoutCommands,
     IEventCommands,
     IExecuteCommands,
-    SessionHandler<[string, any], void, C>,
+    SessionHandler<[sessionId: string, caps: any], void, C>,
     Core {
   /**
    * The set of command line arguments set for this driver

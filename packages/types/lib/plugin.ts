@@ -90,5 +90,5 @@ export type PluginCommand<
 export type PluginClass<P extends Plugin = Plugin> = Class<
   P,
   PluginStatic<P>,
-  [string, Record<string, unknown>]
+  [pluginName: string, cliArgs: Record<string, unknown>]
 >;

@@ -631,7 +631,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
    * ```
    *
    * ```python
-   * selenium.webdriver.common.utils.is_url_connectable(port)
+   * driver.get_status()
    * ```
    *
    * ```java

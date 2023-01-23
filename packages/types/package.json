@@ -28,7 +28,8 @@
     "build",
     "lib",
     "index.js",
-    "tsconfig.json"
+    "tsconfig.json",
+    "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "build": "node ./scripts/generate-schema-types.js",

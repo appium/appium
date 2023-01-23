@@ -31,7 +31,8 @@
     "index.js",
     "lib",
     "build",
-    "tsconfig.json"
+    "tsconfig.json",
+    "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
     "test": "npm run test:unit",

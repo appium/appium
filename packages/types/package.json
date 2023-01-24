@@ -39,7 +39,7 @@
   "dependencies": {
     "@appium/schema": "^0.2.3",
     "@appium/tsconfig": "^0.2.3",
-    "@types/express": "4.17.15",
+    "@types/express": "4.17.16",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.4",
     "type-fest": "3.5.3"

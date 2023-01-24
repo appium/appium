@@ -32,7 +32,7 @@ export function createSessionHelpers(port, address = TEST_HOST) {
      * @param {string} sessionId
      * @param {string} cmdName
      * @param {any} [data]
-     * @param {AxiosRequestConfig} [config]
+     * @param {RawAxiosRequestConfig} [config]
      * @returns {Promise<any>}
      */
     postCommand: async (sessionId, cmdName, data = {}, config = {}) => {
@@ -43,8 +43,8 @@ export function createSessionHelpers(port, address = TEST_HOST) {
     /**
      *
      * @param {string} sessionIdOrCmdName
-     * @param {string|AxiosRequestConfig} cmdNameOrConfig
-     * @param {AxiosRequestConfig} [config]
+     * @param {string|RawAxiosRequestConfig} cmdNameOrConfig
+     * @param {RawAxiosRequestConfig} [config]
      * @returns {Promise<any>}
      */
     getCommand: async (sessionIdOrCmdName, cmdNameOrConfig, config = {}) => {
@@ -63,7 +63,7 @@ export function createSessionHelpers(port, address = TEST_HOST) {
     /**
      *
      * @param {NewSessionData} data
-     * @param {AxiosRequestConfig} [config]
+     * @param {RawAxiosRequestConfig} [config]
      */
     startSession: async (data, config = {}) => {
       data = _.defaultsDeep(data, {
@@ -432,7 +432,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
- * @typedef {import('axios').AxiosRequestConfig} AxiosRequestConfig
+ * @typedef {import('axios').RawAxiosRequestConfig} RawAxiosRequestConfig
  * @typedef {import('@appium/types').SingularSessionData} SingularSessionData
  */
 
@@ -463,9 +463,9 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  * @template [ResponseData=any]
  * @typedef SessionHelpers
  * @property {string} newSessionURL - URL to create a new session. Can be used with raw `axios` requests to fully inspect raw response.  Mostly, this will not be used.
- * @property {(data: NewSessionData, config?: AxiosRequestConfig) => Promise<NewSessionResponse>} startSession - Begin a session
+ * @property {(data: NewSessionData, config?: RawAxiosRequestConfig) => Promise<NewSessionResponse>} startSession - Begin a session
  * @property {(sessionId: string) => Promise<AxiosResponse<{value: {error?: string}?}, {validateStatus: null}>>} endSession - End a session. _Note: resolves with raw response object_
  * @property {(sessionId: string) => Promise<SingularSessionData>} getSession - Get info about a session
- * @property {(sessionId: string, cmdName: string, data?: CommandData, config?: AxiosRequestConfig) => Promise<ResponseData>} postCommand - Send an arbitrary command via `POST`.
- * @property {(sessionIdOrCmdName: string, cmdNameOrConfig: string|AxiosRequestConfig, config?: AxiosRequestConfig) => Promise<ResponseData>} getCommand - Send an arbitrary command via `GET`. Optional `sessionId`.
+ * @property {(sessionId: string, cmdName: string, data?: CommandData, config?: RawAxiosRequestConfig) => Promise<ResponseData>} postCommand - Send an arbitrary command via `POST`.
+ * @property {(sessionIdOrCmdName: string, cmdNameOrConfig: string|RawAxiosRequestConfig, config?: RawAxiosRequestConfig) => Promise<ResponseData>} getCommand - Send an arbitrary command via `GET`. Optional `sessionId`.
  */

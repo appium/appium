@@ -90,7 +90,7 @@ class JWProxy {
    * @private - Do not call this method directly,
    * it uses client-specific arguments and responses!
    *
-   * @param {import('axios').AxiosRequestConfig} requestConfig
+   * @param {import('axios').RawAxiosRequestConfig} requestConfig
    * @returns {Promise<import('axios').AxiosResponse>}
    */
   async request(requestConfig) {
@@ -189,7 +189,7 @@ class JWProxy {
       _.truncate(_.isString(content) ? content : JSON.stringify(content), {
         length: MAX_LOG_BODY_LENGTH,
       });
-    /** @type {import('axios').AxiosRequestConfig} */
+    /** @type {import('axios').RawAxiosRequestConfig} */
     const reqOpts = {
       url: newUrl,
       method,

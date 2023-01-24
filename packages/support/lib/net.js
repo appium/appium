@@ -56,7 +56,7 @@ async function uploadFileToHttp(
   } = uploadOptions;
   const {href} = parsedUri;
 
-  /** @type {import('axios').AxiosRequestConfig} */
+  /** @type {import('axios').RawAxiosRequestConfig} */
   const requestOpts = {
     url: href,
     method,
@@ -232,7 +232,7 @@ async function downloadFile(
   const {isMetered = true, auth, timeout = DEFAULT_TIMEOUT_MS, headers} = downloadOptions;
 
   /**
-   * @type {import('axios').AxiosRequestConfig}
+   * @type {import('axios').RawAxiosRequestConfig}
    */
   const requestOpts = {
     url: remoteUrl,

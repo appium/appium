@@ -162,8 +162,8 @@ If you define your own constructor, you'll need to call `super` to make sure all
 is set up correctly:
 
 ```js
-constructor(args) {
-    super(args);
+constructor(...args) {
+    super(...args);
     // now do your own thing
 }
 ```

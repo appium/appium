@@ -52,38 +52,21 @@ export default class ImageElementPlugin extends BasePlugin {
   });
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {ExtDriver} driver - The driver instance
-   * @param {string} mode
-   * @param {string} firstImage
-   * @param {string} secondImage
-   * @param {Object} [options={}]
-   * @returns {Promise<OccurrenceResult>}
+   * @type {PluginCommand<ExtDriver,[string, string, string, object|undefined], Promise<import('@appium/opencv').OccurrenceResult>>}
    */
   async compareImages(next, driver, mode, firstImage, secondImage, options = {}) {
     return await compareImages(mode, firstImage, secondImage, options);
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {ExtDriver} driver - The driver instance
-   * @param {string} strategy - The strategy used to locate the elements
-   * @param {string} selector - The image selector
-   * @returns {Promise<any>}
+   * @type {PluginCommand<ExtDriver,[string, string]>}
    */
   async findElement(next, driver, strategy, selector) {
     return await this._find(false, next, driver, strategy, selector);
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {ExtDriver} driver - The driver instance
-   * @param {string} strategy - The strategy used to locate the elements
-   * @param {string} selector - The image selector
-   * @returns {Promise<any>}
+   * @type {PluginCommand<ExtDriver,[string, string]>}
    */
   async findElements(next, driver, strategy, selector) {
     return await this._find(true, next, driver, strategy, selector);
@@ -92,7 +75,7 @@ export default class ImageElementPlugin extends BasePlugin {
   /**
    *
    * @param {boolean} multiple - True if finding multiple elements, false if finding a single element
-   * @param {Function} next - The function to be executed after this one
+   * @param {import('@appium/types').NextPluginCallback} next - The function to be executed after this one
    * @param {ExtDriver} driver - The driver instance
    * @param {string} strategy - The strategy used to locate the elements
    * @param {string} selector - The image selector
@@ -109,12 +92,7 @@ export default class ImageElementPlugin extends BasePlugin {
   }
 
   /**
-   *
-   * @param {Function} next - The function to be executed after this one
-   * @param {ExtDriver} driver - The driver instance
-   * @param {string} cmdName - The command name
-   * @param {any[]} args
-   * @returns {Promise<any>}
+   * @type {PluginCommand<ExtDriver,string, any[]>}
    */
   async handle(next, driver, cmdName, ...args) {
     // if we have a command that involves an image element id, attempt to find the image element
@@ -145,4 +123,11 @@ export {ImageElementPlugin, getImgElFromArgs, IMAGE_STRATEGY};
 
 /**
  * @typedef {import('@appium/opencv').OccurrenceResult} OccurrenceResult
+ */
+
+/**
+ * @template {import('@appium/types').ExternalDriver} [D=ExternalDriver]
+ * @template {readonly any[]} [TArgs=any[]]
+ * @template [TReturn]
+ * @typedef {import('@appium/types').PluginCommand<D, TArgs, TReturn>} PluginCommand
  */

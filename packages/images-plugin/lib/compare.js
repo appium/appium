@@ -22,16 +22,12 @@ const DEFAULT_MATCH_THRESHOLD = 0.4;
  * @param {object} [options] - The content of this dictionary depends
  * on the actual `mode` value. See the documentation on `@appium/support`
  * module for more details.
- * @returns {Promise<object|object[]>} The content of the resulting dictionary depends
+ * @returns {Promise<OccurrenceResult|OccurrenceResult[]>} The content of the resulting dictionary depends
  * on the actual `mode` and `options` values. See the documentation on
  * `@appium/support` module for more details.
  * @throws {Error} If required OpenCV modules are not installed or
  * if `mode` value is incorrect or if there was an unexpected issue while
  * matching the images.
- */
-
-/**
- * @type {import('@appium/types').PluginCommand<[string, string, string, object|undefined], Promise<OccurrenceResult>>}
  */
 async function compareImages(mode, firstImage, secondImage, options = {}) {
   const img1 = Buffer.from(firstImage, 'base64');

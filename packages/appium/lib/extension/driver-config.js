@@ -168,7 +168,7 @@ export class DriverConfig extends ExtensionConfig {
     } catch (err) {
       const msg =
         `Could not find a driver for automationName ` +
-        `'${automationName}' and platformName ${platformName}'. ` +
+        `'${automationName}' and platformName '${platformName}'. ` +
         `Have you installed a driver that supports those ` +
         `capabilities? Run 'appium driver list --installed' to see. ` +
         `(Lower-level error: ${err.message})`;

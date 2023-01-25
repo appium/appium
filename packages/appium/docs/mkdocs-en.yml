@@ -46,7 +46,8 @@ nav:
     - guides/grid.md
     - guides/caching.md
   - Developer Reference:
-      - BaseDriver: reference/base_driver.md
+      - BaseDriver Commands: reference/commands/appium_base_driver-1._appium_base_driver.md
+      - FakeDriver Commands: reference/commands/appium_fake_driver-1._appium_fake_driver.md
   - Ecosystem:
     - ecosystem/index.md
     - Developing Appium Extensions:

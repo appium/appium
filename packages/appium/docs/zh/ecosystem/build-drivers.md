@@ -169,8 +169,8 @@ appium driver install --source=local /path/to/your/driver/dev/dir
 你需要调用 `super` 来确保所有标准状态设置正确:
 
 ```js
-constructor(args) {
-    super(args);
+constructor(...args) {
+    super(...args);
     // now do your own thing
 }
 ```

@@ -27,6 +27,9 @@
   "directories": {
     "lib": "lib"
   },
+  "bin": {
+    "appium-docs": "build/lib/cli.js"
+  },
   "files": [
     "index.js",
     "index.d.ts",
@@ -34,18 +37,35 @@
     "lib",
     "build",
     "tsconfig.json",
-    "!build/tsconfig.tsbuildinfo"
+    "!build/tsconfig.tsbuildinfo",
+    "typedoc-shared.json",
+    "requirements.txt"
   ],
   "scripts": {
     "test": "npm run test:unit",
     "test:e2e": "echo \"No e2e tests for this package\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
+    "start": "node ./build/lib/cli.js"
   },
   "dependencies": {
     "@appium/support": "^3.1.4",
+    "@appium/tsconfig": "^0.2.3",
+    "@appium/typedoc-plugin-appium": "^0.3.4",
+    "consola": "2.15.3",
+    "diff": "5.1.0",
+    "glob": "8.1.0",
+    "lodash": "4.17.21",
+    "read-pkg": "5.2.0",
     "source-map-support": "0.5.21",
-    "teen_process": "2.0.2"
+    "teen_process": "2.0.2",
+    "type-fest": "3.5.3",
+    "typedoc": "0.23.24",
+    "typedoc-plugin-markdown": "3.14.0",
+    "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
+    "typescript": "4.7.4",
+    "yaml": "2.2.1",
+    "yargs": "17.6.2"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

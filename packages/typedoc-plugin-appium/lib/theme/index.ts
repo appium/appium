@@ -1,4 +1,11 @@
-import {Application, ContainerReflection, PageEvent, ReflectionKind, Renderer} from 'typedoc';
+import {
+  Application,
+  ContainerReflection,
+  PageEvent,
+  Reflection,
+  ReflectionKind,
+  Renderer,
+} from 'typedoc';
 import {MarkdownTheme} from 'typedoc-plugin-markdown';
 import {AppiumPluginLogger} from '../logger';
 import {AppiumPluginReflectionKind, NS} from '../model';
@@ -59,6 +66,21 @@ export class AppiumTheme extends MarkdownTheme {
     registerHelpers();
   }
 
+  /**
+   * Special-cases `ExtensionReflection` instances to make the filename shorter and thus better
+   * suitable for `mkdocs`.
+   * @param reflection Reflection to get URL for
+   * @returns String URL
+   */
+  public override getUrl(reflection: Reflection) {
+    if (reflection.kindOf(AppiumPluginReflectionKind.Extension as any)) {
+      // I don't know what this replace is for, but the superclass does it, so maybe it's important.
+      return reflection.getAlias().replace('^_', '');
+    }
+    return super.getUrl(reflection);
+  }
+
+  /**
   /**
    * A lookup of {@linkcode ReflectionKind}s to templates.  It also controls in which directory the output files live.
    *

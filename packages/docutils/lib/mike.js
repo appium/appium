@@ -1,4 +1,5 @@
 import {exec} from 'teen_process';
+// eslint-disable-next-line import/no-unresolved
 import log from './logger';
 
 const DEFAULT_REMOTE = 'origin';

@@ -6,7 +6,8 @@
     "paths": {
       "@appium/support": ["../support"],
       "@appium/types": ["../types"]
-    }
+    },
+    "strict": true
   },
   "include": ["./lib/**/*"],
   "references": [{"path": "../types"}, {"path": "../support"}]

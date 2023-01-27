@@ -4,11 +4,8 @@
 
 ## Prerequisites
 
-- `mkdocs` v1.4.0
-- `mkdocs-material` v8.2.8
-- `mkdocs-material-extensions` v1.0.3
-
-Run `pip install -r requirements.txt` to install MkDocs & its deps.
+- Node.js in the [semantic version range](https://semver.org) `^14.17.0 || ^16.13.0 || >=18.0.0`
+- Python v3+ if building HTML documentation
 
 ## Running for Main Appium Docs
 

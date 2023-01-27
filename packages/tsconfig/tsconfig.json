@@ -16,6 +16,6 @@
     "sourceMap": true,
     "removeComments": false,
     "strict": false,
-    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
+    "types": ["node"]
   }
 }

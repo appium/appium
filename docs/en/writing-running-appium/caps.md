@@ -1,3 +1,6 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 ## Appium Desired Capabilities
 
 Desired Capabilities are keys and values encoded in a JSON object, sent by
@@ -155,46 +158,7 @@ Please refer to the documentation on the UIAutomator2 driver [repository](https:
 
 Please refer to the documentation on the Espresso driver [repository](https://github.com/appium/appium-espresso-driver#capabilities) about its available capabilities.
 
-### iOS Only
-
-These Capabilities are available only on the [XCUITest
-Driver](/docs/en/drivers/ios-xcuitest.md) and the deprecated [UIAutomation
-Driver](/docs/en/drivers/ios-uiautomation.md).
-
-|Capability|Description|Values|
-|----|-----------|-------|
-|`calendarFormat`| (Sim-only) Calendar format to set for the iOS Simulator|e.g. `gregorian`|
-|`bundleId`| Bundle ID of the app under test. Useful for starting an app on a real device or for using other caps which require the bundle ID during test startup. To run a test on a real device using the bundle ID, you may omit the 'app' capability, but you must provide 'udid'.|e.g. `io.appium.TestApp`|
-|`launchTimeout`| Amount of time in ms to wait for instruments before assuming it hung and failing the session|e.g. `20000`|
-|`locationServicesEnabled`| (Sim-only) Force location services to be either on or off. Default is to keep current sim setting.|`true` or `false`|
-|`locationServicesAuthorized`| (Sim-only) Set location services to be authorized or not authorized for app via plist, so that location services alert doesn't pop up. Default is to keep current sim setting. Note that if you use this setting you MUST also use the `bundleId` capability to send in your app's bundle ID.|`true` or `false`|
-|`autoAcceptAlerts`| Accept all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false. |`true` or `false`|
-|`autoDismissAlerts`| Dismiss all iOS alerts automatically if they pop up. This includes privacy access permission alerts (e.g., location, contacts, photos). Default is false. |`true` or `false`|
-|`nativeInstrumentsLib`| Use native intruments lib (ie disable instruments-without-delay).|`true` or `false`|
-|`nativeWebTap`| Enable "real", non-javascript-based web taps in Safari. Default: `false`. Warning: depending on viewport size/ratio; this might not accurately tap an element|`true` or `false`|
-|`safariInitialUrl`| Initial safari url, default is a local welcome page | e.g. `https://www.github.com` |
-|`safariAllowPopups`| (Sim-only) Allow javascript to open new windows in Safari. Default keeps current sim setting|`true` or `false`|
-|`safariIgnoreFraudWarning`| (Sim-only) Prevent Safari from showing a fraudulent website warning. Default keeps current sim setting.|`true` or `false`|
-|`safariOpenLinksInBackground`| (Sim-only) Whether Safari should allow links to open in new windows. Default keeps current sim setting.|`true` or `false`|
-|`keepKeyChains`| (Sim-only) Whether to keep keychains (Library/Keychains) when appium session is started/finished|`true` or `false`|
-|`localizableStringsDir`| Where to look for localizable strings. Default `en.lproj`|`en.lproj`|
-|`processArguments`| Arguments to pass to the AUT using instruments|e.g., `-myflag`|
-|`interKeyDelay`| The delay, in ms, between keystrokes sent to an element when typing.|e.g., `100`|
-|`showIOSLog`| Whether to show any logs captured from a device in the appium logs. Default `false`|`true` or `false`|
-|`sendKeyStrategy`| strategy to use to type test into a test field. Simulator default: `oneByOne`. Real device default: `grouped` |`oneByOne`, `grouped` or `setValue`|
-|`screenshotWaitTimeout`| Max timeout in sec to wait for a screenshot to be generated. default: 10 |e.g., `5`|
-|`waitForAppScript`| The ios automation script used to determined if the app has been launched, by default the system wait for the page source not to be empty. The result must be a boolean |e.g. `true;`, `target.elements().length > 0;`, `$.delay(5000); true;` |
-|`webviewConnectRetries`| Number of times to send connection message to remote debugger, to get webview. Default: `8` |e.g., `12`|
-|`appName`| The display name of the application under test. Used to automate backgrounding the app in iOS 9+.|e.g., `UICatalog`|
-|`customSSLCert`|(Sim only) Add an SSL certificate to IOS Simulator. | e.g. <br/>`-----BEGIN CERTIFICATE-----MIIFWjCCBEKg...`<br/>`-----END CERTIFICATE-----`|
-|`webkitResponseTimeout`| (Real device only) Set the time, in ms, to wait for a response from WebKit in a Safari session. Defaults to `5000`|e.g., `10000`|
-|`remoteDebugProxy`| (Sim only, <= 11.2) If set, Appium sends and receives remote debugging messages through a proxy on either the local port (Sim only, <= 11.2) or a proxy on this unix socket (Sim only >= 11.3) instead of communicating with the iOS remote debugger directly. |e.g. `12000` or `"/tmp/my.proxy.socket"`|
-|`enableAsyncExecuteFromHttps`| capability to allow simulators to execute asynchronous JavaScript on pages using HTTPS. Defaults to `false` | `true` or `false` |
-|`skipLogCapture`|Skips to start capturing logs such as crash, system, safari console and safari network. It might improve performance such as network. Log related commands will not work. Defaults to `false`. |`true` or `false`|
-|`webkitDebugProxyPort`| (Real device only) Port to which `ios-webkit-debug-proxy` is connected, during real device tests. Default is `27753`.|`12021`|
-|`fullContextList` | Returns the detailed information on contexts for the [get available context](/docs/en/commands/context/get-contexts.md) command. If this capability is enabled, then each item in the returned contexts list would additionally include WebView title, full URL and the bundle identifier. Defaults to `false`. | `true` or `false` |
-
-#### iOS Only, using XCUITest
+### XCUITest Only
 
 Please refer to the documentation on the XCUITest driver [repository](https://github.com/appium/appium-xcuitest-driver#desired-capabilities) about its available capabilities.
 

@@ -1,3 +1,6 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 # Appium server arguments and environment variables
 
 Since Appium 1.5, many server arguments have been deprecated in favor of the [--default-capabilities flag](/docs/en/writing-running-appium/default-capabilities-arg.md).

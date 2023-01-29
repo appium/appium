@@ -1,12 +1,11 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 ## Getting Started
 
 This doc will get you up and running with a simple Appium 1.x test and introduce
 you to some basic Appium ideas. For a more comprehensive introduction to Appium concepts,
 please check out the [conceptual introduction](/docs/en/about-appium/intro.md).
-
-Note that this documentation explains about Appium 1.x.
-Please refer to [the README in the Appium repository](https://github.com/appium/appium) about upcoming Appium 2.0.
-
 
 ### Installing Appium
 

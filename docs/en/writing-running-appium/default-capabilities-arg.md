@@ -1,3 +1,6 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 ## The --default-capabilities flag
 
 Appium 1.5 does away with most CLI flags that existed previously; the remainder can be converted into JSON and made part of the `--default-capabilities` flag. For example:

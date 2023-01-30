@@ -1,3 +1,6 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 ## Appium Platform Support
 
 Appium supports a variety of platforms and testing modalities (native,

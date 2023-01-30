@@ -1,3 +1,6 @@
+Note that this documentation explains about Appium 1.x.
+Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+
 ## Introduction to Appium
 
 Appium is an open-source tool for automating native, mobile web, and hybrid

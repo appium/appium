@@ -3,7 +3,7 @@
  * @module
  */
 
-import type {Jsonify, JsonValue, SetRequired, TsConfigJson as TsConfigJsonBase} from 'type-fest';
+import type {Jsonify, JsonValue, TsConfigJson as TsConfigJsonBase} from 'type-fest';
 import type {TypeDocOptions} from 'typedoc';
 
 /**
@@ -60,3 +60,8 @@ export type MkDocsYmlTheme =
       custom_dir?: string;
       static_templates?: string[];
     } & Record<string, JsonValue>);
+
+export interface PipPackage {
+  name: string;
+  version: string;
+}

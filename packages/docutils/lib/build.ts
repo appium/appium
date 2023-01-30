@@ -4,11 +4,10 @@ import _ from 'lodash';
 import path from 'node:path';
 import {Application, TSConfigReader, TypeDocOptions} from 'typedoc';
 import {DocutilsError} from './error';
-import {relative, DEFAULT_REL_TYPEDOC_OUT_PATH, getTypedocJsonPath, readJson} from './util';
+import {relative, getTypedocJsonPath, readJson} from './util';
 import glob from 'glob';
-import {TypeDocJson} from './types';
-
-const NAME_SCHEMA = '$schema';
+import {TypeDocJson} from './model';
+import {DEFAULT_REL_TYPEDOC_OUT_PATH, NAME_SCHEMA} from './constants';
 
 /**
  * Replaces TypeDoc's homebrew "glob" implementation with a real one
@@ -54,20 +53,20 @@ export interface BuildTypedocOptions {
 }
 
 export async function buildTypedoc({
-  typedocJson: typedocJsonPath,
+  typedocJson: typeDocJsonPath,
   cwd = process.cwd(),
   packageJson: packageJsonPath,
   tsconfigJson: tsconfig,
   title,
 }: BuildTypedocOptions = {}) {
-  typedocJsonPath = typedocJsonPath ?? (await getTypedocJsonPath(cwd, packageJsonPath));
+  typeDocJsonPath = typeDocJsonPath ?? (await getTypedocJsonPath(cwd, packageJsonPath));
   const pkgRoot = fs.findRoot(cwd);
   const relativePath = relative(cwd);
-  const relativeTypedocJsonPath = relativePath(typedocJsonPath);
+  const relativeTypedocJsonPath = relativePath(typeDocJsonPath);
   log.debug(`Using ${relativeTypedocJsonPath} as typedoc.json`);
   let typedocJson: TypeDocJson;
   try {
-    typedocJson = await readJson(typedocJsonPath);
+    typedocJson = await readJson(typeDocJsonPath);
   } catch (err) {
     throw new DocutilsError(
       `Could not read ${relativeTypedocJsonPath}; please execute "appium docutils init" to create it`
@@ -76,7 +75,7 @@ export async function buildTypedoc({
 
   const out =
     typedocJson.out ??
-    path.relative(typedocJsonPath, path.join(pkgRoot, DEFAULT_REL_TYPEDOC_OUT_PATH));
+    path.relative(typeDocJsonPath, path.join(pkgRoot, DEFAULT_REL_TYPEDOC_OUT_PATH));
   const finalTypedocJson: TypeDocOptions = _.defaultsDeep(
     _.pickBy({tsconfig, name: title, out}, (value, key) => value && key !== NAME_SCHEMA)
   );

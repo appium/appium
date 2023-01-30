@@ -9,11 +9,13 @@ import {DocutilsError} from './error';
 import {LogLevel} from 'consola';
 import {stopwatch} from './util';
 import {buildReference} from './build';
+import {validate} from './validate';
 
 const NAME_GROUP_INIT_BEHAVIOR = 'Initialization Behavior:';
 const NAME_GROUP_INIT_MKDOCS = 'MkDocs Config:';
 const NAME_GROUP_BUILD_REFERENCE = 'Build API:';
 const NAME_GROUP_INIT_PATHS = 'Paths:';
+const NAME_GROUP_VALIDATE = 'Validation:';
 
 const LogLevelName = {
   silent: LogLevel.Silent,
@@ -29,44 +31,120 @@ export async function main(argv = hideBin(process.argv)) {
   return await y
     .scriptName('appium-docs')
     .command(
+      'build',
+      'Build docs',
+      (yargs) => {
+        return yargs.options({
+          'mkdocs-path': {
+            describe: 'Path to mkdocs.yml',
+            normalize: true,
+            type: 'string',
+            nargs: 1,
+            array: false,
+          },
+        });
+      },
+      async () => {}
+    )
+    .command(
+      'validate',
+      'Validate Environment',
+      (yargs) =>
+        yargs.options({
+          python: {
+            default: true,
+            description: 'Validate Python 3 environment',
+            group: NAME_GROUP_VALIDATE,
+            type: 'boolean',
+          },
+          'python-path': {
+            defaultDescription: '(derived from shell)',
+            description: 'Path to python 3 executable',
+            group: NAME_GROUP_VALIDATE,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          'tsconfig-json': {
+            defaultDescription: './tsconfig.json',
+            describe: 'Path to tsconfig.json',
+            group: NAME_GROUP_VALIDATE,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          typedoc: {
+            default: true,
+            description: 'Validate TypoDoc config',
+            group: NAME_GROUP_VALIDATE,
+            type: 'boolean',
+          },
+          'typedoc-json': {
+            defaultDescription: './typedoc.json',
+            describe: 'Path to typedoc.json',
+            group: NAME_GROUP_VALIDATE,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          typescript: {
+            default: true,
+            description: 'Validate TypeScript config',
+            group: NAME_GROUP_VALIDATE,
+            type: 'boolean',
+          },
+        }),
+      async (argv) => {
+        if (!argv.python && !argv.typedoc && !argv.typescript) {
+          throw new Error(
+            'No validation targets specified; one or more of --python, --typescript or --typedoc must be provided'
+          );
+        }
+        await validate(argv);
+      }
+    )
+    .command(
       'build-reference',
       'Build API reference docs',
       (yargs) =>
         yargs.options({
-          'typedoc-json': {
-            requiresArg: true,
-            nargs: 1,
-            normalize: true,
-            type: 'string',
-            describe: 'Path to typedoc.json',
-            defaultDescription: './typedoc.json',
-            group: NAME_GROUP_BUILD_REFERENCE,
-          },
           'package-json': {
-            requiresArg: true,
-            nargs: 1,
-            normalize: true,
-            type: 'string',
-            describe: 'Path to package.json',
             defaultDescription: './package.json',
+            describe: 'Path to package.json',
             group: NAME_GROUP_BUILD_REFERENCE,
-          },
-          'tsconfig-json': {
-            requiresArg: true,
             nargs: 1,
             normalize: true,
+            requiresArg: true,
             type: 'string',
-            describe: 'Path to tsconfig.json',
-            defaultDescription: './tsconfig.json',
-            group: NAME_GROUP_BUILD_REFERENCE,
           },
           title: {
-            requiresArg: true,
-            nargs: 1,
-            type: 'string',
-            describe: 'Title of the API reference',
             defaultDescription: '(extension package name)',
+            describe: 'Title of the API reference',
             group: NAME_GROUP_BUILD_REFERENCE,
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          'tsconfig-json': {
+            defaultDescription: './tsconfig.json',
+            describe: 'Path to tsconfig.json',
+            group: NAME_GROUP_BUILD_REFERENCE,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          'typedoc-json': {
+            defaultDescription: './typedoc.json',
+            describe: 'Path to typedoc.json',
+            group: NAME_GROUP_BUILD_REFERENCE,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
           },
         }),
       async (argv) => {
@@ -74,146 +152,147 @@ export async function main(argv = hideBin(process.argv)) {
       }
     )
     .command(
-      'init [sources..]',
+      'init',
       'Initialize package for docs',
       (yargs) =>
-        yargs
-          .positional('source', {
+        yargs.options({
+          copyright: {
+            descripiton: 'Copyright notice',
+            group: NAME_GROUP_INIT_MKDOCS,
+            nargs: 1,
+            requiresArg: true,
             type: 'string',
+          },
+          dir: {
+            default: '.',
+            defaultDescription: '(current directory)',
+            description: 'Directory of package',
+            group: NAME_GROUP_INIT_PATHS,
+            normalize: true,
+            type: 'string',
+          },
+          'dry-run': {
+            describe: 'Do not write any files; show what would be done',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+          force: {
+            alias: 'f',
+            describe: 'Overwrite existing configurations',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+          include: {
+            alias: 'i',
             array: true,
-            description: 'Source files to include in docs (globs OK)',
-            default: 'lib',
-            coerce: _.castArray,
-          })
-          .options({
-            dir: {
-              type: 'string',
-              default: '.',
-              normalize: true,
-              description: 'Directory of package',
-              defaultDescription: '(current directory)',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            'python-path': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'Path to python 3 executable',
-              normalize: true,
-              defaultDescription: '(derived from shell)',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            python: {
-              type: 'boolean',
-              description: 'Install Python dependencies if needed',
-              default: true,
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-            typedoc: {
-              type: 'boolean',
-              description: 'Create typedoc.json if needed',
-              default: true,
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-            typescript: {
-              type: 'boolean',
-              description: 'Create tsconfig.json if needed',
-              default: true,
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-            mkdocs: {
-              type: 'boolean',
-              description: 'Create mkdocs.yml if needed',
-              default: true,
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-            'mkdocs-path': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'Path to mkdocs.yml',
-              normalize: true,
-              defaultDescription: './mkdocs.yml',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            'site-name': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'Name of site',
-              defaultDescription: '(extension package name)',
-              group: NAME_GROUP_INIT_MKDOCS,
-            },
-            'repo-url': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'URL of extension repository',
-              defaultDescription: '(from package.json)',
-              group: NAME_GROUP_INIT_MKDOCS,
-            },
-            'site-description': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'Site description',
-              defaultDescription: '(from package.json)',
-              group: NAME_GROUP_INIT_MKDOCS,
-            },
-            'repo-name': {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              description: 'Name of extension repository',
-              defaultDescription: '(derived from --repo-url)',
-              group: NAME_GROUP_INIT_MKDOCS,
-            },
-            copyright: {
-              requiresArg: true,
-              nargs: 1,
-              type: 'string',
-              descripiton: 'Copyright notice',
-              group: NAME_GROUP_INIT_MKDOCS,
-            },
-            'tsconfig-json': {
-              requiresArg: true,
-              nargs: 1,
-              normalize: true,
-              type: 'string',
-              describe: 'Path to tsconfig.json',
-              defaultDescription: './tsconfig.json',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            'typedoc-json': {
-              requiresArg: true,
-              nargs: 1,
-              normalize: true,
-              type: 'string',
-              describe: 'Path to typedoc.json',
-              defaultDescription: './typedoc.json',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            'package-json': {
-              requiresArg: true,
-              nargs: 1,
-              normalize: true,
-              type: 'string',
-              describe: 'Path to package.json',
-              defaultDescription: './package.json',
-              group: NAME_GROUP_INIT_PATHS,
-            },
-            force: {
-              type: 'boolean',
-              describe: 'Overwrite existing configurations',
-              alias: 'f',
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-            'dry-run': {
-              type: 'boolean',
-              describe: 'Do not write any files; show what would be done',
-              group: NAME_GROUP_INIT_BEHAVIOR,
-            },
-          }),
+            coerce: (value: string | string[]) => _.castArray(value),
+            description: 'Files to include in compilation (globs OK)',
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          mkdocs: {
+            default: true,
+            description: 'Create mkdocs.yml if needed',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+          'mkdocs-yml': {
+            defaultDescription: './mkdocs.yml',
+            description: 'Path to mkdocs.yml',
+            group: NAME_GROUP_INIT_PATHS,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          'package-json': {
+            defaultDescription: './package.json',
+            describe: 'Path to package.json',
+            group: NAME_GROUP_INIT_PATHS,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          python: {
+            default: true,
+            description: 'Install Python dependencies if needed',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+          'python-path': {
+            defaultDescription: '(derived from shell)',
+            description: 'Path to python 3 executable',
+            group: NAME_GROUP_INIT_PATHS,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          'repo-name': {
+            defaultDescription: '(derived from --repo-url)',
+            description: 'Name of extension repository',
+            group: NAME_GROUP_INIT_MKDOCS,
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          'repo-url': {
+            defaultDescription: '(from package.json)',
+            description: 'URL of extension repository',
+            group: NAME_GROUP_INIT_MKDOCS,
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          'site-description': {
+            defaultDescription: '(from package.json)',
+            description: 'Site description',
+            group: NAME_GROUP_INIT_MKDOCS,
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          'site-name': {
+            defaultDescription: '(extension package name)',
+            description: 'Name of site',
+            group: NAME_GROUP_INIT_MKDOCS,
+            nargs: 1,
+            requiresArg: true,
+            type: 'string',
+          },
+          'tsconfig-json': {
+            defaultDescription: './tsconfig.json',
+            describe: 'Path to tsconfig.json',
+            group: NAME_GROUP_INIT_PATHS,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          typedoc: {
+            default: true,
+            description: 'Create typedoc.json if needed',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+          'typedoc-json': {
+            defaultDescription: './typedoc.json',
+            describe: 'Path to typedoc.json',
+            group: NAME_GROUP_INIT_PATHS,
+            nargs: 1,
+            normalize: true,
+            requiresArg: true,
+            type: 'string',
+          },
+          typescript: {
+            default: true,
+            description: 'Create tsconfig.json if needed',
+            group: NAME_GROUP_INIT_BEHAVIOR,
+            type: 'boolean',
+          },
+        }),
       async (argv) => {
         await init({...argv, overwrite: argv.force, cwd: argv.dir});
         log.success('Done (%dms)', done());
@@ -242,21 +321,32 @@ export async function main(argv = hideBin(process.argv)) {
         log.level = verbose ? LogLevelName.debug : LogLevelName[logLevel];
       }
     )
-    .showHelpOnFail(false)
-    .alias('v', 'version')
-    .help()
+
+    .fail(
+      /**
+       * Custom failure handler so we can log nicely.
+       */
+      (msg: string | null, error) => {
+        // if it is a DocutilsError, it has nothing to do with the CLI
+        if (error instanceof DocutilsError) {
+          log.error(error.message);
+        } else {
+          y.showHelp();
+          log.error(msg ?? error.message);
+        }
+        y.exit(1, error);
+      }
+    )
+    // at least one command is required (but not for --version or --help)
+    .demandCommand(1)
+    // fail if unknown option or command is provided
     .strict()
     .parseAsync();
 }
 
 if (require.main === module) {
   // eslint-disable-next-line promise/prefer-await-to-then
-  main().catch((e) => {
-    if (e instanceof DocutilsError) {
-      log.error(e.message);
-    } else {
-      log.error(e);
-    }
-    process.exitCode = 1;
+  main().catch((err) => {
+    log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);
   });
 }

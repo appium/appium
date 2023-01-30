@@ -3,33 +3,29 @@
  * @module
  */
 
-import readPkg, {NormalizedPackageJson} from 'read-pkg';
-import YAML from 'yaml';
-import findPkgDir from 'pkg-dir';
-import {DocutilsError} from './error';
+import * as JSON5 from 'json5';
 import {fs} from '@appium/support';
-import path from 'node:path';
 import _ from 'lodash';
-import log from './logger';
+import path from 'node:path';
+import _pkgDir from 'pkg-dir';
+import readPkg, {NormalizedPackageJson} from 'read-pkg';
 import {JsonValue, PackageJson} from 'type-fest';
-
-/**
- * The default output path for Typedoc, computed relative to the consuming package's root
- */
-export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join(
-  'node_modules',
-  '.cache',
-  '@appium',
-  'docutils',
-  'typedoc-out'
-);
-export const NAME_TYPEDOC_JSON = 'typedoc.json';
-export const NAME_PACKAGE_JSON = 'package.json';
+import YAML from 'yaml';
+import {NAME_PACKAGE_JSON, NAME_TYPEDOC_JSON} from './constants';
+import {DocutilsError} from './error';
+import log from './logger';
 
 /**
  * Computes a relative path
  */
-export const relative = _.curry((from: string, to: string): string => path.relative(from, to));
+export const relative = _.curry(
+  (from: string, to: string): string => `.${path.sep}${path.relative(from, to)}`
+);
+
+/**
+ * Finds path to closest `package.json`
+ */
+export const findPkgDir = _.memoize(_pkgDir);
 
 /**
  * Writes a file, but will not overwrite an existing file unless `overwrite` is true
@@ -53,6 +49,11 @@ export function safeWriteFile(filepath: string, content: JsonValue, overwrite = 
 export const readJson = _.memoize(
   async <T extends JsonValue>(filepath: string): Promise<T> =>
     JSON.parse(await fs.readFile(filepath, 'utf8'))
+);
+
+export const readJson5 = _.memoize(
+  async <T extends JsonValue>(filepath: string): Promise<T> =>
+    JSON5.parse(await fs.readFile(filepath, 'utf8'))
 );
 
 /**

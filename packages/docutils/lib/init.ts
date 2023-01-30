@@ -1,17 +1,20 @@
+import * as JSON5 from 'json5';
+import {
+  NAME_MKDOCS_YML,
+  NAME_TSCONFIG_JSON,
+  NAME_PYTHON,
+  REQUIREMENTS_TXT_PATH,
+  NAME_TYPEDOC_JSON,
+} from './constants';
 import YAML from 'yaml';
-import {fs} from '@appium/support';
-import path from 'node:path';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './init-task';
 import logger from './logger';
-import {MkDocsYml, TsConfigJson, TypeDocJson} from './types';
-import {NAME_TYPEDOC_JSON, stringifyYaml} from './util';
+import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
+import {stringifyYaml} from './util';
 
-const NAME_MKDOCS_YML = 'mkdocs.yml';
-const NAME_TSCONFIG_JSON = 'tsconfig.json';
-const NAME_PYTHON = 'python';
 /**
  * Data for the base `mkdocs.yml` file
  */
@@ -27,11 +30,6 @@ const BASE_TYPEDOC_JSON: Readonly<TypeDocJson> = Object.freeze({
   cleanOutputDir: true,
   entryPointStrategy: 'packages',
   theme: 'appium',
-  plugin: [
-    '@appium/typedoc-plugin-appium',
-    'typedoc-plugin-markdown',
-    'typedoc-plugin-resolve-crossmodule-references',
-  ],
   readme: 'none',
   entryPoints: ['.'],
 });
@@ -45,13 +43,7 @@ const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
   compilerOptions: {
     outDir: 'build',
   },
-  include: ['lib', 'src', 'test'],
 });
-
-/**
- * Path to the `requirements.txt` file (in this package)
- */
-const REQUIREMENTS_TXT_PATH = path.join(fs.findRoot(__dirname), 'requirements.txt');
 
 const log = logger.withTag('init');
 const dryRunLog = logger.withTag('dry-run');
@@ -62,7 +54,15 @@ const dryRunLog = logger.withTag('dry-run');
 export const initTsConfigJson = createScaffoldTask<InitTsConfigOptions, TsConfigJson>(
   NAME_TSCONFIG_JSON,
   BASE_TSCONFIG_JSON,
-  'TypeScript configuration'
+  'TypeScript configuration',
+  {
+    transform: (content, {include = ['lib', 'test', 'index.js']}) => ({
+      ...content,
+      include,
+    }),
+    deserialize: JSON5.parse,
+    serialize: JSON5.stringify,
+  }
 );
 
 /**
@@ -178,12 +178,12 @@ export async function init({
   typescript,
   typedoc,
   python,
-  tsConfigJson: tsConfigJsonPath,
+  tsconfigJson: tsconfigJsonPath,
   packageJson: packageJsonPath,
   overwrite,
   include,
   mkdocs,
-  mkdocsPath: mkdocsYmlPath,
+  mkdocsYml: mkdocsYmlPath,
   siteName,
   repoName,
   repoUrl,
@@ -191,7 +191,7 @@ export async function init({
   dryRun,
   cwd,
   pythonPath,
-  typedocJson: typedocJsonPath,
+  typedocJson: typeDocJsonPath,
 }: InitOptions = {}): Promise<void> {
   if (!typescript && typedoc) {
     log.warn(
@@ -201,7 +201,7 @@ export async function init({
 
   if (typescript) {
     await initTsConfigJson({
-      dest: tsConfigJsonPath,
+      dest: tsconfigJsonPath,
       packageJson: packageJsonPath,
       overwrite,
       include,
@@ -212,7 +212,7 @@ export async function init({
 
   if (typedoc) {
     await initTypeDocJson({
-      dest: typedocJsonPath,
+      dest: typeDocJsonPath,
       packageJson: packageJsonPath,
       overwrite,
       dryRun,
@@ -283,7 +283,7 @@ export type InitOptions = Simplify<
     /**
      * Path to new or existing `tsconfig.json` file
      */
-    tsConfigJson?: string;
+    tsconfigJson?: string;
     /**
      * Path to existing `package.json` file
      */
@@ -291,6 +291,6 @@ export type InitOptions = Simplify<
     /**
      * Path to new or existing `mkdocs.yml` file
      */
-    mkdocsPath?: string;
+    mkdocsYml?: string;
   }
 >;

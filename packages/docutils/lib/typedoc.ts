@@ -74,11 +74,17 @@ export interface BuildReferenceOptions {
 
 type LogLevelName = 'debug' | 'info' | 'error' | 'warn';
 
-const LogLevelMap: Record<LogLevelName, string> = {
+/**
+ * Mapping of whatever our log level is to whatever TypeDoc's should be.
+ *
+ * TypeDoc's "info" is too verbose for our needs, and it's our default, so
+ * we map it to "warn".
+ */
+const TypeDocLogLevelMap: Record<LogLevelName, string> = {
   debug: 'Verbose',
-  info: 'Info',
-  error: 'Error',
+  info: 'Warn',
   warn: 'Warn',
+  error: 'Error',
 };
 
 export async function buildReference({
@@ -124,7 +130,7 @@ export async function buildReference({
   }
 
   const extraTypedocOpts = _.pickBy(
-    {tsconfig, name: title, out, logLevel: LogLevelMap[logLevel]},
+    {tsconfig, name: title, out, logLevel: TypeDocLogLevelMap[logLevel]},
     Boolean
   ) as Record<string, string>;
 

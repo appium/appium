@@ -2,6 +2,7 @@ import {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {buildMkDocs} from '../../mkdocs';
 import {buildReference} from '../../typedoc';
 import logger from '../../logger';
+import {updateNav} from '../../nav';
 
 const log = logger.withTag('build');
 
@@ -66,6 +67,14 @@ const opts = {
     requiresArg: true,
     type: 'string',
   },
+  'reference-header': {
+    describe: 'Navigation header for API reference',
+    default: 'Reference',
+    group: NAME_GROUP_BUILD,
+    nargs: 1,
+    requiresArg: true,
+    type: 'string',
+  },
 } as const;
 
 opts as Record<string, Options>;
@@ -77,10 +86,11 @@ const buildCommand: CommandModule<{}, BuildOptions> = {
   builder: opts,
   async handler(args) {
     log.debug('Build command called with args: %O', args);
-    if (!args.onlyWeb) {
+    if (args.site) {
       await buildReference(args);
     }
-    if (!args.onlyReference) {
+    if (args.reference) {
+      await updateNav(args);
       await buildMkDocs(args);
     }
   },

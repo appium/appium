@@ -11,6 +11,7 @@ import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson} from 'read-pkg';
 import {JsonValue, PackageJson} from 'type-fest';
 import {Application, LogLevel, TypeDocReader} from 'typedoc';
+import {discoverPlugins, loadPlugins} from 'typedoc/dist/lib/utils';
 import YAML from 'yaml';
 import {NAME_MKDOCS_YML, NAME_PACKAGE_JSON, NAME_TYPEDOC_JSON} from './constants';
 import {DocutilsError} from './error';
@@ -145,12 +146,12 @@ export const readPackageJson = _.memoize(_readPkgJson);
  */
 export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
   const app = new Application();
-  // might want to loosen this a bit in the future
-  app.logger.level = LogLevel.Error;
+  app.options.setValue('plugin', 'none');
+  app.options.setValue('logger', 'none');
   // yes, this is how you do it. yes, it could be easier. no, I don't know why.
   app.options.setValue('options', typedocJsonPath);
   app.options.addReader(new TypeDocReader());
-  app.options.read(app.logger);
+  app.bootstrap();
   return app.options.getRawValues();
 });
 
@@ -170,3 +171,7 @@ export const stringifyYaml = (value: JsonValue) => YAML.stringify(value, {indent
  * @returns JSON5 string
  */
 export const stringifyJson5 = (value: JsonValue) => JSON5.stringify(value, undefined, 2);
+
+export const readYaml = _.memoize(async (filepath: string) =>
+  YAML.parse(await fs.readFile(filepath, 'utf8'))
+);

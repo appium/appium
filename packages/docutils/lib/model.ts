@@ -35,9 +35,9 @@ export type MkDocsYml = Jsonify<{
   extra?: Record<string, JsonValue>;
   hooks?: string[];
   INHERIT?: string;
-  markdown_extensions?: (string | Record<string, JsonValue>)[];
-  nav?: (string | Record<string, string>)[];
-  plugins?: (string | Record<string, JsonValue>)[];
+  markdown_extensions?: Array<string | Record<string, JsonValue>>;
+  nav?: Array<string | Record<string, string[]>>;
+  plugins?: Array<string | Record<string, JsonValue>>;
   repo_name?: string;
   repo_url?: string;
   site_dir?: string;

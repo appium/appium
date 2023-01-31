@@ -18,7 +18,7 @@ import {
 } from './constants';
 import {DocutilsError} from './error';
 import {PipPackage, TypeDocJson} from './model';
-import {findPkgDir, readJson, readJson5, relative} from './util';
+import {findPkgDir, readJson, readJson5, readTypedocJson, relative} from './util';
 import logger from './logger';
 
 const PYTHON_VER_STR = 'Python 3.';
@@ -227,7 +227,7 @@ export async function assertTypeDoc({
     }
   } else {
     try {
-      typeDocJson = await readJson(typeDocJsonPath);
+      typeDocJson = readTypedocJson(typeDocJsonPath);
     } catch (e) {
       if (e instanceof SyntaxError) {
         throw new DocutilsError(`Unparseable ${NAME_TYPEDOC_JSON} at ${relTypeDocJsonPath}: ${e}`);
@@ -267,6 +267,11 @@ export interface AssertTypeDocOpts {
   packageJsonPath?: string;
   typeDocJsonPath?: string;
 }
+
+/**
+ * @todo Implement
+ */
+export async function assertMkdocs() {}
 
 export async function validate({
   packageJson: packageJsonPath,
@@ -330,4 +335,5 @@ export interface ValidateOpts {
   tsconfigJson?: string;
   typedocJson?: string;
   packageJson?: string;
+  mkdocsYml?: string;
 }

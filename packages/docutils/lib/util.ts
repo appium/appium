@@ -3,15 +3,16 @@
  * @module
  */
 
-import * as JSON5 from 'json5';
 import {fs} from '@appium/support';
+import * as JSON5 from 'json5';
 import _ from 'lodash';
 import path from 'node:path';
 import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson} from 'read-pkg';
 import {JsonValue, PackageJson} from 'type-fest';
+import {Application, LogLevel, TypeDocReader} from 'typedoc';
 import YAML from 'yaml';
-import {NAME_PACKAGE_JSON, NAME_TYPEDOC_JSON} from './constants';
+import {NAME_MKDOCS_YML, NAME_PACKAGE_JSON, NAME_TYPEDOC_JSON} from './constants';
 import {DocutilsError} from './error';
 import log from './logger';
 
@@ -76,7 +77,7 @@ stopwatch.cache = new Map<string, number>();
  * Computes where a `typedoc.json` _should_ live
  */
 
-export const getTypedocJsonPath = _.memoize(
+export const findTypeDocJson = _.memoize(
   /**
    * @param cwd - Current working directory
    * @param packageJsonPath - Path to `package.json`
@@ -88,6 +89,23 @@ export const getTypedocJsonPath = _.memoize(
   }
 );
 
+/**
+ * @param cwd - Current working directory
+ * @param packageJsonPath - Path to `package.json`
+ * @returns Path to `mkdocs.yml`
+ */
+export const findMkDocsYml = _.memoize(async (cwd = process.cwd(), packageJsonPath?: string) => {
+  const {pkgPath} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd);
+  const pkgDir = path.dirname(pkgPath);
+  return path.join(pkgDir, NAME_MKDOCS_YML);
+});
+
+/**
+ * Given a directory path, finds closest `package.json` and reads it.
+ * @param cwd - Current working directory
+ * @param normalize - Whether or not to normalize the result
+ * @returns A {@linkcode PackageJson} object if `normalize` is `false`, otherwise a {@linkcode NormalizedPackageJson} object
+ */
 async function _readPkgJson(
   cwd: string,
   normalize: true
@@ -119,4 +137,36 @@ async function _readPkgJson(
  */
 export const readPackageJson = _.memoize(_readPkgJson);
 
-export const stringifyYaml = (value: any) => YAML.stringify(value, {indent: 4});
+/**
+ * Reads a `typedoc.json` file and returns its parsed contents.
+ *
+ * TypeDoc expands the "extends" field, which is why we use its facilities.  It, unfortunately, is a
+ * blocking operation.
+ */
+export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
+  const app = new Application();
+  // might want to loosen this a bit in the future
+  app.logger.level = LogLevel.Error;
+  // yes, this is how you do it. yes, it could be easier. no, I don't know why.
+  app.options.setValue('options', typedocJsonPath);
+  app.options.addReader(new TypeDocReader());
+  app.options.read(app.logger);
+  return app.options.getRawValues();
+});
+
+/**
+ * Stringifies a thing into a YAML
+ *
+ * The indent is 4 because Prettier
+ * @param value Something to yamlify
+ * @returns Some nice YAML 4 u
+ */
+export const stringifyYaml = (value: JsonValue) => YAML.stringify(value, {indent: 4});
+
+/**
+ * Stringifies something into JSON5.  I think the only difference between this and `JSON.stringify`
+ * is that if an object has a `toJSON5()` method, it will be used.
+ * @param value Something to stringify
+ * @returns JSON5 string
+ */
+export const stringifyJson5 = (value: JsonValue) => JSON5.stringify(value, undefined, 2);

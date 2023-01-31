@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "bin": {
-    "appium-docs": "build/lib/cli.js"
+    "appium-docs": "./build/lib/cli/index.js"
   },
   "files": [
     "index.js",
@@ -57,6 +57,7 @@
     "glob": "8.1.0",
     "json5": "2.2.3",
     "lodash": "4.17.21",
+    "pkg-dir": "5.0.0",
     "read-pkg": "5.2.0",
     "semver": "7.3.8",
     "source-map-support": "0.5.21",

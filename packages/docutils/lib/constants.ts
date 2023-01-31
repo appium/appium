@@ -21,6 +21,8 @@ export const NAME_MKDOCS = 'mkdocs';
 export const NAME_PIP = 'pip';
 
 export const NAME_NPM = 'npm';
+
+export const DEFAULT_LOG_LEVEL = 'info';
 /**
  * Blocking I/O
  */
@@ -42,10 +44,4 @@ export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_T
 /**
  * The default output path for Typedoc, computed relative to the consuming package's root
  */
-export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join(
-  'node_modules',
-  '.cache',
-  '@appium',
-  'docutils',
-  'typedoc-out'
-);
+export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join('docs', 'reference');

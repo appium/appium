@@ -10,16 +10,19 @@ import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
-import {createScaffoldTask, ScaffoldTaskOptions} from './init-task';
+import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import logger from './logger';
 import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
-import {stringifyYaml} from './util';
+import {stringifyJson5, stringifyYaml} from './util';
+import _ from 'lodash';
 
 /**
  * Data for the base `mkdocs.yml` file
  */
 const BASE_MKDOCS_YML: Readonly<MkDocsYml> = Object.freeze({
   INHERIT: './node_modules/@appium/docutils/base-mkdocs.yml',
+  docs_dir: 'docs',
+  site_dir: 'site',
 });
 
 /**
@@ -48,6 +51,7 @@ const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
 const log = logger.withTag('init');
 const dryRunLog = logger.withTag('dry-run');
 
+const DEFAULT_INCLUDE = ['lib', 'test', 'index.js'];
 /**
  * Function which scaffolds a `tsconfig.json` file
  */
@@ -56,12 +60,15 @@ export const initTsConfigJson = createScaffoldTask<InitTsConfigOptions, TsConfig
   BASE_TSCONFIG_JSON,
   'TypeScript configuration',
   {
-    transform: (content, {include = ['lib', 'test', 'index.js']}) => ({
-      ...content,
-      include,
-    }),
+    transform: (content, {include = DEFAULT_INCLUDE}) => {
+      include = [...(content.include ?? []), ...include].sort();
+      return {
+        ...content,
+        include: _.sortedUniq(include),
+      };
+    },
     deserialize: JSON5.parse,
-    serialize: JSON5.stringify,
+    serialize: stringifyJson5,
   }
 );
 

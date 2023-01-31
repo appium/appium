@@ -120,11 +120,13 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
         const err = e as NodeJS.ErrnoException;
         // this should only be thrown if `force` is false
         if (err.code === NAME_ERR_EEXIST) {
-          throw new DocutilsError(
-            `${relativeDest} already exists. To overwrite, use --force. Wanted to apply patch:\n\n${patch}`
-          );
+          log.info(`${relativeDest} already exists; continuing...`);
+          log.debug(`Tried to apply patch:\n\n${patch}`);
+        } else {
+          throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`, {
+            cause: err,
+          });
         }
-        throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`);
       }
     } else {
       log.info('No changes to %s', relativeDest);
@@ -148,6 +150,7 @@ export interface CreateScaffoldTaskOptions<Opts extends ScaffoldTaskOptions, T e
   transform?: ScaffoldTaskTransformer<Opts, T>;
   deserialize?: ScaffoldTaskDeserializer<T>;
   serialize?: ScaffoldTaskSerializer<T>;
+  toggleOption?: string;
 }
 
 export interface ScaffoldTaskOptions {

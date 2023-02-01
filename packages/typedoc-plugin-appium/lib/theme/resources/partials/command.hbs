@@ -1,6 +1,8 @@
 {{#unless hasOwnDocument}}
 
-### {{#ifNamedAnchors}} <a id="{{anchor}}" name="{{this.anchor}}"></a> {{/ifNamedAnchors}}`{{httpMethod}}` `{{name}}`
+### {{#ifNamedAnchors}} <a id="{{anchor}}" name="{{this.anchor}}"></a> {{/ifNamedAnchors}}`{{name}}`
+
+`{{httpMethod}}` **`{{route}}`**
 
 {{#if hasComment}}
 {{> comment}}

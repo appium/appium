@@ -107,6 +107,7 @@ export class CommandReflection extends DeclarationReflection {
       commentSource,
       parameters,
       signature,
+      command,
     } = data;
 
     // kind-specific data
@@ -119,7 +120,7 @@ export class CommandReflection extends DeclarationReflection {
       if (!route) {
         throw new TypeError('"route" arg is required for a non-execute-method command');
       }
-      name = route;
+      name = command;
       kind = AppiumPluginReflectionKind.Command;
       httpMethod = data.httpMethod;
     }

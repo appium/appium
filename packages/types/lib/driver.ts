@@ -405,7 +405,7 @@ export interface SessionHandler<
    * Start a new automation session
    * @see {@link https://w3c.github.io/webdriver/#new-session}
    *
-   * @remarks
+   * @privateRemarks
    * The shape of this method is strange because it used to support both JSONWP and W3C
    * capabilities. This will likely change in the future to simplify.
    *

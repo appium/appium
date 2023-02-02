@@ -1,3 +1,9 @@
+/**
+ * Scaffolding functions for CLI `init` command
+ *
+ * @module
+ */
+
 import * as JSON5 from 'json5';
 import {
   NAME_MKDOCS_YML,
@@ -49,7 +55,7 @@ const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
 });
 
 const log = logger.withTag('init');
-const dryRunLog = logger.withTag('dry-run');
+const dryRunLog = log.withTag('dry-run');
 
 const DEFAULT_INCLUDE = ['lib', 'test', 'index.js'];
 /**
@@ -60,11 +66,21 @@ export const initTsConfigJson = createScaffoldTask<InitTsConfigOptions, TsConfig
   BASE_TSCONFIG_JSON,
   'TypeScript configuration',
   {
-    transform: (content, {include = DEFAULT_INCLUDE}) => {
-      include = [...(content.include ?? []), ...include].sort();
+    /**
+     * Merges the contents of the `include` property with any passed on the CLI. If neither exists,
+     * uses the default set of includes.
+     * @param content Parsed and/or scaffolded `tsconfig.json`
+     * @param opts Options specific to this task
+     * @returns `tsconfig.json` content with potentially-modified `include` prop
+     */
+    transform: (content, {include}) => {
+      include = [...(content.include ?? include ?? [])];
+      if (_.isEmpty(include)) {
+        include = [...DEFAULT_INCLUDE];
+      }
       return {
         ...content,
-        include: _.sortedUniq(include),
+        include: _.uniq(include),
       };
     },
     deserialize: JSON5.parse,

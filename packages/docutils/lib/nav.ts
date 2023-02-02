@@ -28,6 +28,7 @@ export async function updateNav<S extends string>({
   mkdocsYml: mkDocsYmlPath,
   packageJson: packageJsonPath,
   referenceHeader = <S>DEFAULT_REFERENCE_HEADER,
+  noReferenceHeader = false,
   typedocJson: typeDocJsonPath,
   dryRun = false,
 }: UpdateNavOpts<S> = {}) {
@@ -102,7 +103,7 @@ export async function updateNav<S extends string>({
 
   log.debug('New reference filepaths: %O', newRefFilepaths);
 
-  const navUsesHeaders = !isStringArray(nav);
+  const navUsesHeaders = noReferenceHeader || !isStringArray(nav);
   let shouldWriteMkDocsYml = false;
   let refFilepaths: string[];
   let nonRefFilepaths: string[];
@@ -159,6 +160,10 @@ export interface UpdateNavOpts<S extends string> {
   mkdocsYml?: string;
   packageJson?: string;
   referenceHeader?: S;
+  /**
+   * If `true`, do not add a reference header to `nav` if one does not exist
+   */
+  noReferenceHeader?: boolean;
   typedocJson?: string;
   dryRun?: boolean;
 }

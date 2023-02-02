@@ -75,6 +75,11 @@ const opts = {
     requiresArg: true,
     type: 'string',
   },
+  'no-reference-header': {
+    describe: 'Do not add a navigation header for API reference',
+    group: NAME_GROUP_BUILD,
+    type: 'boolean',
+  },
 } as const;
 
 opts as Record<string, Options>;

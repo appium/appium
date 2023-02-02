@@ -4,8 +4,15 @@
  * @module
  */
 
+import _ from 'lodash';
 import pluralize from 'pluralize';
-import {ContainerReflection, Context, DeclarationReflection, ProjectReflection} from 'typedoc';
+import {
+  ContainerReflection,
+  Context,
+  DeclarationReflection,
+  ProjectReflection,
+  ReflectionKind,
+} from 'typedoc';
 import {isParentReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {
@@ -19,6 +26,7 @@ import {
   ProjectCommands,
   Route,
 } from '../model';
+import {NAME_BUILTIN_COMMAND_MODULE} from './builtin-method-map';
 import {findChildByNameAndGuard} from './utils';
 
 /**
@@ -58,7 +66,6 @@ export function createCommandReflection(
  * Note that the return value is mainly for informational purposes, since this method mutates
  * TypeDoc's state.
  * @param log - Logger
- * @param ctx - Current context
  * @param parent - Parent module (or project)
  * @param moduleCmds - Command information for `module`
  * @internal
@@ -66,11 +73,11 @@ export function createCommandReflection(
 export function createExtensionReflection(
   log: AppiumPluginLogger,
   ctx: Context,
-  parent: ParentReflection,
+  name: string,
   moduleCmds: ModuleCommands
 ): ExtensionReflection {
   // TODO: parent.name may not be right here
-  const extRefl = new ExtensionReflection(parent.name, parent, moduleCmds);
+  const extRefl = new ExtensionReflection(name, ctx.project, moduleCmds);
   /**
    * See note in {@link createCommandReflection} above about this call
    */
@@ -121,7 +128,7 @@ export function createReflections(
         ? project
         : findChildByNameAndGuard(project, parentName, isParentReflection)!;
 
-    const cmdsRefl = createExtensionReflection(log, ctx, parentRefl, parentCmds);
+    const cmdsRefl = createExtensionReflection(log, ctx, parentRefl.name, parentCmds);
 
     log.info(
       '(%s) Created %d new command %s',
@@ -149,6 +156,32 @@ export function omitDefaultReflections(
     project.removeReflection(childRefl);
     removed.add(childRefl);
   }
+
+  return removed;
+}
+
+/**
+ * Removes extension reflection(s) which are part of Appium itself.  This is desirable for most
+ * extension authors.
+ * @param project - Current TypeDoc project
+ * @param refl - A {@linkcode ContainerReflection} to remove children from; defaults to `project`
+ * @returns A set of removed {@linkcode DeclarationReflection}s
+ */
+export function omitBuiltinReflections(
+  project: ProjectReflection,
+  refl: ContainerReflection = project
+) {
+  let removed = new Set<DeclarationReflection>();
+
+  const extRefls = refl.getChildrenByKind(
+    AppiumPluginReflectionKind.Extension as any
+  ) as DeclarationReflection[];
+  const builtinRefl = _.find(extRefls, {name: NAME_BUILTIN_COMMAND_MODULE});
+  if (!builtinRefl) {
+    throw new Error(`Could not find builtin commands reflection "${NAME_BUILTIN_COMMAND_MODULE}"`);
+  }
+  project.removeReflection(builtinRefl);
+  removed.add(builtinRefl);
 
   return removed;
 }

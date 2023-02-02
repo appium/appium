@@ -1,5 +1,10 @@
+import pluralize from 'pluralize';
 import {CommandModule, InferredOptionTypes, Options} from 'yargs';
-import {validate} from '../../validate';
+import {DocutilsError} from '../../error';
+import {DocutilsValidator, ValidationKind} from '../../validate';
+import logger from '../../logger';
+
+const log = logger.withTag('validate');
 
 const NAME_GROUP_VALIDATE = 'Validation:';
 
@@ -49,6 +54,24 @@ const opts = {
     group: NAME_GROUP_VALIDATE,
     type: 'boolean',
   },
+  mkdocsYml: {
+    defaultDescription: './mkdocs.yml',
+    description: 'Path to mkdocs.yml',
+    group: NAME_GROUP_VALIDATE,
+    nargs: 1,
+    normalize: true,
+    requiresArg: true,
+    type: 'string',
+  },
+  npmPath: {
+    defaultDescription: '(derived from shell)',
+    description: 'Path to npm executable',
+    group: NAME_GROUP_VALIDATE,
+    nargs: 1,
+    normalize: true,
+    requiresArg: true,
+    type: 'string',
+  },
 } as const;
 opts as Record<string, Options>;
 type ValidateOptions = InferredOptionTypes<typeof opts>;
@@ -63,7 +86,29 @@ const validateCommand: CommandModule<{}, ValidateOptions> = {
         'No validation targets specified; one or more of --python, --typescript or --typedoc must be provided'
       );
     }
-    await validate(args);
+
+    let errorCount = 0;
+    const validator = new DocutilsValidator(args)
+      .once(DocutilsValidator.BEGIN, (kinds: ValidationKind[]) => {
+        log.info(`Validating: ${kinds.join(', ')}`);
+      })
+      .once(DocutilsValidator.END, (errCount: number) => {
+        errorCount = errCount;
+      })
+      .on(DocutilsValidator.FAILURE, (err: DocutilsError) => {
+        log.error(err.message);
+      })
+      .on(DocutilsValidator.SUCCESS, (msg: string) => {
+        log.success(msg);
+      });
+
+    await validator.validate();
+
+    if (errorCount) {
+      throw new DocutilsError(
+        `Validation failed with ${errorCount} ${pluralize('error', errorCount)}`
+      );
+    }
   },
 };
 

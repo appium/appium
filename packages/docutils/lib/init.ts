@@ -13,8 +13,8 @@ import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import logger from './logger';
 import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
-import {stringifyJson5, stringifyYaml} from './util';
 import _ from 'lodash';
+import {stringifyJson5, stringifyYaml} from './fs';
 
 /**
  * Data for the base `mkdocs.yml` file

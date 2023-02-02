@@ -5,8 +5,9 @@ import path from 'node:path';
 import {Application, ArgumentsReader, TypeDocOptions, TypeDocReader} from 'typedoc';
 import {DEFAULT_LOG_LEVEL, DEFAULT_REL_TYPEDOC_OUT_PATH, NAME_TYPEDOC_JSON} from './constants';
 import {DocutilsError} from './error';
+import {guessTypeDocJsonPath, readTypedocJson} from './fs';
 import log from './logger';
-import {findTypeDocJson, readTypedocJson, relative, stopwatch} from './util';
+import {relative, stopwatch} from './util';
 
 /**
  * Replaces TypeDoc's homebrew "glob" implementation with a real one
@@ -96,7 +97,7 @@ export async function buildReference({
   title,
 }: BuildReferenceOptions = {}) {
   const stop = stopwatch('buildReference');
-  typeDocJsonPath = typeDocJsonPath ?? (await findTypeDocJson(cwd, packageJsonPath));
+  typeDocJsonPath = typeDocJsonPath ?? (await guessTypeDocJsonPath(cwd, packageJsonPath));
   const pkgRoot = fs.findRoot(cwd);
   const relativePath = relative(cwd);
   const relativeTypeDocJsonPath = relativePath(typeDocJsonPath);

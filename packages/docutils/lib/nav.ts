@@ -1,19 +1,18 @@
+import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
-import {fs} from '@appium/support';
+import {DEFAULT_REL_TYPEDOC_OUT_PATH} from './constants';
 import {
-  findMkDocsYml,
-  findTypeDocJson,
+  guessMkDocsYmlPath,
+  guessTypeDocJsonPath,
   readTypedocJson,
   readYaml,
-  relative,
   safeWriteFile,
   stringifyYaml,
-} from './util';
-import {DEFAULT_REL_TYPEDOC_OUT_PATH} from './constants';
+} from './fs';
 import logger from './logger';
 import {MkDocsYml} from './model';
-import {IterableElement} from 'type-fest';
+import {relative} from './util';
 
 const DEFAULT_REFERENCE_HEADER = 'Reference';
 
@@ -33,8 +32,8 @@ export async function updateNav<S extends string>({
   dryRun = false,
 }: UpdateNavOpts<S> = {}) {
   [mkDocsYmlPath, typeDocJsonPath] = await Promise.all([
-    mkDocsYmlPath ?? findMkDocsYml(cwd, packageJsonPath),
-    typeDocJsonPath ?? findTypeDocJson(cwd, packageJsonPath),
+    mkDocsYmlPath ?? guessMkDocsYmlPath(cwd, packageJsonPath),
+    typeDocJsonPath ?? guessTypeDocJsonPath(cwd, packageJsonPath),
   ]);
   const relativePath = relative(cwd);
   const relMkDocsYmlPath = relativePath(mkDocsYmlPath);

@@ -1,3 +1,8 @@
+/**
+ * Implementation of a generic "create and/or update some file" task
+ * @module
+ */
+
 import {fs} from '@appium/support';
 import logger from './logger';
 import path from 'node:path';
@@ -13,7 +18,7 @@ const NAME_ERR_ENOENT = 'ENOENT';
 const NAME_ERR_EEXIST = 'EEXIST';
 
 const log = logger.withTag('init');
-const dryRunLog = logger.withTag('dry-run');
+const dryRunLog = log.withTag('dry-run');
 
 /**
  * Creates a unified patch for display in "dry run" mode
@@ -35,11 +40,19 @@ function makePatch<T extends JsonValue>(
   );
 }
 
+/**
+ * Options for a task which are not the {@link ScaffoldTaskOptions base options}
+ */
 export type TaskSpecificOpts<Opts extends ScaffoldTaskOptions> = Omit<
   Opts,
-  'overwrite' | 'cwd' | 'packageJson' | 'dest' | 'dryRun'
+  keyof ScaffoldTaskOptions
 >;
 
+/**
+ * A function which performs some scaffolding task.
+ *
+ * @see {@linkcode createScaffoldTask}
+ */
 export type ScaffoldTask<Opts extends ScaffoldTaskOptions, T extends JsonObject> = (
   opts: Opts
 ) => Promise<ScaffoldTaskResult<T>>;
@@ -135,23 +148,47 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
   };
 }
 
+/**
+ * Optional function which can be used to post-process the content of a file. Usually used to merge
+ * various options with existing content
+ */
 export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
   content: Readonly<T>,
   opts: TaskSpecificOpts<Opts>,
   pkg: NormalizedPackageJson
 ) => T;
 
-export type ScaffoldTaskDeserializer<T extends JsonValue> = (content: string) => T;
+/**
+ * A function which deserializes a string into a JS value.
+ */
+export type ScaffoldTaskDeserializer<T> = (content: string) => T;
 
-export type ScaffoldTaskSerializer<T extends JsonValue> = (content: T) => string;
+/**
+ * A function which serializes a JS value into a string.
+ */
+export type ScaffoldTaskSerializer<T> = (content: T) => string;
 
+/**
+ * Options for {@linkcode createScaffoldTask}
+ */
 export interface CreateScaffoldTaskOptions<Opts extends ScaffoldTaskOptions, T extends JsonValue> {
+  /**
+   * Transformer function
+   */
   transform?: ScaffoldTaskTransformer<Opts, T>;
+  /**
+   * Deserializer function
+   */
   deserialize?: ScaffoldTaskDeserializer<T>;
+  /**
+   * Serializer function
+   */
   serialize?: ScaffoldTaskSerializer<T>;
-  toggleOption?: string;
 }
 
+/**
+ * Base options for all scaffold tasks
+ */
 export interface ScaffoldTaskOptions {
   /**
    * Current working directory
@@ -175,7 +212,16 @@ export interface ScaffoldTaskOptions {
   packageJson?: string;
 }
 
+/**
+ * The return value of a {@linkcode ScaffoldTask}
+ */
 export interface ScaffoldTaskResult<T> {
+  /**
+   * The content of whatever it wrote or would write
+   */
   content: T;
+  /**
+   * The filepath of whatever it wrote or would write
+   */
   path: string;
 }

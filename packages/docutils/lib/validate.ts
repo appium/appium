@@ -1,3 +1,9 @@
+/**
+ * Validates an environment for building documentation
+ *
+ * @module
+ */
+
 import {fs} from '@appium/support';
 import chalk from 'chalk';
 import _ from 'lodash';
@@ -44,6 +50,9 @@ const TYPEDOC_VERSION_REGEX = /TypeDoc\s(\d+\.\d+\..+)/;
 
 const log = logger.withTag('validate');
 
+/**
+ * The "kinds" of validation which were requested to be performed
+ */
 export type ValidationKind =
   | typeof NAME_PYTHON
   | typeof NAME_TYPESCRIPT
@@ -56,8 +65,31 @@ export type ValidationKind =
  *
  * Whenever a method _rejects or throws_, this is considered an "unexpected" error, and the validation
  * will abort.
+ *
+ * @todo Use [`strict-event-emitter-types`](https://npm.im/strict-event-emitter-types)
  */
 export class DocutilsValidator extends EventEmitter {
+  /**
+   * Current working directory. Defaults to `process.cwd()`
+   * @todo This cannot yet be overriden by user
+   */
+  protected readonly cwd: string;
+
+  /**
+   * Path to `npm` executable. Defaults to `npm`
+   */
+  protected readonly npmPath: string;
+
+  /**
+   * Path to `python` executable. Defaults to `python`
+   */
+  protected readonly pythonPath: string;
+
+  /**
+   * List of validations to perform
+   */
+  protected readonly validations = new Set<ValidationKind>();
+
   /**
    * Mapping of error messages to errors.
    *
@@ -66,42 +98,28 @@ export class DocutilsValidator extends EventEmitter {
    *
    * Reset after {@linkcode DocutilsValidator.validate validate} completes.
    */
-  private emittedErrors = new Map<string, DocutilsError>();
-
-  /**
-   * Current working directory. Defaults to `process.cwd()`
-   * @todo This cannot yet be overriden by user
-   */
-  protected readonly cwd: string;
-  /**
-   * Path to `npm` executable. Defaults to `npm`
-   */
-  protected readonly npmPath: string;
-  /**
-   * Path to `python` executable. Defaults to `python`
-   */
-  protected readonly pythonPath: string;
-  /**
-   * List of validations to perform
-   */
-  protected readonly validations = new Set<ValidationKind>();
+  protected emittedErrors = new Map<string, DocutilsError>();
 
   /**
    * Path to `mkdocs.yml`.  If not provided, will be lazily resolved.
    */
   protected mkDocsYmlPath: string | undefined;
+
   /**
    * Path to `package.json`.  If not provided, will be lazily resolved.
    */
   protected packageJsonPath: string | undefined;
+
   /**
    * Path to the package directory.  If not provided, will be lazily resolved.
    */
   protected pkgDir: string | undefined;
+
   /**
    * Path to `tsconfig.json`.  If not provided, will be lazily resolved.
    */
   protected tsconfigJsonPath: string | undefined;
+
   /**
    * Path to `typedoc.json`.  If not provided, will be lazily resolved.
    */
@@ -112,16 +130,19 @@ export class DocutilsValidator extends EventEmitter {
    * @event
    */
   public static readonly BEGIN = 'begin';
+
   /**
    * Emitted when validation ends with an error count
    * @event
    */
   public static readonly END = 'end';
+
   /**
    * Emitted when a validation fails, with the associated {@linkcode DocutilsError}
    * @event
    */
   public static readonly FAILURE = 'fail';
+
   /**
    * Emitted when a validation succeeds
    * @event
@@ -217,6 +238,10 @@ export class DocutilsValidator extends EventEmitter {
     );
   }
 
+  /**
+   * Emits a {@linkcode DocutilsValidator.SUCCESS} event
+   * @param message Success message
+   */
   protected ok(message: string) {
     this.emit(DocutilsValidator.SUCCESS, message);
   }
@@ -248,10 +273,16 @@ export class DocutilsValidator extends EventEmitter {
     return requiredPackages;
   }
 
+  /**
+   * Resets the cache of emitted errors
+   */
   protected reset() {
     this.emittedErrors.clear();
   }
 
+  /**
+   * @todo implement
+   */
   protected async validateMkDocs() {}
 
   /**
@@ -552,15 +583,49 @@ export class DocutilsValidator extends EventEmitter {
   }
 }
 
+/**
+ * Options for {@linkcode DocutilsValidator} constructor
+ */
+
 export interface DocutilsValidatorOpts {
+  /**
+   * Current working directory
+   */
   cwd?: string;
+  /**
+   * Path to `mkdocs.yml`
+   */
   mkdocsYml?: string;
+  /**
+   * Path to `npm` executable
+   */
   npm?: string;
+  /**
+   * Path to `package.json`
+   */
   packageJson?: string;
+  /**
+   * If `true`, run Python validation
+   */
   python?: boolean;
+  /**
+   * Path to `python` executable
+   */
   pythonPath?: string;
+  /**
+   * Path to `tsconfig.json`
+   */
   tsconfigJson?: string;
+  /**
+   * If `true`, run TypeDoc validation
+   */
   typedoc?: boolean;
+  /**
+   * Path to `typedoc.json`
+   */
   typedocJson?: string;
+  /**
+   * If `true`, run TypeScript validation
+   */
   typescript?: boolean;
 }

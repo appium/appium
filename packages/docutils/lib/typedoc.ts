@@ -1,3 +1,9 @@
+/**
+ * Runs TypeDoc
+ *
+ * @module
+ */
+
 import {fs} from '@appium/support';
 import glob from 'glob';
 import _ from 'lodash';
@@ -37,15 +43,15 @@ const argify: (obj: Record<string, string>) => string[] = _.flow(_.entries, _.fl
 );
 
 /**
- * Executes TypeDoc in the current process
+ * Executes TypeDoc _in the current process_
  *
- * Monkeypatch's TypeDoc's homebrew "glob" implementation because it is broken
+ * Monkeypatches TypeDoc's homebrew "glob" implementation because it is broken
  * @param pkgRoot - Package root path
  * @param opts - TypeDoc options
  */
 export async function runTypedoc(pkgRoot: string, opts: Record<string, string>) {
   monkeyPatchGlob(pkgRoot);
-  log.debug('Monkeypatched TypeDoc\'s "glob" implementation');
+  log.debug('Monkeypatched TypeDoc');
 
   const args = argify(opts);
   log.debug('TypeDoc args:', args);
@@ -53,19 +59,39 @@ export async function runTypedoc(pkgRoot: string, opts: Record<string, string>) 
   app.options.addReader(new TypeDocReader());
   app.options.addReader(new ArgumentsReader(100, args));
   app.bootstrap();
-  log.debug('Final TypeDoc options: %O', app.options.getRawValues());
-  const project = app.convert();
+  log.debug('Frozen options as computed by TypeDoc: %O', app.options.getRawValues());
   const out = app.options.getValue('out');
-  if (project && out) {
-    await app.generateDocs(project, out);
+  const project = app.convert();
+  if (project) {
+    return await app.generateDocs(project, out);
   }
+
+  throw new DocutilsError('TypeDoc found nothing to document. Is your package empty?');
 }
 
+/**
+ * Options for {@linkcode buildReference}
+ */
 export interface BuildReferenceOptions {
+  /**
+   * Path to `typedoc.json`
+   */
   typedocJson?: string;
+  /**
+   * Current working directory
+   */
   cwd?: string;
+  /**
+   * Path to `package.json`
+   */
   packageJson?: string;
+  /**
+   * Path to `tsconfig.json`
+   */
   tsconfigJson?: string;
+  /**
+   * "Title" for generated docs; this corresponds to {@linkcode typedoc.TypeDocOptionMap.name}
+   */
   title?: string;
   /**
    * This is here because we pass it thru to TypeDoc
@@ -73,6 +99,11 @@ export interface BuildReferenceOptions {
   logLevel?: LogLevelName;
 }
 
+/**
+ * Log level names as supported by this package
+ *
+ * Used to convert our log level to TypeDoc's
+ */
 type LogLevelName = 'debug' | 'info' | 'error' | 'warn';
 
 /**
@@ -88,6 +119,10 @@ const TypeDocLogLevelMap: Record<LogLevelName, string> = {
   error: 'Error',
 };
 
+/**
+ * Build reference documentation via TypeDoc
+ * @param opts - Options
+ */
 export async function buildReference({
   typedocJson: typeDocJsonPath,
   cwd = process.cwd(),

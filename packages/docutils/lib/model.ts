@@ -1,5 +1,6 @@
 /**
- * Utility types
+ * Various data models, mostly referring to config files
+ *
  * @module
  */
 
@@ -8,6 +9,10 @@ import type {TypeDocOptions} from 'typedoc';
 
 /**
  * A `tsconfig.json` file w/ `$schema` prop
+ *
+ * Due to some `unknown` types in {@linkcode type-fest.TsConfigJson}, we cannot use that type
+ * directly and need to use `Jsonify`.
+ *
  */
 export type TsConfigJson = Jsonify<
   TsConfigJsonBase & {
@@ -17,6 +22,9 @@ export type TsConfigJson = Jsonify<
 
 /**
  * A `typedoc.json` file w/ `$schema` and `extends` props
+ *
+ * TypeDoc doesn't recognize `$schema` and ignores it; its own config parser expands the value of
+ * `extends` before it reaches its `Options` class. This is why we cannot use `TypeDocOptions` directly.
  */
 export type TypeDocJson = Jsonify<
   Partial<TypeDocOptions> & {
@@ -25,6 +33,10 @@ export type TypeDocJson = Jsonify<
   }
 >;
 
+/**
+ * This was built by hand from the MkDocs documentation
+ * @see https://www.mkdocs.org/user-guide/configuration/
+ */
 export type MkDocsYml = Jsonify<{
   copyright?: string;
   dev_addr?: string;
@@ -52,6 +64,10 @@ export type MkDocsYml = Jsonify<{
   watch?: string[];
 }>;
 
+/**
+ * The `theme` prop of an `mkdocs.yml`
+ * @see {@linkcode MkDocsYml}
+ */
 export type MkDocsYmlTheme =
   | string
   | ({
@@ -61,6 +77,9 @@ export type MkDocsYmlTheme =
       static_templates?: string[];
     } & Record<string, JsonValue>);
 
+/**
+ * The data parsed from a `requirements.txt` file, or the output of `pip list --json`
+ */
 export interface PipPackage {
   name: string;
   version: string;

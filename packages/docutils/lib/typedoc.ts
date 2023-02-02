@@ -12,8 +12,10 @@ import {Application, ArgumentsReader, TypeDocOptions, TypeDocReader} from 'typed
 import {DEFAULT_LOG_LEVEL, DEFAULT_REL_TYPEDOC_OUT_PATH, NAME_TYPEDOC_JSON} from './constants';
 import {DocutilsError} from './error';
 import {guessTypeDocJsonPath, readTypedocJson} from './fs';
-import log from './logger';
+import logger from './logger';
 import {relative, stopwatch} from './util';
+
+const log = logger.withTag('typedoc');
 
 /**
  * Replaces TypeDoc's homebrew "glob" implementation with a real one

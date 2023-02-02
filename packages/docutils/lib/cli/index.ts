@@ -21,9 +21,9 @@ export async function main(argv = hideBin(process.argv)) {
   const y = yargs(argv);
   return await y
     .scriptName(NAME_BIN)
-    .command(validate)
     .command(build)
     .command(init)
+    .command(validate)
     .options({
       verbose: {
         alias: 'V',
@@ -46,10 +46,9 @@ export async function main(argv = hideBin(process.argv)) {
         const {logLevel, verbose} = argv;
         if (verbose) {
           argv.logLevel = 'debug';
-          log.level = LogLevelName.debug;
-        } else {
-          log.level = LogLevelName[logLevel];
+          log.debug('Debug logging enabled via --verbose');
         }
+        log.level = LogLevelName[logLevel];
       }
     )
     .fail(

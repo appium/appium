@@ -3,6 +3,7 @@ import {buildMkDocs} from '../../mkdocs';
 import {buildReference} from '../../typedoc';
 import logger from '../../logger';
 import {updateNav} from '../../nav';
+import {stopwatch} from '../../util';
 
 const log = logger.withTag('build');
 
@@ -90,7 +91,14 @@ const buildCommand: CommandModule<{}, BuildOptions> = {
   describe: 'Build Appium extension documentation',
   builder: opts,
   async handler(args) {
+    const stop = stopwatch('build');
     log.debug('Build command called with args: %O', args);
+    if (!args.site && !args.reference) {
+      // specifically not a DocUtils error
+      throw new Error(
+        'Cannot use both --no-site (--site=false) and --no-reference (--reference=false)'
+      );
+    }
     if (args.site) {
       await buildReference(args);
     }
@@ -98,6 +106,7 @@ const buildCommand: CommandModule<{}, BuildOptions> = {
       await updateNav(args);
       await buildMkDocs(args);
     }
+    log.success('Done! (total: %dms)', stop());
   },
 };
 

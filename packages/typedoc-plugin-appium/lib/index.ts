@@ -4,12 +4,20 @@
  */
 
 import _ from 'lodash';
+import pluralize from 'pluralize';
 import {Application, Context, Converter, DeclarationReflection} from 'typedoc';
-import {convertCommands, createReflections, omitDefaultReflections} from './converter';
+import {
+  convertCommands,
+  createReflections,
+  omitBuiltinReflections,
+  omitDefaultReflections,
+} from './converter';
 import {AppiumPluginLogger, AppiumPluginParentLogger} from './logger';
 import {ExtensionReflection, NS, ProjectCommands} from './model';
 import {configureOptions, declarations} from './options';
 import {configureTheme, THEME_NAME} from './theme';
+
+let log: AppiumPluginLogger;
 
 /**
  * Loads the Appium TypeDoc plugin.
@@ -48,7 +56,7 @@ export async function convert(app: Application): Promise<ConvertResult> {
       let projectCommands: ProjectCommands | undefined;
 
       // we don't want to do this work if we're not using the custom theme!
-      const log = new AppiumPluginLogger(app.logger, NS);
+      log = log ?? new AppiumPluginLogger(app.logger, NS);
 
       // this should not be necessary given the `AppiumPluginOptionsReader` forces the issue, but
       // it's a safeguard nonetheless.
@@ -98,12 +106,22 @@ export interface ConvertResult {
  * @returns Typedoc `Context` at the time of the {@linkcode Converter.EVENT_RESOLVE_END} event
  */
 export async function postProcess(app: Application): Promise<PostProcessResult> {
+  log = log ?? new AppiumPluginLogger(app.logger, NS);
   return new Promise((resolve) => {
     app.converter.once(Converter.EVENT_RESOLVE_END, (ctx: Context) => {
       let removed: Set<DeclarationReflection> | undefined;
       // if the `outputModules` option is false, then we want to remove all the usual TypeDoc reflections.
       if (!app.options.getValue(declarations.outputModules.name)) {
         removed = omitDefaultReflections(ctx.project);
+        log.info('%s omitted from output', pluralize('default reflection', removed.size, true));
+      }
+      if (!app.options.getValue(declarations.outputBuiltinCommands.name)) {
+        const removedBuiltinRefls = omitBuiltinReflections(ctx.project);
+        removed = new Set([...(removed ?? []), ...removedBuiltinRefls]);
+        log.info(
+          '%s omitted from output',
+          pluralize('builtin reflection', removedBuiltinRefls.size, true)
+        );
       }
       resolve({ctx, removed});
     });

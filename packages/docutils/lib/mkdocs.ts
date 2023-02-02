@@ -6,9 +6,9 @@
 
 import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
 import {NAME_MKDOCS} from './constants';
-import {guessMkDocsYmlPath} from './fs';
+import {guessMkDocsYmlPath, readYaml} from './fs';
 import logger from './logger';
-import {stopwatch, TupleToObject} from './util';
+import {relative, stopwatch, TupleToObject} from './util';
 
 const log = logger.withTag('mkdocs');
 
@@ -57,6 +57,7 @@ export async function buildMkDocs({
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
   mkdocsYmlPath = mkdocsYmlPath ?? (await guessMkDocsYmlPath(cwd, packageJsonPath));
+  const relativePath = relative(cwd);
   const mkdocsArgs = ['-f', mkdocsYmlPath, '-t', theme];
   if (siteDir) {
     mkdocsArgs.push('-d', siteDir);
@@ -68,7 +69,14 @@ export async function buildMkDocs({
   } else {
     log.debug('Launching %s build with args: %O', NAME_MKDOCS, mkdocsArgs);
     await doBuild(NAME_MKDOCS, mkdocsArgs, execOpts);
-    log.success('Built site with %s (%dms)', NAME_MKDOCS, stop());
+    let relSiteDir;
+    if (siteDir) {
+      relSiteDir = relativePath(siteDir);
+    } else {
+      ({site_dir: siteDir} = await readYaml(mkdocsYmlPath));
+      relSiteDir = relativePath(siteDir!);
+    }
+    log.success('MkDocs finished building into %s (%dms)', relSiteDir, stop());
   }
 }
 

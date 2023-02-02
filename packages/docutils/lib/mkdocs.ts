@@ -1,7 +1,8 @@
 import {exec, SubProcess} from 'teen_process';
 import {NAME_MKDOCS} from './constants';
-import {findMkDocsYml, stopwatch} from './util';
+import {guessMkDocsYmlPath} from './fs';
 import logger from './logger';
+import {stopwatch} from './util';
 
 const log = logger.withTag('mkdocs');
 
@@ -34,7 +35,7 @@ export async function buildMkDocs({
   packageJson: packageJsonPath,
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
-  mkdocsYmlPath = mkdocsYmlPath ?? (await findMkDocsYml(cwd, packageJsonPath));
+  mkdocsYmlPath = mkdocsYmlPath ?? (await guessMkDocsYmlPath(cwd, packageJsonPath));
   const mkdocsArgs = ['build', '-f', mkdocsYmlPath, '-t', theme];
   if (siteDir) {
     mkdocsArgs.push('-d', siteDir);

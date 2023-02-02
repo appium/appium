@@ -5,16 +5,15 @@ import {createPatch} from 'diff';
 import {NormalizedPackageJson} from 'read-pkg';
 import {JsonValue, JsonObject} from 'type-fest';
 import {DocutilsError} from './error';
-import {relative, readPackageJson, safeWriteFile} from './util';
+import {relative} from './util';
 import _ from 'lodash';
+import {stringifyJson, readPackageJson, safeWriteFile} from './fs';
 
 const NAME_ERR_ENOENT = 'ENOENT';
 const NAME_ERR_EEXIST = 'EEXIST';
 
 const log = logger.withTag('init');
 const dryRunLog = logger.withTag('dry-run');
-
-const jsonStringify = _.partial(JSON.stringify, _, undefined, 2);
 
 /**
  * Creates a unified patch for display in "dry run" mode
@@ -23,11 +22,11 @@ const jsonStringify = _.partial(JSON.stringify, _, undefined, 2);
  * @param newData - New Data
  * @returns Patch string
  */
-function makePatch(
+function makePatch<T extends JsonValue>(
   filename: string,
-  oldData: JsonValue | string,
-  newData: JsonValue | string,
-  serializer = jsonStringify
+  oldData: T | string,
+  newData: T | string,
+  serializer: ScaffoldTaskSerializer<T> = stringifyJson
 ) {
   return createPatch(
     filename,
@@ -61,7 +60,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
   {
     transform = _.identity,
     deserialize = JSON.parse,
-    serialize = jsonStringify,
+    serialize = stringifyJson,
   }: CreateScaffoldTaskOptions<Opts, T> = {}
 ): ScaffoldTask<Opts, T> {
   return async ({

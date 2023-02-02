@@ -22,9 +22,10 @@ import {
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
+import {findPkgDir, readJson5, readTypedocJson} from './fs';
 import logger from './logger';
 import {PipPackage, TypeDocJson} from './model';
-import {findPkgDir, readJson5, readTypedocJson, relative} from './util';
+import {relative} from './util';
 
 /**
  * Matches the Python version string from `python --version`

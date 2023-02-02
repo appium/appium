@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   Application,
   ContainerReflection,
@@ -50,10 +51,9 @@ export class AppiumTheme extends MarkdownTheme {
 
     this.#extensionTemplateRenderer = this.#createTemplateRenderer(AppiumThemeTemplate.Extension);
 
-    this.#opts = Object.keys(declarations).reduce((opts, name) => {
-      opts[name] = this.application.options.getValue(name);
-      return opts;
-    }, {} as AppiumPluginOptions);
+    this.#opts = _.fromPairs(
+      Object.keys(declarations).map((name) => [[name, this.application.options.getValue(name)]])
+    ) as AppiumPluginOptions;
 
     /**
      * We do not want to show breadcrumbs by default, but `MarkdownTheme` does.  We cannot override

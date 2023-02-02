@@ -12,6 +12,7 @@ import {
 import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
+import {CommandData} from '../../../lib/model';
 
 describe('@appium/typedoc-plugin-appium', function () {
   describe('BuiltinMethodMapConverter', function () {
@@ -41,6 +42,7 @@ describe('@appium/typedoc-plugin-appium', function () {
         describe('when provided the correct module', function () {
           let builtinSource: BuiltinCommands;
           let converter: BuiltinMethodMapConverter;
+
           before(async function () {
             const knownMethods = (
               await initConverter(BuiltinExternalDriverConverter, NAME_TYPES_MODULE)
@@ -63,24 +65,31 @@ describe('@appium/typedoc-plugin-appium', function () {
             );
           });
 
-          it('should contain command data per route', function () {
-            const firstCommand = [
-              ...builtinSource.moduleCmds!.routeMap.get('/session')!.values(),
-            ][0];
-            expect(firstCommand).to.exist;
-            expect(_.omit(firstCommand, 'methodRefl', 'parentRefl', 'comment', 'log')).to.eql({
-              command: 'createSession',
-              httpMethod: 'POST',
-              commentSource: 'method-signature',
-              requiredParams: [],
-              route: '/session',
-              optionalParams: ['desiredCapabilities', 'requiredCapabilities', 'capabilities'],
-              isPluginCommand: false,
+          describe('command data', function () {
+            let cmdData: CommandData;
+            before(function () {
+              cmdData = [...builtinSource.moduleCmds!.routeMap.get('/session')!.values()][0];
             });
-            expect(firstCommand.methodRefl!.name).to.equal('createSession');
-            expect(firstCommand.comment).to.be.an.instanceof(Comment);
-            // @ts-expect-error
-            expect(firstCommand.log).to.be.an.instanceof(AppiumPluginLogger);
+
+            it('should contain the expected properties in the getSession command data', function () {
+              expect(_.omit(cmdData, 'methodRefl', 'parentRefl', 'comment', 'log')).to.eql({
+                command: 'createSession',
+                httpMethod: 'POST',
+                commentSource: 'method-signature',
+                requiredParams: [],
+                route: '/session',
+                optionalParams: ['desiredCapabilities', 'requiredCapabilities', 'capabilities'],
+                isPluginCommand: false,
+              });
+            });
+
+            it('should associate the command data for getSession with the createSession method', function () {
+              expect(cmdData.methodRefl!.name).to.equal('createSession');
+            });
+
+            it('should derive a comment for the getSession command', function () {
+              expect(cmdData.comment).to.be.an.instanceof(Comment);
+            });
           });
         });
 

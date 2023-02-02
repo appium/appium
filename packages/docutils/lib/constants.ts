@@ -8,19 +8,68 @@ import {fs} from '@appium/support';
 import path from 'node:path';
 import {PackageJson} from 'type-fest';
 
+/**
+ * CLI executable name
+ */
 export const NAME_BIN = 'appium-docs';
-export const NAME_MKDOCS_YML = 'mkdocs.yml';
-export const NAME_TSCONFIG_JSON = 'tsconfig.json';
-export const NAME_PYTHON = 'python';
-export const NAME_TYPEDOC_JSON = 'typedoc.json';
-export const NAME_PACKAGE_JSON = 'package.json';
-export const NAME_REQUIREMENTS_TXT = 'requirements.txt';
 
+/**
+ * Expected name of the `mkdocs.yml` config file
+ */
+export const NAME_MKDOCS_YML = 'mkdocs.yml';
+
+/**
+ * Default name of the `tsconfig.json` config file
+ */
+export const NAME_TSCONFIG_JSON = 'tsconfig.json';
+/**
+ * `python` executable
+ */
+export const NAME_PYTHON = 'python';
+/**
+ * Default name of the `typedoc.json` config file
+ */
+export const NAME_TYPEDOC_JSON = 'typedoc.json';
+/**
+ * It's `package.json`!
+ */
+export const NAME_PACKAGE_JSON = 'package.json';
+/**
+ * Name of the `requirements.txt` file for `pip`
+ */
+export const NAME_REQUIREMENTS_TXT = 'requirements.txt';
+/**
+ * Name of the `$schema` property which can be present in JSON files; it may need to be removed to
+ * avoid warnings/errors by 3p libs
+ */
 export const NAME_SCHEMA = '$schema';
+/**
+ * Name of the `mkdocs` executable
+ */
 export const NAME_MKDOCS = 'mkdocs';
+
+/**
+ * Name of the `typedoc` executable
+ */
+export const NAME_TYPEDOC = 'typedoc';
+
+/**
+ * Name of the `pip` module.
+ *
+ * @remarks We don't execute the `pip` executable; but rather use `python -m pip` since that seems
+ * to work better ... on my computer.
+ */
 export const NAME_PIP = 'pip';
 
+/**
+ * Name of the `npm` executable, which we use to check for
+ */
 export const NAME_NPM = 'npm';
+
+/**
+ * The name of the `typescript` package (not the `tsc` executable)
+ */
+export const NAME_TYPESCRIPT = 'typescript';
 
 export const DEFAULT_LOG_LEVEL = 'info';
 /**

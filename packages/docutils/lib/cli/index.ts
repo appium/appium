@@ -7,7 +7,7 @@ import yargs from 'yargs/yargs';
 import {build, init, validate} from './command';
 import {DocutilsError} from '../error';
 import log from '../logger';
-import {DEFAULT_LOG_LEVEL} from '../constants';
+import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
 
 const LogLevelName = {
   silent: LogLevel.Silent,
@@ -20,7 +20,7 @@ const LogLevelName = {
 export async function main(argv = hideBin(process.argv)) {
   const y = yargs(argv);
   return await y
-    .scriptName('appium-docs')
+    .scriptName(NAME_BIN)
     .command(validate)
     .command(build)
     .command(init)

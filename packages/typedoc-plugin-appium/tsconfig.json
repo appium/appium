@@ -3,7 +3,12 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
-    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"]
+    "types": ["node", "mocha", "chai", "sinon-chai", "chai-as-promised"],
+    "strict": true
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
   },
   "include": ["lib", "test"]
 }

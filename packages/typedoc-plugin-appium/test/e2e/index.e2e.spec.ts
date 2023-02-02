@@ -77,7 +77,7 @@ describe('@appium/typedoc-plugin-appium', function () {
           (refl) => refl.name === '@appium/base-driver'
         )!;
         expect(baseDriverRefl).to.exist;
-        const cmdRefl = baseDriverRefl.getChildByName('/status')! as CommandReflection;
+        const cmdRefl = baseDriverRefl.getChildByName('getStatus')! as CommandReflection;
         expect(cmdRefl).to.have.property('comment').and.to.not.be.undefined;
         cmdRefl;
         expect(cmdRefl).to.have.property('hasExample', true);

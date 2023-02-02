@@ -73,7 +73,13 @@ describe('@appium/typedoc-plugin-appium', function () {
 
           it('should find commands', function () {
             expect(driverCmds).not.to.be.empty;
+          });
+
+          it('should find commands in FakeDriver', function () {
             expect(fakeDriverCmds).to.exist;
+          });
+
+          it('should find the createSession command', function () {
             expect(sessionCmdSet).to.exist;
           });
 

@@ -116,19 +116,19 @@ export function initAppForPkgs({
  * @param extraArgs Extra args to `cls`' constructor
  * @returns Converter class instance
  */
-async function convert<
-  ConvertResult,
-  SomeConverter extends BaseConverter<ConvertResult>,
-  Args extends any = any
->(
+async function convert<T, C extends BaseConverter<T>, Args extends readonly any[] = any[]>(
   app: Application,
-  cls: Constructor<SomeConverter, [Context, AppiumPluginLogger, ...Args[]]>,
-  extraArgs: Args[] = []
-): Promise<SomeConverter> {
+  cls: ConverterConstructor<T, C, Args>,
+  extraArgs?: Args
+): Promise<C> {
   return await new Promise((resolve, reject) => {
     const listener = (ctx: Context) => {
       const log = new AppiumPluginLogger(app.logger, `test-${cls.name}`);
-      resolve(new cls(ctx, log, ...extraArgs));
+      if (extraArgs?.length) {
+        resolve(new cls(ctx, log, ...extraArgs));
+      } else {
+        resolve(new cls(ctx, log));
+      }
     };
     app.converter.once(Converter.EVENT_RESOLVE_BEGIN, listener);
     try {
@@ -150,11 +150,11 @@ async function convert<
  * @returns Converter class instance
  */
 export async function initConverter<
-  ConverterResult,
-  C extends BaseConverter<ConverterResult>,
-  Args extends any = any
+  T,
+  C extends BaseConverter<T>,
+  Args extends readonly any[] = any[]
 >(
-  cls: Constructor<C, [Context, AppiumPluginLogger, ...Args[]]>,
+  cls: ConverterConstructor<T, C, Args>,
   pkgName: string,
   opts: InitConverterOptions<Args> = {}
 ): Promise<C> {
@@ -167,6 +167,11 @@ export async function initConverter<
 /**
  * Options for {@linkcode initConverter}
  */
-export interface InitConverterOptions<Args extends any = any> extends Partial<TypeDocOptions> {
-  extraArgs?: Args[];
+export interface InitConverterOptions<Args extends readonly any[] = any[]>
+  extends Partial<TypeDocOptions> {
+  extraArgs?: Args;
 }
+
+type ConverterConstructor<T, C extends BaseConverter<T>, Args extends readonly any[] = any[]> =
+  | Constructor<C, [Context, AppiumPluginLogger, ...Args]>
+  | Constructor<C, [Context, AppiumPluginLogger]>;

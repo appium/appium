@@ -72,7 +72,7 @@ export function convertExecuteMethodMap({
 
     if (!commandProp) {
       // this is a bug in the driver implementation
-      this.log.warn(
+      log.warn(
         'Execute method map in %s has no "command" property for %s',
         parentRefl.name,
         script
@@ -82,7 +82,7 @@ export function convertExecuteMethodMap({
 
     if (!_.isString(commandProp.type.value) || _.isEmpty(commandProp.type.value)) {
       // this is a bug in the driver implementation
-      this.log.warn(
+      log.warn(
         'Execute method map in %s has an empty or invalid "command" property for %s',
         parentRefl.name,
         script

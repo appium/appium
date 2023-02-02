@@ -143,7 +143,7 @@ describe('@appium/typedoc-plugin-appium', function () {
      * @param a some thing
      * @param b another thing
      */
-    function assertDeepEqual(a: object, b: object) {
+    function assertDeepEqual(a: any, b: any): void {
       for (const [key, value] of Object.entries(a)) {
         if (typeof value === 'object') {
           expect(typeof b[key]).to.equal('object');

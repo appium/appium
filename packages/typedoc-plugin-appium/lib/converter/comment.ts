@@ -4,27 +4,34 @@
  */
 
 import _ from 'lodash';
-import {SetOptional} from 'type-fest';
-import {Comment, CommentDisplayPart, CommentTag} from 'typedoc';
+import {SetOptional, ValueOf} from 'type-fest';
+import {Comment, CommentTag} from 'typedoc';
 import {CommandMethodDeclarationReflection, KnownMethods} from './types';
 
 export const NAME_EXAMPLE_TAG = '@example';
 
 /**
  * Languages which can be used in example code blocks
+ *
+ * The key is the identifier used in a fenced code block, and the value is the "display" value
  */
-export enum ExampleLanguage {
-  ts = 'TypeScript',
-  typescript = 'TypeScript',
-  js = 'JavaScript',
-  javascript = 'JavaScript',
-  py = 'Python',
-  python = 'Python',
-  rb = 'Ruby',
-  ruby = 'Ruby',
-  java = 'Java',
-}
+export const ExampleLanguage = {
+  ts: 'TypeScript',
+  typescript: 'TypeScript',
+  js: 'JavaScript',
+  javascript: 'JavaScript',
+  py: 'Python',
+  python: 'Python',
+  rb: 'Ruby',
+  ruby: 'Ruby',
+  java: 'Java',
+} as const;
 
+/**
+ * The beginning of fenced code block looks like this.
+ *
+ * @todo Ensure the _end_ of the fenced code block exists
+ */
 const FENCED_CODE_BLOCK_REGEX = /^\s*```(\w+)?/;
 
 /**
@@ -62,7 +69,7 @@ export interface CommentData {
  */
 export interface Example {
   text: string;
-  lang: ExampleLanguage;
+  lang: ValueOf<typeof ExampleLanguage>;
 }
 
 /**
@@ -266,6 +273,15 @@ export function cloneComment(comment: Comment, blockTags?: CommentTag[]): Commen
 }
 
 /**
+ * Type guard to narrow a string to a key of {@linkcode ExampleLanguage}
+ * @param value anything
+ * @returns `true` if the value is a valid language
+ */
+function isValidLang(value: any): value is keyof typeof ExampleLanguage {
+  return value in ExampleLanguage;
+}
+
+/**
  * Finds any `@example` tags within a comment and creates an {@linkcode ExtractedExamples} object
  * for them. Creates a new comment with the examples removed, so we can handle them in a
  * custom way via our theme.
@@ -292,11 +308,12 @@ export const extractExamples = (comment?: Comment): ExtractedExamples | undefine
     return {comment};
   }
 
-  const examples: Example[] = exampleTags.flatMap(({content}) =>
-    content.reduce((examples, {text}: CommentDisplayPart) => {
+  const examples = exampleTags.flatMap(({content}) =>
+    content.reduce((examples, {text}) => {
       const match = text.match(FENCED_CODE_BLOCK_REGEX);
       if (match) {
-        const lang = match[1] ?? ExampleLanguage.js;
+        const matchedLang = match[1] ?? 'js';
+        const lang = isValidLang(matchedLang) ? matchedLang : 'js';
         return [
           ...examples,
           {
@@ -306,7 +323,7 @@ export const extractExamples = (comment?: Comment): ExtractedExamples | undefine
         ];
       }
       return examples;
-    }, [])
+    }, [] as Example[])
   );
 
   if (examples.length) {

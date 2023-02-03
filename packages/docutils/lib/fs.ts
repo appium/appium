@@ -13,7 +13,14 @@ import _ from 'lodash';
 import _pkgDir from 'pkg-dir';
 import logger from './logger';
 import {Application, TypeDocReader} from 'typedoc';
-import {NAME_TYPEDOC_JSON, NAME_MKDOCS_YML, NAME_PACKAGE_JSON} from './constants';
+import {
+  NAME_TYPEDOC_JSON,
+  NAME_MKDOCS_YML,
+  NAME_PACKAGE_JSON,
+  NAME_MKDOCS,
+  NAME_NPM,
+  NAME_PYTHON,
+} from './constants';
 import {DocutilsError} from './error';
 
 const log = logger.withTag('fs');
@@ -67,36 +74,40 @@ export const readYaml = _.memoize(async (filepath: string) =>
 );
 
 /**
+ * Finds a file from `cwd`. Searches up to the package root (dir containing `package.json`).
+ *
+ * @param filename Filename to look for
+ * @param cwd Dir it should be in
+ * @returns
+ */
+export async function findInPkgDir(
+  filename: string,
+  cwd = process.cwd()
+): Promise<string | undefined> {
+  const pkgDir = await findPkgDir(cwd);
+  if (!pkgDir) {
+    return;
+  }
+  return path.join(pkgDir, filename);
+}
+
+/**
  * Finds a `typedoc.json`, expected to be a sibling of `package.json`
  *
- * Caches the result. Does not check if `typedoc.json` actually exists
+ * Caches the result.
  * @param cwd - Current working directory
- * @param packageJsonPath - Path to `package.json`
  * @returns Path to `typedoc.json`
  */
-export const guessTypeDocJsonPath = _.memoize(
-  async (cwd = process.cwd(), packageJsonPath?: string) => {
-    const {pkgPath} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd);
-    const pkgDir = path.dirname(pkgPath);
-    return path.join(pkgDir, NAME_TYPEDOC_JSON);
-  }
-);
+export const findTypeDocJsonPath = _.memoize(_.partial(findInPkgDir, NAME_TYPEDOC_JSON));
 
 /**
  * Finds an `mkdocs.yml`, expected to be a sibling of `package.json`
  *
- * Caches the result. Does not check if `mkdocs.yml` actually exists
+ * Caches the result.
  * @param cwd - Current working directory
- * @param packageJsonPath - Path to `package.json`
  * @returns Path to `mkdocs.yml`
  */
-export const guessMkDocsYmlPath = _.memoize(
-  async (cwd = process.cwd(), packageJsonPath?: string) => {
-    const {pkgPath} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd);
-    const pkgDir = path.dirname(pkgPath);
-    return path.join(pkgDir, NAME_MKDOCS_YML);
-  }
-);
+export const findMkDocsYml = _.memoize(_.partial(findInPkgDir, NAME_MKDOCS_YML));
 
 /**
  * Given a directory path, finds closest `package.json` and reads it.
@@ -183,3 +194,23 @@ export function safeWriteFile(filepath: string, content: JsonValue, overwrite = 
     flag: overwrite ? 'w' : 'wx',
   });
 }
+
+/**
+ * `which` with memoization
+ */
+export const cachedWhich = _.memoize(fs.which);
+
+/**
+ * Finds `mkdocs` executable
+ */
+export const whichMkDocs = _.partial(cachedWhich, NAME_MKDOCS);
+
+/**
+ * Finds `npm` executable
+ */
+export const whichNpm = _.partial(cachedWhich, NAME_NPM);
+
+/**
+ * Finds `python` executable
+ */
+export const whichPython = _.partial(cachedWhich, NAME_PYTHON);

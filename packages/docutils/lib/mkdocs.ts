@@ -5,40 +5,48 @@
  */
 
 import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
-import {NAME_MKDOCS} from './constants';
-import {guessMkDocsYmlPath, readYaml} from './fs';
+import {NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from './constants';
+import {findMkDocsYml, readYaml, whichMkDocs} from './fs';
 import logger from './logger';
 import {relative, stopwatch, TupleToObject} from './util';
+import _ from 'lodash';
+import {DocutilsError} from './error';
 
 const log = logger.withTag('mkdocs');
 
 /**
  * Runs `mkdocs serve`
- * @param mkdocsPath Path to `mkdocs` executable
  * @param args Extra args to `mkdocs build`
  * @param opts Extra options for `teen_process.Subprocess.start`
+ * @param mkDocsPath Path to `mkdocs` executable
  */
-function doServe(
-  mkdocsPath: string = NAME_MKDOCS,
+async function doServe(
   args: string[] = [],
-  {startDetector, detach, timeoutMs}: TeenProcessSubprocessStartOpts = {}
+  {startDetector, detach, timeoutMs}: TeenProcessSubprocessStartOpts = {},
+  mkDocsPath?: string
 ) {
-  const proc = new SubProcess(mkdocsPath, ['serve', ...args]);
-  return proc.start(startDetector, detach, timeoutMs);
+  mkDocsPath = mkDocsPath ?? (await whichMkDocs());
+  const finalArgs = ['serve', ...args];
+  log.debug('Launching %s with args: %O', mkDocsPath, finalArgs);
+  const proc = new SubProcess(mkDocsPath, finalArgs);
+  return await proc.start(startDetector, detach, timeoutMs);
 }
 
 /**
  * Runs `mkdocs build`
- * @param mkdocsPath Path to `mkdocs` executable
  * @param args Extra args to `mkdocs build`
  * @param opts Extra options to `teen_process.exec`
+ * @param mkDocsPath Path to `mkdocs` executable
  */
-function doBuild(
-  mkdocsPath: string = NAME_MKDOCS,
+async function doBuild(
   args: string[] = [],
-  opts: TeenProcessExecOptions = {}
+  opts: TeenProcessExecOptions = {},
+  mkDocsPath?: string
 ) {
-  return exec(mkdocsPath, ['build', ...args], opts);
+  mkDocsPath = mkDocsPath ?? (await whichMkDocs());
+  const finalArgs = ['build', ...args];
+  log.debug('Launching %s with args: %O', mkDocsPath, finalArgs);
+  return await exec(mkDocsPath, finalArgs, opts);
 }
 
 /**
@@ -50,25 +58,27 @@ export async function buildMkDocs({
   siteDir,
   theme = NAME_MKDOCS,
   cwd = process.cwd(),
-  packageJson: packageJsonPath,
   serve = false,
   serveOpts,
   execOpts,
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
-  mkdocsYmlPath = mkdocsYmlPath ?? (await guessMkDocsYmlPath(cwd, packageJsonPath));
+  mkdocsYmlPath = mkdocsYmlPath ?? (await findMkDocsYml(cwd));
+  if (!mkdocsYmlPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
+    );
+  }
   const relativePath = relative(cwd);
   const mkdocsArgs = ['-f', mkdocsYmlPath, '-t', theme];
   if (siteDir) {
     mkdocsArgs.push('-d', siteDir);
   }
   if (serve) {
-    log.debug('Launching %s serve with args: %O', NAME_MKDOCS, mkdocsArgs);
     // unsure about how SIGHUP is handled here
-    await doServe(NAME_MKDOCS, mkdocsArgs, serveOpts);
+    await doServe(mkdocsArgs, serveOpts);
   } else {
-    log.debug('Launching %s build with args: %O', NAME_MKDOCS, mkdocsArgs);
-    await doBuild(NAME_MKDOCS, mkdocsArgs, execOpts);
+    await doBuild(mkdocsArgs, execOpts);
     let relSiteDir;
     if (siteDir) {
       relSiteDir = relativePath(siteDir);

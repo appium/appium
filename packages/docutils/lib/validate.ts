@@ -16,6 +16,9 @@ import {
   DEFAULT_REL_TYPEDOC_OUT_PATH,
   DOCUTILS_PKG,
   NAME_BIN,
+  NAME_ERR_ENOENT,
+  NAME_MKDOCS,
+  NAME_MKDOCS_YML,
   NAME_NPM,
   NAME_PACKAGE_JSON,
   NAME_PIP,
@@ -28,9 +31,18 @@ import {
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
-import {findPkgDir, readJson5, readTypedocJson} from './fs';
+import {
+  findPkgDir,
+  findMkDocsYml,
+  readJson5,
+  readTypedocJson,
+  readYaml,
+  whichMkDocs,
+  whichNpm,
+  whichPython,
+} from './fs';
 import logger from './logger';
-import {PipPackage, TypeDocJson} from './model';
+import {MkDocsYml, PipPackage, TypeDocJson} from './model';
 import {relative} from './util';
 
 /**
@@ -48,6 +60,11 @@ const TYPESCRIPT_VERSION_REGEX = /Version\s(\d+\.\d+\..+)/;
  */
 const TYPEDOC_VERSION_REGEX = /TypeDoc\s(\d+\.\d+\..+)/;
 
+/**
+ * Matches the MkDocs version string from `mkdocs --version`
+ */
+const MKDOCS_VERSION_REGEX = /mkdocs,\s+version\s+(\d+\.\d+\.\S+)/;
+
 const log = logger.withTag('validate');
 
 /**
@@ -57,7 +74,8 @@ export type ValidationKind =
   | typeof NAME_PYTHON
   | typeof NAME_TYPESCRIPT
   | typeof NAME_TYPEDOC
-  | typeof NAME_NPM;
+  | typeof NAME_NPM
+  | typeof NAME_MKDOCS;
 
 /**
  * This class is designed to run _all_ validation checks (as requested by the user), and emit events for
@@ -76,14 +94,14 @@ export class DocutilsValidator extends EventEmitter {
   protected readonly cwd: string;
 
   /**
-   * Path to `npm` executable. Defaults to `npm`
+   * Path to `npm` executable.
    */
-  protected readonly npmPath: string;
+  protected readonly npmPath: string | undefined;
 
   /**
-   * Path to `python` executable. Defaults to `python`
+   * Path to `python` executable.
    */
-  protected readonly pythonPath: string;
+  protected readonly pythonPath: string | undefined;
 
   /**
    * List of validations to perform
@@ -149,6 +167,8 @@ export class DocutilsValidator extends EventEmitter {
    */
   public static readonly SUCCESS = 'ok';
 
+  private requirementsTxt: PipPackage[] | undefined;
+
   /**
    * Creates a listener to track errors emitted
    */
@@ -156,11 +176,11 @@ export class DocutilsValidator extends EventEmitter {
     super();
 
     this.packageJsonPath = opts.packageJson;
-    this.pythonPath = opts.pythonPath ?? NAME_PYTHON;
+    this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
     this.tsconfigJsonPath = opts.tsconfigJson;
     this.typeDocJsonPath = opts.typedocJson;
-    this.npmPath = opts.npm ?? NAME_NPM;
+    this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
 
     if (opts.python) {
@@ -174,6 +194,9 @@ export class DocutilsValidator extends EventEmitter {
     if (opts.typedoc) {
       this.validations.add(NAME_TYPEDOC);
       this.validations.add(NAME_NPM);
+    }
+    if (opts.mkdocs) {
+      this.validations.add(NAME_MKDOCS);
     }
 
     // this just tracks the emitted errors
@@ -192,6 +215,11 @@ export class DocutilsValidator extends EventEmitter {
       if (this.validations.has(NAME_PYTHON)) {
         await this.validatePythonVersion();
         await this.validatePythonDeps();
+      }
+
+      if (this.validations.has(NAME_MKDOCS)) {
+        await this.validateMkDocs();
+        await this.validateMkDocsConfig();
       }
 
       if (this.validations.has(NAME_NPM)) {
@@ -220,9 +248,10 @@ export class DocutilsValidator extends EventEmitter {
    * @param err A validation error
    * @returns
    */
-  protected fail(err: DocutilsError) {
-    if (!this.emittedErrors.has(err.message)) {
-      this.emit(DocutilsValidator.FAILURE, err);
+  protected fail(err: DocutilsError | string) {
+    const dErr = _.isString(err) ? new DocutilsError(err) : err;
+    if (!this.emittedErrors.has(dErr.message)) {
+      this.emit(DocutilsValidator.FAILURE, dErr);
     }
   }
 
@@ -248,16 +277,19 @@ export class DocutilsValidator extends EventEmitter {
 
   /**
    * Parses a `requirements.txt` file and returns an array of packages
-   * @param requirementsTxtPath Path to `requirements.txt`
+   *
+   * Caches the result.
    * @returns List of package data w/ name and version
    */
-  protected async parseRequirementsTxt(
-    requirementsTxtPath = REQUIREMENTS_TXT_PATH
-  ): Promise<PipPackage[]> {
+  protected async parseRequirementsTxt(): Promise<PipPackage[]> {
+    if (this.requirementsTxt) {
+      return this.requirementsTxt;
+    }
+
     let requiredPackages: PipPackage[] = [];
 
     try {
-      let requirementsTxt = await fs.readFile(requirementsTxtPath, 'utf8');
+      let requirementsTxt = await fs.readFile(REQUIREMENTS_TXT_PATH, 'utf8');
       requirementsTxt = requirementsTxt.trim();
       log.debug('Raw %s: %s', NAME_REQUIREMENTS_TXT, requirementsTxt);
       for (const line of requirementsTxt.split(/\r?\n/)) {
@@ -267,7 +299,7 @@ export class DocutilsValidator extends EventEmitter {
       }
       log.debug('Parsed %s: %O', NAME_REQUIREMENTS_TXT, requiredPackages);
     } catch {
-      throw new DocutilsError(`Could not find ${requirementsTxtPath}. This is a bug`);
+      throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`);
     }
 
     return requiredPackages;
@@ -280,10 +312,79 @@ export class DocutilsValidator extends EventEmitter {
     this.emittedErrors.clear();
   }
 
+  protected async validateMkDocs() {
+    let mkDocsPath: string | undefined;
+    try {
+      mkDocsPath = await whichMkDocs();
+    } catch {
+      // _pretty sure_ the exception code is always ENOENT
+      return this.fail(
+        `Could not find ${NAME_MKDOCS} executable in PATH. If it is installed, check your PATH environment variable.`
+      );
+    }
+
+    let rawMkDocsVersion: string | undefined;
+    try {
+      ({stdout: rawMkDocsVersion} = await exec(mkDocsPath, ['--version']));
+    } catch (err) {
+      return this.fail(`${mkDocsPath} --version failed: ${err}`);
+    }
+    const match = rawMkDocsVersion.match(MKDOCS_VERSION_REGEX);
+    if (match) {
+      const version = match[1];
+      const reqs = await this.parseRequirementsTxt();
+      const mkDocsPipPkg = _.find(reqs, {name: NAME_MKDOCS});
+      if (!mkDocsPipPkg) {
+        throw new DocutilsError(
+          `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug.`
+        );
+      }
+      const {version: mkDocsReqdVersion} = mkDocsPipPkg;
+      if (version !== mkDocsReqdVersion) {
+        return this.fail(
+          `${NAME_MKDOCS} at ${mkDocsPath} is v${version}, but ${REQUIREMENTS_TXT_PATH} requires v${mkDocsReqdVersion}`
+        );
+      }
+    } else {
+      throw new DocutilsError(
+        `Could not parse version from "${mkDocsPath} --version". This is a bug. Output was ${rawMkDocsVersion}`
+      );
+    }
+
+    this.ok('MkDocs install OK');
+  }
+
   /**
-   * @todo implement
+   * Validates (sort of) an `mkdocs.yml` config file.
+   *
+   * It checks if the file exists, if it can be parsed as YAML, and if it has a `site_name` property.
    */
-  protected async validateMkDocs() {}
+  protected async validateMkDocsConfig() {
+    let mkDocsYmlPath = this.mkDocsYmlPath ?? (await findMkDocsYml(this.cwd));
+    if (!mkDocsYmlPath) {
+      return this.fail(
+        `Could not find ${NAME_MKDOCS_YML} from ${this.cwd}. Run "${NAME_BIN} init" to create it`
+      );
+    }
+    let mkDocsYml: MkDocsYml | undefined;
+    try {
+      mkDocsYml = await readYaml(mkDocsYmlPath);
+    } catch (e) {
+      const err = e as NodeJS.ErrnoException;
+      if (err.code === NAME_ERR_ENOENT) {
+        return this.fail(
+          `Could not find ${NAME_MKDOCS_YML} at ${mkDocsYmlPath}. Use --mkdocs-yml to specify a different path.`
+        );
+      }
+      return this.fail(`Could not parse ${mkDocsYmlPath}: ${err}`);
+    }
+
+    if (!mkDocsYml?.site_name) {
+      return this.fail(`No site_name in ${mkDocsYmlPath}; this is required by MkDocs`);
+    }
+
+    this.ok('MkDocs config OK');
+  }
 
   /**
    * Validates that the version of `npm` matches what's described in this package's `engines` field.
@@ -296,18 +397,19 @@ export class DocutilsValidator extends EventEmitter {
       throw new DocutilsError('Could not find property engines.npm in package.json. This is a bug');
     }
     try {
-      const {stdout: npmVersion} = await exec(this.npmPath, ['-v']);
-      if (!satisfies(npmVersion.trim(), npmEngineRange)) {
-        this.fail(
-          new DocutilsError(
-            `${NAME_NPM} is version ${npmVersion}, but ${npmEngineRange} is required`
-          )
+      const npmPath = this.npmPath ?? (await whichNpm());
+      if (!npmPath) {
+        throw new DocutilsError(
+          `Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`
         );
+      }
+      const {stdout: npmVersion} = await exec(npmPath, ['-v']);
+      if (!satisfies(npmVersion.trim(), npmEngineRange)) {
+        this.fail(`${NAME_NPM} is version ${npmVersion}, but ${npmEngineRange} is required`);
         return;
       }
     } catch {
-      this.fail(new DocutilsError(`Could not find ${this.npmPath} in PATH. Is it installed?`));
-      return;
+      return this.fail(`Could not find ${this.npmPath} in PATH. Is it installed?`);
     }
     this.ok(`${NAME_NPM} version OK`);
   }
@@ -320,8 +422,12 @@ export class DocutilsValidator extends EventEmitter {
    */
   protected async validatePythonDeps() {
     let pipListOutput: string;
+    const pythonPath = this.pythonPath ?? (await whichPython());
+    if (!pythonPath) {
+      return this.fail(`Could not find ${NAME_PYTHON} in PATH. Is it installed?`);
+    }
     try {
-      ({stdout: pipListOutput} = await exec(this.pythonPath, [
+      ({stdout: pipListOutput} = await exec(pythonPath, [
         '-m',
         NAME_PIP,
         'list',
@@ -329,8 +435,7 @@ export class DocutilsValidator extends EventEmitter {
         'json',
       ]));
     } catch {
-      this.fail(new DocutilsError(`Could not find ${NAME_PIP} in PATH. Is it installed?`));
-      return;
+      return this.fail(`Could not find ${NAME_PIP} in PATH. Is it installed?`);
     }
 
     let installedPkgs: PipPackage[];
@@ -383,12 +488,7 @@ export class DocutilsValidator extends EventEmitter {
       );
     }
     if (msgParts.length) {
-      this.fail(
-        new DocutilsError(
-          `Required Python dependency validation failed:\n\n${msgParts.join('\n\n')}`
-        )
-      );
-      return;
+      return this.fail(`Required Python dependency validation failed:\n\n${msgParts.join('\n\n')}`);
     }
 
     this.ok('Python dependencies OK');
@@ -398,19 +498,20 @@ export class DocutilsValidator extends EventEmitter {
    * Asserts that the Python version is 3.x
    */
   protected async validatePythonVersion() {
+    const pythonPath = this.pythonPath ?? (await whichPython());
+    if (!pythonPath) {
+      return this.fail(`Could not find ${NAME_PYTHON} in PATH. Is it installed?`);
+    }
+
     try {
-      const {stdout} = await exec(this.pythonPath, ['--version']);
+      const {stdout} = await exec(pythonPath, ['--version']);
       if (!stdout.includes(PYTHON_VER_STR)) {
-        this.fail(
-          new DocutilsError(
-            `Could not find Python 3.x in PATH; found ${stdout}.  Please use --python-path`
-          )
+        return this.fail(
+          `Could not find Python 3.x in PATH; found ${stdout}.  Please use --python-path`
         );
-        return;
       }
     } catch {
-      this.fail(new DocutilsError(`Could not find Python 3.x in PATH.`));
-      return;
+      return this.fail(`Could not find Python 3.x in PATH.`);
     }
     this.ok('Python version OK');
   }
@@ -428,8 +529,7 @@ export class DocutilsValidator extends EventEmitter {
         cwd: pkgDir,
       }));
     } catch {
-      this.fail(new DocutilsError(`Could not find ${NAME_TYPEDOC} executable from ${pkgDir}`));
-      return;
+      return this.fail(`Could not find ${NAME_TYPEDOC} executable from ${pkgDir}`);
     }
 
     if (rawTypeDocVersion) {
@@ -444,12 +544,9 @@ export class DocutilsValidator extends EventEmitter {
 
       const reqdTypeDocVersion = DOCUTILS_PKG.dependencies!.typedoc!;
       if (!satisfies(typeDocVersion, reqdTypeDocVersion)) {
-        this.fail(
-          new DocutilsError(
-            `Found TypeDoc version ${typeDocVersion}, but ${reqdTypeDocVersion} is required`
-          )
+        return this.fail(
+          `Found TypeDoc version ${typeDocVersion}, but ${reqdTypeDocVersion} is required`
         );
-        return;
       }
       this.ok('TypeDoc install OK');
     }
@@ -461,8 +558,7 @@ export class DocutilsValidator extends EventEmitter {
   protected async validateTypeDocConfig() {
     const pkgDir = await this.findPkgDir();
     if (!pkgDir) {
-      this.fail(new DocutilsError(`Could not find package.json in ${this.cwd}`));
-      return;
+      return this.fail(new DocutilsError(`Could not find package.json in ${this.cwd}`));
     }
     const typeDocJsonPath = (this.typeDocJsonPath =
       this.typeDocJsonPath ?? path.join(pkgDir, NAME_TYPEDOC_JSON));
@@ -513,7 +609,7 @@ export class DocutilsValidator extends EventEmitter {
   protected async validateTypeScript() {
     const pkgDir = await this.findPkgDir();
     if (!pkgDir) {
-      return this.fail(new DocutilsError(`Could not find package.json in ${this.cwd}`));
+      return this.fail(`Could not find package.json in ${this.cwd}`);
     }
     let typeScriptVersion: string;
     let rawTypeScriptVersion: string;
@@ -522,9 +618,7 @@ export class DocutilsValidator extends EventEmitter {
         cwd: pkgDir,
       }));
     } catch {
-      return this.fail(
-        new DocutilsError(`Could not find TypeScript compiler ("tsc") from ${pkgDir}`)
-      );
+      return this.fail(`Could not find TypeScript compiler ("tsc") from ${pkgDir}`);
     }
 
     let match = rawTypeScriptVersion.match(TYPESCRIPT_VERSION_REGEX);
@@ -532,9 +626,7 @@ export class DocutilsValidator extends EventEmitter {
       typeScriptVersion = match[1];
     } else {
       return this.fail(
-        new DocutilsError(
-          `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`
-        )
+        `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`
       );
     }
 
@@ -548,14 +640,15 @@ export class DocutilsValidator extends EventEmitter {
 
     if (!satisfies(typeScriptVersion, reqdTypeScriptVersion)) {
       return this.fail(
-        new DocutilsError(
-          `Found TypeScript version ${typeScriptVersion}, but ${reqdTypeScriptVersion} is required`
-        )
+        `Found TypeScript version ${typeScriptVersion}, but ${reqdTypeScriptVersion} is required`
       );
     }
     this.ok('TypeScript install OK');
   }
 
+  /**
+   * Validates a `tsconfig.json` file
+   */
   protected async validateTypeScriptConfig() {
     const pkgDir = await this.findPkgDir();
     if (!pkgDir) {
@@ -628,4 +721,8 @@ export interface DocutilsValidatorOpts {
    * If `true`, run TypeScript validation
    */
   typescript?: boolean;
+  /**
+   * If `true`, run MkDocs validation
+   */
+  mkdocs?: boolean;
 }

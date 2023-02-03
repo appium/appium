@@ -1,4 +1,6 @@
-import {DeclarationReflection} from 'typedoc';
+import _ from 'lodash';
+import {DeclarationReflection, ProjectReflection} from 'typedoc';
+import {NAME_BUILTIN_COMMAND_MODULE} from '../../converter';
 import {ModuleCommands} from '../module-commands';
 import {ExecMethodDataSet, ParentReflection, RouteMap} from '../types';
 import {AppiumPluginReflectionKind} from './kind';
@@ -50,6 +52,19 @@ export class ExtensionReflection extends DeclarationReflection {
   }
 
   /**
+   * Returns `true` if the project contains more than one `ExtensionReflection` that isn't built-in commands.
+   *
+   * Should **not** be called before the TypeDoc converter has emitted `EVENT_RESOLVE_END`
+   */
+  static isCompositeProject = _.memoize((project: ProjectReflection) => {
+    return (
+      project
+        .getChildrenByKind(AppiumPluginReflectionKind.Extension as any)
+        ?.filter(({name}) => name !== NAME_BUILTIN_COMMAND_MODULE).length > 1
+    );
+  });
+
+  /**
    * This is called by `AppiumTheme`'s `getUrl` method, which causes a particular filename to be used.
    *
    * - The name of an `ExtensionReflection` is the name of the module containing commands
@@ -68,6 +83,19 @@ export class ExtensionReflection extends DeclarationReflection {
     alias = alias.replace(/\W/, '-');
     this.#alias = alias;
     return alias;
+  }
+
+  /**
+   * Returns the title for display. Used as the first-level header for rendered page.
+   *
+   * If this is a composite project, the title will be "Command API" prefixed by the name of the
+   * module, otherwise it's just "Command API"
+   */
+  public get extensionTitle(): string {
+    if (ExtensionReflection.isCompositeProject(this.project)) {
+      return `${this.name} Command API`;
+    }
+    return 'Command API';
   }
 
   /**

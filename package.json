@@ -87,7 +87,7 @@
     "@types/sinon-chai": "3.2.9",
     "@types/teen_process": "2.0.0",
     "@types/ws": "8.5.4",
-    "@types/yargs": "17.0.20",
+    "@types/yargs": "17.0.22",
     "asyncbox": "2.9.4",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",

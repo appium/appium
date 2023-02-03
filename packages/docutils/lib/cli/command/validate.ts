@@ -6,9 +6,34 @@ import logger from '../../logger';
 
 const log = logger.withTag('validate');
 
-const NAME_GROUP_VALIDATE = 'Validation:';
+const NAME_GROUP_VALIDATE = 'Validation Behavior:';
+const NAME_GROUP_VALIDATE_PATHS = 'Paths:';
 
 const opts = {
+  mkdocs: {
+    default: true,
+    description: 'Validate MkDocs environment',
+    group: NAME_GROUP_VALIDATE,
+    type: 'boolean',
+  },
+  mkdocsYml: {
+    defaultDescription: './mkdocs.yml',
+    description: 'Path to mkdocs.yml',
+    group: NAME_GROUP_VALIDATE_PATHS,
+    nargs: 1,
+    normalize: true,
+    requiresArg: true,
+    type: 'string',
+  },
+  'npm-path': {
+    defaultDescription: '(derived from shell)',
+    description: 'Path to npm executable',
+    group: NAME_GROUP_VALIDATE_PATHS,
+    nargs: 1,
+    normalize: true,
+    requiresArg: true,
+    type: 'string',
+  },
   python: {
     default: true,
     description: 'Validate Python 3 environment',
@@ -18,7 +43,7 @@ const opts = {
   'python-path': {
     defaultDescription: '(derived from shell)',
     description: 'Path to python 3 executable',
-    group: NAME_GROUP_VALIDATE,
+    group: NAME_GROUP_VALIDATE_PATHS,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -27,7 +52,7 @@ const opts = {
   'tsconfig-json': {
     defaultDescription: './tsconfig.json',
     describe: 'Path to tsconfig.json',
-    group: NAME_GROUP_VALIDATE,
+    group: NAME_GROUP_VALIDATE_PATHS,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -35,14 +60,14 @@ const opts = {
   },
   typedoc: {
     default: true,
-    description: 'Validate TypoDoc config',
+    description: 'Validate TypoDoc environment',
     group: NAME_GROUP_VALIDATE,
     type: 'boolean',
   },
   'typedoc-json': {
     defaultDescription: './typedoc.json',
     describe: 'Path to typedoc.json',
-    group: NAME_GROUP_VALIDATE,
+    group: NAME_GROUP_VALIDATE_PATHS,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -50,27 +75,9 @@ const opts = {
   },
   typescript: {
     default: true,
-    description: 'Validate TypeScript config',
+    description: 'Validate TypeScript environment',
     group: NAME_GROUP_VALIDATE,
     type: 'boolean',
-  },
-  mkdocsYml: {
-    defaultDescription: './mkdocs.yml',
-    description: 'Path to mkdocs.yml',
-    group: NAME_GROUP_VALIDATE,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-  },
-  npmPath: {
-    defaultDescription: '(derived from shell)',
-    description: 'Path to npm executable',
-    group: NAME_GROUP_VALIDATE,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
   },
 } as const;
 opts as Record<string, Options>;
@@ -80,10 +87,10 @@ const validateCommand: CommandModule<{}, ValidateOptions> = {
   describe: 'Validate Environment',
   builder: opts,
   async handler(args) {
-    if (!args.python && !args.typedoc && !args.typescript) {
+    if (!args.python && !args.typedoc && !args.typescript && !args.mkdocs) {
       // specifically not a DocutilsError
       throw new Error(
-        'No validation targets specified; one or more of --python, --typescript or --typedoc must be provided'
+        'No validation targets specified; one or more of --python, --typescript, --typedoc or --mkdocs must be provided'
       );
     }
 

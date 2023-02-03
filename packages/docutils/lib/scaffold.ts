@@ -13,9 +13,7 @@ import {DocutilsError} from './error';
 import {relative} from './util';
 import _ from 'lodash';
 import {stringifyJson, readPackageJson, safeWriteFile} from './fs';
-
-const NAME_ERR_ENOENT = 'ENOENT';
-const NAME_ERR_EEXIST = 'EEXIST';
+import {NAME_ERR_ENOENT, NAME_ERR_EEXIST} from './constants';
 
 const log = logger.withTag('init');
 const dryRunLog = log.withTag('dry-run');

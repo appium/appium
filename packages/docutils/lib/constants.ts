@@ -71,6 +71,19 @@ export const NAME_NPM = 'npm';
  */
 export const NAME_TYPESCRIPT = 'typescript';
 
+/**
+ * Code for a "file not found" error
+ */
+export const NAME_ERR_ENOENT = 'ENOENT';
+
+/**
+ * Code for a "file already exists" error
+ */
+export const NAME_ERR_EEXIST = 'EEXIST';
+
+/**
+ * Default log level
+ */
 export const DEFAULT_LOG_LEVEL = 'info';
 /**
  * Blocking I/O

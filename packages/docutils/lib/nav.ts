@@ -8,10 +8,16 @@
 import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
-import {DEFAULT_REL_TYPEDOC_OUT_PATH} from './constants';
 import {
-  guessMkDocsYmlPath,
-  guessTypeDocJsonPath,
+  DEFAULT_REL_TYPEDOC_OUT_PATH,
+  NAME_BIN,
+  NAME_MKDOCS_YML,
+  NAME_TYPEDOC_JSON,
+} from './constants';
+import {DocutilsError} from './error';
+import {
+  findMkDocsYml,
+  findTypeDocJsonPath,
   readTypedocJson,
   readYaml,
   safeWriteFile,
@@ -19,7 +25,7 @@ import {
 } from './fs';
 import logger from './logger';
 import {MkDocsYml} from './model';
-import {relative} from './util';
+import {relative, isStringArray} from './util';
 
 const DEFAULT_REFERENCE_HEADER = 'Reference';
 
@@ -33,16 +39,25 @@ const log = logger.withTag('mkdocs-nav');
 export async function updateNav<S extends string>({
   cwd = process.cwd(),
   mkdocsYml: mkDocsYmlPath,
-  packageJson: packageJsonPath,
   referenceHeader = <S>DEFAULT_REFERENCE_HEADER,
   noReferenceHeader = false,
   typedocJson: typeDocJsonPath,
   dryRun = false,
 }: UpdateNavOpts<S> = {}) {
   [mkDocsYmlPath, typeDocJsonPath] = await Promise.all([
-    mkDocsYmlPath ?? guessMkDocsYmlPath(cwd, packageJsonPath),
-    typeDocJsonPath ?? guessTypeDocJsonPath(cwd, packageJsonPath),
+    mkDocsYmlPath ?? findMkDocsYml(cwd),
+    typeDocJsonPath ?? findTypeDocJsonPath(cwd),
   ]);
+  if (!mkDocsYmlPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd};  run "${NAME_BIN} init" to create it`
+    );
+  }
+  if (!typeDocJsonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_TYPEDOC_JSON} from ${cwd};  run "${NAME_BIN} init" to create it`
+    );
+  }
   const relativePath = relative(cwd);
   const relMkDocsYmlPath = relativePath(mkDocsYmlPath);
   const typeDocJson = readTypedocJson(typeDocJsonPath);
@@ -152,15 +167,6 @@ export async function updateNav<S extends string>({
     log.info('No changes to navigation for reference documents in %s', relMkDocsYmlPath);
   }
 }
-
-/**
- * Type guard to narrow an array to a string array
- * @param value any value
- * @returns `true` if the array is `string[]`
- */
-const isStringArray = _.overEvery(_.isArray, _.partial(_.every, _, _.isString)) as (
-  value: any
-) => value is string[];
 
 /**
  * Options for {@linkcode updateNav}

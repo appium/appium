@@ -9,9 +9,14 @@ import glob from 'glob';
 import _ from 'lodash';
 import path from 'node:path';
 import {Application, ArgumentsReader, TypeDocOptions, TypeDocReader} from 'typedoc';
-import {DEFAULT_LOG_LEVEL, DEFAULT_REL_TYPEDOC_OUT_PATH, NAME_TYPEDOC_JSON} from './constants';
+import {
+  DEFAULT_LOG_LEVEL,
+  DEFAULT_REL_TYPEDOC_OUT_PATH,
+  NAME_BIN,
+  NAME_TYPEDOC_JSON,
+} from './constants';
 import {DocutilsError} from './error';
-import {guessTypeDocJsonPath, readTypedocJson} from './fs';
+import {findTypeDocJsonPath, readTypedocJson} from './fs';
 import logger from './logger';
 import {relative, stopwatch} from './util';
 
@@ -128,13 +133,17 @@ const TypeDocLogLevelMap: Record<LogLevelName, string> = {
 export async function buildReference({
   typedocJson: typeDocJsonPath,
   cwd = process.cwd(),
-  packageJson: packageJsonPath,
   tsconfigJson: tsconfig,
   logLevel = DEFAULT_LOG_LEVEL,
   title,
 }: BuildReferenceOptions = {}) {
   const stop = stopwatch('buildReference');
-  typeDocJsonPath = typeDocJsonPath ?? (await guessTypeDocJsonPath(cwd, packageJsonPath));
+  typeDocJsonPath = typeDocJsonPath ?? (await findTypeDocJsonPath(cwd));
+  if (!typeDocJsonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_TYPEDOC_JSON} from ${cwd}; run "${NAME_BIN}" to create it`
+    );
+  }
   const pkgRoot = fs.findRoot(cwd);
   const relativePath = relative(cwd);
   const relativeTypeDocJsonPath = relativePath(typeDocJsonPath);
@@ -148,7 +157,7 @@ export async function buildReference({
   } catch (err) {
     log.error(err);
     throw new DocutilsError(
-      `Could not read ${relativeTypeDocJsonPath}; please execute "appium docutils init" to create it`
+      `Could not read ${relativeTypeDocJsonPath}; run "${NAME_BIN} init" to create it`
     );
   }
 

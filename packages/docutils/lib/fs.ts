@@ -258,3 +258,14 @@ export const readMkDocsYml = _.memoize(
     return mkDocsYml;
   }
 );
+
+/**
+ * Given an abs path to a directory, return a list of all abs paths of all directories in it
+ */
+export const findDirsIn = _.memoize(async (dirpath: string): Promise<string[]> => {
+  if (!path.isAbsolute(dirpath)) {
+    throw new DocutilsError(`Expected absolute path, got '${dirpath}'`);
+  }
+  const dirEnts = await fs.readdir(dirpath, {withFileTypes: true});
+  return dirEnts.filter((ent) => ent.isDirectory()).map((ent) => path.join(dirpath, ent.name));
+});

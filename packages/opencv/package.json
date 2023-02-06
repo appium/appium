@@ -43,7 +43,7 @@
   "dependencies": {
     "@types/bluebird": "3.5.38",
     "bluebird": "3.7.2",
-    "jimp": "0.21.0",
+    "jimp": "0.21.3",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",
     "source-map-support": "0.5.21"

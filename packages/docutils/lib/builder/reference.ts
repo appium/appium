@@ -1,5 +1,5 @@
 /**
- * Runs TypeDoc
+ * Builds reference documentation via TypeDoc.  The output is _markdown_, intended to be imported into MkDocs.
  *
  * @module
  */
@@ -14,13 +14,13 @@ import {
   DEFAULT_REL_TYPEDOC_OUT_PATH,
   NAME_BIN,
   NAME_TYPEDOC_JSON,
-} from './constants';
-import {DocutilsError} from './error';
-import {findTypeDocJsonPath, readTypedocJson} from './fs';
-import logger from './logger';
-import {relative, stopwatch} from './util';
+} from '../constants';
+import {DocutilsError} from '../error';
+import {findTypeDocJsonPath, readTypedocJson} from '../fs';
+import logger from '../logger';
+import {argify, relative, stopwatch} from '../util';
 
-const log = logger.withTag('typedoc');
+const log = logger.withTag('builder:reference');
 
 /**
  * Replaces TypeDoc's homebrew "glob" implementation with a real one
@@ -43,16 +43,11 @@ const monkeyPatchGlob = _.once((pkgRoot) => {
 });
 
 /**
- * Converts an object of string values to an array of arguments for CLI
- */
-const argify: (obj: Record<string, string>) => string[] = _.flow(_.entries, _.flatten, (list) =>
-  list.map((v, idx) => (idx % 2 === 0 ? `--${v}` : v))
-);
-
-/**
  * Executes TypeDoc _in the current process_
  *
- * Monkeypatches TypeDoc's homebrew "glob" implementation because it is broken
+ * You will probably want to run `updateNav()` after this.
+ *
+ * @privateRemarks Monkeypatches TypeDoc's homebrew "glob" implementation because it is broken
  * @param pkgRoot - Package root path
  * @param opts - TypeDoc options
  */
@@ -77,7 +72,7 @@ export async function runTypedoc(pkgRoot: string, opts: Record<string, string>) 
 }
 
 /**
- * Options for {@linkcode buildReference}
+ * Options for {@linkcode buildReferenceDocs}
  */
 export interface BuildReferenceOptions {
   /**
@@ -130,15 +125,17 @@ const TypeDocLogLevelMap: Record<LogLevelName, string> = {
  * Build reference documentation via TypeDoc
  * @param opts - Options
  */
-export async function buildReference({
+export async function buildReferenceDocs({
   typedocJson: typeDocJsonPath,
   cwd = process.cwd(),
   tsconfigJson: tsconfig,
   logLevel = DEFAULT_LOG_LEVEL,
   title,
 }: BuildReferenceOptions = {}) {
-  const stop = stopwatch('buildReference');
-  typeDocJsonPath = typeDocJsonPath ?? (await findTypeDocJsonPath(cwd));
+  const stop = stopwatch('buildReferenceDocs');
+  typeDocJsonPath = typeDocJsonPath
+    ? path.resolve(cwd, typeDocJsonPath)
+    : await findTypeDocJsonPath(cwd);
   if (!typeDocJsonPath) {
     throw new DocutilsError(
       `Could not find ${NAME_TYPEDOC_JSON} from ${cwd}; run "${NAME_BIN}" to create it`

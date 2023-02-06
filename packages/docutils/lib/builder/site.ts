@@ -1,16 +1,17 @@
 /**
- * Functions for running `mkdocs`
+ * Runs `mkdocs`, pulling in reference markdown from TypeDoc and any other documentation from the
+ * `docs_dir` directory (as configured in `mkdocs.yml`).
  *
  * @module
  */
 
+import path from 'node:path';
 import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
-import {NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from './constants';
-import {findMkDocsYml, readYaml, whichMkDocs} from './fs';
-import logger from './logger';
-import {relative, stopwatch, TupleToObject} from './util';
-import _ from 'lodash';
-import {DocutilsError} from './error';
+import {NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
+import {DocutilsError} from '../error';
+import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
+import logger from '../logger';
+import {relative, stopwatch, TeenProcessSubprocessStartOpts} from '../util';
 
 const log = logger.withTag('mkdocs');
 
@@ -53,8 +54,8 @@ async function doBuild(
  * Runs `mkdocs build` or `mkdocs serve`
  * @param opts
  */
-export async function buildMkDocs({
-  mkdocsYml: mkdocsYmlPath,
+export async function buildSite({
+  mkdocsYml: mkDocsYmlPath,
   siteDir,
   theme = NAME_MKDOCS,
   cwd = process.cwd(),
@@ -63,14 +64,15 @@ export async function buildMkDocs({
   execOpts,
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
-  mkdocsYmlPath = mkdocsYmlPath ?? (await findMkDocsYml(cwd));
-  if (!mkdocsYmlPath) {
+  mkDocsYmlPath = mkDocsYmlPath
+    ? path.resolve(process.cwd(), mkDocsYmlPath)
+    : await findMkDocsYml(cwd);
+  if (!mkDocsYmlPath) {
     throw new DocutilsError(
       `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
     );
   }
-  const relativePath = relative(cwd);
-  const mkdocsArgs = ['-f', mkdocsYmlPath, '-t', theme];
+  const mkdocsArgs = ['-f', mkDocsYmlPath, '-t', theme];
   if (siteDir) {
     mkdocsArgs.push('-d', siteDir);
   }
@@ -81,17 +83,18 @@ export async function buildMkDocs({
     await doBuild(mkdocsArgs, execOpts);
     let relSiteDir;
     if (siteDir) {
-      relSiteDir = relativePath(siteDir);
+      relSiteDir = relative(cwd, siteDir);
     } else {
-      ({site_dir: siteDir} = await readYaml(mkdocsYmlPath));
-      relSiteDir = relativePath(siteDir!);
+      ({site_dir: siteDir} = await readMkDocsYml(mkDocsYmlPath));
+      log.debug('Found site_dir %s', siteDir);
+      relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir!);
     }
     log.success('MkDocs finished building into %s (%dms)', relSiteDir, stop());
   }
 }
 
 /**
- * Options for {@linkcode buildMkDocs}.
+ * Options for {@linkcode buildSite}.
  */
 export interface BuildMkDocsOpts {
   /**
@@ -138,10 +141,3 @@ export interface BuildMkDocsOpts {
    */
   serveOpts?: TeenProcessSubprocessStartOpts;
 }
-
-/**
- * Conversion of the parameters of {@linkcode Subprocess.start} to an object.
- */
-export type TeenProcessSubprocessStartOpts = Partial<
-  TupleToObject<Parameters<SubProcess['start']>, ['startDetector', 'detach', 'timeoutMs']>
->;

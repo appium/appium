@@ -1,4 +1,4 @@
-import {Mike} from '../../lib';
+import {Mike} from '../..';
 import {expect} from 'chai';
 
 describe('Mike', function () {

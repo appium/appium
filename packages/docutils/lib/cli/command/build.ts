@@ -1,6 +1,5 @@
 import {CommandModule, InferredOptionTypes, Options} from 'yargs';
-import {buildMkDocs} from '../../mkdocs';
-import {buildReference} from '../../typedoc';
+import {buildReferenceDocs, buildSite} from '../../builder';
 import logger from '../../logger';
 import {updateNav} from '../../nav';
 import {stopwatch} from '../../util';
@@ -100,11 +99,11 @@ const buildCommand: CommandModule<{}, BuildOptions> = {
       );
     }
     if (args.site) {
-      await buildReference(args);
+      await buildReferenceDocs(args);
     }
     if (args.reference) {
       await updateNav(args);
-      await buildMkDocs(args);
+      await buildSite(args);
     }
     log.success('Done! (total: %dms)', stop());
   },

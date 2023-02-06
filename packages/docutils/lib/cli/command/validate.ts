@@ -16,7 +16,7 @@ const opts = {
     group: NAME_GROUP_VALIDATE,
     type: 'boolean',
   },
-  mkdocsYml: {
+  'mkdocs-yml': {
     defaultDescription: './mkdocs.yml',
     description: 'Path to mkdocs.yml',
     group: NAME_GROUP_VALIDATE_PATHS,

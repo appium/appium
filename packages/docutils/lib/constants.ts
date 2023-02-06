@@ -3,6 +3,7 @@
  * @module
  */
 
+import {LogLevel} from 'consola';
 import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';
 import path from 'node:path';
@@ -107,3 +108,14 @@ export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_T
  * The default output path for Typedoc, computed relative to the consuming package's root
  */
 export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join('docs', 'reference');
+
+/**
+ * Mapping of `@appium/docutils`' log levels to `consola` log levels
+ */
+export const LogLevelMap = {
+  silent: LogLevel.Silent,
+  error: LogLevel.Error,
+  warn: LogLevel.Warn,
+  info: LogLevel.Info,
+  debug: LogLevel.Debug,
+} as const;

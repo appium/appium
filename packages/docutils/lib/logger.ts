@@ -8,7 +8,14 @@
 
 import consola from 'consola';
 import type {Consola, ConsolaOptions, LogLevel} from 'consola';
-import {DEFAULT_LOG_LEVEL} from './constants';
+import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+
+/**
+ * The global log level
+ *
+ * "Global" inasmuch as any logger created from the root logger will use this level.
+ */
+let globalLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
 
 /**
  * The logger from which all loggers are created
@@ -16,14 +23,7 @@ import {DEFAULT_LOG_LEVEL} from './constants';
  * `withTag`/`withScope` is a way to namespace logs. This is more useful if using log objects, but
  * you can also see the scope when using the CLI app (if your terminal window is 80+ cols).
  */
-const rootLogger = consola.withTag('appium:docutils');
-
-/**
- * The global log level
- *
- * "Global" inasmuch as any logger created from the root logger will use this level.
- */
-let globalLevel = rootLogger.level ?? DEFAULT_LOG_LEVEL;
+const rootLogger = createLogProxy(consola.withTag('docutils'));
 
 /**
  * @summary Creates a log-level-propagating proxy for a {@linkcode Consola} logger.
@@ -42,15 +42,19 @@ let globalLevel = rootLogger.level ?? DEFAULT_LOG_LEVEL;
  *
  * There are other ways to go about this which may be better, but this seemed pretty straightforward.
  */
-function createLogProxy(logger: Consola) {
+function createLogProxy(logger: Consola): Consola {
   return new Proxy(logger, {
     get(target, prop, receiver) {
       if (prop === 'level') {
-        return globalLevel ?? Reflect.get(target, prop, receiver);
+        return globalLevel;
       }
       if (prop === 'create') {
         const create = Reflect.get(target, prop, receiver) as Consola['create'];
         return (opts: ConsolaOptions) => createLogProxy(create.call(receiver, opts));
+      }
+      if (prop === '_defaults') {
+        const defaults = Reflect.get(target, prop, receiver);
+        return {...defaults, level: globalLevel};
       }
       return Reflect.get(target, prop, receiver);
     },
@@ -68,4 +72,4 @@ function createLogProxy(logger: Consola) {
  * The proxied root logger
  * @see {createLogProxy}
  */
-export default createLogProxy(rootLogger);
+export default rootLogger;

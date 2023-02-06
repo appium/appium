@@ -1,23 +1,15 @@
 #!/usr/bin/env node
+import logger from '../logger';
 
-import {LogLevel} from 'consola';
 import _ from 'lodash';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
-import {build, init, validate} from './command';
+import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
 import {DocutilsError} from '../error';
-import log from '../logger';
-import {DEFAULT_LOG_LEVEL, NAME_BIN} from '../constants';
-
-const LogLevelName = {
-  silent: LogLevel.Silent,
-  error: LogLevel.Error,
-  warn: LogLevel.Warn,
-  info: LogLevel.Info,
-  debug: LogLevel.Debug,
-} as const;
+import {build, init, validate} from './command';
 import {findConfig} from './config';
 
+const log = logger.withTag('cli');
 export async function main(argv = hideBin(process.argv)) {
   const config = await findConfig(argv);
 
@@ -29,16 +21,15 @@ export async function main(argv = hideBin(process.argv)) {
     .command(validate)
     .options({
       verbose: {
-        alias: 'V',
         type: 'boolean',
         describe: 'Alias for --log-level=debug',
       },
       'log-level': {
         alias: 'L',
         choices: ['debug', 'info', 'warn', 'error', 'silent'],
-        default: DEFAULT_LOG_LEVEL,
         describe: 'Sets the log level',
-        coerce: _.identity as (x: string) => keyof typeof LogLevelName,
+        default: DEFAULT_LOG_LEVEL,
+        coerce: _.identity as (x: string) => keyof typeof LogLevelMap,
       },
       config: {
         alias: 'c',
@@ -59,12 +50,11 @@ export async function main(argv = hideBin(process.argv)) {
        * Configures logging; `--verbose` implies `--log-level=debug`
        */
       (argv) => {
-        const {logLevel, verbose} = argv;
-        if (verbose) {
+        if (argv.verbose) {
           argv.logLevel = 'debug';
           log.debug('Debug logging enabled via --verbose');
         }
-        log.level = LogLevelName[logLevel];
+        log.level = LogLevelMap[argv.logLevel];
       }
     )
     .fail(

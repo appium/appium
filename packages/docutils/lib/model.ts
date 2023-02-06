@@ -34,6 +34,12 @@ export type TypeDocJson = Jsonify<
 >;
 
 /**
+ * The `nav` prop of an `mkdocs.yml` file
+ * @see {@linkcode MkDocsYml}
+ */
+export type MkDocsYmlNav = Array<string | Record<string, string> | Record<string, MkDocsYmlNav>>;
+
+/**
  * This was built by hand from the MkDocs documentation
  * @see https://www.mkdocs.org/user-guide/configuration/
  */
@@ -48,7 +54,7 @@ export type MkDocsYml = Jsonify<{
   hooks?: string[];
   INHERIT?: string;
   markdown_extensions?: Array<string | Record<string, JsonValue>>;
-  nav?: Array<string | Record<string, string[]>>;
+  nav?: MkDocsYmlNav;
   plugins?: Array<string | Record<string, JsonValue>>;
   repo_name?: string;
   repo_url?: string;

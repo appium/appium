@@ -52,10 +52,12 @@
     "@appium/support": "^3.1.4",
     "@appium/tsconfig": "^0.2.3",
     "@appium/typedoc-plugin-appium": "^0.3.4",
+    "@sliphua/lilconfig-ts-loader": "3.2.2",
     "consola": "2.15.3",
     "diff": "5.1.0",
     "glob": "8.1.0",
     "json5": "2.2.3",
+    "lilconfig": "2.0.6",
     "lodash": "4.17.21",
     "pkg-dir": "5.0.0",
     "pluralize": "8.0.0",
@@ -69,7 +71,8 @@
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "4.7.4",
     "yaml": "2.2.1",
-    "yargs": "17.6.2"
+    "yargs": "17.6.2",
+    "yargs-parser": "20.2.9"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

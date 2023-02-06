@@ -40,6 +40,7 @@ import {
   whichMkDocs,
   whichNpm,
   whichPython,
+  readMkDocsYml,
 } from './fs';
 import logger from './logger';
 import {MkDocsYml, PipPackage, TypeDocJson} from './model';
@@ -294,7 +295,6 @@ export class DocutilsValidator extends EventEmitter {
       log.debug('Raw %s: %s', NAME_REQUIREMENTS_TXT, requirementsTxt);
       for (const line of requirementsTxt.split(/\r?\n/)) {
         const [name, version] = line.trim().split('==');
-        log.debug('Need Python package %s @ %s', name, version);
         requiredPackages.push({name, version});
       }
       log.debug('Parsed %s: %O', NAME_REQUIREMENTS_TXT, requiredPackages);
@@ -302,7 +302,7 @@ export class DocutilsValidator extends EventEmitter {
       throw new DocutilsError(`Could not find ${REQUIREMENTS_TXT_PATH}. This is a bug`);
     }
 
-    return requiredPackages;
+    return (this.requirementsTxt = requiredPackages);
   }
 
   /**
@@ -359,16 +359,16 @@ export class DocutilsValidator extends EventEmitter {
    *
    * It checks if the file exists, if it can be parsed as YAML, and if it has a `site_name` property.
    */
-  protected async validateMkDocsConfig() {
-    let mkDocsYmlPath = this.mkDocsYmlPath ?? (await findMkDocsYml(this.cwd));
+  protected async validateMkDocsConfig(mkDocsYmlPath?: string) {
+    mkDocsYmlPath = mkDocsYmlPath ?? this.mkDocsYmlPath ?? (await findMkDocsYml(this.cwd));
     if (!mkDocsYmlPath) {
       return this.fail(
         `Could not find ${NAME_MKDOCS_YML} from ${this.cwd}. Run "${NAME_BIN} init" to create it`
       );
     }
-    let mkDocsYml: MkDocsYml | undefined;
+    let mkDocsYml: MkDocsYml;
     try {
-      mkDocsYml = await readYaml(mkDocsYmlPath);
+      mkDocsYml = await readMkDocsYml(mkDocsYmlPath);
     } catch (e) {
       const err = e as NodeJS.ErrnoException;
       if (err.code === NAME_ERR_ENOENT) {
@@ -379,11 +379,11 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not parse ${mkDocsYmlPath}: ${err}`);
     }
 
-    if (!mkDocsYml?.site_name) {
-      return this.fail(`No site_name in ${mkDocsYmlPath}; this is required by MkDocs`);
+    if (!mkDocsYml.site_name) {
+      return this.fail(`Could not find required property "site_name" in ${mkDocsYmlPath}`);
     }
 
-    this.ok('MkDocs config OK');
+    this.ok(`MkDocs config at ${mkDocsYmlPath} OK`);
   }
 
   /**

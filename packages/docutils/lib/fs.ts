@@ -22,6 +22,7 @@ import {
   NAME_PYTHON,
 } from './constants';
 import {DocutilsError} from './error';
+import {MkDocsYml} from './model';
 
 const log = logger.withTag('fs');
 
@@ -34,14 +35,12 @@ export const findPkgDir = _.memoize(_pkgDir);
 
 /**
  * Stringifies a thing into a YAML
- *
- * The indent is 4 because Prettier
  * @param value Something to yamlify
  * @returns Some nice YAML 4 u
  */
 export const stringifyYaml: (value: JsonValue) => string = _.partialRight(
   YAML.stringify,
-  {indent: 4},
+  {indent: 2},
   undefined
 );
 
@@ -70,7 +69,10 @@ export const stringifyJson: (value: JsonValue) => string = _.partialRight(
  * Reads a YAML file, parses it and caches the result
  */
 export const readYaml = _.memoize(async (filepath: string) =>
-  YAML.parse(await fs.readFile(filepath, 'utf8'))
+  YAML.parse(await fs.readFile(filepath, 'utf8'), {
+    prettyErrors: false,
+    logLevel: 'silent',
+  })
 );
 
 /**
@@ -214,3 +216,39 @@ export const whichNpm = _.partial(cachedWhich, NAME_NPM);
  * Finds `python` executable
  */
 export const whichPython = _.partial(cachedWhich, NAME_PYTHON);
+
+/**
+ * Reads an `mkdocs.yml` file, merges inherited configs, and returns the result. The result is cached.
+ *
+ * **IMPORTANT**: The paths of `site_dir` and `docs_dir` are resolved to absolute paths, since they
+ * are expressed as relative paths, and each inherited config file can live in different paths.
+ * @param filepath Patgh to an `mkdocs.yml` file
+ * @returns Parsed `mkdocs.yml` file
+ */
+export const readMkDocsYml = _.memoize(
+  async (filepath: string, cwd = process.cwd()): Promise<MkDocsYml> => {
+    let mkDocsYml = <MkDocsYml>await readYaml(filepath);
+    if (mkDocsYml.site_dir) {
+      mkDocsYml.site_dir = path.resolve(cwd, path.dirname(filepath), mkDocsYml.site_dir);
+    }
+    if (mkDocsYml.INHERIT) {
+      let inheritPath: string | undefined = path.resolve(path.dirname(filepath), mkDocsYml.INHERIT);
+      while (inheritPath) {
+        const inheritYml = <MkDocsYml>await readYaml(inheritPath);
+        if (inheritYml.site_dir) {
+          inheritYml.site_dir = path.resolve(path.dirname(inheritPath), inheritYml.site_dir);
+          log.debug('Resolved site_dir to %s', inheritYml.site_dir);
+        }
+        if (inheritYml.docs_dir) {
+          inheritYml.docs_dir = path.resolve(path.dirname(inheritPath), inheritYml.docs_dir);
+          log.debug('Resolved docs_dir to %s', inheritYml.docs_dir);
+        }
+        mkDocsYml = _.defaultsDeep(mkDocsYml, inheritYml);
+        inheritPath = inheritYml.INHERIT
+          ? path.resolve(path.dirname(inheritPath), inheritYml.INHERIT)
+          : undefined;
+      }
+    }
+    return mkDocsYml;
+  }
+);

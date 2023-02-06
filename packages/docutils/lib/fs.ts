@@ -20,6 +20,7 @@ import {
   NAME_MKDOCS,
   NAME_NPM,
   NAME_PYTHON,
+  NAME_MIKE,
 } from './constants';
 import {DocutilsError} from './error';
 import {MkDocsYml} from './model';
@@ -216,6 +217,11 @@ export const whichNpm = _.partial(cachedWhich, NAME_NPM);
  * Finds `python` executable
  */
 export const whichPython = _.partial(cachedWhich, NAME_PYTHON);
+
+/**
+ * Finds `mike` executable
+ */
+export const whichMike = _.partial(cachedWhich, NAME_MIKE);
 
 /**
  * Reads an `mkdocs.yml` file, merges inherited configs, and returns the result. The result is cached.

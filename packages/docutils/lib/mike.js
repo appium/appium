@@ -6,6 +6,9 @@ const DEFAULT_REMOTE = 'origin';
 const DEFAULT_BRANCH = 'gh-pages';
 const MIKE_VER_STRING = 'mike 1.';
 
+/**
+ * @deprecated Use the `deploy` export from `@appium/docutils`
+ */
 export class Mike {
   /** @type {string} */ remote;
   /** @type {string} */ branch;

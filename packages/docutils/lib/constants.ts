@@ -2,7 +2,6 @@
  * Constants used across various modules in this package
  * @module
  */
-
 import {LogLevel} from 'consola';
 import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';
@@ -48,6 +47,11 @@ export const NAME_SCHEMA = '$schema';
  * Name of the `mkdocs` executable
  */
 export const NAME_MKDOCS = 'mkdocs';
+
+/**
+ * Name of the `mike` executable
+ */
+export const NAME_MIKE = 'mike';
 
 /**
  * Name of the `typedoc` executable
@@ -110,6 +114,26 @@ export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_T
 export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join('docs', 'reference');
 
 /**
+ * The default branch to deploy to
+ */
+export const DEFAULT_DEPLOY_BRANCH = 'gh-pages';
+
+/**
+ * The default remote to push the deployed branch to
+ */
+export const DEFAULT_DEPLOY_REMOTE = 'origin';
+
+/**
+ * The default port for serving docs
+ */
+export const DEFAULT_SERVE_PORT = 8000;
+
+/**
+ * The default host for serving docs
+ */
+export const DEFAULT_SERVE_HOST = 'localhost';
+
+/**
  * Mapping of `@appium/docutils`' log levels to `consola` log levels
  */
 export const LogLevelMap = {
@@ -119,3 +143,8 @@ export const LogLevelMap = {
   info: LogLevel.Info,
   debug: LogLevel.Debug,
 } as const;
+
+/**
+ * Default site nav header text
+ */
+export const DEFAULT_NAV_HEADER = 'Reference';

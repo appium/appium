@@ -42,7 +42,7 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
-    "vm2": "3.9.13",
+    "vm2": "3.9.14",
     "webdriverio": "7.30.0"
   },
   "peerDependencies": {

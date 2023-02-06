@@ -16,8 +16,11 @@ const LogLevelName = {
   info: LogLevel.Info,
   debug: LogLevel.Debug,
 } as const;
+import {findConfig} from './config';
 
 export async function main(argv = hideBin(process.argv)) {
+  const config = await findConfig(argv);
+
   const y = yargs(argv);
   return await y
     .scriptName(NAME_BIN)
@@ -36,6 +39,19 @@ export async function main(argv = hideBin(process.argv)) {
         default: DEFAULT_LOG_LEVEL,
         describe: 'Sets the log level',
         coerce: _.identity as (x: string) => keyof typeof LogLevelName,
+      },
+      config: {
+        alias: 'c',
+        type: 'string',
+        describe: 'Path to config file',
+        normalize: true,
+        nargs: 1,
+        requiresArg: true,
+        defaultDescription: '(discovered automatically)',
+      },
+      'no-config': {
+        type: 'boolean',
+        describe: 'Disable config file discovery',
       },
     })
     .middleware(
@@ -66,6 +82,7 @@ export async function main(argv = hideBin(process.argv)) {
         y.exit(1, error);
       }
     )
+    .config(config)
     // at least one command is required (but not for --version or --help)
     .demandCommand(1)
     // fail if unknown option or command is provided

@@ -1,8 +1,7 @@
 import {CommandModule, InferredOptionTypes, Options} from 'yargs';
-import {buildReferenceDocs, buildSite, deploy} from '../../builder';
+import {buildReferenceDocs, buildSite, deploy, updateNav} from '../../builder';
 import {NAME_BIN} from '../../constants';
 import logger from '../../logger';
-import {updateNav} from '../../nav';
 import {stopwatch} from '../../util';
 
 const log = logger.withTag('build');

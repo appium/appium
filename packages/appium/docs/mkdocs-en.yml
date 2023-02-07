@@ -2,13 +2,10 @@ INHERIT: ./base-mkdocs.yml
 site_url: https://appium.github.io/appium/docs/en
 edit_uri: edit/master/packages/appium/docs/en
 site_description: The Appium automation project documentation
-
 docs_dir: en
 site_dir: site/docs/en
-
 theme:
   language: en
-
 nav:
   - Welcome: index.md
   - Introduction:
@@ -59,3 +56,10 @@ nav:
       - contributing/config-system.md
   - More Appium Resources: resources.md
   - Issues: https://github.com/appium/appium/issues
+  - Reference:
+      - reference/commands/base-driver.md
+      - reference/commands/execute-driver-plugin.md
+      - reference/commands/fake-driver.md
+      - reference/commands/images-plugin.md
+      - reference/commands/relaxed-caps-plugin.md
+      - reference/commands/universal-xml-plugin.md

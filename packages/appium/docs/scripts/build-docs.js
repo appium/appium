@@ -1,8 +1,16 @@
-// for simplicity this file is not transpiled and is run directly via an npm script
+/**
+ * This builds the docs.
+ *
+ * For simplicity this file is not transpiled and is run directly via an npm script.
+ * @module
+ */
+
+// @ts-check
+
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {Mike} = require('@appium/docutils');
+const {buildReferenceDocs, deploy, updateNav} = require('@appium/docutils');
 const {
   log,
   LANGS,
@@ -13,51 +21,47 @@ const {
   LATEST_ALIAS,
 } = require('./utils');
 const copyAssets = require('./copy-assets');
-const buildReference = require('./build-reference');
 const path = require('path');
 const semver = require('semver');
 const {version} = require('../../package.json');
 
-const branch = process.env.APPIUM_DOCS_BRANCH || DOCS_BRANCH;
-const prefix = process.env.APPIUM_DOCS_PREFIX || DOCS_PREFIX;
-const remote = process.env.APPIUM_DOCS_REMOTE || DOCS_REMOTE;
+const branch = process.env.APPIUM_DOCS_BRANCH ?? DOCS_BRANCH;
+const basePrefix = process.env.APPIUM_DOCS_PREFIX ?? DOCS_PREFIX;
+const remote = process.env.APPIUM_DOCS_REMOTE ?? DOCS_REMOTE;
 
-const shouldPush = !!process.env.APPIUM_DOCS_PUBLISH;
+const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
+const rebase = push;
 
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   await copyAssets();
-  await buildReference();
+  await buildReferenceDocs();
+
+  for (const lang of LANGS) {
+    await updateNav({mkdocsYml: path.join(DOCS_DIR, `mkdocs-${lang}.yml`)});
+  }
 
   const semVersion = semver.parse(version);
+  if (!semVersion) {
+    throw new Error(`Could not parse Appium version "${version}" as semver`);
+  }
   const majMinVer = `${semVersion.major}.${semVersion.minor}`;
 
   for (const lang of LANGS) {
     log.info(`Building docs for language '${lang}' and version ${majMinVer}`);
     const configFile = path.join(DOCS_DIR, `mkdocs-${lang}.yml`);
-    const m = new Mike({
+    await deploy({
+      mkDocsYml: configFile,
       branch,
-      prefix: path.join(prefix, lang),
+      prefix: path.join(basePrefix, lang),
       remote,
-      configFile,
-    });
-
-    const docsAlreadyExisted = (await m.list()).length >= 1;
-
-    const deployOpts = {
-      version: majMinVer,
+      deployVersion: majMinVer,
+      push,
       alias: LATEST_ALIAS,
-      shouldRebase: shouldPush,
-      shouldPush,
-      commit: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
-    };
-    await m.deploy(deployOpts);
-
-    if (!docsAlreadyExisted) {
-      log.info(`Docs did not already exist so setting the latest alias to default`);
-      await m.setDefault(LATEST_ALIAS);
-    }
+      rebase,
+      message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
+    });
     log.info(`Docs built`);
   }
 }

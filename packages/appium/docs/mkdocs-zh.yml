@@ -2,13 +2,10 @@ INHERIT: ./base-mkdocs.yml
 site_url: https://appium.github.io/appium/docs/zh
 edit_uri: edit/master/packages/appium/docs/zh
 site_description: The Appium automation project documentation
-
 docs_dir: zh
 site_dir: site/docs/zh
-
 theme:
   language: zh
-
 nav:
   - 首页: index.md
   - 简介:
@@ -52,3 +49,10 @@ nav:
   - 贡献: contributing/index.md
   - 更多 Appium 资源: resources.md
   - 问题: https://github.com/appium/appium/issues
+  - Reference:
+      - ../en/reference/commands/base-driver.md
+      - ../en/reference/commands/execute-driver-plugin.md
+      - ../en/reference/commands/fake-driver.md
+      - ../en/reference/commands/images-plugin.md
+      - ../en/reference/commands/relaxed-caps-plugin.md
+      - ../en/reference/commands/universal-xml-plugin.md

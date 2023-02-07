@@ -87,7 +87,7 @@
     "longjohn": "0.2.12",
     "npmlog": "7.0.1",
     "ora": "5.4.1",
-    "package-changed": "1.9.0",
+    "package-changed": "2.0.0",
     "resolve-from": "5.0.0",
     "semver": "7.3.8",
     "source-map-support": "0.5.21",

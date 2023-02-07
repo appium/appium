@@ -3,6 +3,7 @@
  * @module
  */
 
+import findUp from 'find-up';
 import YAML from 'yaml';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import path from 'node:path';
@@ -101,7 +102,11 @@ export async function findInPkgDir(
  * @param cwd - Current working directory
  * @returns Path to `typedoc.json`
  */
-export const findTypeDocJsonPath = _.memoize(_.partial(findInPkgDir, NAME_TYPEDOC_JSON));
+export const findTypeDocJsonPath = _.memoize(async (cwd = process.cwd()) => {
+  const filepath = await findUp(NAME_TYPEDOC_JSON, {cwd, type: 'file'});
+  log.debug('Found `typedoc.json` at %s', filepath);
+  return filepath;
+});
 
 /**
  * Finds an `mkdocs.yml`, expected to be a sibling of `package.json`
@@ -159,10 +164,8 @@ export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
   const app = new Application();
   app.options.setValue('plugin', 'none');
   app.options.setValue('logger', 'none');
-  // yes, this is how you do it. yes, it could be easier. no, I don't know why.
-  app.options.setValue('options', typedocJsonPath);
   app.options.addReader(new TypeDocReader());
-  app.bootstrap();
+  app.bootstrap({options: path.dirname(typedocJsonPath)});
   return app.options.getRawValues();
 });
 

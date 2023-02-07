@@ -135,7 +135,12 @@ function navDataDidChange(
   newNavData: Array<Omit<ParsedNavData, 'name'>>,
   navData: ParsedNavData[]
 ): boolean {
-  return Boolean(_.xor(newNavData, _.map(navData, _.partial(_.omit, _, 'name'))).length);
+  const diff = _.xorWith(
+    newNavData,
+    navData,
+    (a, b) => a.keypath === b.keypath && a.fileOrUrl === b.fileOrUrl
+  );
+  return !_.isEmpty(diff);
 }
 
 /**

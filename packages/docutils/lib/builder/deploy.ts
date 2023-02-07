@@ -4,7 +4,9 @@
  * @module
  */
 
+import _ from 'lodash';
 import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
+import path from 'node:path';
 import {
   DEFAULT_DEPLOY_BRANCH,
   DEFAULT_DEPLOY_REMOTE,
@@ -14,7 +16,7 @@ import {
   NAME_MKDOCS_YML,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findMkDocsYml, whichMike} from '../fs';
+import {findMkDocsYml, readPackageJson, whichMike} from '../fs';
 import logger from '../logger';
 import {argify, stopwatch, TeenProcessSubprocessStartOpts} from '../util';
 
@@ -52,11 +54,29 @@ async function doDeploy(args: string[] = [], opts: TeenProcessExecOptions = {}, 
 }
 
 /**
+ * Derives a deployment version from `package.json`
+ * @param packageJsonPath Path to `package.json` if known
+ * @param cwd Current working directory
+ */
+async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()): Promise<string> {
+  const {pkg} = await readPackageJson(packageJsonPath ? path.dirname(packageJsonPath) : cwd, true);
+  const version = pkg.version;
+  if (!version) {
+    throw new DocutilsError(
+      'No "version" field found in package.json; please add one or specify a version to deploy'
+    );
+  }
+  return version;
+}
+
+/**
  * Runs `mike build` or `mike serve`
- * @param opts
+ * @param opts Options
  */
 export async function deploy({
   mkDocsYml: mkDocsYmlPath,
+  packageJson: packageJsonPath,
+  deployVersion: version,
   cwd = process.cwd(),
   serve = false,
   push = false,
@@ -64,7 +84,6 @@ export async function deploy({
   remote = DEFAULT_DEPLOY_REMOTE,
   prefix,
   message,
-  deployVersion,
   alias,
   rebase = true,
   port = DEFAULT_SERVE_PORT,
@@ -79,7 +98,7 @@ export async function deploy({
       `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
     );
   }
-
+  version = version ?? (await findDeployVersion(packageJsonPath, cwd));
   const mikeOpts = {
     'config-file': mkDocsYmlPath,
     push,
@@ -87,17 +106,27 @@ export async function deploy({
     branch,
     prefix,
     message,
-    deployVersion,
-    alias,
     rebase,
     port,
     host,
   };
-  const mikeArgs = argify(mikeOpts);
   if (serve) {
+    const mikeArgs = [...argify(_.pickBy(mikeOpts, Boolean)), version];
+    if (alias) {
+      mikeArgs.push(alias);
+    }
     // unsure about how SIGHUP is handled here
     await doServe(mikeArgs, serveOpts);
   } else {
+    const mikeArgs = [
+      ...argify(
+        _.omitBy(mikeOpts, (value, key) => _.includes(['port', 'host'], key) || value === false)
+      ),
+      version,
+    ];
+    if (alias) {
+      mikeArgs.push(alias);
+    }
     await doDeploy(mikeArgs, execOpts);
 
     log.success('Mike finished deployment into branch %s (%dms)', branch, stop());

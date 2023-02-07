@@ -16,7 +16,7 @@ import {
   NAME_TYPEDOC_JSON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findTypeDocJsonPath, readTypedocJson} from '../fs';
+import {findPkgDir, findTypeDocJsonPath, readTypedocJson} from '../fs';
 import logger from '../logger';
 import {argify, relative, stopwatch} from '../util';
 
@@ -29,16 +29,12 @@ const log = logger.withTag('builder:reference');
  * from the export map in its `package.json`.
  * @see https://github.com/TypeStrong/typedoc/issues/2151
  */
-const monkeyPatchGlob = _.once((pkgRoot) => {
-  const tdFs = require(path.join(
-    pkgRoot,
-    'node_modules',
-    'typedoc',
-    'dist',
-    'lib',
-    'utils',
-    'fs.js'
-  ));
+const monkeyPatchTypedoc = _.once(async () => {
+  const typedocDir = await findPkgDir(require.resolve('typedoc'));
+  if (!typedocDir) {
+    throw new DocutilsError('Could not find TypeDoc package directory; is it installed?');
+  }
+  const tdFs = require(path.join(typedocDir, 'dist', 'lib', 'utils', 'fs.js'));
   tdFs.glob = glob.sync;
 });
 
@@ -48,20 +44,24 @@ const monkeyPatchGlob = _.once((pkgRoot) => {
  * You will probably want to run `updateNav()` after this.
  *
  * @privateRemarks Monkeypatches TypeDoc's homebrew "glob" implementation because it is broken
- * @param pkgRoot - Package root path
+ * @parma typeDocJsonPath - Path to `typedoc.json`
  * @param opts - TypeDoc options
  */
-export async function runTypedoc(pkgRoot: string, opts: Record<string, string>) {
-  monkeyPatchGlob(pkgRoot);
+export async function runTypedoc(typeDocJsonPath: string, opts: Record<string, string>) {
+  await monkeyPatchTypedoc();
   log.debug('Monkeypatched TypeDoc');
 
   const args = argify(opts);
   log.debug('TypeDoc args:', args);
   const app = new Application();
+  app.options.setValue('plugin', [
+    'typedoc-plugin-markdown',
+    'typedoc-plugin-resolve-crossmodule-references',
+    '@appium/typedoc-plugin-appium',
+  ]);
   app.options.addReader(new TypeDocReader());
   app.options.addReader(new ArgumentsReader(100, args));
-  app.bootstrap();
-  log.debug('Frozen options as computed by TypeDoc: %O', app.options.getRawValues());
+  app.bootstrap({options: path.dirname(typeDocJsonPath)});
   const out = app.options.getValue('out');
   const project = app.convert();
   if (project) {
@@ -161,16 +161,15 @@ export async function buildReferenceDocs({
   // if for some reason "out" is not in typedoc.json, we want to use our default path.
   // otherwise, typedoc's default behavior is to write to the "docs" dir, which is the same dir that
   // we use (by default) as a source dir for the mkdocs site--which might contain files under vcs.
-  let out: string;
-  if (!typeDocJson.out) {
+  let out: string | undefined;
+  if (typeDocJson.out) {
+    log.debug(`Found "out" option in ${NAME_TYPEDOC_JSON}: ${typeDocJson.out}`);
+  } else {
     out = path.relative(
       path.dirname(typeDocJsonPath),
       path.join(pkgRoot, DEFAULT_REL_TYPEDOC_OUT_PATH)
     );
-    log.debug('Overriding "out" option with %s', out);
-  } else {
-    out = typeDocJson.out;
-    log.debug(`Found "out" option in ${NAME_TYPEDOC_JSON}: ${out}`);
+    log.debug('Setting "out" option to %s', out);
   }
 
   const extraTypedocOpts = _.pickBy(
@@ -178,12 +177,12 @@ export async function buildReferenceDocs({
     Boolean
   ) as Record<string, string>;
 
-  log.debug('Extra typedoc opts: %O', extraTypedocOpts);
   try {
-    await runTypedoc(pkgRoot, extraTypedocOpts);
+    await runTypedoc(typeDocJsonPath, extraTypedocOpts);
+    let finalOut = (typeDocJson.out ?? out) as string;
     log.success(
       'Reference docs built at %s (%dms)',
-      path.isAbsolute(out) ? relativePath(out) : out,
+      path.isAbsolute(finalOut) ? relativePath(finalOut) : finalOut,
       stop()
     );
   } catch (err) {

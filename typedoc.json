@@ -16,6 +16,6 @@
     "./packages/execute-driver-plugin"
   ],
   "name": "Appium",
-  "out": "typedoc-docs",
+  "out": "./packages/appium/docs/en/reference",
   "outputBuiltinCommands": true
 }

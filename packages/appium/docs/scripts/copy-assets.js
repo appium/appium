@@ -1,3 +1,9 @@
+/**
+ * This script copies generic assets from `ASSETS_DIR` to each docs language dir.
+ */
+
+// @ts-check
+
 // for simplicity this file is not transpiled and is run directly via an npm script
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */

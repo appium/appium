@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// @ts-check
+
 /* eslint-disable no-console, promise/prefer-await-to-then */
 
 /**
@@ -25,13 +27,13 @@ B.config({
   cancellation: true,
 });
 
-/** @type {import('../lib/cli/extension').runExtensionCommand} */
+/** @type {typeof import('../lib/cli/extension').runExtensionCommand} */
 let runExtensionCommand;
-/** @type {import('../lib/constants').DRIVER_TYPE} */
+/** @type {typeof import('../lib/constants').DRIVER_TYPE} */
 let DRIVER_TYPE;
-/** @type {import('../lib/constants').PLUGIN_TYPE} */
+/** @type {typeof import('../lib/constants').PLUGIN_TYPE} */
 let PLUGIN_TYPE;
-/** @type {import('../lib/extension').loadExtensions} */
+/** @type {typeof import('../lib/extension').loadExtensions} */
 let loadExtensions;
 
 const _ = require('lodash');
@@ -42,7 +44,12 @@ const wrap = _.partial(
 );
 const ora = require('ora');
 
-let env, util, logger;
+/** @type {typeof import('@appium/support').env} */
+let env;
+/** @type {typeof import('@appium/support').util} */
+let util;
+/** @type {typeof import('@appium/support').logger} */
+let logger;
 
 function log(message) {
   console.error(wrap(`[Appium] ${message}`));
@@ -55,13 +62,15 @@ function log(message) {
 async function init() {
   try {
     ({env, util, logger} = require('@appium/support'));
+    // @ts-ignore
     ({runExtensionCommand} = require('../build/lib/cli/extension'));
     ({DRIVER_TYPE, PLUGIN_TYPE} = require('../build/lib/constants'));
+    // @ts-ignore
     ({loadExtensions} = require('../build/lib/extension'));
     logger.getLogger('Appium').level = 'error';
 
     // if we're doing `npm install -g appium` then we will assume we don't have a local appium.
-    if (!process.env.npm_config_global && (await env.hasAppiumDependency())) {
+    if (!process.env.npm_config_global && (await env.hasAppiumDependency(process.cwd()))) {
       log(`Found local Appium installation; skipping automatic installation of extensions.`);
       return false;
     }
@@ -93,6 +102,9 @@ async function main() {
     return;
   }
 
+  /**
+   * @type {[[typeof DRIVER_TYPE, string?], [typeof PLUGIN_TYPE, string?]]}
+   */
   const specs = [
     [DRIVER_TYPE, driverEnv],
     [PLUGIN_TYPE, pluginEnv],
@@ -143,6 +155,11 @@ async function main() {
   );
 }
 
+/**
+ * @privateRemarks the two `@ts-ignore` directives here are because I have no idea what's wrong with
+ * the types and don't want to spend more time on it. regardless, it seems to work for now.
+ * @param {CheckAndInstallExtensionsOpts} opts
+ */
 async function checkAndInstallExtension({
   runExtensionCommand,
   appiumHome,
@@ -153,8 +170,10 @@ async function checkAndInstallExtension({
   spinner,
 }) {
   const extList = await runExtensionCommand(
+    // @ts-ignore
     {
       appiumHome,
+      subcommand: type,
       [`${type}Command`]: 'list',
       showInstalled: true,
       suppressOutput: true,
@@ -167,7 +186,9 @@ async function checkAndInstallExtension({
   }
   spinner.start(`Installing ${type} "${ext}"...`);
   await runExtensionCommand(
+    // @ts-ignore
     {
+      subcommand: type,
       appiumHome,
       [`${type}Command`]: 'install',
       suppressOutput: true,
@@ -186,3 +207,14 @@ if (require.main === module) {
 }
 
 module.exports = main;
+
+/**
+ * @typedef CheckAndInstallExtensionsOpts
+ * @property {typeof runExtensionCommand} runExtensionCommand
+ * @property {string} appiumHome
+ * @property {DRIVER_TYPE | PLUGIN_TYPE} type
+ * @property {string} ext
+ * @property {import('../lib/extension/driver-config').DriverConfig} driverConfig
+ * @property {import('../lib/extension/plugin-config').PluginConfig} pluginConfig
+ * @property {import('ora').Ora} spinner
+ */

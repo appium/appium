@@ -26,6 +26,7 @@ import {
   ProjectCommands,
   Route,
 } from '../model';
+import {PackageTitle} from '../options/declarations';
 import {NAME_BUILTIN_COMMAND_MODULE} from './builtin-method-map';
 import {findChildByNameAndGuard} from './utils';
 
@@ -66,7 +67,8 @@ export function createCommandReflection(
  * Note that the return value is mainly for informational purposes, since this method mutates
  * TypeDoc's state.
  * @param log - Logger
- * @param parent - Parent module (or project)
+ * @param ctx - Context
+ * @param name - Name of module containing commands
  * @param moduleCmds - Command information for `module`
  * @internal
  */
@@ -76,8 +78,17 @@ export function createExtensionReflection(
   name: string,
   moduleCmds: ModuleCommands
 ): ExtensionReflection {
+  const packageTitles = ctx.converter.application.options.getValue(
+    'packageTitles'
+  ) as PackageTitle[];
+  log.verbose(`Value of packageTitles: %O`, packageTitles);
   // TODO: parent.name may not be right here
-  const extRefl = new ExtensionReflection(name, ctx.project, moduleCmds);
+  const extRefl = new ExtensionReflection(
+    name,
+    ctx.project,
+    moduleCmds,
+    packageTitles.find((p) => p.name === name)?.title
+  );
   /**
    * See note in {@link createCommandReflection} above about this call
    */

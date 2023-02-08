@@ -29,14 +29,22 @@ export class ExtensionReflection extends DeclarationReflection {
    */
   #alias: string | undefined;
 
+  readonly #title: string | undefined;
+
   /**
    *
    * @param name Name of module containing commands
    * @param parent Module containing commands
    * @param moduleCommands Data containing commands and execute methods
+   * @param title Title if provided in options
    * @todo Determine the kind by inspecting `package.json` or smth
    */
-  constructor(name: string, parent: ParentReflection, moduleCommands: ModuleCommands) {
+  constructor(
+    name: string,
+    parent: ParentReflection,
+    moduleCommands: ModuleCommands,
+    title?: string
+  ) {
     const {routeMap, execMethodDataSet} = moduleCommands;
     const kind = (
       name.includes('driver')
@@ -49,6 +57,7 @@ export class ExtensionReflection extends DeclarationReflection {
     this.parent = parent;
     this.routeMap = routeMap;
     this.execMethodDataSet = execMethodDataSet;
+    this.#title = title;
   }
 
   /**
@@ -87,15 +96,15 @@ export class ExtensionReflection extends DeclarationReflection {
 
   /**
    * Returns the title for display. Used as the first-level header for rendered page.
-   *
-   * If this is a composite project, the title will be "Command API" prefixed by the name of the
-   * module, otherwise it's just "Command API"
    */
   public get extensionTitle(): string {
-    if (ExtensionReflection.isCompositeProject(this.project)) {
-      return `${this.name} Command API`;
+    if (this.#title) {
+      return this.#title;
     }
-    return 'Command API';
+    if (ExtensionReflection.isCompositeProject(this.project)) {
+      return `${this.name} Commands`;
+    }
+    return 'Commands';
   }
 
   /**

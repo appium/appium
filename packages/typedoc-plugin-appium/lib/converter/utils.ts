@@ -10,7 +10,6 @@ import {
   isReflectionWithReflectedType,
 } from '../guards';
 import {ParentReflection} from '../model';
-import {deriveComment} from './comment';
 import {NAME_OPTIONAL, NAME_REQUIRED} from './external';
 import {
   ClassDeclarationReflection,

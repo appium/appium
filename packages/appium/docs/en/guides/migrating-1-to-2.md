@@ -194,6 +194,16 @@ In summary, if you are using a JSON Appium config file, you can simply cut-and-p
 
 The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.
 
+### :bangbang: Server can no longer be started with `--port 0`
+
+In Appium 1.x, it was possible to specify `--port 0` during server startup. This had the effect of
+starting Appium on a random free port. In Appium 2.0, port values must be `1` or higher. The random
+port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
+HTTP servers work and the fact that there was no port input validation in Appium 1.x. If you want
+to find a random free port to start Appium on, you must now take care of this on your own prior to
+starting Appium. Starting Appium on an explicit and known port is the correct practice moving
+forward.
+
 ### :warning: Internal packages renamed
 
 Some Appium-internal NPM packages have been renamed (for example, `appium-base-driver` is now `@appium/base-driver`). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.

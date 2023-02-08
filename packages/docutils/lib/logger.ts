@@ -6,9 +6,128 @@
  * @module
  */
 
-import consola from 'consola';
-import type {Consola, ConsolaOptions, LogLevel} from 'consola';
+import figures from 'figures';
+import logSymbols from 'log-symbols';
+import chalk, {ForegroundColor, BackgroundColor} from 'chalk';
+import consola, {
+  logType as LogType,
+  ConsolaReporterLogObject,
+  FancyReporter,
+  FancyReporterOptions,
+  Consola,
+  ConsolaOptions,
+  LogLevel,
+} from 'consola';
 import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+import _ from 'lodash';
+
+/**
+ * This is a reporter for `consola` which uses some extra/custom icons and colors.
+ *
+ * @privateRemarks
+ * I did not like that the default `FancyReport` logs errors in _green_ without any sort of icon.
+ * Both `log-symbols` and `consola` consume `chalk`, so we do too. `consola` also depends on `figures`.
+ */
+class DocutilsReporter extends FancyReporter {
+  /**
+   * Mapping of log types (the name of the logging method called) to chalk fg colors
+   */
+  static TYPE_COLOR_MAP = {
+    info: 'cyan',
+    success: 'green',
+    error: 'red',
+    warn: 'yellow',
+  } as const;
+
+  /**
+   * Mapping of log levels to chalk fg colors
+   */
+  static LEVEL_COLORS = {
+    0: 'red',
+    1: 'yellow',
+    2: 'white',
+    3: 'green',
+  } as const;
+
+  /**
+   * Mapping of log types to icons/symbols
+   */
+  static TYPE_ICONS = {
+    info: logSymbols.info,
+    success: logSymbols.success,
+    error: logSymbols.error,
+    warn: logSymbols.warning,
+    debug: figures('›'),
+    trace: figures('›'),
+  } as const;
+
+  /**
+   * Default color to use if we can't find a color for the log type or level
+   */
+  static readonly DEFAULT_COLOR = 'grey';
+
+  /**
+   * Type guard to check if a log type has a color
+   * @param type A log type
+   */
+  static hasTypeColor(type: LogType): type is keyof typeof DocutilsReporter.TYPE_COLOR_MAP {
+    return type in DocutilsReporter.TYPE_COLOR_MAP;
+  }
+
+  /**
+   * Type guard to check if a log level has a color
+   * @param level A log level
+   */
+  static hasLevelColor(level: LogLevel): level is keyof typeof DocutilsReporter.LEVEL_COLORS {
+    return level in DocutilsReporter.LEVEL_COLORS;
+  }
+
+  /**
+   * Type guard to check if a log type has an icon
+   * @param type A log type
+   */
+  static hasTypeIcon(type: LogType): type is keyof typeof DocutilsReporter.TYPE_ICONS {
+    return type in DocutilsReporter.TYPE_ICONS;
+  }
+
+  /**
+   * Prefixes the logging output with colors and symbols, depending on contents of `logObj`.
+   * @param logObj Consola's log object
+   * @param isBadge {@linkcode FancyReporter} uses this; I think it depends on the terminal width
+   * @returns
+   */
+  protected override formatType(logObj: ConsolaReporterLogObject, isBadge?: boolean): string {
+    const {
+      TYPE_COLOR_MAP,
+      LEVEL_COLORS,
+      TYPE_ICONS,
+      hasTypeColor,
+      hasLevelColor,
+      hasTypeIcon,
+      DEFAULT_COLOR,
+    } = DocutilsReporter;
+
+    let typeColor: typeof ForegroundColor;
+    if (hasTypeColor(logObj.type)) {
+      typeColor = TYPE_COLOR_MAP[logObj.type];
+    } else if (hasLevelColor(logObj.level)) {
+      typeColor = LEVEL_COLORS[logObj.level];
+    } else {
+      typeColor = <typeof ForegroundColor>(
+        ((this.options as FancyReporterOptions).secondaryColor ?? DEFAULT_COLOR)
+      );
+    }
+
+    if (isBadge) {
+      return chalk[('bg' + _.capitalize(typeColor)) as typeof BackgroundColor].black(
+        ` ${_.toUpper(logObj.type)}`
+      );
+    }
+
+    const type = hasTypeIcon(logObj.type) ? TYPE_ICONS[logObj.type] : logObj.type;
+    return type ? chalk[typeColor](type) : '';
+  }
+}
 
 /**
  * The global log level
@@ -18,12 +137,11 @@ import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
 let globalLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
 
 /**
- * The logger from which all loggers are created
- *
- * `withTag`/`withScope` is a way to namespace logs. This is more useful if using log objects, but
- * you can also see the scope when using the CLI app (if your terminal window is 80+ cols).
+ * The logger from which all loggers are created.  This one uses a unique tag and our custom reporter.
  */
-const rootLogger = createLogProxy(consola.withTag('docutils'));
+const rootLogger = createLogProxy(
+  consola.create({defaults: {tag: 'docutils'}, reporters: [new DocutilsReporter()]})
+);
 
 /**
  * @summary Creates a log-level-propagating proxy for a {@linkcode Consola} logger.
@@ -73,3 +191,8 @@ function createLogProxy(logger: Consola): Consola {
  * @see {createLogProxy}
  */
 export default rootLogger;
+
+// these are just type-sanity checks
+<{[k in LogType]?: typeof ForegroundColor}>DocutilsReporter.TYPE_COLOR_MAP;
+<{[k in LogLevel]?: typeof ForegroundColor}>DocutilsReporter.LEVEL_COLORS;
+<{[k in LogType]?: string}>DocutilsReporter.TYPE_ICONS;

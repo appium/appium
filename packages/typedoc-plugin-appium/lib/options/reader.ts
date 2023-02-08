@@ -1,8 +1,9 @@
+import _ from 'lodash';
 import path from 'node:path';
-import {EntryPointStrategy, Options, OptionsReader, Logger} from 'typedoc';
+import {EntryPointStrategy, Options, OptionsReader} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
-import {NS} from '../model';
 import {THEME_NAME} from '../theme';
+import {PackageTitle} from './declarations';
 
 /**
  * List of theme names to override.
@@ -42,6 +43,17 @@ export class AppiumPluginOptionsReader implements OptionsReader {
   }
 
   /**
+   * Attempts to derive a title (for use in theme output) from a package's `package.json` if that package is an Appium extension
+   * @param pkgJsonPath Path to a `package.json`
+   */
+  public static getTitleFromPackageJson(pkgJsonPath: string): string | undefined {
+    try {
+      const pkg = require(pkgJsonPath);
+      return pkg?.appium?.driverName ?? pkg?.appium?.pluginName;
+    } catch {}
+  }
+
+  /**
    * Calls various private methods to override option values or provide defaults.
    * @param container - Options container
    */
@@ -49,6 +61,7 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     this.#configureTheme(container);
     this.#configureEntryPointStrategy(container);
     this.#configureEntryPoints(container);
+    this.#configurePackages(container);
   }
 
   /**
@@ -74,8 +87,8 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    * @param container Options
    */
   #configureEntryPoints(container: Options) {
-    const entryPoints = container.getValue('entryPoints');
-    const newEntryPoints: Set<string> = new Set(entryPoints);
+    let entryPoints = container.getValue('entryPoints');
+    const newEntryPoints = new Set(entryPoints);
 
     const addEntryPoint = (entryPoint: string) => {
       try {
@@ -107,8 +120,40 @@ export class AppiumPluginOptionsReader implements OptionsReader {
       }
     }
 
-    container.setValue('entryPoints', [...newEntryPoints]);
-    this.#log.verbose('Final value of "entryPoints" option: %O', container.getValue('entryPoints'));
+    entryPoints = [...newEntryPoints];
+    container.setValue('entryPoints', entryPoints);
+    this.#log.verbose('Final value of "entryPoints" option: %O', entryPoints);
+  }
+
+  #configurePackages(container: Options) {
+    let pkgTitles = container.getValue('packageTitles') as PackageTitle[];
+    const entryPoints = container.getValue('entryPoints');
+
+    const newPkgTitles: PackageTitle[] = [];
+
+    for (const entryPoint of entryPoints) {
+      const pkgJsonPath = require.resolve(`${entryPoint}/package.json`);
+      try {
+        const pkg = require(pkgJsonPath);
+        const {name} = pkg;
+        let title: string | undefined;
+        if (pkg.appium?.driverName) {
+          title = `Driver: ${pkg.appium.driverName}`;
+        } else if (pkg.appium?.pluginName) {
+          title = `Plugin: ${pkg.appium.pluginName}`;
+        }
+
+        if (title && !_.find(pkgTitles, {name})) {
+          newPkgTitles.push({name, title});
+        }
+      } catch {
+        this.#log.warn('Could not resolve package.json for %s', entryPoint);
+      }
+    }
+
+    pkgTitles = [...pkgTitles, ...newPkgTitles];
+    container.setValue('packageTitles', pkgTitles);
+    this.#log.verbose('Final value of "packageTitles" option: %O', pkgTitles);
   }
 
   /**

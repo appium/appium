@@ -52,7 +52,7 @@ async function main() {
     log.info(`Building docs for language '${lang}' and version ${majMinVer}`);
     const configFile = path.join(DOCS_DIR, `mkdocs-${lang}.yml`);
     await deploy({
-      mkDocsYml: configFile,
+      mkdocsYml: configFile,
       branch,
       prefix: path.join(basePrefix, lang),
       remote,

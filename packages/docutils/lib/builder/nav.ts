@@ -170,7 +170,6 @@ function getRootHeaderKeypath(headerItems: ParsedNavData[], header: string) {
  * @param mkDocsDocsDir Configured `docs_dir` or via options
  * @param navData Nav data parsed by {@linkcode parseNav}
  * @param all If `true`, process all markdown files, not just commands
- * @returns
  */
 async function getNavItemsForDir(
   dir: string,
@@ -180,45 +179,52 @@ async function getNavItemsForDir(
   all = false
 ) {
   let dataChanged = false;
-  const newHeaderItems: Omit<ParsedNavData, 'name'>[] = [];
+  const newNavHeaderItems: Omit<ParsedNavData, 'name'>[] = [];
+  const referenceOutputFilepaths = await findRelativeMarkdownFiles(dir, mkDocsDocsDir);
+  if (!referenceOutputFilepaths.length) {
+    log.warn('No markdown files found in %s; did TypeDoc run?', dir);
+    return {data: [], changed: false};
+  }
 
-  const newRefFilepaths = await findRelativeMarkdownFiles(dir, mkDocsDocsDir);
-
-  const header = all ? _.startCase(path.basename(dir)) : DEFAULT_NAV_HEADER;
-
-  const headerItems = filterHeaderItems(navData, header);
+  const navHeader = all ? _.startCase(path.basename(dir)) : DEFAULT_NAV_HEADER;
+  const navHeaderItems = filterHeaderItems(navData, navHeader);
 
   // if we found items with this header already, we are going
   // to replace them all wholesale
-  if (headerItems.length) {
+  if (navHeaderItems.length) {
+    log.debug('Found %d item(s) in header %s', navHeaderItems.length, navHeader);
     // we append indices or names to this keypath
-    const rootHeaderKeypath = getRootHeaderKeypath(headerItems, header);
+    const rootHeaderKeypath = getRootHeaderKeypath(navHeaderItems, navHeader);
 
-    for (const [offset, fileOrUrl] of newRefFilepaths.entries()) {
-      const data = headerItems.find((item) => item.fileOrUrl === fileOrUrl);
-      const keypath = getKeypathForHeaderItem(rootHeaderKeypath, offset, data);
-      newHeaderItems.push({keypath, fileOrUrl});
+    for (const fileOrUrl of referenceOutputFilepaths) {
+      let offset = navHeaderItems.findIndex((item) => item.fileOrUrl === fileOrUrl);
+      const newOffset = offset >= 0 ? offset : navHeaderItems.length;
+      const data = navHeaderItems[offset];
+      log.warn(rootHeaderKeypath, newOffset, data);
+      const keypath = getKeypathForHeaderItem(rootHeaderKeypath, newOffset, data);
+      newNavHeaderItems.push({keypath, fileOrUrl});
     }
 
     // look for any differences between what we have and what's in the file
-    if (navDataDidChange(newHeaderItems, headerItems)) {
-      log.debug('Will write new nav data for header %s', header);
+    if (navDataDidChange(newNavHeaderItems, navHeaderItems)) {
+      log.debug('Will write new nav data for header %s: %O', navHeader, newNavHeaderItems);
       dataChanged = true;
     } else {
-      log.debug('No changes for header %s', header);
+      log.debug('No changes for header %s', navHeader);
     }
   } else {
+    log.debug('No items found in header %s', navHeader);
     let navOffset = nav.length;
-    for (const [idx, newRefFilepath] of newRefFilepaths.entries()) {
-      newHeaderItems.push({
-        keypath: `${navOffset}.${header}.${idx}`,
+    for (const [idx, newRefFilepath] of referenceOutputFilepaths.entries()) {
+      newNavHeaderItems.push({
+        keypath: `${navOffset}.${navHeader}.${idx}`,
         fileOrUrl: newRefFilepath,
       });
     }
-    log.debug('Will create nav data for header %s', header);
+    log.debug('Will create nav data for header %s', navHeader);
     dataChanged = true;
   }
-  return {data: newHeaderItems, changed: dataChanged};
+  return {data: newNavHeaderItems, changed: dataChanged};
 }
 
 /**

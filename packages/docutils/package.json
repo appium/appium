@@ -73,7 +73,7 @@
     "typescript": "4.7.4",
     "yaml": "2.2.1",
     "yargs": "17.6.2",
-    "yargs-parser": "20.2.9"
+    "yargs-parser": "21.1.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

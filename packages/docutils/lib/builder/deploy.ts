@@ -74,7 +74,7 @@ async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()):
  * @param opts Options
  */
 export async function deploy({
-  mkDocsYml: mkDocsYmlPath,
+  mkdocsYml: mkDocsYmlPath,
   packageJson: packageJsonPath,
   deployVersion: version,
   cwd = process.cwd(),
@@ -111,7 +111,10 @@ export async function deploy({
     host,
   };
   if (serve) {
-    const mikeArgs = [...argify(_.pickBy(mikeOpts, Boolean)), version];
+    const mikeArgs = [
+      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
+      version,
+    ];
     if (alias) {
       mikeArgs.push(alias);
     }
@@ -120,7 +123,10 @@ export async function deploy({
   } else {
     const mikeArgs = [
       ...argify(
-        _.omitBy(mikeOpts, (value, key) => _.includes(['port', 'host'], key) || value === false)
+        _.omitBy(
+          mikeOpts,
+          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value)
+        )
       ),
       version,
     ];
@@ -140,7 +146,7 @@ export interface DeployOpts {
   /**
    * Path to `mike.yml`
    */
-  mkDocsYml?: string;
+  mkdocsYml?: string;
 
   /**
    * Current working directory

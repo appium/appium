@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.6](https://github.com/appium/appium/compare/@appium/opencv@2.0.5...@appium/opencv@2.0.6) (2023-02-09)
+
+
+### Bug Fixes
+
+* **support:** update dependency jimp to v0.16.13 ([9ce3263](https://github.com/appium/appium/commit/9ce32639187fcd7195216ccf7393caba1b1ef48c))
+* **support:** update dependency jimp to v0.17.10 ([8129a22](https://github.com/appium/appium/commit/8129a228a9a76c4b9d94402b8d6fa106777d7bbf))
+* **support:** update dependency jimp to v0.21.0 ([9bc1fbd](https://github.com/appium/appium/commit/9bc1fbdf3d881fbdc32be1e1466d6ec367959340))
+* **support:** update dependency jimp to v0.21.3 ([3b4d9dd](https://github.com/appium/appium/commit/3b4d9dde6080569f05057bdb1bb600c2a0cf8eb6))
+* **support:** update dependency jimp to v0.22.4 ([742abf2](https://github.com/appium/appium/commit/742abf25035fe5ea5aa280c1ed09ffec5d4f97cf))
+
+
+
+
+
 ## [2.0.5](https://github.com/appium/appium/compare/@appium/opencv@2.0.4...@appium/opencv@2.0.5) (2023-01-13)
 
 **Note:** Version bump only for package @appium/opencv

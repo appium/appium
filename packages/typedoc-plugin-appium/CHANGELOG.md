@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.3.4...@appium/typedoc-plugin-appium@0.4.0) (2023-02-09)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** add test-related types to tsconfig ([3cd22ef](https://github.com/appium/appium/commit/3cd22ef4fb1041f4d43dd11394c3e7f800139647))
+* **typedoc-plugin-appium:** better top-level header for extension reflection ([db4a1d6](https://github.com/appium/appium/commit/db4a1d6489397b079ab99dcf00b7b1cd521079d4))
+* **typedoc-plugin-appium:** command headings should be the command name ([7495693](https://github.com/appium/appium/commit/749569323f791ba942116ca90a884e93cc58fa93))
+* **typedoc-plugin-appium:** fix cloneComment() and add a test ([9b8e9a1](https://github.com/appium/appium/commit/9b8e9a1a36cbe5b7fd496b5c4f912334605cc21a))
+* **typedoc-plugin-appium:** fix type and test problems ([fee07d3](https://github.com/appium/appium/commit/fee07d38c35087752c84616ff97d0646476c1739))
+* **typedoc-plugin-appium:** use simple filenames for ExtensionReflection objects ([6c26b97](https://github.com/appium/appium/commit/6c26b971246de09ce07b85a34122273f4fad3125)), closes [#18110](https://github.com/appium/appium/issues/18110)
+* **types:** update dependency type-fest to v3.5.4 ([cfb5297](https://github.com/appium/appium/commit/cfb529772cff3a2b7e9ff36e12444b603906a769))
+* **types:** update dependency type-fest to v3.5.5 ([9bf320c](https://github.com/appium/appium/commit/9bf320c87ccf574f933a8247a851b4f848c39fa1))
+* **types:** update dependency type-fest to v3.5.6 ([775c990](https://github.com/appium/appium/commit/775c990f9d4176e78936a071968a788e19048519))
+
+
+### Features
+
+* **typedoc-appium-converter:** add packageTitles option and populate extension titles ([393f9ef](https://github.com/appium/appium/commit/393f9ef32a2f2e5d8ff1f13092c2035704844215))
+* **typedoc-plugin-appium:** display examples in command documentation ([c829708](https://github.com/appium/appium/commit/c8297088bf17fbc30f7b5fbda5b7575523c2f131))
+* **typedoc-plugin-appium:** implemented outputBuiltinCommands ([6bb06e2](https://github.com/appium/appium/commit/6bb06e2c19ed6574567b0d66d607ab6eb03e9084))
+
+
+
+
+
 ## [0.3.4](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.3.3...@appium/typedoc-plugin-appium@0.3.4) (2023-01-23)
 
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.1](https://github.com/appium/appium/compare/@appium/base-driver@9.3.0...@appium/base-driver@9.3.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* **base-driver,driver-test-support,support:** update types for axios@1.2.3 ([c5451e4](https://github.com/appium/appium/commit/c5451e4d8280483dabca6e0bc62736689406d3df))
+* **base-driver:** update definitelytyped ([c2289ad](https://github.com/appium/appium/commit/c2289ad607e1af0aa1182a5b5ab707c5dbf12922))
+* **support:** update dependency axios to v1.2.3 ([20c176b](https://github.com/appium/appium/commit/20c176bae7d0a4f928082fe1a9237f995b8bd58e))
+* **types:** update definitelytyped ([172bdae](https://github.com/appium/appium/commit/172bdae436efa75c5928972322d260184c225dd6))
+* **types:** update dependency @types/express to v4.17.16 ([644f300](https://github.com/appium/appium/commit/644f300cd87edbf3788eb82c4c88f6b773e653b0))
+* **types:** update dependency type-fest to v3.5.4 ([cfb5297](https://github.com/appium/appium/commit/cfb529772cff3a2b7e9ff36e12444b603906a769))
+* **types:** update dependency type-fest to v3.5.5 ([9bf320c](https://github.com/appium/appium/commit/9bf320c87ccf574f933a8247a851b4f848c39fa1))
+* **types:** update dependency type-fest to v3.5.6 ([775c990](https://github.com/appium/appium/commit/775c990f9d4176e78936a071968a788e19048519))
+
+
+
+
+
 # [9.3.0](https://github.com/appium/appium/compare/@appium/base-driver@9.2.3...@appium/base-driver@9.3.0) (2023-01-23)
 
 

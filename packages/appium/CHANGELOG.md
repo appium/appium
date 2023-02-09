@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.54](https://github.com/appium/appium/compare/appium@2.0.0-beta.53...appium@2.0.0-beta.54) (2023-02-09)
+
+
+### Bug Fixes
+
+* add missing ' in an error message ([#18105](https://github.com/appium/appium/issues/18105)) ([0f95213](https://github.com/appium/appium/commit/0f952133987a5da176442eff22d5981ed8959fbe))
+* **appium:** fix broken autoinstall script ([2b3e576](https://github.com/appium/appium/commit/2b3e576393e2dd6a33172632f1e009853e83a8e2))
+* **appium:** update dependency package-changed to v2 ([0d7390f](https://github.com/appium/appium/commit/0d7390faa4df51f67eed74d8539c34a8a67f7ed0))
+* **execute-driver-plugin:** update dependency webdriverio to v7.30.0 ([444b988](https://github.com/appium/appium/commit/444b9886a2ef76f16a477ed2e1f6d3eadd542da3))
+* **support:** update dependency axios to v1.2.3 ([20c176b](https://github.com/appium/appium/commit/20c176bae7d0a4f928082fe1a9237f995b8bd58e))
+* **typedoc-plugin-appium:** use simple filenames for ExtensionReflection objects ([6c26b97](https://github.com/appium/appium/commit/6c26b971246de09ce07b85a34122273f4fad3125)), closes [#18110](https://github.com/appium/appium/issues/18110)
+* **types:** update dependency type-fest to v3.5.4 ([cfb5297](https://github.com/appium/appium/commit/cfb529772cff3a2b7e9ff36e12444b603906a769))
+* **types:** update dependency type-fest to v3.5.5 ([9bf320c](https://github.com/appium/appium/commit/9bf320c87ccf574f933a8247a851b4f848c39fa1))
+* **types:** update dependency type-fest to v3.5.6 ([775c990](https://github.com/appium/appium/commit/775c990f9d4176e78936a071968a788e19048519))
+
+
+
+
+
 # [2.0.0-beta.53](https://github.com/appium/appium/compare/appium@2.0.0-beta.52...appium@2.0.0-beta.53) (2023-01-23)
 
 

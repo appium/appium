@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.5](https://github.com/appium/appium/compare/@appium/support@3.1.4...@appium/support@3.1.5) (2023-02-09)
+
+
+### Bug Fixes
+
+* **base-driver,driver-test-support,support:** update types for axios@1.2.3 ([c5451e4](https://github.com/appium/appium/commit/c5451e4d8280483dabca6e0bc62736689406d3df))
+* **support:** update dependency axios to v1.2.3 ([20c176b](https://github.com/appium/appium/commit/20c176bae7d0a4f928082fe1a9237f995b8bd58e))
+* **support:** update dependency jimp to v0.16.13 ([9ce3263](https://github.com/appium/appium/commit/9ce32639187fcd7195216ccf7393caba1b1ef48c))
+* **support:** update dependency jimp to v0.17.10 ([8129a22](https://github.com/appium/appium/commit/8129a228a9a76c4b9d94402b8d6fa106777d7bbf))
+* **support:** update dependency jimp to v0.21.0 ([9bc1fbd](https://github.com/appium/appium/commit/9bc1fbdf3d881fbdc32be1e1466d6ec367959340))
+* **support:** update dependency jimp to v0.21.3 ([3b4d9dd](https://github.com/appium/appium/commit/3b4d9dde6080569f05057bdb1bb600c2a0cf8eb6))
+* **support:** update dependency jimp to v0.22.4 ([742abf2](https://github.com/appium/appium/commit/742abf25035fe5ea5aa280c1ed09ffec5d4f97cf))
+* **support:** update dependency shell-quote to v1.8.0 ([16d7335](https://github.com/appium/appium/commit/16d73357da3c498a456fa4a8e076ecf167150adf))
+* **types:** update dependency type-fest to v3.5.4 ([cfb5297](https://github.com/appium/appium/commit/cfb529772cff3a2b7e9ff36e12444b603906a769))
+* **types:** update dependency type-fest to v3.5.5 ([9bf320c](https://github.com/appium/appium/commit/9bf320c87ccf574f933a8247a851b4f848c39fa1))
+* **types:** update dependency type-fest to v3.5.6 ([775c990](https://github.com/appium/appium/commit/775c990f9d4176e78936a071968a788e19048519))
+
+
+
+
+
 ## [3.1.4](https://github.com/appium/appium/compare/@appium/support@3.1.3...@appium/support@3.1.4) (2023-01-23)
 
 

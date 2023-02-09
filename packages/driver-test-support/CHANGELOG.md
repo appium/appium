@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.7](https://github.com/appium/appium/compare/@appium/driver-test-support@0.3.6...@appium/driver-test-support@0.3.7) (2023-02-09)
+
+
+### Bug Fixes
+
+* **base-driver,driver-test-support,support:** update types for axios@1.2.3 ([c5451e4](https://github.com/appium/appium/commit/c5451e4d8280483dabca6e0bc62736689406d3df))
+* **support:** update dependency axios to v1.2.3 ([20c176b](https://github.com/appium/appium/commit/20c176bae7d0a4f928082fe1a9237f995b8bd58e))
+* **types:** update dependency type-fest to v3.5.4 ([cfb5297](https://github.com/appium/appium/commit/cfb529772cff3a2b7e9ff36e12444b603906a769))
+* **types:** update dependency type-fest to v3.5.5 ([9bf320c](https://github.com/appium/appium/commit/9bf320c87ccf574f933a8247a851b4f848c39fa1))
+* **types:** update dependency type-fest to v3.5.6 ([775c990](https://github.com/appium/appium/commit/775c990f9d4176e78936a071968a788e19048519))
+
+
+
+
+
 ## [0.3.6](https://github.com/appium/appium/compare/@appium/driver-test-support@0.3.5...@appium/driver-test-support@0.3.6) (2023-01-23)
 
 

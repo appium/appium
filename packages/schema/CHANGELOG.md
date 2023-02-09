@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/appium/appium/compare/@appium/schema@0.2.3...@appium/schema@0.2.4) (2023-02-09)
+
+**Note:** Version bump only for package @appium/schema
+
+
+
+
+
 ## [0.2.3](https://github.com/appium/appium/compare/@appium/schema@0.2.2...@appium/schema@0.2.3) (2023-01-13)
 
 **Note:** Version bump only for package @appium/schema

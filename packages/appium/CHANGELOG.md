@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.55](https://github.com/appium/appium/compare/appium@2.0.0-beta.54...appium@2.0.0-beta.55) (2023-02-09)
+
+
+### Bug Fixes
+
+* **docutils:** fix bad option name and ignore most falsy args ([5446e5c](https://github.com/appium/appium/commit/5446e5c7a755be081f46f1ed1ca8c13665d9a772))
+
+
+
+
+
 # [2.0.0-beta.54](https://github.com/appium/appium/compare/appium@2.0.0-beta.53...appium@2.0.0-beta.54) (2023-02-09)
 
 

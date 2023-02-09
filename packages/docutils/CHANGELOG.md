@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/appium/appium/compare/@appium/docutils@0.2.0...@appium/docutils@0.2.1) (2023-02-09)
+
+
+### Bug Fixes
+
+* **docutils:** fix bad offset in nav updates ([ab366f3](https://github.com/appium/appium/commit/ab366f3a1f9109f7bd75ae5ac32b862d5e6dd1bf))
+* **docutils:** fix bad option name and ignore most falsy args ([5446e5c](https://github.com/appium/appium/commit/5446e5c7a755be081f46f1ed1ca8c13665d9a772))
+
+
+
+
+
 # [0.2.0](https://github.com/appium/appium/compare/@appium/docutils@0.1.6...@appium/docutils@0.2.0) (2023-02-09)
 
 

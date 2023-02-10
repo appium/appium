@@ -693,7 +693,7 @@ class ExtensionCommand {
       );
     }
 
-    if (!(scriptName in extScripts)) {
+    if (!(scriptName in /** @type {Record<string,string>} */ (extScripts))) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
       );

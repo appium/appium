@@ -435,7 +435,7 @@ export class ExtensionConfig {
   /**
    * @param {string} extName
    * @param {ExtManifest<ExtType>} extManifest
-   * @param {ExtensionConfigMutationOpts} [opts]
+   * @param {ExtensionConfigMutationOpts} opts
    * @returns {Promise<void>}
    */
   async addExtension(extName, extManifest, {write = true} = {}) {
@@ -448,7 +448,7 @@ export class ExtensionConfig {
   /**
    * @param {ExtName<ExtType>} extName
    * @param {ExtManifest<ExtType>} extManifest
-   * @param {ExtensionConfigMutationOpts} [opts]
+   * @param {ExtensionConfigMutationOpts} opts
    * @returns {Promise<void>}
    */
   async updateExtension(extName, extManifest, {write = true} = {}) {
@@ -465,7 +465,7 @@ export class ExtensionConfig {
    * Remove an extension from the list of installed extensions, and optionally avoid a write to the manifest file.
    *
    * @param {ExtName<ExtType>} extName
-   * @param {ExtensionConfigMutationOpts} [opts]
+   * @param {ExtensionConfigMutationOpts} opts
    * @returns {Promise<void>}
    */
   async removeExtension(extName, {write = true} = {}) {

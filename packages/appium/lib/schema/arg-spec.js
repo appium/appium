@@ -94,7 +94,7 @@ export class ArgSpec {
    * The _constructor_ is private. Use {@link ArgSpec.create} instead.
    * @private
    * @param {string} name
-   * @param {ArgSpecOptions<D>} [opts]
+   * @param {ArgSpecOptions<D>} opts
    */
   constructor(name, {extType, extName, dest, defaultValue} = {}) {
     // we must normalize the extension name to fit into our convention for CLI

@@ -1,55 +1,16 @@
 import _ from 'lodash';
+import {Comment, DeclarationReflection, ParameterReflection, SignatureReflection} from 'typedoc';
 import {
-  Comment,
-  DeclarationReflection,
-  ParameterReflection,
-  ReflectionFlag,
-  ReflectionFlags,
-  ReflectionKind,
-  SignatureReflection,
-} from 'typedoc';
-import {CommandMethodDeclarationReflection, CommentSourceType} from '../converter';
-import {isCallSignatureReflection, isReferenceType} from '../guards';
+  cloneSignatureReflection,
+  CommandMethodDeclarationReflection,
+  CommentSourceType,
+  createNewParamRefls,
+  KnownMethods,
+} from '../converter';
+import {isReferenceType} from '../guards';
 import {AppiumPluginLogger} from '../logger';
+import {findCallSignature} from '../utils';
 import {AllowedHttpMethod, Command, Route} from './types';
-
-/**
- * List of fields to shallow copy from a `SignatureReflection` to a clone
- * @internal
- */
-const SIGNATURE_REFLECTION_CLONE_FIELDS = [
-  'anchor',
-  'comment',
-  'flags',
-  'hasOwnDocument',
-  'implementationOf',
-  'inheritedFrom',
-  'kindString',
-  'label',
-  'originalName',
-  'overwrites',
-  'parameters',
-  'sources',
-  'typeParameters',
-  'url',
-];
-
-/**
- * List of fields to shallow copy from a `ParameterReflection` to a clone
- * @internal
- */
-const PARAMETER_REFLECTION_CLONE_FIELDS = [
-  'anchor',
-  'comment',
-  'cssClasses',
-  'defaultValue',
-  'hasOwnDocument',
-  'label',
-  'originalName',
-  'sources',
-  'type',
-  'url',
-];
 
 /**
  * Abstract representation of metadata for some sort of Appium command
@@ -80,10 +41,8 @@ export abstract class BaseCommandData {
   public readonly isPluginCommand: boolean;
   /**
    * Actual method reflection.
-   *
-   * @todo Determine if this should be required
    */
-  public readonly methodRefl?: CommandMethodDeclarationReflection;
+  public readonly methodRefl: CommandMethodDeclarationReflection;
   /**
    * List of optional parameter names derived from a method map
    */
@@ -94,12 +53,30 @@ export abstract class BaseCommandData {
   public readonly requiredParams?: string[];
 
   /**
-   * Loops through signatures of the command's method declaration and returns the first that is a
-   * `CallSignatureReflection` (if any).  This is what we think of when we think "function signature"
+   * Map of known builtin methods
    */
-  public static findCallSignature = _.memoize((cmd: BaseCommandData) =>
-    cmd.methodRefl?.getAllSignatures()?.find(isCallSignatureReflection)
-  );
+  public readonly knownBuiltinMethods?: KnownMethods;
+
+  /**
+   * Parameter reflections for this command's method declaration, to eventually be displayed in rendered docs
+   *
+   * These are _not_ the same objects as in the `parameters` property of a the call signature
+   * reflection in `methodRefl`; the comments therein have been aggregated and the parameters have
+   * been renamed and possibly truncated.
+   */
+  public readonly parameters?: ParameterReflection[];
+  /**
+   * Signature reflection for this command's method declaration, to eventually be displayed in
+   * rendered docs
+   *
+   * `methodRefl` is a {@linkcode CommandMethodDeclarationReflection}, so it returns a `Promise<T>`, by
+   * definition.  This signature reflection is modified so that it returns `T` instead, since
+   * `Promise`s don't make much sense in the rendered documentaion.
+   *
+   * The default TypeDoc output uses the original `SignatureReflection`, so you _will_ see
+   * `Promise<T>` there.
+   */
+  public readonly signature?: SignatureReflection;
 
   /**
    * Returns a list of `ParameterReflection` objects in the command's method declaration;
@@ -107,71 +84,25 @@ export abstract class BaseCommandData {
    **/
   public static rewriteParameters = _.memoize((cmd: BaseCommandData) => {
     if (!cmd.hasCommandParams) {
-      return [];
-    }
-    const sig = BaseCommandData.findCallSignature(cmd);
-
-    if (!sig) {
-      return [];
+      return;
     }
 
-    const pRefls = (cmd.isPluginCommand ? sig.parameters?.slice(2) : sig.parameters?.slice()) ?? [];
+    const newParamRefls = [
+      ...createNewParamRefls(cmd.methodRefl, {
+        builtinMethods: cmd.knownBuiltinMethods,
+        commandParams: cmd.requiredParams,
+        isPluginCommand: cmd.isPluginCommand,
+        sig: cmd.signature,
+      }),
+      ...createNewParamRefls(cmd.methodRefl, {
+        builtinMethods: cmd.knownBuiltinMethods,
+        commandParams: cmd.optionalParams,
+        isPluginCommand: cmd.isPluginCommand,
+        sig: cmd.signature,
+        isOptional: true,
+      }),
+    ];
 
-    if (pRefls.length < cmd.requiredParams!.length + cmd.optionalParams!.length) {
-      cmd.log.warn(
-        '(%s) Method %s has fewer parameters (%d) than specified in the method map (%d)',
-        cmd.parentRefl!.name,
-        cmd.methodRefl!.name,
-        pRefls.length,
-        cmd.requiredParams!.length + cmd.optionalParams!.length
-      );
-    }
-
-    /**
-     * This loops over the command parameter names as defined in the method/execute map and attempts
-     * to associate a `ParameterReflection` object with each.
-     *
-     * Because the command param names are essentially properties of a JSON object and the
-     * `ParameterReflection` instances represent the arguments of a method, we must match them by
-     * index. In JS, Required arguments always come first, so we can do those first. If there are
-     * _more_ method arguments than command param names, we toss them out, because they may not be
-     * part of the public API.
-     * @param kind Either `required` or `optional`
-     * @returns List of refls with names matching `commandParams`, throwing out any extra refls
-     */
-    const createNewRefls = (kind: 'required' | 'optional'): ParameterReflection[] => {
-      const commandParams = cmd[`${kind}Params`];
-      if (!commandParams?.length) {
-        return [];
-      }
-      const paramCount = commandParams.length;
-
-      const newParamRefls: ParameterReflection[] = [];
-      for (let i = 0; i < paramCount; i++) {
-        const pRefl = pRefls.shift();
-        if (pRefl) {
-          // if there isn't one, the warning above will have been logged already
-          const newPRefl = new ParameterReflection(
-            commandParams[i],
-            ReflectionKind.CallSignature,
-            sig
-          );
-          _.assign(newPRefl, _.pick(pRefl, PARAMETER_REFLECTION_CLONE_FIELDS));
-
-          // there doesn't seem to be a straightforward way to clone flags.
-          newPRefl.flags = new ReflectionFlags(...pRefl.flags);
-          newPRefl.flags.setFlag(ReflectionFlag.Optional, kind === 'optional');
-          newParamRefls.push(newPRefl);
-        }
-      }
-      return newParamRefls;
-    };
-
-    const newParamRefls = [...createNewRefls('required'), ...createNewRefls('optional')];
-
-    if (!newParamRefls.length) {
-      return [];
-    }
     return newParamRefls;
   });
 
@@ -186,27 +117,21 @@ export abstract class BaseCommandData {
    * name `Promise`.
    */
   public static unwrapSignatureType = _.memoize((cmd: BaseCommandData) => {
-    const callSig = BaseCommandData.findCallSignature(cmd);
+    const callSig = findCallSignature(cmd.methodRefl);
     if (!callSig) {
       return;
     }
     if (isReferenceType(callSig.type) && callSig.type.name === 'Promise') {
-      const newCallSig = new SignatureReflection(
-        callSig.name,
-        ReflectionKind.CallSignature,
-        cmd.methodRefl!
-      );
-      _.assign(newCallSig, _.pick(callSig, SIGNATURE_REFLECTION_CLONE_FIELDS));
-
-      // this is the actual unwrapping.  `Promise` only has a single type argument `T`,
+      // this does the actual unwrapping.  `Promise` only has a single type argument `T`,
       // so we can safely use the first one.
-      newCallSig.type = callSig.type.typeArguments?.[0];
+      const newType = callSig.type.typeArguments?.[0];
+      const newCallSig = cloneSignatureReflection(callSig, cmd.methodRefl, newType);
 
       if (!newCallSig.type) {
         cmd.log.warn(
           '(%s) No type arg T found for return type Promise<T> in %s; this is a bug',
           cmd.parentRefl!.name,
-          cmd.methodRefl!.name
+          cmd.methodRefl.name
         );
         return;
       }
@@ -219,16 +144,26 @@ export abstract class BaseCommandData {
    */
   parentRefl?: DeclarationReflection;
 
-  constructor(log: AppiumPluginLogger, command: Command, opts: CommandDataOpts = {}) {
+  constructor(
+    log: AppiumPluginLogger,
+    command: Command,
+    methodRefl: CommandMethodDeclarationReflection,
+    opts: CommandDataOpts = {}
+  ) {
     this.command = command;
+    this.methodRefl = methodRefl;
+    this.log = log;
+
     this.optionalParams = opts.optionalParams;
     this.requiredParams = opts.requiredParams;
     this.comment = opts.comment;
     this.commentSource = opts.commentSource;
-    this.methodRefl = opts.refl;
     this.parentRefl = opts.parentRefl;
-    this.log = log;
+    this.knownBuiltinMethods = opts.knownBuiltinMethods;
     this.isPluginCommand = Boolean(opts.isPluginCommand);
+
+    this.signature = BaseCommandData.unwrapSignatureType(this);
+    this.parameters = BaseCommandData.rewriteParameters(this);
   }
 
   /**
@@ -237,21 +172,6 @@ export abstract class BaseCommandData {
   public get hasCommandParams(): boolean {
     return Boolean(this.optionalParams?.length || this.requiredParams?.length);
   }
-
-  /**
-   * Gets a list of function parameters (for use in rendering)
-   */
-  public get parameters() {
-    return BaseCommandData.rewriteParameters(this);
-  }
-
-  /**
-   * Gets the call signature (for use in rendering)
-   */
-  public get signature() {
-    return BaseCommandData.unwrapSignatureType(this);
-  }
-
   /**
    * Should create a shallow clone of the implementing instance
    * @param opts New options to pass to the new instance
@@ -291,16 +211,14 @@ export interface CommandDataOpts {
   parentRefl?: DeclarationReflection;
 
   /**
-   * Actual method reflection.
-   *
-   * @todo Determine if this should be required
-   */
-  refl?: CommandMethodDeclarationReflection;
-
-  /**
    * List of required parameter names derived from a method map
    */
   requiredParams?: string[];
+
+  /**
+   * Known methods in the project
+   */
+  knownBuiltinMethods?: KnownMethods;
 }
 
 /**
@@ -320,11 +238,12 @@ export class CommandData extends BaseCommandData {
   constructor(
     log: AppiumPluginLogger,
     command: Command,
+    methodRefl: CommandMethodDeclarationReflection,
     httpMethod: AllowedHttpMethod,
     route: Route,
     opts: CommandDataOpts = {}
   ) {
-    super(log, command, opts);
+    super(log, command, methodRefl, opts);
     this.httpMethod = httpMethod;
     this.route = route;
   }
@@ -339,7 +258,10 @@ export class CommandData extends BaseCommandData {
    * @returns Cloned instance
    */
   public override clone(opts: CommandDataOpts = {}): CommandData {
-    return new CommandData(this.log, this.command, this.httpMethod, this.route, {...this, ...opts});
+    return new CommandData(this.log, this.command, this.methodRefl, this.httpMethod, this.route, {
+      ...this,
+      ...opts,
+    });
   }
 }
 
@@ -362,14 +284,12 @@ export class ExecMethodData extends BaseCommandData {
   constructor(
     log: AppiumPluginLogger,
     command: Command,
+    methodRefl: CommandMethodDeclarationReflection,
     script: string,
     opts: CommandDataOpts = {}
   ) {
-    super(log, command, opts);
+    super(log, command, methodRefl, opts);
     this.script = script;
-    if (!this.methodRefl) {
-      this.log.verbose(`No reflection for script ${script}`);
-    }
   }
 
   /**
@@ -381,6 +301,9 @@ export class ExecMethodData extends BaseCommandData {
    * @returns Cloned instance
    */
   public override clone(opts: CommandDataOpts): ExecMethodData {
-    return new ExecMethodData(this.log, this.command, this.script, {...this, ...opts});
+    return new ExecMethodData(this.log, this.command, this.methodRefl, this.script, {
+      ...this,
+      ...opts,
+    });
   }
 }

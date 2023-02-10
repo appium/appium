@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import _ from 'lodash';
 import {
   Comment,
   CommentTag,
@@ -8,11 +7,11 @@ import {
   ReferenceType,
 } from 'typedoc';
 import {
-  KnownMethods,
-  deriveComment,
+  cloneComment,
   CommandMethodDeclarationReflection,
   CommentSourceType,
-  cloneComment,
+  deriveComment,
+  KnownMethods,
 } from '../../../lib/converter';
 import {AppiumPluginReflectionKind, ExtensionReflection, ModuleCommands} from '../../../lib/model';
 

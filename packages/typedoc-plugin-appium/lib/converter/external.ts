@@ -17,15 +17,15 @@ import {
   RouteMap,
 } from '../model';
 import {BaseConverter} from './base-converter';
-import {convertOverrides} from './overrides';
 import {convertExecuteMethodMap} from './exec-method-map';
 import {convertMethodMap} from './method-map';
+import {convertOverrides} from './overrides';
 import {ClassDeclarationReflection, KnownMethods} from './types';
 import {
   filterChildrenByGuard,
   findChildByGuard,
   findChildByNameAndGuard,
-  findAsyncMethodsInReflection,
+  findCommandMethodsInReflection,
 } from './utils';
 
 /**
@@ -152,7 +152,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
         findChildByGuard(classRefl, isConstructorDeclarationReflection)
       );
 
-      const methods = findAsyncMethodsInReflection(classRefl);
+      const methods = new Map(findCommandMethodsInReflection(classRefl));
 
       if (!methods.size) {
         // may or may not be expected
@@ -220,7 +220,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       log,
       parentRefl,
       execMethodMapRefl,
-      builtinMethods: methods,
+      knownMethods: methods,
       strict: true,
       isPluginCommand,
     });
@@ -253,8 +253,8 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       log,
       methodMapRefl: newMethodMapRefl,
       parentRefl,
-      methods,
-      knownMethods: this.builtinMethods,
+      knownClassMethods: methods,
+      knownBuiltinMethods: this.builtinMethods,
       strict: true,
       isPluginCommand,
     });

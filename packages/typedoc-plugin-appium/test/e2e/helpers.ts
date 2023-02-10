@@ -130,13 +130,13 @@ async function convert<T, C extends BaseConverter<T>, Args extends readonly any[
         resolve(new cls(ctx, log));
       }
     };
-    app.converter.once(Converter.EVENT_RESOLVE_BEGIN, listener);
+    app.converter.once(Converter.EVENT_RESOLVE_END, listener);
     try {
       app.convert();
     } catch (err) {
       reject(err);
     } finally {
-      app.converter.off(Converter.EVENT_RESOLVE_BEGIN, listener);
+      app.converter.off(Converter.EVENT_RESOLVE_END, listener);
     }
   });
 }

@@ -5,8 +5,10 @@
 
 import _ from 'lodash';
 import {SetOptional, ValueOf} from 'type-fest';
-import {Comment, CommentTag} from 'typedoc';
-import {CommandMethodDeclarationReflection, KnownMethods} from './types';
+import {Comment, CommentTag, Reflection} from 'typedoc';
+import {isDeclarationReflection, isParameterReflection} from '../guards';
+import {findCallSignature} from '../utils';
+import {KnownMethods} from './types';
 
 export const NAME_EXAMPLE_TAG = '@example';
 
@@ -49,9 +51,9 @@ interface CommentFinder {
  * @internal
  */
 interface CommentFinderGetterOptions {
-  refl?: CommandMethodDeclarationReflection;
+  refl?: Reflection;
   comment?: Comment;
-  knownMethods?: KnownMethods;
+  knownBuiltinMethods?: KnownMethods;
 }
 
 /**
@@ -112,18 +114,27 @@ export enum CommentSourceType {
    * the `@example` block tag from the `ExternalDriver` interface.
    */
   Multiple = 'multiple',
+
+  /**
+   * A comment found in a `ParameterReflection`
+   */
+  Parameter = 'parameter',
+  /**
+   * A comment found in a `ParameterReflection` within a builtin method (e.g., from `ExternalDriver`)
+   */
+  BuiltinParameter = 'builtin-parameter',
 }
 
 /**
  * Options for {@linkcode deriveComment}
  */
 interface DeriveCommentOptions {
-  refl?: CommandMethodDeclarationReflection;
+  refl?: Reflection;
   comment?: Comment;
   knownMethods?: KnownMethods;
 }
 
-const knownComments: Map<string, Comment> = new Map();
+const knownDeclarationRefComments: Map<string, Comment> = new Map();
 
 /**
  * Array of strategies for finding comments.  They can come from a variety of places depending on
@@ -132,7 +143,7 @@ const knownComments: Map<string, Comment> = new Map();
  *
  * These have an order (of precedence), which is why this is an array.
  */
-const commentFinders: Readonly<CommentFinder[]> = [
+const methodCommentFinders: Readonly<CommentFinder[]> = [
   {
     /**
      *
@@ -152,7 +163,11 @@ const commentFinders: Readonly<CommentFinder[]> = [
     /**
      * @returns The comment from the method's signature (may be inherited)
      */
-    getter: ({refl}) => refl?.getAllSignatures().find((sig) => sig.comment?.summary)?.comment,
+    getter: ({refl}) => {
+      if (isDeclarationReflection(refl)) {
+        return refl.getAllSignatures().find((sig) => sig.comment?.summary)?.comment;
+      }
+    },
     commentSource: CommentSourceType.MethodSignature,
   },
   {
@@ -160,13 +175,13 @@ const commentFinders: Readonly<CommentFinder[]> = [
      * @returns The comment from some method that this one implements or overwrites or w/e;
      * typically coming from interfaces in `@appium/types`
      */
-    getter: ({refl, knownMethods}) => {
-      if (refl && knownComments.has(refl.name)) {
-        return knownComments.get(refl.name);
+    getter: ({refl, knownBuiltinMethods}) => {
+      if (refl && knownDeclarationRefComments.has(refl.name)) {
+        return knownDeclarationRefComments.get(refl.name);
       }
       // if the `refl` is a known command, it should be in `knownMethods`;
       // if it isn't (or doesn't exist) we aren't going to display it anyway, so abort
-      const otherRefl = refl && knownMethods?.get(refl.name);
+      const otherRefl = refl && knownBuiltinMethods?.get(refl.name);
       if (!otherRefl) {
         return;
       }
@@ -178,19 +193,72 @@ const commentFinders: Readonly<CommentFinder[]> = [
       //
       // after looping thru the finders, if we have a comment in the list of `commentData`
       // objects, return the first one found.
-      const comment = commentFinders
+      const comment = methodCommentFinders
         .filter(({commentSource}) => commentSource !== CommentSourceType.OtherMethod)
         .map(({getter, commentSource}) => ({
-          comment: getter({refl: otherRefl, knownMethods}),
+          comment: getter({refl: otherRefl, knownBuiltinMethods: knownBuiltinMethods}),
           commentSource,
         }))
         .find(({comment}) => Boolean(comment))?.comment;
       if (comment) {
-        knownComments.set(refl.name, comment);
+        knownDeclarationRefComments.set(refl.name, comment);
       }
       return comment;
     },
     commentSource: CommentSourceType.OtherMethod,
+  },
+];
+
+const paramCommentFinders: Readonly<CommentFinder[]> = [
+  {
+    getter({refl}) {
+      if (!isParameterReflection(refl)) {
+        return;
+      }
+      return refl.comment?.hasVisibleComponent() ? refl.comment : undefined;
+    },
+    commentSource: CommentSourceType.Parameter,
+  },
+
+  {
+    /**
+     * @returns The comment from some method that this one implements or overwrites or w/e;
+     * typically coming from interfaces in `@appium/types`
+     */
+    getter: ({refl, knownBuiltinMethods}) => {
+      if (!isParameterReflection(refl)) {
+        return;
+      }
+      const signatureRefl = refl.parent;
+      if (!signatureRefl) {
+        return;
+      }
+      const methodRefl = signatureRefl.parent;
+      if (!methodRefl) {
+        return;
+      }
+      const paramIdx = signatureRefl.parameters?.indexOf(refl);
+      if (paramIdx === undefined || paramIdx < 0) {
+        return;
+      }
+
+      const builtinMethodRefl = knownBuiltinMethods?.get(methodRefl.name);
+
+      if (!builtinMethodRefl) {
+        return;
+      }
+
+      const builtinParams = findCallSignature(builtinMethodRefl)?.parameters;
+
+      if (!builtinParams || !builtinParams[paramIdx]) {
+        return;
+      }
+      const builtinParam = builtinParams[paramIdx];
+      if (builtinParam.comment?.hasVisibleComponent()) {
+        return builtinParam.comment;
+      }
+    },
+    commentSource: CommentSourceType.BuiltinParameter,
   },
 ];
 
@@ -202,6 +270,9 @@ const commentFinders: Readonly<CommentFinder[]> = [
  */
 export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | undefined {
   const {refl, comment, knownMethods} = opts;
+
+  const commentFinders = isParameterReflection(refl) ? paramCommentFinders : methodCommentFinders;
+
   /**
    * The result of running thru all of the comment finders. Each value will have a
    * {@linkcode CommentSourceType} corresponding to the finder, and the a `comment` property _if and
@@ -209,7 +280,7 @@ export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | un
    */
   const rawCommentData: SetOptional<CommentData, 'comment'>[] = commentFinders.map(
     ({getter, commentSource}) => ({
-      comment: getter({refl, comment, knownMethods}),
+      comment: getter({refl, comment, knownBuiltinMethods: knownMethods}),
       commentSource,
     })
   );

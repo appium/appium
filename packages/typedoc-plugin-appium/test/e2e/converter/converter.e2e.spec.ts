@@ -28,7 +28,7 @@ describe('@appium/typedoc-plugin-appium', function () {
         entryPoints: [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
       });
       ctx = await new Promise((resolve) => {
-        app.converter.once(Converter.EVENT_RESOLVE_BEGIN, (ctx: Context) => {
+        app.converter.once(Converter.EVENT_RESOLVE_END, (ctx: Context) => {
           resolve(ctx);
         });
         app.convert();

@@ -9,10 +9,10 @@ import {
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
-import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {AppiumPluginLogger} from '../../../lib/logger';
-import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 import {CommandData} from '../../../lib/model';
+import {BuiltinCommands} from '../../../lib/model/builtin-commands';
+import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 
 describe('@appium/typedoc-plugin-appium', function () {
   describe('BuiltinMethodMapConverter', function () {
@@ -72,10 +72,21 @@ describe('@appium/typedoc-plugin-appium', function () {
             });
 
             it('should contain the expected properties in the getSession command data', function () {
-              expect(_.omit(cmdData, 'methodRefl', 'parentRefl', 'comment', 'log')).to.eql({
+              expect(
+                _.omit(
+                  cmdData,
+                  'methodRefl',
+                  'parentRefl',
+                  'knownBuiltinMethods',
+                  'comment',
+                  'log',
+                  'parameters',
+                  'signature'
+                )
+              ).to.eql({
                 command: 'createSession',
                 httpMethod: 'POST',
-                commentSource: 'method-signature',
+                commentSource: 'multiple',
                 requiredParams: [],
                 route: '/session',
                 optionalParams: ['desiredCapabilities', 'requiredCapabilities', 'capabilities'],

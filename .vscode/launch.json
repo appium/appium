@@ -39,6 +39,7 @@
       "skipFiles": [
         "<node_internals>/**",
         "**/node_modules/mocha/**",
+        "**/node_modules/lodash/**",
         "**/node_modules/ts-node/**"
       ],
       "sourceMaps": true,
@@ -53,7 +54,9 @@
       "args": ["--logLevel", "Verbose"],
       "request": "launch",
       "skipFiles": [
-        "<node_internals>/**"
+        "<node_internals>/**",
+        "**/node_modules/lodash/**",
+        "**/node_modules/**/handlebars/**"
       ],
       "sourceMaps": true,
       "type": "node"

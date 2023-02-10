@@ -4,8 +4,10 @@
  */
 
 import {
+  ContainerReflection,
   DeclarationReflection,
   LiteralType,
+  ParameterReflection,
   ProjectReflection,
   ReferenceType,
   Reflection,
@@ -280,7 +282,7 @@ export function isExternalDriverDeclarationReflection(
  * call signature returning a `Promise`.
  * @param value
  */
-export function isAsyncMethodDeclarationReflection(
+export function isCommandMethodDeclarationReflection(
   value: any
 ): value is CommandMethodDeclarationReflection {
   if (
@@ -363,4 +365,12 @@ export function isBasePluginConstructorDeclarationReflection(
     ? value.overwrites
     : undefined;
   return ref?.name === `${NAME_BASE_PLUGIN}.constructor`;
+}
+
+/**
+ * Guard for {@linkcode ParameterReflection}
+ * @param value any
+ */
+export function isParameterReflection(value: any): value is ParameterReflection {
+  return value instanceof ParameterReflection;
 }

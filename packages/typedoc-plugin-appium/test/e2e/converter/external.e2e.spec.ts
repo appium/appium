@@ -9,10 +9,10 @@ import {
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
-import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {isCallSignatureReflectionWithArity} from '../../../lib/guards';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {CommandSet, ModuleCommands, ProjectCommands} from '../../../lib/model';
+import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
 describe('@appium/typedoc-plugin-appium', function () {
   describe('ExternalConverter', function () {
@@ -105,40 +105,24 @@ describe('@appium/typedoc-plugin-appium', function () {
           it('should prefer method map parameters over method parameters', function () {
             const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
 
-            const pRefls = postRoute.methodRefl!.signatures!.find(
-              isCallSignatureReflectionWithArity
-            )!.parameters!;
-
             // the method has 4 parameters, but the method map has 3
-            expect(pRefls).to.have.lengthOf(4);
             expect(postRoute.parameters).to.have.lengthOf(3);
 
-            // the first parameter is required in the method, but optional in the method map
-            // and the names are different.
-            expect(postRoute.parameters[0])
+            expect(postRoute.parameters![0])
               .to.deep.include({
                 name: 'desiredCapabilities',
               })
               .and.to.have.nested.property('flags.isOptional', true);
-            expect(pRefls[0])
-              .to.deep.include({name: 'w3cCapabilities1'})
-              .and.to.have.nested.property('flags.isOptional', false);
 
-            expect(postRoute.parameters[1])
+            expect(postRoute.parameters![1])
               .to.deep.include({
                 name: 'requiredCapabilities',
               })
               .and.to.have.nested.property('flags.isOptional', true);
-            expect(pRefls[1])
-              .to.deep.include({name: 'w3cCapabilities2'})
-              .and.to.have.nested.property('flags.isOptional', true);
-            expect(postRoute.parameters[2])
+            expect(postRoute.parameters![2])
               .to.deep.include({
                 name: 'capabilities',
               })
-              .and.to.have.nested.property('flags.isOptional', true);
-            expect(pRefls[2])
-              .to.deep.include({name: 'w3cCapabilities3'})
               .and.to.have.nested.property('flags.isOptional', true);
           });
         });

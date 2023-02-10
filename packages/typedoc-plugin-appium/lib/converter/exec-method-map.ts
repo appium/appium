@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {DeclarationReflection, ReflectionKind} from 'typedoc';
 import {
+  isCommandMethodDeclarationReflection,
   isCommandPropDeclarationReflection,
   isExecMethodDefParamsPropDeclarationReflection,
 } from '../guards';
@@ -34,7 +35,7 @@ export interface ConvertExecuteMethodMapOpts {
   /**
    * Builtin methods from `@appium/types`
    */
-  builtinMethods: KnownMethods;
+  knownMethods: KnownMethods;
   /**
    * If `true`, do not add a route if the method it references cannot be found
    */
@@ -54,7 +55,7 @@ export function convertExecuteMethodMap({
   log,
   parentRefl,
   execMethodMapRefl,
-  builtinMethods,
+  knownMethods,
   strict = false,
   isPluginCommand = false,
 }: ConvertExecuteMethodMapOpts): ExecMethodDataSet {
@@ -98,20 +99,21 @@ export function convertExecuteMethodMap({
     const requiredParams = convertRequiredCommandParams(paramsProp);
     const optionalParams = convertOptionalCommandParams(paramsProp);
 
-    const methodRefl = builtinMethods.get(command);
+    const methodRefl = knownMethods.get(command);
 
-    if (strict && !methodRefl) {
-      log.error('No method found for command "%s" from script "%s"', command, script);
+    if (!methodRefl) {
+      if (strict) {
+        log.error('No method found for command "%s" from script "%s"', command, script);
+      }
       continue;
     }
 
-    const commentData = deriveComment({refl: methodRefl, comment, knownMethods: builtinMethods});
+    const commentData = deriveComment({refl: methodRefl, comment, knownMethods: knownMethods});
 
     commandRefs.add(
-      new ExecMethodData(log, command, script, {
+      new ExecMethodData(log, command, methodRefl, script, {
         requiredParams,
         optionalParams,
-        refl: methodRefl,
         comment: commentData?.comment,
         commentSource: commentData?.commentSource,
         isPluginCommand,

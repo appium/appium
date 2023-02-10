@@ -3,16 +3,30 @@
  * @module
  */
 
-import {DeclarationReflection, LiteralType, ProjectReflection, ReflectionKind} from 'typedoc';
+import _ from 'lodash';
 import {
-  isAsyncMethodDeclarationReflection,
+  DeclarationReflection,
+  LiteralType,
+  ParameterReflection,
+  ProjectReflection,
+  ReflectionFlag,
+  ReflectionFlags,
+  ReflectionKind,
+  SignatureReflection,
+  SomeType,
+} from 'typedoc';
+import {
+  isCommandMethodDeclarationReflection,
   isMethodDefParamNamesDeclarationReflection,
   isReflectionWithReflectedType,
 } from '../guards';
 import {ParentReflection} from '../model';
+import {findCallSignature} from '../utils';
+import {deriveComment} from './comment';
 import {NAME_OPTIONAL, NAME_REQUIRED} from './external';
 import {
   ClassDeclarationReflection,
+  CommandMethodDeclarationReflection,
   Guard,
   InterfaceDeclarationReflection,
   KnownMethods,
@@ -103,15 +117,15 @@ export function filterChildrenByKind<T extends DeclarationReflection>(
 }
 
 /**
- * Finds _all_ async methods in a class or interface
+ * Finds _all_ async command methods in a class or interface
  * @param refl Class reflection
  * @returns Map of method names to method reflections
  */
-export function findAsyncMethodsInReflection(
+export function findCommandMethodsInReflection(
   refl: ClassDeclarationReflection | InterfaceDeclarationReflection
 ): KnownMethods {
   return new Map(
-    filterChildrenByGuard(refl, isAsyncMethodDeclarationReflection).map((method) => [
+    filterChildrenByGuard(refl, isCommandMethodDeclarationReflection).map((method) => [
       method.name,
       method,
     ])
@@ -170,4 +184,168 @@ export function convertRequiredCommandParams(
   methodDefRefl?: ParamsPropDeclarationReflection
 ): string[] {
   return convertCommandParams(NAME_REQUIRED, methodDefRefl);
+}
+
+/**
+ * List of fields to shallow copy from a `ParameterReflection` to a clone
+ * @internal
+ */
+const PARAMETER_REFLECTION_CLONE_FIELDS = [
+  'anchor',
+  'cssClasses',
+  'defaultValue',
+  'hasOwnDocument',
+  'label',
+  'originalName',
+  'sources',
+  'type',
+  'url',
+];
+
+/**
+ * Clones a `ParameterReflection`.
+ *
+ * @privateRemarks I think.
+ * @param pRefl A `ParameterReflection`
+ * @param param Desired name of parameter
+ * @param knownMethods Builtin methods for aggregating comments
+ * @param sig Custom signature reflection
+ * @param optional If the parameter is considered "optional"
+ * @returns A new `ParameterReflection` based on the first
+ */
+export function cloneParameterReflection(
+  pRefl: ParameterReflection,
+  param: string,
+  knownMethods: KnownMethods,
+  sig?: SignatureReflection,
+  optional = false
+) {
+  sig = sig ?? pRefl.parent;
+  if (!sig) {
+    throw new Error('ParameterReflection has no parent');
+  }
+  const newPRefl = new ParameterReflection(param, ReflectionKind.CallSignature, sig);
+  _.assign(newPRefl, _.pick(pRefl, PARAMETER_REFLECTION_CLONE_FIELDS));
+  // attempt to derive param comments
+  newPRefl.comment =
+    deriveComment({
+      refl: newPRefl,
+      knownMethods: knownMethods,
+    })?.comment ?? pRefl.comment;
+  // there doesn't seem to be a straightforward way to clone flags.
+  newPRefl.flags = new ReflectionFlags(...pRefl.flags);
+  newPRefl.flags.setFlag(ReflectionFlag.Optional, optional);
+  return newPRefl;
+}
+
+/**
+ * List of fields to shallow copy from a `SignatureReflection` to a clone
+ * @internal
+ */
+const SIGNATURE_REFLECTION_CLONE_FIELDS = [
+  'anchor',
+  'comment',
+  'flags',
+  'hasOwnDocument',
+  'implementationOf',
+  'inheritedFrom',
+  'kindString',
+  'label',
+  'originalName',
+  'overwrites',
+  'parameters',
+  'sources',
+  'typeParameters',
+  'url',
+];
+
+/**
+ * This loops over a list of command parameter names as defined in the method/execute map and attempts
+ * to create a new `ParameterReflection` for each, based on the given data.
+ *
+ * Because the command param names are essentially properties of a JSON object and the
+ * `ParameterReflection` instances represent the arguments of a method, we must match them by
+ * index. In JS, optional arguments cannot become before required arguments in a function
+ * signature, so we can do those first. If there are _more_ method arguments than command param
+ * names, we toss them out, because they may not be part of the public API.
+ * @param methodRefl Command method declaration reflection
+ * @param opts Options
+ * @returns List of refls with names matching `commandParams`, throwing out any extra refls
+ */
+export function createNewParamRefls(
+  methodRefl: CommandMethodDeclarationReflection,
+  {
+    builtinMethods = new Map(),
+    commandParams = [],
+    sig,
+    isOptional,
+    isPluginCommand,
+  }: CreateNewParamReflsOpts = {}
+): ParameterReflection[] {
+  const newParamRefls: ParameterReflection[] = [];
+  sig = sig ?? findCallSignature(methodRefl);
+  const allParams = sig?.parameters ?? [];
+  const pRefls = isPluginCommand ? allParams.slice(2) : allParams;
+  for (const [idx, param] of commandParams.entries()) {
+    const pRefl = pRefls[idx];
+    if (pRefl) {
+      const newPRefl = cloneParameterReflection(pRefl, param, builtinMethods, sig, isOptional);
+      newParamRefls.push(newPRefl);
+    }
+  }
+
+  return newParamRefls;
+}
+
+/**
+ * Clones a `SignatureReflection` with a new parent and type.
+ *
+ * @privateRemarks I'm not sure this is sufficient.
+ * @param sig A `SignatureReflection` to clone
+ * @param parent The desired parent of the new `SignatureReflection`
+ * @param type The desired type of the new `SignatureReflection`; if not provided, the original type
+ * will be used
+ * @returns A clone of `sig` with the given parent and type
+ */
+export function cloneSignatureReflection(
+  sig: SignatureReflection,
+  parent: CommandMethodDeclarationReflection,
+  type?: SomeType
+) {
+  const newSig = new SignatureReflection(sig.name, ReflectionKind.CallSignature, parent);
+
+  _.assign(newSig, _.pick(sig, SIGNATURE_REFLECTION_CLONE_FIELDS));
+
+  if (type) {
+    newSig.type = type;
+  }
+  return newSig;
+}
+
+export interface CreateNewParamReflsOpts {
+  /**
+   * Map of known methods
+   */
+  builtinMethods?: KnownMethods;
+  /**
+   * If the parameter is marked as optional in the method def
+   */
+  isOptional?: boolean;
+  /**
+   * If the class containing the method is a Plugin.
+   *
+   * This is important because the `PluginCommand` type has a different signature than the
+   * `DriverCommand` type; the former always has two specific arguments heading its parameter list,
+   * and we do not need to include in the generated docs.
+   */
+  isPluginCommand?: boolean;
+  /**
+   * List of parameter names from method def
+   */
+  commandParams?: string[];
+
+  /**
+   * Custom signature reflection to use
+   */
+  sig?: SignatureReflection;
 }

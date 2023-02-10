@@ -81,8 +81,8 @@ export function convertOverrides({
           knownMethods: builtinMethods,
         });
         const newCommandData = commandData.clone({
-          refl: method,
           parentRefl,
+          knownBuiltinMethods: builtinMethods,
           ...commentData,
         });
         log.verbose('Linked route %s %s for command "%s"', commandData.httpMethod, route, command);

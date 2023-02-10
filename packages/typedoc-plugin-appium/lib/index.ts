@@ -45,38 +45,48 @@ export const setup: (app: Application) => Application = _.flow(configureTheme, c
 /**
  * Finds commands and creates new reflections for them, adding them to the project.
  *
- * Resolves after {@linkcode Converter.EVENT_RESOLVE_BEGIN} emits and when it's finished.
+ * Resolves after {@linkcode Converter.EVENT_RESOLVE_END} emits and when it's finished.
  * @param app Typedoc Application
  * @returns A {@linkcode ConvertResult} receipt from the conversion
  */
 export async function convert(app: Application): Promise<ConvertResult> {
   return new Promise((resolve) => {
-    app.converter.once(Converter.EVENT_RESOLVE_BEGIN, (ctx: Context) => {
-      let extensionReflections: ExtensionReflection[] | undefined;
-      let projectCommands: ProjectCommands | undefined;
+    app.converter.once(
+      Converter.EVENT_RESOLVE_END,
+      /**
+       * This listener _must_ trigger on {@linkcode Converter.EVENT_RESOLVE_END}, because TypeDoc's
+       * internal plugins do some post-processing on the project's reflections--specifically, it
+       * finds `@param` tags in a `SignatureReflection`'s `comment` and "moves" them into the
+       * appropriate `ParameterReflections`.  Without this in place, we won't be able aggregate
+       * parameter comments and they will not display in the generated docs.
+       */
+      (ctx: Context) => {
+        let extensionReflections: ExtensionReflection[] | undefined;
+        let projectCommands: ProjectCommands | undefined;
 
-      // we don't want to do this work if we're not using the custom theme!
-      log = log ?? new AppiumPluginLogger(app.logger, NS);
+        // we don't want to do this work if we're not using the custom theme!
+        log = log ?? new AppiumPluginLogger(app.logger, NS);
 
-      // this should not be necessary given the `AppiumPluginOptionsReader` forces the issue, but
-      // it's a safeguard nonetheless.
-      if (app.renderer.themeName === THEME_NAME) {
-        // this queries the declarations created by TypeDoc and extracts command information
-        projectCommands = convertCommands(ctx, log);
+        // this should not be necessary given the `AppiumPluginOptionsReader` forces the issue, but
+        // it's a safeguard nonetheless.
+        if (app.renderer.themeName === THEME_NAME) {
+          // this queries the declarations created by TypeDoc and extracts command information
+          projectCommands = convertCommands(ctx, log);
 
-        if (!projectCommands) {
-          log.verbose('Skipping creation of reflections');
-          resolve({ctx});
-          return;
+          if (!projectCommands) {
+            log.verbose('Skipping creation of reflections');
+            resolve({ctx});
+            return;
+          }
+          // this creates new custom reflections from the data we gathered and registers them
+          // with TypeDoc
+          extensionReflections = createReflections(ctx, log, projectCommands);
+        } else {
+          log.warn(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
         }
-        // this creates new custom reflections from the data we gathered and registers them
-        // with TypeDoc
-        extensionReflections = createReflections(ctx, log, projectCommands);
-      } else {
-        log.warn(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
+        resolve({ctx, extensionReflections, projectCommands});
       }
-      resolve({ctx, extensionReflections, projectCommands});
-    });
+    );
   });
 }
 
@@ -85,7 +95,7 @@ export async function convert(app: Application): Promise<ConvertResult> {
  */
 export interface ConvertResult {
   /**
-   * Context at time of {@linkcode Context.EVENT_RESOLVE_BEGIN}
+   * Context at time of {@linkcode Context.EVENT_RESOLVE_END}
    */
   ctx: Context;
   /**

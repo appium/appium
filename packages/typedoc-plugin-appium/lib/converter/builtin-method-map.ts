@@ -5,13 +5,13 @@ import {
   isMethodMapDeclarationReflection,
 } from '../guards';
 import {AppiumPluginLogger} from '../logger';
-import {BaseConverter} from './base-converter';
 import {BuiltinCommands} from '../model/builtin-commands';
+import {BaseConverter} from './base-converter';
 import {convertMethodMap} from './method-map';
 import {KnownMethods} from './types';
 import {
   findChildByNameAndGuard,
-  findAsyncMethodsInReflection,
+  findCommandMethodsInReflection,
   findParentReflectionByName,
 } from './utils';
 
@@ -36,7 +36,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
   constructor(
     ctx: Context,
     log: AppiumPluginLogger,
-    protected readonly knownMethods: KnownMethods
+    protected readonly knownBuiltinMethods: KnownMethods
   ) {
     super(ctx, log.createChildLogger(NAME_BUILTIN_COMMAND_MODULE));
   }
@@ -76,11 +76,13 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
       return new BuiltinCommands();
     }
 
+    const knownClassMethods = findCommandMethodsInReflection(baseDriverClassRefl);
     const baseDriverRoutes = convertMethodMap({
       log: this.log,
       methodMapRefl: methodMap,
       parentRefl: baseDriverModuleRefl,
-      methods: findAsyncMethodsInReflection(baseDriverClassRefl),
+      knownClassMethods,
+      knownBuiltinMethods: this.knownBuiltinMethods,
     });
 
     if (!baseDriverRoutes.size) {

@@ -193,10 +193,10 @@ export class NPM {
    * Installs a package w/ `npm`
    * @param {string} cwd
    * @param {string} pkgName
-   * @param {InstallPackageOpts} [opts]
+   * @param {InstallPackageOpts} opts
    * @returns {Promise<NpmInstallReceipt>}
    */
-  async installPackage(cwd, pkgName, {pkgVer, installType}) {
+  async installPackage(cwd, pkgName, {pkgVer, installType} = {}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');

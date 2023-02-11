@@ -32,34 +32,34 @@ class DocutilsReporter extends FancyReporter {
   /**
    * Mapping of log types (the name of the logging method called) to chalk fg colors
    */
-  static TYPE_COLOR_MAP = {
+  static readonly TYPE_COLOR_MAP = {
     info: 'cyan',
     success: 'green',
     error: 'red',
     warn: 'yellow',
-  } as const;
+  } satisfies {[k in LogType]?: typeof ForegroundColor};
 
   /**
    * Mapping of log levels to chalk fg colors
    */
-  static LEVEL_COLORS = {
+  static readonly LEVEL_COLORS = {
     0: 'red',
     1: 'yellow',
     2: 'white',
     3: 'green',
-  } as const;
+  } satisfies {[k in LogLevel]?: typeof ForegroundColor};
 
   /**
    * Mapping of log types to icons/symbols
    */
-  static TYPE_ICONS = {
+  static readonly TYPE_ICONS = {
     info: logSymbols.info,
     success: logSymbols.success,
     error: logSymbols.error,
     warn: logSymbols.warning,
     debug: figures('›'),
     trace: figures('›'),
-  } as const;
+  } satisfies {[k in LogType]?: string};
 
   /**
    * Default color to use if we can't find a color for the log type or level
@@ -191,8 +191,3 @@ function createLogProxy(logger: Consola): Consola {
  * @see {createLogProxy}
  */
 export default rootLogger;
-
-// these are just type-sanity checks
-<{[k in LogType]?: typeof ForegroundColor}>DocutilsReporter.TYPE_COLOR_MAP;
-<{[k in LogLevel]?: typeof ForegroundColor}>DocutilsReporter.LEVEL_COLORS;
-<{[k in LogType]?: string}>DocutilsReporter.TYPE_ICONS;

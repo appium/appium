@@ -26,7 +26,7 @@
     "build": "cpy lib/theme/resources build",
     "clean": "npx rimraf build/lib/theme/resources",
     "test": "run-s test:unit",
-    "test:e2e": "mocha --timeout 20s \"test/e2e/**/*.e2e.spec.ts\"",
+    "test:e2e": "mocha --timeout 20s \"test/e2e/index.e2e.spec.ts\" && mocha --timeout 20s \"test/e2e/converter/builtin-external-driver.e2e.spec.ts\" && mocha --timeout 20s \"test/e2e/converter/builtin-method-map.e2e.spec.ts\" && mocha --timeout 20s \"test/e2e/converter/converter.e2e.spec.ts\" && mocha --timeout 20s \"test/e2e/converter/external.e2e.spec.ts\"",
     "test:smoke": "node ./index.js",
     "test:unit": "mocha --timeout 2s \"test/unit/**/*.spec.ts\""
   },

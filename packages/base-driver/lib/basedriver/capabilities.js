@@ -334,6 +334,68 @@ function processCapabilities(
 }
 
 /**
+ * Return a copy of a "bare" (single-level, non-W3C) capabilities object which has taken everything
+ * within the 'appium:options' capability and promoted it to the top level.
+ *
+ * @template {Constraints} C
+ * @param {NSCapabilities<C>} obj
+ * @return {NSCapabilities<C>} the capabilities with 'options' promoted if necessary
+ */
+function promoteAppiumOptionsForObject(obj) {
+  const appiumOptions = obj[PREFIXED_APPIUM_OPTS_CAP];
+  if (!appiumOptions) {
+    return obj;
+  }
+
+  if (!_.isPlainObject(appiumOptions)) {
+    throw new errors.SessionNotCreatedError(
+      `The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`
+    );
+  }
+  if (_.isEmpty(appiumOptions)) {
+    return obj;
+  }
+
+  log.debug(
+    `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
+  );
+
+  /**
+   * @param {string} capName
+   */
+  const shouldAddVendorPrefix = (capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
+  const verifyIfAcceptable = (/** @type {string} */ capName) => {
+    if (!_.isString(capName)) {
+      throw new errors.SessionNotCreatedError(
+        `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`
+      );
+    }
+    if (isStandardCap(capName)) {
+      throw new errors.SessionNotCreatedError(
+        `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' is unexpected`
+      );
+    }
+    return capName;
+  };
+  const preprocessedOptions = _(appiumOptions)
+    .mapKeys((value, /** @type {string} */ key) => verifyIfAcceptable(key))
+    .mapKeys((value, key) => (shouldAddVendorPrefix(key) ? `${APPIUM_VENDOR_PREFIX}${key}` : key))
+    .value();
+  // warn if we are going to overwrite any keys on the base caps object
+  const overwrittenKeys = _.intersection(Object.keys(obj), Object.keys(preprocessedOptions));
+  if (overwrittenKeys.length > 0) {
+    log.warn(
+      `Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
+        `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
+    );
+  }
+  return _.cloneDeep({
+    .../** @type {NSCapabilities<C>} */ (_.omit(obj, PREFIXED_APPIUM_OPTS_CAP)),
+    ...preprocessedOptions,
+  });
+}
+
+/**
  * Return a copy of a capabilities object which has taken everything within the 'options'
  * capability and promoted it to the top level.
  *
@@ -342,69 +404,15 @@ function processCapabilities(
  * @return {import('@appium/types').W3CCapabilities<C>} the capabilities with 'options' promoted if necessary
  */
 function promoteAppiumOptions(originalCaps) {
-  const promoteForObject = (obj) => {
-    const appiumOptions = obj[PREFIXED_APPIUM_OPTS_CAP];
-    if (!appiumOptions) {
-      return obj;
-    }
-
-    if (!_.isPlainObject(appiumOptions)) {
-      throw new errors.SessionNotCreatedError(
-        `The ${PREFIXED_APPIUM_OPTS_CAP} capability must be an object`
-      );
-    }
-    if (_.isEmpty(appiumOptions)) {
-      return obj;
-    }
-
-    log.debug(
-      `Found ${PREFIXED_APPIUM_OPTS_CAP} capability present; will promote items inside to caps`
-    );
-
-    /**
-     * @param {string} capName
-     */
-    const shouldAddVendorPrefix = (capName) => !capName.startsWith(APPIUM_VENDOR_PREFIX);
-    const verifyIfAcceptable = (capName) => {
-      if (!_.isString(capName)) {
-        throw new errors.SessionNotCreatedError(
-          `Capability names in ${PREFIXED_APPIUM_OPTS_CAP} must be strings. '${capName}' is unexpected`
-        );
-      }
-      if (isStandardCap(capName)) {
-        throw new errors.SessionNotCreatedError(
-          `${PREFIXED_APPIUM_OPTS_CAP} must only contain vendor-specific capabilties. '${capName}' is unexpected`
-        );
-      }
-      return capName;
-    };
-    const preprocessedOptions = _(appiumOptions)
-      .mapKeys((value, key) => verifyIfAcceptable(key))
-      .mapKeys((value, key) => (shouldAddVendorPrefix(key) ? `${APPIUM_VENDOR_PREFIX}${key}` : key))
-      .value();
-    // warn if we are going to overwrite any keys on the base caps object
-    const overwrittenKeys = _.intersection(Object.keys(obj), Object.keys(preprocessedOptions));
-    if (overwrittenKeys.length > 0) {
-      log.warn(
-        `Found capabilities inside ${PREFIXED_APPIUM_OPTS_CAP} that will overwrite ` +
-          `capabilities at the top level: ${JSON.stringify(overwrittenKeys)}`
-      );
-    }
-    return _.cloneDeep({
-      ..._.omit(obj, PREFIXED_APPIUM_OPTS_CAP),
-      ...preprocessedOptions,
-    });
-  };
-
-  const {alwaysMatch, firstMatch} = originalCaps;
   const result = {};
+  const {alwaysMatch, firstMatch} = originalCaps;
   if (_.isPlainObject(alwaysMatch)) {
-    result.alwaysMatch = promoteForObject(alwaysMatch);
+    result.alwaysMatch = promoteAppiumOptionsForObject(alwaysMatch);
   } else if ('alwaysMatch' in originalCaps) {
     result.alwaysMatch = alwaysMatch;
   }
   if (_.isArray(firstMatch)) {
-    result.firstMatch = firstMatch.map(promoteForObject);
+    result.firstMatch = firstMatch.map(promoteAppiumOptionsForObject);
   } else if ('firstMatch' in originalCaps) {
     result.firstMatch = firstMatch;
   }
@@ -421,6 +429,7 @@ export {
   isStandardCap,
   stripAppiumPrefixes,
   promoteAppiumOptions,
+  promoteAppiumOptionsForObject,
   PREFIXED_APPIUM_OPTS_CAP,
 };
 
@@ -429,6 +438,11 @@ export {
  * @typedef {import('@appium/types').Constraint} Constraint
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').ConstraintsToCaps<C>} ConstraintsToCaps
  */
 
 /**

@@ -23,6 +23,7 @@
         "delay",
         "env-paths",
         "execa",
+        "figures",
         "find-up",
         "get-port",
         "globby",

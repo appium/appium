@@ -35,6 +35,7 @@ export {
   isStandardCap,
   validateCaps,
   promoteAppiumOptions,
+  promoteAppiumOptionsForObject,
 } from './basedriver/capabilities';
 
 // Web socket helpers

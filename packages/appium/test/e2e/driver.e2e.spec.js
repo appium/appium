@@ -88,35 +88,32 @@ describe('FakeDriver via HTTP', function () {
     }
 
     FakeDriver = driverConfig.require('fake');
-    // then start server if we need to
-    await serverStart(port, {appiumHome});
   });
 
   after(async function () {
-    await serverClose();
     await fs.rimraf(appiumHome);
     sandbox.restore();
   });
 
   /**
-   *
-   * @param {number} port
    * @param {Partial<import('appium/types').ParsedArgs>} [args]
    */
-  async function serverStart(port, args = {}) {
-    args = {...args, port, address: TEST_HOST};
-    if (shouldStartServer) {
-      server = await appiumServer(args);
-    }
-  }
-
-  async function serverClose() {
-    if (server) {
-      await server.close();
-    }
+  function withServer(args = {}) {
+    before(async function () {
+      args = {...args, appiumHome, port, address: TEST_HOST};
+      if (shouldStartServer) {
+        server = await appiumServer(args);
+      }
+    });
+    after(async function () {
+      if (server) {
+        await server.close();
+      }
+    });
   }
 
   describe('server updating', function () {
+    withServer();
     it('should allow drivers to update the server in arbitrary ways', async function () {
       const {data} = await axios.get(`${testServerBaseUrl}/fakedriver`);
       data.should.eql({fakedriver: 'fakeResponse'});
@@ -132,6 +129,7 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for empty args', function () {
+    withServer();
     it('should not receive user cli args if none passed in', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -146,16 +144,7 @@ describe('FakeDriver via HTTP', function () {
   });
 
   describe('cli args handling for passed in args', function () {
-    before(async function () {
-      await serverClose();
-      await serverStart(port, {appiumHome, ...FAKE_DRIVER_ARGS});
-    });
-    after(async function () {
-      await serverClose();
-      // this weirdness here is to restart the same server which was originally started in the parent suite's
-      // "before all" hook.  another way of doing this would be to just...not nest suites this way.
-      await serverStart(port, {appiumHome});
-    });
+    withServer(FAKE_DRIVER_ARGS);
     it('should receive user cli args from a driver if arguments were passed in', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       const {sessionId} = driver;
@@ -169,7 +158,46 @@ describe('FakeDriver via HTTP', function () {
     });
   });
 
+  describe('default capabilities via cli', function () {
+    withServer({
+      defaultCapabilities: {
+        'appium:options': {
+          automationName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        },
+        platformName: 'Fake',
+      },
+    });
+    it('should allow appium-prefixed caps sent via appium:options through --default-capabilities', async function () {
+      const appiumOptsCaps = {
+        capabilities: {
+          alwaysMatch: {},
+          firstMatch: [{}],
+        },
+      };
+
+      // Create the session
+      const {value} = (await axios.post(testServerBaseSessionUrl, appiumOptsCaps)).data;
+      try {
+        value.sessionId.should.be.a.string;
+        value.should.exist;
+        value.capabilities.should.deep.equal({
+          automationName: 'Fake',
+          platformName: 'Fake',
+          deviceName: 'Fake',
+          app: TEST_FAKE_APP,
+        });
+      } finally {
+        // End session
+        await axios.delete(`${testServerBaseSessionUrl}/${value.sessionId}`);
+      }
+    });
+  });
+
   describe('session handling', function () {
+    withServer();
+
     it('should start and stop a session and not allow commands after session stopped', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       should.exist(driver.sessionId);

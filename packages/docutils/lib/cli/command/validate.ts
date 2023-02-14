@@ -9,7 +9,7 @@ const log = logger.withTag('validate');
 const NAME_GROUP_VALIDATE = 'Validation Behavior:';
 const NAME_GROUP_VALIDATE_PATHS = 'Paths:';
 
-const opts = {
+const opts = Object.freeze({
   mkdocs: {
     default: true,
     description: 'Validate MkDocs environment',
@@ -79,10 +79,11 @@ const opts = {
     group: NAME_GROUP_VALIDATE,
     type: 'boolean',
   },
-} as const;
-opts as Record<string, Options>;
+}) satisfies Record<string, Options>;
+
 type ValidateOptions = InferredOptionTypes<typeof opts>;
-const validateCommand: CommandModule<{}, ValidateOptions> = {
+
+export default {
   command: 'validate',
   describe: 'Validate Environment',
   builder: opts,
@@ -117,6 +118,4 @@ const validateCommand: CommandModule<{}, ValidateOptions> = {
       );
     }
   },
-};
-
-export default validateCommand;
+} as CommandModule<{}, ValidateOptions>;

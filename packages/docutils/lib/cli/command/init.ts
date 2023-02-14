@@ -10,7 +10,7 @@ const NAME_GROUP_INIT_MKDOCS = 'MkDocs Config:';
 const NAME_GROUP_INIT_PATHS = 'Paths:';
 const NAME_GROUP_INIT_BEHAVIOR = 'Initialization Behavior:';
 
-const opts = {
+const opts = Object.freeze({
   copyright: {
     description: 'Copyright notice',
     group: NAME_GROUP_INIT_MKDOCS,
@@ -147,12 +147,11 @@ const opts = {
     group: NAME_GROUP_INIT_BEHAVIOR,
     type: 'boolean',
   },
-} as const;
-opts as Record<string, Options>; // type check
+}) satisfies Record<string, Options>;
 
 type InitOptions = InferredOptionTypes<typeof opts>;
 
-const initCommand: CommandModule<{}, InitOptions> = {
+export default {
   command: 'init',
   describe: 'Initialize package for doc generation',
   builder: opts,
@@ -161,6 +160,4 @@ const initCommand: CommandModule<{}, InitOptions> = {
     await init({...args, overwrite: args.force, cwd: args.dir});
     log.success('Done (%dms)', done());
   },
-};
-
-export default initCommand;
+} as CommandModule<{}, InitOptions>;

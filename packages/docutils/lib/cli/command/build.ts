@@ -11,7 +11,7 @@ const NAME_GROUP_DEPLOY = 'Deployment Options:';
 const NAME_GROUP_SERVE = 'Serve Options:';
 const NAME_GROUP_BUILD_PATHS = 'Paths:';
 
-const opts = {
+const opts = Object.freeze({
   reference: {
     describe: 'Run TypeDoc command API reference build (Markdown)',
     group: NAME_GROUP_BUILD,
@@ -183,12 +183,11 @@ const opts = {
     implies: 'serve',
     defaultDescription: 'localhost',
   },
-} as const;
+}) satisfies Record<string, Options>;
 
-opts as Record<string, Options>;
 type BuildOptions = InferredOptionTypes<typeof opts>;
 
-const buildCommand: CommandModule<{}, BuildOptions> = {
+export default {
   command: 'build',
   describe: 'Build Appium extension documentation',
   builder: (yargs) =>
@@ -224,6 +223,4 @@ const buildCommand: CommandModule<{}, BuildOptions> = {
     }
     log.success('Done! (total: %dms)', stop());
   },
-};
-
-export default buildCommand;
+} as CommandModule<{}, BuildOptions>;

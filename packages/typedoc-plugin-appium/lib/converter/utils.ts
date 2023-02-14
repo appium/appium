@@ -9,11 +9,13 @@ import {
   LiteralType,
   ParameterReflection,
   ProjectReflection,
+  Reflection,
   ReflectionFlag,
   ReflectionFlags,
   ReflectionKind,
   SignatureReflection,
   SomeType,
+  TypeParameterReflection,
 } from 'typedoc';
 import {
   isCommandMethodDeclarationReflection,
@@ -21,7 +23,6 @@ import {
   isReflectionWithReflectedType,
 } from '../guards';
 import {ParentReflection} from '../model';
-import {findCallSignature} from '../utils';
 import {deriveComment} from './comment';
 import {NAME_OPTIONAL, NAME_REQUIRED} from './external';
 import {
@@ -208,34 +209,50 @@ const PARAMETER_REFLECTION_CLONE_FIELDS = [
  * @privateRemarks I think.
  * @param pRefl A `ParameterReflection`
  * @param param Desired name of parameter
+ * @param parent Custom signature reflection
  * @param knownMethods Builtin methods for aggregating comments
- * @param sig Custom signature reflection
  * @param optional If the parameter is considered "optional"
  * @returns A new `ParameterReflection` based on the first
  */
 export function cloneParameterReflection(
   pRefl: ParameterReflection,
   param: string,
-  knownMethods: KnownMethods,
-  sig?: SignatureReflection,
+  parent: SignatureReflection,
+  knownMethods?: KnownMethods,
   optional = false
 ) {
-  sig = sig ?? pRefl.parent;
-  if (!sig) {
-    throw new Error('ParameterReflection has no parent');
-  }
-  const newPRefl = new ParameterReflection(param, ReflectionKind.CallSignature, sig);
+  const newPRefl = new ParameterReflection(param, ReflectionKind.Parameter, parent);
   _.assign(newPRefl, _.pick(pRefl, PARAMETER_REFLECTION_CLONE_FIELDS));
-  // attempt to derive param comments
-  newPRefl.comment =
-    deriveComment({
-      refl: newPRefl,
-      knownMethods: knownMethods,
-    })?.comment ?? pRefl.comment;
+  // attempt to derive param comments.  these are "summary" comments only,
+  // so we do not need to worry about combining block/summary comments like with methods.
+  newPRefl.comment = deriveComment({
+    refl: pRefl,
+    knownMethods: knownMethods,
+    comment: pRefl.comment,
+  })?.comment;
   // there doesn't seem to be a straightforward way to clone flags.
   newPRefl.flags = new ReflectionFlags(...pRefl.flags);
   newPRefl.flags.setFlag(ReflectionFlag.Optional, optional);
   return newPRefl;
+}
+
+/**
+ * Clones a type parameter reflection
+ * @param tPRefl Type parameter reflection
+ * @param parentRefl Parent
+ * @returns A clone of the original type parameter reflection
+ */
+export function cloneTypeParameterReflection(
+  tPRefl: TypeParameterReflection,
+  parentRefl: Reflection
+) {
+  return new TypeParameterReflection(
+    tPRefl.name,
+    tPRefl.type,
+    tPRefl.default,
+    parentRefl,
+    tPRefl.varianceModifier
+  );
 }
 
 /**
@@ -268,32 +285,29 @@ const SIGNATURE_REFLECTION_CLONE_FIELDS = [
  * index. In JS, optional arguments cannot become before required arguments in a function
  * signature, so we can do those first. If there are _more_ method arguments than command param
  * names, we toss them out, because they may not be part of the public API.
- * @param methodRefl Command method declaration reflection
+ * @param sig Signature reflection
  * @param opts Options
  * @returns List of refls with names matching `commandParams`, throwing out any extra refls
  */
 export function createNewParamRefls(
-  methodRefl: CommandMethodDeclarationReflection,
-  {
-    builtinMethods = new Map(),
-    commandParams = [],
-    sig,
-    isOptional,
-    isPluginCommand,
-  }: CreateNewParamReflsOpts = {}
+  sig: SignatureReflection,
+  opts: CreateNewParamReflsOpts = {}
 ): ParameterReflection[] {
+  let {builtinMethods = new Map(), commandParams = [], isOptional, isPluginCommand} = opts;
+  if (!sig.parameters?.length) {
+    // this should not happen, I think?
+    return [];
+  }
+  // a plugin command's method has two leading args we don't need
   const newParamRefls: ParameterReflection[] = [];
-  sig = sig ?? findCallSignature(methodRefl);
-  const allParams = sig?.parameters ?? [];
-  const pRefls = isPluginCommand ? allParams.slice(2) : allParams;
+  const pRefls = isPluginCommand ? sig.parameters.slice(2) : sig.parameters;
   for (const [idx, param] of commandParams.entries()) {
     const pRefl = pRefls[idx];
     if (pRefl) {
-      const newPRefl = cloneParameterReflection(pRefl, param, builtinMethods, sig, isOptional);
+      const newPRefl = cloneParameterReflection(pRefl, param, sig, builtinMethods, isOptional);
       newParamRefls.push(newPRefl);
     }
   }
-
   return newParamRefls;
 }
 
@@ -316,12 +330,22 @@ export function cloneSignatureReflection(
 
   _.assign(newSig, _.pick(sig, SIGNATURE_REFLECTION_CLONE_FIELDS));
 
+  if (newSig.parameters) {
+    newSig.parameters.map((p) => cloneParameterReflection(p, p.name, newSig));
+  }
+  if (newSig.typeParameters) {
+    newSig.typeParameters.map((tP) => cloneTypeParameterReflection(tP, newSig));
+  }
+
   if (type) {
     newSig.type = type;
   }
   return newSig;
 }
 
+/**
+ * Options for {@linkcode createNewParamRefls}
+ */
 export interface CreateNewParamReflsOpts {
   /**
    * Map of known methods
@@ -343,9 +367,4 @@ export interface CreateNewParamReflsOpts {
    * List of parameter names from method def
    */
   commandParams?: string[];
-
-  /**
-   * Custom signature reflection to use
-   */
-  sig?: SignatureReflection;
 }

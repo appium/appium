@@ -152,22 +152,22 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
         findChildByGuard(classRefl, isConstructorDeclarationReflection)
       );
 
-      const methods = new Map(findCommandMethodsInReflection(classRefl));
+      const classMethods: KnownMethods = findCommandMethodsInReflection(classRefl);
 
-      if (!methods.size) {
+      if (!classMethods.size) {
         // may or may not be expected
         log.verbose('No methods found');
         continue;
       }
 
-      log.verbose('Analyzing %s', pluralize('method', methods.size, true));
+      log.verbose('Analyzing %s', pluralize('method', classMethods.size, true));
 
-      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, methods, log, isPlugin);
+      const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, classMethods, log, isPlugin);
       routeMap = new Map([...routeMap, ...newRouteMap]);
 
       const newExecMethodData = this.#findAndConvertExecMethodMap(
         classRefl,
-        methods,
+        classMethods,
         log,
         isPlugin
       );
@@ -177,7 +177,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
         ? convertOverrides({
             log,
             parentRefl: classRefl,
-            classMethods: methods,
+            classMethods,
             builtinMethods: this.builtinMethods,
             newRouteMap,
             newExecMethodMap: execMethodData,

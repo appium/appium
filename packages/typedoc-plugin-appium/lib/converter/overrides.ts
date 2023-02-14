@@ -71,16 +71,16 @@ export function convertOverrides({
       // this must be defined, because if it wasn't then builtinRoutes would be empty and we'd continue the loop
       const commandSet = builtinCommands.routeMap.get(route)!;
       for (const commandData of commandSet) {
-        const method = classMethods.get(command);
-        if (!method) {
+        const methodRefl = classMethods.get(command);
+        if (!methodRefl) {
           log.warn('No such method "%s"; this is a bug', command);
           continue;
         }
         const commentData = deriveComment({
-          refl: method,
+          refl: methodRefl,
           knownMethods: builtinMethods,
         });
-        const newCommandData = commandData.clone({
+        const newCommandData = commandData.clone(methodRefl, {
           parentRefl,
           knownBuiltinMethods: builtinMethods,
           ...commentData,

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {expect} from 'chai';
 import {createSandbox, SinonSandbox} from 'sinon';
 import {Comment, Context} from 'typedoc';
@@ -95,7 +96,7 @@ describe('@appium/typedoc-plugin-appium', function () {
           });
 
           it('should use the summary from the driver instead of from builtins', function () {
-            const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
+            const postRoute = _.find([...sessionCmdSet], {httpMethod: 'POST'})!;
 
             expect(Comment.combineDisplayParts(postRoute.comment!.summary)).to.equal(
               'Comment for `createSession` in `FakeDriver`'
@@ -103,7 +104,7 @@ describe('@appium/typedoc-plugin-appium', function () {
           });
 
           it('should prefer method map parameters over method parameters', function () {
-            const postRoute = [...sessionCmdSet].find((cmdData) => cmdData.httpMethod === 'POST')!;
+            const postRoute = _.find([...sessionCmdSet], {httpMethod: 'POST'})!;
 
             // the method has 4 parameters, but the method map has 3
             expect(postRoute.parameters).to.have.lengthOf(3);
@@ -124,6 +125,11 @@ describe('@appium/typedoc-plugin-appium', function () {
                 name: 'capabilities',
               })
               .and.to.have.nested.property('flags.isOptional', true);
+          });
+
+          it('should contain parameters with comments', function () {
+            const createSessionCmd = _.find([...sessionCmdSet], {httpMethod: 'POST'})!;
+            expect(createSessionCmd.parameters!.every((p) => p.hasComment())).to.be.true;
           });
         });
 

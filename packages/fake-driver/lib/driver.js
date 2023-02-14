@@ -73,7 +73,7 @@ export class FakeDriver extends BaseDriver {
    * @param {W3CFakeDriverCaps} [w3cCapabilities3] W3C Capabilities
    * @param {import('@appium/types').DriverData[]} [driverData] Other session data
    * @override
-   * @returns {Promise<[string,FakeDriverCaps]>} Session ID and normalized capabilities
+   * @returns {Promise<[string,FakeDriverCaps]>}
    */
   async createSession(w3cCapabilities1, w3cCapabilities2, w3cCapabilities3, driverData = []) {
     // TODO add validation on caps.app that we will get for free from

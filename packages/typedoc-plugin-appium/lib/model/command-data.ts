@@ -3,8 +3,9 @@ import {Comment, DeclarationReflection, ParameterReflection, SignatureReflection
 import {
   cloneSignatureReflection,
   CommandMethodDeclarationReflection,
-  CommentSourceType,
+  CommentSource,
   createNewParamRefls,
+  deriveComment,
   Example,
   extractExamples,
   KnownMethods,
@@ -36,7 +37,7 @@ export abstract class BaseCommandData {
    *
    * For debugging purposes mainly
    */
-  public readonly commentSource?: CommentSourceType;
+  public readonly commentSource?: CommentSource;
   /**
    * Language-specific examples for the command, if any
    */
@@ -129,7 +130,7 @@ export abstract class BaseCommandData {
    * Note that the return type of a command's method declaration should always be a `ReferenceType` having
    * name `Promise`.
    */
-  public static unwrapSignatureType = _.memoize(
+  public static rewriteSignature = _.memoize(
     (cmd: BaseCommandData): SignatureReflection | undefined => {
       const callSig = findCallSignature(cmd.methodRefl);
       if (!callSig) {
@@ -149,6 +150,11 @@ export abstract class BaseCommandData {
           );
           return;
         }
+
+        newCallSig.comment = deriveComment({
+          refl: newCallSig,
+          knownMethods: cmd.knownBuiltinMethods,
+        })?.comment;
         return newCallSig;
       }
     }
@@ -181,7 +187,7 @@ export abstract class BaseCommandData {
     }
 
     this.parameters = BaseCommandData.rewriteParameters(this);
-    this.signature = BaseCommandData.unwrapSignatureType(this);
+    this.signature = BaseCommandData.rewriteSignature(this);
   }
 
   /**
@@ -211,7 +217,7 @@ export interface CommandDataOpts {
    *
    * For debugging purposes mainly
    */
-  commentSource?: CommentSourceType;
+  commentSource?: CommentSource;
   /**
    * If `true`, `refl` represents a `PluginCommand`, wherein we will ignore
    * the first two parameters altogether.

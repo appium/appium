@@ -1,7 +1,6 @@
 import {Comment, DeclarationReflection, ParameterReflection, SignatureReflection} from 'typedoc';
-import {CommandMethodDeclarationReflection, CommentSourceType, Example} from '../../converter';
+import {CommandMethodDeclarationReflection, CommentSource, Example} from '../../converter';
 import {isExecMethodData} from '../../guards';
-import {AppiumPluginLogger} from '../../logger';
 import {CommandData, ExecMethodData} from '../command-data';
 import {AllowedHttpMethod, Route} from '../types';
 import {ExtensionReflection} from './extension';
@@ -29,7 +28,7 @@ export class CommandReflection extends DeclarationReflection {
   /**
    * Metadata about where `comment` came from
    */
-  public readonly commentSource?: CommentSourceType;
+  public readonly commentSource?: CommentSource;
   public readonly examples?: Example[];
   /**
    * HTTP Method of the command or execute method

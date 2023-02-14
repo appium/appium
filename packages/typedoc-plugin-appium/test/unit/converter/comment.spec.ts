@@ -3,10 +3,14 @@ import {
   Comment,
   CommentTag,
   DeclarationReflection,
+  ParameterReflection,
   ProjectReflection,
   ReferenceType,
+  ReflectionKind,
+  SignatureReflection,
 } from 'typedoc';
 import {
+  AsyncCallSignatureReflection,
   cloneComment,
   CommandMethodDeclarationReflection,
   CommentSourceType,
@@ -95,7 +99,6 @@ describe('@appium/typedoc-plugin-appium', function () {
           refl.name,
           AppiumPluginReflectionKind.Command as any
         ) as CommandMethodDeclarationReflection;
-        otherRefl.type = ReferenceType.createBrokenReference('stuff', project);
         otherRefl.comment = new Comment(undefined, otherBlockTags);
         knownMethods = new Map([[refl.name, otherRefl]]);
       });
@@ -122,7 +125,6 @@ describe('@appium/typedoc-plugin-appium', function () {
           refl.name,
           AppiumPluginReflectionKind.Command as any
         ) as CommandMethodDeclarationReflection;
-        otherRefl.type = ReferenceType.createBrokenReference('stuff', project);
         otherRefl.comment = new Comment(undefined, otherBlockTags);
         knownMethods = new Map([[refl.name, otherRefl]]);
       });
@@ -131,6 +133,75 @@ describe('@appium/typedoc-plugin-appium', function () {
         const {comment, commentSource} = deriveComment({refl, knownMethods})!;
         expect(comment).to.equal(refl.comment);
         expect(commentSource).to.equal(CommentSourceType.Method);
+      });
+    });
+
+    describe('when called with a parameter', function () {
+      describe('when provided a CommandMethodDeclarationReflection having a parameter with a visible comment', function () {
+        let param: ParameterReflection;
+        let paramComment: Comment;
+
+        beforeEach(function () {
+          const sig = new SignatureReflection(
+            'test',
+            ReflectionKind.CallSignature,
+            refl
+          ) as AsyncCallSignatureReflection;
+          param = new ParameterReflection('foo', ReflectionKind.Parameter, sig);
+          paramComment = new Comment([{kind: 'text', text: 'a description of the parameter'}]);
+          param.comment = paramComment;
+          expect(param.hasComment()).to.be.true;
+          sig.parameters = [param];
+          refl.signatures = [sig];
+        });
+
+        it('should find the comment in the parameter', function () {
+          expect(deriveComment({refl: param})).to.eql({
+            comment: paramComment,
+            commentSource: CommentSourceType.Parameter,
+          });
+        });
+      });
+
+      describe('when provided a ommandMethodDeclarationReflection having a parameter without a comment, and an associated builtin method with the same parameter having a comment', function () {
+        let param: ParameterReflection;
+        let knownMethods: KnownMethods;
+        let otherParamComment: Comment;
+
+        beforeEach(function () {
+          const sig = new SignatureReflection(
+            'test',
+            ReflectionKind.CallSignature,
+            refl
+          ) as AsyncCallSignatureReflection;
+          param = new ParameterReflection('foo', ReflectionKind.Parameter, sig);
+          expect(param.hasComment()).to.be.false;
+          sig.parameters = [param];
+          refl.signatures = [sig];
+          const otherRefl = new DeclarationReflection(
+            refl.name,
+            AppiumPluginReflectionKind.Command as any
+          ) as CommandMethodDeclarationReflection;
+          otherRefl.type = ReferenceType.createBrokenReference('stuff', project);
+          const otherSig = new SignatureReflection(
+            'test',
+            ReflectionKind.CallSignature,
+            otherRefl
+          ) as AsyncCallSignatureReflection;
+          const otherParam = new ParameterReflection('foo', ReflectionKind.Parameter, otherSig);
+          otherParamComment = new Comment([{kind: 'text', text: 'a description of the parameter'}]);
+          otherParam.comment = otherParamComment;
+          expect(otherParam.hasComment()).to.be.true;
+          otherSig.parameters = [otherParam];
+          otherRefl.signatures = [otherSig];
+          knownMethods = new Map([[refl.name, otherRefl]]);
+        });
+
+        it('should use the comment from the builtin method', function () {
+          const {comment, commentSource} = deriveComment({refl: param, knownMethods})!;
+          expect(comment).to.eql(otherParamComment);
+          expect(commentSource).to.equal(CommentSourceType.BuiltinParameter);
+        });
       });
     });
   });

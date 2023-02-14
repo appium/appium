@@ -123,6 +123,11 @@ export enum CommentSourceType {
    * A comment found in a `ParameterReflection` within a builtin method (e.g., from `ExternalDriver`)
    */
   BuiltinParameter = 'builtin-parameter',
+
+  /**
+   * Some comment explicitly provided
+   */
+  OtherParameter = 'other-parameter',
 }
 
 /**
@@ -143,7 +148,7 @@ const knownDeclarationRefComments: Map<string, Comment> = new Map();
  *
  * These have an order (of precedence), which is why this is an array.
  */
-const methodCommentFinders: Readonly<CommentFinder[]> = [
+const MethodCommentFinders: Readonly<CommentFinder[]> = [
   {
     /**
      *
@@ -193,8 +198,9 @@ const methodCommentFinders: Readonly<CommentFinder[]> = [
       //
       // after looping thru the finders, if we have a comment in the list of `commentData`
       // objects, return the first one found.
-      const comment = methodCommentFinders
-        .filter(({commentSource}) => commentSource !== CommentSourceType.OtherMethod)
+      const comment = MethodCommentFinders.filter(
+        ({commentSource}) => commentSource !== CommentSourceType.OtherMethod
+      )
         .map(({getter, commentSource}) => ({
           comment: getter({refl: otherRefl, knownBuiltinMethods: knownBuiltinMethods}),
           commentSource,
@@ -209,7 +215,7 @@ const methodCommentFinders: Readonly<CommentFinder[]> = [
   },
 ];
 
-const paramCommentFinders: Readonly<CommentFinder[]> = [
+const ParamCommentFinders: Readonly<CommentFinder[]> = [
   {
     getter({refl}) {
       if (!isParameterReflection(refl)) {
@@ -219,7 +225,14 @@ const paramCommentFinders: Readonly<CommentFinder[]> = [
     },
     commentSource: CommentSourceType.Parameter,
   },
-
+  {
+    /**
+     *
+     * @returns Comment from some other source
+     */
+    getter: ({comment}) => comment,
+    commentSource: CommentSourceType.OtherParameter,
+  },
   {
     /**
      * @returns The comment from some method that this one implements or overwrites or w/e;
@@ -271,7 +284,7 @@ const paramCommentFinders: Readonly<CommentFinder[]> = [
 export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | undefined {
   const {refl, comment, knownMethods} = opts;
 
-  const commentFinders = isParameterReflection(refl) ? paramCommentFinders : methodCommentFinders;
+  const commentFinders = isParameterReflection(refl) ? ParamCommentFinders : MethodCommentFinders;
 
   /**
    * The result of running thru all of the comment finders. Each value will have a
@@ -297,7 +310,7 @@ export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | un
   ) as CommentData[];
 
   // the first summary found; this is where precedence comes in to play
-  const summaryCommentData = commentData.find(({comment}) => comment.summary?.length);
+  const summaryCommentData = commentData.find(({comment}) => comment.summary.length);
 
   // get a big pile of block tags from all sources, and pick the first from each unique tag
   const allBlockTags = commentData.flatMap(({comment}) => comment.blockTags);

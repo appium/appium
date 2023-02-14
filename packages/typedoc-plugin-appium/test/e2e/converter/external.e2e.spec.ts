@@ -10,7 +10,6 @@ import {
   NAME_BUILTIN_COMMAND_MODULE,
   NAME_TYPES_MODULE,
 } from '../../../lib/converter';
-import {isCallSignatureReflectionWithArity} from '../../../lib/guards';
 import {AppiumPluginLogger} from '../../../lib/logger';
 import {CommandSet, ModuleCommands, ProjectCommands} from '../../../lib/model';
 import {BuiltinCommands} from '../../../lib/model/builtin-commands';
@@ -62,7 +61,7 @@ describe('@appium/typedoc-plugin-appium', function () {
           let fakeDriverCmds: ModuleCommands;
           let sessionCmdSet: CommandSet;
 
-          beforeEach(async function () {
+          before(async function () {
             const converter = await initConverter(ExternalConverter, NAME_FAKE_DRIVER_MODULE, {
               extraArgs: [externalDriverMethods, builtinCmdSrc.moduleCmds],
             });
@@ -130,6 +129,12 @@ describe('@appium/typedoc-plugin-appium', function () {
           it('should contain parameters with comments', function () {
             const createSessionCmd = _.find([...sessionCmdSet], {httpMethod: 'POST'})!;
             expect(createSessionCmd.parameters!.every((p) => p.hasComment())).to.be.true;
+          });
+
+          it('should contain a call signature with a contentful @returns tag', function () {
+            const createSessionCmd = _.find([...sessionCmdSet], {httpMethod: 'POST'})!;
+            const tag = _.find(createSessionCmd.signature!.comment!.blockTags!, {tag: '@returns'})!;
+            expect(tag.content).not.to.be.empty;
           });
         });
 

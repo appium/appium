@@ -1,3 +1,4 @@
+import {ValueOf} from 'type-fest';
 import {
   Comment,
   DeclarationReflection,
@@ -276,3 +277,87 @@ export type ExecuteMethodCommandReflection = CommandReflection & {
   kind: typeof AppiumPluginReflectionKind.ExecuteMethod;
   script: string;
 };
+
+/**
+ * Languages which can be used in example code blocks
+ *
+ * The key is the identifier used in a fenced code block, and the value is the "display" value
+ */
+export const ExampleLanguage = Object.freeze({
+  ts: 'TypeScript',
+  typescript: 'TypeScript',
+  js: 'JavaScript',
+  javascript: 'JavaScript',
+  py: 'Python',
+  python: 'Python',
+  rb: 'Ruby',
+  ruby: 'Ruby',
+  java: 'Java',
+}) satisfies Record<string, string>;
+
+/**
+ * This is basically a fenced code block split into two portions: the text itself and the language
+ * specified in the opening fence.  Part of {@linkcode ExtractedExamples}
+ */
+export interface Example {
+  text: string;
+  lang: ValueOf<typeof ExampleLanguage>;
+}
+
+/**
+ * A pair of a comment and any examples which were removed from it.  Returned by {@linkcode extractExamples}
+ */
+export interface ExtractedExamples {
+  examples?: Example[];
+  comment: Comment;
+}
+
+/**
+ * Mainly for debugging purposes, these tell us (roughly) where a comment came from.
+ * In the case of {@linkcode CommentSource.Multiple}, the comment was derived
+ * from multiple sources.
+ */
+export enum CommentSource {
+  /**
+   * This is a comment directly on the `DeclarationReference` itself.
+   *
+   * It's unclear to me why sometimes comments are attached to the method proper or its signature;
+   * might have something to do with `ReferenceType`.
+   */
+  Method = 'method',
+  /**
+   * A comment attached to the method's call signature.
+   */
+  MethodSignature = 'method-signature',
+  /**
+   * A comment from "elsewhere", which is usually a method map or exec method map.
+   */
+  OtherComment = 'other-comment',
+  /**
+   * A comment coming out of the `@appium/types` package; specifically a method in `ExternalDriver`
+   */
+  OtherMethod = 'builtin-interface',
+  /**
+   * A comment _built_ from any of the above sources from one or more `DeclarationReference`
+   * objects.  For example, the summary (description) of an implementation of `doubleClick()` and
+   * the `@example` block tag from the `ExternalDriver` interface.
+   */
+  Multiple = 'multiple',
+
+  /**
+   * A comment found in a `ParameterReflection`
+   */
+  Parameter = 'parameter',
+  /**
+   * A comment found in a `ParameterReflection` within a builtin method (e.g., from `ExternalDriver`)
+   */
+  BuiltinParameter = 'builtin-parameter',
+  /**
+   * A comment found in a `SignatureReflection` within a builtin method
+   */
+  BuiltinSignature = 'builtin-signature',
+  /**
+   * A comment found in a `SignatureReflection`, but not via a method.
+   */
+  Signature = 'signature',
+}

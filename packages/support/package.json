@@ -63,7 +63,7 @@
     "@types/teen_process": "2.0.0",
     "@types/uuid": "9.0.0",
     "archiver": "5.3.1",
-    "axios": "1.2.3",
+    "axios": "1.2.6",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",
     "bplist-creator": "0.1.1",

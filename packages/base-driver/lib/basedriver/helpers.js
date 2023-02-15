@@ -52,17 +52,22 @@ process.on('exit', () => {
   }
 });
 
-async function retrieveHeaders(link) {
+/**
+ *
+ * @param {string} url
+ * @returns {Promise<import('axios').AxiosResponse['headers']>}
+ */
+async function retrieveHeaders(url) {
   try {
     return (
       await axios({
-        url: link,
+        url,
         method: 'HEAD',
         timeout: 5000,
       })
     ).headers;
   } catch (e) {
-    logger.info(`Cannot send HEAD request to '${link}'. Original error: ${e.message}`);
+    logger.info(`Cannot send HEAD request to '${url}'. Original error: ${e.message}`);
   }
   return {};
 }
@@ -228,6 +233,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
   let newApp = app;
   let shouldUnzipApp = false;
   let packageHash = null;
+  /** @type {import('axios').AxiosResponse['headers']?} */
   let headers = null;
   /** @type {RemoteAppProps} */
   const remoteAppProps = {

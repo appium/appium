@@ -1,9 +1,10 @@
 {
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
-    "rootDir": "lib",
+    "rootDir": ".",
     "outDir": "build",
-    "checkJs": true
+    "checkJs": true,
+    "strict": true
   },
-  "include": ["./lib/**/*.js"]
+  "include": ["lib"]
 }

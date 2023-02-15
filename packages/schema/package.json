@@ -23,7 +23,7 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "types": "./build/index.d.ts",
+  "types": "./build/lib/index.d.ts",
   "files": [
     "build",
     "lib",

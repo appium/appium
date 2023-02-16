@@ -43,6 +43,7 @@
   "dependencies": {
     "@appium/types": "^0.9.1",
     "@types/lodash": "4.14.191",
+    "@types/stoppable": "1.1.1",
     "axios": "1.3.3",
     "bluebird": "3.7.2",
     "chai": "4.3.7",
@@ -50,6 +51,7 @@
     "lodash": "4.17.21",
     "sinon": "15.0.1",
     "source-map-support": "0.5.21",
+    "stoppable": "1.1.0",
     "type-fest": "3.5.7"
   },
   "peerDependencies": {

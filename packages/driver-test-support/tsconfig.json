@@ -10,6 +10,6 @@
     },
     "types": ["mocha", "chai", "chai-as-promised"]
   },
-  "include": ["./lib"],
+  "include": ["lib", "test"],
   "references": [{"path": "../types"}, {"path": "../base-driver"}]
 }

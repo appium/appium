@@ -13,7 +13,7 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = /** @type {const} */ ({
     isString: true,
   },
   webSocketUrl: {
-    isString: true,
+    isBoolean: true,
   },
   newCommandTimeout: {
     isNumber: true,

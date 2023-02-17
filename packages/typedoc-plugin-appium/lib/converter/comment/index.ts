@@ -9,6 +9,9 @@ import {Comment, CommentTag, Reflection} from 'typedoc';
 import {CommentSource, Example, ExampleLanguage, ExtractedExamples, KnownMethods} from '../types';
 import {getFinders} from './finder';
 import {CommentData} from './types';
+import {fallbackLogger} from '../../logger';
+
+const log = fallbackLogger.createChildLogger('comment');
 
 export const NAME_EXAMPLE_TAG = '@example';
 
@@ -78,7 +81,13 @@ export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | un
       const tag = tags.find((t) => t.content.length) ?? tags[0];
       finalBlockTags.push(tag);
     } else {
-      // should not happen
+      if (refl) {
+        log.warn(
+          'No comment tags found in derived comment for %s "%s". This is a bug',
+          refl.constructor.name,
+          refl.name
+        );
+      }
     }
   }
 

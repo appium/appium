@@ -9,16 +9,10 @@ import type {TypeDocOptions} from 'typedoc';
 
 /**
  * A `tsconfig.json` file w/ `$schema` prop
- *
- * Due to some `unknown` types in {@linkcode type-fest.TsConfigJson}, we cannot use that type
- * directly and need to use `Jsonify`.
- *
  */
-export type TsConfigJson = Jsonify<
-  TsConfigJsonBase & {
-    $schema?: string;
-  }
->;
+export type TsConfigJson = TsConfigJsonBase & {
+  $schema?: string;
+};
 
 /**
  * A `typedoc.json` file w/ `$schema` and `extends` props

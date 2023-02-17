@@ -12,6 +12,23 @@
 import _ from 'lodash';
 import {format} from 'node:util';
 import {Logger, LogLevel} from 'typedoc';
+import path from 'path';
+
+// this is a hack to get around package export restrictions.
+// since TypeDoc's ConsoleLogger is a private API, we will fall back to a vanilla `Logger`;
+// I'm not entirely sure what it will do.
+let ConsoleLogger: typeof Logger;
+
+try {
+  ConsoleLogger = require(path.join(
+    path.dirname(require.resolve('typedoc/package.json')),
+    'dist',
+    'lib',
+    'utils'
+  )).ConsoleLogger;
+} catch {
+  ConsoleLogger = Logger;
+}
 
 /**
  * Mapping of TypeDoc {@linkcode LogLevel}s to method names.
@@ -171,3 +188,11 @@ export class AppiumPluginLogger extends Logger {
  * Used internally by {@link AppiumPluginLogger.createChildLogger} to pass log messages to the parent.
  */
 export type AppiumPluginParentLogger = (level: LogLevel, message: string, ...args: any[]) => void;
+
+/**
+ * Fallback logger. **Do not use this unless you really mean it.**
+ *
+ * Prefer to pass a `Logger` or `AppiumPluginLogger` instance to the constructor of the class you
+ * are using or the function you are calling.  If this makes the API too cumbersome, consider using this.
+ */
+export const fallbackLogger = new AppiumPluginLogger(new ConsoleLogger(), 'appium');

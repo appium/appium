@@ -78,6 +78,9 @@ The current committers are (in addition to the TC members above):
 * [@ddkjin](https://github.com/ddkjin)
 * [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
 * [@vmaxim](https://github.com/vmaxim)
+* [@laolubenson](https://github.com/laolubenson)
+* [@Dor-bl](https://github.com/Dor-bl)
+* [@boneskull](https://github.com/boneskull)
 
 ### Contributors
 

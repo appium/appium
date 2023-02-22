@@ -41,7 +41,9 @@ export class RoachHotelMap extends Map {
 /**
  * Extensions that an extension schema file can have.
  */
-export const ALLOWED_SCHEMA_EXTENSIONS = new Set(['.json', '.js', '.cjs']);
+export const ALLOWED_SCHEMA_EXTENSIONS = Object.freeze(
+  new Set(/** @type {AllowedSchemaExtension[]} */ (['.json', '.js', '.cjs']))
+);
 
 const SCHEMA_KEY = '$schema';
 
@@ -57,44 +59,39 @@ class AppiumSchema {
    * An "argument" is a CLI argument or a config property.
    *
    * Used to provide easy lookups of argument metadata when converting between different representations of those arguments.
-   * @private
    * @type {RoachHotelMap<string,ArgSpec>}
    */
-  _argSpecs = new RoachHotelMap();
+  #argSpecs = new RoachHotelMap();
 
   /**
    * A map of extension types to extension names to schema objects.
    *
    * This data structure is used to ensure there are no naming conflicts. The schemas
    * are stored here in memory until the instance is _finalized_.
-   * @private
    * @type {Record<ExtensionType,Map<string,SchemaObject>>}
    */
-  _registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
+  #registeredSchemas = {[DRIVER_TYPE]: new Map(), [PLUGIN_TYPE]: new Map()};
 
   /**
    * Ajv instance
    *
-   * @private
    * @type {Ajv}
    */
-  _ajv;
+  #ajv;
 
   /**
    * Singleton instance.
-   * @private
    * @type {AppiumSchema}
    */
-  static _instance;
+  static #instance;
 
   /**
    * Lookup of schema IDs to finalized schemas.
    *
    * This does not include references, but rather the root schemas themselves.
-   * @private
    * @type {Record<string,StrictSchemaObject>?}
    */
-  _finalizedSchemas = null;
+  #finalizedSchemas = null;
 
   /**
    * Initializes Ajv, adds standard formats and our custom keywords.
@@ -102,7 +99,7 @@ class AppiumSchema {
    * @private
    */
   constructor() {
-    this._ajv = AppiumSchema._instantiateAjv();
+    this.#ajv = AppiumSchema._instantiateAjv();
   }
 
   /**
@@ -113,9 +110,9 @@ class AppiumSchema {
    * @returns {AppiumSchema}
    */
   static create() {
-    if (!AppiumSchema._instance) {
+    if (!AppiumSchema.#instance) {
       const instance = new AppiumSchema();
-      AppiumSchema._instance = instance;
+      AppiumSchema.#instance = instance;
       _.bindAll(instance, [
         'finalize',
         'flatten',
@@ -133,7 +130,7 @@ class AppiumSchema {
       ]);
     }
 
-    return AppiumSchema._instance;
+    return AppiumSchema.#instance;
   }
 
   /**
@@ -145,7 +142,7 @@ class AppiumSchema {
    * @returns {boolean} If registered
    */
   hasRegisteredSchema(extType, extName) {
-    return this._registeredSchemas[extType].has(extName);
+    return this.#registeredSchemas[extType].has(extName);
   }
 
   /**
@@ -154,11 +151,11 @@ class AppiumSchema {
    * @returns {boolean} If finalized
    */
   isFinalized() {
-    return Boolean(this._finalizedSchemas);
+    return Boolean(this.#finalizedSchemas);
   }
 
   getAllArgSpecs() {
-    return this._argSpecs;
+    return this.#argSpecs;
   }
 
   /**
@@ -182,10 +179,10 @@ class AppiumSchema {
    */
   finalize() {
     if (this.isFinalized()) {
-      return /** @type {NonNullable<typeof this._finalizedSchemas>} */ (this._finalizedSchemas);
+      return /** @type {Record<string,StrictSchemaObject>} */ (this.#finalizedSchemas);
     }
 
-    const ajv = this._ajv;
+    const ajv = this.#ajv;
 
     // Ajv will _mutate_ the schema, so we need to clone it.
     const baseSchema = _.cloneDeep(AppiumConfigJsonSchema);
@@ -205,7 +202,7 @@ class AppiumSchema {
           extName,
         });
         const {arg} = argSpec;
-        this._argSpecs.set(arg, argSpec);
+        this.#argSpecs.set(arg, argSpec);
       }
     };
 
@@ -217,7 +214,7 @@ class AppiumSchema {
     const finalizedSchemas = {};
 
     const finalSchema = _.reduce(
-      this._registeredSchemas,
+      this.#registeredSchemas,
       /**
        * @param {typeof baseSchema} baseSchema
        * @param {Map<string,SchemaObject>} extensionSchemas
@@ -246,7 +243,7 @@ class AppiumSchema {
     finalizedSchemas[APPIUM_CONFIG_SCHEMA_ID] = finalSchema;
     ajv.validateSchema(finalSchema, true);
 
-    this._finalizedSchemas = finalizedSchemas;
+    this.#finalizedSchemas = finalizedSchemas;
     return Object.freeze(finalizedSchemas);
   }
 
@@ -283,18 +280,18 @@ class AppiumSchema {
    * @returns {void}
    */
   reset() {
-    for (const schemaId of Object.keys(this._finalizedSchemas ?? {})) {
-      this._ajv.removeSchema(schemaId);
+    for (const schemaId of Object.keys(this.#finalizedSchemas ?? {})) {
+      this.#ajv.removeSchema(schemaId);
     }
-    this._argSpecs = new RoachHotelMap();
-    this._registeredSchemas = {
+    this.#argSpecs = new RoachHotelMap();
+    this.#registeredSchemas = {
       [DRIVER_TYPE]: new Map(),
       [PLUGIN_TYPE]: new Map(),
     };
-    this._finalizedSchemas = null;
+    this.#finalizedSchemas = null;
 
     // Ajv seems to have an over-eager cache, so we have to dump the object entirely.
-    this._ajv = AppiumSchema._instantiateAjv();
+    this.#ajv = AppiumSchema._instantiateAjv();
   }
 
   /**
@@ -318,14 +315,14 @@ class AppiumSchema {
     }
     const normalizedExtName = _.kebabCase(extName);
     if (this.hasRegisteredSchema(extType, normalizedExtName)) {
-      if (_.isEqual(this._registeredSchemas[extType].get(normalizedExtName), schema)) {
+      if (_.isEqual(this.#registeredSchemas[extType].get(normalizedExtName), schema)) {
         return;
       }
       throw new SchemaNameConflictError(extType, extName);
     }
-    this._ajv.validateSchema(schema, true);
+    this.#ajv.validateSchema(schema, true);
 
-    this._registeredSchemas[extType].set(normalizedExtName, schema);
+    this.#registeredSchemas[extType].set(normalizedExtName, schema);
   }
 
   /**
@@ -336,7 +333,7 @@ class AppiumSchema {
    * @returns {ArgSpec|undefined} ArgSpec or `undefined` if not found
    */
   getArgSpec(name, extType, extName) {
-    return this._argSpecs.get(ArgSpec.toArg(name, extType, extName));
+    return this.#argSpecs.get(ArgSpec.toArg(name, extType, extName));
   }
 
   /**
@@ -347,7 +344,7 @@ class AppiumSchema {
    * @returns {boolean} `true` if such an {@link ArgSpec} exists
    */
   hasArgSpec(name, extType, extName) {
-    return this._argSpecs.has(ArgSpec.toArg(name, extType, extName));
+    return this.#argSpecs.has(ArgSpec.toArg(name, extType, extName));
   }
 
   /**
@@ -391,7 +388,7 @@ class AppiumSchema {
 
     /** @type {DefaultValues<Flattened>} */
     const retval = {};
-    return [...this._argSpecs.values()].reduce(reducer, retval);
+    return [...this.#argSpecs.values()].reduce(reducer, retval);
   }
 
   /**
@@ -405,7 +402,7 @@ class AppiumSchema {
     if (!this.isFinalized()) {
       throw new SchemaFinalizationError();
     }
-    const specs = [...this._argSpecs.values()].filter(
+    const specs = [...this.#argSpecs.values()].filter(
       (spec) => spec.extType === extType && spec.extName === extName
     );
     return specs.reduce((defaults, {defaultValue, rawDest}) => {
@@ -506,7 +503,7 @@ class AppiumSchema {
    * @returns {import('ajv').ValidateFunction}
    */
   _getValidator(id = APPIUM_CONFIG_SCHEMA_ID) {
-    const validator = this._ajv.getSchema(id);
+    const validator = this.#ajv.getSchema(id);
     if (!validator) {
       if (id === APPIUM_CONFIG_SCHEMA_ID) {
         throw new SchemaFinalizationError();
@@ -532,11 +529,13 @@ class AppiumSchema {
 
   /**
    * Returns `true` if `filename`'s file extension is allowed (in {@link ALLOWED_SCHEMA_EXTENSIONS}).
-   * @param {string} filename
+   * @param {import('type-fest').LiteralUnion<AllowedSchemaExtension, string>} filename
    * @returns {boolean}
    */
   static isAllowedSchemaFileExtension(filename) {
-    return ALLOWED_SCHEMA_EXTENSIONS.has(path.extname(filename));
+    return ALLOWED_SCHEMA_EXTENSIONS.has(
+      /** @type {AllowedSchemaExtension} */ (path.extname(filename))
+    );
   }
 
   /**
@@ -719,4 +718,8 @@ export const {isAllowedSchemaFileExtension} = AppiumSchema;
  * Helper type for the return value of {@link AppiumSchema.getDefaults}
  * @template {boolean|undefined} Flattened
  * @typedef {Record<string,Flattened extends true ? ArgSpecDefaultValue : ArgSpecDefaultValue | NestedArgSpecDefaultValue>} DefaultValues
+ */
+
+/**
+ * @typedef {'.json'|'.js'|'.cjs'} AllowedSchemaExtension
  */

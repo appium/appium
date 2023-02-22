@@ -4,8 +4,9 @@
  * @see https://github.com/w3c-webdriver/w3c-webdriver
  */
 
-export interface Element {
-  'element-6066-11e4-a52e-4f735466cecf': string;
+export interface Element<Id extends string = string> {
+  ELEMENT?: Id;
+  'element-6066-11e4-a52e-4f735466cecf': Id;
 }
 
 /**
@@ -72,11 +73,7 @@ export type KeyAction = PauseAction | KeyDownAction | KeyUpAction;
 /**
  * @group Actions
  */
-export type PointerAction =
-  | PauseAction
-  | PointerMoveAction
-  | PointerUpAction
-  | PointerDownAction;
+export type PointerAction = PauseAction | PointerMoveAction | PointerUpAction | PointerDownAction;
 
 /**
  * @group Actions
@@ -116,10 +113,7 @@ export type PointerActionSequence = {
 /**
  * @group Actions
  */
-export type ActionSequence =
-  | NullActionSequence
-  | KeyActionSequence
-  | PointerActionSequence;
+export type ActionSequence = NullActionSequence | KeyActionSequence | PointerActionSequence;
 
 /**
  * @group Actions
@@ -194,5 +188,5 @@ export enum Key {
   R_ARROWRIGHT = '\uE05A',
   R_ARROWDOWN = '\uE05B',
   R_INSERT = '\uE05C',
-  R_DELETE = '\uE05D'
+  R_DELETE = '\uE05D',
 }

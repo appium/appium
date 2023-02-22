@@ -1,20 +1,12 @@
 /* eslint-disable no-case-declarations */
 
-import BasePlugin from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin';
 import {errors} from 'appium/driver';
 import {transformSourceXml} from './source';
 import {transformQuery} from './xpath';
 import log from './logger';
 
 export default class UniversalXMLPlugin extends BasePlugin {
-  commands = [
-    'getPageSource',
-    'findElement',
-    'findElements',
-    'findElementFromElement',
-    'findElementsFromElement',
-  ];
-
   async getPageSource(next, driver, sessId, addIndexPath = false) {
     const source = next ? await next() : await driver.getPageSource();
     const metadata = {};

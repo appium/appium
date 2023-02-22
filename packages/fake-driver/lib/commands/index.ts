@@ -1,8 +1,17 @@
-export {default as alert} from './alert';
-export {default as contexts} from './contexts';
-export {default as element} from './element';
-export {default as find} from './find';
-export {default as general} from './general';
+/**
+ * Export all of the "stuff" from these mixin files.  The mixins themselves are not exported,
+ * but any types/interfaces that they export (e.g., options objects for some command) are exported.
+ *
+ * Mixins must not use `Object.assign()` and are expected to use the `mixin` function in the sibling
+ * `mixin` module.
+ * @module
+ */
+
+export * from './alert';
+export * from './contexts';
+export * from './element';
+export * from './find';
+export * from './general';
 
 /* // TODO:
   //rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);

@@ -8,7 +8,7 @@ import {FakeElement} from './fake-element';
 
 const SCREENSHOT = path.join(__dirname, 'screen.png');
 
-class FakeApp {
+export class FakeApp {
   constructor() {
     this.dom = null;
     this.activeDom = null;
@@ -20,7 +20,9 @@ class FakeApp {
     this._width = null;
     this._height = null;
     this.rawXml = '';
+    /** @type {import('./driver').Orientation} */
     this.currentOrientation = 'PORTRAIT';
+    /** @type {import('@appium/types').ActionSequence[][]} */
     this.actionLog = [];
   }
 
@@ -175,8 +177,6 @@ class FakeWebView {
     this.node = node;
   }
 }
-
-export {FakeApp};
 
 /**
  * @typedef {Element & {data: any}} ElementWithData

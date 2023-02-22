@@ -2,7 +2,6 @@ import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
 import {deprecatedCommandsLogged} from '@appium/base-driver/build/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
-import {alert, contexts, element, find, general} from './commands';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
   app: {
@@ -15,20 +14,45 @@ const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
 });
 
 /**
+ * Constraints for {@linkcode FakeDriver}'s capabilites
  * @typedef {typeof FAKE_DRIVER_CONSTRAINTS} FakeDriverConstraints
  */
 
 /**
+ * @template [Thing=any]
  * @extends {BaseDriver<FakeDriverConstraints>}
  * @implements {ExternalDriver<FakeDriverConstraints>}
  */
 export class FakeDriver extends BaseDriver {
-  desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
+  /**
+   * @type {FakeDriverConstraints}
+   * @readonly
+   */
+  desiredCapConstraints;
 
   /** @type {string} */
   curContext;
 
-  appModel = new FakeApp();
+  /** @type {FakeApp} */
+  appModel;
+
+  /** @type {boolean} */
+  _proxyActive;
+
+  /** @type {boolean} */
+  shook;
+
+  /** @type {string?} */
+  focusedElId;
+
+  /** @type {Thing?} */
+  fakeThing;
+
+  /** @type {number} */
+  maxElId;
+
+  /** @type {Record<string,import('./fake-element').FakeElement>} */
+  elMap;
 
   constructor(opts = {}, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
@@ -39,6 +63,8 @@ export class FakeDriver extends BaseDriver {
     this.fakeThing = null;
     this._proxyActive = false;
     this.shook = false;
+    this.appModel = new FakeApp();
+    this.desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
   }
 
   proxyActive() {
@@ -112,7 +138,7 @@ export class FakeDriver extends BaseDriver {
   /**
    * Set the 'thing' value (so that it can be retrieved later)
    *
-   * @param {any} thing
+   * @param {Thing} thing
    * @returns {Promise<null>}
    */
   async setFakeThing(thing) {
@@ -201,86 +227,17 @@ export class FakeDriver extends BaseDriver {
       res.send(JSON.stringify(cliArgs));
     });
   }
-
-  /*********
-   * ALERT *
-   *********/
-  assertNoAlert = alert.assertNoAlert;
-  assertAlert = alert.assertAlert;
-  getAlertText = alert.getAlertText;
-  setAlertText = alert.setAlertText;
-  postAcceptAlert = alert.postAcceptAlert;
-  postDismissAlert = alert.postDismissAlert;
-
-  /************
-   * CONTEXTS *
-   ************/
-  getRawContexts = contexts.getRawContexts;
-  assertWebviewContext = contexts.assertWebviewContext;
-  getCurrentContext = contexts.getCurrentContext;
-  getContexts = contexts.getContexts;
-  setContext = contexts.setContext;
-  setFrame = contexts.setFrame;
-
-  /************
-   * ELEMENTS *
-   ************/
-  getElements = element.getElements;
-  getElement = element.getElement;
-  getName = element.getName;
-  elementDisplayed = element.elementDisplayed;
-  elementEnabled = element.elementEnabled;
-  elementSelected = element.elementSelected;
-  setValue = element.setValue;
-  getText = element.getText;
-  clear = element.clear;
-  click = element.click;
-  getAttribute = element.getAttribute;
-  getElementRect = element.getElementRect;
-  getSize = element.getSize;
-  equalsElement = element.equalsElement;
-  getCssProperty = element.getCssProperty;
-  getLocation = element.getLocation;
-  getLocationInView = element.getLocationInView;
-
-  /********
-   * FIND *
-   ********/
-  getExistingElementForNode = find.getExistingElementForNode;
-  wrapNewEl = find.wrapNewEl;
-  findElOrEls = find.findElOrEls;
-  findElement = find.findElement;
-  findElements = find.findElements;
-  findElementFromElement = find.findElementFromElement;
-  findElementsFromElement = find.findElementsFromElement;
-
-  /***********
-   * GENERAL *
-   ***********/
-  title = general.title;
-  keys = general.keys;
-  setGeoLocation = general.setGeoLocation;
-  getGeoLocation = general.getGeoLocation;
-  getPageSource = general.getPageSource;
-  getOrientation = general.getOrientation;
-  setOrientation = general.setOrientation;
-  getScreenshot = general.getScreenshot;
-  getWindowSize = general.getWindowSize;
-  getWindowRect = general.getWindowRect;
-  performActions = general.performActions;
-  getLog = general.getLog;
-  mobileShake = general.mobileShake;
-  doubleClick = general.doubleClick;
-  execute = general.execute;
-  fakeAddition = general.fakeAddition;
-  releaseActions = general.releaseActions;
 }
+
+// eslint-disable-next-line import/no-unresolved
+export * from './commands';
 
 export default FakeDriver;
 
 /**
  * @typedef {import('./types').FakeDriverCaps} FakeDriverCaps
  * @typedef {import('./types').W3CFakeDriverCaps} W3CFakeDriverCaps
+ * @typedef {import('@appium/types').Element} Element
  */
 
 /**
@@ -291,4 +248,8 @@ export default FakeDriver;
 /**
  * @template {import('@appium/types').Constraints} C
  * @typedef {import('@appium/types').ExternalDriver<C>} ExternalDriver
+ */
+
+/**
+ * @typedef {import('@appium/types').Orientation} Orientation
  */

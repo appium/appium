@@ -1,9 +1,12 @@
 /**
- * @module
  * Portions Copyright (c) 2017 Igor Muchychka
  * @see https://github.com/w3c-webdriver/w3c-webdriver
+ * @module
  */
 
+/**
+ * A W3C or JSONWP element.
+ */
 export interface Element<Id extends string = string> {
   ELEMENT?: Id;
   'element-6066-11e4-a52e-4f735466cecf': Id;

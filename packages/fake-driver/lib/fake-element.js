@@ -1,7 +1,20 @@
 import _ from 'lodash';
 import XMLDom from '@xmldom/xmldom';
 
-class FakeElement {
+export class FakeElement {
+  /** @type {FakeApp} */
+  app;
+
+  /** @type {string} */
+  type;
+
+  /** @type {Record<string,string>} */
+  nodeAttrs;
+
+  /**
+   * @param {any} xmlNode
+   * @param {FakeApp} app
+   */
   constructor(xmlNode, app) {
     this.app = app;
     this.node = xmlNode;
@@ -53,8 +66,8 @@ class FakeElement {
 
   getLocation() {
     return {
-      x: parseFloat(this.nodeAttrs.left || 0),
-      y: parseFloat(this.nodeAttrs.top || 0),
+      x: parseFloat(this.nodeAttrs.left || '0'),
+      y: parseFloat(this.nodeAttrs.top || '0'),
     };
   }
 
@@ -64,8 +77,8 @@ class FakeElement {
 
   getSize() {
     return {
-      width: parseFloat(this.nodeAttrs.width || 0),
-      height: parseFloat(this.nodeAttrs.height || 0),
+      width: parseFloat(this.nodeAttrs.width || '0'),
+      height: parseFloat(this.nodeAttrs.height || '0'),
     };
   }
 
@@ -99,4 +112,6 @@ class FakeElement {
   }
 }
 
-export {FakeElement};
+/**
+ * @typedef {import('./fake-app').FakeApp} FakeApp
+ */

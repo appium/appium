@@ -35,7 +35,7 @@ class DriverCore {
   /**
    * @type {string?}
    */
-  sessionId = null;
+  sessionId;
 
   /**
    * @type {import('@appium/types').DriverOpts<C>}
@@ -47,7 +47,8 @@ class DriverCore {
    */
   initialOpts;
 
-  helpers = helpers;
+  /** @type {typeof helpers} */
+  helpers;
 
   /**
    * basePath is used for several purposes, for example in setting up
@@ -56,39 +57,43 @@ class DriverCore {
    * initially but it is automatically updated during any actual program
    * execution by the routeConfiguringFunction, which is necessarily run as
    * the entrypoint for any Appium server
+   * @type {string}
    */
-  basePath = DEFAULT_BASE_PATH;
+  basePath;
 
-  relaxedSecurityEnabled = false;
-
-  /** @type {string[]} */
-  allowInsecure = [];
+  /** @type {boolean} */
+  relaxedSecurityEnabled;
 
   /** @type {string[]} */
-  denyInsecure = [];
-
-  newCommandTimeoutMs = NEW_COMMAND_TIMEOUT_MS;
-
-  implicitWaitMs = 0;
+  allowInsecure;
 
   /** @type {string[]} */
-  locatorStrategies = [];
+  denyInsecure;
+
+  /** @type {number} */
+  newCommandTimeoutMs;
+
+  /** @type {number} */
+  implicitWaitMs;
 
   /** @type {string[]} */
-  webLocatorStrategies = [];
+  locatorStrategies;
+
+  /** @type {string[]} */
+  webLocatorStrategies;
 
   /** @type {Driver[]} */
-  managedDrivers = [];
+  managedDrivers;
 
   /** @type {NodeJS.Timeout?} */
-  noCommandTimer = null;
+  noCommandTimer;
 
   /** @type {EventHistory} */
-  _eventHistory = {commands: []};
+  _eventHistory;
 
   // used to handle driver events
   /** @type {NodeJS.EventEmitter} */
-  eventEmitter = new EventEmitter();
+  eventEmitter;
 
   /**
    * @type {AppiumLogger}
@@ -97,8 +102,9 @@ class DriverCore {
 
   /**
    * @protected
+   * @type {boolean}
    */
-  shutdownUnexpectedly = false;
+  shutdownUnexpectedly;
 
   /**
    * @type {boolean}
@@ -107,16 +113,18 @@ class DriverCore {
 
   /**
    * @protected
+   * @type {AsyncLock}
    */
-  commandsQueueGuard = new AsyncLock();
+  commandsQueueGuard;
 
   /**
    * settings should be instantiated by drivers which extend BaseDriver, but
    * we set it to an empty DeviceSettings instance here to make sure that the
    * default settings are applied even if an extending driver doesn't utilize
    * the settings functionality itself
+   * @type {DeviceSettings}
    */
-  settings = new DeviceSettings();
+  settings;
 
   /**
    * @param {DriverOpts<C>} opts
@@ -139,6 +147,22 @@ class DriverCore {
     this.initialOpts = _.cloneDeep(opts);
 
     this.sessionId = null;
+    this.helpers = helpers;
+    this.basePath = DEFAULT_BASE_PATH;
+    this.relaxedSecurityEnabled = false;
+    this.allowInsecure = [];
+    this.denyInsecure = [];
+    this.newCommandTimeoutMs = NEW_COMMAND_TIMEOUT_MS;
+    this.implicitWaitMs = 0;
+    this.locatorStrategies = [];
+    this.webLocatorStrategies = [];
+    this.managedDrivers = [];
+    this.noCommandTimer = null;
+    this._eventHistory = {commands: []};
+    this.eventEmitter = new EventEmitter();
+    this.shutdownUnexpectedly = false;
+    this.commandsQueueGuard = new AsyncLock();
+    this.settings = new DeviceSettings();
   }
 
   get log() {

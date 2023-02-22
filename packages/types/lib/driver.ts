@@ -183,7 +183,7 @@ export interface IExecuteCommands {
    *
    * @returns The result of calling the Execute Method
    */
-  executeMethod(script: string, args: [StringRecord] | []): Promise<any>;
+  executeMethod<TReturn = any>(script: string, args: [StringRecord] | any[]): Promise<TReturn>;
 }
 
 export interface MultiSessionData<
@@ -569,6 +569,8 @@ export interface Credential {
   signCount: number;
   largeBlob?: string;
 }
+
+export type Orientation = 'LANDSCAPE' | 'PORTRAIT';
 
 export interface EventHistory {
   commands: EventHistoryCommand[];

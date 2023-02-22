@@ -82,6 +82,8 @@ The current committers are (in addition to the TC members above):
 * [@laolubenson](https://github.com/laolubenson)
 * [@Dor-bl](https://github.com/Dor-bl)
 * [@boneskull](https://github.com/boneskull)
+* [@mwakizaka](https://github.com/mwakizaka)
+* [@rerorero](https://github.com/rerorero)
 
 ### Contributors
 

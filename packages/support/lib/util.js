@@ -172,10 +172,12 @@ function jsonStringify(obj, replacer, space = 2) {
   }
 }
 
-/*
+/**
  * Removes the wrapper from element, if it exists.
  *   { ELEMENT: 4 } becomes 4
  *   { element-6066-11e4-a52e-4f735466cecf: 5 } becomes 5
+ * @param {import('@appium/types').Element|string} el
+ * @returns {string}
  */
 function unwrapElement(el) {
   for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
@@ -183,9 +185,14 @@ function unwrapElement(el) {
       return el[propName];
     }
   }
-  return el;
+  return /** @type {string} */(el);
 }
 
+/**
+ *
+ * @param {string} elementId
+ * @returns {import('@appium/types').Element}
+ */
 function wrapElement(elementId) {
   return {
     ELEMENT: elementId,

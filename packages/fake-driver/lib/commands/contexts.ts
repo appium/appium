@@ -1,54 +1,52 @@
 import _ from 'lodash';
+import {FakeDriver} from '../driver';
 import {errors} from 'appium/driver';
+import {mixin} from './mixin';
+interface FakeDriverContextsMixin {
+  getRawContexts(): Record<string, any>;
+  assertWebviewContext(): void;
+  getCurrentContext(): Promise<string>;
+  getContexts(): Promise<string[]>;
+  setContext(context: string): Promise<void>;
+  setFrame(frame: number | null): Promise<void>;
+}
+declare module '../driver' {
+  interface FakeDriver extends FakeDriverContextsMixin {}
+}
 
-export default {
-  /**
-   * @this {FakeDriver}
-   */
-  getRawContexts() {
+const ContextsMixin: FakeDriverContextsMixin = {
+  getRawContexts(this: FakeDriver) {
     let contexts = {NATIVE_APP: null, PROXY: null};
-    let wvs = this.appModel?.getWebviews() ?? [];
+    let wvs = this.appModel.getWebviews() ?? [];
     for (let i = 1; i < wvs.length + 1; i++) {
       contexts[`WEBVIEW_${i}`] = wvs[i - 1];
     }
     return contexts;
   },
 
-  /**
-   * @this {FakeDriver}
-   */
-  assertWebviewContext() {
+  assertWebviewContext(this: FakeDriver) {
     if (this.curContext === 'NATIVE_APP') {
       throw new errors.InvalidContextError();
     }
   },
 
-  /**
-   * @returns {Promise<string>}
-   * @this {FakeDriver}
-   */
-  async getCurrentContext() {
+  async getCurrentContext(this: FakeDriver): Promise<string> {
     return this.curContext;
   },
 
   /**
    * Get the list of available contexts
-   *
-   * @returns {Promise<string[]>}
-   * @this {FakeDriver}
    */
-  async getContexts() {
+  async getContexts(this: FakeDriver) {
     return _.keys(this.getRawContexts());
   },
 
   /**
    * Set the current context
    *
-   * @param {string} context - name of the context
-   * @returns {Promise<void>}
-   * @this {FakeDriver}
+   * @param context - name of the context
    */
-  async setContext(context) {
+  async setContext(this: FakeDriver, context: string) {
     let contexts = this.getRawContexts();
     if (context in contexts) {
       this.curContext = context;
@@ -68,12 +66,8 @@ export default {
 
   /**
    * Set the active frame
-   *
-   * @param {number} frameId
-   * @returns {Promise<void>}
-   * @this {FakeDriver}
    */
-  async setFrame(frameId) {
+  async setFrame(this: FakeDriver, frameId: number | null) {
     this.assertWebviewContext();
     if (frameId === null) {
       this.appModel.deactivateFrame();
@@ -87,6 +81,4 @@ export default {
   },
 };
 
-/**
- * @typedef {import('../driver').FakeDriver} FakeDriver
- */
+mixin(ContextsMixin);

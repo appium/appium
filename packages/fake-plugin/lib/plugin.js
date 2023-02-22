@@ -5,7 +5,20 @@ import {BasePlugin} from 'appium/plugin';
 import B from 'bluebird';
 
 class FakePlugin extends BasePlugin {
-  fakeThing = 'PLUGIN_FAKE_THING';
+  /**
+   * @type {string}
+   * @readonly
+   */
+  fakeThing;
+
+  /**
+   * @param {string} name
+   * @param {Record<string,unknown>} cliArgs
+   */
+  constructor(name, cliArgs) {
+    super(name, cliArgs);
+    this.fakeThing = 'PLUGIN_FAKE_THING';
+  }
 
   static newMethodMap = /** @type {const} */ ({
     '/session/:sessionId/fake_data': {

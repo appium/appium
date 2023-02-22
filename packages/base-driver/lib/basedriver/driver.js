@@ -1,7 +1,7 @@
 /* eslint-disable require-await */
 /* eslint-disable no-unused-vars */
 
-import {validateCaps, PREFIXED_APPIUM_OPTS_CAP, processCapabilities} from './capabilities';
+import {validateCaps, processCapabilities} from './capabilities';
 import {DriverCore} from './core';
 import {util} from '@appium/support';
 import B from 'bluebird';

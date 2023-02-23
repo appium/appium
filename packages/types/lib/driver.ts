@@ -199,7 +199,7 @@ export type SingularSessionData<
   Extra extends StringRecord | void = void
 > = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
 
-export interface IFindCommands<Ctx = any> {
+export interface IFindCommands {
   /**
    * Find a UI element given a locator strategy and a selector, erroring if it can't be found
    * @see {@link https://w3c.github.io/webdriver/#find-element}
@@ -294,7 +294,7 @@ export interface IFindCommands<Ctx = any> {
    *
    * @returns A single element or list of elements
    */
-  findElOrEls<Mult extends boolean>(
+  findElOrEls<Mult extends boolean, Ctx = any>(
     strategy: string,
     selector: string,
     mult: Mult,
@@ -312,7 +312,7 @@ export interface IFindCommands<Ctx = any> {
    *
    * @returns A single element or list of elements
    */
-  findElOrElsWithProcessing<Mult extends boolean>(
+  findElOrElsWithProcessing<Mult extends boolean, Ctx = any>(
     strategy: string,
     selector: string,
     mult: Mult,
@@ -328,41 +328,35 @@ export interface IFindCommands<Ctx = any> {
   getPageSource(): Promise<string>;
 }
 
-export interface ILogCommands<C extends Constraints> {
+export interface ILogCommands {
   /**
    * Definition of the available log types
    */
-  supportedLogTypes: Readonly<LogDefRecord<C>>;
+  supportedLogTypes: Readonly<LogDefRecord>;
 
   /**
    * Get available log types as a list of strings
    */
-  getLogTypes(): Promise<(keyof ILogCommands<C>['supportedLogTypes'])[]>;
+  getLogTypes(): Promise<string[]>;
 
   /**
    * Get the log for a given log type.
    *
    * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
    */
-  getLog(
-    logType: keyof ILogCommands<C>['supportedLogTypes']
-  ): Promise<
-    AsyncReturnType<
-      ILogCommands<C>['supportedLogTypes'][keyof ILogCommands<C>['supportedLogTypes']]['getter']
-    >
-  >;
+  getLog(logType: string): Promise<any[]>;
 }
 
 /**
  * A record of {@linkcode LogDef} objects, keyed by the log type name.
  * Used in {@linkcode ILogCommands.supportedLogTypes}
  */
-export type LogDefRecord<C extends Constraints> = Record<string, LogDef<C>>;
+export type LogDefRecord = Record<string, LogDef>;
 
 /**
  * A definition of a log type
  */
-export interface LogDef<C extends Constraints, T = unknown> {
+export interface LogDef {
   /**
    * Description of the log type.
    *
@@ -375,7 +369,7 @@ export interface LogDef<C extends Constraints, T = unknown> {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: (driver: Driver<C>) => Promise<T[]>;
+  getter: <C extends Constraints, T = any>(driver: Driver<C>) => Promise<T[]>;
 }
 
 export interface ISettingsCommands {
@@ -669,11 +663,10 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
  */
 export interface Driver<
   C extends Constraints = BaseDriverCapConstraints,
-  CArgs extends StringRecord = StringRecord,
-  Ctx = any
+  CArgs extends StringRecord = StringRecord
 > extends ISessionCommands,
-    ILogCommands<C>,
-    IFindCommands<Ctx>,
+    ILogCommands,
+    IFindCommands,
     ISettingsCommands,
     ITimeoutCommands,
     IEventCommands,

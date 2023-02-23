@@ -10,10 +10,10 @@ import _ from 'lodash';
  */
 export function LogMixin(Base) {
   /**
-   * @implements {ILogCommands<C>}
+   * @implements {ILogCommands}
    */
   class LogCommands extends Base {
-    /** @type {Readonly<import('@appium/types').LogDefRecord<C>>} */
+    /** @type {Readonly<import('@appium/types').LogDefRecord>} */
     supportedLogTypes;
 
     constructor(...args) {
@@ -28,8 +28,8 @@ export function LogMixin(Base) {
 
     /**
      * @this {import('@appium/types').Driver<C>}
-     * @param {keyof typeof this.supportedLogTypes} logType
-     * @returns {Promise<import('type-fest').AsyncReturnType<typeof this.supportedLogTypes[keyof typeof this.supportedLogTypes]['getter']>>}
+     * @param {string} logType
+     * @returns {Promise<any[]>}
      */
     async getLog(logType) {
       this.log.debug(`Retrieving '${String(logType)}' logs`);
@@ -54,11 +54,10 @@ export function LogMixin(Base) {
  */
 
 /**
- * @template {Constraints} C
- * @typedef {import('@appium/types').ILogCommands<C>} ILogCommands
+ * @typedef {import('@appium/types').ILogCommands} ILogCommands
  */
 
 /**
  * @template {Constraints} C
- * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & ILogCommands<C>>} LogBase
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & ILogCommands>} LogBase
  */

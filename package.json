@@ -104,7 +104,7 @@
     "get-port": "5.1.1",
     "handlebars": "4.7.7",
     "husky": "8.0.3",
-    "json-schema-to-typescript": "11.0.4",
+    "json-schema-to-typescript": "11.0.5",
     "lerna": "6.5.1",
     "lint-staged": "13.1.2",
     "log-symbols": "4.1.0",

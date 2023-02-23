@@ -53,5 +53,5 @@ export function SessionMixin(Base) {
 
 /**
  * @template {Constraints} C
- * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & import('@appium/types').ISettingsCommands & ISessionCommands>} SessionBase
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands & import('@appium/types').ISettingsCommands & ISessionCommands>} SessionBase
  */

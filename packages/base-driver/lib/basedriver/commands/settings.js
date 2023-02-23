@@ -34,5 +34,5 @@ export function SettingsMixin(Base) {
  */
 /**
  * @template {Constraints} C
- * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands<C> & ISettingsCommands>} SettingsBase
+ * @typedef {import('../driver').BaseDriverBase<C, import('@appium/types').ITimeoutCommands & import('@appium/types').IEventCommands & import('@appium/types').IFindCommands & import('@appium/types').ILogCommands & ISettingsCommands>} SettingsBase
  */

@@ -204,7 +204,7 @@ be sure to sign up!
 
 ### Troubleshooting
 
-We put together a [troubleshooting guide](/docs/en/writing-running-appium/other/troubleshooting.md).
+We put together a [troubleshooting guide](https://appium.io/docs/en/writing-running-appium/other/troubleshooting/).
 Please have a look here first if you run into any problems. It contains instructions for checking
 a lot of common errors and how to get in touch with the community if you're
 stumped.

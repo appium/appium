@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/appium/appium/compare/@appium/docutils@0.2.1...@appium/docutils@0.2.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* **docutils:** fix typescript version ([6b8eb2c](https://github.com/appium/appium/commit/6b8eb2cbfec39185d8b81e2f4e2ce3f646ffd65f))
+* **docutils:** update dependency typedoc to v0.23.25 ([a4c58cc](https://github.com/appium/appium/commit/a4c58cc5618a9c83de4c044bf8bc59f1ddb80122))
+* **docutils:** update dependency yargs to v17.7.0 ([70d65b7](https://github.com/appium/appium/commit/70d65b7d6230dd415f26aaba6d097a3cbe876b47))
+* **docutils:** update dependency yargs to v17.7.1 ([2602016](https://github.com/appium/appium/commit/2602016eb38c73d2d9a40f94e95277faf2444305))
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+
+
+
+
+
 ## [0.2.1](https://github.com/appium/appium/compare/@appium/docutils@0.2.0...@appium/docutils@0.2.1) (2023-02-09)
 
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.8](https://github.com/appium/appium/compare/@appium/doctor@2.0.7...@appium/doctor@2.0.8) (2023-02-24)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency yargs to v17.7.0 ([70d65b7](https://github.com/appium/appium/commit/70d65b7d6230dd415f26aaba6d097a3cbe876b47))
+* **docutils:** update dependency yargs to v17.7.1 ([2602016](https://github.com/appium/appium/commit/2602016eb38c73d2d9a40f94e95277faf2444305))
+
+
+
+
+
 ## [2.0.7](https://github.com/appium/appium/compare/@appium/doctor@2.0.6...@appium/doctor@2.0.7) (2023-02-09)
 
 **Note:** Version bump only for package @appium/doctor

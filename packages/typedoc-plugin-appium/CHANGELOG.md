@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.4.0...@appium/typedoc-plugin-appium@0.5.0) (2023-02-24)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** fix broken references during clone operations ([242c2cc](https://github.com/appium/appium/commit/242c2ccbdc8030de0f0c2f60162b6a56941fc238))
+* **typedoc-plugin-appium:** parameter descriptions work ([592f9ad](https://github.com/appium/appium/commit/592f9adcb12a8a6b0b95bd73cd155a8094e79202)), closes [#18132](https://github.com/appium/appium/issues/18132)
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+
+
+### Features
+
+* **typedoc-plugin-appium:** extract descriptions of return values from builtins ([ebe9477](https://github.com/appium/appium/commit/ebe9477a3c56afd60c30c4591436c4ec68119f2a))
+
+
+
+
+
 # [0.4.0](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.3.4...@appium/typedoc-plugin-appium@0.4.0) (2023-02-09)
 
 

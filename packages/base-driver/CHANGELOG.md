@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.2](https://github.com/appium/appium/compare/@appium/base-driver@9.3.1...@appium/base-driver@9.3.2) (2023-02-24)
+
+
+### Bug Fixes
+
+* appium:options should work via --default-capabilities ([11e7ad0](https://github.com/appium/appium/commit/11e7ad0cd403ab1dc100f581cdf93772e3449db3)), closes [#18191](https://github.com/appium/appium/issues/18191)
+* **base-driver:** fix type problem w/r/t axios headers ([61a0275](https://github.com/appium/appium/commit/61a0275e29e7a705785282415fd670a3ad617f18))
+* **base-driver:** update dependency body-parser to v1.20.2 ([1cb01a5](https://github.com/appium/appium/commit/1cb01a5e85e7aee54ce1edc751e104138852d59a))
+* **images-plugin:** update dependency lru-cache to v7.15.0 ([4cf8dbc](https://github.com/appium/appium/commit/4cf8dbc0d34769e3167bceed65facabe71b9cbde))
+* **images-plugin:** update dependency lru-cache to v7.16.0 ([d54901a](https://github.com/appium/appium/commit/d54901a9c3982dd5595ffd54010e5029b60c4754))
+* **images-plugin:** update dependency lru-cache to v7.16.1 ([2fa6bf1](https://github.com/appium/appium/commit/2fa6bf1e11e66ba8256d0641e345359bd108bc7d))
+* **images-plugin:** update dependency lru-cache to v7.16.2 ([4b10322](https://github.com/appium/appium/commit/4b10322b80e0032dd4585ac7766edd1ddf798139))
+* **images-plugin:** update dependency lru-cache to v7.17.0 ([eb73be8](https://github.com/appium/appium/commit/eb73be8303c517dbaa965ae99bac3381522d939a))
+* **support:** update dependency axios to v1.3.4 ([49f157d](https://github.com/appium/appium/commit/49f157d63e3bdbd205527a5dc8f997df68540546))
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+* update axios to v1.3.3 ([8f9de63](https://github.com/appium/appium/commit/8f9de63e4a622712db545ab63f9f4ce6654e4a91))
+
+
+
+
+
 ## [9.3.1](https://github.com/appium/appium/compare/@appium/base-driver@9.3.0...@appium/base-driver@9.3.1) (2023-02-09)
 
 

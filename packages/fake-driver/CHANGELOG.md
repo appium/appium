@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.1.5...@appium/fake-driver@5.2.0) (2023-02-24)
+
+
+### Features
+
+* **typedoc-plugin-appium:** extract descriptions of return values from builtins ([ebe9477](https://github.com/appium/appium/commit/ebe9477a3c56afd60c30c4591436c4ec68119f2a))
+
+
+
+
+
 ## [5.1.5](https://github.com/appium/appium/compare/@appium/fake-driver@5.1.4...@appium/fake-driver@5.1.5) (2023-02-09)
 
 **Note:** Version bump only for package @appium/fake-driver

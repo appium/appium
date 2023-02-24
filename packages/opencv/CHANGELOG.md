@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.7](https://github.com/appium/appium/compare/@appium/opencv@2.0.6...@appium/opencv@2.0.7) (2023-02-24)
+
+
+### Bug Fixes
+
+* **support:** update dependency jimp to v0.22.5 ([998514f](https://github.com/appium/appium/commit/998514fccee0b1a7381b810280cbc30558c3c282))
+
+
+
+
+
 ## [2.0.6](https://github.com/appium/appium/compare/@appium/opencv@2.0.5...@appium/opencv@2.0.6) (2023-02-09)
 
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.10.0](https://github.com/appium/appium/compare/@appium/types@0.9.1...@appium/types@0.10.0) (2023-02-24)
+
+
+### Bug Fixes
+
+* **types:** base cap webSocketUrl is now a boolean instead of a string. ([24fb515](https://github.com/appium/appium/commit/24fb515a52349058a8c9b69eafa531876880dffd))
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+
+
+### Features
+
+* **types:** add orientation type; add optional ELEMENT prop of Element ([ab5b285](https://github.com/appium/appium/commit/ab5b285714a804a3a665723e893b82bd93e25854))
+
+
+
+
+
 ## [0.9.1](https://github.com/appium/appium/compare/@appium/types@0.9.0...@appium/types@0.9.1) (2023-02-09)
 
 

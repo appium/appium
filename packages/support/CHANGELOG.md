@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.6](https://github.com/appium/appium/compare/@appium/support@3.1.5...@appium/support@3.1.6) (2023-02-24)
+
+
+### Bug Fixes
+
+* **support:** update dependency @types/uuid to v9.0.1 ([91831cf](https://github.com/appium/appium/commit/91831cf82da943726d04e9f38a3b63c9304fb20e))
+* **support:** update dependency axios to v1.3.4 ([49f157d](https://github.com/appium/appium/commit/49f157d63e3bdbd205527a5dc8f997df68540546))
+* **support:** update dependency jimp to v0.22.5 ([998514f](https://github.com/appium/appium/commit/998514fccee0b1a7381b810280cbc30558c3c282))
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+* update axios to v1.3.3 ([8f9de63](https://github.com/appium/appium/commit/8f9de63e4a622712db545ab63f9f4ce6654e4a91))
+
+
+
+
+
 ## [3.1.5](https://github.com/appium/appium/compare/@appium/support@3.1.4...@appium/support@3.1.5) (2023-02-09)
 
 

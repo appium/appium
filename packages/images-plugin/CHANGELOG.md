@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.7](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.6...@appium/images-plugin@2.0.7) (2023-02-24)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v7.15.0 ([4cf8dbc](https://github.com/appium/appium/commit/4cf8dbc0d34769e3167bceed65facabe71b9cbde))
+* **images-plugin:** update dependency lru-cache to v7.16.0 ([d54901a](https://github.com/appium/appium/commit/d54901a9c3982dd5595ffd54010e5029b60c4754))
+* **images-plugin:** update dependency lru-cache to v7.16.1 ([2fa6bf1](https://github.com/appium/appium/commit/2fa6bf1e11e66ba8256d0641e345359bd108bc7d))
+* **images-plugin:** update dependency lru-cache to v7.16.2 ([4b10322](https://github.com/appium/appium/commit/4b10322b80e0032dd4585ac7766edd1ddf798139))
+* **images-plugin:** update dependency lru-cache to v7.17.0 ([eb73be8](https://github.com/appium/appium/commit/eb73be8303c517dbaa965ae99bac3381522d939a))
+
+
+
+
+
 ## [2.0.6](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.5...@appium/images-plugin@2.0.6) (2023-02-09)
 
 **Note:** Version bump only for package @appium/images-plugin

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.56](https://github.com/appium/appium/compare/appium@2.0.0-beta.55...appium@2.0.0-beta.56) (2023-02-24)
+
+
+### Bug Fixes
+
+* appium:options should work via --default-capabilities ([11e7ad0](https://github.com/appium/appium/commit/11e7ad0cd403ab1dc100f581cdf93772e3449db3)), closes [#18191](https://github.com/appium/appium/issues/18191)
+* **execute-driver-plugin:** update dependency webdriverio to v7.30.1 ([547b8a4](https://github.com/appium/appium/commit/547b8a45c4b5629720b0f4bdb0485a861aecbebf))
+* **support:** update dependency axios to v1.3.4 ([49f157d](https://github.com/appium/appium/commit/49f157d63e3bdbd205527a5dc8f997df68540546))
+* **types:** update dependency type-fest to v3.5.7 ([b4416c5](https://github.com/appium/appium/commit/b4416c5c0f40200b36909a1fbb492d8c4a212108))
+* **types:** update dependency type-fest to v3.6.0 ([08a6f3a](https://github.com/appium/appium/commit/08a6f3a308c7ee162e992629888557b31e50a26e))
+* update axios to v1.3.3 ([8f9de63](https://github.com/appium/appium/commit/8f9de63e4a622712db545ab63f9f4ce6654e4a91))
+
+
+
+
+
 # [2.0.0-beta.55](https://github.com/appium/appium/compare/appium@2.0.0-beta.54...appium@2.0.0-beta.55) (2023-02-09)
 
 

@@ -168,7 +168,7 @@ Java/Kotlin. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
 If you're new to Appium or want a more comprehensive description of what this is all
-about, please read our [Introduction to Appium Concepts](/docs/en/about-appium/intro.md).
+about, please read our [Intro to Appium](https://appium.github.io/appium/docs/en/latest/intro/).
 
 ### Quickstart
 
@@ -204,10 +204,7 @@ be sure to sign up!
 
 ### Troubleshooting
 
-We put together a [troubleshooting guide](/docs/en/writing-running-appium/other/troubleshooting.md).
-Please have a look here first if you run into any problems. It contains instructions for checking
-a lot of common errors and how to get in touch with the community if you're
-stumped.
+Please take a look at each driver repository/documentation.
 
 ### License
 

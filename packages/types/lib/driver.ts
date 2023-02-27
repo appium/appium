@@ -66,7 +66,7 @@ export interface ITimeoutCommands {
    *
    * @returns The return value of the condition
    */
-  implicitWaitForCondition(condition: () => Promise<any>): Promise<unknown>;
+  implicitWaitForCondition(condition: (...args: any[]) => Promise<any>): Promise<unknown>;
 
   /**
    * Get the current timeouts

@@ -5,7 +5,6 @@
  */
 
 import {fs} from '@appium/support';
-import glob from 'glob';
 import _ from 'lodash';
 import path from 'node:path';
 import {Application, ArgumentsReader, TypeDocOptions, TypeDocReader} from 'typedoc';
@@ -16,27 +15,11 @@ import {
   NAME_TYPEDOC_JSON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findPkgDir, findTypeDocJsonPath, readTypedocJson} from '../fs';
+import {findTypeDocJsonPath, readTypedocJson} from '../fs';
 import logger from '../logger';
 import {argify, relative, stopwatch} from '../util';
 
 const log = logger.withTag('builder:reference');
-
-/**
- * Replaces TypeDoc's homebrew "glob" implementation with a real one
- *
- * This cannot be done via `require('typedoc')` or `import` due to the file being excluded
- * from the export map in its `package.json`.
- * @see https://github.com/TypeStrong/typedoc/issues/2151
- */
-const monkeyPatchTypedoc = _.once(async () => {
-  const typedocDir = await findPkgDir(require.resolve('typedoc'));
-  if (!typedocDir) {
-    throw new DocutilsError('Could not find TypeDoc package directory; is it installed?');
-  }
-  const tdFs = require(path.join(typedocDir, 'dist', 'lib', 'utils', 'fs.js'));
-  tdFs.glob = glob.sync;
-});
 
 /**
  * Executes TypeDoc _in the current process_
@@ -48,9 +31,6 @@ const monkeyPatchTypedoc = _.once(async () => {
  * @param opts - TypeDoc options
  */
 export async function runTypedoc(typeDocJsonPath: string, opts: Record<string, string>) {
-  await monkeyPatchTypedoc();
-  log.debug('Monkeypatched TypeDoc');
-
   const args = argify(opts);
   log.debug('TypeDoc args:', args);
   const app = new Application();

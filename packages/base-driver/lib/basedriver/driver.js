@@ -8,7 +8,6 @@ import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
-import {createBaseDriverClass} from './commands';
 import helpers from './helpers';
 import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 
@@ -22,9 +21,10 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
  * @implements {SessionHandler<C>}
  * @template {Constraints} C
  * @template {StringRecord} [CArgs=StringRecord]
+ * @implements {Driver<C, CArgs>}
  * @extends {DriverCore<C>}
  */
-export class BaseDriverCore extends DriverCore {
+export class BaseDriver extends DriverCore {
   /**
    * @type {CArgs & ServerArgs}
    */
@@ -59,7 +59,7 @@ export class BaseDriverCore extends DriverCore {
     super(opts, shouldValidateCaps);
 
     /**
-     * This must be assigned here because the declaration of {@linkcode BaseDriverCore.opts} above
+     * This must be assigned here because the declaration of {@linkcode BaseDriver.opts} above
      * blows away {@linkcode DriverCore.opts}.
      */
     this.opts = opts;
@@ -407,12 +407,9 @@ export class BaseDriverCore extends DriverCore {
   }
 }
 
-/**
- * This ensures that all of the mixins correctly implement the interface described in {@linkcode Driver}.
- * @template {Constraints} [C={}]
- * @implements {Driver<C>}
- */
-export class BaseDriver extends createBaseDriverClass(BaseDriverCore) {}
+// eslint-disable-next-line import/no-unresolved
+export * from './commands';
+
 export default BaseDriver;
 
 /**
@@ -433,11 +430,11 @@ export default BaseDriver;
  */
 
 /**
- * This is used to extend {@linkcode BaseDriverCore} by the mixins and also external drivers.
+ * This is used to extend {@linkcode BaseDriver} by the mixins and also external drivers.
  * @template {Constraints} C
  * @template [Proto={}]
  * @template [Static={}]
- * @typedef {import('@appium/types').Class<BaseDriverCore<C> & Proto,import('@appium/types').DriverStatic & Static>} BaseDriverBase
+ * @typedef {import('@appium/types').Class<BaseDriver<C> & Proto,import('@appium/types').DriverStatic & Static>} BaseDriverBase
  */
 
 /**

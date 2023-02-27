@@ -204,7 +204,7 @@ be sure to sign up!
 
 ### Troubleshooting
 
-Please take a look at each driver repository/documentation.
+Please find the troubleshooting guide at the corresponding driver repository/documentation.
 
 ### License
 

@@ -289,7 +289,7 @@ class AppiumDriver extends DriverCore {
        */
       let otherPendingDriversData = [];
 
-      const driverInstance = new InnerDriver(this.args, true);
+      const driverInstance = /** @type {ExternalDriver} */ (new InnerDriver(this.args, true));
 
       // We want to assign security values directly on the driver. The driver
       // should not read security values from `this.opts` because those values

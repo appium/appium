@@ -16,7 +16,7 @@ export function ExecuteMixin(Base) {
      * @param {[Record<string, any>]|[]} protoArgs
      */
     async executeMethod(script, protoArgs) {
-      const Driver = /** @type {DriverClass} */ (this.constructor);
+      const Driver = /** @type {import('@appium/types').DriverClass<Driver>} */ (this.constructor);
       const commandMetadata = {...Driver.executeMethodMap?.[script]};
       if (!commandMetadata.command) {
         const availableScripts = _.keys(Driver.executeMethodMap);
@@ -25,8 +25,11 @@ export function ExecuteMixin(Base) {
             `are: ${availableScripts.join(', ')}`
         );
       }
+      const command = /** @type {import('@appium/types').DriverCommand} */ (
+        this[commandMetadata.command]
+      );
       const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);
-      return await this[commandMetadata.command](...args);
+      return await command.call(this, ...args);
     }
   }
   return ExecuteCommands;
@@ -35,7 +38,6 @@ export function ExecuteMixin(Base) {
 /**
  * @typedef {import('@appium/types').IExecuteCommands} IExecuteCommands
  * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').Constraints} Constraints
  */
 

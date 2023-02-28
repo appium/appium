@@ -56,26 +56,26 @@ class BasePlugin {
    * `next` and `driver` objects since naturally we'd want to make sure to trigger the driver's own
    * `executeMethod` call if an execute method is not found on the plugin itself.
    *
-   * @template {Driver} D
+   * @template {Constraints} C
    * @param {NextPluginCallback} next
-   * @param {D} driver
+   * @param {Driver<C>} driver
    * @param {string} script
    * @param {[Record<string, any>]|[]} protoArgs
-   * @this {Plugin}
    */
   async executeMethod(next, driver, script, protoArgs) {
-    const Plugin = /** @type {PluginClass} */ (this.constructor);
+    const Plugin = /** @type {import('@appium/types').PluginClass<Plugin>} */ (this.constructor);
     const commandMetadata = {...Plugin.executeMethodMap?.[script]};
 
-    /** @type {import('@appium/types').PluginCommand<D>|undefined} */
-    let command;
-
-    if (!commandMetadata.command || !(command = this[commandMetadata.command])) {
+    if (!commandMetadata.command || !(commandMetadata.command in this)) {
       this.logger.info(
         `Plugin did not know how to handle method '${script}'. Passing control to next`
       );
       return await next();
     }
+
+    const command = /** @type {import('@appium/types').PluginCommand<Driver<C>>} */ (
+      this[commandMetadata.command]
+    );
     const args = validateExecuteMethodParams(protoArgs, commandMetadata.params);
     return await command.call(this, next, driver, ...args);
   }
@@ -87,6 +87,10 @@ export {BasePlugin};
 /**
  * @typedef {import('@appium/types').Plugin} Plugin
  * @typedef {import('@appium/types').NextPluginCallback} NextPluginCallback
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').PluginClass} PluginClass
+ * @typedef {import('@appium/types').Constraints} Constraints
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Driver<C>} Driver
  */

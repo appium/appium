@@ -99,8 +99,7 @@ export function createSessionHelpers(port, address = TEST_HOST) {
 
 /**
  * Creates E2E test suites for a driver.
- * @template {Driver} P
- * @param {DriverClass<P>} DriverClass
+ * @param {DriverClass} DriverClass
  * @param {Partial<BaseNSCapabilities>} [defaultCaps]
  */
 export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
@@ -110,7 +109,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 
   describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer;
-    /** @type {P} */
+    /** @type {Driver} */
     let d;
     /**
      * This URL creates a new session
@@ -419,16 +418,9 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 }
 
 /**
- * A {@linkcode DriverClass}, except using the base {@linkcode Driver} type instead of `ExternalDriver`.
- * This allows the suite to work for `BaseDriver`.
- * @template {Driver} P
- * @typedef {import('@appium/types').DriverClass<P>} DriverClass
- */
-
-/**
+ * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').Driver} Driver
  * @typedef {import('@appium/types').Constraints} Constraints
- * @typedef {import('@appium/types').DriverStatic} DriverStatic
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities

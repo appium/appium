@@ -626,12 +626,22 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
 }
 
 /**
- * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
+ * @typedef {import('@appium/types').Constraints} Constraints
  */
 
 /**
- * @template {import('@appium/types').Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
+ * @template {Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
+ * @typedef {import('@appium/types').DriverClass<Driver<C>>} DriverClass
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Driver<C>} Driver
+ */
+
+/**
+ * @template {Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
  * @template {import('@appium/types').StringRecord|void} [Extra=void]
  * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
  */

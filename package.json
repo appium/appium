@@ -45,7 +45,6 @@
     "lint:fix": "run-s \"lint -- --fix\"",
     "lint:commit": "commitlint",
     "lint:staged": "lint-staged",
-    "pack-all": "npm pack --workspaces --include-workspace-root",
     "prepublishOnly": "run-s rebuild",
     "reinstall": "run-s clean ci",
     "rebuild": "run-s clean:artifacts build:all",
@@ -63,7 +62,8 @@
     "test:unit": "lerna run test",
     "typedoc": "typedoc --logLevel Verbose",
     "upload": "gulp github-upload",
-    "preversion": "run-s rebuild sync-pkgs stage-synced-pkgs",
+    "preversion": "run-s sync-pkgs stage-synced-pkgs",
+    "prepack": "npm run rebuild",
     "zip": "zip -qr ./appium.zip ./packages/appium",
     "zip-and-upload": "run-s zip upload"
   },

@@ -34,7 +34,8 @@
   "scripts": {
     "build": "node ./scripts/generate-schema-json.js",
     "clean": "git checkout -- ./lib/appium-config.schema.json || true",
-    "test:smoke": "node ./index.js"
+    "test:smoke": "node ./index.js",
+    "test": "exit 0"
   },
   "dependencies": {
     "@types/json-schema": "7.0.11",

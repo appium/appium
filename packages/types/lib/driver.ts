@@ -5,17 +5,16 @@ import {
   AppiumServer,
   UpdateServerCallback,
   Class,
-  MethodMap,
   AppiumLogger,
   StringRecord,
   ConstraintsToCaps,
   BaseDriverCapConstraints,
   W3CCapabilities,
   Capabilities,
-  ExecuteMethodMap,
 } from '.';
 import {ServerArgs} from './config';
 import {AsyncReturnType, Entries} from 'type-fest';
+import {MethodMap, ExecuteMethodMap} from './command';
 
 export interface ITimeoutCommands {
   /**
@@ -647,7 +646,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   canProxy(sessionId?: string): boolean;
   proxyRouteIsAvoided(sessionId: string, method: string, url: string): boolean;
   addManagedDriver(driver: Driver): void;
-  getManagedDrivers(): Driver[];
+  getManagedDrivers(): Driver<Constraints>[];
   clearNewCommandTimeout(): Promise<void>;
   logEvent(eventName: string): void;
   driverForSession(sessionId: string): Core<C> | null;
@@ -662,7 +661,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
  * `Ctx` would be the type of the element context (e.g., string, dictionary of some sort, etc.)
  */
 export interface Driver<
-  C extends Constraints = BaseDriverCapConstraints,
+  C extends Constraints = Constraints,
   CArgs extends StringRecord = StringRecord
 > extends ISessionCommands,
     ILogCommands,
@@ -762,8 +761,7 @@ export interface Driver<
  * External drivers must subclass `BaseDriver`, and can implement any of these methods.
  * None of these are implemented within Appium itself.
  */
-export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints>
-  extends Driver<C> {
+export interface ExternalDriver<C extends Constraints = Constraints> extends Driver<C> {
   // The following properties are assigned by appium */
   server?: AppiumServer;
   serverHost?: string;
@@ -2200,11 +2198,11 @@ export interface ExternalDriver<C extends Constraints = BaseDriverCapConstraints
  *
  * This is likely unusable by external consumers, but YMMV!
  */
-export interface DriverStatic<D extends Driver> {
+export interface DriverStatic<T extends Driver> {
   baseVersion: string;
   updateServer?: UpdateServerCallback;
-  newMethodMap?: MethodMap<D>;
-  executeMethodMap?: ExecuteMethodMap<D>;
+  newMethodMap?: MethodMap<T>;
+  executeMethodMap?: ExecuteMethodMap<T>;
 }
 
 /**
@@ -2212,9 +2210,9 @@ export interface DriverStatic<D extends Driver> {
  *
  * This is likely unusable by external consumers, but YMMV!
  */
-export type DriverClass<D extends Driver = ExternalDriver> = Class<
-  D,
-  DriverStatic<D>,
+export type DriverClass<T extends Driver = Driver> = Class<
+  T,
+  DriverStatic<T>,
   [] | [Partial<ServerArgs>] | [Partial<ServerArgs>, boolean]
 >;
 
@@ -2231,7 +2229,12 @@ export type DriverOpts<C extends Constraints = BaseDriverCapConstraints> = Serve
   ExtraDriverOpts &
   Partial<ConstraintsToCaps<C>>;
 
-export type DriverCommand<TArgs = any, TReturn = unknown> = (...args: TArgs[]) => Promise<TReturn>;
+/**
+ * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
+ *
+ * Note that this signature differs from a `PluginCommand`.
+ */
+export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
 
 export type DriverCommands<TArgs = any, TReturn = unknown> = Record<
   string,

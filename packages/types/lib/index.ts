@@ -2,12 +2,10 @@ import type {Express} from 'express';
 import type {Server} from 'http';
 import type {Socket} from 'net';
 import type {Logger} from 'npmlog';
-import type {Class as _Class, ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
+import type {Class as _Class} from 'type-fest';
 import type {Server as WSServer} from 'ws';
 import {ServerArgs} from './config';
-import {Driver} from './driver';
-import {Plugin, PluginCommand} from './plugin';
-
+export * from './command';
 export * from './action';
 export * from './appium-config';
 export * from './capabilities';
@@ -79,74 +77,6 @@ export interface AppiumServerExtension {
 export interface AppiumServerSocket extends Socket {
   _openReqCount: number;
 }
-
-/**
- * The definition of an extension method, which will be provided via Appium's API.
- *
- */
-export interface MethodDef<Ext extends Plugin | Driver> {
-  /**
-   * Name of the command.
-   */
-  readonly command?: keyof ConditionalPick<
-    Required<Ext>,
-    Ext extends Plugin ? PluginCommand : Ext extends Driver ? DriverCommand : never
-  >;
-  /**
-   * If true, this `Method` will never proxy.
-   */
-  readonly neverProxy?: boolean;
-  /**
-   * Specifies shape of payload
-   */
-  readonly payloadParams?: PayloadParams;
-}
-
-export interface ExecuteMethodDef<Ext extends Driver | Plugin> {
-  command: keyof ConditionalPick<
-    Required<Ext>,
-    Ext extends Plugin ? PluginCommand : Ext extends Driver ? DriverCommand : never
-  >;
-  params?: {
-    required?: ReadonlyArray<string>;
-    optional?: ReadonlyArray<string>;
-  };
-}
-export type ExecuteMethodMap<Ext extends Driver | Plugin> = Readonly<
-  Record<string, Readonly<ExecuteMethodDef<Ext>>>
->;
-
-/**
- * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
- *
- * Note that this signature differs from a `PluginCommand`.
- */
-export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
-
-/**
- * Defines the shape of a payload for a {@linkcode MethodDef}.
- */
-export interface PayloadParams {
-  wrap?: string;
-  unwrap?: string;
-  required?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
-  optional?: ReadonlyArray<string> | MultidimensionalReadonlyArray<string, 2>;
-  validate?: (obj: any, protocol: string) => boolean | string | undefined;
-  makeArgs?: (obj: any) => any;
-}
-/**
- * A mapping of URL paths to HTTP methods to {@linkcode MethodDef}s.
- */
-export type MethodMap<Ext extends Plugin | Driver> = Readonly<
-  Record<
-    string,
-    {
-      GET?: MethodDef<Ext>;
-      POST?: MethodDef<Ext>;
-      DELETE?: MethodDef<Ext>;
-    }
-  >
->;
 
 /**
  * Wraps {@linkcode _Class `type-fest`'s `Class`} to include static members.

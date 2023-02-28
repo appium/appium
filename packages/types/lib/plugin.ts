@@ -1,4 +1,5 @@
-import {AppiumLogger, Class, ExecuteMethodMap, MethodMap, UpdateServerCallback} from '.';
+import {AppiumLogger, Class, UpdateServerCallback} from '.';
+import {ExecuteMethodMap, MethodMap} from './command';
 import {ExternalDriver} from './driver';
 
 /**

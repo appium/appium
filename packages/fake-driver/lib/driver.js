@@ -54,7 +54,10 @@ export class FakeDriver extends BaseDriver {
   /** @type {Record<string,import('./fake-element').FakeElement>} */
   elMap;
 
-  constructor(opts = {}, shouldValidateCaps = true) {
+  constructor(
+    opts = /** @type {import('@appium/types').DriverOpts<FakeDriverConstraints>} */ ({}),
+    shouldValidateCaps = true
+  ) {
     super(opts, shouldValidateCaps);
     this.curContext = 'NATIVE_APP';
     this.elMap = {};

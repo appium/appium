@@ -29,9 +29,6 @@ class DriverCore {
    */
   static baseVersion = BASEDRIVER_VER;
 
-  /** @type {import('@appium/types').ExecuteMethodMap<DriverCore>} */
-  static executeMethodMap = {};
-
   /**
    * @type {string?}
    */

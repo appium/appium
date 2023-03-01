@@ -57,7 +57,7 @@ appium driver install --source=npm appium-xcuitest-driver[@<version>]
 # To install a driver from a local folder (useful for developers)
 appium driver install --source=local /Users/me/sources/appium-xcuitest-driver
 # To install a new driver from github (hm, maybe it's time to publish it to NPM?)
-appium driver install --source=github appium/appium-xcuitest-driver
+appium driver install --source=github --package=appium-xcuitest-driver appium/appium-xcuitest-driver
 
 # To list already installed drivers
 appium driver list --installed
@@ -103,7 +103,14 @@ appium server --use-plugins=device-farm,images
 ```
 
 You can find a full list of
-[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#plugins) and
+[officially-supported](https://appium.
+
+
+
+
+
+
+ub.io/appium/docs/en/latest/ecosystem/#plugins) and
 [third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-plugins) plugins at
 the current Appium 2.0 documentation.
 

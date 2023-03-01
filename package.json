@@ -139,7 +139,6 @@
     "access": "public"
   },
   "overrides": {
-    "jpeg-js": "0.4.4",
     "@sidvind/better-ajv-errors": {
       "ajv": "8.12.0"
     },

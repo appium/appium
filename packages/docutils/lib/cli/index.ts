@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import logger from '../logger';
 
 import _ from 'lodash';
@@ -8,6 +9,10 @@ import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
 import {DocutilsError} from '../error';
 import {build, init, validate} from './command';
 import {findConfig} from './config';
+import {fs} from '@appium/support';
+import {sync as readPkg} from 'read-pkg';
+
+const pkg = readPkg({cwd: fs.findRoot(__dirname)});
 
 const log = logger.withTag('cli');
 export async function main(argv = hideBin(process.argv)) {
@@ -45,7 +50,7 @@ export async function main(argv = hideBin(process.argv)) {
         describe: 'Disable config file discovery',
       },
     })
-    .middleware(
+    .middleware([
       /**
        * Configures logging; `--verbose` implies `--log-level=debug`
        */
@@ -55,8 +60,15 @@ export async function main(argv = hideBin(process.argv)) {
           log.debug('Debug logging enabled via --verbose');
         }
         log.level = LogLevelMap[argv.logLevel];
-      }
-    )
+      },
+      /**
+       * Writes a startup message, if logging is enabled
+       */
+      async () => {
+        log.info(`${pkg.name} @ v${pkg.version} (Node.js ${process.version})`);
+      },
+    ])
+    .epilog(`Please report bugs at ${pkg.bugs?.url}`)
     .fail(
       /**
        * Custom failure handler so we can log nicely.
@@ -67,6 +79,7 @@ export async function main(argv = hideBin(process.argv)) {
           log.error(error.message);
         } else {
           y.showHelp();
+          console.log();
           log.error(msg ?? error.message);
         }
         y.exit(1, error);

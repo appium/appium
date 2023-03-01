@@ -1,25 +1,33 @@
+/**
+ * Yargs command module for the `validate` command.
+ * @module
+ */
+
 import pluralize from 'pluralize';
 import {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {DocutilsError} from '../../error';
 import {DocutilsValidator, ValidationKind} from '../../validate';
 import logger from '../../logger';
+import {checkMissingPaths} from '../check';
 
 const log = logger.withTag('validate');
 
-const NAME_GROUP_VALIDATE = 'Validation Behavior:';
-const NAME_GROUP_VALIDATE_PATHS = 'Paths:';
+enum ValidateCommandGroup {
+  Behavior = 'Validation Behavior:',
+  Paths = 'Custom Paths:',
+}
 
-const opts = Object.freeze({
+const opts = {
   mkdocs: {
     default: true,
     description: 'Validate MkDocs environment',
-    group: NAME_GROUP_VALIDATE,
+    group: ValidateCommandGroup.Behavior,
     type: 'boolean',
   },
   'mkdocs-yml': {
     defaultDescription: './mkdocs.yml',
     description: 'Path to mkdocs.yml',
-    group: NAME_GROUP_VALIDATE_PATHS,
+    group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -28,7 +36,7 @@ const opts = Object.freeze({
   'npm-path': {
     defaultDescription: '(derived from shell)',
     description: 'Path to npm executable',
-    group: NAME_GROUP_VALIDATE_PATHS,
+    group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -37,13 +45,13 @@ const opts = Object.freeze({
   python: {
     default: true,
     description: 'Validate Python 3 environment',
-    group: NAME_GROUP_VALIDATE,
+    group: ValidateCommandGroup.Behavior,
     type: 'boolean',
   },
   'python-path': {
     defaultDescription: '(derived from shell)',
     description: 'Path to python 3 executable',
-    group: NAME_GROUP_VALIDATE_PATHS,
+    group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -52,7 +60,7 @@ const opts = Object.freeze({
   'tsconfig-json': {
     defaultDescription: './tsconfig.json',
     describe: 'Path to tsconfig.json',
-    group: NAME_GROUP_VALIDATE_PATHS,
+    group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -61,13 +69,13 @@ const opts = Object.freeze({
   typedoc: {
     default: true,
     description: 'Validate TypoDoc environment',
-    group: NAME_GROUP_VALIDATE,
+    group: ValidateCommandGroup.Behavior,
     type: 'boolean',
   },
   'typedoc-json': {
     defaultDescription: './typedoc.json',
     describe: 'Path to typedoc.json',
-    group: NAME_GROUP_VALIDATE_PATHS,
+    group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
     requiresArg: true,
@@ -76,25 +84,25 @@ const opts = Object.freeze({
   typescript: {
     default: true,
     description: 'Validate TypeScript environment',
-    group: NAME_GROUP_VALIDATE,
+    group: ValidateCommandGroup.Behavior,
     type: 'boolean',
   },
-}) satisfies Record<string, Options>;
+} as const satisfies Record<string, Options>;
 
 type ValidateOptions = InferredOptionTypes<typeof opts>;
 
 export default {
   command: 'validate',
   describe: 'Validate Environment',
-  builder: opts,
+  builder(yargs) {
+    return yargs.options(opts).check(async (argv) => {
+      if (!argv.python && !argv.typedoc && !argv.typescript && !argv.mkdocs) {
+        return 'No validation targets specified; one or more of --python, --typescript, --typedoc or --mkdocs must be provided';
+      }
+      return checkMissingPaths(opts, ValidateCommandGroup.Paths, argv);
+    });
+  },
   async handler(args) {
-    if (!args.python && !args.typedoc && !args.typescript && !args.mkdocs) {
-      // specifically not a DocutilsError
-      throw new Error(
-        'No validation targets specified; one or more of --python, --typescript, --typedoc or --mkdocs must be provided'
-      );
-    }
-
     let errorCount = 0;
     const validator = new DocutilsValidator(args)
       .once(DocutilsValidator.BEGIN, (kinds: ValidationKind[]) => {

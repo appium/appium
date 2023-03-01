@@ -99,6 +99,10 @@ export async function deploy({
     );
   }
   version = version ?? (await findDeployVersion(packageJsonPath, cwd));
+
+  // substitute %s in message with version
+  message = message?.replace('%s', version);
+
   const mikeOpts = {
     'config-file': mkDocsYmlPath,
     push,
@@ -118,6 +122,7 @@ export async function deploy({
     if (alias) {
       mikeArgs.push(alias);
     }
+    stop(); // discard
     // unsure about how SIGHUP is handled here
     await doServe(mikeArgs, serveOpts);
   } else {

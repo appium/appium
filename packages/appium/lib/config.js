@@ -10,8 +10,9 @@ import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 const npmPackage = fs.readPackageJsonFrom(__dirname);
 
 const APPIUM_VER = npmPackage.version;
-const MIN_NODE_VERSION = npmPackage.engines.node;
-const MIN_NPM_VERSION = npmPackage.engines.npm;
+const ENGINES = /** @type {Record<string,string>} */ (npmPackage.engines);
+const MIN_NODE_VERSION = ENGINES.node;
+const MIN_NPM_VERSION = ENGINES.npm;
 
 const GIT_META_ROOT = '.git';
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;

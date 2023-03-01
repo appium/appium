@@ -290,12 +290,14 @@ const fs = {
    * @param {string} dir - Directory to search from
    * @param {import('read-pkg').Options} [opts] - Additional options for `read-pkg`
    * @throws {Error} If there were problems finding or reading a `package.json` file
-   * @returns {object} A parsed `package.json`
+   * @returns {import('read-pkg').NormalizedPackageJson} A parsed `package.json`
    */
   readPackageJsonFrom(dir, opts = {}) {
     const cwd = fs.findRoot(dir);
     try {
-      return readPkg.sync({...opts, cwd});
+      return readPkg.sync(
+        /** @type {import('read-pkg').NormalizeOptions} */ ({normalize: true, ...opts, cwd})
+      );
     } catch (err) {
       err.message = `Failed to read a \`package.json\` from dir \`${dir}\`:\n\n${err.message}`;
       throw err;

@@ -127,7 +127,10 @@ async function _readPkgJson(
   cwd: string,
   normalize: true
 ): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
-async function _readPkgJson(cwd: string): Promise<{pkgPath: string; pkg: PackageJson}>;
+async function _readPkgJson(
+  cwd: string,
+  normalize?: false
+): Promise<{pkgPath: string; pkg: PackageJson}>;
 async function _readPkgJson(
   cwd: string,
   normalize?: boolean

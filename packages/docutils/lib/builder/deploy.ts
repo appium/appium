@@ -5,7 +5,7 @@
  */
 
 import _ from 'lodash';
-import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
+import {exec, SubProcess, SubProcessOptions, TeenProcessExecOptions} from 'teen_process';
 import path from 'node:path';
 import {
   DEFAULT_DEPLOY_BRANCH,
@@ -35,8 +35,9 @@ async function doServe(
 ) {
   mikePath = mikePath ?? (await whichMike());
   const finalArgs = ['serve', ...args];
-  log.debug('Launching %s with args: %O', mikePath, finalArgs);
-  const proc = new SubProcess(mikePath, finalArgs);
+  const opts: SubProcessOptions = {stdio: 'inherit'};
+  log.debug('Launching %s with args: %s', mikePath, finalArgs);
+  const proc = new SubProcess(mikePath, finalArgs, opts);
   return await proc.start(startDetector, detach, timeoutMs);
 }
 

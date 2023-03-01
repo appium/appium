@@ -28,8 +28,9 @@ async function doServe(
 ) {
   mkDocsPath = mkDocsPath ?? (await whichMkDocs());
   const finalArgs = ['serve', ...args];
-  log.debug('Launching %s with args: %O', mkDocsPath, finalArgs);
-  const proc = new SubProcess(mkDocsPath, finalArgs);
+  const opts: SubProcessOptions = {stdio: 'inherit'};
+  log.debug('Launching %s with args: %s', mkDocsPath, finalArgs);
+  const proc = new SubProcess(mkDocsPath, finalArgs, opts);
   return await proc.start(startDetector, detach, timeoutMs);
 }
 

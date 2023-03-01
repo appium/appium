@@ -127,7 +127,7 @@ const opts = Object.freeze({
   },
   message: {
     alias: 'm',
-    describe: 'Commit message',
+    describe: 'Commit message. Use "%s" for version placeholder',
     implies: 'deploy',
     group: NAME_GROUP_DEPLOY,
     type: 'string',

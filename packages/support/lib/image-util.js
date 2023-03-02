@@ -22,18 +22,25 @@ async function getJimpImage(data) {
     if (!_.isString(data) && !_.isBuffer(data)) {
       return reject(new Error('Must initialize jimp object with string or buffer'));
     }
-    // if data is a string, assume it is a base64-encoded image
-    if (_.isString(data)) {
-      data = Buffer.from(data, 'base64');
-    }
+
+    const imagePayload = _.isBuffer(data)
+      ? data
+      // if data is a string, assume it is a base64-encoded image
+      : Buffer.from(String(data), 'base64');
+    const truncatedData = _.truncate(
+      _.isBuffer(data) ? data.toString('utf8') : data,
+      {length: 50}
+    );
     new Jimp(
-      data,
+      imagePayload,
       /**
        * @param {Error?} err
        * @param {AppiumJimp} imgObj
        */
       (err, imgObj) => {
         if (err) {
+          err.message = `The argument must be a valid base64-encoded image payload. ` +
+            `'${truncatedData}' was passed instead. Original error: ${err.message}`;
           return reject(err);
         }
         if (!imgObj) {

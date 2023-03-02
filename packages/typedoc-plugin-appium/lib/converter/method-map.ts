@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {DeclarationReflection, ReflectionKind} from 'typedoc';
+import {Context, DeclarationReflection, ReflectionKind} from 'typedoc';
 import {
   isCommandPropDeclarationReflection,
   isExecMethodDefParamsPropDeclarationReflection,
@@ -22,6 +22,7 @@ import {
  * Options for {@linkcode convertMethodMap}
  */
 export interface ConvertMethodMapOpts {
+  ctx: Context;
   /**
    * All builtin methods from `@appium/types`
    */
@@ -59,6 +60,7 @@ export interface ConvertMethodMapOpts {
  * @returns Lookup of routes to {@linkcode CommandSet} objects
  */
 export function convertMethodMap({
+  ctx,
   log,
   methodMapRefl,
   parentRefl,
@@ -138,17 +140,17 @@ export function convertMethodMap({
 
       const commandSet: CommandSet = routes.get(route) ?? new Set();
 
-      commandSet.add(
-        new CommandData(log, command, method, httpMethod, route, {
-          requiredParams,
-          optionalParams,
-          comment,
-          commentSource,
-          parentRefl,
-          isPluginCommand,
-          knownBuiltinMethods,
-        })
-      );
+      const commandData = CommandData.create(ctx, log, command, method, httpMethod, route, {
+        requiredParams,
+        optionalParams,
+        comment,
+        commentSource,
+        parentRefl,
+        isPluginCommand,
+        knownBuiltinMethods,
+      });
+
+      commandSet.add(commandData);
 
       log.verbose('Registered route %s %s for command "%s"', httpMethod, route, command);
 

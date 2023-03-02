@@ -296,7 +296,7 @@ export function isCommandMethodDeclarationReflection(
     ? value.type.declaration.getAllSignatures()
     : value.getAllSignatures();
   return Boolean(
-    signatures?.find((sig) => isReferenceType(sig.type) && sig.type.name === 'Promise')
+    signatures?.find((sig) => sig.type instanceof ReferenceType && sig.type.name === 'Promise')
   );
 }
 
@@ -332,14 +332,6 @@ export function isCallSignatureReflectionWithArity(
 }
 
 /**
- * Guard for {@linkcode ReferenceType}
- * @param value any
- */
-export function isReferenceType(value: any): value is ReferenceType {
-  return value instanceof ReferenceType;
-}
-
-/**
  * Guard for {@linkcode ConstructorDeclarationReflection}
  * @param value any
  */
@@ -359,11 +351,12 @@ export function isBasePluginConstructorDeclarationReflection(
   if (!(isDeclarationReflection(value) && value.kindOf(ReflectionKind.Constructor))) {
     return false;
   }
-  const ref = isReferenceType(value.inheritedFrom)
-    ? value.inheritedFrom
-    : isReferenceType(value.overwrites)
-    ? value.overwrites
-    : undefined;
+  const ref =
+    value.inheritedFrom instanceof ReferenceType
+      ? value.inheritedFrom
+      : value.overwrites instanceof ReferenceType
+      ? value.overwrites
+      : undefined;
   return ref?.name === `${NAME_BASE_PLUGIN}.constructor`;
 }
 

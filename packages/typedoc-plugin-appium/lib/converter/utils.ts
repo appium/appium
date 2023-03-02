@@ -26,6 +26,7 @@ import {ParentReflection} from '../model';
 import {deriveComment} from './comment';
 import {NAME_OPTIONAL, NAME_REQUIRED} from './external';
 import {
+  CallSignatureReflection,
   ClassDeclarationReflection,
   CommandMethodDeclarationReflection,
   Guard,
@@ -312,35 +313,30 @@ export function createNewParamRefls(
 }
 
 /**
- * Clones a `SignatureReflection` with a new parent and type.
+ * Clones a `CallSignatureReflection` with a new parent and type.
+ *
+ * This does a "deep" clone inasmuch as it clones any associated `ParameterReflection` and
+ * `TypeParameterReflection` instances.
  *
  * @privateRemarks I'm not sure this is sufficient.
- * @param sig A `SignatureReflection` to clone
- * @param parent The desired parent of the new `SignatureReflection`
- * @param type The desired type of the new `SignatureReflection`; if not provided, the original type
+ * @param sig A `CallSignatureReflection` to clone
+ * @param parent The desired parent of the new `CallSignatureReflection`
+ * @param type The desired type of the new `CallSignatureReflection`; if not provided, the original type
  * will be used
  * @returns A clone of `sig` with the given parent and type
  */
-export function cloneSignatureReflection(
-  sig: SignatureReflection,
+export function cloneCallSignatureReflection(
+  sig: CallSignatureReflection,
   parent: CommandMethodDeclarationReflection,
   type?: SomeType
 ) {
   const newSig = new SignatureReflection(sig.name, ReflectionKind.CallSignature, parent);
 
-  _.assign(newSig, _.pick(sig, SIGNATURE_REFLECTION_CLONE_FIELDS));
-
-  if (newSig.parameters) {
-    newSig.parameters.map((p) => cloneParameterReflection(p, p.name, newSig));
-  }
-  if (newSig.typeParameters) {
-    newSig.typeParameters.map((tP) => cloneTypeParameterReflection(tP, newSig));
-  }
-
-  if (type) {
-    newSig.type = type;
-  }
-  return newSig;
+  return _.assign(newSig, _.pick(sig, SIGNATURE_REFLECTION_CLONE_FIELDS), {
+    parameters: _.map(sig.parameters, (p) => cloneParameterReflection(p, p.name, newSig)),
+    typeParameters: _.map(sig.typeParameters, (tP) => cloneTypeParameterReflection(tP, newSig)),
+    type: type ?? sig.type,
+  });
 }
 
 /**
@@ -351,6 +347,10 @@ export interface CreateNewParamReflsOpts {
    * Map of known methods
    */
   builtinMethods?: KnownMethods;
+  /**
+   * List of parameter names from method def
+   */
+  commandParams?: string[];
   /**
    * If the parameter is marked as optional in the method def
    */
@@ -363,8 +363,4 @@ export interface CreateNewParamReflsOpts {
    * and we do not need to include in the generated docs.
    */
   isPluginCommand?: boolean;
-  /**
-   * List of parameter names from method def
-   */
-  commandParams?: string[];
 }

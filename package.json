@@ -30,7 +30,7 @@
     "build": "tsc -b",
     "build:all": "run-s build build:packages",
     "build:packages": "lerna run build",
-    "clean": "run-s \"clean:artifacts:*\" clean:workspaces",
+    "clean": "run-s clean:artifacts clean:workspaces",
     "clean:artifacts": "run-p \"clean:artifacts:*\"",
     "clean:artifacts:distfiles": "npx rimraf \"./packages/*/build\" \"./packages/*/.tsconfig.tsbuildinfo\"",
     "clean:artifacts:packages": "lerna run clean || true",

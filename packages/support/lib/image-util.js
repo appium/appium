@@ -19,20 +19,17 @@ const {MIME_JPEG, MIME_PNG, MIME_BMP} = Jimp;
  */
 async function getJimpImage(data) {
   return await new B((resolve, reject) => {
-    if (!_.isString(data) && !_.isBuffer(data)) {
+    if (!_.isString(data) && !Buffer.isBuffer(data)) {
       return reject(new Error('Must initialize jimp object with string or buffer'));
     }
 
-    const imagePayload = _.isBuffer(data)
-      ? data
-      // if data is a string, assume it is a base64-encoded image
-      : Buffer.from(String(data), 'base64');
     const truncatedData = _.truncate(
-      _.isBuffer(data) ? data.toString('utf8') : data,
+      Buffer.isBuffer(data) ? data.toString('utf8') : data,
       {length: 50}
     );
     new Jimp(
-      imagePayload,
+      // if data is a string, assume it is a base64-encoded image
+      Buffer.isBuffer(data) ? data : Buffer.from(String(data), 'base64'),
       /**
        * @param {Error?} err
        * @param {AppiumJimp} imgObj

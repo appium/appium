@@ -1,6 +1,6 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
-import {deprecatedCommandsLogged} from '@appium/base-driver/lib/protocol/protocol';
+import {deprecatedCommandsLogged} from '@appium/base-driver/build/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({

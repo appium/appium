@@ -6,8 +6,8 @@
  */
 
 import path from 'node:path';
-import {exec, SubProcess, TeenProcessExecOptions} from 'teen_process';
-import {NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML} from '../constants';
+import {exec, SubProcess, SubProcessOptions, TeenProcessExecOptions} from 'teen_process';
+import {NAME_BIN, NAME_MKDOCS, NAME_THEME, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
 import logger from '../logger';
@@ -57,7 +57,7 @@ async function doBuild(
 export async function buildSite({
   mkdocsYml: mkDocsYmlPath,
   siteDir,
-  theme = NAME_MKDOCS,
+  theme = NAME_THEME,
   cwd = process.cwd(),
   serve = false,
   serveOpts,

@@ -40,7 +40,7 @@
     "doctor": "node ./packages/doctor",
     "husky-install": "husky install",
     "generate-docs": "npm run --workspace=packages/appium generate-docs",
-    "prepare": "run-p husky-install build:all || true",
+    "prepare": "run-p husky-install build:all",
     "lint": "eslint .",
     "lint:fix": "run-s \"lint -- --fix\"",
     "lint:commit": "commitlint",

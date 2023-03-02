@@ -78,6 +78,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
 
     const knownClassMethods = findCommandMethodsInReflection(baseDriverClassRefl);
     const baseDriverRoutes = convertMethodMap({
+      ctx: this.ctx,
       log: this.log,
       methodMapRefl: methodMap,
       parentRefl: baseDriverModuleRefl,

@@ -1,7 +1,6 @@
 import _ from 'lodash';
-import {DeclarationReflection, ReflectionKind} from 'typedoc';
+import {Context, DeclarationReflection, ReflectionKind} from 'typedoc';
 import {
-  isCommandMethodDeclarationReflection,
   isCommandPropDeclarationReflection,
   isExecMethodDefParamsPropDeclarationReflection,
 } from '../guards';
@@ -20,6 +19,7 @@ import {
  * Options for {@linkcode convertExecuteMethodMap}
  */
 export interface ConvertExecuteMethodMapOpts {
+  ctx: Context;
   /**
    * Logger
    */
@@ -52,6 +52,7 @@ export interface ConvertExecuteMethodMapOpts {
  * @returns List of "execute commands", if any
  */
 export function convertExecuteMethodMap({
+  ctx,
   log,
   parentRefl,
   execMethodMapRefl,
@@ -110,16 +111,15 @@ export function convertExecuteMethodMap({
 
     const commentData = deriveComment({refl: methodRefl, comment, knownMethods: knownMethods});
 
-    commandRefs.add(
-      new ExecMethodData(log, command, methodRefl, script, {
-        requiredParams,
-        optionalParams,
-        comment: commentData?.comment,
-        commentSource: commentData?.commentSource,
-        isPluginCommand,
-      })
-    );
+    const execMethodData = ExecMethodData.create(ctx, log, command, methodRefl, script, {
+      requiredParams,
+      optionalParams,
+      comment: commentData?.comment,
+      commentSource: commentData?.commentSource,
+      isPluginCommand,
+    });
 
+    commandRefs.add(execMethodData);
     log.verbose(
       'Added POST route %s for command "%s" from script "%s"',
       NAME_EXECUTE_ROUTE,

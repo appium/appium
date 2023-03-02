@@ -1,7 +1,17 @@
 import _ from 'lodash';
-import {Comment, DeclarationReflection, ParameterReflection, SignatureReflection} from 'typedoc';
 import {
-  cloneSignatureReflection,
+  Comment,
+  Context,
+  DeclarationReflection,
+  IntrinsicType,
+  LiteralType,
+  ParameterReflection,
+  ReferenceType,
+  SignatureReflection,
+} from 'typedoc';
+import {
+  CallSignatureReflection,
+  cloneCallSignatureReflection,
   CommandMethodDeclarationReflection,
   CommentSource,
   createNewParamRefls,
@@ -10,10 +20,15 @@ import {
   extractExamples,
   KnownMethods,
 } from '../converter';
-import {isReferenceType} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {findCallSignature} from '../utils';
 import {AllowedHttpMethod, Command, Route} from './types';
+
+/**
+ * Set of type names which should be converted to `null`
+ * @see https://github.com/appium/appium/issues/18269
+ */
+const NULL_TYPES: Readonly<Set<string>> = new Set(['undefined', 'void']);
 
 /**
  * Abstract representation of metadata for some sort of Appium command
@@ -87,84 +102,11 @@ export abstract class BaseCommandData {
    */
   public readonly signature?: SignatureReflection;
 
-  /**
-   * Returns a list of `ParameterReflection` objects in the command's method declaration;
-   * rewrites them to prefer the method map parameter list (and the param names)
-   **/
-  public static rewriteParameters = _.memoize(
-    (cmd: BaseCommandData): ParameterReflection[] | undefined => {
-      if (!cmd.hasCommandParams) {
-        return;
-      }
-
-      const signature = findCallSignature(cmd.methodRefl)!;
-      if (!signature || !signature.parameters?.length) {
-        // no parameters
-        return;
-      }
-
-      const newParamRefls = [
-        ...createNewParamRefls(signature, {
-          builtinMethods: cmd.knownBuiltinMethods,
-          commandParams: cmd.requiredParams,
-          isPluginCommand: cmd.isPluginCommand,
-        }),
-        ...createNewParamRefls(signature, {
-          builtinMethods: cmd.knownBuiltinMethods,
-          commandParams: cmd.optionalParams,
-          isPluginCommand: cmd.isPluginCommand,
-          isOptional: true,
-        }),
-      ];
-
-      return newParamRefls;
-    }
-  );
-  /**
-   * Rewrites a method's return value for documentation.
-   *
-   * Given a command having a method declaration, creates a clone of its call signature wherein the
-   * return type is unwrapped from `Promise`.  In other words, if a method returns `Promise<T>`,
-   * this changes the return type in the signature to `T`.
-   *
-   * Note that the return type of a command's method declaration should always be a `ReferenceType` having
-   * name `Promise`.
-   */
-  public static rewriteSignature = _.memoize(
-    (cmd: BaseCommandData): SignatureReflection | undefined => {
-      const callSig = findCallSignature(cmd.methodRefl);
-      if (!callSig) {
-        return;
-      }
-      if (isReferenceType(callSig.type) && callSig.type.name === 'Promise') {
-        // this does the actual unwrapping.  `Promise` only has a single type argument `T`,
-        // so we can safely use the first one.
-        const newType = _.first(callSig.type.typeArguments);
-        const newCallSig = cloneSignatureReflection(callSig, cmd.methodRefl, newType);
-
-        if (!newCallSig.type) {
-          cmd.log.warn(
-            '(%s) No type arg T found for return type Promise<T> in %s; this is a bug',
-            cmd.parentRefl!.name,
-            cmd.methodRefl.name
-          );
-          return;
-        }
-
-        newCallSig.comment = deriveComment({
-          refl: newCallSig,
-          knownMethods: cmd.knownBuiltinMethods,
-        })?.comment;
-        return newCallSig;
-      }
-    }
-  );
-
   constructor(
     log: AppiumPluginLogger,
     command: Command,
     methodRefl: CommandMethodDeclarationReflection,
-    opts: CommandDataOpts = {}
+    public readonly opts: BaseCommandDataOpts = {}
   ) {
     this.command = command;
     this.methodRefl = methodRefl;
@@ -186,8 +128,8 @@ export abstract class BaseCommandData {
       this.examples = extractedExamples.examples;
     }
 
-    this.parameters = BaseCommandData.rewriteParameters(this);
-    this.signature = BaseCommandData.rewriteSignature(this);
+    this.parameters = this.rewriteParameters();
+    this.signature = this.rewriteSignature();
   }
 
   /**
@@ -198,16 +140,90 @@ export abstract class BaseCommandData {
   }
 
   /**
-   * Should create a shallow clone of the implementing instance
-   * @param opts New options to pass to the new instance
+   * Returns a list of `ParameterReflection` objects in the command's method declaration;
+   * rewrites them to prefer the method map parameter list (and the param names)
    */
-  public abstract clone(opts: CommandDataOpts): BaseCommandData;
+  private rewriteParameters(): ParameterReflection[] | undefined {
+    if (!this.hasCommandParams) {
+      return;
+    }
+
+    const sig = findCallSignature(this.methodRefl)!;
+    if (!sig?.parameters?.length) {
+      // no parameters
+      return;
+    }
+
+    const {knownBuiltinMethods: builtinMethods, isPluginCommand} = this;
+
+    const newParamRefls = [
+      ...createNewParamRefls(sig, {
+        builtinMethods,
+        commandParams: this.requiredParams,
+        isPluginCommand,
+      }),
+      ...createNewParamRefls(sig, {
+        builtinMethods,
+        commandParams: this.optionalParams,
+        isPluginCommand,
+        isOptional: true,
+      }),
+    ];
+
+    return newParamRefls;
+  }
+
+  /**
+   *
+   * Rewrites a method's return value for documentation.
+   *
+   * Given a command having a method declaration, creates a clone of its call signature wherein the
+   * return type is unwrapped from `Promise`.  In other words, if a method returns `Promise<T>`,
+   * this changes the return type in the signature to `T`.
+   *
+   * Note that the return type of a command's method declaration should always be a `ReferenceType` having
+   * name `Promise`.
+   */
+  private rewriteSignature(): CallSignatureReflection | undefined {
+    const callSig = findCallSignature(this.methodRefl);
+    if (!callSig) {
+      return;
+    }
+    if (callSig.type instanceof ReferenceType && callSig.type.name === 'Promise') {
+      // this does the actual unwrapping.  `Promise` only has a single type argument `T`,
+      // so we can safely use the first one.
+      let typeArg = _.first(callSig.type.typeArguments)!;
+
+      // swaps `void`/`undefined` for `null`
+      if (typeArg instanceof IntrinsicType && NULL_TYPES.has(typeArg.name)) {
+        typeArg = new LiteralType(null);
+      }
+
+      const newCallSig = cloneCallSignatureReflection(callSig, this.methodRefl, typeArg);
+
+      if (!newCallSig.type) {
+        this.log.warn(
+          '(%s) No type arg T found for return type Promise<T> in %s; this is a bug',
+          this.parentRefl!.name,
+          this.methodRefl.name
+        );
+        return;
+      }
+
+      newCallSig.comment = deriveComment({
+        refl: newCallSig,
+        knownMethods: this.knownBuiltinMethods,
+      })?.comment;
+
+      return newCallSig;
+    }
+  }
 }
 
 /**
  * Options for {@linkcode CommandData} and {@linkcode ExecMethodData} constructors
  */
-export interface CommandDataOpts {
+export interface BaseCommandDataOpts {
   /**
    * The comment to display for the command, if any exists
    */
@@ -254,13 +270,16 @@ export class CommandData extends BaseCommandData {
    */
   public readonly route: Route;
 
-  constructor(
+  /**
+   * Use {@linkcode CommandData.create} instead
+   */
+  private constructor(
     log: AppiumPluginLogger,
     command: Command,
     methodRefl: CommandMethodDeclarationReflection,
     httpMethod: AllowedHttpMethod,
     route: Route,
-    opts: CommandDataOpts = {}
+    opts: BaseCommandDataOpts = {}
   ) {
     super(log, command, methodRefl, opts);
     this.httpMethod = httpMethod;
@@ -270,20 +289,57 @@ export class CommandData extends BaseCommandData {
   /**
    * Creates a **shallow** clone of this instance.
    *
-   * Keeps props {@linkcode BaseCommandData.command command},
-   * {@linkcode CommandData.httpMethod httpMethod} and
-   * {@linkcode CommandData.route route}, then applies any other options.
-   * @param opts Options to apply. _Note:_ you probably want to provide a new `parentRefl`.
+   * @param commandData Instance to clone
+   * @param ctx Context
+   * @param overrides Override any properties of the instance here (including {@linkcode CommandData.opts})
    * @returns Cloned instance
    */
-  public override clone(
-    methodRefl: CommandMethodDeclarationReflection,
-    opts: CommandDataOpts = {}
-  ): CommandData {
-    return new CommandData(this.log, this.command, methodRefl, this.httpMethod, this.route, {
-      ...this,
-      ...opts,
+  public static clone(commandData: CommandData, ctx: Context, overrides?: Partial<CommandData>) {
+    const {log, command, methodRefl, httpMethod, route, opts} = _.defaults(overrides, {
+      log: commandData.log,
+      command: commandData.command,
+      methodRefl: commandData.methodRefl,
+      httpMethod: commandData.httpMethod,
+      route: commandData.route,
+      opts: _.defaults(overrides?.opts, commandData.opts),
     });
+    return CommandData.create(ctx, log, command, methodRefl, httpMethod, route, opts);
+  }
+
+  /**
+   * Creates a new instance of {@linkcode CommandData} and registers any newly-created reflections
+   * with TypeDoc.
+   * @param ctx Context
+   * @param log Logger
+   * @param command Command name
+   * @param methodRefl Command method reflection
+   * @param httpMethod HTTP method of route
+   * @param route Route path
+   * @param opts Options
+   * @returns
+   */
+  public static create(
+    ctx: Context,
+    log: AppiumPluginLogger,
+    command: Command,
+    methodRefl: CommandMethodDeclarationReflection,
+    httpMethod: AllowedHttpMethod,
+    route: Route,
+    opts: BaseCommandDataOpts = {}
+  ): CommandData {
+    const commandData = new CommandData(log, command, methodRefl, httpMethod, route, opts);
+
+    if (commandData.signature) {
+      ctx.registerReflection(commandData.signature, undefined);
+    }
+
+    if (commandData.parameters) {
+      for (const param of commandData.parameters) {
+        ctx.registerReflection(param, undefined);
+      }
+    }
+
+    return commandData;
   }
 }
 
@@ -297,35 +353,75 @@ export class CommandData extends BaseCommandData {
  */
 export class ExecMethodData extends BaseCommandData {
   /**
-   * The name/identifier of the execute script
-   *
-   * This is different than the method name.
+   * Use {@linkcode ExecMethodData.create} instead
+   * @param log Logger
+   * @param command Command name
+   * @param methodRefl method reflection
+   * @param script Script name (not the same as command name); this is what is passed to the `execute` endpoint
    */
-  public readonly script: string;
-
-  constructor(
+  private constructor(
     log: AppiumPluginLogger,
     command: Command,
     methodRefl: CommandMethodDeclarationReflection,
-    script: string,
-    opts: CommandDataOpts = {}
+    public readonly script: string,
+    public readonly opts: BaseCommandDataOpts = {}
   ) {
     super(log, command, methodRefl, opts);
-    this.script = script;
   }
 
   /**
    * Creates a **shallow** clone of this instance.
    *
-   * Keeps props {@linkcode BaseCommandData.command command}, {@linkcode ExecMethod.script script},
-   * then applies any other options.
-   * @param opts Options to apply
+   * @param execMethodData Instance to clone
+   * @param ctx Context
+   * @param overrides Override any properties of the instance here (including {@linkcode ExecMethodData.opts})
    * @returns Cloned instance
    */
-  public override clone(opts: CommandDataOpts): ExecMethodData {
-    return new ExecMethodData(this.log, this.command, this.methodRefl, this.script, {
-      ...this,
-      ...opts,
+  public static clone(
+    execMethodData: ExecMethodData,
+    ctx: Context,
+    overrides?: Partial<ExecMethodData>
+  ) {
+    const {log, command, methodRefl, script, opts} = _.defaults(overrides, {
+      log: execMethodData.log,
+      command: execMethodData.command,
+      methodRefl: execMethodData.methodRefl,
+      script: execMethodData.script,
+      opts: _.defaults(overrides?.opts, execMethodData.opts),
     });
+    return ExecMethodData.create(ctx, log, command, methodRefl, script, opts);
+  }
+
+  /**
+   * Creates a new instance of {@linkcode CommandData} and registers any newly-created reflections
+   * with TypeDoc.
+   * @param ctx Context
+   * @param log Logger
+   * @param command Command name
+   * @param script Script name
+   * @param route Route path
+   * @param opts Options
+   */
+  public static create(
+    ctx: Context,
+    log: AppiumPluginLogger,
+    command: Command,
+    methodRefl: CommandMethodDeclarationReflection,
+    script: string,
+    opts: BaseCommandDataOpts = {}
+  ): ExecMethodData {
+    const execMethodData = new ExecMethodData(log, command, methodRefl, script, opts);
+
+    if (execMethodData.signature) {
+      ctx.registerReflection(execMethodData.signature, undefined);
+    }
+
+    if (execMethodData.parameters) {
+      for (const param of execMethodData.parameters) {
+        ctx.registerReflection(param, undefined);
+      }
+    }
+
+    return execMethodData;
   }
 }

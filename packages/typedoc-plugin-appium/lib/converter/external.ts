@@ -175,6 +175,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
       const overriddenRouteMap: RouteMap = this.builtinCommands
         ? convertOverrides({
+            ctx: this.ctx,
             log,
             parentRefl: classRefl,
             classMethods,
@@ -217,6 +218,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       return new Set();
     }
     return convertExecuteMethodMap({
+      ctx: this.ctx,
       log,
       parentRefl,
       execMethodMapRefl,
@@ -250,6 +252,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       return new Map();
     }
     return convertMethodMap({
+      ctx: this.ctx,
       log,
       methodMapRefl: newMethodMapRefl,
       parentRefl,

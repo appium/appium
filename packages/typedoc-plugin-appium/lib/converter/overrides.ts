@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import {DeclarationReflection} from 'typedoc';
+import {Context, DeclarationReflection} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
-import {CommandSet, ExecMethodDataSet, ModuleCommands, RouteMap} from '../model';
+import {CommandData, CommandSet, ExecMethodDataSet, ModuleCommands, RouteMap} from '../model';
 import {deriveComment} from './comment';
 import {KnownMethods} from './types';
 
@@ -16,6 +16,7 @@ import {KnownMethods} from './types';
  * @returns More routes pulled from `builtinCommands`, if the driver implements them
  */
 export function convertOverrides({
+  ctx,
   log,
   parentRefl,
   classMethods,
@@ -80,10 +81,13 @@ export function convertOverrides({
           refl: methodRefl,
           knownMethods: builtinMethods,
         });
-        const newCommandData = commandData.clone(methodRefl, {
+        const newCommandData = CommandData.clone(commandData, ctx, {
+          methodRefl,
           parentRefl,
           knownBuiltinMethods: builtinMethods,
-          ...commentData,
+          opts: {
+            comment: commentData?.comment,
+          },
         });
         log.verbose('Linked route %s %s for command "%s"', commandData.httpMethod, route, command);
         newCommandSet.add(newCommandData);
@@ -99,6 +103,7 @@ export function convertOverrides({
  * Options for {@link convertOverrides}
  */
 export interface ConvertOverridesOpts {
+  ctx: Context;
   /**
    * Logger
    */

@@ -75,6 +75,7 @@ describe('@appium/typedoc-plugin-appium', function () {
               expect(
                 _.omit(
                   cmdData,
+                  'opts',
                   'methodRefl',
                   'parentRefl',
                   'knownBuiltinMethods',

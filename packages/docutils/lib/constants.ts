@@ -87,6 +87,11 @@ export const NAME_ERR_ENOENT = 'ENOENT';
 export const NAME_ERR_EEXIST = 'EEXIST';
 
 /**
+ * Name of the default theme
+ */
+export const NAME_THEME = 'material';
+
+/**
  * Default log level
  */
 export const DEFAULT_LOG_LEVEL = 'info';

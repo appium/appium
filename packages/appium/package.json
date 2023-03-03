@@ -82,7 +82,7 @@
     "cross-env": "7.0.3",
     "find-up": "5.0.0",
     "glob": "8.1.0",
-    "lilconfig": "2.0.6",
+    "lilconfig": "2.1.0",
     "lodash": "4.17.21",
     "longjohn": "0.2.12",
     "npmlog": "7.0.1",

@@ -22,6 +22,8 @@
  */
 
 const B = require('bluebird');
+const path = require('node:path');
+const {realpath} = require('node:fs/promises');
 
 B.config({
   cancellation: true,
@@ -56,10 +58,31 @@ function log(message) {
 }
 
 /**
+ * This is a naive attempt at determining whether or not we are in a dev environment; in other
+ * words, is `postinstall` being run from within the `appium` monorepo?
+ *
+ * When we're in the monorepo, `npm_config_local_prefix` will be set to the root of the monorepo root
+ * dir when running this lifecycle script from an `npm install` in the monorepo root.
+ *
+ * `realpath` is necessary due to macOS omitting `/private` from paths
+ */
+async function isDevEnvironment() {
+  return (
+    process.env.npm_config_local_prefix &&
+    path.join(process.env.npm_config_local_prefix, 'packages', 'appium') ===
+      (await realpath(path.join(__dirname, '..')))
+  );
+}
+
+/**
  * Setup / check environment if we should do anything here
  * @returns {Promise<boolean>} `true` if Appium is built and ready to go
  */
 async function init() {
+  if (await isDevEnvironment()) {
+    log('Dev environment likely; skipping automatic installation of extensions');
+    return false;
+  }
   try {
     ({env, util, logger} = require('@appium/support'));
     // @ts-ignore

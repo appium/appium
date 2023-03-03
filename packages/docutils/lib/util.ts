@@ -32,6 +32,9 @@ export function stopwatch(id: string) {
 }
 stopwatch.cache = new Map<string, number>();
 
+/**
+ * Converts a tuple to an object; use for extracting parameter types from a function signature
+ */
 export type TupleToObject<
   T extends readonly any[],
   M extends Record<Exclude<keyof T, keyof any[]>, PropertyKey>
@@ -69,7 +72,7 @@ export const argify: (obj: Record<string, string | number | boolean | undefined>
   );
 
 /**
- * Conversion of the parameters of {@linkcode Subprocess.start} to an object.
+ * Conversion of the parameters of {@linkcode SubProcess.start} to an object.
  */
 export type TeenProcessSubprocessStartOpts = Partial<
   TupleToObject<Parameters<SubProcess['start']>, ['startDetector', 'detach', 'timeoutMs']>

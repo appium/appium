@@ -3,8 +3,8 @@
  * @module
  */
 
-import pluralize from 'pluralize';
-import {CommandModule, InferredOptionTypes, Options} from 'yargs';
+import {util} from '@appium/support';
+import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {DocutilsError} from '../../error';
 import {DocutilsValidator, ValidationKind} from '../../validate';
 import logger from '../../logger';
@@ -122,7 +122,7 @@ export default {
 
     if (errorCount) {
       throw new DocutilsError(
-        `Validation failed with ${errorCount} ${pluralize('error', errorCount)}`
+        `Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`
       );
     }
   },

@@ -4,11 +4,12 @@
  */
 
 import _ from 'lodash';
-import {CommandModule, InferredOptionTypes, Options} from 'yargs';
+import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {init} from '../../init';
 import logger from '../../logger';
 import {stopwatch} from '../../util';
 import {checkMissingPaths} from '../check';
+
 const log = logger.withTag('init');
 
 enum InitCommandGroup {

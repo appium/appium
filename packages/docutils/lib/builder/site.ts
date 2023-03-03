@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import {exec, SubProcess, SubProcessOptions, TeenProcessExecOptions} from 'teen_process';
-import {NAME_BIN, NAME_MKDOCS, NAME_THEME, NAME_MKDOCS_YML} from '../constants';
+import {NAME_BIN, NAME_THEME, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
 import logger from '../logger';

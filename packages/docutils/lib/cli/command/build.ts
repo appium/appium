@@ -5,7 +5,7 @@
 
 import path from 'node:path';
 import _ from 'lodash';
-import {CommandModule, InferredOptionTypes, Options} from 'yargs';
+import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {buildReferenceDocs, buildSite, deploy, updateNav} from '../../builder';
 import {NAME_BIN} from '../../constants';
 import {checkMissingPaths} from '../check';

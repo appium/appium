@@ -1,3 +1,8 @@
+/**
+ * API around `mike`, a tool for deploying multiple versions of MkDocs-built sites to GitHub Pages
+ * @module
+ */
+
 import {exec} from 'teen_process';
 // eslint-disable-next-line import/no-unresolved
 import log from './logger';

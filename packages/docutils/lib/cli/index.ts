@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/**
+ * Main CLI entry point for `@appium/docutils`
+ * @module
+ */
+
 import logger from '../logger';
 
 import _ from 'lodash';

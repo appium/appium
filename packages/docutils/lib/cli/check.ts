@@ -3,10 +3,9 @@
  * @module
  */
 
-import {fs} from '@appium/support';
+import {fs, util} from '@appium/support';
 import _ from 'lodash';
-import pluralize from 'pluralize';
-import {InferredOptionTypes, Options} from 'yargs';
+import type {Options} from 'yargs';
 import logger from '../logger';
 
 const log = logger.withTag('check');
@@ -72,7 +71,7 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
 
   log.debug(
     'Checking for existence of %s: %s',
-    pluralize('path', pathsToCheck.length),
+    util.pluralize('path', pathsToCheck.length),
     _.map(pathsToCheck, 'path')
   );
 

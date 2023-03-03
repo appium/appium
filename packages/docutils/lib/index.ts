@@ -1,3 +1,8 @@
+/**
+ * Main entry point
+ * @module
+ */
+
 export * from './mike';
 export * from './builder';
 export * from './validate';

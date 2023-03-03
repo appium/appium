@@ -4,14 +4,15 @@ import _ from 'lodash';
 import path from 'path';
 import {npm, util, env, console} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
-import {SubProcess} from 'teen_process';
 import {
   INSTALL_TYPE_NPM,
   INSTALL_TYPE_GIT,
   INSTALL_TYPE_GITHUB,
   INSTALL_TYPE_LOCAL,
 } from '../extension/extension-config';
+import {SubProcess} from 'teen_process';
 import {packageDidChange} from '../extension/package-changed';
+import {spawn} from 'child_process';
 
 const UPDATE_ALL = 'installed';
 
@@ -660,17 +661,34 @@ class ExtensionCommand {
   }
 
   /**
-   * Runs a script cached inside the "scripts" field under "appium"
-   * inside of the driver/plugins "package.json" file. Will throw
-   * an error if the driver/plugin does not contain a "scripts" field
-   * underneath the "appium" field in its package.json, if the
-   * "scripts" field is not a plain object, or if the scriptName is
-   * not found within "scripts" object.
+   * Just wraps {@linkcode child_process.spawn} with some default options
+   *
+   * @param {string} cwd - CWD
+   * @param {string} script - Path to script
+   * @param {string[]} args - Extra args for script
+   * @param {import('child_process').SpawnOptions} opts - Options
+   * @returns {import('node:child_process').ChildProcess}
+   */
+  _runUnbuffered(cwd, script, args = [], opts = {}) {
+    return spawn(process.execPath, [script, ...args], {
+      cwd,
+      stdio: 'inherit',
+      ...opts,
+    });
+  }
+
+  /**
+   * Runs a script cached inside the `scripts` field under `appium`
+   * inside of the extension's `package.json` file. Will throw
+   * an error if the driver/plugin does not contain a `scripts` field
+   * underneath the `appium` field in its `package.json`, if the
+   * `scripts` field is not a plain object, or if the `scriptName` is
+   * not found within `scripts` object.
    *
    * @param {RunOptions} opts
    * @return {Promise<RunOutput>}
    */
-  async _run({installSpec, scriptName, extraArgs = []}) {
+  async _run({installSpec, scriptName, extraArgs = [], bufferOutput = false}) {
     if (!this.config.isInstalled(installSpec)) {
       throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
     }
@@ -699,26 +717,56 @@ class ExtensionCommand {
       );
     }
 
-    const runner = new SubProcess(process.execPath, [extScripts[scriptName], ...extraArgs], {
-      cwd: this.config.getInstallPath(installSpec),
-    });
+    if (bufferOutput) {
+      const runner = new SubProcess(process.execPath, [extScripts[scriptName], ...extraArgs], {
+        cwd: this.config.getInstallPath(installSpec),
+      });
 
-    const output = new RingBuffer(50);
+      const output = new RingBuffer(50);
 
-    runner.on('stream-line', (line) => {
-      output.enqueue(line);
-      this.log.log(line);
-    });
+      runner.on('stream-line', (line) => {
+        output.enqueue(line);
+        this.log.log(line);
+      });
 
-    await runner.start(0);
+      await runner.start(0);
+
+      try {
+        await runner.join();
+        this.log.ok(`${scriptName} successfully ran`.green);
+        return {output: output.getBuff()};
+      } catch (err) {
+        this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
+        return {error: err.message, output: output.getBuff()};
+      }
+    }
 
     try {
-      await runner.join();
+      await new B((resolve, reject) => {
+        this._runUnbuffered(
+          this.config.getInstallPath(installSpec),
+          extScripts[scriptName],
+          extraArgs
+        )
+          .on('error', (err) => {
+            // generally this is of the "I can't find the script" variety.
+            // this is a developer bug: the extension is pointing to a script that is not where the
+            // developer said it would be (in `appium.scripts` of the extension's `package.json`)
+            reject(err);
+          })
+          .on('close', (code) => {
+            if (code === 0) {
+              resolve();
+            } else {
+              reject(new Error(`Script "${scriptName}" exited with code ${code}`));
+            }
+          });
+      });
       this.log.ok(`${scriptName} successfully ran`.green);
-      return {output: output.getBuff()};
+      return {};
     } catch (err) {
       this.log.error(`Encountered an error when running '${scriptName}': ${err.message}`.red);
-      return {error: err.message, output: output.getBuff()};
+      return {error: err.message};
     }
   }
 }
@@ -802,6 +850,7 @@ export {ExtensionCommand};
  * @property {string} installSpec - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
  * @property {string[]} [extraArgs] - arguments to pass to the script
+ * @property {boolean} [bufferOutput] - if true, will buffer the output of the script and return it
  */
 
 /**
@@ -809,7 +858,7 @@ export {ExtensionCommand};
  *
  * @typedef RunOutput
  * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
- * @property {string[]} output - script output
+ * @property {string[]} [output] - script output if `bufferOutput` was `true` in {@linkcode RunOptions}
  */
 
 /**

@@ -58,7 +58,12 @@ export default class DriverCommand extends ExtensionCommand {
    * @return {Promise<import('./extension-command').RunOutput>}
    */
   async run({driver, scriptName, extraArgs}) {
-    return await super._run({installSpec: driver, scriptName, extraArgs});
+    return await super._run({
+      installSpec: driver,
+      scriptName,
+      extraArgs,
+      bufferOutput: this.isJsonOutput,
+    });
   }
 
   /**

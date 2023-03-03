@@ -57,7 +57,12 @@ export default class PluginCommand extends ExtensionCommand {
    * @returns {Promise<import('./extension-command').RunOutput>}
    */
   async run({plugin, scriptName, extraArgs}) {
-    return await super._run({installSpec: plugin, scriptName, extraArgs});
+    return await super._run({
+      installSpec: plugin,
+      scriptName,
+      extraArgs,
+      bufferOutput: this.isJsonOutput,
+    });
   }
 
   /**

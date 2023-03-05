@@ -1,3 +1,6 @@
+<!---Current latest commit hash in the original English documentation is e4dfa52 --->
+
+
 ---
 title: Appium 1.xからAppium 2.xへ移行する
 ---
@@ -39,14 +42,38 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 ## 破壊的変更
 
 <!---
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
+Here we call out the breaking changes and what you need to do to account for them.
 --->
 
-リリース毎の変更一覧に関しては[Appium 2.0リリースノート](https://github.com/appium/appium/releases)を確認してください。ここでは破壊的変更と何をする必要があるのかを示します。
+以下では破壊的変更と、何をする必要があるのかを示します。
 
 <!---
 ### :bangbang: Installing drivers during setup
 --->
+
+
+### :bangbang: 初期設定のbase path
+
+
+<!---
+With Appium 1.x, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
+`/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
+2, and is no longer relevant. As such the default base path for the server is now `/`. If you want
+to retain the old behaviour, you can set the base path via a command line argument as follows:
+--->
+
+Appium 1.xでは、AppiumサーバーのURLは`http://localhost:4723/wd/hub`でした。この`/wd/hub`であるbase pathはSelenium 1からSelenium 2へ移行した時の名残であり、今となっては何ら意味を持ちません。そのため、初期設定のbase pathは`/`となります。もしあたなが以前の挙動を保持したいのであれば、以下の通りにAppiumサーバを起動してください。
+
+```
+appium --base-path=/wd/hub
+```
+
+<!---
+You can also set server arguments as [Config file](./config.md) properties.
+--->
+
+この設定は[Config file](./config.md)からでも可能です。
+
 
 ### :bangbang: ドライバーのインストール
 
@@ -72,10 +99,10 @@ npm install --global appium --drivers=xcuitest,uiautomator2
 ```
 
 <!---
-This will install Appium and the two drivers for you in one go.
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
 --->
 
-これはAppiumと2つのドライバーを一つのコマンドでインストールします。
+これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを`npm uninstall -g appium`で削除してみてください。
 
 ### :bangbang: Drivers installation path
 
@@ -223,6 +250,17 @@ In summary, if you are using a JSON Appium config file, you can simply cut-and-p
 ### :bangbang: Old drivers removed
 
 The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.
+
+
+### :bangbang: Server can no longer be started with `--port 0`
+
+In Appium 1.x, it was possible to specify `--port 0` during server startup. This had the effect of
+starting Appium on a random free port. In Appium 2.0, port values must be `1` or higher. The random
+port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
+HTTP servers work and the fact that there was no port input validation in Appium 1.x. If you want
+to find a random free port to start Appium on, you must now take care of this on your own prior to
+starting Appium. Starting Appium on an explicit and known port is the correct practice moving
+forward.
 
 ### :warning: Internal packages renamed
 

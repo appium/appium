@@ -1,4 +1,4 @@
-<!---Current latest commit hash in the original Englis documentation is e4dfa52 --->
+<!---Current latest commit hash in the original English documentation is e4dfa52 --->
 
 
 ---

@@ -161,6 +161,13 @@ const opts = {
     group: InitCommandGroup.Behavior,
     type: 'boolean',
   },
+  upgrade: {
+    alias: 'up',
+    describe: 'Only upgrade Python dependencies if out-of-date',
+    group: InitCommandGroup.Behavior,
+    type: 'boolean',
+    conflicts: 'force',
+  },
 } as const satisfies Record<string, Options>;
 
 type InitOptions = InferredOptionTypes<typeof opts>;

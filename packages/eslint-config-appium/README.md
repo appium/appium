@@ -4,7 +4,7 @@
 
 ## Usage
 
-Install the package with **`npm` v7 or newer** (for automatic installation of peer dependencies):
+Install the package with **`npm` v8 or newer**:
 
 ```bash
 npm install @appium/eslint-config-appium --save-dev
@@ -20,7 +20,7 @@ And then, in your `.eslintrc` file, extend the configuration:
 
 ## Peer Dependencies
 
-This config requires the following packages be installed (as dev dependencies) in your project.  See the `package.json` for the required versions.
+This config requires the following packages be installed (as peer dependencies) in your project.  See the `package.json` for the required versions.
 
 - [eslint](https://www.npmjs.com/package/eslint)
 - [eslint-config-prettier](https://www.npmjs.com/package/eslint-config-prettier)

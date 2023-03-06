@@ -1,0 +1,22 @@
+name: 'Labeler'
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  # Setting up permissions in the workflow to limit the scope of what it can do. Optional!
+  contents: read
+  issues: read # change this if/when we want to label issues
+  pull-requests: write
+  statuses: read
+  checks: read
+
+jobs:
+  labeler:
+    name: Labeler
+    runs-on: ubuntu-latest
+    steps:
+      # follows semantic versioning. Lock to different version: v1, v1.5, v1.5.0 or use a commit hash.
+      - uses: fuxingloh/multi-labeler@6704db0bcba106d07482efabbc79d3092af74fa2 # v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}} # optional, default to '${{ github.token }}'

@@ -1,5 +1,5 @@
 {
-  "extends": "@appium/eslint-config-appium",
+  "extends": ["@appium/eslint-config-appium", "@appium/eslint-config-appium-ts"],
   "overrides": [
     {
       "files": "packages/fake-driver/**/*",

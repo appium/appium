@@ -4,8 +4,5 @@ examples/javascript-wd
 **/build/**
 **/*.min.js
 sample-code
-**/*.d.ts
 **/build-fixtures/**
-**/*.ts
 packages/appium/docs/**/assets/**
-**/*.tsx

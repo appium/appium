@@ -1,0 +1,47 @@
+{
+  "name": "@appium/eslint-config-appium-ts",
+  "version": "0.1.0",
+  "description": "Shared ESLint config for Appium projects (TypeScript version)",
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "appium",
+    "typescript",
+    "typescript-eslint"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/eslint-config-appium-ts"
+  },
+  "license": "Apache-2.0",
+  "author": "https://github.com/appium",
+  "main": "index.json",
+  "files": [
+    "index.json"
+  ],
+  "scripts": {
+    "test:smoke": "exit 0"
+  },
+  "peerDependencies": {
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "@appium/eslint-config-appium": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0"
+  },
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "npm": ">=8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

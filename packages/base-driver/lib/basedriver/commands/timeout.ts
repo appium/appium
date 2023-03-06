@@ -107,7 +107,7 @@ const TimeoutCommands: ITimeoutCommands = {
     this.log.debug(`Set implicit wait to ${ms}ms`);
     if (this.managedDrivers && this.managedDrivers.length) {
       this.log.debug('Setting implicit wait on managed drivers');
-      for (let driver of this.managedDrivers) {
+      for (const driver of this.managedDrivers) {
         if (_.isFunction(driver.setImplicitWait)) {
           driver.setImplicitWait(ms);
         }
@@ -120,7 +120,7 @@ const TimeoutCommands: ITimeoutCommands = {
     this.log.debug(`Set new command timeout to ${ms}ms`);
     if (this.managedDrivers && this.managedDrivers.length) {
       this.log.debug('Setting new command timeout on managed drivers');
-      for (let driver of this.managedDrivers) {
+      for (const driver of this.managedDrivers) {
         if (_.isFunction(driver.setNewCommandTimeout)) {
           driver.setNewCommandTimeout(ms);
         }
@@ -130,7 +130,7 @@ const TimeoutCommands: ITimeoutCommands = {
 
   async implicitWaitForCondition(condFn) {
     this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
-    let wrappedCondFn = async (...args: any[]) => {
+    const wrappedCondFn = async (...args: any[]) => {
       // reset command timeout
       await this.clearNewCommandTimeout();
 
@@ -144,7 +144,7 @@ const TimeoutCommands: ITimeoutCommands = {
   },
 
   parseTimeoutArgument<C extends Constraints>(this: BaseDriver<C>, ms: number | string) {
-    let duration = parseInt(String(ms), 10);
+    const duration = parseInt(String(ms), 10);
     if (_.isNaN(duration) || duration < MIN_TIMEOUT) {
       throw new errors.UnknownError(`Invalid timeout value '${ms}'`);
     }

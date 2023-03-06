@@ -1,5 +1,4 @@
 import {Constraints, ISessionCommands, MultiSessionData} from '@appium/types';
-import _ from 'lodash';
 import {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
@@ -9,7 +8,7 @@ declare module '../driver' {
 
 const SessionCommands: ISessionCommands = {
   async getSessions<C extends Constraints>(this: BaseDriver<C>) {
-    let ret: MultiSessionData[] = [];
+    const ret: MultiSessionData[] = [];
 
     if (this.sessionId) {
       ret.push({

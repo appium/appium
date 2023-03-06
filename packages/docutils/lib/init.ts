@@ -126,7 +126,9 @@ export const initMkDocs = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
       if (repoUrl && !repoName) {
         let {pathname} = new URL(repoUrl);
         pathname = pathname.slice(1);
-        let [owner, repo] = pathname.split('/');
+        const pathparts = pathname.split('/');
+        const owner = pathparts[0];
+        let repo = pathparts[1];
         repo = repo.replace(/\.git$/, '');
         repoName = [owner, repo].join('/');
         if (repoName) {
@@ -262,7 +264,7 @@ export async function init({
   }
 }
 
-export interface InitTypeDocOptions extends ScaffoldTaskOptions {}
+export type InitTypeDocOptions = ScaffoldTaskOptions;
 export interface InitTsConfigOptions extends ScaffoldTaskOptions {
   /**
    * List of source files (globs supported); typically `src` or `lib`

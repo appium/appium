@@ -159,7 +159,7 @@ export async function buildReferenceDocs({
 
   try {
     await runTypedoc(typeDocJsonPath, extraTypedocOpts);
-    let finalOut = (typeDocJson.out ?? out) as string;
+    const finalOut = (typeDocJson.out ?? out) as string;
     log.success(
       'Reference docs built at %s (%dms)',
       path.isAbsolute(finalOut) ? relativePath(finalOut) : finalOut,

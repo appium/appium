@@ -1,6 +1,6 @@
+import {ActionSequence, Location, Rect, Size} from '@appium/types';
 import {errors} from 'appium/driver';
-import {ActionSequence, Location, Rect, Size, LogDef, Driver, LogDefRecord} from '@appium/types';
-import {FakeDriver, FakeDriverConstraints, Orientation} from '../driver';
+import {FakeDriver, Orientation} from '../driver';
 import {mixin} from './mixin';
 
 const ORIENTATIONS = new Set(['LANDSCAPE', 'PORTRAIT']);

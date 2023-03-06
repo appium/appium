@@ -154,7 +154,7 @@ export function omitDefaultReflections(
   project: ProjectReflection,
   refl: ContainerReflection = project
 ): Set<DeclarationReflection> {
-  let removed = new Set<DeclarationReflection>();
+  const removed = new Set<DeclarationReflection>();
   for (const childRefl of refl.getChildrenByKind(~(AppiumPluginReflectionKind.Extension as any))) {
     project.removeReflection(childRefl);
     removed.add(childRefl);
@@ -174,7 +174,7 @@ export function omitBuiltinReflections(
   project: ProjectReflection,
   refl: ContainerReflection = project
 ) {
-  let removed = new Set<DeclarationReflection>();
+  const removed = new Set<DeclarationReflection>();
 
   const extRefls = refl.getChildrenByKind(
     AppiumPluginReflectionKind.Extension as any

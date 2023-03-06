@@ -63,7 +63,7 @@ const MethodCommentFinders: Readonly<CommentFinder[]> = [
         ({commentSource}) => commentSource !== CommentSource.OtherMethod
       )
         .map(({getter, commentSource}) => ({
-          comment: getter({refl: otherRefl, knownBuiltinMethods: knownBuiltinMethods}),
+          comment: getter({refl: otherRefl, knownBuiltinMethods}),
           commentSource,
         }))
         .find(({comment}) => Boolean(comment))?.comment;

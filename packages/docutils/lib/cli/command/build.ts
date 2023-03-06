@@ -4,13 +4,12 @@
  */
 
 import path from 'node:path';
-import _ from 'lodash';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {buildReferenceDocs, buildSite, deploy, updateNav} from '../../builder';
 import {NAME_BIN} from '../../constants';
-import {checkMissingPaths} from '../check';
 import logger from '../../logger';
 import {stopwatch} from '../../util';
+import {checkMissingPaths} from '../check';
 
 const log = logger.withTag('build');
 
@@ -242,4 +241,4 @@ export default {
     }
     log.success('Done! (total: %dms)', stop());
   },
-} as CommandModule<{}, BuildOptions>;
+} as CommandModule<object, BuildOptions>;

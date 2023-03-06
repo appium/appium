@@ -197,7 +197,7 @@ async function getNavItemsForDir(
     const rootHeaderKeypath = getRootHeaderKeypath(navHeaderItems, navHeader);
 
     for (const fileOrUrl of referenceOutputFilepaths) {
-      let offset = navHeaderItems.findIndex((item) => item.fileOrUrl === fileOrUrl);
+      const offset = navHeaderItems.findIndex((item) => item.fileOrUrl === fileOrUrl);
       const newOffset = offset >= 0 ? offset : navHeaderItems.length;
       const data = navHeaderItems[offset];
       log.warn(rootHeaderKeypath, newOffset, data);
@@ -214,7 +214,7 @@ async function getNavItemsForDir(
     }
   } else {
     log.debug('No items found in header %s', navHeader);
-    let navOffset = nav.length;
+    const navOffset = nav.length;
     for (const [idx, newRefFilepath] of referenceOutputFilepaths.entries()) {
       newNavHeaderItems.push({
         keypath: `${navOffset}.${navHeader}.${idx}`,
@@ -254,7 +254,6 @@ export async function updateNav({
   mkdocsYml: mkDocsYmlPath,
   typedocJson: typeDocJsonPath,
   all = false,
-  dryRun = false,
 }: UpdateNavOpts = {}) {
   // we need `mkdocs.yml` to update
   // and we need `typedoc.json` to know where to look for the command docs

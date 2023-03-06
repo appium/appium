@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {DeclarationReflection, ReflectionKind} from 'typedoc';
 import {
-  isCommandMethodDeclarationReflection,
   isCommandPropDeclarationReflection,
   isExecMethodDefParamsPropDeclarationReflection,
 } from '../guards';
@@ -108,7 +107,7 @@ export function convertExecuteMethodMap({
       continue;
     }
 
-    const commentData = deriveComment({refl: methodRefl, comment, knownMethods: knownMethods});
+    const commentData = deriveComment({refl: methodRefl, comment, knownMethods});
 
     commandRefs.add(
       new ExecMethodData(log, command, methodRefl, script, {

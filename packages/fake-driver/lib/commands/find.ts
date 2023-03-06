@@ -34,7 +34,7 @@ declare module '../driver' {
 
 const FindMixin: FakeDriverFindMixin = {
   getExistingElementForNode(this: FakeDriver, node) {
-    for (let [id, el] of _.toPairs(this.elMap)) {
+    for (const [id, el] of _.toPairs(this.elMap)) {
       if (el.node === node) {
         return id;
       }
@@ -44,7 +44,7 @@ const FindMixin: FakeDriverFindMixin = {
 
   wrapNewEl(this: FakeDriver, obj: FakeElement): Element {
     // first check and see if we already have a ref to this element
-    let existingElId = this.getExistingElementForNode(obj);
+    const existingElId = this.getExistingElementForNode(obj);
     if (existingElId) {
       return {ELEMENT: existingElId, [W3C_WEB_ELEMENT_IDENTIFIER]: existingElId};
     }
@@ -63,7 +63,7 @@ const FindMixin: FakeDriverFindMixin = {
     many: Many,
     context: Ctx
   ): Promise<Many extends true ? Element[] : Element> {
-    let qMap = {
+    const qMap = {
       xpath: 'xpathQuery',
       id: 'idQuery',
       'accessibility id': 'idQuery',
@@ -78,13 +78,13 @@ const FindMixin: FakeDriverFindMixin = {
     if (selector === 'badsel') {
       throw new errors.InvalidSelectorError();
     }
-    let els = this.appModel[qMap[strategy]](selector, context);
+    const els = this.appModel[qMap[strategy]](selector, context);
 
     let retval: Element | Element[];
     if (els.length) {
       if (many) {
-        let allEls: Element[] = [];
-        for (let el of els) {
+        const allEls: Element[] = [];
+        for (const el of els) {
           allEls.push(this.wrapNewEl(el));
         }
         retval = allEls;
@@ -119,7 +119,7 @@ const FindMixin: FakeDriverFindMixin = {
     selector: string,
     elementId: string
   ) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return this.findElOrEls(strategy, selector, false, el.xmlFragment);
   },
 
@@ -129,7 +129,7 @@ const FindMixin: FakeDriverFindMixin = {
     selector: string,
     elementId: string
   ) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return this.findElOrEls(strategy, selector, true, el.xmlFragment);
   },
 };

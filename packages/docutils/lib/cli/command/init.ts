@@ -178,4 +178,4 @@ export default {
     await init({...args, overwrite: args.force, cwd: args.dir});
     log.success('Done (%dms)', done());
   },
-} as CommandModule<{}, InitOptions>;
+} as CommandModule<object, InitOptions>;

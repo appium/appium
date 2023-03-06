@@ -48,7 +48,7 @@ function reflectionPath(this: PageEvent<ContainerReflection>) {
  * @param inclusive Whether to show the count in the output
  * @returns The pluralized string (if necessary)
  */
-function pluralize(value: string, count: number, inclusive: boolean = false) {
+function pluralize(value: string, count: number, inclusive = false) {
   const safeValue = Handlebars.escapeExpression(value);
   // XXX: Handlebars seems to be passing in a truthy value here, even if the arg is unused in the template! Make double-sure it's a boolean.
   inclusive = inclusive === true;

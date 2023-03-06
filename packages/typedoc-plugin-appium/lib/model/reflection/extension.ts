@@ -65,13 +65,12 @@ export class ExtensionReflection extends DeclarationReflection {
    *
    * Should **not** be called before the TypeDoc converter has emitted `EVENT_RESOLVE_END`
    */
-  static isCompositeProject = _.memoize((project: ProjectReflection) => {
-    return (
+  static isCompositeProject = _.memoize(
+    (project: ProjectReflection) =>
       project
         .getChildrenByKind(AppiumPluginReflectionKind.Extension as any)
         ?.filter(({name}) => name !== NAME_BUILTIN_COMMAND_MODULE).length > 1
-    );
-  });
+  );
 
   /**
    * This is called by `AppiumTheme`'s `getUrl` method, which causes a particular filename to be used.
@@ -87,7 +86,7 @@ export class ExtensionReflection extends DeclarationReflection {
     }
 
     let alias: string;
-    let matches = this.name.match(SCOPED_PACKAGE_NAME_REGEX);
+    const matches = this.name.match(SCOPED_PACKAGE_NAME_REGEX);
     alias = matches ? matches[2] : this.name;
     alias = alias.replace(/\W/, '-');
     this.#alias = alias;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 /**
  * Main CLI entry point for `@appium/docutils`
@@ -99,7 +100,7 @@ export async function main(argv = hideBin(process.argv)) {
 }
 
 if (require.main === module) {
-  // eslint-disable-next-line promise/prefer-await-to-then
+  // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-await-to-callbacks
   main().catch((err) => {
     log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);
   });

@@ -37,7 +37,7 @@ describe('@appium/typedoc-plugin-appium', function () {
     });
 
     describe('convertCommands()', function () {
-      it('should return a non-empty ProjectCommands Map', () => {
+      it('should return a non-empty ProjectCommands Map', function () {
         expect(convertCommands(ctx, log)).to.be.an.instanceof(ProjectCommands).and.not.to.be.empty;
       });
     });

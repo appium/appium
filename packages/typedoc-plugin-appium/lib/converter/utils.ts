@@ -228,7 +228,7 @@ export function cloneParameterReflection(
   // so we do not need to worry about combining block/summary comments like with methods.
   newPRefl.comment = deriveComment({
     refl: pRefl,
-    knownMethods: knownMethods,
+    knownMethods,
     comment: pRefl.comment,
   })?.comment;
   // there doesn't seem to be a straightforward way to clone flags.
@@ -294,7 +294,7 @@ export function createNewParamRefls(
   sig: SignatureReflection,
   opts: CreateNewParamReflsOpts = {}
 ): ParameterReflection[] {
-  let {builtinMethods = new Map(), commandParams = [], isOptional, isPluginCommand} = opts;
+  const {builtinMethods = new Map(), commandParams = [], isOptional, isPluginCommand} = opts;
   if (!sig.parameters?.length) {
     // this should not happen, I think?
     return [];

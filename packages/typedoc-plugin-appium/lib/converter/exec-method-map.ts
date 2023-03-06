@@ -109,7 +109,7 @@ export function convertExecuteMethodMap({
       continue;
     }
 
-    const commentData = deriveComment({refl: methodRefl, comment, knownMethods: knownMethods});
+    const commentData = deriveComment({refl: methodRefl, comment, knownMethods});
 
     const execMethodData = ExecMethodData.create(ctx, log, command, methodRefl, script, {
       requiredParams,

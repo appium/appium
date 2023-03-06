@@ -285,7 +285,7 @@ export class DocutilsValidator extends EventEmitter {
       return this.requirementsTxt;
     }
 
-    let requiredPackages: PipPackage[] = [];
+    const requiredPackages: PipPackage[] = [];
 
     try {
       let requirementsTxt = await fs.readFile(REQUIREMENTS_TXT_PATH, 'utf8');
@@ -534,7 +534,7 @@ export class DocutilsValidator extends EventEmitter {
     }
 
     if (rawTypeDocVersion) {
-      let match = rawTypeDocVersion.match(TYPEDOC_VERSION_REGEX);
+      const match = rawTypeDocVersion.match(TYPEDOC_VERSION_REGEX);
       if (match) {
         typeDocVersion = match[1];
       } else {
@@ -622,7 +622,7 @@ export class DocutilsValidator extends EventEmitter {
       return this.fail(`Could not find TypeScript compiler ("tsc") from ${pkgDir}`);
     }
 
-    let match = rawTypeScriptVersion.match(TYPESCRIPT_VERSION_REGEX);
+    const match = rawTypeScriptVersion.match(TYPESCRIPT_VERSION_REGEX);
     if (match) {
       typeScriptVersion = match[1];
     } else {

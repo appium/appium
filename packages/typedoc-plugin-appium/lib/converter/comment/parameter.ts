@@ -1,4 +1,3 @@
-import {ParameterReflection} from 'typedoc';
 import {isCallSignatureReflection, isParameterReflection} from '../../guards';
 import {findCallSignature} from '../../utils';
 import {CommentSource} from '../types';

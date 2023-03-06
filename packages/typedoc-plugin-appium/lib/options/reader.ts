@@ -50,7 +50,9 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     try {
       const pkg = require(pkgJsonPath);
       return pkg?.appium?.driverName ?? pkg?.appium?.pluginName;
-    } catch {}
+    } catch {
+      // ignored
+    }
   }
 
   /**

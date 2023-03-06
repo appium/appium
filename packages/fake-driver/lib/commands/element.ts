@@ -32,7 +32,7 @@ declare module '../driver' {
 
 const ElementsMixin: FakeDriverElementsMixin = {
   getElements(this: FakeDriver, elementIds: string[]) {
-    for (let elId of elementIds) {
+    for (const elId of elementIds) {
       if (!_.has(this.elMap, elId)) {
         throw new errors.StaleElementReferenceError();
       }
@@ -45,22 +45,22 @@ const ElementsMixin: FakeDriverElementsMixin = {
   },
 
   async getName(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.tagName;
   },
 
   async elementDisplayed(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.isVisible();
   },
 
   async elementEnabled(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.isEnabled();
   },
 
   async elementSelected(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.isSelected();
   },
 
@@ -69,7 +69,7 @@ const ElementsMixin: FakeDriverElementsMixin = {
     if (keys instanceof Array) {
       value = keys.join('');
     }
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     if (el.type !== 'MockInputField') {
       throw new errors.InvalidElementStateError();
     }
@@ -77,7 +77,7 @@ const ElementsMixin: FakeDriverElementsMixin = {
   },
 
   async getText(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.getAttr('value');
   },
 
@@ -90,7 +90,7 @@ const ElementsMixin: FakeDriverElementsMixin = {
    */
   async click(this: FakeDriver, elementId: string) {
     this.assertNoAlert();
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     if (!el.isVisible()) {
       throw new errors.InvalidElementStateError();
     }
@@ -99,29 +99,29 @@ const ElementsMixin: FakeDriverElementsMixin = {
   },
 
   async getAttribute(this: FakeDriver, attr: string, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.getAttr(attr);
   },
 
   async getElementRect(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.getElementRect();
   },
 
   async getSize(this: FakeDriver, elementId: string) {
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.getSize();
   },
 
   async equalsElement(this: FakeDriver, elementIdA: string, elementIdB: string) {
-    let el1 = this.getElement(elementIdA);
-    let el2 = this.getElement(elementIdB);
+    const el1 = this.getElement(elementIdA);
+    const el2 = this.getElement(elementIdB);
     return el1.equals(el2);
   },
 
   async getCssProperty(this: FakeDriver, prop: string, elementId: string) {
     this.assertWebviewContext();
-    let el = this.getElement(elementId);
+    const el = this.getElement(elementId);
     return el.getCss(prop);
   },
 

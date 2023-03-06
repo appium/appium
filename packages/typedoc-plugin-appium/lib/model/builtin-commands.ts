@@ -36,7 +36,7 @@ export class BuiltinCommands {
    * will be invariant; thus we only need to create it once.
    * @returns A {@linkcode ProjectCommands} object with zero or one entry
    */
-  public toProjectCommands = _.once(() => {
-    return new ProjectCommands(this.refl ? [[this.refl.name, this.moduleCmds]] : []);
-  });
+  public toProjectCommands = _.once(
+    () => new ProjectCommands(this.refl ? [[this.refl.name, this.moduleCmds]] : [])
+  );
 }

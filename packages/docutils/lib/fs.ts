@@ -239,14 +239,14 @@ export const whichMike = _.partial(cachedWhich, NAME_MIKE);
  */
 export const readMkDocsYml = _.memoize(
   async (filepath: string, cwd = process.cwd()): Promise<MkDocsYml> => {
-    let mkDocsYml = <MkDocsYml>await readYaml(filepath);
+    let mkDocsYml = (await readYaml(filepath)) as MkDocsYml;
     if (mkDocsYml.site_dir) {
       mkDocsYml.site_dir = path.resolve(cwd, path.dirname(filepath), mkDocsYml.site_dir);
     }
     if (mkDocsYml.INHERIT) {
       let inheritPath: string | undefined = path.resolve(path.dirname(filepath), mkDocsYml.INHERIT);
       while (inheritPath) {
-        const inheritYml = <MkDocsYml>await readYaml(inheritPath);
+        const inheritYml = (await readYaml(inheritPath)) as MkDocsYml;
         if (inheritYml.site_dir) {
           inheritYml.site_dir = path.resolve(path.dirname(inheritPath), inheritYml.site_dir);
           log.debug('Resolved site_dir to %s', inheritYml.site_dir);

@@ -126,4 +126,4 @@ export default {
       );
     }
   },
-} as CommandModule<{}, ValidateOptions>;
+} as CommandModule<object, ValidateOptions>;

@@ -16,8 +16,8 @@ declare module '../driver' {
 
 const ContextsMixin: FakeDriverContextsMixin = {
   getRawContexts(this: FakeDriver) {
-    let contexts = {NATIVE_APP: null, PROXY: null};
-    let wvs = this.appModel.getWebviews() ?? [];
+    const contexts = {NATIVE_APP: null, PROXY: null};
+    const wvs = this.appModel.getWebviews() ?? [];
     for (let i = 1; i < wvs.length + 1; i++) {
       contexts[`WEBVIEW_${i}`] = wvs[i - 1];
     }
@@ -47,7 +47,7 @@ const ContextsMixin: FakeDriverContextsMixin = {
    * @param context - name of the context
    */
   async setContext(this: FakeDriver, context: string) {
-    let contexts = this.getRawContexts();
+    const contexts = this.getRawContexts();
     if (context in contexts) {
       this.curContext = context;
       if (context === 'NATIVE_APP') {
@@ -72,7 +72,7 @@ const ContextsMixin: FakeDriverContextsMixin = {
     if (frameId === null) {
       this.appModel.deactivateFrame();
     } else {
-      let nodes = this.appModel.xpathQuery(`//iframe[@id="${frameId}"]`);
+      const nodes = this.appModel.xpathQuery(`//iframe[@id="${frameId}"]`);
       if (!nodes.length) {
         throw new errors.NoSuchFrameError();
       }

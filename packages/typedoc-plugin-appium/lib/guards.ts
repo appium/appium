@@ -4,7 +4,6 @@
  */
 
 import {
-  ContainerReflection,
   DeclarationReflection,
   LiteralType,
   ParameterReflection,

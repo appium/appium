@@ -100,13 +100,13 @@ export function initAppForPkgs({
   tsconfig = ROOT_TSCONFIG,
   ...opts
 }: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Application {
-  let {entryPoints, ...typedocOpts} = opts;
+  let {entryPoints} = opts;
   entryPoints = entryPoints.map((pkgName) =>
     path.dirname(require.resolve(`${pkgName}/${NAME_PACKAGE_JSON}`))
   );
   // because entryPoints is a list of directories, this must be 'packages'
   const entryPointStrategy = EntryPointStrategy.Packages;
-  return getTypedocApp({...typedocOpts, entryPoints, entryPointStrategy});
+  return getTypedocApp({...opts, tsconfig, entryPoints, entryPointStrategy});
 }
 
 /**

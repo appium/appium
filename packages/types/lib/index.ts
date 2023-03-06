@@ -83,7 +83,7 @@ export interface AppiumServerSocket extends Socket {
  */
 export type Class<
   Proto,
-  StaticMembers extends object = {},
+  StaticMembers extends object = object,
   Args extends unknown[] = any[]
 > = _Class<Proto, Args> & StaticMembers;
 

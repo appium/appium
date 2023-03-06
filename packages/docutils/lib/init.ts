@@ -160,8 +160,12 @@ export const initMkDocs = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
 export async function initPython({
   pythonPath = NAME_PYTHON,
   dryRun = false,
+  upgrade = false,
 }: InitPythonOptions = {}): Promise<void> {
   const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
+  if (upgrade) {
+    args.push('--upgrade');
+  }
   if (dryRun) {
     dryRunLog.info('Would execute command: %s %s', pythonPath, args.join(' '));
   } else {
@@ -216,6 +220,7 @@ export async function init({
   dryRun,
   cwd,
   pythonPath,
+  upgrade,
   typedocJson: typeDocJsonPath,
 }: InitOptions = {}): Promise<void> {
   if (!typescript && typedoc) {
@@ -224,7 +229,7 @@ export async function init({
     );
   }
 
-  if (typescript) {
+  if (typescript && !upgrade) {
     await initTsConfigJson({
       dest: tsconfigJsonPath,
       packageJson: packageJsonPath,
@@ -235,7 +240,7 @@ export async function init({
     });
   }
 
-  if (typedoc) {
+  if (typedoc && !upgrade) {
     await initTypeDocJson({
       dest: typeDocJsonPath,
       packageJson: packageJsonPath,
@@ -246,10 +251,10 @@ export async function init({
   }
 
   if (python) {
-    await initPython({pythonPath, dryRun});
+    await initPython({pythonPath, dryRun, upgrade});
   }
 
-  if (mkdocs) {
+  if (mkdocs && !upgrade) {
     await initMkDocs({
       dest: mkdocsYmlPath,
       cwd,
@@ -276,6 +281,11 @@ export interface InitPythonOptions extends ScaffoldTaskOptions {
    * Path to `python` (v3.x) executable
    */
   pythonPath?: string;
+
+  /**
+   * If true, upgrade only
+   */
+  upgrade?: boolean;
 }
 
 /**
@@ -317,5 +327,10 @@ export type InitOptions = Simplify<
      * Path to new or existing `mkdocs.yml` file
      */
     mkdocsYml?: string;
+
+    /**
+     * If `true`, upgrade only
+     */
+    upgrade?: boolean;
   }
 >;

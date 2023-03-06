@@ -3,14 +3,9 @@
   "version": "8.0.0",
   "description": "Shared ESLint config for Appium projects",
   "keywords": [
-    "automation",
-    "javascript",
-    "selenium",
-    "webdriver",
-    "ios",
-    "android",
-    "firefoxos",
-    "testing"
+    "eslint",
+    "eslintconfig",
+    "appium"
   ],
   "homepage": "https://appium.io",
   "bugs": {

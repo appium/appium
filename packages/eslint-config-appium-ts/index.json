@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json.schemastore.org/eslintrc",
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "extends": ["@appium/eslint-config-appium", "plugin:@typescript-eslint/recommended"],
+      "rules": {
+        "@typescript-eslint/no-empty-function": 1,
+        "@typescript-eslint/no-empty-interface": 0,
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-non-null-assertion": 0,
+        "@typescript-eslint/no-var-requires": 1,
+        "import/no-duplicates": 0,
+        "import/no-unresolved": 0,
+        "no-unused-vars": 0,
+        "promise/no-native": 0,
+        "require-await": 0
+      }
+    }
+  ]
+}

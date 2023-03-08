@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.1](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.5.0...@appium/typedoc-plugin-appium@0.5.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** replace void responses with 'null' ([cd76622](https://github.com/appium/appium/commit/cd76622aa9931eed058d32f0d3c51327ac43f15c)), closes [#18269](https://github.com/appium/appium/issues/18269)
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+
+
+
 # [0.5.0](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.4.0...@appium/typedoc-plugin-appium@0.5.0) (2023-02-24)
 
 

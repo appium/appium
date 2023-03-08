@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/appium/appium/compare/@appium/docutils@0.2.2...@appium/docutils@0.3.0) (2023-03-08)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v2.1.0 ([4ed745a](https://github.com/appium/appium/commit/4ed745a95ffc6a43f76003eba62019c16a4c6cf2))
+* **docutils:** update dependency typedoc to v0.23.26 ([431092d](https://github.com/appium/appium/commit/431092dc87c3146bfd3cd274ae5c279b7582ff55))
+* **docutils:** use material theme ([189e39d](https://github.com/appium/appium/commit/189e39d03c16551272d6c489aedc0d9fbb08a3a9))
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+### Features
+
+* **docutils:** add --upgrade flag to init ([4cfad00](https://github.com/appium/appium/commit/4cfad004dbdff4ae04ed7c87f23a3c9e913e4d4e))
+* **docutils:** allow "%s" as version number in commit msg arg ([f80f4cb](https://github.com/appium/appium/commit/f80f4cb2bca40347913a6ce39e3de58b485492a8))
+* **docutils:** better path validation ([b30b2cf](https://github.com/appium/appium/commit/b30b2cfb84b0f208d932d60082847d0d7323e108))
+
+
+
+
+
 ## [0.2.2](https://github.com/appium/appium/compare/@appium/docutils@0.2.1...@appium/docutils@0.2.2) (2023-02-24)
 
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.1](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.0...@appium/fake-driver@5.2.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* **appium,fake-driver:** expose child process when running an extension script ([e9dae3f](https://github.com/appium/appium/commit/e9dae3f6d006dcf89b6c0b6fb491be15acfed98b))
+* **fake-driver:** fix a broken type ([b4c1403](https://github.com/appium/appium/commit/b4c1403c22c4ffd7a4358f2473917c33f8c0049e))
+
+
+
+
+
 # [5.2.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.1.5...@appium/fake-driver@5.2.0) (2023-02-24)
 
 

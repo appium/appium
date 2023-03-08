@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.7](https://github.com/appium/appium/compare/@appium/support@3.1.6...@appium/support@3.1.7) (2023-03-08)
+
+
+### Bug Fixes
+
+* **appium,support:** fs.readPackageJsonFrom() returns proper type ([9ccbab5](https://github.com/appium/appium/commit/9ccbab5dc02d0019b0cad903772cda872d9fd5fb))
+* **support:** Improve error description on image load ([#18284](https://github.com/appium/appium/issues/18284)) ([2a6a13a](https://github.com/appium/appium/commit/2a6a13ac89f9731b85670b8528e6c1fc3fafd680))
+* **support:** remove all logging from env module ([2359a2b](https://github.com/appium/appium/commit/2359a2ba3b738b5c5f74807fb14260789cc6e4ba)), closes [#16970](https://github.com/appium/appium/issues/16970)
+* **support:** update dependency @types/glob to v8.1.0 ([96898c8](https://github.com/appium/appium/commit/96898c87d52444185988ff0ccbac1e109104d7bb))
+* **support:** update dependency jimp to v0.22.7 ([188ed16](https://github.com/appium/appium/commit/188ed161e4156aab4381b27fcb6f6d1fccbc0e73))
+* **support:** update dependency pngjs to v7 ([85e4bd8](https://github.com/appium/appium/commit/85e4bd892548343db7d4f7ed82b275dd296c748e))
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+
+
+
 ## [3.1.6](https://github.com/appium/appium/compare/@appium/support@3.1.5...@appium/support@3.1.6) (2023-02-24)
 
 

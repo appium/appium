@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.1](https://github.com/appium/appium/compare/@appium/types@0.10.0...@appium/types@0.10.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* **types:** callback to implicitWaitForCondition accepts args ([5684c4e](https://github.com/appium/appium/commit/5684c4e2860d7f7043c6252f1e447a653b49955a))
+* **types:** type fixes & improvements ([e2aa3d3](https://github.com/appium/appium/commit/e2aa3d3b32235072c99647c3a0bad5adc1965b22))
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+
+
+
 # [0.10.0](https://github.com/appium/appium/compare/@appium/types@0.9.1...@appium/types@0.10.0) (2023-02-24)
 
 

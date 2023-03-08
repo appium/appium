@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.3](https://github.com/appium/appium/compare/@appium/base-driver@9.3.2...@appium/base-driver@9.3.3) (2023-03-08)
+
+
+### Bug Fixes
+
+* **base-driver:** remove needless static prop breaking the build ([1b70551](https://github.com/appium/appium/commit/1b70551055444cad97144e539da7be872b9f70f8))
+* **base-driver:** use new mixin strategy ([be86627](https://github.com/appium/appium/commit/be8662759586bb3c24c7635b60ed8c574f5e2fd4))
+* **images-plugin:** update dependency lru-cache to v7.17.2 ([d1d5ece](https://github.com/appium/appium/commit/d1d5ecef87e70afea6d9d59f69cae465460e930b))
+* **images-plugin:** update dependency lru-cache to v7.18.1 ([ed1d3aa](https://github.com/appium/appium/commit/ed1d3aae61539bc136b3f266911331387397b88a))
+* **images-plugin:** update dependency lru-cache to v7.18.2 ([48c3311](https://github.com/appium/appium/commit/48c331157f74b238a3fc8dc92775d0af3f9f3134))
+* **images-plugin:** update dependency lru-cache to v7.18.3 ([01bff49](https://github.com/appium/appium/commit/01bff49297ca5a1c92259f1f8f11f5944ef15e4d))
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+
+
+
 ## [9.3.2](https://github.com/appium/appium/compare/@appium/base-driver@9.3.1...@appium/base-driver@9.3.2) (2023-02-24)
 
 

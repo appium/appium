@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium@8.0.0...@appium/eslint-config-appium@8.0.1) (2023-03-08)
+
+**Note:** Version bump only for package @appium/eslint-config-appium
+
+
+
+
+
 # [8.0.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium@7.0.0...@appium/eslint-config-appium@8.0.0) (2022-12-14)
 
 - chore!: set engines to minimum Node.js v14.17.0 ([a1dbe6c](https://github.com/appium/appium/commit/a1dbe6c43efe76604943a607d402f4c8b864d652))

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.57](https://github.com/appium/appium/compare/appium@2.0.0-beta.56...appium@2.0.0-beta.57) (2023-03-08)
+
+
+### Bug Fixes
+
+* **appium,fake-driver:** expose child process when running an extension script ([e9dae3f](https://github.com/appium/appium/commit/e9dae3f6d006dcf89b6c0b6fb491be15acfed98b))
+* **appium,support:** fs.readPackageJsonFrom() returns proper type ([9ccbab5](https://github.com/appium/appium/commit/9ccbab5dc02d0019b0cad903772cda872d9fd5fb))
+* **docutils:** update dependency lilconfig to v2.1.0 ([4ed745a](https://github.com/appium/appium/commit/4ed745a95ffc6a43f76003eba62019c16a4c6cf2))
+* **execute-driver-plugin:** update dependency webdriverio to v7.30.2 ([49694f5](https://github.com/appium/appium/commit/49694f50a4680138cc92aba1eee294c927d712cf))
+* **types:** update dependency type-fest to v3.6.1 ([471a4b5](https://github.com/appium/appium/commit/471a4b57e622ff077d59f577a78341268700c48d))
+
+
+
+
+
 # [2.0.0-beta.56](https://github.com/appium/appium/compare/appium@2.0.0-beta.55...appium@2.0.0-beta.56) (2023-02-24)
 
 

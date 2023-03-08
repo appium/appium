@@ -103,14 +103,7 @@ appium server --use-plugins=device-farm,images
 ```
 
 You can find a full list of
-[officially-supported](https://appium.
-
-
-
-
-
-
-ub.io/appium/docs/en/latest/ecosystem/#plugins) and
+[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#plugins) and
 [third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-plugins) plugins at
 the current Appium 2.0 documentation.
 

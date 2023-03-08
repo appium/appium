@@ -5,8 +5,8 @@
  */
 
 import _ from 'lodash';
-import {exec, SubProcess, SubProcessOptions, TeenProcessExecOptions} from 'teen_process';
 import path from 'node:path';
+import {exec, TeenProcessExecOptions} from 'teen_process';
 import {
   DEFAULT_DEPLOY_BRANCH,
   DEFAULT_DEPLOY_REMOTE,
@@ -18,7 +18,7 @@ import {
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readPackageJson, whichMike} from '../fs';
 import logger from '../logger';
-import {argify, stopwatch, TeenProcessSubprocessStartOpts} from '../util';
+import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
 const log = logger.withTag('builder:deploy');
 
@@ -30,15 +30,12 @@ const log = logger.withTag('builder:deploy');
  */
 async function doServe(
   args: string[] = [],
-  {startDetector, detach, timeoutMs}: TeenProcessSubprocessStartOpts = {},
+  opts: SpawnBackgroundProcessOpts = {},
   mikePath?: string
 ) {
   mikePath = mikePath ?? (await whichMike());
   const finalArgs = ['serve', ...args];
-  const opts: SubProcessOptions = {stdio: 'inherit'};
-  log.debug('Launching %s with args: %s', mikePath, finalArgs);
-  const proc = new SubProcess(mikePath, finalArgs, opts);
-  return await proc.start(startDetector, detach, timeoutMs);
+  return spawnBackgroundProcess(mikePath, finalArgs, opts);
 }
 
 /**
@@ -223,7 +220,7 @@ export interface DeployOpts {
   execOpts?: TeenProcessExecOptions;
 
   /**
-   * Extra options for {@linkcode teen_process.Subprocess.start}
+   * Extra options for {@linkcode spawnBackgroundProcess}
    */
-  serveOpts?: TeenProcessSubprocessStartOpts;
+  serveOpts?: SpawnBackgroundProcessOpts;
 }

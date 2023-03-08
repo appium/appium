@@ -4,6 +4,7 @@
  */
 
 import _ from 'lodash';
+import {SpawnOptions, spawn} from 'node:child_process';
 import path from 'node:path';
 import type {SubProcess} from 'teen_process';
 
@@ -72,8 +73,27 @@ export const argify: (obj: Record<string, string | number | boolean | undefined>
   );
 
 /**
- * Conversion of the parameters of {@linkcode SubProcess.start} to an object.
+ * Spawns a long-running "background" child process.  This is expected to only return control to the
+ * parent process in the case of a nonzero exit code from the child process.
+ * @param command Command to run
+ * @param args Args to pass to command
+ * @param opts Spawn options. `{stdio: 'inherit'}` will always be true
+ * @privateRemarks `teen_process` is good for running a one-shot command, but not so great for
+ * background tasks; we use node's `child_process` directly here to pass `stdio` through, since
+ * `teen_process` basically does not respect `{stdio: 'inherit'}`.
  */
-export type TeenProcessSubprocessStartOpts = Partial<
-  TupleToObject<Parameters<SubProcess['start']>, ['startDetector', 'detach', 'timeoutMs']>
->;
+export async function spawnBackgroundProcess(command: string, args: string[], opts: SpawnOptions) {
+  return new Promise<void>((resolve, reject) => {
+    spawn(command, args, {...opts, stdio: 'inherit'})
+      .on('error', reject)
+      .on('close', (code) => {
+        // can be null or number
+        if (code) {
+          return reject(new Error(`${command} exited with code ${code}`));
+        }
+        resolve();
+      });
+  });
+}
+
+export type SpawnBackgroundProcessOpts = Omit<SpawnOptions, 'stdio'>;

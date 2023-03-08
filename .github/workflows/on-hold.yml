@@ -5,10 +5,10 @@ on:
 
 jobs:
   label-check:
-    if: github.base_ref == 'master'
+    if: ${{ github.base_ref == 'master' && github.repository == 'appium/appium' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: danielchabr/pr-labels-checker@e1d7e79aa0933af1728011705a30528a279874fd
+      - uses: danielchabr/pr-labels-checker@e1d7e79aa0933af1728011705a30528a279874fd # v3.1
         with:
           id: check-labels
           hasNone: On Hold

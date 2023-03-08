@@ -4,7 +4,6 @@ on:
     types: [opened, synchronize]
 
 permissions:
-  # Setting up permissions in the workflow to limit the scope of what it can do. Optional!
   contents: read
   issues: read # change this if/when we want to label issues
   pull-requests: write
@@ -13,6 +12,7 @@ permissions:
 
 jobs:
   labeler:
+    if: ${{ github.repository == 'appium/appium' }}
     name: Labeler
     runs-on: ubuntu-latest
     steps:

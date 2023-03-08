@@ -4,7 +4,6 @@ import {homedir} from 'os';
 import path from 'path';
 import readPkg from 'read-pkg';
 import {npm} from './npm';
-import log from './logger';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -69,11 +68,6 @@ export const findAppiumDependencyPackage = _.memoize(
           pkg?.peerDependencies?.appium;
         pkgPath = version && !OLD_VERSION_REGEX.test(String(version)) ? cwd : undefined;
       } catch {}
-      if (pkgPath) {
-        log.debug(`Found package.json having current Appium dep in ${pkgPath}`);
-      } else {
-        log.debug(`No package.json having current Appium dep in ${cwd}`);
-      }
       return pkgPath;
     };
 
@@ -85,11 +79,7 @@ export const findAppiumDependencyPackage = _.memoize(
       const {json: list} = await npm.exec('list', ['--long', '--json'], {cwd});
       ({path: pkgDir} = list);
       if (pkgDir !== cwd) {
-        if (pkgDir) {
-          log.debug(`Determined package/workspace root from ${cwd} => ${pkgDir}`);
-        } else {
-          pkgDir = cwd;
-        }
+        pkgDir = pkgDir ?? cwd;
       }
     } catch {
       pkgDir = cwd;
@@ -131,7 +121,6 @@ export const resolveAppiumHome = _.memoize(
     }
 
     if (process.env.APPIUM_HOME) {
-      log.debug(`Using APPIUM_HOME from env: ${process.env.APPIUM_HOME}`);
       return path.resolve(cwd, process.env.APPIUM_HOME);
     }
 
@@ -139,7 +128,6 @@ export const resolveAppiumHome = _.memoize(
     if (pkgPath) {
       return pkgPath;
     }
-    log.debug(`Using default APPIUM_HOME: ${DEFAULT_APPIUM_HOME}`);
     return DEFAULT_APPIUM_HOME;
   }
 );

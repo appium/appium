@@ -44,6 +44,7 @@
   ],
   "scripts": {
     "build:docs": "node docs/scripts/build-docs.js",
+    "build:docs:preview": "cross-env APPIUM_DOCS_PREVIEW=1 npm run build:docs",
     "build:docs:assets": "node docs/scripts/copy-assets.js",
     "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
     "build:docs:reference": "node docs/scripts/build-reference.js",

@@ -1,0 +1,40 @@
+name: Build Docs
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    paths:
+      - './packages/appium/docs/**'
+      - './packages/docutils/**'
+      - './packages/typedoc-plugin-appium/**'
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
+      - name: Install dependencies (node)
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        with:
+          useRollingCache: true
+          install-command: npm ci
+      - name: Install dependencies (python)
+        run: pip install -r packages/docutils/requirements.txt
+      - name: Configure Git User
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      - name: Build Docs
+        run: npm run docs:preview
+      - name: Deploy Preview
+        if: ${{ github.repository == 'appium/appium' }}
+        uses: rossjrw/pr-preview-action@9dac5c4777c535516ebf819f93aeadac70f66488 # v1
+        with:
+          source-dir: ./packages/appium/docs/site

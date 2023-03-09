@@ -37,6 +37,8 @@
     "clean:workspaces": "lerna clean -y",
     "ci": "npm ci",
     "dev": "run-s \"build -- --watch\"",
+    "docs": "npm run -w packages/appium build:docs",
+    "docs:preview": "npm run -w packages/appium build:docs:preview",
     "doctor": "node ./packages/doctor",
     "husky-install": "husky install",
     "generate-docs": "npm run --workspace=packages/appium generate-docs",

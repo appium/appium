@@ -45,21 +45,3 @@ jobs:
         uses: rinchsan/renovate-config-validator@1ea1e8514f6a33fdd71c40b0a5fa3512b9e7b936 # tag=v0
         with:
           pattern: '{.renovaterc.json,renovate/default.json}'
-
-  docs:
-    name: Docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3
-      - name: Install dependencies (node)
-        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
-        with:
-          useRollingCache: true
-          install-command: npm ci
-      - name: Install dependencies (python)
-        run: pip install -r packages/docutils/requirements.txt
-      - name: Build Docs
-        run: |
-          git config user.name 'Appium Bot'
-          git config user.email 'appium@appium.io'
-          npm run --workspace packages/appium build:docs

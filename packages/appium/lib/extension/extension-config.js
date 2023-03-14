@@ -1,9 +1,9 @@
-import _ from 'lodash';
+import {util} from '@appium/support';
 import B from 'bluebird';
+import _ from 'lodash';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import {satisfies} from 'semver';
-import {util} from '@appium/support';
 import {commandClasses} from '../cli/extension';
 import {APPIUM_VER} from '../config';
 import log from '../logger';
@@ -13,17 +13,41 @@ import {
   registerSchema,
 } from '../schema/schema';
 
-const INSTALL_TYPE_NPM = 'npm';
-const INSTALL_TYPE_LOCAL = 'local';
-const INSTALL_TYPE_GITHUB = 'github';
-const INSTALL_TYPE_GIT = 'git';
+/**
+ * "npm" install type
+ * Used when extension was installed by npm package name
+ * @remarks _All_ extensions are installed _by_ `npm`, but only this one means the package name was
+ * used to specify it
+ */
+export const INSTALL_TYPE_NPM = 'npm';
+/**
+ * "local" install type
+ * Used when extension was installed from a local path
+ */
+export const INSTALL_TYPE_LOCAL = 'local';
+/**
+ * "github" install type
+ * Used when extension was installed via GitHub URL
+ */
+export const INSTALL_TYPE_GITHUB = 'github';
+/**
+ * "git" install type
+ * Used when extensions was installed via Git URL
+ */
+export const INSTALL_TYPE_GIT = 'git';
+/**
+ * "dev" install type
+ * Used when automatically detected as a working copy
+ */
+export const INSTALL_TYPE_DEV = 'dev';
 
 /** @type {Set<InstallType>} */
-const INSTALL_TYPES = new Set([
+export const INSTALL_TYPES = new Set([
   INSTALL_TYPE_GIT,
   INSTALL_TYPE_GITHUB,
   INSTALL_TYPE_LOCAL,
   INSTALL_TYPE_NPM,
+  INSTALL_TYPE_DEV,
 ]);
 
 /**
@@ -54,7 +78,7 @@ export class ExtensionConfig {
   manifest;
 
   /**
-   * @type {ExtensionListData|undefined}
+   * @type {import('../cli/extension-command').ExtensionList<ExtType>|undefined}
    */
   #listDataCache;
 
@@ -239,7 +263,7 @@ export class ExtensionConfig {
    * This is an expensive operation, so the result is cached.  Currently, there is no
    * use case for invalidating the cache.
    * @protected
-   * @returns {Promise<ExtensionListData>}
+   * @returns {Promise<import('../cli/extension-command').ExtensionList<ExtType>>}
    */
   async getListData() {
     if (this.#listDataCache) {
@@ -300,7 +324,10 @@ export class ExtensionConfig {
 
     if (_.isString(appiumVersion) && !satisfies(APPIUM_VER, appiumVersion)) {
       const listData = await this.getListData();
-      const extListData = /** @type {InstalledExtensionListData} */ (listData[extName]);
+      const extListData =
+        /** @type {import('../cli/extension-command').ExtensionListData<ExtType>} */ (
+          listData[extName]
+        );
       if (extListData?.installed) {
         const {updateVersion, upToDate} = extListData;
         if (!upToDate) {
@@ -319,7 +346,10 @@ export class ExtensionConfig {
       }
     } else if (!_.isString(appiumVersion)) {
       const listData = await this.getListData();
-      const extListData = /** @type {InstalledExtensionListData} */ (listData[extName]);
+      const extListData =
+        /** @type {import('../cli/extension-command').InstalledExtensionListData<ExtType>} */ (
+          listData[extName]
+        );
       if (!extListData?.upToDate && extListData?.updateVersion) {
         warnings.push(
           createPeerWarning(
@@ -619,8 +649,6 @@ export class ExtensionConfig {
   }
 }
 
-export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GITHUB, INSTALL_TYPES};
-
 /**
  * An issue with the {@linkcode ExtManifest} for a particular extension.
  *
@@ -640,8 +668,6 @@ export {INSTALL_TYPE_NPM, INSTALL_TYPE_GIT, INSTALL_TYPE_LOCAL, INSTALL_TYPE_GIT
 /**
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('./manifest').Manifest} Manifest
- * @typedef {import('../cli/extension-command').ExtensionListData} ExtensionListData
- * @typedef {import('../cli/extension-command').InstalledExtensionListData} InstalledExtensionListData
  * @typedef {import('appium/types').InstallType} InstallType
  */
 

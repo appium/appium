@@ -84,6 +84,16 @@ function makeListArgs(type) {
         dest: 'showUpdates',
       },
     ],
+    [
+      ['--verbose'],
+      {
+        required: false,
+        default: false,
+        action: 'store_true',
+        help: 'Show more information about each extension',
+        dest: 'verbose',
+      },
+    ],
   ]);
 }
 

@@ -1,15 +1,15 @@
 /* eslint-disable require-await */
 /* eslint-disable no-unused-vars */
 
-import {validateCaps, processCapabilities} from './capabilities';
-import {DriverCore} from './core';
 import {util} from '@appium/support';
+import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
+import {processCapabilities, validateCaps} from './capabilities';
+import {DriverCore} from './core';
 import helpers from './helpers';
-import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -21,8 +21,9 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
  * @implements {SessionHandler<C>}
  * @template {Constraints} C
  * @template {StringRecord} [CArgs=StringRecord]
+ * @template {StringRecord} [ExtraOpts=import('type-fest').EmptyObject]
  * @implements {Driver<C, CArgs>}
- * @extends {DriverCore<C>}
+ * @extends {DriverCore<C, ExtraOpts>}
  */
 export class BaseDriver extends DriverCore {
   /**
@@ -46,16 +47,19 @@ export class BaseDriver extends DriverCore {
   desiredCapConstraints;
 
   /**
-   * @type {DriverOpts<C> & DriverOpts<BaseDriverCapConstraints>}
+   * @type {import('@appium/types').DriverOpts<C, ExtraOpts> & import('@appium/types').DriverOpts<BaseDriverCapConstraints>}
    */
   opts;
 
   /**
    *
-   * @param {DriverOpts<C>} opts
+   * @param {import('@appium/types').DriverOpts<C, ExtraOpts>} opts
    * @param {boolean} shouldValidateCaps
    */
-  constructor(opts = /** @type {DriverOpts<C>} */ ({}), shouldValidateCaps = true) {
+  constructor(
+    opts = /** @type {import('@appium/types').DriverOpts<C, ExtraOpts>} */ ({}),
+    shouldValidateCaps = true
+  ) {
     super(opts, shouldValidateCaps);
 
     /**
@@ -307,7 +311,11 @@ export class BaseDriver extends DriverCore {
     this.sessionId = util.uuidV4();
     this.caps = caps;
     // merge caps onto opts so we don't need to worry about what's where
-    this.opts = {..._.cloneDeep(this.initialOpts), ...this.caps};
+    this.opts =
+      /** @type {import('@appium/types').DriverOpts<C, ExtraOpts> & import('@appium/types').DriverOpts<BaseDriverCapConstraints>} */ ({
+        ..._.cloneDeep(this.initialOpts),
+        ...this.caps,
+      });
 
     // deal with resets
     // some people like to do weird things by setting noReset and fullReset
@@ -463,9 +471,4 @@ export default BaseDriver;
 /**
  * @template {Constraints} C
  * @typedef {import('@appium/types').ExternalDriver<C>} ExternalDriver
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').DriverOpts<C>} DriverOpts
  */

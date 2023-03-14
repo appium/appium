@@ -20,6 +20,7 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 /**
  * @template {Constraints} [C=BaseDriverCapConstraints]
+ * @template {import('@appium/types').StringRecord} [ExtraOpts=import('type-fest').EmptyObject]
  * @implements {Core<C>}
  */
 class DriverCore {
@@ -35,7 +36,7 @@ class DriverCore {
   sessionId;
 
   /**
-   * @type {import('@appium/types').DriverOpts<C>}
+   * @type {import('@appium/types').DriverOpts<C, ExtraOpts>}
    */
   opts;
 
@@ -124,10 +125,13 @@ class DriverCore {
   settings;
 
   /**
-   * @param {DriverOpts<C>} opts
+   * @param {import('@appium/types').DriverOpts<C, ExtraOpts>} opts
    * @param {boolean} [shouldValidateCaps]
    */
-  constructor(opts = /** @type {DriverOpts<C>} */ ({}), shouldValidateCaps = true) {
+  constructor(
+    opts = /** @type {import('@appium/types').DriverOpts<C, ExtraOpts>} */ ({}),
+    shouldValidateCaps = true
+  ) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
     // setup state

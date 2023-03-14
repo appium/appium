@@ -1,20 +1,20 @@
 import type {EventEmitter} from 'events';
-import {Element, ActionSequence} from './action';
+import {EmptyObject, Entries} from 'type-fest';
 import {
-  HTTPMethod,
-  AppiumServer,
-  UpdateServerCallback,
-  Class,
   AppiumLogger,
-  StringRecord,
-  ConstraintsToCaps,
+  AppiumServer,
   BaseDriverCapConstraints,
-  W3CCapabilities,
   Capabilities,
+  Class,
+  ConstraintsToCaps,
+  HTTPMethod,
+  StringRecord,
+  UpdateServerCallback,
+  W3CCapabilities,
 } from '.';
+import {ActionSequence, Element} from './action';
+import {ExecuteMethodMap, MethodMap} from './command';
 import {ServerArgs} from './config';
-import {AsyncReturnType, Entries} from 'type-fest';
-import {MethodMap, ExecuteMethodMap} from './command';
 
 export interface ITimeoutCommands {
   /**
@@ -2224,10 +2224,18 @@ export interface ExtraDriverOpts {
  * Options as passed into a driver constructor, which is just a union of {@linkcode ServerArgs} and {@linkcode Capabilities}.
  *
  * The combination happens within Appium prior to calling the constructor.
+ *
+ * @example
+ * ```ts
+ * class MyDriver extends BaseDriver<MyConstraints> {
+ *   constructor(opts: DriverOpts<MyConstraints, {foo: string}>) {}
+ * }
+ * ```
  */
-export type DriverOpts<C extends Constraints = BaseDriverCapConstraints> = ServerArgs &
-  ExtraDriverOpts &
-  Partial<ConstraintsToCaps<C>>;
+export type DriverOpts<
+  C extends Constraints = BaseDriverCapConstraints,
+  ExtraOpts extends StringRecord = EmptyObject
+> = ServerArgs & ExtraDriverOpts & Partial<ConstraintsToCaps<C>> & Partial<ExtraOpts>;
 
 /**
  * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.

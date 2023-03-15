@@ -2,16 +2,21 @@ import _ from 'lodash';
 import path from 'path';
 import url from 'url';
 import logger from './logger';
-import {tempDir, fs, util, zip, net, timing, node} from '@appium/support';
+import {tempDir, fs, util, zip, timing, node} from '@appium/support';
 import LRU from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
+import B from 'bluebird';
 
 const IPA_EXT = '.ipa';
 const ZIP_EXTS = ['.zip', IPA_EXT];
 const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
 const CACHED_APPS_MAX_AGE = 1000 * 60 * 60 * 24; // ms
 const MAX_CACHED_APPS = 1024;
+const HTTP_STATUS_NOT_MODIFIED = 304;
+const DEFAULT_REQ_HEADERS = Object.freeze({
+  'user-agent': 'Appium',
+});
 const APPLICATIONS_CACHE = new LRU({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
@@ -51,77 +56,6 @@ process.on('exit', () => {
     }
   }
 });
-
-/**
- *
- * @param {string} url
- * @returns {Promise<import('axios').AxiosResponse['headers']>}
- */
-async function retrieveHeaders(url) {
-  try {
-    return (
-      await axios({
-        url,
-        method: 'HEAD',
-        timeout: 5000,
-      })
-    ).headers;
-  } catch (e) {
-    logger.info(`Cannot send HEAD request to '${url}'. Original error: ${e.message}`);
-  }
-  return {};
-}
-
-function getCachedApplicationPath(link, currentAppProps = {}, cachedAppInfo = {}) {
-  const refresh = () => {
-    logger.debug(`A fresh copy of the application is going to be downloaded from ${link}`);
-    return null;
-  };
-
-  if (!_.isPlainObject(cachedAppInfo) || !_.isPlainObject(currentAppProps)) {
-    // if an invalid arg is passed then assume cache miss
-    return refresh();
-  }
-
-  const {
-    lastModified: currentModified,
-    immutable: currentImmutable,
-    // maxAge is in seconds
-    maxAge: currentMaxAge,
-  } = currentAppProps;
-  const {
-    // Date instance
-    lastModified,
-    // boolean
-    immutable,
-    // Unix time in milliseconds
-    timestamp,
-    fullPath,
-  } = cachedAppInfo;
-  if (lastModified && currentModified) {
-    if (currentModified.getTime() <= lastModified.getTime()) {
-      logger.debug(`The application at ${link} has not been modified since ${lastModified}`);
-      return fullPath;
-    }
-    logger.debug(`The application at ${link} has been modified since ${lastModified}`);
-    return refresh();
-  }
-  if (immutable && currentImmutable) {
-    logger.debug(`The application at ${link} is immutable`);
-    return fullPath;
-  }
-  if (currentMaxAge && timestamp) {
-    const msLeft = timestamp + currentMaxAge * 1000 - Date.now();
-    if (msLeft > 0) {
-      logger.debug(
-        `The cached application '${path.basename(fullPath)}' will expire in ${msLeft / 1000}s`
-      );
-      return fullPath;
-    }
-    logger.debug(`The cached application '${path.basename(fullPath)}' has expired`);
-  }
-  return refresh();
-}
 
 function verifyAppExtension(app, supportedAppExtensions) {
   if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
@@ -240,6 +174,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
     lastModified: null,
     immutable: false,
     maxAge: null,
+    etag: null,
   };
   const {protocol, pathname} = url.parse(newApp);
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
@@ -250,12 +185,26 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
     if (isUrl) {
       // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);
-      headers = await retrieveHeaders(newApp);
+      const reqHeaders = {
+        ...DEFAULT_REQ_HEADERS,
+      };
+      if (cachedAppInfo?.etag) {
+        reqHeaders['if-none-match'] = remoteAppProps.etag;
+      } else if (cachedAppInfo?.lastModified) {
+        reqHeaders['if-modified-since'] = remoteAppProps.lastModified?.toString();
+      }
+
+      let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
       if (!_.isEmpty(headers)) {
+        logger.debug(`Etag: ${remoteAppProps?.etag} -> ${headers.etag}`);
+        if (headers.etag) {
+          remoteAppProps.etag = headers.etag;
+        }
+        logger.debug(`Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`);
         if (headers['last-modified']) {
           remoteAppProps.lastModified = new Date(headers['last-modified']);
         }
-        logger.debug(`Last-Modified: ${headers['last-modified']}`);
+        logger.debug(`Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`);
         if (headers['cache-control']) {
           remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
           const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
@@ -263,19 +212,18 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
             remoteAppProps.maxAge = parseInt(maxAgeMatch[1], 10);
           }
         }
-        logger.debug(`Cache-Control: ${headers['cache-control']}`);
       }
-      const cachedPath = getCachedApplicationPath(app, remoteAppProps, cachedAppInfo);
-      if (cachedPath) {
-        if (await isAppIntegrityOk(cachedPath, cachedAppInfo?.integrity)) {
-          logger.info(`Reusing previously downloaded application at '${cachedPath}'`);
-          return verifyAppExtension(cachedPath, supportedAppExtensions);
+      if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
+        if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
+          logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
+          return verifyAppExtension(cachedAppInfo.fullPath, supportedAppExtensions);
         }
         logger.info(
-          `The application at '${cachedPath}' does not exist anymore ` +
-            `or its integrity has been damaged. Deleting it from the internal cache`
+          `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
+          `or its integrity has been damaged. Deleting it from the internal cache`
         );
         APPLICATIONS_CACHE.delete(app);
+        ({stream} = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS}));
       }
 
       let fileName = null;
@@ -333,7 +281,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
         prefix: fileName,
         suffix: '',
       });
-      newApp = await downloadApp(newApp, targetPath);
+      newApp = await fetchApp(stream, targetPath);
     } else if (await fs.exists(newApp)) {
       // Use the local app
       logger.info(`Using local app '${newApp}'`);
@@ -429,16 +377,76 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
   });
 }
 
-async function downloadApp(app, targetPath) {
-  const {href} = url.parse(app);
+/**
+ * Sends a HTTP GET query to fetch the app with caching enabled.
+ * Follows https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
+ *
+ * @param {string} appLink The URL to download an app from
+ * @param {import('axios').RawAxiosRequestHeaders} headers
+ * @returns {Promise<RemoteAppData>}
+ */
+async function queryAppLink(appLink, headers) {
+  const {href} = url.parse(appLink);
+  /**
+   * @type {import('axios').RawAxiosRequestConfig}
+   */
+  const requestOpts = {
+    url: href,
+    responseType: 'stream',
+    timeout: APP_DOWNLOAD_TIMEOUT_MS,
+    validateStatus: (status) => status >= 200 && status < 300 || status === HTTP_STATUS_NOT_MODIFIED,
+    headers,
+  };
   try {
-    await net.downloadFile(href, targetPath, {
-      timeout: APP_DOWNLOAD_TIMEOUT_MS,
+    const {data: stream, headers, status} = await axios(requestOpts);
+    return {
+      stream,
+      headers,
+      status,
+    }
+  } catch (err) {
+    throw new Error(`Cannot download the app from ${href}: ${err.message}`);
+  }
+}
+
+/**
+ * Retrieves app payload from the given stream. Also meters the download performance.
+ *
+ * @param {import('stream').Readable} srcStream The incoming stream
+ * @param {string} dstPath The target file path to be written
+ * @returns {Promise<string>} The same dstPath
+ * @throws {Error} If there was a failure while downloading the file
+ */
+async function fetchApp (srcStream, dstPath) {
+  const timer = new timing.Timer().start();
+  try {
+    const writer = fs.createWriteStream(dstPath);
+    srcStream.pipe(writer);
+
+    await new B((resolve, reject) => {
+      srcStream.once('error', reject);
+      writer.once('finish', resolve);
+      writer.once('error', (e) => {
+        srcStream.unpipe(writer);
+        reject(e);
+      });
     });
   } catch (err) {
-    throw new Error(`Unable to download the app: ${err.message}`);
+    throw new Error(`Cannot fetch the application: ${err.message}`);
   }
-  return targetPath;
+
+  const secondsElapsed = timer.getDuration().asSeconds;
+  const {size} = await fs.stat(dstPath);
+  logger.debug(
+    `The application (${util.toReadableSizeString(size)}) ` +
+    `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+  );
+  if (secondsElapsed >= 2) {
+    const bytesPerSec = Math.floor(size / secondsElapsed);
+    logger.debug(`Approximate download speed: ${util.toReadableSizeString(bytesPerSec)}/s`);
+  }
+
+  return dstPath;
 }
 
 /**
@@ -613,4 +621,12 @@ export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generate
  * @property {Date?} lastModified
  * @property {boolean} immutable
  * @property {number?} maxAge
+ * @property {string?} etag
+ */
+
+/**
+ * @typedef RemoteAppData
+ * @property {number} status
+ * @property {import('stream').Readable} stream
+ * @property {import('axios').RawAxiosResponseHeaders | import('axios').AxiosResponseHeaders} headers
  */

@@ -9,7 +9,7 @@ import axios from 'axios';
 import B from 'bluebird';
 
 const IPA_EXT = '.ipa';
-const ZIP_EXTS = ['.zip', IPA_EXT];
+const ZIP_EXTS = new Set(['.zip', IPA_EXT]);
 const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
 const CACHED_APPS_MAX_AGE = 1000 * 60 * 60 * 24; // ms
 const MAX_CACHED_APPS = 1024;
@@ -238,7 +238,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
         const extname = path.extname(basename);
         // to determine if we need to unzip the app, we have a number of places
         // to look: content type, content disposition, or the file extension
-        if (ZIP_EXTS.includes(extname)) {
+        if (ZIP_EXTS.has(extname)) {
           fileName = basename;
           shouldUnzipApp = true;
         }
@@ -264,7 +264,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
             fileName = fs.sanitizeName(match[1], {
               replacement: SANITIZE_REPLACEMENT,
             });
-            shouldUnzipApp = shouldUnzipApp || ZIP_EXTS.includes(path.extname(fileName));
+            shouldUnzipApp = shouldUnzipApp || ZIP_EXTS.has(path.extname(fileName));
           }
         }
         if (!fileName) {
@@ -295,7 +295,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
     } else if (await fs.exists(newApp)) {
       // Use the local app
       logger.info(`Using local app '${newApp}'`);
-      shouldUnzipApp = ZIP_EXTS.includes(path.extname(newApp));
+      shouldUnzipApp = ZIP_EXTS.has(path.extname(newApp));
     } else {
       let errorMessage = `The application at '${newApp}' does not exist or is not accessible`;
       // protocol value for 'C:\\temp' is 'c:', so we check the length as well
@@ -452,6 +452,7 @@ async function fetchApp (srcStream, dstPath) {
     `The application (${util.toReadableSizeString(size)}) ` +
     `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
   );
+  // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= 2) {
     const bytesPerSec = Math.floor(size / secondsElapsed);
     logger.debug(`Approximate download speed: ${util.toReadableSizeString(bytesPerSec)}/s`);
@@ -636,8 +637,8 @@ export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generate
  */
 
 /**
- * @typedef RemoteAppData
- * @property {number} status
- * @property {import('stream').Readable} stream
- * @property {import('axios').RawAxiosResponseHeaders | import('axios').AxiosResponseHeaders} headers
+ * @typedef RemoteAppData Properties of the remote application (e.g. GET HTTP response) to be downloaded.
+ * @property {number} status The HTTP status of the response
+ * @property {import('stream').Readable} stream The HTTP response body represented as readable stream
+ * @property {import('axios').RawAxiosResponseHeaders | import('axios').AxiosResponseHeaders} headers HTTP response headers
  */

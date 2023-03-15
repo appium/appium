@@ -195,93 +195,103 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
       }
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
-      if (!_.isEmpty(headers)) {
-        logger.debug(`Etag: ${remoteAppProps?.etag} -> ${headers.etag}`);
-        if (headers.etag) {
-          remoteAppProps.etag = headers.etag;
-        }
-        logger.debug(`Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`);
-        if (headers['last-modified']) {
-          remoteAppProps.lastModified = new Date(headers['last-modified']);
-        }
-        logger.debug(`Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`);
-        if (headers['cache-control']) {
-          remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
-          const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
-          if (maxAgeMatch) {
-            remoteAppProps.maxAge = parseInt(maxAgeMatch[1], 10);
+      try {
+        if (!_.isEmpty(headers)) {
+          logger.debug(`Etag: ${remoteAppProps?.etag} -> ${headers.etag}`);
+          if (headers.etag) {
+            remoteAppProps.etag = headers.etag;
+          }
+          logger.debug(`Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`);
+          if (headers['last-modified']) {
+            remoteAppProps.lastModified = new Date(headers['last-modified']);
+          }
+          logger.debug(`Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`);
+          if (headers['cache-control']) {
+            remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
+            const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
+            if (maxAgeMatch) {
+              remoteAppProps.maxAge = parseInt(maxAgeMatch[1], 10);
+            }
           }
         }
-      }
-      if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
-        if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
-          logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
-          return verifyAppExtension(cachedAppInfo.fullPath, supportedAppExtensions);
-        }
-        logger.info(
-          `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
-          `or its integrity has been damaged. Deleting it from the internal cache`
-        );
-        APPLICATIONS_CACHE.delete(app);
-        ({stream} = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS}));
-      }
+        if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
+          if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
+            logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
+            return verifyAppExtension(cachedAppInfo.fullPath, supportedAppExtensions);
+          }
+          logger.info(
+            `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
+            `or its integrity has been damaged. Deleting it from the internal cache`
+          );
+          APPLICATIONS_CACHE.delete(app);
 
-      let fileName = null;
-      const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
-        replacement: SANITIZE_REPLACEMENT,
-      });
-      const extname = path.extname(basename);
-      // to determine if we need to unzip the app, we have a number of places
-      // to look: content type, content disposition, or the file extension
-      if (ZIP_EXTS.includes(extname)) {
-        fileName = basename;
-        shouldUnzipApp = true;
-      }
-      if (headers['content-type']) {
-        const ct = headers['content-type'];
-        logger.debug(`Content-Type: ${ct}`);
-        // the filetype may not be obvious for certain urls, so check the mime type too
-        if (
-          ZIP_MIME_TYPES.some((mimeType) =>
-            new RegExp(`\\b${_.escapeRegExp(mimeType)}\\b`).test(ct)
-          )
-        ) {
-          if (!fileName) {
-            fileName = `${DEFAULT_BASENAME}.zip`;
+          if (!stream.closed) {
+            stream.destroy();
           }
+          ({stream, headers, status} = await queryAppLink(newApp, {...DEFAULT_REQ_HEADERS}));
+        }
+
+        let fileName = null;
+        const basename = fs.sanitizeName(path.basename(decodeURIComponent(pathname ?? '')), {
+          replacement: SANITIZE_REPLACEMENT,
+        });
+        const extname = path.extname(basename);
+        // to determine if we need to unzip the app, we have a number of places
+        // to look: content type, content disposition, or the file extension
+        if (ZIP_EXTS.includes(extname)) {
+          fileName = basename;
           shouldUnzipApp = true;
         }
-      }
-      if (headers['content-disposition'] && /^attachment/i.test(headers['content-disposition'])) {
-        logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
-        const match = /filename="([^"]+)/i.exec(headers['content-disposition']);
-        if (match) {
-          fileName = fs.sanitizeName(match[1], {
-            replacement: SANITIZE_REPLACEMENT,
-          });
-          shouldUnzipApp = shouldUnzipApp || ZIP_EXTS.includes(path.extname(fileName));
+        if (headers['content-type']) {
+          const ct = headers['content-type'];
+          logger.debug(`Content-Type: ${ct}`);
+          // the filetype may not be obvious for certain urls, so check the mime type too
+          if (
+            ZIP_MIME_TYPES.some((mimeType) =>
+              new RegExp(`\\b${_.escapeRegExp(mimeType)}\\b`).test(ct)
+            )
+          ) {
+            if (!fileName) {
+              fileName = `${DEFAULT_BASENAME}.zip`;
+            }
+            shouldUnzipApp = true;
+          }
         }
-      }
-      if (!fileName) {
-        // assign the default file name and the extension if none has been detected
-        const resultingName = basename
-          ? basename.substring(0, basename.length - extname.length)
-          : DEFAULT_BASENAME;
-        let resultingExt = extname;
-        if (!supportedAppExtensions.includes(resultingExt)) {
-          logger.info(
-            `The current file extension '${resultingExt}' is not supported. ` +
+        if (headers['content-disposition'] && /^attachment/i.test(headers['content-disposition'])) {
+          logger.debug(`Content-Disposition: ${headers['content-disposition']}`);
+          const match = /filename="([^"]+)/i.exec(headers['content-disposition']);
+          if (match) {
+            fileName = fs.sanitizeName(match[1], {
+              replacement: SANITIZE_REPLACEMENT,
+            });
+            shouldUnzipApp = shouldUnzipApp || ZIP_EXTS.includes(path.extname(fileName));
+          }
+        }
+        if (!fileName) {
+          // assign the default file name and the extension if none has been detected
+          const resultingName = basename
+            ? basename.substring(0, basename.length - extname.length)
+            : DEFAULT_BASENAME;
+          let resultingExt = extname;
+          if (!supportedAppExtensions.includes(resultingExt)) {
+            logger.info(
+              `The current file extension '${resultingExt}' is not supported. ` +
               `Defaulting to '${_.first(supportedAppExtensions)}'`
-          );
-          resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
+            );
+            resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
+          }
+          fileName = `${resultingName}${resultingExt}`;
         }
-        fileName = `${resultingName}${resultingExt}`;
+        const targetPath = await tempDir.path({
+          prefix: fileName,
+          suffix: '',
+        });
+        newApp = await fetchApp(stream, targetPath);
+      } finally {
+        if (!stream.closed) {
+          stream.destroy();
+        }
       }
-      const targetPath = await tempDir.path({
-        prefix: fileName,
-        suffix: '',
-      });
-      newApp = await fetchApp(stream, targetPath);
     } else if (await fs.exists(newApp)) {
       // Use the local app
       logger.info(`Using local app '${newApp}'`);
@@ -296,6 +306,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
       }
       throw new Error(errorMessage);
     }
+
 
     const isPackageAFile = (await fs.stat(newApp)).isFile();
     if (isPackageAFile) {

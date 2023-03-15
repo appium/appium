@@ -393,10 +393,10 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
  * Follows https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
  *
  * @param {string} appLink The URL to download an app from
- * @param {import('axios').RawAxiosRequestHeaders} headers
+ * @param {import('axios').RawAxiosRequestHeaders} reqHeaders Additional HTTP request headers
  * @returns {Promise<RemoteAppData>}
  */
-async function queryAppLink(appLink, headers) {
+async function queryAppLink(appLink, reqHeaders) {
   const {href} = url.parse(appLink);
   /**
    * @type {import('axios').RawAxiosRequestConfig}
@@ -406,7 +406,7 @@ async function queryAppLink(appLink, headers) {
     responseType: 'stream',
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
     validateStatus: (status) => status >= 200 && status < 300 || status === HTTP_STATUS_NOT_MODIFIED,
-    headers,
+    headers: reqHeaders,
   };
   try {
     const {data: stream, headers, status} = await axios(requestOpts);

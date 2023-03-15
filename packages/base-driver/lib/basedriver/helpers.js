@@ -414,7 +414,7 @@ async function queryAppLink(appLink, headers) {
       stream,
       headers,
       status,
-    }
+    };
   } catch (err) {
     throw new Error(`Cannot download the app from ${href}: ${err.message}`);
   }

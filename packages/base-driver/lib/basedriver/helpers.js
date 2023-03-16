@@ -8,6 +8,8 @@ import AsyncLock from 'async-lock';
 import axios from 'axios';
 import B from 'bluebird';
 
+// for compat with running tests transpiled and in-place
+const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 const IPA_EXT = '.ipa';
 const ZIP_EXTS = new Set(['.zip', IPA_EXT]);
 const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
@@ -15,8 +17,9 @@ const CACHED_APPS_MAX_AGE = 1000 * 60 * 60 * 24; // ms
 const MAX_CACHED_APPS = 1024;
 const HTTP_STATUS_NOT_MODIFIED = 304;
 const DEFAULT_REQ_HEADERS = Object.freeze({
-  'user-agent': 'Appium',
+  'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
+const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
 const APPLICATIONS_CACHE = new LRU({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
@@ -453,7 +456,7 @@ async function fetchApp (srcStream, dstPath) {
     `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
   );
   // it does not make much sense to approximate the speed for short downloads
-  if (secondsElapsed >= 2) {
+  if (secondsElapsed >= AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC) {
     const bytesPerSec = Math.floor(size / secondsElapsed);
     logger.debug(`Approximate download speed: ${util.toReadableSizeString(bytesPerSec)}/s`);
   }
@@ -626,7 +629,14 @@ export default {
   parseCapsArray,
   generateDriverLogPrefix,
 };
-export {configureApp, isPackageOrBundle, duplicateKeys, parseCapsArray, generateDriverLogPrefix};
+export {
+  configureApp,
+  isPackageOrBundle,
+  duplicateKeys,
+  parseCapsArray,
+  generateDriverLogPrefix,
+  BASEDRIVER_VER,
+};
 
 /**
  * @typedef RemoteAppProps

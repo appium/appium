@@ -9,10 +9,7 @@ import os from 'os';
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
-import helpers from './helpers';
-
-// for compat with running tests transpiled and in-place
-const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
+import helpers, { BASEDRIVER_VER } from './helpers';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 

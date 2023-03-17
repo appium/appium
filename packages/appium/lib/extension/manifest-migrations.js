@@ -102,7 +102,7 @@ export async function migrate(manifest) {
   didChange = setSchemaRev(manifest, CURRENT_SCHEMA_REV) || didChange;
   if (didChange) {
     // this is not _technically_ true, since we don't actually write the file here.
-    log.info(`Upgraded extension manifest to schema v${manifest.schemaRev}`);
+    log.debug(`Upgraded extension manifest to schema v${manifest.schemaRev}`);
   }
 
   return didChange;

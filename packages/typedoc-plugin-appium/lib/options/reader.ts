@@ -48,6 +48,7 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    */
   public static getTitleFromPackageJson(pkgJsonPath: string): string | undefined {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const pkg = require(pkgJsonPath);
       return pkg?.appium?.driverName ?? pkg?.appium?.pluginName;
     } catch {
@@ -136,6 +137,7 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     for (const entryPoint of entryPoints) {
       const pkgJsonPath = require.resolve(`${entryPoint}/package.json`);
       try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const pkg = require(pkgJsonPath);
         const {name} = pkg;
         let title: string | undefined;

@@ -7,11 +7,11 @@
  * @module
  */
 
-export * from './alert';
-export * from './contexts';
-export * from './element';
-export * from './find';
-export * from './general';
+import './alert';
+import './contexts';
+import './element';
+import './find';
+import './general';
 
 /* // TODO:
   //rest.post('/wd/hub/session/:sessionId?/touch/click', controller.doClick);

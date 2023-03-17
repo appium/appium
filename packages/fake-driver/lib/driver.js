@@ -232,8 +232,7 @@ export class FakeDriver extends BaseDriver {
   }
 }
 
-// eslint-disable-next-line import/no-unresolved
-export * from './commands';
+import './commands';
 
 export default FakeDriver;
 

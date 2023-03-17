@@ -227,9 +227,8 @@ class AppiumDriver extends DriverCore {
    * @param {W3CCapabilities<AppiumDriverConstraints>} jsonwpCaps JSONWP formatted desired capabilities
    * @param {W3CCapabilities<AppiumDriverConstraints>} reqCaps Required capabilities (JSONWP standard)
    * @param {W3CCapabilities<AppiumDriverConstraints>} w3cCapabilities W3C capabilities
-   * @param {DriverData[]} [driverData]
    */
-  async createSession(jsonwpCaps, reqCaps, w3cCapabilities, driverData) {
+  async createSession(jsonwpCaps, reqCaps, w3cCapabilities) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
     const defaultSettings = pullSettings(defaultCapabilities);
     jsonwpCaps = _.cloneDeep(jsonwpCaps);
@@ -618,6 +617,7 @@ class AppiumDriver extends DriverCore {
     let dstSession = null;
     let protocol = null;
     /** @type {this | ExternalDriver} */
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let driver = this;
     if (isSessionCmd) {
       sessionId = _.last(args);

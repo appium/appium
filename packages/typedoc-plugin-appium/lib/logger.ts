@@ -20,6 +20,7 @@ import path from 'path';
 let ConsoleLogger: typeof Logger;
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   ConsoleLogger = require(path.join(
     path.dirname(require.resolve('typedoc/package.json')),
     'dist',

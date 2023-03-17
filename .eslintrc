@@ -1,5 +1,5 @@
 {
-  "extends": ["@appium/eslint-config-appium", "@appium/eslint-config-appium-ts"],
+  "extends": ["@appium/eslint-config-appium-ts"],
   "overrides": [
     {
       "files": "packages/fake-driver/**/*",
@@ -27,8 +27,15 @@
       }
     },
     {
+      "files": ["./test/setup.js", "./**/scripts/**/*.js", "./packages/*/index.js"],
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
       "files": "./packages/*/test/**/*.js",
       "rules": {
+        "@typescript-eslint/no-var-requires": "off",
         "no-restricted-properties": [
           "error",
           {

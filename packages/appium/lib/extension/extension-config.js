@@ -544,6 +544,7 @@ export class ExtensionConfig {
       delete require.cache[reqResolved];
     }
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const MainClass = require(reqPath)[mainClass];
     if (!MainClass) {
       throw new ReferenceError(

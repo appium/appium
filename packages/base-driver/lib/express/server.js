@@ -151,8 +151,10 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
     notifier: new EventEmitter(),
     closed: false,
   };
-  // TS does not love monkeypatching.
-  const appiumServer = /** @type {AppiumServer} */ (/** @type {unknown} */ (httpServer));
+  /**
+   * @type {AppiumServer}
+   */
+  const appiumServer = /** @type {any} */ (httpServer);
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;

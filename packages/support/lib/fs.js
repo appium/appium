@@ -211,8 +211,8 @@ const fs = {
    * @throws {Error} If the `dir` parameter contains a path to an invalid folder
    * @returns {Promise<string?>} returns the found path or null if the item was not found
    */
+  // eslint-disable-next-line promise/prefer-await-to-callbacks
   async walkDir(dir, recursive, callback) {
-    //eslint-disable-line promise/prefer-await-to-callbacks
     let isValidRoot = false;
     let errMsg = null;
     try {
@@ -387,7 +387,7 @@ export default fs;
  * @callback WalkDirCallback
  * @param {string} itemPath The path of the file or folder
  * @param {boolean} isDirectory Shows if it is a directory or a file
- * @return {boolean} return true if you want to stop walking
+ * @return {boolean|void} return true if you want to stop walking
  */
 
 /**

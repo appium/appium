@@ -1,7 +1,3 @@
-// @ts-check
-
-/* eslint-disable no-unused-vars */
-/* eslint-disable require-await */
 import {waitForCondition} from 'asyncbox';
 import _ from 'lodash';
 import {util} from '@appium/support';
@@ -11,13 +7,14 @@ import {Constraints, ITimeoutCommands} from '@appium/types';
 import {mixin} from './mixin';
 
 declare module '../driver' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends ITimeoutCommands {}
 }
 
 const MIN_TIMEOUT = 0;
 
 const TimeoutCommands: ITimeoutCommands = {
-  async timeouts(type, ms, script, pageLoad, implicit) {
+  async timeouts<C extends Constraints>(this: BaseDriver<C>, type, ms, script, pageLoad, implicit) {
     if (util.hasValue(type) && util.hasValue(ms)) {
       this.log.debug(`MJSONWP timeout arguments: ${JSON.stringify({type, ms})}}`);
 
@@ -66,42 +63,42 @@ const TimeoutCommands: ITimeoutCommands = {
   },
 
   // implicit
-  async implicitWaitW3C(ms) {
+  async implicitWaitW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
     await this.implicitWait(ms);
   },
 
-  async implicitWaitMJSONWP(ms) {
+  async implicitWaitMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
     await this.implicitWait(ms);
   },
 
-  async implicitWait(ms) {
-    await this.setImplicitWait(this.parseTimeoutArgument(ms));
+  async implicitWait<C extends Constraints>(this: BaseDriver<C>, ms) {
+    this.setImplicitWait(this.parseTimeoutArgument(ms));
   },
 
   // pageLoad
-  async pageLoadTimeoutW3C(ms) {
+  async pageLoadTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
   },
 
-  async pageLoadTimeoutMJSONWP(ms) {
+  async pageLoadTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for pageLoad.');
   },
 
   // script
-  async scriptTimeoutW3C(ms) {
+  async scriptTimeoutW3C<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for script.');
   },
 
-  async scriptTimeoutMJSONWP(ms) {
+  async scriptTimeoutMJSONWP<C extends Constraints>(this: BaseDriver<C>, ms) {
     throw new errors.NotImplementedError('Not implemented yet for script.');
   },
 
   // command
-  async newCommandTimeout(ms) {
+  async newCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms) {
     this.setNewCommandTimeout(this.parseTimeoutArgument(ms));
   },
 
-  setImplicitWait(ms) {
+  setImplicitWait<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     // eslint-disable-line require-await
     this.implicitWaitMs = ms;
     this.log.debug(`Set implicit wait to ${ms}ms`);
@@ -115,7 +112,7 @@ const TimeoutCommands: ITimeoutCommands = {
     }
   },
 
-  setNewCommandTimeout(ms) {
+  setNewCommandTimeout<C extends Constraints>(this: BaseDriver<C>, ms: number) {
     this.newCommandTimeoutMs = ms;
     this.log.debug(`Set new command timeout to ${ms}ms`);
     if (this.managedDrivers && this.managedDrivers.length) {
@@ -128,7 +125,10 @@ const TimeoutCommands: ITimeoutCommands = {
     }
   },
 
-  async implicitWaitForCondition(condFn) {
+  async implicitWaitForCondition<C extends Constraints>(
+    this: BaseDriver<C>,
+    condFn: (...args: any[]) => Promise<any>
+  ) {
     this.log.debug(`Waiting up to ${this.implicitWaitMs} ms for condition`);
     const wrappedCondFn = async (...args: any[]) => {
       // reset command timeout

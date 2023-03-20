@@ -50,11 +50,17 @@ export interface BaseMethodDef {
 /**
  * A definition of an exposed API command in a {@linkcode Driver}.
  */
-export interface DriverMethodDef<T extends Driver> extends BaseMethodDef {
+export interface DriverMethodDef<T extends Driver, D extends boolean = boolean>
+  extends BaseMethodDef {
   /**
    * Name of the command.
    */
-  readonly command?: keyof ConditionalPick<Required<T>, DriverCommand>;
+  readonly command?: D extends true ? string : keyof ConditionalPick<Required<T>, DriverCommand>;
+
+  /**
+   * If this is `true`, we do not validate `command`, because it may not exist in `ExternalDriver`.
+   */
+  readonly deprecated?: D;
 }
 
 /**

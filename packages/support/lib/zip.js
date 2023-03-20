@@ -336,16 +336,16 @@ async function readEntries(zipFilePath, onEntry) {
 
 /**
  * @typedef ZipOptions
- * @property {boolean} encodeToBase64 [false] Whether to encode
+ * @property {boolean} [encodeToBase64=false] Whether to encode
  * the resulting archive to a base64-encoded string
- * @property {boolean} isMetered [true] Whether to log the actual
+ * @property {boolean} [isMetered=true] Whether to log the actual
  * archiver performance
- * @property {number} maxSize [1073741824] The maximum size of
+ * @property {number} [maxSize=1073741824] The maximum size of
  * the resulting archive in bytes. This is set to 1GB by default, because
  * Appium limits the maximum HTTP body size to 1GB. Also, the NodeJS heap
  * size must be enough to keep the resulting object (usually this size is
  * limited to 1.4 GB)
- * @property {number} level [9] The compression level. The maximum
+ * @property {number} [level=9] The compression level. The maximum
  * level is 9 (the best compression, worst performance). The minimum
  * compression level is 0 (no compression).
  */
@@ -485,8 +485,8 @@ async function assertValidZip(filePath) {
 
 /**
  * @typedef ZipSourceOptions
- * @property {string} pattern ['**\/*'] - GLOB pattern for compression
- * @property {string} cwd - The source root folder (the parent folder of
+ * @property {string} [pattern='**\/*'] - GLOB pattern for compression
+ * @property {string} [cwd] - The source root folder (the parent folder of
  * the destination file by default)
  * @property {string[]} [ignore] - The list of ignored patterns
  */

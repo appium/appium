@@ -1,20 +1,14 @@
 import type {EventEmitter} from 'events';
-import {Element, ActionSequence} from './action';
-import {
-  HTTPMethod,
-  AppiumServer,
-  UpdateServerCallback,
-  Class,
-  AppiumLogger,
-  StringRecord,
-  ConstraintsToCaps,
-  BaseDriverCapConstraints,
-  W3CCapabilities,
-  Capabilities,
-} from '.';
+import {Entries} from 'type-fest';
+import {ActionSequence, Element} from './action';
+import {Capabilities, ConstraintsToCaps, W3CCapabilities} from './capabilities';
+import {ExecuteMethodMap, MethodMap} from './command';
 import {ServerArgs} from './config';
-import {AsyncReturnType, Entries} from 'type-fest';
-import {MethodMap, ExecuteMethodMap} from './command';
+import {BaseDriverCapConstraints} from './constraints';
+import {HTTPHeaders, HTTPMethod} from './http';
+import {AppiumLogger} from './logger';
+import {AppiumServer, UpdateServerCallback} from './server';
+import {Class, StringRecord} from './util';
 
 export interface ITimeoutCommands {
   /**
@@ -48,6 +42,7 @@ export interface ITimeoutCommands {
    * @param ms - the timeout in ms
    *
    * @deprecated Use `timeouts` instead
+   *
    */
   implicitWait(ms: number | string): Promise<void>;
 
@@ -350,12 +345,12 @@ export interface ILogCommands {
  * A record of {@linkcode LogDef} objects, keyed by the log type name.
  * Used in {@linkcode ILogCommands.supportedLogTypes}
  */
-export type LogDefRecord = Record<string, LogDef>;
+export type LogDefRecord<D = any> = Record<string, LogDef<D>>;
 
 /**
  * A definition of a log type
  */
-export interface LogDef {
+export interface LogDef<D = any> {
   /**
    * Description of the log type.
    *
@@ -368,7 +363,7 @@ export interface LogDef {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: <C extends Constraints, T = any>(driver: Driver<C>) => Promise<T[]>;
+  getter: (driver: D) => Promise<unknown[]>;
 }
 
 export interface ISettingsCommands {
@@ -459,12 +454,15 @@ export interface Constraint {
 }
 export type Constraints = Readonly<Record<string, Constraint>>;
 
-export interface DriverHelpers<C extends Constraints> {
-  configureApp: (app: string, supportedAppExtensions: string[]) => Promise<string>;
+export interface DriverHelpers {
+  configureApp: (
+    app: string,
+    supportedAppExtensions?: string | string[] | ConfigureAppOptions
+  ) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
-  generateDriverLogPrefix: (obj: Core<C>, sessionId?: string) => string;
+  generateDriverLogPrefix: <C extends Constraints>(obj: Core<C>, sessionId?: string) => string;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
@@ -587,7 +585,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   opts: DriverOpts<C>;
   initialOpts: ServerArgs;
   protocol?: string;
-  helpers: DriverHelpers<C>;
+  helpers: DriverHelpers;
   basePath: string;
   relaxedSecurityEnabled: boolean;
   allowInsecure: string[];
@@ -707,6 +705,7 @@ export interface Driver<
    * Reset the current session (run the delete session and create session subroutines)
    *
    * @deprecated Use explicit session management commands instead
+   * @privateRemarks This is implemented by `BaseDriver` and is used within `@appium/driver-test-support`
    */
   reset(): Promise<void>;
 
@@ -1209,13 +1208,6 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
   // Appium W3C WebDriver Extension
 
   /**
-   * Shake the device
-   *
-   * @deprecated
-   */
-  mobileShake?(): Promise<void>;
-
-  /**
    * Get the current time on the device under timeouts
    *
    * @param format - the date/time format you would like the response into
@@ -1225,58 +1217,13 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
   getDeviceTime?(format?: string): Promise<string>;
 
   /**
-   * Lock the device, and optionally unlock the device after a certain amount of time
-   *
-   * @param seconds - the number of seconds after which to unlock the device. Set to zero or leave
-   * empty to not unlock the device automatically
-   *
-   * @deprecated
-   */
-  lock?(seconds?: number): Promise<void>;
-
-  /**
-   * Unlock the device
-   *
-   * @deprecated
-   */
-  unlock?(): Promise<void>;
-
-  /**
-   * Determine whether the device is locked
-   *
-   * @returns True if the device is locked, false otherwise
-   *
-   * @deprecated
-   */
-  isLocked?(): Promise<boolean>;
-
-  /**
-   * Direct Appium to start recording the device screen
-   *
-   * @param options - parameters for screen recording
-   *
-   * @deprecated
-   */
-  startRecordingScreen?(options?: StartScreenRecordOptions): Promise<void>;
-
-  /**
-   * Direct Appium to stop screen recording and return the video
-   *
-   * @param options - parameters for stopping like video Uploading
-   *
-   * @returns The base64-encoded video data
-   *
-   * @deprecated
-   */
-  stopRecordingScreen?(options?: StopScreenRecordOptions): Promise<string>;
-
-  /**
    * List the performance data types supported by this driver, which can be used in a call to get
    * the performance data by type.
    *
    * @returns The list of types
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getPerformanceDataTypes?(): Promise<string[]>;
 
@@ -1291,6 +1238,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns A list of performance data strings
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getPerformanceData?(
     packageName: string,
@@ -1306,6 +1254,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param flags - the code denoting the combination of extra flags
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   pressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
 
@@ -1317,6 +1266,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param flags - the code denoting the combination of extra flags
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   longPressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
 
@@ -1326,6 +1276,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param fingerprintId - the numeric ID of the fingerprint to use
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   fingerprint?(fingerprintId: number): Promise<void>;
 
@@ -1336,6 +1287,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param message - the SMS text
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   sendSMS?(phoneNumber: string, message: string): Promise<void>;
 
@@ -1347,6 +1299,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param action - the action to take in response (accept, reject, etc...)
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   gsmCall?(phoneNumber: string, action: string): Promise<void>;
 
@@ -1356,6 +1309,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param singalStrength - the strength in a driver-appropriate string
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   gsmSignal?(signalStrength: string): Promise<void>;
 
@@ -1365,6 +1319,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param state - the state
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   gsmVoice?(state: string): Promise<void>;
 
@@ -1374,6 +1329,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param percent - how full the battery should become
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   powerCapacity?(percent: number): Promise<void>;
 
@@ -1383,6 +1339,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param state - whether the device is connected to power or not
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   powerAC?(state: string): Promise<void>;
 
@@ -1392,6 +1349,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param netspeed - the speed as a string, like '3G'
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   networkSpeed?(netspeed: string): Promise<void>;
 
@@ -1402,6 +1360,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param metastate - the combination of meta startUnexpectedShutdown
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   keyevent?(keycode: string, metastate?: string): Promise<void>;
 
@@ -1416,6 +1375,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param elementId - if we're rotating around an element
    *
    * @deprecated Use setRotation instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   mobileRotation?(
     x: number,
@@ -1433,6 +1393,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns The activity name
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getCurrentActivity?(): Promise<string>;
 
@@ -1442,6 +1403,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns The package name
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getCurrentPackage?(): Promise<string>;
 
@@ -1489,10 +1451,11 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    *
    * @param appId - the package or bundle ID of the application
    *
-   * @returns A number representing the state. 0 means not installed, 1 means not running, 3 means
-   * running in the background, and 4 means running in the foreground
+   * @returns A number representing the state. `0` means not installed, `1` means not running, `2`
+   * means running in background but suspended, `3` means running in the background, and `4` means
+   * running in the foreground
    */
-  queryAppState?(appId: string): Promise<0 | 1 | 3 | 4>;
+  queryAppState?(appId: string): Promise<0 | 1 | 2 | 3 | 4>;
 
   /**
    * Attempt to hide a virtual keyboard
@@ -1541,6 +1504,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Toggle airplane/flight mode for the device
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   toggleFlightMode?(): Promise<void>;
 
@@ -1548,6 +1512,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Toggle cell network data
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   toggleData?(): Promise<void>;
 
@@ -1555,6 +1520,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Toggle WiFi radio status
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   toggleWiFi?(): Promise<void>;
 
@@ -1562,6 +1528,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Toggle location services for the device
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   toggleLocationServices?(): Promise<void>;
 
@@ -1569,6 +1536,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Open the notifications shade/screen
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   openNotifications?(): Promise<void>;
 
@@ -1588,6 +1556,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * activity
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   startActivity?(
     appPackage: string,
@@ -1607,6 +1576,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns An array of information objects of driver-specific shape
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getSystemBars?(): Promise<unknown[]>;
 
@@ -1616,49 +1586,9 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns The density
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getDisplayDensity?(): Promise<number>;
-
-  /**
-   * Trigger a touch/fingerprint match or match failure
-   *
-   * @param match - whether the match should be a success or failure
-   *
-   * @deprecated
-   */
-  touchId?(match: boolean): Promise<void>;
-
-  /**
-   * Toggle whether the device is enrolled in the touch ID program
-   *
-   * @param enabled - whether to enable or disable the touch ID program
-   *
-   * @deprecated
-   */
-  toggleEnrollTouchId?(enabled: boolean): Promise<void>;
-
-  /**
-   * Start the session after it has been started.
-   *
-   * @deprecated Don't use this, it never made sense.
-   */
-  launchApp?(): Promise<void>;
-
-  /**
-   * Stop the session without stopping the session
-   *
-   * @deprecated Don't use this, it never made sense.
-   */
-  closeApp?(): Promise<void>;
-
-  /**
-   * Background (close) the app either permanently or for a certain amount of time
-   *
-   * @param seconds - the number of seconds to background the app for, or `null` for permanently
-   *
-   * @deprecated
-   */
-  background?(seconds: null | number): Promise<void>;
 
   /**
    * End platform-specific code coverage tracing
@@ -1667,30 +1597,9 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param path - the path to place the results
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   endCoverage?(intent: string, path: string): Promise<void>;
-
-  /**
-   * Return the language-specific strings for an app
-   *
-   * @param language - the language to retrieve strings for
-   * @param stringFile - the path to the localized strings file if not in the default location
-   *
-   * @returns A record of localized keys to localized text
-   *
-   * @deprecated
-   */
-  getStrings?(language?: string, stringFile?: string): Promise<Record<string, unknown>>;
-
-  /**
-   * Set the value, but like, now? Don't use this.
-   *
-   * @param value - the value to set
-   * @param elementId - the element to set the value of
-   *
-   * @deprecated
-   */
-  setValueImmediate?(value: string, elementId: string): Promise<void>;
 
   /**
    * Set the value of a text field but ensure the current value is replace and not appended
@@ -1699,93 +1608,11 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param elementId - the element to set it in
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   replaceValue?(value: string, elementId: string): Promise<void>;
 
-  /**
-   * Collect the response of an async script execution? It's unclear what this is for. Don't use
-   * it.
-   *
-   * @param response - idk
-   *
-   * @deprecated
-   */
-  receiveAsyncResponse?(response: unknown): Promise<void>;
-
-  /**
-   * Set the contents of the device clipboard
-   *
-   * @param content - the text to set
-   * @param contentType - the media type if not text
-   * @param label - the label if not text
-   *
-   * @deprecated
-   */
-  setClipboard?(content: string, contentType?: string, label?: string): Promise<void>;
-
-  /**
-   * Get the contents of the device clipboard, converted into an appropriate media type
-   *
-   * @param contentType - the media type if not text
-   *
-   * @returns The text or media content (base64-encoded) of the clipboard
-   *
-   * @deprecated
-   */
-  getClipboard?(contentType?: string): Promise<string>;
-
   // JSONWP
-  /**
-   * Set the async execute script timeout
-   *
-   * @param ms - the timeout
-   *
-   * @deprecated Use the W3C timeouts command instead
-   */
-  asyncScriptTimeout?(ms: number): Promise<void>;
-
-  /**
-   * Get the window size
-   *
-   * @returns The size (width and height)
-   *
-   * @deprecated Use getWindowRect instead
-   */
-  getWindowSize?(): Promise<Size>;
-
-  /**
-   * Get the position of an element on screen
-   *
-   * @param elementId - the element ID
-   *
-   * @returns The position of the element
-   *
-   * @deprecated Use getElementRect instead
-   */
-  getLocation?(elementId: string): Promise<Position>;
-
-  /**
-   * Get the position of an element on screen within a certain other view
-   *
-   * @param elementId - the element ID
-   *
-   * @returns The position of the element
-   *
-   * @deprecated Use getElementRect instead
-   */
-  getLocationInView?(elementId: string): Promise<Position>;
-
-  /**
-   * Get the size of an element
-   *
-   * @param elementId - the element ID
-   *
-   * @returns The size of the element
-   *
-   * @deprecated Use getElementRect instead
-   */
-  getSize?(elementId: string): Promise<Size>;
-
   /**
    * Check whether two elements are identical
    *
@@ -1795,33 +1622,16 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns True if the elements are equal, false otherwise
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   equalsElement?(elementId: string, otherElementId: string): Promise<boolean>;
-
-  /**
-   * Submit the form an element is in
-   *
-   * @param elementId - the element ID
-   *
-   * @deprecated
-   */
-  submit?(elementId: string): Promise<void>;
-
-  /**
-   * Send keys to the app
-   *
-   * @param value: the array of keys to send
-   *
-   * @deprecated Use the W3C send keys method instead
-   */
-  keys?(value: string[]): Promise<void>;
-
   /**
    * Get the list of IME engines
    *
    * @returns The list of IME engines
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   availableIMEEngines?(): Promise<string[]>;
 
@@ -1831,6 +1641,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns The name of the active engine
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getActiveIMEEngine?(): Promise<string>;
 
@@ -1840,6 +1651,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns True if the IME is activated
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   isIMEActivated?(): Promise<boolean>;
 
@@ -1847,6 +1659,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Deactivate an IME engine
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   deactivateIMEEngine?(): Promise<void>;
 
@@ -1856,6 +1669,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param engine - the name of the engine
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   activateIMEEngine?(engine: string): Promise<void>;
 
@@ -1874,22 +1688,12 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
   setOrientation?(orientation: string): Promise<void>;
 
   /**
-   * Move the mouse pointer to a particular screen location
-   *
-   * @param element - the element ID if the move is relative to an element
-   * @param xOffset - the x offset
-   * @param yOffset - the y offset
-   *
-   * @deprecated Use the Actions API instead
-   */
-  moveTo?(element?: null | string, xOffset?: number, yOffset?: number): Promise<void>;
-
-  /**
    * Trigger a mouse button down
    *
    * @param button - the button ID
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   buttonDown?(button?: number): Promise<void>;
 
@@ -1899,6 +1703,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param button - the button ID
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   buttonUp?(button?: number): Promise<void>;
 
@@ -1908,6 +1713,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param button - the button ID
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   clickCurrent?(button?: number): Promise<void>;
 
@@ -1915,6 +1721,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * Double-click the current mouse location
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   doubleClick?(): Promise<void>;
 
@@ -1925,6 +1732,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   touchDown?(x: number, y: number): Promise<void>;
 
@@ -1935,6 +1743,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   touchUp?(x: number, y: number): Promise<void>;
 
@@ -1945,6 +1754,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   touchMove?(x: number, y: number): Promise<void>;
 
@@ -1954,6 +1764,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param elementId - the id of the element to long touch
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   touchLongClick?(elementId: string): Promise<void>;
 
@@ -1968,6 +1779,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param speed - the speed (unclear how this relates to xSpeed and ySpeed)
    *
    * @deprecated Use the Actions API instead
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   flick?(
     element?: string,
@@ -2008,7 +1820,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    *
    * @param name - the context name
    */
-  setContext?(name: string): Promise<void>;
+  setContext?(name: string, ...args: any[]): Promise<void>;
 
   /**
    * Get the list of available contexts
@@ -2026,6 +1838,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @returns The page index
    *
    * @deprecated
+   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getPageIndex?(elementId: string): Promise<string>;
 
@@ -2045,25 +1858,6 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    * @param type - the bitmask representing network state
    */
   setNetworkConnection?(type: number): Promise<void>;
-
-  /**
-   * Perform a set of touch actions
-   *
-   * @param actions - the old MJSONWP style touch action objects
-   *
-   * @deprecated Use the W3C Actions API instead
-   */
-  performTouch?(actions: unknown): Promise<void>;
-
-  /**
-   * Perform a set of touch actions
-   *
-   * @param actions - the old MJSONWP style touch action objects
-   * @param elementId - the id of an element if actions are restricted to one element
-   *
-   * @deprecated Use the W3C Actions API instead
-   */
-  performMultiAction?(actions: unknown, elementId: string): Promise<void>;
 
   /**
    * Get the current rotation state of the device
@@ -2245,3 +2039,91 @@ export type DriverCommands<TArgs = any, TReturn = unknown> = Record<
  * Tuple of an HTTP method with a regex matching a request path
  */
 export type RouteMatcher = [HTTPMethod, RegExp];
+
+export interface PostProcessResult {
+  /**
+   * The full past to the post-processed application package on the local file system .
+   *
+   * This might be a file or a folder path.
+   */
+  appPath: string;
+}
+
+/**
+ * Information about a cached app instance.
+ */
+export interface CachedAppInfo {
+  /**
+   * SHA1 hash of the package if it is a file (and not a folder)
+   */
+  packageHash: string;
+  /**
+   * Date instance; the value of the file's `Last-Modified` header
+   */
+  lastModified?: Date;
+  /**
+   * `true` if the file contains an `immutable` mark in `Cache-control` header
+   */
+  immutable?: boolean;
+  /**
+   * Integer representation of `maxAge` parameter in `Cache-control` header
+   */
+  maxAge?: number;
+  /**
+   * The timestamp this item has been added to the cache (measured in Unix epoch milliseconds)
+   */
+  timestamp?: number;
+  /**
+   * An object containing either `file` property with SHA1 hash of the file or `folder` property
+   * with total amount of cached files and subfolders
+   */
+  integrity?: {file?: string} | {folder?: number};
+  /**
+   * The full path to the cached app
+   */
+  fullPath?: string;
+}
+
+/**
+ * Options for the post-processing step
+ *
+ * The generic can be supplied if using `axios`, where `headers` is a fancy object.
+ */
+export interface PostProcessOptions<Headers = HTTPHeaders> {
+  /**
+   * The information about the previously cached app instance (if exists)
+   */
+  cachedAppInfo?: CachedAppInfo;
+  /**
+   * Whether the app has been downloaded from a remote URL
+   */
+  isUrl?: boolean;
+  /**
+   * Optional headers object.
+   *
+   * Only present if `isUrl` is `true` and if the server responds to `HEAD` requests. All header names are normalized to lowercase.
+   */
+  headers?: Headers;
+  /**
+   * A string containing full path to the preprocessed application package (either downloaded or a local one)
+   */
+  appPath?: string;
+}
+
+export interface ConfigureAppOptions {
+  /**
+   *
+   * Optional function, which should be applied to the application after it is
+   * downloaded/preprocessed.
+   *
+   * This function may be async and is expected to accept single object parameter. The function is
+   * expected to either return a falsy value, which means the app must not be cached and a fresh
+   * copy of it is downloaded each time, _or_ if this function returns an object containing an
+   * `appPath` property, then the integrity of it will be verified and stored into the cache.
+   * @returns
+   */
+  onPostProcess?: (
+    obj: PostProcessOptions
+  ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
+  supportedExtensions: string[];
+}

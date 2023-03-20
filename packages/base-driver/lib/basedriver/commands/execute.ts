@@ -12,6 +12,7 @@ import {mixin} from './mixin';
 import {BaseDriver} from '../driver';
 
 declare module '../driver' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends IExecuteCommands {}
 }
 

@@ -97,56 +97,14 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
 }
 
 /**
- * @typedef PostProcessOptions
- * @property {?Object} cachedAppInfo The information about the previously cached app instance (if exists):
- *    - packageHash: SHA1 hash of the package if it is a file and not a folder
- *    - lastModified: Optional Date instance, the value of file's `Last-Modified` header
- *    - immutable: Optional boolean value. Contains true if the file has an `immutable` mark
- *                 in `Cache-control` header
- *    - maxAge: Optional integer representation of `maxAge` parameter in `Cache-control` header
- *    - timestamp: The timestamp this item has been added to the cache (measured in Unix epoch
- *                 milliseconds)
- *    - integrity: An object containing either `file` property with SHA1 hash of the file
- *                 or `folder` property with total amount of cached files and subfolders
- *    - fullPath: the full path to the cached app
- * @property {boolean} isUrl Whether the app has been downloaded from a remote URL
- * @property {?Object} headers Optional headers object. Only present if `isUrl` is true and if the server
- * responds to HEAD requests. All header names are normalized to lowercase.
- * @property {string} appPath A string containing full path to the preprocessed application package (either
- * downloaded or a local one)
- */
-
-/**
- * @typedef PostProcessResult
- * @property {string} appPath The full past to the post-processed application package on the
- * local file system (might be a file or a folder path)
- */
-
-/**
- * @typedef ConfigureAppOptions
- * @property {(obj: PostProcessOptions) => (Promise<PostProcessResult|undefined>|PostProcessResult|undefined)} [onPostProcess]
- * Optional function, which should be applied
- * to the application after it is downloaded/preprocessed. This function may be async
- * and is expected to accept single object parameter.
- * The function is expected to either return a falsy value, which means the app must not be
- * cached and a fresh copy of it is downloaded each time. If this function returns an object
- * containing `appPath` property then the integrity of it will be verified and stored into
- * the cache.
- * @property {string[]} supportedExtensions List of supported application extensions (
- * including starting dots). This property is mandatory and must not be empty.
- */
-
-/**
- * Prepares an app to be used in an automated test. The app gets cached automatically
- * if it is an archive or if it is downloaded from an URL.
- * If the downloaded app has `.zip` extension, this method will unzip it.
- * The unzip does not work when `onPostProcess` is provided.
  *
- * @param {string} app Either a full path to the app or a remote URL
- * @param {string|string[]|ConfigureAppOptions} options
- * @returns The full path to the resulting application bundle
+ * @param {string} app
+ * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
  */
-async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({})) {
+async function configureApp(
+  app,
+  options = /** @type {import('@appium/types').ConfigureAppOptions} */ ({})
+) {
   if (!_.isString(app)) {
     // immediately shortcircuit if not given an app
     return;
@@ -170,8 +128,8 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
   let newApp = app;
   let shouldUnzipApp = false;
   let packageHash = null;
-  /** @type {import('axios').AxiosResponse['headers']?} */
-  let headers = null;
+  /** @type {import('axios').AxiosResponse['headers']|undefined} */
+  let headers = undefined;
   /** @type {RemoteAppProps} */
   const remoteAppProps = {
     lastModified: null,
@@ -204,11 +162,15 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
           if (headers.etag) {
             remoteAppProps.etag = headers.etag;
           }
-          logger.debug(`Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`);
+          logger.debug(
+            `Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`
+          );
           if (headers['last-modified']) {
             remoteAppProps.lastModified = new Date(headers['last-modified']);
           }
-          logger.debug(`Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`);
+          logger.debug(
+            `Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`
+          );
           if (headers['cache-control']) {
             remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
             const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
@@ -224,7 +186,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
           }
           logger.info(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
-            `or its integrity has been damaged. Deleting it from the internal cache`
+              `or its integrity has been damaged. Deleting it from the internal cache`
           );
           APPLICATIONS_CACHE.delete(app);
 
@@ -279,7 +241,7 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
           if (!supportedAppExtensions.includes(resultingExt)) {
             logger.info(
               `The current file extension '${resultingExt}' is not supported. ` +
-              `Defaulting to '${_.first(supportedAppExtensions)}'`
+                `Defaulting to '${_.first(supportedAppExtensions)}'`
             );
             resultingExt = /** @type {string} */ (_.first(supportedAppExtensions));
           }
@@ -309,7 +271,6 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
       }
       throw new Error(errorMessage);
     }
-
 
     const isPackageAFile = (await fs.stat(newApp)).isFile();
     if (isPackageAFile) {
@@ -373,12 +334,14 @@ async function configureApp(app, options = /** @type {ConfigureAppOptions} */ ({
     };
 
     if (_.isFunction(onPostProcess)) {
-      const result = await onPostProcess({
-        cachedAppInfo: _.clone(cachedAppInfo),
-        isUrl,
-        headers: _.clone(headers),
-        appPath: newApp,
-      });
+      const result = await onPostProcess(
+        /** @type {import('@appium/types').PostProcessOptions<import('axios').AxiosResponseHeaders>} */ ({
+          cachedAppInfo: _.clone(cachedAppInfo),
+          isUrl,
+          headers: _.clone(headers),
+          appPath: newApp,
+        })
+      );
       return !result?.appPath || app === result?.appPath || !(await fs.exists(result?.appPath))
         ? newApp
         : await storeAppInCache(result.appPath);
@@ -408,7 +371,8 @@ async function queryAppLink(appLink, reqHeaders) {
     url: href,
     responseType: 'stream',
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
-    validateStatus: (status) => status >= 200 && status < 300 || status === HTTP_STATUS_NOT_MODIFIED,
+    validateStatus: (status) =>
+      (status >= 200 && status < 300) || status === HTTP_STATUS_NOT_MODIFIED,
     headers: reqHeaders,
   };
   try {
@@ -431,7 +395,7 @@ async function queryAppLink(appLink, reqHeaders) {
  * @returns {Promise<string>} The same dstPath
  * @throws {Error} If there was a failure while downloading the file
  */
-async function fetchApp (srcStream, dstPath) {
+async function fetchApp(srcStream, dstPath) {
   const timer = new timing.Timer().start();
   try {
     const writer = fs.createWriteStream(dstPath);
@@ -453,7 +417,7 @@ async function fetchApp (srcStream, dstPath) {
   const {size} = await fs.stat(dstPath);
   logger.debug(
     `The application (${util.toReadableSizeString(size)}) ` +
-    `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
+      `has been downloaded to '${dstPath}' in ${secondsElapsed.toFixed(3)}s`
   );
   // it does not make much sense to approximate the speed for short downloads
   if (secondsElapsed >= AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC) {

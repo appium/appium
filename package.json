@@ -45,6 +45,7 @@
     "prepare": "run-p husky-install build:all",
     "lint": "eslint .",
     "lint:fix": "run-s \"lint -- --fix\"",
+    "lint:ci": "eslint --quiet .",
     "lint:commit": "commitlint",
     "lint:staged": "lint-staged",
     "prepublishOnly": "run-s rebuild",

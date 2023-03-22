@@ -72,6 +72,13 @@ module.exports = {
      * `return await somePromise` have their own use-cases.
      */
     'require-await': 'off',
+
+    /**
+     * Disables the `brace-style` rule.
+     * @remarks Due to the way `prettier` sometimes formats extremely verbose types, sometimes it is necessary
+     * to indent in a way that is not allowed by the default `brace-style` rule.
+     */
+    'brace-style': 'off',
   },
   /**
    * This stuff enables `eslint-plugin-import` to resolve TS modules.

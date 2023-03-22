@@ -4,6 +4,7 @@ import {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseDriver<C extends Constraints> extends ILogCommands {}
 }
 
@@ -15,10 +16,7 @@ const LogCommands: ILogCommands = {
     return Object.keys(this.supportedLogTypes);
   },
 
-  async getLog<C extends Constraints>(
-    this: Driver<C>,
-    logType: keyof ILogCommands['supportedLogTypes']
-  ) {
+  async getLog<C extends Constraints>(this: Driver<C>, logType: string) {
     this.log.debug(`Retrieving '${String(logType)}' logs`);
 
     if (!(logType in this.supportedLogTypes)) {

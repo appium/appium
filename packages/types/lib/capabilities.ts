@@ -1,6 +1,7 @@
 import {StandardCapabilities} from './standard-caps';
-import {StringRecord, Constraint, Constraints} from '.';
 import {BaseDriverCapConstraints} from './constraints';
+import {Constraint, Constraints} from './driver';
+import {AnyCase, StringRecord} from './util';
 
 export {StandardCapabilities};
 
@@ -59,17 +60,6 @@ export type ConstraintToCap<C extends Constraint> = C['presence'] extends
   | {allowEmpty: boolean}
   ? ConstraintToCapKind<C>
   : ConstraintToCapKind<C> | undefined;
-
-/**
- * Given `string` `T`, this is a case-insensitive version of `T`.
- */
-export type AnyCase<T extends string> = string extends T
-  ? string
-  : T extends `${infer F1}${infer F2}${infer R}`
-  ? `${Uppercase<F1> | Lowercase<F1>}${Uppercase<F2> | Lowercase<F2>}${AnyCase<R>}`
-  : T extends `${infer F}${infer R}`
-  ? `${Uppercase<F> | Lowercase<F>}${AnyCase<R>}`
-  : '';
 
 /**
  * Given {@linkcode StringRecord} `T` and namespace string `NS`, a type with the key names prefixed by `${NS}:` _except_ for standard capabilities.  `NS` defaults to `appium`.

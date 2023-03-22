@@ -11,7 +11,6 @@ export * from './stoppable';
  */
 
 /**
- * @template {import('@appium/types').Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
- * @template {import('@appium/types').StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
+ * @template {import('@appium/types').Constraints} C
+ * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
  */

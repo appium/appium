@@ -1,15 +1,21 @@
 import type {EventEmitter} from 'events';
 import {Entries} from 'type-fest';
 import {ActionSequence, Element} from './action';
-import {Capabilities, ConstraintsToCaps, W3CCapabilities} from './capabilities';
+import {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
 import {ExecuteMethodMap, MethodMap} from './command';
 import {ServerArgs} from './config';
-import {BaseDriverCapConstraints} from './constraints';
 import {HTTPHeaders, HTTPMethod} from './http';
 import {AppiumLogger} from './logger';
 import {AppiumServer, UpdateServerCallback} from './server';
 import {Class, StringRecord} from './util';
 
+/**
+ * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
+ */
+export interface IDeviceSettings<T extends StringRecord> {
+  update(newSettings: T): Promise<void>;
+  getSettings(): T;
+}
 export interface ITimeoutCommands {
   /**
    * Set the various timeouts associated with a session
@@ -157,14 +163,14 @@ export interface ISessionCommands {
    *
    * @returns A list of session data objects
    */
-  getSessions(): Promise<MultiSessionData[]>;
+  getSessions<C extends Constraints>(): Promise<MultiSessionData<C>[]>;
 
   /**
    * Get the data for the current session
    *
    * @returns A session data object
    */
-  getSession(): Promise<SingularSessionData>;
+  getSession<C extends Constraints>(): Promise<SingularSessionData<C>>;
 }
 
 export interface IExecuteCommands {
@@ -186,18 +192,15 @@ export interface IExecuteCommands {
   ): Promise<TReturn>;
 }
 
-export interface MultiSessionData<
-  C extends Constraints = BaseDriverCapConstraints,
-  Extra extends StringRecord | void = void
-> {
+export interface MultiSessionData<C extends Constraints> {
   id: string;
-  capabilities: Capabilities<C, Extra>;
+  capabilities: DriverCaps<C>;
 }
 
-export type SingularSessionData<
-  C extends Constraints = BaseDriverCapConstraints,
-  Extra extends StringRecord | void = void
-> = Capabilities<C, Extra> & {events?: EventHistory; error?: string};
+export type SingularSessionData<C extends Constraints> = DriverCaps<C> & {
+  events?: EventHistory;
+  error?: string;
+};
 
 export interface IFindCommands {
   /**
@@ -344,19 +347,19 @@ export interface ILogCommands {
    *
    * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
    */
-  getLog(logType: string): Promise<any[]>;
+  getLog(logType: string): Promise<unknown[]>;
 }
 
 /**
  * A record of {@linkcode LogDef} objects, keyed by the log type name.
  * Used in {@linkcode ILogCommands.supportedLogTypes}
  */
-export type LogDefRecord<D = any> = Record<string, LogDef<D>>;
+export type LogDefRecord = Record<string, LogDef>;
 
 /**
  * A definition of a log type
  */
-export interface LogDef<D = any> {
+export interface LogDef {
   /**
    * Description of the log type.
    *
@@ -369,10 +372,10 @@ export interface LogDef<D = any> {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: (driver: D) => Promise<unknown[]>;
+  getter: (driver: any) => Promise<unknown[]> | unknown[];
 }
 
-export interface ISettingsCommands {
+export interface ISettingsCommands<T extends StringRecord = StringRecord> {
   /**
    * Update the session's settings dictionary with a new settings object
    *
@@ -386,14 +389,29 @@ export interface ISettingsCommands {
    *
    * @returns The settings object
    */
-  getSettings(): Promise<StringRecord>;
+  getSettings(): Promise<T>;
 }
 
-export interface SessionHandler<
-  CreateResult,
-  DeleteResult,
-  C extends Constraints = BaseDriverCapConstraints,
-  Extra extends StringRecord | void = void
+/**
+ * @see {@linkcode ISessionHandler}
+ */
+export type DefaultCreateSessionResult<C extends Constraints> = [
+  sessionId: string,
+  capabilities: DriverCaps<C>
+];
+
+/**
+ * @see {@linkcode ISessionHandler}
+ */
+export type DefaultDeleteSessionResult = void;
+
+/**
+ * An interface which creates and deletes sessions.
+ */
+export interface ISessionHandler<
+  C extends Constraints = Constraints,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult
 > {
   /**
    * Start a new automation session
@@ -413,9 +431,9 @@ export interface SessionHandler<
    * @returns The capabilities object representing the created session
    */
   createSession(
-    w3cCaps1: W3CCapabilities<C, Extra>,
-    w3cCaps2?: W3CCapabilities<C, Extra>,
-    w3cCaps3?: W3CCapabilities<C, Extra>,
+    w3cCaps1: W3CDriverCaps<C>,
+    w3cCaps2?: W3CDriverCaps<C>,
+    w3cCaps3?: W3CDriverCaps<C>,
     driverData?: DriverData[]
   ): Promise<CreateResult>;
 
@@ -434,19 +452,6 @@ export interface SessionHandler<
  */
 export type DriverData = Record<string, unknown>;
 
-/**
- * Extensions can define new methods for the Appium server to map to command names, of the same
- * format as used in Appium's `routes.js`.
- *
- *
- * @example
- * {
- *   '/session/:sessionId/new_method': {
- *     GET: {command: 'getNewThing'},
- *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
- *   }
- * }
- */
 export interface Constraint {
   readonly presence?: boolean | Readonly<{allowEmpty: boolean}>;
   readonly isString?: boolean;
@@ -455,10 +460,16 @@ export interface Constraint {
   readonly isObject?: boolean;
   readonly isArray?: boolean;
   readonly deprecated?: boolean;
-  readonly inclusion?: Readonly<[any, ...any[]]>;
-  readonly inclusionCaseInsensitive?: Readonly<[any, ...any[]]>;
+  readonly inclusion?: Readonly<[string, ...string[]]>;
+  readonly inclusionCaseInsensitive?: Readonly<[string, ...string[]]>;
 }
-export type Constraints = Readonly<Record<string, Constraint>>;
+
+/**
+ * A collection of constraints describing the allowed capabilities for a driver.
+ */
+export interface Constraints {
+  [name: string]: Constraint;
+}
 
 export interface DriverHelpers {
   configureApp: (
@@ -476,11 +487,6 @@ export type SettingsUpdateListener<T extends Record<string, unknown> = Record<st
   newValue: unknown,
   curValue: unknown
 ) => Promise<void>;
-
-export interface DeviceSettings<T = any> {
-  update(newSettings: Record<string, T>): Promise<void>;
-  getSettings(): Record<string, T>;
-}
 
 // WebDriver
 
@@ -585,11 +591,11 @@ export interface EventHistoryCommand {
  *
  * This should not be used directly by external code.
  */
-export interface Core<C extends Constraints = BaseDriverCapConstraints> {
+export interface Core<C extends Constraints, Settings extends StringRecord = StringRecord> {
   shouldValidateCaps: boolean;
   sessionId: string | null;
   opts: DriverOpts<C>;
-  initialOpts: ServerArgs;
+  initialOpts: Partial<DriverOpts<C>>;
   protocol?: string;
   helpers: DriverHelpers;
   basePath: string;
@@ -601,9 +607,9 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
   locatorStrategies: string[];
   webLocatorStrategies: string[];
   eventEmitter: EventEmitter;
-  settings: DeviceSettings;
+  settings: IDeviceSettings<Settings>;
   log: AppiumLogger;
-  driverData?: DriverData;
+  driverData: DriverData;
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
   onUnexpectedShutdown(handler: () => any): void;
@@ -639,7 +645,7 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
    * ```
    */
   getStatus(): Promise<any>;
-  sessionExists(sessionId: string): boolean;
+  sessionExists(sessionId?: string): boolean;
   isW3CProtocol(): boolean;
   isMjsonwpProtocol(): boolean;
   isFeatureEnabled(name: string): boolean;
@@ -662,24 +668,32 @@ export interface Core<C extends Constraints = BaseDriverCapConstraints> {
  *
  * `C` should be the constraints of the driver.
  * `CArgs` would be the shape of `cliArgs`.
- * `Ctx` would be the type of the element context (e.g., string, dictionary of some sort, etc.)
+ * `Settings` is the shape of the raw device settings object (see {@linkcode IDeviceSettings})
  */
 export interface Driver<
   C extends Constraints = Constraints,
-  CArgs extends StringRecord = StringRecord
+  CArgs extends StringRecord = StringRecord,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult
 > extends ISessionCommands,
     ILogCommands,
     IFindCommands,
-    ISettingsCommands,
+    ISettingsCommands<Settings>,
     ITimeoutCommands,
     IEventCommands,
     IExecuteCommands,
-    SessionHandler<[sessionId: string, caps: any], void, C>,
-    Core {
+    ISessionHandler<C, CreateResult, DeleteResult>,
+    Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver
    */
   cliArgs: CArgs;
+  // The following properties are assigned by appium */
+  server?: AppiumServer;
+  serverHost?: string;
+  serverPort?: number;
+  serverPath?: string;
 
   // The following methods are implemented by `BaseDriver`.
 
@@ -739,7 +753,7 @@ export interface Driver<
    *
    * @returns Whether or not the capabilities are valid
    */
-  validateDesiredCaps(caps: Capabilities<C>): boolean;
+  validateDesiredCaps(caps: DriverCaps<C>): boolean;
 
   /**
    * A helper function to log unrecognized capabilities to the console
@@ -748,7 +762,7 @@ export interface Driver<
    *
    * @internal
    */
-  logExtraCaps(caps: Capabilities<C>): void;
+  logExtraCaps(caps: DriverCaps<C>): void;
 
   /**
    * A helper function used to assign server information to the driver instance so the driver knows
@@ -767,12 +781,6 @@ export interface Driver<
  * None of these are implemented within Appium itself.
  */
 export interface ExternalDriver<C extends Constraints = Constraints> extends Driver<C> {
-  // The following properties are assigned by appium */
-  server?: AppiumServer;
-  serverHost?: string;
-  serverPort?: number;
-  serverPath?: string;
-
   // WebDriver spec commands
 
   /**
@@ -2025,9 +2033,7 @@ export interface ExtraDriverOpts {
  *
  * The combination happens within Appium prior to calling the constructor.
  */
-export type DriverOpts<C extends Constraints = BaseDriverCapConstraints> = ServerArgs &
-  ExtraDriverOpts &
-  Partial<ConstraintsToCaps<C>>;
+export type DriverOpts<C extends Constraints> = ServerArgs & ExtraDriverOpts & DriverCaps<C>;
 
 /**
  * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.
@@ -2043,6 +2049,9 @@ export type DriverCommand<TArgs extends readonly any[] = any[], TRetval = unknow
  */
 export type RouteMatcher = [HTTPMethod, RegExp];
 
+/**
+ * Result of the {@linkcode onPostProcess ConfigureAppOptions.onPostProcess} callback.
+ */
 export interface PostProcessResult {
   /**
    * The full past to the post-processed application package on the local file system .

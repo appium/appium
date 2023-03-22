@@ -22,7 +22,7 @@ interface FakeDriverGeneralMixin {
   doubleClick(): Promise<void>;
   execute(script: string, args: any[]): Promise<any>;
   fakeAddition(a: number, b: number, c?: number): Promise<number>;
-  getLog(type: string): Promise<any[]>;
+  getLog(type: string): Promise<unknown[]>;
 }
 
 declare module '../driver' {

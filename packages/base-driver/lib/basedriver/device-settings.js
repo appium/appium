@@ -9,13 +9,13 @@ import {errors} from '../protocol/errors';
 export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
 
 /**
- * @template T
+ * @template {import('@appium/types').StringRecord} T
  * @implements {IDeviceSettings<T>}
  */
-class DeviceSettings {
+export class DeviceSettings {
   /**
    * @protected
-   * @type {Record<string,T>}
+   * @type {T}
    */
   _settings;
 
@@ -27,17 +27,17 @@ class DeviceSettings {
 
   /**
    * Creates a _shallow copy_ of the `defaultSettings` parameter!
-   * @param {Record<string,T>} [defaultSettings]
+   * @param {T} [defaultSettings]
    * @param {import('@appium/types').SettingsUpdateListener<T>} [onSettingsUpdate]
    */
-  constructor(defaultSettings = {}, onSettingsUpdate = async () => {}) {
+  constructor(defaultSettings = /** @type {T} */ ({}), onSettingsUpdate = async () => {}) {
     this._settings = {...defaultSettings};
     this._onSettingsUpdate = onSettingsUpdate;
   }
 
   /**
    * calls updateSettings from implementing driver every time a setting is changed.
-   * @param {Record<string,T>} newSettings
+   * @param {T} newSettings
    */
   async update(newSettings) {
     if (!_.isPlainObject(newSettings)) {
@@ -54,8 +54,7 @@ class DeviceSettings {
       );
     }
 
-    const props = /** @type {(keyof T & string)[]} */ (_.keys(newSettings));
-    for (const prop of props) {
+    for (const prop in newSettings) {
       if (!_.isUndefined(this._settings[prop])) {
         if (this._settings[prop] === newSettings[prop]) {
           log.debug(`The value of '${prop}' setting did not change. Skipping the update for it`);
@@ -73,9 +72,8 @@ class DeviceSettings {
 }
 
 export default DeviceSettings;
-export {DeviceSettings};
 
 /**
- * @template T
- * @typedef {import('@appium/types').DeviceSettings<T>} IDeviceSettings
+ * @template {import('@appium/types').StringRecord} [T=import('@appium/types').StringRecord]
+ * @typedef {import('@appium/types').IDeviceSettings<T>} IDeviceSettings
  */

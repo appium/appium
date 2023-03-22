@@ -12,18 +12,22 @@ const {expect} = chai;
 
 /**
  * Creates unit test suites for a driver.
- * @param {DriverClass} DriverClass
- * @param {Partial<BaseNSCapabilities>} [defaultCaps]
+ * @template {Constraints} C
+ * @param {DriverClass<C>} DriverClass
+ * @param {import('@appium/types').NSDriverCaps<C>} [defaultCaps]
  */
 
-export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
+export function driverUnitTestSuite(
+  DriverClass,
+  defaultCaps = /** @type {import('@appium/types').NSDriverCaps<C>} */ ({})
+) {
   // to display the driver under test in report
   const className = DriverClass.name ?? '(unknown driver)';
 
   describe(`BaseDriver unit suite (as ${className})`, function () {
     /** @type {InstanceType<typeof DriverClass>} */
     let d;
-    /** @type {W3CCapabilities} */
+    /** @type {import('@appium/types').W3CDriverCaps<C>} */
     let w3cCaps;
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
@@ -229,7 +233,7 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
     });
 
     describe('command queue', function () {
-      /** @type {InstanceType<DriverClass>} */
+      /** @type {InstanceType<DriverClass<Constraints>>} */
       let d;
       let waitMs = 10;
 
@@ -531,11 +535,11 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
             d.logEvent('commands');
           }).should.throw();
           (() => {
-            // @ts-expect-error
+            // @ts-expect-error - bad type
             d.logEvent(1);
           }).should.throw();
           (() => {
-            // @ts-expect-error
+            // @ts-expect-error - bad type
             d.logEvent({});
           }).should.throw();
         });
@@ -631,7 +635,7 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
  */
 
 /**
- * @template {Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
+ * @template {Constraints} C
  * @typedef {import('@appium/types').DriverClass<Driver<C>>} DriverClass
  */
 
@@ -641,7 +645,6 @@ export function driverUnitTestSuite(DriverClass, defaultCaps = {}) {
  */
 
 /**
- * @template {Constraints} [C=import('@appium/types').BaseDriverCapConstraints]
- * @template {import('@appium/types').StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
  */

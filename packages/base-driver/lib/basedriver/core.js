@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-await */
 
-import {fs, logger} from '@appium/support';
+import {logger} from '@appium/support';
 import AsyncLock from 'async-lock';
 import {EventEmitter} from 'events';
 import _ from 'lodash';
@@ -16,8 +16,9 @@ const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @implements {Core<C>}
+ * @template {Constraints} C
+ * @template {StringRecord} [Settings=StringRecord]
+ * @implements {Core<C, Settings>}
  */
 class DriverCore {
   /**
@@ -37,7 +38,7 @@ class DriverCore {
   opts;
 
   /**
-   * @type {ServerArgs}
+   * @type {import('@appium/types').DriverOpts<C>}
    */
   initialOpts;
 
@@ -115,7 +116,7 @@ class DriverCore {
    * we set it to an empty DeviceSettings instance here to make sure that the
    * default settings are applied even if an extending driver doesn't utilize
    * the settings functionality itself
-   * @type {DeviceSettings}
+   * @type {DeviceSettings<Settings>}
    */
   settings;
 
@@ -180,11 +181,9 @@ class DriverCore {
    * specific driver sessions. This data can be later used to adjust
    * properties for driver instances running in parallel.
    * Override it in inherited driver classes if necessary.
-   *
-   * @return {Record<string,unknown>} Driver properties mapping
    */
   get driverData() {
-    return {};
+    return /** @type {import('@appium/types').DriverData} */ ({});
   }
 
   /**
@@ -256,7 +255,7 @@ class DriverCore {
    * @returns {Core<C> | null}
    */
   driverForSession(sessionId) {
-    return this;
+    return /** @type {Core<C> | null} */ (this);
   }
 
   isMjsonwpProtocol() {
@@ -445,18 +444,9 @@ export {DriverCore};
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
- */
-/**
- * @template {StringRecord} [T={}]
- * @typedef {import('@appium/types').W3CCapabilities<T>} W3CCapabilities
- */
-
-/**
  * @template {Constraints} C
- * @typedef {import('@appium/types').Core<C>} Core
+ * @template {StringRecord} [S=StringRecord]
+ * @typedef {import('@appium/types').Core<C, S>} Core
  */
 
 /**

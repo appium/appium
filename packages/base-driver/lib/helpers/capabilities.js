@@ -83,7 +83,6 @@ export {isW3cCaps, fixCaps};
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Capabilities<C>} Capabilities
  */

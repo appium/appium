@@ -1,4 +1,5 @@
 module.exports = {
+  extends: ['eslint:recommended', 'prettier'],
   parserOptions: {
     requireConfigFile: false,
     sourceType: 'module',
@@ -103,5 +104,11 @@ module.exports = {
       },
     ],
   },
-  extends: ['eslint:recommended', 'prettier'],
+  overrides: [
+    /**
+     * This disables the `import` plugin from trying to resolve `.test-d.ts` files,
+     * which have a weird resolution strategy.
+     */
+    {files: '*.test-d.ts', rules: {'import/no-unresolved': 'off'}},
+  ],
 };

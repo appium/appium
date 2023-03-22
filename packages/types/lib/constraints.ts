@@ -1,4 +1,6 @@
-export const BASE_DESIRED_CAP_CONSTRAINTS = /** @type {const} */ ({
+import {Constraints} from './driver';
+
+export const BASE_DESIRED_CAP_CONSTRAINTS = {
   platformName: {
     presence: true,
     isString: true,
@@ -51,8 +53,6 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = /** @type {const} */ ({
   printPageSourceOnFindFailure: {
     isBoolean: true,
   },
-});
+} as const satisfies Constraints;
 
-/**
- * @typedef {typeof BASE_DESIRED_CAP_CONSTRAINTS} BaseDriverCapConstraints
- */
+export type BaseDriverCapConstraints = typeof BASE_DESIRED_CAP_CONSTRAINTS;

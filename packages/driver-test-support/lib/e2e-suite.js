@@ -425,7 +425,12 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
  * @typedef {import('@appium/types').BaseNSCapabilities} BaseNSCapabilities
  * @typedef {import('axios').RawAxiosRequestConfig} RawAxiosRequestConfig
- * @typedef {import('@appium/types').SingularSessionData} SingularSessionData
+ */
+
+/**
+ * `Constraints` is purposefully loose here
+ * @template {Constraints} [C=Constraints]
+ * @typedef {import('@appium/types').SingularSessionData<C>} SingularSessionData
  */
 
 /**
@@ -434,18 +439,18 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
+ * `Constraints` is purposefully loose here
+ * @template {Constraints} [C=Constraints]
  * @typedef NewSessionData
- * @property {import('type-fest').RequireAtLeastOne<import('@appium/types').W3CCapabilities<C, Extra>, 'firstMatch'|'alwaysMatch'>} capabilities
+ * @property {import('type-fest').RequireAtLeastOne<import('@appium/types').W3CCapabilities<C>, 'firstMatch'|'alwaysMatch'>} capabilities
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
+ * `Constraints` is purposefully loose here
+ * @template {Constraints} [C=Constraints]
  * @typedef NewSessionResponse
  * @property {string} sessionId,
- * @property {import('@appium/types').Capabilities<C, Extra>} capabilities
+ * @property {import('@appium/types').Capabilities<C>} capabilities
  */
 
 /**

@@ -244,7 +244,3 @@ export class DriverConfig extends ExtensionConfig {
  * @property {string} version
  * @property {string} driverName
  */
-
-/**
- * @typedef {import('@appium/types').Capabilities} Capabilities
- */

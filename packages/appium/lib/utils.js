@@ -369,21 +369,18 @@ export {
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').Capabilities<C, Extra>} Capabilities
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Capabilities<C>} Capabilities
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').W3CCapabilities<C, Extra>} W3CCapabilities
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
  */
 
 /**
- * @template {Constraints} [C=BaseDriverCapConstraints]
- * @template {StringRecord|void} [Extra=void]
- * @typedef {import('@appium/types').NSCapabilities<C, Extra>} NSCapabilities
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').NSCapabilities<C>} NSCapabilities
  */
 
 /**

@@ -16,6 +16,19 @@ export interface PayloadParams {
 }
 /**
  * A mapping of URL paths to HTTP methods to either a {@linkcode DriverMethodDef} or {@linkcode PluginMethodDef}.
+ *
+ * Extensions can define new methods for the Appium server to map to command names, of the same
+ * format as used in Appium's `routes.js`.
+ *
+ * @example
+ * ```js
+ * {
+ *   '/session/:sessionId/new_method': {
+ *     GET: {command: 'getNewThing'},
+ *     POST: {command: 'setNewThing', payloadParams: {required: ['someParam']}}
+ *   }
+ * }
+ * ```
  */
 export type MethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<PluginMethodMap<T>>

@@ -28,15 +28,12 @@ const desiredCapabilityConstraints = /** @type {const} */ ({
     isString: true,
   },
 });
-/**
- * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
- */
 
 const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
 
 /**
- * @implements {SessionHandler}
+ * @implements {AppiumSessionHandler}
  */
 class AppiumDriver extends DriverCore {
   /**
@@ -92,11 +89,11 @@ class AppiumDriver extends DriverCore {
    */
   desiredCapConstraints;
 
-  /** @type {DriverOpts} */
+  /** @type {import('@appium/types').DriverOpts<AppiumDriverConstraints>} */
   args;
 
   /**
-   * @param {DriverOpts} opts
+   * @param {import('@appium/types').DriverOpts<AppiumDriverConstraints>} opts
    */
   constructor(opts) {
     // It is necessary to set `--tmp` here since it should be set to
@@ -224,9 +221,10 @@ class AppiumDriver extends DriverCore {
 
   /**
    * Create a new session
-   * @param {W3CCapabilities<AppiumDriverConstraints>} jsonwpCaps JSONWP formatted desired capabilities
-   * @param {W3CCapabilities<AppiumDriverConstraints>} reqCaps Required capabilities (JSONWP standard)
-   * @param {W3CCapabilities<AppiumDriverConstraints>} w3cCapabilities W3C capabilities
+   * @param {W3CAppiumDriverCaps} jsonwpCaps JSONWP formatted desired capabilities
+   * @param {W3CAppiumDriverCaps} [reqCaps] Required capabilities (JSONWP standard)
+   * @param {W3CAppiumDriverCaps} [w3cCapabilities] W3C capabilities
+   * @returns {Promise<SessionHandlerCreateResult>}
    */
   async createSession(jsonwpCaps, reqCaps, w3cCapabilities) {
     const defaultCapabilities = _.cloneDeep(this.args.defaultCapabilities);
@@ -246,13 +244,14 @@ class AppiumDriver extends DriverCore {
       Object.assign(w3cSettings, pullSettings(firstMatchEntry));
     }
 
+    /** @type {string|undefined} */
     let protocol;
     let innerSessionId, dCaps;
     try {
       // Parse the caps into a format that the InnerDriver will accept
       const parsedCaps = parseCapsForInnerDriver(
         jsonwpCaps,
-        promoteAppiumOptions(w3cCapabilities),
+        promoteAppiumOptions(/** @type {W3CAppiumDriverCaps} */ (w3cCapabilities)),
         this.desiredCapConstraints,
         defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined
       );
@@ -398,7 +397,7 @@ class AppiumDriver extends DriverCore {
 
   /**
    *
-   * @param {Driver} driver
+   * @param {ExternalDriver} driver
    * @param {string} innerSessionId
    */
   attachUnexpectedShutdownHandler(driver, innerSessionId) {
@@ -441,10 +440,11 @@ class AppiumDriver extends DriverCore {
 
   /**
    *
-   * @param {DriverClass} InnerDriver
+   * @param {((...args: any[]) => any)|(new(...args: any[]) => any)} InnerDriver
    * @returns {Promise<DriverData[]>}}
+   * @privateRemarks The _intent_ is that `InnerDriver` is the class of a driver, but it only really
+   * needs to be a function or constructor.
    */
-  // eslint-disable-next-line require-await
   async curSessionDataForDriver(InnerDriver) {
     const data = _.compact(
       _.values(this.sessions)
@@ -587,7 +587,7 @@ class AppiumDriver extends DriverCore {
    *
    * @param {string} cmd
    * @param  {...any} args
-   * @returns {Promise<{value: any, error?: Error, protocol: string} | import('type-fest').AsyncReturnType<Driver['executeCommand']>>}
+   * @returns {Promise<{value: any, error?: Error, protocol: string} | import('type-fest').AsyncReturnType<ExternalDriver['executeCommand']>>}
    */
   async executeCommand(cmd, ...args) {
     // We have basically three cases for how to handle commands:
@@ -840,21 +840,33 @@ export class NoDriverProxyCommandError extends Error {
 export {AppiumDriver};
 
 /**
- * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').DriverClass} DriverClass
  * @typedef {import('@appium/types').DriverData} DriverData
  * @typedef {import('@appium/types').ServerArgs} DriverOpts
  * @typedef {import('@appium/types').Constraints} Constraints
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('./extension/driver-config').DriverConfig} DriverConfig
- * @typedef {import('@appium/types').Plugin} Plugin
- * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('@appium/types').PluginType} PluginType
  * @typedef {import('@appium/types').DriverType} DriverType
  * @typedef {import('@appium/types').StringRecord} StringRecord
- * @typedef {import('@appium/types').SessionHandler<SessionHandlerResult<any[]>,SessionHandlerResult<void>>} SessionHandler
+ * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
+ * @typedef {import('@appium/types').PluginClass} PluginClass
+ * @typedef {import('@appium/types').Plugin} Plugin
+ * @typedef {import('@appium/types').DriverClass<Constraints>} DriverClass
+ */
+
+/**
+ * @typedef {import('@appium/types').ISessionHandler<AppiumDriverConstraints,
+ * SessionHandlerCreateResult, SessionHandlerDeleteResult>} AppiumSessionHandler
+ */
+
+/**
+ * @typedef {SessionHandlerResult<[innerSessionId: string, caps:
+ * import('@appium/types').DriverCaps<Constraints>, protocol: string|undefined]>} SessionHandlerCreateResult
+ */
+
+/**
+ * @typedef {SessionHandlerResult<void>} SessionHandlerDeleteResult
  */
 
 /**
@@ -868,11 +880,6 @@ export {AppiumDriver};
  */
 
 /**
- * @template {Constraints} C
- * @typedef {import('@appium/types').W3CCapabilities<C>} W3CCapabilities
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').Capabilities<C>} Capabilities
+ * @typedef {typeof desiredCapabilityConstraints} AppiumDriverConstraints
+ * @typedef {import('@appium/types').W3CDriverCaps<AppiumDriverConstraints>} W3CAppiumDriverCaps
  */

@@ -244,7 +244,11 @@ async function init(args) {
       }
     }
 
-    const appiumDriver = new AppiumDriver(serverArgs);
+    const appiumDriver = new AppiumDriver(
+      /** @type {import('@appium/types').DriverOpts<import('./appium').AppiumDriverConstraints>} */ (
+        serverArgs
+      )
+    );
     // set the config on the umbrella driver so it can match drivers to caps
     appiumDriver.driverConfig = driverConfig;
     await preflightChecks(serverArgs, throwInsteadOfExit);

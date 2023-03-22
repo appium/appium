@@ -40,7 +40,8 @@
     "test": "npm run test:unit",
     "test:e2e": "mocha -p --timeout 20s --slow 10s \"./test/e2e/**/*.spec.js\"",
     "test:smoke": "node ./index.js",
-    "test:unit": "mocha \"./test/unit/**/*.spec.js\""
+    "test:unit": "mocha \"./test/unit/**/*.spec.js\"",
+    "test:types": "tsd"
   },
   "dependencies": {
     "@appium/support": "^3.1.7",
@@ -78,5 +79,8 @@
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
   "typedoc": {
     "entryPoint": "./lib/index.js"
+  },
+  "tsd": {
+    "directory": "test/types"
   }
 }

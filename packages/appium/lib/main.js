@@ -22,7 +22,7 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {SERVER_SUBCOMMAND} from './constants';
+import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate} from './schema/schema';
 import {
@@ -46,8 +46,7 @@ async function preflightChecks(args, throwInsteadOfExit = false) {
     checkNodeOk();
     await checkNpmOk();
     if (args.longStacktrace) {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      require('longjohn').async_trace_limit = -1;
+      Error.stackTraceLimit = LONG_STACKTRACE_LIMIT;
     }
     if (args.showBuildInfo) {
       await showBuildInfo();

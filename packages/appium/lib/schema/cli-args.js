@@ -224,7 +224,7 @@ export function toParserArgs() {
 }
 
 /**
- * @template T
+ * @template {string|number} T
  * @typedef {import('ajv/dist/types').FormatValidator<T>} FormatValidator<T>
  */
 

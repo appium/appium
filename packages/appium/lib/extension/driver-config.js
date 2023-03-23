@@ -212,28 +212,29 @@ export class DriverConfig extends ExtensionConfig {
 }
 
 /**
- * @template T
+ * @template {ExtensionType} T
  * @typedef {import('appium/types').ExtMetadata<T>} ExtMetadata
  */
 
 /**
- * @template T
+ * @template {ExtensionType} T
  * @typedef {import('appium/types').ExtManifest<T>} ExtManifest
  */
 
 /**
+ * @typedef {import('@appium/types').ExtensionType} ExtensionType
  * @typedef {import('appium/types').ManifestData} ManifestData
  * @typedef {import('@appium/types').DriverType} DriverType
  * @typedef {import('./manifest').Manifest} Manifest
  */
 
 /**
- * @template T
+ * @template {ExtensionType} T
  * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
  */
 
 /**
- * @template T
+ * @template {ExtensionType} T
  * @typedef {import('appium/types').ExtName<T>} ExtName
  */
 

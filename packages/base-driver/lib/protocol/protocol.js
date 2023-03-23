@@ -277,7 +277,7 @@ function routeConfiguringFunction(driver) {
           `${basePath}${path}`,
           spec,
           driver,
-          isSessionCommand(spec.command)
+          isSessionCommand(/** @type {import('@appium/types').DriverMethodDef} */ (spec).command)
         );
       }
     }
@@ -455,12 +455,12 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
       let actualErr;
-      if ((err instanceof Error) || (_.has(err, 'stack') && _.has(err, 'message'))) {
+      if (err instanceof Error || (_.has(err, 'stack') && _.has(err, 'message'))) {
         actualErr = err;
       } else {
         getLogger(driver, req.params.sessionId || newSessionId).warn(
           'The thrown error object does not seem to be a valid instance of the Error class. This ' +
-          'might be a genuine bug of a driver or a plugin.'
+            'might be a genuine bug of a driver or a plugin.'
         );
         actualErr = new Error(`${err ?? 'unknown'}`);
       }

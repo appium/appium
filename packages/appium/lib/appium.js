@@ -33,7 +33,7 @@ const sessionsListGuard = new AsyncLock();
 const pendingDriversGuard = new AsyncLock();
 
 /**
- * @implements {AppiumSessionHandler}
+ * @extends {DriverCore<AppiumDriverConstraints>}
  */
 class AppiumDriver extends DriverCore {
   /**
@@ -160,11 +160,10 @@ class AppiumDriver extends DriverCore {
     };
   }
 
-  // eslint-disable-next-line require-await
   async getSessions() {
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
-      capabilities: driver.caps,
+      capabilities: /** @type {import('@appium/types').DriverCaps} */ (driver.caps),
     }));
   }
 
@@ -852,7 +851,7 @@ export {AppiumDriver};
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver
  * @typedef {import('@appium/types').PluginClass} PluginClass
  * @typedef {import('@appium/types').Plugin} Plugin
- * @typedef {import('@appium/types').DriverClass<Constraints>} DriverClass
+ * @typedef {import('@appium/types').DriverClass<import('@appium/types').Driver>} DriverClass
  */
 
 /**
@@ -863,6 +862,11 @@ export {AppiumDriver};
 /**
  * @typedef {SessionHandlerResult<[innerSessionId: string, caps:
  * import('@appium/types').DriverCaps<Constraints>, protocol: string|undefined]>} SessionHandlerCreateResult
+ */
+
+/**
+ * @template {Constraints} C
+ * @typedef {import('@appium/types').Core<C>} Core
  */
 
 /**

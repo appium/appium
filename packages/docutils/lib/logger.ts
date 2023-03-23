@@ -134,7 +134,7 @@ class DocutilsReporter extends FancyReporter {
  *
  * "Global" inasmuch as any logger created from the root logger will use this level.
  */
-let globalLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
+let globalLevel: LogLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
 
 /**
  * The logger from which all loggers are created.  This one uses a unique tag and our custom reporter.

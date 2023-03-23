@@ -163,7 +163,7 @@ export interface ISessionCommands {
    *
    * @returns A list of session data objects
    */
-  getSessions<C extends Constraints>(): Promise<MultiSessionData<C>[]>;
+  getSessions(): Promise<MultiSessionData[]>;
 
   /**
    * Get the data for the current session
@@ -192,12 +192,12 @@ export interface IExecuteCommands {
   ): Promise<TReturn>;
 }
 
-export interface MultiSessionData<C extends Constraints> {
+export interface MultiSessionData<C extends Constraints = Constraints> {
   id: string;
   capabilities: DriverCaps<C>;
 }
 
-export type SingularSessionData<C extends Constraints> = DriverCaps<C> & {
+export type SingularSessionData<C extends Constraints = Constraints> = DriverCaps<C> & {
   events?: EventHistory;
   error?: string;
 };

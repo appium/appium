@@ -141,7 +141,7 @@ export type NSCapabilities<C extends Constraints, NS extends string = W3C_APPIUM
  * Normalized capabilities for drivers extending `BaseDriver`.
  * Includes {@linkcode BaseCapabilities}.
  */
-export type DriverCaps<C extends Constraints> = BaseCapabilities & Capabilities<C>;
+export type DriverCaps<C extends Constraints = Constraints> = BaseCapabilities & Capabilities<C>;
 
 /**
  * W3C-style capabilities for drivers extending `BaseDriver`.
@@ -157,11 +157,13 @@ export type DriverCaps<C extends Constraints> = BaseCapabilities & Capabilities<
  * }
  * ```
  */
-export type W3CDriverCaps<C extends Constraints> = BaseW3CCapabilities & W3CCapabilities<C>;
+export type W3CDriverCaps<C extends Constraints = Constraints> = BaseW3CCapabilities &
+  W3CCapabilities<C>;
 
 /**
  * Namespaced capabilities for drivers extending `BaseDriver`.
  *
  * Includes {@linkcode BaseNSCapabilities}.
  */
-export type NSDriverCaps<C extends Constraints> = BaseNSCapabilities & NSCapabilities<C>;
+export type NSDriverCaps<C extends Constraints = Constraints> = BaseNSCapabilities &
+  NSCapabilities<C>;

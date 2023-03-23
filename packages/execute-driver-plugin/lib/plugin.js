@@ -32,7 +32,7 @@ export default class ExecuteDriverPlugin extends BasePlugin {
    *
    * @returns {Promise<any>} - a JSONifiable object representing the return value of
    * the script
-   * @type {import('@appium/types').PluginCommand<[script: string, scriptType: string?, timeoutMs: number?], any>}
+   * @type {import('@appium/types').PluginCommand<import('@appium/types').ExternalDriver, [script: string, scriptType: string?, timeoutMs: number?]>}
    * @throws {Error}
    */
   async executeDriverScript(

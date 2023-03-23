@@ -18,6 +18,7 @@ const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
  * define the routes, mapping of HTTP methods to particular driver commands, and
  * any parameters that are expected in a request parameters can be `required` or
  * `optional`
+ * @satisfies {import('@appium/types').MethodMap<import('../basedriver/driver').BaseDriver>}
  */
 const METHOD_MAP = /** @type {const} */ ({
   '/status': {
@@ -129,7 +130,11 @@ const METHOD_MAP = /** @type {const} */ ({
     POST: {command: 'deactivateIMEEngine', deprecated: true},
   },
   '/session/:sessionId/ime/activate': {
-    POST: {command: 'activateIMEEngine', payloadParams: {required: ['engine']}, deprecated: true},
+    POST: {
+      command: 'activateIMEEngine',
+      payloadParams: {required: ['engine']},
+      deprecated: true,
+    },
   },
   '/session/:sessionId/frame': {
     POST: {command: 'setFrame', payloadParams: {required: ['id']}},
@@ -356,7 +361,11 @@ const METHOD_MAP = /** @type {const} */ ({
     DELETE: {command: 'releaseActions'},
   },
   '/session/:sessionId/touch/longclick': {
-    POST: {command: 'touchLongClick', payloadParams: {required: ['elements']}, deprecated: true},
+    POST: {
+      command: 'touchLongClick',
+      payloadParams: {required: ['elements']},
+      deprecated: true,
+    },
   },
   '/session/:sessionId/touch/flick': {
     POST: {
@@ -922,7 +931,7 @@ const METHOD_MAP = /** @type {const} */ ({
 let ALL_COMMANDS = [];
 for (let v of _.values(METHOD_MAP)) {
   for (let m of _.values(v)) {
-    if (m.command) {
+    if ('command' in m && m.command) {
       ALL_COMMANDS.push(m.command);
     }
   }
@@ -1006,13 +1015,3 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
 const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
 
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};
-
-/**
- * This checks compat with the `MethodMap` interface.
- * @ignore
- */
-// eslint-disable-next-line no-unused-vars
-const _validMethodMap =
-  /** @type {import('@appium/types').MethodMap<import('@appium/types').ExternalDriver<import('@appium/types').BaseDriverCapConstraints>>} */ (
-    METHOD_MAP
-  );

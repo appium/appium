@@ -284,6 +284,7 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.drivers[pkgJson.appium.driverName])) {
+        // @ts-expect-error - looks like TS v5.x bug. when it's fixed, this will fail.
         this.setExtension(DRIVER_TYPE, pkgJson.appium.driverName, value);
         return true;
       }
@@ -294,6 +295,7 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.plugins[pkgJson.appium.pluginName])) {
+        // @ts-expect-error - looks like TS v5.x bug. when it's fixed, this will fail.
         this.setExtension(PLUGIN_TYPE, pkgJson.appium.pluginName, value);
         return true;
       }

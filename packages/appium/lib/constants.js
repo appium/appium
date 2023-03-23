@@ -69,3 +69,11 @@ export const EXT_SUBCOMMAND_RUN = 'run';
  * Current revision of the manifest (`extensions.yaml`) schema
  */
 export const CURRENT_SCHEMA_REV = 4;
+
+/**
+ * The default number of stack frames to show in a "long" stack trace, when enabled via `--long-stacktrace`
+ * @remarks This value may be increased in the future.
+ * @privateRemarks A value like `Infinity` may provide to have deleterious effects on
+ * memory usage, perf, and/or log output, and higher limits may be difficult to scan.
+ */
+export const LONG_STACKTRACE_LIMIT = 100;

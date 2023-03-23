@@ -85,7 +85,6 @@
     "glob": "8.1.0",
     "lilconfig": "2.1.0",
     "lodash": "4.17.21",
-    "longjohn": "0.2.12",
     "npmlog": "7.0.1",
     "ora": "5.4.1",
     "package-changed": "2.0.0",

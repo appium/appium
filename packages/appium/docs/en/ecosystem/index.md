@@ -54,7 +54,7 @@ These drivers are not maintained by the Appium team and can be used to target ad
 
 ## Clients
 
-You need a clients to write and run Appium scripts. To learn more about clients, read our [Client
+You need clients to write and run Appium scripts. To learn more about clients, read our [Client
 Intro](../intro/clients.md). Here is the list of known Appium clients. You'll want to become very
 familiar with your client documentation (as well as the documentation of any Selenium client that
 the Appium client depends on) since that is what you will use as your primary interface to Appium.

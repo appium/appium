@@ -20,7 +20,7 @@ JavaScript, Python, and Java, though [Appium clients](../ecosystem/index.md#clie
 Before getting started, make sure your system satisfies the
 [requirements](../intro/requirements.md) for running the Appium server. Additional requirements
 will be discussed in conjunction with installing the UiAutomator2 driver. The guide also assumes
-you're basic command line proficiency on your platform, for example being able to run commands, set
+you have basic command line proficiency on your platform, for example being able to run commands, set
 and persist environment variables, etc...
 
 Now you're ready to get started! So head on over to [Installing Appium](./install.md).

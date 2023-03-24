@@ -68,4 +68,4 @@ export const EXT_SUBCOMMAND_RUN = 'run';
 /**
  * Current revision of the manifest (`extensions.yaml`) schema
  */
-export const CURRENT_SCHEMA_REV = 3;
+export const CURRENT_SCHEMA_REV = 4;

@@ -9,10 +9,12 @@ import {
   INSTALL_TYPE_GIT,
   INSTALL_TYPE_GITHUB,
   INSTALL_TYPE_LOCAL,
+  INSTALL_TYPE_DEV,
 } from '../extension/extension-config';
 import {SubProcess} from 'teen_process';
 import {packageDidChange} from '../extension/package-changed';
 import {spawn} from 'child_process';
+import {inspect} from 'node:util';
 
 const UPDATE_ALL = 'installed';
 
@@ -99,41 +101,40 @@ class ExtensionCommand {
 
   /**
    * List extensions
-   *
+   * @template {ExtensionType} ExtType
    * @param {ListOptions} opts
-   * @return {Promise<ExtensionListData>} map of extension names to extension data
+   * @return {Promise<ExtensionList<ExtType>>} map of extension names to extension data
    */
-  async list({showInstalled, showUpdates}) {
-    const lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s`;
+  async list({showInstalled, showUpdates, verbose = false}) {
+    let lsMsg = `Listing ${showInstalled ? 'installed' : 'available'} ${this.type}s`;
+    if (verbose) {
+      lsMsg += ' (verbose mode)';
+    }
     const installedNames = Object.keys(this.config.installedExtensions);
     const knownNames = Object.keys(this.knownExtensions);
-    const exts = [...installedNames, ...knownNames].reduce(
-      (acc, name) => {
-        if (!acc[name]) {
-          if (installedNames.includes(name)) {
-            acc[name] = {
-              ...this.config.installedExtensions[name],
-              installed: true,
-            };
-          } else if (!showInstalled) {
-            acc[name] = {pkgName: this.knownExtensions[name], installed: false};
-          }
+    const listData = [...installedNames, ...knownNames].reduce((acc, name) => {
+      if (!acc[name]) {
+        if (installedNames.includes(name)) {
+          acc[name] = {
+            .../** @type {Partial<ExtManifest<ExtType>>} */ (this.config.installedExtensions[name]),
+            installed: true,
+          };
+        } else if (!showInstalled) {
+          acc[name] = /** @type {ExtensionListData<ExtType>} */ ({
+            pkgName: this.knownExtensions[name],
+            installed: false,
+          });
         }
-        return acc;
-      },
-      /**
-       * This accumulator contains either {@linkcode UninstalledExtensionLIstData} _or_
-       * {@linkcode InstalledExtensionListData} without upgrade information (which is added by the below code block)
-       * @type {Record<string,Partial<InstalledExtensionListData>|UninstalledExtensionListData>}
-       */ ({})
-    );
+      }
+      return acc;
+    }, /** @type {ExtensionList<ExtType>} */ ({}));
 
     // if we want to show whether updates are available, put that behind a spinner
     await spinWith(this.isJsonOutput, lsMsg, async () => {
       if (!showUpdates) {
         return;
       }
-      for (const [ext, data] of _.toPairs(exts)) {
+      for (const [ext, data] of _.toPairs(listData)) {
         if (!data.installed || data.installType !== INSTALL_TYPE_NPM) {
           // don't need to check for updates on exts that aren't installed
           // also don't need to check for updates on non-npm exts
@@ -150,7 +151,12 @@ class ExtensionCommand {
       }
     });
 
-    const listData = /** @type {ExtensionListData} */ (exts);
+    /**
+     * Type guard to narrow "installed" extensions, which have more data
+     * @param {any} data
+     * @returns {data is InstalledExtensionListData<ExtType>}
+     */
+    const extIsInstalled = (data) => Boolean(data.installed);
 
     // if we're just getting the data, short circuit return here since we don't need to do any
     // formatting logic
@@ -158,12 +164,16 @@ class ExtensionCommand {
       return listData;
     }
 
+    if (verbose) {
+      this.log.log(inspect(listData, {colors: true, depth: null}));
+      return listData;
+    }
     for (const [name, data] of _.toPairs(listData)) {
       let installTxt = ' [not installed]'.grey;
       let updateTxt = '';
       let upToDateTxt = '';
       let unsafeUpdateTxt = '';
-      if (data.installed) {
+      if (extIsInstalled(data)) {
         const {
           installType,
           installSpec,
@@ -182,8 +192,11 @@ class ExtensionCommand {
           case INSTALL_TYPE_LOCAL:
             typeTxt = `(linked from ${installSpec})`.magenta;
             break;
+          case INSTALL_TYPE_DEV:
+            typeTxt = '(dev mode)';
+            break;
           default:
-            typeTxt = '(NPM)';
+            typeTxt = '(npm)';
         }
         installTxt = `@${version.yellow} ${('[installed ' + typeTxt + ']').green}`;
 
@@ -513,7 +526,12 @@ class ExtensionCommand {
         `Can't uninstall ${this.type} '${installSpec}'; it is not installed`
       );
     }
-    const pkgName = this.config.installedExtensions[installSpec].pkgName;
+    const extRecord = this.config.installedExtensions[installSpec];
+    if (extRecord.installType === INSTALL_TYPE_DEV) {
+      this.log.warn(`Cannot uninstall ${this.type} "${installSpec}" because it is in development!`);
+      return this.config.installedExtensions;
+    }
+    const pkgName = extRecord.pkgName;
     await npm.uninstallPackage(this.config.appiumHome, pkgName);
     await this.config.removeExtension(installSpec);
     this.log.ok(`Successfully uninstalled ${this.type} '${installSpec}'`.green);
@@ -785,12 +803,13 @@ export {ExtensionCommand};
 /**
  * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCommand.list}.
  *
- * @typedef ExtensionMetadata
+ * @typedef ExtensionListMetadata
  * @property {boolean} installed - If `true`, the extension is installed
- * @property {string?} updateVersion - If the extension is installed, the version it can be updated to
- * @property {string?} unsafeUpdateVersion - Same as above, but a major version bump
  * @property {boolean} upToDate - If the extension is installed and the latest
- * @property {string?} updateError - Update check error message (if present)
+ * @property {string|null} updateVersion - If the extension is installed, the version it can be updated to
+ * @property {string|null} unsafeUpdateVersion - Same as above, but a major version bump
+ * @property {string} [updateError] - Update check error message (if present)
+ * @property {boolean} [devMode] - If Appium is run from an extension's working copy
  */
 
 /**
@@ -831,17 +850,19 @@ export {ExtensionCommand};
 
 /**
  * Possible return value for {@linkcode ExtensionCommand.list}
- * @typedef {Partial<InstalledExtensionListData> & {pkgName: string, installed: false}} UninstalledExtensionListData
+ * @template {ExtensionType} ExtType
+ * @typedef {Partial<ExtManifest<ExtType>> & Partial<ExtensionListMetadata>} ExtensionListData
  */
 
 /**
- * Possible return value for {@linkcode ExtensionCommand.list}
- * @typedef {import('appium/types').InternalMetadata & ExtensionMetadata} InstalledExtensionListData
+ * @template {ExtensionType} ExtType
+ * @typedef {ExtManifest<ExtType> & ExtensionListMetadata} InstalledExtensionListData
  */
 
 /**
  * Return value of {@linkcode ExtensionCommand.list}.
- * @typedef {Record<string,InstalledExtensionListData|UninstalledExtensionListData>} ExtensionListData
+ * @template {ExtensionType} ExtType
+ * @typedef {Record<string,ExtensionListData<ExtType>>} ExtensionList
  */
 
 /**
@@ -929,6 +950,7 @@ export {ExtensionCommand};
  * @typedef ListOptions
  * @property {boolean} showInstalled - whether should show only installed extensions
  * @property {boolean} showUpdates - whether should show available updates
+ * @property {boolean} [verbose] - whether to show additional data from the extension
  */
 
 /**

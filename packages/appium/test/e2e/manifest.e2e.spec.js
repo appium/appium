@@ -99,7 +99,7 @@ describe('manifest handling', function () {
       });
 
       it('should update the manifest file to the latest schema revision', function () {
-        expect(manifest.schemaRev).to.equal(3);
+        expect(manifest.schemaRev).to.equal(CURRENT_SCHEMA_REV);
       });
     });
   });

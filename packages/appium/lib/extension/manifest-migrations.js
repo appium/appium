@@ -1,4 +1,4 @@
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
+import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
 
 /**
@@ -13,6 +13,11 @@ import log from '../logger';
 const SCHEMA_REV_3 = 3;
 
 /**
+ * Constant for v4 of the schema rev.
+ */
+const SCHEMA_REV_4 = 4;
+
+/**
  * Collection of functions to migrate from one version to another.
  *
  * These functions _should not actually perform the migration_; rather, they
@@ -20,7 +25,7 @@ const SCHEMA_REV_3 = 3;
  * itself will happen within {@linkcode Manifest.syncWithInstalledExtensions}; the extensions
  * will be checked and the manifest file updated per the state of the filesystem.
  *
- * @type {{[P in keyof ManifestDataVersions]?: Migration}}
+ * @type { {[P in keyof ManifestDataVersions]?: Migration} }
  */
 const Migrations = {
   /**
@@ -32,19 +37,32 @@ const Migrations = {
    * @type {Migration}
    */
   [SCHEMA_REV_3]: (manifest) => {
-    let shouldSync = false;
     /** @type {Array<ExtManifest<PluginType>|ExtManifest<DriverType>>} */
     const allExtData = [
       ...Object.values(manifest.getExtensionData(DRIVER_TYPE)),
       ...Object.values(manifest.getExtensionData(PLUGIN_TYPE)),
     ];
-    for (const metadata of allExtData) {
-      if (!('installPath' in metadata)) {
-        shouldSync = true;
-        break;
-      }
+    return allExtData.some((metadata) => !('installPath' in metadata));
+  },
+  /**
+   * Updates installed extensions to use `InstallType` of `dev` if appropriate.
+   *
+   * Previously, these types of extensions (automatically discovered) would use the default `InstallType` of `npm`, so we need
+   * to refresh any with this install type.
+   *
+   * This should only happen once; we do not want to re-check everything with `npm` install type
+   * every time.
+   * @type {Migration}
+   */
+  [SCHEMA_REV_4]: (manifest) => {
+    if (manifest.schemaRev < SCHEMA_REV_4) {
+      const allExtData = [
+        ...Object.values(manifest.getExtensionData(DRIVER_TYPE)),
+        ...Object.values(manifest.getExtensionData(PLUGIN_TYPE)),
+      ];
+      return allExtData.some((metadata) => metadata.installType === 'npm');
     }
-    return shouldSync;
+    return false;
   },
 };
 
@@ -61,7 +79,7 @@ const Migrations = {
  * @returns {boolean} Whether the data was modified
  */
 function setSchemaRev(manifest, version) {
-  if (manifest.schemaRev ?? 0 < version) {
+  if ((manifest.schemaRev ?? 0) < version) {
     manifest.setSchemaRev(version);
     return true;
   }
@@ -78,15 +96,13 @@ function setSchemaRev(manifest, version) {
  */
 export async function migrate(manifest) {
   let didChange = false;
-  for await (const [v, migration] of Object.entries(Migrations)) {
-    const version = /** @type {keyof ManifestDataVersions} */ (Number(v));
+  for await (const migration of Object.values(Migrations)) {
     didChange = (await migration(manifest)) || didChange;
-    didChange = setSchemaRev(manifest, version) || didChange;
   }
-
+  didChange = setSchemaRev(manifest, CURRENT_SCHEMA_REV) || didChange;
   if (didChange) {
     // this is not _technically_ true, since we don't actually write the file here.
-    log.info(`Upgraded extension manifest to schema v${manifest.schemaRev}`);
+    log.debug(`Upgraded extension manifest to schema v${manifest.schemaRev}`);
   }
 
   return didChange;

@@ -40,7 +40,10 @@ describe('Manifest', function () {
     let overrides;
     ({MockPackageChanged, MockAppiumSupport, MockGlob, overrides, sandbox} = initMocks());
     MockAppiumSupport.fs.readFile.resolves(yamlFixture);
-    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), overrides));
+    ({Manifest} = rewiremock.proxy(() => require('../../../lib/extension/manifest'), {
+      ...overrides,
+      '../../../lib/extension/manifest-migrations.js': {migrate: sandbox.stub().resolves()},
+    }));
 
     Manifest.getInstance.cache = new Map();
   });

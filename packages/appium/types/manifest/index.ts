@@ -5,17 +5,18 @@
 
 import * as ManifestV2 from './base';
 import * as ManifestV3 from './v3';
-
+import * as ManifestV4 from './v4';
 // add `import * as ManifestV<new-version> from './v<new-version>';` above
 
-export * from './v3';
+export * from './v4';
 // replace above line with `export * from './v<new-version>';`
 
-export {ManifestV2, ManifestV3};
+export {ManifestV2, ManifestV3, ManifestV4};
 
 export interface ManifestDataVersions {
   2: ManifestV2.ManifestData;
   3: ManifestV3.ManifestData;
+  4: ManifestV4.ManifestData;
 }
 // append to this interface your new version of `ManifestData`
 

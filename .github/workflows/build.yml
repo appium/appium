@@ -40,7 +40,7 @@ jobs:
           useRollingCache: true
           install-command: npm ci
       - name: ESLint
-        run: npm run lint
+        run: npm run lint:ci
       - name: Validate Renovate Config
         uses: rinchsan/renovate-config-validator@1ea1e8514f6a33fdd71c40b0a5fa3512b9e7b936 # tag=v0
         with:

@@ -20,9 +20,9 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "main": "index.json",
+  "main": "index.js",
   "files": [
-    "index.json"
+    "index.js"
   ],
   "scripts": {
     "test:smoke": "exit 0"
@@ -35,7 +35,8 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-mocha": "^10.1.0",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-import-resolver-typescript": "^3.5.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

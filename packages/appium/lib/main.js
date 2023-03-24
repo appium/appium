@@ -2,7 +2,6 @@
 
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
-// @ts-ignore
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
 import {logger as logFactory, util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
@@ -47,6 +46,7 @@ async function preflightChecks(args, throwInsteadOfExit = false) {
     checkNodeOk();
     await checkNpmOk();
     if (args.longStacktrace) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('longjohn').async_trace_limit = -1;
     }
     if (args.showBuildInfo) {

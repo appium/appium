@@ -9,7 +9,7 @@ import os from 'os';
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
-import helpers, { BASEDRIVER_VER } from './helpers';
+import helpers, {BASEDRIVER_VER} from './helpers';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
@@ -95,7 +95,6 @@ class DriverCore {
   _log;
 
   /**
-   * @protected
    * @type {boolean}
    */
   shutdownUnexpectedly;

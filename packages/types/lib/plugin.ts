@@ -1,6 +1,8 @@
-import {AppiumLogger, Class, UpdateServerCallback} from '.';
 import {ExecuteMethodMap, MethodMap} from './command';
 import {ExternalDriver} from './driver';
+import {AppiumLogger} from './logger';
+import {UpdateServerCallback} from './server';
+import {Class} from './util';
 
 /**
  * The interface describing the constructor and static properties of a Plugin.

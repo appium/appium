@@ -10,7 +10,7 @@ import path from 'path';
 import YAML from 'yaml';
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import log from '../logger';
-import {INSTALL_TYPE_NPM} from './extension-config';
+import {INSTALL_TYPE_NPM, INSTALL_TYPE_DEV} from './extension-config';
 import {packageDidChange} from './package-changed';
 import {migrate} from './manifest-migrations';
 
@@ -148,27 +148,33 @@ export class Manifest {
    * Returns a new or existing {@link Manifest} instance, based on the value of `appiumHome`.
    *
    * Maintains one instance per value of `appiumHome`.
-   * @param {string} appiumHome - Path to `APPIUM_HOME`
-   * @returns {Manifest}
    */
-  static getInstance = _.memoize(function _getInstance(appiumHome) {
-    return new Manifest(appiumHome);
-  });
+  static getInstance = _.memoize(
+    /**
+     * @param {string} appiumHome - Path to `APPIUM_HOME`
+     * @returns {Manifest}
+     */
+    function _getInstance(appiumHome) {
+      return new Manifest(appiumHome);
+    }
+  );
 
   /**
    * Searches `APPIUM_HOME` for installed extensions and adds them to the manifest.
+   * @param {boolean} hasAppiumDependency - This affects whether or not the "dev" `InstallType` is used
    * @returns {Promise<boolean>} `true` if any extensions were added, `false` otherwise.
    */
-  async syncWithInstalledExtensions() {
+  async syncWithInstalledExtensions(hasAppiumDependency = false) {
     // this could be parallelized, but we can't use fs.walk as an async iterator
     let didChange = false;
 
     /**
      * Listener for the `match` event of a `glob` instance
      * @param {string} filepath - Path to a `package.json`
+     * @param {boolean} [devType] - If `true`, this is an extension in "dev mode"
      * @returns {Promise<void>}
      */
-    const onMatch = async (filepath) => {
+    const onMatch = async (filepath, devType = false) => {
       try {
         const pkg = JSON.parse(await fs.readFile(filepath, 'utf8'));
         if (isExtension(pkg)) {
@@ -188,7 +194,8 @@ export class Manifest {
           ) {
             log.info(`Discovered installed ${extType} "${name}"`);
           }
-          const changed = this.addExtensionFromPackage(pkg, filepath);
+          const installType = devType && hasAppiumDependency ? INSTALL_TYPE_DEV : INSTALL_TYPE_NPM;
+          const changed = this.addExtensionFromPackage(pkg, filepath, installType);
           didChange = didChange || changed;
         }
       } catch {}
@@ -199,8 +206,9 @@ export class Manifest {
      * @type {Promise<void>[]}
      */
     const queue = [
-      // look at `package.json` in `APPIUM_HOME` only
-      onMatch(path.join(this.#appiumHome, 'package.json')),
+      // look at `package.json` in `APPIUM_HOME` only.
+      // this causes extensions in "dev mode" to be automatically found
+      onMatch(path.join(this.#appiumHome, 'package.json'), true),
     ];
 
     // add dependencies to the queue
@@ -252,9 +260,10 @@ export class Manifest {
    * @template {ExtensionType} ExtType
    * @param {ExtPackageJson<ExtType>} pkgJson
    * @param {string} pkgPath
+   * @param {typeof INSTALL_TYPE_NPM | typeof INSTALL_TYPE_DEV} [installType]
    * @returns {boolean} - `true` if this method did anything.
    */
-  addExtensionFromPackage(pkgJson, pkgPath) {
+  addExtensionFromPackage(pkgJson, pkgPath, installType = INSTALL_TYPE_NPM) {
     const extensionPath = path.dirname(pkgPath);
 
     /**
@@ -264,7 +273,7 @@ export class Manifest {
       pkgName: pkgJson.name,
       version: pkgJson.version,
       appiumVersion: pkgJson.peerDependencies?.appium,
-      installType: INSTALL_TYPE_NPM,
+      installType,
       installSpec: `${pkgJson.name}@${pkgJson.version}`,
       installPath: extensionPath,
     };
@@ -434,6 +443,8 @@ export class Manifest {
         shouldWrite = await migrate(this);
       }
 
+      const hasAppiumDependency = await env.hasAppiumDependency(this.appiumHome);
+
       /**
        * we still may want to sync with installed extensions even if we have a
        * new file. right now this is limited to the following cases:
@@ -445,13 +456,9 @@ export class Manifest {
        * It may also make sense to sync with the extensions in an arbitrary
        * `APPIUM_HOME`, but we don't do that here.
        */
-      if (
-        shouldWrite ||
-        ((await env.hasAppiumDependency(this.appiumHome)) &&
-          (await packageDidChange(this.appiumHome)))
-      ) {
+      if (shouldWrite || (hasAppiumDependency && (await packageDidChange(this.appiumHome)))) {
         log.debug('Discovering newly installed extensions...');
-        shouldWrite = (await this.syncWithInstalledExtensions()) || shouldWrite;
+        shouldWrite = (await this.syncWithInstalledExtensions(hasAppiumDependency)) || shouldWrite;
       }
 
       if (shouldWrite) {

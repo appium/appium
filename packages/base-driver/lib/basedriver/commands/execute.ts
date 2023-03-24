@@ -20,7 +20,7 @@ const ExecuteCommands: IExecuteCommands = {
   async executeMethod<C extends Constraints>(
     this: BaseDriver<C>,
     script: string,
-    protoArgs: [StringRecord] | any[]
+    protoArgs: readonly [StringRecord<unknown>] | readonly unknown[]
   ) {
     const Driver = this.constructor as DriverClass<Driver<C>>;
     const commandMetadata = {...Driver.executeMethodMap?.[script]};

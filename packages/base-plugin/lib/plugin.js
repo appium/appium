@@ -60,7 +60,7 @@ class BasePlugin {
    * @param {NextPluginCallback} next
    * @param {Driver<C>} driver
    * @param {string} script
-   * @param {[Record<string, any>]|[]} protoArgs
+   * @param {readonly [import('@appium/types').StringRecord<unknown>] | readonly any[]} protoArgs
    */
   async executeMethod(next, driver, script, protoArgs) {
     const Plugin = /** @type {import('@appium/types').PluginClass<Plugin>} */ (this.constructor);

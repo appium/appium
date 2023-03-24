@@ -177,7 +177,13 @@ export interface IExecuteCommands {
    *
    * @returns The result of calling the Execute Method
    */
-  executeMethod<TReturn = any>(script: string, args: [StringRecord] | any[]): Promise<TReturn>;
+  executeMethod<
+    TArgs extends readonly any[] | readonly [StringRecord<unknown>] = unknown[],
+    TReturn = unknown
+  >(
+    script: string,
+    args: TArgs
+  ): Promise<TReturn>;
 }
 
 export interface MultiSessionData<
@@ -2028,12 +2034,9 @@ export type DriverOpts<C extends Constraints = BaseDriverCapConstraints> = Serve
  *
  * Note that this signature differs from a `PluginCommand`.
  */
-export type DriverCommand<TArgs = any, TRetval = unknown> = (...args: TArgs[]) => Promise<TRetval>;
-
-export type DriverCommands<TArgs = any, TReturn = unknown> = Record<
-  string,
-  DriverCommand<TArgs, TReturn>
->;
+export type DriverCommand<TArgs extends readonly any[] = any[], TRetval = unknown> = (
+  ...args: TArgs
+) => Promise<TRetval>;
 
 /**
  * Tuple of an HTTP method with a regex matching a request path

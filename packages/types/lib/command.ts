@@ -1,6 +1,7 @@
 import {ConditionalPick, MultidimensionalReadonlyArray} from 'type-fest';
 import {Driver, DriverCommand} from './driver';
 import {Plugin, PluginCommand} from './plugin';
+import {StringRecord} from './util';
 
 /**
  * Defines the shape of a payload for a {@linkcode MethodDef}.
@@ -119,7 +120,7 @@ export interface PluginExecuteMethodDef<T extends Plugin> extends BaseExecuteMet
  * Definition of an execute method (which overloads the behavior of the `execute` command) in a {@linkcode Driver} or {@linkcode Plugin}.
  */
 export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
-  ? Readonly<Record<string, PluginExecuteMethodDef<T>>>
+  ? Readonly<StringRecord<PluginExecuteMethodDef<T>>>
   : T extends Driver
-  ? Readonly<Record<string, DriverExecuteMethodDef<T>>>
+  ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
   : never;

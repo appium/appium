@@ -1,14 +1,14 @@
 /* eslint-disable no-console */
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
 import {isExtensionCommandArgs} from '../utils';
-import DriverCommand from './driver-command';
-import PluginCommand from './plugin-command';
+import DriverCliCommand from './driver-command';
+import PluginCliCommand from './plugin-command';
 import {errAndQuit, JSON_SPACES} from './utils';
 
 export const commandClasses = Object.freeze(
   /** @type {const} */ ({
-    [DRIVER_TYPE]: DriverCommand,
-    [PLUGIN_TYPE]: PluginCommand,
+    [DRIVER_TYPE]: DriverCliCommand,
+    [PLUGIN_TYPE]: PluginCliCommand,
   })
 );
 
@@ -59,7 +59,7 @@ export {runExtensionCommand};
 
 /**
  * @template {ExtensionType} ExtType
- * @typedef {ExtType extends DriverType ? Class<DriverCommand> : ExtType extends PluginType ? Class<PluginCommand> : never} ExtCommand
+ * @typedef {ExtType extends DriverType ? Class<DriverCliCommand> : ExtType extends PluginType ? Class<PluginCliCommand> : never} ExtCommand
  */
 
 /**

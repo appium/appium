@@ -34,7 +34,7 @@ function receiptToManifest(receipt) {
 /**
  * @template {ExtensionType} ExtType
  */
-class ExtensionCommand {
+class ExtensionCliCommand {
   /**
    * This is the `DriverConfig` or `PluginConfig`, depending on `ExtType`.
    * @type {ExtensionConfig<ExtType>}
@@ -789,11 +789,11 @@ class ExtensionCommand {
   }
 }
 
-export default ExtensionCommand;
-export {ExtensionCommand};
+export default ExtensionCliCommand;
+export {ExtensionCliCommand as ExtensionCommand};
 
 /**
- * Options for the {@linkcode ExtensionCommand} constructor
+ * Options for the {@linkcode ExtensionCliCommand} constructor
  * @template {ExtensionType} ExtType
  * @typedef ExtensionCommandOptions
  * @property {ExtensionConfig<ExtType>} config - the `DriverConfig` or `PluginConfig` instance used for this command
@@ -801,7 +801,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCommand.list}.
+ * Extra stuff about extensions; used indirectly by {@linkcode ExtensionCliCommand.list}.
  *
  * @typedef ExtensionListMetadata
  * @property {boolean} installed - If `true`, the extension is installed
@@ -849,7 +849,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Possible return value for {@linkcode ExtensionCommand.list}
+ * Possible return value for {@linkcode ExtensionCliCommand.list}
  * @template {ExtensionType} ExtType
  * @typedef {Partial<ExtManifest<ExtType>> & Partial<ExtensionListMetadata>} ExtensionListData
  */
@@ -860,13 +860,13 @@ export {ExtensionCommand};
  */
 
 /**
- * Return value of {@linkcode ExtensionCommand.list}.
+ * Return value of {@linkcode ExtensionCliCommand.list}.
  * @template {ExtensionType} ExtType
  * @typedef {Record<string,ExtensionListData<ExtType>>} ExtensionList
  */
 
 /**
- * Options for {@linkcode ExtensionCommand._run}.
+ * Options for {@linkcode ExtensionCliCommand._run}.
  * @typedef RunOptions
  * @property {string} installSpec - name of the extension to run a script from
  * @property {string} scriptName - name of the script to run
@@ -875,7 +875,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Return value of {@linkcode ExtensionCommand._run}
+ * Return value of {@linkcode ExtensionCliCommand._run}
  *
  * @typedef RunOutput
  * @property {string} [error] - error message if script ran unsuccessfully, otherwise undefined
@@ -883,41 +883,41 @@ export {ExtensionCommand};
  */
 
 /**
- * Options for {@linkcode ExtensionCommand._update}.
+ * Options for {@linkcode ExtensionCliCommand._update}.
  * @typedef ExtensionUpdateOpts
  * @property {string} installSpec - the name of the extension to update
  * @property {boolean} unsafe - if true, will perform unsafe updates past major revision boundaries
  */
 
 /**
- * Return value of {@linkcode ExtensionCommand._update}.
+ * Return value of {@linkcode ExtensionCliCommand._update}.
  * @typedef ExtensionUpdateResult
  * @property {Record<string,Error>} errors - map of ext names to error objects
  * @property {Record<string,UpdateReport>} updates - map of ext names to {@linkcode UpdateReport}s
  */
 
 /**
- * Part of result of {@linkcode ExtensionCommand._update}.
+ * Part of result of {@linkcode ExtensionCliCommand._update}.
  * @typedef UpdateReport
  * @property {string} from - version the extension was updated from
  * @property {string} to - version the extension was updated to
  */
 
 /**
- * Options for {@linkcode ExtensionCommand._uninstall}.
+ * Options for {@linkcode ExtensionCliCommand._uninstall}.
  * @typedef UninstallOpts
  * @property {string} installSpec - the name or spec of an extension to uninstall
  */
 
 /**
- * Used by {@linkcode ExtensionCommand.getPostInstallText}
+ * Used by {@linkcode ExtensionCliCommand.getPostInstallText}
  * @typedef ExtensionArgs
  * @property {string} extName - the name of an extension
  * @property {object} extData - the data for an installed extension
  */
 
 /**
- * Options for {@linkcode ExtensionCommand.installViaNpm}
+ * Options for {@linkcode ExtensionCliCommand.installViaNpm}
  * @typedef InstallViaNpmArgs
  * @property {string} installSpec - the name or spec of an extension to install
  * @property {string} pkgName - the NPM package name of the extension
@@ -926,7 +926,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Object returned by {@linkcode ExtensionCommand.checkForExtensionUpdate}
+ * Object returned by {@linkcode ExtensionCliCommand.checkForExtensionUpdate}
  * @typedef PossibleUpdates
  * @property {string} current - current version
  * @property {string?} safeUpdate - version we can safely update to if it exists, or null
@@ -934,7 +934,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Options for {@linkcode ExtensionCommand._install}
+ * Options for {@linkcode ExtensionCliCommand._install}
  * @typedef InstallOpts
  * @property {string} installSpec - the name or spec of an extension to install
  * @property {InstallType} installType - how to install this extension. One of the INSTALL_TYPES
@@ -954,7 +954,7 @@ export {ExtensionCommand};
  */
 
 /**
- * Opts for {@linkcode ExtensionCommand.getInstallationReceipt}
+ * Opts for {@linkcode ExtensionCliCommand.getInstallationReceipt}
  * @template {ExtensionType} ExtType
  * @typedef GetInstallationReceiptOpts
  * @property {string} installPath

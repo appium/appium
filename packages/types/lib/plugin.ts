@@ -36,7 +36,7 @@ export interface PluginStatic<P extends Plugin> {
  * @example
  *
  * class MyPlugin extends BasePlugin implements Plugin {
- *   public getPageSource: OverrideDriverCommand<
+ *   public getPageSource: DriverCommandToPluginCommand<
  *     ExternalDriver['getPageSource'], // method to override
  *     [flag: boolean], // new arguments; defaults to the args of the method
  *     string|Buffer, // new return type; defaults to the async return type of the method

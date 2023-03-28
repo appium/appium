@@ -91,7 +91,7 @@
     "@types/sinon-chai": "3.2.9",
     "@types/teen_process": "2.0.0",
     "@types/ws": "8.5.4",
-    "@types/yargs": "17.0.23",
+    "@types/yargs": "17.0.24",
     "@typescript-eslint/eslint-plugin": "5.56.0",
     "@typescript-eslint/parser": "5.56.0",
     "asyncbox": "2.9.4",

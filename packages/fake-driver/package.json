@@ -83,5 +83,5 @@
     "entryPoint": "./lib/index.js"
   },
   "types": "./build/lib/index.d.ts",
-  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
+  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.2](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.1...@appium/fake-driver@5.2.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* **appium,types,base-driver,fake-driver,driver-test-support:** normalize constraint defaults ([3c9fa7b](https://github.com/appium/appium/commit/3c9fa7ba73b639e610e1f3d41d239a9402845b4c))
+
+
+
+
+
 ## [5.2.1](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.0...@appium/fake-driver@5.2.1) (2023-03-08)
 
 

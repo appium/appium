@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.4](https://github.com/appium/appium/compare/@appium/base-driver@9.3.3...@appium/base-driver@9.3.4) (2023-03-28)
+
+
+### Bug Fixes
+
+* **appium,types,base-driver,fake-driver,driver-test-support:** normalize constraint defaults ([3c9fa7b](https://github.com/appium/appium/commit/3c9fa7ba73b639e610e1f3d41d239a9402845b4c))
+* backwards-compatible fixes for TS v5.x ([4974403](https://github.com/appium/appium/commit/49744036619ecc239e0e6255a13d38cafd709920))
+* **base-driver,base-plugin,types:** update PluginCommand and DriverCommand types ([0dcd5fa](https://github.com/appium/appium/commit/0dcd5fa371af523c6527e55de4cff6cd472fde22))
+* **base-driver,types:** fix websocket-related types on AppiumServer ([34891f5](https://github.com/appium/appium/commit/34891f56572f18dd740558b2348d8818680dc709))
+* **base-driver:** fix timeout mixin to use proper context types ([51a8f2f](https://github.com/appium/appium/commit/51a8f2fc347f0b4e222ca2e8dc92fa4bdf44d1e3))
+* **base-driver:** misc type fixes ([d303527](https://github.com/appium/appium/commit/d303527c3da4f657a28b97a2d82eb1a709c6b9bc))
+* **basedriver:** convert main driver implementation to typescript ([deb631b](https://github.com/appium/appium/commit/deb631b4562a0f99e4061c89a7ad21b0621f8a47)), closes [#18379](https://github.com/appium/appium/issues/18379) [#18379](https://github.com/appium/appium/issues/18379)
+* **types:** update dependency type-fest to v3.7.0 ([6912fa1](https://github.com/appium/appium/commit/6912fa14f2a7d338f17e1bed060e959de7aba1d6))
+* **types:** update dependency type-fest to v3.7.1 ([bc860c7](https://github.com/appium/appium/commit/bc860c733a73760f0c42cbfb384e04d50c376d5e))
+
+
+
+
+
 ## [9.3.3](https://github.com/appium/appium/compare/@appium/base-driver@9.3.2...@appium/base-driver@9.3.3) (2023-03-08)
 
 

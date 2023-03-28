@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.1...@appium/driver-test-support@0.4.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* **appium,types,base-driver,fake-driver,driver-test-support:** normalize constraint defaults ([3c9fa7b](https://github.com/appium/appium/commit/3c9fa7ba73b639e610e1f3d41d239a9402845b4c))
+* **driver-test-support:** update definitelytyped ([86eb495](https://github.com/appium/appium/commit/86eb495641456e3e467f507e4d230ad1bc2901c1))
+* **test-support:** update dependency sinon to v15.0.2 ([f1a8ce0](https://github.com/appium/appium/commit/f1a8ce0bbac5a165ba5175c50d83668ec305b592))
+* **test-support:** update dependency sinon to v15.0.3 ([d774a84](https://github.com/appium/appium/commit/d774a8428a0f0c4ecbbc8124a855bda12821ae08))
+* **types:** update dependency type-fest to v3.7.0 ([6912fa1](https://github.com/appium/appium/commit/6912fa14f2a7d338f17e1bed060e959de7aba1d6))
+* **types:** update dependency type-fest to v3.7.1 ([bc860c7](https://github.com/appium/appium/commit/bc860c733a73760f0c42cbfb384e04d50c376d5e))
+
+
+
+
+
 ## [0.4.1](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.0...@appium/driver-test-support@0.4.1) (2023-03-08)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.2](https://github.com/appium/appium/compare/@appium/eslint-config-appium@8.0.1...@appium/eslint-config-appium@8.0.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* **eslint-config-appium:** disable import/no-unresolved for tsd tests ([020473a](https://github.com/appium/appium/commit/020473afc43e68215a576cb3d723b2de2de8e8ad))
+
+
+
+
+
 ## [8.0.1](https://github.com/appium/appium/compare/@appium/eslint-config-appium@8.0.0...@appium/eslint-config-appium@8.0.1) (2023-03-08)
 
 **Note:** Version bump only for package @appium/eslint-config-appium

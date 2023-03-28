@@ -1,6 +1,6 @@
 {
   "name": "@appium/eslint-config-appium-ts",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Shared ESLint config for Appium projects (TypeScript version)",
   "keywords": [
     "eslint",
@@ -33,10 +33,10 @@
     "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^3.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-mocha": "^10.1.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-import-resolver-typescript": "^3.5.0"
+    "eslint-plugin-promise": "^6.0.0"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

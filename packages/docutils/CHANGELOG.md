@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/appium/appium/compare/@appium/docutils@0.3.0...@appium/docutils@0.3.1) (2023-03-28)
+
+
+### Bug Fixes
+
+* backwards-compatible fixes for TS v5.x ([4974403](https://github.com/appium/appium/commit/49744036619ecc239e0e6255a13d38cafd709920))
+* **docutils:** inherit stdio in long-running processes ([ad11fbf](https://github.com/appium/appium/commit/ad11fbf97b57a0c4302d37146660e87c564a5404))
+* **docutils:** update dependency typedoc to v0.23.27 ([ef9cbe6](https://github.com/appium/appium/commit/ef9cbe6bcc27a3633eda01cd7c08a4466e304630))
+* **docutils:** update dependency typedoc to v0.23.28 ([dbc0bf6](https://github.com/appium/appium/commit/dbc0bf69e855744ed69ff3b75a9981b313579fa2))
+* **types:** update dependency type-fest to v3.7.0 ([6912fa1](https://github.com/appium/appium/commit/6912fa14f2a7d338f17e1bed060e959de7aba1d6))
+* **types:** update dependency type-fest to v3.7.1 ([bc860c7](https://github.com/appium/appium/commit/bc860c733a73760f0c42cbfb384e04d50c376d5e))
+
+
+
+
+
 # [0.3.0](https://github.com/appium/appium/compare/@appium/docutils@0.2.2...@appium/docutils@0.3.0) (2023-03-08)
 
 

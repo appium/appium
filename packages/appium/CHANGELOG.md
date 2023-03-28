@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.58](https://github.com/appium/appium/compare/appium@2.0.0-beta.57...appium@2.0.0-beta.58) (2023-03-28)
+
+
+### Bug Fixes
+
+* **appium,types,base-driver,fake-driver,driver-test-support:** normalize constraint defaults ([3c9fa7b](https://github.com/appium/appium/commit/3c9fa7ba73b639e610e1f3d41d239a9402845b4c))
+* **appium:** remove longjohn ([0c52b50](https://github.com/appium/appium/commit/0c52b50e6595a16287d0bb71960fb2e08278de6f)), closes [#18357](https://github.com/appium/appium/issues/18357)
+* backwards-compatible fixes for TS v5.x ([4974403](https://github.com/appium/appium/commit/49744036619ecc239e0e6255a13d38cafd709920))
+* **types:** update dependency type-fest to v3.7.0 ([6912fa1](https://github.com/appium/appium/commit/6912fa14f2a7d338f17e1bed060e959de7aba1d6))
+* **types:** update dependency type-fest to v3.7.1 ([bc860c7](https://github.com/appium/appium/commit/bc860c733a73760f0c42cbfb384e04d50c376d5e))
+
+
+### Features
+
+* **appium:** improvements to ext commands when running extension in development ([d9b47bc](https://github.com/appium/appium/commit/d9b47bc86434c50382221397cf39c10e661c1ea9)), closes [#18277](https://github.com/appium/appium/issues/18277)
+
+
+
+
+
 # [2.0.0-beta.57](https://github.com/appium/appium/compare/appium@2.0.0-beta.56...appium@2.0.0-beta.57) (2023-03-08)
 
 

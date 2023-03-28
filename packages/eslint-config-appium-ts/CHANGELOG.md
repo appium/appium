@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/appium/appium/compare/@appium/eslint-config-appium-ts@0.2.0...@appium/eslint-config-appium-ts@0.3.0) (2023-03-28)
+
+
+### Bug Fixes
+
+* **eslint-config-appium-ts:** disable brace-style rule ([409192d](https://github.com/appium/appium/commit/409192d0630244e072534391eb702de063d54d17))
+
+
+* feat(eslint-config-appium-ts)!: enable for JS sources ([43df77f](https://github.com/appium/appium/commit/43df77f6b623462d20d90cb23a2d7577aa0c56de))
+
+
+### BREAKING CHANGES
+
+* This makes `@appium/eslint-config-appium-ts` also apply to JS sources _and_ requires a new peer dependency (`eslint-import-resolver-typescript`). The `main` file is now a `.js` file.  The module is expected to _extend_ `@appium/eslint-config-appium`, not replace it; consumers needn't extend both in their ESLint config.
+
+In the not-too-distant past, `@typescript-eslint/parser` was unable to understand docstrings in `.js` files. Evidently this is no longer true.
+
+I've rewritten and heavily commented the configuration explaining the intent behind everything.
+
+
+
+
+
 # 0.2.0 (2023-03-08)
 
 

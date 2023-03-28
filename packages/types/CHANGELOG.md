@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.2](https://github.com/appium/appium/compare/@appium/types@0.10.1...@appium/types@0.10.2) (2023-03-28)
+
+
+### Bug Fixes
+
+* **appium,types,base-driver,fake-driver,driver-test-support:** normalize constraint defaults ([3c9fa7b](https://github.com/appium/appium/commit/3c9fa7ba73b639e610e1f3d41d239a9402845b4c))
+* backwards-compatible fixes for TS v5.x ([4974403](https://github.com/appium/appium/commit/49744036619ecc239e0e6255a13d38cafd709920))
+* **base-driver,base-plugin,types:** update PluginCommand and DriverCommand types ([0dcd5fa](https://github.com/appium/appium/commit/0dcd5fa371af523c6527e55de4cff6cd472fde22))
+* **base-driver,types:** fix websocket-related types on AppiumServer ([34891f5](https://github.com/appium/appium/commit/34891f56572f18dd740558b2348d8818680dc709))
+* **types:** fix method map types ([5485f0b](https://github.com/appium/appium/commit/5485f0b9cd5c33dfeca61f1599edb40b2087479e))
+* **types:** update dependency type-fest to v3.7.0 ([6912fa1](https://github.com/appium/appium/commit/6912fa14f2a7d338f17e1bed060e959de7aba1d6))
+* **types:** update dependency type-fest to v3.7.1 ([bc860c7](https://github.com/appium/appium/commit/bc860c733a73760f0c42cbfb384e04d50c376d5e))
+
+
+
+
+
 ## [0.10.1](https://github.com/appium/appium/compare/@appium/types@0.10.0...@appium/types@0.10.1) (2023-03-08)
 
 

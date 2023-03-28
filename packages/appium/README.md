@@ -12,8 +12,9 @@
 Appium is an open-source, cross-platform test automation tool for native,
 hybrid, mobile web and desktop apps. Initially created to automate iOS and Android mobile
 applications Appium has grown to a full-featured platform that provides [WebDriver](https://www.w3.org/TR/webdriver/)-based automation possibilities for the whole set of different mobile and desktop platforms.
-See [Drivers Maintained By The Appium Team](#drivers-maintained-by-the-appium-team)
-and [Drivers Provided By Third Parties](#drivers-provided-by-third-parties) sections below for more details.
+See the full list of
+[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#drivers) and
+[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-drivers) drivers for more details.
 
 :bangbang: Major documentation revision in progress
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.9](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.8...@appium/execute-driver-plugin@3.0.9) (2023-03-28)
+
+
+### Bug Fixes
+
+* backwards-compatible fixes for TS v5.x ([4974403](https://github.com/appium/appium/commit/49744036619ecc239e0e6255a13d38cafd709920))
+
+
+
+
+
 ## [3.0.8](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.7...@appium/execute-driver-plugin@3.0.8) (2023-03-08)
 
 

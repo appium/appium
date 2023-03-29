@@ -53,4 +53,4 @@ targets:
       path: ./packages/docutils
 
 revision:
-  - branch: master
+  branch: master

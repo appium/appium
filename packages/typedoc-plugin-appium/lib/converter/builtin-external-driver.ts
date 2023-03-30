@@ -41,14 +41,14 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
     methods = findCommandMethodsInReflection(externalDriverRefl);
 
     if (!methods.size) {
-      this.log.error('No methods found in %s', NAME_EXTERNAL_DRIVER);
+      this.log.error('(%s) No methods found! This is a bug.', NAME_EXTERNAL_DRIVER);
       return methods;
     }
 
     this.log.verbose(
-      'Done; found %s in %s',
-      pluralize('builtin command method', methods.size, true),
-      NAME_EXTERNAL_DRIVER
+      '(%s) Done; found %s',
+      NAME_EXTERNAL_DRIVER,
+      pluralize('builtin command method', methods.size, true)
     );
 
     return methods;

@@ -74,7 +74,9 @@ export function convertMethodMap({
   const routeProps = filterChildrenByKind(methodMapRefl, ReflectionKind.Property);
 
   if (!routeProps.length) {
-    log.warn('No routes found in MethodMap; skipping');
+    if (methodMapRefl.overwrites?.name === 'BasePlugin') {
+      log.warn('(%s) MethodMap; skipping');
+    }
     return routes;
   }
 
@@ -152,7 +154,13 @@ export function convertMethodMap({
 
       commandSet.add(commandData);
 
-      log.verbose('Registered route %s %s for command "%s"', httpMethod, route, command);
+      log.verbose(
+        '(%s) Registered route %s %s for command "%s"',
+        parentRefl.name,
+        httpMethod,
+        route,
+        command
+      );
 
       routes.set(route, commandSet);
     }

@@ -95,17 +95,17 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     if (modules.length) {
       for (const mod of modules) {
         const log = this.log.createChildLogger(mod.name);
-        log.verbose('Begin conversion');
+        log.verbose('(%s) Begin conversion', mod.name);
         const cmdInfo = this.#convertModuleClasses(mod, log);
         projectCommands.set(mod.name, cmdInfo);
-        log.verbose('End conversion');
+        log.verbose('(%s) End conversion', mod.name);
       }
     } else {
       const log = this.log.createChildLogger(project.name);
-      log.verbose('Begin conversion');
+      log.verbose('(%s) Begin conversion', project.name);
       const cmdInfo = this.#convertModuleClasses(project, log);
       projectCommands.set(project.name, cmdInfo);
-      log.verbose('End conversion');
+      log.verbose('(%s) End conversion', project.name);
     }
 
     if (projectCommands.size) {
@@ -156,11 +156,15 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
       if (!classMethods.size) {
         // may or may not be expected
-        log.verbose('No methods found');
+        log.verbose('(%s) No command methods found', classRefl.name);
         continue;
       }
 
-      log.verbose('Analyzing %s', pluralize('method', classMethods.size, true));
+      log.verbose(
+        '(%s) Analyzing %s',
+        classRefl.name,
+        pluralize('method', classMethods.size, true)
+      );
 
       const newRouteMap = this.#findAndConvertNewMethodMap(classRefl, classMethods, log, isPlugin);
       routeMap = new Map([...routeMap, ...newRouteMap]);
@@ -189,9 +193,10 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       routeMap = new Map([...routeMap, ...overriddenRouteMap]);
 
       log.verbose(
-        'Done; found %s and %s',
-        pluralize('route', newRouteMap.size + overriddenRouteMap.size, true),
-        pluralize('execute method', newExecMethodData.size, true)
+        '(%s) Done; found %s and %s',
+        classRefl.name,
+        pluralize('total command', newRouteMap.size + overriddenRouteMap.size, true),
+        pluralize('total execute method', newExecMethodData.size, true)
       );
     }
 
@@ -214,7 +219,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
   ): ExecMethodDataSet {
     const execMethodMapRefl = findChildByGuard(parentRefl, isExecMethodDefReflection);
     if (!execMethodMapRefl) {
-      log.verbose('No execute method map found');
+      log.verbose('(%s) No execute method map found', parentRefl.name);
       return new Set();
     }
     return convertExecuteMethodMap({
@@ -248,7 +253,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       isMethodMapDeclarationReflection
     );
     if (!newMethodMapRefl) {
-      log.verbose('No new method map found');
+      log.verbose('(%s) No new method map found', parentRefl.name);
       return new Map();
     }
     return convertMethodMap({

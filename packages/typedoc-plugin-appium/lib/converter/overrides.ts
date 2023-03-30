@@ -60,7 +60,7 @@ export function convertOverrides({
     const builtinRoutes = builtinCommands.routesByCommandName.get(command);
     if (!builtinMethods.has(command) || !builtinRoutes) {
       // actually unknown method
-      log.verbose('No such route for method "%s"; not a command', command);
+      log.verbose('(%s) Method "%s" is not a registered command', parentRefl.name, command);
       continue;
     }
 
@@ -70,11 +70,12 @@ export function convertOverrides({
     for (const route of builtinRoutes) {
       const newCommandSet: CommandSet = new Set();
       // this must be defined, because if it wasn't then builtinRoutes would be empty and we'd continue the loop
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const commandSet = builtinCommands.routeMap.get(route)!;
       for (const commandData of commandSet) {
         const methodRefl = classMethods.get(command);
         if (!methodRefl) {
-          log.warn('No such method "%s"; this is a bug', command);
+          log.warn('(%s) No such method "%s"; this is a bug', parentRefl.name, command);
           continue;
         }
         const commentData = deriveComment({
@@ -89,7 +90,13 @@ export function convertOverrides({
             comment: commentData?.comment,
           },
         });
-        log.verbose('Linked route %s %s for command "%s"', commandData.httpMethod, route, command);
+        log.verbose(
+          '(%s) Linked command "%s" to route %s %s',
+          parentRefl.name,
+          command,
+          commandData.httpMethod,
+          route
+        );
         newCommandSet.add(newCommandData);
       }
       routes.set(route, newCommandSet);

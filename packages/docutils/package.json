@@ -67,7 +67,7 @@
     "semver": "7.3.8",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
-    "type-fest": "3.7.1",
+    "type-fest": "3.7.2",
     "typedoc": "0.23.28",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",

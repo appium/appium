@@ -25,6 +25,7 @@ labels:
     matcher:
       commits: '^chore.*?:'
       title: '^chore.*?:'
+      files: ['.github/**', '.husky/**', '.vscode/**', './.*', './*.js', '**/test/**']
 
   - label: 'SemVer:Breaking'
     sync: true
@@ -34,7 +35,7 @@ labels:
   - label: 'Dependencies'
     sync: true
     matcher:
-      files: ['**/package.json', '**/package-lock.json', '**/requirements.txt']
+      files: ['**/package.json', 'package-lock.json', '**/requirements.txt']
       author: 'renovate'
 
   - label: 'appium core'
@@ -51,6 +52,11 @@ labels:
     sync: true
     matcher:
       files: ['packages/eslint-config-appium/**']
+
+  - label: '@appium/eslint-config-appium-ts'
+    sync: true
+    matcher:
+      files: ['packages/eslint-config-appium-ts/**']
 
   - label: '@appium/base-plugin'
     sync: true

@@ -13,7 +13,12 @@
     "./packages/universal-xml-plugin",
     "./packages/relaxed-caps-plugin",
     "./packages/images-plugin",
-    "./packages/execute-driver-plugin"
+    "./packages/execute-driver-plugin",
+    "./packages/schema",
+    "./packages/driver-test-support",
+    "./packages/test-support",
+    "./packages/plugin-test-support",
+    "./packages/opencv"
   ],
   "name": "Appium",
   "out": "./packages/appium/docs/en/reference",

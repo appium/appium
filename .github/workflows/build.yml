@@ -1,5 +1,42 @@
 name: Appium Build
-on: [push, pull_request]
+on:
+  push:
+    # this list of paths could potentially impact the build
+    paths:
+      - '**/tsconfig*.json'
+      - 'packages/base-driver/static/**/*'
+      - 'packages/*/test/**'
+      - 'packages/*/bin'
+      - 'packages/**/*.ts'
+      - 'packages/**/*.json'
+      - 'packages/**/*.js'
+      - 'package*.json'
+      - 'lerna.json'
+      - '.npmrc'
+      - '.mocharc.js'
+      - '.github/workflows/build.yml' # this file
+      - '.eslintrc'
+      - '.eslintignore'
+      - '!**/sample-code/**'
+      - '!packages/*/docs/**'
+  pull_request:
+    paths:
+      - '**/tsconfig*.json'
+      - 'packages/base-driver/static/**/*'
+      - 'packages/*/test/**'
+      - 'packages/*/bin'
+      - 'packages/**/*.ts'
+      - 'packages/**/*.json'
+      - 'packages/**/*.js'
+      - 'package*.json'
+      - 'lerna.json'
+      - '.npmrc'
+      - '.mocharc.js'
+      - '.github/workflows/build.yml' # this file
+      - '.eslintrc'
+      - '.eslintignore'
+      - '!**/sample-code/**'
+      - '!packages/*/docs/**'
 
 permissions:
   contents: read

@@ -1,16 +1,38 @@
 name: Build Docs
 
 on:
-  pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
-      - closed
+  push:
+    # this list of paths could potentially impact doc generation.
     paths:
-      - './packages/appium/docs/**'
-      - './packages/docutils/**'
-      - './packages/typedoc-plugin-appium/**'
+      - '**/typedoc.json'
+      - '**/tsconfig*.json'
+      - '**/package*.json'
+      - '**/*mkdocs*.ya?ml'
+      - 'packages/docutils/requirements.txt'
+      - 'packages/*/README.md'
+      - 'packages/*/docs/**'
+      - 'packages/*/**/*.ts'
+      - 'packages/*/**/*.js'
+      - '.github/workflows/docs.yml' # this file
+      - '!**/test/**'
+      - '!**/sample-code/**'
+
+  pull_request:
+    paths:
+      - '**/typedoc.json'
+      - '**/tsconfig*.json'
+      - '**/package*.json'
+      - '**/*mkdocs*.ya?ml'
+      - 'packages/docutils/requirements.txt'
+      - 'packages/*/README.md'
+      - 'packages/*/docs/**'
+      - 'packages/*/**/*.ts'
+      - 'packages/*/**/*.js'
+      - '.github/workflows/docs.yml' # this file
+      - '!**/test/**'
+      - '!**/sample-code/**'
+
+    branches: [master]
 
 concurrency: preview-${{ github.ref }}
 
@@ -20,12 +42,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3 # v3
-      - name: Install dependencies (node)
+      - name: Install dependencies (Node.js)
         uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:
           useRollingCache: true
           install-command: npm ci
-      - name: Install dependencies (python)
+      - name: Install dependencies (Python)
         run: pip install -r packages/docutils/requirements.txt
       - name: Configure Git User
         run: |
@@ -34,7 +56,7 @@ jobs:
       - name: Build Docs
         run: npm run docs:preview
       - name: Deploy Preview
-        if: ${{ github.repository == 'appium/appium' }}
-        uses: rossjrw/pr-preview-action@9dac5c4777c535516ebf819f93aeadac70f66488 # v1
+        uses: rossjrw/pr-preview-action@v1 # v1
         with:
           source-dir: ./packages/appium/docs/site
+          custom-url: 'appium.github.io/appium'

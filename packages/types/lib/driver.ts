@@ -1,13 +1,13 @@
 import type {EventEmitter} from 'events';
 import {Entries} from 'type-fest';
-import {ActionSequence, Element} from './action';
+import {ActionSequence} from './action';
 import {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
 import {ExecuteMethodMap, MethodMap} from './command';
 import {ServerArgs} from './config';
 import {HTTPHeaders, HTTPMethod} from './http';
 import {AppiumLogger} from './logger';
 import {AppiumServer, UpdateServerCallback} from './server';
-import {Class, StringRecord} from './util';
+import {Class, StringRecord, Element} from './util';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`

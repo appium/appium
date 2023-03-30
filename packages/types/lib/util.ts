@@ -72,3 +72,20 @@ export type AnyCase<T extends string> = string extends T
   : T extends `${infer F}${infer R}`
   ? `${Uppercase<F> | Lowercase<F>}${AnyCase<R>}`
   : '';
+
+/**
+ * A W3C element.
+ * @see https://www.w3.org/TR/webdriver1/#elements
+ */
+export interface Element<Id extends string = string> {
+  /**
+   * For backwards compatibility with JSONWP only.
+   * @deprecated Use {@linkcode element-6066-11e4-a52e-4f735466cecf} instead.
+   */
+  ELEMENT?: Id;
+  /**
+   * This property name is the string constant W3C element identifier used to identify an object as
+   * a W3C element.
+   */
+  'element-6066-11e4-a52e-4f735466cecf': Id;
+}

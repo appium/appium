@@ -60,6 +60,22 @@
       ],
       "sourceMaps": true,
       "type": "node"
+    },
+    {
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/packages/appium",
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "appium-docs build",
+      "program": "${workspaceFolder}/packages/docutils/build/lib/cli/index.js",
+      "args": ["build", "--serve", "--mkdocs-yml", "./docs/mkdocs-en.yml", "-L", "debug"],
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**",
+        "**/node_modules/lodash/**",
+        "**/node_modules/**/handlebars/**"
+      ],
+      "sourceMaps": true,
+      "type": "node"
     }
   ],
   "version": "0.2.0"

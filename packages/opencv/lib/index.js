@@ -360,12 +360,12 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  * as an image (useful for debugging purposes)
  * @property {string} method [TM_CCOEFF_NORMED] The name of the template matching method.
  * Acceptable values are:
- * - TM_CCOEFF
- * - TM_CCOEFF_NORMED (default)
- * - TM_CCORR
- * - TM_CCORR_NORMED
- * - TM_SQDIFF
- * - TM_SQDIFF_NORMED
+ * - `TM_CCOEFF`
+ * - `TM_CCOEFF_NORMED` (default)
+ * - `TM_CCORR`
+ * - `TM_CCORR_NORMED`
+ * - `TM_SQDIFF`
+ * - `TM_SQDIFF_NORMED`
  * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
  * for more details.
  */
@@ -475,7 +475,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  */
 
 /**
- * @typedef {'TM_CCOEFF'|'TM_CCOEFF_NORMED|'TM_CCORR'|'TM_CCORR_NORMED'|'TM_SQDIFF'|'TMSQDIFF_NORMED'} OccurrenceResultMethod
+ * @typedef {'TM_CCOEFF'|'TM_CCOEFF_NORMED'|'TM_CCORR'|'TM_CCORR_NORMED'|'TM_SQDIFF'|'TMSQDIFF_NORMED'} OccurrenceResultMethod
  */
 
 /**
@@ -492,12 +492,12 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  * - only when multiple option is passed
  * @property {OccurrenceResultMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
  * Acceptable values are:
- * - TM_CCOEFF
- * - TM_CCOEFF_NORMED (default)
- * - TM_CCORR
- * - TM_CCORR_NORMED
- * - TM_SQDIFF
- * - TM_SQDIFF_NORMED
+ * - `TM_CCOEFF`
+ * - `TM_CCOEFF_NORMED` (default)
+ * - `TM_CCORR`
+ * - `TM_CCORR_NORMED`
+ * - `TM_SQDIFF`
+ * - `TM_SQDIFF_NORMED`
  * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
  * for more details.
  */

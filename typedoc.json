@@ -19,7 +19,8 @@
     "./packages/test-support",
     "./packages/plugin-test-support",
     "./packages/opencv",
-    "./packages/strongbox"
+    "./packages/strongbox",
+    "./packages/docutils"
   ],
   "name": "Appium",
   "out": "./packages/appium/docs/en/reference",

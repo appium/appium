@@ -94,18 +94,17 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
     const modules = project.getChildrenByKind(ReflectionKind.Module);
     if (modules.length) {
       for (const mod of modules) {
-        const log = this.log.createChildLogger(mod.name);
-        log.verbose('(%s) Begin conversion', mod.name);
-        const cmdInfo = this.#convertModuleClasses(mod, log);
+        this.log.verbose('(%s) Begin conversion', mod.name);
+        const cmdInfo = this.#convertModuleClasses(mod, this.log);
         projectCommands.set(mod.name, cmdInfo);
-        log.verbose('(%s) End conversion', mod.name);
+        this.log.verbose('(%s) End conversion', mod.name);
       }
     } else {
-      const log = this.log.createChildLogger(project.name);
-      log.verbose('(%s) Begin conversion', project.name);
-      const cmdInfo = this.#convertModuleClasses(project, log);
+      this.log.createChildLogger(project.name);
+      this.log.verbose('(%s) Begin conversion', project.name);
+      const cmdInfo = this.#convertModuleClasses(project, this.log);
       projectCommands.set(project.name, cmdInfo);
-      log.verbose('(%s) End conversion', project.name);
+      this.log.verbose('(%s) End conversion', project.name);
     }
 
     if (projectCommands.size) {

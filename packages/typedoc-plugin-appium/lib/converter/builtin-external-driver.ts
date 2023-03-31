@@ -20,15 +20,6 @@ export const NAME_EXTERNAL_DRIVER = 'ExternalDriver';
  * Converts `@appium/types` into a `KnownMethods`, if it can.
  */
 export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> {
-  /**
-   * Creates a child logger for this instance
-   * @param ctx Typedoc Context
-   * @param log Logger
-   */
-  constructor(protected ctx: Context, log: AppiumPluginLogger) {
-    super(ctx, log.createChildLogger(NAME_TYPES_MODULE));
-  }
-
   #convertMethodDeclarations(refl: AppiumTypesReflection): KnownMethods {
     const externalDriverRefl = refl.getChildByName(NAME_EXTERNAL_DRIVER);
     let methods: KnownMethods = new Map();

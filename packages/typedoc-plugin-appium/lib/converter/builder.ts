@@ -73,14 +73,9 @@ export function createExtensionReflection(
   const packageTitles = ctx.converter.application.options.getValue(
     'packageTitles'
   ) as PackageTitle[];
-  log.verbose(`Value of packageTitles: %O`, packageTitles);
+  const packageTitle = packageTitles.find((p) => p.name === name)?.title;
   // TODO: parent.name may not be right here
-  const extRefl = new ExtensionReflection(
-    name,
-    ctx.project,
-    moduleCmds,
-    packageTitles.find((p) => p.name === name)?.title
-  );
+  const extRefl = new ExtensionReflection(name, ctx.project, moduleCmds, packageTitle);
   /**
    * See note in {@link createCommandReflection} above about this call
    */

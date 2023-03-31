@@ -38,7 +38,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
     log: AppiumPluginLogger,
     protected readonly knownBuiltinMethods: KnownMethods
   ) {
-    super(ctx, log.createChildLogger(NAME_BUILTIN_COMMAND_MODULE));
+    super(ctx, log);
   }
 
   /**

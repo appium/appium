@@ -780,7 +780,8 @@ export interface Driver<
  * External drivers must subclass `BaseDriver`, and can implement any of these methods.
  * None of these are implemented within Appium itself.
  */
-export interface ExternalDriver<C extends Constraints = Constraints> extends Driver<C> {
+export interface ExternalDriver<C extends Constraints = Constraints, Ctx = string>
+  extends Driver<C> {
   // WebDriver spec commands
 
   /**
@@ -1826,7 +1827,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    *
    * @returns The context name
    */
-  getCurrentContext?(): Promise<string | null>;
+  getCurrentContext?(): Promise<Ctx | null>;
 
   /**
    * Switch to a context by name
@@ -1842,7 +1843,7 @@ export interface ExternalDriver<C extends Constraints = Constraints> extends Dri
    *
    * @returns The list of context names
    */
-  getContexts?(): Promise<string[]>;
+  getContexts?(): Promise<Ctx[]>;
 
   /**
    * Get the index of an element on the page

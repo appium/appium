@@ -3,6 +3,8 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "paths": {
       "@appium/support": ["../support"],
       "@appium/types": ["../types"]

@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import {SpawnOptions, spawn} from 'node:child_process';
 import path from 'node:path';
-import type {SubProcess} from 'teen_process';
 
 /**
  * Computes a relative path, prepending `./`
@@ -19,10 +18,9 @@ export const relative = _.curry(
  * A stopwatch-like thing
  *
  * Used for displaying elapsed time in milliseconds
- * @param id - Unique identifier
  * @returns Function that returns the elapsed time in milliseconds
  */
-export function stopwatch(id: string) {
+export function stopwatch(id: string = _.uniqueId()) {
   const start = Date.now();
   stopwatch.cache.set(id, start);
   return () => {
@@ -61,14 +59,14 @@ export const argify: (obj: Record<string, string | number | boolean | undefined>
     _.entries,
     _.flatten,
     (list) =>
-      list.map((value, idx) => {
-        if (value === true) {
-          return `--${value}`;
-        } else if (value === false || value === undefined) {
-          return;
-        }
-        return idx % 2 === 0 ? `--${value}` : value;
-      }),
+      list.map((value, idx) =>
+        // if (value === true) {
+        //   return `--${value}`;
+        // } else if (value === false || value === undefined) {
+        //   return;
+        // }
+        idx % 2 === 0 ? `--${value}` : value
+      ),
     _.compact
   );
 

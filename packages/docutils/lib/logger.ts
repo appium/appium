@@ -15,10 +15,9 @@ import consola, {
   FancyReporter,
   FancyReporterOptions,
   Consola,
-  ConsolaOptions,
   LogLevel,
 } from 'consola';
-import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants.js';
 import _ from 'lodash';
 
 /**

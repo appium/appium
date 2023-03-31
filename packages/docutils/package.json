@@ -62,7 +62,7 @@
     "lilconfig": "2.1.0",
     "lodash": "4.17.21",
     "log-symbols": "4.1.0",
-    "pkg-dir": "5.0.0",
+    "pkg-dir": "7.0.0",
     "read-pkg": "5.2.0",
     "semver": "7.4.0",
     "source-map-support": "0.5.21",
@@ -72,6 +72,7 @@
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "4.9.5",
+    "watcher": "2.2.2",
     "yaml": "2.2.1",
     "yargs": "17.7.1",
     "yargs-parser": "21.1.1"
@@ -79,6 +80,18 @@
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./build/lib/index.d.ts",
+        "default": "./build/lib/index.js"
+      }
+    }
+  },
+  "typedoc": {
+    "entryPoint": "lib/index.ts"
   },
   "publishConfig": {
     "access": "public"

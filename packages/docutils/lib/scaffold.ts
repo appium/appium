@@ -4,16 +4,16 @@
  */
 
 import {fs} from '@appium/support';
-import {getLogger} from './logger';
-import path from 'node:path';
 import {createPatch} from 'diff';
-import {NormalizedPackageJson} from 'read-pkg';
-import {JsonValue, JsonObject} from 'type-fest';
-import {DocutilsError} from './error';
-import {relative} from './util';
 import _ from 'lodash';
-import {stringifyJson, readPackageJson, safeWriteFile} from './fs';
-import {NAME_ERR_ENOENT, NAME_ERR_EEXIST} from './constants';
+import path from 'node:path';
+import {NormalizedPackageJson} from 'read-pkg';
+import {JsonObject, JsonValue} from 'type-fest';
+import {NAME_ERR_EEXIST, NAME_ERR_ENOENT} from './constants.js';
+import {DocutilsError} from './error.js';
+import {readPackageJson, safeWriteFile, stringifyJson} from './fs.js';
+import {getLogger} from './logger.js';
+import {relative} from './util.js';
 
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
@@ -133,9 +133,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
           log.info(`${relativeDest} already exists; continuing...`);
           log.debug(`Tried to apply patch:\n\n${patch}`);
         } else {
-          throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`, {
-            cause: err,
-          });
+          throw new DocutilsError(`Could not write to ${relativeDest}. Reason: ${err.message}`);
         }
       }
     } else {

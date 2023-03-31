@@ -14,11 +14,11 @@ import {
   DEFAULT_SERVE_PORT,
   NAME_BIN,
   NAME_MKDOCS_YML,
-} from '../constants';
-import {DocutilsError} from '../error';
-import {findMkDocsYml, readPackageJson, whichMike} from '../fs';
-import {getLogger} from '../logger';
-import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
+} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {findMkDocsYml, readPackageJson, whichMike} from '../fs.js';
+import {getLogger} from '../logger.js';
+import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util.js';
 
 const log = getLogger('builder:deploy');
 
@@ -89,7 +89,7 @@ export async function deploy({
   serveOpts,
   execOpts,
 }: DeployOpts = {}) {
-  const stop = stopwatch('deploy');
+  const stop = stopwatch();
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
     throw new DocutilsError(

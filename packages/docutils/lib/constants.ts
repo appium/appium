@@ -2,11 +2,16 @@
  * Constants used across various modules in this package
  * @module
  */
-import {LogLevel} from 'consola';
-import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';
+import consola from 'consola';
+import {readFileSync} from 'node:fs';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {PackageJson} from 'type-fest';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const {LogLevel} = consola;
 
 /**
  * CLI executable name
@@ -158,3 +163,5 @@ export const DEFAULT_NAV_HEADER = 'Reference';
  * If the user does not specify a site directory _and_ the `mkdocs.yml` doesn't either, use this dir.
  */
 export const DEFAULT_SITE_DIR = 'site';
+
+export {LogLevel};

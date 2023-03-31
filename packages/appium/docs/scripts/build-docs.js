@@ -10,7 +10,6 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {buildReferenceDocs, deploy, updateNav, buildSite} = require('@appium/docutils');
 const {
   log,
   LANGS,
@@ -35,6 +34,7 @@ const rebase = push;
 
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
+  const {buildReferenceDocs, deploy, updateNav, buildSite} = await import('@appium/docutils');
 
   await copyAssets();
   await buildReferenceDocs();

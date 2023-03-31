@@ -3,17 +3,16 @@
  * @module
  */
 
-import loadTs from '@sliphua/lilconfig-ts-loader';
-import {LogLevel} from 'consola';
+import loadTs = require('@sliphua/lilconfig-ts-loader');
 import {lilconfig, Loader} from 'lilconfig';
 import _ from 'lodash';
 import path from 'node:path';
 import YAML from 'yaml';
 import parser from 'yargs-parser';
 import {hideBin} from 'yargs/helpers';
-import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
-import {getLogger, initLogger, isLogLevelString} from '../logger';
-import {relative} from '../util';
+import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants.js';
+import {getLogger, initLogger, isLogLevelString} from '../logger.js';
+import {relative} from '../util.js';
 
 const log = getLogger('config');
 
@@ -76,7 +75,7 @@ export async function loadConfig(filepath?: string, cwd = process.cwd()): Promis
     loaders: {
       '.yaml': loadYaml,
       '.yml': loadYaml,
-      '.ts': loadTs,
+      '.ts': loadTs as unknown as Loader,
       '.js': loadEsm,
       '.cjs': loadEsm,
       '.mjs': loadEsm,

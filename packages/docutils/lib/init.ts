@@ -11,16 +11,16 @@ import {
   NAME_PYTHON,
   REQUIREMENTS_TXT_PATH,
   NAME_TYPEDOC_JSON,
-} from './constants';
+} from './constants.js';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
-import {DocutilsError} from './error';
-import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
-import {getLogger} from './logger';
-import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
+import {DocutilsError} from './error.js';
+import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold.js';
+import {getLogger} from './logger.js';
+import {MkDocsYml, TsConfigJson, TypeDocJson} from './model.js';
 import _ from 'lodash';
-import {stringifyJson5, stringifyYaml} from './fs';
+import {stringifyJson5, stringifyYaml} from './fs.js';
 
 /**
  * Data for the base `mkdocs.yml` file

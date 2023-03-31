@@ -6,17 +6,21 @@
  * @module
  */
 
-import {getLogger} from '../logger';
+import {getLogger} from '../logger.js';
 
 import _ from 'lodash';
 import {hideBin} from 'yargs/helpers';
 import yargs from 'yargs/yargs';
-import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
-import {DocutilsError} from '../error';
-import {build, init, validate} from './command';
-import {findConfig} from './config';
+import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants.js';
+import {DocutilsError} from '../error.js';
+import {build, init, validate} from './command/index.js';
+import {findConfig} from './config.js';
 import {fs} from '@appium/support';
 import {sync as readPkg} from 'read-pkg';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const pkg = readPkg({cwd: fs.findRoot(__dirname)});
 
@@ -88,9 +92,8 @@ export async function main(argv = hideBin(process.argv)) {
     .parseAsync();
 }
 
-if (require.main === module) {
-  // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-await-to-callbacks
-  main().catch((err) => {
+try {
+  main();
+} catch (err) {
     log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);
-  });
 }

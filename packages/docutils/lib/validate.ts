@@ -28,8 +28,8 @@ import {
   NAME_TYPEDOC_JSON,
   NAME_TYPESCRIPT,
   REQUIREMENTS_TXT_PATH,
-} from './constants';
-import {DocutilsError} from './error';
+} from './constants.js';
+import {DocutilsError} from './error.js';
 import {
   findPkgDir,
   findMkDocsYml,
@@ -39,10 +39,10 @@ import {
   whichNpm,
   whichPython,
   readMkDocsYml,
-} from './fs';
-import {getLogger} from './logger';
-import {MkDocsYml, PipPackage, TypeDocJson} from './model';
-import {relative} from './util';
+} from './fs.js';
+import {getLogger} from './logger.js';
+import {MkDocsYml, PipPackage, TypeDocJson} from './model.js';
+import {relative} from './util.js';
 
 /**
  * Matches the Python version string from `python --version`
@@ -262,7 +262,7 @@ export class DocutilsValidator extends EventEmitter {
       this.pkgDir ??
       (this.pkgDir = this.packageJsonPath
         ? path.dirname(this.packageJsonPath)
-        : await findPkgDir(this.cwd))
+        : await findPkgDir({cwd: this.cwd}))
     );
   }
 

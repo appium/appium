@@ -14,8 +14,8 @@ import {
   NAME_BIN,
   NAME_MKDOCS_YML,
   NAME_TYPEDOC_JSON,
-} from '../constants';
-import {DocutilsError} from '../error';
+} from '../constants.js';
+import {DocutilsError} from '../error.js';
 import {
   findDirsIn,
   findMkDocsYml,
@@ -24,10 +24,10 @@ import {
   readYaml,
   safeWriteFile,
   stringifyYaml,
-} from '../fs';
-import {getLogger} from '../logger';
-import {MkDocsYml, MkDocsYmlNav} from '../model';
-import {relative} from '../util';
+} from '../fs.js';
+import {getLogger} from '../logger.js';
+import {MkDocsYml, MkDocsYmlNav} from '../model.js';
+import {relative} from '../util.js';
 
 const log = getLogger('builder:nav');
 

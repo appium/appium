@@ -9,10 +9,10 @@ import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import path from 'node:path';
 import {JsonValue} from 'type-fest';
 import {fs} from '@appium/support';
-import * as JSON5 from 'json5';
+import JSON5 from 'json5';
 import _ from 'lodash';
-import _pkgDir from 'pkg-dir';
-import {getLogger} from './logger';
+import {packageDirectory} from 'pkg-dir';
+import {getLogger} from './logger.js';
 import {Application, TypeDocReader} from 'typedoc';
 import {
   NAME_TYPEDOC_JSON,
@@ -22,9 +22,9 @@ import {
   NAME_NPM,
   NAME_PYTHON,
   NAME_MIKE,
-} from './constants';
-import {DocutilsError} from './error';
-import {MkDocsYml} from './model';
+} from './constants.js';
+import {DocutilsError} from './error.js';
+import {MkDocsYml} from './model.js';
 
 const log = getLogger('fs');
 
@@ -33,7 +33,7 @@ const log = getLogger('fs');
  *
  * Caches result
  */
-export const findPkgDir = _.memoize(_pkgDir);
+export const findPkgDir = _.memoize(packageDirectory);
 
 /**
  * Stringifies a thing into a YAML
@@ -88,7 +88,7 @@ export async function findInPkgDir(
   filename: string,
   cwd = process.cwd()
 ): Promise<string | undefined> {
-  const pkgDir = await findPkgDir(cwd);
+  const pkgDir = await findPkgDir({cwd});
   if (!pkgDir) {
     return;
   }
@@ -135,7 +135,7 @@ async function _readPkgJson(
   cwd: string,
   normalize?: boolean
 ): Promise<{pkgPath: string; pkg: PackageJson | NormalizedPackageJson}> {
-  const pkgDir = await findPkgDir(cwd);
+  const pkgDir = await findPkgDir({cwd});
   if (!pkgDir) {
     throw new DocutilsError(
       `Could not find a ${NAME_PACKAGE_JSON} near ${cwd}; please create it before using this utility`

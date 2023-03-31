@@ -55,6 +55,12 @@
           }
         ]
       }
+    },
+    {
+      "files": "./packages/docutils/**/*.ts",
+      "parserOptions": {
+        "sourceType": "module"
+      }
     }
   ]
 }

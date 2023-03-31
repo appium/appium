@@ -3,7 +3,7 @@
  * @module
  */
 
-export * from './deploy';
-export * from './site';
-export * from './reference';
-export * from './nav';
+export * from './deploy.js';
+export * from './site.js';
+export * from './reference.js';
+export * from './nav.js';

@@ -4,8 +4,7 @@
  */
 
 import {exec} from 'teen_process';
-// eslint-disable-next-line import/no-unresolved
-import log from './logger';
+import log from './logger.js';
 
 const DEFAULT_REMOTE = 'origin';
 const DEFAULT_BRANCH = 'gh-pages';

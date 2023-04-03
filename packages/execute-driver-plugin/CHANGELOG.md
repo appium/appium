@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.10](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.9...@appium/execute-driver-plugin@3.0.10) (2023-04-03)
+
+**Note:** Version bump only for package @appium/execute-driver-plugin
+
+
+
+
+
 ## [3.0.9](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.8...@appium/execute-driver-plugin@3.0.9) (2023-03-28)
 
 

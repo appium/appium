@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.2](https://github.com/appium/appium/compare/@appium/docutils@0.3.1...@appium/docutils@0.3.2) (2023-04-03)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v3.7.2 ([5580539](https://github.com/appium/appium/commit/55805390b5a0c6aa718bb357b30f66651f3db281))
+
+
+
+
+
 ## [0.3.1](https://github.com/appium/appium/compare/@appium/docutils@0.3.0...@appium/docutils@0.3.1) (2023-03-28)
 
 

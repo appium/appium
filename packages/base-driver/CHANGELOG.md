@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.5](https://github.com/appium/appium/compare/@appium/base-driver@9.3.4...@appium/base-driver@9.3.5) (2023-04-03)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v3.7.2 ([5580539](https://github.com/appium/appium/commit/55805390b5a0c6aa718bb357b30f66651f3db281))
+
+
+
+
+
 ## [9.3.4](https://github.com/appium/appium/compare/@appium/base-driver@9.3.3...@appium/base-driver@9.3.4) (2023-03-28)
 
 

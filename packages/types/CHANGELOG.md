@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.10.3](https://github.com/appium/appium/compare/@appium/types@0.10.2...@appium/types@0.10.3) (2023-04-03)
+
+
+### Bug Fixes
+
+* **types:** make getContext & getContexts generic ([296c29a](https://github.com/appium/appium/commit/296c29ad8499d8ac132a785580d71617fdaf3e18))
+* **types:** update dependency type-fest to v3.7.2 ([5580539](https://github.com/appium/appium/commit/55805390b5a0c6aa718bb357b30f66651f3db281))
+
+
+
+
+
 ## [0.10.2](https://github.com/appium/appium/compare/@appium/types@0.10.1...@appium/types@0.10.2) (2023-03-28)
 
 

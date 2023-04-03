@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.9](https://github.com/appium/appium/compare/@appium/support@3.1.8...@appium/support@3.1.9) (2023-04-03)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v3.7.2 ([5580539](https://github.com/appium/appium/commit/55805390b5a0c6aa718bb357b30f66651f3db281))
+
+
+
+
+
 ## [3.1.8](https://github.com/appium/appium/compare/@appium/support@3.1.7...@appium/support@3.1.8) (2023-03-28)
 
 

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.59](https://github.com/appium/appium/compare/appium@2.0.0-beta.58...appium@2.0.0-beta.59) (2023-04-03)
+
+
+### Bug Fixes
+
+* **appium:** update dependency package-changed to v3 ([bbcaec9](https://github.com/appium/appium/commit/bbcaec9c05e93d522ae72e30368cecc876e16db7))
+* **types:** update dependency type-fest to v3.7.2 ([5580539](https://github.com/appium/appium/commit/55805390b5a0c6aa718bb357b30f66651f3db281))
+
+
+
+
+
 # [2.0.0-beta.58](https://github.com/appium/appium/compare/appium@2.0.0-beta.57...appium@2.0.0-beta.58) (2023-03-28)
 
 

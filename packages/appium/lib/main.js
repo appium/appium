@@ -114,17 +114,6 @@ async function logStartupInfo(args) {
 }
 
 /**
- * Logs the address and port the server is listening on
- * @param {string} address - Address
- * @param {number} port - Port
- * @returns {void}
- */
-function logServerPort(address, port) {
-  let logMessage = `Appium REST http interface listener started on ` + `${address}:${port}`;
-  logger.info(logMessage);
-}
-
-/**
  * Gets a list of `updateServer` functions from all extensions
  * @param {DriverNameMap} driverClasses
  * @param {PluginNameMap} pluginClasses
@@ -374,7 +363,10 @@ async function main(args) {
     });
   }
 
-  logServerPort(parsedArgs.address, parsedArgs.port);
+  logger.info(
+    `Appium REST http interface listener started on ${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
+  );
+
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);
 

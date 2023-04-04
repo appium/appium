@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.4](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.5.3...@appium/typedoc-plugin-appium@0.5.4) (2023-04-04)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** allow ts v5 as peer dep ([822206b](https://github.com/appium/appium/commit/822206be204599390c2f97b9b8d6c618ff53cb89))
+
+
+
+
+
 ## [0.5.3](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.5.2...@appium/typedoc-plugin-appium@0.5.3) (2023-04-03)
 
 

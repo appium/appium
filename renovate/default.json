@@ -19,6 +19,7 @@
       "matchPackageNames": [
         "@types/wrap-ansi",
         "chalk",
+        "conf",
         "del",
         "delay",
         "env-paths",

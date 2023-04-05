@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.5.4...@appium/typedoc-plugin-appium@0.6.0) (2023-04-05)
+
+
+### Features
+
+* **typedoc-plugin-appium:** enable comment derivation via reflection types ([b808dc8](https://github.com/appium/appium/commit/b808dc866d6587269d8adbe8d354471b3a1ba6de))
+
+
+
+
+
 ## [0.5.4](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.5.3...@appium/typedoc-plugin-appium@0.5.4) (2023-04-04)
 
 

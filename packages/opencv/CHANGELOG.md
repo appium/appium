@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.10](https://github.com/appium/appium/compare/@appium/opencv@2.0.9...@appium/opencv@2.0.10) (2023-04-05)
+
+
+### Bug Fixes
+
+* **opencv:** fix a type error causing typedoc problems ([bb11d1c](https://github.com/appium/appium/commit/bb11d1cfe9681ccd457f0677118725a6e9ddd72f))
+
+
+
+
+
 ## [2.0.9](https://github.com/appium/appium/compare/@appium/opencv@2.0.8...@appium/opencv@2.0.9) (2023-04-03)
 
 **Note:** Version bump only for package @appium/opencv

@@ -57,6 +57,7 @@
     "rebuild": "run-s clean build",
     "reinstall": "run-s clean clean:deps ci",
     "reinstall:angry": "npm run clean:dangerously && npm ci",
+    "release": "lerna publish",
     "stage-synced-pkgs": "git add -A packages/appium/README.md \"packages/*/package.json\"",
     "start": "appium",
     "sync-pkgs": "run-p sync-pkgs:*",

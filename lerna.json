@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/lerna",
   "command": {
     "run": {
       "concurrency": 8
@@ -12,6 +13,9 @@
     },
     "add": {
       "exact": true
+    },
+    "publish": {
+      "message": "chore: publish"
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],

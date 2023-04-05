@@ -1,5 +1,5 @@
 import {Comment} from 'typedoc';
-import {isDeclarationReflection} from '../../guards';
+import {isDeclarationReflection, isReflectionType} from '../../guards';
 import {CommentSource} from '../types';
 import {CommentFinder} from './types';
 
@@ -24,11 +24,20 @@ const MethodCommentFinders: Readonly<CommentFinder[]> = [
   },
   {
     /**
-     * @returns The comment from the method's signature (may be inherited)
+     * @returns The comment from the method's signature (may be inherited or from a `ReflectionType`'s declaration)
      */
     getter: ({refl}) => {
       if (isDeclarationReflection(refl)) {
-        return refl.getAllSignatures().find((sig) => sig.comment?.summary)?.comment;
+        let comment = refl.getAllSignatures().find((sig) => sig.comment?.summary)?.comment;
+        if (comment) {
+          return comment;
+        }
+        if (isReflectionType(refl.type)) {
+          comment = refl.type.declaration
+            .getAllSignatures()
+            .find((sig) => sig.comment?.summary)?.comment;
+        }
+        return comment;
       }
     },
     commentSource: CommentSource.MethodSignature,

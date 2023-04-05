@@ -75,7 +75,7 @@ export function deriveComment(opts: DeriveCommentOptions = {}): CommentData | un
   const finalBlockTags: CommentTag[] = [];
   for (const tags of Object.values(tagsByTag)) {
     if (tags.length === 1) {
-      finalBlockTags.push(_.first(tags)!);
+      finalBlockTags.push(tags[0]);
     } else if (tags.length > 1) {
       // prefer a tag with content
       const tag = tags.find((t) => t.content.length) ?? tags[0];

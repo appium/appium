@@ -7,6 +7,7 @@ import {
   ProjectReflection,
   ReferenceType,
   ReflectionKind,
+  ReflectionType,
   SignatureReflection,
 } from 'typedoc';
 import {
@@ -136,6 +137,31 @@ describe('@appium/typedoc-plugin-appium', function () {
           const {comment, commentSource} = deriveComment({refl: methodRefl, knownMethods})!;
           expect(comment).to.equal(methodRefl.comment);
           expect(commentSource).to.equal(CommentSource.Method);
+        });
+      });
+    });
+
+    describe('when provided a DeclarationReflection which is of kind Property', function () {
+      describe('when provided a reflection without a visible comment which has a reflection type of a declaration having a visible comment', function () {
+        // Note: This is how appium-xcuitest-driver works (though is not generally a recommended strategy).  Each method is a property on the driver which is assigned to a method contained in some mixin.  The method has the docstring (or more precisely, its signature does).
+        let otherComment: Comment;
+        let otherRefl: DeclarationReflection;
+        let propRefl: DeclarationReflection;
+        beforeEach(function () {
+          propRefl = new DeclarationReflection('from', ReflectionKind.Property);
+          otherRefl = new DeclarationReflection('to', ReflectionKind.Method);
+          propRefl.type = new ReflectionType(otherRefl);
+
+          const sigRefl = new SignatureReflection('to', ReflectionKind.CallSignature, otherRefl);
+          otherRefl.signatures = [sigRefl];
+          otherComment = new Comment([{kind: 'text', text: 'a description of the method'}]);
+          sigRefl.comment = otherComment;
+        });
+
+        it('should use the comment from the reference type declaration', function () {
+          const {comment, commentSource} = deriveComment({refl: propRefl})!;
+          expect(comment).to.eql(otherComment);
+          expect(commentSource).to.equal(CommentSource.MethodSignature);
         });
       });
     });

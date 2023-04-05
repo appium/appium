@@ -8,7 +8,7 @@ import {CommentSource} from '../types';
 const nullFinder: CommentFinder = {
   /**
    *
-   * @returns A comment probably from the method map itself
+   * @returns A comment which was directly provided
    */
   getter: ({comment}) => comment,
   commentSource: CommentSource.OtherComment,

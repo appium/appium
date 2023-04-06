@@ -142,34 +142,43 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
 }
 
 /**
- * Validates the custom value of appium home path
+ * Prepares and validates appium home path folder
  *
- * @param {string} name The name of the appiumHome source (either config or environment)
+ * @param {string} name The name of the appium home source (needed for error messages)
  * @param {string} appiumHome The actual value to be verified
  * @returns {Promise<string>} Same appiumHome value
  * @throws {Error} If the validation has failed
  */
-async function validateAppiumHome(name, appiumHome) {
+async function prepareAppiumHome(name, appiumHome) {
   let stat;
   try {
     stat = await fs.stat(appiumHome);
   } catch (e) {
+    let err = e;
+    if (e.code === 'ENOENT') {
+      try {
+        await fs.mkdir(appiumHome, {recursive: true});
+        return appiumHome;
+      } catch (e1) {
+        err = e1;
+      }
+    }
     throw new Error(
-      `The path provided in ${name} (${appiumHome}) must be pointing ` +
+      `The path '${appiumHome}' provided in ${name} must be pointing ` +
       `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
-      `Original error: ${e.message}`
+      `Original error: ${err.message}`
     );
   }
   if (!stat.isDirectory()) {
     throw new Error(
-      `The path provided in ${name} (${appiumHome}) must be pointing to a valid folder`
+      `The path '${appiumHome}' provided in ${name} must be pointing to a valid folder`
     );
   }
   try {
     await fs.access(appiumHome, fs.constants.W_OK);
   } catch (e) {
     logger.warn(
-      `The folder path provided in ${name} (${appiumHome}) is not ` +
+      `The folder path '${appiumHome}' provided in ${name} is not ` +
       `writeable for the current user account '${os.userInfo().username}'. This might ` +
       `lead to unexpected future errors. Original error: ${e.message}`
     );
@@ -196,12 +205,13 @@ async function validateAppiumHome(name, appiumHome) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
-  if (args?.appiumHome || process.env.APPIUM_HOME) {
-    await validateAppiumHome(
-      args?.appiumHome ? 'appiumHome config value' : 'APPIUM_HOME environment variable',
-      appiumHome
-    );
+  let appiumHomeSourceName = 'autodetected appium home path';
+  if (!_.isNil(args?.appiumHome)) {
+    appiumHomeSourceName = 'appiumHome config value';
+  } else if (process.env.APPIUM_HOME) {
+    appiumHomeSourceName = 'APPIUM_HOME environment variable';
   }
+  await prepareAppiumHome(appiumHomeSourceName, appiumHome);
 
   adjustNodePath();
 

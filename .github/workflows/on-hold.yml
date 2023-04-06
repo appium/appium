@@ -4,17 +4,11 @@ on:
     types: [opened, labeled, unlabeled, synchronize]
     branches: [master]
 
-permissions: read-all
-
 jobs:
   label-check:
-    permissions:
-      pull-requests: write
-      checks: write
     runs-on: ubuntu-latest
     steps:
       - uses: danielchabr/pr-labels-checker@e1d7e79aa0933af1728011705a30528a279874fd # v3.1
         with:
-          id: check-labels
           hasNone: On Hold
           githubToken: ${{ secrets.GITHUB_TOKEN }}

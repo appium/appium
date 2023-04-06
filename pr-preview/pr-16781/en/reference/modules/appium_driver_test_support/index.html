@@ -2088,7 +2088,7 @@
 <p>Ƭ <strong>AppiumServerOpts</strong>: <a href="../appium/#args"><code>Args</code></a>&lt;<code>CliCommandServer</code>></p>
 <p>Options for <a href="./#startstoppableappium"><code>startStoppableAppium</code></a></p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/stoppable.ts#L12">packages/driver-test-support/lib/stoppable.ts:12</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/stoppable.ts#L12">packages/driver-test-support/lib/stoppable.ts:12</a></p>
 <hr />
 <h3 id="basenscapabilities">BaseNSCapabilities</h3>
 <p>Ƭ <strong>BaseNSCapabilities</strong>: <a href="../appium_types/#nscapabilities"><code>NSCapabilities</code></a>&lt;<a href="../appium_types/#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a>></p>
@@ -2112,31 +2112,31 @@
 </tbody>
 </table>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/unit-suite.js#L644">packages/driver-test-support/lib/unit-suite.js:644</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/unit-suite.js#L644">packages/driver-test-support/lib/unit-suite.js:644</a></p>
 <hr />
 <h3 id="driverclass">DriverClass</h3>
 <p>Ƭ <strong>DriverClass</strong>&lt;>: <code>DriverClass</code></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/index.js#L9">packages/driver-test-support/lib/index.js:9</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/index.js#L9">packages/driver-test-support/lib/index.js:9</a></p>
 <hr />
 <h3 id="normativeappiumserver">NormativeAppiumServer</h3>
 <p>Ƭ <strong>NormativeAppiumServer</strong>: <code>Omit</code>&lt;<a href="../appium_types/#appiumserver"><code>AppiumServer</code></a>, <code>"close"</code>> &amp; { <code>close</code>: <code>Server</code>[<code>"close"</code>]  }</p>
 <p>The AppiumServer type, but with the <code>close</code> method normalized to a callback-style function.</p>
 <h4 id="defined-in_4">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/stoppable.ts#L27">packages/driver-test-support/lib/stoppable.ts:27</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/stoppable.ts#L27">packages/driver-test-support/lib/stoppable.ts:27</a></p>
 <hr />
 <h3 id="testappiumserver">TestAppiumServer</h3>
 <p>Ƭ <strong>TestAppiumServer</strong>: <code>Omit</code>&lt;<a href="./#normativeappiumserver"><code>NormativeAppiumServer</code></a>, <code>"close"</code>> &amp; { <code>close</code>: (<code>callback</code>: (<code>err?</code>: <code>Error</code>) =&gt; <code>void</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>stop</code>: <code>Asyncify</code>&lt;<code>stoppable.WithStop</code>[<code>"stop"</code>]>  }</p>
 <p>An AppiumServer with a method <code>stop() =&gt; Promise&lt;void&gt;</code>, which closes all sockets and fully stops the server.</p>
 <p>Returned by <a href="./#startstoppableappium"><code>startStoppableAppium</code></a></p>
 <h4 id="defined-in_5">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/stoppable.ts#L19">packages/driver-test-support/lib/stoppable.ts:19</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/stoppable.ts#L19">packages/driver-test-support/lib/stoppable.ts:19</a></p>
 <h2 id="variables_1">Variables</h2>
 <h3 id="test_host">TEST_HOST</h3>
 <p>• <code>Const</code> <strong>TEST_HOST</strong>: <code>"127.0.0.1"</code></p>
 <p>Default test host</p>
 <h4 id="defined-in_6">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/helpers.js#L7">packages/driver-test-support/lib/helpers.js:7</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/helpers.js#L7">packages/driver-test-support/lib/helpers.js:7</a></p>
 <h2 id="functions_1">Functions</h2>
 <h3 id="createappiumurl">createAppiumURL</h3>
 <p>▸ <strong>createAppiumURL</strong>(): <code>CurriedFunction4</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
@@ -2679,7 +2679,7 @@ To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</co
 <h4 id="returns_16">Returns</h4>
 <p><code>SessionHelpers</code>&lt;<code>CommandData</code>, <code>ResponseData</code>></p>
 <h4 id="defined-in_23">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/e2e-suite.js#L19">packages/driver-test-support/lib/e2e-suite.js:19</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/e2e-suite.js#L19">packages/driver-test-support/lib/e2e-suite.js:19</a></p>
 <hr />
 <h3 id="drivere2etestsuite">driverE2ETestSuite</h3>
 <p>▸ <strong>driverE2ETestSuite</strong>(<code>DriverClass</code>, <code>defaultCaps?</code>): <code>void</code></p>
@@ -2706,7 +2706,7 @@ To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</co
 <h4 id="returns_17">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_24">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/e2e-suite.js#L105">packages/driver-test-support/lib/e2e-suite.js:105</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/e2e-suite.js#L105">packages/driver-test-support/lib/e2e-suite.js:105</a></p>
 <hr />
 <h3 id="driverunittestsuite">driverUnitTestSuite</h3>
 <p>▸ <strong>driverUnitTestSuite</strong>&lt;<code>C</code>>(<code>DriverClass</code>, <code>defaultCaps?</code>): <code>void</code></p>
@@ -2748,7 +2748,7 @@ To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</co
 <h4 id="returns_18">Returns</h4>
 <p><code>void</code></p>
 <h4 id="defined-in_25">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/unit-suite.js#L20">packages/driver-test-support/lib/unit-suite.js:20</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/unit-suite.js#L20">packages/driver-test-support/lib/unit-suite.js:20</a></p>
 <hr />
 <h3 id="gettestport">getTestPort</h3>
 <p>▸ <strong>getTestPort</strong>(<code>force?</code>): <code>Promise</code>&lt;<code>number</code>></p>
@@ -2776,7 +2776,7 @@ To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</co
 <p><code>Promise</code>&lt;<code>number</code>></p>
 <p>a free port</p>
 <h4 id="defined-in_26">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/helpers.js#L16">packages/driver-test-support/lib/helpers.js:16</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/helpers.js#L16">packages/driver-test-support/lib/helpers.js:16</a></p>
 <hr />
 <h3 id="startstoppableappium">startStoppableAppium</h3>
 <p>▸ <strong>startStoppableAppium</strong>(<code>opts</code>): <code>Promise</code>&lt;<a href="./#testappiumserver"><code>TestAppiumServer</code></a>></p>
@@ -2994,7 +2994,7 @@ To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</co
 <p><code>Promise</code>&lt;<a href="./#testappiumserver"><code>TestAppiumServer</code></a>></p>
 <p>A stoppable Appium server</p>
 <h4 id="defined-in_27">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/afc7e34/packages/driver-test-support/lib/stoppable.ts#L37">packages/driver-test-support/lib/stoppable.ts:37</a></p>
+<p><a href="https://github.com/appium/appium/blob/e67890f/packages/driver-test-support/lib/stoppable.ts#L37">packages/driver-test-support/lib/stoppable.ts:37</a></p>
 
 
 

@@ -147,3 +147,8 @@ labels:
     sync: true
     matcher:
       files: ['packages/universal-xml-plugin/**']
+  
+  - label: '@appium/strongbox'
+    sync: true
+    matcher:
+      files: ['packages/strongbox/**']

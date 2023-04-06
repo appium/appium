@@ -67,6 +67,9 @@
     },
     {
       "path": "packages/doctor"
+    },
+    {
+      "path": "packages/strongbox"
     }
   ]
 }

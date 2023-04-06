@@ -18,7 +18,8 @@
     "./packages/driver-test-support",
     "./packages/test-support",
     "./packages/plugin-test-support",
-    "./packages/opencv"
+    "./packages/opencv",
+    "./packages/strongbox"
   ],
   "name": "Appium",
   "out": "./packages/appium/docs/en/reference",

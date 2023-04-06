@@ -40,7 +40,7 @@ import {
   whichPython,
   readMkDocsYml,
 } from './fs';
-import logger from './logger';
+import {getLogger} from './logger';
 import {MkDocsYml, PipPackage, TypeDocJson} from './model';
 import {relative} from './util';
 
@@ -64,7 +64,7 @@ const TYPEDOC_VERSION_REGEX = /TypeDoc\s(\d+\.\d+\..+)/;
  */
 const MKDOCS_VERSION_REGEX = /mkdocs,\s+version\s+(\d+\.\d+\.\S+)/;
 
-const log = logger.withTag('validate');
+const log = getLogger('validate');
 
 /**
  * The "kinds" of validation which were requested to be performed

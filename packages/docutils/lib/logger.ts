@@ -137,57 +137,58 @@ class DocutilsReporter extends FancyReporter {
 let globalLevel: LogLevel = LogLevelMap[DEFAULT_LOG_LEVEL];
 
 /**
- * The logger from which all loggers are created.  This one uses a unique tag and our custom reporter.
+ * Type guard to see if a string is a recognized log level
+ * @param level any value
  */
-const rootLogger = createLogProxy(
-  consola.create({defaults: {tag: 'docutils'}, reporters: [new DocutilsReporter()]})
-);
-
-/**
- * @summary Creates a log-level-propagating proxy for a {@linkcode Consola} logger.
- * @description
- * Alright.  So when you create a new logger via {@linkcode Consola.create}, it's basically a clone
- * of its parent with a new set of options.
- *
- * If we change the log level of the root logger (which we do: see `cli/index.ts`), we may (almost
- * certainly) have
- * child loggers which: a) have already been created and b) have inherited the old/default log level
- * from the root logger. We don't _want_ that (though this is likely a reasonable use case) for our
- * purposes.
- *
- * The implementation below solves the problem by maintaining its own singleton log level value, and
- * intercepts the `level` property of any logger created from the root logger.
- *
- * There are other ways to go about this which may be better, but this seemed pretty straightforward.
- */
-function createLogProxy(logger: Consola): Consola {
-  return new Proxy(logger, {
-    get(target, prop, receiver) {
-      if (prop === 'level') {
-        return globalLevel;
-      }
-      if (prop === 'create') {
-        const create = Reflect.get(target, prop, receiver) as Consola['create'];
-        return (opts: ConsolaOptions) => createLogProxy(create.call(receiver, opts));
-      }
-      if (prop === '_defaults') {
-        const defaults = Reflect.get(target, prop, receiver);
-        return {...defaults, level: globalLevel};
-      }
-      return Reflect.get(target, prop, receiver);
-    },
-    set(target, prop, value, receiver) {
-      if (prop === 'level') {
-        globalLevel = value as LogLevel;
-        return true;
-      }
-      return Reflect.set(target, prop, value, receiver);
-    },
-  });
+export function isLogLevelString(level: any): level is keyof typeof LogLevelMap {
+  return level in LogLevelMap;
 }
 
 /**
- * The proxied root logger
- * @see {createLogProxy}
+ * The logger from which all loggers are created.  This one uses a unique tag and our custom reporter.
  */
-export default rootLogger;
+const rootLogger = consola.create({
+  defaults: {tag: 'docutils'},
+  reporters: [new DocutilsReporter()],
+  level: globalLevel,
+});
+// this prevents logging before `initLogger` is called
+rootLogger.pause();
+
+/**
+ * A map of tags to loggers
+ */
+const loggers: Map<string, WeakRef<Consola>> = new Map();
+
+export function getLogger(tag: string, parent = rootLogger) {
+  if (loggers.has(tag)) {
+    const logger = loggers.get(tag)?.deref();
+    if (logger) {
+      return logger;
+    }
+  }
+  const logger = parent.withTag(tag);
+  logger.level = globalLevel;
+  loggers.set(tag, new WeakRef(logger));
+  return logger;
+}
+
+/**
+ * Initialize the logging system.
+ *
+ * This should only be called once. The loglevel cannot be changed once it is set.
+ *
+ * @remarks Child loggers seem to inherit the "paused" state of the parent, so when this is called, we must resume all of them.
+ */
+export const initLogger = _.once((level: keyof typeof LogLevelMap | LogLevel) => {
+  globalLevel = isLogLevelString(level) ? LogLevelMap[level] : level;
+  rootLogger.level = globalLevel;
+  rootLogger.resume();
+  for (const ref of loggers.values()) {
+    const logger = ref.deref();
+    if (logger) {
+      logger.level = globalLevel;
+      logger.resume();
+    }
+  }
+});

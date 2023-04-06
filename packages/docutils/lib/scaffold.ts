@@ -4,7 +4,7 @@
  */
 
 import {fs} from '@appium/support';
-import logger from './logger';
+import {getLogger} from './logger';
 import path from 'node:path';
 import {createPatch} from 'diff';
 import {NormalizedPackageJson} from 'read-pkg';
@@ -15,8 +15,8 @@ import _ from 'lodash';
 import {stringifyJson, readPackageJson, safeWriteFile} from './fs';
 import {NAME_ERR_ENOENT, NAME_ERR_EEXIST} from './constants';
 
-const log = logger.withTag('init');
-const dryRunLog = log.withTag('dry-run');
+const log = getLogger('init');
+const dryRunLog = getLogger('dry-run', log);
 
 /**
  * Creates a unified patch for display in "dry run" mode

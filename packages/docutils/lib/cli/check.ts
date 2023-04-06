@@ -6,9 +6,9 @@
 import {fs, util} from '@appium/support';
 import _ from 'lodash';
 import type {Options} from 'yargs';
-import logger from '../logger';
+import {getLogger} from '../logger';
 
-const log = logger.withTag('check');
+const log = getLogger('check');
 
 /**
  * Given a list of objects with `id` and `path` props, filters out the ones that do not exist

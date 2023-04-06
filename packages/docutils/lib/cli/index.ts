@@ -6,7 +6,7 @@
  * @module
  */
 
-import logger from '../logger';
+import {getLogger} from '../logger';
 
 import _ from 'lodash';
 import {hideBin} from 'yargs/helpers';
@@ -20,7 +20,7 @@ import {sync as readPkg} from 'read-pkg';
 
 const pkg = readPkg({cwd: fs.findRoot(__dirname)});
 
-const log = logger.withTag('cli');
+const log = getLogger('cli');
 export async function main(argv = hideBin(process.argv)) {
   const config = await findConfig(argv);
 
@@ -56,24 +56,14 @@ export async function main(argv = hideBin(process.argv)) {
         describe: 'Disable config file discovery',
       },
     })
-    .middleware([
+    .middleware(
       /**
-       * Configures logging; `--verbose` implies `--log-level=debug`
+       * Writes a startup message
        */
-      (argv) => {
-        if (argv.verbose) {
-          argv.logLevel = 'debug';
-          log.debug('Debug logging enabled via --verbose');
-        }
-        log.level = LogLevelMap[argv.logLevel];
-      },
-      /**
-       * Writes a startup message, if logging is enabled
-       */
-      async () => {
+      () => {
         log.info(`${pkg.name} @ v${pkg.version} (Node.js ${process.version})`);
-      },
-    ])
+      }
+    )
     .epilog(`Please report bugs at ${pkg.bugs?.url}`)
     .fail(
       /**
@@ -85,8 +75,7 @@ export async function main(argv = hideBin(process.argv)) {
           log.error(error.message);
         } else {
           y.showHelp();
-          console.log();
-          log.error(msg ?? error.message);
+          log.error(`\n\n${msg ?? error.message}`);
         }
         y.exit(1, error);
       }

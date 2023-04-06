@@ -11,10 +11,11 @@ import path from 'node:path';
 import YAML from 'yaml';
 import parser from 'yargs-parser';
 import {hideBin} from 'yargs/helpers';
-import {NAME_BIN} from '../constants';
-import logger from '../logger';
+import {DEFAULT_LOG_LEVEL, LogLevelMap, NAME_BIN} from '../constants';
+import {getLogger, initLogger, isLogLevelString} from '../logger';
 import {relative} from '../util';
-const log = logger.withTag('config');
+
+const log = getLogger('config');
 
 /**
  * `lilconfig` loader for YAML
@@ -43,8 +44,19 @@ const loadEsm: Loader = (filepath: string) => import(filepath);
 export async function findConfig(argv: string[] = hideBin(process.argv)) {
   const preArgs = parser(argv);
 
-  if (preArgs.verbose || preArgs.logLevel === 'debug') {
-    log.level = LogLevel.Debug;
+  // if --verbose is used, set the log level to debug.
+  // otherwise use --log-level or the default.
+  let logLevel: LogLevel | keyof typeof LogLevelMap;
+  if (preArgs.verbose) {
+    logLevel = LogLevel.Debug;
+  } else {
+    // if the loglevel is valid, use it, otherwise use the default
+    logLevel = isLogLevelString(preArgs.logLevel) ? preArgs.logLevel : DEFAULT_LOG_LEVEL;
+  }
+  initLogger(logLevel);
+
+  if (preArgs.noConfig) {
+    log.debug('Not loading config because --no-config was provided');
   }
 
   return preArgs.noConfig || preArgs.help || preArgs.version

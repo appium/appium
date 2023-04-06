@@ -5,16 +5,15 @@
  * @module
  */
 
-import {spawn, SpawnOptions} from 'node:child_process';
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
-import {NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML, NAME_THEME} from '../constants';
+import {NAME_BIN, NAME_MKDOCS_YML, NAME_THEME} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
-import logger from '../logger';
+import {getLogger} from '../logger';
 import {relative, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
-const log = logger.withTag('mkdocs');
+const log = getLogger('mkdocs');
 
 /**
  * Runs `mkdocs serve`
@@ -81,6 +80,7 @@ export async function buildSite({
     // unsure about how SIGHUP is handled here
     await doServe(mkdocsArgs, serveOpts);
   } else {
+    log.info('Building site into %s (%dms)');
     await doBuild(mkdocsArgs, execOpts);
     let relSiteDir;
     if (siteDir) {
@@ -90,7 +90,7 @@ export async function buildSite({
       log.debug('Found site_dir %s', siteDir);
       relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir!);
     }
-    log.success('MkDocs finished building into %s (%dms)', relSiteDir, stop());
+    log.success('Finnished building site into %s (%dms)', relSiteDir, stop());
   }
 }
 

@@ -25,11 +25,11 @@ import {
   safeWriteFile,
   stringifyYaml,
 } from '../fs';
-import logger from '../logger';
+import {getLogger} from '../logger';
 import {MkDocsYml, MkDocsYmlNav} from '../model';
 import {relative} from '../util';
 
-const log = logger.withTag('builder:nav');
+const log = getLogger('builder:nav');
 
 /**
  * Gets a list of `.md` files relative to `docs_dir`

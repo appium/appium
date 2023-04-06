@@ -6,11 +6,11 @@
 import _ from 'lodash';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {init} from '../../init';
-import logger from '../../logger';
+import {getLogger} from '../../logger';
 import {stopwatch} from '../../util';
 import {checkMissingPaths} from '../check';
 
-const log = logger.withTag('init');
+const log = getLogger('init');
 
 enum InitCommandGroup {
   MkDocs = 'MkDocs Config:',

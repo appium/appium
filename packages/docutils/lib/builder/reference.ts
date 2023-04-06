@@ -16,10 +16,10 @@ import {
 } from '../constants';
 import {DocutilsError} from '../error';
 import {findTypeDocJsonPath, readTypedocJson} from '../fs';
-import logger from '../logger';
+import {getLogger} from '../logger';
 import {argify, relative, stopwatch} from '../util';
 
-const log = logger.withTag('builder:reference');
+const log = getLogger('builder:reference');
 
 /**
  * Executes TypeDoc _in the current process_

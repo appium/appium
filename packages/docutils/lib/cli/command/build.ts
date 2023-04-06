@@ -7,11 +7,11 @@ import path from 'node:path';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {buildReferenceDocs, buildSite, deploy, updateNav} from '../../builder';
 import {NAME_BIN} from '../../constants';
-import logger from '../../logger';
+import {getLogger} from '../../logger';
 import {stopwatch} from '../../util';
 import {checkMissingPaths} from '../check';
 
-const log = logger.withTag('build');
+const log = getLogger('build');
 
 enum BuildCommandGroup {
   Build = 'Build Config:',
@@ -220,6 +220,7 @@ export default {
       );
   },
   async handler(args) {
+    log.info('Building docs...');
     const stop = stopwatch('build');
     log.debug('Build command called with args: %O', args);
     if (!args.site && !args.reference) {

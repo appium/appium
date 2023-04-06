@@ -7,10 +7,10 @@ import {util} from '@appium/support';
 import type {CommandModule, InferredOptionTypes, Options} from 'yargs';
 import {DocutilsError} from '../../error';
 import {DocutilsValidator, ValidationKind} from '../../validate';
-import logger from '../../logger';
+import {getLogger} from '../../logger';
 import {checkMissingPaths} from '../check';
 
-const log = logger.withTag('validate');
+const log = getLogger('validate');
 
 enum ValidateCommandGroup {
   Behavior = 'Validation Behavior:',

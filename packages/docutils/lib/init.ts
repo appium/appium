@@ -17,7 +17,7 @@ import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
-import logger from './logger';
+import {getLogger} from './logger';
 import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
 import _ from 'lodash';
 import {stringifyJson5, stringifyYaml} from './fs';
@@ -54,8 +54,8 @@ const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
   },
 });
 
-const log = logger.withTag('init');
-const dryRunLog = log.withTag('dry-run');
+const log = getLogger('init');
+const dryRunLog = getLogger('dry-run', log);
 
 const DEFAULT_INCLUDE = ['lib', 'test', 'index.js'];
 /**

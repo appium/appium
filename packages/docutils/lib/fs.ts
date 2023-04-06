@@ -12,7 +12,7 @@ import {fs} from '@appium/support';
 import * as JSON5 from 'json5';
 import _ from 'lodash';
 import _pkgDir from 'pkg-dir';
-import logger from './logger';
+import {getLogger} from './logger';
 import {Application, TypeDocReader} from 'typedoc';
 import {
   NAME_TYPEDOC_JSON,
@@ -26,7 +26,7 @@ import {
 import {DocutilsError} from './error';
 import {MkDocsYml} from './model';
 
-const log = logger.withTag('fs');
+const log = getLogger('fs');
 
 /**
  * Finds path to closest `package.json`

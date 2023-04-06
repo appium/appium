@@ -17,10 +17,10 @@ import {
 } from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readPackageJson, whichMike} from '../fs';
-import logger from '../logger';
+import {getLogger} from '../logger';
 import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
-const log = logger.withTag('builder:deploy');
+const log = getLogger('builder:deploy');
 
 /**
  * Runs `mike serve`
@@ -124,6 +124,7 @@ export async function deploy({
     // unsure about how SIGHUP is handled here
     await doServe(mikeArgs, serveOpts);
   } else {
+    log.info('Deploying into branch %s', branch);
     const mikeArgs = [
       ...argify(
         _.omitBy(
@@ -138,7 +139,7 @@ export async function deploy({
     }
     await doDeploy(mikeArgs, execOpts);
 
-    log.success('Mike finished deployment into branch %s (%dms)', branch, stop());
+    log.success('Finished deployment into branch %s (%dms)', branch, stop());
   }
 }
 

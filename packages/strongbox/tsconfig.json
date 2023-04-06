@@ -1,0 +1,10 @@
+{
+  "extends": "@appium/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "strict": true,
+    "types": ["node", "mocha", "chai", "chai-as-promised", "sinon-chai"]
+  },
+  "include": ["lib", "test"]
+}

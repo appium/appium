@@ -1,0 +1,52 @@
+{
+  "name": "@appium/strongbox",
+  "version": "0.1.0",
+  "description": "Persistent storage for Appium extensions",
+  "keywords": [
+    "automation",
+    "javascript",
+    "selenium",
+    "webdriver",
+    "ios",
+    "android",
+    "firefoxos",
+    "testing"
+  ],
+  "homepage": "https://appium.io",
+  "bugs": {
+    "url": "https://github.com/appium/appium/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/strongbox"
+  },
+  "license": "Apache-2.0",
+  "author": "Appium Contributors",
+  "main": "./build/lib/index.js",
+  "types": "./build/lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "build/lib",
+    "lib",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "test": "npm run test:unit",
+    "test:smoke": "node .",
+    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
+  },
+  "dependencies": {
+    "env-paths": "2.2.1",
+    "slugify": "1.6.6"
+  },
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "npm": ">=8"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

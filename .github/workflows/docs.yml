@@ -56,7 +56,7 @@ jobs:
       - name: Build Docs
         run: npm run docs:preview
       - name: Deploy Preview
-        uses: rossjrw/pr-preview-action@9dac5c4777c535516ebf819f93aeadac70f66488 # v1
+        uses: boneskull/pr-preview-action@b4463cc5d5139a053f7150396f143752ecf86500 # v1
         with:
           source-dir: ./packages/appium/docs/site
           custom-url: 'appium.github.io/appium'

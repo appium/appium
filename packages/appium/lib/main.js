@@ -33,6 +33,8 @@ import {
   isPluginCommandArgs,
   isServerCommandArgs,
 } from './utils';
+import fs from 'fs/promises';
+import os from 'os';
 
 const {resolveAppiumHome} = env;
 
@@ -138,6 +140,43 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
     {}
   );
 }
+
+/**
+ * Validates the custom value of appium home path
+ *
+ * @param {string} name The name of the appiumHome source (either config or environment)
+ * @param {string} appiumHome The actual value to be verified
+ * @returns {Promise<string>} Same appiumHome value
+ * @throws {Error} If the validation has failed
+ */
+async function validateAppiumHome(name, appiumHome) {
+  let stat;
+  try {
+    stat = await fs.stat(appiumHome);
+  } catch (e) {
+    throw new Error(
+      `The path provided in ${name} (${appiumHome}) must be pointing ` +
+      `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
+      `Original error: ${e.message}`
+    );
+  }
+  if (!stat.isDirectory()) {
+    throw new Error(
+      `The path provided in ${name} (${appiumHome}) must be pointing to a valid folder`
+    );
+  }
+  try {
+    await fs.access(appiumHome, fs.constants.W_OK);
+  } catch (e) {
+    logger.warn(
+      `The folder path provided in ${name} (${appiumHome}) is not ` +
+      `writeable for the current user account '${os.userInfo().username}'. This might ` +
+      `lead to unexpected future errors. Original error: ${e.message}`
+    );
+  }
+  return appiumHome;
+}
+
 /**
  * Initializes Appium, but does not start the server.
  *
@@ -157,6 +196,12 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+  if (args?.appiumHome || process.env.APPIUM_HOME) {
+    await validateAppiumHome(
+      args?.appiumHome ? 'appiumHome config value' : 'APPIUM_HOME environment variable',
+      appiumHome
+    );
+  }
 
   adjustNodePath();
 

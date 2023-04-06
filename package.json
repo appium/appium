@@ -43,7 +43,6 @@
     "docs": "npm run -w packages/appium build:docs",
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "doctor": "node ./packages/doctor",
-    "generate-docs": "npm run --workspace=packages/appium generate-docs",
     "husky-install": "husky install",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",

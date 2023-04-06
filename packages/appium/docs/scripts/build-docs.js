@@ -50,7 +50,7 @@ async function main() {
   const majMinVer = `${semVersion.major}.${semVersion.minor}`;
 
   for (const lang of LANGS) {
-    log.info(`Building docs for language '${lang}' and version ${majMinVer}`);
+    log.info('Building docs for language `%s` and version %s', lang, majMinVer);
     const configFile = path.join(DOCS_DIR, `mkdocs-${lang}.yml`);
     if (preview) {
       await buildSite({
@@ -70,8 +70,9 @@ async function main() {
         message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
       });
     }
-    log.info(`Docs built`);
+    log.success('Docs built for language `%s` and version %s', lang, majMinVer);
   }
+  log.success('Done!');
 }
 
 if (require.main === module) {

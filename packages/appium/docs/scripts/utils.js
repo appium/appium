@@ -2,10 +2,12 @@
 
 // for simplicity this file is not transpiled and is run directly via an npm script
 //
-const {logger} = require('@appium/support');
+const {initLogger, getLogger} = require('@appium/docutils');
 const path = require('path');
 
-const log = logger.getLogger('Docs');
+initLogger('info');
+
+const log = getLogger('build-docs');
 
 const DOCS_REMOTE = 'origin';
 const DOCS_BRANCH = 'gh-pages';

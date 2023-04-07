@@ -294,5 +294,5 @@ export {getServerArgs, getExtensionArgs};
 
 /**
  * A tuple of argument aliases and argument options
- * @typedef {Map<string[],import('argparse').ArgumentOptions>} ArgumentDefinitions
+ * @typedef {Map<[name: string]|[name: string, alias: string],import('argparse').ArgumentOptions>} ArgumentDefinitions
  */

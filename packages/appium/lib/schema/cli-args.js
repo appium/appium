@@ -94,7 +94,7 @@ function makeDescription(schema) {
  * as understood by `argparse`.
  * @param {AppiumJSONSchema} subSchema - JSON schema for the option
  * @param {ArgSpec} argSpec - Argument spec tuple
- * @returns {[string[], import('argparse').ArgumentOptions]} Tuple of flag and options
+ * @returns {[[string]|[string, string], import('argparse').ArgumentOptions]} Tuple of flag and options
  */
 function subSchemaToArgDef(subSchema, argSpec) {
   let {type, appiumCliAliases, appiumCliTransformer, enum: enumValues} = subSchema;
@@ -207,7 +207,10 @@ function subSchemaToArgDef(subSchema, argSpec) {
     }
   }
 
-  return [aliases, argOpts];
+  // TODO: argparse only accepts the command name and a single alias; any extra aliases
+  // will be silently discarded.
+  const finalAliases = /** @type {[string]|[string, string]} */ (aliases);
+  return [finalAliases, argOpts];
 }
 
 /**

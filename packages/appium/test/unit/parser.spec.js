@@ -264,6 +264,14 @@ describe('parser', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'list', '--updates']);
         args.showUpdates.should.eql(true);
       });
+      it('should allow "ls" as an alias for "list"', function () {
+        const args = p.parseArgs([DRIVER_TYPE, 'ls']);
+        args.subcommand.should.eql(DRIVER_TYPE);
+        args.driverCommand.should.eql('list');
+        args.showInstalled.should.eql(false);
+        args.showUpdates.should.eql(false);
+        args.json.should.eql(false);
+      });
     });
     describe('install', function () {
       it('should not allow an empty argument list', function () {

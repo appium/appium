@@ -1,0 +1,3056 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium/docs/en/reference/modules/appium_driver_test_support/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.5">
+    
+    
+      
+        <title>Module: @appium/driver-test-support - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7a7fce14.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-appiumdriver-test-support" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Module: @appium/driver-test-support
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="Select language">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Welcome
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Introduction
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Introduction
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Intro to Appium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Intro to Appium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Overview of Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/drivers/" class="md-nav__link">
+        Intro to Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/clients/" class="md-nav__link">
+        Intro to Appium Clients
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/requirements/" class="md-nav__link">
+        Appium Requirements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/history/" class="md-nav__link">
+        Appium Project History
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Quickstart
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Quickstart
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        Quickstart Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/install/" class="md-nav__link">
+        Install Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/uiauto2-driver/" class="md-nav__link">
+        Install the UiAutomator2 Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Write a Test
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Write a Test
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-js/" class="md-nav__link">
+        Write a Test (JS)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-py/" class="md-nav__link">
+        Write a Test (Python)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-java/" class="md-nav__link">
+        Write a Test (Java)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-rb/" class="md-nav__link">
+        Write a Test (Ruby)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/next-steps/" class="md-nav__link">
+        Next Steps
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          CLI Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          CLI Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        CLI Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/args/" class="md-nav__link">
+        Server CLI Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/extensions/" class="md-nav__link">
+        The Extension CLI
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating from Appium 1.x to Appium 2.x
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/managing-exts/" class="md-nav__link">
+        Managing Appium Drivers and Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/config/" class="md-nav__link">
+        The Appium Config File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/security/" class="md-nav__link">
+        Appium Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caps/" class="md-nav__link">
+        Capabilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/context/" class="md-nav__link">
+        The Context API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/settings/" class="md-nav__link">
+        The Settings API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/execute-methods/" class="md-nav__link">
+        Execute Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/event-timing/" class="md-nav__link">
+        The Event Timing API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/log-filters/" class="md-nav__link">
+        Log Filtering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/grid/" class="md-nav__link">
+        Appium and Selenium Grid
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caching/" class="md-nav__link">
+        Application Bundles Caching Logic
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Developer Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Developer Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        BaseDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        FakeDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Ecosystem
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Ecosystem
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/" class="md-nav__link">
+        The Appium Ecosystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          Developing Appium Extensions
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          Developing Appium Extensions
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-drivers/" class="md-nav__link">
+        Building Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-plugins/" class="md-nav__link">
+        Building Appium Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-docs/" class="md-nav__link">
+        Building Docs for Appium Extensions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        Contributing to Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/config-system/" class="md-nav__link">
+        Appium's Config System
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resources/" class="md-nav__link">
+        More Appium Resources
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/appium/appium/issues" class="md-nav__link">
+        Issues
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-aliases" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    Variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-aliases_1" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+    <nav class="md-nav" aria-label="Type Aliases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#appiumserveropts" class="md-nav__link">
+    AppiumServerOpts
+  </a>
+  
+    <nav class="md-nav" aria-label="AppiumServerOpts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basenscapabilities" class="md-nav__link">
+    BaseNSCapabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="BaseNSCapabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_1" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver" class="md-nav__link">
+    Driver
+  </a>
+  
+    <nav class="md-nav" aria-label="Driver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverclass" class="md-nav__link">
+    DriverClass
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverClass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normativeappiumserver" class="md-nav__link">
+    NormativeAppiumServer
+  </a>
+  
+    <nav class="md-nav" aria-label="NormativeAppiumServer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_4" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testappiumserver" class="md-nav__link">
+    TestAppiumServer
+  </a>
+  
+    <nav class="md-nav" aria-label="TestAppiumServer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_5" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables_1" class="md-nav__link">
+    Variables
+  </a>
+  
+    <nav class="md-nav" aria-label="Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test_host" class="md-nav__link">
+    TEST_HOST
+  </a>
+  
+    <nav class="md-nav" aria-label="TEST_HOST">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_6" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#createappiumurl" class="md-nav__link">
+    createAppiumURL
+  </a>
+  
+    <nav class="md-nav" aria-label="createAppiumURL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_7" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_8" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_9" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_10" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_11" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_12" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_13" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_14" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_15" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_16" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_17" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_18" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_19" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_20" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_14" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_21" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_14" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_15" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_22" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createsessionhelpers" class="md-nav__link">
+    createSessionHelpers
+  </a>
+  
+    <nav class="md-nav" aria-label="createSessionHelpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_1" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_15" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_16" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_23" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivere2etestsuite" class="md-nav__link">
+    driverE2ETestSuite
+  </a>
+  
+    <nav class="md-nav" aria-label="driverE2ETestSuite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_16" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_17" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_24" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverunittestsuite" class="md-nav__link">
+    driverUnitTestSuite
+  </a>
+  
+    <nav class="md-nav" aria-label="driverUnitTestSuite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_2" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_17" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_18" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_25" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gettestport" class="md-nav__link">
+    getTestPort
+  </a>
+  
+    <nav class="md-nav" aria-label="getTestPort">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_18" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_19" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_26" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startstoppableappium" class="md-nav__link">
+    startStoppableAppium
+  </a>
+  
+    <nav class="md-nav" aria-label="startStoppableAppium">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_19" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_20" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_27" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="module-appiumdriver-test-support">Module: @appium/driver-test-support</h1>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="interfaces">Interfaces</h3>
+<ul>
+<li><a href="../../interfaces/appium_driver_test_support.Constraints/">Constraints</a></li>
+<li><a href="../../interfaces/appium_driver_test_support.W3CCapabilities/">W3CCapabilities</a></li>
+</ul>
+<h3 id="type-aliases">Type Aliases</h3>
+<ul>
+<li><a href="./#appiumserveropts">AppiumServerOpts</a></li>
+<li><a href="./#basenscapabilities">BaseNSCapabilities</a></li>
+<li><a href="./#driver">Driver</a></li>
+<li><a href="./#driverclass">DriverClass</a></li>
+<li><a href="./#normativeappiumserver">NormativeAppiumServer</a></li>
+<li><a href="./#testappiumserver">TestAppiumServer</a></li>
+</ul>
+<h3 id="variables">Variables</h3>
+<ul>
+<li><a href="./#test_host">TEST_HOST</a></li>
+</ul>
+<h3 id="functions">Functions</h3>
+<ul>
+<li><a href="./#createappiumurl">createAppiumURL</a></li>
+<li><a href="./#createsessionhelpers">createSessionHelpers</a></li>
+<li><a href="./#drivere2etestsuite">driverE2ETestSuite</a></li>
+<li><a href="./#driverunittestsuite">driverUnitTestSuite</a></li>
+<li><a href="./#gettestport">getTestPort</a></li>
+<li><a href="./#startstoppableappium">startStoppableAppium</a></li>
+</ul>
+<h2 id="type-aliases_1">Type Aliases</h2>
+<h3 id="appiumserveropts">AppiumServerOpts</h3>
+<p>Ƭ <strong>AppiumServerOpts</strong>: <a href="../appium/#args"><code>Args</code></a>&lt;<code>CliCommandServer</code>></p>
+<p>Options for <a href="./#startstoppableappium"><code>startStoppableAppium</code></a></p>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/stoppable.ts#L12">packages/driver-test-support/lib/stoppable.ts:12</a></p>
+<hr />
+<h3 id="basenscapabilities">BaseNSCapabilities</h3>
+<p>Ƭ <strong>BaseNSCapabilities</strong>: <a href="../appium_types/#nscapabilities"><code>NSCapabilities</code></a>&lt;<a href="../appium_types/#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a>></p>
+<p>Like BaseCapabilities, except all Appium-specific keys are namespaced.</p>
+<h4 id="defined-in_1">Defined in</h4>
+<p>packages/types/build/lib/capabilities.d.ts:14</p>
+<hr />
+<h3 id="driver">Driver</h3>
+<p>Ƭ <strong>Driver</strong>&lt;<code>C</code>>: <code>Driver</code></p>
+<h4 id="type-parameters">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/unit-suite.js#L644">packages/driver-test-support/lib/unit-suite.js:644</a></p>
+<hr />
+<h3 id="driverclass">DriverClass</h3>
+<p>Ƭ <strong>DriverClass</strong>&lt;>: <code>DriverClass</code></p>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/index.js#L9">packages/driver-test-support/lib/index.js:9</a></p>
+<hr />
+<h3 id="normativeappiumserver">NormativeAppiumServer</h3>
+<p>Ƭ <strong>NormativeAppiumServer</strong>: <code>Omit</code>&lt;<a href="../appium_types/#appiumserver"><code>AppiumServer</code></a>, <code>"close"</code>> &amp; { <code>close</code>: <code>Server</code>[<code>"close"</code>]  }</p>
+<p>The AppiumServer type, but with the <code>close</code> method normalized to a callback-style function.</p>
+<h4 id="defined-in_4">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/stoppable.ts#L27">packages/driver-test-support/lib/stoppable.ts:27</a></p>
+<hr />
+<h3 id="testappiumserver">TestAppiumServer</h3>
+<p>Ƭ <strong>TestAppiumServer</strong>: <code>Omit</code>&lt;<a href="./#normativeappiumserver"><code>NormativeAppiumServer</code></a>, <code>"close"</code>> &amp; { <code>close</code>: (<code>callback</code>: (<code>err?</code>: <code>Error</code>) =&gt; <code>void</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>stop</code>: <code>Asyncify</code>&lt;<code>stoppable.WithStop</code>[<code>"stop"</code>]>  }</p>
+<p>An AppiumServer with a method <code>stop() =&gt; Promise&lt;void&gt;</code>, which closes all sockets and fully stops the server.</p>
+<p>Returned by <a href="./#startstoppableappium"><code>startStoppableAppium</code></a></p>
+<h4 id="defined-in_5">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/stoppable.ts#L19">packages/driver-test-support/lib/stoppable.ts:19</a></p>
+<h2 id="variables_1">Variables</h2>
+<h3 id="test_host">TEST_HOST</h3>
+<p>• <code>Const</code> <strong>TEST_HOST</strong>: <code>"127.0.0.1"</code></p>
+<p>Default test host</p>
+<h4 id="defined-in_6">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/helpers.js#L7">packages/driver-test-support/lib/helpers.js:7</a></p>
+<h2 id="functions_1">Functions</h2>
+<h3 id="createappiumurl">createAppiumURL</h3>
+<p>▸ <strong>createAppiumURL</strong>(): <code>CurriedFunction4</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="returns">Returns</h4>
+<p><code>CurriedFunction4</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_7">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:174</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>): <code>CurriedFunction3</code>&lt;<code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_1">Returns</h4>
+<p><code>CurriedFunction3</code>&lt;<code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_8">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:175</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>): <code>CurriedFunction3</code>&lt;<code>string</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_2">Returns</h4>
+<p><code>CurriedFunction3</code>&lt;<code>string</code>, <code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_9">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:176</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>): <code>CurriedFunction2</code>&lt;<code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_3">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>null</code> | <code>string</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_10">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:177</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>): <code>CurriedFunction3</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_4">Returns</h4>
+<p><code>CurriedFunction3</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_11">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:178</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>): <code>CurriedFunction2</code>&lt;<code>string</code> | <code>number</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_5">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>string</code> | <code>number</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_12">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:179</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>): <code>CurriedFunction2</code>&lt;<code>string</code>, <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_5">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_6">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>string</code>, <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_13">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:180</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>): <code>CurriedFunction1</code>&lt;<code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns</h4>
+<p><code>CurriedFunction1</code>&lt;<code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_14">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:181</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction3</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_7">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns</h4>
+<p><code>CurriedFunction3</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_15">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:182</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction2</code>&lt;<code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_8">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>string</code> | <code>number</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_16">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:183</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction2</code>&lt;<code>string</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_9">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_10">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>string</code>, <code>null</code> | <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_17">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:184</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction2</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_10">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns</h4>
+<p><code>CurriedFunction2</code>&lt;<code>string</code>, <code>string</code> | <code>number</code>, <code>string</code>></p>
+<h4 id="defined-in_18">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:185</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction1</code>&lt;<code>null</code> | <code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_11">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns</h4>
+<p><code>CurriedFunction1</code>&lt;<code>null</code> | <code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_19">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:186</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction1</code>&lt;<code>string</code> | <code>number</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_12">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_13">Returns</h4>
+<p><code>CurriedFunction1</code>&lt;<code>string</code> | <code>number</code>, <code>string</code>></p>
+<h4 id="defined-in_20">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:187</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>CurriedFunction1</code>&lt;<code>string</code>, <code>string</code>></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_13">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>LoDashStatic</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_14">Returns</h4>
+<p><code>CurriedFunction1</code>&lt;<code>string</code>, <code>string</code>></p>
+<h4 id="defined-in_21">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:188</p>
+<p>▸ <strong>createAppiumURL</strong>(<code>t1</code>, <code>t2</code>, <code>t3</code>, <code>t4</code>): <code>string</code></p>
+<p>Build an Appium URL from components.</p>
+<p><strong>All</strong> parameters are required.  Provide an empty string (<code>''</code>) if you don't need one.
+To rearrange arguments (if needed), use the placeholder from Lodash (<code>_</code>).</p>
+<h4 id="parameters_14">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>t1</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t2</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>t3</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>t4</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_15">Returns</h4>
+<p><code>string</code></p>
+<h4 id="defined-in_22">Defined in</h4>
+<p>node_modules/@types/lodash/common/function.d.ts:189</p>
+<hr />
+<h3 id="createsessionhelpers">createSessionHelpers</h3>
+<p>▸ <strong>createSessionHelpers</strong>&lt;<code>CommandData</code>, <code>ResponseData</code>>(<code>port</code>, <code>address?</code>): <code>SessionHelpers</code>&lt;<code>CommandData</code>, <code>ResponseData</code>></p>
+<p>Creates some helper functions for E2E tests to manage sessions.</p>
+<h4 id="type-parameters_1">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>CommandData</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+<tr>
+<td align="left"><code>ResponseData</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters_15">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Default value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>port</code></td>
+<td align="left"><code>number</code></td>
+<td align="left"><code>undefined</code></td>
+<td align="left">Port on which the server is running. Typically this will be retrieved via <code>get-port</code> beforehand</td>
+</tr>
+<tr>
+<td align="left"><code>address?</code></td>
+<td align="left"><code>string</code></td>
+<td align="left"><code>TEST_HOST</code></td>
+<td align="left">Address/host on which the server is running. Defaults to <a href="./#test_host"><code>TEST_HOST</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_16">Returns</h4>
+<p><code>SessionHelpers</code>&lt;<code>CommandData</code>, <code>ResponseData</code>></p>
+<h4 id="defined-in_23">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/e2e-suite.js#L19">packages/driver-test-support/lib/e2e-suite.js:19</a></p>
+<hr />
+<h3 id="drivere2etestsuite">driverE2ETestSuite</h3>
+<p>▸ <strong>driverE2ETestSuite</strong>(<code>DriverClass</code>, <code>defaultCaps?</code>): <code>void</code></p>
+<p>Creates E2E test suites for a driver.</p>
+<h4 id="parameters_16">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>DriverClass</code></td>
+<td align="left"><a href="./#driverclass"><code>DriverClass</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>defaultCaps?</code></td>
+<td align="left"><code>Partial</code>&lt;<code>Partial</code>&lt;<a href="../appium_types/#capstonscaps"><code>CapsToNSCaps</code></a>&lt;<a href="../appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code>  } ; <code>autoLaunch</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>autoWebview</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>automationName</code>: { <code>isString</code>: <code>true</code>  } ; <code>deviceName</code>: { <code>isString</code>: <code>true</code>  } ; <code>eventTimings</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>fullReset</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>language</code>: { <code>isString</code>: <code>true</code>  } ; <code>locale</code>: { <code>isString</code>: <code>true</code>  } ; <code>newCommandTimeout</code>: { <code>isNumber</code>: <code>true</code>  } ; <code>noReset</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>orientation</code>: { <code>inclusion</code>: readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]  } ; <code>platformName</code>: { <code>isString</code>: <code>true</code> ; <code>presence</code>: <code>true</code>  } ; <code>platformVersion</code>: { <code>isString</code>: <code>true</code>  } ; <code>printPageSourceOnFindFailure</code>: { <code>isBoolean</code>: <code>true</code>  } ; <code>udid</code>: { <code>isString</code>: <code>true</code>  } ; <code>webSocketUrl</code>: { <code>isBoolean</code>: <code>true</code>  }  }>, <code>"appium"</code>>>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_17">Returns</h4>
+<p><code>void</code></p>
+<h4 id="defined-in_24">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/e2e-suite.js#L105">packages/driver-test-support/lib/e2e-suite.js:105</a></p>
+<hr />
+<h3 id="driverunittestsuite">driverUnitTestSuite</h3>
+<p>▸ <strong>driverUnitTestSuite</strong>&lt;<code>C</code>>(<code>DriverClass</code>, <code>defaultCaps?</code>): <code>void</code></p>
+<p>Creates unit test suites for a driver.</p>
+<h4 id="type-parameters_2">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="../../interfaces/appium_driver_test_support.Constraints/"><code>Constraints</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters_17">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>DriverClass</code></td>
+<td align="left"><a href="./#driverclass"><code>DriverClass</code></a>&lt;<code>C</code>></td>
+</tr>
+<tr>
+<td align="left"><code>defaultCaps?</code></td>
+<td align="left"><a href="../appium_types/#nsdrivercaps"><code>NSDriverCaps</code></a>&lt;<code>C</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_18">Returns</h4>
+<p><code>void</code></p>
+<h4 id="defined-in_25">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/unit-suite.js#L20">packages/driver-test-support/lib/unit-suite.js:20</a></p>
+<hr />
+<h3 id="gettestport">getTestPort</h3>
+<p>▸ <strong>getTestPort</strong>(<code>force?</code>): <code>Promise</code>&lt;<code>number</code>></p>
+<p>Returns a free port; one per process</p>
+<h4 id="parameters_18">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Default value</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>force?</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left"><code>false</code></td>
+<td align="left">If true, do not reuse the port (if it already exists)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_19">Returns</h4>
+<p><code>Promise</code>&lt;<code>number</code>></p>
+<p>a free port</p>
+<h4 id="defined-in_26">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/helpers.js#L16">packages/driver-test-support/lib/helpers.js:16</a></p>
+<hr />
+<h3 id="startstoppableappium">startStoppableAppium</h3>
+<p>▸ <strong>startStoppableAppium</strong>(<code>opts</code>): <code>Promise</code>&lt;<a href="./#testappiumserver"><code>TestAppiumServer</code></a>></p>
+<p>Coerces AppiumServer into a <a href="./#testappiumserver"><code>TestAppiumServer</code></a>.</p>
+<p><strong><code>Todo</code></strong></p>
+<p>This should be moved into <code>@appium/driver-test-support</code> or something</p>
+<h4 id="parameters_19">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>opts</code></td>
+<td align="left"><code>Object</code></td>
+<td align="left">Options for startAppium</td>
+</tr>
+<tr>
+<td align="left"><code>opts.address</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.allowCors</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.allowInsecure</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium_types/#allowinsecureconfig"><code>AllowInsecureConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.appiumHome</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.basePath</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.callbackAddress</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.callbackPort</code></td>
+<td align="left"><code>undefined</code> | <code>number</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.configFile</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.debugLogSpacing</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.defaultCapabilities</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DefaultCapabilitiesConfig/"><code>DefaultCapabilitiesConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.denyInsecure</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium_types/#denyinsecureconfig"><code>DenyInsecureConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.driver</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.DriverConfig/"><code>DriverConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.keepAliveTimeout</code></td>
+<td align="left"><code>undefined</code> | <code>number</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.localTimezone</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.logFile</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.logFilters</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium_types/#logfiltersconfig"><code>LogFiltersConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.logHandler</code></td>
+<td align="left"><code>undefined</code> | (...<code>args</code>: <code>any</code>[]) =&gt; <code>void</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.logNoColors</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.logTimestamp</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.loglevel</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <a href="../appium_types/#loglevelconfig"><code>LogLevelConfig</code></a>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.longStacktrace</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.noPermsCheck</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.nodeconfig</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.NodeconfigConfig/"><code>NodeconfigConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.plugin</code></td>
+<td align="left"><code>undefined</code> | <a href="../../interfaces/appium_types.PluginConfig/"><code>PluginConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.port</code></td>
+<td align="left"><code>undefined</code> | <code>number</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.relaxedSecurityEnabled</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.sessionOverride</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.shell</code></td>
+<td align="left"><code>undefined</code> | <code>boolean</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.showBuildInfo</code></td>
+<td align="left"><code>undefined</code> | <code>boolean</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.showConfig</code></td>
+<td align="left"><code>undefined</code> | <code>boolean</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.strictCaps</code></td>
+<td align="left"><code>undefined</code> | <code>NonNullable</code>&lt;<code>undefined</code> | <code>boolean</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.subcommand</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium/#clicommand"><code>CliCommand</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.throwInsteadOfExit</code></td>
+<td align="left"><code>undefined</code> | <code>boolean</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.tmpDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.traceDir</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.useDrivers</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium_types/#usedriversconfig"><code>UseDriversConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.usePlugins</code></td>
+<td align="left"><code>undefined</code> | <a href="../appium_types/#usepluginsconfig"><code>UsePluginsConfig</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>opts.webhook</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+<td align="left">-</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_20">Returns</h4>
+<p><code>Promise</code>&lt;<a href="./#testappiumserver"><code>TestAppiumServer</code></a>></p>
+<p>A stoppable Appium server</p>
+<h4 id="defined-in_27">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/1d5070e/packages/driver-test-support/lib/stoppable.ts#L37">packages/driver-test-support/lib/stoppable.ts:37</a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.407015b8.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -236,6 +236,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://appium.github.io/appium/docs/en/reference/classes/appium_strongbox.Strongbox/</loc>
+         <lastmod>2023-04-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://appium.github.io/appium/docs/en/reference/classes/appium_support.console.CliConsole/</loc>
          <lastmod>2023-04-07</lastmod>
          <changefreq>daily</changefreq>
@@ -412,6 +417,16 @@
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/reference/interfaces/appium_plugin_test_support.E2ESetupOpts/</loc>
+         <lastmod>2023-04-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.github.io/appium/docs/en/reference/interfaces/appium_strongbox.Item/</loc>
+         <lastmod>2023-04-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.github.io/appium/docs/en/reference/interfaces/appium_strongbox.StrongboxOpts/</loc>
          <lastmod>2023-04-07</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -867,6 +882,11 @@
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/en/reference/modules/appium_schema/</loc>
+         <lastmod>2023-04-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.github.io/appium/docs/en/reference/modules/appium_strongbox/</loc>
          <lastmod>2023-04-07</lastmod>
          <changefreq>daily</changefreq>
     </url>

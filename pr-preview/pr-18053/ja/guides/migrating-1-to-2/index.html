@@ -1057,7 +1057,7 @@ Here we call out the breaking changes and what you need to do to account for the
 ### :bangbang: Installing drivers during setup
 --->
 
-<h3 id="base-path"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 初期設定のbase path</h3>
+<h3 id="base-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 初期設定のbase path</h3>
 <!---
 With Appium 1.x, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
 `/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
@@ -1073,7 +1073,7 @@ You can also set server arguments as [Config file](./config.md) properties.
 --->
 
 <p>この設定は<a href="./config.md">Config file</a>からでも可能です。</p>
-<h3 id="_2"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> ドライバーのインストール</h3>
+<h3 id="_2"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> ドライバーのインストール</h3>
 <!---
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
@@ -1094,13 +1094,13 @@ This will install Appium and the two drivers for you in one go. Please uninstall
 --->
 
 <p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを<code>npm uninstall -g appium</code>で削除してみてください。</p>
-<h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
+<h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
 <p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
 The path was <code>/path/to/appium/node_modules</code>.
 For example, <code>appium-webdriveragent</code> to build WebDriverAgent manually was <code>/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code>.</p>
 <p>Appium 2.0 installs such dependencies in <code>APPIUM_HOME</code> environment variable. The default path is <code>~/.appium</code>.
 So, the path to  <code>appium-webdriveragent</code> could be <code>$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code> after installing the XCUITest driver package.</p>
-<h3 id="chromedriver-installation-flags"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Chromedriver installation flags</h3>
+<h3 id="chromedriver-installation-flags"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Chromedriver installation flags</h3>
 <p>In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:</p>
 <ul>
 <li><code>--chromedriver-skip-install</code></li>
@@ -1116,10 +1116,10 @@ So, the path to  <code>appium-webdriveragent</code> could be <code>$APPIUM_HOME/
 <p>For example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">APPIUM_SKIP_CHROMEDRIVER_INSTALL</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
 </code></pre></div>
-<h3 id="driver-specific-command-line-options"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Driver-specific command line options</h3>
+<h3 id="driver-specific-command-line-options"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver-specific command line options</h3>
 <p>With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, <code>--chromedriver-executable</code> was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.</p>
 <p>With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either <code>driver</code> or <code>plugin</code>) and the name of the extension. For example, <code>--chromedriver-executable</code> becomes <code>--driver-uiautomator2-chromedriver-executable</code>.</p>
-<h3 id="driver-specific-automation-commands"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Driver-specific automation commands</h3>
+<h3 id="driver-specific-automation-commands"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver-specific automation commands</h3>
 <p>The definition of certain commands that pertain only to specific drivers has been moved to those
 drivers' implementations. For example, <code>pressKeyCode</code> is specific to the UiAutomator2 driver and is
 now understood only by that driver. In practice, the only breaking change here is the kind of error
@@ -1127,7 +1127,7 @@ you would encounter if the appropriate driver is not installed. Previously, you 
 Not Yet Implemented</code> error if using a driver that didn't implement the command. Now, you will get
 a <code>404 Not Found</code> error because if a driver that doesn't know about the command is not active, the
 main Appium server will not define the route corresponding to the command.</p>
-<h3 id="driver-updates"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Driver updates</h3>
+<h3 id="driver-updates"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver updates</h3>
 <p>In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>list<span class="w"> </span>--updates
 </code></pre></div>
@@ -1141,10 +1141,10 @@ CLI</a> doc)</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
 </code></pre></div>
-<h3 id="protocol-changes"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Protocol changes</h3>
+<h3 id="protocol-changes"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Protocol changes</h3>
 <p>Appium's API is based on the <a href="https://www.w3.org/TR/webdriver/">W3C WebDriver Protocol</a>, and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.</p>
 <p>Up until Appium 2.0, Appium supported both protocols, so that older Selenium/Appium clients could still communicate with newer Appium servers. Moving forward, support for older protocols will be removed.</p>
-<h3 id="capabilities"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> <em>Capabilities</em></h3>
+<h3 id="capabilities"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>Capabilities</em></h3>
 <p>One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the <a href="https://www.w3.org/TR/webdriver/#capabilities">WebDriver Protocol spec</a>, and includes a few commonly used capabilities such as <code>browserName</code> and <code>platformName</code>.</p>
 <p>These standard capabilities continue to be used as-is. All other capabilities must include a "vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as <code>appium:</code>. Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include vendor prefixes (we recommend that you use <code>appium:</code> unless directed otherwise by documentation). For example:</p>
 <ul>
@@ -1167,13 +1167,13 @@ CLI</a> doc)</p>
 </code></pre></div>
 <p>(Of course, each client will have a different way of creating structured capabilities like <code>appium:options</code> or other ones that you might have seen such as <code>goog:chromeOptions</code>). NB: capabilities that show up in <code>appium:options</code> will overwrite capabilities of the same name that show up at the top level of the object. (The new <code>appium:options</code> syntax support by cloud providers may vary.)</p>
 <p>For more information on capabilities, have a look at the <a href="caps.md">Capabilities Guide</a>.</p>
-<h3 id="removed-commands"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> <em>Removed Commands</em></h3>
+<h3 id="removed-commands"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>Removed Commands</em></h3>
 <p>In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:</p>
 <ul>
 <li>TODO (these commands are being identified and removed and will be updated here when complete)</li>
 </ul>
 <p>If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.</p>
-<h3 id="image-analysis-features-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Image analysis features moved to plugin</h3>
+<h3 id="image-analysis-features-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Image analysis features moved to plugin</h3>
 <p>One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called <a href="../ecosystem/index.md">plugins</a>. This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called <a href="https://github.com/appium/appium/tree/master/packages/images-plugin">images</a>.</p>
 <p>If you use these image-related methods, to continue accessing them you will need to do two things.</p>
 <ol>
@@ -1181,19 +1181,19 @@ CLI</a> doc)</p>
 <li>Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., <code>appium --use-plugins=images</code></li>
 </ol>
 <p>Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.</p>
-<h3 id="execute-driver-script-command-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Execute Driver Script command moved to plugin</h3>
+<h3 id="execute-driver-script-command-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Execute Driver Script command moved to plugin</h3>
 <p>If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO script to have it executed completely on the server instead of command-by-command from the client), this functionality has been moved to a plugin. Here's what to do to keep using it:</p>
 <ol>
 <li>Install the plugin: <code>appium plugin install execute-driver</code></li>
 <li>Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., <code>appium --use-plugins=execute-driver</code></li>
 </ol>
-<h3 id="external-files-no-longer-supported-for-nodeconfig-default-capabilities-allow-insecure-and-deny-insecure"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> External Files No Longer Supported for <code>--nodeconfig</code>, <code>--default-capabilities</code>, <code>--allow-insecure</code> and <code>--deny-insecure</code></h3>
+<h3 id="external-files-no-longer-supported-for-nodeconfig-default-capabilities-allow-insecure-and-deny-insecure"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> External Files No Longer Supported for <code>--nodeconfig</code>, <code>--default-capabilities</code>, <code>--allow-insecure</code> and <code>--deny-insecure</code></h3>
 <p>These options can be provided as strings on the command line (a JSON string for <code>--nodeconfig</code> and a comma-separated list of strings for <code>--allow-insecure</code> and <code>--deny-insecure</code>). Arguments provided on the command line will likely need to be quoted or escaped.</p>
 <p>The recommended method to provide these options is now via a <a href="#tada-configuration-files">configuration file</a>.</p>
 <p>In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the <code>server.nodeconfig</code> property.  Any CSV-like files you had previously provided for <code>--allow-insecure</code> and <code>--deny-insecure</code> become the values of the <code>server.allow-insecure</code> and <code>server.deny-insecure</code> properties in the Appium config files (respectively); both are arrays of strings.</p>
-<h3 id="old-drivers-removed"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Old drivers removed</h3>
+<h3 id="old-drivers-removed"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Old drivers removed</h3>
 <p>The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., <code>authorize-ios</code>) have been removed. They haven't been relevant for many years anyway.</p>
-<h3 id="server-can-no-longer-be-started-with-port-0"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Server can no longer be started with <code>--port 0</code></h3>
+<h3 id="server-can-no-longer-be-started-with-port-0"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Server can no longer be started with <code>--port 0</code></h3>
 <p>In Appium 1.x, it was possible to specify <code>--port 0</code> during server startup. This had the effect of
 starting Appium on a random free port. In Appium 2.0, port values must be <code>1</code> or higher. The random
 port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
@@ -1201,30 +1201,30 @@ HTTP servers work and the fact that there was no port input validation in Appium
 to find a random free port to start Appium on, you must now take care of this on your own prior to
 starting Appium. Starting Appium on an explicit and known port is the correct practice moving
 forward.</p>
-<h3 id="internal-packages-renamed"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> Internal packages renamed</h3>
+<h3 id="internal-packages-renamed"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Internal packages renamed</h3>
 <p>Some Appium-internal NPM packages have been renamed (for example, <code>appium-base-driver</code> is now <code>@appium/base-driver</code>). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.</p>
-<h3 id="wd-javascript-client-library-no-longer-supported"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> "WD" JavaScript client library no longer supported</h3>
+<h3 id="wd-javascript-client-library-no-longer-supported"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> "WD" JavaScript client library no longer supported</h3>
 <p>For many years, some of Appium's authors maintained the <a href="https://github.com/admc/wd">WD</a> client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend <a href="https://webdriver.io">WebdriverIO</a>.</p>
-<h3 id="appium-inspector-split-out-from-appium-desktop"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> Appium Inspector split out from Appium Desktop</h3>
+<h3 id="appium-inspector-split-out-from-appium-desktop"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Appium Inspector split out from Appium Desktop</h3>
 <p>The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: <a href="https://github.com/appium/appium-inspector">github.com/appium/appium-inspector</a>. It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: <a href="https://github.com/appium/appium-desktop">github.com/appium/appium-desktop</a>. It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated <a href="https://github.com/admc/wd">WD</a> client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app.</p>
 <p>You can also now use the Appium Inspector without downloading anything, by visiting the <a href="https://inspector.appiumpro.com">web version of Appium Inspector</a>. Note that to test against local servers, you'll need to start the server with <code>--allow-cors</code> so that the browser-based version of Appium Inspector can access your Appium server to start sessions.</p>
 <h2 id="major-new-features">Major New Features</h2>
 <p>Apart from the breaking changes mentioned above, in this section is a list of some of the major new features you may wish to take advantage of with Appium 2.0.</p>
 <h3 id="plugins">Plugins</h3>
-<h4 id="server-plugins"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> <em>Server Plugins</em></h4>
+<h4 id="server-plugins"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>Server Plugins</em></h4>
 <p>Appium extension authors can now develop their own server plugins, which can intercept and modify
 any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
 more about plugins, read the new <a href="../../intro/">Appium Introduction</a>. Interested in building
 a plugin? Check out the <a href="../ecosystem/build-plugins.md">Building Plugins</a> guide.</p>
-<h4 id="client-plugins"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> <em>Client Plugins</em></h4>
+<h4 id="client-plugins"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>Client Plugins</em></h4>
 <p>TODO</p>
-<h3 id="install-drivers-and-plugins-from-anywhere"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> Install drivers and plugins from anywhere</h3>
+<h3 id="install-drivers-and-plugins-from-anywhere"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> Install drivers and plugins from anywhere</h3>
 <p>You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
 about! Appium extension authors can now develop custom drivers, which can be downloaded or
 installed via Appium's <a href="../cli/extensions.md">Extension CLI</a> from NPM, Git, GitHub, or even the
 local filesystem. Interested in building a driver? Check out the <a href="../ecosystem/build-drivers.md">Building
 Drivers</a> guide.</p>
-<h3 id="configuration-files"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> Configuration Files</h3>
+<h3 id="configuration-files"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> Configuration Files</h3>
 <p>Appium now supports <em>configuration files</em> in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the <a href="config.md">Config Guide</a> for a full explanation.</p>
 <h2 id="special-notes-for-cloud-providers">Special Notes for Cloud Providers</h2>
 <p>The rest of this document has applied to Appium generally, but some of the architectural changes in Appium 2.0 will constitute breaking changes for Appium-related service providers, whether a cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium server is responsible for installing and making available the various Appium drivers and plugins that end users may wish to use.</p>

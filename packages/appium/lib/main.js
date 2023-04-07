@@ -3,7 +3,7 @@
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -33,8 +33,7 @@ import {
   isPluginCommandArgs,
   isServerCommandArgs,
 } from './utils';
-import fs from 'fs/promises';
-import os from 'os';
+import os from 'node:os';
 
 const {resolveAppiumHome} = env;
 

@@ -34,9 +34,10 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "test": "npm run test:unit",
+    "test": "run-p test:unit test:types",
     "test:smoke": "node .",
-    "test:unit": "mocha \"test/unit/**/*.spec.ts\""
+    "test:unit": "mocha \"test/unit/**/*.spec.ts\"",
+    "test:types": "tsd"
   },
   "dependencies": {
     "env-paths": "2.2.1",
@@ -48,5 +49,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "tsd": {
+    "directory": "test/types"
   }
 }

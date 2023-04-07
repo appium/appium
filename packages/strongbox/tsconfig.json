@@ -6,5 +6,6 @@
     "strict": true,
     "types": ["node", "mocha", "chai", "chai-as-promised", "sinon-chai"]
   },
-  "include": ["lib", "test"]
+  "include": ["lib", "test"],
+  "exclude": ["**/*.test-d.ts"]
 }

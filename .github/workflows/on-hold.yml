@@ -8,7 +8,8 @@ jobs:
   label-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: danielchabr/pr-labels-checker@e1d7e79aa0933af1728011705a30528a279874fd # v3.1
+      - name: Check for "On Hold" label
+        uses: egmacke/action-check-label@0eb29f801fb482a95c9bd2dd22834ecc8f4e8af9 # v1
         with:
-          hasNone: On Hold
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          label: On Hold
+          state: absent

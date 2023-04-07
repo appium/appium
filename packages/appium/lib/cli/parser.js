@@ -101,6 +101,13 @@ class ArgParser {
     try {
       const parsed = this.parser.parse_known_args(args);
       const [knownArgs, unknownArgs] = parsed;
+      // XXX: you'd think that argparse, when given an alias for a subcommand,
+      // would set this value to the original subcommand name, but it doesn't.
+      if (knownArgs?.driverCommand === 'ls') {
+        knownArgs.driverCommand = 'list';
+      } else if (knownArgs?.pluginCommand === 'ls') {
+        knownArgs.pluginCommand = 'list';
+      }
       if (
         unknownArgs?.length &&
         (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
@@ -210,13 +217,14 @@ class ArgParser {
       });
       const extensionArgs = getExtensionArgs();
       /**
-       * @type { {command: import('appium/types').CliExtensionSubcommand, args: import('./args').ArgumentDefinitions, help: string}[] }
+       * @type { {command: import('appium/types').CliExtensionSubcommand, args: import('./args').ArgumentDefinitions, help: string, aliases?: import('argparse').SubArgumentParserOptions['aliases']}[] }
        */
       const parserSpecs = [
         {
           command: 'list',
           args: extensionArgs[type].list,
           help: `List available and installed ${type}s`,
+          aliases: ['ls'],
         },
         {
           command: 'install',
@@ -242,15 +250,18 @@ class ArgParser {
         },
       ];
 
-      for (const {command, args, help} of parserSpecs) {
-        const parser = extSubParsers.add_parser(command, {help});
+      for (const {command, args, help, aliases} of parserSpecs) {
+        const parser = extSubParsers.add_parser(command, {help, aliases: aliases ?? []});
 
         ArgParser._patchExit(parser);
 
         for (const [flagsOrNames, opts] of args) {
           // add_argument mutates params so make sure to send in copies instead
-          // @ts-ignore
-          parser.add_argument(...flagsOrNames, {...opts});
+          if (flagsOrNames.length === 2) {
+            parser.add_argument(flagsOrNames[0], flagsOrNames[1], {...opts});
+          } else {
+            parser.add_argument(flagsOrNames[0], {...opts});
+          }
         }
       }
     }

@@ -138,7 +138,11 @@ export class Strongbox {
    */
   protected constructor(
     public readonly name: string,
-    {container, suffix = DEFAULT_SUFFIX, defaultItemCtor: defaultCtor = BaseItem}: StrongboxOpts = {}
+    {
+      container,
+      suffix = DEFAULT_SUFFIX,
+      defaultItemCtor: defaultCtor = BaseItem,
+    }: StrongboxOpts = {}
   ) {
     this.id = slugify(name);
     this.defaultItemCtor = defaultCtor;
@@ -282,3 +286,8 @@ export interface StrongboxOpts {
  * {@inheritdoc Strongbox.create}
  */
 export const strongbox = Strongbox.create;
+
+/**
+ * This can be subclassed if needed.
+ */
+export {BaseItem};

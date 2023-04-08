@@ -1599,7 +1599,7 @@ Appium 2.0 中的更改主要与特定平台的自动化行为更改 <em>无</em
 <h2 id="_1">重大变更</h2>
 <p>查看 <a href="https://github.com/appium/appium/releases">Appium 2.0 发行说明</a> 以获取最全面的变更列表. 
 在此, 我们指出重大变更以及您需要为它们执行的操作. </p>
-<h3 id="_2"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 在安装过程中安装驱动程序</h3>
+<h3 id="_2"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 在安装过程中安装驱动程序</h3>
 <p>当您安装Appium 1.x时, 所有可用的驱动程序将与主Appium Server同时安装. 
 现在情况已不再如此. 简单地安装Appium 2.0 (例如, 通过 <code>npm install -g appium</code> ) , 
 将只安装Appium Server, 但没有驱动程序. 
@@ -1616,7 +1616,7 @@ Appium 2.0 中的更改主要与特定平台的自动化行为更改 <em>无</em
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm install --global appium --drivers=xcuitest,uiautomator2
 </code></pre></div>
 <p>这将一次性为您安装Appium和两种驱动程序.</p>
-<h3 id="_3"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 驱动安装路径</h3>
+<h3 id="_3"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 驱动安装路径</h3>
 <p>当您安装 Appium 1.x 时, 
 所有可用的驱动程序将与主 Appium 服务器同时安装.
 路径是 <code>/path/to/appium/node_modules</code>.
@@ -1626,7 +1626,7 @@ Appium 2.0 中的更改主要与特定平台的自动化行为更改 <em>无</em
 默认路径为 <code>~/.appium</code>.
 因此，安装 XCUITest 驱动程序包后，
 <code>appium-webdriveragent</code> 的路径可能是 <code>$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code> .</p>
-<h3 id="chromedriver"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> Chromedriver安装标志</h3>
+<h3 id="chromedriver"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Chromedriver安装标志</h3>
 <p>在Appium 1.x中, 可以使用以下命令行标志自定义Chromedriver的安装方式
  (例如作为UiAutomator2驱动程序的一部分) :</p>
 <ul>
@@ -1644,7 +1644,7 @@ Appium 2.0 中的更改主要与特定平台的自动化行为更改 <em>无</em
 <p>例如:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 </code></pre></div>
-<h3 id="_4"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 特定于驱动程序的命令行选项</h3>
+<h3 id="_4"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 特定于驱动程序的命令行选项</h3>
 <p>在 Appium 1.x 中, 针对特定驱动程序的命令行选项都托管在主 Appium 服务器上. 
 因此, 您可以与Appium一起使用诸如
 '--chromedriver-executable' 这样的CLI参数, 
@@ -1654,7 +1654,7 @@ UiAutomator2同理. </p>
 所有特定于驱动程序和平台的 CLI 参数都已移至驱动程序本身. 
 要访问它们, 您现在需要在参数前面附加扩展类型 ( <code>driver</code> 或 <code>plugin</code>) 以及扩展名的名称. 
 例如, <code>--chromedriver-executable</code>变为<code>--driver-uiautomator2-chromedriver-executable</code>. </p>
-<h3 id="_5"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 特定于驱动程序的自动化命令</h3>
+<h3 id="_5"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 特定于驱动程序的自动化命令</h3>
 <p>仅与特定驱动程序相关的某些命令的定义已移至这些驱动程序内实现. 
 例如, <code>pressKeyCode</code> 特定作用于 UiAutomator2 驱动程序, 
 并且现在只有该驱动程序才能识别. 
@@ -1663,7 +1663,7 @@ UiAutomator2同理. </p>
 现在, 您将获得<code>404 Not Found</code>错误, 
 因为如果不知道该命令的驱动程序是否有效, 
 主 Appium Server将不会定义与命令对应的路由. </p>
-<h3 id="_6"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 驱动程序更新</h3>
+<h3 id="_6"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 驱动程序更新</h3>
 <p>在过去, 要获取iOS或Android驱动程序的更新, 
 您只需等待新版本的Appium包含这些升级, 
 然后更新您的Appium版本即可. 
@@ -1680,7 +1680,7 @@ UiAutomator2同理. </p>
 </code></pre></div>
 <p>要更新Appium Server本身, 您需要执行与过去一致的操作: <code>npm install -g appium</code>. 
 现在, 安装新版本的Appium Server将无关于其他驱动程序, 因此整个过程将更加快速. </p>
-<h3 id="_7"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 协议变更</h3>
+<h3 id="_7"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 协议变更</h3>
 <p>Appium的API基于<a href="https://www.w3.org/TR/webdriver/">W3C WebDriver协议</a>, 
 并且已经支持该协议多年. 
 在W3C WebDriver协议被设计为Web标准之前, 
@@ -1690,7 +1690,7 @@ W3C协议与(M)JSONWP协议在某些方面略有差异. </p>
 <p>在Appium 2.0之前, Appium支持这两种协议, 
 因此之前的Selenium / Appium客户端仍然可以与较新的Appium服务器进行通信. 
 长期来看, Appium将删除对遗留协议的支持. </p>
-<h3 id="capabilities"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> <em>Capabilities</em></h3>
+<h3 id="capabilities"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>Capabilities</em></h3>
 <p>新旧协议之间的一个显着差异在于capabilities的格式. 
 以前称为"desired capabilities", 现在简称为"capabilities", 
 现在要求在任何非标准capabilities上使用所谓的"供应商前缀". 
@@ -1737,7 +1737,7 @@ Appium 的大多数capabilities都超出了标准的 W3C capabilities,
 诸如 <code>appium:options</code> 或其他你可能见过的capabilities, 如 <code>goog:chromeOptions</code>) . 
 注意:显示在 <code>appium:options</code> 中的capabilities将覆盖显示在对象顶层的同名capabilities. </p>
 <p>有关capabilities的更多信息, 请查看<a href="../caps/">Capabilities指南</a>.</p>
-<h3 id="_8"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> <em>删除的命令</em></h3>
+<h3 id="_8"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>删除的命令</em></h3>
 <p>除了已移至驱动程序实现的命令外, 
 作为W3C协议外的旧的JSON Wire协议命令将不再可用:</p>
 <ul>
@@ -1746,7 +1746,7 @@ Appium 的大多数capabilities都超出了标准的 W3C capabilities,
 <p>如果您使用现代Appium或Selenium客户端, 
 则无论如何都不应再使用遗留命令, 
 因此任何重大变更都应首先作用于客户端方面. </p>
-<h3 id="_9"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 图像分析功能移至插件</h3>
+<h3 id="_9"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 图像分析功能移至插件</h3>
 <p>Appium 2.0 的设计目标之一是
 将非核心功能迁移到名为 <a href="../../ecosystem/">plugins</a>的特殊扩展中.
 这允许人们选择使用额外时间来下载或扩展系统设置的功能. 
@@ -1759,7 +1759,7 @@ Appium的各种图像相关功能 (图像比较, 按图像查找元素等) 已�
 </ol>
 <p>与图像相关的命令也将在客户端被删除, 
 这意味着您需要按照插件README上的说明安装客户端插件来使用这些功能. </p>
-<h3 id="_10"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 执行驱动程序脚本命令移至插件</h3>
+<h3 id="_10"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 执行驱动程序脚本命令移至插件</h3>
 <p>如果您使用高级执行驱动程序脚本功能
  (它允许您发送WebdriverIO脚本以使其完全在服务器上执行, 
 而不是从客户端逐个命令执行) , 
@@ -1769,7 +1769,7 @@ Appium的各种图像相关功能 (图像比较, 按图像查找元素等) 已�
 <li>安装插件: <code>appium plugin install execute-driver</code></li>
 <li>确保您启动 Appium Server时具备访问运行插件的权限,  方法是将其包含在命令行上指定的插件列表中, 例如 <code>appium --use-plugins=execute-driver</code></li>
 </ol>
-<h3 id="-nodeconfig-default-capabilities-allow-insecure-deny-insecure"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 不再支持外部文件 <code>--nodeconfig</code>, <code>--default-capabilities</code>, <code>--allow-insecure</code> 以及 <code>--deny-insecure</code></h3>
+<h3 id="-nodeconfig-default-capabilities-allow-insecure-deny-insecure"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 不再支持外部文件 <code>--nodeconfig</code>, <code>--default-capabilities</code>, <code>--allow-insecure</code> 以及 <code>--deny-insecure</code></h3>
 <p>这些选项可以在命令行上以字符串形式提供
  ( <code>--nodeconfig</code> 的JSON字符串以及
 用于<code>--allow-insecure</code>和<code>--deny-insecure</code>的逗号分隔字符串列表) . 
@@ -1780,21 +1780,21 @@ Appium的各种图像相关功能 (图像比较, 按图像查找元素等) 已�
 您之前为 <code>--allow-insecure</code> 和 <code>--deny-insecure</code> 提供的任何类似CSV的文件
 分别成为Appium配置文件中 <code>server.allow-insecure</code> 和 <code>server.deny-insecure</code> 属性的值;
 两者都是字符串数组. </p>
-<h3 id="_11"><img alt="‼" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/203c.svg" title=":bangbang:" /> 删除的旧驱动</h3>
+<h3 id="_11"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 删除的旧驱动</h3>
 <p>旧的iOS和Android (UiAutomator 1) 驱动程序
 和相关工具 (例如, <code>authorize-ios</code>) 已被删除. 
 无论如何, 它们已经很多年都没有关联了. </p>
-<h3 id="_12"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> 内部包已重命名</h3>
+<h3 id="_12"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> 内部包已重命名</h3>
 <p>一些Appium内部的NPM软件包已被重命名
  (例如,  <code>appium-base-driver</code> 现在是 <code>@appium/base-driver</code>) . 
 对于Appium用户来说, 这并非是重大变更, 
 仅仅针对那些已经构建了直接包含Appium代码的软件的人来说. </p>
-<h3 id="wdjavascript"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> 不再支持"WD"JavaScript 客户端库</h3>
+<h3 id="wdjavascript"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> 不再支持"WD"JavaScript 客户端库</h3>
 <p>多年来, Appium的一些作者一直维护着<a href="https://github.com/admc/wd">WD</a> 客户端库. 
 此库已被弃用, 并且尚未更新W3C WebDriver协议. 
 因此, 如果您正在使用此库, 则需要迁移到更现代的库. 
 我们推荐 <a href="https://webdriver.io">WebdriverIO</a>. </p>
-<h3 id="appium-inspector-appium-desktop"><img alt="⚠" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/26a0.svg" title=":warning:" /> Appium Inspector 从 Appium Desktop 中分离出来</h3>
+<h3 id="appium-inspector-appium-desktop"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Appium Inspector 从 Appium Desktop 中分离出来</h3>
 <p>Appium Desktop的Inspector部分已移至其自己的应用程序Appium Inspector:
 <a href="https://github.com/appium/appium-inspector">github.com/appium/appium-inspector</a>. 
 其与Appium 2.0 Server完全兼容. 
@@ -1811,7 +1811,7 @@ Appium Desktop Server将继续在其原始站点
 <p>除了上面提到的重大变更之外, 
 本节中还列出了您可能希望在 Appium 2.0 中利用的一些主要新功能. </p>
 <h3 id="_14">插件</h3>
-<h4 id="_15"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> <em>服务器插件</em></h4>
+<h4 id="_15"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>服务器插件</em></h4>
 <p>Appium 扩展作者现在可以开发自己的服务器插件, 
 可以拦截和修改任何Appium命令,
 甚至调整底层 Appium HTTP 服务器本身的工作方式.
@@ -1819,9 +1819,9 @@ Appium Desktop Server将继续在其原始站点
 查询新的 <a href="../../intro/">Appium 介绍</a>.
 有兴趣构建插件? 
 请查阅 <a href="../../ecosystem/build-plugins/">构建插件</a> 指南.</p>
-<h4 id="_16"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> <em>客户端插件</em></h4>
+<h4 id="_16"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>客户端插件</em></h4>
 <p>TODO</p>
-<h3 id="_17"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> 从任何地方安装驱动程序和插件</h3>
+<h3 id="_17"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> 从任何地方安装驱动程序和插件</h3>
 <p>您不再局限于 Appium 附带的驱动程序，
 或者通过Appium团队知晓!
 Appium 扩展作者现在可以开发自定义驱动程序,
@@ -1829,7 +1829,7 @@ Appium 扩展作者现在可以开发自定义驱动程序,
 从NPM, Git, GitHub 乃至本地的文件系统下载或安装.
 有兴趣构建驱动程序? 
 请查阅 <a href="../../ecosystem/build-drivers/">构建驱动</a> 指南.</p>
-<h3 id="_18"><img alt="🎉" class="twemoji" src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f389.svg" title=":tada:" /> 配置文件</h3>
+<h3 id="_18"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> 配置文件</h3>
 <p>Appium 现在除了命令行参数外, 
 还支持 <em>配置文件</em> . 
 简而言之, Appium 1.x需要在CLI上提供的几乎所有参数现在都可以通过配置文件来表达. 

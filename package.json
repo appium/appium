@@ -129,7 +129,7 @@
     "npm-run-all": "4.1.5",
     "prettier": "2.8.7",
     "rewiremock": "3.14.5",
-    "rimraf": "3.0.2",
+    "rimraf": "4.4.1",
     "serve-static": "1.15.0",
     "sinon": "15.0.3",
     "sinon-chai": "3.7.0",

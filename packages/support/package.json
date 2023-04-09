@@ -88,7 +88,7 @@
     "pngjs": "7.0.0",
     "read-pkg": "5.2.0",
     "resolve-from": "5.0.0",
-    "rimraf": "3.0.2",
+    "rimraf": "4.4.1",
     "sanitize-filename": "1.6.3",
     "semver": "7.3.8",
     "shell-quote": "1.8.1",

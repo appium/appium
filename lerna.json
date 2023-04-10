@@ -1,6 +1,13 @@
 {
   "$schema": "https://json.schemastore.org/lerna",
+  "changelogPreset": "conventional-changelog-conventionalcommits",
   "command": {
+    "add": {
+      "exact": true
+    },
+    "publish": {
+      "message": "chore: publish"
+    },
     "run": {
       "concurrency": 8
     },
@@ -10,16 +17,10 @@
       "version": {
         "allowBranch": "master"
       }
-    },
-    "add": {
-      "exact": true
-    },
-    "publish": {
-      "message": "chore: publish"
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],
-  "version": "independent",
+  "useNx": false,
   "useWorkspaces": true,
-  "useNx": false
+  "version": "independent"
 }

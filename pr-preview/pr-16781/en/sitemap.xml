@@ -236,6 +236,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://appium.github.io/appium/docs/en/reference/classes/appium_strongbox.BaseItem/</loc>
+         <lastmod>2023-04-10</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://appium.github.io/appium/docs/en/reference/classes/appium_strongbox.Strongbox/</loc>
          <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>

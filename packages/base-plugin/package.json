@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-plugin",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "The base plugin used to create Appium 2.0 plugins",
   "keywords": [
     "automation",
@@ -40,8 +40,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^9.3.5",
-    "@appium/support": "^3.1.9"
+    "@appium/base-driver": "^9.3.6",
+    "@appium/support": "^3.1.10"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

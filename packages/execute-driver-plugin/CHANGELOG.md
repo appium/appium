@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.11](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.10...@appium/execute-driver-plugin@3.0.11) (2023-04-10)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency vm2 to v3.9.15 ([5790924](https://github.com/appium/appium/commit/5790924bf89d55352bd5e20b14377b2bffc0cbf1))
+
+
+
+
+
 ## [3.0.10](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.9...@appium/execute-driver-plugin@3.0.10) (2023-04-03)
 
 **Note:** Version bump only for package @appium/execute-driver-plugin

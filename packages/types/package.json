@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.10.3",
+  "version": "0.10.4",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "automation",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@appium/schema": "^0.2.6",
-    "@appium/tsconfig": "^0.2.4",
+    "@appium/tsconfig": "^0.3.0",
     "@types/express": "4.17.17",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.4",

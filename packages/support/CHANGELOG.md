@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.10](https://github.com/appium/appium/compare/@appium/support@3.1.9...@appium/support@3.1.10) (2023-04-10)
+
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.3.5 ([6cf1480](https://github.com/appium/appium/commit/6cf14802b70a462beffc12a1134476596060c005))
+* **support:** update dependency shell-quote to v1.8.1 ([c39be81](https://github.com/appium/appium/commit/c39be81d04b9738cd639bb5dd82adf584f691f8f))
+* **types:** update dependency type-fest to v3.8.0 ([d6c42e9](https://github.com/appium/appium/commit/d6c42e99c08efce0b34796d5982ce379fca044d3))
+
+
+
+
+
 ## [3.1.9](https://github.com/appium/appium/compare/@appium/support@3.1.8...@appium/support@3.1.9) (2023-04-03)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.4...@appium/tsconfig@0.3.0) (2023-04-10)
+
+
+### Features
+
+* **strongbox:** create @appium/strongbox ([fd91234](https://github.com/appium/appium/commit/fd912346fade8f29f5b4d1458828ea677d7e9fcc))
+
+
+
+
+
 ## [0.2.4](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.3...@appium/tsconfig@0.2.4) (2023-02-09)
 
 

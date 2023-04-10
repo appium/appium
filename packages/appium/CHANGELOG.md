@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.0.0-beta.62](https://github.com/appium/appium/compare/appium@2.0.0-beta.61...appium@2.0.0-beta.62) (2023-04-10)
+
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.3.5 ([6cf1480](https://github.com/appium/appium/commit/6cf14802b70a462beffc12a1134476596060c005))
+* **types:** update dependency type-fest to v3.8.0 ([d6c42e9](https://github.com/appium/appium/commit/d6c42e99c08efce0b34796d5982ce379fca044d3))
+
+
+### Features
+
+* **appium:** make "ls" alias of "list" ([5ab2fea](https://github.com/appium/appium/commit/5ab2fea5768ef8c67270d49c920b9515ca1ff1e4))
+
+
+
+
+
 # [2.0.0-beta.61](https://github.com/appium/appium/compare/appium@2.0.0-beta.60...appium@2.0.0-beta.61) (2023-04-05)
 
 **Note:** Version bump only for package appium

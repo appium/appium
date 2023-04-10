@@ -2,17 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.github.io/appium/docs/ja/</loc>
-         <lastmod>2023-04-07</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/guides/migrating-1-to-2/</loc>
-         <lastmod>2023-04-07</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.github.io/appium/docs/ja/intro/</loc>
-         <lastmod>2023-04-07</lastmod>
+         <lastmod>2023-04-10</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

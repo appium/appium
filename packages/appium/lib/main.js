@@ -170,7 +170,7 @@ async function prepareAppiumHome(name, appiumHome) {
   }
   if (!stat.isDirectory()) {
     throw new Error(
-      `The path '${appiumHome}' provided in the ${name} must be pointing to a valid folder`
+      `The path '${appiumHome}' provided in the ${name} must point to a valid folder`
     );
   }
   try {

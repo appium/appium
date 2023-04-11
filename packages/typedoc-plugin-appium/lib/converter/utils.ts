@@ -247,13 +247,10 @@ export function cloneTypeParameterReflection(
   tPRefl: TypeParameterReflection,
   parentRefl: Reflection
 ) {
-  return new TypeParameterReflection(
-    tPRefl.name,
-    tPRefl.type,
-    tPRefl.default,
-    parentRefl,
-    tPRefl.varianceModifier
-  );
+  const newTPRefl = new TypeParameterReflection(tPRefl.name, parentRefl, tPRefl.varianceModifier);
+  newTPRefl.default = tPRefl.default;
+  newTPRefl.type = tPRefl.type;
+  return newTPRefl;
 }
 
 /**

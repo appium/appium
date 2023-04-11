@@ -81,7 +81,7 @@ export function convertMethodMap({
   }
 
   for (const routeProp of routeProps) {
-    const {originalName: route} = routeProp;
+    const {name: route} = routeProp;
 
     if (!isRoutePropDeclarationReflection(routeProp)) {
       log.warn('Empty route: %s', route);

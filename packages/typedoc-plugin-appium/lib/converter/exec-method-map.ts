@@ -68,7 +68,7 @@ export function convertExecuteMethodMap({
 
   const newMethodProps = filterChildrenByKind(execMethodMapRefl, ReflectionKind.Property);
   for (const newMethodProp of newMethodProps) {
-    const {comment, originalName: script} = newMethodProp;
+    const {comment, name: script} = newMethodProp;
 
     const commandProp = findChildByGuard(newMethodProp, isCommandPropDeclarationReflection);
 

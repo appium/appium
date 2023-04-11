@@ -27,14 +27,16 @@ let log: AppiumPluginLogger;
  */
 export function load(
   app: Application
-): Promise<[PromiseSettledResult<ConvertResult>, PromiseSettledResult<PostProcessResult>]> {
-  // register our custom theme.  the user still has to choose it
+): void {
+  // reister our custom theme.  the user still has to choose it
   setup(app);
 
   // TypeDoc does not expect a return value here, but it's useful for testing.
   // note that this runs both methods "in parallel", but the `convert` method will always resolve
   // first, and `postProcess` won't do any real work until that happens.
-  return Promise.allSettled([convert(app), postProcess(app)]);
+  convert(app);
+  postProcess(app);
+  // return Promise.allSettled([convert(app), postProcess(app)]);
 }
 
 /**

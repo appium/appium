@@ -37,7 +37,7 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    * This needs to run before `MarkdownOptionsReader`.
    */
   public readonly order = 500;
-  public readonly supportsPackages = true;
+  public readonly supportsPackages = false;
 
   constructor(logger: AppiumPluginLogger) {
     this.#log = logger.createChildLogger('options-reader');

@@ -110,10 +110,3 @@ export async function main(argv = hideBin(process.argv)) {
     .strict()
     .parseAsync();
 }
-
-if (require.main === module) {
-  // eslint-disable-next-line promise/prefer-await-to-then, promise/prefer-await-to-callbacks
-  main().catch((err) => {
-    log.error('Caught otherwise-unhandled rejection (this is probably a bug):', err);
-  });
-}

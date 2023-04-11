@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "bin": {
-    "appium-docs": "./bin/appium-docs.js"
+    "appium-docs": "bin/appium-docs.js"
   },
   "files": [
     "index.js",
@@ -37,8 +37,7 @@
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",
-    "requirements.txt",
-    "bin"
+    "requirements.txt"
   ],
   "scripts": {
     "test": "npm run test:unit",

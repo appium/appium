@@ -38,7 +38,7 @@ const BASE_MKDOCS_YML = {
 const BASE_TYPEDOC_JSON = {
   $schema: 'https://typedoc.org/schema.json',
   cleanOutputDir: true,
-  entryPointStrategy: 'packages',
+  entryPointStrategy: 'legacy-packages',
   theme: 'appium',
   entryPoints: ['.'],
   outputBuiltinCommands: false,

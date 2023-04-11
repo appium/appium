@@ -1,7 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "cleanOutputDir": true,
-  "entryPointStrategy": "packages",
+  "entryPointStrategy": "legacy-packages",
   "entryPoints": [
     "./packages/appium",
     "./packages/base-driver",

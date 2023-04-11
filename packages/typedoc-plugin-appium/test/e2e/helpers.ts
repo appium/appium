@@ -48,7 +48,7 @@ async function getEntryPoint(pkgName: string): Promise<string> {
  *
  * If `_FORCE_LOGS` is in the env, use verbose logging; otherwise logs are suppressed for your pleasure
  *
- * Note: if multiple entry points are provided, we assume that the `entryPointStrategy` should be `packages`
+ * Note: if multiple entry points are provided, we assume that the `entryPointStrategy` should be `legacy-packages`
  *
  * @param opts - Opts
  * @returns New TypeDoc app
@@ -64,9 +64,8 @@ function getTypedocApp(opts: Partial<TypeDocOptions> = {}): Application {
     excludeExternals: true,
     plugin: ['none'], // prevent any plugins from being auto-loaded
     logLevel: forceLogs ? LogLevel.Verbose : LogLevel.Info,
-    logger: forceLogs ? undefined : 'none',
     entryPointStrategy:
-      opts.entryPoints?.length ?? 0 > 1 ? EntryPointStrategy.Packages : EntryPointStrategy.Resolve,
+      opts.entryPoints?.length ?? 0 > 1 ? EntryPointStrategy.LegacyPackages : EntryPointStrategy.Resolve,
     theme: THEME_NAME,
     skipErrorChecking: true,
     ...opts,
@@ -92,7 +91,7 @@ export async function initAppForPkg(
 }
 
 /**
- * Runs Typedoc against multiple packages (using `entryPointStrategy` of `packages`)
+ * Runs Typedoc against multiple packages (using `entryPointStrategy` of `legacy-packages`)
  * @param opts - Options; `entryPoints` is required
  * @returns Typedoc Application
  */
@@ -104,8 +103,8 @@ export function initAppForPkgs({
   entryPoints = entryPoints.map((pkgName) =>
     path.dirname(require.resolve(`${pkgName}/${NAME_PACKAGE_JSON}`))
   );
-  // because entryPoints is a list of directories, this must be 'packages'
-  const entryPointStrategy = EntryPointStrategy.Packages;
+  // because entryPoints is a list of directories, this must be 'legacy-packages'
+  const entryPointStrategy = EntryPointStrategy.LegacyPackages;
   return getTypedocApp({...opts, tsconfig, entryPoints, entryPointStrategy});
 }
 

@@ -167,7 +167,6 @@ export const readPackageJson = _.memoize(_readPkgJson);
 export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
   const app = new Application();
   app.options.setValue('plugin', 'none');
-  app.options.setValue('logger', 'none');
   app.options.addReader(new TypeDocReader());
   app.bootstrap({options: path.dirname(typedocJsonPath)});
   return app.options.getRawValues();

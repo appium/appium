@@ -26,7 +26,6 @@ const log = getLogger('builder:reference');
  *
  * You will probably want to run `updateNav()` after this.
  *
- * @privateRemarks Monkeypatches TypeDoc's homebrew "glob" implementation because it is broken
  * @parma typeDocJsonPath - Path to `typedoc.json`
  * @param opts - TypeDoc options
  */
@@ -34,11 +33,14 @@ export async function runTypedoc(typeDocJsonPath: string, opts: Record<string, s
   const args = argify(opts);
   log.debug('TypeDoc args:', args);
   const app = new Application();
-  app.options.setValue('plugin', [
-    'typedoc-plugin-markdown',
-    'typedoc-plugin-resolve-crossmodule-references',
-    '@appium/typedoc-plugin-appium',
-  ]);
+  app.options.setValue(
+    'plugin',
+    _.uniq([
+      ...(app.options.getValue('plugin') ?? []),
+      'typedoc-plugin-markdown',
+      '@appium/typedoc-plugin-appium',
+    ])
+  );
   app.options.addReader(new TypeDocReader());
   app.options.addReader(new ArgumentsReader(100, args));
   app.bootstrap({options: path.dirname(typeDocJsonPath)});

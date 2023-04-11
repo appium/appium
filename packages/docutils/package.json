@@ -32,14 +32,13 @@
   },
   "files": [
     "index.js",
-    "index.d.ts",
     "base-mkdocs.yml",
     "lib",
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",
-    "typedoc-shared.json",
-    "requirements.txt"
+    "requirements.txt",
+    "bin"
   ],
   "scripts": {
     "test": "npm run test:unit",
@@ -69,9 +68,8 @@
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
     "type-fest": "3.11.1",
-    "typedoc": "0.23.28",
-    "typedoc-plugin-markdown": "3.14.0",
-    "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
+    "typedoc": "0.24.1",
+    "typedoc-plugin-markdown": "3.15.1",
     "typescript": "4.9.5",
     "yaml": "2.3.1",
     "yargs": "17.7.2",

@@ -24,6 +24,7 @@ export type TypeDocJson = Jsonify<
   Partial<TypeDocOptions> & {
     $schema?: string;
     extends?: string;
+    [x: string]: any;
   }
 >;
 

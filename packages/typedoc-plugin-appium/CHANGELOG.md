@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.1...@appium/typedoc-plugin-appium@0.6.2) (2023-04-12)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** restrict peer deps ([63e28a0](https://github.com/appium/appium/commit/63e28a014cf9af8bba9595d83f513bfb7026ae9a))
+
+
+
 ## [0.6.1](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.0...@appium/typedoc-plugin-appium@0.6.1) (2023-04-10)
 
 

@@ -3,7 +3,7 @@
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
 import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -33,6 +33,7 @@ import {
   isPluginCommandArgs,
   isServerCommandArgs,
 } from './utils';
+import os from 'node:os';
 
 const {resolveAppiumHome} = env;
 
@@ -138,6 +139,52 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
     {}
   );
 }
+
+/**
+ * Prepares and validates appium home path folder
+ *
+ * @param {string} name The name of the appium home source (needed for error messages)
+ * @param {string} appiumHome The actual value to be verified
+ * @returns {Promise<string>} Same appiumHome value
+ * @throws {Error} If the validation has failed
+ */
+async function prepareAppiumHome(name, appiumHome) {
+  let stat;
+  try {
+    stat = await fs.stat(appiumHome);
+  } catch (e) {
+    let err = e;
+    if (e.code === 'ENOENT') {
+      try {
+        await fs.mkdir(appiumHome, {recursive: true});
+        return appiumHome;
+      } catch (e1) {
+        err = e1;
+      }
+    }
+    throw new Error(
+      `The path '${appiumHome}' provided in the ${name} must point ` +
+      `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
+      `Original error: ${err.message}`
+    );
+  }
+  if (!stat.isDirectory()) {
+    throw new Error(
+      `The path '${appiumHome}' provided in the ${name} must point to a valid folder`
+    );
+  }
+  try {
+    await fs.access(appiumHome, fs.constants.W_OK);
+  } catch (e) {
+    throw new Error(
+      `The folder path '${appiumHome}' provided in the ${name} must be ` +
+      `writeable for the current user account '${os.userInfo().username}. ` +
+      `Original error: ${e.message}`
+    );
+  }
+  return appiumHome;
+}
+
 /**
  * Initializes Appium, but does not start the server.
  *
@@ -157,6 +204,13 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
+  let appiumHomeSourceName = 'autodetected appium home path';
+  if (!_.isNil(args?.appiumHome)) {
+    appiumHomeSourceName = 'appiumHome config value';
+  } else if (process.env.APPIUM_HOME) {
+    appiumHomeSourceName = 'APPIUM_HOME environment variable';
+  }
+  await prepareAppiumHome(appiumHomeSourceName, appiumHome);
 
   adjustNodePath();
 

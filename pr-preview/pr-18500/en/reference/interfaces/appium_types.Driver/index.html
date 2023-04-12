@@ -1,0 +1,6395 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium/docs/en/reference/interfaces/appium_types.Driver/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+    
+    
+      
+        <title>Interface: Driver - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#interface-driverc-cargs-settings-createresult-deleteresult" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Interface: Driver<C, CArgs, Settings, CreateResult, DeleteResult\>
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="Select language">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Welcome
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Introduction
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Introduction
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Intro to Appium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Intro to Appium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Overview of Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/drivers/" class="md-nav__link">
+        Intro to Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/clients/" class="md-nav__link">
+        Intro to Appium Clients
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/requirements/" class="md-nav__link">
+        Appium Requirements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/history/" class="md-nav__link">
+        Appium Project History
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Quickstart
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Quickstart
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        Quickstart Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/install/" class="md-nav__link">
+        Install Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/uiauto2-driver/" class="md-nav__link">
+        Install the UiAutomator2 Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Write a Test
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Write a Test
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-js/" class="md-nav__link">
+        Write a Test (JS)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-py/" class="md-nav__link">
+        Write a Test (Python)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-java/" class="md-nav__link">
+        Write a Test (Java)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-rb/" class="md-nav__link">
+        Write a Test (Ruby)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/next-steps/" class="md-nav__link">
+        Next Steps
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          CLI Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          CLI Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        CLI Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/args/" class="md-nav__link">
+        Server CLI Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/extensions/" class="md-nav__link">
+        The Extension CLI
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating from Appium 1.x to Appium 2.x
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/managing-exts/" class="md-nav__link">
+        Managing Appium Drivers and Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/config/" class="md-nav__link">
+        The Appium Config File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/security/" class="md-nav__link">
+        Appium Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caps/" class="md-nav__link">
+        Capabilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/context/" class="md-nav__link">
+        The Context API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/settings/" class="md-nav__link">
+        The Settings API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/execute-methods/" class="md-nav__link">
+        Execute Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/event-timing/" class="md-nav__link">
+        The Event Timing API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/log-filters/" class="md-nav__link">
+        Log Filtering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/grid/" class="md-nav__link">
+        Appium and Selenium Grid
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caching/" class="md-nav__link">
+        Application Bundles Caching Logic
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Developer Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Developer Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        BaseDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        FakeDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Ecosystem
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Ecosystem
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/" class="md-nav__link">
+        The Appium Ecosystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          Developing Appium Extensions
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          Developing Appium Extensions
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-drivers/" class="md-nav__link">
+        Building Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-plugins/" class="md-nav__link">
+        Building Appium Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-docs/" class="md-nav__link">
+        Building Docs for Appium Extensions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        Contributing to Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/config-system/" class="md-nav__link">
+        Appium's Config System
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resources/" class="md-nav__link">
+        More Appium Resources
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/appium/appium/issues" class="md-nav__link">
+        Issues
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#type-parameters" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hierarchy" class="md-nav__link">
+    Hierarchy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties_1" class="md-nav__link">
+    Properties
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#allowinsecure" class="md-nav__link">
+    allowInsecure
+  </a>
+  
+    <nav class="md-nav" aria-label="allowInsecure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basepath" class="md-nav__link">
+    basePath
+  </a>
+  
+    <nav class="md-nav" aria-label="basePath">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_1" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_1" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caps" class="md-nav__link">
+    caps
+  </a>
+  
+    <nav class="md-nav" aria-label="caps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cliargs" class="md-nav__link">
+    cliArgs
+  </a>
+  
+    <nav class="md-nav" aria-label="cliArgs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denyinsecure" class="md-nav__link">
+    denyInsecure
+  </a>
+  
+    <nav class="md-nav" aria-label="denyInsecure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_2" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_4" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#desiredcapconstraints" class="md-nav__link">
+    desiredCapConstraints
+  </a>
+  
+    <nav class="md-nav" aria-label="desiredCapConstraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_5" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverdata" class="md-nav__link">
+    driverData
+  </a>
+  
+    <nav class="md-nav" aria-label="driverData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_3" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_6" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventemitter" class="md-nav__link">
+    eventEmitter
+  </a>
+  
+    <nav class="md-nav" aria-label="eventEmitter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_4" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_7" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventhistory" class="md-nav__link">
+    eventHistory
+  </a>
+  
+    <nav class="md-nav" aria-label="eventHistory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_5" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_8" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helpers" class="md-nav__link">
+    helpers
+  </a>
+  
+    <nav class="md-nav" aria-label="helpers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_6" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_9" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicitwaitms" class="md-nav__link">
+    implicitWaitMs
+  </a>
+  
+    <nav class="md-nav" aria-label="implicitWaitMs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_7" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_10" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initialopts" class="md-nav__link">
+    initialOpts
+  </a>
+  
+    <nav class="md-nav" aria-label="initialOpts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_8" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_11" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#iscommandsqueueenabled" class="md-nav__link">
+    isCommandsQueueEnabled
+  </a>
+  
+    <nav class="md-nav" aria-label="isCommandsQueueEnabled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_9" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_12" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#locatorstrategies" class="md-nav__link">
+    locatorStrategies
+  </a>
+  
+    <nav class="md-nav" aria-label="locatorStrategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_10" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_13" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log" class="md-nav__link">
+    log
+  </a>
+  
+    <nav class="md-nav" aria-label="log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_11" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_14" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#newcommandtimeoutms" class="md-nav__link">
+    newCommandTimeoutMs
+  </a>
+  
+    <nav class="md-nav" aria-label="newCommandTimeoutMs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_12" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_15" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opts" class="md-nav__link">
+    opts
+  </a>
+  
+    <nav class="md-nav" aria-label="opts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_13" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_16" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#originalcaps" class="md-nav__link">
+    originalCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="originalCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_17" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol" class="md-nav__link">
+    protocol
+  </a>
+  
+    <nav class="md-nav" aria-label="protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_14" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_18" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relaxedsecurityenabled" class="md-nav__link">
+    relaxedSecurityEnabled
+  </a>
+  
+    <nav class="md-nav" aria-label="relaxedSecurityEnabled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_15" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_19" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server" class="md-nav__link">
+    server
+  </a>
+  
+    <nav class="md-nav" aria-label="server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_20" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverhost" class="md-nav__link">
+    serverHost
+  </a>
+  
+    <nav class="md-nav" aria-label="serverHost">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_21" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverpath" class="md-nav__link">
+    serverPath
+  </a>
+  
+    <nav class="md-nav" aria-label="serverPath">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_22" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverport" class="md-nav__link">
+    serverPort
+  </a>
+  
+    <nav class="md-nav" aria-label="serverPort">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_23" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sessionid" class="md-nav__link">
+    sessionId
+  </a>
+  
+    <nav class="md-nav" aria-label="sessionId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_16" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_24" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settings" class="md-nav__link">
+    settings
+  </a>
+  
+    <nav class="md-nav" aria-label="settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_17" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_25" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shouldvalidatecaps" class="md-nav__link">
+    shouldValidateCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="shouldValidateCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_18" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_26" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supportedlogtypes" class="md-nav__link">
+    supportedLogTypes
+  </a>
+  
+    <nav class="md-nav" aria-label="supportedLogTypes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_19" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_27" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updatesettings" class="md-nav__link">
+    updateSettings
+  </a>
+  
+    <nav class="md-nav" aria-label="updateSettings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_20" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_28" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#weblocatorstrategies" class="md-nav__link">
+    webLocatorStrategies
+  </a>
+  
+    <nav class="md-nav" aria-label="webLocatorStrategies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_21" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_29" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addmanageddriver" class="md-nav__link">
+    addManagedDriver
+  </a>
+  
+    <nav class="md-nav" aria-label="addManagedDriver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_22" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_30" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assertfeatureenabled" class="md-nav__link">
+    assertFeatureEnabled
+  </a>
+  
+    <nav class="md-nav" aria-label="assertFeatureEnabled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_23" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_31" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assignserver" class="md-nav__link">
+    assignServer
+  </a>
+  
+    <nav class="md-nav" aria-label="assignServer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_32" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#canproxy" class="md-nav__link">
+    canProxy
+  </a>
+  
+    <nav class="md-nav" aria-label="canProxy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_24" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_33" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clearnewcommandtimeout" class="md-nav__link">
+    clearNewCommandTimeout
+  </a>
+  
+    <nav class="md-nav" aria-label="clearNewCommandTimeout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_25" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_34" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#createsession" class="md-nav__link">
+    createSession
+  </a>
+  
+    <nav class="md-nav" aria-label="createSession">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_26" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_35" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deletesession" class="md-nav__link">
+    deleteSession
+  </a>
+  
+    <nav class="md-nav" aria-label="deleteSession">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_27" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_36" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverforsession" class="md-nav__link">
+    driverForSession
+  </a>
+  
+    <nav class="md-nav" aria-label="driverForSession">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_28" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_37" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executecommand" class="md-nav__link">
+    executeCommand
+  </a>
+  
+    <nav class="md-nav" aria-label="executeCommand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_38" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executemethod" class="md-nav__link">
+    executeMethod
+  </a>
+  
+    <nav class="md-nav" aria-label="executeMethod">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_1" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_29" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_39" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelorels" class="md-nav__link">
+    findElOrEls
+  </a>
+  
+    <nav class="md-nav" aria-label="findElOrEls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_2" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_30" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_40" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelorelswithprocessing" class="md-nav__link">
+    findElOrElsWithProcessing
+  </a>
+  
+    <nav class="md-nav" aria-label="findElOrElsWithProcessing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_3" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_31" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_41" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelement" class="md-nav__link">
+    findElement
+  </a>
+  
+    <nav class="md-nav" aria-label="findElement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_32" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_42" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelementfromelement" class="md-nav__link">
+    findElementFromElement
+  </a>
+  
+    <nav class="md-nav" aria-label="findElementFromElement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_14" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_33" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_43" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelementfromshadowroot" class="md-nav__link">
+    findElementFromShadowRoot
+  </a>
+  
+    <nav class="md-nav" aria-label="findElementFromShadowRoot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_14" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_15" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_34" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_44" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelements" class="md-nav__link">
+    findElements
+  </a>
+  
+    <nav class="md-nav" aria-label="findElements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_15" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_16" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_35" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_45" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelementsfromelement" class="md-nav__link">
+    findElementsFromElement
+  </a>
+  
+    <nav class="md-nav" aria-label="findElementsFromElement">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_16" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_17" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_36" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_46" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findelementsfromshadowroot" class="md-nav__link">
+    findElementsFromShadowRoot
+  </a>
+  
+    <nav class="md-nav" aria-label="findElementsFromShadowRoot">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_17" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_18" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_37" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_47" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlog" class="md-nav__link">
+    getLog
+  </a>
+  
+    <nav class="md-nav" aria-label="getLog">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_18" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_19" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_38" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_48" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlogevents" class="md-nav__link">
+    getLogEvents
+  </a>
+  
+    <nav class="md-nav" aria-label="getLogEvents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_19" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_20" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_39" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_49" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlogtypes" class="md-nav__link">
+    getLogTypes
+  </a>
+  
+    <nav class="md-nav" aria-label="getLogTypes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_21" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_40" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_50" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmanageddrivers" class="md-nav__link">
+    getManagedDrivers
+  </a>
+  
+    <nav class="md-nav" aria-label="getManagedDrivers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_22" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_41" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_51" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getpagesource" class="md-nav__link">
+    getPageSource
+  </a>
+  
+    <nav class="md-nav" aria-label="getPageSource">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_23" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_42" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_52" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getproxyavoidlist" class="md-nav__link">
+    getProxyAvoidList
+  </a>
+  
+    <nav class="md-nav" aria-label="getProxyAvoidList">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_20" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_24" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_43" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_53" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsession" class="md-nav__link">
+    getSession
+  </a>
+  
+    <nav class="md-nav" aria-label="getSession">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_4" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_25" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_44" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_54" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsessions" class="md-nav__link">
+    getSessions
+  </a>
+  
+    <nav class="md-nav" aria-label="getSessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_26" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_45" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_55" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsettings" class="md-nav__link">
+    getSettings
+  </a>
+  
+    <nav class="md-nav" aria-label="getSettings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_27" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_46" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_56" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getstatus" class="md-nav__link">
+    getStatus
+  </a>
+  
+    <nav class="md-nav" aria-label="getStatus">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_28" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_47" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_57" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gettimeouts" class="md-nav__link">
+    getTimeouts
+  </a>
+  
+    <nav class="md-nav" aria-label="getTimeouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_29" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_48" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_58" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicitwait" class="md-nav__link">
+    implicitWait
+  </a>
+  
+    <nav class="md-nav" aria-label="implicitWait">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_21" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_30" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_49" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_59" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicitwaitforcondition" class="md-nav__link">
+    implicitWaitForCondition
+  </a>
+  
+    <nav class="md-nav" aria-label="implicitWaitForCondition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_22" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_31" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_50" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_60" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicitwaitmjsonwp" class="md-nav__link">
+    implicitWaitMJSONWP
+  </a>
+  
+    <nav class="md-nav" aria-label="implicitWaitMJSONWP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_23" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_32" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_51" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_61" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#implicitwaitw3c" class="md-nav__link">
+    implicitWaitW3C
+  </a>
+  
+    <nav class="md-nav" aria-label="implicitWaitW3C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_24" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_33" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_52" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_62" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isfeatureenabled" class="md-nav__link">
+    isFeatureEnabled
+  </a>
+  
+    <nav class="md-nav" aria-label="isFeatureEnabled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_25" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_34" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_53" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_63" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ismjsonwpprotocol" class="md-nav__link">
+    isMjsonwpProtocol
+  </a>
+  
+    <nav class="md-nav" aria-label="isMjsonwpProtocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_35" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_54" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_64" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isw3cprotocol" class="md-nav__link">
+    isW3CProtocol
+  </a>
+  
+    <nav class="md-nav" aria-label="isW3CProtocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_36" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_55" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_65" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logcustomevent" class="md-nav__link">
+    logCustomEvent
+  </a>
+  
+    <nav class="md-nav" aria-label="logCustomEvent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_26" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_37" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_56" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_66" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logevent" class="md-nav__link">
+    logEvent
+  </a>
+  
+    <nav class="md-nav" aria-label="logEvent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_27" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_38" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_57" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_67" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logextracaps" class="md-nav__link">
+    logExtraCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="logExtraCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_28" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_39" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_68" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#newcommandtimeout" class="md-nav__link">
+    newCommandTimeout
+  </a>
+  
+    <nav class="md-nav" aria-label="newCommandTimeout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_29" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_40" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_58" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_69" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onunexpectedshutdown" class="md-nav__link">
+    onUnexpectedShutdown
+  </a>
+  
+    <nav class="md-nav" aria-label="onUnexpectedShutdown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_30" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_41" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_59" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_70" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pageloadtimeoutmjsonwp" class="md-nav__link">
+    pageLoadTimeoutMJSONWP
+  </a>
+  
+    <nav class="md-nav" aria-label="pageLoadTimeoutMJSONWP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_31" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_42" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_60" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_71" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pageloadtimeoutw3c" class="md-nav__link">
+    pageLoadTimeoutW3C
+  </a>
+  
+    <nav class="md-nav" aria-label="pageLoadTimeoutW3C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_32" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_43" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_61" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_72" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parsetimeoutargument" class="md-nav__link">
+    parseTimeoutArgument
+  </a>
+  
+    <nav class="md-nav" aria-label="parseTimeoutArgument">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_33" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_44" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_62" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_73" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxyactive" class="md-nav__link">
+    proxyActive
+  </a>
+  
+    <nav class="md-nav" aria-label="proxyActive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_34" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_45" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_63" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_74" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#proxyrouteisavoided" class="md-nav__link">
+    proxyRouteIsAvoided
+  </a>
+  
+    <nav class="md-nav" aria-label="proxyRouteIsAvoided">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_35" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_46" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_64" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_75" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    reset
+  </a>
+  
+    <nav class="md-nav" aria-label="reset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_47" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_76" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripttimeoutmjsonwp" class="md-nav__link">
+    scriptTimeoutMJSONWP
+  </a>
+  
+    <nav class="md-nav" aria-label="scriptTimeoutMJSONWP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_36" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_48" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_65" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_77" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripttimeoutw3c" class="md-nav__link">
+    scriptTimeoutW3C
+  </a>
+  
+    <nav class="md-nav" aria-label="scriptTimeoutW3C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_37" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_49" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_66" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_78" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sessionexists" class="md-nav__link">
+    sessionExists
+  </a>
+  
+    <nav class="md-nav" aria-label="sessionExists">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_38" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_50" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_67" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_79" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setimplicitwait" class="md-nav__link">
+    setImplicitWait
+  </a>
+  
+    <nav class="md-nav" aria-label="setImplicitWait">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_39" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_51" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_68" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_80" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setnewcommandtimeout" class="md-nav__link">
+    setNewCommandTimeout
+  </a>
+  
+    <nav class="md-nav" aria-label="setNewCommandTimeout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_40" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_52" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_69" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_81" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startnewcommandtimeout" class="md-nav__link">
+    startNewCommandTimeout
+  </a>
+  
+    <nav class="md-nav" aria-label="startNewCommandTimeout">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_53" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_82" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#startunexpectedshutdown" class="md-nav__link">
+    startUnexpectedShutdown
+  </a>
+  
+    <nav class="md-nav" aria-label="startUnexpectedShutdown">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_41" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_54" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_83" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timeouts" class="md-nav__link">
+    timeouts
+  </a>
+  
+    <nav class="md-nav" aria-label="timeouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_42" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_55" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_70" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_84" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validatedesiredcaps" class="md-nav__link">
+    validateDesiredCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="validateDesiredCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_43" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_56" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_85" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validatelocatorstrategy" class="md-nav__link">
+    validateLocatorStrategy
+  </a>
+  
+    <nav class="md-nav" aria-label="validateLocatorStrategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_44" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_57" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_71" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_86" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="interface-driverc-cargs-settings-createresult-deleteresult">Interface: Driver&lt;C, CArgs, Settings, CreateResult, DeleteResult></h1>
+<p><a href="../../modules/appium_types/">@appium/types</a>.Driver</p>
+<p><code>BaseDriver</code> implements this.  It contains default behavior;
+external drivers are expected to implement <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a> instead.</p>
+<p><code>C</code> should be the constraints of the driver.
+<code>CArgs</code> would be the shape of <code>cliArgs</code>.
+<code>Settings</code> is the shape of the raw device settings object (see <a href="../appium_types.IDeviceSettings/"><code>IDeviceSettings</code></a>)</p>
+<h2 id="type-parameters">Type parameters</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="../appium_types.Constraints/"><code>Constraints</code></a> = <a href="../appium_types.Constraints/"><code>Constraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>CArgs</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Settings</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>CreateResult</code></td>
+<td align="left"><a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<code>C</code>></td>
+</tr>
+<tr>
+<td align="left"><code>DeleteResult</code></td>
+<td align="left"><a href="../../modules/appium_types/#defaultdeletesessionresult"><code>DefaultDeleteSessionResult</code></a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="hierarchy">Hierarchy</h2>
+<ul>
+<li>
+<p><a href="../appium_types.ISessionCommands/"><code>ISessionCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.ILogCommands/"><code>ILogCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.IFindCommands/"><code>IFindCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.ISettingsCommands/"><code>ISettingsCommands</code></a>&lt;<code>Settings</code>></p>
+</li>
+<li>
+<p><a href="../appium_types.ITimeoutCommands/"><code>ITimeoutCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.IEventCommands/"><code>IEventCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.IExecuteCommands/"><code>IExecuteCommands</code></a></p>
+</li>
+<li>
+<p><a href="../appium_types.ISessionHandler/"><code>ISessionHandler</code></a>&lt;<code>C</code>, <code>CreateResult</code>, <code>DeleteResult</code>></p>
+</li>
+<li>
+<p><a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <code>Settings</code>></p>
+</li>
+</ul>
+<p>↳ <strong><code>Driver</code></strong></p>
+<p>↳↳ <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a></p>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="properties">Properties</h3>
+<ul>
+<li><a href="./#allowinsecure">allowInsecure</a></li>
+<li><a href="./#basepath">basePath</a></li>
+<li><a href="./#caps">caps</a></li>
+<li><a href="./#cliargs">cliArgs</a></li>
+<li><a href="./#denyinsecure">denyInsecure</a></li>
+<li><a href="./#desiredcapconstraints">desiredCapConstraints</a></li>
+<li><a href="./#driverdata">driverData</a></li>
+<li><a href="./#eventemitter">eventEmitter</a></li>
+<li><a href="./#eventhistory">eventHistory</a></li>
+<li><a href="./#helpers">helpers</a></li>
+<li><a href="./#implicitwaitms">implicitWaitMs</a></li>
+<li><a href="./#initialopts">initialOpts</a></li>
+<li><a href="./#iscommandsqueueenabled">isCommandsQueueEnabled</a></li>
+<li><a href="./#locatorstrategies">locatorStrategies</a></li>
+<li><a href="./#log">log</a></li>
+<li><a href="./#newcommandtimeoutms">newCommandTimeoutMs</a></li>
+<li><a href="./#opts">opts</a></li>
+<li><a href="./#originalcaps">originalCaps</a></li>
+<li><a href="./#protocol">protocol</a></li>
+<li><a href="./#relaxedsecurityenabled">relaxedSecurityEnabled</a></li>
+<li><a href="./#server">server</a></li>
+<li><a href="./#serverhost">serverHost</a></li>
+<li><a href="./#serverpath">serverPath</a></li>
+<li><a href="./#serverport">serverPort</a></li>
+<li><a href="./#sessionid">sessionId</a></li>
+<li><a href="./#settings">settings</a></li>
+<li><a href="./#shouldvalidatecaps">shouldValidateCaps</a></li>
+<li><a href="./#supportedlogtypes">supportedLogTypes</a></li>
+<li><a href="./#updatesettings">updateSettings</a></li>
+<li><a href="./#weblocatorstrategies">webLocatorStrategies</a></li>
+</ul>
+<h3 id="methods">Methods</h3>
+<ul>
+<li><a href="./#addmanageddriver">addManagedDriver</a></li>
+<li><a href="./#assertfeatureenabled">assertFeatureEnabled</a></li>
+<li><a href="./#assignserver">assignServer</a></li>
+<li><a href="./#canproxy">canProxy</a></li>
+<li><a href="./#clearnewcommandtimeout">clearNewCommandTimeout</a></li>
+<li><a href="./#createsession">createSession</a></li>
+<li><a href="./#deletesession">deleteSession</a></li>
+<li><a href="./#driverforsession">driverForSession</a></li>
+<li><a href="./#executecommand">executeCommand</a></li>
+<li><a href="./#executemethod">executeMethod</a></li>
+<li><a href="./#findelorels">findElOrEls</a></li>
+<li><a href="./#findelorelswithprocessing">findElOrElsWithProcessing</a></li>
+<li><a href="./#findelement">findElement</a></li>
+<li><a href="./#findelementfromelement">findElementFromElement</a></li>
+<li><a href="./#findelementfromshadowroot">findElementFromShadowRoot</a></li>
+<li><a href="./#findelements">findElements</a></li>
+<li><a href="./#findelementsfromelement">findElementsFromElement</a></li>
+<li><a href="./#findelementsfromshadowroot">findElementsFromShadowRoot</a></li>
+<li><a href="./#getlog">getLog</a></li>
+<li><a href="./#getlogevents">getLogEvents</a></li>
+<li><a href="./#getlogtypes">getLogTypes</a></li>
+<li><a href="./#getmanageddrivers">getManagedDrivers</a></li>
+<li><a href="./#getpagesource">getPageSource</a></li>
+<li><a href="./#getproxyavoidlist">getProxyAvoidList</a></li>
+<li><a href="./#getsession">getSession</a></li>
+<li><a href="./#getsessions">getSessions</a></li>
+<li><a href="./#getsettings">getSettings</a></li>
+<li><a href="./#getstatus">getStatus</a></li>
+<li><a href="./#gettimeouts">getTimeouts</a></li>
+<li><a href="./#implicitwait">implicitWait</a></li>
+<li><a href="./#implicitwaitforcondition">implicitWaitForCondition</a></li>
+<li><a href="./#implicitwaitmjsonwp">implicitWaitMJSONWP</a></li>
+<li><a href="./#implicitwaitw3c">implicitWaitW3C</a></li>
+<li><a href="./#isfeatureenabled">isFeatureEnabled</a></li>
+<li><a href="./#ismjsonwpprotocol">isMjsonwpProtocol</a></li>
+<li><a href="./#isw3cprotocol">isW3CProtocol</a></li>
+<li><a href="./#logcustomevent">logCustomEvent</a></li>
+<li><a href="./#logevent">logEvent</a></li>
+<li><a href="./#logextracaps">logExtraCaps</a></li>
+<li><a href="./#newcommandtimeout">newCommandTimeout</a></li>
+<li><a href="./#onunexpectedshutdown">onUnexpectedShutdown</a></li>
+<li><a href="./#pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</a></li>
+<li><a href="./#pageloadtimeoutw3c">pageLoadTimeoutW3C</a></li>
+<li><a href="./#parsetimeoutargument">parseTimeoutArgument</a></li>
+<li><a href="./#proxyactive">proxyActive</a></li>
+<li><a href="./#proxyrouteisavoided">proxyRouteIsAvoided</a></li>
+<li><a href="./#reset">reset</a></li>
+<li><a href="./#scripttimeoutmjsonwp">scriptTimeoutMJSONWP</a></li>
+<li><a href="./#scripttimeoutw3c">scriptTimeoutW3C</a></li>
+<li><a href="./#sessionexists">sessionExists</a></li>
+<li><a href="./#setimplicitwait">setImplicitWait</a></li>
+<li><a href="./#setnewcommandtimeout">setNewCommandTimeout</a></li>
+<li><a href="./#startnewcommandtimeout">startNewCommandTimeout</a></li>
+<li><a href="./#startunexpectedshutdown">startUnexpectedShutdown</a></li>
+<li><a href="./#timeouts">timeouts</a></li>
+<li><a href="./#validatedesiredcaps">validateDesiredCaps</a></li>
+<li><a href="./#validatelocatorstrategy">validateLocatorStrategy</a></li>
+</ul>
+<h2 id="properties_1">Properties</h2>
+<h3 id="allowinsecure">allowInsecure</h3>
+<p>• <strong>allowInsecure</strong>: <code>string</code>[]</p>
+<h4 id="inherited-from">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#allowinsecure">allowInsecure</a></p>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L603">packages/types/lib/driver.ts:603</a></p>
+<hr />
+<h3 id="basepath">basePath</h3>
+<p>• <strong>basePath</strong>: <code>string</code></p>
+<h4 id="inherited-from_1">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#basepath">basePath</a></p>
+<h4 id="defined-in_1">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L601">packages/types/lib/driver.ts:601</a></p>
+<hr />
+<h3 id="caps">caps</h3>
+<p>• <code>Optional</code> <strong>caps</strong>: <a href="../../modules/appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>></p>
+<p>The processed capabilities used to start the session represented by the current driver instance</p>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L735">packages/types/lib/driver.ts:735</a></p>
+<hr />
+<h3 id="cliargs">cliArgs</h3>
+<p>• <strong>cliArgs</strong>: <code>CArgs</code></p>
+<p>The set of command line arguments set for this driver</p>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L691">packages/types/lib/driver.ts:691</a></p>
+<hr />
+<h3 id="denyinsecure">denyInsecure</h3>
+<p>• <strong>denyInsecure</strong>: <code>string</code>[]</p>
+<h4 id="inherited-from_2">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#denyinsecure">denyInsecure</a></p>
+<h4 id="defined-in_4">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L604">packages/types/lib/driver.ts:604</a></p>
+<hr />
+<h3 id="desiredcapconstraints">desiredCapConstraints</h3>
+<p>• <strong>desiredCapConstraints</strong>: <code>C</code></p>
+<p>The constraints object used to validate capabilities</p>
+<h4 id="defined-in_5">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L745">packages/types/lib/driver.ts:745</a></p>
+<hr />
+<h3 id="driverdata">driverData</h3>
+<p>• <strong>driverData</strong>: <a href="../../modules/appium_types/#driverdata"><code>DriverData</code></a></p>
+<h4 id="inherited-from_3">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#driverdata">driverData</a></p>
+<h4 id="defined-in_6">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L612">packages/types/lib/driver.ts:612</a></p>
+<hr />
+<h3 id="eventemitter">eventEmitter</h3>
+<p>• <strong>eventEmitter</strong>: <code>EventEmitter</code></p>
+<h4 id="inherited-from_4">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#eventemitter">eventEmitter</a></p>
+<h4 id="defined-in_7">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L609">packages/types/lib/driver.ts:609</a></p>
+<hr />
+<h3 id="eventhistory">eventHistory</h3>
+<p>• <strong>eventHistory</strong>: <a href="../appium_types.EventHistory/"><code>EventHistory</code></a></p>
+<h4 id="inherited-from_5">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#eventhistory">eventHistory</a></p>
+<h4 id="defined-in_8">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L614">packages/types/lib/driver.ts:614</a></p>
+<hr />
+<h3 id="helpers">helpers</h3>
+<p>• <strong>helpers</strong>: <a href="../appium_types.DriverHelpers/"><code>DriverHelpers</code></a></p>
+<h4 id="inherited-from_6">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#helpers">helpers</a></p>
+<h4 id="defined-in_9">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L600">packages/types/lib/driver.ts:600</a></p>
+<hr />
+<h3 id="implicitwaitms">implicitWaitMs</h3>
+<p>• <strong>implicitWaitMs</strong>: <code>number</code></p>
+<h4 id="inherited-from_7">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#implicitwaitms">implicitWaitMs</a></p>
+<h4 id="defined-in_10">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L606">packages/types/lib/driver.ts:606</a></p>
+<hr />
+<h3 id="initialopts">initialOpts</h3>
+<p>• <strong>initialOpts</strong>: <code>Partial</code>&lt;<a href="../../modules/appium_types/#driveropts"><code>DriverOpts</code></a>&lt;<code>C</code>>></p>
+<h4 id="inherited-from_8">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#initialopts">initialOpts</a></p>
+<h4 id="defined-in_11">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L598">packages/types/lib/driver.ts:598</a></p>
+<hr />
+<h3 id="iscommandsqueueenabled">isCommandsQueueEnabled</h3>
+<p>• <strong>isCommandsQueueEnabled</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_9">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#iscommandsqueueenabled">isCommandsQueueEnabled</a></p>
+<h4 id="defined-in_12">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L613">packages/types/lib/driver.ts:613</a></p>
+<hr />
+<h3 id="locatorstrategies">locatorStrategies</h3>
+<p>• <strong>locatorStrategies</strong>: <code>string</code>[]</p>
+<h4 id="inherited-from_10">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#locatorstrategies">locatorStrategies</a></p>
+<h4 id="defined-in_13">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L607">packages/types/lib/driver.ts:607</a></p>
+<hr />
+<h3 id="log">log</h3>
+<p>• <strong>log</strong>: <a href="../appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
+<h4 id="inherited-from_11">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#log">log</a></p>
+<h4 id="defined-in_14">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L611">packages/types/lib/driver.ts:611</a></p>
+<hr />
+<h3 id="newcommandtimeoutms">newCommandTimeoutMs</h3>
+<p>• <strong>newCommandTimeoutMs</strong>: <code>number</code></p>
+<h4 id="inherited-from_12">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#newcommandtimeoutms">newCommandTimeoutMs</a></p>
+<h4 id="defined-in_15">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L605">packages/types/lib/driver.ts:605</a></p>
+<hr />
+<h3 id="opts">opts</h3>
+<p>• <strong>opts</strong>: <a href="../../modules/appium_types/#driveropts"><code>DriverOpts</code></a>&lt;<code>C</code>></p>
+<h4 id="inherited-from_13">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#opts">opts</a></p>
+<h4 id="defined-in_16">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L597">packages/types/lib/driver.ts:597</a></p>
+<hr />
+<h3 id="originalcaps">originalCaps</h3>
+<p>• <code>Optional</code> <strong>originalCaps</strong>: <a href="../appium_types.W3CCapabilities/"><code>W3CCapabilities</code></a>&lt;<code>C</code>></p>
+<p>The original capabilities used to start the session represented by the current driver instance</p>
+<h4 id="defined-in_17">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L740">packages/types/lib/driver.ts:740</a></p>
+<hr />
+<h3 id="protocol">protocol</h3>
+<p>• <code>Optional</code> <strong>protocol</strong>: <code>string</code></p>
+<h4 id="inherited-from_14">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#protocol">protocol</a></p>
+<h4 id="defined-in_18">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L599">packages/types/lib/driver.ts:599</a></p>
+<hr />
+<h3 id="relaxedsecurityenabled">relaxedSecurityEnabled</h3>
+<p>• <strong>relaxedSecurityEnabled</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_15">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#relaxedsecurityenabled">relaxedSecurityEnabled</a></p>
+<h4 id="defined-in_19">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L602">packages/types/lib/driver.ts:602</a></p>
+<hr />
+<h3 id="server">server</h3>
+<p>• <code>Optional</code> <strong>server</strong>: <a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></p>
+<h4 id="defined-in_20">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L693">packages/types/lib/driver.ts:693</a></p>
+<hr />
+<h3 id="serverhost">serverHost</h3>
+<p>• <code>Optional</code> <strong>serverHost</strong>: <code>string</code></p>
+<h4 id="defined-in_21">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L694">packages/types/lib/driver.ts:694</a></p>
+<hr />
+<h3 id="serverpath">serverPath</h3>
+<p>• <code>Optional</code> <strong>serverPath</strong>: <code>string</code></p>
+<h4 id="defined-in_22">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L696">packages/types/lib/driver.ts:696</a></p>
+<hr />
+<h3 id="serverport">serverPort</h3>
+<p>• <code>Optional</code> <strong>serverPort</strong>: <code>number</code></p>
+<h4 id="defined-in_23">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L695">packages/types/lib/driver.ts:695</a></p>
+<hr />
+<h3 id="sessionid">sessionId</h3>
+<p>• <strong>sessionId</strong>: <code>null</code> | <code>string</code></p>
+<h4 id="inherited-from_16">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#sessionid">sessionId</a></p>
+<h4 id="defined-in_24">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L596">packages/types/lib/driver.ts:596</a></p>
+<hr />
+<h3 id="settings">settings</h3>
+<p>• <strong>settings</strong>: <a href="../appium_types.IDeviceSettings/"><code>IDeviceSettings</code></a>&lt;<code>Settings</code>></p>
+<h4 id="inherited-from_17">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#settings">settings</a></p>
+<h4 id="defined-in_25">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L610">packages/types/lib/driver.ts:610</a></p>
+<hr />
+<h3 id="shouldvalidatecaps">shouldValidateCaps</h3>
+<p>• <strong>shouldValidateCaps</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_18">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#shouldvalidatecaps">shouldValidateCaps</a></p>
+<h4 id="defined-in_26">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L595">packages/types/lib/driver.ts:595</a></p>
+<hr />
+<h3 id="supportedlogtypes">supportedLogTypes</h3>
+<p>• <strong>supportedLogTypes</strong>: <code>Readonly</code>&lt;<a href="../../modules/appium_types/#logdefrecord"><code>LogDefRecord</code></a>></p>
+<p>Definition of the available log types</p>
+<h4 id="inherited-from_19">Inherited from</h4>
+<p><a href="../appium_types.ILogCommands/">ILogCommands</a>.<a href="../appium_types.ILogCommands/#supportedlogtypes">supportedLogTypes</a></p>
+<h4 id="defined-in_27">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L338">packages/types/lib/driver.ts:338</a></p>
+<hr />
+<h3 id="updatesettings">updateSettings</h3>
+<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="type-declaration">Type declaration</h4>
+<p>▸ (<code>settings</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Update the session's settings dictionary with a new settings object</p>
+<h5 id="parameters">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>settings</code></td>
+<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>></td>
+<td align="left">A key-value map of setting names to values. Settings not named in the map will not have their value adjusted.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns">Returns</h5>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_20">Inherited from</h4>
+<p><a href="../appium_types.ISettingsCommands/">ISettingsCommands</a>.<a href="../appium_types.ISettingsCommands/#updatesettings">updateSettings</a></p>
+<h4 id="defined-in_28">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L385">packages/types/lib/driver.ts:385</a></p>
+<hr />
+<h3 id="weblocatorstrategies">webLocatorStrategies</h3>
+<p>• <strong>webLocatorStrategies</strong>: <code>string</code>[]</p>
+<h4 id="inherited-from_21">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#weblocatorstrategies">webLocatorStrategies</a></p>
+<h4 id="defined-in_29">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L608">packages/types/lib/driver.ts:608</a></p>
+<h2 id="methods_1">Methods</h2>
+<h3 id="addmanageddriver">addManagedDriver</h3>
+<p>▸ <strong>addManagedDriver</strong>(<code>driver</code>): <code>void</code></p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>driver</code></td>
+<td align="left"><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_1">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_22">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#addmanageddriver">addManagedDriver</a></p>
+<h4 id="defined-in_30">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L658">packages/types/lib/driver.ts:658</a></p>
+<hr />
+<h3 id="assertfeatureenabled">assertFeatureEnabled</h3>
+<p>▸ <strong>assertFeatureEnabled</strong>(<code>name</code>): <code>void</code></p>
+<h4 id="parameters_2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_2">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_23">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#assertfeatureenabled">assertFeatureEnabled</a></p>
+<h4 id="defined-in_31">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L652">packages/types/lib/driver.ts:652</a></p>
+<hr />
+<h3 id="assignserver">assignServer</h3>
+<p>▸ <code>Optional</code> <strong>assignServer</strong>(<code>server</code>, <code>host</code>, <code>port</code>, <code>path</code>): <code>void</code></p>
+<p>A helper function used to assign server information to the driver instance so the driver knows
+where the server is Running</p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>server</code></td>
+<td align="left"><a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></td>
+<td align="left">the server object</td>
+</tr>
+<tr>
+<td align="left"><code>host</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the server hostname</td>
+</tr>
+<tr>
+<td align="left"><code>port</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the server port</td>
+</tr>
+<tr>
+<td align="left"><code>path</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the server base url</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_3">Returns</h4>
+<p><code>void</code></p>
+<h4 id="defined-in_32">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L776">packages/types/lib/driver.ts:776</a></p>
+<hr />
+<h3 id="canproxy">canProxy</h3>
+<p>▸ <strong>canProxy</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_4">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_24">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#canproxy">canProxy</a></p>
+<h4 id="defined-in_33">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L656">packages/types/lib/driver.ts:656</a></p>
+<hr />
+<h3 id="clearnewcommandtimeout">clearNewCommandTimeout</h3>
+<p>▸ <strong>clearNewCommandTimeout</strong>(): <code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="returns_5">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_25">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#clearnewcommandtimeout">clearNewCommandTimeout</a></p>
+<h4 id="defined-in_34">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L660">packages/types/lib/driver.ts:660</a></p>
+<hr />
+<h3 id="createsession">createSession</h3>
+<p>▸ <strong>createSession</strong>(<code>w3cCaps1</code>, <code>w3cCaps2?</code>, <code>w3cCaps3?</code>, <code>driverData?</code>): <code>Promise</code>&lt;<code>CreateResult</code>></p>
+<p>Start a new automation session</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#new-session">https://w3c.github.io/webdriver/#new-session</a></p>
+<h4 id="parameters_5">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>w3cCaps1</code></td>
+<td align="left"><a href="../../modules/appium_types/#w3cdrivercaps"><code>W3CDriverCaps</code></a>&lt;<code>C</code>></td>
+<td align="left">the new session capabilities</td>
+</tr>
+<tr>
+<td align="left"><code>w3cCaps2?</code></td>
+<td align="left"><a href="../../modules/appium_types/#w3cdrivercaps"><code>W3CDriverCaps</code></a>&lt;<code>C</code>></td>
+<td align="left">another place the new session capabilities could be sent (typically left undefined)</td>
+</tr>
+<tr>
+<td align="left"><code>w3cCaps3?</code></td>
+<td align="left"><a href="../../modules/appium_types/#w3cdrivercaps"><code>W3CDriverCaps</code></a>&lt;<code>C</code>></td>
+<td align="left">another place the new session capabilities could be sent (typically left undefined)</td>
+</tr>
+<tr>
+<td align="left"><code>driverData?</code></td>
+<td align="left"><a href="../../modules/appium_types/#driverdata"><code>DriverData</code></a>[]</td>
+<td align="left">a list of DriverData objects representing other sessions running for this driver on the same Appium server. This information can be used to help ensure no conflict of resources</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_6">Returns</h4>
+<p><code>Promise</code>&lt;<code>CreateResult</code>></p>
+<p>The capabilities object representing the created session</p>
+<h4 id="inherited-from_26">Inherited from</h4>
+<p><a href="../appium_types.ISessionHandler/">ISessionHandler</a>.<a href="../appium_types.ISessionHandler/#createsession">createSession</a></p>
+<h4 id="defined-in_35">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L433">packages/types/lib/driver.ts:433</a></p>
+<hr />
+<h3 id="deletesession">deleteSession</h3>
+<p>▸ <strong>deleteSession</strong>(<code>sessionId?</code>, <code>driverData?</code>): <code>Promise</code>&lt;<code>DeleteResult</code>></p>
+<p>Stop an automation session</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#delete-session">https://w3c.github.io/webdriver/#delete-session</a></p>
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the session that is to be deleted</td>
+</tr>
+<tr>
+<td align="left"><code>driverData?</code></td>
+<td align="left"><a href="../../modules/appium_types/#driverdata"><code>DriverData</code></a>[]</td>
+<td align="left">the driver data for other currently-running sessions</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns</h4>
+<p><code>Promise</code>&lt;<code>DeleteResult</code>></p>
+<h4 id="inherited-from_27">Inherited from</h4>
+<p><a href="../appium_types.ISessionHandler/">ISessionHandler</a>.<a href="../appium_types.ISessionHandler/#deletesession">deleteSession</a></p>
+<h4 id="defined-in_36">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L447">packages/types/lib/driver.ts:447</a></p>
+<hr />
+<h3 id="driverforsession">driverForSession</h3>
+<p>▸ <strong>driverForSession</strong>(<code>sessionId</code>): <code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></p>
+<h4 id="parameters_7">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns</h4>
+<p><code>null</code> | <a href="../appium_types.Core/"><code>Core</code></a>&lt;<code>C</code>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>></p>
+<h4 id="inherited-from_28">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#driverforsession">driverForSession</a></p>
+<h4 id="defined-in_37">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L662">packages/types/lib/driver.ts:662</a></p>
+<hr />
+<h3 id="executecommand">executeCommand</h3>
+<p>▸ <strong>executeCommand</strong>(<code>cmd</code>, <code>...args</code>): <code>Promise</code>&lt;<code>any</code>></p>
+<p>Execute a driver (WebDriver-protocol) command by its name as defined in the routes file</p>
+<h4 id="parameters_8">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>cmd</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the name of the command</td>
+</tr>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>any</code>[]</td>
+<td align="left">arguments to pass to the command</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_9">Returns</h4>
+<p><code>Promise</code>&lt;<code>any</code>></p>
+<p>The result of running the command</p>
+<h4 id="defined-in_38">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L708">packages/types/lib/driver.ts:708</a></p>
+<hr />
+<h3 id="executemethod">executeMethod</h3>
+<p>▸ <strong>executeMethod</strong>&lt;<code>TArgs</code>, <code>TReturn</code>>(<code>script</code>, <code>args</code>): <code>Promise</code>&lt;<code>TReturn</code>></p>
+<p>Call an <code>Execute Method</code> by its name with the given arguments. This method will check that the
+driver has registered the method matching the name, and send it the arguments.</p>
+<h4 id="type-parameters_1">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>TArgs</code></td>
+<td align="left">extends readonly <code>any</code>[] | readonly [<a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>unknown</code>>] = <code>unknown</code>[]</td>
+</tr>
+<tr>
+<td align="left"><code>TReturn</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters_9">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>script</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the name of the Execute Method</td>
+</tr>
+<tr>
+<td align="left"><code>args</code></td>
+<td align="left"><code>TArgs</code></td>
+<td align="left">a singleton array containing an arguments object</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_10">Returns</h4>
+<p><code>Promise</code>&lt;<code>TReturn</code>></p>
+<p>The result of calling the Execute Method</p>
+<h4 id="inherited-from_29">Inherited from</h4>
+<p><a href="../appium_types.IExecuteCommands/">IExecuteCommands</a>.<a href="../appium_types.IExecuteCommands/#executemethod">executeMethod</a></p>
+<h4 id="defined-in_39">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L186">packages/types/lib/driver.ts:186</a></p>
+<hr />
+<h3 id="findelorels">findElOrEls</h3>
+<p>▸ <strong>findElOrEls</strong>&lt;<code>Mult</code>, <code>Ctx</code>>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>A helper method that returns one or more UI elements based on the search criteria</p>
+<h4 id="type-parameters_2">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Mult</code></td>
+<td align="left">extends <code>boolean</code></td>
+</tr>
+<tr>
+<td align="left"><code>Ctx</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters_10">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector</td>
+</tr>
+<tr>
+<td align="left"><code>mult</code></td>
+<td align="left"><code>Mult</code></td>
+<td align="left">whether or not we want to find multiple elements</td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>Ctx</code></td>
+<td align="left">the element to use as the search context basis if desiredCapabilities</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns</h4>
+<p><code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>A single element or list of elements</p>
+<h4 id="inherited-from_30">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelorels">findElOrEls</a></p>
+<h4 id="defined-in_40">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L300">packages/types/lib/driver.ts:300</a></p>
+<hr />
+<h3 id="findelorelswithprocessing">findElOrElsWithProcessing</h3>
+<p>▸ <strong>findElOrElsWithProcessing</strong>&lt;<code>Mult</code>, <code>Ctx</code>>(<code>strategy</code>, <code>selector</code>, <code>mult</code>, <code>context?</code>): <code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>This is a wrapper for <a href="../appium_types.IFindCommands/#findelorels"><code>findElOrEls</code></a> that validates locator strategies
+and implements the <code>appium:printPageSourceOnFindFailure</code> capability</p>
+<h4 id="type-parameters_3">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Mult</code></td>
+<td align="left">extends <code>boolean</code></td>
+</tr>
+<tr>
+<td align="left"><code>Ctx</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="parameters_11">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector</td>
+</tr>
+<tr>
+<td align="left"><code>mult</code></td>
+<td align="left"><code>Mult</code></td>
+<td align="left">whether or not we want to find multiple elements</td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>Ctx</code></td>
+<td align="left">the element to use as the search context basis if desiredCapabilities</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns</h4>
+<p><code>Promise</code>&lt;<code>Mult</code> extends <code>true</code> ? <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[] : <a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>A single element or list of elements</p>
+<h4 id="inherited-from_31">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelorelswithprocessing">findElOrElsWithProcessing</a></p>
+<h4 id="defined-in_41">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L318">packages/types/lib/driver.ts:318</a></p>
+<hr />
+<h3 id="findelement">findElement</h3>
+<p>▸ <strong>findElement</strong>(<code>strategy</code>, <code>selector</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>Find a UI element given a locator strategy and a selector, erroring if it can't be found</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element">https://w3c.github.io/webdriver/#find-element</a></p>
+<h4 id="parameters_12">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific element</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_13">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>The element object encoding the element id which can be used in element-related
+commands</p>
+<h4 id="inherited-from_32">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelement">findElement</a></p>
+<h4 id="defined-in_42">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L216">packages/types/lib/driver.ts:216</a></p>
+<hr />
+<h3 id="findelementfromelement">findElementFromElement</h3>
+<p>▸ <strong>findElementFromElement</strong>(<code>strategy</code>, <code>selector</code>, <code>elementId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>Find a UI element given a locator strategy and a selector, erroring if it can't be found. Only
+look for elements among the set of descendants of a given element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-element">https://w3c.github.io/webdriver/#find-element-from-element</a></p>
+<h4 id="parameters_13">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific element</td>
+</tr>
+<tr>
+<td align="left"><code>elementId</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the element to use as the search basis</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_14">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>The element object encoding the element id which can be used in element-related
+commands</p>
+<h4 id="inherited-from_33">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelementfromelement">findElementFromElement</a></p>
+<h4 id="defined-in_43">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L241">packages/types/lib/driver.ts:241</a></p>
+<hr />
+<h3 id="findelementfromshadowroot">findElementFromShadowRoot</h3>
+<p>▸ <code>Optional</code> <strong>findElementFromShadowRoot</strong>(<code>strategy</code>, <code>selector</code>, <code>shadowId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>Find an element from a shadow root</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
+<h4 id="parameters_14">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+<tr>
+<td align="left"><code>shadowId</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the element to use as the search basis</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_15">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>></p>
+<p>The element inside the shadow root matching the selector</p>
+<h4 id="inherited-from_34">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelementfromshadowroot">findElementFromShadowRoot</a></p>
+<h4 id="defined-in_44">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L269">packages/types/lib/driver.ts:269</a></p>
+<hr />
+<h3 id="findelements">findElements</h3>
+<p>▸ <strong>findElements</strong>(<code>strategy</code>, <code>selector</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements">https://w3c.github.io/webdriver/#find-elements</a></p>
+<h4 id="parameters_15">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_16">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>A possibly-empty list of element objects</p>
+<h4 id="inherited-from_35">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelements">findElements</a></p>
+<h4 id="defined-in_45">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L227">packages/types/lib/driver.ts:227</a></p>
+<hr />
+<h3 id="findelementsfromelement">findElementsFromElement</h3>
+<p>▸ <strong>findElementsFromElement</strong>(<code>strategy</code>, <code>selector</code>, <code>elementId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+look for elements among the set of descendants of a given element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements-from-element">https://w3c.github.io/webdriver/#find-elements-from-element</a></p>
+<h4 id="parameters_16">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+<tr>
+<td align="left"><code>elementId</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the element to use as the search basis</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_17">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>A possibly-empty list of element objects</p>
+<h4 id="inherited-from_36">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelementsfromelement">findElementsFromElement</a></p>
+<h4 id="defined-in_46">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L254">packages/types/lib/driver.ts:254</a></p>
+<hr />
+<h3 id="findelementsfromshadowroot">findElementsFromShadowRoot</h3>
+<p>▸ <code>Optional</code> <strong>findElementsFromShadowRoot</strong>(<code>strategy</code>, <code>selector</code>, <code>shadowId</code>): <code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>Find elements from a shadow root</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
+<h4 id="parameters_17">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the locator strategy</td>
+</tr>
+<tr>
+<td align="left"><code>selector</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the selector to combine with the strategy to find the specific elements</td>
+</tr>
+<tr>
+<td align="left"><code>shadowId</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the id of the element to use as the search basis</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_18">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.Element/"><code>Element</code></a>&lt;<code>string</code>>[]></p>
+<p>A possibly empty list of elements inside the shadow root matching the selector</p>
+<h4 id="inherited-from_37">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#findelementsfromshadowroot">findElementsFromShadowRoot</a></p>
+<h4 id="defined-in_47">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L284">packages/types/lib/driver.ts:284</a></p>
+<hr />
+<h3 id="getlog">getLog</h3>
+<p>▸ <strong>getLog</strong>(<code>logType</code>): <code>Promise</code>&lt;<code>unknown</code>[]></p>
+<p>Get the log for a given log type.</p>
+<h4 id="parameters_18">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>logType</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">Name/key of log type as defined in <a href="../appium_types.ILogCommands/#supportedlogtypes"><code>supportedLogTypes</code></a>.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_19">Returns</h4>
+<p><code>Promise</code>&lt;<code>unknown</code>[]></p>
+<h4 id="inherited-from_38">Inherited from</h4>
+<p><a href="../appium_types.ILogCommands/">ILogCommands</a>.<a href="../appium_types.ILogCommands/#getlog">getLog</a></p>
+<h4 id="defined-in_48">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L350">packages/types/lib/driver.ts:350</a></p>
+<hr />
+<h3 id="getlogevents">getLogEvents</h3>
+<p>▸ <strong>getLogEvents</strong>(<code>type?</code>): <code>Promise</code>&lt;<a href="../appium_types.EventHistory/"><code>EventHistory</code></a> | <code>Record</code>&lt;<code>string</code>, <code>number</code>>></p>
+<p>Get a list of events that have occurred in the current session</p>
+<h4 id="parameters_19">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type?</code></td>
+<td align="left"><code>string</code> | <code>string</code>[]</td>
+<td align="left">filter the returned events by including one or more types</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_20">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.EventHistory/"><code>EventHistory</code></a> | <code>Record</code>&lt;<code>string</code>, <code>number</code>>></p>
+<p>The event history for the session</p>
+<h4 id="inherited-from_39">Inherited from</h4>
+<p><a href="../appium_types.IEventCommands/">IEventCommands</a>.<a href="../appium_types.IEventCommands/#getlogevents">getLogEvents</a></p>
+<h4 id="defined-in_49">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L157">packages/types/lib/driver.ts:157</a></p>
+<hr />
+<h3 id="getlogtypes">getLogTypes</h3>
+<p>▸ <strong>getLogTypes</strong>(): <code>Promise</code>&lt;<code>string</code>[]></p>
+<p>Get available log types as a list of strings</p>
+<h4 id="returns_21">Returns</h4>
+<p><code>Promise</code>&lt;<code>string</code>[]></p>
+<h4 id="inherited-from_40">Inherited from</h4>
+<p><a href="../appium_types.ILogCommands/">ILogCommands</a>.<a href="../appium_types.ILogCommands/#getlogtypes">getLogTypes</a></p>
+<h4 id="defined-in_50">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L343">packages/types/lib/driver.ts:343</a></p>
+<hr />
+<h3 id="getmanageddrivers">getManagedDrivers</h3>
+<p>▸ <strong>getManagedDrivers</strong>(): <a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>>[]</p>
+<h4 id="returns_22">Returns</h4>
+<p><a href="./"><code>Driver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>, <a href="../../modules/appium_types/#defaultcreatesessionresult"><code>DefaultCreateSessionResult</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>, <code>void</code>>[]</p>
+<h4 id="inherited-from_41">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#getmanageddrivers">getManagedDrivers</a></p>
+<h4 id="defined-in_51">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L659">packages/types/lib/driver.ts:659</a></p>
+<hr />
+<h3 id="getpagesource">getPageSource</h3>
+<p>▸ <strong>getPageSource</strong>(): <code>Promise</code>&lt;<code>string</code>></p>
+<p>Get the current page/app source as HTML/XML</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-page-source">https://w3c.github.io/webdriver/#get-page-source</a></p>
+<h4 id="returns_23">Returns</h4>
+<p><code>Promise</code>&lt;<code>string</code>></p>
+<p>The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)</p>
+<h4 id="inherited-from_42">Inherited from</h4>
+<p><a href="../appium_types.IFindCommands/">IFindCommands</a>.<a href="../appium_types.IFindCommands/#getpagesource">getPageSource</a></p>
+<h4 id="defined-in_52">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L331">packages/types/lib/driver.ts:331</a></p>
+<hr />
+<h3 id="getproxyavoidlist">getProxyAvoidList</h3>
+<p>▸ <strong>getProxyAvoidList</strong>(<code>sessionId?</code>): <a href="../../modules/appium_types/#routematcher"><code>RouteMatcher</code></a>[]</p>
+<h4 id="parameters_20">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_24">Returns</h4>
+<p><a href="../../modules/appium_types/#routematcher"><code>RouteMatcher</code></a>[]</p>
+<h4 id="inherited-from_43">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#getproxyavoidlist">getProxyAvoidList</a></p>
+<h4 id="defined-in_53">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L655">packages/types/lib/driver.ts:655</a></p>
+<hr />
+<h3 id="getsession">getSession</h3>
+<p>▸ <strong>getSession</strong>&lt;<code>C</code>>(): <code>Promise</code>&lt;<a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>>></p>
+<p>Get the data for the current session</p>
+<h4 id="type-parameters_4">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="../appium_types.Constraints/"><code>Constraints</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_25">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>>></p>
+<p>A session data object</p>
+<h4 id="inherited-from_44">Inherited from</h4>
+<p><a href="../appium_types.ISessionCommands/">ISessionCommands</a>.<a href="../appium_types.ISessionCommands/#getsession">getSession</a></p>
+<h4 id="defined-in_54">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L173">packages/types/lib/driver.ts:173</a></p>
+<hr />
+<h3 id="getsessions">getSessions</h3>
+<p>▸ <strong>getSessions</strong>(): <code>Promise</code>&lt;<a href="../appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>[]></p>
+<p>Get data for all sessions running on an Appium server</p>
+<h4 id="returns_26">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>[]></p>
+<p>A list of session data objects</p>
+<h4 id="inherited-from_45">Inherited from</h4>
+<p><a href="../appium_types.ISessionCommands/">ISessionCommands</a>.<a href="../appium_types.ISessionCommands/#getsessions">getSessions</a></p>
+<h4 id="defined-in_55">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L166">packages/types/lib/driver.ts:166</a></p>
+<hr />
+<h3 id="getsettings">getSettings</h3>
+<p>▸ <strong>getSettings</strong>(): <code>Promise</code>&lt;<code>Settings</code>></p>
+<p>Get the current settings for the session</p>
+<h4 id="returns_27">Returns</h4>
+<p><code>Promise</code>&lt;<code>Settings</code>></p>
+<p>The settings object</p>
+<h4 id="inherited-from_46">Inherited from</h4>
+<p><a href="../appium_types.ISettingsCommands/">ISettingsCommands</a>.<a href="../appium_types.ISettingsCommands/#getsettings">getSettings</a></p>
+<h4 id="defined-in_56">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L392">packages/types/lib/driver.ts:392</a></p>
+<hr />
+<h3 id="getstatus">getStatus</h3>
+<p>▸ <strong>getStatus</strong>(): <code>Promise</code>&lt;<code>any</code>></p>
+<p><strong><code>Summary</code></strong></p>
+<p>Retrieve the server's current status.</p>
+<p><strong><code>Description</code></strong></p>
+<p>Returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.</p>
+<p>The readiness state is represented by the ready property of the body, which is false if an attempt to create a session at the current time would fail. However, the value true does not guarantee that a New Session command will succeed.</p>
+<p>Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.</p>
+<p><strong><code>Example</code></strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// webdriver.io example</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">status</span><span class="p">();</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">get_status</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">getStatus</span><span class="p">();</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># ruby_lib example</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">remote_status</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># ruby_lib_core example</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">remote_status</span>
+</code></pre></div>
+<h4 id="returns_28">Returns</h4>
+<p><code>Promise</code>&lt;<code>any</code>></p>
+<h4 id="inherited-from_47">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#getstatus">getStatus</a></p>
+<h4 id="defined-in_57">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L647">packages/types/lib/driver.ts:647</a></p>
+<hr />
+<h3 id="gettimeouts">getTimeouts</h3>
+<p>▸ <strong>getTimeouts</strong>(): <code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>number</code>>></p>
+<p>Get the current timeouts</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-timeouts">https://w3c.github.io/webdriver/#get-timeouts</a></p>
+<h4 id="returns_29">Returns</h4>
+<p><code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>number</code>>></p>
+<p>A map of timeout names to ms values</p>
+<h4 id="inherited-from_48">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#gettimeouts">getTimeouts</a></p>
+<h4 id="defined-in_58">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L77">packages/types/lib/driver.ts:77</a></p>
+<hr />
+<h3 id="implicitwait">implicitWait</h3>
+<p>▸ <strong>implicitWait</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the implicit wait timeout</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use <code>timeouts</code> instead</p>
+<h4 id="parameters_21">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_30">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_49">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#implicitwait">implicitWait</a></p>
+<h4 id="defined-in_59">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L53">packages/types/lib/driver.ts:53</a></p>
+<hr />
+<h3 id="implicitwaitforcondition">implicitWaitForCondition</h3>
+<p>▸ <strong>implicitWaitForCondition</strong>(<code>condition</code>): <code>Promise</code>&lt;<code>unknown</code>></p>
+<p>Periodically retry an async function up until the currently set implicit wait timeout</p>
+<h4 id="parameters_22">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>condition</code></td>
+<td align="left">(...<code>args</code>: <code>any</code>[]) =&gt; <code>Promise</code>&lt;<code>any</code>></td>
+<td align="left">the behaviour to retry until it returns truthy</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_31">Returns</h4>
+<p><code>Promise</code>&lt;<code>unknown</code>></p>
+<p>The return value of the condition</p>
+<h4 id="inherited-from_50">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#implicitwaitforcondition">implicitWaitForCondition</a></p>
+<h4 id="defined-in_60">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L69">packages/types/lib/driver.ts:69</a></p>
+<hr />
+<h3 id="implicitwaitmjsonwp">implicitWaitMJSONWP</h3>
+<p>▸ <strong>implicitWaitMJSONWP</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the implicit wait value that was sent in via the JSONWP</p>
+<p><strong><code>Deprecated</code></strong></p>
+<h4 id="parameters_23">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_32">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_51">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#implicitwaitmjsonwp">implicitWaitMJSONWP</a></p>
+<h4 id="defined-in_61">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L92">packages/types/lib/driver.ts:92</a></p>
+<hr />
+<h3 id="implicitwaitw3c">implicitWaitW3C</h3>
+<p>▸ <strong>implicitWaitW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the implicit wait value that was sent in via the W3C protocol</p>
+<h4 id="parameters_24">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_33">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_52">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#implicitwaitw3c">implicitWaitW3C</a></p>
+<h4 id="defined-in_62">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L84">packages/types/lib/driver.ts:84</a></p>
+<hr />
+<h3 id="isfeatureenabled">isFeatureEnabled</h3>
+<p>▸ <strong>isFeatureEnabled</strong>(<code>name</code>): <code>boolean</code></p>
+<h4 id="parameters_25">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_34">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_53">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#isfeatureenabled">isFeatureEnabled</a></p>
+<h4 id="defined-in_63">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L651">packages/types/lib/driver.ts:651</a></p>
+<hr />
+<h3 id="ismjsonwpprotocol">isMjsonwpProtocol</h3>
+<p>▸ <strong>isMjsonwpProtocol</strong>(): <code>boolean</code></p>
+<h4 id="returns_35">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_54">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#ismjsonwpprotocol">isMjsonwpProtocol</a></p>
+<h4 id="defined-in_64">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L650">packages/types/lib/driver.ts:650</a></p>
+<hr />
+<h3 id="isw3cprotocol">isW3CProtocol</h3>
+<p>▸ <strong>isW3CProtocol</strong>(): <code>boolean</code></p>
+<h4 id="returns_36">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_55">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#isw3cprotocol">isW3CProtocol</a></p>
+<h4 id="defined-in_65">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L649">packages/types/lib/driver.ts:649</a></p>
+<hr />
+<h3 id="logcustomevent">logCustomEvent</h3>
+<p>▸ <strong>logCustomEvent</strong>(<code>vendor</code>, <code>event</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Add a custom-named event to the Appium event log</p>
+<h4 id="parameters_26">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>vendor</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the name of the vendor or tool the event belongs to, to namespace the event</td>
+</tr>
+<tr>
+<td align="left"><code>event</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">the name of the event itself</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_37">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_56">Inherited from</h4>
+<p><a href="../appium_types.IEventCommands/">IEventCommands</a>.<a href="../appium_types.IEventCommands/#logcustomevent">logCustomEvent</a></p>
+<h4 id="defined-in_66">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L148">packages/types/lib/driver.ts:148</a></p>
+<hr />
+<h3 id="logevent">logEvent</h3>
+<p>▸ <strong>logEvent</strong>(<code>eventName</code>): <code>void</code></p>
+<h4 id="parameters_27">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>eventName</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_38">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_57">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#logevent">logEvent</a></p>
+<h4 id="defined-in_67">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L661">packages/types/lib/driver.ts:661</a></p>
+<hr />
+<h3 id="logextracaps">logExtraCaps</h3>
+<p>▸ <strong>logExtraCaps</strong>(<code>caps</code>): <code>void</code></p>
+<p>A helper function to log unrecognized capabilities to the console</p>
+<p><strong><code>Params</code></strong></p>
+<p>caps - the capabilities</p>
+<h4 id="parameters_28">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>caps</code></td>
+<td align="left"><a href="../../modules/appium_types/#drivercaps"><code>DriverCaps</code></a>&lt;<code>C</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_39">Returns</h4>
+<p><code>void</code></p>
+<h4 id="defined-in_68">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L765">packages/types/lib/driver.ts:765</a></p>
+<hr />
+<h3 id="newcommandtimeout">newCommandTimeout</h3>
+<p>▸ <strong>newCommandTimeout</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set Appium's new command timeout</p>
+<h4 id="parameters_29">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_40">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_58">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#newcommandtimeout">newCommandTimeout</a></p>
+<h4 id="defined-in_69">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L129">packages/types/lib/driver.ts:129</a></p>
+<hr />
+<h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
+<p>▸ <strong>onUnexpectedShutdown</strong>(<code>handler</code>): <code>void</code></p>
+<h4 id="parameters_30">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>handler</code></td>
+<td align="left">() =&gt; <code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_41">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_59">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#onunexpectedshutdown">onUnexpectedShutdown</a></p>
+<h4 id="defined-in_70">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L615">packages/types/lib/driver.ts:615</a></p>
+<hr />
+<h3 id="pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</h3>
+<p>▸ <strong>pageLoadTimeoutMJSONWP</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the page load timeout value that was sent in via the JSONWP</p>
+<p><strong><code>Deprecated</code></strong></p>
+<h4 id="parameters_31">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_42">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_60">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#pageloadtimeoutmjsonwp">pageLoadTimeoutMJSONWP</a></p>
+<h4 id="defined-in_71">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L107">packages/types/lib/driver.ts:107</a></p>
+<hr />
+<h3 id="pageloadtimeoutw3c">pageLoadTimeoutW3C</h3>
+<p>▸ <strong>pageLoadTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the page load timeout value that was sent in via the W3C protocol</p>
+<h4 id="parameters_32">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_43">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_61">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#pageloadtimeoutw3c">pageLoadTimeoutW3C</a></p>
+<h4 id="defined-in_72">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L99">packages/types/lib/driver.ts:99</a></p>
+<hr />
+<h3 id="parsetimeoutargument">parseTimeoutArgument</h3>
+<p>▸ <strong>parseTimeoutArgument</strong>(<code>ms</code>): <code>number</code></p>
+<p>Get a timeout value from a number or a string</p>
+<h4 id="parameters_33">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+<td align="left">the timeout value as a number or a string</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_44">Returns</h4>
+<p><code>number</code></p>
+<p>The timeout as a number in ms</p>
+<h4 id="inherited-from_62">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#parsetimeoutargument">parseTimeoutArgument</a></p>
+<h4 id="defined-in_73">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L138">packages/types/lib/driver.ts:138</a></p>
+<hr />
+<h3 id="proxyactive">proxyActive</h3>
+<p>▸ <strong>proxyActive</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<h4 id="parameters_34">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_45">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_63">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#proxyactive">proxyActive</a></p>
+<h4 id="defined-in_74">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L654">packages/types/lib/driver.ts:654</a></p>
+<hr />
+<h3 id="proxyrouteisavoided">proxyRouteIsAvoided</h3>
+<p>▸ <strong>proxyRouteIsAvoided</strong>(<code>sessionId</code>, <code>method</code>, <code>url</code>): <code>boolean</code></p>
+<h4 id="parameters_35">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>method</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>url</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_46">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_64">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#proxyrouteisavoided">proxyRouteIsAvoided</a></p>
+<h4 id="defined-in_75">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L657">packages/types/lib/driver.ts:657</a></p>
+<hr />
+<h3 id="reset">reset</h3>
+<p>▸ <strong>reset</strong>(): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Reset the current session (run the delete session and create session subroutines)</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use explicit session management commands instead</p>
+<h4 id="returns_47">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_76">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L730">packages/types/lib/driver.ts:730</a></p>
+<hr />
+<h3 id="scripttimeoutmjsonwp">scriptTimeoutMJSONWP</h3>
+<p>▸ <strong>scriptTimeoutMJSONWP</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the script timeout value that was sent in via the JSONWP</p>
+<p><strong><code>Deprecated</code></strong></p>
+<h4 id="parameters_36">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_48">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_65">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#scripttimeoutmjsonwp">scriptTimeoutMJSONWP</a></p>
+<h4 id="defined-in_77">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L122">packages/types/lib/driver.ts:122</a></p>
+<hr />
+<h3 id="scripttimeoutw3c">scriptTimeoutW3C</h3>
+<p>▸ <strong>scriptTimeoutW3C</strong>(<code>ms</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the script timeout value that was sent in via the W3C protocol</p>
+<h4 id="parameters_37">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_49">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_66">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#scripttimeoutw3c">scriptTimeoutW3C</a></p>
+<h4 id="defined-in_78">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L114">packages/types/lib/driver.ts:114</a></p>
+<hr />
+<h3 id="sessionexists">sessionExists</h3>
+<p>▸ <strong>sessionExists</strong>(<code>sessionId?</code>): <code>boolean</code></p>
+<h4 id="parameters_38">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>sessionId?</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_50">Returns</h4>
+<p><code>boolean</code></p>
+<h4 id="inherited-from_67">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#sessionexists">sessionExists</a></p>
+<h4 id="defined-in_79">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L648">packages/types/lib/driver.ts:648</a></p>
+<hr />
+<h3 id="setimplicitwait">setImplicitWait</h3>
+<p>▸ <strong>setImplicitWait</strong>(<code>ms</code>): <code>void</code></p>
+<p>A helper method (not a command) used to set the implicit wait value</p>
+<h4 id="parameters_39">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the implicit wait in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_51">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_68">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#setimplicitwait">setImplicitWait</a></p>
+<h4 id="defined-in_80">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L60">packages/types/lib/driver.ts:60</a></p>
+<hr />
+<h3 id="setnewcommandtimeout">setNewCommandTimeout</h3>
+<p>▸ <strong>setNewCommandTimeout</strong>(<code>ms</code>): <code>void</code></p>
+<p>Set the new command timeout</p>
+<h4 id="parameters_40">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the timeout in ms</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_52">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_69">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#setnewcommandtimeout">setNewCommandTimeout</a></p>
+<h4 id="defined-in_81">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L43">packages/types/lib/driver.ts:43</a></p>
+<hr />
+<h3 id="startnewcommandtimeout">startNewCommandTimeout</h3>
+<p>▸ <strong>startNewCommandTimeout</strong>(): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Start the timer for the New Command Timeout, which when it runs out, will stop the current
+session</p>
+<h4 id="returns_53">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_82">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L722">packages/types/lib/driver.ts:722</a></p>
+<hr />
+<h3 id="startunexpectedshutdown">startUnexpectedShutdown</h3>
+<p>▸ <strong>startUnexpectedShutdown</strong>(<code>err?</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Signify to any owning processes that this driver encountered an error which should cause the
+session to terminate immediately (for example an upstream service failed)</p>
+<h4 id="parameters_41">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>err?</code></td>
+<td align="left"><code>Error</code></td>
+<td align="left">the Error object which is causing the shutdown</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_54">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_83">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L716">packages/types/lib/driver.ts:716</a></p>
+<hr />
+<h3 id="timeouts">timeouts</h3>
+<p>▸ <strong>timeouts</strong>(<code>type</code>, <code>ms</code>, <code>script?</code>, <code>pageLoad?</code>, <code>implicit?</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Set the various timeouts associated with a session</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#set-timeouts">https://w3c.github.io/webdriver/#set-timeouts</a></p>
+<h4 id="parameters_42">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>string</code></td>
+<td align="left">used only for the old (JSONWP) command, the type of the timeout</td>
+</tr>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+<td align="left">used only for the old (JSONWP) command, the ms for the timeout</td>
+</tr>
+<tr>
+<td align="left"><code>script?</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the number in ms for the script timeout, used for the W3C command</td>
+</tr>
+<tr>
+<td align="left"><code>pageLoad?</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">the number in ms for the pageLoad timeout, used for the W3C command</td>
+</tr>
+<tr>
+<td align="left"><code>implicit?</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+<td align="left">the number in ms for the implicit wait timeout, used for the W3C command</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_55">Returns</h4>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="inherited-from_70">Inherited from</h4>
+<p><a href="../appium_types.ITimeoutCommands/">ITimeoutCommands</a>.<a href="../appium_types.ITimeoutCommands/#timeouts">timeouts</a></p>
+<h4 id="defined-in_84">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L30">packages/types/lib/driver.ts:30</a></p>
+<hr />
+<h3 id="validatedesiredcaps">validateDesiredCaps</h3>
+<p>▸ <strong>validateDesiredCaps</strong>(<code>caps</code>): <code>boolean</code></p>
+<p>Validate the capabilities used to start a session</p>
+<h4 id="parameters_43">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>caps</code></td>
+<td align="left"><a href="../../modules/appium_types/#drivercaps"><code>DriverCaps</code></a>&lt;<code>C</code>></td>
+<td align="left">the capabilities</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_56">Returns</h4>
+<p><code>boolean</code></p>
+<p>Whether or not the capabilities are valid</p>
+<h4 id="defined-in_85">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L756">packages/types/lib/driver.ts:756</a></p>
+<hr />
+<h3 id="validatelocatorstrategy">validateLocatorStrategy</h3>
+<p>▸ <strong>validateLocatorStrategy</strong>(<code>strategy</code>, <code>webContext?</code>): <code>void</code></p>
+<h4 id="parameters_44">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>strategy</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>webContext?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_57">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_71">Inherited from</h4>
+<p><a href="../appium_types.Core/">Core</a>.<a href="../appium_types.Core/#validatelocatorstrategy">validateLocatorStrategy</a></p>
+<h4 id="defined-in_86">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/f42374e/packages/types/lib/driver.ts#L653">packages/types/lib/driver.ts:653</a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+    
+  </body>
+</html>

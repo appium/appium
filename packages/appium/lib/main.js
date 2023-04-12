@@ -163,7 +163,7 @@ async function prepareAppiumHome(name, appiumHome) {
       }
     }
     throw new Error(
-      `The path '${appiumHome}' provided in the ${name} must be pointing ` +
+      `The path '${appiumHome}' provided in the ${name} must point ` +
       `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
       `Original error: ${err.message}`
     );
@@ -176,10 +176,10 @@ async function prepareAppiumHome(name, appiumHome) {
   try {
     await fs.access(appiumHome, fs.constants.W_OK);
   } catch (e) {
-    logger.warn(
-      `The folder path '${appiumHome}' provided in the ${name} is not ` +
-      `writeable for the current user account '${os.userInfo().username}'. This might ` +
-      `lead to unexpected future errors. Original error: ${e.message}`
+    throw new Error(
+      `The folder path '${appiumHome}' provided in the ${name} must be ` +
+      `writeable for the current user account '${os.userInfo().username}. ` +
+      `Original error: ${e.message}`
     );
   }
   return appiumHome;

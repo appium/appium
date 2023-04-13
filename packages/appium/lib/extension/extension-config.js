@@ -139,7 +139,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>} extName
    * @returns {Promise<string[]>}
    */
-  // eslint-disable-next-line no-unused-vars,require-await
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getConfigWarnings(extManifest, extName) {
     return [];
   }
@@ -421,7 +421,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>} extName - Extension name (from manifest)
    * @returns {ExtManifestProblem[]}
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getGenericConfigProblems(extManifest, extName) {
     const {version, pkgName, mainClass} = extManifest;
     const problems = [];
@@ -456,7 +456,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>} extName
    * @returns {ExtManifestProblem[]}
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getConfigProblems(extManifest, extName) {
     // shoud override this method if special validation is necessary for this extension type
     return [];
@@ -509,7 +509,7 @@ export class ExtensionConfig {
    * @param {ExtName<ExtType>[]} [activeNames]
    * @returns {void}
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   print(activeNames) {
     if (_.isEmpty(this.installedExtensions)) {
       log.info(
@@ -534,7 +534,7 @@ export class ExtensionConfig {
    * @returns {string}
    * @abstract
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   extensionDesc(extName, extManifest) {
     throw new Error('This must be implemented in a subclass');
   }

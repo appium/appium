@@ -424,7 +424,7 @@ class ExtensionCliCommand {
    * @param {ExtensionArgs} args
    * @returns {string}
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPostInstallText(args) {
     throw this._createFatalError('Must be implemented in final class');
   }
@@ -505,7 +505,7 @@ class ExtensionCliCommand {
    * @param {ExtMetadata<ExtType>} extMetadata - the data in the "appium" field of `package.json` for an extension
    * @param {string} installSpec - Extension name/spec
    */
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   validateExtensionFields(extMetadata, installSpec) {
     throw this._createFatalError('Must be implemented in final class');
   }

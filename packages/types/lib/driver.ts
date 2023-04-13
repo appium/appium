@@ -157,22 +157,6 @@ export interface IEventCommands {
   getLogEvents(type?: string | string[]): Promise<EventHistory | Record<string, number>>;
 }
 
-export interface ISessionCommands {
-  /**
-   * Get data for all sessions running on an Appium server
-   *
-   * @returns A list of session data objects
-   */
-  getSessions(): Promise<MultiSessionData[]>;
-
-  /**
-   * Get the data for the current session
-   *
-   * @returns A session data object
-   */
-  getSession<C extends Constraints>(): Promise<SingularSessionData<C>>;
-}
-
 export interface IExecuteCommands {
   /**
    * Call an `Execute Method` by its name with the given arguments. This method will check that the
@@ -197,10 +181,20 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
   capabilities: DriverCaps<C>;
 }
 
-export type SingularSessionData<C extends Constraints = Constraints> = DriverCaps<C> & {
+/**
+ * Data returned by {@linkcode ISessionCommands.getSession}.
+ *
+ * @typeParam C - The driver's constraints
+ * @typeParam T - Any extra data the driver stuffs in here
+ * @privateRemarks The content of this object looks implementation-specific and in practice is not well-defined.  It's _possible_ to fully type this in the future.
+ */
+export type SingularSessionData<
+  C extends Constraints = Constraints,
+  T extends StringRecord = StringRecord
+> = DriverCaps<C> & {
   events?: EventHistory;
   error?: string;
-};
+} & T;
 
 export interface IFindCommands {
   /**
@@ -411,7 +405,8 @@ export type DefaultDeleteSessionResult = void;
 export interface ISessionHandler<
   C extends Constraints = Constraints,
   CreateResult = DefaultCreateSessionResult<C>,
-  DeleteResult = DefaultDeleteSessionResult
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord
 > {
   /**
    * Start a new automation session
@@ -445,6 +440,20 @@ export interface ISessionHandler<
    * @param driverData - the driver data for other currently-running sessions
    */
   deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult>;
+
+  /**
+   * Get data for all sessions running on an Appium server
+   *
+   * @returns A list of session data objects
+   */
+  getSessions(): Promise<MultiSessionData[]>;
+
+  /**
+   * Get the data for the current session
+   *
+   * @returns A session data object
+   */
+  getSession(): Promise<SingularSessionData<C, SessionData>>;
 }
 
 /**
@@ -675,15 +684,15 @@ export interface Driver<
   CArgs extends StringRecord = StringRecord,
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
-  DeleteResult = DefaultDeleteSessionResult
-> extends ISessionCommands,
-    ILogCommands,
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord
+> extends ILogCommands,
     IFindCommands,
     ISettingsCommands<Settings>,
     ITimeoutCommands,
     IEventCommands,
     IExecuteCommands,
-    ISessionHandler<C, CreateResult, DeleteResult>,
+    ISessionHandler<C, CreateResult, DeleteResult, SessionData>,
     Core<C, Settings> {
   /**
    * The set of command line arguments set for this driver
@@ -1992,14 +2001,19 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
   /**
    * Proxy a command to a connected WebDriver server
    *
-   * @typeParam T - the type of the return value
+   * @typeParam TReq - the type of the incoming body
+   * @typeParam TRes - the type of the return value
    * @param url - the incoming URL
    * @param method - the incoming HTTP method
    * @param body - the incoming HTTP body
    *
    * @returns The return value of the proxied command
    */
-  proxyCommand?<T = any>(url: string, method: HTTPMethod, body?: string): Promise<T>;
+  proxyCommand?<TReq = any, TRes = unknown>(
+    url: string,
+    method: HTTPMethod,
+    body?: TReq
+  ): Promise<TRes>;
 }
 
 /**

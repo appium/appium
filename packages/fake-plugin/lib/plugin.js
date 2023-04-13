@@ -59,7 +59,7 @@ class FakePlugin extends BasePlugin {
     FakePlugin._unexpectedData = null;
   }
 
-  // eslint-disable-next-line no-unused-vars,require-await
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,require-await
   static async updateServer(expressApp, httpServer, cliArgs) {
     expressApp.all('/fake', FakePlugin.fakeRoute);
     expressApp.all('/unexpected', FakePlugin.unexpectedData);

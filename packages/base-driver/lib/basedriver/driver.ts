@@ -17,7 +17,9 @@ import {
   DriverCaps,
   DriverData,
   DriverOpts,
+  MultiSessionData,
   ServerArgs,
+  SingularSessionData,
   StringRecord,
   W3CDriverCaps,
 } from '@appium/types';
@@ -31,7 +33,8 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 export class BaseDriver<
     C extends Constraints,
     CArgs extends StringRecord = StringRecord,
-    Settings extends StringRecord = StringRecord
+    Settings extends StringRecord = StringRecord,
+    SessionData extends StringRecord = StringRecord
   >
   extends DriverCore<C, Settings>
   implements Driver<C, CArgs>
@@ -309,6 +312,25 @@ export class BaseDriver<
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
     return [this.sessionId, caps];
+  }
+  async getSessions() {
+    const ret: MultiSessionData<C>[] = [];
+
+    if (this.sessionId) {
+      ret.push({
+        id: this.sessionId,
+        capabilities: this.caps,
+      });
+    }
+
+    return ret;
+  }
+
+  /**
+   * Returns capabilities for the session and event history (if applicable)
+   */
+  async getSession() {
+    return this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

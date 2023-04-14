@@ -65,6 +65,7 @@ the Appium client depends on) since that is what you will use as your primary in
 |[Appium Python client](https://github.com/appium/python-client)|Python|Appium Team|
 |[Appium Ruby Core client](https://github.com/appium/ruby_lib_core) (Recommended)<br>[Appium Ruby client](https://github.com/appium/ruby_lib)|Ruby|Appium Team|
 |[WebDriverIO](https://webdriver.io)|Node.js|Community|
+|[Nightwatch](https://nightwatchjs.org/)|Node.js|Community|
 |[Appium .NET client](https://github.com/appium/dotnet-client)|C#|Appium Team*|
 |[RobotFramework](https://github.com/serhatbolsu/robotframework-appiumlibrary)|DSL|Community|
 

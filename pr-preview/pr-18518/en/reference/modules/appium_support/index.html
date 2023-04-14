@@ -1,0 +1,2132 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium/docs/en/reference/modules/appium_support/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+    
+    
+      
+        <title>Module: @appium/support - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-appiumsupport" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Module: @appium/support
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="Select language">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Welcome
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          Introduction
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Introduction
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Intro to Appium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Intro to Appium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Overview of Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/drivers/" class="md-nav__link">
+        Intro to Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/clients/" class="md-nav__link">
+        Intro to Appium Clients
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/requirements/" class="md-nav__link">
+        Appium Requirements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/history/" class="md-nav__link">
+        Appium Project History
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Quickstart
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Quickstart
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        Quickstart Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/install/" class="md-nav__link">
+        Install Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/uiauto2-driver/" class="md-nav__link">
+        Install the UiAutomator2 Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          Write a Test
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          Write a Test
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-js/" class="md-nav__link">
+        Write a Test (JS)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-py/" class="md-nav__link">
+        Write a Test (Python)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-java/" class="md-nav__link">
+        Write a Test (Java)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-rb/" class="md-nav__link">
+        Write a Test (Ruby)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/next-steps/" class="md-nav__link">
+        Next Steps
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          CLI Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          CLI Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        CLI Intro
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/args/" class="md-nav__link">
+        Server CLI Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/extensions/" class="md-nav__link">
+        The Extension CLI
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating from Appium 1.x to Appium 2.x
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/managing-exts/" class="md-nav__link">
+        Managing Appium Drivers and Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/config/" class="md-nav__link">
+        The Appium Config File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/security/" class="md-nav__link">
+        Appium Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caps/" class="md-nav__link">
+        Capabilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/context/" class="md-nav__link">
+        The Context API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/settings/" class="md-nav__link">
+        The Settings API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/execute-methods/" class="md-nav__link">
+        Execute Methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/event-timing/" class="md-nav__link">
+        The Event Timing API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/log-filters/" class="md-nav__link">
+        Log Filtering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/grid/" class="md-nav__link">
+        Appium and Selenium Grid
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caching/" class="md-nav__link">
+        Application Bundles Caching Logic
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Developer Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Developer Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        BaseDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        FakeDriver Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Ecosystem
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Ecosystem
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/" class="md-nav__link">
+        The Appium Ecosystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+          Developing Appium Extensions
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          Developing Appium Extensions
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-drivers/" class="md-nav__link">
+        Building Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-plugins/" class="md-nav__link">
+        Building Appium Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-docs/" class="md-nav__link">
+        Building Docs for Appium Extensions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+          Contributing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          Contributing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        Contributing to Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/config-system/" class="md-nav__link">
+        Appium's Config System
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resources/" class="md-nav__link">
+        More Appium Resources
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/appium/appium/issues" class="md-nav__link">
+        Issues
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    Variables
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables_1" class="md-nav__link">
+    Variables
+  </a>
+  
+    <nav class="md-nav" aria-label="Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default" class="md-nav__link">
+    default
+  </a>
+  
+    <nav class="md-nav" aria-label="default">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fs" class="md-nav__link">
+    fs
+  </a>
+  
+    <nav class="md-nav" aria-label="fs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_1" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_1" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#npm" class="md-nav__link">
+    npm
+  </a>
+  
+    <nav class="md-nav" aria-label="npm">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions_1" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancellabledelay" class="md-nav__link">
+    cancellableDelay
+  </a>
+  
+    <nav class="md-nav" aria-label="cancellableDelay">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mkdirp" class="md-nav__link">
+    mkdirp
+  </a>
+  
+    <nav class="md-nav" aria-label="mkdirp">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_4" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="module-appiumsupport">Module: @appium/support</h1>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="namespaces">Namespaces</h3>
+<ul>
+<li><a href="../appium_support.console/">console</a></li>
+<li><a href="../appium_support.env/">env</a></li>
+<li><a href="../appium_support.imageUtil/">imageUtil</a></li>
+<li><a href="../appium_support.logger/">logger</a></li>
+<li><a href="../appium_support.mjpeg/">mjpeg</a></li>
+<li><a href="../appium_support.net/">net</a></li>
+<li><a href="../appium_support.node/">node</a></li>
+<li><a href="../appium_support.plist/">plist</a></li>
+<li><a href="../appium_support.process/">process</a></li>
+<li><a href="../appium_support.system/">system</a></li>
+<li><a href="../appium_support.tempDir/">tempDir</a></li>
+<li><a href="../appium_support.timing/">timing</a></li>
+<li><a href="../appium_support.util/">util</a></li>
+<li><a href="../appium_support.zip/">zip</a></li>
+</ul>
+<h3 id="variables">Variables</h3>
+<ul>
+<li><a href="./#default">default</a></li>
+<li><a href="./#fs">fs</a></li>
+<li><a href="./#npm">npm</a></li>
+</ul>
+<h3 id="functions">Functions</h3>
+<ul>
+<li><a href="./#cancellabledelay">cancellableDelay</a></li>
+<li><a href="./#mkdirp">mkdirp</a></li>
+</ul>
+<h2 id="variables_1">Variables</h2>
+<h3 id="default">default</h3>
+<p>• <strong>default</strong>: <code>Object</code></p>
+<h4 id="type-declaration">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>cancellableDelay</code></td>
+<td align="left">(<code>ms</code>: <code>any</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>></td>
+</tr>
+<tr>
+<td align="left"><code>console</code></td>
+<td align="left"><a href="../appium_support.console/"><code>console</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>env</code></td>
+<td align="left"><a href="../appium_support.env/"><code>env</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>fs</code></td>
+<td align="left">{ <code>F_OK</code>: <code>number</code> = constants.F_OK; <code>R_OK</code>: <code>number</code> = constants.R_OK; <code>W_OK</code>: <code>number</code> = constants.W_OK; <code>X_OK</code>: <code>number</code> = constants.X_OK; <code>access</code>: (<code>path</code>: <code>PathLike</code>, <code>mode?</code>: <code>number</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.access; <code>appendFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Uint8Array</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>FlagAndOpenMode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.appendFile; <code>chmod</code>: (<code>path</code>: <code>PathLike</code>, <code>mode</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.chmod; <code>close</code>: (<code>arg1</code>: <code>number</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>> ; <code>constants</code>: typeof <code>constants</code> ; <code>createReadStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>ReadStreamOptions</code>) =&gt; <code>ReadStream</code> ; <code>createWriteStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>StreamOptions</code>) =&gt; <code>WriteStream</code> ; <code>glob</code>: (<code>pattern</code>: <code>string</code>, <code>opts?</code>: <code>IOptions</code>) =&gt; <code>Bluebird</code>&lt;<code>string</code>[]> ; <code>lstat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.lstat; <code>mv</code>: (<code>from</code>: <code>string</code>, <code>to</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Bluebird</code>&lt;<code>void</code>> ; <code>open</code>: (<code>path</code>: <code>PathLike</code>, <code>flags</code>: <code>OpenMode</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>number</code>> ; <code>openFile</code>: (<code>path</code>: <code>PathLike</code>, <code>flags?</code>: <code>string</code> | <code>number</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>FileHandle</code>> = fsPromises.open; <code>read</code>: <code>ReadFn</code>&lt;<code>ArrayBufferView</code>> ; <code>readFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | { <code>encoding?</code>: <code>null</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options</code>: <code>BufferEncoding</code> | { <code>encoding</code>: <code>BufferEncoding</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>Abortable</code> &amp; { <code>flag?</code>: <code>OpenMode</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readFile; <code>readdir</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]> = fsPromises.readdir; <code>readlink</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>string</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readlink; <code>realpath</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.realpath; <code>rename</code>: (<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.rename; <code>rimraf</code>: (<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>rimrafSync</code>: (<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code> = rimrafIdx.sync; <code>sanitizeName</code>: (<code>input</code>: <code>string</code>, <code>options?</code>: { <code>replacement?</code>: <code>string</code> | (<code>substring</code>: <code>string</code>) =&gt; <code>string</code>  }) =&gt; <code>string</code> = sanitize; <code>stat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.stat; <code>symlink</code>: (<code>target</code>: <code>PathLike</code>, <code>path</code>: <code>PathLike</code>, <code>type?</code>: <code>null</code> | <code>string</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.symlink; <code>unlink</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.unlink; <code>which</code>: typeof <code>which</code> ; <code>write</code>: (<code>arg1</code>: <code>number</code>, <code>arg2</code>: <code>string</code>) =&gt; <code>Bluebird</code>&lt;<code>number</code>> ; <code>writeFile</code>: (<code>file</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Stream</code> | <code>ArrayBufferView</code> | <code>Iterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>> | <code>AsyncIterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>flag?</code>: <code>OpenMode</code> ; <code>mode?</code>: <code>Mode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.writeFile; <code>copyFile</code>: (<code>source</code>: <code>string</code>, <code>destination</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>exists</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>findRoot</code>: (<code>dir</code>: <code>string</code>) =&gt; <code>string</code> ; <code>hasAccess</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>hash</code>: (<code>filePath</code>: <code>PathLike</code>, <code>algorithm?</code>: <code>string</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>isExecutable</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>md5</code>: (<code>filePath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>mkdir</code>: (<code>filepath</code>: <code>string</code> | <code>Buffer</code> | <code>URL</code>, <code>opts?</code>: <code>MakeDirectoryOptions</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>mkdirp</code>: (<code>dir</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>readPackageJsonFrom</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <a href="../appium_support.env/#normalizedpackagejson"><code>NormalizedPackageJson</code></a> ; <code>walk</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Walker</code> ; <code>walkDir</code>: (<code>dir</code>: <code>string</code>, <code>recursive</code>: <code>boolean</code>, <code>callback</code>: <code>WalkDirCallback</code>) =&gt; <code>Promise</code>&lt;<code>null</code> | <code>string</code>>  }</td>
+</tr>
+<tr>
+<td align="left"><code>fs.F_OK</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.R_OK</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.W_OK</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.X_OK</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.access</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>mode?</code>: <code>number</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.appendFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Uint8Array</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>FlagAndOpenMode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.chmod</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>mode</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.close</code></td>
+<td align="left">(<code>arg1</code>: <code>number</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.constants</code></td>
+<td align="left">typeof <code>constants</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.createReadStream</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>ReadStreamOptions</code>) =&gt; <code>ReadStream</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.createWriteStream</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>StreamOptions</code>) =&gt; <code>WriteStream</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.glob</code></td>
+<td align="left">(<code>pattern</code>: <code>string</code>, <code>opts?</code>: <code>IOptions</code>) =&gt; <code>Bluebird</code>&lt;<code>string</code>[]></td>
+</tr>
+<tr>
+<td align="left"><code>fs.lstat</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.mv</code></td>
+<td align="left">(<code>from</code>: <code>string</code>, <code>to</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Bluebird</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.open</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>flags</code>: <code>OpenMode</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>number</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.openFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>flags?</code>: <code>string</code> | <code>number</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>FileHandle</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.read</code></td>
+<td align="left"><code>ReadFn</code>&lt;<code>ArrayBufferView</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.readFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | { <code>encoding?</code>: <code>null</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options</code>: <code>BufferEncoding</code> | { <code>encoding</code>: <code>BufferEncoding</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>Abortable</code> &amp; { <code>flag?</code>: <code>OpenMode</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.readdir</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
+</tr>
+<tr>
+<td align="left"><code>fs.readlink</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>string</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.realpath</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.rename</code></td>
+<td align="left">(<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.rimraf</code></td>
+<td align="left">(<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.rimrafSync</code></td>
+<td align="left">(<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.sanitizeName</code></td>
+<td align="left">(<code>input</code>: <code>string</code>, <code>options?</code>: { <code>replacement?</code>: <code>string</code> | (<code>substring</code>: <code>string</code>) =&gt; <code>string</code>  }) =&gt; <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.stat</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.symlink</code></td>
+<td align="left">(<code>target</code>: <code>PathLike</code>, <code>path</code>: <code>PathLike</code>, <code>type?</code>: <code>null</code> | <code>string</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.unlink</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.which</code></td>
+<td align="left">typeof <code>which</code></td>
+</tr>
+<tr>
+<td align="left"><code>fs.write</code></td>
+<td align="left">(<code>arg1</code>: <code>number</code>, <code>arg2</code>: <code>string</code>) =&gt; <code>Bluebird</code>&lt;<code>number</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.writeFile</code></td>
+<td align="left">(<code>file</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Stream</code> | <code>ArrayBufferView</code> | <code>Iterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>> | <code>AsyncIterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>flag?</code>: <code>OpenMode</code> ; <code>mode?</code>: <code>Mode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+</tr>
+<tr>
+<td align="left"><code>fs.copyFile</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.exists</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.findRoot</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.hasAccess</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.hash</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.isExecutable</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.md5</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.mkdir</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.mkdirp</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.readPackageJsonFrom</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.walk</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.walkDir</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>imageUtil</code></td>
+<td align="left"><a href="../appium_support.imageUtil/"><code>imageUtil</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>logger</code></td>
+<td align="left"><a href="../appium_support.logger/"><code>logger</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>mjpeg</code></td>
+<td align="left"><a href="../appium_support.mjpeg/"><code>mjpeg</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>mkdirp</code></td>
+<td align="left">(<code>dir</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></td>
+</tr>
+<tr>
+<td align="left"><code>net</code></td>
+<td align="left"><a href="../appium_support.net/"><code>net</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>node</code></td>
+<td align="left"><a href="../appium_support.node/"><code>node</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>plist</code></td>
+<td align="left"><a href="../appium_support.plist/"><code>plist</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>process</code></td>
+<td align="left"><a href="../appium_support.process/"><code>process</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>system</code></td>
+<td align="left"><a href="../appium_support.system/"><code>system</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>tempDir</code></td>
+<td align="left"><a href="../appium_support.tempDir/"><code>tempDir</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>timing</code></td>
+<td align="left"><a href="../appium_support.timing/"><code>timing</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>util</code></td>
+<td align="left"><a href="../appium_support.util/"><code>util</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>zip</code></td>
+<td align="left"><a href="../appium_support.zip/"><code>zip</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c7d9a45/packages/support/lib/index.js#L41">packages/support/lib/index.js:41</a></p>
+<hr />
+<h3 id="fs">fs</h3>
+<p>• <code>Const</code> <strong>fs</strong>: <code>Object</code></p>
+<h4 id="type-declaration_1">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>F_OK</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">Use <code>constants.F_OK</code> instead. <strong><code>Deprecated</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>R_OK</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">Use <code>constants.R_OK</code> instead. <strong><code>Deprecated</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>W_OK</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">Use <code>constants.W_OK</code> instead. <strong><code>Deprecated</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>X_OK</code></td>
+<td align="left"><code>number</code></td>
+<td align="left">Use <code>constants.X_OK</code> instead. <strong><code>Deprecated</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>access</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>mode?</code>: <code>number</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Tests a user's permissions for the file or directory specified by <code>path</code>. The <code>mode</code> argument is an optional integer that specifies the accessibility checks to be performed. <code>mode</code> should be either the value <code>fs.constants.F_OK</code>or a mask consisting of the bitwise OR of any of <code>fs.constants.R_OK</code>,<code>fs.constants.W_OK</code>, and <code>fs.constants.X_OK</code> (e.g.<code>fs.constants.W_OK \| fs.constants.R_OK</code>). Check <code>File access constants</code> for possible values of <code>mode</code>. If the accessibility check is successful, the promise is resolved with no value. If any of the accessibility checks fail, the promise is rejected with an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">Error</a> object. The following example checks if the file<code>/etc/passwd</code> can be read and written by the current process. <code>js import { access } from 'fs/promises'; import { constants } from 'fs'; try { await access('/etc/passwd', constants.R_OK \| constants.W_OK); console.log('can access'); } catch { console.error('cannot access'); }</code> Using <code>fsPromises.access()</code> to check for the accessibility of a file before calling <code>fsPromises.open()</code> is not recommended. Doing so introduces a race condition, since other processes may change the file's state between the two calls. Instead, user code should open/read/write the file directly and handle the error raised if the file is not accessible. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>appendFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Uint8Array</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>FlagAndOpenMode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Asynchronously append data to a file, creating the file if it does not yet exist. <code>data</code> can be a string or a <code>Buffer</code>. If <code>options</code> is a string, then it specifies the <code>encoding</code>. The <code>mode</code> option only affects the newly created file. See <code>fs.open()</code> for more details. The <code>path</code> may be specified as a <code>FileHandle</code> that has been opened for appending (using <code>fsPromises.open()</code>). <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>chmod</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>mode</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Changes the permissions of a file. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>close</code></td>
+<td align="left">(<code>arg1</code>: <code>number</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>constants</code></td>
+<td align="left">typeof <code>constants</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>createReadStream</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>ReadStreamOptions</code>) =&gt; <code>ReadStream</code></td>
+<td align="left">Unlike the 16 kb default <code>highWaterMark</code> for a <code>stream.Readable</code>, the stream returned by this method has a default <code>highWaterMark</code> of 64 kb. <code>options</code> can include <code>start</code> and <code>end</code> values to read a range of bytes from the file instead of the entire file. Both <code>start</code> and <code>end</code> are inclusive and start counting at 0, allowed values are in the [0, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER"><code>Number.MAX_SAFE_INTEGER</code></a>] range. If <code>fd</code> is specified and <code>start</code> is omitted or <code>undefined</code>, <code>fs.createReadStream()</code> reads sequentially from the current file position. The <code>encoding</code> can be any one of those accepted by <code>Buffer</code>. If <code>fd</code> is specified, <code>ReadStream</code> will ignore the <code>path</code> argument and will use the specified file descriptor. This means that no <code>'open'</code> event will be emitted. <code>fd</code> should be blocking; non-blocking <code>fd</code>s should be passed to <code>net.Socket</code>. If <code>fd</code> points to a character device that only supports blocking reads (such as keyboard or sound card), read operations do not finish until data is available. This can prevent the process from exiting and the stream from closing naturally. By default, the stream will emit a <code>'close'</code> event after it has been destroyed. Set the <code>emitClose</code> option to <code>false</code> to change this behavior. By providing the <code>fs</code> option, it is possible to override the corresponding <code>fs</code>implementations for <code>open</code>, <code>read</code>, and <code>close</code>. When providing the <code>fs</code> option, an override for <code>read</code> is required. If no <code>fd</code> is provided, an override for<code>open</code> is also required. If <code>autoClose</code> is <code>true</code>, an override for <code>close</code> is also required. <code>js import { createReadStream } from 'fs'; // Create a stream from some character device. const stream = createReadStream('/dev/input/event0'); setTimeout(() =&gt; { stream.close(); // This may not close the stream. // Artificially marking end-of-stream, as if the underlying resource had // indicated end-of-file by itself, allows the stream to close. // This does not cancel pending read operations, and if there is such an // operation, the process may still not be able to exit successfully // until it finishes. stream.push(null); stream.read(0); }, 100);</code> If <code>autoClose</code> is false, then the file descriptor won't be closed, even if there's an error. It is the application's responsibility to close it and make sure there's no file descriptor leak. If <code>autoClose</code> is set to true (default behavior), on <code>'error'</code> or <code>'end'</code> the file descriptor will be closed automatically. <code>mode</code> sets the file mode (permission and sticky bits), but only if the file was created. An example to read the last 10 bytes of a file which is 100 bytes long: <code>js import { createReadStream } from 'fs'; createReadStream('sample.txt', { start: 90, end: 99 });</code> If <code>options</code> is a string, then it specifies the encoding. <strong><code>Since</code></strong> v0.1.31</td>
+</tr>
+<tr>
+<td align="left"><code>createWriteStream</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>StreamOptions</code>) =&gt; <code>WriteStream</code></td>
+<td align="left"><code>options</code> may also include a <code>start</code> option to allow writing data at some position past the beginning of the file, allowed values are in the [0, <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER"><code>Number.MAX_SAFE_INTEGER</code></a>] range. Modifying a file rather than replacing it may require the <code>flags</code> option to be set to <code>r+</code> rather than the default <code>w</code>. The <code>encoding</code> can be any one of those accepted by <code>Buffer</code>. If <code>autoClose</code> is set to true (default behavior) on <code>'error'</code> or <code>'finish'</code>the file descriptor will be closed automatically. If <code>autoClose</code> is false, then the file descriptor won't be closed, even if there's an error. It is the application's responsibility to close it and make sure there's no file descriptor leak. By default, the stream will emit a <code>'close'</code> event after it has been destroyed. Set the <code>emitClose</code> option to <code>false</code> to change this behavior. By providing the <code>fs</code> option it is possible to override the corresponding <code>fs</code>implementations for <code>open</code>, <code>write</code>, <code>writev</code> and <code>close</code>. Overriding <code>write()</code>without <code>writev()</code> can reduce performance as some optimizations (<code>_writev()</code>) will be disabled. When providing the <code>fs</code> option, overrides for at least one of<code>write</code> and <code>writev</code> are required. If no <code>fd</code> option is supplied, an override for <code>open</code> is also required. If <code>autoClose</code> is <code>true</code>, an override for <code>close</code>is also required. Like <code>fs.ReadStream</code>, if <code>fd</code> is specified, <code>fs.WriteStream</code> will ignore the<code>path</code> argument and will use the specified file descriptor. This means that no<code>'open'</code> event will be emitted. <code>fd</code> should be blocking; non-blocking <code>fd</code>s should be passed to <code>net.Socket</code>. If <code>options</code> is a string, then it specifies the encoding. <strong><code>Since</code></strong> v0.1.31</td>
+</tr>
+<tr>
+<td align="left"><code>glob</code></td>
+<td align="left">(<code>pattern</code>: <code>string</code>, <code>opts?</code>: <code>IOptions</code>) =&gt; <code>Bluebird</code>&lt;<code>string</code>[]></td>
+<td align="left">Given a glob pattern, resolve with list of files matching that pattern <strong><code>See</code></strong> https://github.com/isaacs/node-glob</td>
+</tr>
+<tr>
+<td align="left"><code>lstat</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>></td>
+<td align="left">Equivalent to <code>fsPromises.stat()</code> unless <code>path</code> refers to a symbolic link, in which case the link itself is stat-ed, not the file that it refers to. Refer to the POSIX <a href="http://man7.org/linux/man-pages/man2/lstat.2.html"><code>lstat(2)</code></a> document for more detail. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>mv</code></td>
+<td align="left">(<code>from</code>: <code>string</code>, <code>to</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Bluebird</code>&lt;<code>void</code>></td>
+<td align="left">Move a file</td>
+</tr>
+<tr>
+<td align="left"><code>open</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>flags</code>: <code>OpenMode</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>number</code>></td>
+<td align="left">Warning: this is a promisified <a href="./#open"><code>fs.open</code></a>. It resolves w/a file descriptor instead of a fsPromises.FileHandle FileHandle object, as fsPromises.open does. Use fs.openFile if you want a <code>FileHandle</code>.</td>
+</tr>
+<tr>
+<td align="left"><code>openFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>flags?</code>: <code>string</code> | <code>number</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>FileHandle</code>></td>
+<td align="left">Opens a <code>FileHandle</code>. Refer to the POSIX <a href="http://man7.org/linux/man-pages/man2/open.2.html"><code>open(2)</code></a> documentation for more detail. Some characters (<code>&lt; &gt; : " / \ \| ? *</code>) are reserved under Windows as documented by <a href="https://docs.microsoft.com/en-us/windows/desktop/FileIO/naming-a-file">Naming Files, Paths, and Namespaces</a>. Under NTFS, if the filename contains a colon, Node.js will open a file system stream, as described by <a href="https://docs.microsoft.com/en-us/windows/desktop/FileIO/using-streams">this MSDN page</a>. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>read</code></td>
+<td align="left"><code>ReadFn</code>&lt;<code>ArrayBufferView</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>readFile</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | { <code>encoding?</code>: <code>null</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options</code>: <code>BufferEncoding</code> | { <code>encoding</code>: <code>BufferEncoding</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>Abortable</code> &amp; { <code>flag?</code>: <code>OpenMode</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+<td align="left">Asynchronously reads the entire contents of a file. If no encoding is specified (using <code>options.encoding</code>), the data is returned as a <code>Buffer</code> object. Otherwise, the data will be a string. If <code>options</code> is a string, then it specifies the encoding. When the <code>path</code> is a directory, the behavior of <code>fsPromises.readFile()</code> is platform-specific. On macOS, Linux, and Windows, the promise will be rejected with an error. On FreeBSD, a representation of the directory's contents will be returned. It is possible to abort an ongoing <code>readFile</code> using an <code>AbortSignal</code>. If a request is aborted the promise returned is rejected with an <code>AbortError</code>: <code>js import { readFile } from 'fs/promises'; try { const controller = new AbortController(); const { signal } = controller; const promise = readFile(fileName, { signal }); // Abort the request before the promise settles. controller.abort(); await promise; } catch (err) { // When a request is aborted - err is an AbortError console.error(err); }</code> Aborting an ongoing request does not abort individual operating system requests but rather the internal buffering <code>fs.readFile</code> performs. Any specified <code>FileHandle</code> has to support reading. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>readdir</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
+<td align="left">Reads the contents of a directory. The optional <code>options</code> argument can be a string specifying an encoding, or an object with an <code>encoding</code> property specifying the character encoding to use for the filenames. If the <code>encoding</code> is set to <code>'buffer'</code>, the filenames returned will be passed as <code>Buffer</code> objects. If <code>options.withFileTypes</code> is set to <code>true</code>, the resolved array will contain <code>fs.Dirent</code> objects. <code>js import { readdir } from 'fs/promises'; try { const files = await readdir(path); for (const file of files) console.log(file); } catch (err) { console.error(err); }</code> <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>readlink</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>string</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+<td align="left">Reads the contents of the symbolic link referred to by <code>path</code>. See the POSIX <a href="http://man7.org/linux/man-pages/man2/readlink.2.html"><code>readlink(2)</code></a> documentation for more detail. The promise is resolved with the<code>linkString</code> upon success. The optional <code>options</code> argument can be a string specifying an encoding, or an object with an <code>encoding</code> property specifying the character encoding to use for the link path returned. If the <code>encoding</code> is set to <code>'buffer'</code>, the link path returned will be passed as a <code>Buffer</code> object. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>realpath</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>></td>
+<td align="left">Determines the actual location of <code>path</code> using the same semantics as the<code>fs.realpath.native()</code> function. Only paths that can be converted to UTF8 strings are supported. The optional <code>options</code> argument can be a string specifying an encoding, or an object with an <code>encoding</code> property specifying the character encoding to use for the path. If the <code>encoding</code> is set to <code>'buffer'</code>, the path returned will be passed as a <code>Buffer</code> object. On Linux, when Node.js is linked against musl libc, the procfs file system must be mounted on <code>/proc</code> in order for this function to work. Glibc does not have this restriction. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>rename</code></td>
+<td align="left">(<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Renames <code>oldPath</code> to <code>newPath</code>. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>rimraf</code></td>
+<td align="left">(<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Remove a directory and all its contents, recursively <strong><code>Todo</code></strong> Replace with <code>rm()</code> from <code>fs.promises</code> when Node.js v12 support is dropped.</td>
+</tr>
+<tr>
+<td align="left"><code>rimrafSync</code></td>
+<td align="left">(<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code></td>
+<td align="left">Alias of rimrafIdx.sync <strong><code>Todo</code></strong> Replace with <code>rmSync()</code> from <code>fs</code> when Node.js v12 support is dropped.</td>
+</tr>
+<tr>
+<td align="left"><code>sanitizeName</code></td>
+<td align="left">(<code>input</code>: <code>string</code>, <code>options?</code>: { <code>replacement?</code>: <code>string</code> | (<code>substring</code>: <code>string</code>) =&gt; <code>string</code>  }) =&gt; <code>string</code></td>
+<td align="left">Sanitize a filename <strong><code>See</code></strong> https://github.com/parshap/node-sanitize-filename</td>
+</tr>
+<tr>
+<td align="left"><code>stat</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>></td>
+<td align="left"><strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>symlink</code></td>
+<td align="left">(<code>target</code>: <code>PathLike</code>, <code>path</code>: <code>PathLike</code>, <code>type?</code>: <code>null</code> | <code>string</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Creates a symbolic link. The <code>type</code> argument is only used on Windows platforms and can be one of <code>'dir'</code>,<code>'file'</code>, or <code>'junction'</code>. Windows junction points require the destination path to be absolute. When using <code>'junction'</code>, the <code>target</code> argument will automatically be normalized to absolute path. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>unlink</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">If <code>path</code> refers to a symbolic link, then the link is removed without affecting the file or directory to which that link refers. If the <code>path</code> refers to a file path that is not a symbolic link, the file is deleted. See the POSIX <a href="http://man7.org/linux/man-pages/man2/unlink.2.html"><code>unlink(2)</code></a> documentation for more detail. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>which</code></td>
+<td align="left">typeof <code>which</code></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>write</code></td>
+<td align="left">(<code>arg1</code>: <code>number</code>, <code>arg2</code>: <code>string</code>) =&gt; <code>Bluebird</code>&lt;<code>number</code>></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>writeFile</code></td>
+<td align="left">(<code>file</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Stream</code> | <code>ArrayBufferView</code> | <code>Iterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>> | <code>AsyncIterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>flag?</code>: <code>OpenMode</code> ; <code>mode?</code>: <code>Mode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Asynchronously writes data to a file, replacing the file if it already exists.<code>data</code> can be a string, a buffer, an <a href="https://tc39.github.io/ecma262/#sec-asynciterable-interface">AsyncIterable</a> or <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterable_protocol">Iterable</a> object. The <code>encoding</code> option is ignored if <code>data</code> is a buffer. If <code>options</code> is a string, then it specifies the encoding. The <code>mode</code> option only affects the newly created file. See <code>fs.open()</code> for more details. Any specified <code>FileHandle</code> has to support writing. It is unsafe to use <code>fsPromises.writeFile()</code> multiple times on the same file without waiting for the promise to be settled. Similarly to <code>fsPromises.readFile</code> - <code>fsPromises.writeFile</code> is a convenience method that performs multiple <code>write</code> calls internally to write the buffer passed to it. For performance sensitive code consider using <code>fs.createWriteStream()</code> or <code>filehandle.createWriteStream()</code>. It is possible to use an <code>AbortSignal</code> to cancel an <code>fsPromises.writeFile()</code>. Cancelation is "best effort", and some amount of data is likely still to be written. <code>js import { writeFile } from 'fs/promises'; import { Buffer } from 'buffer'; try { const controller = new AbortController(); const { signal } = controller; const data = new Uint8Array(Buffer.from('Hello Node.js')); const promise = writeFile('message.txt', data, { signal }); // Abort the request before the promise settles. controller.abort(); await promise; } catch (err) { // When a request is aborted - err is an AbortError console.error(err); }</code> Aborting an ongoing request does not abort individual operating system requests but rather the internal buffering <code>fs.writeFile</code> performs. <strong><code>Since</code></strong> v10.0.0</td>
+</tr>
+<tr>
+<td align="left"><code>copyFile</code></td>
+<td align="left">(<code>source</code>: <code>string</code>, <code>destination</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Copies files <em>and entire directories</em> <strong><code>See</code></strong> https://npm.im/ncp</td>
+</tr>
+<tr>
+<td align="left"><code>exists</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>></td>
+<td align="left">Alias for fs.hasAccess</td>
+</tr>
+<tr>
+<td align="left"><code>findRoot</code></td>
+<td align="left">(<code>dir</code>: <code>string</code>) =&gt; <code>string</code></td>
+<td align="left">Finds the project root directory from <code>dir</code>. <strong><code>Throws</code></strong> If <code>dir</code> is not a nonempty string or relative path <strong><code>Throws</code></strong> If there were problems finding the project root</td>
+</tr>
+<tr>
+<td align="left"><code>hasAccess</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>></td>
+<td align="left">Resolves <code>true</code> if <code>path</code> is <em>readable</em>, which differs from Node.js' default behavior of "can we see it?" On Windows, ACLs are not supported, so this becomes a simple check for existence. This function will never reject.</td>
+</tr>
+<tr>
+<td align="left"><code>hash</code></td>
+<td align="left">(<code>filePath</code>: <code>PathLike</code>, <code>algorithm?</code>: <code>string</code>) =&gt; <code>Promise</code>&lt;<code>string</code>></td>
+<td align="left">Create a hex digest of some file at <code>filePath</code></td>
+</tr>
+<tr>
+<td align="left"><code>isExecutable</code></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>></td>
+<td align="left">Resolves <code>true</code> if <code>path</code> is executable; <code>false</code> otherwise. On Windows, this function delegates to fs.hasAccess. This function will never reject.</td>
+</tr>
+<tr>
+<td align="left"><code>md5</code></td>
+<td align="left">(<code>filePath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>string</code>></td>
+<td align="left">Create an MD5 hash of a file.</td>
+</tr>
+<tr>
+<td align="left"><code>mkdir</code></td>
+<td align="left">(<code>filepath</code>: <code>string</code> | <code>Buffer</code> | <code>URL</code>, <code>opts?</code>: <code>MakeDirectoryOptions</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></td>
+<td align="left">Like Node.js' <code>fsPromises.mkdir()</code>, but will <em>not</em> reject if the directory already exists. <strong><code>See</code></strong> https://nodejs.org/api/fs.html#fspromisesmkdirpath-options</td>
+</tr>
+<tr>
+<td align="left"><code>mkdirp</code></td>
+<td align="left">(<code>dir</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></td>
+<td align="left">Recursively create a directory.</td>
+</tr>
+<tr>
+<td align="left"><code>readPackageJsonFrom</code></td>
+<td align="left">(<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <a href="../appium_support.env/#normalizedpackagejson"><code>NormalizedPackageJson</code></a></td>
+<td align="left">Reads the closest <code>package.json</code> file from absolute path <code>dir</code>. <strong><code>Throws</code></strong> If there were problems finding or reading a <code>package.json</code> file</td>
+</tr>
+<tr>
+<td align="left"><code>walk</code></td>
+<td align="left">(<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Walker</code></td>
+<td align="left">Returns an <code>Walker</code> instance, which is a readable stream (and thusly an async iterator). <strong><code>See</code></strong> https://www.npmjs.com/package/klaw</td>
+</tr>
+<tr>
+<td align="left"><code>walkDir</code></td>
+<td align="left">(<code>dir</code>: <code>string</code>, <code>recursive</code>: <code>boolean</code>, <code>callback</code>: <code>WalkDirCallback</code>) =&gt; <code>Promise</code>&lt;<code>null</code> | <code>string</code>></td>
+<td align="left">Walks a directory given according to the parameters given. The callback will be invoked with a path joined with the dir parameter <strong><code>Throws</code></strong> If the <code>dir</code> parameter contains a path to an invalid folder</td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_1">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c7d9a45/packages/support/lib/fs.js#L37">packages/support/lib/fs.js:37</a></p>
+<hr />
+<h3 id="npm">npm</h3>
+<p>• <code>Const</code> <strong>npm</strong>: <code>NPM</code></p>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c7d9a45/packages/support/lib/npm.js#L267">packages/support/lib/npm.js:267</a></p>
+<h2 id="functions_1">Functions</h2>
+<h3 id="cancellabledelay">cancellableDelay</h3>
+<p>▸ <strong>cancellableDelay</strong>(<code>ms</code>): <code>Bluebird</code>&lt;<code>any</code>></p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns">Returns</h4>
+<p><code>Bluebird</code>&lt;<code>any</code>></p>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c7d9a45/packages/support/lib/util.js#L101">packages/support/lib/util.js:101</a></p>
+<hr />
+<h3 id="mkdirp">mkdirp</h3>
+<p>▸ <strong>mkdirp</strong>(<code>dir</code>): <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></p>
+<p>Recursively create a directory.</p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>dir</code></td>
+<td align="left"><code>PathLike</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_1">Returns</h4>
+<p><code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></p>
+<h4 id="defined-in_4">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c7d9a45/packages/support/lib/fs.js#L202">packages/support/lib/fs.js:202</a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+    
+  </body>
+</html>

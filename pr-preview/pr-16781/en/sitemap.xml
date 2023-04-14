@@ -701,11 +701,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/en/reference/interfaces/appium_types.ISessionCommands/</loc>
-         <lastmod>2023-04-14</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://appium.github.io/appium/docs/en/reference/interfaces/appium_types.ISessionHandler/</loc>
          <lastmod>2023-04-14</lastmod>
          <changefreq>daily</changefreq>

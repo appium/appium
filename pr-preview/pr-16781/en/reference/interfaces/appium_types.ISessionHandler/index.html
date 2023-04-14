@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interface-isessionhandlerc-createresult-deleteresult" class="md-skip">
+        <a href="#interface-isessionhandlerc-createresult-deleteresult-sessiondata" class="md-skip">
           Skip to content
         </a>
       
@@ -108,7 +108,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Interface: ISessionHandler<C, CreateResult, DeleteResult\>
+              Interface: ISessionHandler<C, CreateResult, DeleteResult, SessionData\>
             
           </span>
         </div>
@@ -1393,6 +1393,60 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#getsession" class="md-nav__link">
+    getSession
+  </a>
+  
+    <nav class="md-nav" aria-label="getSession">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsessions" class="md-nav__link">
+    getSessions
+  </a>
+  
+    <nav class="md-nav" aria-label="getSessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1416,7 +1470,7 @@
   
 
 
-<h1 id="interface-isessionhandlerc-createresult-deleteresult">Interface: ISessionHandler&lt;C, CreateResult, DeleteResult></h1>
+<h1 id="interface-isessionhandlerc-createresult-deleteresult-sessiondata">Interface: ISessionHandler&lt;C, CreateResult, DeleteResult, SessionData></h1>
 <p><a href="../../modules/appium_types/">@appium/types</a>.ISessionHandler</p>
 <p>An interface which creates and deletes sessions.</p>
 <h2 id="type-parameters">Type parameters</h2>
@@ -1440,6 +1494,10 @@
 <td align="left"><code>DeleteResult</code></td>
 <td align="left"><a href="../../modules/appium_types/#defaultdeletesessionresult"><code>DefaultDeleteSessionResult</code></a></td>
 </tr>
+<tr>
+<td align="left"><code>SessionData</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+</tr>
 </tbody>
 </table>
 <h2 id="hierarchy">Hierarchy</h2>
@@ -1452,6 +1510,8 @@
 <ul>
 <li><a href="./#createsession">createSession</a></li>
 <li><a href="./#deletesession">deleteSession</a></li>
+<li><a href="./#getsession">getSession</a></li>
+<li><a href="./#getsessions">getSessions</a></li>
 </ul>
 <h2 id="methods_1">Methods</h2>
 <h3 id="createsession">createSession</h3>
@@ -1495,7 +1555,7 @@
 <p><code>Promise</code>&lt;<code>CreateResult</code>></p>
 <p>The capabilities object representing the created session</p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/78bc092/packages/types/lib/driver.ts#L433">packages/types/lib/driver.ts:433</a></p>
+<p><a href="https://github.com/appium/appium/blob/11406e4/packages/types/lib/driver.ts#L428">packages/types/lib/driver.ts:428</a></p>
 <hr />
 <h3 id="deletesession">deleteSession</h3>
 <p>▸ <strong>deleteSession</strong>(<code>sessionId?</code>, <code>driverData?</code>): <code>Promise</code>&lt;<code>DeleteResult</code>></p>
@@ -1527,7 +1587,25 @@
 <h4 id="returns_1">Returns</h4>
 <p><code>Promise</code>&lt;<code>DeleteResult</code>></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/78bc092/packages/types/lib/driver.ts#L447">packages/types/lib/driver.ts:447</a></p>
+<p><a href="https://github.com/appium/appium/blob/11406e4/packages/types/lib/driver.ts#L442">packages/types/lib/driver.ts:442</a></p>
+<hr />
+<h3 id="getsession">getSession</h3>
+<p>▸ <strong>getSession</strong>(): <code>Promise</code>&lt;<a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>, <code>SessionData</code>>></p>
+<p>Get the data for the current session</p>
+<h4 id="returns_2">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>, <code>SessionData</code>>></p>
+<p>A session data object</p>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/11406e4/packages/types/lib/driver.ts#L456">packages/types/lib/driver.ts:456</a></p>
+<hr />
+<h3 id="getsessions">getSessions</h3>
+<p>▸ <strong>getSessions</strong>(): <code>Promise</code>&lt;<a href="../appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>[]></p>
+<p>Get data for all sessions running on an Appium server</p>
+<h4 id="returns_3">Returns</h4>
+<p><code>Promise</code>&lt;<a href="../appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>>[]></p>
+<p>A list of session data objects</p>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/11406e4/packages/types/lib/driver.ts#L449">packages/types/lib/driver.ts:449</a></p>
 
 
 

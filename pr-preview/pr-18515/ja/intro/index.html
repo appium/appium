@@ -1,0 +1,932 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.github.io/appium/docs/ja/intro/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../guides/migrating-1-to-2/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+    
+    
+      
+        <title>Appiumについて - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ded33207.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#appiums-choice-of-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Appiumについて
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="Select language">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        はじめに
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          導入
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          導入
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Appiumについて
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Appiumについて
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Appiumの全体像
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Appiumの全体像
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#appiums-choice-of-api" class="md-nav__link">
+    Appium's choice of API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-automation-behaviour" class="md-nav__link">
+    Platform automation behaviour
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#universal-programming-language-access" class="md-nav__link">
+    Universal programming language access
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appiums-huge-scope" class="md-nav__link">
+    Appium's huge scope
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          手引き
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          手引き
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating 1 to 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#appiums-choice-of-api" class="md-nav__link">
+    Appium's choice of API
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platform-automation-behaviour" class="md-nav__link">
+    Platform automation behaviour
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#universal-programming-language-access" class="md-nav__link">
+    Universal programming language access
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appiums-huge-scope" class="md-nav__link">
+    Appium's huge scope
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Appiumの全体像</h1>
+
+<!---
+As mentioned on the main page, Appium is an open-source project and ecosystem of related software,
+designed to facilitate UI automation of many app platforms. With the release of Appium 2.0, Appium
+has the following primary goals:[^1]
+- Make platform-specific automation capabilities available under a cross-platform, standard API
+- Allow easy access to this API from any programming language
+- Provide tools to enable convenient community development of Appium extensions
+--->
+
+<p>「はじめに」でも言及したとおり、Appiumはオープンソースプロジェクトであり、多くのアプリケーションプラットフォームのUI自動化を助けるために設計された関係するソフトウェアのエコシステムです。Appium 2.0のリリースにより、Appiumは以下の主要な目標を達成します：<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<ul>
+<li>標準化されたAPIにより、クロスプラットフォームながらもプラットフォーム固有の自動化を可能とする</li>
+<li>様々なプログラミング言語からこのAPIを呼び出すことができる</li>
+<li>コミュニティ間で開発された便利なAppium拡張（Appium extensions）を利用できるようになる</li>
+</ul>
+<!---
+[^1]:
+    To meet these primary goals, we also work with a set of secondary goals or methodology
+    principles, which we also encourage for Appium extension developers:
+
+    - As far as possible, rely on (and contribute to) open source technology
+    - As far as possible, rely on vendor-provided tools for a given platform
+    - As far as possible, rely on automation tools that allow automation of unmodified apps (prefer
+      not to require the user to build in additional SDKs or software that introduce discrepancies
+      between the test version of the app and the production version)
+    - As far as possible, rely on existing standards instead of creating new ones
+--->
+
+<!---
+So, take any app platform you know about, like iOS or Android. Appium wants for there to be a way
+for developers and testers to write UI automation code for that platform, according to a single,
+unified API. Based on Appium's goals, we have a lot of questions to answer to make it all work:
+--->
+
+<p>したがって、iOSやAndroidといったいかなるアプリプラットフォームに対しても、Appiumは開発者やテスターにそのプラットフォームにおけるUI自動化コードを一つの統一されたAPIで記述できるようにします。</p>
+<!---
+Based on Appium's goals, we have a lot of questions to answer to make it all work:
+
+- Which API should that "single, unified" API be?
+- How do we map that API to automation behaviour for a specific platform?
+- How do we make that API accessible via multiple popular programming languages?
+--->
+
+<p>Appiumの目標を実現するために私たちは多くの疑問に答える必要があります。</p>
+<ul>
+<li>"一つの統一された" APIとは何か？</li>
+<li>どのように私たちはそのAPIを特定のプラットフォームにおける自動化としての振る舞いに対応させているか？</li>
+<li>どのように私たちは複数のよく知られるプログラミング言語から利用可能にしているか？</li>
+</ul>
+<!---
+There's another, larger, question lurking in the background here too, given that there are more app
+platforms out there than just iOS and Android:
+
+- How do we enable automation for *all* the platforms?
+
+Exploring Appium's answers to these questions may not be the quickest way to learn what Appium is,
+but it is certainly a good one! So let's dive in.
+--->
+
+<p>iOSとAndroidだけでなくより多くのアプリプラットフォームが存在していることを考えると、その背景には別の、より大きな疑問が潜んでいます。</p>
+<ul>
+<li>どのようにして<em>全ての</em>プラットフォームに対して自動化を実現するか？</li>
+</ul>
+<p>これらの疑問へのAppiumの答えを知ることは、Appiumが何かを学ぶ最短の方法ではないかもしれませんが、確かな道になります。では、見ていきましょう。</p>
+<h2 id="appiums-choice-of-api">Appium's choice of API</h2>
+<p>Appium is very fortunate to have been preceded by a technology which has been a long-standing
+pioneer in the field of UI automation, namely <a href="https://seleniumhq.org">Selenium</a>. The goal of the
+Selenium project has been to support UI automation of web browsers, and in this way we can think of
+it as occupying a subset of Appium's goals. Along the way, Selenium (and, after they merged,
+another project called WebDriver) developed a relatively stable API for browser automation.</p>
+<p>Over the years, Selenium worked with various web browser vendors and the <a href="https://w3c.org">W3C</a>
+standards group to turn its API into an official web browser standard, called the <a href="https://w3c.github.io/webdriver/webdriver-spec.html">WebDriver
+specification</a>. All the main browsers now
+implement automation capabilities inline with the WebDriver spec, without the Selenium team having
+to maintain any software that performs actual automation; standards for the win!</p>
+<p>Appium's initial goals were to develop an automation standard for mobile apps (iOS and Android). We
+could have made up something new, but in the spirit of joining forces and keeping standards, well,
+standard, we decided to adopt the WebDriver spec as Appium's API.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> While user interaction on
+websites and in mobile native apps are not entirely identical (with even greater differences once
+we start to consider, for example, TV platforms controlled by simple remotes), the fact is that
+most software UIs are pretty much the same. This means that the WebDriver spec provides automation
+API primitives (finding elements, interacting with elements, loading pages or screens, etc...) that
+more or less map to any platform.</p>
+<p>Of course, Appium wants to support the cases where user interaction <em>does</em> differ from web to
+mobile or web to TV, and so Appium also makes use of the built-in <em>extensibility</em> of the WebDriver
+spec. The result is that, no matter what platform you want to automate, when you use Appium, you
+will do so using the standard WebDriver spec, with two caveats:</p>
+<ul>
+<li>We might not have any way to support a particular WebDriver API command on a given platform, and
+  so some commands might be unsupported (for example, getting or setting cookies is not possible in
+  the world of native mobile app automation).</li>
+<li>We might support automation behaviours that go <em>beyond</em> what's available in the WebDriver API
+  command list, though any such commands will be valid and spec-compliant extensions to the
+  WebDriver API.</li>
+</ul>
+<p>How do you actually <em>use</em> the WebDriver API, particularly in the context of Appium? We'll cover
+that in the <a href="#universal-programming-language-access">section below</a> on how Appium provides
+universal programming language access. All you need to know for now is that the way Appium
+introduces a universal UI automation interface is by implementing the WebDriver protocol.</p>
+<h2 id="platform-automation-behaviour">Platform automation behaviour</h2>
+<p>The next question is, how does Appium map this protocol to automation behaviour on a wide range of
+platforms? The trick is that, strictly speaking, Appium doesn't! It leaves this responsibility up
+to a kind of software module called an Appium <em>driver</em>. There's a whole <a href="./drivers.md">Driver
+Introduction</a> which you can read next, so we won't go into huge detail on how they
+work for now.</p>
+<p>What's important to understand at the moment is that a driver is kind of like a pluggable module
+for Appium that gives Appium the power to automate a particular platform (or set of platforms,
+depending on the goal of the driver). At the end of the day, a driver's responsibility is to simply
+implement an Appium-internal interface representing the WebDriver protocol. How it implements this
+interface is totally up to the driver, based on its strategy for making automation happen on
+a specific platform. Typically, and with a lot more complexity and difficulty in the details,
+a driver does this by relying on platform-specific automation technologies. For example, Apple
+maintains an iOS automation technology called
+<a href="https://developer.apple.com/documentation/xctest/user_interface_tests">XCUITest</a>. The Appium
+driver that supports iOS app automation is called the <a href="https://github.com/appium/appium-xcuitest-driver">XCUITest
+Driver</a> because ultimately what it does is
+convert the WebDriver protocol to XCUITest library calls.</p>
+<p>One of the reasons that drivers are independent, pluggable modules is that they work completely
+differently from one another. The tools and requirements for building and using drivers for
+different platforms are completely different. And so Appium lets you use just the drivers that you
+need for your automation tasks. Choosing drivers and installing them so that you can use them with
+your Appium instance is so important that Appium has its very own <a href="../cli/extensions.md">CLI for managing
+drivers</a>.</p>
+<p>So, to answer our original question, the way that Appium provides access to automation capabilities
+for a given platform is that the Appium team (or anyone else<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>) writes a <em>driver</em> for that
+platform, implementing as much or little of the WebDriver protocol as desired. The driver can then
+be installed by anyone using Appium.</p>
+<h2 id="universal-programming-language-access">Universal programming language access</h2>
+<p>But what does it mean, or look like, to <em>use</em> Appium, anyway? Since Appium is ultimately a Node.js
+program, it <em>could</em> have looked like importing Appium and its drivers as libraries into your own
+Node.js programs. But that wouldn't meet Appium's goal of providing automation capabilities to
+people using any popular programming language.</p>
+<p>Luckily, the fact that Appium rode in on Selenium's coattails meant that we had a solution to this
+problem from day one. You see, the WebDriver specification is actually an HTTP-based protocol,
+meaning it is designed to be used over a network rather than within the memory of a single program.</p>
+<p>One of the main benefits of this "client-server" architecture is that it allows the automation
+implementer (the thing doing the automation, in this case the 'server') to be completely distinct
+from the automation runner (the thing defining what automation should be done, in what steps,
+etc..., in this case the 'client'). Basically, all the "hard stuff" (actually figuring out how to
+make automation happen on a given platform) can be handled in one place by the server, and "thin"
+client libraries can be written in any programming language which simply encode HTTP requests to
+the server in language-appropriate way. It's possible, in other words, to bring basic Appium
+/ WebDriver capabilities to a new programming language relatively easily, assuming high-level HTTP
+libraries exist, simply by coding up a basic HTTP client in that language.</p>
+<p>There are a couple important takeaways here for you, the Appium user:</p>
+<ul>
+<li>Appium is an <em>HTTP server</em>. It must run as a process on some computer for as long as you want to
+  be able to use it for automation. It must be accessible on the network to whichever computer you
+  want to use to run the automation from (whether that is the same machine or one across the
+  world).</li>
+<li>Unless you want to write raw HTTP calls or use cURL, using Appium for automation involves the use
+  of an <a href="clients.md">Appium Client</a> in the language of your choice. The goal of each of these
+  clients is to encapsulate the WebDriver protocol so that rather than worrying about the protocol
+  itself, you can work with objects and methods that feel idiomatic for your language.</li>
+<li>The Appium server and the Appium client do <em>not</em> need to be running on the same computer. You
+  simply need to be able to send HTTP requests from the client to the server over some network.
+  This greatly facilitates the use of cloud providers for Appium, since they can host the Appium
+  server and any related drivers and devices, and all you need to do is point your client script to
+  their secure endpoints.</li>
+</ul>
+<p>And of course, none of this is about "testing" per se, purely about the use of Appium and its
+client libraries for automation purposes. If you want to do automation for the purpose of
+"testing", you'll likely want to enlist the help of test runners, test frameworks, and the like,
+none of which need be related to Appium; one of the benefits of Appium's "universal accessibility"
+is that it plays well with whatever set of tools you find most beneficial for your situation.</p>
+<h2 id="appiums-huge-scope">Appium's huge scope</h2>
+<p>Appium's vision (automation of everything under a single API) is huge! Certainly, much bigger than
+the team of core maintainers for the open source project. So how does Appium hope to achieve this
+goal? Basically, by empowering the community to develop functionality on top of Appium as
+a <em>platform</em>. This is what we call the Appium "ecosystem".</p>
+<p>The Appium team does officially maintain a few drivers itself (for example, the XCUITest driver
+that we spoke about earlier). But it cannot hope to have the platform-specific expertise or the
+capacity to maintain drivers for many different platforms. But what we have done, particularly
+beginning with Appium 2.0, is to provide tools to empower the community to join in our vision:</p>
+<ul>
+<li>Anyone can create a driver simply by creating a Node.js module that conforms to the appropriate
+  conventions and implements any (sub|super)set of the WebDriver protocol. Creating a driver often
+  involves a minimal amount of code because the WebDriver protocol details are abstracted away, and
+  many helper libraries are available---the same libraries that power the Appium team's own
+  drivers.</li>
+<li>Sharing drivers with others is easy using the Appium driver CLI. There is no central authority.
+  Anyone can share drivers publicly or privately, for free or for sale. Drivers can be open or
+  closed source (though obviously we appreciate open source!).</li>
+</ul>
+<p>Appium's vision of being a platform for development extends beyond the support of automation for
+all app platforms. As a popular automation tool, there are many opportunities for integrating
+Appium with all kinds of other tools and services. In addition, there are many feature ideas for
+Appium, either as a core server or in its incarnation across various drivers, which the core team
+will never have time to build. And so, with Appium 2.0, Appium has released a plugin system that
+enables anyone to build and share modules that change how Appium works!</p>
+<p>In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
+can be published and consumed via a parallel <a href="../cli/extensions.md">Plugin CLI</a>. Plugins can do all
+sorts of things, for example adding the ability for Appium to find and interact with screen regions
+based on a template image (as in the <a href="https://github.com/appium/appium/tree/2.0/packages/images-plugin"><code>images</code>
+plugin</a>). There are very few
+limitations on what you can do with plugins, so you might also be interested in learning how to
+<a href="../ecosystem/build-plugins.md">Build Plugins</a> in Node.js that can be used with Appium.</p>
+<p>So that's Appium: an extensible, universal interface for the UI automation of potentially
+everything! Read on into some of the specific intro docs for more details, or check out the various
+guides to dive into some more general concepts and features of Appium.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>これらの主要な目的達成のため、私たちは二次的な目標や原則に沿っています。Appium拡張（Appium extension）の開発者にも同様に推奨するものです。</p>
+<ul>
+<li>可能な限り、オープンソースを活用し、オープンソースに貢献もする</li>
+<li>可能な限り、開発元から提供されるプラットフォーム固有のツールを使用する</li>
+<li>可能な限り、テスト対象に変更を必要としない自動化ツールを使用する（専用ビルドを必要とするような追加のSDKやテスト対象版と製品版とで差異があることは好ましくない）</li>
+<li>可能な限り、新しい独自のものを作るより既にある標準のものを使う</li>
+</ul>
+<p><a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Technically, when Appium was first written, we were dealing with something older than the
+  WebDriver spec, called the JSON Wire Protocol. Since then, Appium continued to evolve along with
+  the W3C spec and is fully W3C-compliant.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>You can build and share your own drivers! Check out <a href="../ecosystem/build-drivers.md">Building
+  Drivers</a> to learn more about how to develop drivers in Node.js
+  that can be used with Appium.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51198bba.min.js"></script>
+      
+    
+  </body>
+</html>

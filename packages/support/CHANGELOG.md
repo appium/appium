@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.11](https://github.com/appium/appium/compare/@appium/support@3.1.10...@appium/support@3.1.11) (2023-04-14)
+
+
+### Bug Fixes
+
+* **support:** prevent s3 presigned post request failing in http upload ([#18519](https://github.com/appium/appium/issues/18519)) ([59e4367](https://github.com/appium/appium/commit/59e4367cc832ced431259b476dc3c20775595e37))
+* **support:** update dependency semver to v7.4.0 ([6ae86bd](https://github.com/appium/appium/commit/6ae86bd5c7be879a4d8852951d73eb2f68128df3))
+
+
+
 ## [3.1.10](https://github.com/appium/appium/compare/@appium/support@3.1.9...@appium/support@3.1.10) (2023-04-10)
 
 

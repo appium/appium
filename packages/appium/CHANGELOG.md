@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.64](https://github.com/appium/appium/compare/appium@2.0.0-beta.63...appium@2.0.0-beta.64) (2023-04-14)
+
+
+### Bug Fixes
+
+* **support:** update dependency semver to v7.4.0 ([6ae86bd](https://github.com/appium/appium/commit/6ae86bd5c7be879a4d8852951d73eb2f68128df3))
+
+
+
 ## [2.0.0-beta.63](https://github.com/appium/appium/compare/appium@2.0.0-beta.62...appium@2.0.0-beta.63) (2023-04-12)
 
 **Note:** Version bump only for package appium

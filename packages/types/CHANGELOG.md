@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.0](https://github.com/appium/appium/compare/@appium/types@0.10.4...@appium/types@0.11.0) (2023-04-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* **types:** `Driver.proxyCommand` now returns `Promise<unknown>` by default.  In strict mode, this forces an extension calling `this.proxyCommand()` to explicitly type the return value (because it's unknown!).
+
+Otherwise, this concerns the `SingularSessionData` type and the function which returns it (`getSession()`).  `Driver` now accepts a type param to add arbitrary properties to the value returned by `getSession()`--as this is in-line with `XCUITestDriver` is doing.  This param is provided as the new optional second type param to `SingularSessionData`.
+
+Further, it removes the `ISessionCommands` interface, because I didn't understand how to write it such that an isolated implementation could use the type parameter from the class it belongs to. This is probably doable, but seems icky, and I didn't want to fight with it.  It's easier to just move the implementation into the class itself, which is what will happen in `BaseDriver` (see next changeset).
+
+### Bug Fixes
+
+* **types:** driver-specific session data now allowed ([91abd5b](https://github.com/appium/appium/commit/91abd5b598dd55e8d7fd12d2e683703aa8ac290a))
+
+
+
 ## [0.10.4](https://github.com/appium/appium/compare/@appium/types@0.10.3...@appium/types@0.10.4) (2023-04-10)
 
 

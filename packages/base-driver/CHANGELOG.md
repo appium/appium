@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.7](https://github.com/appium/appium/compare/@appium/base-driver@9.3.6...@appium/base-driver@9.3.7) (2023-04-14)
+
+
+### Bug Fixes
+
+* **basedriver:** allow arbitrary session data to be returned by getSession ([6245022](https://github.com/appium/appium/commit/6245022be953b69acad70d0a4c877bc65eed2d3a))
+
+
+
 ## [9.3.6](https://github.com/appium/appium/compare/@appium/base-driver@9.3.5...@appium/base-driver@9.3.6) (2023-04-10)
 
 

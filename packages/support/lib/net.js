@@ -70,7 +70,6 @@ async function uploadFileToHttp(
   }
   if (fileFieldName) {
     const form = new FormData();
-    form.append(fileFieldName, localFileStream);
     if (formFields) {
       let pairs = [];
       if (_.isArray(formFields)) {
@@ -84,6 +83,7 @@ async function uploadFileToHttp(
         }
       }
     }
+    form.append(fileFieldName, localFileStream); // AWS S3 POST upload requires this to be the last field
     requestOpts.headers = {
       ...(_.isPlainObject(headers) ? headers : {}),
       ...form.getHeaders(),

@@ -153,3 +153,8 @@ export const LogLevelMap = {
  * Default site nav header text
  */
 export const DEFAULT_NAV_HEADER = 'Reference';
+
+/**
+ * If the user does not specify a site directory _and_ the `mkdocs.yml` doesn't either, use this dir.
+ */
+export const DEFAULT_SITE_DIR = 'site';

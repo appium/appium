@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
-import {NAME_BIN, NAME_MKDOCS_YML, NAME_THEME} from '../constants';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_THEME} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
 import {getLogger} from '../logger';
@@ -80,17 +80,26 @@ export async function buildSite({
     // unsure about how SIGHUP is handled here
     await doServe(mkdocsArgs, serveOpts);
   } else {
-    log.info('Building site into %s (%dms)');
+    log.info('Building site...');
     await doBuild(mkdocsArgs, execOpts);
     let relSiteDir;
     if (siteDir) {
       relSiteDir = relative(cwd, siteDir);
     } else {
       ({site_dir: siteDir} = await readMkDocsYml(mkDocsYmlPath));
-      log.debug('Found site_dir %s', siteDir);
-      relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir!);
+      if (siteDir) {
+        log.debug('Found site_dir %s', siteDir);
+        relSiteDir = relative(path.dirname(mkDocsYmlPath), siteDir);
+      } else {
+        log.warn(
+          'No site_dir specified in args or %s; using default site_dir: %s',
+          NAME_MKDOCS_YML,
+          DEFAULT_SITE_DIR
+        );
+        relSiteDir = relative(cwd, DEFAULT_SITE_DIR);
+      }
     }
-    log.success('Finnished building site into %s (%dms)', relSiteDir, stop());
+    log.success('Finished building site into %s (%dms)', relSiteDir, stop());
   }
 }
 

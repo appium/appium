@@ -3131,23 +3131,23 @@
 <p>The capabilities object representing the created session</p>
 <h3 id="deletesession"><code>deleteSession</code></h3>
 <p><code>DELETE</code> <strong><code>/session/:sessionId</code></strong></p>
-<p>Get the data for the current session</p>
+<p>Returns capabilities for the session and event history (if applicable)</p>
 <!-- comment source: method-signature -->
 
 <!-- END:EXAMPLES -->
 
 <h4 id="response_8">Response</h4>
-<p><a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>></p>
+<p><a href="../../modules/appium_types/#drivercaps"><code>DriverCaps</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>uniqueApp</code>: { <code>isBoolean</code>: <code>true</code> = true }  }></p>
 <p>A session data object</p>
 <h3 id="getsession"><code>getSession</code></h3>
 <p><code>GET</code> <strong><code>/session/:sessionId</code></strong></p>
-<p>Get the data for the current session</p>
-<!-- comment source: method-signature -->
+<p>Returns capabilities for the session and event history (if applicable)</p>
+<!-- comment source: multiple -->
 
 <!-- END:EXAMPLES -->
 
 <h4 id="response_9">Response</h4>
-<p><a href="../../modules/appium_types/#singularsessiondata"><code>SingularSessionData</code></a>&lt;<code>C</code>></p>
+<p><a href="../../modules/appium_types/#drivercaps"><code>DriverCaps</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>uniqueApp</code>: { <code>isBoolean</code>: <code>true</code> = true }  }></p>
 <p>A session data object</p>
 <h3 id="findelement"><code>findElement</code></h3>
 <p><code>POST</code> <strong><code>/session/:sessionId/element</code></strong></p>
@@ -3474,7 +3474,7 @@ look for elements among the set of descendants of a given element</p>
 <!-- END:EXAMPLES -->
 
 <h4 id="response_22">Response</h4>
-<p><a href="../../interfaces/appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;<a href="../../interfaces/appium_types.Constraints/"><code>Constraints</code></a>>[]</p>
+<p><a href="../../interfaces/appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>uniqueApp</code>: { <code>isBoolean</code>: <code>true</code> = true }  }>[]</p>
 <p>A list of session data objects</p>
 <h3 id="getstatus"><code>getStatus</code></h3>
 <p><code>GET</code> <strong><code>/status</code></strong></p>

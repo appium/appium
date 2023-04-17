@@ -47,7 +47,7 @@
     },
     {
       "extends": ["packages:eslint"],
-      "matchPackageNames": ["@appium/eslint-config-appium"],
+      "matchPackagePrefixes": ["@appium/eslint-config-appium"],
       "groupName": "ESLint-related packages",
       "groupSlug": "eslint"
     },
@@ -58,7 +58,8 @@
     },
     {
       "matchPackagePrefixes": ["@appium/"],
-      "excludePackageNames": ["@appium/eslint-config-appium"],
+      "excludePackageNames": ["@appium/eslint-config-appium", "@appium/eslint-config-appium-ts"],
+      "matchPackageNames": "appium",
       "groupName": "Appium-related packages",
       "groupSlug": "appium"
     }

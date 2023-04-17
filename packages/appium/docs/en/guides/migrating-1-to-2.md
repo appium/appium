@@ -231,10 +231,6 @@ any Appium command, or even adjust the way the underlying Appium HTTP server its
 more about plugins, read the new [Appium Introduction](../intro/index.md). Interested in building
 a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
 
-#### :tada: _Client Plugins_
-
-TODO
-
 ### :tada: Install drivers and plugins from anywhere
 
 You're no longer limited to the drivers that come with Appium, or that the Appium team even knows

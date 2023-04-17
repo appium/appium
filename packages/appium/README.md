@@ -13,16 +13,16 @@ Appium is an open-source, cross-platform test automation tool for native,
 hybrid, mobile web and desktop apps. Initially created to automate iOS and Android mobile
 applications Appium has grown to a full-featured platform that provides [WebDriver](https://www.w3.org/TR/webdriver/)-based automation possibilities for the whole set of different mobile and desktop platforms.
 See the full list of
-[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#drivers) and
-[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-drivers) drivers for more details.
+[officially-supported](https://appium.io/docs/en/latest/ecosystem/#drivers) and
+[third-party](https://appium.io/docs/en/latest/ecosystem/#other-drivers) drivers for more details.
 
 :bangbang: Major documentation revision in progress
 
-:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://appium.github.io/appium/docs/en/latest/guides/migrating-1-to-2/) to manage the Appium server.
+:bangbang: Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x anymore, and require Appium 2 to run. [Please read the migration guide from 1.x to 2.0](https://appium.io/docs/en/latest/guides/migrating-1-to-2/) to manage the Appium server.
 
 Appium is in the final stages of a major revision (to version 2.0). As such, the documentation
 found around the web may not be correct. The current Appium 2.0 documentation is very much in
-progress. Currently, it can be found [here](https://appium.github.io/appium/docs/en/latest/).
+progress. Currently, it can be found [here](https://appium.io/docs/en/latest/).
 
 ### Requirements
 
@@ -71,8 +71,8 @@ appium driver uninstall xcuitest
 ```
 
 You can find a full list of
-[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#drivers) and
-[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-drivers) drivers at
+[officially-supported](https://appium.io/docs/en/latest/ecosystem/#drivers) and
+[third-party](https://appium.io/docs/en/latest/ecosystem/#other-drivers) drivers at
 the current Appium 2.0 documentation.
 
 ### Plugins
@@ -104,8 +104,8 @@ appium server --use-plugins=device-farm,images
 ```
 
 You can find a full list of
-[officially-supported](https://appium.github.io/appium/docs/en/latest/ecosystem/#plugins) and
-[third-party](https://appium.github.io/appium/docs/en/latest/ecosystem/#other-plugins) plugins at
+[officially-supported](https://appium.io/docs/en/latest/ecosystem/#plugins) and
+[third-party](https://appium.io/docs/en/latest/ecosystem/#other-plugins) plugins at
 the current Appium 2.0 documentation.
 
 
@@ -169,11 +169,11 @@ Java/Kotlin. Appium opens up the possibility of true cross-platform native app
 automation, for mobile and beyond. Finally!
 
 If you're new to Appium or want a more comprehensive description of what this is all
-about, please read our [Intro to Appium](https://appium.github.io/appium/docs/en/latest/intro/).
+about, please read our [Intro to Appium](https://appium.io/docs/en/latest/intro/).
 
 ### Quickstart
 
-Check out our [Quickstart](https://appium.github.io/appium/docs/en/latest/quickstart/) guide
+Check out our [Quickstart](https://appium.io/docs/en/latest/quickstart/) guide
 to get going with Appium.
 
 There is also a sample code that contains [many examples of tests in a variety
@@ -181,7 +181,7 @@ of different languages](https://github.com/appium/appium/tree/1.x/sample-code)!
 
 ### Documentation
 
-For prettily-rendered docs, please visit [Appium Documentation](https://appium.github.io/appium).
+For prettily-rendered docs, please visit [Appium Documentation](https://appium.io).
 You can always find the full list of Appium doc pages at [Appium's GitHub
 Repo](https://github.com/appium/appium/tree/master/packages/appium/docs) as well.
 
@@ -196,7 +196,7 @@ Interested in where Appium is heading in the future? Check out the [Roadmap](ROA
 
 ### Project History, Credits & Inspiration
 
-* [History](https://appium.github.io/appium/docs/en/latest/intro/history/)
+* [History](https://appium.io/docs/en/latest/intro/history/)
 
 ### User Forums
 

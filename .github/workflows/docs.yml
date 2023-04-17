@@ -1,7 +1,7 @@
 name: Build Docs
 
 on:
-  pull_request_target:
+  pull_request:
     paths:
       - '**/typedoc.json'
       - '**/tsconfig*.json'
@@ -15,10 +15,20 @@ on:
       - '.github/workflows/docs.yml' # this file
       - '!**/test/**'
       - '!**/sample-code/**'
-
-    branches: [master]
-
-concurrency: preview-${{ github.ref }}
+  push:
+    paths:
+      - '**/typedoc.json'
+      - '**/tsconfig*.json'
+      - '**/package*.json'
+      - '**/*mkdocs*.ya?ml'
+      - 'packages/docutils/requirements.txt'
+      - 'packages/*/README.md'
+      - 'packages/*/docs/**'
+      - 'packages/*/**/*.ts'
+      - 'packages/*/**/*.js'
+      - '.github/workflows/docs.yml' # this file
+      - '!**/test/**'
+      - '!**/sample-code/**'
 
 jobs:
   docs:
@@ -39,8 +49,3 @@ jobs:
           git config --local user.name "github-actions[bot]"
       - name: Build Docs
         run: npm run docs:preview
-      - name: Deploy Preview
-        uses: rossjrw/pr-preview-action@2a652922e9b9c53e7e5ea62fa38da744de09043c # v1
-        with:
-          source-dir: ./packages/appium/docs/site
-          custom-url: 'appium.github.io/appium'

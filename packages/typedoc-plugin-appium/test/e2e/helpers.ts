@@ -10,8 +10,8 @@ import {
   TSConfigReader,
   TypeDocOptions,
 } from 'typedoc';
-import {THEME_NAME} from '../../lib';
-import {BaseConverter} from '../../lib/converter';
+import {THEME_NAME, setup} from '../../lib';
+import {BaseConverter, NAME_BUILTIN_COMMAND_MODULE, NAME_TYPES_MODULE} from '../../lib/converter';
 import {AppiumPluginLogger} from '../../lib/logger';
 
 const {expect} = chai;
@@ -175,3 +175,13 @@ export interface InitConverterOptions<Args extends readonly any[] = any[]>
 type ConverterConstructor<T, C extends BaseConverter<T>, Args extends readonly any[] = any[]> =
   | Constructor<C, [Context, AppiumPluginLogger, ...Args]>
   | Constructor<C, [Context, AppiumPluginLogger]>;
+
+/**
+ * Creates a new TypeDoc application and/or resets it
+ */
+export function reset({
+  entryPoints = [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
+  ...opts
+}: Partial<TypeDocOptions> = {}): Application {
+  return setup(initAppForPkgs({entryPoints, ...opts}));
+}

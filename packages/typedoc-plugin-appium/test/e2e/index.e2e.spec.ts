@@ -1,16 +1,9 @@
 import _ from 'lodash';
-import {
-  Application,
-  Context,
-  DeclarationReflection,
-  ProjectReflection,
-  ReflectionKind,
-  TypeDocOptions,
-} from 'typedoc';
-import {convert, ConvertResult, postProcess, PostProcessResult, setup} from '../../lib';
+import {Context, DeclarationReflection, ProjectReflection, ReflectionKind} from 'typedoc';
+import {convert, ConvertResult, postProcess, PostProcessResult} from '../../lib';
 import {NAME_BUILTIN_COMMAND_MODULE, NAME_TYPES_MODULE} from '../../lib/converter';
 import {AppiumPluginReflectionKind, CommandReflection, ExtensionReflection} from '../../lib/model';
-import {initAppForPkgs, NAME_FAKE_DRIVER_MODULE} from './helpers';
+import {reset} from './helpers';
 
 const {expect} = chai;
 
@@ -33,16 +26,6 @@ describe('@appium/typedoc-plugin-appium', function () {
    * Array of {@linkcode ExtensionReflection} instances as in a {@linkcode ConvertResult}
    */
   let extensionReflections!: ExtensionReflection[];
-
-  /**
-   * Creates a new TypeDoc application and/or resets it
-   */
-  function reset({
-    entryPoints = [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
-    ...opts
-  }: Partial<TypeDocOptions> = {}): Application {
-    return setup(initAppForPkgs({entryPoints, ...opts}));
-  }
 
   describe('convert()', function () {
     describe('when "theme" is not "markdown" or "appium"', function () {

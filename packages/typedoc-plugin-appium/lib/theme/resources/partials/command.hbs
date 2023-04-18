@@ -20,6 +20,7 @@
 {{/with}}
 
 {{else}}
+{{! the required/optional parameters bits are fallbacks }}
 {{#if hasRequiredParams}}
 
 ##### Required Parameters
@@ -53,8 +54,8 @@
 
 <!-- END:EXAMPLE -->
 {{/each}}
-{{/if}}
 <!-- END:EXAMPLES -->
+{{/if}}
 {{#if signature}}
 
 #### Response

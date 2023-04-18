@@ -238,7 +238,7 @@ export function isExecMethodData(value: any): value is ExecMethodData {
 export function isMethodDefParamsPropDeclarationReflection(
   value: any
 ): value is MethodDefParamsPropDeclarationReflection {
-  return isReflectionWithReflectedType(value) && value.name === NAME_PARAMS;
+  return isReflectionWithReflectedType(value) && value.name === NAME_PAYLOAD_PARAMS;
 }
 
 /**
@@ -248,7 +248,7 @@ export function isMethodDefParamsPropDeclarationReflection(
 export function isExecMethodDefParamsPropDeclarationReflection(
   value: any
 ): value is ExecMethodDefParamsPropDeclarationReflection {
-  return isReflectionWithReflectedType(value) && value.name === NAME_PAYLOAD_PARAMS;
+  return isReflectionWithReflectedType(value) && value.name === NAME_PARAMS;
 }
 
 /**

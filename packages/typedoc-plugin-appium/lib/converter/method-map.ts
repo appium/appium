@@ -2,8 +2,8 @@ import _ from 'lodash';
 import {Context, DeclarationReflection, ReflectionKind} from 'typedoc';
 import {
   isCommandPropDeclarationReflection,
-  isExecMethodDefParamsPropDeclarationReflection,
   isHTTPMethodDeclarationReflection,
+  isMethodDefParamsPropDeclarationReflection,
   isRoutePropDeclarationReflection,
 } from '../guards';
 import {AppiumPluginLogger} from '../logger';
@@ -134,7 +134,7 @@ export function convertMethodMap({
 
       const payloadParamsProp = findChildByGuard(
         httpMethodProp,
-        isExecMethodDefParamsPropDeclarationReflection
+        isMethodDefParamsPropDeclarationReflection
       );
 
       const requiredParams = convertRequiredCommandParams(payloadParamsProp);

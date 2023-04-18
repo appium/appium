@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.2...@appium/typedoc-plugin-appium@0.6.3) (2023-04-18)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** fix parameter display for execute methods ([5a70d7c](https://github.com/appium/appium/commit/5a70d7ce78ce12ef8b9209a2a17c52b02ac0fc80))
+
+
+
 ## [0.6.2](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.1...@appium/typedoc-plugin-appium@0.6.2) (2023-04-12)
 
 

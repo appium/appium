@@ -1,6 +1,6 @@
 import {mkdir, readFile, unlink, writeFile} from 'node:fs/promises';
 import path from 'node:path';
-import type {Item, ItemEncoding, Value} from '.';
+import type {Item, ItemEncoding, Strongbox, Value} from '.';
 import {slugify} from './util';
 
 /**
@@ -9,17 +9,20 @@ import {slugify} from './util';
  * @remarks This class is not intended to be instantiated directly
  * @typeParam T - Type of data stored in the `Item`
  */
-export class BaseItem<T extends Value> implements Item<T> {
+export class BaseItem<T extends Value, U extends Strongbox = Strongbox> implements Item<T> {
   /**
    * {@inheritdoc Item.value}
    */
   protected _value?: T | undefined;
 
   /**
+   * Parent Strongbox instance
+   */
+  public readonly container: string;
+  /**
    * Unique slugified identifier
    */
   public readonly id: string;
-
   /**
    * {@inheritdoc Item.value}
    */
@@ -28,16 +31,16 @@ export class BaseItem<T extends Value> implements Item<T> {
   /**
    * Slugifies the name
    * @param name Name of instance
-   * @param container Slugified name of container
+   * @param parent Parent Strongbox
    * @param encoding Defaults to `utf8`
    */
   constructor(
     public readonly name: string,
-    public readonly container: string,
+    parent: U,
     public readonly encoding: ItemEncoding = 'utf8'
   ) {
-    this.id = path.join(container, slugify(name));
-
+    this.container = parent.container;
+    this.id = path.join(this.container, slugify(name));
     Object.defineProperties(this, {
       value: {
         get() {
@@ -50,6 +53,20 @@ export class BaseItem<T extends Value> implements Item<T> {
         writable: true,
       },
     });
+  }
+
+  /**
+   * {@inheritdoc Item.clear}
+   */
+  public async clear(): Promise<void> {
+    try {
+      await unlink(this.id);
+      this._value = undefined;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw e;
+      }
+    }
   }
 
   /**
@@ -76,20 +93,6 @@ export class BaseItem<T extends Value> implements Item<T> {
       await mkdir(path.dirname(this.id), {recursive: true});
       await writeFile(this.id, value, this.encoding);
       this._value = value;
-    }
-  }
-
-  /**
-   * {@inheritdoc Item.clear}
-   */
-  public async clear(): Promise<void> {
-    try {
-      await unlink(this.id);
-      this._value = undefined;
-    } catch (e) {
-      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
-        throw e;
-      }
     }
   }
 }

@@ -1,7 +1,7 @@
 import {expectAssignable, expectNotAssignable} from 'tsd';
-import {Item, BaseItem, Value} from '../..';
+import {Item, BaseItem, Value, strongbox} from '../..';
 
-expectAssignable<Item<string>>(new BaseItem('foo', 'some-container'));
+expectAssignable<Item<string>>(new BaseItem('foo', strongbox('foo')));
 
 expectNotAssignable<Value>(1);
 expectAssignable<Value>('foo');

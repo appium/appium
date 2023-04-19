@@ -37,7 +37,8 @@
     "test": "run-p test:unit test:types",
     "test:smoke": "node .",
     "test:unit": "mocha \"test/unit/**/*.spec.ts\"",
-    "test:types": "tsd"
+    "test:types": "tsd",
+    "test:e2e": "mocha -t 20s \"test/e2e/**/*.e2e.spec.ts\""
   },
   "dependencies": {
     "env-paths": "2.2.1",

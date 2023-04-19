@@ -1,7 +1,8 @@
 import envPaths from 'env-paths';
+import {rm} from 'node:fs/promises';
 import path from 'node:path';
 import {BaseItem} from './base-item';
-import {slugify, slugifyPath} from './util';
+import {slugify} from './util';
 
 /**
  * Valid file encodings.
@@ -34,7 +35,17 @@ export interface Item<T extends Value> {
    * Name of item
    */
   name: string;
+  /**
+   * Last known value (stored in memory)
+   *
+   * @remarks A custom {@linkcode Item} meant to handle very large files should probably not implement this.
+   */
+  value?: T | undefined;
 
+  /**
+   * Deletes the item.
+   */
+  clear(): Promise<void>;
   /**
    * Reads value
    */
@@ -44,18 +55,6 @@ export interface Item<T extends Value> {
    * @param value New value
    */
   write(value: T): Promise<void>;
-
-  /**
-   * Deletes the item.
-   */
-  clear(): Promise<void>;
-
-  /**
-   * Last known value (stored in memory)
-   *
-   * @remarks A custom {@linkcode Item} meant to handle very large files should probably not implement this.
-   */
-  value?: T | undefined;
 }
 
 /**
@@ -87,6 +86,8 @@ function isEncoding(value: any): value is ItemEncoding {
 }
 
 /**
+ * Default container suffix if no explicit container is provided.
+ *
  * @see {@linkcode StrongboxOpts}
  */
 export const DEFAULT_SUFFIX = 'strongbox';
@@ -94,37 +95,22 @@ export const DEFAULT_SUFFIX = 'strongbox';
 /**
  * A constructor function which instantiates a {@linkcode Item}.
  */
-export type ItemCtor<T extends Value> = new (
-  name: string,
-  container: string,
-  encoding?: ItemEncoding
-) => Item<T>;
+export type ItemCtor<
+  T extends Value,
+  U extends StrongboxOpts = StrongboxOpts,
+  V extends Strongbox<U> = Strongbox<U>
+> = new (name: string, parent: V, encoding?: ItemEncoding) => Item<T>;
 
 /**
  * Main entry point for use of this module
  *
  * Manages multiple {@linkcode Item}s.
  */
-export class Strongbox {
+export class Strongbox<Options extends StrongboxOpts = StrongboxOpts> {
   /**
    * Default {@linkcode ItemCtor} to use when creating new {@linkcode Item}s
    */
   protected defaultItemCtor: ItemCtor<any>;
-  /**
-   * Slugified name of this instance; corresponds to the directory name.
-   *
-   * If `dir` is provided, this value is unused.
-   * If `suffix` is provided, then this will be the parent directory of `suffix`.
-   */
-  public readonly id: string;
-
-  /**
-   * Override the directory of this container.
-   *
-   * If this is present, both `suffix` and `containerId` are unused.
-   */
-  public readonly container: string;
-
   /**
    * Store of known {@linkcode Item}s
    * @internal
@@ -132,24 +118,35 @@ export class Strongbox {
   protected items: Map<string, WeakRef<Item<any>>>;
 
   /**
+   * Override the directory of this container.
+   *
+   * If this is present, `suffix` is ignored.
+   */
+  public readonly container: string;
+  /**
+   * Slugified name of this instance; corresponds to the directory name.
+   *
+   * If `dir` is provided, this value is unused.
+   * If `suffix` is provided, then this will be the parent directory of `suffix`.
+   */
+  public readonly id: string;
+  public readonly suffix: string;
+
+  /**
    * Slugifies the name & determines the directory
    * @param name Name of instance
    * @param opts Options
    */
-  protected constructor(
-    public readonly name: string,
-    {
-      container,
-      suffix = DEFAULT_SUFFIX,
-      defaultItemCtor: defaultCtor = BaseItem,
-    }: StrongboxOpts = {}
-  ) {
+  protected constructor(public readonly name: string, opts: Partial<Options> = {}) {
     this.id = slugify(name);
-    this.defaultItemCtor = defaultCtor;
+
+    let newOpts = this.setDefaultOptions(opts);
+    newOpts = this.checkOptions(newOpts);
+
+    this.defaultItemCtor = newOpts.defaultItemCtor;
+    this.container = newOpts.container;
+    this.suffix = newOpts.suffix;
     this.items = new Map();
-    this.container = container
-      ? slugifyPath(container)
-      : path.join(envPaths(this.id).data, slugify(suffix));
   }
 
   /**
@@ -158,8 +155,24 @@ export class Strongbox {
    * @param opts Options
    * @returns New instance
    */
-  public static create(name: string, opts?: StrongboxOpts) {
+  public static create<Options extends StrongboxOpts = StrongboxOpts>(
+    name: string,
+    opts?: Partial<Options>
+  ) {
     return new Strongbox(name, opts);
+  }
+
+  /**
+   * Clears _all_ items.
+   *
+   * @param force - If `true`, will rimraf the container. Otherwise, will only delete individual items.
+   */
+  public async clearAll(force = false): Promise<void> {
+    const items = [...this.items.values()].map((ref) => ref.deref()).filter(Boolean) as Item<any>[];
+    await Promise.all(items.map((item) => item.clear()));
+    if (force) {
+      await rm(this.container, {recursive: true});
+    }
   }
 
   /**
@@ -188,7 +201,7 @@ export class Strongbox {
     }
     const item = new (encodingOrCtor ?? (this.defaultItemCtor as ItemCtor<T>))(
       name,
-      this.container,
+      this,
       encoding
     );
     if (this.items.has(item.id)) {
@@ -250,11 +263,40 @@ export class Strongbox {
   }
 
   /**
-   * Clears _all_ items, as well as the container.
+   * Performs runtime validation (and optionally transformation) of options.
+   *
+   * Should not set defaults.
+   *
+   * The default implementation slugifies any custom container name and suffix.
+   *
+   * Subclasses should override this method to perform additional validation as needed.
+   * @param opts - Options
    */
-  public async clearAll(): Promise<void> {
-    const items = [...this.items.values()].map((ref) => ref.deref()).filter(Boolean) as Item<any>[];
-    await Promise.all(items.map((item) => item.clear()));
+  protected checkOptions(opts: Options): Options {
+    opts.suffix = slugify(opts.suffix);
+    if (opts.container) {
+      opts.container = opts.container.split(path.sep).map(slugify).join(path.sep);
+      if (!path.isAbsolute(opts.container)) {
+        throw new TypeError(`container slug ${opts.container} must be an absolute path`);
+      }
+    } else {
+      opts.container = path.join(envPaths(this.id).data, opts.suffix);
+    }
+    return opts;
+  }
+
+  /**
+   * Sets defaults for options.
+   *
+   * Subclasses should override as necessary.
+   * @param opts Options
+   * @returns Options with defaults applied
+   */
+  protected setDefaultOptions(opts: Partial<Options> = {}): Options {
+    const newOpts = opts as Options;
+    newOpts.suffix = opts.suffix ?? DEFAULT_SUFFIX;
+    newOpts.defaultItemCtor = opts.defaultItemCtor ?? BaseItem;
+    return newOpts;
   }
 }
 
@@ -263,23 +305,25 @@ export class Strongbox {
  */
 export interface StrongboxOpts {
   /**
+   * Override default container, which is chosen according to environment.
+   *
+   * This must be a writable path.
+   */
+  container: string;
+  /**
    * Default {@linkcode Item} constructor.
    *
    * Unless a constructor is specified when calling {@linkcode Strongbox.createItem} or {@linkcode Strongbox.createItemWithValue}, this will be used.
    * @defaultValue BaseItem
    */
-  defaultItemCtor?: ItemCtor<any>;
-  /**
-   * Override default container, which is chosen according to environment
-   */
-  container?: string;
+  defaultItemCtor: ItemCtor<any>;
   /**
    * Extra subdir to append to the auto-generated file directory hierarchy.
    *
    * This is ignored if `container` is provided.
    * @defaultValue 'strongbox'
    */
-  suffix?: string;
+  suffix: string;
 }
 
 /**

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import rewiremock from 'rewiremock/node';
-import type {Strongbox as TStrongbox, StrongboxOpts} from '../../lib';
+import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../lib';
 import {createSandbox, SinonSandbox, SinonStubbedMember} from 'sinon';
 import type fs from 'node:fs/promises';
 
@@ -10,7 +10,7 @@ type MockFs = {
 };
 
 describe('Strongbox', function () {
-  let strongbox: (name: string, opts?: StrongboxOpts) => TStrongbox;
+  let strongbox: (name: string, opts?: Partial<StrongboxOpts>) => TStrongbox;
   let Strongbox: new (name: string, opts?: StrongboxOpts) => TStrongbox;
   let sandbox: SinonSandbox;
   let DEFAULT_SUFFIX: string;
@@ -20,16 +20,19 @@ describe('Strongbox', function () {
 
   beforeEach(function () {
     sandbox = createSandbox();
-    ({strongbox, DEFAULT_SUFFIX, Strongbox} = rewiremock.proxy(() => require('../../lib'), (r) => ({
-      // all of these props are async functions
-      'node:fs/promises': r
-        .mockThrough((prop) => {
-          MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
-          return MockFs[prop as keyof typeof fs];
-        })
-        .dynamic(), // this allows us to change the mock behavior on-the-fly
-      'env-paths': sandbox.stub().returns({data: DATA_DIR}),
-    })));
+    ({strongbox, DEFAULT_SUFFIX, Strongbox} = rewiremock.proxy(
+      () => require('../../lib'),
+      (r) => ({
+        // all of these props are async functions
+        'node:fs/promises': r
+          .mockThrough((prop) => {
+            MockFs = {...MockFs, [prop]: sandbox.stub().resolves()};
+            return MockFs[prop as keyof typeof fs];
+          })
+          .dynamic(), // this allows us to change the mock behavior on-the-fly
+        'env-paths': sandbox.stub().returns({data: DATA_DIR}),
+      })
+    ));
   });
 
   describe('static method', function () {
@@ -37,6 +40,29 @@ describe('Strongbox', function () {
       it('should return a new Strongbox', function () {
         const box = strongbox('test');
         expect(box).to.be.an.instanceOf(Strongbox);
+      });
+
+      describe('when provided an absolute container path', function () {
+        it('should use the provided container path', function () {
+          expect(strongbox('test', {container: '/somewhere/else'}).container).to.equal(
+            '/somewhere/else'
+          );
+        });
+      });
+
+      describe('when provided a relative container path', function () {
+        it('should throw an error', function () {
+          expect(() => strongbox('test', {container: 'somewhere/else'})).to.throw(
+            TypeError,
+            'container slug somewhere/else must be an absolute path'
+          );
+        });
+      });
+
+      describe('when provided a suffix', function () {
+        it('should use the provided suffix', function () {
+          expect(strongbox('test', {suffix: 'mooo'}).suffix).to.equal('mooo');
+        });
       });
     });
   });
@@ -51,8 +77,13 @@ describe('Strongbox', function () {
     describe('createItem()', function () {
       describe('when a Item with the same id does not exist', function () {
         describe('when the file does not exist', function () {
+          let item: Item<Value>;
+
+          beforeEach(async function () {
+            item = await box.createItem('SLUG test');
+          });
+
           it('should create an empty Item', async function () {
-            const item = await box.createItem('SLUG test');
             expect(item).to.eql({
               id: '/some/dir/strongbox/slug-test',
               name: 'SLUG test',
@@ -60,6 +91,10 @@ describe('Strongbox', function () {
               value: undefined,
               container: '/some/dir/strongbox',
             });
+          });
+
+          it('should slugify the id', function () {
+            expect(item.id).to.equal('/some/dir/strongbox/slug-test');
           });
         });
 
@@ -76,6 +111,15 @@ describe('Strongbox', function () {
               value: 'foo bar',
               container: '/some/dir/strongbox',
             });
+          });
+        });
+
+        describe('when attempting to read the file throws a non-ENOENT error', function () {
+          beforeEach(function () {
+            MockFs.readFile.rejects(new Error('ETOOMANYGOATS'));
+          });
+          it('should reject', async function () {
+            await expect(box.createItem('SLUG test')).to.be.rejectedWith(Error, 'ETOOMANYGOATS');
           });
         });
 
@@ -106,6 +150,13 @@ describe('Strongbox', function () {
             Error,
             'Item with id "/some/dir/strongbox/test" already exists'
           );
+        });
+      });
+
+      describe('when the second parameter is a valid encoding', function () {
+        it('should create the empty Item with the proper encoding', async function () {
+          const item = await box.createItem('test', 'base64');
+          expect(item.encoding).to.equal('base64');
         });
       });
     });
@@ -146,6 +197,28 @@ describe('Strongbox', function () {
           path.join(DATA_DIR, DEFAULT_SUFFIX, 'test'),
           'value'
         );
+      });
+
+      describe('when the third parameter is a valid encoding', function () {
+        it('should create the Item with the given value and proper encoding', async function () {
+          const item = await box.createItemWithValue('test', 'value', 'base64');
+          expect(item.encoding).to.equal('base64');
+        });
+      });
+    });
+
+    describe('getItem()', function () {
+      describe('when there is no known Item with the given id', function () {
+        it('should return undefined', function () {
+          expect(box.getItem('test')).to.be.undefined;
+        });
+      });
+
+      describe('when there is a known Item with the given id', function () {
+        it('should return the Item', async function () {
+          const item = await box.createItem('test');
+          expect(box.getItem(item.id)).to.equal(item);
+        });
       });
     });
   });

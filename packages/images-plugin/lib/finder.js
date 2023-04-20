@@ -76,9 +76,6 @@ const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 
 export default class ImageElementFinder {
-  /** @type {ExternalDriver} */
-  driver;
-
   /** @type {LRU<string,ImageElement>} */
   imgElCache;
 
@@ -87,17 +84,12 @@ export default class ImageElementFinder {
    * @param {ExternalDriver} driver
    * @param {number} [maxSize]
    */
-  constructor(driver, maxSize = MAX_CACHE_SIZE_BYTES) {
-    this.driver = driver;
+  constructor(maxSize = MAX_CACHE_SIZE_BYTES) {
     this.imgElCache = new LRU({
       max: MAX_CACHE_ITEMS,
       maxSize,
       sizeCalculation: (el) => el.template.length,
     });
-  }
-
-  setDriver(driver) {
-    this.driver = driver;
   }
 
   /**
@@ -106,8 +98,7 @@ export default class ImageElementFinder {
    */
   registerImageElement(imgEl) {
     this.imgElCache.set(imgEl.id, imgEl);
-    const protoKey = this.driver.isW3CProtocol() ? W3C_ELEMENT_KEY : MJSONWP_ELEMENT_KEY;
-    return imgEl.asElement(protoKey);
+    return imgEl.asElement(W3C_ELEMENT_KEY);
   }
 
   /**
@@ -119,6 +110,8 @@ export default class ImageElementFinder {
    * @property {boolean} [ignoreDefaultImageTemplateScale=false] - Whether we
    * ignore defaultImageTemplateScale. It can be used when you would like to
    * scale b64Template with defaultImageTemplateScale setting.
+   * @property {import('@appium/types').Rect?} containerRect - The bounding
+   * rectangle to limit the search in
    */
 
   /**
@@ -127,18 +120,17 @@ export default class ImageElementFinder {
    *
    * @param {string} b64Template - base64-encoded image used as a template to be
    * matched in the screenshot
+   * @param {ExternalDriver} driver
    * @param {FindByImageOptions} opts - additional options
    *
    * @returns {Promise<Element|Element[]|ImageElement>} - WebDriver element with a special id prefix
    */
   async findByImage(
     b64Template,
-    {shouldCheckStaleness = false, multiple = false, ignoreDefaultImageTemplateScale = false}
+    driver,
+    {shouldCheckStaleness = false, multiple = false, ignoreDefaultImageTemplateScale = false, containerRect = null}
   ) {
-    if (!this.driver) {
-      throw new Error(`Can't find without a driver!`);
-    }
-    const settings = {...DEFAULT_SETTINGS, ...this.driver.settings.getSettings()};
+    const settings = {...DEFAULT_SETTINGS, ...driver.settings.getSettings()};
     const {
       imageMatchThreshold: threshold,
       imageMatchMethod,
@@ -149,25 +141,31 @@ export default class ImageElementFinder {
     } = settings;
 
     log.info(`Finding image element with match threshold ${threshold}`);
-    if (!this.driver.getWindowSize) {
-      throw new Error("This driver does not support the required 'getWindowSize' command");
+    if (!driver.getWindowRect) {
+      throw new Error("This driver does not support the required 'getWindowRect' command");
     }
-    const {width: screenWidth, height: screenHeight} = await this.driver.getWindowSize();
+    const screenRect = await driver.getWindowRect();
+    const screenSize = {
+      width: screenRect.width,
+      height: screenRect.height,
+    };
 
     // someone might have sent in a template that's larger than the screen
     // dimensions. If so let's check and cut it down to size since the algorithm
     // will not work unless we do. But because it requires some potentially
     // expensive commands, only do this if the user has requested it in settings.
     if (fixImageTemplateSize) {
-      b64Template = await this.ensureTemplateSize(b64Template, screenWidth, screenHeight);
+      b64Template = await this.ensureTemplateSize(b64Template, {
+        width: containerRect ? containerRect.width : screenSize.width,
+        height: containerRect ? containerRect.height : screenSize.height,
+      });
     }
 
     const results = [];
     const condition = async () => {
       try {
         const {b64Screenshot, scale} = await this.getScreenshotForImageFind(
-          screenWidth,
-          screenHeight
+          driver, screenSize, containerRect
         );
 
         b64Template = await this.fixImageTemplateScale(b64Template, {
@@ -213,7 +211,7 @@ export default class ImageElementFinder {
     };
 
     try {
-      await this.driver.implicitWaitForCondition(condition);
+      await driver.implicitWaitForCondition(condition);
     } catch (err) {
       // this `implicitWaitForCondition` method will throw a 'Condition unmet'
       // error if an element is not found eventually. In that case, we will
@@ -235,7 +233,7 @@ export default class ImageElementFinder {
 
     const elements = results.map(({rect, score, visualization}) => {
       log.info(`Image template matched: ${JSON.stringify(rect)}`);
-      return new ImageElement(b64Template, rect, score, visualization, this);
+      return new ImageElement(b64Template, rect, score, visualization, this, containerRect);
     });
 
     // if we're just checking staleness, return straightaway so we don't add
@@ -254,29 +252,28 @@ export default class ImageElementFinder {
    * Ensure that the image template sent in for a find is of a suitable size
    *
    * @param {string} b64Template - base64-encoded image
-   * @param {number} screenWidth - width of screen
-   * @param {number} screenHeight - height of screen
+   * @param {import('@appium/types').Size} maxSize - size of the bounding rectangle
    *
    * @returns {Promise<string>} base64-encoded image, potentially resized
    */
-  async ensureTemplateSize(b64Template, screenWidth, screenHeight) {
+  async ensureTemplateSize(b64Template, maxSize) {
     let imgObj = await imageUtil.getJimpImage(b64Template);
     let {width: tplWidth, height: tplHeight} = imgObj.bitmap;
 
     log.info(
-      `Template image is ${tplWidth}x${tplHeight}. Screen size is ${screenWidth}x${screenHeight}`
+      `Template image is ${tplWidth}x${tplHeight}. Bounding rectangle size is ${maxSize.width}x${maxSize.height}`
     );
     // if the template fits inside the screen dimensions, we're good
-    if (tplWidth <= screenWidth && tplHeight <= screenHeight) {
+    if (tplWidth <= maxSize.width && tplHeight <= maxSize.height) {
       return b64Template;
     }
 
     log.info(
       `Scaling template image from ${tplWidth}x${tplHeight} to match ` +
-        `screen at ${screenWidth}x${screenHeight}`
+      `the bounding rectangle at ${maxSize.width}x${maxSize.height}`
     );
-    // otherwise, scale it to fit inside the screen dimensions
-    imgObj = imgObj.scaleToFit(screenWidth, screenHeight);
+    // otherwise, scale it to fit inside the bounding rectangle dimensions
+    imgObj = imgObj.scaleToFit(maxSize.width, maxSize.height);
     return (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
   }
 
@@ -284,33 +281,46 @@ export default class ImageElementFinder {
    * Get the screenshot image that will be used for find by element, potentially
    * altering it in various ways based on user-requested settings
    *
-   * @param {number} screenWidth - width of screen
-   * @param {number} screenHeight - height of screen
+   * @param {ExternalDriver} driver
+   * @param {import('@appium/types').Size} screenSize - The original size of the screen
+   * @param {import('@appium/types').Rect?} containerRect - Optional bounding container
    *
    * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
-  async getScreenshotForImageFind(screenWidth, screenHeight) {
-    if (!this.driver.getScreenshot) {
+  async getScreenshotForImageFind(driver, screenSize, containerRect = null) {
+    if (containerRect && containerRect.width < 1 || containerRect.height < 1) {
+        throw new errors.InvalidArgumentError(`Connot find an image element inside a zero-size cotainer`);
+    }
+
+    if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
-    const settings = Object.assign({}, DEFAULT_SETTINGS, this.driver.settings.getSettings());
+    const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
     const {fixImageFindScreenshotDims} = settings;
 
-    let b64Screenshot = await this.driver.getScreenshot();
+    let b64Screenshot = await driver.getScreenshot();
+
+    const cropContainerBitmap = async (originalB64Bitmap) => containerRect
+      ? await imageUtil.cropBase64Image(originalB64Bitmap, {
+        left: containerRect.x,
+        top: containerRect.y,
+        width: containerRect.width,
+        height: containerRect.height,
+      }) : originalB64Bitmap;
 
     // if the user has requested not to correct for aspect or size differences
     // between the screenshot and the screen, just return the screenshot now
     if (!fixImageFindScreenshotDims) {
       log.info(`Not verifying screenshot dimensions match screen`);
-      return {b64Screenshot};
+      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
     }
 
-    if (screenWidth < 1 || screenHeight < 1) {
+    if (screenSize.width < 1 || screenSize.height < 1) {
       log.warn(
-        `The retrieved screen size ${screenWidth}x${screenHeight} does ` +
-          `not seem to be valid. No changes will be applied to the screenshot`
+        `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
+        `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot};
+      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
     }
 
     // otherwise, do some verification on the screenshot to make sure it matches
@@ -323,16 +333,16 @@ export default class ImageElementFinder {
     if (shotWidth < 1 || shotHeight < 1) {
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
-          `not seem to be valid. No changes will be applied to the screenshot`
+        `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot};
+      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
     }
 
-    if (screenWidth === shotWidth && screenHeight === shotHeight) {
+    if (screenSize.width === shotWidth && screenSize.height === shotHeight) {
       // the height and width of the screenshot and the device screen match, which
       // means we should be safe when doing template matches
       log.info('Screenshot size matched screen size');
-      return {b64Screenshot};
+      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
     }
 
     // otherwise, if they don't match, it could spell problems for the accuracy
@@ -343,18 +353,18 @@ export default class ImageElementFinder {
 
     const scale = {xScale: 1.0, yScale: 1.0};
 
-    const screenAR = screenWidth / screenHeight;
+    const screenAR = screenSize.width / screenSize.height;
     const shotAR = shotWidth / shotHeight;
     if (Math.round(screenAR * FLOAT_PRECISION) === Math.round(shotAR * FLOAT_PRECISION)) {
       log.info(
         `Screenshot aspect ratio '${shotAR}' (${shotWidth}x${shotHeight}) matched ` +
-          `screen aspect ratio '${screenAR}' (${screenWidth}x${screenHeight})`
+          `screen aspect ratio '${screenAR}' (${screenSize.width}x${screenSize.height})`
       );
     } else {
       log.warn(
         `When trying to find an element, determined that the screen ` +
           `aspect ratio and screenshot aspect ratio are different. Screen ` +
-          `is ${screenWidth}x${screenHeight} whereas screenshot is ` +
+          `is ${screenSize.width}x${screenSize.height} whereas screenshot is ` +
           `${shotWidth}x${shotHeight}.`
       );
 
@@ -369,8 +379,8 @@ export default class ImageElementFinder {
       // which is used to image comparison by OpenCV as a base image.
       // All of this is primarily useful when the screenshot is a horizontal slice taken out of the
       // screen (for example not including top/bottom nav bars)
-      const xScale = (1.0 * shotWidth) / screenWidth;
-      const yScale = (1.0 * shotHeight) / screenHeight;
+      const xScale = (1.0 * shotWidth) / screenSize.width;
+      const yScale = (1.0 * shotHeight) / screenSize.height;
       const scaleFactor = xScale >= yScale ? yScale : xScale;
 
       log.warn(
@@ -391,19 +401,22 @@ export default class ImageElementFinder {
     // since except for that, it might be a situation which is different window rect and
     // screenshot size like `@driver.window_rect #=>x=0, y=0, width=1080, height=1794` and
     // `"deviceScreenSize"=>"1080x1920"`
-    if (screenWidth !== shotWidth && screenHeight !== shotHeight) {
+    if (screenSize.width !== shotWidth && screenSize.height !== shotHeight) {
       log.info(
         `Scaling screenshot from ${shotWidth}x${shotHeight} to match ` +
-          `screen at ${screenWidth}x${screenHeight}`
+        `screen at ${screenSize.width}x${screenSize.height}`
       );
-      imgObj = imgObj.resize(screenWidth, screenHeight);
+      imgObj = imgObj.resize(screenSize.width, screenSize.height);
 
-      scale.xScale *= (1.0 * screenWidth) / shotWidth;
-      scale.yScale *= (1.0 * screenHeight) / shotHeight;
+      scale.xScale *= (1.0 * screenSize.width) / shotWidth;
+      scale.yScale *= (1.0 * screenSize.height) / shotHeight;
     }
 
     b64Screenshot = (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
-    return {b64Screenshot, scale};
+    return {
+      b64Screenshot: await cropContainerBitmap(b64Screenshot),
+      scale
+    };
   }
 
   /**

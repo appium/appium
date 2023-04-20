@@ -57,7 +57,6 @@ export default class ImageElementPlugin extends BasePlugin {
       return await next();
     }
 
-    this.finder.setDriver(driver);
     return await this.finder.findByImage(selector, driver, {multiple});
   }
 

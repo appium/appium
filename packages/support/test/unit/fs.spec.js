@@ -1,4 +1,4 @@
-import {fs, tempDir} from '../../lib/index.js';
+import {fs, system, tempDir} from '../../lib';
 import path from 'path';
 import {createSandbox} from 'sinon';
 import {exec} from 'teen_process';
@@ -140,6 +140,11 @@ describe('fs', function () {
     stat.should.have.property('atime');
   });
   describe('which()', function () {
+    before(function () {
+      if (system.isWindows()) {
+        return this.skip();
+      }
+    });
     it('should find correct executable', async function () {
       let systemNpmPath = (await exec('which', ['npm'])).stdout.trim();
       let npmPath = await fs.which('npm');

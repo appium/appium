@@ -1,6 +1,6 @@
 import * as teenProcess from 'teen_process';
 import {createSandbox} from 'sinon';
-import {process} from '../../lib/index.js';
+import {process, system} from '../../lib';
 import {retryInterval} from 'asyncbox';
 
 const SubProcess = teenProcess.SubProcess;
@@ -19,11 +19,16 @@ describe('process', function () {
   describe('getProcessIds', function () {
     let proc;
     before(async function () {
+      if (system.isWindows()) {
+        return this.skip();
+      }
       proc = new SubProcess('tail', ['-f', __filename]);
       await proc.start();
     });
     after(async function () {
-      await proc.stop();
+      if (proc) {
+        await proc.stop();
+      }
     });
     it('should get return an array for existing process', async function () {
       let pids = await process.getProcessIds('tail');
@@ -49,6 +54,11 @@ describe('process', function () {
 
   describe('killProcess', function () {
     let proc;
+    before(function () {
+      if (system.isWindows()) {
+        return this.skip();
+      }
+    });
     beforeEach(async function () {
       proc = new SubProcess('tail', ['-f', __filename]);
       await proc.start();

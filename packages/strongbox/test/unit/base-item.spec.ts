@@ -12,7 +12,7 @@ type MockFs = {
 describe('Strongbox', function () {
   let sandbox: SinonSandbox;
   let MockFs: MockFs = {} as any;
-  const DATA_DIR = '/some/dir';
+  const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof import('../../lib/base-item').BaseItem;
 

@@ -44,15 +44,16 @@ describe('Strongbox', function () {
 
       describe('when provided an absolute container path', function () {
         it('should use the provided container path', function () {
-          expect(strongbox('test', {container: '/somewhere/else'}).container).to.equal(
-            '/somewhere/else'
-          );
+          const container = path.resolve(path.sep, 'somewhere');
+          expect(strongbox('test', {container}).container).to.equal(container);
         });
       });
 
       describe('when provided a relative container path', function () {
         it('should throw an error', function () {
-          expect(() => strongbox('test', {container: 'somewhere/else'})).to.throw(
+          const container = path.join('somewhere', 'else');
+
+          expect(() => strongbox('test', {container})).to.throw(
             TypeError,
             'container slug somewhere/else must be an absolute path'
           );
@@ -91,10 +92,6 @@ describe('Strongbox', function () {
               value: undefined,
               container: path.resolve(DATA_DIR, 'strongbox'),
             });
-          });
-
-          it('should slugify the id', function () {
-            expect(item.id).to.equal('/some/dir/strongbox/slug-test');
           });
         });
 

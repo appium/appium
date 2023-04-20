@@ -16,7 +16,7 @@ describe('Strongbox', function () {
   let DEFAULT_SUFFIX: string;
   let MockFs: MockFs = {} as any;
 
-  const DATA_DIR = '/some/dir';
+  const DATA_DIR = path.resolve('some', 'dir', 'strongbox');
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -85,11 +85,11 @@ describe('Strongbox', function () {
 
           it('should create an empty Item', async function () {
             expect(item).to.eql({
-              id: '/some/dir/strongbox/slug-test',
+              id: path.resolve(DATA_DIR, 'strongbox', 'slug-test'),
               name: 'SLUG test',
               encoding: 'utf8',
               value: undefined,
-              container: '/some/dir/strongbox',
+              container: path.resolve(DATA_DIR, 'strongbox'),
             });
           });
 
@@ -105,11 +105,11 @@ describe('Strongbox', function () {
           it('should read its value', async function () {
             const item = await box.createItem('SLUG test');
             expect(item).to.eql({
-              id: '/some/dir/strongbox/slug-test',
+              id: path.resolve(DATA_DIR, 'strongbox', 'slug-test'),
               name: 'SLUG test',
               encoding: 'utf8',
               value: 'foo bar',
-              container: '/some/dir/strongbox',
+              container: path.resolve(DATA_DIR, 'strongbox'),
             });
           });
         });
@@ -129,7 +129,7 @@ describe('Strongbox', function () {
             await item.write('boo bah');
 
             expect(MockFs.writeFile).to.have.been.calledWith(
-              path.join(DATA_DIR, DEFAULT_SUFFIX, 'test'),
+              path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
               'boo bah',
               'utf8'
             );
@@ -148,7 +148,7 @@ describe('Strongbox', function () {
           await box.createItem('test');
           await expect(box.createItem('test')).to.be.rejectedWith(
             Error,
-            'Item with id "/some/dir/strongbox/test" already exists'
+            `Item with id "${path.resolve(DATA_DIR, 'strongbox', 'test')}" already exists`
           );
         });
       });
@@ -194,7 +194,7 @@ describe('Strongbox', function () {
       it('should write the value to disk', async function () {
         await box.createItemWithValue('test', 'value');
         expect(MockFs.writeFile).to.have.been.calledWith(
-          path.join(DATA_DIR, DEFAULT_SUFFIX, 'test'),
+          path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
           'value'
         );
       });

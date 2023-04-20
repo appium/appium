@@ -2,7 +2,7 @@
  * Constants used across various modules in this package
  * @module
  */
-import {LogLevel} from 'consola';
+import {LogLevels} from 'consola';
 import {readFileSync} from 'node:fs';
 import {fs} from '@appium/support';
 import path from 'node:path';
@@ -142,11 +142,11 @@ export const DEFAULT_SERVE_HOST = 'localhost';
  * Mapping of `@appium/docutils`' log levels to `consola` log levels
  */
 export const LogLevelMap = {
-  silent: LogLevel.Silent,
-  error: LogLevel.Error,
-  warn: LogLevel.Warn,
-  info: LogLevel.Info,
-  debug: LogLevel.Debug,
+  silent: LogLevels.silent,
+  error: LogLevels.error,
+  warn: LogLevels.warn,
+  info: LogLevels.info,
+  debug: LogLevels.debug,
 } as const;
 
 /**

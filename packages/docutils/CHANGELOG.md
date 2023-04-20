@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.9](https://github.com/appium/appium/compare/@appium/docutils@0.3.8...@appium/docutils@0.3.9) (2023-04-20)
+
+
+### Bug Fixes
+
+* **docutils:** do not bail when no site_dir found ([c85b89e](https://github.com/appium/appium/commit/c85b89ecbe28f2fd720d73fca7cd11f283eb9a0a))
+
+
+
 ## [0.3.8](https://github.com/appium/appium/compare/@appium/docutils@0.3.7...@appium/docutils@0.3.8) (2023-04-18)
 
 **Note:** Version bump only for package @appium/docutils

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-beta.66](https://github.com/appium/appium/compare/appium@2.0.0-beta.65...appium@2.0.0-beta.66) (2023-04-20)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
 ## [2.0.0-beta.65](https://github.com/appium/appium/compare/appium@2.0.0-beta.64...appium@2.0.0-beta.65) (2023-04-18)
 
 **Note:** Version bump only for package appium

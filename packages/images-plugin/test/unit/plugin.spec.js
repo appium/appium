@@ -56,7 +56,7 @@ describe('ImageElementPlugin#handle', function () {
     driver.settings = {getSettings: () => ({})};
     driver.isW3CProtocol = () => true;
     driver.getScreenshot = () => TEST_IMG_2_B64;
-    driver.getWindowSize = () => ({width: 64, height: 64});
+    driver.getWindowRect = () => ({x:0, y: 0, width: 64, height: 64});
     it('should defer execution to regular command if not a find command', async function () {
       const next = () => true;
       await p.handle(next, driver, 'sendKeys').should.eventually.become(true);
@@ -83,7 +83,7 @@ describe('ImageElementPlugin#handle', function () {
       driver.settings = {getSettings: () => ({})};
       driver.isW3CProtocol = () => true;
       driver.getScreenshot = () => TEST_IMG_2_B64;
-      driver.getWindowSize = () => ({width: 64, height: 64});
+      driver.getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
       const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       elId = el[W3C_ELEMENT_KEY];
     });

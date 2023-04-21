@@ -48,7 +48,7 @@ describe('ImageElement', function () {
   describe('.asElement', function () {
     it('should get the webdriver object representation of the element', function () {
       const el = new ImageElement(defTemplate, defRect);
-      el.asElement('ELEMENT').ELEMENT.should.match(/^appium-image-el/);
+      el.asElement().ELEMENT.should.match(/^appium-image-el/);
     });
   });
 

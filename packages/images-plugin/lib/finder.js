@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import {errors} from 'appium/driver';
-import {util, imageUtil} from 'appium/support';
+import {imageUtil} from 'appium/support';
 import {
   ImageElement,
   DEFAULT_TEMPLATE_IMAGE_SCALE,
@@ -11,7 +11,6 @@ import {MATCH_TEMPLATE_MODE, compareImages, DEFAULT_MATCH_THRESHOLD} from './com
 import log from './logger';
 
 const MJSONWP_ELEMENT_KEY = 'ELEMENT';
-const W3C_ELEMENT_KEY = util.W3C_WEB_ELEMENT_IDENTIFIER;
 const DEFAULT_FIX_IMAGE_TEMPLATE_SCALE = 1;
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
@@ -96,7 +95,7 @@ export default class ImageElementFinder {
    */
   registerImageElement(imgEl) {
     this.imgElCache.set(imgEl.id, imgEl);
-    return imgEl.asElement(W3C_ELEMENT_KEY);
+    return imgEl.asElement();
   }
 
   /**

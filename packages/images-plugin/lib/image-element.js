@@ -83,13 +83,11 @@ export default class ImageElement {
   }
 
   /**
-   * @param {string} protocolKey - the protocol-specific JSON key for
-   * a WebElement
    *
    * @returns {Element} - this image element as a WebElement
    */
-  asElement(protocolKey) {
-    return {[protocolKey]: this.id};
+  asElement() {
+    return util.wrapElement(this.id);
   }
 
   /**

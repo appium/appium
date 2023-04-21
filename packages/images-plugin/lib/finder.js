@@ -10,7 +10,6 @@ import {
 import {MATCH_TEMPLATE_MODE, compareImages, DEFAULT_MATCH_THRESHOLD} from './compare';
 import log from './logger';
 
-const MJSONWP_ELEMENT_KEY = 'ELEMENT';
 const DEFAULT_FIX_IMAGE_TEMPLATE_SCALE = 1;
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
@@ -502,7 +501,7 @@ export default class ImageElementFinder {
   }
 }
 
-export {W3C_ELEMENT_KEY, MJSONWP_ELEMENT_KEY, DEFAULT_SETTINGS, DEFAULT_FIX_IMAGE_TEMPLATE_SCALE};
+export {DEFAULT_SETTINGS, DEFAULT_FIX_IMAGE_TEMPLATE_SCALE};
 
 /**
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver

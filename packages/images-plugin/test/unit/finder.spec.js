@@ -273,7 +273,6 @@ describe('finding elements by image', function () {
   });
 
   describe('ensureTemplateSize', function () {
-    const d = new PluginDriver();
     const f = new ImageElementFinder();
 
     it('should not resize the template if it is smaller than the screen', async function () {

@@ -144,7 +144,7 @@ describe('finding elements by image', function () {
     });
     it('should return empty array for multiple elements if template match fails', async function () {
       compareStub.rejects(new Error('Cannot find any occurrences'));
-      await f.findByImage(template, {multiple: true}).should.eventually.eql([]);
+      await f.findByImage(template, d, {multiple: true}).should.eventually.eql([]);
     });
     it('should respect implicit wait', async function () {
       d.setImplicitWait(10);
@@ -324,7 +324,7 @@ describe('finding elements by image', function () {
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 1.5);
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, width, height);
+      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
       b64Screenshot.should.not.eql(TINY_PNG);
       const screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
       screenshotObj.bitmap.width.should.eql(width);

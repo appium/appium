@@ -12,7 +12,7 @@ const compareModule = require('../../lib/compare');
 const plugin = new ImageElementPlugin();
 
 class PluginDriver extends BaseDriver {
-  async getWindowSize() {}
+  async getWindowRect() {}
   async getScreenshot() {}
   findElement(strategy, selector) {
     return plugin.findElement(_.noop, this, strategy, selector);
@@ -66,8 +66,7 @@ describe('finding elements by image', function () {
     let compareStub;
 
     function basicStub(driver, finder) {
-      const sizeStub = sandbox.stub(driver, 'getWindowSize').returns(size);
-      const rectStub = sandbox.stub(driver, 'getWindowSize').returns({
+      const rectStub = sandbox.stub(driver, 'getWindowRect').returns({
         x: 0,
         y: 0,
         ...size,
@@ -84,7 +83,7 @@ describe('finding elements by image', function () {
       imgEl.rect.should.eql(rect);
       imgEl.score.should.eql(score);
       return imgEl;
-    } 
+    }
 
     beforeEach(function () {
       d = new PluginDriver();
@@ -105,8 +104,8 @@ describe('finding elements by image', function () {
       els.should.have.length(1);
       basicImgElVerify(els[0], f);
     });
-    it('should fail if driver does not support getWindowSize', async function () {
-      d.getWindowSize = null;
+    it('should fail if driver does not support getWindowRect', async function () {
+      d.getWindowRect = null;
       await f
         .findByImage(template, d, {multiple: false})
         .should.eventually.be.rejectedWith(/driver does not support/);

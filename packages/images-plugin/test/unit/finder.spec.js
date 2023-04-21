@@ -67,8 +67,13 @@ describe('finding elements by image', function () {
 
     function basicStub(driver, finder) {
       const sizeStub = sandbox.stub(driver, 'getWindowSize').returns(size);
+      const rectStub = sandbox.stub(driver, 'getWindowSize').returns({
+        x: 0,
+        y: 0,
+        ...size,
+      });
       const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns(screenshot);
-      return {sizeStub, screenStub};
+      return {sizeStub, rectStub, screenStub};
     }
 
     function basicImgElVerify(imgElProto, finder) {
@@ -79,7 +84,7 @@ describe('finding elements by image', function () {
       imgEl.rect.should.eql(rect);
       imgEl.score.should.eql(score);
       return imgEl;
-    }
+    } 
 
     beforeEach(function () {
       d = new PluginDriver();

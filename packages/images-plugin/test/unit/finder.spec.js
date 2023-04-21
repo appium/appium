@@ -325,8 +325,8 @@ describe('finding elements by image', function () {
       const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, width, height);
       b64Screenshot.should.not.eql(TINY_PNG);
       const screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(screen[0]);
-      screenshotObj.bitmap.height.should.eql(screen[1]);
+      screenshotObj.bitmap.width.should.eql(width);
+      screenshotObj.bitmap.height.should.eql(height);
       scale.should.eql({xScale: 1.5, yScale: 1.5});
     });
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio', async function () {
@@ -337,8 +337,8 @@ describe('finding elements by image', function () {
       const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
       b64Screenshot.should.not.eql(TINY_PNG);
       let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(screen[0]);
-      screenshotObj.bitmap.height.should.eql(screen[1]);
+      screenshotObj.bitmap.width.should.eql(width);
+      screenshotObj.bitmap.height.should.eql(height);
       scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
       scale.yScale.should.eql(expectedScale.yScale);
 
@@ -349,8 +349,8 @@ describe('finding elements by image', function () {
       const {b64Screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
       newScreen.should.not.eql(TINY_PNG);
       screenshotObj = await imageUtil.getJimpImage(newScreen);
-      screenshotObj.bitmap.width.should.eql(screen[0]);
-      screenshotObj.bitmap.height.should.eql(screen[1]);
+      screenshotObj.bitmap.width.should.eql(width);
+      screenshotObj.bitmap.height.should.eql(height);
       newScale.xScale.should.eql(expectedScale.xScale);
       newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
     });
@@ -363,8 +363,8 @@ describe('finding elements by image', function () {
       const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
       b64Screenshot.should.not.eql(TINY_PNG);
       let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(screen[0]);
-      screenshotObj.bitmap.height.should.eql(screen[1]);
+      screenshotObj.bitmap.width.should.eql(width);
+      screenshotObj.bitmap.height.should.eql(height);
       scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
       scale.yScale.should.eql(expectedScale.yScale);
       // 8 x 12 stretched TINY_PNG
@@ -384,8 +384,8 @@ describe('finding elements by image', function () {
       const {b64Screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
       newScreen.should.not.eql(TINY_PNG);
       screenshotObj = await imageUtil.getJimpImage(newScreen);
-      screenshotObj.bitmap.width.should.eql(screen[0]);
-      screenshotObj.bitmap.height.should.eql(screen[1]);
+      screenshotObj.bitmap.width.should.eql(width);
+      screenshotObj.bitmap.height.should.eql(height);
       newScale.xScale.should.eql(expectedScale.xScale);
       newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
       // 12 x 8 stretched TINY_PNG

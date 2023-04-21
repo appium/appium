@@ -303,10 +303,8 @@ describe('finding elements by image', function () {
     });
 
     it('should fail if driver does not support getScreenshot', async function () {
-      const d = new BaseDriver();
-      const f = new ImageElementFinder();
-      await f
-        .getScreenshotForImageFind()
+      await new ImageElementFinder()
+        .getScreenshotForImageFind(new BaseDriver())
         .should.eventually.be.rejectedWith(/driver does not support/);
     });
     it('should not adjust or verify screenshot if asked not to by settings', async function () {

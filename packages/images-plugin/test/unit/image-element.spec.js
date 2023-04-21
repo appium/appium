@@ -76,7 +76,7 @@ describe('ImageElement', function () {
     });
     it('should try to check for image element staleness, and throw if stale', async function () {
       const d = new BaseDriver();
-      const f = new ImageElementFinder(d);
+      const f = new ImageElementFinder();
       sandbox.stub(f, 'findByImage').throws();
       const el = new ImageElement(defTemplate, defRect, null, null, f);
       // we need to check for staleness if explicitly requested to do so
@@ -97,7 +97,7 @@ describe('ImageElement', function () {
       const d = new BaseDriver();
       d.performActions = _.noop;
       sandbox.stub(d, 'performActions');
-      const f = new ImageElementFinder(d);
+      const f = new ImageElementFinder();
       const el = new ImageElement(defTemplate, defRect, null, null, f);
       const newRect = {...defRect, x: defRect.x + 10, y: defRect.y + 5};
       const elPos2 = new ImageElement(defTemplate, newRect, null, null, f);
@@ -168,7 +168,7 @@ describe('ImageElement', function () {
 
   describe('#execute', function () {
     // aGFwcHkgdGVzdGluZw== is 'happy testing'
-    const f = new ImageElementFinder(driver);
+    const f = new ImageElementFinder();
     const imgEl = new ImageElement(defTemplate, defRect, 0, 'aGFwcHkgdGVzdGluZw==', f);
     let clickStub;
 
@@ -256,7 +256,7 @@ describe('image element LRU cache', function () {
   it('once cache reaches max size, should eject image elements', function () {
     const el1 = new ImageElement(defTemplate, defRect);
     const el2 = new ImageElement(defTemplate, defRect);
-    const cache = new ImageElementFinder(null, defTemplate.length + 1).imgElCache;
+    const cache = new ImageElementFinder(defTemplate.length + 1).imgElCache;
     cache.set(el1.id, el1);
     cache.has(el1.id).should.be.true;
     cache.set(el2.id, el2);

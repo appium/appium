@@ -80,9 +80,7 @@ export default class ImageElementFinder {
   imgElCache;
 
   /**
-   *
-   * @param {ExternalDriver} driver
-   * @param {number} [maxSize]
+   * @param {number} maxSize
    */
   constructor(maxSize = MAX_CACHE_SIZE_BYTES) {
     this.imgElCache = new LRU({

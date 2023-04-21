@@ -72,7 +72,7 @@ describe('finding elements by image', function () {
         ...size,
       });
       const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns(screenshot);
-      return {sizeStub, rectStub, screenStub};
+      return {rectStub, screenStub};
     }
 
     function basicImgElVerify(imgElProto, finder) {
@@ -167,12 +167,10 @@ describe('finding elements by image', function () {
   });
 
   describe('fixImageTemplateScale', function () {
-    let d;
     let f;
     const basicTemplate = 'iVBORbaz';
 
     beforeEach(function () {
-      d = new PluginDriver();
       f = new ImageElementFinder();
     });
 

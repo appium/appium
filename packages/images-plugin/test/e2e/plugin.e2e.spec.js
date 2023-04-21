@@ -1,8 +1,10 @@
+import _ from 'lodash';
 import path from 'path';
 import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/compare';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
+import { tempDir, fs } from '@appium/support';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -79,10 +81,34 @@ describe('ImageElementPlugin', function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {x, y} = await imageEl.getLocation();
     const {width, height} = await imageEl.getSize();
+    const screenshot = await imageEl.screenshot();
     x.should.eql(28);
     y.should.eql(72);
     width.should.eql(80);
     height.should.eql(91);
+    _.isEmpty(screenshot).should.be.false;
     await imageEl.click();
+  });
+
+  it('should find subelements', async function () {
+    const imageEl = await driver.$(APPSTORE_IMG_PATH);
+    const {width, height} = await imageEl.getSize();
+    const screenshot = await imageEl.screenshot();
+    const tmpRoot = await tempDir.openDir();
+    try {
+      const tmpImgPath = path.join(tmpRoot, 'region.png');
+      const region = await imageUtil.cropBase64Image(screenshot, {
+        left: width / 4,
+        top: height / 4,
+        width: width / 2,
+        height: height / 2,
+      });
+      await fs.writeFile(tmpImgPath, Buffer.from(region, 'base64'));
+      const subEl = await imageEl.$(tmpImgPath);
+      _.isNil(subEl).should.be.false;
+    } finally {
+      await fs.rimraf(tmpRoot);
+    }
+
   });
 });

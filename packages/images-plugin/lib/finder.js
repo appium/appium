@@ -286,7 +286,7 @@ export default class ImageElementFinder {
    * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind(driver, screenSize, containerRect = null) {
-    if (containerRect && containerRect.width < 1 || containerRect.height < 1) {
+    if (containerRect && (containerRect.width < 1 || containerRect.height < 1)) {
         throw new errors.InvalidArgumentError(`Connot find an image element inside a zero-size cotainer`);
     }
 

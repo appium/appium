@@ -81,28 +81,30 @@ describe('ImageElementPlugin', function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {x, y} = await imageEl.getLocation();
     const {width, height} = await imageEl.getSize();
-    const screenshot = await imageEl.screenshot();
     x.should.eql(28);
     y.should.eql(72);
     width.should.eql(80);
     height.should.eql(91);
-    _.isEmpty(screenshot).should.be.false;
     await imageEl.click();
   });
 
   it('should find subelements', async function () {
     const imageEl = await driver.$(APPSTORE_IMG_PATH);
     const {width, height} = await imageEl.getSize();
-    const screenshot = await imageEl.screenshot();
     const tmpRoot = await tempDir.openDir();
     try {
+      const screenshotPath = path.join(tmpRoot, 'element.png');
+      await imageEl.saveScreenshot(screenshotPath);
       const tmpImgPath = path.join(tmpRoot, 'region.png');
-      const region = await imageUtil.cropBase64Image(screenshot, {
-        left: width / 4,
-        top: height / 4,
-        width: width / 2,
-        height: height / 2,
-      });
+      const region = await imageUtil.cropBase64Image(
+        (await fs.readFile(screenshotPath)).toString('base64'),
+        {
+          left: width / 4,
+          top: height / 4,
+          width: width / 2,
+          height: height / 2,
+        }
+      );
       await fs.writeFile(tmpImgPath, Buffer.from(region, 'base64'));
       const subEl = await imageEl.$(tmpImgPath);
       _.isNil(subEl).should.be.false;

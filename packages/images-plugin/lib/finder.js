@@ -84,7 +84,7 @@ export default class ImageElementFinder {
     this.imgElCache = new LRU({
       max: MAX_CACHE_ITEMS,
       maxSize,
-      sizeCalculation: (el) => el.template.length,
+      sizeCalculation: (el) => el.template.length + (el.matchedImage?.length ?? 0),
     });
   }
 

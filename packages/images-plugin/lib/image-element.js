@@ -259,7 +259,7 @@ export default class ImageElement {
       case 'getElementRect':
         return imgEl.rect;
       case 'getElementScreenshot':
-        return imgEl.matchedImage;
+        return imgEl.template;
       case 'getAttribute':
         // /session/:sessionId/element/:elementId/attribute/:name
         // /session/:sessionId/element/:elementId/attribute/visual should retun the visual data

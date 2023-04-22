@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import BaseDriver from 'appium/driver';
+import {util} from 'appium/support';
 import ImageElementFinder from '../../lib/finder';
 import {getImgElFromArgs} from '../../lib/plugin';
 import ImageElement, {IMAGE_ELEMENT_PREFIX} from '../../lib/image-element';
@@ -48,7 +49,7 @@ describe('ImageElement', function () {
   describe('.asElement', function () {
     it('should get the webdriver object representation of the element', function () {
       const el = new ImageElement(defTemplate, defRect);
-      el.asElement().ELEMENT.should.match(/^appium-image-el/);
+      util.unwrapElement(el.asElement()).should.match(/^appium-image-el/);
     });
   });
 

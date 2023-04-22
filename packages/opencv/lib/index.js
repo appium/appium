@@ -627,7 +627,9 @@ async function cvMatToPng(mat) {
       height: mat.rows,
       channels: 4,
     }
-  }).toBuffer();
+  })
+  .png()
+  .toBuffer();
 }
 
 /**

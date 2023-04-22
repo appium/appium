@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import {remote as wdio} from 'webdriverio';
-import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/compare';
+import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
 import {tempDir, fs, imageUtil} from '@appium/support';

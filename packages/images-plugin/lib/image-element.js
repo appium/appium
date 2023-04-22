@@ -2,15 +2,12 @@ import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import log from './logger';
-import {DEFAULT_SETTINGS} from './finder';
-import { IMAGE_STRATEGY } from './plugin';
+import {
+  IMAGE_STRATEGY, DEFAULT_SETTINGS, IMAGE_TAP_STRATEGIES,
+  IMAGE_ELEMENT_PREFIX, IMAGE_EL_TAP_STRATEGY_W3C,
+} from './constants';
 
-const IMAGE_ELEMENT_PREFIX = 'appium-image-element-';
 const TAP_DURATION_MS = 125;
-const IMAGE_EL_TAP_STRATEGY_W3C = 'w3cActions';
-const IMAGE_EL_TAP_STRATEGY_MJSONWP = 'touchActions';
-const IMAGE_TAP_STRATEGIES = [IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C];
-const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
 
 /**
  * @typedef Dimension
@@ -275,13 +272,7 @@ export default class ImageElement {
   }
 }
 
-export {
-  ImageElement,
-  IMAGE_EL_TAP_STRATEGY_MJSONWP,
-  IMAGE_EL_TAP_STRATEGY_W3C,
-  DEFAULT_TEMPLATE_IMAGE_SCALE,
-  IMAGE_ELEMENT_PREFIX,
-};
+export {ImageElement};
 
 /**
  * @typedef {import('@appium/types').Rect} Rect

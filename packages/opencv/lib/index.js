@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import {Buffer} from 'buffer';
 import B from 'bluebird';
-import {decode as decodePngToBitmap, encode as encodePngToBitmap} from 'fast-png';
+import sharp from 'sharp';
 
 /** @type {any} */
 let cv;
@@ -255,7 +255,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
     }
 
     detector = new cv[AVAILABLE_DETECTORS[detectorName]]();
-    [img1, img2] = [cvMatFromPng(img1Data), cvMatFromPng(img2Data)];
+    [img1, img2] = await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]);
     result1 = detectAndCompute(img1, detector);
     result2 = detectAndCompute(img2, detector);
     matcher = new cv.DescriptorMatcher(AVAILABLE_MATCHING_FUNCTIONS[matchFunc]);
@@ -335,7 +335,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
         width: rect2.width,
         height: rect2.height,
       });
-      result.visualization = cvMatToPng(visualization);
+      result.visualization = await cvMatToPng(visualization);
     }
 
     return result;
@@ -397,7 +397,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
 
   let template, reference, matched;
   try {
-    [template, reference] = [cvMatFromPng(img1Data), cvMatFromPng(img2Data)];
+    [template, reference] = await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]);
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
       throw new Error(
         'Both images are expected to have the same size in order to ' +
@@ -442,7 +442,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
             height: boundingRect.height,
           });
         }
-        result.visualization = cvMatToPng(resultMat);
+        result.visualization = await cvMatToPng(resultMat);
       } finally {
         try {
           bothImages.delete();
@@ -527,7 +527,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
   let fullImg, partialImg, matched;
 
   try {
-    [fullImg, partialImg] = [cvMatFromPng(fullImgData), cvMatFromPng(partialImgData)];
+    [fullImg, partialImg] = await B.all([cvMatFromImage(fullImgData), cvMatFromImage(partialImgData)]);
     matched = new cv.Mat();
     const results = [];
     let visualization = null;
@@ -595,9 +595,9 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
 
         highlightRegion(singleHighlightedImage, result.rect);
         highlightRegion(fullHighlightedImage, result.rect);
-        result.visualization = cvMatToPng(singleHighlightedImage);
+        result.visualization = await (singleHighlightedImage);
       }
-      visualization = cvMatToPng(fullHighlightedImage);
+      visualization = await cvMatToPng(fullHighlightedImage);
     }
     return {
       rect: results[0].rect,
@@ -618,24 +618,32 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
  * Convert an opencv image matrix into a PNG buffer
  *
  * @param {cv.Mat} mat OpenCV image matrix
- * @return {Buffer} PNG image data buffer
+ * @return {Promise<Buffer>} PNG image data buffer
  */
-function cvMatToPng(mat) {
-  return Buffer.from(encodePngToBitmap({
-    width: mat.cols,
-    height: mat.rows,
-    data: new Uint8Array(Buffer.from(mat.data).buffer),
-  }).buffer);
+async function cvMatToPng(mat) {
+  return await sharp(Buffer.from(mat.data), {
+    raw: {
+      width: mat.cols,
+      height: mat.rows,
+      channels: 4,
+    }
+  }).toBuffer();
 }
 
 /**
- * Take a PNG image buffer and return a cv.Mat
+ * Take an image buffer and return a cv.Mat
  *
- * @param {Buffer} img PNG image data buffer
- * @return {cv.Mat} OpenCV image matrix
+ * @param {Buffer} img image data buffer. All image formats avilable for
+ * https://www.npmjs.com/package/sharp node library are supported.
+ * @return {Promise<cv.Mat>} OpenCV image matrix
  */
-function cvMatFromPng(img) {
-  return cv.matFromImageData(decodePngToBitmap(img));
+async function cvMatFromImage(img) {
+  const {data, info} = await sharp(img)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({resolveWithObject: true});
+  const {width, height} = info;
+  return cv.matFromImageData({data, width, height});
 }
 
 /**

@@ -2,15 +2,14 @@ import _ from 'lodash';
 import LRU from 'lru-cache';
 import {errors} from 'appium/driver';
 import {imageUtil} from 'appium/support';
-import {
-  ImageElement,
-  DEFAULT_TEMPLATE_IMAGE_SCALE,
-  IMAGE_EL_TAP_STRATEGY_W3C,
-} from './image-element';
-import {MATCH_TEMPLATE_MODE, compareImages, DEFAULT_MATCH_THRESHOLD} from './compare';
+import {ImageElement} from './image-element';
+import {compareImages} from './compare';
 import log from './logger';
+import {
+  DEFAULT_SETTINGS, MATCH_TEMPLATE_MODE, DEFAULT_TEMPLATE_IMAGE_SCALE,
+  DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
+} from './constants';
 
-const DEFAULT_FIX_IMAGE_TEMPLATE_SCALE = 1;
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
 const FLOAT_PRECISION = 100000;
@@ -30,58 +29,6 @@ function containsRect(templateRect, rect) {
       && rect.height <= templateRect.y + templateRect.height - rect.y;
 }
 
-const DEFAULT_SETTINGS = {
-  // value between 0 and 1 representing match strength, below which an image
-  // element will not be found
-  imageMatchThreshold: DEFAULT_MATCH_THRESHOLD,
-
-  // One of possible image matching methods.
-  // Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
-  // for more details.
-  // TM_CCOEFF_NORMED by default
-  imageMatchMethod: '',
-
-  // if the image returned by getScreenshot differs in size or aspect ratio
-  // from the screen, attempt to fix it automatically
-  fixImageFindScreenshotDims: true,
-
-  // whether Appium should ensure that an image template sent in during image
-  // element find should have its size adjusted so the match algorithm will not
-  // complain
-  fixImageTemplateSize: false,
-
-  // whether Appium should ensure that an image template sent in during image
-  // element find should have its scale adjusted to display size so the match
-  // algorithm will not complain.
-  // e.g. iOS has `width=375, height=667` window rect, but its screenshot is
-  //      `width=750 × height=1334` pixels. This setting help to adjust the scale
-  //      if a user use `width=750 × height=1334` pixels's base template image.
-  fixImageTemplateScale: false,
-
-  // Users might have scaled template image to reduce their storage size.
-  // This setting allows users to scale a template image they send to Appium server
-  // so that the Appium server compares the actual scale users originally had.
-  // e.g. If a user has an image of 270 x 32 pixels which was originally 1080 x 126 pixels,
-  //      the user can set {defaultImageTemplateScale: 4.0} to scale the small image
-  //      to the original one so that Appium can compare it as the original one.
-  defaultImageTemplateScale: DEFAULT_TEMPLATE_IMAGE_SCALE,
-
-  // whether Appium should re-check that an image element can be matched
-  // against the current screenshot before clicking it
-  checkForImageElementStaleness: true,
-
-  // whether before clicking on an image element Appium should re-determine the
-  // position of the element on screen
-  autoUpdateImageElementPosition: false,
-
-  // which method to use for tapping by coordinate for image elements. the
-  // options are 'w3c' or 'mjsonwp'
-  imageElementTapStrategy: IMAGE_EL_TAP_STRATEGY_W3C,
-
-  // which method to use to save the matched image area in ImageElement class.
-  // It is used for debugging purpose.
-  getMatchedImageResult: false,
-};
 const NO_OCCURRENCES_PATTERN = /Cannot find any occurrences/;
 const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
@@ -504,8 +451,6 @@ export default class ImageElementFinder {
     return (await imgTempObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
   }
 }
-
-export {DEFAULT_SETTINGS, DEFAULT_FIX_IMAGE_TEMPLATE_SCALE};
 
 /**
  * @typedef {import('@appium/types').ExternalDriver} ExternalDriver

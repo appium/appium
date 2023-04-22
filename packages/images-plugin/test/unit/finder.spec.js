@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import {imageUtil} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
-import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
+import {ImageElementPlugin} from '../../lib/plugin';
+import {IMAGE_STRATEGY} from '../../lib/constants';
 import ImageElementFinder from '../../lib/finder';
 import ImageElement from '../../lib/image-element';
 import sinon from 'sinon';

@@ -5,9 +5,8 @@ import {errors} from 'appium/driver';
 import BasePlugin from 'appium/plugin';
 import {compareImages} from './compare';
 import ImageElementFinder from './finder';
-import {ImageElement, IMAGE_ELEMENT_PREFIX} from './image-element';
-
-const IMAGE_STRATEGY = '-image';
+import {ImageElement} from './image-element';
+import {IMAGE_STRATEGY, IMAGE_ELEMENT_PREFIX} from './constants';
 
 function getImgElFromArgs(args) {
   for (let arg of args) {

@@ -3,8 +3,9 @@ import BaseDriver from 'appium/driver';
 import {util} from 'appium/support';
 import ImageElementFinder from '../../lib/finder';
 import {getImgElFromArgs} from '../../lib/plugin';
-import ImageElement, {IMAGE_ELEMENT_PREFIX} from '../../lib/image-element';
+import ImageElement from '../../lib/image-element';
 import sinon from 'sinon';
+import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
 
 const defRect = {x: 100, y: 110, width: 50, height: 25};
 const defTemplate = 'iVBORasdf';

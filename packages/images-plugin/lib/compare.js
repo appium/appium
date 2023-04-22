@@ -1,12 +1,7 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {getImagesMatches, getImagesSimilarity, getImageOccurrence} from '@appium/opencv';
-
-const MATCH_FEATURES_MODE = 'matchFeatures';
-const GET_SIMILARITY_MODE = 'getSimilarity';
-const MATCH_TEMPLATE_MODE = 'matchTemplate';
-
-const DEFAULT_MATCH_THRESHOLD = 0.4;
+import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from './constants';
 
 /**
  * Performs images comparison using OpenCV framework features.
@@ -84,13 +79,7 @@ function convertVisualizationToBase64(element) {
   return element;
 }
 
-export {
-  compareImages,
-  DEFAULT_MATCH_THRESHOLD,
-  MATCH_TEMPLATE_MODE,
-  MATCH_FEATURES_MODE,
-  GET_SIMILARITY_MODE,
-};
+export {compareImages};
 
 /**
  * @typedef {import('@appium/opencv').OccurrenceResult} OccurrenceResult

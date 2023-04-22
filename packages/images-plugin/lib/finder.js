@@ -17,6 +17,19 @@ const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_SIZE_BYTES = 1024 * 1024 * 40; // 40mb
 
+/**
+ * Checks if one rect fully contains another
+ *
+ * @param {import('@appium/types').Rect} templateRect The bounding rect
+ * @param {import('@appium/types').Rect} rect The rect to be checked for containment
+ * @returns {boolean} True if templateRect contains rect
+ */
+function containsRect(templateRect, rect) {
+  return templateRect.x <= rect.x && templateRect.y <= rect.y
+      && rect.width <= templateRect.x + templateRect.width - rect.x
+      && rect.height <= templateRect.y + templateRect.height - rect.y;
+}
+
 const DEFAULT_SETTINGS = {
   // value between 0 and 1 representing match strength, below which an image
   // element will not be found
@@ -160,9 +173,7 @@ export default class ImageElementFinder {
     const results = [];
     const condition = async () => {
       try {
-        const {b64Screenshot, scale} = await this.getScreenshotForImageFind(
-          driver, screenSize, containerRect
-        );
+        const {b64Screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
 
         b64Template = await this.fixImageTemplateScale(b64Template, {
           defaultImageTemplateScale,
@@ -179,21 +190,21 @@ export default class ImageElementFinder {
         if (imageMatchMethod) {
           comparisonOpts.method = imageMatchMethod;
         }
-        if (multiple) {
-          results.push(
-            ...(await compareImages(
-              MATCH_TEMPLATE_MODE,
-              b64Screenshot,
-              b64Template,
-              comparisonOpts
-            ))
-          );
-        } else {
-          results.push(
-            await compareImages(MATCH_TEMPLATE_MODE, b64Screenshot, b64Template, comparisonOpts)
-          );
-        }
-        return true;
+
+        const pushIfOk = (el) => {
+          if (containerRect && !containsRect(containerRect, el.rect)) {
+            log.debug(
+              `The matched element rectangle ${JSON.stringify(el.rect)} is not located ` +
+              `inside of the bounding rectangle ${JSON.stringify(containerRect)}, thus rejected`
+            );
+            return false;
+          }
+          results.push(el);
+          return true;
+        };
+
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, b64Screenshot, b64Template, comparisonOpts);
+        return _.some((_.isArray(elOrEls) ? elOrEls : [elOrEls]).map(pushIfOk));
       } catch (err) {
         // if compareImages fails, we'll get a specific error, but we should
         // retry, so trap that and just return false to trigger the next round of
@@ -231,12 +242,7 @@ export default class ImageElementFinder {
       log.info(`Image template matched: ${JSON.stringify(rect)}`);
       return new ImageElement(
         b64Template,
-        containerRect ? {
-          x: containerRect.x + rect.x,
-          y: containerRect.y + rect.y,
-          width: rect.width,
-          height: rect.height,
-        } : rect,
+        rect,
         score,
         visualization,
         this,
@@ -291,36 +297,23 @@ export default class ImageElementFinder {
    *
    * @param {ExternalDriver} driver
    * @param {import('@appium/types').Size} screenSize - The original size of the screen
-   * @param {import('@appium/types').Rect?} containerRect - Optional bounding container
    *
    * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
    */
-  async getScreenshotForImageFind(driver, screenSize, containerRect = null) {
-    if (containerRect && (containerRect.width < 1 || containerRect.height < 1)) {
-        throw new errors.InvalidArgumentError(`Connot find an image element inside a zero-size cotainer`);
-    }
-
+  async getScreenshotForImageFind(driver, screenSize) {
     if (!driver.getScreenshot) {
       throw new Error("This driver does not support the required 'getScreenshot' command");
     }
     const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
     const {fixImageFindScreenshotDims} = settings;
 
-    let b64Screenshot = await driver.getScreenshot();
-
-    const cropContainerBitmap = async (originalB64Bitmap) => containerRect
-      ? await imageUtil.cropBase64Image(originalB64Bitmap, {
-        left: containerRect.x,
-        top: containerRect.y,
-        width: containerRect.width,
-        height: containerRect.height,
-      }) : originalB64Bitmap;
+    const b64Screenshot = await driver.getScreenshot();
 
     // if the user has requested not to correct for aspect or size differences
     // between the screenshot and the screen, just return the screenshot now
     if (!fixImageFindScreenshotDims) {
       log.info(`Not verifying screenshot dimensions match screen`);
-      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
+      return {b64Screenshot};
     }
 
     if (screenSize.width < 1 || screenSize.height < 1) {
@@ -328,7 +321,7 @@ export default class ImageElementFinder {
         `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
         `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
+      return {b64Screenshot};
     }
 
     // otherwise, do some verification on the screenshot to make sure it matches
@@ -343,14 +336,14 @@ export default class ImageElementFinder {
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
         `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
+      return {b64Screenshot};
     }
 
     if (screenSize.width === shotWidth && screenSize.height === shotHeight) {
       // the height and width of the screenshot and the device screen match, which
       // means we should be safe when doing template matches
       log.info('Screenshot size matched screen size');
-      return {b64Screenshot: await cropContainerBitmap(b64Screenshot)};
+      return {b64Screenshot};
     }
 
     // otherwise, if they don't match, it could spell problems for the accuracy
@@ -366,14 +359,14 @@ export default class ImageElementFinder {
     if (Math.round(screenAR * FLOAT_PRECISION) === Math.round(shotAR * FLOAT_PRECISION)) {
       log.info(
         `Screenshot aspect ratio '${shotAR}' (${shotWidth}x${shotHeight}) matched ` +
-          `screen aspect ratio '${screenAR}' (${screenSize.width}x${screenSize.height})`
+        `screen aspect ratio '${screenAR}' (${screenSize.width}x${screenSize.height})`
       );
     } else {
       log.warn(
         `When trying to find an element, determined that the screen ` +
-          `aspect ratio and screenshot aspect ratio are different. Screen ` +
-          `is ${screenSize.width}x${screenSize.height} whereas screenshot is ` +
-          `${shotWidth}x${shotHeight}.`
+        `aspect ratio and screenshot aspect ratio are different. Screen ` +
+        `is ${screenSize.width}x${screenSize.height} whereas screenshot is ` +
+        `${shotWidth}x${shotHeight}.`
       );
 
       // In the case where the x-scale and y-scale are different, we need to decide
@@ -393,8 +386,8 @@ export default class ImageElementFinder {
 
       log.warn(
         `Resizing screenshot to ${shotWidth * scaleFactor}x${shotHeight * scaleFactor} to match ` +
-          `screen aspect ratio so that image element coordinates have a ` +
-          `greater chance of being correct.`
+        `screen aspect ratio so that image element coordinates have a ` +
+        `greater chance of being correct.`
       );
       imgObj = imgObj.resize(shotWidth * scaleFactor, shotHeight * scaleFactor);
 
@@ -420,10 +413,9 @@ export default class ImageElementFinder {
       scale.yScale *= (1.0 * screenSize.height) / shotHeight;
     }
 
-    b64Screenshot = (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
     return {
-      b64Screenshot: await cropContainerBitmap(b64Screenshot),
-      scale
+      b64Screenshot: (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64'),
+      scale,
     };
   }
 

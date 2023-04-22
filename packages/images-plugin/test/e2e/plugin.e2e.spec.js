@@ -34,11 +34,14 @@ const WDIO_OPTS = {
 };
 
 describe('ImageElementPlugin', function () {
-  let server,
-    driver = null;
+  let server;
+  let driver;
 
-  // this hook is intended to be run before the hooks created by `e2eSetup`
-  after(async function () {
+  beforeEach(async function () {
+    driver = await wdio(WDIO_OPTS);
+  });
+
+  afterEach(async function () {
     if (driver) {
       await driver.deleteSession();
     }
@@ -60,7 +63,6 @@ describe('ImageElementPlugin', function () {
   });
 
   it('should add the compareImages route', async function () {
-    driver = await wdio(WDIO_OPTS);
     let comparison = await driver.compareImages(
       MATCH_FEATURES_MODE,
       TEST_IMG_1_B64,
@@ -111,6 +113,5 @@ describe('ImageElementPlugin', function () {
     } finally {
       await fs.rimraf(tmpRoot);
     }
-
   });
 });

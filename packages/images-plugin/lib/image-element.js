@@ -245,9 +245,9 @@ export default class ImageElement {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
-      case 'findElement':
+      case 'findElementFromElement':
         return imgEl.find(false, driver, ...args);
-      case 'findElements':
+      case 'findElementsFromElement':
         return imgEl.find(true, driver, ...args);
       case 'elementDisplayed':
         return true;

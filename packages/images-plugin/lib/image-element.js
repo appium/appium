@@ -222,12 +222,9 @@ export default class ImageElement {
    */
   async find(multiple, driver, ...args) {
     const [strategy, selector] = args;
-
-    // if we're not actually finding by image, just do the normal thing
     if (strategy !== IMAGE_STRATEGY) {
       throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
     }
-
     return await this.finder.findByImage(selector, driver, {multiple, containerRect: this.rect});
   }
 
@@ -246,9 +243,9 @@ export default class ImageElement {
       case 'click':
         return await imgEl.click(driver);
       case 'findElementFromElement':
-        return imgEl.find(false, driver, ...args);
+        return await imgEl.find(false, driver, ...args);
       case 'findElementsFromElement':
-        return imgEl.find(true, driver, ...args);
+        return await imgEl.find(true, driver, ...args);
       case 'elementDisplayed':
         return true;
       case 'getSize':

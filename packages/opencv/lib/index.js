@@ -576,7 +576,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
       if (_.isEmpty(results)) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
         throw new Error(
-          `Match threshold: ${threshold}. Highest match value ` + `found was ${minMax.maxVal}`
+          `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`
         );
       }
     } catch (e) {
@@ -598,9 +598,12 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
         highlightRegion(fullHighlightedImage, result.rect);
         visualisePromises.push(cvMatToPng(singleHighlightedImage));
       }
-      [visualization,] = await B.all([cvMatToPng(fullHighlightedImage), ...visualisePromises]);
-      for (const [result, pngBuffer] of _.zip(results, visualisePromises)) {
-        result.visualization = await pngBuffer;
+      let restPngBuffers = [];
+      [visualization, ...restPngBuffers] = await B.all(
+        [cvMatToPng(fullHighlightedImage), ...visualisePromises]
+      );
+      for (const [result, pngBuffer] of _.zip(results, restPngBuffers)) {
+        result.visualization = pngBuffer;
       }
     }
     return {

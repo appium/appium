@@ -590,14 +590,18 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     if (visualize) {
       const fullHighlightedImage = fullImg.clone();
 
+      const visualisePromises = [];
       for (const result of results) {
         const singleHighlightedImage = fullImg.clone();
 
         highlightRegion(singleHighlightedImage, result.rect);
         highlightRegion(fullHighlightedImage, result.rect);
-        result.visualization = await (singleHighlightedImage);
+        visualisePromises.push(cvMatToPng(singleHighlightedImage));
       }
-      visualization = await cvMatToPng(fullHighlightedImage);
+      [visualization,] = await B.all([cvMatToPng(fullHighlightedImage), ...visualisePromises]);
+      for (const [result, pngBuffer] of _.zip(results, visualisePromises)) {
+        result.visualization = await pngBuffer;
+      }
     }
     return {
       rect: results[0].rect,

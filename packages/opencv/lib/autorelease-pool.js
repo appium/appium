@@ -25,11 +25,11 @@ export class OpenCvAutoreleasePool {
   }
 
   drain() {
-    for (const item of this._items) {
+    this._items.forEach((item) => {
       try {
         item.delete();
       } catch (ign) {}
-    }
+    });
     this._items.clear();
   }
 }

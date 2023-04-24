@@ -2,14 +2,12 @@ import _ from 'lodash';
 import {errors} from 'appium/driver';
 import {util} from 'appium/support';
 import log from './logger';
-import {DEFAULT_SETTINGS} from './finder';
+import {
+  IMAGE_STRATEGY, DEFAULT_SETTINGS, IMAGE_TAP_STRATEGIES,
+  IMAGE_ELEMENT_PREFIX, IMAGE_EL_TAP_STRATEGY_W3C,
+} from './constants';
 
-const IMAGE_ELEMENT_PREFIX = 'appium-image-element-';
 const TAP_DURATION_MS = 125;
-const IMAGE_EL_TAP_STRATEGY_W3C = 'w3cActions';
-const IMAGE_EL_TAP_STRATEGY_MJSONWP = 'touchActions';
-const IMAGE_TAP_STRATEGIES = [IMAGE_EL_TAP_STRATEGY_MJSONWP, IMAGE_EL_TAP_STRATEGY_W3C];
-const DEFAULT_TEMPLATE_IMAGE_SCALE = 1.0;
 
 /**
  * @typedef Dimension
@@ -37,14 +35,17 @@ export default class ImageElement {
    * @param {string?} b64Result - the base64-encoded image which has matched marks.
    *                              Defaults to null.
    * @param {import('./finder').default?} finder - the finder we can use to re-check stale elements
+   * @param {import('@appium/types').Rect?} containerRect - The bounding
+   * rectangle to limit the search in
    */
-  constructor(b64Template, rect, score, b64Result = null, finder = null) {
+  constructor(b64Template, rect, score, b64Result = null, finder = null, containerRect = null) {
     this.template = b64Template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
     this.b64MatchedImage = b64Result;
     this.score = score;
     this.finder = finder;
+    this.containerRect = containerRect;
   }
 
   /**
@@ -79,13 +80,11 @@ export default class ImageElement {
   }
 
   /**
-   * @param {string} protocolKey - the protocol-specific JSON key for
-   * a WebElement
    *
    * @returns {Element} - this image element as a WebElement
    */
-  asElement(protocolKey) {
-    return {[protocolKey]: this.id};
+  asElement() {
+    return util.wrapElement(this.id);
   }
 
   /**
@@ -132,11 +131,12 @@ export default class ImageElement {
     if (checkForImageElementStaleness || updatePos) {
       log.info('Checking image element for staleness before clicking');
       try {
-        newImgEl = await this.finder.findByImage(this.template, {
+        newImgEl = await this.finder.findByImage(this.template, driver, {
           shouldCheckStaleness: true,
           // Set ignoreDefaultImageTemplateScale because this.template is device screenshot based image
           // managed inside Appium after finidng image by template which managed by a user
           ignoreDefaultImageTemplateScale: true,
+          containerRect: this.containerRect,
         });
       } catch (err) {
         throw new errors.StaleElementReferenceError();
@@ -210,6 +210,22 @@ export default class ImageElement {
   }
 
   /**
+   * Perform lookup of image element(s) inside of the current element
+   *
+   * @param {boolean} multiple - Whether to lookup multiple elements
+   * @param {import('appium/driver').BaseDriver} driver - The driver to use for commands
+   * @param  {string[]} args = Rest of arguments for executeScripts
+   * @returns {Promise<Element|Element[]|ImageElement>} - WebDriver element with a special id prefix
+   */
+  async find(multiple, driver, ...args) {
+    const [strategy, selector] = args;
+    if (strategy !== IMAGE_STRATEGY) {
+      throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
+    }
+    return await this.finder.findByImage(selector, driver, {multiple, containerRect: this.rect});
+  }
+
+  /**
    * Handle various Appium commands that involve an image element
    *
    * @param {import('appium/driver').BaseDriver} driver - the driver to use for commands
@@ -223,6 +239,10 @@ export default class ImageElement {
     switch (cmd) {
       case 'click':
         return await imgEl.click(driver);
+      case 'findElementFromElement':
+        return await imgEl.find(false, driver, ...args);
+      case 'findElementsFromElement':
+        return await imgEl.find(true, driver, ...args);
       case 'elementDisplayed':
         return true;
       case 'getSize':
@@ -232,6 +252,8 @@ export default class ImageElement {
         return imgEl.location;
       case 'getElementRect':
         return imgEl.rect;
+      case 'getElementScreenshot':
+        return imgEl.template;
       case 'getAttribute':
         // /session/:sessionId/element/:elementId/attribute/:name
         // /session/:sessionId/element/:elementId/attribute/visual should retun the visual data
@@ -250,13 +272,7 @@ export default class ImageElement {
   }
 }
 
-export {
-  ImageElement,
-  IMAGE_EL_TAP_STRATEGY_MJSONWP,
-  IMAGE_EL_TAP_STRATEGY_W3C,
-  DEFAULT_TEMPLATE_IMAGE_SCALE,
-  IMAGE_ELEMENT_PREFIX,
-};
+export {ImageElement};
 
 /**
  * @typedef {import('@appium/types').Rect} Rect

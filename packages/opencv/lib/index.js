@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import Jimp from 'jimp';
 import {Buffer} from 'buffer';
 import B from 'bluebird';
+import sharp from 'sharp';
 
 /** @type {any} */
 let cv;
@@ -335,7 +335,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
         width: rect2.width,
         height: rect2.height,
       });
-      result.visualization = await jimpImgFromCvMat(visualization).getBufferAsync(Jimp.MIME_PNG);
+      result.visualization = await cvMatToPng(visualization);
     }
 
     return result;
@@ -442,7 +442,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
             height: boundingRect.height,
           });
         }
-        result.visualization = await jimpImgFromCvMat(resultMat).getBufferAsync(Jimp.MIME_PNG);
+        result.visualization = await cvMatToPng(resultMat);
       } finally {
         try {
           bothImages.delete();
@@ -527,10 +527,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
   let fullImg, partialImg, matched;
 
   try {
-    [fullImg, partialImg] = await B.all([
-      cvMatFromImage(fullImgData),
-      cvMatFromImage(partialImgData),
-    ]);
+    [fullImg, partialImg] = await B.all([cvMatFromImage(fullImgData), cvMatFromImage(partialImgData)]);
     matched = new cv.Mat();
     const results = [];
     let visualization = null;
@@ -579,7 +576,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
       if (_.isEmpty(results)) {
         // Below error message, `Cannot find any occurrences` is referenced in find by image
         throw new Error(
-          `Match threshold: ${threshold}. Highest match value ` + `found was ${minMax.maxVal}`
+          `Match threshold: ${threshold}. Highest match value found was ${minMax.maxVal}`
         );
       }
     } catch (e) {
@@ -593,16 +590,21 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     if (visualize) {
       const fullHighlightedImage = fullImg.clone();
 
+      const visualisePromises = [];
       for (const result of results) {
         const singleHighlightedImage = fullImg.clone();
 
         highlightRegion(singleHighlightedImage, result.rect);
         highlightRegion(fullHighlightedImage, result.rect);
-        result.visualization = await jimpImgFromCvMat(singleHighlightedImage).getBufferAsync(
-          Jimp.MIME_PNG
-        );
+        visualisePromises.push(cvMatToPng(singleHighlightedImage));
       }
-      visualization = await jimpImgFromCvMat(fullHighlightedImage).getBufferAsync(Jimp.MIME_PNG);
+      let restPngBuffers = [];
+      [visualization, ...restPngBuffers] = await B.all(
+        [cvMatToPng(fullHighlightedImage), ...visualisePromises]
+      );
+      for (const [result, pngBuffer] of _.zip(results, restPngBuffers)) {
+        result.visualization = pngBuffer;
+      }
     }
     return {
       rect: results[0].rect,
@@ -620,28 +622,37 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
 }
 
 /**
- * Convert an opencv image matrix into a Jimp image object
+ * Convert an opencv image matrix into a PNG buffer
  *
- * @param {cv.Mat} mat the image matrix
- * @return {Jimp} the Jimp image
+ * @param {cv.Mat} mat OpenCV image matrix
+ * @return {Promise<Buffer>} PNG image data buffer
  */
-function jimpImgFromCvMat(mat) {
-  return new Jimp({
-    width: mat.cols,
-    height: mat.rows,
-    data: Buffer.from(mat.data),
-  });
+async function cvMatToPng(mat) {
+  return await sharp(Buffer.from(mat.data), {
+    raw: {
+      width: mat.cols,
+      height: mat.rows,
+      channels: 4,
+    }
+  })
+  .png()
+  .toBuffer();
 }
 
 /**
- * Take a binary image buffer and return a cv.Mat
+ * Take an image buffer and return a cv.Mat
  *
- * @param {Buffer} img the image data buffer
- * @return {cv.Mat} the opencv matrix
+ * @param {Buffer} img image data buffer. All image formats avilable for
+ * https://www.npmjs.com/package/sharp node library are supported.
+ * @return {Promise<cv.Mat>} OpenCV image matrix
  */
 async function cvMatFromImage(img) {
-  const jimpImg = await Jimp.read(img);
-  return cv.matFromImageData(jimpImg.bitmap);
+  const {data, info} = await sharp(img)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({resolveWithObject: true});
+  const {width, height} = info;
+  return cv.matFromImageData({data, width, height});
 }
 
 /**

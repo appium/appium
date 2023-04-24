@@ -1,8 +1,10 @@
-import {ImageElementPlugin, IMAGE_STRATEGY} from '../../lib/plugin';
-import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from '../../lib/compare';
+import {ImageElementPlugin} from '../../lib/plugin';
+import {
+  MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE, IMAGE_STRATEGY
+} from '../../lib/constants';
 import BaseDriver from 'appium/driver';
-import {W3C_ELEMENT_KEY} from '../../lib/finder';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures';
+import { util } from '@appium/support';
 
 describe('ImageElementPlugin#handle', function () {
   const next = () => {};
@@ -56,7 +58,7 @@ describe('ImageElementPlugin#handle', function () {
     driver.settings = {getSettings: () => ({})};
     driver.isW3CProtocol = () => true;
     driver.getScreenshot = () => TEST_IMG_2_B64;
-    driver.getWindowSize = () => ({width: 64, height: 64});
+    driver.getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
     it('should defer execution to regular command if not a find command', async function () {
       const next = () => true;
       await p.handle(next, driver, 'sendKeys').should.eventually.become(true);
@@ -68,12 +70,12 @@ describe('ImageElementPlugin#handle', function () {
     });
     it('should find an image element inside a screenshot', async function () {
       const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
-      el[W3C_ELEMENT_KEY].should.include('appium-image-element');
+      util.unwrapElement(el).should.include('appium-image-element');
     });
     it('should find image elements inside a screenshot', async function () {
       const els = await p.findElements(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
       els.should.have.length(1);
-      els[0][W3C_ELEMENT_KEY].should.include('appium-image-element');
+      util.unwrapElement(els[0]).should.include('appium-image-element');
     });
   });
 
@@ -83,9 +85,9 @@ describe('ImageElementPlugin#handle', function () {
       driver.settings = {getSettings: () => ({})};
       driver.isW3CProtocol = () => true;
       driver.getScreenshot = () => TEST_IMG_2_B64;
-      driver.getWindowSize = () => ({width: 64, height: 64});
+      driver.getWindowRect = () => ({x: 0, y: 0, width: 64, height: 64});
       const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
-      elId = el[W3C_ELEMENT_KEY];
+      elId = util.unwrapElement(el);
     });
     it('should click on the screen coords of the middle of the element', async function () {
       let action = null;
@@ -140,7 +142,7 @@ describe('ImageElementPlugin#handle', function () {
         }),
       };
       const el = await p.findElement(next, driver, IMAGE_STRATEGY, TEST_IMG_2_PART_B64);
-      elId = el[W3C_ELEMENT_KEY];
+      elId = util.unwrapElement(el);
       await p
         .handle(next, driver, 'getAttribute', 'visual', elId)
         .should.eventually.include('iVBOR');

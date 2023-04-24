@@ -12,8 +12,8 @@ export class OpenCvAutoreleasePool {
 
   /**
    * @template T
-   * @param {...T} _items
-   * @return {T[]} the same items
+   * @param {...T} items
+   * @return {T[]|T} the same items
    */
   add(...items) {
     for (const item of items) {
@@ -21,7 +21,7 @@ export class OpenCvAutoreleasePool {
         this._items.add(item);
       }
     }
-    return items;
+    return items.length === 1 ? items[0] : items;
   }
 
   drain() {

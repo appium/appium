@@ -238,7 +238,7 @@ function highlightRegion(mat, region) {
 async function getImagesMatches(img1Data, img2Data, options = {}) {
   await initOpenCv();
 
-  const pool = OpenCvAutoreleasePool();
+  const pool = new OpenCvAutoreleasePool();
   try {
     const {
       detectorName = 'ORB',
@@ -510,7 +510,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     method = DEFAULT_MATCHING_METHOD,
   } = options;
 
-  const pool = OpenCvAutoreleasePool();
+  const pool = new OpenCvAutoreleasePool();
   try {
     const [fullImg, partialImg] = await B.all([cvMatFromImage(fullImgData), cvMatFromImage(partialImgData)])
       .map((x) => pool.add(x));

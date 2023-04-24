@@ -2,6 +2,7 @@ import _ from 'lodash';
 import {Buffer} from 'buffer';
 import B from 'bluebird';
 import sharp from 'sharp';
+import { OpenCvAutoreleasePool } from './autorelease-pool';
 
 /** @type {any} */
 let cv;
@@ -104,6 +105,7 @@ async function initOpenCv() {
  * for brute-force matching.
  * Read https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_matcher/py_matcher.html
  * for more details.
+ * The caller is responsible for releasing the returned objects.
  *
  * @param {OpenCVBindings['Mat']} img Image data
  * @param {OpenCVBindings['FeatureDetector']} detector OpenCV feature detector instance
@@ -173,13 +175,18 @@ function highlightRegion(mat, region) {
     return;
   }
 
-  // highlight in red
-  const color = new cv.Scalar(255, 0, 0, 255);
-  const thickness = 2;
-  const topLeft = new cv.Point(region.x, region.y);
-  const botRight = new cv.Point(region.x + region.width, region.y + region.height);
-  cv.rectangle(mat, topLeft, botRight, color, thickness, cv.LINE_8, 0);
-  return mat;
+  const pool = new OpenCvAutoreleasePool();
+  try {
+    // highlight in red
+    const color = pool.add(new cv.Scalar(255, 0, 0, 255));
+    const thickness = 2;
+    const topLeft = pool.add(new cv.Point(region.x, region.y));
+    const botRight = pool.add(new cv.Point(region.x + region.width, region.y + region.height));
+    cv.rectangle(mat, topLeft, botRight, color, thickness, cv.LINE_8, 0);
+    return mat;
+  } finally {
+    pool.drain();
+  }
 }
 
 /**
@@ -231,7 +238,7 @@ function highlightRegion(mat, region) {
 async function getImagesMatches(img1Data, img2Data, options = {}) {
   await initOpenCv();
 
-  let img1, img2, detector, result1, result2, matcher, matchesVec;
+  const pool = OpenCvAutoreleasePool();
   try {
     const {
       detectorName = 'ORB',
@@ -254,13 +261,15 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
       );
     }
 
-    detector = new cv[AVAILABLE_DETECTORS[detectorName]]();
-    [img1, img2] = await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]);
-    result1 = detectAndCompute(img1, detector);
-    result2 = detectAndCompute(img2, detector);
-    matcher = new cv.DescriptorMatcher(AVAILABLE_MATCHING_FUNCTIONS[matchFunc]);
-    matchesVec = new cv.DMatchVector();
-    let matches = [];
+    const detector = pool.add(new cv[AVAILABLE_DETECTORS[detectorName]]());
+    const [img1, img2] = (await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]))
+      .map((x) => pool.add(x));
+    const result1 = detectAndCompute(img1, detector);
+    pool.add(result1.keyPoints, result1.descriptor);
+    const result2 = detectAndCompute(img2, detector);
+    pool.add(result2.keyPoints, result2.descriptor);
+    const matcher = pool.add(new cv.DescriptorMatcher(AVAILABLE_MATCHING_FUNCTIONS[matchFunc]));
+    const matchesVec = pool.add(new cv.DMatchVector());
     matcher.match(result1.descriptor, result2.descriptor, matchesVec);
     const totalCount = matchesVec.size();
     if (totalCount < 1) {
@@ -269,6 +278,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
           `resolution, or use another detector or matching function.`
       );
     }
+    let matches = [];
     for (let i = 0; i < totalCount; i++) {
       matches.push(matchesVec.get(i));
     }
@@ -313,12 +323,12 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
       count: matches.length,
     };
     if (visualize) {
-      const goodMatchesVec = new cv.DMatchVector();
+      const goodMatchesVec = pool.add(new cv.DMatchVector());
       for (let i = 0; i < matches.length; i++) {
         goodMatchesVec.push_back(matches[i]);
       }
-      const visualization = new cv.Mat();
-      const color = new cv.Scalar(0, 255, 0, 255);
+      const visualization = pool.add(new cv.Mat());
+      const color = pool.add(new cv.Scalar(0, 255, 0, 255));
       cv.drawMatches(
         img1,
         result1.keyPoints,
@@ -340,17 +350,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
 
     return result;
   } finally {
-    try {
-      img1.delete();
-      img2.delete();
-      detector.delete();
-      result1.keyPoints.delete();
-      result1.descriptor.delete();
-      result2.keyPoints.delete();
-      result2.descriptor.delete();
-      matcher.delete();
-      matchesVec.delete();
-    } catch (ign) {}
+    pool.drain();
   }
 }
 
@@ -374,7 +374,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  * @typedef SimilarityResult
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {?Buffer} visualization The visualization of the matching result
+ * @property {Buffer?} visualization The visualization of the matching result
  * represented as PNG image buffer. This image includes both input pictures where
  * difference regions are highlighted with rectangles.
  */
@@ -385,7 +385,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  *
  * @param {Buffer} img1Data The data of the first image packed into a NodeJS buffer
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
- * @param {?SimilarityOptions} options [{}] Set of similarity calculation options
+ * @param {SimilarityOptions} options [{}] Set of similarity calculation options
  *
  * @returns {SimilarityResult} The calculation result
  * @throws {Error} If the given images have different resolution.
@@ -395,9 +395,10 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
 
   const {method = DEFAULT_MATCHING_METHOD, visualize = false} = options;
 
-  let template, reference, matched;
+  const pool = new OpenCvAutoreleasePool();
   try {
-    [template, reference] = await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]);
+    const [template, reference] = (await B.all([cvMatFromImage(img1Data), cvMatFromImage(img2Data)]))
+      .map((x) => pool.add(x));
     if (template.rows !== reference.rows || template.cols !== reference.cols) {
       throw new Error(
         'Both images are expected to have the same size in order to ' +
@@ -407,7 +408,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
     template.convertTo(template, cv.CV_8UC3);
     reference.convertTo(reference, cv.CV_8UC3);
 
-    matched = new cv.Mat();
+    const matched = pool.add(new cv.Mat());
     cv.matchTemplate(reference, template, matched, toMatchingMethod(method));
     const minMax = cv.minMaxLoc(matched);
     const result = {
@@ -415,51 +416,36 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
     };
 
     if (visualize) {
-      let bothImages, resultMat, mask, contours, hierarchy;
-      try {
-        resultMat = new cv.Mat(template.rows, template.cols * 2, cv.CV_8UC3);
-        bothImages = new cv.MatVector();
-        bothImages.push_back(reference);
-        bothImages.push_back(template);
-        cv.hconcat(bothImages, resultMat);
+      const resultMat = pool.add(new cv.Mat(template.rows, template.cols * 2, cv.CV_8UC3));
+      const bothImages = pool.add(new cv.MatVector());
+      bothImages.push_back(reference);
+      bothImages.push_back(template);
+      cv.hconcat(bothImages, resultMat);
 
-        mask = new cv.Mat();
-        cv.absdiff(reference, template, mask);
-        cv.cvtColor(mask, mask, cv.COLOR_BGR2GRAY, 0);
+      const mask = pool.add(new cv.Mat());
+      cv.absdiff(reference, template, mask);
+      cv.cvtColor(mask, mask, cv.COLOR_BGR2GRAY, 0);
 
-        cv.threshold(mask, mask, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
-        contours = new cv.MatVector();
-        hierarchy = new cv.Mat();
-        cv.findContours(mask, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+      cv.threshold(mask, mask, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU);
+      const contours = pool.add(new cv.MatVector());
+      const hierarchy = pool.add(new cv.Mat());
+      cv.findContours(mask, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
 
-        for (let i = 0; i < contours.size(); i++) {
-          const boundingRect = cv.boundingRect(contours.get(i));
-          highlightRegion(resultMat, boundingRect);
-          highlightRegion(resultMat, {
-            x: reference.cols + boundingRect.x,
-            y: boundingRect.y,
-            width: boundingRect.width,
-            height: boundingRect.height,
-          });
-        }
-        result.visualization = await cvMatToPng(resultMat);
-      } finally {
-        try {
-          bothImages.delete();
-          resultMat.delete();
-          mask.delete();
-          contours.delete();
-          hierarchy.delete();
-        } catch (ign) {}
+      for (let i = 0; i < contours.size(); i++) {
+        const boundingRect = pool.add(cv.boundingRect(contours.get(i)));
+        highlightRegion(resultMat, boundingRect);
+        highlightRegion(resultMat, {
+          x: reference.cols + boundingRect.x,
+          y: boundingRect.y,
+          width: boundingRect.width,
+          height: boundingRect.height,
+        });
       }
+      result.visualization = await cvMatToPng(resultMat);
     }
     return result;
   } finally {
-    try {
-      template.delete();
-      reference.delete();
-      matched.delete();
-    } catch (ign) {}
+    pool.drain();
   }
 }
 
@@ -508,7 +494,7 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  *
  * @param {Buffer} fullImgData The data of the full image packed into a NodeJS buffer
  * @param {Buffer} partialImgData The data of the partial image packed into a NodeJS buffer
- * @param {OccurrenceOptions?} [options] Set of occurrence calculation options
+ * @param {OccurrenceOptions} [options] Set of occurrence calculation options
  *
  * @returns {OccurrenceResult}
  * @throws {Error} If no occurrences of the partial image can be found in the full image
@@ -524,11 +510,11 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     method = DEFAULT_MATCHING_METHOD,
   } = options;
 
-  let fullImg, partialImg, matched;
-
+  const pool = OpenCvAutoreleasePool();
   try {
-    [fullImg, partialImg] = await B.all([cvMatFromImage(fullImgData), cvMatFromImage(partialImgData)]);
-    matched = new cv.Mat();
+    const [fullImg, partialImg] = await B.all([cvMatFromImage(fullImgData), cvMatFromImage(partialImgData)])
+      .map((x) => pool.add(x));
+    const matched = pool.add(new cv.Mat());
     const results = [];
     let visualization = null;
 
@@ -588,11 +574,11 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
     }
 
     if (visualize) {
-      const fullHighlightedImage = fullImg.clone();
+      const fullHighlightedImage = pool.add(fullImg.clone());
 
       const visualisePromises = [];
       for (const result of results) {
-        const singleHighlightedImage = fullImg.clone();
+        const singleHighlightedImage = pool.add(fullImg.clone());
 
         highlightRegion(singleHighlightedImage, result.rect);
         highlightRegion(fullHighlightedImage, result.rect);
@@ -613,11 +599,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
       multiple: results,
     };
   } finally {
-    try {
-      fullImg.delete();
-      partialImg.delete();
-      matched.delete();
-    } catch (ign) {}
+    pool.drain();
   }
 }
 

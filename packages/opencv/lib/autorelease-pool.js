@@ -30,6 +30,6 @@ export class OpenCvAutoreleasePool {
         item.delete();
       } catch (ign) {}
     }
-    this._items = [];
+    this._items.clear();
   }
 }

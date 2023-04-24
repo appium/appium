@@ -1,6 +1,6 @@
 // transpile:mocha
 
-import {server, routeConfiguringFunction} from '../../../lib';
+import {server, routeConfiguringFunction, SslHandler} from '../../../lib';
 import {configureServer, normalizeBasePath} from '../../../lib/express/server';
 import {createSandbox} from 'sinon';
 import {getTestPort} from '@appium/driver-test-support';
@@ -126,6 +126,49 @@ describe('server configuration', function () {
       normalizeBasePath('foo').should.eql('/foo');
       normalizeBasePath('wd/hub').should.eql('/wd/hub');
       normalizeBasePath('wd/hub/').should.eql('/wd/hub');
+    });
+  });
+
+  describe('#handleHttpsOptions', function () {
+    beforeEach(function () {
+      delete process.env.APPIUM_SECURE;
+      delete process.env.APPIUM_SSL_CERT_PATH;
+      delete process.env.APPIUM_SSL_KEY_PATH;
+    });
+    it('it should throw an error if file does not exist', function () {
+      process.env.APPIUM_SECURE = 'true';
+      process.env.APPIUM_SSL_CERT_PATH = 'some/path/file.pem';
+      process.env.APPIUM_SSL_KEY_PATH = 'some/path/file.pem';
+      should.throw(() => {
+        SslHandler.getInstance().handleHttpsOptions();
+      });
+    });
+    it('it should throw an error if APPIUM_SSL_CERT_PATH is not set along with APPIUM_SECURE', function () {
+      process.env.APPIUM_SECURE = 'true';
+      process.env.APPIUM_SSL_KEY_PATH = 'some/path/file.pem';
+      should.throw(() => {
+        SslHandler.getInstance().handleHttpsOptions();
+      });
+    });
+    it('it should throw an error if APPIUM_SSL_CERT_PATH is not set along with APPIUM_SECURE', function () {
+      process.env.APPIUM_SECURE = 'true';
+      process.env.APPIUM_SSL_KEY_PATH = 'some/path/file.pem';
+      should.throw(() => {
+        SslHandler.getInstance().handleHttpsOptions();
+      });
+    });
+    it('it should not throw an error if APPIUM_SECURE is not set', function () {
+      process.env.APPIUM_SSL_KEY_PATH = 'some/path/file.pem';
+      should.not.throw(() => {
+        SslHandler.getInstance().handleHttpsOptions();
+      });
+    });
+    it('it should not throw an error if APPIUM_SECURE is set to false', function () {
+      process.env.APPIUM_SECURE = 'false';
+      process.env.APPIUM_SSL_KEY_PATH = 'some/path/file.pem';
+      should.not.throw(() => {
+        SslHandler.getInstance().handleHttpsOptions();
+      });
     });
   });
 });

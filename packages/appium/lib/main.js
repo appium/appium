@@ -2,7 +2,11 @@
 
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
-import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
+import {
+  routeConfiguringFunction as makeRouter,
+  server as baseServer,
+  SslHandler,
+} from '@appium/base-driver';
 import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
@@ -164,8 +168,8 @@ async function prepareAppiumHome(name, appiumHome) {
     }
     throw new Error(
       `The path '${appiumHome}' provided in the ${name} must point ` +
-      `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
-      `Original error: ${err.message}`
+        `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
+        `Original error: ${err.message}`
     );
   }
   if (!stat.isDirectory()) {
@@ -178,8 +182,8 @@ async function prepareAppiumHome(name, appiumHome) {
   } catch (e) {
     throw new Error(
       `The folder path '${appiumHome}' provided in the ${name} must be ` +
-      `writeable for the current user account '${os.userInfo().username}. ` +
-      `Original error: ${e.message}`
+        `writeable for the current user account '${os.userInfo().username}. ` +
+        `Original error: ${e.message}`
     );
   }
   return appiumHome;
@@ -417,8 +421,9 @@ async function main(args) {
     });
   }
 
+  const serverType = SslHandler.getInstance()._secure ? 'https' : 'http';
   logger.info(
-    `Appium REST http interface listener started on ${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
+    `Appium REST ${serverType} interface listener started on ${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
   );
 
   driverConfig.print();

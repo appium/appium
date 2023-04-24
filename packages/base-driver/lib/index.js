@@ -41,6 +41,8 @@ export {
 // Web socket helpers
 export {DEFAULT_WS_PATHNAME_PREFIX} from './express/websocket';
 
+export {SslHandler} from './express/ssl-handler';
+
 /**
  * @typedef {import('./express/server').ServerOpts} ServerOpts
  */

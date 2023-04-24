@@ -134,6 +134,10 @@ Appium supports execution of parallel server processes as well as parallel drive
 single server process. Refer the corresponding driver documentations regarding which mode is optimal
 for the particular driver or whether it supports parallel sessions.
 
+Appium runs by default on an HTTP server. If an HTTPS server should be used instead, simply set
+the following three ENV variables. ENV 'APPIUM_SECURE' to 'true' and ENV 'APPIUM_SSL_CERT_PATH' should contain
+a path to the certificate and ENV 'APPIUM_SSL_KEY_PATH' to the key, respectively.
+
 ### Why Appium?
 
 1. You usually don't have to recompile your app or modify it in any way, due

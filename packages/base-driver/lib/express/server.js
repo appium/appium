@@ -2,6 +2,7 @@ import _ from 'lodash';
 import path from 'path';
 import express from 'express';
 import http from 'http';
+import https from 'https';
 import favicon from 'serve-favicon';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
@@ -29,6 +30,7 @@ import {DEFAULT_BASE_PATH} from '../constants';
 import {EventEmitter} from 'events';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+import {SslHandler} from './ssl-handler';
 
 /**
  *
@@ -48,9 +50,14 @@ async function server(opts) {
     keepAliveTimeout = KEEP_ALIVE_TIMEOUT_MS,
   } = opts;
 
-  // create the actual http server
+  // create the actual http or https server
   const app = express();
-  const httpServer = http.createServer(app);
+  let server;
+  if (SslHandler.getInstance().secure) {
+    server = https.createServer(SslHandler.getInstance().httpsOptions, app);
+  } else {
+    server = http.createServer(app);
+  }
   return await new B(async (resolve, reject) => {
     // we put an async function as the promise constructor because we want some things to happen in
     // serial (application of plugin updates, for example). But we still need to use a promise here
@@ -58,8 +65,8 @@ async function server(opts) {
     // way we resolve it is to use an async function here but to wrap all the inner logic in
     // try/catch so any errors can be passed to reject.
     try {
-      const appiumServer = configureHttp({
-        httpServer,
+      const appiumServer = configureHttpOrHttps({
+        server,
         reject,
         keepAliveTimeout,
       });
@@ -80,7 +87,7 @@ async function server(opts) {
       // want to block extensions' ability to add routes if they want.
       app.all('*', catch404Handler);
 
-      await startServer({httpServer, hostname, port, keepAliveTimeout});
+      await startServer({server, hostname, port, keepAliveTimeout});
 
       resolve(appiumServer);
     } catch (err) {
@@ -141,12 +148,12 @@ function configureServer({
 }
 
 /**
- * Monkeypatches the `http.Server` instance and returns a {@linkcode AppiumServer}.
+ * Monkeypatches the `http(s).Server` instance and returns a {@linkcode AppiumServer}.
  * This function _mutates_ the `httpServer` parameter.
- * @param {ConfigureHttpOpts} opts
+ * @param {ConfigureHttpOrHttpsOpts} opts
  * @returns {AppiumServer}
  */
-function configureHttp({httpServer, reject, keepAliveTimeout}) {
+function configureHttpOrHttps({server, reject, keepAliveTimeout}) {
   const serverState = {
     notifier: new EventEmitter(),
     closed: false,
@@ -154,7 +161,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   /**
    * @type {AppiumServer}
    */
-  const appiumServer = /** @type {any} */ (httpServer);
+  const appiumServer = /** @type {any} */ (server);
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
@@ -169,7 +176,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
       serverState.closed = true;
       serverState.notifier.emit('shutdown');
       log.info('Waiting until the server is closed');
-      httpServer.on('close', () => {
+      server.on('close', () => {
         log.info('Received server close event');
         resolve();
       });
@@ -230,15 +237,15 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
  * @param {StartServerOpts} opts
  * @returns {Promise<void>}
  */
-async function startServer({httpServer, port, hostname, keepAliveTimeout}) {
+async function startServer({server, port, hostname, keepAliveTimeout}) {
   // If the hostname is omitted, the server will accept
   // connections on any IP address
   /** @type {(port: number, hostname?: string) => B<http.Server>} */
-  const start = B.promisify(httpServer.listen, {context: httpServer});
+  const start = B.promisify(server.listen, {context: server});
   const startPromise = start(port, hostname);
-  httpServer.keepAliveTimeout = keepAliveTimeout;
+  server.keepAliveTimeout = keepAliveTimeout;
   // headers timeout must be greater than keepAliveTimeout
-  httpServer.headersTimeout = keepAliveTimeout + 5 * 1000;
+  server.headersTimeout = keepAliveTimeout + 5 * 1000;
   await startPromise;
 }
 
@@ -270,7 +277,7 @@ export {server, configureServer, normalizeBasePath};
 /**
  * Options for {@linkcode startServer}.
  * @typedef StartServerOpts
- * @property {import('http').Server} httpServer - HTTP server instance
+ * @property {import('http').Server|import('https').Server} server - HTTP/HTTPS server instance
  * @property {number} port - Port to run on
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
  * @property {string} [hostname] - Optional hostname
@@ -286,9 +293,9 @@ export {server, configureServer, normalizeBasePath};
  */
 
 /**
- * Options for {@linkcode configureHttp}
- * @typedef ConfigureHttpOpts
- * @property {import('http').Server} httpServer - HTTP server instance
+ * Options for {@linkcode configureHttpOrHttps}
+ * @typedef ConfigureHttpOrHttpsOpts
+ * @property {(import('http').Server)|(import('https').Server)} server - HTTP/HTTPS server instance
  * @property {(error?: any) => void} reject - Rejection function from `Promise` constructor
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
  */

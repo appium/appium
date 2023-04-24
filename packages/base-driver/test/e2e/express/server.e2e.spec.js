@@ -1,16 +1,40 @@
-import {server} from '../../../lib';
+import {SslHandler, server} from '../../../lib';
 import axios from 'axios';
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+import {given} from 'mocha-testdata';
+import {promisify} from 'util';
+
+const exec = promisify(require('child_process').exec);
+
+let givens = [{protocol: 'http'}, {protocol: 'https'}];
+
+async function startHttpsServer(port, routeConfiguringFunction, serverUpdaters = []) {
+  await exec('openssl genrsa 2048 > private.pem');
+  await exec(
+    'openssl req -x509 -days 1000 -new -key private.pem -out public.pem -subj /CN="sslhandler.test.com"/OU="Appium"/O="Appium"/C=US/'
+  );
+  process.env.APPIUM_SECURE = 'true';
+  process.env.APPIUM_SSL_CERT_PATH = 'public.pem';
+  process.env.APPIUM_SSL_KEY_PATH = 'private.pem';
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+  return await server({
+    routeConfiguringFunction,
+    port,
+    serverUpdaters,
+  });
+}
 
 describe('server', function () {
-  let hwServer;
-  let port;
+  let httpHwServer;
+  let httpPort;
+  let httpsPort;
+  let httpsHwServer;
   let sandbox;
   before(async function () {
-    port = await getTestPort(true);
+    httpPort = await getTestPort(true);
 
     function configureRoutes(app) {
       app.get('/', (req, res) => {
@@ -29,29 +53,35 @@ describe('server', function () {
         res.status(200).send('We have waited!');
       });
     }
-    hwServer = await server({
+    httpHwServer = await server({
       routeConfiguringFunction: configureRoutes,
-      port,
+      port: httpPort,
     });
+    httpsPort = await getTestPort(true);
+    SslHandler.instance = null;
+    httpsHwServer = await startHttpsServer(httpsPort, configureRoutes);
   });
   beforeEach(function () {
     sandbox = createSandbox();
     sandbox.stub(console, 'error');
   });
   after(async function () {
-    await hwServer.close();
+    await httpHwServer.close();
+    await httpsHwServer.close();
   });
   afterEach(function () {
     sandbox.restore();
   });
 
-  it('should start up with our middleware', async function () {
-    const {data} = await axios.get(`http://${TEST_HOST}:${port}/`);
+  given(givens).it('should start up with our middleware', async function ({protocol}) {
+    const correctPort = protocol === 'http' ? httpPort : httpsPort;
+    const {data} = await axios.get(`${protocol}://${TEST_HOST}:${correctPort}/`);
     data.should.eql('Hello World!');
   });
-  it('should fix broken context type', async function () {
+  given(givens).it('should fix broken context type', async function ({protocol}) {
+    const correctPort = protocol === 'http' ? httpPort : httpsPort;
     const {data} = await axios({
-      url: `http://${TEST_HOST}:${port}/python`,
+      url: `${protocol}://${TEST_HOST}:${correctPort}/python`,
       headers: {
         'user-agent': 'Python',
         'content-type': 'application/x-www-form-urlencoded',
@@ -59,54 +89,76 @@ describe('server', function () {
     });
     data.should.eql('application/json; charset=utf-8');
   });
-  it('should catch errors in the catchall', async function () {
-    await axios.get(`http://${TEST_HOST}:${port}/error`).should.be.rejected;
+  given(givens).it('should catch errors in the catchall', async function ({protocol}) {
+    const correctPort = protocol === 'http' ? httpPort : httpsPort;
+    await axios.get(`${protocol}://${TEST_HOST}:${correctPort}/error`).should.be.rejected;
   });
-  it('should error if we try to start again on a port that is used', async function () {
-    await server({
-      routeConfiguringFunction() {},
-      port,
-    }).should.be.rejectedWith(/EADDRINUSE/);
-  });
-  it('should not wait for the server close connections before finishing closing', async function () {
-    let bodyPromise = axios.get(`http://${TEST_HOST}:${port}/pause`).catch(() => {});
+  given(givens).it(
+    'should error if we try to start again on a port that is used',
+    async function () {
+      await server({
+        routeConfiguringFunction() {},
+        port: httpPort,
+      }).should.be.rejectedWith(/EADDRINUSE/);
+    }
+  );
+  given(givens).it(
+    'should not wait for the server close connections before finishing closing',
+    async function ({protocol}) {
+      const correctPort = protocol === 'http' ? httpPort : httpsPort;
+      let bodyPromise = axios
+        .get(`${protocol}://${TEST_HOST}:${correctPort}/pause`)
+        .catch(() => {});
 
-    // relinquish control so that we don't close before the request is received
-    await B.delay(100);
+      // relinquish control so that we don't close before the request is received
+      await B.delay(100);
 
-    let before = Date.now();
-    await hwServer.close();
-    // expect slightly less than the request waited, since we paused above
-    (Date.now() - before).should.not.be.above(800);
+      let before = Date.now();
+      await httpHwServer.close();
+      await httpsHwServer.close();
+      // expect slightly less than the request waited, since we paused above
+      (Date.now() - before).should.not.be.above(800);
 
-    await bodyPromise;
-  });
+      await bodyPromise;
+    }
+  );
   it('should error if we try to start on a bad hostname', async function () {
     this.timeout(60000);
     await server({
       routeConfiguringFunction: _.noop,
-      port,
+      port: httpPort,
       hostname: 'lolcathost',
     }).should.be.rejectedWith(/ENOTFOUND|EADDRNOTAVAIL|EAI_AGAIN/);
     await server({
       routeConfiguringFunction: _.noop,
-      port,
+      port: httpPort,
       hostname: '1.1.1.1',
     }).should.be.rejectedWith(/EADDRNOTAVAIL/);
   });
 });
 
 describe('server plugins', function () {
-  let hwServer;
-  let port;
+  let httpHwServer;
+  let httpsHwServer;
+  let httpPort;
+  let httpsPort;
 
   before(async function () {
-    port = await getTestPort(true);
+    httpPort = await getTestPort(true);
+    httpsPort = await getTestPort(true);
+  });
+
+  beforeEach(async function () {
+    delete process.env.APPIUM_SECURE;
+    delete process.env.APPIUM_SSL_CERT_PATH;
+    delete process.env.APPIUM_SSL_KEY_PATH;
+    SslHandler.instance = null;
   });
 
   afterEach(async function () {
     try {
-      await hwServer.close();
+      //await httpHwServer.close();
+      await httpsHwServer.close();
     } catch (ign) {}
   });
 
@@ -120,32 +172,49 @@ describe('server plugins', function () {
       httpServer[`_updated_${route}`] = true;
     };
   }
-
-  it('should allow one or more plugins to update the server', async function () {
-    hwServer = await server({
-      routeConfiguringFunction: _.noop,
-      port,
-      serverUpdaters: [
-        updaterWithGetRoute('plugin1', 'res from plugin1 route'),
-        updaterWithGetRoute('plugin2', 'res from plugin2 route'),
-      ],
-    });
-    let {data} = await axios.get(`http://${TEST_HOST}:${port}/plugin1`);
-    data.should.eql('res from plugin1 route');
-    ({data} = await axios.get(`http://${TEST_HOST}:${port}/plugin2`));
-    data.should.eql('res from plugin2 route');
-    hwServer._updated_plugin1.should.be.true;
-    hwServer._updated_plugin2.should.be.true;
-  });
-  it('should pass on errors from the plugin updateServer method', async function () {
-    await server({
-      routeConfiguringFunction: _.noop,
-      port,
-      serverUpdaters: [
-        () => {
-          throw new Error('ugh');
-        },
-      ],
-    }).should.eventually.be.rejectedWith(/ugh/);
-  });
+  given(givens).it(
+    'should allow one or more plugins to update the server',
+    async function ({protocol}) {
+      let correctPort;
+      if (protocol === 'http') {
+        correctPort = httpPort;
+        httpHwServer = await server({
+          routeConfiguringFunction: _.noop,
+          port: correctPort,
+          serverUpdaters: [
+            updaterWithGetRoute('plugin1', 'res from plugin1 route'),
+            updaterWithGetRoute('plugin2', 'res from plugin2 route'),
+          ],
+        });
+      } else {
+        correctPort = httpsPort;
+        httpsHwServer = await startHttpsServer(httpsPort, _.noop, [
+          updaterWithGetRoute('plugin1', 'res from plugin1 route'),
+          updaterWithGetRoute('plugin2', 'res from plugin2 route'),
+        ]);
+      }
+      let {data} = await axios.get(`${protocol}://${TEST_HOST}:${correctPort}/plugin1`);
+      data.should.eql('res from plugin1 route');
+      ({data} = await axios.get(`${protocol}://${TEST_HOST}:${correctPort}/plugin2`));
+      data.should.eql('res from plugin2 route');
+      const correctServer = protocol === 'http' ? httpHwServer : httpsHwServer;
+      correctServer._updated_plugin1.should.be.true;
+      correctServer._updated_plugin2.should.be.true;
+    }
+  );
+  given(givens).it(
+    'should pass on errors from the plugin updateServer method',
+    async function ({protocol}) {
+      const correctPort = protocol === 'http' ? httpPort : httpsPort;
+      await server({
+        routeConfiguringFunction: _.noop,
+        port: correctPort,
+        serverUpdaters: [
+          () => {
+            throw new Error('ugh');
+          },
+        ],
+      }).should.eventually.be.rejectedWith(/ugh/);
+    }
+  );
 });

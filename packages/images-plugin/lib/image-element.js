@@ -23,14 +23,12 @@ const TAP_DURATION_MS = 125;
 
 /**
  * @typedef ImageElementOpts
- * @property {string} b64Template - the base64-encoded image which was used to
- *                               find this ImageElement
+ * @property {Buffer} template - the image which was used to find this ImageElement
  * @property {Rect} rect - bounds of matched image element
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
  * @property {string} sessionId - identifier of the corresponding driver session
- * @property {string?} b64Result - the base64-encoded image which has matched marks.
- *                              Defaults to null.
+ * @property {Buffer?} match - the image which has matched marks. Defaults to null.
  * @property {import('./finder').default?} finder - the finder we can use to re-check stale elements
  * @property {import('@appium/types').Rect?} containerRect - The bounding
  * rectangle to limit the search in
@@ -45,19 +43,19 @@ export default class ImageElement {
    * @param {ImageElementOpts}
    */
   constructor({
-    b64Template,
+    template,
     rect,
     score,
     sessionId,
-    b64Result = null,
+    match = null,
     finder = null,
     containerRect = null,
   }) {
-    this.template = b64Template;
+    this.template = template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
     this.sessionId = sessionId;
-    this.b64MatchedImage = b64Result;
+    this.match = match;
     this.score = score;
     this.finder = finder;
     this.containerRect = containerRect;
@@ -88,10 +86,17 @@ export default class ImageElement {
   }
 
   /**
-   * @returns {?string} - the base64-encoded image which has matched marks
+   * @returns {string} - the base64-encoded original image used for matching
+   */
+  get originalImage() {
+    return this.template.toString('base64');
+  }
+
+  /**
+   * @returns {string|null} - the base64-encoded image which has matched marks
    */
   get matchedImage() {
-    return this.b64MatchedImage;
+    return this.match?.toString('base64') ?? null;
   }
 
   /**
@@ -268,7 +273,7 @@ export default class ImageElement {
       case 'getElementRect':
         return imgEl.rect;
       case 'getElementScreenshot':
-        return imgEl.template;
+        return imgEl.originalImage;
       case 'getAttribute':
         // /session/:sessionId/element/:elementId/attribute/:name
         // /session/:sessionId/element/:elementId/attribute/visual should retun the visual data

@@ -8,7 +8,7 @@ import sinon from 'sinon';
 import {IMAGE_ELEMENT_PREFIX} from '../../lib/constants';
 
 const defRect = {x: 100, y: 110, width: 50, height: 25};
-const defTemplate = 'iVBORasdf';
+const defTemplate = Buffer.from('iVBORasdf', 'base64');
 
 describe('ImageElement', function () {
   const driver = new BaseDriver();
@@ -26,7 +26,7 @@ describe('ImageElement', function () {
   describe('.size', function () {
     it('should return the width and height of the image el', function () {
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       el.size.should.eql({width: defRect.width, height: defRect.height});
@@ -36,7 +36,7 @@ describe('ImageElement', function () {
   describe('.location', function () {
     it('should return the location of the image el', function () {
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       el.location.should.eql({x: defRect.x, y: defRect.y});
@@ -46,7 +46,7 @@ describe('ImageElement', function () {
   describe('.center', function () {
     it('should return the center location of the image el', function () {
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       el.center.should.eql({
@@ -59,7 +59,7 @@ describe('ImageElement', function () {
   describe('.asElement', function () {
     it('should get the webdriver object representation of the element', function () {
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       util.unwrapElement(el.asElement()).should.match(/^appium-image-el/);
@@ -69,11 +69,11 @@ describe('ImageElement', function () {
   describe('.equals', function () {
     it('should say two image elements with same rect are equal', function () {
       const el1 = new ImageElement({
-        b64Template: 'foo',
+        template: Buffer.from('foo'),
         rect: defRect
       });
       const el2 = new ImageElement({
-        b64Template: 'bar',
+        template: Buffer.from('bar'),
         rect: defRect
       });
       el1.equals(el2).should.be.true;
@@ -81,11 +81,11 @@ describe('ImageElement', function () {
     });
     it('should say two image elements with different rect are not equal', function () {
       const el1 = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: {...defRect, x: 0}
       });
       const el2 = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       el1.equals(el2).should.be.false;
@@ -97,7 +97,7 @@ describe('ImageElement', function () {
     it('should reject an invalid tap strategy', async function () {
       const d = new BaseDriver();
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       await d.settings.update({imageElementTapStrategy: 'bad'});
@@ -108,7 +108,7 @@ describe('ImageElement', function () {
       const f = new ImageElementFinder();
       sandbox.stub(f, 'findByImage').throws();
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
         finder: f,
       });
@@ -132,13 +132,13 @@ describe('ImageElement', function () {
       sandbox.stub(d, 'performActions');
       const f = new ImageElementFinder();
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
         finder: f,
       });
       const newRect = {...defRect, x: defRect.x + 10, y: defRect.y + 5};
       const elPos2 = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: newRect,
         finder: f,
       });
@@ -155,7 +155,7 @@ describe('ImageElement', function () {
       d.performActions = _.noop;
       const actionStub = sandbox.stub(d, 'performActions');
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       // skip the staleness check for this test
@@ -172,7 +172,7 @@ describe('ImageElement', function () {
       d.performTouch = _.noop;
       const actionStub = sandbox.stub(d, 'performTouch');
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       // skip the staleness check for this test
@@ -191,7 +191,7 @@ describe('ImageElement', function () {
       d.performTouch = _.noop;
       const touchStub = sandbox.stub(d, 'performTouch');
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       // skip the staleness check for this test
@@ -208,7 +208,7 @@ describe('ImageElement', function () {
     it('should throw if driver does not implement any type of action', async function () {
       const d = new BaseDriver();
       const el = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       // skip the staleness check for this test
@@ -223,10 +223,10 @@ describe('ImageElement', function () {
     // aGFwcHkgdGVzdGluZw== is 'happy testing'
     const f = new ImageElementFinder();
     const imgEl = new ImageElement({
-      b64Template: defTemplate,
+      template: defTemplate,
       rect: defRect,
       score: 0,
-      b64Result: 'aGFwcHkgdGVzdGluZw==',
+      match: Buffer.from('aGFwcHkgdGVzdGluZw==', 'base64'),
       finder: f,
     });
     let clickStub;
@@ -276,7 +276,7 @@ describe('ImageElement', function () {
     });
     it('should get null as visual of element by default', async function () {
       const imgElement = new ImageElement({
-        b64Template: defTemplate,
+        template: defTemplate,
         rect: defRect,
       });
       await ImageElement.execute(
@@ -303,11 +303,11 @@ describe('ImageElement', function () {
 describe('image element LRU cache', function () {
   it('should accept and cache image elements', function () {
     const el1 = new ImageElement({
-      b64Template: defTemplate,
+      template: defTemplate,
       rect: defRect,
     });
     const el2 = new ImageElement({
-      b64Template: defTemplate,
+      template: defTemplate,
       rect: defRect,
     });
     const finder = new ImageElementFinder();
@@ -317,14 +317,14 @@ describe('image element LRU cache', function () {
   });
   it('once cache reaches max size, should eject image elements', function () {
     const el1 = new ImageElement({
-      b64Template: defTemplate,
+      template: defTemplate,
       rect: defRect,
     });
     const el2 = new ImageElement({
-      b64Template: defTemplate,
+      template: defTemplate,
       rect: defRect,
     });
-    const finder = new ImageElementFinder(defTemplate.length + 1);
+    const finder = new ImageElementFinder(1);
     finder.registerImageElement(el1);
     _.isUndefined(finder.getImageElement(el1.id)).should.be.false;
     finder.registerImageElement(el2);

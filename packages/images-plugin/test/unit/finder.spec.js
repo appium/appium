@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {imageUtil} from 'appium/support';
+import {imageUtil, util} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {IMAGE_STRATEGY} from '../../lib/constants';
@@ -77,9 +77,8 @@ describe('finding elements by image', function () {
     }
 
     function basicImgElVerify(imgElProto, finder) {
-      const imgElId = imgElProto.ELEMENT;
-      finder.imgElCache.has(imgElId).should.be.true;
-      const imgEl = finder.imgElCache.get(imgElId);
+      const imgElId = util.unwrapElement(imgElProto);
+      const imgEl = finder.getImageElement(imgElId);
       (imgEl instanceof ImageElement).should.be.true;
       imgEl.rect.should.eql(rect);
       imgEl.score.should.eql(score);
@@ -162,7 +161,7 @@ describe('finding elements by image', function () {
         shouldCheckStaleness: true,
       });
       (imgEl instanceof ImageElement).should.be.true;
-      f.imgElCache.has(imgEl.id).should.be.false;
+      _.isNil(f.getImageElement(imgEl.id)).should.be.true;
       imgEl.rect.should.eql(rect);
     });
   });

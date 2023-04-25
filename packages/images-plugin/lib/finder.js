@@ -14,6 +14,7 @@ import {
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
 const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
+const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
 const MAX_CACHE_SIZE_BYTES = 1024 * 1024 * 40; // 40mb
 
 /**
@@ -35,13 +36,15 @@ const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 export default class ImageElementFinder {
   /** @type {LRU<string,ImageElement>} */
-  imgElCache;
+  _imgElCache;
 
   /**
    * @param {number} maxSize
    */
   constructor(maxSize = MAX_CACHE_SIZE_BYTES) {
-    this.imgElCache = new LRU({
+    this._imgElCache = new LRU({
+      ttl: MAX_CACHE_AGE_MS,
+      updateAgeOnGet: true,
       max: MAX_CACHE_ITEMS,
       maxSize,
       sizeCalculation: (el) => el.template.length + (el.matchedImage?.length ?? 0),
@@ -53,8 +56,31 @@ export default class ImageElementFinder {
    * @returns {Element}
    */
   registerImageElement(imgEl) {
-    this.imgElCache.set(imgEl.id, imgEl);
+    this._imgElCache.set(imgEl.id, imgEl);
     return imgEl.asElement();
+  }
+
+  /**
+   * @param {string} imgElId
+   * @returns {ImageElement|undefined}
+   */
+  getImageElement(imgElId) {
+    return this._imgElCache.get(imgElId);
+  }
+
+  /**
+   * @param {string} deletedSessionId
+   */
+  revokeObsoleteImageElements(deletedSessionId) {
+    const elementIdsToDelete = [];
+    for (const [elId, imgEl] of this._imgElCache.entries()) {
+      if (imgEl.sessionId === deletedSessionId) {
+        elementIdsToDelete.push(elId);
+      }
+    }
+    for (const elId of elementIdsToDelete) {
+      this._imgElCache.delete(elId);
+    }
   }
 
   /**
@@ -193,14 +219,15 @@ export default class ImageElementFinder {
 
     const elements = results.map(({rect, score, visualization}) => {
       log.info(`Image template matched: ${JSON.stringify(rect)}`);
-      return new ImageElement(
+      return new ImageElement({
         b64Template,
         rect,
         score,
-        visualization,
-        this,
-        containerRect
-      );
+        b64Result: visualization,
+        finder: this,
+        containerRect,
+        sessionId: driver.sessionId,
+      });
     });
 
     // if we're just checking staleness, return straightaway so we don't add

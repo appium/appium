@@ -64,11 +64,15 @@ export default class ImageElementPlugin extends BasePlugin {
     // and execute the command on it
     const imgElId = getImgElFromArgs(args);
     if (imgElId) {
-      if (!this.finder.imgElCache.has(imgElId)) {
+      const imgEl = this.finder.getImageElement(imgElId);
+      if (!imgEl) {
         throw new errors.NoSuchElementError();
       }
-      const imgEl = this.finder.imgElCache.get(imgElId);
       return await ImageElement.execute(driver, imgEl, cmdName, ...args);
+    }
+
+    if (cmdName === 'deleteSession') {
+      this.finder.revokeObsoleteImageElements(driver.sessionId);
     }
 
     // otherwise just do the normal thing

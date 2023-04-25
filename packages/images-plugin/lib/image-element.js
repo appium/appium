@@ -22,26 +22,41 @@ const TAP_DURATION_MS = 125;
  */
 
 /**
+ * @typedef ImageElementOpts
+ * @property {string} b64Template - the base64-encoded image which was used to
+ *                               find this ImageElement
+ * @property {Rect} rect - bounds of matched image element
+ * @property {number} score The similarity score as a float number in range [0.0, 1.0].
+ * 1.0 is the highest score (means both images are totally equal).
+ * @property {string} sessionId - identifier of the corresponding driver session
+ * @property {string?} b64Result - the base64-encoded image which has matched marks.
+ *                              Defaults to null.
+ * @property {import('./finder').default?} finder - the finder we can use to re-check stale elements
+ * @property {import('@appium/types').Rect?} containerRect - The bounding
+ * rectangle to limit the search in
+ */
+
+/**
  * Representation of an "image element", which is simply a set of coordinates
  * and methods that can be used on that set of coordinates via the driver
  */
 export default class ImageElement {
   /**
-   * @param {string} b64Template - the base64-encoded image which was used to
-   *                               find this ImageElement
-   * @param {Rect} rect - bounds of matched image element
-   * @param {number} score The similarity score as a float number in range [0.0, 1.0].
-   * 1.0 is the highest score (means both images are totally equal).
-   * @param {string?} b64Result - the base64-encoded image which has matched marks.
-   *                              Defaults to null.
-   * @param {import('./finder').default?} finder - the finder we can use to re-check stale elements
-   * @param {import('@appium/types').Rect?} containerRect - The bounding
-   * rectangle to limit the search in
+   * @param {ImageElementOpts}
    */
-  constructor(b64Template, rect, score, b64Result = null, finder = null, containerRect = null) {
+  constructor({
+    b64Template,
+    rect,
+    score,
+    sessionId,
+    b64Result = null,
+    finder = null,
+    containerRect = null,
+  }) {
     this.template = b64Template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
+    this.sessionId = sessionId;
     this.b64MatchedImage = b64Result;
     this.score = score;
     this.finder = finder;

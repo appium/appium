@@ -6,7 +6,7 @@ export class OpenCvAutoreleasePool {
    */
   _items;
 
-  OpenCvAutoreleasePool() {
+  constructor() {
     this._items = new Set();
   }
 
@@ -25,11 +25,11 @@ export class OpenCvAutoreleasePool {
   }
 
   drain() {
-    this._items.forEach((item) => {
+    for (const item of this._items) {
       try {
         item.delete();
       } catch (ign) {}
-    });
+    }
     this._items.clear();
   }
 }

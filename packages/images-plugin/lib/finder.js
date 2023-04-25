@@ -65,19 +65,8 @@ export default class ImageElementFinder {
     return this._imgElCache.get(imgElId);
   }
 
-  /**
-   * @param {string} deletedSessionId
-   */
-  revokeObsoleteImageElements(deletedSessionId) {
-    const elementIdsToDelete = [];
-    for (const [elId, imgEl] of this._imgElCache.entries()) {
-      if (imgEl.sessionId === deletedSessionId) {
-        elementIdsToDelete.push(elId);
-      }
-    }
-    for (const elId of elementIdsToDelete) {
-      this._imgElCache.delete(elId);
-    }
+  clearImageElements() {
+    this._imgElCache.clear();
   }
 
   /**
@@ -223,7 +212,6 @@ export default class ImageElementFinder {
         match: visualization ? Buffer.from(visualization, 'base64') : null,
         finder: this,
         containerRect,
-        sessionId: driver.sessionId,
       });
     });
 

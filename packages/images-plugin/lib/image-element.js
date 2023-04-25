@@ -27,7 +27,6 @@ const TAP_DURATION_MS = 125;
  * @property {Rect} rect - bounds of matched image element
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {string} sessionId - identifier of the corresponding driver session
  * @property {Buffer?} match - the image which has matched marks. Defaults to null.
  * @property {import('./finder').default?} finder - the finder we can use to re-check stale elements
  * @property {import('@appium/types').Rect?} containerRect - The bounding
@@ -46,7 +45,6 @@ export default class ImageElement {
     template,
     rect,
     score,
-    sessionId,
     match = null,
     finder = null,
     containerRect = null,
@@ -54,7 +52,6 @@ export default class ImageElement {
     this.template = template;
     this.rect = rect;
     this.id = `${IMAGE_ELEMENT_PREFIX}${util.uuidV4()}`;
-    this.sessionId = sessionId;
     this.match = match;
     this.score = score;
     this.finder = finder;

@@ -68,7 +68,7 @@ export default class ImageElementPlugin extends BasePlugin {
     }
 
     if (cmdName === 'deleteSession') {
-      this.finder.revokeObsoleteImageElements(driver.sessionId);
+      this.finder.clearImageElements();
     }
 
     // otherwise just do the normal thing

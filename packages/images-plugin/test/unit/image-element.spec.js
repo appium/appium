@@ -233,7 +233,7 @@ describe('ImageElement', function () {
 
     before(function () {
       clickStub = sandbox.stub(imgEl, 'click');
-      f.registerImageElement(imgEl.id, imgEl);
+      f.registerImageElement(imgEl);
       clickStub.returns(true);
     });
 

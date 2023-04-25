@@ -97,7 +97,7 @@ export default class ImageElementFinder {
    * Find a screen rect represented by an ImageElement corresponding to an image
    * template sent in by the client
    *
-   * @param {string} template - base64-encoded image used as a template to be
+   * @param {Buffer} template - image used as a template to be
    * matched in the screenshot
    * @param {ExternalDriver} driver
    * @param {FindByImageOptions} opts - additional options

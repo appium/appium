@@ -238,9 +238,7 @@ function validateExecuteMethodParams(params, paramSpec) {
   } else {
     paramSpec.required ??= [];
     paramSpec.optional ??= [];
-    const supportedParamNames = [...paramSpec.required, ...paramSpec.optional];
-    const argNames = _.keys(args);
-    const unknownNames = _.difference(argNames, supportedParamNames);
+    const unknownNames = _.difference(_.keys(args), paramSpec.required, paramSpec.optional);
     if (!_.isEmpty(unknownNames)) {
       log.info(`The following script arguments are not known and will be ignored: ${unknownNames}`);
       args = _.pickBy(args, (v, k) => !unknownNames.includes(k));

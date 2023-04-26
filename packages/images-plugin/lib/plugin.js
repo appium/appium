@@ -9,11 +9,7 @@ import {ImageElement} from './image-element';
 import {IMAGE_STRATEGY, IMAGE_ELEMENT_PREFIX} from './constants';
 
 function getImgElFromArgs(args) {
-  for (let arg of args) {
-    if (_.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX)) {
-      return arg;
-    }
-  }
+  return args.find((arg) => _.isString(arg) && arg.startsWith(IMAGE_ELEMENT_PREFIX));
 }
 
 export default class ImageElementPlugin extends BasePlugin {
@@ -72,7 +68,7 @@ export default class ImageElementPlugin extends BasePlugin {
     }
 
     if (cmdName === 'deleteSession') {
-      this.finder.revokeObsoleteImageElements(driver.sessionId);
+      this.finder.clearImageElements();
     }
 
     // otherwise just do the normal thing

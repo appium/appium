@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import LRU from 'lru-cache';
 import {errors} from 'appium/driver';
-import {imageUtil} from 'appium/support';
 import {ImageElement} from './image-element';
 import {compareImages} from './compare';
 import log from './logger';
@@ -9,13 +8,13 @@ import {
   DEFAULT_SETTINGS, MATCH_TEMPLATE_MODE, DEFAULT_TEMPLATE_IMAGE_SCALE,
   DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
 } from './constants';
+import sharp from 'sharp';
 
 // Used to compare ratio and screen width
 // Pixel is basically under 1080 for example. 100K is probably enough fo a while.
 const FLOAT_PRECISION = 100000;
 const MAX_CACHE_ITEMS = 100;
 const MAX_CACHE_AGE_MS = 24 * 60 * 60 * 1000;
-const MAX_CACHE_SIZE_BYTES = 1024 * 1024 * 40; // 40mb
 
 /**
  * Checks if one rect fully contains another
@@ -39,15 +38,13 @@ export default class ImageElementFinder {
   _imgElCache;
 
   /**
-   * @param {number} maxSize
+   * @param {number} max
    */
-  constructor(maxSize = MAX_CACHE_SIZE_BYTES) {
+  constructor(max = MAX_CACHE_ITEMS) {
     this._imgElCache = new LRU({
       ttl: MAX_CACHE_AGE_MS,
       updateAgeOnGet: true,
-      max: MAX_CACHE_ITEMS,
-      maxSize,
-      sizeCalculation: (el) => el.template.length + (el.matchedImage?.length ?? 0),
+      max,
     });
   }
 
@@ -68,19 +65,8 @@ export default class ImageElementFinder {
     return this._imgElCache.get(imgElId);
   }
 
-  /**
-   * @param {string} deletedSessionId
-   */
-  revokeObsoleteImageElements(deletedSessionId) {
-    const elementIdsToDelete = [];
-    for (const [elId, imgEl] of this._imgElCache.entries()) {
-      if (imgEl.sessionId === deletedSessionId) {
-        elementIdsToDelete.push(elId);
-      }
-    }
-    for (const elId of elementIdsToDelete) {
-      this._imgElCache.delete(elId);
-    }
+  clearImageElements() {
+    this._imgElCache.clear();
   }
 
   /**
@@ -91,7 +77,7 @@ export default class ImageElementFinder {
    * multiple
    * @property {boolean} [ignoreDefaultImageTemplateScale=false] - Whether we
    * ignore defaultImageTemplateScale. It can be used when you would like to
-   * scale b64Template with defaultImageTemplateScale setting.
+   * scale template with defaultImageTemplateScale setting.
    * @property {import('@appium/types').Rect?} containerRect - The bounding
    * rectangle to limit the search in
    */
@@ -100,7 +86,7 @@ export default class ImageElementFinder {
    * Find a screen rect represented by an ImageElement corresponding to an image
    * template sent in by the client
    *
-   * @param {string} b64Template - base64-encoded image used as a template to be
+   * @param {Buffer} template - image used as a template to be
    * matched in the screenshot
    * @param {ExternalDriver} driver
    * @param {FindByImageOptions} opts - additional options
@@ -108,7 +94,7 @@ export default class ImageElementFinder {
    * @returns {Promise<Element|Element[]|ImageElement>} - WebDriver element with a special id prefix
    */
   async findByImage(
-    b64Template,
+    template,
     driver,
     {shouldCheckStaleness = false, multiple = false, ignoreDefaultImageTemplateScale = false, containerRect = null}
   ) {
@@ -143,7 +129,7 @@ export default class ImageElementFinder {
     // will not work unless we do. But because it requires some potentially
     // expensive commands, only do this if the user has requested it in settings.
     if (fixImageTemplateSize) {
-      b64Template = await this.ensureTemplateSize(b64Template, {
+      template = await this.ensureTemplateSize(template, {
         width: containerRect ? containerRect.width : screenSize.width,
         height: containerRect ? containerRect.height : screenSize.height,
       });
@@ -152,9 +138,9 @@ export default class ImageElementFinder {
     const results = [];
     const condition = async () => {
       try {
-        const {b64Screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
+        const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
 
-        b64Template = await this.fixImageTemplateScale(b64Template, {
+        template = await this.fixImageTemplateScale(template, {
           defaultImageTemplateScale,
           ignoreDefaultImageTemplateScale,
           fixImageTemplateScale,
@@ -182,7 +168,7 @@ export default class ImageElementFinder {
           return true;
         };
 
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, b64Screenshot, b64Template, comparisonOpts);
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
         return _.some((_.isArray(elOrEls) ? elOrEls : [elOrEls]).map(pushIfOk));
       } catch (err) {
         // if compareImages fails, we'll get a specific error, but we should
@@ -220,13 +206,12 @@ export default class ImageElementFinder {
     const elements = results.map(({rect, score, visualization}) => {
       log.info(`Image template matched: ${JSON.stringify(rect)}`);
       return new ImageElement({
-        b64Template,
+        template,
         rect,
         score,
-        b64Result: visualization,
+        match: visualization ? Buffer.from(visualization, 'base64') : null,
         finder: this,
         containerRect,
-        sessionId: driver.sessionId,
       });
     });
 
@@ -245,30 +230,35 @@ export default class ImageElementFinder {
   /**
    * Ensure that the image template sent in for a find is of a suitable size
    *
-   * @param {string} b64Template - base64-encoded image
+   * @param {Buffer} template - template image
    * @param {import('@appium/types').Size} maxSize - size of the bounding rectangle
    *
-   * @returns {Promise<string>} base64-encoded image, potentially resized
+   * @returns {Promise<Buffer>} image, potentially resized
    */
-  async ensureTemplateSize(b64Template, maxSize) {
-    let imgObj = await imageUtil.getJimpImage(b64Template);
-    let {width: tplWidth, height: tplHeight} = imgObj.bitmap;
+  async ensureTemplateSize(template, maxSize) {
+    const imgObj = sharp(template);
+    const {width: tplWidth, height: tplHeight} = await imgObj.metadata();
 
     log.info(
       `Template image is ${tplWidth}x${tplHeight}. Bounding rectangle size is ${maxSize.width}x${maxSize.height}`
     );
     // if the template fits inside the screen dimensions, we're good
     if (tplWidth <= maxSize.width && tplHeight <= maxSize.height) {
-      return b64Template;
+      return template;
     }
 
     log.info(
       `Scaling template image from ${tplWidth}x${tplHeight} to match ` +
       `the bounding rectangle at ${maxSize.width}x${maxSize.height}`
     );
-    // otherwise, scale it to fit inside the bounding rectangle dimensions
-    imgObj = imgObj.scaleToFit(maxSize.width, maxSize.height);
-    return (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
+    // otherwise, scale it to fit inside the bounding rectangle dimensions:
+    // https://sharp.pixelplumbing.com/api-resize
+    return await imgObj.resize({
+      width: parseInt(maxSize.width, 10),
+      height: parseInt(maxSize.height, 10),
+      fit: 'inside',
+    })
+    .toBuffer();
   }
 
   /**
@@ -278,7 +268,7 @@ export default class ImageElementFinder {
    * @param {ExternalDriver} driver
    * @param {import('@appium/types').Size} screenSize - The original size of the screen
    *
-   * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} base64-encoded screenshot and ScreenshotScale
+   * @returns {Promise<Screenshot & {scale?: ScreenshotScale}>} PNG screenshot and ScreenshotScale
    */
   async getScreenshotForImageFind(driver, screenSize) {
     if (!driver.getScreenshot) {
@@ -287,13 +277,13 @@ export default class ImageElementFinder {
     const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
     const {fixImageFindScreenshotDims} = settings;
 
-    const b64Screenshot = await driver.getScreenshot();
+    const screenshot = Buffer.from(await driver.getScreenshot(), 'base64');
 
     // if the user has requested not to correct for aspect or size differences
     // between the screenshot and the screen, just return the screenshot now
     if (!fixImageFindScreenshotDims) {
       log.info(`Not verifying screenshot dimensions match screen`);
-      return {b64Screenshot};
+      return {screenshot};
     }
 
     if (screenSize.width < 1 || screenSize.height < 1) {
@@ -301,29 +291,29 @@ export default class ImageElementFinder {
         `The retrieved screen size ${screenSize.width}x${screenSize.height} does ` +
         `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot};
+      return {screenshot};
     }
 
     // otherwise, do some verification on the screenshot to make sure it matches
     // the screen size and aspect ratio
     log.info('Verifying screenshot size and aspect ratio');
 
-    let imgObj = await imageUtil.getJimpImage(b64Screenshot);
-    let {width: shotWidth, height: shotHeight} = imgObj.bitmap;
+    let imgObj = sharp(screenshot);
+    let {width: shotWidth, height: shotHeight} = await imgObj.metadata();
 
     if (shotWidth < 1 || shotHeight < 1) {
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
         `not seem to be valid. No changes will be applied to the screenshot`
       );
-      return {b64Screenshot};
+      return {screenshot};
     }
 
     if (screenSize.width === shotWidth && screenSize.height === shotHeight) {
       // the height and width of the screenshot and the device screen match, which
       // means we should be safe when doing template matches
       log.info('Screenshot size matched screen size');
-      return {b64Screenshot};
+      return {screenshot};
     }
 
     // otherwise, if they don't match, it could spell problems for the accuracy
@@ -355,27 +345,31 @@ export default class ImageElementFinder {
       // this.getScreenshot(shotWidth, shotHeight) is 540x397,
       // this.getDeviceSize(screenWidth, screenHeight) is 1080x1920.
       // The ratio would then be {xScale: 0.5, yScale: 0.2}.
-      // In this case, we must should `yScale: 0.2` as scaleFactor, because
+      // In this case, we must use `yScale: 0.2` as scaleFactor, because
       // if we select the xScale, the height will be bigger than real screenshot size
       // which is used to image comparison by OpenCV as a base image.
       // All of this is primarily useful when the screenshot is a horizontal slice taken out of the
       // screen (for example not including top/bottom nav bars)
       const xScale = (1.0 * shotWidth) / screenSize.width;
       const yScale = (1.0 * shotHeight) / screenSize.height;
-      const scaleFactor = xScale >= yScale ? yScale : xScale;
+      const scaleFactor = Math.min(xScale, yScale);
+      const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor]
+        .map((x) => parseInt(x, 10));
 
       log.warn(
-        `Resizing screenshot to ${shotWidth * scaleFactor}x${shotHeight * scaleFactor} to match ` +
+        `Resizing screenshot to ${newWidth}x${newHeight} to match ` +
         `screen aspect ratio so that image element coordinates have a ` +
         `greater chance of being correct.`
       );
-      imgObj = imgObj.resize(shotWidth * scaleFactor, shotHeight * scaleFactor);
+      imgObj = imgObj.resize({
+        width: newWidth,
+        height: newHeight,
+        fit: 'fill',
+      });
 
       scale.xScale *= scaleFactor;
       scale.yScale *= scaleFactor;
-
-      shotWidth = imgObj.bitmap.width;
-      shotHeight = imgObj.bitmap.height;
+      [shotWidth, shotHeight] = [newWidth, newHeight];
     }
 
     // Resize based on the screen dimensions only if both width and height are mismatched
@@ -387,14 +381,18 @@ export default class ImageElementFinder {
         `Scaling screenshot from ${shotWidth}x${shotHeight} to match ` +
         `screen at ${screenSize.width}x${screenSize.height}`
       );
-      imgObj = imgObj.resize(screenSize.width, screenSize.height);
+      imgObj = imgObj.resize({
+        width: parseInt(screenSize.width, 10),
+        height: parseInt(screenSize.height, 10),
+        fit: 'fill',
+      });
 
       scale.xScale *= (1.0 * screenSize.width) / shotWidth;
       scale.yScale *= (1.0 * screenSize.height) / shotHeight;
     }
 
     return {
-      b64Screenshot: (await imgObj.getBuffer(imageUtil.MIME_PNG)).toString('base64'),
+      screenshot: await imgObj.toBuffer(),
       scale,
     };
   }
@@ -404,7 +402,7 @@ export default class ImageElementFinder {
    * @property {boolean} fixImageTemplateScale - fixImageTemplateScale in device-settings
    * @property {number} defaultImageTemplateScale - defaultImageTemplateScale in device-settings
    * @property {boolean} ignoreDefaultImageTemplateScale - Ignore defaultImageTemplateScale if it has true.
-   * If b64Template has been scaled to defaultImageTemplateScale or should ignore the scale,
+   * If the template has been scaled to defaultImageTemplateScale or should ignore the scale,
    * this parameter should be true. e.g. click in image-element module
    * @property {number} xScale - Scale ratio for width
    * @property {number} yScale - Scale ratio for height
@@ -414,20 +412,19 @@ export default class ImageElementFinder {
    * Get a image that will be used for template maching.
    * Returns scaled image if scale ratio is provided.
    *
-   *
-   * @param {string} b64Template - base64-encoded image used as a template to be
+   * @param {Buffer} template - image used as a template to be
    * matched in the screenshot
    * @param {ImageTemplateSettings} opts - Image template scale related options
    *
-   * @returns {Promise<string>} base64-encoded scaled template screenshot
+   * @returns {Promise<Buffer>} scaled template screenshot
    */
-  async fixImageTemplateScale(b64Template, opts) {
+  async fixImageTemplateScale(template, opts) {
     if (!opts) {
-      return b64Template;
+      return template;
     }
 
     let {
-      fixImageTemplateScale = false,
+      fixImageTemplateScale: fixTplScale = false,
       defaultImageTemplateScale = DEFAULT_TEMPLATE_IMAGE_SCALE,
       ignoreDefaultImageTemplateScale = false,
       xScale = DEFAULT_FIX_IMAGE_TEMPLATE_SCALE,
@@ -439,12 +436,12 @@ export default class ImageElementFinder {
     }
 
     // Default
-    if (defaultImageTemplateScale === DEFAULT_TEMPLATE_IMAGE_SCALE && !fixImageTemplateScale) {
-      return b64Template;
+    if (defaultImageTemplateScale === DEFAULT_TEMPLATE_IMAGE_SCALE && !fixTplScale) {
+      return template;
     }
 
     // Calculate xScale and yScale Appium should scale
-    if (fixImageTemplateScale) {
+    if (fixTplScale) {
       xScale *= defaultImageTemplateScale;
       yScale *= defaultImageTemplateScale;
     } else {
@@ -453,7 +450,7 @@ export default class ImageElementFinder {
 
     // xScale and yScale can be NaN if defaultImageTemplateScale is string, for example
     if (!parseFloat(String(xScale)) || !parseFloat(String(yScale))) {
-      return b64Template;
+      return template;
     }
 
     // Return if the scale is default, 1, value
@@ -467,21 +464,24 @@ export default class ImageElementFinder {
         )
       )
     ) {
-      return b64Template;
+      return template;
     }
 
-    let imgTempObj = await imageUtil.getJimpImage(b64Template);
-    let {width: baseTempWidth, height: baseTempHeigh} = imgTempObj.bitmap;
+    let imgObj = sharp(template);
+    const {width: baseTempWidth, height: baseTempHeigh} = await imgObj.metadata();
 
     const scaledWidth = baseTempWidth * xScale;
     const scaledHeight = baseTempHeigh * yScale;
     log.info(
-      `Scaling template image from ${baseTempWidth}x${baseTempHeigh}` +
-        ` to ${scaledWidth}x${scaledHeight}`
+      `Scaling template image from ${baseTempWidth}x${baseTempHeigh} to ${scaledWidth}x${scaledHeight}`
     );
     log.info(`The ratio is ${xScale} and ${yScale}`);
-    imgTempObj = await imgTempObj.resize(scaledWidth, scaledHeight);
-    return (await imgTempObj.getBuffer(imageUtil.MIME_PNG)).toString('base64');
+    imgObj = imgObj.resize({
+      width: parseInt(scaledWidth, 10),
+      height: parseInt(scaledHeight, 10),
+      fit: 'fill',
+    });
+    return await imgObj.toBuffer();
   }
 }
 
@@ -492,7 +492,7 @@ export default class ImageElementFinder {
 
 /**
  * @typedef Screenshot
- * @property {string} b64Screenshot - base64 based screenshot string
+ * @property {Buffer} screenshot - screenshot image as PNG
  */
 
 /**

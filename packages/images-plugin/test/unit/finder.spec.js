@@ -1,12 +1,13 @@
 import _ from 'lodash';
-import {imageUtil, util} from 'appium/support';
+import {util} from 'appium/support';
 import {BaseDriver} from 'appium/driver';
 import {ImageElementPlugin} from '../../lib/plugin';
 import {IMAGE_STRATEGY} from '../../lib/constants';
 import ImageElementFinder from '../../lib/finder';
 import ImageElement from '../../lib/image-element';
 import sinon from 'sinon';
-import {TINY_PNG, TINY_PNG_DIMS} from '../fixtures';
+import {TINY_PNG, TiNY_PNG_BUF, TINY_PNG_DIMS} from '../fixtures';
+import sharp from 'sharp';
 
 const compareModule = require('../../lib/compare');
 
@@ -57,8 +58,8 @@ describe('finding elements by image', function () {
     const rect = {x: 10, y: 20, width: 30, height: 40};
     const score = 0.9;
     const size = {width: 100, height: 200};
-    const screenshot = 'iVBORfoo';
-    const template = 'iVBORbar';
+    const screenshot = Buffer.from('iVBORfoo', 'base64');
+    const template = Buffer.from('iVBORbar', 'base64');
     /** @type {PluginDriver} */
     let d;
     /** @type {ImageElementFinder} */
@@ -112,27 +113,30 @@ describe('finding elements by image', function () {
     });
     it('should fix template size if requested', async function () {
       const newTemplate = 'iVBORbaz';
+      const newTemplateBuf = Buffer.from(newTemplate, 'base64');
       await d.settings.update({fixImageTemplateSize: true});
-      sandbox.stub(f, 'ensureTemplateSize').returns(newTemplate);
+      sandbox.stub(f, 'ensureTemplateSize').returns(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      imgEl.template.should.eql(newTemplate);
-      _.last(compareStub.args)[2].should.eql(newTemplate);
+      imgEl.originalImage.should.eql(newTemplate);
+      _.last(compareStub.args)[2].should.eql(newTemplateBuf);
     });
 
     it('should fix template size scale if requested', async function () {
       const newTemplate = 'iVBORbaz';
+      const newTemplateBuf = Buffer.from(newTemplate, 'base64');
       await d.settings.update({fixImageTemplateScale: true});
-      sandbox.stub(f, 'fixImageTemplateScale').returns(newTemplate);
+      sandbox.stub(f, 'fixImageTemplateScale').returns(newTemplateBuf);
       const imgElProto = await f.findByImage(template, d, {multiple: false});
       const imgEl = basicImgElVerify(imgElProto, f);
-      imgEl.template.should.eql(newTemplate);
-      _.last(compareStub.args)[2].should.eql(newTemplate);
+      imgEl.originalImage.should.eql(newTemplate);
+      _.last(compareStub.args)[2].should.eql(newTemplateBuf);
     });
     it('should not fix template size scale if it is not requested', async function () {
       const newTemplate = 'iVBORbaz';
+      const newTemplateBuf = Buffer.from(newTemplate, 'base64');
       await d.settings.update({});
-      sandbox.stub(f, 'fixImageTemplateScale').returns(newTemplate);
+      sandbox.stub(f, 'fixImageTemplateScale').returns(newTemplateBuf);
       f.fixImageTemplateScale.callCount.should.eql(0);
     });
 
@@ -169,6 +173,8 @@ describe('finding elements by image', function () {
   describe('fixImageTemplateScale', function () {
     let f;
     const basicTemplate = 'iVBORbaz';
+    const basicTemplateBuf = Buffer.from(basicTemplate, 'base64');
+
 
     beforeEach(function () {
       f = new ImageElementFinder();
@@ -176,99 +182,89 @@ describe('finding elements by image', function () {
 
     it('should not fix template size scale if no scale value', async function () {
       await f
-        .fixImageTemplateScale(basicTemplate, {fixImageTemplateScale: true})
-        .should.eventually.eql(basicTemplate);
+        .fixImageTemplateScale(basicTemplateBuf, {fixImageTemplateScale: true})
+        .should.eventually.eql(basicTemplateBuf);
     });
 
     it('should not fix template size scale if it is null', async function () {
-      await f.fixImageTemplateScale(basicTemplate, null).should.eventually.eql(basicTemplate);
+      await f.fixImageTemplateScale(basicTemplateBuf, null).should.eventually.eql(basicTemplateBuf);
     });
 
     it('should not fix template size scale if it is not number', async function () {
       await f
-        .fixImageTemplateScale(basicTemplate, 'wrong-scale')
-        .should.eventually.eql(basicTemplate);
+        .fixImageTemplateScale(basicTemplateBuf, 'wrong-scale')
+        .should.eventually.eql(basicTemplateBuf);
     });
 
     it('should fix template size scale', async function () {
-      const actual =
-        'iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAWElEQVR4AU3BQRWAQAhAwa/PGBsEgrC16AFBKEIPXW7OXO+Rmey9iQjMjHFzrLUwM7qbqmLcHKpKRFBVuDvj4agq3B1VRUQYT2bS3QwRQVUZF/CaGRHB3wc1vSZbHO5+BgAAAABJRU5ErkJggg==';
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         })
-        .should.eventually.eql(actual);
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
 
     it('should not fix template size scale because of fixImageTemplateScale being false', async function () {
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         })
-        .should.eventually.eql(TINY_PNG);
+        .should.eventually.eql(TiNY_PNG_BUF);
     });
 
     it('should fix template size scale with default scale', async function () {
-      const actual =
-        'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABwUlEQVR4AaXBPUsrQQCG0SeX+cBdkTjwTpG1NPgLpjY/fW1stt4UYmm2cJqwMCsaw70uJJ3CBc9Z/P3Cl+12S9u2tG1L27bEGLm/v2ez2bDZbJDEd/7wS4YT7z3X19fc3Nxwd3dHXdd47xnHkefnZ8ZxpKoq6rqmqiqMMcwMJ1VV0TQN0zThnOPj44O6rsk503UdkmiahqZpWK1WGGOYGU7quqZpGqy1SCLnTM6Z19dXcs5IYpomrLVI4uLigpnhpKoqVqsVkjgcDjw9PdF1HTlnuq5DEs45JHE4HDgznByPR97e3pimiVIK4zhyPB7x3hNCIITA5eUl3nsWiwVnhpNSCsMwsNvtGIaB/X5PKQVJpJSQxHq9RhLOOc4MJ9M0sdvt2G639H3PTBIxRiQhCUnEGLHWcmY4KaUwDAN93/P4+MhyuSSlhCRSSkjCOYe1FmstZ6bve2YvLy/s93tmy+USSUhCEpIIIfAd8/DwwOz9/Z1SCpJIKSGJ9XqNJJxz/MS0bcvs6uoKScQYkYQkJBFjxFrLT0zbtsxub29JKSGJlBKScM5hrcVay09MzplZjJHPz0+894QQCCHwP/7wS/8A4e6nAg+R8LwAAAAASUVORK5CYII=';
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
         })
-        .should.eventually.eql(actual);
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
 
     it('should fix template size scale with default scale and image scale', async function () {
-      const actual =
-        'iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACaUlEQVR4AbXBMWvrWBSF0c9BsFPtW91UR1U6+///FKlKKt8qqnyqnMozggkI8xgMj6x1uv+L/6zryrIsrOvKsiys68qyLFwuF87nM5fLhfP5zOVy4Xw+84wXftkLv2ziQBK26b0TEVQVu4jANrvM5Hq9spOEJCQhCUlI4mjiQBK26b1TVewkYRvb7DKTMQaZiW1s01rDNraRxNHEgSRaa1QVO0m01jjKTDKTXe+d3jtVxU4SjyYOJGGbnSRs03snM8lMMpPb7UZmkplEBFXFThK2eTRxIAnbSMI2VcX39zdjDMYYZCaZyRiDMQZVxU4StqkqHk0cSEISf5KZ7DKTMQbLsrCTRGuN3jtVxaOJg6qiqqgqqoqqoqoYY5CZ7GwTEdzvd97f34kIeu/YRhKPJg6qiswkM7ndbmQmmUlmkpnsbBMR2CYimOeZ3ju2kcSjiYOqIjP5+vpi2za2bWPbNo5aa7TW2PXe6b3Te6e1hiQeTRxUFbfbjW3bGGNwvV4ZY2Ab27TWsI1tbGMb27TWsI0kHk0cVBWZybZtXK9XPj8/+fj4YJ5nIoLWGraJCOZ5RhKSkIQkJPFo4qCqyEy2bWOMwefnJ+u6cjqdsM3ONvM8cz6feca0ris/rtcrmcnONhHB/X7n/f2diKD3jm0k8axpWRZ+ZCaZyc42EYFtIoJ5num9YxtJPGta15U/sY1tdm9vb/Te6b1jG0k8a1qWhR+2sU1rjdYatrGNbWxjm9YaknjWtK4rPyKCiKC1hm0igojg9fUVSUhCEpJ41rQsC0e22dkmIrhcLvyNF/7H6XTib73wy174Zf8AJEsePtlPj10AAAAASUVORK5CYII=';
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         })
-        .should.eventually.eql(actual);
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
 
     it('should not fix template size scale with default scale and image scale', async function () {
-      const actual =
-        'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABwUlEQVR4AaXBPUsrQQCG0SeX+cBdkTjwTpG1NPgLpjY/fW1stt4UYmm2cJqwMCsaw70uJJ3CBc9Z/P3Cl+12S9u2tG1L27bEGLm/v2ez2bDZbJDEd/7wS4YT7z3X19fc3Nxwd3dHXdd47xnHkefnZ8ZxpKoq6rqmqiqMMcwMJ1VV0TQN0zThnOPj44O6rsk503UdkmiahqZpWK1WGGOYGU7quqZpGqy1SCLnTM6Z19dXcs5IYpomrLVI4uLigpnhpKoqVqsVkjgcDjw9PdF1HTlnuq5DEs45JHE4HDgznByPR97e3pimiVIK4zhyPB7x3hNCIITA5eUl3nsWiwVnhpNSCsMwsNvtGIaB/X5PKQVJpJSQxHq9RhLOOc4MJ9M0sdvt2G639H3PTBIxRiQhCUnEGLHWcmY4KaUwDAN93/P4+MhyuSSlhCRSSkjCOYe1FmstZ6bve2YvLy/s93tmy+USSUhCEpIIIfAd8/DwwOz9/Z1SCpJIKSGJ9XqNJJxz/MS0bcvs6uoKScQYkYQkJBFjxFrLT0zbtsxub29JKSGJlBKScM5hrcVay09MzplZjJHPz0+894QQCCHwP/7wS/8A4e6nAg+R8LwAAAAASUVORK5CYII=';
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           fixImageTemplateScale: false,
           xScale: 1.5,
           yScale: 1.5,
         })
-        .should.eventually.eql(actual);
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
 
     it('should not fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
         })
-        .should.eventually.eql(TINY_PNG);
+        .should.eventually.eql(TiNY_PNG_BUF);
     });
 
     it('should ignore defaultImageTemplateScale to fix template size scale because of ignoreDefaultImageTemplateScale', async function () {
-      const actual =
-        'iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAWElEQVR4AU3BQRWAQAhAwa/PGBsEgrC16AFBKEIPXW7OXO+Rmey9iQjMjHFzrLUwM7qbqmLcHKpKRFBVuDvj4agq3B1VRUQYT2bS3QwRQVUZF/CaGRHB3wc1vSZbHO5+BgAAAABJRU5ErkJggg==';
       await f
-        .fixImageTemplateScale(TINY_PNG, {
+        .fixImageTemplateScale(TiNY_PNG_BUF, {
           defaultImageTemplateScale: 4.0,
           ignoreDefaultImageTemplateScale: true,
           fixImageTemplateScale: true,
           xScale: 1.5,
           yScale: 1.5,
         })
-        .should.eventually.eql(actual);
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
   });
 
@@ -277,17 +273,17 @@ describe('finding elements by image', function () {
 
     it('should not resize the template if it is smaller than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 2);
-      await f.ensureTemplateSize(TINY_PNG, {width, height}).should.eventually.eql(TINY_PNG);
+      await f.ensureTemplateSize(TiNY_PNG_BUF, {width, height}).should.eventually.eql(TiNY_PNG_BUF);
     });
     it('should not resize the template if it is the same size as the screen', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      await f.ensureTemplateSize(TINY_PNG, {width, height}).should.eventually.eql(TINY_PNG);
+      await f.ensureTemplateSize(TiNY_PNG_BUF, {width, height}).should.eventually.eql(TiNY_PNG_BUF);
     });
     it('should resize the template if it is bigger than the screen', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n / 2);
-      const newTemplate = await f.ensureTemplateSize(TINY_PNG, {width, height});
-      newTemplate.should.not.eql(TINY_PNG);
-      newTemplate.length.should.be.below(TINY_PNG.length);
+      const newTemplateBuf = await f.ensureTemplateSize(TiNY_PNG_BUF, {width, height});
+      newTemplateBuf.should.not.eql(TiNY_PNG_BUF);
+      newTemplateBuf.length.should.be.below(TiNY_PNG_BUF.length);
     });
   });
 
@@ -309,23 +305,24 @@ describe('finding elements by image', function () {
     it('should not adjust or verify screenshot if asked not to by settings', async function () {
       await d.settings.update({fixImageFindScreenshotDims: false});
       const [width, height] = TINY_PNG_DIMS.map((n) => n + 1);
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
-      b64Screenshot.should.eql(TINY_PNG);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
+      screenshot.should.eql(TiNY_PNG_BUF);
       should.equal(scale, undefined);
     });
     it('should return screenshot without adjustment if it matches screen size', async function () {
       const [width, height] = TINY_PNG_DIMS;
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
-      b64Screenshot.should.eql(TINY_PNG);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
+      screenshot.should.eql(TiNY_PNG_BUF);
       should.equal(scale, undefined);
     });
     it('should return scaled screenshot with same aspect ratio if matching screen aspect ratio', async function () {
       const [width, height] = TINY_PNG_DIMS.map((n) => n * 1.5);
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
-      b64Screenshot.should.not.eql(TINY_PNG);
-      const screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(width);
-      screenshotObj.bitmap.height.should.eql(height);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
+      screenshot.should.not.eql(TiNY_PNG_BUF);
+      const screenshotObj = sharp(screenshot);
+      const {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
+      screenWidth.should.eql(width);
+      screenHeight.should.eql(height);
       scale.should.eql({xScale: 1.5, yScale: 1.5});
     });
     it('should return scaled screenshot with different aspect ratio if not matching screen aspect ratio', async function () {
@@ -333,11 +330,12 @@ describe('finding elements by image', function () {
       let [width, height] = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
       let expectedScale = {xScale: 2.67, yScale: 4};
 
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
-      b64Screenshot.should.not.eql(TINY_PNG);
-      let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(width);
-      screenshotObj.bitmap.height.should.eql(height);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
+      screenshot.should.not.eql(TiNY_PNG_BUF);
+      let screenshotObj = sharp(screenshot);
+      let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
+      screenWidth.should.eql(width);
+      screenHeight.should.eql(height);
       scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
       scale.yScale.should.eql(expectedScale.yScale);
 
@@ -345,11 +343,12 @@ describe('finding elements by image', function () {
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
       expectedScale = {xScale: 4, yScale: 2.67};
 
-      const {b64Screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
-      newScreen.should.not.eql(TINY_PNG);
-      screenshotObj = await imageUtil.getJimpImage(newScreen);
-      screenshotObj.bitmap.width.should.eql(width);
-      screenshotObj.bitmap.height.should.eql(height);
+      const {screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
+      newScreen.should.not.eql(TiNY_PNG_BUF);
+      screenshotObj = sharp(newScreen);
+      ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
+      screenWidth.should.eql(width);
+      screenHeight.should.eql(height);
       newScale.xScale.should.eql(expectedScale.xScale);
       newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
     });
@@ -359,40 +358,35 @@ describe('finding elements by image', function () {
       let [width, height] = [TINY_PNG_DIMS[0] * 2, TINY_PNG_DIMS[1] * 3];
       let expectedScale = {xScale: 2.67, yScale: 4};
 
-      const {b64Screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
-      b64Screenshot.should.not.eql(TINY_PNG);
-      let screenshotObj = await imageUtil.getJimpImage(b64Screenshot);
-      screenshotObj.bitmap.width.should.eql(width);
-      screenshotObj.bitmap.height.should.eql(height);
+      const {screenshot, scale} = await f.getScreenshotForImageFind(d, {width, height});
+      screenshot.should.not.eql(TiNY_PNG_BUF);
+      let screenshotObj = sharp(screenshot);
+      let {width: screenWidth, height: screenHeight} = await screenshotObj.metadata();
+      screenWidth.should.eql(width);
+      screenHeight.should.eql(height);
       scale.xScale.toFixed(2).should.eql(expectedScale.xScale.toString());
       scale.yScale.should.eql(expectedScale.yScale);
       // 8 x 12 stretched TINY_PNG
       await f
-        .fixImageTemplateScale(b64Screenshot, {
-          fixImageTemplateScale: true,
-          scale,
-        })
-        .should.eventually.eql(
-          'iVBORw0KGgoAAAANSUhEUgAAAAgAAAAMCAYAAABfnvydAAAAJ0lEQVR4AYXBAQEAIACDMKR/p0fTBrKdbZcPCRIkSJAgQYIECRIkPAzBA1TpeNwZAAAAAElFTkSuQmCC'
-        );
+        .fixImageTemplateScale(screenshot, {fixImageTemplateScale: true, scale})
+        .should.eventually.not.eql(TiNY_PNG_BUF);
 
       // then with landscape screen, screen = 12 x 8
       [width, height] = [TINY_PNG_DIMS[0] * 3, TINY_PNG_DIMS[1] * 2];
       expectedScale = {xScale: 4, yScale: 2.67};
 
-      const {b64Screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
-      newScreen.should.not.eql(TINY_PNG);
-      screenshotObj = await imageUtil.getJimpImage(newScreen);
-      screenshotObj.bitmap.width.should.eql(width);
-      screenshotObj.bitmap.height.should.eql(height);
+      const {screenshot: newScreen, scale: newScale} = await f.getScreenshotForImageFind(d, {width, height});
+      newScreen.should.not.eql(TiNY_PNG_BUF);
+      screenshotObj = sharp(newScreen);
+      ({width: screenWidth, height: screenHeight} = await screenshotObj.metadata());
+      screenWidth.should.eql(width);
+      screenHeight.should.eql(height);
       newScale.xScale.should.eql(expectedScale.xScale);
       newScale.yScale.toFixed(2).should.eql(expectedScale.yScale.toString());
       // 12 x 8 stretched TINY_PNG
       await f
         .fixImageTemplateScale(newScreen, {fixImageTemplateScale: true, scale})
-        .should.eventually.eql(
-          'iVBORw0KGgoAAAANSUhEUgAAAAwAAAAICAYAAADN5B7xAAAAI0lEQVR4AZXBAQEAMAyDMI5/T5W2ayB5245AIokkkkgiiST6+W4DTLyo5PUAAAAASUVORK5CYII='
-        );
+        .should.eventually.not.eql(TiNY_PNG_BUF);
     });
   });
 });

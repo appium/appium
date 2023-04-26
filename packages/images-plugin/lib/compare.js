@@ -10,9 +10,9 @@ import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from './c
  *
  * @param {string} mode - One of possible comparison modes:
  * matchFeatures, getSimilarity, matchTemplate
- * @param {string} firstImage - Base64-encoded image file.
+ * @param {string|Buffer} firstImage - Base64-encoded image file.
  * All image formats, that OpenCV library itself accepts, are supported.
- * @param {string} secondImage - Base64-encoded image file.
+ * @param {string|Buffer} secondImage - Base64-encoded image file.
  * All image formats, that OpenCV library itself accepts, are supported.
  * @param {object} [options] - The content of this dictionary depends
  * on the actual `mode` value. See the documentation on `@appium/support`
@@ -29,8 +29,8 @@ import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE} from './c
  * @type {import('@appium/types').PluginCommand<[string, string, string, object|undefined], Promise<OccurrenceResult>>}
  */
 async function compareImages(mode, firstImage, secondImage, options = {}) {
-  const img1 = Buffer.from(firstImage, 'base64');
-  const img2 = Buffer.from(secondImage, 'base64');
+  const img1 = Buffer.isBuffer(firstImage) ? firstImage : Buffer.from(firstImage, 'base64');
+  const img2 = Buffer.isBuffer(secondImage) ? secondImage : Buffer.from(secondImage, 'base64');
   let result = null;
   switch (_.toLower(mode)) {
     case MATCH_FEATURES_MODE.toLowerCase():

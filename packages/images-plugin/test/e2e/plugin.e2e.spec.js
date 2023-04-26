@@ -4,7 +4,8 @@ import {remote as wdio} from 'webdriverio';
 import {MATCH_FEATURES_MODE, GET_SIMILARITY_MODE} from '../../lib/constants';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, APPSTORE_IMG_PATH} from '../fixtures';
 import {pluginE2EHarness} from '@appium/plugin-test-support';
-import {tempDir, fs, imageUtil} from '@appium/support';
+import {tempDir, fs} from '@appium/support';
+import sharp from 'sharp';
 
 const THIS_PLUGIN_DIR = path.join(__dirname, '..', '..');
 const APPIUM_HOME = path.join(THIS_PLUGIN_DIR, 'local_appium_home');
@@ -98,16 +99,16 @@ describe('ImageElementPlugin', function () {
       const screenshotPath = path.join(tmpRoot, 'element.png');
       await imageEl.saveScreenshot(screenshotPath);
       const tmpImgPath = path.join(tmpRoot, 'region.png');
-      const region = await imageUtil.cropBase64Image(
-        (await fs.readFile(screenshotPath)).toString('base64'),
+      await sharp(screenshotPath)
+      .extract(
         {
-          left: width / 4,
-          top: height / 4,
-          width: width / 2,
-          height: height / 2,
+          left: parseInt(width / 4, 10),
+          top: parseInt(height / 4, 10),
+          width: parseInt(width / 2, 10),
+          height: parseInt(height / 2, 10),
         }
-      );
-      await fs.writeFile(tmpImgPath, Buffer.from(region, 'base64'));
+      )
+      .toFile(tmpImgPath);
       const subEl = await imageEl.$(tmpImgPath);
       _.isNil(subEl).should.be.false;
     } finally {

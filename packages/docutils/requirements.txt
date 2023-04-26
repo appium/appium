@@ -1,4 +1,4 @@
 mkdocs==1.4.2
-mkdocs-material==9.1.7
+mkdocs-material==9.1.8
 mkdocs-material-extensions==1.1.1
 mike==1.1.2

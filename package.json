@@ -92,7 +92,7 @@
     "@types/chai-as-promised": "7.1.5",
     "@types/diff": "5.0.3",
     "@types/mocha": "10.0.1",
-    "@types/node": "18.16.0",
+    "@types/node": "18.16.1",
     "@types/semver": "7.3.13",
     "@types/sinon": "10.0.14",
     "@types/sinon-chai": "3.2.9",

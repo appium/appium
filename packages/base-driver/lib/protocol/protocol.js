@@ -13,6 +13,7 @@ import B from 'bluebird';
 import {formatResponseValue, formatStatus} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
+import log from '../basedriver/logger';
 
 const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -225,7 +226,7 @@ function validateExecuteMethodParams(params, paramSpec) {
         `arguments to execute script and instead received: ${JSON.stringify(params)}`
     );
   }
-  const args = params[0] ?? {};
+  let args = params[0] ?? {};
   if (!_.isPlainObject(args)) {
     throw new errors.InvalidArgumentError(
       `Did not receive an appropriate execute method parameters object. It needs to be ` +
@@ -237,6 +238,11 @@ function validateExecuteMethodParams(params, paramSpec) {
   } else {
     paramSpec.required ??= [];
     paramSpec.optional ??= [];
+    const unknownNames = _.difference(_.keys(args), paramSpec.required, paramSpec.optional);
+    if (!_.isEmpty(unknownNames)) {
+      log.info(`The following script arguments are not known and will be ignored: ${unknownNames}`);
+      args = _.pickBy(args, (v, k) => !unknownNames.includes(k));
+    }
     checkParams(paramSpec, args, null);
   }
   const argsToApply = makeArgs({}, args, paramSpec, null);

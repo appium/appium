@@ -10,6 +10,7 @@ import {
   promises as fsPromises,
   read,
   write,
+  rmSync,
   open,
 } from 'fs';
 import glob from 'glob';
@@ -83,22 +84,21 @@ const fs = {
 
   /**
    * Remove a directory and all its contents, recursively
-   * @param {string} filepath
-   * @returns {Promise<undefined>}
+   * @param {PathLike} filepath
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
   async rimraf(filepath) {
-    return await fsPromises.rm(filepath, { recursive: true, force: true });
+    return await fsPromises.rm(filepath, {recursive: true, force: true});
   },
 
   /**
    * Remove a directory and all its contents, recursively in sync
-   * @param {string} filepath
+   * @param {PathLike} filepath
    * @returns undefined
    * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
   rimrafSync(filepath) {
-    return fs.rmSync(filepath, { recursive: true, force: true });
+    return rmSync(filepath, {recursive: true, force: true});
   },
 
   /**

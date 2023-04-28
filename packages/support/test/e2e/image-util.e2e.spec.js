@@ -12,14 +12,14 @@ async function getImage(name) {
 
 describe('image-util', function () {
   describe('cropBase64Image', function () {
-    let originalImage64 = null;
+    let originalImageB64 = null;
 
     before(async function () {
-      originalImage64 = await getImage('full-image.b64');
+      originalImageB64 = await getImage('full-image.b64');
     });
 
     it('should verify that an image is cropped correctly', async function () {
-      const croppedImageB64 = await cropBase64Image(originalImage64, {
+      const croppedImageB64 = await cropBase64Image(originalImageB64, {
         left: 35,
         top: 107,
         width: 323,

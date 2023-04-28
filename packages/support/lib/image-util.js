@@ -11,7 +11,6 @@ import sharp from 'sharp';
 export async function cropBase64Image(base64Image, rect) {
   const buf = await sharp(Buffer.from(base64Image, 'base64'))
     .extract(rect)
-    .png()
     .toBuffer();
   return buf.toString('base64');
 }

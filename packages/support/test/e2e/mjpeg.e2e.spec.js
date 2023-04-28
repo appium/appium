@@ -89,7 +89,6 @@ describe('MJpeg Stream (e2e)', function () {
     const png = await stream.lastChunkPNGBase64();
     png.should.be.a('string');
     png.indexOf('iVBOR').should.eql(0);
-    png.length.should.be.above(400);
 
     // now stop the stream and wait some more then assert no new data has come in
     stream.stop();

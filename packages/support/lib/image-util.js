@@ -1,5 +1,4 @@
 import sharp from 'sharp';
-import {Buffer} from 'buffer';
 
 /**
  * Crop the image by given rectangle (use base64 string as input and output)

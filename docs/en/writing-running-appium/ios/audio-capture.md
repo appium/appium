@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [Audio Capture](https://appium.github.io/appium-xcuitest-driver/latest/audio-capture/)
+
 ## Audio Capture From iOS Simulators and Real Devices
 
 

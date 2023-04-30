@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## How To Emulate IME Actions Generation
 
 Very often Android developers use [onEditorAction](https://developer.android.com/reference/android/widget/TextView.OnEditorActionListener.html#onEditorAction(android.widget.TextView,%20int,%20android.view.KeyEvent)) callback with `actionId` argument to implement actions handling, for example, when `Search` or `Done` button is pressed on the on-screen keyboard. Appium since version 1.9.2 allows to automate the generation of such actions by providing the special `mobile:` command.

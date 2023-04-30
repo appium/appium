@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) and [appium-espresso-driver](https://github.com/appium/appium-espresso-driver) repositories
+
 ## How To Execute Shell Commands On The Remote Device
 
 It is possible to execute any command on the remote Android device or an emulator under test and get the output from it. This action might be potentially insecure and is disabled on the server side by default. One must provide the `--relaxed-security` command line argument while starting the server in order to enable remote shell commands execution (and other insecure features, which are disabled by default). An exception will be thrown if the relaxed security has not been enabled on the server side and one tries to invoke `mobile: shell` endpoint on the client side.

@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Finding and Interacting with Image Elements
 
 Using the experimental `-image` locator strategy, it is possible to send an Appium an image file representing an element you want to tap. If Appium can find a screen region matching your template, it will wrap up information about this region as a standard `WebElement` and send it back to your Appium client.

@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 # Real Device Continuous Integration
 
 Appium uses a service called [TestObject](https://testobject.com/) that allows us to run automated functional tests against real devices.

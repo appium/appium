@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## How To Troubleshoot Activities Startup
 
 

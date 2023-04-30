@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## uiautomator UiSelector
 
 Appium enables searching using [UiSelectors](http://developer.android.com/reference/android/support/test/uiautomator/UiSelector.html).

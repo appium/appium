@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Cross-domain iFrame Automation
 
 [Same-origin policy](https://en.wikipedia.org/wiki/Same-origin_policy) prevents Appium from automating iFrames that have a different domain to the parent.

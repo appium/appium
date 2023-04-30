@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-espresso-driver](https://github.com/appium/appium-espresso-driver) repository
+
 ## Espresso DataMatcher Selector
 
 By delegating to Espresso's [Data Matcher](https://developer.android.com/reference/android/support/test/espresso/DataInteraction), we can target views that are not visible in the viewport without the need to manually scroll the Views on screen.

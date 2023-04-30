@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## How To Test Android App Bundle
 
 Google has released the [Android App Bundle](https://developer.android.com/platform/technology/app-bundle/) feature.

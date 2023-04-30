@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 # Security
 
 The Appium team makes every effort to ensure the security of the Appium server. This is especially important when Appium is run in a multitenant environment, or when multiple users are running sessions on the same Appium server. In general, if you're running your own Appium server locally, and not sharing it with anyone else, and don't expose Appium's port to the wider internet, you should have nothing to worry about, and can safely enable all Appium's features.

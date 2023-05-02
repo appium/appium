@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Parallel Android Tests
 
 Appium provides a way for users to automate multiple Android sessions on a single machine on single server instance. All it involves is starting Appium server on any available port.

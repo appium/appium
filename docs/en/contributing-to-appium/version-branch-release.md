@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 # Appium Version, Branch, and Release Models
 
 ## Versioning
@@ -13,9 +15,9 @@ This makes Appium’s versioning consistent with other major projects in the NPM
 
 Appium uses [Trunk Based Development](http://paulhammant.com/2013/04/05/what-is-trunk-based-development/). As Paul Hammant explains,
 
->Trunk Based Development (TBD) is where all developers (for a particular deployable unit) commit to one shared branch under source-control. That branch is going to be colloquially known as trunk. 
+>Trunk Based Development (TBD) is where all developers (for a particular deployable unit) commit to one shared branch under source-control. That branch is going to be colloquially known as trunk.
 >
->… Branches are made for a release. Developers are not allowed to make branches in that shared place. Only release engineers commit to those branches, and indeed create each release branch. They may also cherry-pick individual commits to that branch if there is a desire to do so. 
+>… Branches are made for a release. Developers are not allowed to make branches in that shared place. Only release engineers commit to those branches, and indeed create each release branch. They may also cherry-pick individual commits to that branch if there is a desire to do so.
 >
 >… The release branch that will live for a short time before it is replaced by another release branch, takes everything from trunk when it is created. In terms of merges, only cherry-picks FROM trunk TO the release branch are supported.
 
@@ -30,8 +32,8 @@ For Appium, the basic flow looks like this:
    1. All PRs go to `master` (aka `trunk`).
    1. Whoever is leading a release acts as the "release engineer" (RE). When the release is ready to be shared (“Beta" status or better), the RE creates a new branch `v[Major].[Minor].[Patch]-branch`.
    1. PRs continue to go to `master`.
-   1. If the release requires fixes committed to `master`, the RE cherrypicks those commits into the release branch. 
-   1. The release branch can be amended with hotfixes for subsequent patch releases. This allows the team to carefully scope small changesets for quick release. Fixes can also be pulled into previous release  branches branches when needed.  
+   1. If the release requires fixes committed to `master`, the RE cherrypicks those commits into the release branch.
+   1. The release branch can be amended with hotfixes for subsequent patch releases. This allows the team to carefully scope small changesets for quick release. Fixes can also be pulled into previous release  branches branches when needed.
    1. Rinse, repeat.
 
 Developers can maintain working branches however they like. These are strictly for personal use. All “official” branches should conform to the model defined above.
@@ -48,8 +50,4 @@ Developers can maintain working branches however they like. These are strictly f
    1. The RE tags HEAD of `20.1-branch` as `20.1.0` and publishes the release.
    1. A few weeks later, a crash is discovered in `20.1.0` and users need a fix NOW.
    1. The acting RE pulls the crash fix from master into `20.1-branch`, tags HEAD as `20.1.1`, and publishes the hotfix.
-   1. The cycle repeats once the `20.2` release is ready. 
-
-
-
-
+   1. The cycle repeats once the `20.2` release is ready.

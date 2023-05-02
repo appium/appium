@@ -1,3 +1,7 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
+
+
 ## Low-Level Insights on Android Input Events
 
 

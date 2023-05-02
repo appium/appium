@@ -1,1 +1,1 @@
-Please refer to https://github.com/appium/appium-xcuitest-driver/blob/master/docs/ios/ios-xctest-mobile-gestures.md
+Please refer to https://github.com/appium/appium-xcuitest-driver

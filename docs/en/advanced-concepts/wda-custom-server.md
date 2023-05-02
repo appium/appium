@@ -1,1 +1,1 @@
-Please refer to https://github.com/appium/appium-xcuitest-driver/blob/master/docs/wda-custom-server.md
+Please refer to https://appium.github.io/appium-xcuitest-driver/latest/wda-custom-server

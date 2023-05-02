@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## Automating Mobile Gestures With UiAutomator2 Backend
 
 Touch actions are the most advanced and the most complicated way to

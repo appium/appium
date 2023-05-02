@@ -1,5 +1,4 @@
-Note that this documentation explains about Appium 1.x.
-Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](https://appium.github.io/appium) about Appium 2.0.
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
 
 ## Appium Platform Support
 

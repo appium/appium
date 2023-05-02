@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Memory Collection
 
 Since Node v. 12 it is possible to collect the dumps of Appium's memory usage to be analyzed for problems.
@@ -24,7 +26,7 @@ They have the `.heapsnapshot` extension, and can be loaded into the Chrome Inspe
 
 #### Examples
 ```shell
-# 1. Go to the directory where appium is installed via NPM using one of the two cd command below, depending on appium 
+# 1. Go to the directory where appium is installed via NPM using one of the two cd command below, depending on appium
 # is installed globally or locally
 ## if your appium is globally installed via NPM with command "npm install -g appium":
 cd "$(npm -g root)/appium/"

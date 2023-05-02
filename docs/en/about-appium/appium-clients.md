@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## List of client libraries with Appium server support
 
 These libraries wrap standard Selenium client libraries to provide all the regular selenium commands dictated by the [JSON Wire protocol](https://w3c.github.io/webdriver/webdriver-spec.html), and add extra commands related to controlling mobile devices, such as **multi-touch gestures** and **screen orientation**.

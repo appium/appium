@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Selenium Grid 4
 
 `Relay` feature in Grid 4 allows you to proxy Appium requests to an appium server instance.

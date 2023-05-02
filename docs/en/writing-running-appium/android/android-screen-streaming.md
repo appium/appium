@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver) repository
+
 ## Android Device Screen Streaming With Appium
 
 Since Appium 1.16 there is a possibility to stream the screen of the device under test to one or more remote clients. The currently displayed content is broadcasted as configurable [MJPEG](https://en.wikipedia.org/wiki/Motion_JPEG) stream over http protocol. This allows to observe automated test execution while it is running and catch possible issues earlier. Single MJPEG server supports multiple simultaneous clients that can receive screen updates at the same time. The framerate there depends on the server and device performance, but is close to the real time one and can reach up to 60 frames per second, especially with properly adjusted bitrate and/or scaled screen dimensions.

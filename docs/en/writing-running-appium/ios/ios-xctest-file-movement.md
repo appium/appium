@@ -1,1 +1,1 @@
-Please refer to https://github.com/appium/appium-xcuitest-driver/blob/master/docs/ios/ios-xctest-file-movement.md
+Please refer to https://appium.github.io/appium-xcuitest-driver/latest/ios-xctest-file-movement/

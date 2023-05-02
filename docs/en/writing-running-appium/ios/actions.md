@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [About iOS Input Events](https://appium.github.io/appium-xcuitest-driver/latest/actions/)
+
 ## Low-Level Insights on iOS Input Events
 
 

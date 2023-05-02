@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Element Finding Plugins
 
 As of version 1.9.2, Appium supports the use of plugins that can be used to assist in finding elements, via the `-custom` locator strategy. This is an experimental feature.

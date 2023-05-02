@@ -1,3 +1,5 @@
+This documentation is deprecated. Please refer to [the README in the Appium repository](https://github.com/appium/appium) or [Appium 2.0 documentation](http://appium.io/).
+
 ## Settings
 
 Settings are a new concept introduced by Appium. They are currently not a part of the Mobile JSON Wire Protocol, or the Webdriver spec.

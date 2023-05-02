@@ -2,7 +2,7 @@
 jobs:
   - job: update_appium_io
     pool:
-      vmImage: 'Ubuntu-18.04'
+      vmImage: 'Ubuntu-20.04'
     variables:
       CC: gcc
       CXX: g++

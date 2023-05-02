@@ -97,7 +97,7 @@
     "teen_process": "2.0.2",
     "type-fest": "3.9.0",
     "uuid": "9.0.0",
-    "which": "3.0.0",
+    "which": "3.0.1",
     "yauzl": "2.10.0"
   },
   "engines": {

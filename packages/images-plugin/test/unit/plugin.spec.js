@@ -28,8 +28,8 @@ describe('ImageElementPlugin#handle', function () {
         next,
         driver,
         GET_SIMILARITY_MODE,
-        TEST_IMG_1_B64,
-        TEST_IMG_2_B64,
+        Buffer.from(TEST_IMG_1_B64, 'base64'),
+        Buffer.from(TEST_IMG_2_B64, 'base64'),
         {}
       );
       res.score.should.be.above(0.2);
@@ -51,6 +51,16 @@ describe('ImageElementPlugin#handle', function () {
       await p
         .compareImages(next, driver, 'some mode', '', '')
         .should.eventually.be.rejectedWith(/comparison mode is unknown/);
+    });
+    it('should throw an error if image template is broken', async function () {
+      await p
+        .compareImages(next, driver, MATCH_TEMPLATE_MODE, Buffer.from('d1423423424'), Buffer.from('d1423423424'))
+        .should.eventually.be.rejected;
+    });
+    it('should throw an error if image template is empty', async function () {
+      await p
+        .compareImages(next, driver, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))
+        .should.eventually.be.rejected;
     });
   });
 

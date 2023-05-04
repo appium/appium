@@ -1,3 +1,8 @@
+# Notice
+
+**changelogs for each driver exists their GitHub repositories. Please check them. https://appium.io/docs/en/latest/ecosystem/ has links for each driver.**
+
+
 CHANGES IN VERSION 1.22.3 (FROM 1.22.2)
 ===================================
 

@@ -85,6 +85,7 @@ const fs = {
   /**
    * Remove a directory and all its contents, recursively
    * @param {PathLike} filepath
+   * @returns Promise<void>
    * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
   async rimraf(filepath) {

@@ -1,4 +1,4 @@
-import { cropBase64Image } from '../../lib/image-util';
+import {cropBase64Image} from '../../lib/image-util';
 import path from 'path';
 import sharp from 'sharp';
 import {fs} from '../../lib';

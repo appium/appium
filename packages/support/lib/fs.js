@@ -10,6 +10,7 @@ import {
   promises as fsPromises,
   read,
   write,
+  rmSync,
   open,
 } from 'fs';
 import glob from 'glob';
@@ -20,7 +21,6 @@ import ncp from 'ncp';
 import path from 'path';
 import pkgDir from 'pkg-dir';
 import readPkg from 'read-pkg';
-import rimrafIdx from 'rimraf';
 import sanitize from 'sanitize-filename';
 import which from 'which';
 import log from './logger';
@@ -84,17 +84,23 @@ const fs = {
 
   /**
    * Remove a directory and all its contents, recursively
-   * @todo Replace with `rm()` from `fs.promises` when Node.js v12 support is dropped.
+   * @param {PathLike} filepath
+   * @returns Promise<void>
+   * @see https://nodejs.org/api/fs.html#fspromisesrmpath-options
    */
-  rimraf: /** @type {(dirpath: string, opts?: import('rimraf').Options) => Promise<void>} */ (
-    B.promisify(rimrafIdx)
-  ),
+  async rimraf(filepath) {
+    return await fsPromises.rm(filepath, {recursive: true, force: true});
+  },
 
   /**
-   * Alias of {@linkcode rimrafIdx.sync}
-   * @todo Replace with `rmSync()` from `fs` when Node.js v12 support is dropped.
+   * Remove a directory and all its contents, recursively in sync
+   * @param {PathLike} filepath
+   * @returns undefined
+   * @see https://nodejs.org/api/fs.html#fsrmsyncpath-options
    */
-  rimrafSync: rimrafIdx.sync,
+  rimrafSync(filepath) {
+    return rmSync(filepath, {recursive: true, force: true});
+  },
 
   /**
    * Like Node.js' `fsPromises.mkdir()`, but will _not_ reject if the directory already exists.

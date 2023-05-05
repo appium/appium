@@ -1,10 +1,13 @@
 import {ImageElementPlugin} from '../../lib/plugin';
 import {
-  MATCH_FEATURES_MODE, GET_SIMILARITY_MODE, MATCH_TEMPLATE_MODE, IMAGE_STRATEGY
+  MATCH_FEATURES_MODE,
+  GET_SIMILARITY_MODE,
+  MATCH_TEMPLATE_MODE,
+  IMAGE_STRATEGY,
 } from '../../lib/constants';
 import BaseDriver from 'appium/driver';
 import {TEST_IMG_1_B64, TEST_IMG_2_B64, TEST_IMG_2_PART_B64} from '../fixtures';
-import { util } from '@appium/support';
+import {util} from '@appium/support';
 
 describe('ImageElementPlugin#handle', function () {
   const next = () => {};
@@ -53,13 +56,16 @@ describe('ImageElementPlugin#handle', function () {
         .should.eventually.be.rejectedWith(/comparison mode is unknown/);
     });
     it('should throw an error if image template is broken', async function () {
-      await p
-        .compareImages(next, driver, MATCH_TEMPLATE_MODE, Buffer.from('d1423423424'), Buffer.from('d1423423424'))
-        .should.eventually.be.rejected;
+      await p.compareImages(
+        next,
+        driver,
+        MATCH_TEMPLATE_MODE,
+        Buffer.from('d1423423424'),
+        Buffer.from('d1423423424')
+      ).should.eventually.be.rejected;
     });
     it('should throw an error if image template is empty', async function () {
-      await p
-        .compareImages(next, driver, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))
+      await p.compareImages(next, driver, MATCH_TEMPLATE_MODE, Buffer.from(''), Buffer.from(''))
         .should.eventually.be.rejected;
     });
   });

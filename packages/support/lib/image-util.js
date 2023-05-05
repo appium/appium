@@ -9,8 +9,6 @@ import sharp from 'sharp';
  * @return {Promise<string>} base64 encoded string of cropped image
  */
 export async function cropBase64Image(base64Image, rect) {
-  const buf = await sharp(Buffer.from(base64Image, 'base64'))
-    .extract(rect)
-    .toBuffer();
+  const buf = await sharp(Buffer.from(base64Image, 'base64')).extract(rect).toBuffer();
   return buf.toString('base64');
 }

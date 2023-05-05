@@ -7,7 +7,7 @@
 
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
-import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML, NAME_THEME} from '../constants';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML} from '../constants';
 import {DocutilsError} from '../error';
 import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
 import {getLogger} from '../logger';
@@ -57,7 +57,6 @@ async function doBuild(
 export async function buildSite({
   mkdocsYml: mkDocsYmlPath,
   siteDir,
-  theme = NAME_THEME,
   cwd = process.cwd(),
   serve = false,
   serveOpts,
@@ -72,7 +71,7 @@ export async function buildSite({
       `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
     );
   }
-  const mkdocsArgs = ['-f', mkDocsYmlPath, '-t', theme];
+  const mkdocsArgs = ['-f', mkDocsYmlPath];
   if (siteDir) {
     mkdocsArgs.push('-d', siteDir);
   }

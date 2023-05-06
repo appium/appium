@@ -102,5 +102,6 @@ are currently maintained by the Appium Team:
 These tools are to help Appium as part of Appium ecosystem.
 
 |Name|Description|Supported By|
+|---|---|---|
 |[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help setting up Appium running environment for Android and iOS|`@AppiumTestDistribution`|
 

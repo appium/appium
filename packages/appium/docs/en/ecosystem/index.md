@@ -97,3 +97,10 @@ are currently maintained by the Appium Team:
     If you maintain an Appium plugin that you would like to be listed in the Appium docs, feel free
     to make a PR to add it to this section with a link to the documentation for the plugin.
 
+## Helper tools
+
+These tools are to help Appium as part of Appium ecosystem.
+
+|Name|Description|Supported By|
+|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help setting up Appium running environment for Android and iOS|`@AppiumTestDistribution`|
+

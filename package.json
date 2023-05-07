@@ -107,7 +107,7 @@
     "chai-webdriverio-async": "2.7.0",
     "conventional-changelog-conventionalcommits": "5.0.0",
     "cpy-cli": "4.2.0",
-    "eslint": "8.39.0",
+    "eslint": "8.40.0",
     "eslint-config-prettier": "8.8.0",
     "eslint-find-rules": "4.1.0",
     "eslint-import-resolver-typescript": "3.5.5",

@@ -99,9 +99,9 @@ are currently maintained by the Appium Team:
 
 ## Helper tools
 
-These tools are to help Appium as part of Appium ecosystem.
+The following tools might also be useful for Appium users:
 
 |Name|Description|Supported By|
 |---|---|---|
-|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help setting up Appium running environment for Android and iOS|`@AppiumTestDistribution`|
+|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help set up an Appium environment for Android and iOS|`@AppiumTestDistribution`|
 

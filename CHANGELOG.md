@@ -1,14 +1,15 @@
 # Aggregate Changelog
 
-Appium contains many different modules and supports a variety of drivers, most of which have their own changelogs. Links to these individual changelogs are aggregated here.
+Appium contains many different modules and supports a variety of drivers, plugins and clients, most of which have their own changelogs. Links to these individual changelogs are aggregated here.
 
 ## Main Appium Module
 
 * ### [Appium 2.0 Changelog](packages/appium/CHANGELOG.md)
 * [Appium 1.x Changelog](https://github.com/appium/appium/blob/1.x/CHANGELOG.md)
 
-## Appium Drivers
-Appium 2.0 does not include drivers by default. Refer to the [Appium Ecosystem](https://appium.io/docs/en/latest/ecosystem/#drivers) page for links to specific driver documentation and changelogs.
+## Appium Drivers / Clients / Plugins
+* Refer to the [Appium Ecosystem](https://appium.io/docs/en/latest/ecosystem/) page for links to specific driver/client/plugin documentation
+* Changelogs for plugins maintained by Appium Team are also linked in the Other Modules section below
 
 ## Other Appium Modules
 * [base-driver](packages/base-driver/CHANGELOG.md)

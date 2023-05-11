@@ -80,7 +80,20 @@ APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
 
-With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either `driver` or `plugin`) and the name of the extension. For example, `--chromedriver-executable` becomes `--driver-uiautomator2-chromedriver-executable`.
+With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access the corresponding functionality, you'll need to refer to the driver/plugin documentation. In some cases, the extension will continue to expose CLI parameters. For example, the XCUITest driver used to expose a parameter `--webdriveragent-port`. Now, to access this parameter, it should be prefixed with `driver-xcuitest`, to differentiate it from parameters other drivers might also expose. To use this parameter, you thus need to start Appium with something like:
+
+```bash
+appium --driver-xcuitest-webdriveragent-port=5000
+```
+
+Some drivers have done away with CLI args entirely in favour of default capabilities instead. With
+the above-mentioned `--chromedriver-executable` param for example, you now need to take advantage
+of the `appium:chromedriverExecutable` capability supported by the UiAutomator2 driver. To set this
+capability from the command line, do the following:
+
+```bash
+appium --default-capabilities '{"appium:chromedriverExecutable": "/path/to/chromedriver"}'
+```
 
 ### :bangbang: Driver-specific automation commands
 

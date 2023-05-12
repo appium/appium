@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_support.net.HttpUploadOptions/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_support.net.HttpUploadOptions/">
       
       
       
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1396,33 +1517,33 @@
 <p>The name of the form field containing the file
 content to be uploaded. Any falsy value make the request to use non-multipart upload</p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/net.js#L331">packages/support/lib/net.js:331</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/net.js#L331">packages/support/lib/net.js:331</a></p>
 <hr />
 <h3 id="formfields">formFields</h3>
-<p>• <strong>formFields</strong>: <code>undefined</code> | <code>Record</code>&lt;<code>string</code>, <code>any</code>></p>
+<p>• <strong>formFields</strong>: <code>undefined</code> | <code>Record</code>&lt;<code>string</code>, <code>any</code>> | [<code>string</code>, <code>any</code>][]</p>
 <p>The additional form fields
 to be included into the upload request. This property is only considered if
 <code>fileFieldName</code> is set</p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/net.js#L333">packages/support/lib/net.js:333</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/net.js#L333">packages/support/lib/net.js:333</a></p>
 <hr />
 <h3 id="headers">headers</h3>
-<p>• <strong>headers</strong>: <code>Record</code>&lt;<code>string</code>, <code>any</code>></p>
+<p>• <strong>headers</strong>: <code>undefined</code> | <a href="../../modules/appium_types/#httpheaders"><code>HTTPHeaders</code></a></p>
 <p>Additional request headers mapping</p>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/net.js#L328">packages/support/lib/net.js:328</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/net.js#L328">packages/support/lib/net.js:328</a></p>
 <hr />
 <h3 id="method">method</h3>
 <p>• <strong>method</strong>: <code>undefined</code> | <code>Method</code></p>
 <p>The HTTP method used for file upload</p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/net.js#L329">packages/support/lib/net.js:329</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/net.js#L329">packages/support/lib/net.js:329</a></p>
 <hr />
 <h3 id="timeout">timeout</h3>
 <p>• <strong>timeout</strong>: <code>undefined</code> | <code>number</code></p>
 <p>The actual request timeout in milliseconds; defaults to DEFAULT_TIMEOUT_MS</p>
 <h4 id="defined-in_4">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/net.js#L330">packages/support/lib/net.js:330</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/net.js#L330">packages/support/lib/net.js:330</a></p>
 
 
 

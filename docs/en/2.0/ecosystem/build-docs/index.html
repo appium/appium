@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/ecosystem/build-docs/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/ecosystem/build-docs/">
       
       
         <link rel="prev" href="../build-plugins/">
@@ -117,6 +117,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#conceptual-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -175,19 +180,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -950,7 +955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../reference/commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -964,7 +969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../reference/commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1095,9 +1100,52 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Building Docs for Appium Extensions
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Building Docs for Appium Extensions
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conceptual-architecture" class="md-nav__link">
+    Conceptual architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1212,6 +1260,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1230,6 +1399,35 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conceptual-architecture" class="md-nav__link">
+    Conceptual architecture
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1247,7 +1445,83 @@
 
 
 
-<p>TODO</p>
+  <h1>Building Docs for Appium Extensions</h1>
+
+<p>Once you've <a href="../build-drivers/">built a driver</a> or <a href="../build-plugins/">built a plugin</a> for
+Appium, you will hopefully want to document how that extension works for your users. The most basic
+way of doing this is to write up a quick README and keep it in the root of your project's
+repository. However, this can involve a lot of duplication of effort, especially when documenting
+things like Appium commands.</p>
+<p>Let's say your driver implements ~25 of the standard WebDriver protocol commands. You could write
+up a description of these commands, how they map to the protocol, what parameters they take, and
+what behaviour will result on your particular platform. But this information is already more or
+less stored in your code, as the command implementation (and any docstrings or comments). Having
+this information in two places creates an opportunity for the docs to get out of sync with the
+reality of the code. Wouldn't it be nice to generate command reference documentation straight from
+the code?</p>
+<p>Another problem with the basic single file README approach is that many extensions might want
+a whole set of documents including longer prose guides (like this one). It might be nice to have
+code examples where you can toggle between different programming languages. It might be nice to be
+able to add a project-specific logo. And so on.</p>
+<p>Luckily, the Appium project has built tools to do all these things, and we've packaged up these
+tools so our ecosystem developers building drivers and plugins can <em>also</em> use them. The best way to
+get going with these tools is probably to look at an existing Appium driver repo to see how it's
+done, for example the <a href="https://github.com/appium/appium-xcuitest-driver">XCUITest driver repo</a>. But
+this guide will outline the basic approach.</p>
+<h3 id="conceptual-architecture">Conceptual architecture</h3>
+<p>Appium settled on <a href="https://www.mkdocs.org/">MkDocs</a> as a Markdown-based documentation site
+generator. It uses a Python toolchain (and not Node.js), but it turned out to be the best option
+for our purposes. You can adjust this, but by default Appium's utilities also assume that you'll be
+using the <a href="https://squidfunk.github.io/mkdocs-material/">mkdocs-material</a> theme/extension for
+MkDocs.</p>
+<p>From here, building a basic docs site is as easy as collecting your Markdown files together and
+creating a sort of manifest file defining how you want them to be organized.</p>
+<p>The other main piece is automatic documentation generation from your code files. Appium maintains
+a plugin for <a href="https://typedoc.org/">TypeDoc</a>. This plugin is incorporated into our doc utility.
+When you give it an entrypoint for you driver or plugin, it will scan and parse all your code files
+looking for Appium command implementations. A set of Markdown reference files will be generated for these
+commands, which can then be included in your docs site.</p>
+<p>In order to make different versions of your docs available (one for each minor release of your
+extension, typically), we also bundle <a href="https://github.com/jimporter/mike">Mike</a>.</p>
+<h3 id="setup">Setup</h3>
+<p>To take advantage of Appium's documentation utilities, you'll need to make sure of the following:</p>
+<ul>
+<li>Python 3 is available</li>
+<li>The appropriate Python dependencies are available (the versions used by Appium itself are listed</li>
+<li>in the doc utility's
+  <a href="https://github.com/appium/appium/blob/master/packages/docutils/requirements.txt">requirements.txt</a>).
+  It's recommended you use the same versions.</li>
+<li>Include the <code>@appium/docutils</code> NPM package as a dev dependency of your project</li>
+<li>Annotate your commands using TypeDoc (this works for JS projects and not just TypeScript
+  projects).</li>
+<li>Put your markdown docs files in a directory</li>
+<li>Create a <a href="https://www.mkdocs.org/user-guide/configuration/"><code>mkdocs.yml</code></a> file that extends
+  Appium's base MkDocs configuration. (If your <code>mkdocs.yml</code> file is in the root of your repo, then
+  the line at the top of it should look like:
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>INHERIT: ./node_modules/@appium/docutils/base-mkdocs.yml
+</code></pre></div>
+  Basically, make sure you're inheriting the path to <code>@appium/docutils</code>'s <code>base-mkdocs.yml</code>.</li>
+</ul>
+<h3 id="usage">Usage</h3>
+<p>At this point, you can use the <code>appium-docs</code> CLI tool. Run this tool with no arguments to get the
+full help output and see all the available subcommands and parameters. Here are a few usage
+examples:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Generate reference and build the mkdocs site into the site dir</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium-docs<span class="w"> </span>build
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Same as build, but host the docs on a local dev server</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># and watch for changes and rebuild when files change</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>appium-docs<span class="w"> </span>build<span class="w"> </span>--serve
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Build the docs and deploy them with mike versioning to the docs-site branch</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># using the included commit message and rebase strategy on the branch.</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># This is particularly useful for pushing content to a GitHub pages branch!</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>appium-docs<span class="w"> </span>build<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span>--deploy<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span>-b<span class="w"> </span>docs-site<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span>-m<span class="w"> </span><span class="s1">&#39;docs: auto-build docs for appium-xcuitest-driver@%s&#39;</span><span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span>--rebase
+</code></pre></div>
 
 
 

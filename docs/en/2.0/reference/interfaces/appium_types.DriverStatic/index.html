@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_types.DriverStatic/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_types.DriverStatic/">
       
       
       
@@ -114,7 +114,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interface-driverstaticd" class="md-skip">
+        <a href="#interface-driverstatict" class="md-skip">
           Skip to content
         </a>
       
@@ -150,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Interface: DriverStatic<D\>
+              Interface: DriverStatic<T\>
             
           </span>
         </div>
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1366,7 +1487,7 @@
 
 
 
-<h1 id="interface-driverstaticd">Interface: DriverStatic&lt;D></h1>
+<h1 id="interface-driverstatict">Interface: DriverStatic&lt;T></h1>
 <p><a href="../../modules/appium_types/">@appium/types</a>.DriverStatic</p>
 <p>Static members of a <a href="../../modules/appium_types/#driverclass"><code>DriverClass</code></a>.</p>
 <p>This is likely unusable by external consumers, but YMMV!</p>
@@ -1380,7 +1501,7 @@
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>D</code></td>
+<td align="left"><code>T</code></td>
 <td align="left">extends <a href="../appium_types.Driver/"><code>Driver</code></a></td>
 </tr>
 </tbody>
@@ -1397,22 +1518,22 @@
 <h3 id="baseversion">baseVersion</h3>
 <p>• <strong>baseVersion</strong>: <code>string</code></p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2209">packages/types/lib/driver.ts:2209</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L2025">packages/types/lib/driver.ts:2025</a></p>
 <hr />
 <h3 id="executemethodmap">executeMethodMap</h3>
-<p>• <code>Optional</code> <strong>executeMethodMap</strong>: <code>Readonly</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>Readonly</code>&lt;<a href="../appium_types.ExecuteMethodDef/"><code>ExecuteMethodDef</code></a>&lt;<code>D</code>>>>></p>
+<p>• <code>Optional</code> <strong>executeMethodMap</strong>: <a href="../../modules/appium_types/#executemethodmap"><code>ExecuteMethodMap</code></a>&lt;<code>T</code>></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2212">packages/types/lib/driver.ts:2212</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L2028">packages/types/lib/driver.ts:2028</a></p>
 <hr />
 <h3 id="newmethodmap">newMethodMap</h3>
-<p>• <code>Optional</code> <strong>newMethodMap</strong>: <code>Readonly</code>&lt;<code>Record</code>&lt;<code>string</code>, { <code>DELETE?</code>: <a href="../appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>D</code>> ; <code>GET?</code>: <a href="../appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>D</code>> ; <code>POST?</code>: <a href="../appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>D</code>>  }>></p>
+<p>• <code>Optional</code> <strong>newMethodMap</strong>: <a href="../../modules/appium_types/#methodmap"><code>MethodMap</code></a>&lt;<code>T</code>></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2211">packages/types/lib/driver.ts:2211</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L2027">packages/types/lib/driver.ts:2027</a></p>
 <hr />
 <h3 id="updateserver">updateServer</h3>
 <p>• <code>Optional</code> <strong>updateServer</strong>: <a href="../../modules/appium_types/#updateservercallback"><code>UpdateServerCallback</code></a></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2210">packages/types/lib/driver.ts:2210</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L2026">packages/types/lib/driver.ts:2026</a></p>
 
 
 

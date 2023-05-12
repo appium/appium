@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/modules/appium_support/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/modules/appium_support/">
       
       
       
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1197,6 +1197,127 @@
       <a href="https://github.com/appium/appium/issues" class="md-nav__link">
         Issues
       </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1504,7 +1625,7 @@
 </tr>
 <tr>
 <td align="left"><code>fs</code></td>
-<td align="left">{ <code>F_OK</code>: <code>number</code> = constants.F_OK; <code>R_OK</code>: <code>number</code> = constants.R_OK; <code>W_OK</code>: <code>number</code> = constants.W_OK; <code>X_OK</code>: <code>number</code> = constants.X_OK; <code>access</code>: (<code>path</code>: <code>PathLike</code>, <code>mode?</code>: <code>number</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.access; <code>appendFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Uint8Array</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>FlagAndOpenMode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.appendFile; <code>chmod</code>: (<code>path</code>: <code>PathLike</code>, <code>mode</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.chmod; <code>close</code>: (<code>arg1</code>: <code>number</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>> ; <code>constants</code>: typeof <code>constants</code> ; <code>createReadStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>ReadStreamOptions</code>) =&gt; <code>ReadStream</code> ; <code>createWriteStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>StreamOptions</code>) =&gt; <code>WriteStream</code> ; <code>glob</code>: (<code>pattern</code>: <code>string</code>, <code>opts?</code>: <code>IOptions</code>) =&gt; <code>Bluebird</code>&lt;<code>string</code>[]> ; <code>lstat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.lstat; <code>mv</code>: (<code>from</code>: <code>string</code>, <code>to</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Bluebird</code>&lt;<code>void</code>> ; <code>open</code>: (<code>path</code>: <code>PathLike</code>, <code>flags</code>: <code>OpenMode</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>number</code>> ; <code>openFile</code>: (<code>path</code>: <code>PathLike</code>, <code>flags?</code>: <code>string</code> | <code>number</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>FileHandle</code>> = fsPromises.open; <code>read</code>: <code>ReadFn</code>&lt;<code>ArrayBufferView</code>> ; <code>readFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | { <code>encoding?</code>: <code>null</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options</code>: <code>BufferEncoding</code> | { <code>encoding</code>: <code>BufferEncoding</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>Abortable</code> &amp; { <code>flag?</code>: <code>OpenMode</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readFile; <code>readdir</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]> = fsPromises.readdir; <code>readlink</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>string</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readlink; <code>realpath</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.realpath; <code>rename</code>: (<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.rename; <code>rimraf</code>: (<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>rimrafSync</code>: (<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code> = rimrafIdx.sync; <code>sanitizeName</code>: (<code>input</code>: <code>string</code>, <code>options?</code>: { <code>replacement?</code>: <code>string</code> | (<code>substring</code>: <code>string</code>) =&gt; <code>string</code>  }) =&gt; <code>string</code> = sanitize; <code>stat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.stat; <code>symlink</code>: (<code>target</code>: <code>PathLike</code>, <code>path</code>: <code>PathLike</code>, <code>type?</code>: <code>null</code> | <code>string</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.symlink; <code>unlink</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.unlink; <code>which</code>: typeof <code>which</code> ; <code>write</code>: (<code>arg1</code>: <code>number</code>, <code>arg2</code>: <code>string</code>) =&gt; <code>Bluebird</code>&lt;<code>number</code>> ; <code>writeFile</code>: (<code>file</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Stream</code> | <code>ArrayBufferView</code> | <code>Iterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>> | <code>AsyncIterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>flag?</code>: <code>OpenMode</code> ; <code>mode?</code>: <code>Mode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.writeFile; <code>copyFile</code>: (<code>source</code>: <code>string</code>, <code>destination</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>exists</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>findRoot</code>: (<code>dir</code>: <code>string</code>) =&gt; <code>string</code> ; <code>hasAccess</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>hash</code>: (<code>filePath</code>: <code>PathLike</code>, <code>algorithm?</code>: <code>string</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>isExecutable</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>md5</code>: (<code>filePath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>mkdir</code>: (<code>filepath</code>: <code>string</code> | <code>Buffer</code> | <code>URL</code>, <code>opts?</code>: <code>MakeDirectoryOptions</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>mkdirp</code>: (<code>dir</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>readPackageJsonFrom</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>any</code> ; <code>walk</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Walker</code> ; <code>walkDir</code>: (<code>dir</code>: <code>string</code>, <code>recursive</code>: <code>boolean</code>, <code>callback</code>: <code>WalkDirCallback</code>) =&gt; <code>Promise</code>&lt;<code>null</code> | <code>string</code>>  }</td>
+<td align="left">{ <code>F_OK</code>: <code>number</code> = constants.F_OK; <code>R_OK</code>: <code>number</code> = constants.R_OK; <code>W_OK</code>: <code>number</code> = constants.W_OK; <code>X_OK</code>: <code>number</code> = constants.X_OK; <code>access</code>: (<code>path</code>: <code>PathLike</code>, <code>mode?</code>: <code>number</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.access; <code>appendFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Uint8Array</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>FlagAndOpenMode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.appendFile; <code>chmod</code>: (<code>path</code>: <code>PathLike</code>, <code>mode</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.chmod; <code>close</code>: (<code>arg1</code>: <code>number</code>) =&gt; <code>Bluebird</code>&lt;<code>any</code>> ; <code>constants</code>: typeof <code>constants</code> ; <code>createReadStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>ReadStreamOptions</code>) =&gt; <code>ReadStream</code> ; <code>createWriteStream</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>BufferEncoding</code> | <code>StreamOptions</code>) =&gt; <code>WriteStream</code> ; <code>glob</code>: (<code>pattern</code>: <code>string</code>, <code>opts?</code>: <code>IOptions</code>) =&gt; <code>Bluebird</code>&lt;<code>string</code>[]> ; <code>lstat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.lstat; <code>mv</code>: (<code>from</code>: <code>string</code>, <code>to</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Bluebird</code>&lt;<code>void</code>> ; <code>open</code>: (<code>path</code>: <code>PathLike</code>, <code>flags</code>: <code>OpenMode</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>number</code>> ; <code>openFile</code>: (<code>path</code>: <code>PathLike</code>, <code>flags?</code>: <code>string</code> | <code>number</code>, <code>mode?</code>: <code>Mode</code>) =&gt; <code>Promise</code>&lt;<code>FileHandle</code>> = fsPromises.open; <code>read</code>: <code>ReadFn</code>&lt;<code>ArrayBufferView</code>> ; <code>readFile</code>: (<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | { <code>encoding?</code>: <code>null</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options</code>: <code>BufferEncoding</code> | { <code>encoding</code>: <code>BufferEncoding</code> ; <code>flag?</code>: <code>OpenMode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; <code>Abortable</code> &amp; { <code>flag?</code>: <code>OpenMode</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readFile; <code>readdir</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>"buffer"</code> | { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]> = fsPromises.readdir; <code>readlink</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>string</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.readlink; <code>realpath</code>: (<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code>>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>BufferEncodingOption</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code>) =&gt; <code>Promise</code>&lt;<code>string</code> | <code>Buffer</code>> = fsPromises.realpath; <code>rename</code>: (<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.rename; <code>sanitizeName</code>: (<code>input</code>: <code>string</code>, <code>options?</code>: { <code>replacement?</code>: <code>string</code> | (<code>substring</code>: <code>string</code>) =&gt; <code>string</code>  }) =&gt; <code>string</code> = sanitize; <code>stat</code>: (<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code> &amp; { <code>bigint?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Stats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts</code>: <code>StatOptions</code> &amp; { <code>bigint</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>BigIntStats</code>>(<code>path</code>: <code>PathLike</code>, <code>opts?</code>: <code>StatOptions</code>) =&gt; <code>Promise</code>&lt;<code>Stats</code> | <code>BigIntStats</code>> = fsPromises.stat; <code>symlink</code>: (<code>target</code>: <code>PathLike</code>, <code>path</code>: <code>PathLike</code>, <code>type?</code>: <code>null</code> | <code>string</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.symlink; <code>unlink</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.unlink; <code>which</code>: typeof <code>which</code> ; <code>write</code>: (<code>arg1</code>: <code>number</code>, <code>arg2</code>: <code>string</code>) =&gt; <code>Bluebird</code>&lt;<code>number</code>> ; <code>writeFile</code>: (<code>file</code>: <code>PathLike</code> | <code>FileHandle</code>, <code>data</code>: <code>string</code> | <code>Stream</code> | <code>ArrayBufferView</code> | <code>Iterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>> | <code>AsyncIterable</code>&lt;<code>string</code> | <code>ArrayBufferView</code>>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>flag?</code>: <code>OpenMode</code> ; <code>mode?</code>: <code>Mode</code>  } &amp; <code>Abortable</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> = fsPromises.writeFile; <code>copyFile</code>: (<code>source</code>: <code>string</code>, <code>destination</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>exists</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>findRoot</code>: (<code>dir</code>: <code>string</code>) =&gt; <code>string</code> ; <code>hasAccess</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>hash</code>: (<code>filePath</code>: <code>PathLike</code>, <code>algorithm?</code>: <code>string</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>isExecutable</code>: (<code>path</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>boolean</code>> ; <code>md5</code>: (<code>filePath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>string</code>> ; <code>mkdir</code>: (<code>filepath</code>: <code>string</code> | <code>Buffer</code> | <code>URL</code>, <code>opts?</code>: <code>MakeDirectoryOptions</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>mkdirp</code>: (<code>dir</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>> ; <code>readPackageJsonFrom</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <a href="../appium_support.env/#normalizedpackagejson"><code>NormalizedPackageJson</code></a> ; <code>rimraf</code>: (<code>filepath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>> ; <code>rimrafSync</code>: (<code>filepath</code>: <code>PathLike</code>) =&gt; <code>void</code> ; <code>walk</code>: (<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Walker</code> ; <code>walkDir</code>: (<code>dir</code>: <code>string</code>, <code>recursive</code>: <code>boolean</code>, <code>callback</code>: <code>WalkDirCallback</code>) =&gt; <code>Promise</code>&lt;<code>null</code> | <code>string</code>>  }</td>
 </tr>
 <tr>
 <td align="left"><code>fs.F_OK</code></td>
@@ -1580,7 +1701,7 @@
 </tr>
 <tr>
 <td align="left"><code>fs.readdir</code></td>
-<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>"buffer"</code> | { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
 </tr>
 <tr>
 <td align="left"><code>fs.readlink</code></td>
@@ -1593,14 +1714,6 @@
 <tr>
 <td align="left"><code>fs.rename</code></td>
 <td align="left">(<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
-</tr>
-<tr>
-<td align="left"><code>fs.rimraf</code></td>
-<td align="left">(<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
-</tr>
-<tr>
-<td align="left"><code>fs.rimrafSync</code></td>
-<td align="left">(<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code></td>
 </tr>
 <tr>
 <td align="left"><code>fs.sanitizeName</code></td>
@@ -1671,6 +1784,14 @@
 <td align="left">[object Object]</td>
 </tr>
 <tr>
+<td align="left"><code>fs.rimraf</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
+<td align="left"><code>fs.rimrafSync</code></td>
+<td align="left">[object Object]</td>
+</tr>
+<tr>
 <td align="left"><code>fs.walk</code></td>
 <td align="left">[object Object]</td>
 </tr>
@@ -1733,7 +1854,7 @@
 </tbody>
 </table>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/index.js#L41">packages/support/lib/index.js:41</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/index.js#L41">packages/support/lib/index.js:41</a></p>
 <hr />
 <h3 id="fs">fs</h3>
 <p>• <code>Const</code> <strong>fs</strong>: <code>Object</code></p>
@@ -1839,7 +1960,7 @@
 </tr>
 <tr>
 <td align="left"><code>readdir</code></td>
-<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  } | <code>"buffer"</code>) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
+<td align="left">(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>"buffer"</code> | { <code>encoding</code>: <code>"buffer"</code> ; <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options?</code>: <code>null</code> | <code>BufferEncoding</code> | <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes?</code>: <code>false</code>  }) =&gt; <code>Promise</code>&lt;<code>string</code>[] | <code>Buffer</code>[]>(<code>path</code>: <code>PathLike</code>, <code>options</code>: <code>ObjectEncodingOptions</code> &amp; { <code>withFileTypes</code>: <code>true</code>  }) =&gt; <code>Promise</code>&lt;<code>Dirent</code>[]></td>
 <td align="left">Reads the contents of a directory. The optional <code>options</code> argument can be a string specifying an encoding, or an object with an <code>encoding</code> property specifying the character encoding to use for the filenames. If the <code>encoding</code> is set to <code>'buffer'</code>, the filenames returned will be passed as <code>Buffer</code> objects. If <code>options.withFileTypes</code> is set to <code>true</code>, the resolved array will contain <code>fs.Dirent</code> objects. <code>js import { readdir } from 'fs/promises'; try { const files = await readdir(path); for (const file of files) console.log(file); } catch (err) { console.error(err); }</code> <strong><code>Since</code></strong> v10.0.0</td>
 </tr>
 <tr>
@@ -1856,16 +1977,6 @@
 <td align="left"><code>rename</code></td>
 <td align="left">(<code>oldPath</code>: <code>PathLike</code>, <code>newPath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
 <td align="left">Renames <code>oldPath</code> to <code>newPath</code>. <strong><code>Since</code></strong> v10.0.0</td>
-</tr>
-<tr>
-<td align="left"><code>rimraf</code></td>
-<td align="left">(<code>dirpath</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
-<td align="left">Remove a directory and all its contents, recursively <strong><code>Todo</code></strong> Replace with <code>rm()</code> from <code>fs.promises</code> when Node.js v12 support is dropped.</td>
-</tr>
-<tr>
-<td align="left"><code>rimrafSync</code></td>
-<td align="left">(<code>path</code>: <code>string</code>, <code>options?</code>: <code>Options</code>) =&gt; <code>void</code></td>
-<td align="left">Alias of rimrafIdx.sync <strong><code>Todo</code></strong> Replace with <code>rmSync()</code> from <code>fs</code> when Node.js v12 support is dropped.</td>
 </tr>
 <tr>
 <td align="left"><code>sanitizeName</code></td>
@@ -1949,8 +2060,18 @@
 </tr>
 <tr>
 <td align="left"><code>readPackageJsonFrom</code></td>
-<td align="left">(<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <code>any</code></td>
+<td align="left">(<code>dir</code>: <code>string</code>, <code>opts?</code>: <code>Options</code>) =&gt; <a href="../appium_support.env/#normalizedpackagejson"><code>NormalizedPackageJson</code></a></td>
 <td align="left">Reads the closest <code>package.json</code> file from absolute path <code>dir</code>. <strong><code>Throws</code></strong> If there were problems finding or reading a <code>package.json</code> file</td>
+</tr>
+<tr>
+<td align="left"><code>rimraf</code></td>
+<td align="left">(<code>filepath</code>: <code>PathLike</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></td>
+<td align="left">Remove a directory and all its contents, recursively <strong><code>See</code></strong> https://nodejs.org/api/fs.html#fspromisesrmpath-options</td>
+</tr>
+<tr>
+<td align="left"><code>rimrafSync</code></td>
+<td align="left">(<code>filepath</code>: <code>PathLike</code>) =&gt; <code>void</code></td>
+<td align="left">Remove a directory and all its contents, recursively in sync <strong><code>See</code></strong> https://nodejs.org/api/fs.html#fsrmsyncpath-options</td>
 </tr>
 <tr>
 <td align="left"><code>walk</code></td>
@@ -1965,12 +2086,12 @@
 </tbody>
 </table>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/fs.js#L37">packages/support/lib/fs.js:37</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/fs.js#L37">packages/support/lib/fs.js:37</a></p>
 <hr />
 <h3 id="npm">npm</h3>
 <p>• <code>Const</code> <strong>npm</strong>: <code>NPM</code></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/npm.js#L267">packages/support/lib/npm.js:267</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/npm.js#L267">packages/support/lib/npm.js:267</a></p>
 <h2 id="functions_1">Functions</h2>
 <h3 id="cancellabledelay">cancellableDelay</h3>
 <p>▸ <strong>cancellableDelay</strong>(<code>ms</code>): <code>Bluebird</code>&lt;<code>any</code>></p>
@@ -1992,7 +2113,7 @@
 <h4 id="returns">Returns</h4>
 <p><code>Bluebird</code>&lt;<code>any</code>></p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/util.js#L101">packages/support/lib/util.js:101</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/util.js#L101">packages/support/lib/util.js:101</a></p>
 <hr />
 <h3 id="mkdirp">mkdirp</h3>
 <p>▸ <strong>mkdirp</strong>(<code>dir</code>): <code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></p>
@@ -2015,7 +2136,7 @@
 <h4 id="returns_1">Returns</h4>
 <p><code>Promise</code>&lt;<code>undefined</code> | <code>string</code>></p>
 <h4 id="defined-in_4">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/support/lib/fs.js#L202">packages/support/lib/fs.js:202</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/support/lib/fs.js#L208">packages/support/lib/fs.js:208</a></p>
 
 
 

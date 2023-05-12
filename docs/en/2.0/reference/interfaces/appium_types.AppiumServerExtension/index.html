@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_types.AppiumServerExtension/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_types.AppiumServerExtension/">
       
       
       
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1399,6 +1520,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#returns_3" class="md-nav__link">
     Returns
   </a>
@@ -1426,7 +1554,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
+  <a href="#parameters_3" class="md-nav__link">
     Parameters
   </a>
   
@@ -1492,74 +1620,87 @@
 </ul>
 <h2 id="properties_1">Properties</h2>
 <h3 id="websocketsmapping">webSocketsMapping</h3>
-<p>• <strong>webSocketsMapping</strong>: <code>Record</code>&lt;<code>string</code>, <code>Server</code>&lt;<code>WebSocket</code>>></p>
+<p>• <strong>webSocketsMapping</strong>: <code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>></p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L76">packages/types/lib/index.ts:76</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L47">packages/types/lib/server.ts:47</a></p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="addwebsockethandler">addWebSocketHandler</h3>
-<p>▸ <strong>addWebSocketHandler</strong>(<code>handlerPathname</code>, <code>handlerServer</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>▸ <strong>addWebSocketHandler</strong>(<code>this</code>, <code>handlerPathname</code>, <code>handlerServer</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Adds websocket handler to an <a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a>.</p>
 <h4 id="parameters">Parameters</h4>
 <table>
 <thead>
 <tr>
 <th align="left">Name</th>
 <th align="left">Type</th>
+<th align="left">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td align="left"><code>this</code></td>
+<td align="left"><a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
 <td align="left"><code>handlerPathname</code></td>
 <td align="left"><code>string</code></td>
+<td align="left">Web socket endpoint path starting with a single slash character. It is recommended to always prepend <code>/ws</code> to all web socket pathnames.</td>
 </tr>
 <tr>
 <td align="left"><code>handlerServer</code></td>
-<td align="left"><code>Server</code>&lt;<code>WebSocket</code>></td>
+<td align="left"><a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>></td>
+<td align="left">WebSocket server instance. See https://github.com/websockets/ws/pull/885 for more details on how to configure the handler properly.</td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L72">packages/types/lib/index.ts:72</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L19">packages/types/lib/server.ts:19</a></p>
 <hr />
 <h3 id="close">close</h3>
 <p>▸ <strong>close</strong>(): <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="returns_1">Returns</h4>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L71">packages/types/lib/index.ts:71</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L13">packages/types/lib/server.ts:13</a></p>
 <hr />
 <h3 id="getwebsockethandlers">getWebSocketHandlers</h3>
-<p>▸ <strong>getWebSocketHandlers</strong>(<code>keysFilter</code>): <code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>Server</code>&lt;<code>WebSocket</code>>>></p>
+<p>▸ <strong>getWebSocketHandlers</strong>(<code>this</code>, <code>keysFilter?</code>): <code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>>></p>
+<p>Returns web socket handlers registered for the given server
+instance.</p>
 <h4 id="parameters_1">Parameters</h4>
 <table>
 <thead>
 <tr>
 <th align="left">Name</th>
 <th align="left">Type</th>
+<th align="left">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="left"><code>keysFilter</code></td>
-<td align="left"><code>undefined</code> | <code>null</code> | <code>string</code></td>
+<td align="left"><code>this</code></td>
+<td align="left"><a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left"><code>keysFilter?</code></td>
+<td align="left"><code>null</code> | <code>string</code></td>
+<td align="left">Only include pathnames with given value if set. All pairs will be included by default.</td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_2">Returns</h4>
-<p><code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>Server</code>&lt;<code>WebSocket</code>>>></p>
+<p><code>Promise</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../classes/appium_types.WSServer/"><code>WSServer</code></a>&lt;<code>WebSocket</code>>>></p>
+<p>Pathnames to WS server instances mapping matching the search criteria, if any found.</p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L75">packages/types/lib/index.ts:75</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L43">packages/types/lib/server.ts:43</a></p>
 <hr />
 <h3 id="removeallwebsockethandlers">removeAllWebSocketHandlers</h3>
-<p>▸ <strong>removeAllWebSocketHandlers</strong>(): <code>Promise</code>&lt;<code>boolean</code>></p>
-<h4 id="returns_3">Returns</h4>
-<p><code>Promise</code>&lt;<code>boolean</code>></p>
-<h4 id="defined-in_4">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L74">packages/types/lib/index.ts:74</a></p>
-<hr />
-<h3 id="removewebsockethandler">removeWebSocketHandler</h3>
-<p>▸ <strong>removeWebSocketHandler</strong>(<code>handlerPathname</code>): <code>Promise</code>&lt;<code>boolean</code>></p>
+<p>▸ <strong>removeAllWebSocketHandlers</strong>(<code>this</code>): <code>Promise</code>&lt;<code>boolean</code>></p>
+<p>Removes all existing WebSocket handlers from the server instance.</p>
 <h4 id="parameters_2">Parameters</h4>
 <table>
 <thead>
@@ -1570,15 +1711,48 @@
 </thead>
 <tbody>
 <tr>
+<td align="left"><code>this</code></td>
+<td align="left"><a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_3">Returns</h4>
+<p><code>Promise</code>&lt;<code>boolean</code>></p>
+<p><code>true</code> if at least one handler was deleted; <code>false</code> otherwise.</p>
+<h4 id="defined-in_4">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L36">packages/types/lib/server.ts:36</a></p>
+<hr />
+<h3 id="removewebsockethandler">removeWebSocketHandler</h3>
+<p>▸ <strong>removeWebSocketHandler</strong>(<code>this</code>, <code>handlerPathname</code>): <code>Promise</code>&lt;<code>boolean</code>></p>
+<p>Removes existing WebSocket handler from the server instance.</p>
+<p>The call is ignored if the given <code>handlerPathname</code> handler is not present in the handlers list.</p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>this</code></td>
+<td align="left"><a href="../../modules/appium_types/#appiumserver"><code>AppiumServer</code></a></td>
+<td align="left">-</td>
+</tr>
+<tr>
 <td align="left"><code>handlerPathname</code></td>
 <td align="left"><code>string</code></td>
+<td align="left">WebSocket endpoint path</td>
 </tr>
 </tbody>
 </table>
 <h4 id="returns_4">Returns</h4>
 <p><code>Promise</code>&lt;<code>boolean</code>></p>
+<p><code>true</code> if the <code>handlerPathname</code> was found and deleted; <code>false</code> otherwise.</p>
 <h4 id="defined-in_5">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L73">packages/types/lib/index.ts:73</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/server.ts#L31">packages/types/lib/server.ts:31</a></p>
 
 
 

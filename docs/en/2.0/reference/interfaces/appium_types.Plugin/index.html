@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_types.Plugin/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_types.Plugin/">
       
       
       
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1424,29 +1545,29 @@
 <p>• <strong>cliArgs</strong>: <code>Record</code>&lt;<code>string</code>, <code>any</code>></p>
 <p>CLI args for this plugin (if any are accepted and provided).</p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L44">packages/types/lib/plugin.ts:44</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/plugin.ts#L75">packages/types/lib/plugin.ts:75</a></p>
 <hr />
 <h3 id="handle">handle</h3>
-<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true } ; <code>autoLaunch</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>autoWebview</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>automationName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>deviceName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>eventTimings</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>fullReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>language</code>: { <code>isString</code>: <code>true</code> = true } ; <code>locale</code>: { <code>isString</code>: <code>true</code> = true } ; <code>newCommandTimeout</code>: { <code>isNumber</code>: <code>true</code> = true } ; <code>noReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>orientation</code>: { <code>inclusion</code>: readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]  } ; <code>platformName</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>platformVersion</code>: { <code>isString</code>: <code>true</code> = true } ; <code>printPageSourceOnFindFailure</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>udid</code>: { <code>isString</code>: <code>true</code> = true } ; <code>webSocketUrl</code>: { <code>isString</code>: <code>true</code> = true }  }>, [cmdName: string, ...args: any[]], <code>void</code>></p>
+<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
 <p>Handle an Appium command, optionally running and using or throwing away the value of the
 original Appium behavior (or the behavior of the next plugin in a plugin chain).</p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L53">packages/types/lib/plugin.ts:53</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/plugin.ts#L84">packages/types/lib/plugin.ts:84</a></p>
 <hr />
 <h3 id="logger">logger</h3>
 <p>• <strong>logger</strong>: <a href="../appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
 <p>A logger with prefix identifying the plugin</p>
 <h4 id="defined-in_2">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L40">packages/types/lib/plugin.ts:40</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/plugin.ts#L71">packages/types/lib/plugin.ts:71</a></p>
 <hr />
 <h3 id="name">name</h3>
 <p>• <strong>name</strong>: <code>string</code></p>
 <p>Name of the plugin.  Derived from the metadata.</p>
 <h4 id="defined-in_3">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L36">packages/types/lib/plugin.ts:36</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/plugin.ts#L67">packages/types/lib/plugin.ts:67</a></p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
-<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true } ; <code>autoLaunch</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>autoWebview</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>automationName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>deviceName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>eventTimings</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>fullReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>language</code>: { <code>isString</code>: <code>true</code> = true } ; <code>locale</code>: { <code>isString</code>: <code>true</code> = true } ; <code>newCommandTimeout</code>: { <code>isNumber</code>: <code>true</code> = true } ; <code>noReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>orientation</code>: { <code>inclusion</code>: readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]  } ; <code>platformName</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>platformVersion</code>: { <code>isString</code>: <code>true</code> = true } ; <code>printPageSourceOnFindFailure</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>udid</code>: { <code>isString</code>: <code>true</code> = true } ; <code>webSocketUrl</code>: { <code>isString</code>: <code>true</code> = true }  }>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>driver</code>, <code>cause</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.</p>
@@ -1461,7 +1582,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;{ <code>app</code>: { <code>isString</code>: <code>true</code> = true } ; <code>autoLaunch</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>autoWebview</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>automationName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>deviceName</code>: { <code>isString</code>: <code>true</code> = true } ; <code>eventTimings</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>fullReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>language</code>: { <code>isString</code>: <code>true</code> = true } ; <code>locale</code>: { <code>isString</code>: <code>true</code> = true } ; <code>newCommandTimeout</code>: { <code>isNumber</code>: <code>true</code> = true } ; <code>noReset</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>orientation</code>: { <code>inclusion</code>: readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]  } ; <code>platformName</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>platformVersion</code>: { <code>isString</code>: <code>true</code> = true } ; <code>printPageSourceOnFindFailure</code>: { <code>isBoolean</code>: <code>true</code> = true } ; <code>udid</code>: { <code>isString</code>: <code>true</code> = true } ; <code>webSocketUrl</code>: { <code>isString</code>: <code>true</code> = true }  }></td>
+<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_types.Constraints/"><code>Constraints</code></a>, <code>string</code>></td>
 </tr>
 <tr>
 <td align="left"><code>cause</code></td>
@@ -1472,7 +1593,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <h5 id="returns">Returns</h5>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in_4">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L48">packages/types/lib/plugin.ts:48</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/plugin.ts#L79">packages/types/lib/plugin.ts:79</a></p>
 
 
 

@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_types.ISettingsCommands/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_types.ISettingsCommands/">
       
       
       
@@ -114,7 +114,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interface-isettingscommands" class="md-skip">
+        <a href="#interface-isettingscommandst" class="md-skip">
           Skip to content
         </a>
       
@@ -150,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Interface: ISettingsCommands
+              Interface: ISettingsCommands<T\>
             
           </span>
         </div>
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1226,6 +1347,13 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#type-parameters" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#hierarchy" class="md-nav__link">
@@ -1380,8 +1508,23 @@
 
 
 
-<h1 id="interface-isettingscommands">Interface: ISettingsCommands</h1>
+<h1 id="interface-isettingscommandst">Interface: ISettingsCommands&lt;T></h1>
 <p><a href="../../modules/appium_types/">@appium/types</a>.ISettingsCommands</p>
+<h2 id="type-parameters">Type parameters</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> = <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="hierarchy">Hierarchy</h2>
 <ul>
 <li><strong><code>ISettingsCommands</code></strong></li>
@@ -1398,7 +1541,7 @@
 </ul>
 <h2 id="properties_1">Properties</h2>
 <h3 id="updatesettings">updateSettings</h3>
-<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <strong>updateSettings</strong>: (<code>settings</code>: <a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>settings</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Update the session's settings dictionary with a new settings object</p>
@@ -1414,7 +1557,7 @@
 <tbody>
 <tr>
 <td align="left"><code>settings</code></td>
-<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a></td>
+<td align="left"><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>&lt;<code>any</code>></td>
 <td align="left">A key-value map of setting names to values. Settings not named in the map will not have their value adjusted.</td>
 </tr>
 </tbody>
@@ -1422,16 +1565,16 @@
 <h5 id="returns">Returns</h5>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L388">packages/types/lib/driver.ts:388</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L379">packages/types/lib/driver.ts:379</a></p>
 <h2 id="methods_1">Methods</h2>
 <h3 id="getsettings">getSettings</h3>
-<p>▸ <strong>getSettings</strong>(): <code>Promise</code>&lt;<a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
+<p>▸ <strong>getSettings</strong>(): <code>Promise</code>&lt;<code>T</code>></p>
 <p>Get the current settings for the session</p>
 <h4 id="returns_1">Returns</h4>
-<p><code>Promise</code>&lt;<a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a>></p>
+<p><code>Promise</code>&lt;<code>T</code>></p>
 <p>The settings object</p>
 <h4 id="defined-in_1">Defined in</h4>
-<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L395">packages/types/lib/driver.ts:395</a></p>
+<p><a href="https://github.com/appium/appium/blob/c5e0750bb/packages/types/lib/driver.ts#L386">packages/types/lib/driver.ts:386</a></p>
 
 
 

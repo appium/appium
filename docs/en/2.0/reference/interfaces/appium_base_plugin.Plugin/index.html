@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/en/2.0/reference/interfaces/appium_base_plugin.Plugin/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.0/reference/interfaces/appium_base_plugin.Plugin/">
       
       
       
@@ -176,19 +176,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -951,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_base_driver-1._appium_base_driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         BaseDriver Commands
       </a>
     </li>
@@ -965,7 +965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../commands/appium_fake_driver-1._appium_fake_driver/" class="md-nav__link">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
         FakeDriver Commands
       </a>
     </li>
@@ -1201,6 +1201,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/base-driver/" class="md-nav__link">
+        @appium/base-driver Commands
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
+        Plugin: execute-driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/fake-driver/" class="md-nav__link">
+        Driver: fake
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
+        Plugin: images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
+        Plugin: relaxed-caps
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        Plugin: universal-xml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -1409,7 +1530,7 @@
 <h1 id="interface-plugin">Interface: Plugin</h1>
 <p><a href="../../modules/appium_base_plugin/">@appium/base-plugin</a>.Plugin</p>
 <p>An instance of a "plugin" extension.</p>
-<p>Likewise, the <code>prototype</code> of a <a href="../../modules/appium_base_plugin/#pluginclass"><code>Plugin</code> class</a>.</p>
+<p>Likewise, the <code>prototype</code> of a PluginClass <code>Plugin</code> class.</p>
 <h2 id="table-of-contents">Table of contents</h2>
 <h3 id="properties">Properties</h3>
 <ul>
@@ -1424,29 +1545,29 @@
 <p>• <strong>cliArgs</strong>: <code>Record</code>&lt;<code>string</code>, <code>any</code>></p>
 <p>CLI args for this plugin (if any are accepted and provided).</p>
 <h4 id="defined-in">Defined in</h4>
-<p>packages/types/build/lib/plugin.d.ts:42</p>
+<p>packages/types/build/lib/plugin.d.ts:67</p>
 <hr />
 <h3 id="handle">handle</h3>
-<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a>>, [cmdName: string, ...args: any[]], <code>void</code>></p>
+<p>• <code>Optional</code> <strong>handle</strong>: <a href="../../modules/appium_types/#plugincommand"><code>PluginCommand</code></a>&lt;<a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_base_plugin.Constraints/"><code>Constraints</code></a>, <code>string</code>>, [cmdName: string, ...args: any[]], <code>void</code>, <code>unknown</code>></p>
 <p>Handle an Appium command, optionally running and using or throwing away the value of the
 original Appium behavior (or the behavior of the next plugin in a plugin chain).</p>
 <h4 id="defined-in_1">Defined in</h4>
-<p>packages/types/build/lib/plugin.d.ts:51</p>
+<p>packages/types/build/lib/plugin.d.ts:76</p>
 <hr />
 <h3 id="logger">logger</h3>
 <p>• <strong>logger</strong>: <a href="../appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
 <p>A logger with prefix identifying the plugin</p>
 <h4 id="defined-in_2">Defined in</h4>
-<p>packages/types/build/lib/plugin.d.ts:38</p>
+<p>packages/types/build/lib/plugin.d.ts:63</p>
 <hr />
 <h3 id="name">name</h3>
 <p>• <strong>name</strong>: <code>string</code></p>
 <p>Name of the plugin.  Derived from the metadata.</p>
 <h4 id="defined-in_3">Defined in</h4>
-<p>packages/types/build/lib/plugin.d.ts:34</p>
+<p>packages/types/build/lib/plugin.d.ts:59</p>
 <hr />
 <h3 id="onunexpectedshutdown">onUnexpectedShutdown</h3>
-<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a><typeof <a href="../modules/appium_types.md#base_desired_cap_constraints">klzzwxh:0028</a>\>, <code>cause</code>: <code>string</code> \| <code>Error</code>) => <code>Promise</code>&lt;<code>void</code>></p>
+<p>• <code>Optional</code> <strong>onUnexpectedShutdown</strong>: (<code>driver</code>: <a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_base_plugin.Constraints/"><code>Constraints</code></a>, <code>string</code>>, <code>cause</code>: <code>string</code> | <code>Error</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="type-declaration">Type declaration</h4>
 <p>▸ (<code>driver</code>, <code>cause</code>): <code>Promise</code>&lt;<code>void</code>></p>
 <p>Listener for unexpected server shutdown, which allows a plugin to do cleanup or take custom actions.</p>
@@ -1461,7 +1582,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <tbody>
 <tr>
 <td align="left"><code>driver</code></td>
-<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a>></td>
+<td align="left"><a href="../appium_types.ExternalDriver/"><code>ExternalDriver</code></a>&lt;<a href="../appium_base_plugin.Constraints/"><code>Constraints</code></a>, <code>string</code>></td>
 </tr>
 <tr>
 <td align="left"><code>cause</code></td>
@@ -1472,7 +1593,7 @@ original Appium behavior (or the behavior of the next plugin in a plugin chain).
 <h5 id="returns">Returns</h5>
 <p><code>Promise</code>&lt;<code>void</code>></p>
 <h4 id="defined-in_4">Defined in</h4>
-<p>packages/types/build/lib/plugin.d.ts:46</p>
+<p>packages/types/build/lib/plugin.d.ts:71</p>
 
 
 

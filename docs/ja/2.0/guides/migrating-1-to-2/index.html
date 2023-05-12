@@ -10,7 +10,7 @@
       
       
       
-        <link rel="canonical" href="https://appium.github.io/appium/docs/ja/2.0/guides/migrating-1-to-2/">
+        <link rel="canonical" href="https://appium.io/docs/ja/2.0/guides/migrating-1-to-2/">
       
       
         <link rel="prev" href="../../intro/">
@@ -21,7 +21,7 @@
     
     
       
-        <title>Appium 1.xからAppium 2.xへ移行する - Appium Documentation</title>
+        <title>Migrating 1 to 2 - Appium Documentation</title>
       
     
     
@@ -116,7 +116,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#appium-20" class="md-skip">
+        <a href="#title-appium-1xappium-2x" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -152,7 +152,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Appium 1.xからAppium 2.xへ移行する
+              Migrating 1 to 2
             
           </span>
         </div>
@@ -178,19 +178,19 @@
             <ul class="md-select__list">
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/en/" hreflang="en" class="md-select__link">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
                     English
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/ja/" hreflang="ja" class="md-select__link">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
                     日本
                   </a>
                 </li>
               
                 <li class="md-select__item">
-                  <a href="/appium/docs/zh/" hreflang="zh" class="md-select__link">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
                     中文简体
                   </a>
                 </li>
@@ -440,12 +440,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Appium 1.xからAppium 2.xへ移行する
+          Migrating 1 to 2
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Appium 1.xからAppium 2.xへ移行する
+        Migrating 1 to 2
       </a>
       
         
@@ -462,6 +462,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#title-appium-1xappium-2x" class="md-nav__link">
+    title: Appium 1.xからAppium 2.xへ移行する
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#appium-20" class="md-nav__link">
     Appium 2.0の概要
   </a>
@@ -475,6 +482,13 @@
   
     <nav class="md-nav" aria-label="破壊的変更">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-path" class="md-nav__link">
+    初期設定のbase path
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
@@ -563,6 +577,13 @@
           <li class="md-nav__item">
   <a href="#old-drivers-removed" class="md-nav__link">
     Old drivers removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-can-no-longer-be-started-with-port-0" class="md-nav__link">
+    Server can no longer be started with --port 0
   </a>
   
 </li>
@@ -669,6 +690,127 @@
   
 
     
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" tabindex="0" aria-expanded="false">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -694,6 +836,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#title-appium-1xappium-2x" class="md-nav__link">
+    title: Appium 1.xからAppium 2.xへ移行する
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#appium-20" class="md-nav__link">
     Appium 2.0の概要
   </a>
@@ -707,6 +856,13 @@
   
     <nav class="md-nav" aria-label="破壊的変更">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-path" class="md-nav__link">
+    初期設定のbase path
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
@@ -795,6 +951,13 @@
           <li class="md-nav__item">
   <a href="#old-drivers-removed" class="md-nav__link">
     Old drivers removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-can-no-longer-be-started-with-port-0" class="md-nav__link">
+    Server can no longer be started with --port 0
   </a>
   
 </li>
@@ -905,8 +1068,12 @@
 
 
 
-  <h1>Appium 1.xからAppium 2.xへ移行する</h1>
+  <h1>Migrating 1 to 2</h1>
 
+<!---Current latest commit hash in the original English documentation is e4dfa52 --->
+
+<hr />
+<h2 id="title-appium-1xappium-2x">title: Appium 1.xからAppium 2.xへ移行する</h2>
 <!---
 This document is a guide for those who are using Appium 1.x and wish to migrate to Appium 2.x. It contains a list of breaking changes and how to migrate your environments or test suites to ensure compatibility with Appium 2.0.
 --->
@@ -938,35 +1105,51 @@ Together these do introduce a few breaking changes to how Appium is installed, h
 
 <h2 id="_1">破壊的変更</h2>
 <!---
-Have a look at the [Appium 2.0 release notes](https://github.com/appium/appium/releases) for the most comprehensive lists of changes. Here we call out the breaking changes and what you need to do to account for them.
+Here we call out the breaking changes and what you need to do to account for them.
 --->
 
-<p>リリース毎の変更一覧に関しては<a href="https://github.com/appium/appium/releases">Appium 2.0リリースノート</a>を確認してください。ここでは破壊的変更と何をする必要があるのかを示します。</p>
+<p>以下では破壊的変更と、何をする必要があるのかを示します。</p>
 <!---
 ### :bangbang: Installing drivers during setup
 --->
 
+<h3 id="base-path"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> 初期設定のbase path</h3>
+<!---
+With Appium 1.x, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
+`/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
+2, and is no longer relevant. As such the default base path for the server is now `/`. If you want
+to retain the old behaviour, you can set the base path via a command line argument as follows:
+--->
+
+<p>Appium 1.xでは、AppiumサーバーのURLは<code>http://localhost:4723/wd/hub</code>でした。この<code>/wd/hub</code>であるbase pathはSelenium 1からSelenium 2へ移行した時の名残であり、今となっては何ら意味を持ちません。そのため、初期設定のbase pathは<code>/</code>となります。もしあたなが以前の挙動を保持したいのであれば、以下の通りにAppiumサーバを起動してください。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium --base-path=/wd/hub
+</code></pre></div>
+<!---
+You can also set server arguments as [Config file](./config.md) properties.
+--->
+
+<p>この設定は<a href="./config.md">Config file</a>からでも可能です。</p>
 <h3 id="_2"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> ドライバーのインストール</h3>
 <!---
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
 
 <p>Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば <code>npm install -g appium@next</code>）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい<a href="../cli/extensions.md">Appium拡張コマンドラインインタフェース（Appium extension CLI）</a>を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2<span class="w">     </span><span class="c1"># installs the latest driver version</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.12.2<span class="w">  </span><span class="c1"># installs a specific driver version</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2<span class="w">     </span><span class="c1"># installs the latest driver version</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.12.2<span class="w">  </span><span class="c1"># installs a specific driver version</span>
 </code></pre></div>
 <!---
 At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it. If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 --->
 
 <p>これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
 </code></pre></div>
 <!---
-This will install Appium and the two drivers for you in one go.
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
 --->
 
-<p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。</p>
+<p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを<code>npm uninstall -g appium</code>で削除してみてください。</p>
 <h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
 <p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
 The path was <code>/path/to/appium/node_modules</code>.
@@ -987,7 +1170,7 @@ So, the path to  <code>appium-webdriveragent</code> could be <code>$APPIUM_HOME/
 <li><code>CHROMEDRIVER_CDNURL</code></li>
 </ul>
 <p>For example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">APPIUM_SKIP_CHROMEDRIVER_INSTALL</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">APPIUM_SKIP_CHROMEDRIVER_INSTALL</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
 </code></pre></div>
 <h3 id="driver-specific-command-line-options"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Driver-specific command line options</h3>
 <p>With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, <code>--chromedriver-executable</code> was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.</p>
@@ -1002,17 +1185,17 @@ a <code>404 Not Found</code> error because if a driver that doesn't know about t
 main Appium server will not define the route corresponding to the command.</p>
 <h3 id="driver-updates"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Driver updates</h3>
 <p>In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>list<span class="w"> </span>--updates
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>list<span class="w"> </span>--updates
 </code></pre></div>
 <p>If any updates are available, you can then run the <code>update</code> command for any given driver:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>update<span class="w"> </span>xcuitest
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>update<span class="w"> </span>xcuitest
 </code></pre></div>
 <p>(For a complete description of the update command, check out the <a href="../cli/extensions.md">Extension
 CLI</a> doc)</p>
 <p>To update the Appium server itself, you do the same thing as in the past: <code>npm install -g appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
 <p>If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the <code>install</code> subcommand instead of <code>update</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
 </code></pre></div>
 <h3 id="protocol-changes"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Protocol changes</h3>
 <p>Appium's API is based on the <a href="https://www.w3.org/TR/webdriver/">W3C WebDriver Protocol</a>, and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.</p>
@@ -1028,15 +1211,15 @@ CLI</a> doc)</p>
 <p>This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the <code>appium:</code> prefix for you on all necessary capabilities automatically. New versions of <a href="https://github.com/appium/appium-inspector">Appium Inspector</a> will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.</p>
 <p>On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).</p>
 <p>To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, <code>appium:options</code>. You can bundle together anything that you would normally put an <code>appium:</code> prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using <code>appium:options</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="p">{</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="nt">&quot;browserName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Safari&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="p">}</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;browserName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Safari&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
 </code></pre></div>
 <p>(Of course, each client will have a different way of creating structured capabilities like <code>appium:options</code> or other ones that you might have seen such as <code>goog:chromeOptions</code>). NB: capabilities that show up in <code>appium:options</code> will overwrite capabilities of the same name that show up at the top level of the object. (The new <code>appium:options</code> syntax support by cloud providers may vary.)</p>
 <p>For more information on capabilities, have a look at the <a href="caps.md">Capabilities Guide</a>.</p>
@@ -1066,6 +1249,14 @@ CLI</a> doc)</p>
 <p>In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the <code>server.nodeconfig</code> property.  Any CSV-like files you had previously provided for <code>--allow-insecure</code> and <code>--deny-insecure</code> become the values of the <code>server.allow-insecure</code> and <code>server.deny-insecure</code> properties in the Appium config files (respectively); both are arrays of strings.</p>
 <h3 id="old-drivers-removed"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Old drivers removed</h3>
 <p>The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., <code>authorize-ios</code>) have been removed. They haven't been relevant for many years anyway.</p>
+<h3 id="server-can-no-longer-be-started-with-port-0"><img alt="‼" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/203c.svg" title=":bangbang:" /> Server can no longer be started with <code>--port 0</code></h3>
+<p>In Appium 1.x, it was possible to specify <code>--port 0</code> during server startup. This had the effect of
+starting Appium on a random free port. In Appium 2.0, port values must be <code>1</code> or higher. The random
+port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
+HTTP servers work and the fact that there was no port input validation in Appium 1.x. If you want
+to find a random free port to start Appium on, you must now take care of this on your own prior to
+starting Appium. Starting Appium on an explicit and known port is the correct practice moving
+forward.</p>
 <h3 id="internal-packages-renamed"><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> Internal packages renamed</h3>
 <p>Some Appium-internal NPM packages have been renamed (for example, <code>appium-base-driver</code> is now <code>@appium/base-driver</code>). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.</p>
 <h3 id="wd-javascript-client-library-no-longer-supported"><img alt="⚠" class="twemoji" src="https://twemoji.maxcdn.com/v/latest/svg/26a0.svg" title=":warning:" /> "WD" JavaScript client library no longer supported</h3>

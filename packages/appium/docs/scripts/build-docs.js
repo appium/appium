@@ -31,7 +31,6 @@ const remote = process.env.APPIUM_DOCS_REMOTE ?? DOCS_REMOTE;
 const preview = Boolean(process.env.APPIUM_DOCS_PREVIEW);
 
 const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
-const rebase = push;
 
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
@@ -66,7 +65,7 @@ async function main() {
         deployVersion: majMinVer,
         push,
         alias: LATEST_ALIAS,
-        rebase,
+        rebase: true, // we always want to rebase if branch is out of sync
         message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
       });
     }

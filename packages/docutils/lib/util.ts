@@ -59,17 +59,16 @@ export const isStringArray = _.overEvery(_.isArray, _.partial(_.every, _, _.isSt
 export const argify: (obj: Record<string, string | number | boolean | undefined>) => string[] =
   _.flow(
     _.entries,
-    _.flatten,
     (list) =>
-      list.map((value, idx) => {
+      list.map(([key, value]) => {
         if (value === true) {
-          return `--${value}`;
+          return [`--${key}`];
         } else if (value === false || value === undefined) {
           return;
         }
-        return idx % 2 === 0 ? `--${value}` : value;
+        return [`--${key}`, value];
       }),
-    _.compact
+    _.flatten
   );
 
 /**

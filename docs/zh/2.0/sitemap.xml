@@ -1,773 +1,773 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/resources/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/resources/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/cli/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/cli/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/cli/args/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/cli/args/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/cli/extensions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/cli/extensions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/contributing/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/contributing/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/ecosystem/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/ecosystem/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/ecosystem/build-docs/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/ecosystem/build-docs/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/ecosystem/build-drivers/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/ecosystem/build-drivers/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/ecosystem/build-plugins/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/ecosystem/build-plugins/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/caps/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/caps/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/config/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/config/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/context/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/context/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/event-timing/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/event-timing/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/execute-script-overload/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/execute-script-overload/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/grid/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/grid/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/log-filters/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/log-filters/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/managing-exts/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/managing-exts/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/migrating-1-to-2/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/migrating-1-to-2/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/security/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/security/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/guides/settings/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/guides/settings/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/intro/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/intro/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/intro/clients/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/intro/clients/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/intro/drivers/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/intro/drivers/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/intro/history/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/intro/history/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/intro/requirements/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/intro/requirements/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/install/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/install/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/next-steps/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/next-steps/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/test-java/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/test-java/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/test-js/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/test-js/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/test-py/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/test-py/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/quickstart/uiauto2-driver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/quickstart/uiauto2-driver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_base_driver-1.BaseDriver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_base_driver-1.BaseDriver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_base_driver-1.DeviceSettings/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_base_driver-1.DeviceSettings/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_base_driver-1.DriverCore/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_base_driver-1.DriverCore/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_base_driver-1.JWProxy/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_base_driver-1.JWProxy/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_base_plugin.BasePlugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_base_plugin.BasePlugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_execute_driver_plugin-1.ExecuteDriverPlugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_execute_driver_plugin-1.ExecuteDriverPlugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_fake_driver-1.FakeDriver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_fake_driver-1.FakeDriver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_images_plugin-1.ImageElementPlugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_images_plugin-1.ImageElementPlugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_relaxed_caps_plugin-1.RelaxedCapsPlugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_relaxed_caps_plugin-1.RelaxedCapsPlugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_support.console.CliConsole/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_support.console.CliConsole/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_support.mjpeg.MJpegStream/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_support.mjpeg.MJpegStream/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_support.timing.Duration/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_support.timing.Duration/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_support.timing.Timer/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_support.timing.Timer/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumPluginLogger/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumPluginLogger/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumPluginOptionsReader/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumPluginOptionsReader/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumTheme/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_typedoc_plugin_appium.AppiumTheme/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/classes/appium_universal_xml_plugin-1.UniversalXMLPlugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/classes/appium_universal_xml_plugin-1.UniversalXMLPlugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_base_driver-1._appium_base_driver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_base_driver-1._appium_base_driver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_execute_driver_plugin-1._appium_execute_driver_plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_execute_driver_plugin-1._appium_execute_driver_plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_fake_driver-1._appium_fake_driver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_fake_driver-1._appium_fake_driver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_images_plugin-1._appium_images_plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_images_plugin-1._appium_images_plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_relaxed_caps_plugin-1._appium_relaxed_caps_plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_relaxed_caps_plugin-1._appium_relaxed_caps_plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/commands/appium_universal_xml_plugin-1._appium_universal_xml_plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/commands/appium_universal_xml_plugin-1._appium_universal_xml_plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/enums/appium_typedoc_plugin_appium.AppiumThemeTemplate/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/enums/appium_typedoc_plugin_appium.AppiumThemeTemplate/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/enums/appium_types.Key/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/enums/appium_types.Key/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium.ServerInitData/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium.ServerInitData/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_base_driver-1.ServerOpts/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_base_driver-1.ServerOpts/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_base_plugin.Plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_base_plugin.Plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.console.ConsoleOpts/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.console.ConsoleOpts/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.imageUtil.Region/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.imageUtil.Region/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.logger.AppiumLogger/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.logger.AppiumLogger/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.logger.LoadResult/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.logger.LoadResult/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.net.AuthCredentials/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.net.AuthCredentials/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.net.DownloadOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.net.DownloadOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.net.HttpUploadOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.net.HttpUploadOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.net.NetOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.net.NetOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.net.NotHttpUploadOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.net.NotHttpUploadOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.tempDir.Affixes/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.tempDir.Affixes/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.tempDir.OpenedAffixes/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.tempDir.OpenedAffixes/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.util.EncodingOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.util.EncodingOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.util.LockFileOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.util.LockFileOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.util.PluralizeOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.util.PluralizeOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.zip.ExtractAllOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.zip.ExtractAllOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipCompressionOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipCompressionOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipEntry/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipEntry/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipSourceOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_support.zip.ZipSourceOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_typedoc_plugin_appium.ConvertResult/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_typedoc_plugin_appium.ConvertResult/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_typedoc_plugin_appium.PostProcessResult/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_typedoc_plugin_appium.PostProcessResult/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.AppiumConfiguration/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.AppiumConfiguration/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.AppiumLogger/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.AppiumLogger/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.AppiumServerExtension/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.AppiumServerExtension/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.AppiumServerSocket/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.AppiumServerSocket/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Constraint/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Constraint/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Cookie/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Cookie/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Core/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Core/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Credential/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Credential/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.DefaultCapabilitiesConfig/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.DefaultCapabilitiesConfig/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.DeviceSettings/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.DeviceSettings/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Driver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Driver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.DriverConfig/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.DriverConfig/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.DriverHelpers/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.DriverHelpers/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.DriverStatic/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.DriverStatic/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Element/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Element/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.EventHistory/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.EventHistory/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.EventHistoryCommand/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.EventHistoryCommand/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ExecuteMethodDef/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ExecuteMethodDef/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ExternalDriver/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ExternalDriver/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ExtraDriverOpts/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ExtraDriverOpts/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.IEventCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.IEventCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.IExecuteCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.IExecuteCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.IFindCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.IFindCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ILogCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ILogCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ISessionCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ISessionCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ISettingsCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ISettingsCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ITimeoutCommands/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ITimeoutCommands/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Location/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Location/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.LogDef/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.LogDef/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.LogFilterRegex/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.LogFilterRegex/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.LogFilterText/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.LogFilterText/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.MethodDef/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.MethodDef/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.MultiSessionData/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.MultiSessionData/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.NewWindow/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.NewWindow/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.NodeconfigConfig/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.NodeconfigConfig/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.PayloadParams/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.PayloadParams/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.PluginConfig/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.PluginConfig/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.PluginStatic/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.PluginStatic/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Rect/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Rect/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.Rotation/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.Rotation/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.ServerConfig/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.ServerConfig/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.SessionHandler/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.SessionHandler/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.StandardCapabilities/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.StandardCapabilities/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.StartScreenRecordOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.StartScreenRecordOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/interfaces/appium_types.StopScreenRecordOptions/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/interfaces/appium_types.StopScreenRecordOptions/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_base_driver-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_base_driver-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_base_plugin/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_base_plugin/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_execute_driver_plugin-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_execute_driver_plugin-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_fake_driver-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_fake_driver-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_images_plugin-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_images_plugin-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_relaxed_caps_plugin-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_relaxed_caps_plugin-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.console/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.console/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.env/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.env/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.imageUtil/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.imageUtil/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.logger/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.logger/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.mjpeg/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.mjpeg/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.net/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.net/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.node/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.node/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.plist/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.plist/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.process/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.process/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.system/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.system/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.tempDir/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.tempDir/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.timing/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.timing/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.util/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.util/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_support.zip/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_support.zip/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_typedoc_plugin_appium/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_typedoc_plugin_appium/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_types/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_types/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://appium.github.io/appium/docs/zh/2.0/reference/modules/appium_universal_xml_plugin-1/</loc>
-         <lastmod>2023-01-26</lastmod>
+         <loc>https://appium.io/docs/zh/2.0/reference/modules/appium_universal_xml_plugin-1/</loc>
+         <lastmod>2023-05-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

@@ -1113,7 +1113,7 @@ Use explicit session management commands instead
 
 ## Execute Methods
 
-### Script: \`fake: addition\`
+### \`fake: addition\`
 
 #### Route
 
@@ -1131,7 +1131,7 @@ Use explicit session management commands instead
 
 \`number\`
 
-### Script: \`fake: getDeprecatedCommandsCalled\`
+### \`fake: getDeprecatedCommandsCalled\`
 
 This is a command that will return a list of deprecated command names called
 
@@ -1145,7 +1145,7 @@ This is a command that will return a list of deprecated command names called
 
 \`string\`[]
 
-### Script: \`fake: getThing\`
+### \`fake: getThing\`
 
 Gets a thing (a fake thing)
 
@@ -1159,7 +1159,7 @@ Gets a thing (a fake thing)
 
 \`\`null\`\` \\\\| \`Thing\`
 
-### Script: \`fake: setThing\`
+### \`fake: setThing\`
 
 Set the 'thing' value (so that it can be retrieved later)
 

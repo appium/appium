@@ -84,6 +84,8 @@ The current committers are (in addition to the TC members above):
 * [@boneskull](https://github.com/boneskull)
 * [@mwakizaka](https://github.com/mwakizaka)
 * [@rerorero](https://github.com/rerorero)
+* [@tomriddly](https://github.com/tomriddly)
+* [@eglitise](https://github.com/eglitise)
 
 ### Contributors
 

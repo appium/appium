@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/appium/appium/compare/@appium/support@3.1.11...@appium/support@4.0.0) (2023-05-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* **support:** The following methods have been removed from imageUtil module: getJimpImage, base64ToImage, imageToBase64, cropImage
+* **support:** The following constants have been removed from imageUtil module: MIME_JPEG, MIME_PNG, MIME_BMP
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.3.6 ([6692227](https://github.com/appium/appium/commit/66922279b7742a08613f472585a4a1cb70f80683))
+* **support:** update dependency axios to v1.4.0 ([91a6bc5](https://github.com/appium/appium/commit/91a6bc5925ab8ffc4ab6d05883900f7d186e49a9))
+* **support:** update dependency semver to v7.5.0 ([c568523](https://github.com/appium/appium/commit/c568523e017a8b52bdf5132a48bbfde791de704f))
+* **support:** update dependency which to v3.0.1 ([869b7aa](https://github.com/appium/appium/commit/869b7aa4a21fba6612db6f0365cb081cbdf7fac2))
+* **types:** update dependency type-fest to v3.10.0 ([3c4d3ac](https://github.com/appium/appium/commit/3c4d3acc09d2ca1ed74dc77c18c62482e4c70239))
+* **types:** update dependency type-fest to v3.9.0 ([94a207f](https://github.com/appium/appium/commit/94a207fc9718068f3657c51cc8be0ef682f16b11))
+
+
+### Code Refactoring
+
+* **support:** Drop jimp and pngjs in favour of sharp ([#18584](https://github.com/appium/appium/issues/18584)) ([1da9de4](https://github.com/appium/appium/commit/1da9de4225ee177fa784bfaab4cf5fb91ec0f4f2))
+
+
+
 ## [3.1.11](https://github.com/appium/appium/compare/@appium/support@3.1.10...@appium/support@3.1.11) (2023-04-14)
 
 

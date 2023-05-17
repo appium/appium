@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.10...@appium/images-plugin@2.1.0) (2023-05-17)
+
+
+### Features
+
+* **image-plugin:** Make it possible to find elements inside of other elements ([#18555](https://github.com/appium/appium/issues/18555)) ([2796639](https://github.com/appium/appium/commit/2796639b1183f0efbae8d7adb6d24570d5d4fde4))
+
+
+### Bug Fixes
+
+* **opencv:** update dependency sharp to v0.32.1 ([add0eaa](https://github.com/appium/appium/commit/add0eaa05f476a5f2708925a43f2bc16cad75872))
+
+
+
 ## [2.0.10](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.9...@appium/images-plugin@2.0.10) (2023-04-05)
 
 **Note:** Version bump only for package @appium/images-plugin

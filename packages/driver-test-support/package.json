@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",
@@ -41,7 +41,7 @@
   },
   "types": "./build/lib/index.d.ts",
   "dependencies": {
-    "@appium/types": "^0.11.0",
+    "@appium/types": "^0.11.1",
     "@types/lodash": "4.14.194",
     "@types/stoppable": "1.1.1",
     "axios": "1.4.0",

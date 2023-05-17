@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.15](https://github.com/appium/appium/compare/@appium/doctor@2.0.14...@appium/doctor@2.0.15) (2023-05-17)
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v9.11.2 ([e7df6fd](https://github.com/appium/appium/commit/e7df6fd4f054d6ad6eb4125f77e7e0d58bc05ebf))
+* **docutils:** update dependency yargs to v17.7.2 ([3d1e4af](https://github.com/appium/appium/commit/3d1e4af858ea21bcf3ab1e1015aa7bdf1776f3ce))
+
+
+
 ## [2.0.14](https://github.com/appium/appium/compare/@appium/doctor@2.0.13...@appium/doctor@2.0.14) (2023-04-20)
 
 

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/@appium/opencv@2.0.10...@appium/opencv@2.1.0) (2023-05-17)
+
+
+### Features
+
+* **image-plugin:** Make it possible to find elements inside of other elements ([#18555](https://github.com/appium/appium/issues/18555)) ([2796639](https://github.com/appium/appium/commit/2796639b1183f0efbae8d7adb6d24570d5d4fde4))
+
+
+### Bug Fixes
+
+* **opencv:** Make sure allocated CV objects are properly released afterwards ([#18569](https://github.com/appium/appium/issues/18569)) ([2fb844c](https://github.com/appium/appium/commit/2fb844c8ad5ea1e36c326ce5cf46869c0ff0d4f9))
+* **opencv:** update dependency sharp to v0.32.1 ([add0eaa](https://github.com/appium/appium/commit/add0eaa05f476a5f2708925a43f2bc16cad75872))
+
+
+
 ## [2.0.10](https://github.com/appium/appium/compare/@appium/opencv@2.0.9...@appium/opencv@2.0.10) (2023-04-05)
 
 

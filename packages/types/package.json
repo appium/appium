@@ -1,6 +1,6 @@
 {
   "name": "@appium/types",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Various type declarations used across Appium",
   "keywords": [
     "automation",

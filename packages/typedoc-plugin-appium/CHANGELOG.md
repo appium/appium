@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.4](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.3...@appium/typedoc-plugin-appium@0.6.4) (2023-05-17)
+
+
+### Bug Fixes
+
+* **typedoc-plugin-appium:** don't prefix execute methods with "Script: " ([#18618](https://github.com/appium/appium/issues/18618)) ([40e5199](https://github.com/appium/appium/commit/40e5199caa0bb6166af5af714f03d26fc5936b97))
+* **types:** update dependency type-fest to v3.10.0 ([3c4d3ac](https://github.com/appium/appium/commit/3c4d3acc09d2ca1ed74dc77c18c62482e4c70239))
+* **types:** update dependency type-fest to v3.9.0 ([94a207f](https://github.com/appium/appium/commit/94a207fc9718068f3657c51cc8be0ef682f16b11))
+
+
+
 ## [0.6.3](https://github.com/appium/appium/compare/@appium/typedoc-plugin-appium@0.6.2...@appium/typedoc-plugin-appium@0.6.3) (2023-04-18)
 
 

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.10](https://github.com/appium/appium/compare/@appium/docutils@0.3.9...@appium/docutils@0.3.10) (2023-05-17)
+
+
+### Bug Fixes
+
+* **docutils:** remove -t arg for mkdocs which prevents theme customizations (fix [#18536](https://github.com/appium/appium/issues/18536)) ([#18617](https://github.com/appium/appium/issues/18617)) ([cdfe7c3](https://github.com/appium/appium/commit/cdfe7c3d82a61776a784236140dff94ff1f34540))
+* **docutils:** update dependency yaml to v2.2.2 ([ddadd69](https://github.com/appium/appium/commit/ddadd6977d76a8a5ce1559d2a4ff4a31b58fb42f))
+* **docutils:** update dependency yargs to v17.7.2 ([3d1e4af](https://github.com/appium/appium/commit/3d1e4af858ea21bcf3ab1e1015aa7bdf1776f3ce))
+* **support:** update dependency semver to v7.5.0 ([c568523](https://github.com/appium/appium/commit/c568523e017a8b52bdf5132a48bbfde791de704f))
+* **types:** update dependency type-fest to v3.10.0 ([3c4d3ac](https://github.com/appium/appium/commit/3c4d3acc09d2ca1ed74dc77c18c62482e4c70239))
+* **types:** update dependency type-fest to v3.9.0 ([94a207f](https://github.com/appium/appium/commit/94a207fc9718068f3657c51cc8be0ef682f16b11))
+
+
+
 ## [0.3.9](https://github.com/appium/appium/compare/@appium/docutils@0.3.8...@appium/docutils@0.3.9) (2023-04-20)
 
 

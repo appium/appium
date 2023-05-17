@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.8](https://github.com/appium/appium/compare/@appium/base-driver@9.3.7...@appium/base-driver@9.3.8) (2023-05-17)
+
+
+### Bug Fixes
+
+* **base-driver:** Ignore unknown script arguments ([#18575](https://github.com/appium/appium/issues/18575)) ([4f564ef](https://github.com/appium/appium/commit/4f564ef7ad350831b90994ffd4e8b00de227577d))
+* **support:** update dependency axios to v1.3.6 ([6692227](https://github.com/appium/appium/commit/66922279b7742a08613f472585a4a1cb70f80683))
+* **support:** update dependency axios to v1.4.0 ([91a6bc5](https://github.com/appium/appium/commit/91a6bc5925ab8ffc4ab6d05883900f7d186e49a9))
+* **types:** update dependency type-fest to v3.10.0 ([3c4d3ac](https://github.com/appium/appium/commit/3c4d3acc09d2ca1ed74dc77c18c62482e4c70239))
+* **types:** update dependency type-fest to v3.9.0 ([94a207f](https://github.com/appium/appium/commit/94a207fc9718068f3657c51cc8be0ef682f16b11))
+
+
+
 ## [9.3.7](https://github.com/appium/appium/compare/@appium/base-driver@9.3.6...@appium/base-driver@9.3.7) (2023-04-14)
 
 

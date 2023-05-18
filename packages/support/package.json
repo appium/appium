@@ -60,6 +60,7 @@
     "@types/supports-color": "8.1.1",
     "@types/teen_process": "2.0.0",
     "@types/uuid": "9.0.1",
+    "@types/which": "3.0.0",
     "archiver": "5.3.1",
     "axios": "1.4.0",
     "base64-stream": "1.0.0",

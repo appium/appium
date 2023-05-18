@@ -20,7 +20,7 @@ import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import {getLogger} from './logger';
 import {MkDocsYml, TsConfigJson, TypeDocJson} from './model';
 import _ from 'lodash';
-import {stringifyJson5, stringifyYaml} from './fs';
+import {stringifyJson5, stringifyYaml, whichPython, whichPython3} from './fs';
 
 /**
  * Data for the base `mkdocs.yml` file
@@ -158,10 +158,15 @@ export const initMkDocs = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
  * @param opts Options
  */
 export async function initPython({
-  pythonPath = NAME_PYTHON,
+  pythonPath,
   dryRun = false,
   upgrade = false,
 }: InitPythonOptions = {}): Promise<void> {
+  pythonPath =
+    pythonPath ??
+    (await whichPython3({nothrow: true})) ??
+    (await whichPython({nothrow: true})) ??
+    NAME_PYTHON;
   const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
   if (upgrade) {
     args.push('--upgrade');

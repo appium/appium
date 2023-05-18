@@ -225,6 +225,11 @@ export const whichNpm = _.partial(cachedWhich, NAME_NPM);
 export const whichPython = _.partial(cachedWhich, NAME_PYTHON);
 
 /**
+ * Finds `python3` executable
+ */
+export const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`);
+
+/**
  * Finds `mike` executable
  */
 export const whichMike = _.partial(cachedWhich, NAME_MIKE);

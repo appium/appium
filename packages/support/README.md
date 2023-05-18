@@ -42,7 +42,7 @@ All utility functions are split into a bunch of different categories. Each categ
 
 #### fs
 
-Contains asynchronous wrappers of calls from the node.js's [fs](https://nodejs.org/api/fs.html) module. Most of the functions there are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api).
+Most of the functions there are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api).
 
 #### env
 
@@ -50,15 +50,15 @@ Several helpers needed by the server to cope with internal dependencies and mani
 
 #### console
 
-Wrappers for command line interface abstraction used by the Appium server.
+Wrappers for the command line interface abstraction used by the Appium server.
 
 #### image-util
 
-Utilities to work with images. Uses [sharp](https://github.com/lovell/sharp) under the hood.
+Utilities to work with images. Use [sharp](https://github.com/lovell/sharp) under the hood.
 
 #### log-internal
 
-Utilities to needed for internal Appium log config assistance.
+Utilities needed for internal Appium log config assistance.
 
 #### logging
 
@@ -66,7 +66,7 @@ See [below](#logger)
 
 #### mjpeg
 
-Helpers needed to implement MJPEG streaming.
+Helpers needed to implement [MJPEG streaming](https://en.wikipedia.org/wiki/Motion_JPEG#Video_streaming).
 
 #### net
 
@@ -74,7 +74,7 @@ Helpers needed for network interactions, for example, upload and download of fil
 
 #### node
 
-Set of node.js-specific utility functions needed, for example, to ensure objects immutability or to calculate their sizes.
+Set of Node.js-specific utility functions needed, for example, to ensure objects immutability or to calculate their sizes.
 
 #### npm
 

@@ -42,7 +42,7 @@ All utility functions are split into a bunch of different categories. Each categ
 
 #### fs
 
-Contains asynchronous wrappers of calls from the node.js's [fs](https://nodejs.org/api/fs.html) module. Most of the wrappers there are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api).
+Contains asynchronous wrappers of calls from the node.js's [fs](https://nodejs.org/api/fs.html) module. Most of the functions there are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api).
 
 #### env
 

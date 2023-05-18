@@ -38,6 +38,7 @@ import {
   whichMkDocs,
   whichNpm,
   whichPython,
+  whichPython3,
   readMkDocsYml,
 } from './fs';
 import {getLogger} from './logger';
@@ -423,7 +424,10 @@ export class DocutilsValidator extends EventEmitter {
    */
   protected async validatePythonDeps() {
     let pipListOutput: string;
-    const pythonPath = this.pythonPath ?? (await whichPython());
+    const pythonPath =
+      this.pythonPath ??
+      (await whichPython3({nothrow: true})) ??
+      (await whichPython({nothrow: true}));
     if (!pythonPath) {
       return this.fail(`Could not find ${NAME_PYTHON} in PATH. Is it installed?`);
     }

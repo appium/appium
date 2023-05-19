@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.13](https://github.com/appium/appium/compare/@appium/docutils@0.3.12...@appium/docutils@0.3.13) (2023-05-19)
+
+
+### Bug Fixes
+
+* **docutils:** fix broken executable ([f0ebe2e](https://github.com/appium/appium/commit/f0ebe2e02f3e4164f07fd10ca36f460ff7a61682))
+
+
+
 ## [0.3.12](https://github.com/appium/appium/compare/@appium/docutils@0.3.11...@appium/docutils@0.3.12) (2023-05-19)
 
 

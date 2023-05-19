@@ -13,10 +13,12 @@ import {
   DEFAULT_SERVE_HOST,
   DEFAULT_SERVE_PORT,
   NAME_BIN,
+  NAME_MIKE,
   NAME_MKDOCS_YML,
+  NAME_PYTHON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findMkDocsYml, readPackageJson, whichMike} from '../fs';
+import {findMkDocsYml, findPython, readPackageJson} from '../fs';
 import {getLogger} from '../logger';
 import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -24,31 +26,33 @@ const log = getLogger('builder:deploy');
 
 /**
  * Runs `mike serve`
+ * @param pythonPath Path to Python 3 executable
  * @param args Extra args to `mike build`
  * @param opts Extra options for `teen_process.Subprocess.start`
- * @param mikePath Path to `mike` executable
  */
 async function doServe(
+  pythonPath: string,
   args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-  mikePath?: string
+  opts: SpawnBackgroundProcessOpts = {}
 ) {
-  mikePath = mikePath ?? (await whichMike());
-  const finalArgs = ['serve', ...args];
-  return spawnBackgroundProcess(mikePath, finalArgs, opts);
+  const finalArgs = ['-m,', NAME_MIKE, 'serve', ...args];
+  return spawnBackgroundProcess(pythonPath, finalArgs, opts);
 }
 
 /**
  * Runs `mike build`
+ * @param pythonPath Path to Python 3 executable
  * @param args Extra args to `mike build`
  * @param opts Extra options to `teen_process.exec`
- * @param mikePath Path to `mike` executable
  */
-async function doDeploy(args: string[] = [], opts: TeenProcessExecOptions = {}, mikePath?: string) {
-  mikePath = mikePath ?? (await whichMike());
-  const finalArgs = ['deploy', ...args];
-  log.debug('Launching %s with args: %O', mikePath, finalArgs);
-  return await exec(mikePath, finalArgs, opts);
+async function doDeploy(
+  pythonPath: string,
+  args: string[] = [],
+  opts: TeenProcessExecOptions = {}
+) {
+  const finalArgs = ['-m', NAME_MIKE, 'deploy', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, pythonPath, finalArgs);
+  return await exec(pythonPath, finalArgs, opts);
 }
 
 /**
@@ -90,6 +94,15 @@ export async function deploy({
   execOpts,
 }: DeployOpts = {}) {
   const stop = stopwatch('deploy');
+
+  const pythonPath = await findPython();
+
+  if (!pythonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`
+    );
+  }
+
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
     throw new DocutilsError(
@@ -122,7 +135,7 @@ export async function deploy({
     }
     stop(); // discard
     // unsure about how SIGHUP is handled here
-    await doServe(mikeArgs, serveOpts);
+    await doServe(pythonPath, mikeArgs, serveOpts);
   } else {
     log.info('Deploying into branch %s', branch);
     const mikeArgs = [
@@ -137,7 +150,7 @@ export async function deploy({
     if (alias) {
       mikeArgs.push(alias);
     }
-    await doDeploy(mikeArgs, execOpts);
+    await doDeploy(pythonPath, mikeArgs, execOpts);
 
     log.success('Finished deployment into branch %s (%dms)', branch, stop());
   }

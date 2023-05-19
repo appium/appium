@@ -7,9 +7,9 @@
 
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
-import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS_YML} from '../constants';
+import {DEFAULT_SITE_DIR, NAME_BIN, NAME_MKDOCS, NAME_MKDOCS_YML, NAME_PYTHON} from '../constants';
 import {DocutilsError} from '../error';
-import {findMkDocsYml, readMkDocsYml, whichMkDocs} from '../fs';
+import {findMkDocsYml, findPython, readMkDocsYml} from '../fs';
 import {getLogger} from '../logger';
 import {relative, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -17,37 +17,31 @@ const log = getLogger('mkdocs');
 
 /**
  * Runs `mkdocs serve`
+ * @param pythonPath Path to Python 3 executable
  * @param args Extra args to `mkdocs build`
  * @param opts Extra options for `teen_process.Subprocess.start`
  * @param mkDocsPath Path to `mkdocs` executable
  */
 async function doServe(
+  pythonPath: string,
   args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {},
-  mkDocsPath?: string
+  opts: SpawnBackgroundProcessOpts = {}
 ) {
-  mkDocsPath = mkDocsPath ?? (await whichMkDocs());
-  const finalArgs = ['serve', ...args];
-
-  log.debug('Launching %s with args: %s', mkDocsPath, finalArgs);
-  return spawnBackgroundProcess(mkDocsPath, finalArgs, opts);
+  const finalArgs = ['-m', NAME_MKDOCS, 'serve', ...args];
+  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
+  return spawnBackgroundProcess(pythonPath, finalArgs, opts);
 }
 
 /**
  * Runs `mkdocs build`
+ * @param pythonPath Path to Python 3 executable
  * @param args Extra args to `mkdocs build`
  * @param opts Extra options to `teen_process.exec`
- * @param mkDocsPath Path to `mkdocs` executable
  */
-async function doBuild(
-  args: string[] = [],
-  opts: TeenProcessExecOptions = {},
-  mkDocsPath?: string
-) {
-  mkDocsPath = mkDocsPath ?? (await whichMkDocs());
-  const finalArgs = ['build', ...args];
-  log.debug('Launching %s with args: %O', mkDocsPath, finalArgs);
-  return await exec(mkDocsPath, finalArgs, opts);
+async function doBuild(pythonPath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
+  const finalArgs = ['-m', NAME_MKDOCS, 'build', ...args];
+  log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
+  return await exec(pythonPath, finalArgs, opts);
 }
 
 /**
@@ -63,6 +57,14 @@ export async function buildSite({
   execOpts,
 }: BuildMkDocsOpts = {}) {
   const stop = stopwatch('build-mkdocs');
+
+  const pythonPath = await findPython();
+  if (!pythonPath) {
+    throw new DocutilsError(
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`
+    );
+  }
+
   mkDocsYmlPath = mkDocsYmlPath
     ? path.resolve(process.cwd(), mkDocsYmlPath)
     : await findMkDocsYml(cwd);
@@ -77,10 +79,10 @@ export async function buildSite({
   }
   if (serve) {
     // unsure about how SIGHUP is handled here
-    await doServe(mkdocsArgs, serveOpts);
+    await doServe(pythonPath, mkdocsArgs, serveOpts);
   } else {
     log.info('Building site...');
-    await doBuild(mkdocsArgs, execOpts);
+    await doBuild(pythonPath, mkdocsArgs, execOpts);
     let relSiteDir;
     if (siteDir) {
       relSiteDir = relative(cwd, siteDir);

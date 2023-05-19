@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.10](https://github.com/appium/appium/compare/@appium/base-driver@9.3.9...@appium/base-driver@9.3.10) (2023-05-19)
+
+
+### Bug Fixes
+
+* **base-driver:** add missing @types/lodash ([63a429c](https://github.com/appium/appium/commit/63a429c53bf3da353e018ed86ec24e32bf238d18))
+
+
+
 ## [9.3.9](https://github.com/appium/appium/compare/@appium/base-driver@9.3.8...@appium/base-driver@9.3.9) (2023-05-19)
 
 **Note:** Version bump only for package @appium/base-driver

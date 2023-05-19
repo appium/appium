@@ -1,4 +1,4 @@
-import {node} from '@appium/support';
+import {node} from 'appium/support';
 
 export const IMAGE_STRATEGY = '-image';
 

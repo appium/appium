@@ -31,15 +31,14 @@ import {
 } from './constants';
 import {DocutilsError} from './error';
 import {
-  findPkgDir,
   findMkDocsYml,
+  findPkgDir,
+  findTypeDoc,
   readJson5,
-  readTypedocJson,
-  whichMkDocs,
-  whichNpm,
-  whichPython,
-  whichPython3,
   readMkDocsYml,
+  readTypedocJson,
+  whichNpm,
+  findPython,
 } from './fs';
 import {getLogger} from './logger';
 import {MkDocsYml, PipPackage, TypeDocJson} from './model';
@@ -96,12 +95,12 @@ export class DocutilsValidator extends EventEmitter {
   /**
    * Path to `npm` executable.
    */
-  protected readonly npmPath: string | undefined;
+  protected readonly npmPath?: string;
 
   /**
    * Path to `python` executable.
    */
-  protected readonly pythonPath: string | undefined;
+  protected readonly pythonPath?: string;
 
   /**
    * List of validations to perform
@@ -121,27 +120,29 @@ export class DocutilsValidator extends EventEmitter {
   /**
    * Path to `mkdocs.yml`.  If not provided, will be lazily resolved.
    */
-  protected mkDocsYmlPath: string | undefined;
+  protected mkDocsYmlPath?: string;
 
   /**
    * Path to `package.json`.  If not provided, will be lazily resolved.
    */
-  protected packageJsonPath: string | undefined;
+  protected packageJsonPath?: string;
 
   /**
    * Path to the package directory.  If not provided, will be lazily resolved.
    */
-  protected pkgDir: string | undefined;
+  protected pkgDir?: string;
 
   /**
    * Path to `tsconfig.json`.  If not provided, will be lazily resolved.
    */
-  protected tsconfigJsonPath: string | undefined;
+  protected tsconfigJsonPath?: string;
 
   /**
    * Path to `typedoc.json`.  If not provided, will be lazily resolved.
    */
-  protected typeDocJsonPath: string | undefined;
+  protected typeDocJsonPath?: string;
+
+  protected typeDocPath?: string;
 
   /**
    * Emitted when validation begins with a list of validation kinds to be performed
@@ -182,6 +183,7 @@ export class DocutilsValidator extends EventEmitter {
     this.typeDocJsonPath = opts.typedocJson;
     this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
+    this.typeDocPath = opts.typedocPath;
 
     if (opts.python) {
       this.validations.add(NAME_PYTHON);
@@ -315,10 +317,7 @@ export class DocutilsValidator extends EventEmitter {
    * Validates that the correct version of `mkdocs` is installed
    */
   protected async validateMkDocs() {
-    const pythonPath =
-      this.pythonPath ??
-      (await whichPython3({nothrow: true})) ??
-      (await whichPython({nothrow: true}));
+    const pythonPath = this.pythonPath ?? (await findPython());
 
     if (!pythonPath) {
       return this.fail(
@@ -425,10 +424,7 @@ export class DocutilsValidator extends EventEmitter {
    */
   protected async validatePythonDeps() {
     let pipListOutput: string;
-    const pythonPath =
-      this.pythonPath ??
-      (await whichPython3({nothrow: true})) ??
-      (await whichPython({nothrow: true}));
+    const pythonPath = this.pythonPath ?? (await findPython());
     if (!pythonPath) {
       return this.fail(`Could not find ${NAME_PYTHON} in PATH. Is it installed?`);
     }
@@ -504,7 +500,7 @@ export class DocutilsValidator extends EventEmitter {
    * Asserts that the Python version is 3.x
    */
   protected async validatePythonVersion() {
-    const pythonPath = this.pythonPath ?? (await whichPython());
+    const pythonPath = this.pythonPath ?? (await findPython());
     if (!pythonPath) {
       return this.fail(`Could not find ${NAME_PYTHON} in PATH. Is it installed?`);
     }
@@ -525,17 +521,30 @@ export class DocutilsValidator extends EventEmitter {
   /**
    * Asserts TypeDoc is installed, runnable, the correct version, and that the config file is readable
    * and constaints required options
+   *
+   * @todo Another option would be to `npm exec typedoc@<version>` which delegates to `npx`.
    */
   protected async validateTypeDoc() {
     const pkgDir = await this.findPkgDir();
+    const typeDocPath = this.typeDocPath ?? (await findTypeDoc(pkgDir));
+
+    if (!typeDocPath) {
+      return this.fail(`Could not find ${NAME_TYPEDOC}; is it installed?`);
+    }
+    log.debug('Found %s at %s', NAME_TYPEDOC, typeDocPath);
+
     let rawTypeDocVersion: string;
     let typeDocVersion: string;
     try {
-      ({stdout: rawTypeDocVersion} = await exec('npm', ['exec', NAME_TYPEDOC, '--', '--version'], {
+      ({stdout: rawTypeDocVersion} = await exec(process.execPath, [typeDocPath, '--version'], {
         cwd: pkgDir,
       }));
-    } catch {
-      return this.fail(`Could not find ${NAME_TYPEDOC} executable from ${pkgDir}`);
+    } catch (err) {
+      return this.fail(
+        `Could not execute ${process.execPath} ${typeDocPath} from ${pkgDir}. Reason: ${
+          (err as Error).message
+        }`
+      );
     }
 
     if (rawTypeDocVersion) {
@@ -548,7 +557,8 @@ export class DocutilsValidator extends EventEmitter {
         );
       }
 
-      const reqdTypeDocVersion = DOCUTILS_PKG.dependencies!.typedoc!;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const reqdTypeDocVersion = DOCUTILS_PKG.dependencies!.typedoc!; // this is our own package.json
       if (!satisfies(typeDocVersion, reqdTypeDocVersion)) {
         return this.fail(
           `Found TypeDoc version ${typeDocVersion}, but ${reqdTypeDocVersion} is required`
@@ -601,7 +611,7 @@ export class DocutilsValidator extends EventEmitter {
     if (!typeDocJson.out) {
       return this.fail(
         new DocutilsError(
-          `Missing "out" property in ${relTypeDocJsonPath}; path "${DEFAULT_REL_TYPEDOC_OUT_PATH} is recommended`
+          `Missing "out" property in ${relTypeDocJsonPath}; path "${DEFAULT_REL_TYPEDOC_OUT_PATH}" is recommended`
         )
       );
     }
@@ -719,6 +729,10 @@ export interface DocutilsValidatorOpts {
    * If `true`, run TypeDoc validation
    */
   typedoc?: boolean;
+  /**
+   * Path to `typedoc` executable
+   */
+  typedocPath?: string;
   /**
    * Path to `typedoc.json`
    */

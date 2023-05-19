@@ -208,47 +208,49 @@ export function safeWriteFile(filepath: string, content: JsonValue, overwrite = 
 /**
  * `which` with memoization
  */
-export const cachedWhich = _.memoize(fs.which);
-
-/**
- * Finds `mkdocs` executable
- */
-export const whichMkDocs = _.partial(cachedWhich, NAME_MKDOCS);
+const cachedWhich = _.memoize(fs.which as typeof import('which'));
 
 /**
  * Finds `npm` executable
  */
-export const whichNpm = _.partial(cachedWhich, NAME_NPM);
+export const whichNpm = _.partial(cachedWhich, NAME_NPM, {nothrow: true});
 
 /**
  * Finds `python` executable
  */
-export const whichPython = _.partial(cachedWhich, NAME_PYTHON);
+const whichPython = _.partial(cachedWhich, NAME_PYTHON, {nothrow: true});
 
 /**
  * Finds `python3` executable
  */
-export const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`);
-
-/**
- * Finds `mike` executable
- */
-export const whichMike = _.partial(cachedWhich, NAME_MIKE);
+const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`, {nothrow: true});
 
 /**
  * Finds `typedoc` executable
  */
-export const whichTypeDoc = _.partial(cachedWhich, NAME_TYPEDOC);
+const whichTypeDoc = _.partial(cachedWhich, NAME_TYPEDOC, {nothrow: true});
 
+/**
+ * Finds the `typedoc` executable.
+ *
+ * Looks in the `node_modules/.bin` dir from the current working directory, and if this fails, in the `node_modules` dir for the file which `.bin/typedoc` should be a symlink of, and if _that_ fails, try the `PATH`.
+ */
 export const findTypeDoc = _.memoize(async (cwd = process.cwd()): Promise<string | undefined> => {
+  // .cmd is for win32, of course. note that glob _always_ uses posix dir separators.
   const globResult =
-    (await fs.glob('node_modules/.bin/typedoc?(.cwd)', {cwd, nodir: true})) ??
+    (await fs.glob('node_modules/.bin/typedoc?(.cmd)', {cwd, nodir: true})) ??
     (await fs.glob('node_modules/**/typedoc/bin/typedoc', {cwd, nodir: true, follow: true}));
-  if (globResult.length) {
-    return _.first(globResult);
-  }
-  return await whichTypeDoc({nothrow: true});
+  return _.first(globResult) ?? (await whichTypeDoc());
 });
+
+/**
+ * Finds the `python3` or `python` executable in the user's `PATH`.
+ *
+ * `python3` is preferred over `python`, since the latter could be Python 2.
+ */
+export const findPython = _.memoize(
+  async (): Promise<string | undefined> => (await whichPython3()) ?? (await whichPython())
+);
 
 /**
  * Reads an `mkdocs.yml` file, merges inherited configs, and returns the result. The result is cached.

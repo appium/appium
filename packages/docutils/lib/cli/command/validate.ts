@@ -50,7 +50,7 @@ const opts = {
   },
   'python-path': {
     defaultDescription: '(derived from shell)',
-    description: 'Path to python 3 executable',
+    description: 'Path to python3 executable',
     group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,
@@ -75,6 +75,15 @@ const opts = {
   'typedoc-json': {
     defaultDescription: './typedoc.json',
     describe: 'Path to typedoc.json',
+    group: ValidateCommandGroup.Paths,
+    nargs: 1,
+    normalize: true,
+    requiresArg: true,
+    type: 'string',
+  },
+  'typedoc-path': {
+    defaultDescription: '(derived from shell)',
+    description: 'Path to typedoc executable',
     group: ValidateCommandGroup.Paths,
     nargs: 1,
     normalize: true,

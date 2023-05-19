@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.12](https://github.com/appium/appium/compare/@appium/docutils@0.3.11...@appium/docutils@0.3.12) (2023-05-19)
+
+
+### Bug Fixes
+
+* **docutils:** add @types/which as it is exported ([9538c34](https://github.com/appium/appium/commit/9538c34131cd2f8a3c45039efd65678bc0980497))
+* **docutils:** exec mike/mkdocs via python -m ([426830d](https://github.com/appium/appium/commit/426830d14a348f163535a7f935a65b028008738d))
+* **docutils:** provide CJS executable for proper linking ([db73971](https://github.com/appium/appium/commit/db73971018b560ca47527173094720eee3d20a55))
+* **docutils:** run mkdocs via python -m ([5d24ea1](https://github.com/appium/appium/commit/5d24ea1ad294fa28f7ecce125e5342b081a84c83))
+* **docutils:** try python3 if python not in PATH ([7b17754](https://github.com/appium/appium/commit/7b177547865a8343625cf089c97cebfb93fd6955))
+
+
+
 ## [0.3.11](https://github.com/appium/appium/compare/@appium/docutils@0.3.10...@appium/docutils@0.3.11) (2023-05-19)
 
 **Note:** Version bump only for package @appium/docutils

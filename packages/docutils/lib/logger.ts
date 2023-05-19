@@ -6,20 +6,19 @@
  * @module
  */
 
-import figures from 'figures';
-import logSymbols from 'log-symbols';
-import chalk, {ForegroundColor, BackgroundColor} from 'chalk';
+import chalk, {type BackgroundColor, type ForegroundColor} from 'chalk';
 import consola, {
-  logType as LogType,
-  ConsolaReporterLogObject,
+  type Consola,
+  type ConsolaReporterLogObject,
   FancyReporter,
-  FancyReporterOptions,
-  Consola,
-  ConsolaOptions,
-  LogLevel,
+  type FancyReporterOptions,
+  type LogLevel,
+  type logType as LogType,
 } from 'consola';
-import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
+import figures from 'figures';
 import _ from 'lodash';
+import logSymbols from 'log-symbols';
+import {DEFAULT_LOG_LEVEL, LogLevelMap} from './constants';
 
 /**
  * This is a reporter for `consola` which uses some extra/custom icons and colors.

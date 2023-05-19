@@ -11,12 +11,6 @@
       "rules": {"func-names": "off"}
     },
     {
-      "files": ["packages/*/index.js", "packages/*/scripts/**/*.js", "test/*.js"],
-      "parserOptions": {
-        "sourceType": "script"
-      }
-    },
-    {
       "files": [
         "packages/appium/support.js",
         "packages/appium/driver.js",
@@ -27,9 +21,17 @@
       }
     },
     {
-      "files": ["./test/setup.js", "./**/scripts/**/*.js", "./packages/*/index.js"],
+      "files": [
+        "./test/setup.js",
+        "./**/scripts/**/*.js",
+        "./packages/*/index.js",
+        "./packages/docutils/bin/appium-docs.js"
+      ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
+      },
+      "parserOptions": {
+        "sourceType": "script"
       }
     },
     {

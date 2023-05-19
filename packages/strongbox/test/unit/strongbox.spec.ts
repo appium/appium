@@ -55,7 +55,7 @@ describe('Strongbox', function () {
 
           expect(() => strongbox('test', {container})).to.throw(
             TypeError,
-            'container slug somewhere/else must be an absolute path'
+            `container slug ${container} must be an absolute path`
           );
         });
       });
@@ -86,7 +86,7 @@ describe('Strongbox', function () {
 
           it('should create an empty Item', async function () {
             expect(item).to.eql({
-              id: path.resolve(DATA_DIR, 'strongbox', 'slug-test'),
+              id: path.resolve(DATA_DIR, 'strongbox', 'SLUG-test'),
               name: 'SLUG test',
               encoding: 'utf8',
               value: undefined,
@@ -102,7 +102,7 @@ describe('Strongbox', function () {
           it('should read its value', async function () {
             const item = await box.createItem('SLUG test');
             expect(item).to.eql({
-              id: path.resolve(DATA_DIR, 'strongbox', 'slug-test'),
+              id: path.resolve(DATA_DIR, 'strongbox', 'SLUG-test'),
               name: 'SLUG test',
               encoding: 'utf8',
               value: 'foo bar',

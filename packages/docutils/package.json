@@ -28,7 +28,7 @@
     "lib": "lib"
   },
   "bin": {
-    "appium-docs": "./build/lib/cli/index.js"
+    "appium-docs": "./bin/appium-docs.js"
   },
   "files": [
     "index.js",

@@ -3,28 +3,26 @@
  * @module
  */
 
-import findUp from 'find-up';
-import YAML from 'yaml';
-import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
-import path from 'node:path';
-import {JsonValue} from 'type-fest';
 import {fs} from '@appium/support';
+import findUp from 'find-up';
 import * as JSON5 from 'json5';
 import _ from 'lodash';
+import path from 'node:path';
 import _pkgDir from 'pkg-dir';
-import {getLogger} from './logger';
+import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
+import {JsonValue} from 'type-fest';
 import {Application, TypeDocReader} from 'typedoc';
+import YAML from 'yaml';
 import {
-  NAME_TYPEDOC_JSON,
   NAME_MKDOCS_YML,
-  NAME_PACKAGE_JSON,
-  NAME_MKDOCS,
   NAME_NPM,
+  NAME_PACKAGE_JSON,
   NAME_PYTHON,
-  NAME_MIKE,
   NAME_TYPEDOC,
+  NAME_TYPEDOC_JSON,
 } from './constants';
 import {DocutilsError} from './error';
+import {getLogger} from './logger';
 import {MkDocsYml} from './model';
 
 const log = getLogger('fs');

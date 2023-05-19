@@ -75,6 +75,7 @@ export function parseNav(nav: MkDocsYmlNav): ParsedNavData[] {
   const queue: QueueItem[] = [{entries, keypath: ''}];
 
   while (queue.length) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const {entries, keypath} = queue.shift()!;
     for (const [key, item] of entries) {
       if (_.isString(item)) {
@@ -153,6 +154,7 @@ function getRootHeaderKeypath(headerItems: ParsedNavData[], header: string) {
   // these are the parts of the keypath of the first item, which will contain the header string. it
   // dosn't matter whether we pick the first one or any one; they will all contain the same root
   // keypath by definition.
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const rootHeaderKeypathParts = _.toPath(_.first(headerItems)!.keypath);
 
   // this is the keypath up to the header string, inclusive.

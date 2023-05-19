@@ -6,7 +6,6 @@
 import _ from 'lodash';
 import {SpawnOptions, spawn} from 'node:child_process';
 import path from 'node:path';
-import type {SubProcess} from 'teen_process';
 
 /**
  * Computes a relative path, prepending `./`
@@ -26,7 +25,7 @@ export function stopwatch(id: string) {
   const start = Date.now();
   stopwatch.cache.set(id, start);
   return () => {
-    const result = Date.now() - stopwatch.cache.get(id)!;
+    const result = Date.now() - (stopwatch.cache.get(id) ?? 0);
     stopwatch.cache.delete(id);
     return result;
   };

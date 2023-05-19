@@ -22,6 +22,7 @@ import {
   NAME_NPM,
   NAME_PYTHON,
   NAME_MIKE,
+  NAME_TYPEDOC,
 } from './constants';
 import {DocutilsError} from './error';
 import {MkDocsYml} from './model';
@@ -233,6 +234,21 @@ export const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`);
  * Finds `mike` executable
  */
 export const whichMike = _.partial(cachedWhich, NAME_MIKE);
+
+/**
+ * Finds `typedoc` executable
+ */
+export const whichTypeDoc = _.partial(cachedWhich, NAME_TYPEDOC);
+
+export const findTypeDoc = _.memoize(async (cwd = process.cwd()): Promise<string | undefined> => {
+  const globResult =
+    (await fs.glob('node_modules/.bin/typedoc?(.cwd)', {cwd, nodir: true})) ??
+    (await fs.glob('node_modules/**/typedoc/bin/typedoc', {cwd, nodir: true, follow: true}));
+  if (globResult.length) {
+    return _.first(globResult);
+  }
+  return await whichTypeDoc({nothrow: true});
+});
 
 /**
  * Reads an `mkdocs.yml` file, merges inherited configs, and returns the result. The result is cached.

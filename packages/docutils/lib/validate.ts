@@ -63,7 +63,7 @@ const TYPEDOC_VERSION_REGEX = /TypeDoc\s(\d+\.\d+\..+)/;
 /**
  * Matches the MkDocs version string from `mkdocs --version`
  */
-const MKDOCS_VERSION_REGEX = /mkdocs,\s+version\s+(\d+\.\d+\.\S+)/;
+const MKDOCS_VERSION_REGEX = /\s+version\s+(\d+\.\d+\.\S+)/;
 
 const log = getLogger('validate');
 
@@ -315,21 +315,22 @@ export class DocutilsValidator extends EventEmitter {
    * Validates that the correct version of `mkdocs` is installed
    */
   protected async validateMkDocs() {
-    let mkDocsPath: string | undefined;
-    try {
-      mkDocsPath = await whichMkDocs();
-    } catch {
-      // _pretty sure_ the exception code is always ENOENT
+    const pythonPath =
+      this.pythonPath ??
+      (await whichPython3({nothrow: true})) ??
+      (await whichPython({nothrow: true}));
+
+    if (!pythonPath) {
       return this.fail(
-        `Could not find ${NAME_MKDOCS} executable in PATH. If it is installed, check your PATH environment variable.`
+        `Could not find ${NAME_PYTHON} executable in PATH. If it is installed, check your PATH environment variable.`
       );
     }
 
     let rawMkDocsVersion: string | undefined;
     try {
-      ({stdout: rawMkDocsVersion} = await exec(mkDocsPath, ['--version']));
+      ({stdout: rawMkDocsVersion} = await exec(pythonPath, ['-m', NAME_MKDOCS, '--version']));
     } catch (err) {
-      return this.fail(`${mkDocsPath} --version failed: ${err}`);
+      return this.fail(`Failed to get MkDocs version: ${err}`);
     }
     const match = rawMkDocsVersion.match(MKDOCS_VERSION_REGEX);
     if (match) {
@@ -344,12 +345,12 @@ export class DocutilsValidator extends EventEmitter {
       const {version: mkDocsReqdVersion} = mkDocsPipPkg;
       if (version !== mkDocsReqdVersion) {
         return this.fail(
-          `${NAME_MKDOCS} at ${mkDocsPath} is v${version}, but ${REQUIREMENTS_TXT_PATH} requires v${mkDocsReqdVersion}`
+          `${NAME_MKDOCS} is v${version}, but ${REQUIREMENTS_TXT_PATH} requires v${mkDocsReqdVersion}`
         );
       }
     } else {
       throw new DocutilsError(
-        `Could not parse version from "${mkDocsPath} --version". This is a bug. Output was ${rawMkDocsVersion}`
+        `Could not parse version from MkDocs. This is a bug. Output was ${rawMkDocsVersion}`
       );
     }
 

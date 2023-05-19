@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.16](https://github.com/appium/appium/compare/@appium/doctor@2.0.15...@appium/doctor@2.0.16) (2023-05-19)
+
+**Note:** Version bump only for package @appium/doctor
+
+
+
+
+
 ## [2.0.15](https://github.com/appium/appium/compare/@appium/doctor@2.0.14...@appium/doctor@2.0.15) (2023-05-17)
 
 

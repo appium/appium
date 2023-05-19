@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.1](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.0...@appium/images-plugin@2.1.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* **images-plugin:** Add the missing dependency to support ([#18652](https://github.com/appium/appium/issues/18652)) ([f512e59](https://github.com/appium/appium/commit/f512e596eb54edb5ca8993b3451aa4a22184bc57))
+
+
+
 ## [2.1.0](https://github.com/appium/appium/compare/@appium/images-plugin@2.0.10...@appium/images-plugin@2.1.0) (2023-05-17)
 
 

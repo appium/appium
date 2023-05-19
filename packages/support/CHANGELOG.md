@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/appium/appium/compare/@appium/support@4.0.0...@appium/support@4.0.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* **support:** add missing @types/which ([ea42548](https://github.com/appium/appium/commit/ea42548442713f3fefa711719d4ad54dff212f04))
+
+
+
 ## [4.0.0](https://github.com/appium/appium/compare/@appium/support@3.1.11...@appium/support@4.0.0) (2023-05-17)
 
 

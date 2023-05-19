@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
     "automation",

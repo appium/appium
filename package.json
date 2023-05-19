@@ -34,7 +34,7 @@
     "clean": "run-s clean:distfiles clean:workspaces",
     "clean:dangerously": "run-s clean:workspaces clean:force",
     "clean:deps": "lerna clean --yes",
-    "clean:distfiles": "npx rimraf \"./packages/*/build\" \"./packages/*/**/.tsconfig.tsbuildinfo\"; npx nx reset",
+    "clean:distfiles": "npx rimraf --glob \"./packages/*/build\" \"./packages/*/**/.tsconfig.tsbuildinfo\"; npx nx reset",
     "clean:interactive": "git clean -d -x -i",
     "clean:force": "git clean -d -x -f",
     "clean:workspaces": "lerna run clean || true",

@@ -55,7 +55,7 @@
     "@types/ncp": "2.0.5",
     "@types/npmlog": "4.1.4",
     "@types/pluralize": "0.0.29",
-    "@types/semver": "7.3.13",
+    "@types/semver": "7.5.0",
     "@types/shell-quote": "1.7.1",
     "@types/supports-color": "8.1.1",
     "@types/teen_process": "2.0.0",

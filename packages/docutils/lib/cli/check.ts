@@ -79,7 +79,10 @@ export async function checkMissingPaths<T extends Record<string, Options>>(
 
   if (missingPaths.length) {
     return missingPaths
-      .map(({id, path}) => `Path specified using --${_.kebabCase(id)} (${path}) does not exist`)
+      .map(
+        ({id, path}) =>
+          `Default or specified path via --${_.kebabCase(id)} (${path}) does not exist`
+      )
       .join('\n');
   }
 

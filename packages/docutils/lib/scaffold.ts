@@ -92,6 +92,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     const relativeDest = relativePath(dest);
     log.debug('Initializing %s', relativeDest);
     let shouldWriteDest = false;
+    let isNew = false;
     let destContent: T;
     let result: ScaffoldTaskResult<T>;
     try {
@@ -105,6 +106,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
       shouldWriteDest = true;
       log.debug('Creating new file %s', relativeDest);
       destContent = {} as T;
+      isNew = true;
     }
 
     const defaults: T = transform(defaultContent, opts, pkg);
@@ -113,7 +115,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
     shouldWriteDest = shouldWriteDest || !_.isEqual(destContent, finalDestContent);
 
     if (shouldWriteDest) {
-      log.info('Changes needed to %s', relativeDest);
+      log.info('Changes needed in %s', relativeDest);
       log.debug('Original %s: %O', relativeDest, destContent);
       log.debug('Final %s: %O', relativeDest, finalDestContent);
       const patch = makePatch(dest, destContent, finalDestContent, serialize);
@@ -126,6 +128,11 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 
       try {
         await safeWriteFile(dest, finalDestContent, overwrite);
+        if (isNew) {
+          log.success('Initialized %s', description);
+        } else {
+          log.success('Updated %s', description);
+        }
       } catch (e) {
         const err = e as NodeJS.ErrnoException;
         // this should only be thrown if `force` is false
@@ -139,9 +146,9 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
         }
       }
     } else {
-      log.info('No changes to %s', relativeDest);
+      log.info('No changes necessary for %s', relativeDest);
     }
-    log.success('Initialized %s', description);
+    log.success(`${description}: done`);
     return {path: dest, content: finalDestContent};
   };
 }
@@ -153,7 +160,7 @@ export function createScaffoldTask<Opts extends ScaffoldTaskOptions, T extends J
 export type ScaffoldTaskTransformer<Opts extends ScaffoldTaskOptions, T extends JsonValue> = (
   content: Readonly<T>,
   opts: TaskSpecificOpts<Opts>,
-  pkg: NormalizedPackageJson
+  pkg: Readonly<NormalizedPackageJson>
 ) => T;
 
 /**

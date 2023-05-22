@@ -30,6 +30,7 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   dir: {
     default: '.',
@@ -59,6 +60,7 @@ const opts = {
     group: InitCommandGroup.MkDocs,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   mkdocs: {
     default: true,
@@ -74,6 +76,7 @@ const opts = {
     normalize: true,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   'package-json': {
     defaultDescription: './package.json',
@@ -98,6 +101,7 @@ const opts = {
     normalize: true,
     requiresArg: true,
     type: 'string',
+    implies: 'python',
   },
   'repo-name': {
     defaultDescription: '(derived from --repo-url)',
@@ -106,6 +110,7 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   'repo-url': {
     defaultDescription: '(from package.json)',
@@ -114,6 +119,7 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   'site-description': {
     defaultDescription: '(from package.json)',
@@ -122,6 +128,7 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   'site-name': {
     defaultDescription: '(extension package name)',
@@ -130,6 +137,7 @@ const opts = {
     nargs: 1,
     requiresArg: true,
     type: 'string',
+    implies: 'mkdocs',
   },
   'tsconfig-json': {
     defaultDescription: './tsconfig.json',
@@ -139,12 +147,14 @@ const opts = {
     normalize: true,
     requiresArg: true,
     type: 'string',
+    implies: 'typescript',
   },
   typedoc: {
     default: true,
     description: 'Create typedoc.json if needed',
     group: InitCommandGroup.Behavior,
     type: 'boolean',
+    implies: 'entry-point',
   },
   'typedoc-json': {
     defaultDescription: './typedoc.json',
@@ -154,6 +164,17 @@ const opts = {
     normalize: true,
     requiresArg: true,
     type: 'string',
+    implies: 'typedoc',
+  },
+  'entry-point': {
+    alias: 'e',
+    describe: 'Source entry point of extension',
+    group: InitCommandGroup.Paths,
+    nargs: 1,
+    normalize: false,
+    requiresArg: true,
+    type: 'string',
+    implies: 'typedoc',
   },
   typescript: {
     default: true,
@@ -167,6 +188,7 @@ const opts = {
     group: InitCommandGroup.Behavior,
     type: 'boolean',
     conflicts: 'force',
+    implies: 'python',
   },
 } as const satisfies Record<string, Options>;
 

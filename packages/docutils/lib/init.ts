@@ -11,10 +11,11 @@ import {
   NAME_PYTHON,
   REQUIREMENTS_TXT_PATH,
   NAME_TYPEDOC_JSON,
+  NAME_PACKAGE_JSON,
 } from './constants';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
-import {Simplify} from 'type-fest';
+import {PackageJson, Simplify} from 'type-fest';
 import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
 import {getLogger} from './logger';
@@ -54,9 +55,19 @@ const BASE_TSCONFIG_JSON: Readonly<TsConfigJson> = Object.freeze({
   },
 });
 
+/**
+ * Data for the base `package.json` file.
+ * We expect `package.json` to exist, and we are not in the business of creating it.
+ * However, we will need to add a `typedoc.entryPoint` prop to it.
+ */
+const BASE_PACKAGE_JSON: Readonly<PackageJson> = Object.freeze({});
+
 const log = getLogger('init');
 const dryRunLog = getLogger('dry-run', log);
 
+/**
+ * Files included, by default, in `tsconfig.json`
+ */
 const DEFAULT_INCLUDE = ['lib', 'test', 'index.js'];
 /**
  * Function which scaffolds a `tsconfig.json` file
@@ -95,6 +106,26 @@ export const initTypeDocJson = createScaffoldTask<InitTypeDocOptions, TypeDocJso
   NAME_TYPEDOC_JSON,
   BASE_TYPEDOC_JSON,
   'TypeDoc configuration'
+);
+
+/**
+ * Function which scaffolds a `package.json` file
+ *
+ * This only amends prop `typedoc.entryPoint` to the `package.json` file.
+ *
+ * If, strangely, `package.json` did not exist, then it will now contain _only_ that prop.
+ */
+export const initTypeDocPkgJson = createScaffoldTask<InitTypeDocOptions, PackageJson>(
+  NAME_PACKAGE_JSON,
+  BASE_PACKAGE_JSON,
+  'Package configuration for TypeDoc',
+  {
+    transform: (content, opts) =>
+      ({
+        ...content,
+        typedoc: {entryPoint: opts.typeDocEntryPoint},
+      } as PackageJson),
+  }
 );
 
 /**
@@ -224,6 +255,7 @@ export async function init({
   pythonPath,
   upgrade,
   typedocJson: typeDocJsonPath,
+  entryPoint: typeDocEntryPoint,
 }: InitOptions = {}): Promise<void> {
   if (!typescript && typedoc) {
     log.warn(
@@ -250,6 +282,13 @@ export async function init({
       dryRun,
       cwd,
     });
+    await initTypeDocPkgJson({
+      packageJson: packageJsonPath,
+      overwrite: true, // <-- always overwrite
+      dryRun,
+      cwd,
+      typeDocEntryPoint,
+    });
   }
 
   if (python) {
@@ -271,7 +310,10 @@ export async function init({
   }
 }
 
-export type InitTypeDocOptions = ScaffoldTaskOptions;
+export interface InitTypeDocOptions extends ScaffoldTaskOptions {
+  typeDocEntryPoint?: string;
+}
+
 export interface InitTsConfigOptions extends ScaffoldTaskOptions {
   /**
    * List of source files (globs supported); typically `src` or `lib`
@@ -334,5 +376,10 @@ export type InitOptions = Simplify<
      * If `true`, upgrade only
      */
     upgrade?: boolean;
+
+    /**
+     * Path to entry point of extension (source; not "main" field)
+     */
+    entryPoint?: string;
   }
 >;

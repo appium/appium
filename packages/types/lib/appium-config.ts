@@ -6,9 +6,13 @@
  */
 
 /**
- * IP address to listen on
+ * IPv4/IPv6 address or a hostname to listen on
  */
-export type AddressConfig = string;
+export type AddressConfig = AddressConfig1 & AddressConfig2;
+export type AddressConfig1 = {
+  [k: string]: unknown;
+};
+export type AddressConfig2 = string;
 /**
  * Whether the Appium server should allow web browser connections from any host
  */

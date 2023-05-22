@@ -5,6 +5,7 @@ import {
   removeAppiumPrefixes,
   inspect,
   adjustNodePath,
+  fetchIpAddresses,
 } from '../../lib/utils';
 import {BASE_CAPS, W3C_CAPS} from '../helpers';
 import _ from 'lodash';
@@ -275,4 +276,19 @@ describe('utils', function () {
       (await fs.exists(process.env.NODE_PATH)).should.be.true;
     });
   });
+
+  describe('fetchIpAddresses()', function () {
+    it('should fetch addresses for ipv4 only', async function () {
+      fetchIpAddresses(4).length.should.be.greaterThan(0);
+    });
+
+    it('should fetch addresses for ipv6 only', async function () {
+      fetchIpAddresses(6).length.should.be.greaterThan(0);
+    });
+
+    it('should fetch addresses for ipv4 and ipv6', async function () {
+      fetchIpAddresses().length.should.be.greaterThan(0);
+    });
+  });
+
 });

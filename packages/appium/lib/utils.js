@@ -5,9 +5,13 @@ import {inspect as dump} from 'util';
 import {node} from '@appium/support';
 import path from 'path';
 import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE} from './constants';
+import os from 'node:os';
 
 const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
+export const V4_BROADCAST_IP = '0.0.0.0';
+export const V6_BROADCAST_IP = '::';
+
 
 /**
  *
@@ -329,6 +333,29 @@ export function isDriverCommandArgs(args) {
  */
 export function isPluginCommandArgs(args) {
   return args.subcommand === PLUGIN_TYPE;
+}
+
+/**
+ * Fetches the list of IP addresses of the current host.
+ *
+ * @param {number?} family Either 4 to filter out ipv4 addresses only,
+ * 6 to filter out ipv6 addresses only, or null to include all of them
+ * @returns {string[]} The list of matched IP addresses
+ */
+export function fetchIpAddresses (family = null) {
+  const nets = os.networkInterfaces();
+  let familyValue = null;
+  // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
+  if (family === 4) {
+    familyValue = [4, 'IPv4'];
+  } else if (family === 6) {
+    familyValue = [6, 'IPv6'];
+  }
+  return _.flatMap(_.values(nets).filter(Boolean))
+    // @ts-ignore The linter does not understand the above filter
+    .filter(({family}) => !familyValue || familyValue && familyValue.includes(family))
+    // @ts-ignore The linter does not understand the above filter
+    .map(({address}) => address);
 }
 
 export {

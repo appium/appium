@@ -330,18 +330,15 @@ async function init(args) {
 function logServerAddress(url) {
   logger.info(`Appium REST http interface listener started on ${url}`);
   const urlObj = new URL(url);
-  const connectToHostnames = [];
-  if (urlObj.hostname === V4_BROADCAST_IP) {
-    connectToHostnames.push(...fetchIpAddresses(4));
-  } else if (urlObj.hostname === V6_BROADCAST_IP) {
-    connectToHostnames.push(...fetchIpAddresses(6));
-  } else {
-    connectToHostnames.push(urlObj.hostname);
+  if (![V4_BROADCAST_IP, V6_BROADCAST_IP].includes(urlObj.hostname)) {
+    return;
   }
+
+  const ipAddreses = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   logger.info(
-    `You can provide the following ${util.pluralize('URL', connectToHostnames.length, false)} ` +
+    `You can provide the following ${util.pluralize('URL', ipAddreses.length, false)} ` +
     `in your client code to connect to this server:\n` +
-    connectToHostnames.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+    ipAddreses.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
   );
 }
 

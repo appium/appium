@@ -163,8 +163,9 @@ describe('fs', function () {
 
   describe('walkDir()', function () {
     it('walkDir recursive', async function () {
-      await chai.expect(fs.walkDir(__dirname, true, (item) => item.endsWith('logger/helpers.js')))
-        .to.eventually.not.be.null;
+      await chai.expect(
+        fs.walkDir(__dirname, true, (item) => item.endsWith(`logger${path.sep}helpers.js`))
+      ).to.eventually.not.be.null;
     });
     it('should walk all elements recursive', async function () {
       await chai.expect(fs.walkDir(path.join(__dirname, '..', 'e2e', 'fixture'), true, _.noop)).to

@@ -37,7 +37,6 @@ import {
   V6_BROADCAST_IP,
 } from './utils';
 import os from 'node:os';
-import net from 'node:net';
 
 const {resolveAppiumHome} = env;
 
@@ -332,9 +331,9 @@ function logServerAddress(url) {
   logger.info(`Appium REST http interface listener started on ${url}`);
   const urlObj = new URL(url);
   const connectToHostnames = [];
-  if (net.isIPv4(urlObj.hostname) && urlObj.hostname === V4_BROADCAST_IP) {
+  if (urlObj.hostname === V4_BROADCAST_IP) {
     connectToHostnames.push(...fetchIpAddresses(4));
-  } else if (net.isIPv6(urlObj.hostname) && urlObj.hostname === V6_BROADCAST_IP) {
+  } else if (urlObj.hostname === V6_BROADCAST_IP) {
     connectToHostnames.push(...fetchIpAddresses(6));
   } else {
     connectToHostnames.push(urlObj.hostname);

@@ -334,11 +334,11 @@ function logServerAddress(url) {
     return;
   }
 
-  const ipAddreses = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const ips = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   logger.info(
-    `You can provide the following ${util.pluralize('URL', ipAddreses.length, false)} ` +
+    `You can provide the following ${util.pluralize('URL', ips.length, false)} ` +
     `in your client code to connect to this server:\n` +
-    ipAddreses.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+    ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
   );
 }
 

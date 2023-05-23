@@ -86,7 +86,7 @@
     "read-pkg": "5.2.0",
     "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.3",
-    "semver": "7.5.0",
+    "semver": "7.5.1",
     "sharp": "0.32.1",
     "shell-quote": "1.8.1",
     "source-map-support": "0.5.21",

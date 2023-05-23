@@ -340,8 +340,8 @@ function logServerAddress(url) {
     connectToHostnames.push(urlObj.hostname);
   }
   logger.info(
-    `You can use the following ${util.pluralize('URL', connectToHostnames.length, false)} ` +
-    `in your client library to connect to the server:\n` +
+    `You can provide the following ${util.pluralize('URL', connectToHostnames.length, false)} ` +
+    `in your client code to connect to this server:\n` +
     connectToHostnames.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
   );
 }

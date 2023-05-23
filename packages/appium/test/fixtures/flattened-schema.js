@@ -22,7 +22,6 @@ export default [
       appiumCliAliases: ['a'],
       default: '0.0.0.0',
       description: 'IPv4/IPv6 address or a hostname to listen on',
-      format: 'hostname',
       title: 'address config',
       type: 'string',
     },

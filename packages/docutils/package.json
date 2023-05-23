@@ -65,7 +65,7 @@
     "log-symbols": "4.1.0",
     "pkg-dir": "5.0.0",
     "read-pkg": "5.2.0",
-    "semver": "7.5.0",
+    "semver": "7.5.1",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
     "type-fest": "3.10.0",

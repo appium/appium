@@ -11,10 +11,17 @@ export default [
       ref: 'appium.json#/properties/server/properties/address',
     },
     schema: {
-      $comment: 'I think hostname covers both DNS and IPv4...could be wrong',
+      anyOf: [
+        {
+          format: 'hostname'
+        },
+        {
+          format: 'ipv6'
+        }
+      ],
       appiumCliAliases: ['a'],
       default: '0.0.0.0',
-      description: 'IP address to listen on',
+      description: 'IPv4/IPv6 address or a hostname to listen on',
       format: 'hostname',
       title: 'address config',
       type: 'string',

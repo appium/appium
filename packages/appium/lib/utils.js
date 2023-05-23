@@ -338,12 +338,11 @@ export function isPluginCommandArgs(args) {
 /**
  * Fetches the list of IP addresses of the current host.
  *
- * @param {number?} family Either 4 to filter out ipv4 addresses only,
- * 6 to filter out ipv6 addresses only, or null to include all of them
+ * @param {4|6|null} family Either 4 to include ipv4 addresses only,
+ * 6 to include ipv6 addresses only, or null to include all of them
  * @returns {string[]} The list of matched IP addresses
  */
 export function fetchIpAddresses (family = null) {
-  const nets = os.networkInterfaces();
   let familyValue = null;
   // 'IPv4' is in Node <= 17, from 18 it's a number 4 or 6
   if (family === 4) {
@@ -351,7 +350,7 @@ export function fetchIpAddresses (family = null) {
   } else if (family === 6) {
     familyValue = [6, 'IPv6'];
   }
-  return _.flatMap(_.values(nets).filter(Boolean))
+  return _.flatMap(_.values(os.networkInterfaces()).filter(Boolean))
     // @ts-ignore The linter does not understand the above filter
     .filter(({family}) => !familyValue || familyValue && familyValue.includes(family))
     // @ts-ignore The linter does not understand the above filter

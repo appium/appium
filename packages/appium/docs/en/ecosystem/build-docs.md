@@ -182,7 +182,9 @@ The documentation will show that the `doMyThing` method accepts required paramet
 
 In addition, the _description_ from the docstring in `newMethodMap` overrides the description in the method implementation; it will describe the command `doMyThing` as "Does my thing".
 
-Finally, the `@param` tags and `@returns` tag from the docstring in `newMethodMap` provides further information where `newMethodMap` cannot; e.g., each parameter has a type and description.
+The `@param` tags and `@returns` tag from the method's docstring provide information about the expected and returned types, as well as a description of each. This is not expressible via `newMethodMap` and `executeMethodMap` alone; it provides more information for your extension's users.
+
+> Note for TypeScript users: while the _types_ will already be present, providing `@param` and `@returns` tags is still useful for providing descriptions.
 
 All commands must be `async`, so they will return `Promise<T>` where type `T` is the type of whatever the `Promise` fulfills with.  In the generated documentation, the `Promise` is ignored, and only `T` is reported.  So for `doMyThing`, the return type of the command, as output in the documentation, will be `boolean`.  
 

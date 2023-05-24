@@ -6,7 +6,7 @@
  */
 
 /**
- * IP address to listen on
+ * IPv4/IPv6 address or a hostname to listen on
  */
 export type AddressConfig = string;
 /**

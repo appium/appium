@@ -21,11 +21,13 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
       description: 'Configuration when running Appium as a server',
       properties: {
         address: {
-          $comment: 'I think hostname covers both DNS and IPv4...could be wrong',
           appiumCliAliases: ['a'],
           default: '0.0.0.0',
-          description: 'IP address to listen on',
-          format: 'hostname',
+          description: 'IPv4/IPv6 address or a hostname to listen on',
+          anyOf: [
+            { format: 'hostname' },
+            { format: 'ipv6' }
+          ],
           title: 'address config',
           type: 'string',
         },

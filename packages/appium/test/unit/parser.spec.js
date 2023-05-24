@@ -119,6 +119,18 @@ describe('parser', function () {
         p.parseArgs(['--allow-insecure', 'foo ,bar']).allowInsecure.should.eql(['foo', 'bar']);
       });
 
+      it('should parse --address correctly', function () {
+        p.parseArgs(['--address', 'localhost']).address.should.eql('localhost');
+        p.parseArgs(['--address', 'appium.net']).address.should.eql('appium.net');
+        p.parseArgs(['--address', '127.0.0.1']).address.should.eql('127.0.0.1');
+        p.parseArgs(['--address', '10.0.0.1']).address.should.eql('10.0.0.1');
+        p.parseArgs(['--address', '::']).address.should.eql('::');
+        p.parseArgs(['--address', '::1']).address.should.eql('::1');
+        p.parseArgs(['--address', '2a02:8888:9a80:158:2418:a474:43c6:1b78']).address.should.eql(
+          '2a02:8888:9a80:158:2418:a474:43c6:1b78'
+        );
+      });
+
       it('should parse --deny-insecure correctly', function () {
         p.parseArgs([]).should.not.have.property('denyInsecure');
         p.parseArgs(['--deny-insecure', '']).denyInsecure.should.eql([]);

@@ -32,6 +32,9 @@ import {
   isExtensionCommandArgs,
   isPluginCommandArgs,
   isServerCommandArgs,
+  fetchIpAddresses,
+  V4_BROADCAST_IP,
+  V6_BROADCAST_IP,
 } from './utils';
 import os from 'node:os';
 
@@ -318,6 +321,28 @@ async function init(args) {
 }
 
 /**
+ * Prints the actual server address and the list of URLs that
+ * could be used to connect to the current server.
+ * Properly replaces broadcast addresses in client URLs.
+ *
+ * @param {string} url The URL the server is listening on
+ */
+function logServerAddress(url) {
+  logger.info(`Appium REST http interface listener started on ${url}`);
+  const urlObj = new URL(url);
+  if (![V4_BROADCAST_IP, V6_BROADCAST_IP].includes(urlObj.hostname)) {
+    return;
+  }
+
+  const ips = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  logger.info(
+    `You can provide the following ${util.pluralize('URL', ips.length, false)} ` +
+    `in your client code to connect to this server:\n` +
+    ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+  );
+}
+
+/**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
  * @template {CliCommand} [Cmd=ServerCommand]
@@ -417,9 +442,7 @@ async function main(args) {
     });
   }
 
-  logger.info(
-    `Appium REST http interface listener started on ${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
-  );
+  logServerAddress(`${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`);
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

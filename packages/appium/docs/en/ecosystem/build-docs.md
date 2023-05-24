@@ -53,7 +53,7 @@ extension, typically), we also bundle [Mike](https://github.com/jimporter/mike).
 
 ### Prerequisites
 
-To take advantage of Appium's documentation utilities, you'll to install:
+To take advantage of Appium's documentation utilities, you'll need to install:
 
 - [Python v3+](https://www.python.org/downloads/)
 - [pip](https://pip.pypa.io/en/stable/installation/) (this may be installed automatically with Python)

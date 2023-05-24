@@ -11,14 +11,6 @@ export default [
       ref: 'appium.json#/properties/server/properties/address',
     },
     schema: {
-      anyOf: [
-        {
-          format: 'hostname'
-        },
-        {
-          format: 'ipv6'
-        }
-      ],
       appiumCliAliases: ['a'],
       default: '0.0.0.0',
       description: 'IPv4/IPv6 address or a hostname to listen on',

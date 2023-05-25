@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
-import { util } from 'appium/support';
 import axios from 'axios';
 import B from 'bluebird';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import chai from 'chai';
 import sinon from 'sinon';
+import { Agent } from 'node:http';
 
 const should = chai.should();
 
@@ -149,10 +149,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 
     describe('session handling', function () {
       it('should handle idempotency while creating sessions', async function () {
-        if (util.compareVersions(process.version, '>=', '19.0.0')) {
-          // FIXME: Unfortunately the 'socket hang up' error is too hard to debug
-          return this.skip();
-        }
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
+        const httpAgent = new Agent({ keepAlive: true });
 
         const sessionIds = [];
         let times = 0;
@@ -165,6 +163,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
               headers: {
                 'X-Idempotency-Key': '123456',
               },
+              httpAgent,
             }
           );
 
@@ -179,10 +178,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
       });
 
       it('should handle idempotency while creating parallel sessions', async function () {
-        if (util.compareVersions(process.version, '>=', '19.0.0')) {
-          // FIXME: Unfortunately the 'socket hang up' error is too hard to debug
-          return this.skip();
-        }
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
+        const httpAgent = new Agent({ keepAlive: true });
 
         const reqs = [];
         let times = 0;
@@ -198,6 +195,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
                 headers: {
                   'X-Idempotency-Key': '12345',
                 },
+                httpAgent,
               }
             )
           );

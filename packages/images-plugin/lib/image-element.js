@@ -239,7 +239,11 @@ export default class ImageElement {
     if (strategy !== IMAGE_STRATEGY) {
       throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
     }
-    return await this.finder.findByImage(selector, driver, {multiple, containerRect: this.rect});
+    return await this.finder.findByImage(
+      Buffer.from(selector, 'base64'),
+      driver,
+      {multiple, containerRect: this.rect}
+    );
   }
 
   /**

@@ -5,6 +5,7 @@ import B from 'bluebird';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import chai from 'chai';
 import sinon from 'sinon';
+import { Agent } from 'node:http';
 
 const should = chai.should();
 
@@ -148,6 +149,9 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 
     describe('session handling', function () {
       it('should handle idempotency while creating sessions', async function () {
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
+        const httpAgent = new Agent({ keepAlive: true });
+
         const sessionIds = [];
         let times = 0;
         do {
@@ -159,11 +163,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
               headers: {
                 'X-Idempotency-Key': '123456',
               },
-              // XXX: I'm not sure what these are, as they are not documented axios options,
-              // nor are they mentioned in our source
-              // @ts-expect-error
-              simple: false,
-              resolveWithFullResponse: true,
+              httpAgent,
             }
           );
 
@@ -178,6 +178,9 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
       });
 
       it('should handle idempotency while creating parallel sessions', async function () {
+        // workaround for https://github.com/node-fetch/node-fetch/issues/1735
+        const httpAgent = new Agent({ keepAlive: true });
+
         const reqs = [];
         let times = 0;
         do {
@@ -192,6 +195,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
                 headers: {
                   'X-Idempotency-Key': '12345',
                 },
+                httpAgent,
               }
             )
           );

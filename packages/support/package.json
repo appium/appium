@@ -92,7 +92,7 @@
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "2.0.2",
-    "type-fest": "3.10.0",
+    "type-fest": "3.11.0",
     "uuid": "9.0.0",
     "which": "3.0.1",
     "yauzl": "2.10.0"

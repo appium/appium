@@ -52,7 +52,7 @@ export default class ImageElementPlugin extends BasePlugin {
       return await next();
     }
 
-    return await this.finder.findByImage(selector, driver, {multiple});
+    return await this.finder.findByImage(Buffer.from(selector, 'base64'), driver, {multiple});
   }
 
   async handle(next, driver, cmdName, ...args) {

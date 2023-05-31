@@ -43,7 +43,7 @@
     "@types/express": "4.17.17",
     "@types/npmlog": "4.1.4",
     "@types/ws": "8.5.4",
-    "type-fest": "3.11.0"
+    "type-fest": "3.11.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

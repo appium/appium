@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export class OpenCvAutoreleasePool {
   /**
    * @type {Set}
@@ -17,9 +15,7 @@ export class OpenCvAutoreleasePool {
    */
   add(...items) {
     for (const item of items) {
-      if (_.has(item, 'delete') && _.isFunction(item.delete)) {
-        this._items.add(item);
-      }
+      this._items.add(item);
     }
     return items.length === 1 ? items[0] : items;
   }

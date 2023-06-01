@@ -1,3 +1,4 @@
+import path from 'node:path';
 import {BinaryIsInPathCheck, AndroidSdkExists} from '../../lib/dev';
 import {fs} from '@appium/support';
 import * as tp from 'teen_process';
@@ -65,12 +66,12 @@ describe('dev', function () {
         check.autofix.should.not.be.ok;
       });
       it('diagnose - success', async function () {
-        process.env.ANDROID_HOME = '/a/b/c/d';
+        process.env.ANDROID_HOME = path.resolve('/', 'a', 'b', 'c', 'd');
         mocks.fs.expects('exists').once().returns(B.resolve(true));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
-          message: 'android-16 was found at: /a/b/c/d/platforms/android-16',
+          message: `android-16 was found at: ${process.env.ANDROID_HOME}/platforms/android-16`,
         });
         mocks.verify();
       });
@@ -84,12 +85,12 @@ describe('dev', function () {
         mocks.verify();
       });
       it('diagnose - failure - invalid path', async function () {
-        process.env.ANDROID_HOME = '/a/b/c/d';
+        process.env.ANDROID_HOME = path.resolve('/', 'a', 'b', 'c', 'd');
         mocks.fs.expects('exists').once().returns(B.resolve(false));
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: "android-16 could NOT be found at '/a/b/c/d/platforms/android-16'!",
+          message: `android-16 could NOT be found at '${process.env.ANDROID_HOME}/platforms/android-16'!`,
         });
         mocks.verify();
       });

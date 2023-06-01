@@ -75,7 +75,7 @@ class OptionalFfmpegCommandCheck extends DoctorCheck {
     return ffmpegPath
       ? okOptional(
           `ffmpeg is installed at: ${ffmpegPath}. ${
-            (await exec('ffmpeg', ['-version'])).stdout.split(EOL)[0]
+            (await exec('ffmpeg', ['-version'])).stdout.split('\n')[0]
           }`
         )
       : nokOptional('ffmpeg cannot be found');

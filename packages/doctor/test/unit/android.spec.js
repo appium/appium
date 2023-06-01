@@ -1,10 +1,11 @@
+import path from 'node:path';
 import {
   EnvVarAndPathCheck,
   AndroidToolCheck,
   OptionalAppBundleCheck,
   OptionalGstreamerCheck,
 } from '../../lib/android';
-import {fs} from '@appium/support';
+import {fs, system} from '@appium/support';
 import * as adb from 'appium-adb';
 import * as utils from '../../lib/utils';
 import * as tp from 'teen_process';
@@ -13,6 +14,9 @@ import B from 'bluebird';
 import {removeColors} from './helper';
 
 describe('android', function () {
+  const apkAnalyzerFilename = system.isWindows() ? 'apkanalyzer.bat' : 'apkanalyzer';
+  const gstLaunchFilename = system.isWindows() ? 'gst-launch-1.0.exe' : 'gst-launch-1.0';
+  const gstInspectFilename = system.isWindows() ? 'gst-inspect-1.0.exe' : 'gst-inspect-1.0';
   describe(
     'EnvVarAndPathCheck',
     withMocks({fs}, (mocks) => {
@@ -64,12 +68,14 @@ describe('android', function () {
       });
       it('diagnose - success', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
+        mocks.adb
+          .expects('getAndroidBinaryPath')
+          .exactly(check.tools.length)
           .returns(B.resolve('/path/to/binary'));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
-          message: 'adb, emulator, apkanalyzer exist: /a/b/c/d',
+          message: `adb, emulator, ${apkAnalyzerFilename} exist: /a/b/c/d`,
         });
         mocks.verify();
       });
@@ -79,19 +85,17 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: 'adb, emulator, apkanalyzer could not be found because ' +
-            'ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!',
+          message: `adb, emulator, ${apkAnalyzerFilename} could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!`,
         });
         mocks.verify();
       });
       it('diagnose - failure - path not valid', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length)
-          .throws();
+        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length).throws();
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: 'adb, emulator, apkanalyzer could NOT be found in /a/b/c/d!',
+          message: `adb, emulator, ${apkAnalyzerFilename} could NOT be found in /a/b/c/d!`,
         });
         mocks.verify();
       });
@@ -102,11 +106,9 @@ describe('android', function () {
         );
       });
       it('fix - install', async function () {
-        process.env.ANDROID_HOME = '/a/b/c/d';
+        process.env.ANDROID_HOME = path.resolve('/', 'a', 'b', 'c', 'd');
         removeColors(await check.fix()).should.equal(
-          'Manually install adb, emulator, apkanalyzer and add it to PATH. ' +
-            'https://developer.android.com/studio#cmdline-tools and ' +
-            'https://developer.android.com/studio/intro/update#sdk-manager may help to setup.'
+          `Manually install adb, emulator, ${apkAnalyzerFilename} and add it to PATH. https://developer.android.com/studio#cmdline-tools and https://developer.android.com/studio/intro/update#sdk-manager may help to setup.`
         );
       });
     })
@@ -138,8 +140,10 @@ describe('android', function () {
         mocks.verify();
       });
       it('fix', async function () {
-        removeColors(await check.fix()).should.equal(
-          'bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it'
+        removeColors(await check.fix()).should.match(
+          new RegExp(
+            'bundletool.jar is used to handle Android App Bundle. Please read http://appium.io/docs/en/writing-running-appium/android/android-appbundle/ to install it'
+          )
         );
       });
     })
@@ -158,8 +162,7 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: true,
-          message:
-            'gst-launch-1.0 and gst-inspect-1.0 are installed at: path/to/gst-launch and path/to/gst-inspect',
+          message: `${gstLaunchFilename} and ${gstInspectFilename} are installed at: path/to/gst-launch and path/to/gst-inspect`,
         });
         mocks.verify();
       });
@@ -168,14 +171,13 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: true,
-          message: 'gst-launch-1.0 and/or gst-inspect-1.0 cannot be found',
+          message: `${gstLaunchFilename} and/or ${gstInspectFilename} cannot be found`,
         });
         mocks.verify();
       });
       it('fix', async function () {
         removeColors(await check.fix()).should.equal(
-          'gst-launch-1.0 and gst-inspect-1.0 are used to stream the screen of the device under test. ' +
-            'Please read https://appium.io/docs/en/writing-running-appium/android/android-screen-streaming/ to install them and for more details'
+          `${gstLaunchFilename} and ${gstInspectFilename} are used to stream the screen of the device under test. Please read https://appium.io/docs/en/writing-running-appium/android/android-screen-streaming/ to install them and for more details`
         );
       });
     })

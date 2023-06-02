@@ -320,6 +320,12 @@ class JWProxy {
     return commandName;
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {import('@appium/types').HTTPMethod} method
+   * @param {any?} body
+   */
   async proxyCommand(url, method, body = null) {
     const commandName = this.requestToCommandName(url, method);
     if (!commandName) {
@@ -330,6 +336,12 @@ class JWProxy {
     return await this.protocolConverter.convertAndProxy(commandName, url, method, body);
   }
 
+  /**
+   *
+   * @param {string} url
+   * @param {import('@appium/types').HTTPMethod} method
+   * @param {any?} body
+   */
   async command(url, method, body = null) {
     let response;
     let resBodyObj;

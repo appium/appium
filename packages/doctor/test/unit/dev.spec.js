@@ -71,7 +71,7 @@ describe('dev', function () {
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
-          message: `android-16 was found at: ${process.env.ANDROID_HOME}/platforms/android-16`,
+          message: `android-16 was found at: ${process.env.ANDROID_HOME}${path.sep}platforms${path.sep}android-16`,
         });
         mocks.verify();
       });
@@ -90,7 +90,7 @@ describe('dev', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: `android-16 could NOT be found at '${process.env.ANDROID_HOME}/platforms/android-16'!`,
+          message: `android-16 could NOT be found at '${process.env.ANDROID_HOME}${path.sep}platforms${path.sep}android-16'!`,
         });
         mocks.verify();
       });

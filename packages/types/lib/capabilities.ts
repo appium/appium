@@ -50,7 +50,7 @@ export type ConstraintToCapKind<C extends Constraint> = C['isString'] extends tr
   : C['isArray'] extends true
   ? string[]
   : C['isObject'] extends true
-  ? object
+  ? StringRecord
   : unknown;
 
 /**

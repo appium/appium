@@ -982,7 +982,13 @@ function isUnknownError(err) {
     })
   );
 }
-
+/**
+ * Type guard to check if an Error is of a specific type
+ * @template {Error} T
+ * @param {any} err
+ * @param {import('@appium/types').Class<T>} type
+ * @returns {err is T}
+ */
 function isErrorType(err, type) {
   // `name` property is the constructor name
   if (type.name === ProtocolError.name) {

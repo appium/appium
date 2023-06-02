@@ -291,15 +291,21 @@ export interface IFindCommands {
    *
    * @returns A single element or list of elements
    */
-  findElOrEls<Mult extends boolean, Ctx = any>(
+  findElOrEls<Ctx = any>(
     strategy: string,
     selector: string,
-    mult: Mult,
+    mult: true,
     context?: Ctx
-  ): Promise<Mult extends true ? Element[] : Element>;
+  ): Promise<Element[]>;
+  findElOrEls<Ctx = any>(
+    strategy: string,
+    selector: string,
+    mult: false,
+    context?: Ctx
+  ): Promise<Element>;
 
   /**
-   * This is a wrapper for {@linkcode IFindCommands.findElOrEls} that validates locator strategies
+   * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
    * and implements the `appium:printPageSourceOnFindFailure` capability
    *
    * @param strategy - the locator strategy
@@ -309,12 +315,18 @@ export interface IFindCommands {
    *
    * @returns A single element or list of elements
    */
-  findElOrElsWithProcessing<Mult extends boolean, Ctx = any>(
+  findElOrElsWithProcessing<Ctx = any>(
     strategy: string,
     selector: string,
-    mult: Mult,
+    mult: true,
     context?: Ctx
-  ): Promise<Mult extends true ? Element[] : Element>;
+  ): Promise<Element[]>;
+  findElOrElsWithProcessing<Ctx = any>(
+    strategy: string,
+    selector: string,
+    mult: false,
+    context?: Ctx
+  ): Promise<Element>;
 
   /**
    * Get the current page/app source as HTML/XML
@@ -1278,7 +1290,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param flags - the code denoting the combination of extra flags
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   pressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
 
@@ -1290,7 +1301,7 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param flags - the code denoting the combination of extra flags
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
+   *
    */
   longPressKeyCode?(keycode: number, metastate?: number, flags?: number): Promise<void>;
 
@@ -1300,7 +1311,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param fingerprintId - the numeric ID of the fingerprint to use
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   fingerprint?(fingerprintId: number): Promise<void>;
 
@@ -1311,7 +1321,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param message - the SMS text
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   sendSMS?(phoneNumber: string, message: string): Promise<void>;
 
@@ -1323,7 +1332,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param action - the action to take in response (accept, reject, etc...)
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   gsmCall?(phoneNumber: string, action: string): Promise<void>;
 
@@ -1333,9 +1341,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param singalStrength - the strength in a driver-appropriate string
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  gsmSignal?(signalStrength: string): Promise<void>;
+  gsmSignal?(signalStrength: string | number): Promise<void>;
 
   /**
    * Do something with GSM voice (unclear; this should not be implemented anywhere)
@@ -1353,7 +1360,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param percent - how full the battery should become
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   powerCapacity?(percent: number): Promise<void>;
 
@@ -1363,7 +1369,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param state - whether the device is connected to power or not
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   powerAC?(state: string): Promise<void>;
 
@@ -1373,7 +1378,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param netspeed - the speed as a string, like '3G'
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   networkSpeed?(netspeed: string): Promise<void>;
 
@@ -1384,9 +1388,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param metastate - the combination of meta startUnexpectedShutdown
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  keyevent?(keycode: string, metastate?: string): Promise<void>;
+  keyevent?(keycode: string | number, metastate?: string | number): Promise<void>;
 
   /**
    * Construct a rotation gesture? Unclear what this command does and it does not appear to be used
@@ -1461,7 +1464,7 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param appId - the package or bundle ID of the application
    * @param options - driver-specific launch options
    */
-  terminateApp?(appId: string, options?: unknown): Promise<void>;
+  terminateApp?(appId: string, options?: unknown): Promise<boolean>;
 
   /**
    * Determine whether an app is installed

@@ -7,17 +7,82 @@ import {util} from '@appium/support';
 import {mixin} from './mixin';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
+
+async function findElOrEls<Ctx = any>(
+  this: FakeDriver<any>,
+  strategy: string,
+  selector: string,
+  mult: true,
+  context?: Ctx
+): Promise<Element[]>;
+async function findElOrEls<Ctx = any>(
+  this: FakeDriver<any>,
+  strategy: string,
+  selector: string,
+  mult: false,
+  context?: Ctx
+): Promise<Element>;
+async function findElOrEls<Ctx = any>(
+  this: FakeDriver<any>,
+  strategy: string,
+  selector: string,
+  mult: boolean,
+  context?: Ctx
+): Promise<Element | Element[]> {
+  const qMap = {
+    xpath: 'xpathQuery',
+    id: 'idQuery',
+    'accessibility id': 'idQuery',
+    'class name': 'classQuery',
+    'tag name': 'classQuery',
+    'css selector': 'cssQuery',
+  } as Record<string, keyof FakeDriver['appModel']>;
+  // TODO this error checking should probably be part of MJSONWP?
+  if (!_.includes(_.keys(qMap), strategy)) {
+    throw new errors.UnknownCommandError();
+  }
+  if (selector === 'badsel') {
+    throw new errors.InvalidSelectorError();
+  }
+  const els = this.appModel[qMap[strategy]](selector, context);
+
+  let retval: Element | Element[];
+  if (els.length) {
+    if (mult) {
+      const allEls: Element[] = [];
+      for (const el of els) {
+        allEls.push(this.wrapNewEl(el));
+      }
+      retval = allEls;
+    } else {
+      retval = this.wrapNewEl(els[0]);
+    }
+  } else if (mult) {
+    retval = [];
+  } else {
+    throw new errors.NoSuchElementError();
+  }
+  return retval;
+}
+
 interface FakeDriverFindMixin {
   getExistingElementForNode(node: FakeElement): string | null;
   wrapNewEl(obj: FakeElement): Element;
 
-  findElOrEls<Many extends boolean, Ctx = any>(
+  findElOrEls<Ctx = any>(
     this: FakeDriver,
     strategy: string,
     selector: string,
-    many: Many,
+    mult: true,
     context?: Ctx
-  ): Promise<Many extends true ? Element[] : Element>;
+  ): Promise<Element[]>;
+  findElOrEls<Ctx = any>(
+    this: FakeDriver,
+    strategy: string,
+    selector: string,
+    mult: false,
+    context?: Ctx
+  ): Promise<Element>;
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;
   findElementFromElement(elementId: string, strategy: string, selector: string): Promise<Element>;
@@ -56,48 +121,7 @@ const FindMixin: FakeDriverFindMixin = {
     return {ELEMENT: maxElId, [W3C_WEB_ELEMENT_IDENTIFIER]: maxElId};
   },
 
-  async findElOrEls<Many extends boolean, Ctx = any>(
-    this: FakeDriver,
-    strategy: string,
-    selector: string,
-    many: Many,
-    context: Ctx
-  ): Promise<Many extends true ? Element[] : Element> {
-    const qMap = {
-      xpath: 'xpathQuery',
-      id: 'idQuery',
-      'accessibility id': 'idQuery',
-      'class name': 'classQuery',
-      'tag name': 'classQuery',
-      'css selector': 'cssQuery',
-    } as Record<string, keyof FakeDriver['appModel']>;
-    // TODO this error checking should probably be part of MJSONWP?
-    if (!_.includes(_.keys(qMap), strategy)) {
-      throw new errors.UnknownCommandError();
-    }
-    if (selector === 'badsel') {
-      throw new errors.InvalidSelectorError();
-    }
-    const els = this.appModel[qMap[strategy]](selector, context);
-
-    let retval: Element | Element[];
-    if (els.length) {
-      if (many) {
-        const allEls: Element[] = [];
-        for (const el of els) {
-          allEls.push(this.wrapNewEl(el));
-        }
-        retval = allEls;
-      } else {
-        retval = this.wrapNewEl(els[0]);
-      }
-    } else if (many) {
-      retval = [];
-    } else {
-      throw new errors.NoSuchElementError();
-    }
-    return retval as Many extends true ? Element[] : Element;
-  },
+  findElOrEls,
 
   /**
    * This should override whatever's in ExternalDriver

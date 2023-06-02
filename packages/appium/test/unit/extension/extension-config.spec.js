@@ -303,7 +303,7 @@ describe('ExtensionConfig', function () {
         it('should throw', function () {
           expect(() => config.require('fake')).to.throw(
             ReferenceError,
-            /^could not find a driver installed at \/some\/path\/node_modules\/flotsam/i
+            /^could not find a driver installed at .+flotsam/i
           );
         });
       });

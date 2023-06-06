@@ -87,7 +87,6 @@
     "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.3",
     "semver": "7.5.1",
-    "sharp": "0.32.1",
     "shell-quote": "1.8.1",
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
@@ -96,6 +95,9 @@
     "uuid": "9.0.0",
     "which": "3.0.1",
     "yauzl": "2.10.0"
+  },
+  "optionalDependencies": {
+    "sharp": "0.32.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

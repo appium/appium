@@ -353,7 +353,7 @@ export interface ILogCommands {
    *
    * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
    */
-  getLog(logType: string): Promise<unknown[]>;
+  getLog(logType: string): Promise<unknown>;
 }
 
 /**
@@ -378,7 +378,7 @@ export interface LogDef {
    *
    * This implementation *should* drain, truncate or otherwise reset the log buffer.
    */
-  getter: (driver: any) => Promise<unknown[]> | unknown[];
+  getter: (driver: any) => Promise<unknown> | unknown;
 }
 
 export interface ISettingsCommands<T extends StringRecord = StringRecord> {

@@ -57,3 +57,24 @@ export default {
   env,
   console,
 };
+
+export type {ConsoleOpts} from './console';
+export type {ReadFn, WalkDirCallback} from './fs';
+export type {
+  NetOptions,
+  DownloadOptions,
+  AuthCredentials,
+  NotHttpUploadOptions,
+  HttpUploadOptions,
+} from './net';
+export type {InstallPackageOpts, ExecOpts, NpmInstallReceipt} from './npm';
+export type {Affixes, OpenedAffixes} from './tempdir';
+export type {PluralizeOptions, EncodingOptions, LockFileOptions, NonEmptyString} from './util';
+export type {
+  ExtractAllOptions,
+  ZipEntry,
+  ZipOptions,
+  ZipCompressionOptions,
+  ZipSourceOptions,
+} from './zip';
+export type {SecureValuePreprocessingRule} from './log-internal';

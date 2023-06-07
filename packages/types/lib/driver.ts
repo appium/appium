@@ -536,36 +536,7 @@ export interface Cookie {
   sameSite?: 'Lax' | 'Strict';
 }
 
-// Appium W3C WebDriver Extension
-
-export interface StartScreenRecordOptions {
-  remotePath?: string;
-  username?: string;
-  password?: string;
-  method?: string;
-  forceRestart?: boolean;
-  timeLimit?: string;
-  videoType?: string;
-  videoQuality?: string;
-  videoFps?: string;
-  videoScale?: string;
-  bitRate?: string;
-  videoSize?: string;
-  bugReport?: string;
-}
-
-export interface StopScreenRecordOptions {
-  remotePath?: string;
-  user?: string;
-  pass?: string;
-  method?: string;
-  headers?: Record<string, string>;
-  fileFieldName?: string;
-  formFields: Record<string, string> | Entries<Record<string, string>>;
-}
-
 // JSONWP
-
 export type Size = Pick<Rect, 'width' | 'height'>;
 
 export type Position = Pick<Rect, 'x' | 'y'>;

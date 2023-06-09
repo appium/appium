@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+// @ts-check
 
 'use strict';
+require('source-map-support').install();
 
 const {main} = require('../build/lib/cli');
 const {getLogger} = require('../build/lib/logger');

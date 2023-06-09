@@ -124,7 +124,7 @@ const opts = {
   remote: {
     alias: 'r',
     describe: 'Remote to push to',
-    implies: ['deploy', 'push'],
+    implies: 'push',
     group: BuildCommandGroup.Deploy,
     type: 'string',
     requiresArg: true,
@@ -133,7 +133,7 @@ const opts = {
   },
   prefix: {
     describe: 'Subdirectory within <branch> to commit to',
-    implies: ['deploy', 'branch'],
+    implies: 'branch',
     group: BuildCommandGroup.Deploy,
     type: 'string',
     nargs: 1,
@@ -168,9 +168,10 @@ const opts = {
   },
   rebase: {
     describe: 'Rebase <branch> with remote before deploy',
-    implies: ['deploy', 'branch', 'remote'],
+    implies: 'deploy',
     group: BuildCommandGroup.Deploy,
     type: 'boolean',
+    defaultDescription: 'true',
   },
   serve: {
     describe: 'Start development server',

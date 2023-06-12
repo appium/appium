@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {Constraints, Element, IFindCommands} from '@appium/types';
 import {errors} from '../../protocol';
 import {BaseDriver} from '../driver';
@@ -8,50 +9,50 @@ declare module '../driver' {
   interface BaseDriver<C extends Constraints> extends IFindCommands {}
 }
 
-async function findElOrEls<C extends Constraints, Ctx = any>(
+async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: true,
-  context?: Ctx
+  context?: any
 ): Promise<Element[]>;
-async function findElOrEls<C extends Constraints, Ctx = any>(
+async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: Ctx
+  context?: any
 ): Promise<Element>;
-async function findElOrEls<C extends Constraints, Ctx = any>(
+async function findElOrEls<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: Ctx
+  context?: any
 ): Promise<Element[] | Element> {
   throw new errors.NotImplementedError('Not implemented yet for find.');
 }
 
-async function findElOrElsWithProcessing<C extends Constraints, Ctx = any>(
+async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: true,
-  context?: Ctx
+  context?: any
 ): Promise<Element[]>;
-async function findElOrElsWithProcessing<C extends Constraints, Ctx = any>(
+async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: false,
-  context?: Ctx
+  context?: any
 ): Promise<Element>;
-async function findElOrElsWithProcessing<C extends Constraints, Ctx = any>(
+async function findElOrElsWithProcessing<C extends Constraints>(
   this: BaseDriver<C>,
   strategy: string,
   selector: string,
   mult: boolean,
-  context?: Ctx
+  context?: any
 ): Promise<Element[] | Element> {
   this.validateLocatorStrategy(strategy);
   try {

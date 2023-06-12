@@ -69,19 +69,19 @@ interface FakeDriverFindMixin {
   getExistingElementForNode(node: FakeElement): string | null;
   wrapNewEl(obj: FakeElement): Element;
 
-  findElOrEls<Ctx = any>(
+  findElOrEls(
     this: FakeDriver,
     strategy: string,
     selector: string,
     mult: true,
-    context?: Ctx
+    context?: any
   ): Promise<Element[]>;
-  findElOrEls<Ctx = any>(
+  findElOrEls(
     this: FakeDriver,
     strategy: string,
     selector: string,
     mult: false,
-    context?: Ctx
+    context?: any
   ): Promise<Element>;
   findElement(strategy: string, selector: string): Promise<Element>;
   findElements(strategy: string, selector: string): Promise<Element[]>;

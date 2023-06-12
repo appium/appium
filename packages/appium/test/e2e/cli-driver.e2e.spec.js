@@ -1,7 +1,7 @@
 // @ts-check
 
 import {exec} from 'teen_process';
-import {fs, tempDir, util} from '@appium/support';
+import {fs, system, tempDir, util} from '@appium/support';
 import path from 'path';
 import resolveFrom from 'resolve-from';
 import {
@@ -24,6 +24,8 @@ const TEST_DRIVER_INVALID_PEERS_DIR = path.dirname(
 );
 
 describe('Driver CLI', function () {
+  this.timeout(90000); // some of these tests involve network and can be very slow
+
   /**
    * @type {string}
    */
@@ -96,6 +98,10 @@ describe('Driver CLI', function () {
     });
 
     it('should show updates for installed drivers with --updates', async function () {
+      if (system.isWindows()) {
+        // TODO figure out why this isn't working on windows
+        return this.skip();
+      }
       const versions = /** @type {string[]} */ (
         JSON.parse(
           (

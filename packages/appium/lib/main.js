@@ -167,8 +167,8 @@ async function prepareAppiumHome(name, appiumHome) {
     }
     throw new Error(
       `The path '${appiumHome}' provided in the ${name} must point ` +
-      `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
-      `Original error: ${err.message}`
+        `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
+        `Original error: ${err.message}`
     );
   }
   if (!stat.isDirectory()) {
@@ -181,8 +181,8 @@ async function prepareAppiumHome(name, appiumHome) {
   } catch (e) {
     throw new Error(
       `The folder path '${appiumHome}' provided in the ${name} must be ` +
-      `writeable for the current user account '${os.userInfo().username}. ` +
-      `Original error: ${e.message}`
+        `writeable for the current user account '${os.userInfo().username}. ` +
+        `Original error: ${e.message}`
     );
   }
   return appiumHome;
@@ -337,8 +337,8 @@ function logServerAddress(url) {
   const ips = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   logger.info(
     `You can provide the following ${util.pluralize('URL', ips.length, false)} ` +
-    `in your client code to connect to this server:\n` +
-    ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+      `in your client code to connect to this server:\n` +
+      ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
   );
 }
 
@@ -442,7 +442,7 @@ async function main(args) {
     });
   }
 
-  logServerAddress(`${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`);
+  logServerAddress(`http://${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`);
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

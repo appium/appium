@@ -8,7 +8,7 @@ const ORIENTATIONS = new Set(['LANDSCAPE', 'PORTRAIT']);
 interface FakeDriverGeneralMixin {
   title(): Promise<string>;
   keys(value: string | string[]): Promise<void>;
-  setGeoLocation(location: Location): Promise<void>;
+  setGeoLocation(location: Location): Promise<Location>;
   getGeoLocation(): Promise<Location>;
   getPageSource(): Promise<string>;
   getOrientation(): Promise<string>;
@@ -22,7 +22,7 @@ interface FakeDriverGeneralMixin {
   doubleClick(): Promise<void>;
   execute(script: string, args: any[]): Promise<any>;
   fakeAddition(a: number, b: number, c?: number): Promise<number>;
-  getLog(type: string): Promise<unknown>;
+  getLog(type: string): Promise<any>;
 }
 
 declare module '../driver' {
@@ -46,6 +46,7 @@ const GeneralMixin: FakeDriverGeneralMixin = {
     // TODO test this adequately once WD bug is fixed
     this.appModel.lat = location.latitude;
     this.appModel.long = location.longitude;
+    return location;
   },
 
   async getGeoLocation(this: FakeDriver) {

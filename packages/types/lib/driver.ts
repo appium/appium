@@ -291,18 +291,8 @@ export interface IFindCommands {
    *
    * @returns A single element or list of elements
    */
-  findElOrEls<Ctx = any>(
-    strategy: string,
-    selector: string,
-    mult: true,
-    context?: Ctx
-  ): Promise<Element[]>;
-  findElOrEls<Ctx = any>(
-    strategy: string,
-    selector: string,
-    mult: false,
-    context?: Ctx
-  ): Promise<Element>;
+  findElOrEls(strategy: string, selector: string, mult: true, context?: any): Promise<Element[]>;
+  findElOrEls(strategy: string, selector: string, mult: false, context?: any): Promise<Element>;
 
   /**
    * This is a wrapper for {@linkcode findElOrEls} that validates locator strategies
@@ -315,17 +305,17 @@ export interface IFindCommands {
    *
    * @returns A single element or list of elements
    */
-  findElOrElsWithProcessing<Ctx = any>(
+  findElOrElsWithProcessing(
     strategy: string,
     selector: string,
     mult: true,
-    context?: Ctx
+    context?: any
   ): Promise<Element[]>;
-  findElOrElsWithProcessing<Ctx = any>(
+  findElOrElsWithProcessing(
     strategy: string,
     selector: string,
     mult: false,
-    context?: Ctx
+    context?: any
   ): Promise<Element>;
 
   /**
@@ -353,7 +343,7 @@ export interface ILogCommands {
    *
    * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
    */
-  getLog(logType: string): Promise<unknown>;
+  getLog(logType: string): Promise<any>;
 }
 
 /**
@@ -1230,7 +1220,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @returns The list of types
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getPerformanceDataTypes?(): Promise<string[]>;
 
@@ -1245,13 +1234,12 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @returns A list of performance data strings
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getPerformanceData?(
     packageName: string,
     dataType: string,
     dataReadTimeout?: number
-  ): Promise<string[]>;
+  ): Promise<any>;
 
   /**
    * Press a device hardware key by its code for the default duration
@@ -1426,8 +1414,10 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    *
    * @param appId - the package or bundle ID of the application
    * @param options - driver-specific launch options
+   *
+   * @returns `true` if successful
    */
-  removeApp?(appId: string, options?: unknown): Promise<void>;
+  removeApp?(appId: string, options?: unknown): Promise<boolean>;
 
   /**
    * Quit / terminate / stop a running application
@@ -1462,8 +1452,15 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param key - the text of a key to use to hide the keyboard
    * @param keyCode - a key code to trigger to hide the keyboard
    * @param keyName - the name of a key to use to hide the keyboard
+   *
+   * @returns Whether the keyboard was successfully hidden. May never return `false` on some platforms
    */
-  hideKeyboard?(strategy?: string, key?: string, keyCode?: string, keyName?: string): Promise<void>;
+  hideKeyboard?(
+    strategy?: string,
+    key?: string,
+    keyCode?: string,
+    keyName?: string
+  ): Promise<boolean>;
 
   /**
    * Determine whether the keyboard is shown
@@ -1574,9 +1571,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @returns An array of information objects of driver-specific shape
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  getSystemBars?(): Promise<unknown[]>;
+  getSystemBars?(): Promise<unknown>;
 
   /**
    * Get the display's pixel density
@@ -1639,7 +1635,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @returns The name of the active engine
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   getActiveIMEEngine?(): Promise<string>;
 
@@ -1649,7 +1644,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @returns True if the IME is activated
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   isIMEActivated?(): Promise<boolean>;
 
@@ -1657,7 +1651,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * Deactivate an IME engine
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   deactivateIMEEngine?(): Promise<void>;
 
@@ -1667,7 +1660,6 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param engine - the name of the engine
    *
    * @deprecated
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
   activateIMEEngine?(engine: string): Promise<void>;
 
@@ -1730,9 +1722,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  touchDown?(x: number, y: number): Promise<void>;
+  touchDown?(element: string, x: number, y: number): Promise<void>;
 
   /**
    * Perform a touch up event at the location specified
@@ -1741,9 +1732,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  touchUp?(x: number, y: number): Promise<void>;
+  touchUp?(element: string, x: number, y: number): Promise<void>;
 
   /**
    * Perform a touch move event at the location specified
@@ -1752,9 +1742,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param y - the y coordinate
    *
    * @deprecated Use the Actions API instead
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  touchMove?(x: number, y: number): Promise<void>;
+  touchMove?(element: string, x: number, y: number): Promise<void>;
 
   /**
    * Perform a long touch down event at the location specified
@@ -1762,9 +1751,8 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @param elementId - the id of the element to long touch
    *
    * @deprecated Use the Actions API instead
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
    */
-  touchLongClick?(elementId: string): Promise<void>;
+  touchLongClick?(element: string, x: number, y: number, duration: number): Promise<void>;
 
   /**
    * Perform a flick event at the location specified
@@ -1799,8 +1787,9 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * Set the virtual geographical location of a device
    *
    * @param location - the location including latitude and longitude
+   * @returns The complete location
    */
-  setGeoLocation?(location: Partial<Location>): Promise<void>;
+  setGeoLocation?(location: Partial<Location>): Promise<Location>;
 
   // MJSONWIRE
 
@@ -1854,8 +1843,10 @@ export interface ExternalDriver<C extends Constraints = Constraints, Ctx = strin
    * @see {@link https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#device-modes}
    *
    * @param type - the bitmask representing network state
+   * @returns A number which is a bitmask representing categories like Data, Wifi, and Airplane
+   * mode status
    */
-  setNetworkConnection?(type: number): Promise<void>;
+  setNetworkConnection?(type: number): Promise<number>;
 
   /**
    * Get the current rotation state of the device

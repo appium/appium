@@ -1,4 +1,4 @@
-import AppiumSupport from '../../lib/index.js';
+import AppiumSupport from '../../lib/';
 
 let {system, tempDir, util} = AppiumSupport;
 

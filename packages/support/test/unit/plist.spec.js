@@ -1,5 +1,5 @@
 import path from 'path';
-import {plist, tempDir, fs} from '../../lib/index.js';
+import {plist, tempDir, fs} from '../../lib';
 
 const binaryPlistPath = path.join(__dirname, 'assets', 'sample_binary.plist');
 const textPlistPath = path.join(__dirname, 'assets', 'sample_text.plist');

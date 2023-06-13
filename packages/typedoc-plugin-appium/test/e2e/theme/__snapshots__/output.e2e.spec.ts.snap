@@ -264,7 +264,7 @@ Get the log for a given log type.
 
 #### Response
 
-\`unknown\`[]
+\`any\`
 
 ### \`getLog\`
 
@@ -282,7 +282,7 @@ Get the log for a given log type.
 
 #### Response
 
-\`unknown\`[]
+\`any\`
 
 ### \`getLogEvents\`
 
@@ -852,7 +852,7 @@ Get the log for a given log type.
 
 #### Response
 
-\`unknown\`[]
+\`any\`
 
 ### \`getLog\`
 
@@ -870,7 +870,7 @@ Get the log for a given log type.
 
 #### Response
 
-\`unknown\`[]
+\`any\`
 
 ### \`getLogEvents\`
 

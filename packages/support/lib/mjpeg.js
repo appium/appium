@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import log from './logger';
 import B from 'bluebird';
-import sharp from 'sharp';
+import {requireSharp} from './image-util';
 import {Writable} from 'stream';
 import {requirePackage} from './node';
 import axios from 'axios';
@@ -77,7 +77,7 @@ class MJpegStream extends Writable {
     }
 
     try {
-      return await sharp(lastChunk).png().toBuffer();
+      return await requireSharp()(lastChunk).png().toBuffer();
     } catch (e) {
       return null;
     }

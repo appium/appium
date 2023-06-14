@@ -18,7 +18,7 @@ import {
   NAME_PYTHON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findMkDocsYml, findPython, readPackageJson} from '../fs';
+import {findMike, findMkDocsYml, findPython, readPackageJson} from '../fs';
 import {getLogger} from '../logger';
 import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -26,33 +26,33 @@ const log = getLogger('builder:deploy');
 
 /**
  * Runs `mike serve`
- * @param pythonPath Path to Python 3 executable
+ * @param mikePath Path to `mike` executable
  * @param args Extra args to `mike build`
  * @param opts Extra options for `teen_process.Subprocess.start`
  */
 async function doServe(
-  pythonPath: string,
+  mikePath: string,
   args: string[] = [],
   opts: SpawnBackgroundProcessOpts = {}
 ) {
-  const finalArgs = ['-m,', NAME_MIKE, 'serve', ...args];
-  return spawnBackgroundProcess(pythonPath, finalArgs, opts);
+  const finalArgs = ['serve', ...args];
+  return spawnBackgroundProcess(mikePath, finalArgs, opts);
 }
 
 /**
  * Runs `mike build`
- * @param pythonPath Path to Python 3 executable
+ * @param mikePath Path to `mike` executable
  * @param args Extra args to `mike build`
  * @param opts Extra options to `teen_process.exec`
  */
 async function doDeploy(
-  pythonPath: string,
+  mikePath: string,
   args: string[] = [],
   opts: TeenProcessExecOptions = {}
 ) {
-  const finalArgs = ['-m', NAME_MIKE, 'deploy', ...args];
-  log.debug('Executing %s via: %s %O', NAME_MIKE, pythonPath, finalArgs);
-  return await exec(pythonPath, finalArgs, opts);
+  const finalArgs = ['deploy', ...args];
+  log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
+  return await exec(mikePath, finalArgs, opts);
 }
 
 /**
@@ -125,6 +125,11 @@ export async function deploy({
     port,
     host,
   };
+
+  const mikePath = await findMike();
+  if (!mikePath) {
+    throw new DocutilsError(`Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`);
+  }
   if (serve) {
     const mikeArgs = [
       ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
@@ -135,7 +140,7 @@ export async function deploy({
     }
     stop(); // discard
     // unsure about how SIGHUP is handled here
-    await doServe(pythonPath, mikeArgs, serveOpts);
+    await doServe(mikePath, mikeArgs, serveOpts);
   } else {
     log.info('Deploying into branch %s', branch);
     const mikeArgs = [
@@ -150,7 +155,7 @@ export async function deploy({
     if (alias) {
       mikeArgs.push(alias);
     }
-    await doDeploy(pythonPath, mikeArgs, execOpts);
+    await doDeploy(mikePath, mikeArgs, execOpts);
 
     log.success('Finished deployment into branch %s (%dms)', branch, stop());
   }

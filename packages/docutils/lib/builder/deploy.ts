@@ -68,7 +68,7 @@ async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()):
   // return MAJOR.MINOR as the version by default, if that is a thing we can extract, otherwise
   // just return the version as is
   const versionParts = version.split('.');
-  if (versionParts.length < 2) {
+  if (versionParts.length === 1) {
     return version;
   }
   return `${versionParts[0]}.${versionParts[1]}`;

@@ -14,6 +14,7 @@ import {JsonValue} from 'type-fest';
 import {Application, TypeDocReader} from 'typedoc';
 import YAML from 'yaml';
 import {
+  NAME_MIKE,
   NAME_MKDOCS_YML,
   NAME_NPM,
   NAME_PACKAGE_JSON,
@@ -24,6 +25,7 @@ import {
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import {MkDocsYml} from './model';
+import { exec } from 'teen_process';
 
 const log = getLogger('fs');
 
@@ -227,6 +229,34 @@ const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`, {nothrow: true});
  * Finds `typedoc` executable
  */
 const whichTypeDoc = _.partial(cachedWhich, NAME_TYPEDOC, {nothrow: true});
+
+/**
+ * `mike` cannot be invoked via `python -m`, so we need to find the script.
+ */
+export const findMike = _.partial(async () => {
+  // see if it's in PATH
+  let mikePath = await cachedWhich(NAME_MIKE, {nothrow: true});
+  if (mikePath) {
+    return mikePath;
+  }
+  // if it isn't, it may be in a user dir
+  const pythonPath = await findPython();
+  if (!pythonPath) {
+    return;
+  }
+  try {
+    // the user dir can be found this way.
+    // usually it's something like ~/.local
+    const {stdout} = await exec(pythonPath, ['-m', 'site', '--user-base']);
+    if (stdout) {
+      mikePath = path.join(stdout.trim(), 'bin', 'mike');
+      if (await fs.isExecutable(mikePath)) {
+        return mikePath;
+      }
+    }
+  }
+  catch {}
+});
 
 /**
  * Finds the `typedoc` executable.

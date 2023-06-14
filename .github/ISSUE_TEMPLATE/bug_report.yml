@@ -8,17 +8,17 @@ body:
       value: ':stop_sign: _For support questions, please visit [http://discuss.appium.io](http://discuss.appium.io) instead._'
   - type: checkboxes
     attributes:
-      label: 'Do I have the most recent driver and server updates?'
+      label: 'Do I have the most recent component updates?'
       description: 'Appium 1-related issues are going to be ignored as this version has reached its end of life.'
       options:
-      - label: 'I use the most recent available driver and server versions'
+      - label: 'I use the most recent available driver/plugin and server versions'
         required: true  
   - type: checkboxes
     attributes:
-      label: 'Is the driver or the plugin officially supported by the Appium team?'
+      label: 'Is the component officially supported by the Appium team?'
       description: 'Make sure you report an issue for a component which is officially supported/maintained by the Appium team.'
       options:
-      - label: 'I have verified the plugin/driver repository is present under the Appium organization in GitHub'
+      - label: 'I have verified the component repository is present under the Appium organization in GitHub'
         required: true         
   - type: checkboxes
     attributes:

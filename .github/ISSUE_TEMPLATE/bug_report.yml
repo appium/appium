@@ -64,8 +64,8 @@ body:
             - Appium CLI version (output of `appium --version`):
             - Node.js version (output of `node --version`):
             - `npm` version (output of `npm --version`): 
-            - Last `appium` version which did _not_ exhibit the problem: 
-          - If running Appium Desktop, its version:
+            - Last component version which did _not_ exhibit the problem: 
+          - Appium server version:
           - Appium driver(s) and their version(s):
           - Appium plugin(s) and their version(s):
           - Platform and version under test:

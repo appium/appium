@@ -27,6 +27,7 @@
         "figures",
         "find-up",
         "get-port",
+        "get-stream",
         "globby",
         "got",
         "inquirer",

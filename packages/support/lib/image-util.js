@@ -3,7 +3,7 @@ let _sharp;
 /**
  * @returns {import('sharp')}
  */
-function requireSharp() {
+export function requireSharp() {
   if (!_sharp) {
     try {
       _sharp = require('sharp');

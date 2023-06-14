@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1](https://github.com/appium/appium/compare/@appium/docutils@0.4.0...@appium/docutils@0.4.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **docutils:** fixes some weirdness with default behavior and the "implies" keyword ([#18751](https://github.com/appium/appium/issues/18751)) ([e5254b5](https://github.com/appium/appium/commit/e5254b5b4564450252fd3eb55b773c0d7c615316))
+
+
+
 ## [0.4.0](https://github.com/appium/appium/compare/@appium/docutils@0.3.13...@appium/docutils@0.4.0) (2023-06-14)
 
 

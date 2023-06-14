@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.3](https://github.com/appium/appium/compare/@appium/support@4.0.2...@appium/support@4.0.3) (2023-06-14)
+
+
+### Bug Fixes
+
+* **support:** Require the optional sharp dep properly from mjpeg module ([#18769](https://github.com/appium/appium/issues/18769)) ([c18eb03](https://github.com/appium/appium/commit/c18eb03261a4c0f73ec71417825a387da1c59991))
+
+
+
 ## [4.0.2](https://github.com/appium/appium/compare/@appium/support@4.0.1...@appium/support@4.0.2) (2023-06-14)
 
 

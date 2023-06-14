@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.2](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.1...@appium/images-plugin@2.1.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* **images-plugin:** Make sure the template is always a buffer ([#18696](https://github.com/appium/appium/issues/18696)) ([0497090](https://github.com/appium/appium/commit/0497090a90e6219a383125543780cd71269a4604))
+
+
+
 ## [2.1.1](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.0...@appium/images-plugin@2.1.1) (2023-05-19)
 
 

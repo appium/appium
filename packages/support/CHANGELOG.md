@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.2](https://github.com/appium/appium/compare/@appium/support@4.0.1...@appium/support@4.0.2) (2023-06-14)
+
+
+### Bug Fixes
+
+* **support:** update dependency @types/semver to v7.5.0 ([528dcfe](https://github.com/appium/appium/commit/528dcfe324e75e48471cdb694448c2a09ec2d828))
+* **support:** update dependency semver to v7.5.1 ([5a55509](https://github.com/appium/appium/commit/5a555090c5322318f845415d743ee5c645fb94a0))
+* **types:** update dependency type-fest to v3.11.0 ([19277f6](https://github.com/appium/appium/commit/19277f6e14a56e52b4669d633e148ad4a3da2c7a))
+* **types:** update dependency type-fest to v3.11.1 ([56499eb](https://github.com/appium/appium/commit/56499eb997b551739bed628f057de7987674ea7f))
+
+
+
 ## [4.0.1](https://github.com/appium/appium/compare/@appium/support@4.0.0...@appium/support@4.0.1) (2023-05-19)
 
 

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.0](https://github.com/appium/appium/compare/@appium/schema@0.2.6...@appium/schema@0.3.0) (2023-06-14)
+
+
+### Features
+
+* **appium:** Allow to provide ipv6 addresses and handle broadcast addresses in logs ([#18674](https://github.com/appium/appium/issues/18674)) ([8f63dab](https://github.com/appium/appium/commit/8f63dabb5dca882e522026f243e3445f5418874b))
+
+
+### Bug Fixes
+
+* **schema:** update definitelytyped ([e967240](https://github.com/appium/appium/commit/e96724077ef2b5b8aae203856195f3bb8de56116))
+* **types:** fix broken appium config schema types, temporarily ([fd2c72f](https://github.com/appium/appium/commit/fd2c72fd886ecaaf0f6588a328ff8a268a54fb55))
+
+
+
 ## [0.2.6](https://github.com/appium/appium/compare/@appium/schema@0.2.5...@appium/schema@0.2.6) (2023-03-08)
 
 **Note:** Version bump only for package @appium/schema

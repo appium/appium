@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "0.3.13",
+  "version": "0.4.0",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -49,9 +49,9 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "^4.0.1",
+    "@appium/support": "^4.0.2",
     "@appium/tsconfig": "^0.3.0",
-    "@appium/typedoc-plugin-appium": "^0.6.4",
+    "@appium/typedoc-plugin-appium": "^0.6.5",
     "@sliphua/lilconfig-ts-loader": "3.2.2",
     "@types/which": "3.0.0",
     "chalk": "4.1.2",

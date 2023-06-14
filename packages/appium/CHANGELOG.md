@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-rc.1](https://github.com/appium/appium/compare/appium@2.0.0-beta.71...appium@2.0.0-rc.1) (2023-06-14)
+
+
+### Features
+
+* **appium:** Allow to provide ipv6 addresses and handle broadcast addresses in logs ([#18674](https://github.com/appium/appium/issues/18674)) ([8f63dab](https://github.com/appium/appium/commit/8f63dabb5dca882e522026f243e3445f5418874b))
+
+
+### Bug Fixes
+
+* **appium:** update dependency winston to v3.9.0 ([a98d9c3](https://github.com/appium/appium/commit/a98d9c33c761af6870411721cc0d6c4491b43940))
+* **docutils:** update dependency yaml to v2.3.0 ([325d237](https://github.com/appium/appium/commit/325d2372078ee01e8fb58613ffd13417f2527151))
+* **docutils:** update dependency yaml to v2.3.1 ([1a2260b](https://github.com/appium/appium/commit/1a2260bb15d75e4f4c23551dc61529108a7b0d88))
+* ensure logServerAddress gets an actual URL ([#18754](https://github.com/appium/appium/issues/18754)) ([901ac71](https://github.com/appium/appium/commit/901ac711c4e2207f30d93ad177a332b7d6f23c38))
+* **support:** update dependency @types/semver to v7.5.0 ([528dcfe](https://github.com/appium/appium/commit/528dcfe324e75e48471cdb694448c2a09ec2d828))
+* **support:** update dependency semver to v7.5.1 ([5a55509](https://github.com/appium/appium/commit/5a555090c5322318f845415d743ee5c645fb94a0))
+* **types:** fix broken appium config schema types, temporarily ([fd2c72f](https://github.com/appium/appium/commit/fd2c72fd886ecaaf0f6588a328ff8a268a54fb55))
+* **types:** update dependency type-fest to v3.11.0 ([19277f6](https://github.com/appium/appium/commit/19277f6e14a56e52b4669d633e148ad4a3da2c7a))
+* **types:** update dependency type-fest to v3.11.1 ([56499eb](https://github.com/appium/appium/commit/56499eb997b551739bed628f057de7987674ea7f))
+
+
+
 ## [2.0.0-beta.71](https://github.com/appium/appium/compare/appium@2.0.0-beta.70...appium@2.0.0-beta.71) (2023-05-19)
 
 **Note:** Version bump only for package appium

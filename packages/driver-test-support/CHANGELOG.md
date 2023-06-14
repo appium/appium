@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.7](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.6...@appium/driver-test-support@0.4.7) (2023-06-14)
+
+
+### Bug Fixes
+
+* **schema:** update definitelytyped ([e967240](https://github.com/appium/appium/commit/e96724077ef2b5b8aae203856195f3bb8de56116))
+* **test-support:** update dependency sinon to v15.1.0 ([4c61d53](https://github.com/appium/appium/commit/4c61d533b8f52131a637f5cd0b019375f85f075f))
+* **types:** update dependency type-fest to v3.11.0 ([19277f6](https://github.com/appium/appium/commit/19277f6e14a56e52b4669d633e148ad4a3da2c7a))
+* **types:** update dependency type-fest to v3.11.1 ([56499eb](https://github.com/appium/appium/commit/56499eb997b551739bed628f057de7987674ea7f))
+
+
+
 ## [0.4.6](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.5...@appium/driver-test-support@0.4.6) (2023-05-17)
 
 

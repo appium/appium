@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.0](https://github.com/appium/appium/compare/@appium/docutils@0.3.13...@appium/docutils@0.4.0) (2023-06-14)
+
+
+### Features
+
+* **appium:** Allow to provide ipv6 addresses and handle broadcast addresses in logs ([#18674](https://github.com/appium/appium/issues/18674)) ([8f63dab](https://github.com/appium/appium/commit/8f63dabb5dca882e522026f243e3445f5418874b))
+* **docutils:** init: scafffold package.json ([2766dcc](https://github.com/appium/appium/commit/2766dcca4cfdc74904cc21f4881d748ed8ffd198))
+
+
+### Bug Fixes
+
+* **docutils:** update dependency yaml to v2.3.0 ([325d237](https://github.com/appium/appium/commit/325d2372078ee01e8fb58613ffd13417f2527151))
+* **docutils:** update dependency yaml to v2.3.1 ([1a2260b](https://github.com/appium/appium/commit/1a2260bb15d75e4f4c23551dc61529108a7b0d88))
+* **support:** update dependency semver to v7.5.1 ([5a55509](https://github.com/appium/appium/commit/5a555090c5322318f845415d743ee5c645fb94a0))
+* **types:** update dependency type-fest to v3.11.0 ([19277f6](https://github.com/appium/appium/commit/19277f6e14a56e52b4669d633e148ad4a3da2c7a))
+* **types:** update dependency type-fest to v3.11.1 ([56499eb](https://github.com/appium/appium/commit/56499eb997b551739bed628f057de7987674ea7f))
+
+
+
 ## [0.3.13](https://github.com/appium/appium/compare/@appium/docutils@0.3.12...@appium/docutils@0.3.13) (2023-05-19)
 
 

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.12.0](https://github.com/appium/appium/compare/@appium/types@0.11.1...@appium/types@0.12.0) (2023-06-14)
+
+
+### Features
+
+* **appium:** Allow to provide ipv6 addresses and handle broadcast addresses in logs ([#18674](https://github.com/appium/appium/issues/18674)) ([8f63dab](https://github.com/appium/appium/commit/8f63dabb5dca882e522026f243e3445f5418874b))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v3.11.0 ([19277f6](https://github.com/appium/appium/commit/19277f6e14a56e52b4669d633e148ad4a3da2c7a))
+* **types:** update dependency type-fest to v3.11.1 ([56499eb](https://github.com/appium/appium/commit/56499eb997b551739bed628f057de7987674ea7f))
+
+
+
 ## [0.11.1](https://github.com/appium/appium/compare/@appium/types@0.11.0...@appium/types@0.11.1) (2023-05-17)
 
 

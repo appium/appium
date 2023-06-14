@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/appium/appium/compare/@appium/strongbox@0.3.0...@appium/strongbox@0.3.1) (2023-06-14)
+
+
+### Bug Fixes
+
+* **strongbox:** do not force-lowercase slugged containers ([1ccf857](https://github.com/appium/appium/commit/1ccf857a4bdd77af3ccf2ad268e3410855509af8))
+
+
+
 ## [0.3.0](https://github.com/appium/appium/compare/@appium/strongbox@0.2.0...@appium/strongbox@0.3.0) (2023-04-20)
 
 

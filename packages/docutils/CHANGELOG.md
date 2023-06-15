@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/appium/appium/compare/@appium/docutils@0.4.1...@appium/docutils@0.4.2) (2023-06-15)
+
+
+### Bug Fixes
+
+* **docutils:** set mike version to major.minor by default ([#18770](https://github.com/appium/appium/issues/18770)) ([1a5b8cc](https://github.com/appium/appium/commit/1a5b8cca2d22b0be0150fe87be963973c4cc04e5))
+
+
+
 ## [0.4.1](https://github.com/appium/appium/compare/@appium/docutils@0.4.0...@appium/docutils@0.4.1) (2023-06-14)
 
 

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.0](https://github.com/appium/appium/compare/@appium/types@0.12.0...@appium/types@0.13.0) (2023-06-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **types:** This changes the def of `findElOrEls` and `findElOrElsWithProcessing` in `ExternalDriver` in a breaking manner.
+
+So conditional types don't work like how I was using them.  They work in capital-T-types (`type`), but they don't work as return values.  Instead, what we should have is an overload.  in this case, the function can be called one of two ways, and it returns a different thing depending on those values.  _unfortunately_ this is a little hinky to implement, given that overloads are unsupported in _object literals_.  they are supported in function statements or expressions, and they are supported in class definitions, but not object literals.  you'll see what needs to happen to make this work in `FakeDriver` and `BaseDriver` in subsequent changesets; essentially the function must be defined outside of the object literal and then stuffed in there.
+
+The other change here changes an `object` type (which does not allow arbitrary properties) to a `StringRecord` type within the type which converts `Constraints` to `Capabilities`.  This affects caps for some drivers such as `chromedriverArgs` in `appium-android-driver`; anywhere where the constraint has `isObject: true`.
+
+### Bug Fixes
+
+* **types,fake-driver:** getLog doesn't necessarily return an array ([00ae162](https://github.com/appium/appium/commit/00ae1625d73305b8840d45a0dc98ac3cc628ac37))
+* **types:** use overload instead of broken conditional type in findElOrEls ([63a5c22](https://github.com/appium/appium/commit/63a5c22127ab22acfde8d36e9b96bdd35614fe17))
+* **types:** various fixes for reality ([81bc527](https://github.com/appium/appium/commit/81bc527be6aa54dd30a012156b5752b8b821ac0c))
+
+
+
 ## [0.12.0](https://github.com/appium/appium/compare/@appium/types@0.11.1...@appium/types@0.12.0) (2023-06-14)
 
 

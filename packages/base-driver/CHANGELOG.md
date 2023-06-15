@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.13](https://github.com/appium/appium/compare/@appium/base-driver@9.3.12...@appium/base-driver@9.3.13) (2023-06-15)
+
+
+### Bug Fixes
+
+* **base-driver:** update def of findElOrEls and findElOrElsWithProcessing ([54a4a8d](https://github.com/appium/appium/commit/54a4a8da030dbecde783168bb92634df837d5a41))
+* **types:** various fixes for reality ([81bc527](https://github.com/appium/appium/commit/81bc527be6aa54dd30a012156b5752b8b821ac0c))
+
+
+
 ## [9.3.12](https://github.com/appium/appium/compare/@appium/base-driver@9.3.11...@appium/base-driver@9.3.12) (2023-06-14)
 
 **Note:** Version bump only for package @appium/base-driver

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.5](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.4...@appium/fake-driver@5.2.5) (2023-06-15)
+
+
+### Bug Fixes
+
+* **fake-driver:** update definition of findElOrEls ([598b255](https://github.com/appium/appium/commit/598b255e8d4a2b41cca0ec0c02a54c46946eadb5))
+* **types,fake-driver:** getLog doesn't necessarily return an array ([00ae162](https://github.com/appium/appium/commit/00ae1625d73305b8840d45a0dc98ac3cc628ac37))
+* **types:** various fixes for reality ([81bc527](https://github.com/appium/appium/commit/81bc527be6aa54dd30a012156b5752b8b821ac0c))
+
+
+
 ## [5.2.4](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.3...@appium/fake-driver@5.2.4) (2023-06-14)
 
 

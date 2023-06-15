@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/appium/appium/compare/@appium/support@4.0.3...@appium/support@4.1.0) (2023-06-15)
+
+
+### Features
+
+* **support:** export a bunch of types that weren't properly exported ([88293f8](https://github.com/appium/appium/commit/88293f803933ecf7d258b02afd08d636b310a24b))
+
+
+
 ## [4.0.3](https://github.com/appium/appium/compare/@appium/support@4.0.2...@appium/support@4.0.3) (2023-06-14)
 
 

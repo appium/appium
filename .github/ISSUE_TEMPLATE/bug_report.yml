@@ -8,6 +8,20 @@ body:
       value: ':stop_sign: _For support questions, please visit [http://discuss.appium.io](http://discuss.appium.io) instead._'
   - type: checkboxes
     attributes:
+      label: 'Do I have the most recent component updates?'
+      description: 'Appium 1-related issues are going to be ignored as this version has reached its end of life.'
+      options:
+      - label: 'I use the most recent available driver/plugin and server versions'
+        required: true
+  - type: checkboxes
+    attributes:
+      label: 'Is the component officially supported by the Appium team?'
+      description: 'Make sure you report an issue for a component which is officially supported/maintained by the Appium team.'
+      options:
+      - label: 'I have verified the component repository is present under the Appium organization in GitHub'
+        required: true
+  - type: checkboxes
+    attributes:
       label: 'Is there an existing issue for this?'
       description: 'Please [search :mag: the issues](https://github.com/appium/appium/issues) to check if this bug has already been reported.'
       options:
@@ -34,7 +48,7 @@ body:
         An easy way to get started is to copy [sample code](https://github.com/appium/appium/tree/master/packages/appium/sample-code) and modify it accordingly.
 
         If the result is more than a screenful of text _or_ requires multiple files, please:
-        
+
         - _Attach_ (do not paste) it to this textarea, _or_
         - Put it in a [Gist](https://gist.github.com) and paste the link, _or_
         - Provide a link to a new or existing public repository exhibiting the issue
@@ -46,14 +60,12 @@ body:
       description: 'Please provide the following information about your environment; feel free to remove any items which are not relevant.'
       value: |
           - Operating system:
-          - If running via `appium` CLI...
-            - Appium CLI version (output of `appium --version`):
-            - Node.js version (output of `node --version`):
-            - `npm` version (output of `npm --version`): 
-            - Last `appium` version which did _not_ exhibit the problem: 
-          - If running Appium Desktop, its version:
+          - Appium server version (output of `appium --version`):
           - Appium driver(s) and their version(s):
           - Appium plugin(s) and their version(s):
+          - Node.js version (output of `node --version`):
+          - `npm` version (output of `npm --version`):
+          - Last component(s) version which did _not_ exhibit the problem:
           - Platform and version under test:
           - Real device or emulator/simulator:
     validations:
@@ -63,9 +75,9 @@ body:
       label: 'Link to Appium Logs'
       description: |
         Create a [Gist](https://gist.github.com)—which contains your _full_ Appium logs—and link it here.  Alternatively, you can attach a logfile to this issue (drag it into the "Further Information" field below).
-        
+
         :warning: _Remember to redact or remove any sensitive information!_
-      placeholder: 'https://gist.github.com/...'      
+      placeholder: 'https://gist.github.com/...'
   - type: textarea
     attributes:
       label: Futher Information

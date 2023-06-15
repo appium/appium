@@ -61,13 +61,13 @@ body:
       value: |
           - Operating system:
           - Appium server version (output of `appium --version`):
-          - Appium driver(s) and their version(s) (if applicable):
-          - Appium plugin(s) and their version(s) (if applicable):
+          - Appium driver(s) and their version(s):
+          - Appium plugin(s) and their version(s):
           - Node.js version (output of `node --version`):
           - `npm` version (output of `npm --version`):
           - Last component(s) version which did _not_ exhibit the problem:
           - Platform and version under test:
-          - Real device or emulator/simulator (if applicable):
+          - Real device or emulator/simulator:
     validations:
       required: false
   - type: input

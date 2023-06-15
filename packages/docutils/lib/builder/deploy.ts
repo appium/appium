@@ -45,11 +45,7 @@ async function doServe(
  * @param args Extra args to `mike build`
  * @param opts Extra options to `teen_process.exec`
  */
-async function doDeploy(
-  mikePath: string,
-  args: string[] = [],
-  opts: TeenProcessExecOptions = {}
-) {
+async function doDeploy(mikePath: string, args: string[] = [], opts: TeenProcessExecOptions = {}) {
   const finalArgs = ['deploy', ...args];
   log.debug('Executing %s via: %s %O', NAME_MIKE, mikePath, finalArgs);
   return await exec(mikePath, finalArgs, opts);
@@ -68,7 +64,14 @@ async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()):
       'No "version" field found in package.json; please add one or specify a version to deploy'
     );
   }
-  return version;
+
+  // return MAJOR.MINOR as the version by default, if that is a thing we can extract, otherwise
+  // just return the version as is
+  const versionParts = version.split('.');
+  if (versionParts.length === 1) {
+    return version;
+  }
+  return `${versionParts[0]}.${versionParts[1]}`;
 }
 
 /**
@@ -128,7 +131,9 @@ export async function deploy({
 
   const mikePath = await findMike();
   if (!mikePath) {
-    throw new DocutilsError(`Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`);
+    throw new DocutilsError(
+      `Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`
+    );
   }
   if (serve) {
     const mikeArgs = [

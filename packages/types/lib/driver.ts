@@ -378,7 +378,7 @@ export interface ISettingsCommands<T extends StringRecord = StringRecord> {
    * @param settings - A key-value map of setting names to values. Settings not named in the map
    * will not have their value adjusted.
    */
-  updateSettings: (settings: StringRecord) => Promise<void>;
+  updateSettings: (settings: T) => Promise<void>;
 
   /**
    * Get the current settings for the session

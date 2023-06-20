@@ -1,4 +1,4 @@
-import {Constraints} from './driver';
+import type {Constraints} from './driver';
 
 export const BASE_DESIRED_CAP_CONSTRAINTS = {
   platformName: {
@@ -6,9 +6,6 @@ export const BASE_DESIRED_CAP_CONSTRAINTS = {
     isString: true,
   },
   app: {
-    isString: true,
-  },
-  deviceName: {
     isString: true,
   },
   platformVersion: {

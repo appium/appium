@@ -163,7 +163,7 @@ class AppiumDriver extends DriverCore {
   async getSessions() {
     return _.toPairs(this.sessions).map(([id, driver]) => ({
       id,
-      capabilities: /** @type {import('@appium/types').DriverCaps} */ (driver.caps),
+      capabilities: /** @type {import('@appium/types').DriverCaps<any>} */ (driver.caps),
     }));
   }
 

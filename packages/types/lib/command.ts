@@ -30,16 +30,16 @@ export interface PayloadParams {
  * }
  * ```
  */
-export type MethodMap<T extends Plugin | Driver<any>> = T extends Plugin
+export type MethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<PluginMethodMap<T>>
-  : T extends Driver<any>
+  : T extends Driver
   ? Readonly<DriverMethodMap<T>>
   : never;
 
 /**
  * A {@linkcode MethodMap} for a {@linkcode Driver}.
  */
-export interface DriverMethodMap<T extends Driver<any>> {
+export interface DriverMethodMap<T extends Driver> {
   [key: string]: {
     GET?: DriverMethodDef<T>;
     POST?: DriverMethodDef<T>;
@@ -118,7 +118,7 @@ export interface BaseExecuteMethodDef {
 /**
  * A definition of an execute method in a {@linkcode Driver}.
  */
-export interface DriverExecuteMethodDef<T extends Driver<any>> extends BaseExecuteMethodDef {
+export interface DriverExecuteMethodDef<T extends Driver> extends BaseExecuteMethodDef {
   command: keyof ConditionalPick<T, DriverCommand>;
 }
 
@@ -132,8 +132,8 @@ export interface PluginExecuteMethodDef<T extends Plugin> extends BaseExecuteMet
 /**
  * Definition of an execute method (which overloads the behavior of the `execute` command) in a {@linkcode Driver} or {@linkcode Plugin}.
  */
-export type ExecuteMethodMap<T extends Plugin | Driver<any>> = T extends Plugin
+export type ExecuteMethodMap<T extends Plugin | Driver> = T extends Plugin
   ? Readonly<StringRecord<PluginExecuteMethodDef<T>>>
-  : T extends Driver<any>
+  : T extends Driver
   ? Readonly<StringRecord<DriverExecuteMethodDef<T>>>
   : never;

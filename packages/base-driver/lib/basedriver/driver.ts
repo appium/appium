@@ -1,28 +1,28 @@
-import {validateCaps, processCapabilities} from './capabilities';
-import {DriverCore} from './core';
 import {util} from '@appium/support';
+import {
+  BASE_DESIRED_CAP_CONSTRAINTS,
+  type AppiumServer,
+  type BaseDriverCapConstraints,
+  type Capabilities,
+  type Constraints,
+  type DefaultCreateSessionResult,
+  type Driver,
+  type DriverCaps,
+  type DriverData,
+  type DriverOpts,
+  type MultiSessionData,
+  type ServerArgs,
+  type StringRecord,
+  type W3CDriverCaps,
+  type InitialOpts,
+} from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
+import {processCapabilities, validateCaps} from './capabilities';
+import {DriverCore} from './core';
 import helpers from './helpers';
-import {
-  AppiumServer,
-  BaseDriverCapConstraints,
-  BASE_DESIRED_CAP_CONSTRAINTS,
-  Capabilities,
-  Constraints,
-  DefaultCreateSessionResult,
-  Driver,
-  DriverCaps,
-  DriverData,
-  DriverOpts,
-  MultiSessionData,
-  ServerArgs,
-  SingularSessionData,
-  StringRecord,
-  W3CDriverCaps,
-} from '@appium/types';
 
 const EVENT_SESSION_INIT = 'newSessionRequested';
 const EVENT_SESSION_START = 'newSessionStarted';
@@ -43,13 +43,12 @@ export class BaseDriver<
   caps: DriverCaps<C>;
   originalCaps: W3CDriverCaps<C>;
   desiredCapConstraints: C;
-  opts: DriverOpts<C>;
   server?: AppiumServer;
   serverHost?: string;
   serverPort?: number;
   serverPath?: string;
 
-  constructor(opts: DriverOpts<C>, shouldValidateCaps = true) {
+  constructor(opts: InitialOpts, shouldValidateCaps = true) {
     super(opts, shouldValidateCaps);
 
     this.caps = {} as DriverCaps<C>;
@@ -62,7 +61,7 @@ export class BaseDriver<
    *
    * Subclasses _shouldn't_ need to use this. If you need to use this, please create
    * an issue:
-   * @see https://github.com/appium/appium/issues/new
+   * @see {@link https://github.com/appium/appium/issues/new}
    */
   protected get _desiredCapConstraints(): Readonly<BaseDriverCapConstraints & C> {
     return Object.freeze(_.merge({}, BASE_DESIRED_CAP_CONSTRAINTS, this.desiredCapConstraints));

@@ -55,7 +55,7 @@ export class FakeDriver extends BaseDriver {
   elMap;
 
   constructor(
-    opts = /** @type {import('@appium/types').DriverOpts<FakeDriverConstraints>} */ ({}),
+    opts = /** @type {import('@appium/types').InitialOpts} */ ({}),
     shouldValidateCaps = true
   ) {
     super(opts, shouldValidateCaps);

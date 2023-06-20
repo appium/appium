@@ -1,13 +1,13 @@
-import type {EventEmitter} from 'events';
-import {Entries} from 'type-fest';
-import {ActionSequence} from './action';
-import {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
-import {ExecuteMethodMap, MethodMap} from './command';
-import {ServerArgs} from './config';
-import {HTTPHeaders, HTTPMethod} from './http';
-import {AppiumLogger} from './logger';
-import {AppiumServer, UpdateServerCallback} from './server';
-import {Class, StringRecord, Element} from './util';
+import type {EventEmitter} from 'node:events';
+import type {Merge} from 'type-fest';
+import type {ActionSequence} from './action';
+import type {Capabilities, DriverCaps, W3CCapabilities, W3CDriverCaps} from './capabilities';
+import type {ExecuteMethodMap, MethodMap} from './command';
+import type {ServerArgs} from './config';
+import type {HTTPHeaders, HTTPMethod} from './http';
+import type {AppiumLogger} from './logger';
+import type {AppiumServer, UpdateServerCallback} from './server';
+import type {Class, Element, StringRecord} from './util';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -577,7 +577,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   shouldValidateCaps: boolean;
   sessionId: string | null;
   opts: DriverOpts<C>;
-  initialOpts: Partial<DriverOpts<C>>;
+  initialOpts: InitialOpts;
   protocol?: string;
   helpers: DriverHelpers;
   basePath: string;
@@ -2009,11 +2009,14 @@ export interface ExtraDriverOpts {
   skipUninstall?: boolean;
 }
 /**
- * Options as passed into a driver constructor, which is just a union of {@linkcode ServerArgs} and {@linkcode Capabilities}.
- *
- * The combination happens within Appium prior to calling the constructor.
+ * Options as set within {@linkcode ExternalDriver.createSession}, which is a union of {@linkcode InitialOpts} and {@linkcode DriverCaps}.
  */
-export type DriverOpts<C extends Constraints> = ServerArgs & ExtraDriverOpts & DriverCaps<C>;
+export type DriverOpts<C extends Constraints> = InitialOpts & DriverCaps<C>;
+
+/**
+ * Options as provided to the {@linkcode Driver} constructor.
+ */
+export type InitialOpts = Merge<ServerArgs, ExtraDriverOpts>;
 
 /**
  * An instance method of a driver class, whose name may be referenced by {@linkcode MethodDef.command}, and serves as an Appium command.

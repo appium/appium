@@ -38,7 +38,7 @@ class DriverCore {
   opts;
 
   /**
-   * @type {import('@appium/types').DriverOpts<C>}
+   * @type {import('@appium/types').InitialOpts}
    */
   initialOpts;
 
@@ -121,14 +121,14 @@ class DriverCore {
   settings;
 
   /**
-   * @param {DriverOpts<C>} opts
+   * @param {InitialOpts} opts
    * @param {boolean} [shouldValidateCaps]
    */
-  constructor(opts = /** @type {DriverOpts<C>} */ ({}), shouldValidateCaps = true) {
+  constructor(opts = /** @type {InitialOpts} */ ({}), shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
 
     // setup state
-    this.opts = opts;
+    this.opts = /** @type {DriverOpts<C>} */ (opts);
 
     // use a custom tmp dir to avoid losing data and app when computer is
     // restarted
@@ -441,6 +441,7 @@ export {DriverCore};
  * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
  * @typedef {import('@appium/types').StringRecord} StringRecord
  * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
+ * @typedef {import('@appium/types').InitialOpts} InitialOpts
  */
 
 /**

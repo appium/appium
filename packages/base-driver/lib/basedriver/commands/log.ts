@@ -1,6 +1,6 @@
-import {Constraints, Driver, ILogCommands, LogDefRecord} from '@appium/types';
+import type {Constraints, Driver, ILogCommands} from '@appium/types';
 import _ from 'lodash';
-import {BaseDriver} from '../driver';
+import type {BaseDriver} from '../driver';
 import {mixin} from './mixin';
 
 declare module '../driver' {
@@ -9,7 +9,7 @@ declare module '../driver' {
 }
 
 const LogCommands: ILogCommands = {
-  supportedLogTypes: <LogDefRecord>{},
+  supportedLogTypes: {},
 
   async getLogTypes<C extends Constraints>(this: BaseDriver<C>) {
     this.log.debug('Retrieving supported log types');

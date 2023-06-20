@@ -9,7 +9,7 @@ import {errors} from '../protocol/errors';
 export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
 
 /**
- * @template {import('@appium/types').StringRecord} T
+ * @template {StringRecord} T
  * @implements {IDeviceSettings<T>}
  */
 export class DeviceSettings {
@@ -74,6 +74,10 @@ export class DeviceSettings {
 export default DeviceSettings;
 
 /**
- * @template {import('@appium/types').StringRecord} [T=import('@appium/types').StringRecord]
+ * @typedef {import('@appium/types').StringRecord} StringRecord
+ */
+
+/**
+ * @template {StringRecord} [T=StringRecord]
  * @typedef {import('@appium/types').IDeviceSettings<T>} IDeviceSettings
  */

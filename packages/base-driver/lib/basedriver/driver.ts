@@ -33,11 +33,10 @@ const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 export class BaseDriver<
     C extends Constraints,
     CArgs extends StringRecord = StringRecord,
-    Settings extends StringRecord = StringRecord,
-    SessionData extends StringRecord = StringRecord
+    Settings extends StringRecord = StringRecord
   >
   extends DriverCore<C, Settings>
-  implements Driver<C, CArgs>
+  implements Driver<C, CArgs, Settings>
 {
   cliArgs: CArgs & ServerArgs;
 
@@ -379,6 +378,20 @@ export class BaseDriver<
     this.logExtraCaps(caps);
 
     return true;
+  }
+
+  async updateSettings(newSettings: Settings) {
+    if (!this.settings) {
+      this.log.errorAndThrow('Cannot update settings; settings object not found');
+    }
+    return await this.settings.update(newSettings);
+  }
+
+  async getSettings() {
+    if (!this.settings) {
+      this.log.errorAndThrow('Cannot get settings; settings object not found');
+    }
+    return this.settings.getSettings();
   }
 }
 

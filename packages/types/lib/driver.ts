@@ -441,7 +441,7 @@ export interface ISessionHandler<
    * @param sessionId - the id of the session that is to be deleted
    * @param driverData - the driver data for other currently-running sessions
    */
-  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult>;
+  deleteSession(sessionId?: string, driverData?: DriverData[]): Promise<DeleteResult | void>;
 
   /**
    * Get data for all sessions running on an Appium server

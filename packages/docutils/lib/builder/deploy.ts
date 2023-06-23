@@ -137,11 +137,12 @@ export async function deploy({
   }
   if (serve) {
     const mikeArgs = [
-      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
-      version,
+      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value)))
     ];
     if (alias) {
-      mikeArgs.push(alias);
+      mikeArgs.push('--update-aliases', version, alias);
+    } else {
+      mikeArgs.push(version)
     }
     stop(); // discard
     // unsure about how SIGHUP is handled here
@@ -155,10 +156,11 @@ export async function deploy({
           (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value)
         )
       ),
-      version,
     ];
     if (alias) {
-      mikeArgs.push(alias);
+      mikeArgs.push('--update-aliases', version, alias);
+    } else {
+      mikeArgs.push(version)
     }
     await doDeploy(mikePath, mikeArgs, execOpts);
 

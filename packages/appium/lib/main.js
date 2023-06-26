@@ -36,7 +36,7 @@ import {
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
 } from './utils';
-import os, { hostname } from 'node:os';
+import os from 'node:os';
 
 const {resolveAppiumHome} = env;
 

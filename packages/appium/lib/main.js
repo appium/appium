@@ -335,21 +335,21 @@ async function init(args) {
 function logServerAddress(url) {
   logger.info(`Appium REST http interface listener started on ${url}`);
   const urlObj = new URL(url);
-  if (![V4_BROADCAST_IP, V6_BROADCAST_IP].includes(urlObj.hostname)) {
+  if (![V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(urlObj.hostname)) {
     return;
   }
 
   const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
-  const toAddressLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
-    const hostname = urlObj.href.replace(urlObj.hostname, iface.address);
+  const toLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
+    const href = urlObj.href.replace(urlObj.hostname, iface.address);
     return iface.internal
-      ? `${hostname} (only accessible from the same host)`
-      : hostname;
+      ? `${href} (only accessible from the same host)`
+      : href;
   };
   logger.info(
     `You can provide the following ${util.pluralize('URL', interfaces.length, false)} ` +
-      `in your client code to connect to this server:\n` +
-      interfaces.map((iface) => `\t${toAddressLabel(iface)}`).join('\n')
+    `in your client code to connect to this server:\n` +
+    interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
   );
 }
 

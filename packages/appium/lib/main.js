@@ -2,7 +2,11 @@
 
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
-import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
+import {
+  routeConfiguringFunction as makeRouter,
+  server as baseServer,
+  normalizeBasePath,
+} from '@appium/base-driver';
 import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
@@ -449,10 +453,7 @@ async function main(args) {
   }
 
   logServerAddress(
-    // @ts-ignore It is ok if the property does not exist
-    server.address?.address
-    ?? server.address
-    ?? `http://${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
+    `http://${parsedArgs.address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`
   );
 
   driverConfig.print();

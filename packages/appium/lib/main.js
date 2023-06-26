@@ -333,8 +333,8 @@ async function init(args) {
  * @param {string} url The URL the server is listening on
  */
 function logServerAddress(url) {
-  logger.info(`Appium REST http interface listener started on ${url}`);
   const urlObj = new URL(url);
+  logger.info(`Appium REST http interface listener started on ${url}`);
   if (![V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(urlObj.hostname)) {
     return;
   }

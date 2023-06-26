@@ -41,6 +41,7 @@ import {
   V6_BROADCAST_IP,
 } from './utils';
 import os from 'node:os';
+import net from 'node:net';
 
 const {resolveAppiumHome} = env;
 
@@ -452,9 +453,8 @@ async function main(args) {
     });
   }
 
-  logServerAddress(
-    `http://${parsedArgs.address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`
-  );
+  const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
+  logServerAddress(`http://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`);
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

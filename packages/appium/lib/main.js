@@ -32,11 +32,11 @@ import {
   isExtensionCommandArgs,
   isPluginCommandArgs,
   isServerCommandArgs,
-  fetchIpAddresses,
+  fetchInterfaces,
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
 } from './utils';
-import os from 'node:os';
+import os, { hostname } from 'node:os';
 
 const {resolveAppiumHome} = env;
 
@@ -334,11 +334,17 @@ function logServerAddress(url) {
     return;
   }
 
-  const ips = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const toAddressLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
+    const hostname = urlObj.href.replace(urlObj.hostname, iface.address);
+    return iface.internal
+      ? `${hostname} (only accessible from the same host)`
+      : hostname;
+  };
   logger.info(
-    `You can provide the following ${util.pluralize('URL', ips.length, false)} ` +
+    `You can provide the following ${util.pluralize('URL', interfaces.length, false)} ` +
       `in your client code to connect to this server:\n` +
-      ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+      interfaces.map((iface) => `\t${toAddressLabel(iface)}`).join('\n')
   );
 }
 
@@ -442,7 +448,12 @@ async function main(args) {
     });
   }
 
-  logServerAddress(`http://${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`);
+  logServerAddress(
+    // @ts-ignore It is ok if the property does not exist
+    server.address?.address
+    ?? server.address
+    ?? `http://${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`
+  );
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

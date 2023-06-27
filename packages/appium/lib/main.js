@@ -2,7 +2,11 @@
 
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
-import {routeConfiguringFunction as makeRouter, server as baseServer} from '@appium/base-driver';
+import {
+  routeConfiguringFunction as makeRouter,
+  server as baseServer,
+  normalizeBasePath,
+} from '@appium/base-driver';
 import {logger as logFactory, util, env, fs} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
@@ -32,11 +36,12 @@ import {
   isExtensionCommandArgs,
   isPluginCommandArgs,
   isServerCommandArgs,
-  fetchIpAddresses,
+  fetchInterfaces,
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
 } from './utils';
 import os from 'node:os';
+import net from 'node:net';
 
 const {resolveAppiumHome} = env;
 
@@ -328,17 +333,23 @@ async function init(args) {
  * @param {string} url The URL the server is listening on
  */
 function logServerAddress(url) {
-  logger.info(`Appium REST http interface listener started on ${url}`);
   const urlObj = new URL(url);
-  if (![V4_BROADCAST_IP, V6_BROADCAST_IP].includes(urlObj.hostname)) {
+  logger.info(`Appium REST http interface listener started on ${url}`);
+  if (![V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(urlObj.hostname)) {
     return;
   }
 
-  const ips = fetchIpAddresses(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
+  const toLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
+    const href = urlObj.href.replace(urlObj.hostname, iface.address);
+    return iface.internal
+      ? `${href} (only accessible from the same host)`
+      : href;
+  };
   logger.info(
-    `You can provide the following ${util.pluralize('URL', ips.length, false)} ` +
-      `in your client code to connect to this server:\n` +
-      ips.map((x) => `\t${urlObj.href.replace(urlObj.hostname, x)}`).join('\n')
+    `You can provide the following ${util.pluralize('URL', interfaces.length, false)} ` +
+    `in your client code to connect to this server:\n` +
+    interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
   );
 }
 
@@ -442,7 +453,8 @@ async function main(args) {
     });
   }
 
-  logServerAddress(`http://${parsedArgs.address}:${parsedArgs.port}${parsedArgs.basePath}`);
+  const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
+  logServerAddress(`http://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`);
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

@@ -19,7 +19,7 @@ jobs:
     name: Check Renovate Configs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
+      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
       - name: Validate Renovate Config
         uses: rinchsan/renovate-config-validator@1ea1e8514f6a33fdd71c40b0a5fa3512b9e7b936 # tag=v0
         with:

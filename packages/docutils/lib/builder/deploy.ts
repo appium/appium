@@ -142,7 +142,7 @@ export async function deploy({
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
     } else {
-      mikeArgs.push(version)
+      mikeArgs.push(version);
     }
     stop(); // discard
     // unsure about how SIGHUP is handled here
@@ -160,7 +160,7 @@ export async function deploy({
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
     } else {
-      mikeArgs.push(version)
+      mikeArgs.push(version);
     }
     await doDeploy(mikePath, mikeArgs, execOpts);
 

@@ -1,6 +1,5 @@
 module.exports = {
-  '*.js': ['eslint --fix', 'prettier --write'],
-  '*.ts': ['prettier --write'],
+  '*.(js|ts)': ['eslint --fix', 'prettier --write'],
   'appium-config-schema.js': () => [
     'npm run --workspace=./packages/schema build',
     'git add -A packages/schema/lib/appium-config.schema.json',

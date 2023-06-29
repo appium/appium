@@ -341,6 +341,7 @@ class JWProxy {
    * @param {string} url
    * @param {import('@appium/types').HTTPMethod} method
    * @param {any?} body
+   * @returns {Promise<unknown>}
    */
   async command(url, method, body = null) {
     let response;

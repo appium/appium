@@ -4,8 +4,8 @@ import {BaseDriver} from '.../../..';
 import {BaseDriverCapConstraints, ExternalDriver, Driver, DriverOpts} from '@appium/types';
 
 expectAssignable<Driver<BaseDriverCapConstraints>>(
-  new BaseDriver({} as DriverOpts<BaseDriverCapConstraints>)
+  new BaseDriver<BaseDriverCapConstraints>({} as DriverOpts<BaseDriverCapConstraints>)
 );
 expectAssignable<ExternalDriver<BaseDriverCapConstraints>>(
-  new BaseDriver({} as DriverOpts<BaseDriverCapConstraints>)
+  new BaseDriver<BaseDriverCapConstraints>({} as DriverOpts<BaseDriverCapConstraints>)
 );

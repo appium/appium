@@ -1078,6 +1078,7 @@ function getResponseForW3CError(err) {
     w3cLog.debug(`Bad parameters: ${err}`);
     w3cErrorString = BadParametersError.error();
   } else {
+    // @ts-expect-error unclear what the problem is here
     w3cErrorString = err.error;
   }
 

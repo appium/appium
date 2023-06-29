@@ -2,10 +2,23 @@
 /* eslint-disable require-await */
 
 import {logger} from '@appium/support';
+import type {
+  AppiumLogger,
+  Constraints,
+  Core,
+  Driver,
+  DriverOpts,
+  EventHistory,
+  HTTPMethod,
+  InitialOpts,
+  Protocol,
+  RouteMatcher,
+  StringRecord,
+} from '@appium/types';
 import AsyncLock from 'async-lock';
-import {EventEmitter} from 'events';
 import _ from 'lodash';
-import os from 'os';
+import {EventEmitter} from 'node:events';
+import os from 'node:os';
 import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
@@ -15,35 +28,22 @@ const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
-/**
- * @template {Constraints} C
- * @template {StringRecord} [Settings=StringRecord]
- * @implements {Core<C, Settings>}
- */
-class DriverCore {
+export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
+  implements Core<C, Settings>
+{
   /**
    * Make the basedriver version available so for any driver which inherits from this package, we
    * know which version of basedriver it inherited from
    */
   static baseVersion = BASEDRIVER_VER;
 
-  /**
-   * @type {string?}
-   */
-  sessionId;
+  sessionId: string | null;
 
-  /**
-   * @type {import('@appium/types').DriverOpts<C>}
-   */
-  opts;
+  opts: DriverOpts<C>;
 
-  /**
-   * @type {import('@appium/types').InitialOpts}
-   */
-  initialOpts;
+  initialOpts: InitialOpts;
 
-  /** @type {typeof helpers} */
-  helpers;
+  helpers: typeof helpers;
 
   /**
    * basePath is used for several purposes, for example in setting up
@@ -52,83 +52,58 @@ class DriverCore {
    * initially but it is automatically updated during any actual program
    * execution by the routeConfiguringFunction, which is necessarily run as
    * the entrypoint for any Appium server
-   * @type {string}
    */
-  basePath;
+  basePath: string;
 
-  /** @type {boolean} */
-  relaxedSecurityEnabled;
+  relaxedSecurityEnabled: boolean;
 
-  /** @type {string[]} */
-  allowInsecure;
+  allowInsecure: string[];
 
-  /** @type {string[]} */
-  denyInsecure;
+  denyInsecure: string[];
 
-  /** @type {number} */
-  newCommandTimeoutMs;
+  newCommandTimeoutMs: number;
 
-  /** @type {number} */
-  implicitWaitMs;
+  implicitWaitMs: number;
 
-  /** @type {string[]} */
-  locatorStrategies;
+  locatorStrategies: string[];
 
-  /** @type {string[]} */
-  webLocatorStrategies;
+  webLocatorStrategies: string[];
 
-  /** @type {Driver[]} */
-  managedDrivers;
+  managedDrivers: Driver[];
 
-  /** @type {NodeJS.Timeout?} */
-  noCommandTimer;
+  noCommandTimer: NodeJS.Timeout | null;
 
-  /** @type {EventHistory} */
-  _eventHistory;
+  protected _eventHistory: EventHistory;
 
   // used to handle driver events
-  /** @type {NodeJS.EventEmitter} */
-  eventEmitter;
+  eventEmitter: NodeJS.EventEmitter;
 
   /**
-   * @type {AppiumLogger}
+   * @privateRemarks XXX: unsure why this is wrapped in a getter when nothing else is
    */
-  _log;
+  protected _log: AppiumLogger;
 
-  /**
-   * @type {boolean}
-   */
-  shutdownUnexpectedly;
+  shutdownUnexpectedly: boolean;
 
-  /**
-   * @type {boolean}
-   */
-  shouldValidateCaps;
+  shouldValidateCaps: boolean;
 
-  /**
-   * @protected
-   * @type {AsyncLock}
-   */
-  commandsQueueGuard;
+  protected commandsQueueGuard: AsyncLock;
 
   /**
    * settings should be instantiated by drivers which extend BaseDriver, but
    * we set it to an empty DeviceSettings instance here to make sure that the
    * default settings are applied even if an extending driver doesn't utilize
    * the settings functionality itself
-   * @type {DeviceSettings<Settings>}
    */
-  settings;
+  settings: DeviceSettings<Settings>;
 
-  /**
-   * @param {InitialOpts} opts
-   * @param {boolean} [shouldValidateCaps]
-   */
-  constructor(opts = /** @type {InitialOpts} */ ({}), shouldValidateCaps = true) {
-    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this));
+  protocol?: Protocol;
+
+  constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
+    this._log = logger.getLogger(helpers.generateDriverLogPrefix(this as Core<C>));
 
     // setup state
-    this.opts = /** @type {DriverOpts<C>} */ (opts);
+    this.opts = opts as DriverOpts<C>;
 
     // use a custom tmp dir to avoid losing data and app when computer is
     // restarted
@@ -168,11 +143,11 @@ class DriverCore {
    * when the driver is shut down unexpectedly. Multiple calls to this method
    * will cause the handler to be executed mutiple times
    *
-   * @param {(...args: any[]) => void} handler The code to be executed on unexpected shutdown.
+   * @param handler The code to be executed on unexpected shutdown.
    * The function may accept one argument, which is the actual error instance, which
    * caused the driver to shut down.
    */
-  onUnexpectedShutdown(handler) {
+  onUnexpectedShutdown(handler: (...args: any[]) => void) {
     this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, handler);
   }
 
@@ -183,7 +158,7 @@ class DriverCore {
    * Override it in inherited driver classes if necessary.
    */
   get driverData() {
-    return /** @type {import('@appium/types').DriverData} */ ({});
+    return {};
   }
 
   /**
@@ -191,13 +166,13 @@ class DriverCore {
    * handles new driver commands received from the client.
    * Override it for inherited classes only in special cases.
    *
-   * @return {boolean} If the returned value is true (default) then all the commands
+   * @return If the returned value is true (default) then all the commands
    *   received by the particular driver instance are going to be put into the queue,
    *   so each following command will not be executed until the previous command
    *   execution is completed. False value disables that queue, so each driver command
    *   is executed independently and does not wait for anything.
    */
-  get isCommandsQueueEnabled() {
+  get isCommandsQueueEnabled(): boolean {
     return true;
   }
 
@@ -211,9 +186,8 @@ class DriverCore {
 
   /**
    * API method for driver developers to log timings for important events
-   * @param {string} eventName
    */
-  logEvent(eventName) {
+  logEvent(eventName: string) {
     if (eventName === 'commands') {
       throw new Error('Cannot log commands directly');
     }
@@ -240,10 +214,8 @@ class DriverCore {
   /**
    * method required by MJSONWP in order to determine whether it should
    * respond with an invalid session response
-   * @param {string} [sessionId]
-   * @returns {boolean}
    */
-  sessionExists(sessionId) {
+  sessionExists(sessionId: string): boolean {
     if (!sessionId) return false; // eslint-disable-line curly
     return sessionId === this.sessionId;
   }
@@ -251,11 +223,9 @@ class DriverCore {
   /**
    * method required by MJSONWP in order to determine if the command should
    * be proxied directly to the driver
-   * @param {string} sessionId
-   * @returns {Core<C> | null}
    */
-  driverForSession(sessionId) {
-    return /** @type {Core<C> | null} */ (this);
+  driverForSession(sessionId: string): Core<Constraints> | null {
+    return this as Core<Constraints>;
   }
 
   isMjsonwpProtocol() {
@@ -277,11 +247,9 @@ class DriverCore {
   /**
    * Check whether a given feature is enabled via its name
    *
-   * @param {string} name - name of feature/command
-   *
-   * @returns {Boolean}
+   * @param name - name of feature/command
    */
-  isFeatureEnabled(name) {
+  isFeatureEnabled(name: string): boolean {
     // if we have explicitly denied this feature, return false immediately
     if (this.denyInsecure && _.includes(this.denyInsecure, name)) {
       return false;
@@ -306,10 +274,10 @@ class DriverCore {
    * Assert that a given feature is enabled and throw a helpful error if it's
    * not
    *
-   * @param {string} name - name of feature/command
+   * @param name - name of feature/command
    * @deprecated
    */
-  ensureFeatureEnabled(name) {
+  ensureFeatureEnabled(name: string) {
     this.assertFeatureEnabled(name);
   }
 
@@ -317,9 +285,9 @@ class DriverCore {
    * Assert that a given feature is enabled and throw a helpful error if it's
    * not
    *
-   * @param {string} name - name of feature/command
+   * @param name - name of feature/command
    */
-  assertFeatureEnabled(name) {
+  assertFeatureEnabled(name: string) {
     if (!this.isFeatureEnabled(name)) {
       throw new Error(
         `Potentially insecure feature '${name}' has not been ` +
@@ -331,12 +299,7 @@ class DriverCore {
     }
   }
 
-  /**
-   *
-   * @param {string} strategy
-   * @param {boolean} [webContext]
-   */
-  validateLocatorStrategy(strategy, webContext = false) {
+  validateLocatorStrategy(strategy: string, webContext = false) {
     let validStrategies = this.locatorStrategies;
     this.log.debug(`Valid locator strategies for this request: ${validStrategies.join(', ')}`);
 
@@ -351,30 +314,15 @@ class DriverCore {
     }
   }
 
-  /**
-   *
-   * @param {string} [sessionId]
-   * @returns {boolean}
-   */
-  proxyActive(sessionId) {
+  proxyActive(sessionId: string): boolean {
     return false;
   }
 
-  /**
-   *
-   * @param {string} sessionId
-   * @returns {import('@appium/types').RouteMatcher[]}
-   */
-  getProxyAvoidList(sessionId) {
+  getProxyAvoidList(sessionId: string): RouteMatcher[] {
     return [];
   }
 
-  /**
-   *
-   * @param {string} [sessionId]
-   * @returns {boolean}
-   */
-  canProxy(sessionId) {
+  canProxy(sessionId: string): boolean {
     return false;
   }
 
@@ -382,28 +330,28 @@ class DriverCore {
    * Whether a given command route (expressed as method and url) should not be
    * proxied according to this driver
    *
-   * @param {string} sessionId - the current sessionId (in case the driver runs
+   * @param sessionId - the current sessionId (in case the driver runs
    * multiple session ids and requires it). This is not used in this method but
    * should be made available to overridden methods.
-   * @param {import('@appium/types').HTTPMethod} method - HTTP method of the route
-   * @param {string} url - url of the route
-   * @param {any} [body] - webdriver request body
+   * @param method - HTTP method of the route
+   * @param url - url of the route
+   * @param [body] - webdriver request body
    *
-   * @returns {boolean} - whether the route should be avoided
+   * @returns whether the route should be avoided
    */
-  proxyRouteIsAvoided(sessionId, method, url, body) {
-    for (let avoidSchema of this.getProxyAvoidList(sessionId)) {
+  proxyRouteIsAvoided(sessionId: string, method: HTTPMethod, url: string, body?: any): boolean {
+    for (const avoidSchema of this.getProxyAvoidList(sessionId)) {
       if (!_.isArray(avoidSchema) || avoidSchema.length !== 2) {
         throw new Error('Proxy avoidance must be a list of pairs');
       }
-      let [avoidMethod, avoidPathRegex] = avoidSchema;
+      const [avoidMethod, avoidPathRegex] = avoidSchema;
       if (!_.includes(['GET', 'POST', 'DELETE'], avoidMethod)) {
         throw new Error(`Unrecognized proxy avoidance method '${avoidMethod}'`);
       }
       if (!_.isRegExp(avoidPathRegex)) {
         throw new Error('Proxy avoidance path must be a regular expression');
       }
-      let normalizedUrl = url.replace(new RegExp(`^${_.escapeRegExp(this.basePath)}`), '');
+      const normalizedUrl = url.replace(new RegExp(`^${_.escapeRegExp(this.basePath)}`), '');
       if (avoidMethod === method && avoidPathRegex.test(normalizedUrl)) {
         return true;
       }
@@ -415,7 +363,7 @@ class DriverCore {
    *
    * @param {Driver} driver
    */
-  addManagedDriver(driver) {
+  addManagedDriver(driver: Driver) {
     this.managedDrivers.push(driver);
   }
 
@@ -430,27 +378,3 @@ class DriverCore {
     }
   }
 }
-
-export {DriverCore};
-
-/**
- * @typedef {import('@appium/types').Driver} Driver
- * @typedef {import('@appium/types').Constraints} Constraints
- * @typedef {import('@appium/types').ServerArgs} ServerArgs
- * @typedef {import('@appium/types').EventHistory} EventHistory
- * @typedef {import('@appium/types').AppiumLogger} AppiumLogger
- * @typedef {import('@appium/types').StringRecord} StringRecord
- * @typedef {import('@appium/types').BaseDriverCapConstraints} BaseDriverCapConstraints
- * @typedef {import('@appium/types').InitialOpts} InitialOpts
- */
-
-/**
- * @template {Constraints} C
- * @template {StringRecord} [S=StringRecord]
- * @typedef {import('@appium/types').Core<C, S>} Core
- */
-
-/**
- * @template {Constraints} C
- * @typedef {import('@appium/types').DriverOpts<C>} DriverOpts
- */

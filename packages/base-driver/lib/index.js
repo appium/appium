@@ -15,7 +15,7 @@ export default BaseDriver;
 // MJSONWP exports
 export * from './protocol';
 export {errorFromMJSONWPStatusCode as errorFromCode} from './protocol';
-export {DEFAULT_BASE_PATH, PROTOCOLS} from './constants';
+export {DEFAULT_BASE_PATH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants';
 
 // Express exports
 export {STATIC_DIR} from './express/static';

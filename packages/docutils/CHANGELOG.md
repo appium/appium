@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.3](https://github.com/appium/appium/compare/@appium/docutils@0.4.2...@appium/docutils@0.4.3) (2023-06-29)
+
+
+### Bug Fixes
+
+* **docutils:** docs versioning and update latest ([#18804](https://github.com/appium/appium/issues/18804)) ([52a755a](https://github.com/appium/appium/commit/52a755a9135e06ad676cc422e37b5cab019c5b85))
+
+
+
 ## [0.4.2](https://github.com/appium/appium/compare/@appium/docutils@0.4.1...@appium/docutils@0.4.2) (2023-06-15)
 
 

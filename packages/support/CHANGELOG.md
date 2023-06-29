@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/appium/appium/compare/@appium/support@4.1.0...@appium/support@4.1.1) (2023-06-29)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
 ## [4.1.0](https://github.com/appium/appium/compare/@appium/support@4.0.3...@appium/support@4.1.0) (2023-06-15)
 
 

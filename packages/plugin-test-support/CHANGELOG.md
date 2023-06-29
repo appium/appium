@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.17](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.16...@appium/plugin-test-support@0.3.17) (2023-06-29)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
 ## [0.3.16](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.15...@appium/plugin-test-support@0.3.16) (2023-06-15)
 
 **Note:** Version bump only for package @appium/plugin-test-support

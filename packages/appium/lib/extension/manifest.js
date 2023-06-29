@@ -284,7 +284,11 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.drivers[pkgJson.appium.driverName])) {
-        this.setExtension(DRIVER_TYPE, pkgJson.appium.driverName, value);
+        this.setExtension(
+          /** @type {ExtType} */ (DRIVER_TYPE),
+          pkgJson.appium.driverName,
+          /** @type {ExtManifest<ExtType>} */ (value)
+        );
         return true;
       }
       return false;
@@ -294,7 +298,11 @@ export class Manifest {
         ...internal,
       };
       if (!_.isEqual(value, this.#data.plugins[pkgJson.appium.pluginName])) {
-        this.setExtension(PLUGIN_TYPE, pkgJson.appium.pluginName, value);
+        this.setExtension(
+          /** @type {ExtType} */ (PLUGIN_TYPE),
+          pkgJson.appium.pluginName,
+          /** @type {ExtManifest<ExtType>} */ (value)
+        );
         return true;
       }
       return false;

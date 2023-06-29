@@ -371,7 +371,7 @@ export interface LogDef {
   getter: (driver: any) => Promise<unknown> | unknown;
 }
 
-export interface ISettingsCommands<T extends StringRecord = StringRecord> {
+export interface ISettingsCommands<T extends object = object> {
   /**
    * Update the session's settings dictionary with a new settings object
    *
@@ -478,9 +478,9 @@ export interface Constraint {
 /**
  * A collection of constraints describing the allowed capabilities for a driver.
  */
-export interface Constraints {
-  [name: string]: Constraint;
-}
+export type Constraints = {
+  readonly [name: string]: Constraint;
+};
 
 export interface DriverHelpers {
   configureApp: (
@@ -568,6 +568,8 @@ export interface EventHistoryCommand {
   endTime: number;
 }
 
+export type Protocol = 'MJSONWP' | 'W3C';
+
 /**
  * Methods and properties which both `AppiumDriver` and `BaseDriver` inherit.
  *
@@ -578,7 +580,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   sessionId: string | null;
   opts: DriverOpts<C>;
   initialOpts: InitialOpts;
-  protocol?: string;
+  protocol?: Protocol;
   helpers: DriverHelpers;
   basePath: string;
   relaxedSecurityEnabled: boolean;
@@ -636,12 +638,12 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   proxyActive(sessionId?: string): boolean;
   getProxyAvoidList(sessionId?: string): RouteMatcher[];
   canProxy(sessionId?: string): boolean;
-  proxyRouteIsAvoided(sessionId: string, method: string, url: string): boolean;
+  proxyRouteIsAvoided(sessionId: string, method: string, url: string, body?: any): boolean;
   addManagedDriver(driver: Driver): void;
   getManagedDrivers(): Driver<Constraints>[];
   clearNewCommandTimeout(): Promise<void>;
   logEvent(eventName: string): void;
-  driverForSession(sessionId: string): Core<C> | null;
+  driverForSession(sessionId: string): Core<Constraints> | null;
 }
 
 /**
@@ -762,8 +764,15 @@ export interface Driver<
  * External drivers must subclass `BaseDriver`, and can implement any of these methods.
  * None of these are implemented within Appium itself.
  */
-export interface ExternalDriver<C extends Constraints = Constraints, Ctx = string>
-  extends Driver<C> {
+export interface ExternalDriver<
+  C extends Constraints = Constraints,
+  Ctx = string,
+  CArgs extends StringRecord = StringRecord,
+  Settings extends StringRecord = StringRecord,
+  CreateResult = DefaultCreateSessionResult<C>,
+  DeleteResult = DefaultDeleteSessionResult,
+  SessionData extends StringRecord = StringRecord
+> extends Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData> {
   // WebDriver spec commands
 
   /**

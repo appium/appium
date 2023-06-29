@@ -120,7 +120,7 @@
     "get-port": "5.1.1",
     "handlebars": "4.7.7",
     "husky": "8.0.3",
-    "json-schema-to-typescript": "13.0.1",
+    "json-schema-to-typescript": "13.0.2",
     "lerna": "6.6.2",
     "lint-staged": "13.2.2",
     "log-symbols": "4.1.0",

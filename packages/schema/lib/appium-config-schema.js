@@ -26,7 +26,16 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           description: 'IPv4/IPv6 address or a hostname to listen on',
           title: 'address config',
           type: 'string',
-          // this should be anyOf [format: "hostname" or format: "ipv6"], but there seems to be a bug in json-schema-to-typescript preventing "ipv6" from converting to type "string"'
+          anyOf: [
+            {
+              type: 'string',
+              format: 'hostname',
+            },
+            {
+              type: 'string',
+              format: 'ipv6',
+            },
+          ],
         },
         'allow-cors': {
           description:

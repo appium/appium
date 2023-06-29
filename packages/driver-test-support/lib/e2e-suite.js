@@ -5,9 +5,10 @@ import B from 'bluebird';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
 import chai from 'chai';
 import sinon from 'sinon';
-import { Agent } from 'node:http';
+import {Agent} from 'node:http';
 
 const should = chai.should();
+const {expect} = chai;
 
 /**
  * Creates some helper functions for E2E tests to manage sessions.
@@ -150,7 +151,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
     describe('session handling', function () {
       it('should handle idempotency while creating sessions', async function () {
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735
-        const httpAgent = new Agent({ keepAlive: true });
+        const httpAgent = new Agent({keepAlive: true});
 
         const sessionIds = [];
         let times = 0;
@@ -179,7 +180,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
 
       it('should handle idempotency while creating parallel sessions', async function () {
         // workaround for https://github.com/node-fetch/node-fetch/issues/1735
-        const httpAgent = new Agent({ keepAlive: true });
+        const httpAgent = new Agent({keepAlive: true});
 
         const reqs = [];
         let times = 0;
@@ -400,22 +401,49 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
     });
 
     describe('event timings', function () {
-      it('should not add timings if not using opt-in cap', async function () {
-        const session = await startSession({capabilities: {alwaysMatch: defaultCaps}});
-        const res = await getSession(session.sessionId);
-        should.not.exist(res.events);
-        await endSession(session.sessionId);
+      /** @type {NewSessionResponse} */
+      let session;
+      /** @type {SingularSessionData} */
+      let res;
+
+      describe('when not provided the eventTimings cap', function () {
+        before(async function () {
+          session = await startSession({capabilities: {alwaysMatch: defaultCaps}});
+          res = await getSession(session.sessionId);
+        });
+
+        after(async function () {
+          if (session) {
+            await endSession(session.sessionId);
+          }
+        });
+
+        it('should not respond with events', function () {
+          expect(res.events).to.be.undefined;
+        });
       });
-      it('should add start session timings', async function () {
-        const caps = {...defaultCaps, 'appium:eventTimings': true};
-        const session = await startSession({capabilities: {alwaysMatch: caps}});
-        const res = await getSession(session.sessionId);
-        should.exist(res.events);
-        should.exist(res.events?.newSessionRequested);
-        should.exist(res.events?.newSessionStarted);
-        res.events?.newSessionRequested[0].should.be.a('number');
-        res.events?.newSessionStarted[0].should.be.a('number');
-        await endSession(session.sessionId);
+
+      describe('when provided the eventTimings cap', function () {
+        before(async function () {
+          session = await startSession({
+            capabilities: {alwaysMatch: {...defaultCaps, 'appium:eventTimings': true}},
+          });
+          res = await getSession(session.sessionId);
+        });
+
+        after(async function () {
+          if (session) {
+            await endSession(session.sessionId);
+          }
+        });
+
+        it('should add a newSessionRequested event', function () {
+          expect(res.events?.newSessionRequested?.[0]).to.be.a('number');
+        });
+
+        it('should add a newSessionStarted event', function () {
+          expect(res.events?.newSessionRequested?.[0]).to.be.a('number');
+        });
       });
     });
   });

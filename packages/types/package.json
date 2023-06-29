@@ -33,7 +33,7 @@
   ],
   "scripts": {
     "build": "node ./scripts/generate-schema-types.js",
-    "clean": "git checkout -- ./types/lib/appium-config.ts || true",
+    "clean": "git checkout -- ./lib/appium-config.ts || true",
     "test:smoke": "node ./index.js",
     "test:types": "tsd"
   },

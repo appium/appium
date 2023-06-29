@@ -9,12 +9,13 @@ import {
   type Driver,
   type DriverCaps,
   type DriverData,
-  type DriverOpts,
   type MultiSessionData,
   type ServerArgs,
   type StringRecord,
   type W3CDriverCaps,
   type InitialOpts,
+  type DefaultDeleteSessionResult,
+  type SingularSessionData,
 } from '@appium/types';
 import B from 'bluebird';
 import _ from 'lodash';
@@ -31,15 +32,17 @@ const EVENT_SESSION_QUIT_DONE = 'quitSessionFinished';
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
 
 export class BaseDriver<
-    C extends Constraints,
+    const C extends Constraints,
     CArgs extends StringRecord = StringRecord,
-    Settings extends StringRecord = StringRecord
+    Settings extends StringRecord = StringRecord,
+    CreateResult = DefaultCreateSessionResult<C>,
+    DeleteResult = DefaultDeleteSessionResult,
+    SessionData extends StringRecord = StringRecord
   >
   extends DriverCore<C, Settings>
-  implements Driver<C, CArgs, Settings>
+  implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
 {
   cliArgs: CArgs & ServerArgs;
-
   caps: DriverCaps<C>;
   originalCaps: W3CDriverCaps<C>;
   desiredCapConstraints: C;
@@ -232,7 +235,7 @@ export class BaseDriver<
     w3cCapabilities?: W3CDriverCaps<C>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     driverData?: DriverData[]
-  ): Promise<DefaultCreateSessionResult<C>> {
+  ): Promise<CreateResult> {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError(
         'Cannot create a new session while one is in progress'
@@ -309,7 +312,7 @@ export class BaseDriver<
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
-    return [this.sessionId, caps];
+    return [this.sessionId, caps] as CreateResult;
   }
   async getSessions() {
     const ret: MultiSessionData<C>[] = [];
@@ -328,7 +331,9 @@ export class BaseDriver<
    * Returns capabilities for the session and event history (if applicable)
    */
   async getSession() {
-    return this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps;
+    return (
+      this.caps.eventTimings ? {...this.caps, events: this.eventHistory} : this.caps
+    ) as SingularSessionData<C, SessionData>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

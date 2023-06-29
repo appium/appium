@@ -5,38 +5,6 @@ exports[`@appium/typedoc-plugin-appium theme command output should generate expe
 
 ## Commands
 
-### \`getSettings\`
-
-\`GET\` **\`/session/:sessionId/appium/settings\`**
-
-Get the current settings for the session
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-\`StringRecord\`<\`any\`\\\\>
-
-The settings object
-
-### \`updateSettings\`
-
-\`POST\` **\`/session/:sessionId/appium/settings\`**
-
-Get the current settings for the session
-
-<!-- comment source: method-signature -->
-
-##### Required Parameters
-
-- \`settings\`
-
-#### Response
-
-\`StringRecord\`<\`any\`\\\\>
-
-The settings object
-
 ### \`createSession\`
 
 \`POST\` **\`/session\`**
@@ -62,7 +30,7 @@ the latter.
 
 #### Response
 
-\`DefaultCreateSessionResult\`<\`C\`\\\\>
+\`CreateResult\`
 
 The capabilities object representing the created session
 
@@ -76,7 +44,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`DriverCaps\`<\`C\`\\\\>
+\`SingularSessionData\`<\`C\`, \`SessionData\`\\\\>
 
 A session data object
 
@@ -90,7 +58,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`DriverCaps\`<\`C\`\\\\>
+\`SingularSessionData\`<\`C\`, \`SessionData\`\\\\>
 
 A session data object
 
@@ -360,6 +328,36 @@ Get data for all sessions running on an Appium server
 
 A list of session data objects
 
+### \`getSettings\`
+
+\`GET\` **\`/session/:sessionId/appium/settings\`**
+
+Update the session's settings dictionary with a new settings object
+
+<!-- comment source: builtin-interface -->
+
+#### Response
+
+\`\`null\`\`
+
+### \`updateSettings\`
+
+\`POST\` **\`/session/:sessionId/appium/settings\`**
+
+Update the session's settings dictionary with a new settings object
+
+<!-- comment source: builtin-interface -->
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| \`settings\` | \`Settings\` | A key-value map of setting names to values. Settings not named in the map will not have their value adjusted. |
+
+#### Response
+
+\`\`null\`\`
+
 ### \`getStatus\`
 
 \`GET\` **\`/status\`**
@@ -594,39 +592,7 @@ Get the driver args that were sent in via the CLI
 
 #### Response
 
-\`StringRecord\`<\`any\`\\\\> & \`ServerArgs\`
-
-### \`getSettings\`
-
-\`GET\` **\`/session/:sessionId/appium/settings\`**
-
-Get the current settings for the session
-
-<!-- comment source: method-signature -->
-
-#### Response
-
-\`StringRecord\`<\`any\`\\\\>
-
-The settings object
-
-### \`updateSettings\`
-
-\`POST\` **\`/session/:sessionId/appium/settings\`**
-
-Get the current settings for the session
-
-<!-- comment source: method-signature -->
-
-##### Required Parameters
-
-- \`settings\`
-
-#### Response
-
-\`StringRecord\`<\`any\`\\\\>
-
-The settings object
+\`StringRecord\` & \`ServerArgs\`
 
 ### \`createSession\`
 
@@ -664,7 +630,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`DriverCaps\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }\\\\>
+\`SingularSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, \`StringRecord\`\\\\>
 
 A session data object
 
@@ -678,7 +644,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`DriverCaps\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }\\\\>
+\`SingularSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, \`StringRecord\`\\\\>
 
 A session data object
 
@@ -947,6 +913,36 @@ Get data for all sessions running on an Appium server
 \`MultiSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }\\\\>[]
 
 A list of session data objects
+
+### \`getSettings\`
+
+\`GET\` **\`/session/:sessionId/appium/settings\`**
+
+Update the session's settings dictionary with a new settings object
+
+<!-- comment source: builtin-interface -->
+
+#### Response
+
+\`\`null\`\`
+
+### \`updateSettings\`
+
+\`POST\` **\`/session/:sessionId/appium/settings\`**
+
+Update the session's settings dictionary with a new settings object
+
+<!-- comment source: builtin-interface -->
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| \`settings\` | \`StringRecord\` | A key-value map of setting names to values. Settings not named in the map will not have their value adjusted. |
+
+#### Response
+
+\`\`null\`\`
 
 ### \`getStatus\`
 

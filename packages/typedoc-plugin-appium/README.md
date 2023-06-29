@@ -71,7 +71,7 @@ This packages uses snapshot tests to assert the generated markdown is correct.  
 To update the snapshots, execute:
 
 ```bash
-UPDATE_SNAPSHOT=1 npm test
+UPDATE_SNAPSHOT=1 npm run test:e2e
 ```
 
 This will (likely) modify the snapshots in your working copy, so you will then need to commit them.

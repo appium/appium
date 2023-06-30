@@ -20,7 +20,17 @@
           "default": "0.0.0.0",
           "description": "IPv4/IPv6 address or a hostname to listen on",
           "title": "address config",
-          "type": "string"
+          "type": "string",
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "hostname"
+            },
+            {
+              "type": "string",
+              "format": "ipv6"
+            }
+          ]
         },
         "allow-cors": {
           "description": "Whether the Appium server should allow web browser connections from any host",

@@ -16,6 +16,10 @@ export default [
       description: 'IPv4/IPv6 address or a hostname to listen on',
       title: 'address config',
       type: 'string',
+      anyOf: [
+        {format: 'hostname', type: 'string'},
+        {format: 'ipv6', type: 'string'}
+      ]
     },
   },
   {

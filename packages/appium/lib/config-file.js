@@ -27,7 +27,11 @@ const rawConfig = new Map();
  */
 function jsonLoader(filepath, content) {
   rawConfig.set(filepath, content);
-  return JSON.parse(content);
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    throw new Error(`The JSON config at '${filepath}' cannot be loaded. Original error: ${e.message}`);
+  }
 }
 
 /**

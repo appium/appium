@@ -9,7 +9,11 @@ import {getSchema, validate} from './schema/schema';
  * @type {import('lilconfig').LoaderSync}
  */
 function yamlLoader(filepath, content) {
-  return yaml.parse(content);
+  try {
+    return yaml.parse(content);
+  } catch (e) {
+    throw new Error(`The YAML config at '${filepath}' cannot be loaded. Original error: ${e.message}`);
+  }
 }
 
 /**
@@ -27,7 +31,11 @@ const rawConfig = new Map();
  */
 function jsonLoader(filepath, content) {
   rawConfig.set(filepath, content);
-  return JSON.parse(content);
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    throw new Error(`The JSON config at '${filepath}' cannot be loaded. Original error: ${e.message}`);
+  }
 }
 
 /**

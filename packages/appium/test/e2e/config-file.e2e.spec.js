@@ -320,7 +320,7 @@ describe('config file behavior', function () {
           return this.skip();
         }
         await readConfigFile(INVALID_JSON_FILEPATH).should.be.rejectedWith(
-          new RegExp(`${INVALID_JSON_FILEPATH} is invalid`)
+          new RegExp(`${_.escapeRegExp(INVALID_JSON_FILEPATH)}`)
         );
       });
     });

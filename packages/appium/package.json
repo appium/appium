@@ -89,7 +89,7 @@
     "ora": "5.4.1",
     "package-changed": "3.0.0",
     "resolve-from": "5.0.0",
-    "semver": "7.5.1",
+    "semver": "7.5.3",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.2",
     "type-fest": "3.11.1",

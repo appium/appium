@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.13.2](https://github.com/appium/appium/compare/@appium/types@0.13.1...@appium/types@0.13.2) (2023-07-03)
+
+
+### Bug Fixes
+
+* **appium:** restrict address to ipv6/hostname ([#18824](https://github.com/appium/appium/issues/18824)) ([f09fbb6](https://github.com/appium/appium/commit/f09fbb64dce0e179a007f3a0ae9800e61fbe90eb)), closes [#18716](https://github.com/appium/appium/issues/18716)
+* **types,base-driver:** remove deviceName from base constraints ([01061b2](https://github.com/appium/appium/commit/01061b291981333bdec59adfbea60f0cef3d69c1))
+* **types:** ensure return type of deleteSession can always be void ([ee9b2a3](https://github.com/appium/appium/commit/ee9b2a30dee4a24b351375862883986e6d4e618c))
+* **types:** fix signature of updateSettings ([24e7aec](https://github.com/appium/appium/commit/24e7aeca7dcab69e84e797e9e3168492d0e70e83))
+* **types:** separate the type of opts from initialOpts ([d6cca51](https://github.com/appium/appium/commit/d6cca5175c3e55d4670936c9d216cd3a6610d16b))
+* **types:** update some more types to reflect reality ([62f4244](https://github.com/appium/appium/commit/62f4244753b450eb0c9b96483a8b04a40ef289d2))
+
+
+
 ## [0.13.1](https://github.com/appium/appium/compare/@appium/types@0.13.0...@appium/types@0.13.1) (2023-06-29)
 
 **Note:** Version bump only for package @appium/types

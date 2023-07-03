@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.0-rc.5](https://github.com/appium/appium/compare/appium@2.0.0-rc.4...appium@2.0.0-rc.5) (2023-07-03)
+
+
+### Bug Fixes
+
+* **appium:** restrict address to ipv6/hostname ([#18824](https://github.com/appium/appium/issues/18824)) ([f09fbb6](https://github.com/appium/appium/commit/f09fbb64dce0e179a007f3a0ae9800e61fbe90eb)), closes [#18716](https://github.com/appium/appium/issues/18716)
+* **appium:** type fixes for ts v5 ([c13333b](https://github.com/appium/appium/commit/c13333bb979ee3409e6a62a5800c629781553b42))
+* **support:** update dependency semver to v7.5.3 ([ed1856d](https://github.com/appium/appium/commit/ed1856d720c442842d5c3fe5f6caeccb8229b5f1))
+
+
+
 ## [2.0.0-rc.4](https://github.com/appium/appium/compare/appium@2.0.0-rc.3...appium@2.0.0-rc.4) (2023-06-29)
 
 **Note:** Version bump only for package appium

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.4](https://github.com/appium/appium/compare/@appium/docutils@0.4.3...@appium/docutils@0.4.4) (2023-07-03)
+
+
+### Bug Fixes
+
+* **support:** update dependency semver to v7.5.3 ([ed1856d](https://github.com/appium/appium/commit/ed1856d720c442842d5c3fe5f6caeccb8229b5f1))
+
+
+
 ## [0.4.3](https://github.com/appium/appium/compare/@appium/docutils@0.4.2...@appium/docutils@0.4.3) (2023-06-29)
 
 

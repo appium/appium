@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/appium/appium/compare/@appium/schema@0.3.0...@appium/schema@0.3.1) (2023-07-03)
+
+
+### Bug Fixes
+
+* **appium:** restrict address to ipv6/hostname ([#18824](https://github.com/appium/appium/issues/18824)) ([f09fbb6](https://github.com/appium/appium/commit/f09fbb64dce0e179a007f3a0ae9800e61fbe90eb)), closes [#18716](https://github.com/appium/appium/issues/18716)
+
+
+
 ## [0.3.0](https://github.com/appium/appium/compare/@appium/schema@0.2.6...@appium/schema@0.3.0) (2023-06-14)
 
 

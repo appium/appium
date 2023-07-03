@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.15](https://github.com/appium/appium/compare/@appium/base-driver@9.3.14...@appium/base-driver@9.3.15) (2023-07-03)
+
+
+### Bug Fixes
+
+* **base-driver:** allow subclass to define shape of settings object ([3d614d6](https://github.com/appium/appium/commit/3d614d6d414d0d34026f516dbfad7d296000efcf))
+* **base-driver:** pass thru all type args to ExternalDriver ([2b35170](https://github.com/appium/appium/commit/2b351705d401e2db8da76022989c1475cbdda0f8))
+* **types,base-driver:** remove deviceName from base constraints ([01061b2](https://github.com/appium/appium/commit/01061b291981333bdec59adfbea60f0cef3d69c1))
+* **types:** separate the type of opts from initialOpts ([d6cca51](https://github.com/appium/appium/commit/d6cca5175c3e55d4670936c9d216cd3a6610d16b))
+
+
+
 ## [9.3.14](https://github.com/appium/appium/compare/@appium/base-driver@9.3.13...@appium/base-driver@9.3.14) (2023-06-29)
 
 **Note:** Version bump only for package @appium/base-driver

@@ -1,6 +1,6 @@
 {
   "name": "@appium/eslint-config-appium",
-  "version": "8.0.3",
+  "version": "8.0.4",
   "description": "Shared ESLint config for Appium projects",
   "keywords": [
     "eslint",

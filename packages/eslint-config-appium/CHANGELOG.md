@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.0.4](https://github.com/appium/appium/compare/@appium/eslint-config-appium@8.0.3...@appium/eslint-config-appium@8.0.4) (2023-07-03)
+
+
+### Bug Fixes
+
+* **eslint-config-appium:** remove prototype assignment warning ([679865e](https://github.com/appium/appium/commit/679865ed2f1df59baef8c4d884b0a63a9222940e))
+
+
+
 ## [8.0.3](https://github.com/appium/appium/compare/@appium/eslint-config-appium@8.0.2...@appium/eslint-config-appium@8.0.3) (2023-04-03)
 
 **Note:** Version bump only for package @appium/eslint-config-appium

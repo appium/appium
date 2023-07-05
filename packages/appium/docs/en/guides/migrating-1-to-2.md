@@ -225,11 +225,11 @@ Some Appium-internal NPM packages have been renamed (for example, `appium-base-d
 
 For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend [WebdriverIO](https://webdriver.io).
 
-### :warning: Appium Inspector split out from Appium Desktop
+### :warning: Appium Desktop replaced with Appium Inspector
 
-The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated [WD](https://github.com/admc/wd) client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app.
+The inspector functionality of Appium Desktop has been moved to its own app: [Appium Inspector](https://github.com/appium/appium-inspector). It's fully compatible with standalone Appium 2.0 servers, but also works with later versions of Appium 1.x servers. Appium Desktop itself has been deprecated and is not compatible with Appium 2.0.
 
-You can also now use the Appium Inspector without downloading anything, by visiting the [web version of Appium Inspector](https://inspector.appiumpro.com). Note that to test against local servers, you'll need to start the server with `--allow-cors` so that the browser-based version of Appium Inspector can access your Appium server to start sessions.
+In addition to the app, Appium Inspector also has a browser version, accessible at https://inspector.appiumpro.com. Note that in order to use the browser version with a local Appium server, you'll need to first start the server with the `--allow-cors` flag.
 
 ## Major New Features
 

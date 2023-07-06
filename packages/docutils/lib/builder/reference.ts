@@ -144,6 +144,7 @@ export async function buildReferenceDocs({
   let out: string | undefined;
   if (typeDocJson.out) {
     log.debug(`Found "out" option in ${NAME_TYPEDOC_JSON}: ${typeDocJson.out}`);
+    out = typeDocJson.out;
   } else {
     out = path.relative(
       path.dirname(typeDocJsonPath),
@@ -159,10 +160,9 @@ export async function buildReferenceDocs({
 
   try {
     await runTypedoc(typeDocJsonPath, extraTypedocOpts);
-    const finalOut = (typeDocJson.out ?? out) as string;
     log.success(
       'Reference docs built at %s (%dms)',
-      path.isAbsolute(finalOut) ? relativePath(finalOut) : finalOut,
+      path.isAbsolute(out) ? relativePath(out) : out,
       stop()
     );
   } catch (err) {

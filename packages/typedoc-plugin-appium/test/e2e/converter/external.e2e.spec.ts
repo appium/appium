@@ -1,7 +1,7 @@
-import _ from 'lodash';
 import {expect} from 'chai';
+import _ from 'lodash';
 import {createSandbox, SinonSandbox} from 'sinon';
-import {Comment, Context} from 'typedoc';
+import {Comment, ProjectReflection} from 'typedoc';
 import {
   BuiltinExternalDriverConverter,
   BuiltinMethodMapConverter,
@@ -14,6 +14,7 @@ import {AppiumPluginLogger} from '../../../lib/logger';
 import {CommandSet, ModuleCommands, ProjectCommands} from '../../../lib/model';
 import {BuiltinCommands} from '../../../lib/model/builtin-commands';
 import {initConverter, NAME_FAKE_DRIVER_MODULE} from '../helpers';
+
 describe('@appium/typedoc-plugin-appium', function () {
   describe('ExternalConverter', function () {
     let sandbox: SinonSandbox;
@@ -29,10 +30,10 @@ describe('@appium/typedoc-plugin-appium', function () {
     describe('constructor', function () {
       it('should instantiate a ExternalConverter', function () {
         const knownMethods: KnownMethods = new Map();
-        const ctx = sandbox.createStubInstance(Context);
+        const project = sandbox.createStubInstance(ProjectReflection);
         const log = sandbox.createStubInstance(AppiumPluginLogger);
         expect(
-          new ExternalConverter(ctx, log, knownMethods, {} as ModuleCommands)
+          new ExternalConverter(project, log, knownMethods, {} as ModuleCommands)
         ).to.be.an.instanceof(ExternalConverter);
       });
     });

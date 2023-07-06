@@ -1,5 +1,5 @@
 import {createSandbox, SinonSandbox} from 'sinon';
-import {Context, Converter} from 'typedoc';
+import {Application, ProjectReflection} from 'typedoc';
 import {
   convertCommands,
   NAME_BUILTIN_COMMAND_MODULE,
@@ -21,15 +21,15 @@ describe('@appium/typedoc-plugin-appium', function () {
     afterEach(function () {
       sandbox.restore();
     });
-    let ctx: Context;
+    let project: ProjectReflection;
     let log: AppiumPluginLogger;
     before(async function () {
       const app = initAppForPkgs({
         entryPoints: [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
       });
-      ctx = await new Promise((resolve) => {
-        app.converter.once(Converter.EVENT_RESOLVE_END, (ctx: Context) => {
-          resolve(ctx);
+      project = await new Promise((resolve) => {
+        app.once(Application.EVENT_PROJECT_REVIVE, (project: ProjectReflection) => {
+          resolve(project);
         });
         app.convert();
       });
@@ -38,7 +38,8 @@ describe('@appium/typedoc-plugin-appium', function () {
 
     describe('convertCommands()', function () {
       it('should return a non-empty ProjectCommands Map', function () {
-        expect(convertCommands(ctx, log)).to.be.an.instanceof(ProjectCommands).and.not.to.be.empty;
+        expect(convertCommands(project, log)).to.be.an.instanceof(ProjectCommands).and.not.to.be
+          .empty;
       });
     });
   });

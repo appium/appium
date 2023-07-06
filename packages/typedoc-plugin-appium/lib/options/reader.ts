@@ -1,3 +1,5 @@
+import {hasMagic, globSync} from 'glob';
+import {MarkdownThemeOptionsReader} from 'typedoc-plugin-markdown/dist/options-reader';
 import _ from 'lodash';
 import path from 'node:path';
 import {EntryPointStrategy, Options, OptionsReader} from 'typedoc';
@@ -33,13 +35,16 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    * I don't know the point of `name`, but the interface requires it, so here.
    */
   public readonly name = 'naughty-appium-options-reader';
+  public readonly supportsPackages = true;
+
   /**
-   * This needs to be higher than the value in `MarkdownOptionsReader`.
+   * This needs to be lower than the value in `MarkdownOptionsReader`.
    */
-  public readonly priority = 2000;
+  public order: number;
 
   constructor(logger: AppiumPluginLogger) {
     this.#log = logger.createChildLogger('options-reader');
+    this.order = new MarkdownThemeOptionsReader().order - 5;
   }
 
   /**
@@ -62,9 +67,9 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    */
   public read(container: Options) {
     this.#configureTheme(container);
-    this.#configureEntryPointStrategy(container);
-    this.#configureEntryPoints(container);
-    this.#configurePackages(container);
+    // this.#configureEntryPointStrategy(container);
+    // this.#configureEntryPoints(container);
+    this.#configurePkgTitles(container);
   }
 
   /**
@@ -90,7 +95,7 @@ export class AppiumPluginOptionsReader implements OptionsReader {
    * @param container Options
    */
   #configureEntryPoints(container: Options) {
-    let entryPoints = container.getValue('entryPoints');
+    let entryPoints = container.getValue('entryPoints') ?? [];
     const newEntryPoints = new Set(entryPoints);
 
     const addEntryPoint = (entryPoint: string) => {
@@ -104,7 +109,19 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     };
 
     for (const reqdEntryPoint of REQUIRED_PACKAGES) {
-      const foundReqdEP = entryPoints.find((entryPoint) => entryPoint.includes(reqdEntryPoint));
+      const foundReqdEP = entryPoints.find((entryPoint) => {
+        if (hasMagic(entryPoint)) {
+          // this makes it find only dirs
+          entryPoint = entryPoint.replace(/\*$/, '*/');
+          try {
+            const matches = globSync(entryPoint);
+            return matches.includes(reqdEntryPoint);
+          } catch {
+            return false;
+          }
+        }
+        return entryPoint.includes(reqdEntryPoint);
+      });
       if (foundReqdEP) {
         try {
           require.resolve(foundReqdEP);
@@ -128,14 +145,18 @@ export class AppiumPluginOptionsReader implements OptionsReader {
     this.#log.verbose('Final value of "entryPoints" option: %O', entryPoints);
   }
 
-  #configurePackages(container: Options) {
-    let pkgTitles = container.getValue('packageTitles') as PackageTitle[];
+  #configurePkgTitles(container: Options) {
+    if (!container.packageDir) {
+      return;
+    }
+
+    let pkgTitles = (container.getValue('packageTitles') ?? []) as PackageTitle[];
     const entryPoints = container.getValue('entryPoints');
 
     const newPkgTitles: PackageTitle[] = [];
 
     for (const entryPoint of entryPoints) {
-      const pkgJsonPath = require.resolve(`${entryPoint}/package.json`);
+      const pkgJsonPath = require.resolve(`${container.packageDir}/package.json`);
       try {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const pkg = require(pkgJsonPath);

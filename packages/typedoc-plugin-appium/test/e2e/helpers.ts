@@ -3,10 +3,9 @@ import readPkg from 'read-pkg';
 import {Constructor, SetRequired} from 'type-fest';
 import {
   Application,
-  Context,
-  Converter,
   EntryPointStrategy,
   LogLevel,
+  ProjectReflection,
   TSConfigReader,
   TypeDocOptions,
 } from 'typedoc';
@@ -122,21 +121,21 @@ async function convert<T, C extends BaseConverter<T>, Args extends readonly any[
   extraArgs?: Args
 ): Promise<C> {
   return await new Promise((resolve, reject) => {
-    const listener = (ctx: Context) => {
+    const listener = (project: ProjectReflection) => {
       const log = new AppiumPluginLogger(app.logger, `test-${cls.name}`);
       if (extraArgs?.length) {
-        resolve(new cls(ctx, log, ...extraArgs));
+        resolve(new cls(project, log, ...extraArgs));
       } else {
-        resolve(new cls(ctx, log));
+        resolve(new cls(project, log));
       }
     };
-    app.converter.once(Converter.EVENT_RESOLVE_END, listener);
+    app.once(Application.EVENT_PROJECT_REVIVE, listener);
     try {
       app.convert();
     } catch (err) {
       reject(err);
     } finally {
-      app.converter.off(Converter.EVENT_RESOLVE_END, listener);
+      app.off(Application.EVENT_PROJECT_REVIVE, listener);
     }
   });
 }
@@ -173,8 +172,8 @@ export interface InitConverterOptions<Args extends readonly any[] = any[]>
 }
 
 type ConverterConstructor<T, C extends BaseConverter<T>, Args extends readonly any[] = any[]> =
-  | Constructor<C, [Context, AppiumPluginLogger, ...Args]>
-  | Constructor<C, [Context, AppiumPluginLogger]>;
+  | Constructor<C, [ProjectReflection, AppiumPluginLogger, ...Args]>
+  | Constructor<C, [ProjectReflection, AppiumPluginLogger]>;
 
 /**
  * Creates a new TypeDoc application and/or resets it

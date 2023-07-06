@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {createSandbox, SinonSandbox} from 'sinon';
-import {Context} from 'typedoc';
+import {ProjectReflection} from 'typedoc';
 import {
   BuiltinExternalDriverConverter,
   KnownMethods,
@@ -23,9 +23,9 @@ describe('@appium/typedoc-plugin-appium', function () {
 
     describe('constructor', function () {
       it('should instantiate a BuiltinExternalDriverConverter', function () {
-        const ctx = sandbox.createStubInstance(Context);
+        const project = sandbox.createStubInstance(ProjectReflection);
         const log = sandbox.createStubInstance(AppiumPluginLogger);
-        expect(new BuiltinExternalDriverConverter(ctx, log)).to.be.an.instanceof(
+        expect(new BuiltinExternalDriverConverter(project, log)).to.be.an.instanceof(
           BuiltinExternalDriverConverter
         );
       });

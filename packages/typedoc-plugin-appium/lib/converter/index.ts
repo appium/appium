@@ -14,7 +14,7 @@
  * @module
  */
 
-import {Context} from 'typedoc';
+import {Context, ProjectReflection} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
 import {ProjectCommands} from '../model';
 import {BuiltinExternalDriverConverter} from './builtin-external-driver';
@@ -28,19 +28,19 @@ import {ExternalConverter} from './external';
  * @returns All commands found in the project
  */
 export function convertCommands(
-  ctx: Context,
+  project: ProjectReflection,
   parentLog: AppiumPluginLogger
 ): ProjectCommands | undefined {
   const log = parentLog.createChildLogger('converter');
 
-  const bedConverter = new BuiltinExternalDriverConverter(ctx, log);
+  const bedConverter = new BuiltinExternalDriverConverter(project, log);
   const builtinMethods = bedConverter.convert();
 
-  const bmmConverter = new BuiltinMethodMapConverter(ctx, log, builtinMethods);
+  const bmmConverter = new BuiltinMethodMapConverter(project, log, builtinMethods);
   const builtinCommands = bmmConverter.convert();
 
   const externalConverter = new ExternalConverter(
-    ctx,
+    project,
     log,
     builtinMethods,
     builtinCommands.moduleCmds

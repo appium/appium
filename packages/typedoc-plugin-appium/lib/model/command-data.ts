@@ -6,6 +6,7 @@ import {
   IntrinsicType,
   LiteralType,
   ParameterReflection,
+  ProjectReflection,
   ReferenceType,
   SignatureReflection,
 } from 'typedoc';
@@ -290,11 +291,15 @@ export class CommandData extends BaseCommandData {
    * Creates a **shallow** clone of this instance.
    *
    * @param commandData Instance to clone
-   * @param ctx Context
+   * @param project Project
    * @param overrides Override any properties of the instance here (including {@linkcode CommandData.opts})
    * @returns Cloned instance
    */
-  public static clone(commandData: CommandData, ctx: Context, overrides?: Partial<CommandData>) {
+  public static clone(
+    commandData: CommandData,
+    project: ProjectReflection,
+    overrides?: Partial<CommandData>
+  ) {
     const {log, command, methodRefl, httpMethod, route, opts} = _.defaults(overrides, {
       log: commandData.log,
       command: commandData.command,
@@ -303,13 +308,13 @@ export class CommandData extends BaseCommandData {
       route: commandData.route,
       opts: _.defaults(overrides?.opts, commandData.opts),
     });
-    return CommandData.create(ctx, log, command, methodRefl, httpMethod, route, opts);
+    return CommandData.create(project, log, command, methodRefl, httpMethod, route, opts);
   }
 
   /**
    * Creates a new instance of {@linkcode CommandData} and registers any newly-created reflections
    * with TypeDoc.
-   * @param ctx Context
+   * @param project Context
    * @param log Logger
    * @param command Command name
    * @param methodRefl Command method reflection
@@ -319,7 +324,7 @@ export class CommandData extends BaseCommandData {
    * @returns
    */
   public static create(
-    ctx: Context,
+    project: ProjectReflection,
     log: AppiumPluginLogger,
     command: Command,
     methodRefl: CommandMethodDeclarationReflection,
@@ -330,12 +335,12 @@ export class CommandData extends BaseCommandData {
     const commandData = new CommandData(log, command, methodRefl, httpMethod, route, opts);
 
     if (commandData.signature) {
-      ctx.registerReflection(commandData.signature, undefined);
+      project.registerReflection(commandData.signature, undefined);
     }
 
     if (commandData.parameters) {
       for (const param of commandData.parameters) {
-        ctx.registerReflection(param, undefined);
+        project.registerReflection(param, undefined);
       }
     }
 
@@ -373,13 +378,13 @@ export class ExecMethodData extends BaseCommandData {
    * Creates a **shallow** clone of this instance.
    *
    * @param execMethodData Instance to clone
-   * @param ctx Context
+   * @param project Context
    * @param overrides Override any properties of the instance here (including {@linkcode ExecMethodData.opts})
    * @returns Cloned instance
    */
   public static clone(
     execMethodData: ExecMethodData,
-    ctx: Context,
+    project: ProjectReflection,
     overrides?: Partial<ExecMethodData>
   ) {
     const {log, command, methodRefl, script, opts} = _.defaults(overrides, {
@@ -389,13 +394,13 @@ export class ExecMethodData extends BaseCommandData {
       script: execMethodData.script,
       opts: _.defaults(overrides?.opts, execMethodData.opts),
     });
-    return ExecMethodData.create(ctx, log, command, methodRefl, script, opts);
+    return ExecMethodData.create(project, log, command, methodRefl, script, opts);
   }
 
   /**
    * Creates a new instance of {@linkcode CommandData} and registers any newly-created reflections
    * with TypeDoc.
-   * @param ctx Context
+   * @param project Context
    * @param log Logger
    * @param command Command name
    * @param script Script name
@@ -403,7 +408,7 @@ export class ExecMethodData extends BaseCommandData {
    * @param opts Options
    */
   public static create(
-    ctx: Context,
+    project: ProjectReflection,
     log: AppiumPluginLogger,
     command: Command,
     methodRefl: CommandMethodDeclarationReflection,
@@ -413,12 +418,12 @@ export class ExecMethodData extends BaseCommandData {
     const execMethodData = new ExecMethodData(log, command, methodRefl, script, opts);
 
     if (execMethodData.signature) {
-      ctx.registerReflection(execMethodData.signature, undefined);
+      project.registerReflection(execMethodData.signature, undefined);
     }
 
     if (execMethodData.parameters) {
       for (const param of execMethodData.parameters) {
-        ctx.registerReflection(param, undefined);
+        project.registerReflection(param, undefined);
       }
     }
 

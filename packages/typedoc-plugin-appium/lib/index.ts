@@ -4,18 +4,20 @@
  */
 
 import _ from 'lodash';
+import {once} from 'node:events';
 import pluralize from 'pluralize';
-import {Application, Context, Converter, DeclarationReflection} from 'typedoc';
+import {Application, type DeclarationReflection, type ProjectReflection} from 'typedoc';
 import {
   convertCommands,
   createReflections,
   omitBuiltinReflections,
   omitDefaultReflections,
 } from './converter';
-import {AppiumPluginLogger, AppiumPluginParentLogger} from './logger';
+import {AppiumPluginLogger, type AppiumPluginParentLogger} from './logger';
 import {ExtensionReflection, NS, ProjectCommands} from './model';
 import {configureOptions, declarations} from './options';
-import {configureTheme, THEME_NAME} from './theme';
+import type {PackageTitle} from './options/declarations';
+import {THEME_NAME, configureTheme} from './theme';
 
 let log: AppiumPluginLogger;
 
@@ -25,16 +27,11 @@ let log: AppiumPluginLogger;
  * @param app - TypeDoc Application
  * @returns Unused by TypeDoc, but can be consumed programmatically.
  */
-export function load(
-  app: Application
-): Promise<[PromiseSettledResult<ConvertResult>, PromiseSettledResult<PostProcessResult>]> {
+export function load(app: Application): void {
   // register our custom theme.  the user still has to choose it
   setup(app);
 
-  // TypeDoc does not expect a return value here, but it's useful for testing.
-  // note that this runs both methods "in parallel", but the `convert` method will always resolve
-  // first, and `postProcess` won't do any real work until that happens.
-  return Promise.allSettled([convert(app), postProcess(app)]);
+  convert(app);
 }
 
 /**
@@ -50,54 +47,45 @@ export const setup: (app: Application) => Application = _.flow(configureTheme, c
  * @returns A {@linkcode ConvertResult} receipt from the conversion
  */
 export async function convert(app: Application): Promise<ConvertResult> {
-  return new Promise((resolve) => {
-    app.converter.once(
-      Converter.EVENT_RESOLVE_END,
-      /**
-       * This listener _must_ trigger on {@linkcode Converter.EVENT_RESOLVE_END}, because TypeDoc's
-       * internal plugins do some post-processing on the project's reflections--specifically, it
-       * finds `@param` tags in a `SignatureReflection`'s `comment` and "moves" them into the
-       * appropriate `ParameterReflections`.  Without this in place, we won't be able aggregate
-       * parameter comments and they will not display in the generated docs.
-       */
-      (ctx: Context) => {
-        let extensionReflections: ExtensionReflection[] | undefined;
-        let projectCommands: ProjectCommands | undefined;
+  const [project] = (await once(app, Application.EVENT_PROJECT_REVIVE)) as [ProjectReflection];
 
-        // we don't want to do this work if we're not using the custom theme!
-        log = log ?? new AppiumPluginLogger(app.logger, NS);
+  let removed: Set<DeclarationReflection> | undefined;
+  let extensionReflections: ExtensionReflection[] | undefined;
+  let projectCommands: ProjectCommands | undefined;
+  const packageTitles = app.options.getValue('packageTitles') as PackageTitle[];
 
-        // this should not be necessary given the `AppiumPluginOptionsReader` forces the issue, but
-        // it's a safeguard nonetheless.
-        if (app.renderer.themeName === THEME_NAME) {
-          // this queries the declarations created by TypeDoc and extracts command information
-          projectCommands = convertCommands(ctx, log);
+  // we don't want to do this work if we're not using the custom theme!
+  log = log ?? new AppiumPluginLogger(app.logger, NS);
 
-          if (!projectCommands) {
-            log.verbose('Skipping creation of reflections');
-            resolve({ctx});
-            return;
-          }
-          // this creates new custom reflections from the data we gathered and registers them
-          // with TypeDoc
-          extensionReflections = createReflections(ctx, log, projectCommands);
-        } else {
-          log.warn(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
-        }
-        resolve({ctx, extensionReflections, projectCommands});
-      }
-    );
-  });
+  // this should not be necessary given the `AppiumPluginOptionsReader` forces the issue, but
+  // it's a safeguard nonetheless.
+  if (app.renderer.themeName === THEME_NAME) {
+    // this queries the declarations created by TypeDoc and extracts command information
+    projectCommands = convertCommands(project, log);
+
+    if (!projectCommands) {
+      log.verbose('Skipping creation of reflections');
+      return {project};
+    }
+    // this creates new custom reflections from the data we gathered and registers them
+    // with TypeDoc
+    extensionReflections = createReflections(project, log, projectCommands, packageTitles);
+    ({removed} = postProcess(app, project));
+  } else {
+    log.warn(`Appium theme disabled!  Use "theme: 'appium'" in your typedoc.json`);
+  }
+
+  return {project, extensionReflections, projectCommands, removed};
 }
 
 /**
  * Resolved value of {@linkcode convert}
  */
-export interface ConvertResult {
+export interface ConvertResult extends PostProcessResult {
   /**
-   * Context at time of {@linkcode Context.EVENT_RESOLVE_END}
+   * Final project
    */
-  ctx: Context;
+  project: ProjectReflection;
   /**
    * Raw data structure containing everything about commands in the project
    */
@@ -115,27 +103,22 @@ export interface ConvertResult {
  * @param app Typedoc application
  * @returns Typedoc `Context` at the time of the {@linkcode Converter.EVENT_RESOLVE_END} event
  */
-export async function postProcess(app: Application): Promise<PostProcessResult> {
-  log = log ?? new AppiumPluginLogger(app.logger, NS);
-  return new Promise((resolve) => {
-    app.converter.once(Converter.EVENT_RESOLVE_END, (ctx: Context) => {
-      let removed: Set<DeclarationReflection> | undefined;
-      // if the `outputModules` option is false, then we want to remove all the usual TypeDoc reflections.
-      if (!app.options.getValue(declarations.outputModules.name)) {
-        removed = omitDefaultReflections(ctx.project);
-        log.info('%s omitted from output', pluralize('default reflection', removed.size, true));
-      }
-      if (!app.options.getValue(declarations.outputBuiltinCommands.name)) {
-        const removedBuiltinRefls = omitBuiltinReflections(ctx.project);
-        removed = new Set([...(removed ?? []), ...removedBuiltinRefls]);
-        log.info(
-          '%s omitted from output',
-          pluralize('builtin reflection', removedBuiltinRefls.size, true)
-        );
-      }
-      resolve({ctx, removed});
-    });
-  });
+export function postProcess(app: Application, project: ProjectReflection): PostProcessResult {
+  let removed: Set<DeclarationReflection> | undefined;
+  // if the `outputModules` option is false, then we want to remove all the usual TypeDoc reflections.
+  if (!app.options.getValue(declarations.outputModules.name)) {
+    removed = omitDefaultReflections(project);
+    log.info('%s omitted from output', pluralize('default reflection', removed.size, true));
+  }
+  if (!app.options.getValue(declarations.outputBuiltinCommands.name)) {
+    const removedBuiltinRefls = omitBuiltinReflections(project);
+    removed = new Set([...(removed ?? []), ...removedBuiltinRefls]);
+    log.info(
+      '%s omitted from output',
+      pluralize('builtin reflection', removedBuiltinRefls.size, true)
+    );
+  }
+  return {removed};
 }
 
 /**
@@ -147,10 +130,6 @@ export interface PostProcessResult {
    * project, if any.
    */
   removed?: Set<DeclarationReflection>;
-  /**
-   * Context at time of {@linkcode Context.EVENT_RESOLVE_END}
-   */
-  ctx: Context;
 }
 
 export * from './options';

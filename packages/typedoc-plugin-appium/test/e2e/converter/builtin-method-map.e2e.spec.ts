@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import _ from 'lodash';
 import {createSandbox, SinonSandbox} from 'sinon';
-import {Comment, Context} from 'typedoc';
+import {Comment, ProjectReflection} from 'typedoc';
 import {
   BuiltinExternalDriverConverter,
   BuiltinMethodMapConverter,
@@ -29,9 +29,9 @@ describe('@appium/typedoc-plugin-appium', function () {
     describe('constructor', function () {
       it('should instantiate a BuiltinMethodMapConverter', function () {
         const knownMethods: KnownMethods = new Map();
-        const ctx = sandbox.createStubInstance(Context);
+        const project = sandbox.createStubInstance(ProjectReflection);
         const log = sandbox.createStubInstance(AppiumPluginLogger);
-        expect(new BuiltinMethodMapConverter(ctx, log, knownMethods)).to.be.an.instanceof(
+        expect(new BuiltinMethodMapConverter(project, log, knownMethods)).to.be.an.instanceof(
           BuiltinMethodMapConverter
         );
       });

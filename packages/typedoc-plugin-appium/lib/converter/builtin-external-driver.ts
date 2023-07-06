@@ -1,10 +1,10 @@
 import pluralize from 'pluralize';
-import {Context} from 'typedoc';
+import {ProjectReflection} from 'typedoc';
 import {isAppiumTypesReflection, isExternalDriverDeclarationReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {BaseConverter} from './base-converter';
 import {AppiumTypesReflection, KnownMethods} from './types';
-import {findParentReflectionByName, findCommandMethodsInReflection} from './utils';
+import {findCommandMethodsInReflection, findParentReflectionByName} from './utils';
 
 /**
  * Name of the module containing `ExternalDriver`
@@ -22,11 +22,11 @@ export const NAME_EXTERNAL_DRIVER = 'ExternalDriver';
 export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> {
   /**
    * Creates a child logger for this instance
-   * @param ctx Typedoc Context
+   * @param project Project
    * @param log Logger
    */
-  constructor(protected ctx: Context, log: AppiumPluginLogger) {
-    super(ctx, log.createChildLogger(NAME_TYPES_MODULE));
+  constructor(protected project: ProjectReflection, log: AppiumPluginLogger) {
+    super(project, log.createChildLogger(NAME_TYPES_MODULE));
   }
 
   #convertMethodDeclarations(refl: AppiumTypesReflection): KnownMethods {
@@ -55,7 +55,7 @@ export class BuiltinExternalDriverConverter extends BaseConverter<KnownMethods> 
   }
 
   public override convert(): KnownMethods {
-    const {project} = this.ctx;
+    const {project} = this;
     const typesModule = findParentReflectionByName(project, NAME_TYPES_MODULE);
     if (!isAppiumTypesReflection(typesModule)) {
       this.log.error('Could not find %s', NAME_TYPES_MODULE);

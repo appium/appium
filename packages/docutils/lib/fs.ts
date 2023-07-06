@@ -10,6 +10,7 @@ import _ from 'lodash';
 import path from 'node:path';
 import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
+import {exec} from 'teen_process';
 import {JsonValue} from 'type-fest';
 import {Application, TypeDocReader} from 'typedoc';
 import YAML from 'yaml';
@@ -25,7 +26,6 @@ import {
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import {MkDocsYml} from './model';
-import { exec } from 'teen_process';
 
 const log = getLogger('fs');
 
@@ -167,7 +167,6 @@ export const readPackageJson = _.memoize(_readPkgJson);
 export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
   const app = new Application();
   app.options.setValue('plugin', 'none');
-  app.options.setValue('logger', 'none');
   app.options.addReader(new TypeDocReader());
   app.bootstrap({options: path.dirname(typedocJsonPath)});
   return app.options.getRawValues();
@@ -254,8 +253,7 @@ export const findMike = _.partial(async () => {
         return mikePath;
       }
     }
-  }
-  catch {}
+  } catch {}
 });
 
 /**

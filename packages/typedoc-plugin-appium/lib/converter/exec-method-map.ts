@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {Context, DeclarationReflection, ReflectionKind} from 'typedoc';
+import {DeclarationReflection, ProjectReflection, ReflectionKind} from 'typedoc';
 import {
   isCommandPropDeclarationReflection,
   isExecMethodDefParamsPropDeclarationReflection,
@@ -19,7 +19,7 @@ import {
  * Options for {@linkcode convertExecuteMethodMap}
  */
 export interface ConvertExecuteMethodMapOpts {
-  ctx: Context;
+  project: ProjectReflection;
   /**
    * Logger
    */
@@ -52,7 +52,7 @@ export interface ConvertExecuteMethodMapOpts {
  * @returns List of "execute commands", if any
  */
 export function convertExecuteMethodMap({
-  ctx,
+  project,
   log,
   parentRefl,
   execMethodMapRefl,
@@ -68,7 +68,7 @@ export function convertExecuteMethodMap({
 
   const newMethodProps = filterChildrenByKind(execMethodMapRefl, ReflectionKind.Property);
   for (const newMethodProp of newMethodProps) {
-    const {comment, originalName: script} = newMethodProp;
+    const {comment, name: script} = newMethodProp;
 
     const commandProp = findChildByGuard(newMethodProp, isCommandPropDeclarationReflection);
 
@@ -111,7 +111,7 @@ export function convertExecuteMethodMap({
 
     const commentData = deriveComment({refl: methodRefl, comment, knownMethods});
 
-    const execMethodData = ExecMethodData.create(ctx, log, command, methodRefl, script, {
+    const execMethodData = ExecMethodData.create(project, log, command, methodRefl, script, {
       requiredParams,
       optionalParams,
       comment: commentData?.comment,

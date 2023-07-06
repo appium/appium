@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import {Context, ReflectionKind} from 'typedoc';
+import {ProjectReflection, ReflectionKind} from 'typedoc';
 import {
   isBasePluginConstructorDeclarationReflection,
   isClassDeclarationReflection,
@@ -68,16 +68,16 @@ export const NAME_BASE_PLUGIN = 'BasePlugin';
 export class ExternalConverter extends BaseConverter<ProjectCommands> {
   /**
    * Creates a child logger for this instance
-   * @param ctx Typedoc Context
+   * @param project Project
    * @param log Logger
    */
   constructor(
-    ctx: Context,
+    project: ProjectReflection,
     log: AppiumPluginLogger,
     protected readonly builtinMethods: KnownMethods,
     protected readonly builtinCommands?: ModuleCommands
   ) {
-    super(ctx, log.createChildLogger('extension'), builtinCommands);
+    super(project, log.createChildLogger('extension'), builtinCommands);
   }
 
   /**
@@ -86,8 +86,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
    * @returns Command info for entire project
    */
   public override convert(): ProjectCommands {
-    const ctx = this.ctx;
-    const {project} = ctx;
+    const {project} = this;
     const projectCommands: ProjectCommands = new ProjectCommands();
 
     // convert all modules (or just project if no modules)
@@ -179,7 +178,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
 
       const overriddenRouteMap: RouteMap = this.builtinCommands
         ? convertOverrides({
-            ctx: this.ctx,
+            project: this.project,
             log,
             parentRefl: classRefl,
             classMethods,
@@ -223,7 +222,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       return new Set();
     }
     return convertExecuteMethodMap({
-      ctx: this.ctx,
+      project: this.project,
       log,
       parentRefl,
       execMethodMapRefl,
@@ -257,7 +256,7 @@ export class ExternalConverter extends BaseConverter<ProjectCommands> {
       return new Map();
     }
     return convertMethodMap({
-      ctx: this.ctx,
+      project: this.project,
       log,
       methodMapRefl: newMethodMapRefl,
       parentRefl,

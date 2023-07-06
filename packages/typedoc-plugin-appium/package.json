@@ -51,12 +51,12 @@
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.48",
-    "typedoc": "~0.23.14",
-    "typedoc-plugin-markdown": "3.14.0",
-    "typedoc-plugin-resolve-crossmodule-references": "~0.3.3",
-    "typescript": "^4.7.0 || ^5.0.0"
+    "typedoc": "^0.24.0",
+    "typedoc-plugin-markdown": "^3.15.0",
+    "typescript": "~5.0.0"
   },
   "dependencies": {
+    "glob": "10.3.1",
     "handlebars": "4.7.7",
     "lodash": "4.17.21",
     "pluralize": "8.0.0",

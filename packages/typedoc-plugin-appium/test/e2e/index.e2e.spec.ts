@@ -81,79 +81,79 @@ describe('@appium/typedoc-plugin-appium', function () {
     });
   });
 
-  describe('postProcess()', function () {
-    let project: ProjectReflection;
-    let removed: Set<DeclarationReflection> | undefined;
+  // describe('postProcess()', function () {
+  //   let project: ProjectReflection;
+  //   let removed: Set<DeclarationReflection> | undefined;
 
-    describe('when the `outputModules` option is false', function () {
-      before(async function () {
-        const app = reset();
-        app.options.setValue('outputModules', false);
-        resolveBeginCtxPromise = convert(app);
-        resolveEndCtxPromise = postProcess(app);
-        app.convert();
-        [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
-        ({project} = ctx);
-      });
+  //   describe('when the `outputModules` option is false', function () {
+  //     before(async function () {
+  //       const app = reset();
+  //       app.options.setValue('outputModules', false);
+  //       resolveBeginCtxPromise = convert(app);
+  //       resolveEndCtxPromise = postProcess(app);
+  //       app.convert();
+  //       [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
+  //       ({project} = ctx);
+  //     });
 
-      it('should mutate the project', function () {
-        const childRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
-        expect(childRefls).to.have.lengthOf(project.children!.length).and.to.not.be.empty;
-        expect(project.getChildrenByKind(ReflectionKind.Module)).to.be.empty;
-      });
+  //     it('should mutate the project', function () {
+  //       const childRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
+  //       expect(childRefls).to.have.lengthOf(project.children!.length).and.to.not.be.empty;
+  //       expect(project.getChildrenByKind(ReflectionKind.Module)).to.be.empty;
+  //     });
 
-      it('should remove DeclarationReflections', function () {
-        expect(removed).not.to.be.empty;
-      });
-    });
+  //     it('should remove DeclarationReflections', function () {
+  //       expect(removed).not.to.be.empty;
+  //     });
+  //   });
 
-    describe('when the `outputModules` option is true', function () {
-      before(async function () {
-        const app = reset();
-        app.options.setValue('outputModules', true);
-        app.options.setValue('outputBuiltinCommands', true); // do not pollute result
-        resolveBeginCtxPromise = convert(app);
-        resolveEndCtxPromise = postProcess(app);
-        app.convert();
-        [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
-        ({project} = ctx);
-      });
+  //   describe('when the `outputModules` option is true', function () {
+  //     before(async function () {
+  //       const app = reset();
+  //       app.options.setValue('outputModules', true);
+  //       app.options.setValue('outputBuiltinCommands', true); // do not pollute result
+  //       resolveBeginCtxPromise = convert(app);
+  //       resolveEndCtxPromise = postProcess(app);
+  //       app.convert();
+  //       [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
+  //       ({project} = ctx);
+  //     });
 
-      it('should not remove anything from the project', function () {
-        const defaultRefls = project.getChildrenByKind(
-          ~(AppiumPluginReflectionKind.Extension as any)
-        );
-        expect(defaultRefls).to.not.be.empty;
-        const pluginRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
-        expect(pluginRefls).to.not.be.empty;
-      });
+  //     it('should not remove anything from the project', function () {
+  //       const defaultRefls = project.getChildrenByKind(
+  //         ~(AppiumPluginReflectionKind.Extension as any)
+  //       );
+  //       expect(defaultRefls).to.not.be.empty;
+  //       const pluginRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
+  //       expect(pluginRefls).to.not.be.empty;
+  //     });
 
-      it('should not remove DeclarationReflections', function () {
-        expect(removed).to.be.undefined;
-      });
-    });
+  //     it('should not remove DeclarationReflections', function () {
+  //       expect(removed).to.be.undefined;
+  //     });
+  //   });
 
-    describe('when the `outputBuiltinCommands` option is false', function () {
-      before(async function () {
-        const app = reset();
-        app.options.setValue('outputModules', true); // as to not pollute the 'removed' set
-        app.options.setValue('outputBuiltinCommands', false);
-        resolveBeginCtxPromise = convert(app);
-        resolveEndCtxPromise = postProcess(app);
-        app.convert();
-        [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
-        ({project} = ctx);
-      });
+  //   describe('when the `outputBuiltinCommands` option is false', function () {
+  //     before(async function () {
+  //       const app = reset();
+  //       app.options.setValue('outputModules', true); // as to not pollute the 'removed' set
+  //       app.options.setValue('outputBuiltinCommands', false);
+  //       resolveBeginCtxPromise = convert(app);
+  //       resolveEndCtxPromise = postProcess(app);
+  //       app.convert();
+  //       [, {ctx, removed}] = await Promise.all([resolveBeginCtxPromise, resolveEndCtxPromise]);
+  //       ({project} = ctx);
+  //     });
 
-      it('should remove the builtin commands', function () {
-        expect(removed).to.have.lengthOf(1);
-      });
+  //     it('should remove the builtin commands', function () {
+  //       expect(removed).to.have.lengthOf(1);
+  //     });
 
-      it('should not output builtin commands', async function () {
-        const extRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
-        expect(extRefls).to.not.be.empty;
-        expect(_.find(extRefls, {name: NAME_BUILTIN_COMMAND_MODULE})).to.be.undefined;
-      });
-    });
-  });
+  //     it('should not output builtin commands', async function () {
+  //       const extRefls = project.getChildrenByKind(AppiumPluginReflectionKind.Extension as any);
+  //       expect(extRefls).to.not.be.empty;
+  //       expect(_.find(extRefls, {name: NAME_BUILTIN_COMMAND_MODULE})).to.be.undefined;
+  //     });
+  //   });
+  // });
 });

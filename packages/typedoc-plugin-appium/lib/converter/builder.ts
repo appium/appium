@@ -24,32 +24,22 @@ import {NAME_BUILTIN_COMMAND_MODULE} from './builtin-method-map';
 import {findChildByNameAndGuard} from './utils';
 
 /**
- * Creates and adds a child {@linkcode CommandReflection} to this reflection
+ * Creates and adds a child {@linkcode CommandReflection} to the {@linkcode ExtensionReflection}
  *
- * During "normal" usage of TypeDoc, one would call
- * `createDeclarationReflection()`. But since we've subclassed
- * `DeclarationReflection`, we cannot call it directly.  It doesn't seem to do
- * anything useful besides instantiation then delegating to
- * `postReflectionCreation()`; so we just need to call it directly.
- *
- * Finally, we call `finalizeDeclarationReflection()` which I think just fires
- * some events for other plugins to potentially use.
- * @param log Logger
+ * @param project Project
  * @param data Command reference
  * @param route Route
  * @param parent Commands reflection
  * @internal
  */
 export function createCommandReflection(
-  ctx: Context,
+  project: ProjectReflection,
   data: CommandData | ExecMethodData,
   parent: ExtensionReflection,
   route?: Route
 ): void {
   const commandRefl = new CommandReflection(data, parent, route);
-  // yes, the `undefined`s are needed
-  ctx.postReflectionCreation(commandRefl, undefined, undefined);
-  ctx.finalizeDeclarationReflection(commandRefl);
+  project.registerReflection(commandRefl);
 }
 
 /**
@@ -59,47 +49,40 @@ export function createCommandReflection(
  * Note that the return value is mainly for informational purposes, since this method mutates
  * TypeDoc's state.
  * @param log - Logger
- * @param ctx - Context
+ * @param project - Project
  * @param name - Name of module containing commands
  * @param moduleCmds - Command information for `module`
  * @internal
  */
 export function createExtensionReflection(
   log: AppiumPluginLogger,
-  ctx: Context,
+  project: ProjectReflection,
   name: string,
-  moduleCmds: ModuleCommands
+  moduleCmds: ModuleCommands,
+  packageTitles: PackageTitle[]
 ): ExtensionReflection {
-  const packageTitles = ctx.converter.application.options.getValue(
-    'packageTitles'
-  ) as PackageTitle[];
   log.verbose(`Value of packageTitles: %O`, packageTitles);
   // TODO: parent.name may not be right here
   const extRefl = new ExtensionReflection(
     name,
-    ctx.project,
+    project,
     moduleCmds,
     packageTitles.find((p) => p.name === name)?.title
   );
-  /**
-   * See note in {@link createCommandReflection} above about this call
-   */
-  ctx.postReflectionCreation(extRefl, undefined, undefined);
+  project.registerReflection(extRefl);
 
-  const parentCtx = ctx.withScope(extRefl);
   const {routeMap: routeMap, execMethodDataSet: execCommandsData} = moduleCmds;
 
   for (const [route, commandSet] of routeMap) {
     for (const data of commandSet) {
-      createCommandReflection(parentCtx, data, extRefl, route);
+      createCommandReflection(project, data, extRefl, route);
     }
   }
 
   for (const data of execCommandsData) {
-    createCommandReflection(parentCtx, data, extRefl);
+    createCommandReflection(project, data, extRefl);
   }
 
-  ctx.finalizeDeclarationReflection(extRefl);
   return extRefl;
 }
 
@@ -107,18 +90,18 @@ export function createExtensionReflection(
  * Creates custom {@linkcode typedoc#DeclarationReflection}s from parsed command & execute method data.
  *
  * These instances are added to the {@linkcode Context} object itself; this mutates TypeDoc's internal state. Nothing is returned.
- * @param ctx TypeDoc Context
+ * @param project Project
  * @param parentLog Plugin logger
  * @param projectCmds Command info from converter; a map of parent reflections to parsed data
  * @returns List of {@linkcode ExtensionReflection} instances
  */
 export function createReflections(
-  ctx: Context,
+  project: ProjectReflection,
   parentLog: AppiumPluginLogger,
-  projectCmds: ProjectCommands
+  projectCmds: ProjectCommands,
+  packageTitles: PackageTitle[] = []
 ): ExtensionReflection[] {
   const log = parentLog.createChildLogger('builder');
-  const {project} = ctx;
 
   if (!projectCmds.size) {
     log.error('No reflections to create; nothing to do.');
@@ -131,7 +114,13 @@ export function createReflections(
         ? project
         : findChildByNameAndGuard(project, parentName, isParentReflection)!;
 
-    const cmdsRefl = createExtensionReflection(log, ctx, parentRefl.name, parentCmds);
+    const cmdsRefl = createExtensionReflection(
+      log,
+      project,
+      parentRefl.name,
+      parentCmds,
+      packageTitles
+    );
 
     log.info(
       '(%s) Created %d new command %s',

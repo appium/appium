@@ -1,4 +1,4 @@
-import {Context} from 'typedoc';
+import {ProjectReflection} from 'typedoc';
 import {
   isBaseDriverDeclarationReflection,
   isClassDeclarationReflection,
@@ -30,15 +30,15 @@ export const NAME_BUILTIN_COMMAND_MODULE = '@appium/base-driver';
 export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
   /**
    * Creates a child logger for this instance
-   * @param ctx Typedoc Context
+   * @param project Project
    * @param log Logger
    */
   constructor(
-    ctx: Context,
+    project: ProjectReflection,
     log: AppiumPluginLogger,
     protected readonly knownBuiltinMethods: KnownMethods
   ) {
-    super(ctx, log.createChildLogger(NAME_BUILTIN_COMMAND_MODULE));
+    super(project, log.createChildLogger(NAME_BUILTIN_COMMAND_MODULE));
   }
 
   /**
@@ -48,7 +48,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
    * route map (if found).
    */
   public override convert(): BuiltinCommands {
-    const {project} = this.ctx;
+    const {project} = this;
     const baseDriverModuleRefl = findParentReflectionByName(project, NAME_BUILTIN_COMMAND_MODULE);
 
     if (!isBaseDriverDeclarationReflection(baseDriverModuleRefl)) {
@@ -78,7 +78,7 @@ export class BuiltinMethodMapConverter extends BaseConverter<BuiltinCommands> {
 
     const knownClassMethods = findCommandMethodsInReflection(baseDriverClassRefl);
     const baseDriverRoutes = convertMethodMap({
-      ctx: this.ctx,
+      project: this.project,
       log: this.log,
       methodMapRefl: methodMap,
       parentRefl: baseDriverModuleRefl,

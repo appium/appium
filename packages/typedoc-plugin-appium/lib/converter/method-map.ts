@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {Context, DeclarationReflection, ReflectionKind} from 'typedoc';
+import {DeclarationReflection, ProjectReflection, ReflectionKind} from 'typedoc';
 import {
   isCommandPropDeclarationReflection,
   isHTTPMethodDeclarationReflection,
@@ -22,7 +22,7 @@ import {
  * Options for {@linkcode convertMethodMap}
  */
 export interface ConvertMethodMapOpts {
-  ctx: Context;
+  project: ProjectReflection;
   /**
    * All builtin methods from `@appium/types`
    */
@@ -60,7 +60,7 @@ export interface ConvertMethodMapOpts {
  * @returns Lookup of routes to {@linkcode CommandSet} objects
  */
 export function convertMethodMap({
-  ctx,
+  project: ctx,
   log,
   methodMapRefl,
   parentRefl,
@@ -81,7 +81,7 @@ export function convertMethodMap({
   }
 
   for (const routeProp of routeProps) {
-    const {originalName: route} = routeProp;
+    const {name: route} = routeProp;
 
     if (!isRoutePropDeclarationReflection(routeProp)) {
       log.warn('Empty route: %s', route);

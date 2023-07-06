@@ -49,8 +49,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "typedoc": {
-    "entryPoint": "./lib/index.js"
-  },
   "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
 }

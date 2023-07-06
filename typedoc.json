@@ -23,5 +23,7 @@
   ],
   "name": "Appium",
   "out": "./packages/appium/docs/en/reference",
-  "outputBuiltinCommands": true
+  "outputBuiltinCommands": true,
+  "plugin": ["typedoc-plugin-markdown", "./packages/typedoc-plugin-appium"],
+  "readme": "none"
 }

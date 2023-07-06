@@ -104,8 +104,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "3fa73a1d1a95e3868fbceb005f8b1deb4ac53eaf",
-  "typedoc": {
-    "entryPoint": "./lib/main.js"
-  }
+  "gitHead": "3fa73a1d1a95e3868fbceb005f8b1deb4ac53eaf"
 }

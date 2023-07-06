@@ -79,9 +79,6 @@
       "fake-stdin": "./build/lib/scripts/fake-stdin.js"
     }
   },
-  "typedoc": {
-    "entryPoint": "./lib/index.js"
-  },
   "types": "./build/lib/index.d.ts",
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

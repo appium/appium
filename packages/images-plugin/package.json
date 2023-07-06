@@ -59,8 +59,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72",
-  "typedoc": {
-    "entryPoint": "./lib/plugin.js"
-  }
+  "gitHead": "84b211330dc84849af9cc1f3a5c5ad32e15b2e72"
 }

@@ -49,9 +49,6 @@
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
-  "typedoc": {
-    "entryPoint": "./lib/index.ts"
-  },
   "peerDependencies": {
     "appium": "^2.0.0-beta.48",
     "typedoc": "~0.23.14",

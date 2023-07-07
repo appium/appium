@@ -2,7 +2,7 @@
 
 const {asyncify} = require('asyncbox');
 
-const appium = require('./build/lib/main.js');
+const appium = require('./build/lib');
 
 if (require.main === module) {
   asyncify(appium.main);

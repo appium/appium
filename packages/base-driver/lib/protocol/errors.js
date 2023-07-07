@@ -1,7 +1,7 @@
+import {logger, util} from '@appium/support';
 import ES6Error from 'es6-error';
-import _ from 'lodash';
-import {util, logger} from '@appium/support';
 import {StatusCodes as HTTPStatusCodes} from 'http-status-codes';
+import _ from 'lodash';
 
 const mjsonwpLog = logger.getLogger('MJSONWP');
 const w3cLog = logger.getLogger('W3C');
@@ -915,8 +915,11 @@ export class ProxyRequestError extends ES6Error {
     return new UnknownError(this.message);
   }
 }
-// map of error class name to error class
-const errors = {
+
+/**
+ * map of error class name to error class
+ */
+export const errors = /** @type {const} */ ({
   NotYetImplementedError,
   NotImplementedError,
   BadParametersError,
@@ -957,24 +960,41 @@ const errors = {
   UnknownMethodError,
   UnsupportedOperationError,
   ProxyRequestError,
-};
+});
 
-// map of error code to error class
-const jsonwpErrorCodeMap = {};
-for (let ErrorClass of _.values(errors)) {
-  if ('code' in ErrorClass) {
-    jsonwpErrorCodeMap[ErrorClass.code()] = ErrorClass;
-  }
+/**
+ * @param {any} [ErrCtor]
+ * @returns {ErrCtor is W3CError}
+ */
+function isW3CError(ErrCtor) {
+  return ErrCtor && 'error' in ErrCtor;
 }
 
-const w3cErrorCodeMap = {};
-for (let ErrorClass of _.values(errors)) {
-  if ('error' in ErrorClass) {
-    w3cErrorCodeMap[ErrorClass.error()] = ErrorClass;
-  }
+/**
+ * @param {any} [ErrCtor]
+ * @returns {ErrCtor is JSONWPError}
+ */
+function isJSONWPError(ErrCtor) {
+  return ErrCtor && 'code' in ErrCtor;
 }
 
-function isUnknownError(err) {
+/** @type {import('@appium/types').StringRecord<JSONWPError>} */
+const jsonwpErrorCodeMap = _.mapKeys(
+  _.pickBy(errors, isJSONWPError),
+  /** @param {JSONWPError} ErrCtor */ (ErrCtor) => ErrCtor.code()
+);
+
+/** @type {import('@appium/types').StringRecord<W3CError>} */
+const w3cErrorCodeMap = _.mapKeys(
+  _.pickBy(errors, isW3CError),
+  /** @param {W3CError} ErrCtor */ (ErrCtor) => ErrCtor.error()
+);
+
+/**
+ * @param {any} err
+ * @returns {err is Error}
+ */
+export function isUnknownError(err) {
   return (
     !err.constructor.name ||
     !_.values(errors).find(function equalNames(error) {
@@ -982,6 +1002,7 @@ function isUnknownError(err) {
     })
   );
 }
+
 /**
  * Type guard to check if an Error is of a specific type
  * @template {Error} T
@@ -989,7 +1010,7 @@ function isUnknownError(err) {
  * @param {import('@appium/types').Class<T>} type
  * @returns {err is T}
  */
-function isErrorType(err, type) {
+export function isErrorType(err, type) {
   // `name` property is the constructor name
   if (type.name === ProtocolError.name) {
     // `jsonwpCode` is `0` on success
@@ -1012,16 +1033,16 @@ function isErrorType(err, type) {
 /**
  * Retrieve an error derived from MJSONWP status
  * @param {number} code JSONWP status code
- * @param {string|Object} value The error message, or an object with a `message` property
+ * @param {string|object} value The error message, or an object with a `message` property
  * @return {ProtocolError} The error that is associated with provided JSONWP status code
  */
-function errorFromMJSONWPStatusCode(code, value = '') {
+export function errorFromMJSONWPStatusCode(code, value = '') {
   // if `value` is an object, pull message from it, otherwise use the plain
   // value, or default to an empty string, if null
   const message = (value || {}).message || value || '';
-  if (code !== UnknownError.code() && jsonwpErrorCodeMap[code]) {
+  if (code !== UnknownError.code() && code in jsonwpErrorCodeMap) {
     mjsonwpLog.debug(`Matched JSONWP error code ${code} to ${jsonwpErrorCodeMap[code].name}`);
-    return new jsonwpErrorCodeMap[code](message);
+    return /** @type {ProtocolError} */ (new jsonwpErrorCodeMap[code](message));
   }
   mjsonwpLog.debug(`Matched JSONWP error code ${code} to UnknownError`);
   return new UnknownError(message);
@@ -1031,10 +1052,10 @@ function errorFromMJSONWPStatusCode(code, value = '') {
  * Retrieve an error derived from W3C JSON Code
  * @param {string} code W3C error string (see https://www.w3.org/TR/webdriver/#handling-errors `JSON Error Code` column)
  * @param {string} message the error message
- * @param {?string} stacktrace an optional error stacktrace
+ * @param {string|null} stacktrace an optional error stacktrace
  * @return {ProtocolError}  The error that is associated with the W3C error string
  */
-function errorFromW3CJsonCode(code, message, stacktrace = null) {
+export function errorFromW3CJsonCode(code, message, stacktrace = null) {
   if (code && w3cErrorCodeMap[code.toLowerCase()]) {
     w3cLog.debug(`Matched W3C error code '${code}' to ${w3cErrorCodeMap[code.toLowerCase()].name}`);
     const resultError = new w3cErrorCodeMap[code.toLowerCase()](message);
@@ -1060,7 +1081,7 @@ function isProtocolError(err) {
  * Convert an Appium error to proper W3C HTTP response
  * @param {ProtocolError|MJSONWPError} err The error that needs to be translated
  */
-function getResponseForW3CError(err) {
+export function getResponseForW3CError(err) {
   let httpStatus;
 
   // W3C defined error message (https://www.w3.org/TR/webdriver/#dfn-error-code)
@@ -1078,7 +1099,7 @@ function getResponseForW3CError(err) {
     w3cLog.debug(`Bad parameters: ${err}`);
     w3cErrorString = BadParametersError.error();
   } else {
-    // @ts-expect-error unclear what the problem is here
+    // @ts-expect-error unclear what the problem is here; looks unreachable
     w3cErrorString = err.error;
   }
 
@@ -1102,7 +1123,7 @@ function getResponseForW3CError(err) {
  * Convert an Appium error to a proper JSONWP response
  * @param {ProtocolError} err The error to be converted
  */
-function getResponseForJsonwpError(err) {
+export function getResponseForJsonwpError(err) {
   if (isUnknownError(err)) {
     err = new errors.UnknownError(err);
   }
@@ -1136,16 +1157,6 @@ function getResponseForJsonwpError(err) {
   return [httpStatus, httpResBody];
 }
 
-export {
-  errors,
-  isErrorType,
-  isUnknownError,
-  errorFromMJSONWPStatusCode,
-  errorFromW3CJsonCode,
-  getResponseForW3CError,
-  getResponseForJsonwpError,
-};
-
 /**
  * @typedef { string | {value: HttpResultBodyValue, status?: number } } HttpResultBody
  */
@@ -1162,4 +1173,12 @@ export {
  * @property {number} status
  * @property {string|object} value
  * @property {string} message
+ */
+
+/**
+ * @typedef {import('@appium/types').Class<any, {error: () => string, stacktrace?: string}>} W3CError
+ */
+
+/**
+ * @typedef {import('@appium/types').Class<any, {code: () => string|number}>} JSONWPError
  */

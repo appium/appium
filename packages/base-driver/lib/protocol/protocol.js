@@ -1,19 +1,19 @@
+import {logger, node, util} from '@appium/support';
+import B from 'bluebird';
 import _ from 'lodash';
-import {util, logger, node} from '@appium/support';
-import {validators} from './validators';
+import log from '../basedriver/logger';
+import {DEFAULT_BASE_PATH, MAX_LOG_BODY_LENGTH, PROTOCOLS} from '../constants';
+import {isW3cCaps} from '../helpers/capabilities';
 import {
   errors,
-  isErrorType,
-  getResponseForW3CError,
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
+  getResponseForW3CError,
+  isErrorType,
 } from './errors';
-import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
-import B from 'bluebird';
 import {formatResponseValue, formatStatus} from './helpers';
-import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
-import {isW3cCaps} from '../helpers/capabilities';
-import log from '../basedriver/logger';
+import {METHOD_MAP, NO_SESSION_ID_COMMANDS} from './routes';
+import {validators} from './validators';
 
 const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -561,13 +561,13 @@ async function doJwpProxy(driver, req, res) {
 }
 
 export {
-  routeConfiguringFunction,
-  isSessionCommand,
-  driverShouldDoJwpProxy,
-  determineProtocol,
   CREATE_SESSION_COMMAND,
   DELETE_SESSION_COMMAND,
   GET_STATUS_COMMAND,
   deprecatedCommandsLogged,
+  determineProtocol,
+  driverShouldDoJwpProxy,
+  isSessionCommand,
+  routeConfiguringFunction,
   validateExecuteMethodParams,
 };

@@ -10,13 +10,14 @@ export type AppiumConfig = Partial<AppiumConfiguration>;
 /**
  * Derive the "constant" type of the server properties from the schema.
  */
-type AppiumServerJsonSchema = (typeof AppiumConfigJsonSchema)['properties']['server']['properties'];
+export type AppiumServerJsonSchema =
+  (typeof AppiumConfigJsonSchema)['properties']['server']['properties'];
 
 /**
  * This type associates the types generated from the schema ({@linkcode AppiumConfiguration})
  * with the schema itself (beginning with the `server` prop).
  */
-type ServerConfigMapping = Associated<ServerConfig, AppiumServerJsonSchema>;
+export type ServerConfigMapping = Associated<ServerConfig, AppiumServerJsonSchema>;
 
 /**
  * Camel-cased server config. _Not_ flattened.
@@ -39,7 +40,7 @@ export type NormalizedAppiumConfig = {
  * {@linkcode WithDest}, and uses the _value_ of that property for the key name;
  * otherwise uses the camel-cased value of the key name.
  */
-type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
+export type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
   AppiumServerJsonSchema[Prop] extends WithDest
     ? AppiumServerJsonSchema[Prop]['appiumCliDest']
     : KebabToCamel<Prop>;
@@ -49,7 +50,7 @@ type SetKeyForProp<Prop extends keyof ServerConfigMapping> =
  * always be defined (eliminates `| undefined` from the type).
  * If no default value, just a type.
  */
-type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
+export type KeyOrDefaultForProp<Prop extends keyof ServerConfigMapping> =
   AppiumServerJsonSchema[Prop] extends WithDefault
     ? NonNullable<ServerConfig[Prop]>
     : ServerConfig[Prop];
@@ -73,7 +74,7 @@ export type ServerArgs = {
  *
  * See `appium/lib/schema/keywords` for definition of `appiumCliDest`.
  */
-interface WithDest {
+export interface WithDest {
   appiumCliDest: string;
 }
 
@@ -84,7 +85,7 @@ interface WithDest {
  * We use this to ensure that the `ParsedArgs` makes guarantees
  * about the presence of properties.
  */
-interface WithDefault<T = any> {
+export interface WithDefault<T = any> {
   default: T;
 }
 

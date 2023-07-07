@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {validator} from './desired-caps';
 import {util} from '@appium/support';
 import log from './logger';
-import {errors} from '../protocol/errors';
+import {errors} from '../protocol';
 
 const APPIUM_VENDOR_PREFIX = 'appium:';
 const PREFIXED_APPIUM_OPTS_CAP = `${APPIUM_VENDOR_PREFIX}options`;

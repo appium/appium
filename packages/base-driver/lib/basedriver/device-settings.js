@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import log from './logger';
 import {node, util} from '@appium/support';
-import {errors} from '../protocol/errors';
+import {errors} from '../protocol';
 
 /**
  * Maximum size (in bytes) of a given driver's settings object (which is internal to {@linkcode DriverSettings}).
@@ -9,7 +9,7 @@ import {errors} from '../protocol/errors';
 export const MAX_SETTINGS_SIZE = 20 * 1024 * 1024; // 20 MB
 
 /**
- * @template {StringRecord} T
+ * @template {import('@appium/types').StringRecord} T
  * @implements {IDeviceSettings<T>}
  */
 export class DeviceSettings {
@@ -74,10 +74,6 @@ export class DeviceSettings {
 export default DeviceSettings;
 
 /**
- * @typedef {import('@appium/types').StringRecord} StringRecord
- */
-
-/**
- * @template {StringRecord} [T=StringRecord]
+ * @template {import('@appium/types').StringRecord} [T=import('@appium/types').StringRecord]
  * @typedef {import('@appium/types').IDeviceSettings<T>} IDeviceSettings
  */

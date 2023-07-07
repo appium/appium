@@ -20,7 +20,7 @@ describe('AppiumDriver', function () {
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
 
-  /** @type {typeof import('appium/lib/appium').AppiumDriver} */
+  /** @type {typeof import('../../lib/appium').AppiumDriver} */
   let AppiumDriver;
 
   /** @type {MockConfig} */

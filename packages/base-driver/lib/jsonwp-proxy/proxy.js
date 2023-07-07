@@ -8,8 +8,8 @@ import {
   errorFromMJSONWPStatusCode,
   errorFromW3CJsonCode,
   getResponseForW3CError,
-} from '../protocol/errors';
-import {routeToCommandName} from '../protocol';
+  routeToCommandName,
+} from '../protocol';
 import {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
 import ProtocolConverter from './protocol-converter';
 import {formatResponseValue, formatStatus} from '../protocol/helpers';

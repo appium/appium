@@ -200,7 +200,8 @@ async function prepareAppiumHome(name, appiumHome) {
  *
  * If `args` contains a non-empty `subcommand` which is not `server`, this function will return an empty object.
  *
- * @template {CliCommand} [Cmd=ServerCommand]
+ * @internal
+ * @template {CliCommand} [Cmd=CliCommandServer]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
  * @param {Args<Cmd, SubCmd>} [args] - Partial args (progammatic usage only)
  * @returns {Promise<InitResult<Cmd>>}
@@ -210,7 +211,7 @@ async function prepareAppiumHome(name, appiumHome) {
  * await init(options);
  * const schema = getSchema(); // entire config schema including plugins and drivers
  */
-async function init(args) {
+export async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
   let appiumHomeSourceName = 'autodetected appium home path';
   if (!_.isNil(args?.appiumHome)) {
@@ -342,38 +343,36 @@ function logServerAddress(url) {
   const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   const toLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
     const href = urlObj.href.replace(urlObj.hostname, iface.address);
-    return iface.internal
-      ? `${href} (only accessible from the same host)`
-      : href;
+    return iface.internal ? `${href} (only accessible from the same host)` : href;
   };
   logger.info(
     `You can provide the following ${util.pluralize('URL', interfaces.length, false)} ` +
-    `in your client code to connect to this server:\n` +
-    interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
+      `in your client code to connect to this server:\n` +
+      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
   );
 }
 
 /**
  * Initializes Appium's config.  Starts server if appropriate and resolves the
  * server instance if so; otherwise resolves w/ `undefined`.
- * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliCommand} [Cmd=CliCommandServer]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
  * @param {Args<Cmd, SubCmd>} [args] - Arguments from CLI or otherwise
- * @returns {Promise<Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void>}
+ * @returns {Promise<Cmd extends CliCommandServer ? import('@appium/types').AppiumServer : void>}
  */
-async function main(args) {
+export async function main(args) {
   const initResult = await init(args);
 
   if (_.isEmpty(initResult)) {
     // if this branch is taken, we've run a different subcommand, so there's nothing
     // left to do here.
-    return /** @type {Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void} */ (
+    return /** @type {Cmd extends CliCommandServer ? import('@appium/types').AppiumServer : void} */ (
       undefined
     );
   }
 
   const {appiumDriver, pluginConfig, driverConfig, parsedArgs} =
-    /** @type {InitResult<ServerCommand>} */ (initResult);
+    /** @type {InitResult<CliCommandServer>} */ (initResult);
 
   const pluginClasses = getActivePlugins(pluginConfig, parsedArgs.usePlugins);
   // set the active plugins on the umbrella driver so it can use them for commands
@@ -459,7 +458,7 @@ async function main(args) {
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);
 
-  return /** @type {Cmd extends ServerCommand ? import('@appium/types').AppiumServer : void} */ (
+  return /** @type {Cmd extends CliCommandServer ? import('@appium/types').AppiumServer : void} */ (
     server
   );
 }
@@ -471,11 +470,6 @@ if (require.main === module) {
   asyncify(main);
 }
 
-// everything below here is intended to be a public API.
-export {readConfigFile} from './config-file';
-export {finalizeSchema, getSchema, validate} from './schema/schema';
-export {main, init, resolveAppiumHome};
-
 /**
  * @typedef {import('@appium/types').DriverType} DriverType
  * @typedef {import('@appium/types').PluginType} PluginType
@@ -484,16 +478,11 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('appium/types').CliCommand} CliCommand
  * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
  * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
- * @typedef {import('appium/types').CliCommandServer} ServerCommand
- * @typedef {import('appium/types').CliCommandDriver} DriverCommand
- * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandServer} CliCommandServer
+ * @typedef {import('appium/types').CliCommandDriver} CliCommandDriver
+ * @typedef {import('appium/types').CliCommandPlugin} CliCommandPlugin
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
- */
-
-/**
- * Literally an empty object
- * @typedef { {} } ExtCommandInitResult
  */
 
 /**
@@ -503,18 +492,19 @@ export {main, init, resolveAppiumHome};
  */
 
 /**
+ * @internal
  * @template {CliCommand} Cmd
- * @typedef {Cmd extends ServerCommand ? ServerInitData & import('./extension').ExtensionConfigs : ExtCommandInitResult} InitResult
+ * @typedef {Cmd extends import('appium/types').CliCommandServer ? ServerInitData & import('./extension').ExtensionConfigs : import('type-fest').EmptyObject} InitResult
  */
 
 /**
- * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliCommand} [Cmd=CliCommandServer]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
  * @typedef {import('appium/types').Args<Cmd, SubCmd>} Args
  */
 
 /**
- * @template {CliCommand} [Cmd=ServerCommand]
+ * @template {CliCommand} [Cmd=CliCommandServer]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
  * @typedef {import('appium/types').ParsedArgs<Cmd, SubCmd>} ParsedArgs
  */

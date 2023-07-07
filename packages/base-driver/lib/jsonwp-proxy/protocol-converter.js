@@ -42,7 +42,7 @@ export const COMMAND_URLS_CONFLICTS = [
 const {MJSONWP, W3C} = PROTOCOLS;
 const DEFAULT_LOG = logger.getLogger('Protocol Converter');
 
-class ProtocolConverter {
+export class ProtocolConverter {
   constructor(proxyFunc, log = null) {
     this.proxyFunc = proxyFunc;
     this._downstreamProtocol = null;

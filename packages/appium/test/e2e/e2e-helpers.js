@@ -182,7 +182,6 @@ export function formatAppiumArgErrorOutput(stderr) {
 
 /**
  * @typedef {import('@appium/types').ExtensionType} ExtensionType
- * @typedef {import('appium/lib/cli/extension-command').ExtensionList} ExtensionListData
  * @typedef {import('teen_process').ExecError} ExecError
  * @typedef {import('teen_process').TeenProcessExecOptions} TeenProcessExecOptions
  * @typedef {import('teen_process').TeenProcessExecResult<string>} TeenProcessExecResult
@@ -198,13 +197,13 @@ export function formatAppiumArgErrorOutput(stderr) {
  */
 
 /**
- * @template T
+ * @template {ExtensionType} T
  * @typedef {import('appium/types').ExtRecord<T>} ExtRecord
  */
 
 /**
  * @template ExtSubCommand
- * @typedef {[import('appium/types').CliSubcommand, ExtSubCommand, ...string[]]} CliExtArgs
+ * @typedef {[import('appium/types').CliExtensionSubcommand, ExtSubCommand, ...string[]]} CliExtArgs
  */
 
 /**
@@ -213,7 +212,7 @@ export function formatAppiumArgErrorOutput(stderr) {
 
 /**
  * @template [Result=unknown]
- * @template {import('appium/types').CliSubcommand} [ExtSubcommand=never]
+ * @template {import('appium/types').CliExtensionSubcommand} [ExtSubcommand=never]
  * @callback AppiumRunner
  * @param {string} appiumHome
  * @param {CliExtArgs<ExtSubcommand>|CliArgs} args

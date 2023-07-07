@@ -2,9 +2,6 @@ import {BaseDriverCapConstraints} from './constraints';
 import {Constraint, Constraints} from './driver';
 import {StandardCapabilities} from './standard-caps';
 import {AnyCase, StringRecord} from './util';
-
-export {StandardCapabilities};
-
 export type W3C_APPIUM_PREFIX = 'appium';
 
 /**

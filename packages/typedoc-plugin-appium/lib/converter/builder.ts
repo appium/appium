@@ -6,7 +6,13 @@
 
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import {ContainerReflection, Context, DeclarationReflection, ProjectReflection} from 'typedoc';
+import {
+  ContainerReflection,
+  Context,
+  DeclarationReflection,
+  ProjectReflection,
+  ReflectionKind,
+} from 'typedoc';
 import {isParentReflection} from '../guards';
 import {AppiumPluginLogger} from '../logger';
 import {
@@ -40,6 +46,7 @@ export function createCommandReflection(
 ): void {
   const commandRefl = new CommandReflection(data, parent, route);
   project.registerReflection(commandRefl);
+  parent.children = [...(parent.children ?? []), commandRefl];
 }
 
 /**
@@ -70,6 +77,7 @@ export function createExtensionReflection(
     packageTitles.find((p) => p.name === name)?.title
   );
   project.registerReflection(extRefl);
+  project.children = [...(project.children ?? []), extRefl];
 
   const {routeMap: routeMap, execMethodDataSet: execCommandsData} = moduleCmds;
 
@@ -114,7 +122,7 @@ export function createReflections(
         ? project
         : findChildByNameAndGuard(project, parentName, isParentReflection)!;
 
-    const cmdsRefl = createExtensionReflection(
+    const extRefl = createExtensionReflection(
       log,
       project,
       parentRefl.name,
@@ -125,10 +133,10 @@ export function createReflections(
     log.info(
       '(%s) Created %d new command %s',
       parentName,
-      cmdsRefl.children?.length ?? 0,
-      pluralize('reflection', cmdsRefl.children?.length ?? 0)
+      extRefl.children?.length ?? 0,
+      pluralize('reflection', extRefl.children?.length ?? 0)
     );
-    return cmdsRefl;
+    return extRefl;
   });
 }
 
@@ -165,9 +173,7 @@ export function omitBuiltinReflections(
 ) {
   const removed = new Set<DeclarationReflection>();
 
-  const extRefls = refl.getChildrenByKind(
-    AppiumPluginReflectionKind.Extension as any
-  ) as DeclarationReflection[];
+  const extRefls = refl.getChildrenByKind(ReflectionKind.Module) as DeclarationReflection[];
   const builtinRefl = _.find(extRefls, {name: NAME_BUILTIN_COMMAND_MODULE});
   if (!builtinRefl) {
     throw new Error(`Could not find builtin commands reflection "${NAME_BUILTIN_COMMAND_MODULE}"`);

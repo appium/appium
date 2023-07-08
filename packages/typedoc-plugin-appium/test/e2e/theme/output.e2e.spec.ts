@@ -12,7 +12,7 @@ describe('@appium/typedoc-plugin-appium', function () {
   let tmpDir: string;
   before(async function () {
     const app = reset({
-      plugin: ['typedoc-plugin-markdown', 'typedoc-plugin-crossmodule-references'],
+      plugin: ['typedoc-plugin-markdown'],
     });
     const promise = convert(app);
     const project = app.convert();

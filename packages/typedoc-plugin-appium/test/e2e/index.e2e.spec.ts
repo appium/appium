@@ -58,7 +58,7 @@ describe('@appium/typedoc-plugin-appium', function () {
 
       it('should find examples', function () {
         const baseDriverRefl = extensionReflections.find(
-          (refl) => refl.name === '@appium/base-driver'
+          (refl) => refl.name === NAME_BUILTIN_COMMAND_MODULE
         )!;
         expect(baseDriverRefl).to.exist;
         const cmdRefl = baseDriverRefl.getChildByName('getStatus')! as CommandReflection;

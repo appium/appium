@@ -38,7 +38,7 @@ To install Appium 2 server using Node Package Manager (npm) run the following co
 npm install -g appium
 ```
 
-:bangbang: Make sure Appium 1 is fully reinstalled before upgrading it to Appium 2 (`npm uninstall -g appium`). Unexpected errors might appear if this has not been done.
+:bangbang: Make sure Appium 1 is fully unistalled before upgrading it to Appium 2 (`npm uninstall -g appium`). Unexpected errors might appear if this has not been done.
 
 ### Drivers
 

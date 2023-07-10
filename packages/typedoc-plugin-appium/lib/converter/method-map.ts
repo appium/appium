@@ -60,7 +60,7 @@ export interface ConvertMethodMapOpts {
  * @returns Lookup of routes to {@linkcode CommandSet} objects
  */
 export function convertMethodMap({
-  project: ctx,
+  project,
   log,
   methodMapRefl,
   parentRefl,
@@ -142,7 +142,7 @@ export function convertMethodMap({
 
       const commandSet: CommandSet = routes.get(route) ?? new Set();
 
-      const commandData = CommandData.create(ctx, log, command, method, httpMethod, route, {
+      const commandData = CommandData.create(project, log, command, method, httpMethod, route, {
         requiredParams,
         optionalParams,
         comment,

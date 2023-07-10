@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import {
   Comment,
-  Context,
   DeclarationReflection,
   IntrinsicType,
   LiteralType,
@@ -12,14 +11,14 @@ import {
 } from 'typedoc';
 import {
   CallSignatureReflection,
-  cloneCallSignatureReflection,
   CommandMethodDeclarationReflection,
   CommentSource,
+  Example,
+  KnownMethods,
+  cloneCallSignatureReflection,
   createNewParamRefls,
   deriveComment,
-  Example,
   extractExamples,
-  KnownMethods,
 } from '../converter';
 import {AppiumPluginLogger} from '../logger';
 import {findCallSignature} from '../utils';
@@ -314,7 +313,7 @@ export class CommandData extends BaseCommandData {
   /**
    * Creates a new instance of {@linkcode CommandData} and registers any newly-created reflections
    * with TypeDoc.
-   * @param project Context
+   * @param project Project
    * @param log Logger
    * @param command Command name
    * @param methodRefl Command method reflection

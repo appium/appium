@@ -7,7 +7,13 @@
 import {fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'node:path';
-import {Application, ArgumentsReader, TypeDocOptions, TypeDocReader} from 'typedoc';
+import {
+  Application,
+  ArgumentsReader,
+  TSConfigReader,
+  TypeDocReader,
+  type TypeDocOptions,
+} from 'typedoc';
 import {
   DEFAULT_LOG_LEVEL,
   DEFAULT_REL_TYPEDOC_OUT_PATH,
@@ -30,25 +36,23 @@ const log = getLogger('builder:reference');
  * @parma typeDocJsonPath - Path to `typedoc.json`
  * @param opts - TypeDoc options
  */
-export async function runTypedoc(typeDocJsonPath: string, opts: Record<string, string>) {
-  const args = argify(opts);
-  log.debug('TypeDoc args:', args);
+export async function runTypedoc(
+  typeDocJsonPath: string,
+  opts: Pick<Partial<TypeDocOptions>, 'out' | 'tsconfig' | 'name' | 'logLevel'>
+) {
   const app = new Application();
-  app.options.setValue(
-    'plugin',
-    _.uniq([
-      ...(app.options.getValue('plugin') ?? []),
-      'typedoc-plugin-markdown',
-      '@appium/typedoc-plugin-appium',
-    ])
-  );
   app.options.addReader(new TypeDocReader());
-  app.options.addReader(new ArgumentsReader(100, args));
-  app.bootstrap({options: path.dirname(typeDocJsonPath)});
-  const out = app.options.getValue('out');
+  app.options.addReader(new TSConfigReader());
+  app.options.addReader(new ArgumentsReader(100, argify(opts)));
+  await app.bootstrapWithPlugins({
+    ...opts,
+    options: path.dirname(typeDocJsonPath),
+    plugin: ['typedoc-plugin-markdown', '@appium/typedoc-plugin-appium'],
+  });
+  log.debug('TypeDoc options:', app.options.getRawValues());
   const project = app.convert();
   if (project) {
-    return await app.generateDocs(project, out);
+    return await app.generateDocs(project, app.options.getValue('out'));
   }
 
   throw new DocutilsError('TypeDoc found nothing to document. Is your package empty?');
@@ -153,7 +157,7 @@ export async function buildReferenceDocs({
       path.dirname(typeDocJsonPath),
       path.join(pkgRoot, DEFAULT_REL_TYPEDOC_OUT_PATH)
     );
-    log.debug('Setting "out" option to %s', out);
+    log.debug('Setting "out" option to default: %s', out);
   }
 
   const extraTypedocOpts = _.pickBy(
@@ -170,5 +174,6 @@ export async function buildReferenceDocs({
     );
   } catch (err) {
     log.error(err);
+    throw new DocutilsError('Could not build reference docs; see above log for details');
   }
 }

@@ -12,10 +12,11 @@ import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {exec} from 'teen_process';
 import {JsonValue} from 'type-fest';
-import {Application, TypeDocReader} from 'typedoc';
+import {Logger, Options, TypeDocReader} from 'typedoc';
 import YAML from 'yaml';
 import {
   NAME_MIKE,
+  NAME_MKDOCS,
   NAME_MKDOCS_YML,
   NAME_NPM,
   NAME_PACKAGE_JSON,
@@ -165,11 +166,12 @@ export const readPackageJson = _.memoize(_readPkgJson);
  * blocking operation.
  */
 export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
-  const app = new Application();
-  app.options.setValue('plugin', 'none');
-  app.options.addReader(new TypeDocReader());
-  app.bootstrap({options: path.dirname(typedocJsonPath)});
-  return app.options.getRawValues();
+  // this is a null logger
+  const logger = new Logger();
+  const opts = new Options(logger);
+  // this mutates `opts`
+  new TypeDocReader().read(opts, logger, path.dirname(typedocJsonPath));
+  return opts.getRawValues();
 });
 
 /**
@@ -248,9 +250,33 @@ export const findMike = _.partial(async () => {
     // usually it's something like ~/.local
     const {stdout} = await exec(pythonPath, ['-m', 'site', '--user-base']);
     if (stdout) {
-      mikePath = path.join(stdout.trim(), 'bin', 'mike');
+      mikePath = path.join(stdout.trim(), 'bin', NAME_MIKE);
       if (await fs.isExecutable(mikePath)) {
         return mikePath;
+      }
+    }
+  } catch {}
+});
+
+export const findMkdocs = _.partial(async () => {
+  // see if it's in PATH
+  let mkdocsPath = await cachedWhich(NAME_MKDOCS, {nothrow: true});
+  if (mkdocsPath) {
+    return mkdocsPath;
+  }
+  // if it isn't, it may be in a user dir
+  const pythonPath = await findPython();
+  if (!pythonPath) {
+    return;
+  }
+  try {
+    // the user dir can be found this way.
+    // usually it's something like ~/.local
+    const {stdout} = await exec(pythonPath, ['-m', 'site', '--user-base']);
+    if (stdout) {
+      mkdocsPath = path.join(stdout.trim(), 'bin', NAME_MKDOCS);
+      if (await fs.isExecutable(mkdocsPath)) {
+        return mkdocsPath;
       }
     }
   } catch {}

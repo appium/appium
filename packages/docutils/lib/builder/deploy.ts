@@ -6,7 +6,7 @@
 
 import _ from 'lodash';
 import path from 'node:path';
-import {exec, TeenProcessExecOptions} from 'teen_process';
+import {exec, ExecError, TeenProcessExecOptions} from 'teen_process';
 import {
   DEFAULT_DEPLOY_BRANCH,
   DEFAULT_DEPLOY_REMOTE,
@@ -18,7 +18,7 @@ import {
   NAME_PYTHON,
 } from '../constants';
 import {DocutilsError} from '../error';
-import {findMike, findMkDocsYml, findPython, readPackageJson} from '../fs';
+import {findMike, findMkdocs, findMkDocsYml, findPython, readPackageJson} from '../fs';
 import {getLogger} from '../logger';
 import {argify, spawnBackgroundProcess, SpawnBackgroundProcessOpts, stopwatch} from '../util';
 
@@ -129,6 +129,17 @@ export async function deploy({
     host,
   };
 
+  const mkdocsPath = await findMkdocs();
+  if (!mkdocsPath) {
+    throw new DocutilsError(`Could not find mkdocs executable; please run "${NAME_BIN} init`);
+  }
+  // okay, so if mkdocs is not in the PATH, then mike can't find it and will fail.
+  // so if we've found mkdocs, then we should add it to the path, just in case.
+  // further validation would involve asserting that the mkdocs version is what we expect,
+  // because this mkdocs executable may not be the same one we found via validation.
+  execOpts = _.defaultsDeep(execOpts, {
+    env: {PATH: `${path.dirname(mkdocsPath)}${path.delimiter}${process.env.PATH}`},
+  });
   const mikePath = await findMike();
   if (!mikePath) {
     throw new DocutilsError(
@@ -137,7 +148,7 @@ export async function deploy({
   }
   if (serve) {
     const mikeArgs = [
-      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value)))
+      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
     ];
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
@@ -162,7 +173,12 @@ export async function deploy({
     } else {
       mikeArgs.push(version);
     }
-    await doDeploy(mikePath, mikeArgs, execOpts);
+    try {
+      log.info('Executing %s via: %', NAME_MIKE, [mikePath, ...mikeArgs].join(', '));
+      await doDeploy(mikePath, mikeArgs, execOpts);
+    } catch (err) {
+      throw new DocutilsError(`Failed to deploy: ${(err as ExecError).stderr}`);
+    }
 
     log.success('Finished deployment into branch %s (%dms)', branch, stop());
   }

@@ -59,10 +59,13 @@ export async function main(argv = hideBin(process.argv)) {
     })
     .middleware(
       /**
-       * Writes a startup message
+       * Writes a startup message and sets the log level if --verbose is passed.
        */
-      () => {
+      (args) => {
         log.info(`${pkg.name} @ v${pkg.version} (Node.js ${process.version})`);
+        if (args.verbose) {
+          args.logLevel = 'debug';
+        }
       }
     )
     .epilog(`Please report bugs at ${pkg.bugs?.url}`)

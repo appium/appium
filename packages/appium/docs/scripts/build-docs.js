@@ -32,14 +32,26 @@ const preview = Boolean(process.env.APPIUM_DOCS_PREVIEW);
 
 const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
 
+const ROOT = path.join(__dirname, '..', '..', '..', '..');
+
+const TYPEDOC_JSON_PATH = path.join(ROOT, 'typedoc.json');
+const TSCONFIG_JSON_PATH = path.join(ROOT, 'tsconfig.json');
+
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   await copyAssets();
-  await buildReferenceDocs();
+  await buildReferenceDocs({
+    typedocJson: TYPEDOC_JSON_PATH,
+    tsconfigJson: TSCONFIG_JSON_PATH,
+    cwd: ROOT,
+  });
 
   for (const lang of LANGS) {
-    await updateNav({mkdocsYml: path.join(DOCS_DIR, `mkdocs-${lang}.yml`)});
+    await updateNav({
+      typedocJson: TYPEDOC_JSON_PATH,
+      mkdocsYml: path.join(DOCS_DIR, `mkdocs-${lang}.yml`),
+    });
   }
 
   const semVersion = semver.parse(version);

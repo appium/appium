@@ -25,6 +25,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    - name: Install dependencies (NodeJS)
+      run: npm install
     - name: Install dependencies (Python)
       run: pip install -r packages/docutils/requirements.txt
     - run: |

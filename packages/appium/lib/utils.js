@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import logger from './logger';
-import {processCapabilities, PROTOCOLS, STANDARD_CAPS} from '@appium/base-driver';
+import {processCapabilities, PROTOCOLS, STANDARD_CAPS, errors} from '@appium/base-driver';
 import {inspect as dump} from 'util';
 import {node} from '@appium/support';
 import path from 'path';
@@ -21,6 +21,18 @@ export const V6_BROADCAST_IP = '::';
  * @type {boolean}
  */
 const isStdoutTTY = process.stdout.isTTY;
+
+/**
+ * Creates an error object in case a session gets incompatible capabilities as the input.
+ *
+ * @returns {Error}
+ */
+export function makeNonW3cCapsError() {
+  return new errors.SessionNotCreatedError(
+    'Session capabilities format must comply to the W3C standard. Make sure your client is up to date. ' +
+    'See https://www.w3.org/TR/webdriver/#new-session for more details.'
+  );
+}
 
 /**
  * Dumps to value to the console using `info` logger.
@@ -69,7 +81,7 @@ function parseCapsForInnerDriver(
   if (!hasW3CCaps) {
     return /** @type {InvalidCaps<C>} */ ({
       protocol: PROTOCOLS.W3C,
-      error: new Error('W3C capabilities should be provided'),
+      error: makeNonW3cCapsError(),
     });
   }
 

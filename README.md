@@ -35,10 +35,10 @@ These are only server requirements. Each driver might have its own requirements.
 To install Appium 2 server using Node Package Manager (npm) run the following command:
 
 ```bash
-npm install -g appium
+npm i --location=global appium
 ```
 
-:bangbang: Make sure Appium 1 is fully unistalled before upgrading it to Appium 2 (`npm uninstall -g appium`). Unexpected errors might appear if this has not been done.
+:bangbang: Make sure Appium 1 is fully unistalled before upgrading it to Appium 2 (`npm uninstall --location=global appium`). Unexpected errors might appear if this has not been done.
 
 ### Drivers
 

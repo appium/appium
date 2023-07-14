@@ -141,6 +141,9 @@ async function configureApp(
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
+  if (cachedAppInfo) {
+    logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
+  }
 
   return await APPLICATIONS_CACHE_GUARD.acquire(app, async () => {
     if (isUrl) {
@@ -150,27 +153,23 @@ async function configureApp(
         ...DEFAULT_REQ_HEADERS,
       };
       if (cachedAppInfo?.etag) {
-        reqHeaders['if-none-match'] = remoteAppProps.etag;
+        reqHeaders['if-none-match'] = cachedAppInfo.etag;
       } else if (cachedAppInfo?.lastModified) {
-        reqHeaders['if-modified-since'] = remoteAppProps.lastModified?.toString();
+        reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toUTCString();
       }
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
       try {
         if (!_.isEmpty(headers)) {
-          logger.debug(`Etag: ${remoteAppProps?.etag} -> ${headers.etag}`);
+          logger.debug(`Etag: ${headers.etag}`);
           if (headers.etag) {
             remoteAppProps.etag = headers.etag;
           }
-          logger.debug(
-            `Last-Modified: ${remoteAppProps?.['last-modified']} -> ${headers['last-modified']}`
-          );
+          logger.debug(`Last-Modified: ${headers['last-modified']}`);
           if (headers['last-modified']) {
             remoteAppProps.lastModified = new Date(headers['last-modified']);
           }
-          logger.debug(
-            `Cache-Control: ${remoteAppProps?.['cache-control']} -> ${headers['cache-control']}`
-          );
+          logger.debug(`Cache-Control: ${headers['cache-control']}`);
           if (headers['cache-control']) {
             remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
             const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);

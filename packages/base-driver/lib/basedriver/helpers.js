@@ -150,9 +150,9 @@ async function configureApp(
         ...DEFAULT_REQ_HEADERS,
       };
       if (cachedAppInfo?.etag) {
-        reqHeaders['if-none-match'] = remoteAppProps.etag;
+        reqHeaders['if-none-match'] = cachedAppInfo.etag;
       } else if (cachedAppInfo?.lastModified) {
-        reqHeaders['if-modified-since'] = remoteAppProps.lastModified?.toString();
+        reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toString();
       }
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);

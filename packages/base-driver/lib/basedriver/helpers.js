@@ -130,6 +130,13 @@ async function configureApp(
   let packageHash = null;
   /** @type {import('axios').AxiosResponse['headers']|undefined} */
   let headers = undefined;
+  /** @type {RemoteAppProps} */
+  const remoteAppProps = {
+    lastModified: null,
+    immutable: false,
+    maxAge: null,
+    etag: null,
+  };
   const {protocol, pathname} = url.parse(newApp);
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
@@ -152,13 +159,6 @@ async function configureApp(
       }
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
-      /** @type {RemoteAppProps} */
-      const remoteAppProps = {
-        lastModified: null,
-        immutable: false,
-        maxAge: null,
-        etag: null,
-      };
       try {
         if (!_.isEmpty(headers)) {
           logger.debug(`Etag: ${headers.etag}`);

@@ -152,7 +152,7 @@ async function configureApp(
       if (cachedAppInfo?.etag) {
         reqHeaders['if-none-match'] = cachedAppInfo.etag;
       } else if (cachedAppInfo?.lastModified) {
-        reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toString();
+        reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toUTCString();
       }
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);

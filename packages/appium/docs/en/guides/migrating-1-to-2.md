@@ -31,7 +31,7 @@ You can also set server arguments as [Config file](./config.md) properties.
 
 ### :bangbang: Installing drivers during setup
 
-When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install --location=global appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
@@ -42,10 +42,10 @@ At this point, your drivers are installed and ready. There's a lot more you can 
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 
 ```bash
-npm install --global appium --drivers=xcuitest,uiautomator2
+npm install --location=global appium --drivers=xcuitest,uiautomator2
 ```
 
-This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error.
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall --location=global appium`) if you get an installation or startup error.
 
 ### :bangbang: Drivers installation path
 
@@ -122,7 +122,7 @@ appium driver update xcuitest
 (For a complete description of the update command, check out the [Extension
 CLI](../cli/extensions.md) doc)
 
-To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
+To update the Appium server itself, you do the same thing as in the past: `npm install --location=global appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 
 If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`.
 

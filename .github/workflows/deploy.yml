@@ -24,9 +24,9 @@ jobs:
       - name: Install Appium
         run: |
           if [[ "$GITHUB_REF_TYPE" == tag ]]; then
-            npm i -g $GITHUB_REF_NAME
+            npm i --location=global $GITHUB_REF_NAME
           else
-            npm i -g appium@next
+            npm i --location=global appium
           fi
         shell: bash
       - name: Install drivers and plugins

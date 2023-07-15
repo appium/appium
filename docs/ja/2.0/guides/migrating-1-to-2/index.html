@@ -17,7 +17,7 @@
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -1136,10 +1136,10 @@ You can also set server arguments as [Config file](./config.md) properties.
 <p>この設定は<a href="./config.md">Config file</a>からでも可能です。</p>
 <h3 id="_2"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> ドライバーのインストール</h3>
 <!---
-When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install -g appium@next`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install --location=global appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
 
-<p>Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば <code>npm install -g appium@next</code>）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい<a href="../cli/extensions.md">Appium拡張コマンドラインインタフェース（Appium extension CLI）</a>を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。</p>
+<p>Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば <code>npm install --location=global appium</code>）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい<a href="../cli/extensions.md">Appium拡張コマンドラインインタフェース（Appium extension CLI）</a>を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2<span class="w">     </span><span class="c1"># installs the latest driver version</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.12.2<span class="w">  </span><span class="c1"># installs a specific driver version</span>
 </code></pre></div>
@@ -1148,13 +1148,13 @@ At this point, your drivers are installed and ready. There's a lot more you can 
 --->
 
 <p>これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--location<span class="o">=</span>global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
 </code></pre></div>
 <!---
-This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall --location=global appium`) if you get an installation or startup error. 
 --->
 
-<p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを<code>npm uninstall -g appium</code>で削除してみてください。</p>
+<p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを<code>npm uninstall --location=global appium</code>で削除してみてください。</p>
 <h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
 <p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
 The path was <code>/path/to/appium/node_modules</code>.
@@ -1197,7 +1197,7 @@ main Appium server will not define the route corresponding to the command.</p>
 </code></pre></div>
 <p>(For a complete description of the update command, check out the <a href="../cli/extensions.md">Extension
 CLI</a> doc)</p>
-<p>To update the Appium server itself, you do the same thing as in the past: <code>npm install -g appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
+<p>To update the Appium server itself, you do the same thing as in the past: <code>npm install --location=global appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
 <p>If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the <code>install</code> subcommand instead of <code>update</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
@@ -1343,10 +1343,10 @@ an industry-compatible way!</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

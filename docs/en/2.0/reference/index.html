@@ -15,7 +15,7 @@
       
       
       <link rel="icon" href="../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -1497,6 +1497,7 @@ See the full list of
 <a href="https://appium.io/docs/en/latest/ecosystem/#other-drivers">third-party</a> drivers for more details.</p>
 <p><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> The current Appium 2.0 documentation can be found <a href="https://appium.io/docs/en/latest/">here</a>.</p>
 <p><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Appium core team does not maintain Appium 1.x anymore since the 1st of January 2022. All recent versions of officially supported platform drivers are not compatible to Appium 1.x, and require Appium 2 to run. <a href="https://appium.io/docs/en/latest/guides/migrating-1-to-2/">Please read the migration guide from 1.x to 2.0</a> to manage the Appium server.</p>
+<p><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> If you still use the deprecated Appium Desktop containing the built-in server then you won't be able to upgrade to Appium 2. Consider switching to <a href="https://github.com/appium/appium-inspector">Appium Inspector</a> instead.</p>
 <h3 id="requirements">Requirements</h3>
 <ul>
 <li>macOS, Linux or Windows operating system</li>
@@ -1506,8 +1507,9 @@ See the full list of
 <p>These are only server requirements. Each driver might have its own requirements. Consider checking the corresponding driver tutorial for more details.</p>
 <h3 id="server">Server</h3>
 <p>To install Appium 2 server using Node Package Manager (npm) run the following command:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>appium
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npm<span class="w"> </span>i<span class="w"> </span>--location<span class="o">=</span>global<span class="w"> </span>appium
 </code></pre></div>
+<p><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Make sure Appium 1 is fully unistalled before upgrading it to Appium 2 (<code>npm uninstall --location=global appium</code>). Unexpected errors might appear if this has not been done.</p>
 <h3 id="drivers">Drivers</h3>
 <p>Appium supports app automation across a variety of platforms, like iOS,
 Android, and Windows. Each platform is supported by one or more "drivers",
@@ -1690,10 +1692,10 @@ be sure to sign up!</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections"], "search": "../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

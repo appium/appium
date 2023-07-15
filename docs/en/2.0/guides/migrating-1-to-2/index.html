@@ -19,7 +19,7 @@
         <link rel="next" href="../managing-exts/">
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -1824,15 +1824,15 @@ to retain the old behaviour, you can set the base path via a command line argume
 </code></pre></div>
 <p>You can also set server arguments as <a href="../config/">Config file</a> properties.</p>
 <h3 id="installing-drivers-during-setup"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Installing drivers during setup</h3>
-<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by <code>npm install -g appium@next</code>), will install the Appium server only, but no drivers. To install drivers, you must instead use the new <a href="../../cli/extensions/">Appium extension CLI</a>. For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:</p>
+<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by <code>npm install --location=global appium</code>), will install the Appium server only, but no drivers. To install drivers, you must instead use the new <a href="../../cli/extensions/">Appium extension CLI</a>. For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2<span class="w">     </span><span class="c1"># installs the latest driver version</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.12.2<span class="w">  </span><span class="c1"># installs a specific driver version</span>
 </code></pre></div>
 <p>At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it.
 If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--location<span class="o">=</span>global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
 </code></pre></div>
-<p>This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with <code>npm uninstall -g appium</code>) if you get an installation or startup error.</p>
+<p>This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with <code>npm uninstall --location=global appium</code>) if you get an installation or startup error.</p>
 <h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
 <p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
 The path was <code>/path/to/appium/node_modules</code>.
@@ -1883,7 +1883,7 @@ main Appium server will not define the route corresponding to the command.</p>
 </code></pre></div>
 <p>(For a complete description of the update command, check out the <a href="../../cli/extensions/">Extension
 CLI</a> doc)</p>
-<p>To update the Appium server itself, you do the same thing as in the past: <code>npm install -g appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
+<p>To update the Appium server itself, you do the same thing as in the past: <code>npm install --location=global appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
 <p>If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the <code>install</code> subcommand instead of <code>update</code>.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
@@ -2027,10 +2027,10 @@ an industry-compatible way!</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

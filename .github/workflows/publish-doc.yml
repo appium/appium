@@ -29,6 +29,5 @@ jobs:
       run: npm install
     - name: Install dependencies (Python)
       run: pip install -r packages/docutils/requirements.txt
-    - run: |
-        cd packages/appium
-        npm run publish:docs
+    - run: npm run publish:docs
+      working-directory: packages/appium

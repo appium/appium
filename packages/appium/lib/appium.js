@@ -13,7 +13,7 @@ import {
   promoteAppiumOptionsForObject,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
-import {parseCapsForInnerDriver, pullSettings} from './utils';
+import {parseCapsForInnerDriver, pullSettings, makeNonW3cCapsError} from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE} from './constants';
@@ -231,6 +231,10 @@ class AppiumDriver extends DriverCore {
     jsonwpCaps = _.cloneDeep(jsonwpCaps);
     const jwpSettings = {...defaultSettings, ...pullSettings(jsonwpCaps)};
     w3cCapabilities = _.cloneDeep(w3cCapabilities);
+    if (!_.isPlainObject(w3cCapabilities)
+        || !(_.isArray(w3cCapabilities?.firstMatch) || _.isPlainObject(w3cCapabilities?.alwaysMatch))) {
+      throw makeNonW3cCapsError();
+    }
     // It is possible that the client only provides caps using JSONWP standard,
     // although firstMatch/alwaysMatch properties are still present.
     // In such case we assume the client understands W3C protocol and merge the given

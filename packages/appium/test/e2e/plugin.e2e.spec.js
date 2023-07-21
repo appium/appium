@@ -275,6 +275,31 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
         }
         shutdownErr.message.should.match(/either terminated or not started/);
       });
+
+      it('should allow plugin handled commands to reset newCommandTimeout', async function () {
+        /** @type {import('webdriverio').RemoteOptions} */
+        const newOpts = {...wdOpts};
+        newOpts.capabilities = {
+          ...(newOpts.capabilities ?? {}),
+          'appium:newCommandTimeout': 2,
+        };
+        const driver = await wdio(newOpts);
+        const {sessionId} = driver;
+        try {
+          const start = Date.now();
+          for (let i = 0; i < 5; i++) {
+            await B.delay(500);
+            await driver.getPageSource();
+          }
+          // prove that we went beyond the new command timeout as a result of sending commands
+          (Date.now() - start).should.be.above(2500);
+          await driver
+            .getPageSource()
+            .should.eventually.eql(`<Fake>${JSON.stringify([sessionId])}</Fake>`);
+        } finally {
+          await driver.deleteSession();
+        }
+      });
     });
   }
   describe('cli args handling for plugin args', function () {

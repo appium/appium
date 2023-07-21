@@ -240,6 +240,8 @@ describe('FakeDriver via HTTP', function () {
 
       await B.delay(250);
       await driver.getPageSource().should.eventually.be.rejectedWith(/terminated/);
+
+      await driver.getSessions().should.eventually.be.empty;
     });
 
     it('should accept valid W3C capabilities and start a W3C session', async function () {

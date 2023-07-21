@@ -231,8 +231,10 @@ class AppiumDriver extends DriverCore {
     jsonwpCaps = _.cloneDeep(jsonwpCaps);
     const jwpSettings = {...defaultSettings, ...pullSettings(jsonwpCaps)};
     w3cCapabilities = _.cloneDeep(w3cCapabilities);
-    if (!_.isPlainObject(w3cCapabilities)
-        || !(_.isArray(w3cCapabilities?.firstMatch) || _.isPlainObject(w3cCapabilities?.alwaysMatch))) {
+    if (
+      !_.isPlainObject(w3cCapabilities) ||
+      !(_.isArray(w3cCapabilities?.firstMatch) || _.isPlainObject(w3cCapabilities?.alwaysMatch))
+    ) {
       throw makeNonW3cCapsError();
     }
     // It is possible that the client only provides caps using JSONWP standard,
@@ -638,6 +640,16 @@ class AppiumDriver extends DriverCore {
     // get any plugins which are registered as handling this command
     const plugins = this.pluginsToHandleCmd(cmd, sessionId);
 
+    // if any plugins are going to handle this command, we can't guarantee that the default
+    // driver's executeCommand method will be called, which means we can't guarantee that the
+    // newCommandTimeout will be cleared. So we do it here as well.
+    if (plugins.length && dstSession) {
+      this.log.debug(
+        'Clearing new command timeout pre-emptively since plugin(s) will handle this command'
+      );
+      await dstSession.clearNewCommandTimeout();
+    }
+
     // now we define a 'cmdHandledBy' object which will keep track of which plugins have handled this
     // command. we care about this because (a) multiple plugins can handle the same command, and
     // (b) there's no guarantee that a plugin will actually call the next() method which runs the
@@ -702,6 +714,22 @@ class AppiumDriver extends DriverCore {
     // if we had plugins, make sure to log out the helpful report about which plugins ended up
     // handling the command and which didn't
     this.logPluginHandlerReport(plugins, {cmd, cmdHandledBy});
+
+    // if we had plugins, and if they did not ultimately call the default handler, this means our
+    // new command timeout was not restarted by the default handler's executeCommand call, so
+    // restart it here using the same logic as in BaseDriver's executeCommand
+    if (
+      dstSession &&
+      !cmdHandledBy.default &&
+      dstSession.isCommandsQueueEnabled &&
+      cmd !== DELETE_SESSION_COMMAND
+    ) {
+      this.log.debug(
+        'Restarting new command timeout via umbrella driver since plugin did not ' +
+          'allow default handler to execute'
+      );
+      await dstSession.startNewCommandTimeout();
+    }
 
     // And finally, if the command was createSession, we want to migrate any plugins which were
     // previously sessionless to use the new sessionId, so that plugins can share state between

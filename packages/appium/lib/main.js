@@ -436,7 +436,8 @@ async function main(args) {
     throw err;
   }
 
-  for (const signal of ['SIGINT', 'SIGTERM']) {
+  // SIGHUP is for Windows environment only
+  for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP']) {
     process.once(signal, async function onSignal() {
       logger.info(`Received ${signal} - shutting down`);
       try {

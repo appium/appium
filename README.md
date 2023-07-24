@@ -41,7 +41,7 @@ npm i --location=global appium
 To update Appium 2 server using Node Package Manager (npm) run the following command:
 
  ```bash
-npm install appium@latest -g
+npm install --location=global appium@latest
 ```
 
 :bangbang: Make sure Appium 1 is fully uninstalled before upgrading it to Appium 2 (`npm uninstall --location=global appium`). Unexpected errors might appear if this has not been done.

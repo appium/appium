@@ -1,6 +1,6 @@
 {
   "name": "@appium/driver-test-support",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "description": "Test utilities for Appium drivers",
   "keywords": [
     "automation",

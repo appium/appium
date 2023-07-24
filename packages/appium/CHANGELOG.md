@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.1](https://github.com/appium/appium/compare/appium@2.0.0...appium@2.0.1) (2023-07-24)
+
+
+### Bug Fixes
+
+* **appium:** ensure plugin commands reset newCommandTimeout ([41836a4](https://github.com/appium/appium/commit/41836a4a7bfb0d7602839c081a4e3c4792e869df))
+* **support:** update dependency teen_process to v2.0.4 ([151c19c](https://github.com/appium/appium/commit/151c19c1c3b4c9b94aba10033c2d863f567d849b))
+
+
+
 ## [2.0.0-rc.5](https://github.com/appium/appium/compare/appium@2.0.0-rc.4...appium@2.0.0-rc.5) (2023-07-03)
 
 

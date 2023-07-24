@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.3](https://github.com/appium/appium/compare/@appium/support@4.1.2...@appium/support@4.1.3) (2023-07-24)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.0.4 ([151c19c](https://github.com/appium/appium/commit/151c19c1c3b4c9b94aba10033c2d863f567d849b))
+
+
+
 ## [4.1.2](https://github.com/appium/appium/compare/@appium/support@4.1.1...@appium/support@4.1.2) (2023-07-03)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.19](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.18...@appium/plugin-test-support@0.3.19) (2023-07-24)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.0.4 ([151c19c](https://github.com/appium/appium/commit/151c19c1c3b4c9b94aba10033c2d863f567d849b))
+
+
+
 ## [0.3.18](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.17...@appium/plugin-test-support@0.3.18) (2023-07-03)
 
 **Note:** Version bump only for package @appium/plugin-test-support

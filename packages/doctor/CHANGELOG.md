@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.22](https://github.com/appium/appium/compare/@appium/doctor@2.0.21...@appium/doctor@2.0.22) (2023-07-24)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.0.4 ([151c19c](https://github.com/appium/appium/commit/151c19c1c3b4c9b94aba10033c2d863f567d849b))
+
+
+
 ## [2.0.21](https://github.com/appium/appium/compare/@appium/doctor@2.0.20...@appium/doctor@2.0.21) (2023-07-03)
 
 

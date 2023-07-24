@@ -1,6 +1,6 @@
 {
   "name": "@appium/plugin-test-support",
-  "version": "0.3.18",
+  "version": "0.3.19",
   "description": "Testing utilities for Appium plugins",
   "keywords": [
     "automation",

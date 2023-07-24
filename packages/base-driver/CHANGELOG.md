@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.16](https://github.com/appium/appium/compare/@appium/base-driver@9.3.15...@appium/base-driver@9.3.16) (2023-07-24)
+
+
+### Bug Fixes
+
+* **base-driver:** Use proper cached headers for app download ([#18874](https://github.com/appium/appium/issues/18874)) ([75650a6](https://github.com/appium/appium/commit/75650a6b744dfcbd50d45972f04040472fdbcd45))
+
+
+
 ## [9.3.15](https://github.com/appium/appium/compare/@appium/base-driver@9.3.14...@appium/base-driver@9.3.15) (2023-07-03)
 
 

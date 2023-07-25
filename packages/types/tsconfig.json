@@ -2,7 +2,6 @@
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
-    "checkJs": true,
     "strict": true,
     "paths": {
       "@appium/schema": ["../schema"]

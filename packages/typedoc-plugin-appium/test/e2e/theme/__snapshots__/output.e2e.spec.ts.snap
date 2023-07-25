@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`@appium/typedoc-plugin-appium theme command output should generate expected markdown 1`] = `
-"# Commands
+"# @appium/base-driver Commands
 
 ## Commands
 
@@ -24,9 +24,9 @@ the latter.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`desiredCapabilities?\` | \`W3CDriverCaps\`<\`C\`\\\\> | the new session capabilities |
-| \`requiredCapabilities?\` | \`W3CDriverCaps\`<\`C\`\\\\> | another place the new session capabilities could be sent (typically left undefined) |
-| \`capabilities?\` | \`W3CDriverCaps\`<\`C\`\\\\> | another place the new session capabilities could be sent (typically left undefined) |
+| \`desiredCapabilities?\` | [\`W3CDriverCaps\`](../modules/appium_types.md#w3cdrivercaps)<\`C\`\\\\> | the new session capabilities |
+| \`requiredCapabilities?\` | [\`W3CDriverCaps\`](../modules/appium_types.md#w3cdrivercaps)<\`C\`\\\\> | another place the new session capabilities could be sent (typically left undefined) |
+| \`capabilities?\` | [\`W3CDriverCaps\`](../modules/appium_types.md#w3cdrivercaps)<\`C\`\\\\> | another place the new session capabilities could be sent (typically left undefined) |
 
 #### Response
 
@@ -40,11 +40,11 @@ The capabilities object representing the created session
 
 Returns capabilities for the session and event history (if applicable)
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
-\`SingularSessionData\`<\`C\`, \`SessionData\`\\\\>
+[\`SingularSessionData\`](../modules/appium_types.md#singularsessiondata)<\`C\`, \`SessionData\`\\\\>
 
 A session data object
 
@@ -58,7 +58,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`SingularSessionData\`<\`C\`, \`SessionData\`\\\\>
+[\`SingularSessionData\`](../modules/appium_types.md#singularsessiondata)<\`C\`, \`SessionData\`\\\\>
 
 A session data object
 
@@ -83,7 +83,7 @@ Find a UI element given a locator strategy and a selector, erroring if it can't 
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element object encoding the element id which can be used in element-related
 commands
@@ -110,7 +110,7 @@ look for elements among the set of descendants of a given element
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element object encoding the element id which can be used in element-related
 commands
@@ -136,7 +136,7 @@ Find an element from a shadow root
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element inside the shadow root matching the selector
 
@@ -161,7 +161,7 @@ Find a a list of all UI elements matching a given a locator strategy and a selec
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly-empty list of element objects
 
@@ -187,7 +187,7 @@ look for elements among the set of descendants of a given element
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly-empty list of element objects
 
@@ -212,7 +212,7 @@ Find elements from a shadow root
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly empty list of elements inside the shadow root matching the selector
 
@@ -228,7 +228,7 @@ Get the log for a given log type.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`type\` | \`string\` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
+| \`type\` | \`string\` | Name/key of log type as defined in [\`supportedLogTypes\`](../classes/appium_base_driver.BaseDriver.md#supportedlogtypes). |
 
 #### Response
 
@@ -246,7 +246,7 @@ Get the log for a given log type.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`type\` | \`string\` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
+| \`type\` | \`string\` | Name/key of log type as defined in [\`supportedLogTypes\`](../classes/appium_base_driver.BaseDriver.md#supportedlogtypes). |
 
 #### Response
 
@@ -268,7 +268,7 @@ Get a list of events that have occurred in the current session
 
 #### Response
 
-\`EventHistory\` \\\\| \`Record\`<\`string\`, \`number\`\\\\>
+[\`EventHistory\`](../interfaces/appium_types.EventHistory.md) \\\\| \`Record\`<\`string\`, \`number\`\\\\>
 
 The event history for the session
 
@@ -320,11 +320,11 @@ The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 
 Get data for all sessions running on an Appium server
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
-\`MultiSessionData\`<\`C\`\\\\>[]
+[\`MultiSessionData\`](../interfaces/appium_types.MultiSessionData.md)<\`C\`\\\\>[]
 
 A list of session data objects
 
@@ -334,7 +334,7 @@ A list of session data objects
 
 Update the session's settings dictionary with a new settings object
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
@@ -346,7 +346,7 @@ Update the session's settings dictionary with a new settings object
 
 Update the session's settings dictionary with a new settings object
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Parameters
 
@@ -374,7 +374,7 @@ The readiness state is represented by the ready property of the body, which is f
 
 Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Examples
 
@@ -515,7 +515,7 @@ Reset the current session (run the delete session and create session subroutines
 
 Use explicit session management commands instead
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
@@ -524,7 +524,7 @@ Use explicit session management commands instead
 `;
 
 exports[`@appium/typedoc-plugin-appium theme execute method output should generate expected markdown 1`] = `
-"# Commands
+"# @appium/fake-driver Commands
 
 ## Commands
 
@@ -592,7 +592,7 @@ Get the driver args that were sent in via the CLI
 
 #### Response
 
-\`StringRecord\` & \`ServerArgs\`
+[\`StringRecord\`](../modules/appium_types.md#stringrecord) & [\`ServerArgs\`](../modules/appium_types.md#serverargs)
 
 ### \`createSession\`
 
@@ -626,11 +626,11 @@ The capabilities object representing the created session
 
 Returns capabilities for the session and event history (if applicable)
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
-\`SingularSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, \`StringRecord\`\\\\>
+[\`SingularSessionData\`](../modules/appium_types.md#singularsessiondata)<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, [\`StringRecord\`](../modules/appium_types.md#stringrecord)\\\\>
 
 A session data object
 
@@ -644,7 +644,7 @@ Returns capabilities for the session and event history (if applicable)
 
 #### Response
 
-\`SingularSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, \`StringRecord\`\\\\>
+[\`SingularSessionData\`](../modules/appium_types.md#singularsessiondata)<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }, [\`StringRecord\`](../modules/appium_types.md#stringrecord)\\\\>
 
 A session data object
 
@@ -669,7 +669,7 @@ Find a UI element given a locator strategy and a selector, erroring if it can't 
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element object encoding the element id which can be used in element-related
 commands
@@ -696,7 +696,7 @@ look for elements among the set of descendants of a given element
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element object encoding the element id which can be used in element-related
 commands
@@ -722,7 +722,7 @@ Find an element from a shadow root
 
 #### Response
 
-\`Element\`<\`string\`\\\\>
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>
 
 The element inside the shadow root matching the selector
 
@@ -747,7 +747,7 @@ Find a a list of all UI elements matching a given a locator strategy and a selec
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly-empty list of element objects
 
@@ -773,7 +773,7 @@ look for elements among the set of descendants of a given element
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly-empty list of element objects
 
@@ -798,7 +798,7 @@ Find elements from a shadow root
 
 #### Response
 
-\`Element\`<\`string\`\\\\>[]
+[\`Element\`](../interfaces/appium_types.Element.md)<\`string\`\\\\>[]
 
 A possibly empty list of elements inside the shadow root matching the selector
 
@@ -814,7 +814,7 @@ Get the log for a given log type.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`type\` | \`string\` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
+| \`type\` | \`string\` | Name/key of log type as defined in [\`supportedLogTypes\`](../classes/appium_fake_driver.FakeDriver.md#supportedlogtypes). |
 
 #### Response
 
@@ -832,7 +832,7 @@ Get the log for a given log type.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`type\` | \`string\` | Name/key of log type as defined in ILogCommands.supportedLogTypes. |
+| \`type\` | \`string\` | Name/key of log type as defined in [\`supportedLogTypes\`](../classes/appium_fake_driver.FakeDriver.md#supportedlogtypes). |
 
 #### Response
 
@@ -854,7 +854,7 @@ Get a list of events that have occurred in the current session
 
 #### Response
 
-\`EventHistory\` \\\\| \`Record\`<\`string\`, \`number\`\\\\>
+[\`EventHistory\`](../interfaces/appium_types.EventHistory.md) \\\\| \`Record\`<\`string\`, \`number\`\\\\>
 
 The event history for the session
 
@@ -906,11 +906,11 @@ The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 
 Get data for all sessions running on an Appium server
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
-\`MultiSessionData\`<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }\\\\>[]
+[\`MultiSessionData\`](../interfaces/appium_types.MultiSessionData.md)<{ \`app\`: { \`isString\`: \`\`true\`\` = true; \`presence\`: \`\`true\`\` = true } ; \`uniqueApp\`: { \`isBoolean\`: \`\`true\`\` = true }  }\\\\>[]
 
 A list of session data objects
 
@@ -920,7 +920,7 @@ A list of session data objects
 
 Update the session's settings dictionary with a new settings object
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 
@@ -932,13 +932,13 @@ Update the session's settings dictionary with a new settings object
 
 Update the session's settings dictionary with a new settings object
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| \`settings\` | \`StringRecord\` | A key-value map of setting names to values. Settings not named in the map will not have their value adjusted. |
+| \`settings\` | [\`StringRecord\`](../modules/appium_types.md#stringrecord) | A key-value map of setting names to values. Settings not named in the map will not have their value adjusted. |
 
 #### Response
 
@@ -960,7 +960,7 @@ The readiness state is represented by the ready property of the body, which is f
 
 Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Examples
 
@@ -1101,7 +1101,7 @@ Reset the current session (run the delete session and create session subroutines
 
 Use explicit session management commands instead
 
-<!-- comment source: builtin-interface -->
+<!-- comment source: method-signature -->
 
 #### Response
 

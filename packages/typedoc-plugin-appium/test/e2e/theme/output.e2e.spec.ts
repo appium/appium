@@ -1,8 +1,8 @@
 import path from 'node:path';
 import {tempDir, fs} from 'appium/support';
 import {jestSnapshotPlugin} from 'mocha-chai-jest-snapshot';
-import {convert} from '../../../lib';
 import {reset} from '../helpers';
+import {convert} from '../../../lib';
 
 chai.use(jestSnapshotPlugin());
 
@@ -11,13 +11,10 @@ const {expect} = chai;
 describe('@appium/typedoc-plugin-appium', function () {
   let tmpDir: string;
   before(async function () {
-    const app = reset({
-      plugin: ['typedoc-plugin-markdown'],
-    });
-    const promise = convert(app);
+    const app = await reset();
+    const convertPromise = convert(app);
     const project = app.convert();
-    await promise;
-    expect(project).to.exist;
+    await convertPromise;
     tmpDir = await tempDir.openDir();
     await app.generateDocs(project!, tmpDir);
   });

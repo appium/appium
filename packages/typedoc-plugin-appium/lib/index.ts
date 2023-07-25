@@ -46,7 +46,7 @@ export const setup: (app: Application) => Application = _.flow(configureTheme, c
  * @param app Typedoc Application
  * @returns A {@linkcode ConvertResult} receipt from the conversion
  */
-export async function convert(app: Application): Promise<ConvertResult> {
+export const convert = _.memoize(async (app: Application): Promise<ConvertResult> => {
   const [project] = (await once(app, Application.EVENT_PROJECT_REVIVE)) as [ProjectReflection];
 
   let removed: Set<DeclarationReflection> | undefined;
@@ -76,7 +76,7 @@ export async function convert(app: Application): Promise<ConvertResult> {
   }
 
   return {project, extensionReflections, projectCommands, removed};
-}
+});
 
 /**
  * Resolved value of {@linkcode convert}
@@ -98,28 +98,28 @@ export interface ConvertResult extends PostProcessResult {
 
 /**
  * Optionally omits the default TypeDoc reflections from the project based on the `outputModules` option.
- *
- * Resolves after {@linkcode Converter.EVENT_RESOLVE_END} emits and when it's finished.
  * @param app Typedoc application
- * @returns Typedoc `Context` at the time of the {@linkcode Converter.EVENT_RESOLVE_END} event
+ * @returns Removed reflections, if any
  */
-export function postProcess(app: Application, project: ProjectReflection): PostProcessResult {
-  let removed: Set<DeclarationReflection> | undefined;
-  // if the `outputModules` option is false, then we want to remove all the usual TypeDoc reflections.
-  if (!app.options.getValue(declarations.outputModules.name)) {
-    removed = omitDefaultReflections(project);
-    log.info('%s omitted from output', pluralize('default reflection', removed.size, true));
+export const postProcess = _.memoize(
+  (app: Application, project: ProjectReflection): PostProcessResult => {
+    let removed: Set<DeclarationReflection> | undefined;
+    // if the `outputModules` option is false, then we want to remove all the usual TypeDoc reflections.
+    if (!app.options.getValue(declarations.outputModules.name)) {
+      removed = omitDefaultReflections(project);
+      log.info('%s omitted from output', pluralize('default reflection', removed.size, true));
+    }
+    if (!app.options.getValue(declarations.outputBuiltinCommands.name)) {
+      const removedBuiltinRefls = omitBuiltinReflections(project);
+      removed = new Set([...(removed ?? []), ...removedBuiltinRefls]);
+      log.info(
+        '%s omitted from output',
+        pluralize('builtin reflection', removedBuiltinRefls.size, true)
+      );
+    }
+    return {removed};
   }
-  if (!app.options.getValue(declarations.outputBuiltinCommands.name)) {
-    const removedBuiltinRefls = omitBuiltinReflections(project);
-    removed = new Set([...(removed ?? []), ...removedBuiltinRefls]);
-    log.info(
-      '%s omitted from output',
-      pluralize('builtin reflection', removedBuiltinRefls.size, true)
-    );
-  }
-  return {removed};
-}
+);
 
 /**
  * Result of {@linkcode postProcess}

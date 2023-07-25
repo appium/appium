@@ -1,11 +1,8 @@
 import {fs} from '@appium/support';
-import {once} from 'node:events';
 import path from 'node:path';
 import {Constructor, SetRequired} from 'type-fest';
 import {
   Application,
-  Context,
-  Converter,
   EntryPointStrategy,
   LogLevel,
   ProjectReflection,
@@ -73,14 +70,13 @@ async function getEntryPoint(pkgName: string): Promise<string> {
  * @returns New TypeDoc app
  * @todo Figure out how to get plugin-specific options into TypeDoc other than via `Options.setValue`
  */
-function getTypedocApp(opts: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Application {
+async function getTypedocApp(
+  opts: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>
+): Promise<Application> {
   const app = new Application();
   app.options.addReader(new TSConfigReader());
+  app.options.addReader(new TypeDocReader());
   const isPackageStrategy = opts.entryPoints.length > 1;
-
-  if (isPackageStrategy) {
-    app.options.addReader(new TypeDocReader());
-  }
 
   const forceLogs = Boolean(process.env._FORCE_LOGS);
 
@@ -96,10 +92,12 @@ function getTypedocApp(opts: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>
       : EntryPointStrategy.Resolve,
     theme: THEME_NAME,
     skipErrorChecking: true,
+    plugin: ['typedoc-plugin-markdown', '@appium/typedoc-plugin-appium'],
+    readme: 'none',
     ...opts,
   };
 
-  app.bootstrap(finalOpts);
+  await app.bootstrapWithPlugins(finalOpts);
   return app;
 }
 
@@ -127,10 +125,10 @@ export async function initAppForPkg(
  * @param opts - Options; `entryPoints` is required
  * @returns Typedoc Application
  */
-export function initAppForPkgs({
+export async function initAppForPkgs({
   tsconfig = ROOT_TSCONFIG,
   ...opts
-}: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Application {
+}: SetRequired<Partial<TypeDocOptions>, 'entryPoints'>): Promise<Application> {
   return getTypedocApp({...opts, tsconfig, entryPointStrategy: EntryPointStrategy.Packages});
 }
 
@@ -188,9 +186,9 @@ type ConverterConstructor<T, C extends BaseConverter<T>, Args extends readonly a
 /**
  * Creates a new TypeDoc application and/or resets it
  */
-export function reset({
+export async function reset({
   entryPoints = [NAME_TYPES_MODULE, NAME_FAKE_DRIVER_MODULE, NAME_BUILTIN_COMMAND_MODULE],
   ...opts
-}: Partial<TypeDocOptions> = {}): Application {
-  return setup(initAppForPkgs({entryPoints, ...opts}));
+}: Partial<TypeDocOptions> = {}): Promise<Application> {
+  return initAppForPkgs({entryPoints, ...opts});
 }

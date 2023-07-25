@@ -40,11 +40,11 @@ export class AppiumPluginOptionsReader implements OptionsReader {
   /**
    * This needs to be lower than the value in `MarkdownOptionsReader`.
    */
-  public order: number;
+  public readonly order: number;
 
   constructor(logger: AppiumPluginLogger) {
     this.#log = logger.createChildLogger('options-reader');
-    this.order = new MarkdownThemeOptionsReader().order - 5;
+    this.order = new MarkdownThemeOptionsReader().order - 10;
   }
 
   /**

@@ -14,7 +14,7 @@
  * @module
  */
 
-import {Context, ProjectReflection} from 'typedoc';
+import {ProjectReflection} from 'typedoc';
 import {AppiumPluginLogger} from '../logger';
 import {ProjectCommands} from '../model';
 import {BuiltinExternalDriverConverter} from './builtin-external-driver';

@@ -8,7 +8,7 @@ export type EntryPointTitleRecord = Record<string, string>;
  * List of options for the plugin
  * @internal
  */
-export const declarations = {
+export const declarations: Record<string, DeclarationOption> = {
   commandsDir: {
     defaultValue: 'commands',
     help: `(${NS}) Name of "commands" directory under the TypeDoc output directory. Not a full path`,
@@ -46,7 +46,7 @@ export const declarations = {
       }
     },
   },
-} as const;
+};
 
 export function isPackageTitle(value: any): value is PackageTitle {
   return _.isPlainObject(value) && _.isString(value.name) && _.isString(value.title);
@@ -56,6 +56,3 @@ export function isPackageTitles(value: any): value is PackageTitle[] {
   return _.isArray(value) && value.every(isPackageTitle);
 }
 export type PackageTitle = {name: string; title: string};
-
-// type sanity check
-declarations as Record<string, DeclarationOption>;

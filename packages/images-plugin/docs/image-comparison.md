@@ -98,7 +98,7 @@ assert File.size? 'find_result_visual.png'
    The image must have the same scale and look the same. However, you can add a scaling transformation beforehand.
 
    official doc:
-   https://github.com/appium/appium/blob/master/docs/en/writing-running-appium/image-comparison.md
+   https://github.com/appium/appium/blob/master/packages/images-plugin/docs/image-comparison.md
    OpenCV algorithm doc:
    https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/template_matching/template_matching.html
    official sample code:

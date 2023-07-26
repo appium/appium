@@ -280,7 +280,7 @@ function adjustNodePath() {
  * The capabilities argument itself gets mutated, so it does not contain parsed
  * settings anymore to avoid further parsing issues.
  * Check
- * https://github.com/appium/appium/blob/master/docs/en/advanced-concepts/settings.md
+ * https://appium.io/docs/en/latest/guides/settings/
  * for more details on the available settings.
  *
  * @param {?Object} caps - Capabilities dictionary. It is mutated if

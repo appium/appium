@@ -293,8 +293,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         `Potentially insecure feature '${name}' has not been ` +
           `enabled. If you want to enable this feature and accept ` +
           `the security ramifications, please do so by following ` +
-          `the documented instructions at https://github.com/appium` +
-          `/appium/blob/master/docs/en/writing-running-appium/security.md`
+          `the documented instructions at http://appium.io/docs/en/2.0/guides/security/`
       );
     }
   }

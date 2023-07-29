@@ -5,13 +5,13 @@ import os from 'os';
 import path from 'path';
 import {EventEmitter} from 'events';
 
-const CACHE_SIZE = 1024;
 const IDEMPOTENT_RESPONSES = new LRU({
-  max: CACHE_SIZE,
+  max: 64,
+  ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
-  dispose(key, {response}) {
+  dispose: (key, {response}) => {
     if (response) {
-      fs.rimrafSync(response);
+      fs.rimraf(response);
     }
   },
 });

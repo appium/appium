@@ -1,68 +1,62 @@
 import log from './logger';
 import LRU from 'lru-cache';
-import {fs, util} from '@appium/support';
-import os from 'os';
-import path from 'path';
+import _ from 'lodash';
 import {EventEmitter} from 'events';
 
 const IDEMPOTENT_RESPONSES = new LRU({
   max: 64,
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
-  dispose: (key, {response}) => {
-    if (response) {
-      fs.rimraf(response);
-    }
-  },
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 
-process.on('exit', () => {
-  const resPaths = [...IDEMPOTENT_RESPONSES.values()].map(({response}) => response).filter(Boolean);
-  for (const resPath of resPaths) {
-    try {
-      // Asynchronous calls are not supported in onExit handler
-      fs.rimrafSync(resPath);
-    } catch (ign) {}
-  }
-});
-
+/**
+ *
+ * @param {string} key
+ * @param {import('http').ClientRequest} req
+ * @param {import('http').ServerResponse} res
+ */
 function cacheResponse(key, req, res) {
+  if (!res.socket) {
+    return;
+  }
+
   const responseStateListener = new EventEmitter();
-  IDEMPOTENT_RESPONSES.set(key, {
+  const value = {
     method: req.method,
     path: req.path,
-    response: null,
+    /** @type {Buffer?} */response: null,
     responseStateListener,
-  });
-  const tmpFile = path.resolve(os.tmpdir(), `${util.uuidV4()}.response`);
-  const responseListener = fs.createWriteStream(tmpFile, {
-    emitClose: true,
-  });
+  };
+  IDEMPOTENT_RESPONSES.set(key, value);
   const originalSocketWriter = res.socket.write.bind(res.socket);
-  const patchedWriter = (chunk, encoding, next) => {
-    if (responseListener.writable) {
-      responseListener.write(chunk);
-    }
+  //tr: Uint8Array | string, encoding?: BufferEncoding, cb?: (err?: Error) => void
+  const patchedWriter = (
+    /**@type {Uint8Array | string}*/chunk,
+    /**@type {BufferEncoding | null}*/encoding,
+    next
+  ) => {
+    const buf = chunk instanceof Uint8Array
+      ? Buffer.from(chunk.buffer)
+      : Buffer.from(chunk, _.isString(encoding) ? encoding : undefined);
+    value.response = value.response ? Buffer.concat([value.response, buf]) : buf;
     return originalSocketWriter(chunk, encoding, next);
   };
+  // @ts-ignore This should be fine
   res.socket.write = patchedWriter;
-  let writeError = null;
+  let httpError = null;
   let isResponseFullySent = false;
-  responseListener.once('error', (e) => {
-    writeError = e;
+  res.once('error', (e) => {
+    httpError = e;
+  });
+  req.once('error', (e) => {
+    httpError = e;
   });
   res.once('finish', () => {
     isResponseFullySent = true;
-    responseListener.end();
   });
   res.once('close', () => {
-    if (!isResponseFullySent) {
-      responseListener.end();
-    }
-  });
-  responseListener.once('close', () => {
     if (res.socket?.write === patchedWriter) {
       res.socket.write = originalSocketWriter;
     }
@@ -70,35 +64,38 @@ function cacheResponse(key, req, res) {
     if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
         `Could not cache the response identified by '${key}'. ` +
-          `Cache consistency has been damaged`
+        `Cache consistency has been damaged`
       );
       return responseStateListener.emit('ready', null);
     }
-    if (writeError) {
-      log.info(`Could not cache the response identified by '${key}': ${writeError.message}`);
+    if (httpError) {
+      log.info(`Could not cache the response identified by '${key}': ${httpError.message}`);
       IDEMPOTENT_RESPONSES.delete(key);
       return responseStateListener.emit('ready', null);
     }
     if (!isResponseFullySent) {
       log.info(
         `Could not cache the response identified by '${key}', ` +
-          `because it has not been completed`
+        `because it has not been completed`
       );
       log.info('Does the client terminate connections too early?');
       IDEMPOTENT_RESPONSES.delete(key);
       return responseStateListener.emit('ready', null);
     }
 
-    IDEMPOTENT_RESPONSES.get(key).response = tmpFile;
-    responseStateListener.emit('ready', tmpFile);
+    responseStateListener.emit('ready', IDEMPOTENT_RESPONSES.get(key).response);
   });
 }
 
+/**
+ * @param {import('http').ClientRequest} req
+ * @param {import('http').ServerResponse} res
+ */
 async function handleIdempotency(req, res, next) {
-  const key = req.headers[IDEMPOTENCY_KEY_HEADER];
-  if (!key) {
+  if (!req.hasHeader(IDEMPOTENCY_KEY_HEADER)) {
     return next();
   }
+  const key = req.getHeader[IDEMPOTENCY_KEY_HEADER];
   if (!MONITORED_METHODS.includes(req.method)) {
     // GET, DELETE, etc. requests are idempotent by default
     // there is no need to cache them
@@ -123,28 +120,18 @@ async function handleIdempotency(req, res, next) {
     return next();
   }
 
-  const rerouteCachedResponse = async (cachedResPath) => {
-    if (!(await fs.exists(cachedResPath))) {
-      IDEMPOTENT_RESPONSES.delete(key);
-      log.warn(`Could not read the cached response identified by key '${key}'`);
-      log.warn('The temporary storage is not accessible anymore');
-      return next();
-    }
-    fs.createReadStream(cachedResPath).pipe(res.socket);
-  };
-
   if (response) {
     log.info(`The same request with the idempotency key '${key}' has been already processed`);
     log.info(`Rerouting its response to the current request`);
-    await rerouteCachedResponse(response);
+    res.end(response);
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
     log.info(`Waiting for the response to be rerouted to the current request`);
-    responseStateListener.once('ready', async (cachedResponsePath) => {
-      if (!cachedResponsePath) {
+    responseStateListener.once('ready', async (/** @type {Buffer?} */ cachedResponseBuf) => {
+      if (!cachedResponseBuf) {
         return next();
       }
-      await rerouteCachedResponse(cachedResponsePath);
+      res.end(cachedResponseBuf);
     });
   }
 }

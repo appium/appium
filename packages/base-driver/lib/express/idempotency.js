@@ -23,15 +23,14 @@ function cacheResponse(key, req, res) {
   }
 
   const responseStateListener = new EventEmitter();
-  const value = {
+  IDEMPOTENT_RESPONSES.set(key, {
     method: req.method,
     path: req.path,
     /** @type {Buffer?} */response: null,
     responseStateListener,
-  };
-  IDEMPOTENT_RESPONSES.set(key, value);
+  });
   const originalSocketWriter = res.socket.write.bind(res.socket);
-  //tr: Uint8Array | string, encoding?: BufferEncoding, cb?: (err?: Error) => void
+  let response = Buffer.from('', 'utf8');
   const patchedWriter = (
     /**@type {Uint8Array | string}*/chunk,
     /**@type {BufferEncoding | null}*/encoding,
@@ -40,7 +39,7 @@ function cacheResponse(key, req, res) {
     const buf = chunk instanceof Uint8Array
       ? Buffer.from(chunk.buffer)
       : Buffer.from(chunk, _.isString(encoding) ? encoding : undefined);
-    value.response = value.response ? Buffer.concat([value.response, buf]) : buf;
+    response = response ? Buffer.concat([response, buf]) : buf;
     return originalSocketWriter(chunk, encoding, next);
   };
   // @ts-ignore This should be fine
@@ -83,7 +82,13 @@ function cacheResponse(key, req, res) {
       return responseStateListener.emit('ready', null);
     }
 
-    responseStateListener.emit('ready', IDEMPOTENT_RESPONSES.get(key).response);
+    const value = IDEMPOTENT_RESPONSES.get(key);
+    if (value) {
+      value.response = response;
+      responseStateListener.emit('ready', response);
+    } else {
+      responseStateListener.emit('ready', null);
+    }
   });
 }
 

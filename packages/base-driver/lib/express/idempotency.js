@@ -40,6 +40,7 @@ function cacheResponse(key, req, res) {
     /**@type {BufferEncoding | null}*/encoding,
     next
   ) => {
+    log.debug(`>>> chunk: ${typeof chunk} -> ${chunk}`);
     const buf = chunk instanceof Uint8Array
       ? Buffer.from(chunk.buffer)
       : Buffer.from(chunk, _.isString(encoding) ? encoding : undefined);
@@ -75,6 +76,7 @@ function cacheResponse(key, req, res) {
       IDEMPOTENT_RESPONSES.delete(key);
     }
 
+    log.debug(`>>> response: ${typeof response} -> ${response}`);
     const value = IDEMPOTENT_RESPONSES.get(key);
     if (value) {
       value.response = response;

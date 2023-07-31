@@ -194,10 +194,6 @@ Repo](https://github.com/appium/appium/tree/master/packages/appium/docs) as well
 Please take a look at our [contribution documentation](CONTRIBUTING.md)
 for instructions on how to build, test, and run Appium from the source.
 
-### Roadmap
-
-Interested in where Appium is heading in the future? Check out the [Roadmap](ROADMAP.md)
-
 ### Project History, Credits & Inspiration
 
 * [History](https://appium.io/docs/en/latest/intro/history/)

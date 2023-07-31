@@ -43,7 +43,6 @@ function cacheResponse(key, req, res) {
     }
     return originalSocketWriter(chunk, encoding, next);
   };
-  // @ts-ignore This should be fine
   res.socket.write = patchedWriter;
   let httpErrorMessage = null;
   let isResponseFullySent = false;

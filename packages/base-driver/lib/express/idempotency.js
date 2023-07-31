@@ -8,6 +8,9 @@ const IDEMPOTENT_RESPONSES = new LRU({
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
   updateAgeOnHas: true,
+  dispose: (key, {responseStateListener}) => {
+    responseStateListener.removeAllListeners();
+  }
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
@@ -15,8 +18,8 @@ const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 /**
  *
  * @param {string} key
- * @param {import('http').ClientRequest} req
- * @param {import('http').ServerResponse} res
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
  */
 function cacheResponse(key, req, res) {
   if (!res.socket) {
@@ -31,7 +34,7 @@ function cacheResponse(key, req, res) {
     responseStateListener,
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
-  let response = Buffer.from('', 'utf8');
+  let response = null;
   const patchedWriter = (
     /**@type {Uint8Array | string}*/chunk,
     /**@type {BufferEncoding | null}*/encoding,
@@ -45,17 +48,11 @@ function cacheResponse(key, req, res) {
   };
   // @ts-ignore This should be fine
   res.socket.write = patchedWriter;
-  let httpError = null;
+  let httpErrorMessage = null;
   let isResponseFullySent = false;
-  res.once('error', (e) => {
-    httpError = e;
-  });
-  req.once('error', (e) => {
-    httpError = e;
-  });
-  res.once('finish', () => {
-    isResponseFullySent = true;
-  });
+  res.once('error', (e) => { httpErrorMessage = e.message; });
+  req.once('error', (e) => { httpErrorMessage = e.message; });
+  res.once('finish', () => { isResponseFullySent = true; });
   res.once('close', () => {
     if (res.socket?.write === patchedWriter) {
       res.socket.write = originalSocketWriter;
@@ -66,8 +63,8 @@ function cacheResponse(key, req, res) {
         `Could not cache the response identified by '${key}'. ` +
         `Cache consistency has been damaged`
       );
-    } else if (httpError) {
-      log.info(`Could not cache the response identified by '${key}': ${httpError.message}`);
+    } else if (httpErrorMessage) {
+      log.info(`Could not cache the response identified by '${key}': ${httpErrorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
     } else if (!isResponseFullySent) {
       log.info(
@@ -89,14 +86,14 @@ function cacheResponse(key, req, res) {
 }
 
 /**
- * @param {import('http').ClientRequest} req
- * @param {import('http').ServerResponse} res
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
  */
 async function handleIdempotency(req, res, next) {
-  if (!req.hasHeader(IDEMPOTENCY_KEY_HEADER)) {
+  const key = req.headers[IDEMPOTENCY_KEY_HEADER];
+  if (!key) {
     return next();
   }
-  const key = req.getHeader[IDEMPOTENCY_KEY_HEADER];
   if (!MONITORED_METHODS.includes(req.method)) {
     // GET, DELETE, etc. requests are idempotent by default
     // there is no need to cache them
@@ -105,17 +102,17 @@ async function handleIdempotency(req, res, next) {
 
   log.debug(`Request idempotency key: ${key}`);
   if (!IDEMPOTENT_RESPONSES.has(key)) {
-    cacheResponse(key, req, res);
+    cacheResponse(_.isArray(key) ? key[0] : key, req, res);
     return next();
   }
 
   const {
-    method: storedMethod,
-    path: storedPath,
+    method,
+    path,
     response,
     responseStateListener,
   } = IDEMPOTENT_RESPONSES.get(key);
-  if (req.method !== storedMethod || req.path !== storedPath) {
+  if (req.method !== method || req.path !== path) {
     log.warn(`Got two different requests with the same idempotency key '${key}'`);
     log.warn('Is the client generating idempotency keys properly?');
     return next();

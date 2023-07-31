@@ -34,17 +34,15 @@ function cacheResponse(key, req, res) {
     responseStateListener,
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
-  let response = null;
-  const patchedWriter = (
-    /**@type {Uint8Array | string}*/chunk,
-    /**@type {BufferEncoding | null}*/encoding,
-    next
-  ) => {
-    log.debug(`>>> chunk: ${typeof chunk} -> ${chunk}`);
-    const buf = chunk instanceof Uint8Array
-      ? Buffer.from(chunk.buffer)
-      : Buffer.from(chunk, _.isString(encoding) ? encoding : undefined);
-    response = response ? Buffer.concat([response, buf]) : buf;
+  let response = '';
+  const patchedWriter = (chunk, encoding, next) => {
+    log.debug(`>>> chunk: ${chunk?.constructor?.name}, ${Buffer.isBuffer(chunk)} -> ${chunk}`);
+    log.debug(`>>> encoding: ${typeof encoding} -> ${encoding}`);
+    if (_.isString(chunk)) {
+      response += chunk;
+    } else {
+      response += chunk.toString(_.isString(encoding) ? encoding : undefined);
+    }
     return originalSocketWriter(chunk, encoding, next);
   };
   // @ts-ignore This should be fine

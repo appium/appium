@@ -30,17 +30,15 @@ function cacheResponse(key, req, res) {
   IDEMPOTENT_RESPONSES.set(key, {
     method: req.method,
     path: req.path,
-    /** @type {Buffer?} */response: null,
+    response: '',
     responseStateListener,
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
   let response = '';
   const patchedWriter = (chunk, encoding, next) => {
-    log.debug(`>>> chunk: ${chunk?.constructor?.name}, ${Buffer.isBuffer(chunk)} -> ${chunk}`);
-    log.debug(`>>> encoding: ${typeof encoding} -> ${encoding}`);
     if (_.isString(chunk)) {
       response += chunk;
-    } else {
+    } else if (_.isFunction(chunk.toString)) {
       response += chunk.toString(_.isString(encoding) ? encoding : undefined);
     }
     return originalSocketWriter(chunk, encoding, next);
@@ -74,7 +72,6 @@ function cacheResponse(key, req, res) {
       IDEMPOTENT_RESPONSES.delete(key);
     }
 
-    log.debug(`>>> response: ${typeof response} -> ${response}`);
     const value = IDEMPOTENT_RESPONSES.get(key);
     if (value) {
       value.response = response;
@@ -130,11 +127,11 @@ async function handleIdempotency(req, res, next) {
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
     log.info(`Waiting for the response to be rerouted to the current request`);
-    responseStateListener.once('ready', async (/** @type {Buffer?} */ cachedResponseBuf) => {
-      if (!cachedResponseBuf || !res.socket?.writable) {
+    responseStateListener.once('ready', async (/** @type {string?} */ cachedResponse) => {
+      if (!cachedResponse || !res.socket?.writable) {
         return next();
       }
-      res.socket.write(cachedResponseBuf);
+      res.socket.write(cachedResponse);
     });
   }
 }

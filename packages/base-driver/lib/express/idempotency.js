@@ -90,10 +90,12 @@ function cacheResponse(key, req, res) {
  * @param {import('express').Response} res
  */
 async function handleIdempotency(req, res, next) {
-  const key = req.headers[IDEMPOTENCY_KEY_HEADER];
-  if (!key) {
+  const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
+  if (!keyOrArr) {
     return next();
   }
+
+  const key = _.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
   if (!MONITORED_METHODS.includes(req.method)) {
     // GET, DELETE, etc. requests are idempotent by default
     // there is no need to cache them
@@ -102,7 +104,7 @@ async function handleIdempotency(req, res, next) {
 
   log.debug(`Request idempotency key: ${key}`);
   if (!IDEMPOTENT_RESPONSES.has(key)) {
-    cacheResponse(_.isArray(key) ? key[0] : key, req, res);
+    cacheResponse(key, req, res);
     return next();
   }
 
@@ -121,15 +123,18 @@ async function handleIdempotency(req, res, next) {
   if (response) {
     log.info(`The same request with the idempotency key '${key}' has been already processed`);
     log.info(`Rerouting its response to the current request`);
-    res.end(response);
+    if (!res.socket?.writable) {
+      return next();
+    }
+    res.socket.write(response);
   } else {
     log.info(`The same request with the idempotency key '${key}' is being processed`);
     log.info(`Waiting for the response to be rerouted to the current request`);
     responseStateListener.once('ready', async (/** @type {Buffer?} */ cachedResponseBuf) => {
-      if (!cachedResponseBuf) {
+      if (!cachedResponseBuf || !res.socket?.writable) {
         return next();
       }
-      res.end(cachedResponseBuf);
+      res.socket.write(cachedResponseBuf);
     });
   }
 }

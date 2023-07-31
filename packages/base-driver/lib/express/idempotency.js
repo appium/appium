@@ -7,6 +7,7 @@ const IDEMPOTENT_RESPONSES = new LRU({
   max: 64,
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
+  updateAgeOnHas: true,
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
@@ -65,21 +66,16 @@ function cacheResponse(key, req, res) {
         `Could not cache the response identified by '${key}'. ` +
         `Cache consistency has been damaged`
       );
-      return responseStateListener.emit('ready', null);
-    }
-    if (httpError) {
+    } else if (httpError) {
       log.info(`Could not cache the response identified by '${key}': ${httpError.message}`);
       IDEMPOTENT_RESPONSES.delete(key);
-      return responseStateListener.emit('ready', null);
-    }
-    if (!isResponseFullySent) {
+    } else if (!isResponseFullySent) {
       log.info(
         `Could not cache the response identified by '${key}', ` +
         `because it has not been completed`
       );
       log.info('Does the client terminate connections too early?');
       IDEMPOTENT_RESPONSES.delete(key);
-      return responseStateListener.emit('ready', null);
     }
 
     const value = IDEMPOTENT_RESPONSES.get(key);

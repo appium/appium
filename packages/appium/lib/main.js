@@ -347,7 +347,7 @@ function logServerAddress(url) {
       : href;
   };
   logger.info(
-    `You can provide the following ${util.pluralize('URL', interfaces.length, false)} ` +
+    `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
     `in your client code to connect to this server:\n` +
     interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
   );

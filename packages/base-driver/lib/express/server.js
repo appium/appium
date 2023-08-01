@@ -118,6 +118,7 @@ function configureServer({
   } else {
     app.use(allowCrossDomainAsyncExecute(basePath));
   }
+  // @ts-ignore
   app.use(handleIdempotency);
   app.use(fixPythonContentType(basePath));
   app.use(defaultToJSONContentType);

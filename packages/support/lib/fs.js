@@ -13,7 +13,7 @@ import {
   rmSync,
   open,
 } from 'fs';
-import glob from 'glob';
+import { glob } from 'glob';
 import klaw from 'klaw';
 import _ from 'lodash';
 import mv from 'mv';
@@ -158,7 +158,7 @@ const fs = {
    * Given a glob pattern, resolve with list of files matching that pattern
    * @see https://github.com/isaacs/node-glob
    */
-  glob: /** @type {(pattern: string, opts?: glob.GlobOptions) => B<string[]>} */ B.promisify(glob.glob),
+  glob: /** @type {(pattern: string, opts?: glob.GlobOptions) => B<string[]>} */ B.promisify(glob),
 
   /**
    * Sanitize a filename

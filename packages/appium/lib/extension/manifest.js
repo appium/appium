@@ -3,7 +3,7 @@
  */
 
 import B from 'bluebird';
-import { globIterate } from 'glob';
+import { glob } from 'glob';
 import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
@@ -212,7 +212,7 @@ export class Manifest {
     ];
 
     // add dependencies to the queue
-    const filepathGenerator = globIterate('node_modules/{*,@*/*}/package.json', {
+    const filepathGenerator = glob.iterate('node_modules/{*,@*/*}/package.json', {
       cwd: this.#appiumHome,
       absolute: true,
     });

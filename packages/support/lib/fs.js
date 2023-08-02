@@ -158,7 +158,9 @@ const fs = {
    * Given a glob pattern, resolve with list of files matching that pattern
    * @see https://github.com/isaacs/node-glob
    */
-  glob: /** @type {(pattern: string, opts?: glob.GlobOptions) => B<string[]>} */ B.promisify(glob),
+  glob: /** @type {(pattern: string, opts?: import('glob').GlobOptions) => B<string[]>} */ (
+    (pattern, options) => B.resolve(options ? glob(pattern, options) : glob(pattern))
+  ),
 
   /**
    * Sanitize a filename

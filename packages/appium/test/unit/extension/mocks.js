@@ -26,6 +26,7 @@ export function initMocks(sandbox = createSandbox()) {
             .returns({next: sandbox.stub().resolves({done: true})}),
         })
       ),
+      glob: /** @type {MockAppiumSupportFs['glob']} */ (sandbox.stub().resolves([])),
       mkdirp: /** @type {MockAppiumSupportFs['mkdirp']} */ (sandbox.stub().resolves()),
       readPackageJsonFrom: /** @type {MockAppiumSupportFs['readPackageJsonFrom']} */ (
         sandbox.stub().returns({version: APPIUM_VER, engines: {node: '>=12'}})
@@ -166,6 +167,7 @@ export function initMocks(sandbox = createSandbox()) {
  * @property {SinonStubbedMember<SupportFs['readFile']>} readFile
  * @property {SinonStubbedMember<SupportFs['writeFile']>} writeFile
  * @property {SinonStubbedMember<SupportFs['walk']>} walk
+ * @property {SinonStubbedMember<SupportFs['glob']>} glob
  * @property {SinonStubbedMember<SupportFs['mkdirp']>} mkdirp
  * @property {SinonStubbedMember<SupportFs['readPackageJsonFrom']>} readPackageJsonFrom
  * @property {SinonStubbedMember<SupportFs['findRoot']>} findRoot

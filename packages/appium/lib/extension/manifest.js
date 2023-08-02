@@ -3,7 +3,6 @@
  */
 
 import B from 'bluebird';
-import { glob } from 'glob';
 import {env, fs} from '@appium/support';
 import _ from 'lodash';
 import path from 'path';
@@ -212,11 +211,11 @@ export class Manifest {
     ];
 
     // add dependencies to the queue
-    const filepathGenerator = glob.iterate('node_modules/{*,@*/*}/package.json', {
+    const filepaths = await fs.glob('node_modules/{*,@*/*}/package.json', {
       cwd: this.#appiumHome,
       absolute: true,
     });
-    for await (const filepath of filepathGenerator) {
+    for (const filepath of filepaths) {
       queue.push(onMatch(filepath));
     }
 

@@ -52,6 +52,8 @@ jobs:
       run: echo "versions=$(curl -s https://endoflife.date/api/nodejs.json | jq -c '[[.[] | select(.lts != false)][:3] | .[].cycle | tonumber]')" >> "$GITHUB_OUTPUT"
 
   test:
+    needs:
+    - prepare_matrix
     name: Tests
     strategy:
       matrix:

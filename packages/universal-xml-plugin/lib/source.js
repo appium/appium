@@ -1,43 +1,60 @@
 import _ from 'lodash';
-import parser, {j2xParser} from 'fast-xml-parser';
+import {XMLParser, XMLBuilder} from 'fast-xml-parser';
 import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import TRANSFORMS from './transformers';
-
-const PARSE_OPTS = {
-  ignoreAttributes: false,
-  arrayMode: true,
-};
-
-const GEN_OPTS = {
-  ignoreAttributes: false,
-  arrayMode: true,
-  format: true,
-};
 
 export const ATTR_PREFIX = '@_';
 export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
 export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
-const isAttr = (k) => k.substring(0, 2) === ATTR_PREFIX;
-const isNode = (k) => !isAttr(k);
+const PARSE_OPTS = {
+  ignoreAttributes: false,
+  ignoreDeclaration: true,
+  attributeNamePrefix: ATTR_PREFIX,
+  isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
+};
 
+const GEN_OPTS = {
+  ignoreAttributes: false,
+  attributeNamePrefix: ATTR_PREFIX,
+  allowBooleanAttributes: true,
+  suppressBooleanAttributes: false,
+  format: true,
+};
+
+const isAttr = (/** @type {string} */ k) => k.startsWith(ATTR_PREFIX);
+const isNode = (/** @type {string} */ k) => !isAttr(k);
+
+/**
+ *
+ * @param {string} xmlStr
+ * @param {string} platform
+ * @param {{metadata?: Object, addIndexPath?: boolean}} opts
+ * @returns {{xml: string, unknowns: NodesAndAttributes}}
+ */
 export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPath = false} = {}) {
   // first thing we want to do is modify the ios source root node, because it doesn't include the
   // necessary index attribute, so we add it if it's not there
   xmlStr = xmlStr.replace('<AppiumAUT>', '<AppiumAUT index="0">');
-  const xmlObj = parser.parse(xmlStr, PARSE_OPTS);
+  const xmlObj = new XMLParser(PARSE_OPTS).parse(xmlStr);
   const unknowns = transformNode(xmlObj, platform, {
     metadata,
     addIndexPath,
     parentPath: '',
   });
-  const jParser = new j2xParser(GEN_OPTS);
-  let transformedXml = jParser.parse(xmlObj).trim();
+  let transformedXml = new XMLBuilder(GEN_OPTS).build(xmlObj).trim();
   transformedXml = `<?xml version="1.0" encoding="UTF-8"?>\n${transformedXml}`;
   return {xml: transformedXml, unknowns};
 }
 
+/**
+ *
+ * @param {Object} nameMap
+ * @param {string} name
+ * @param {string} platform
+ * @returns {string | null}
+ */
 function getUniversalName(nameMap, name, platform) {
   for (const translatedName of Object.keys(nameMap)) {
     const sourceNodes = nameMap[translatedName]?.[platform];
@@ -51,14 +68,33 @@ function getUniversalName(nameMap, name, platform) {
   return null;
 }
 
+/**
+ *
+ * @param {any} nodeName
+ * @param {string} platform
+ * @returns {string?}
+ */
 export function getUniversalNodeName(nodeName, platform) {
   return getUniversalName(NODE_MAP, nodeName, platform);
 }
 
+/**
+ *
+ * @param {string} attrName
+ * @param {string} platform
+ * @returns {string?}
+ */
 export function getUniversalAttrName(attrName, platform) {
   return getUniversalName(ATTR_MAP, attrName, platform);
 }
 
+/**
+ *
+ * @param {any} nodeObj
+ * @param {string} platform
+ * @param {{metadata?: Object, addIndexPath?: boolean, parentPath?: string}} opts
+ * @returns {NodesAndAttributes}
+ */
 export function transformNode(nodeObj, platform, {metadata, addIndexPath, parentPath}) {
   const unknownNodes = [];
   const unknownAttrs = [];
@@ -103,6 +139,14 @@ export function transformNode(nodeObj, platform, {metadata, addIndexPath, parent
   };
 }
 
+/**
+ *
+ * @param {any} nodeObj
+ * @param {string[]} childNodeNames
+ * @param {string} platform
+ * @param {{metadata?: Object, addIndexPath?: boolean, parentPath?: string}} opts
+ * @returns {NodesAndAttributes}
+ */
 export function transformChildNodes(
   nodeObj,
   childNodeNames,
@@ -144,6 +188,13 @@ export function transformChildNodes(
   return {nodes: unknownNodes, attrs: unknownAttrs};
 }
 
+/**
+ *
+ * @param {any} nodeObj
+ * @param {string[]} attrs
+ * @param {string} platform
+ * @returns {string[]}
+ */
 export function transformAttrs(nodeObj, attrs, platform) {
   const unknownAttrs = [];
   for (const attr of attrs) {
@@ -165,3 +216,7 @@ export function transformAttrs(nodeObj, attrs, platform) {
   }
   return unknownAttrs;
 }
+
+/**
+ * @typedef {{nodes: string[], attrs: string[]}} NodesAndAttributes
+ */

@@ -4,20 +4,22 @@ import NODE_MAP from './node-map';
 import {ATTR_MAP, REMOVE_ATTRS} from './attr-map';
 import TRANSFORMS from './transformers';
 
+export const ATTR_PREFIX = '@_';
+export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
+export const IDX_PREFIX = `${ATTR_PREFIX}index`;
+
 const PARSE_OPTS = {
   ignoreAttributes: false,
+  attributeNamePrefix: ATTR_PREFIX,
   arrayMode: true,
 };
 
 const GEN_OPTS = {
   ignoreAttributes: false,
+  attributeNamePrefix: ATTR_PREFIX,
   arrayMode: true,
   format: true,
 };
-
-export const ATTR_PREFIX = '@_';
-export const IDX_PATH_PREFIX = `${ATTR_PREFIX}indexPath`;
-export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
 const isAttr = (/** @type {string} */ k) => k.substring(0, 2) === ATTR_PREFIX;
 const isNode = (k) => !isAttr(k);
@@ -44,6 +46,13 @@ export function transformSourceXml(xmlStr, platform, {metadata = {}, addIndexPat
   return {xml: transformedXml, unknowns};
 }
 
+/**
+ *
+ * @param {Object} nameMap
+ * @param {string} name
+ * @param {string} platform
+ * @returns {string | null}
+ */
 function getUniversalName(nameMap, name, platform) {
   for (const translatedName of Object.keys(nameMap)) {
     const sourceNodes = nameMap[translatedName]?.[platform];
@@ -57,10 +66,22 @@ function getUniversalName(nameMap, name, platform) {
   return null;
 }
 
+/**
+ *
+ * @param {any} nodeName
+ * @param {string} platform
+ * @returns {string?}
+ */
 export function getUniversalNodeName(nodeName, platform) {
   return getUniversalName(NODE_MAP, nodeName, platform);
 }
 
+/**
+ *
+ * @param {string} attrName
+ * @param {string} platform
+ * @returns {string?}
+ */
 export function getUniversalAttrName(attrName, platform) {
   return getUniversalName(ATTR_MAP, attrName, platform);
 }

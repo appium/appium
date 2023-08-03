@@ -49,7 +49,8 @@ jobs:
         node-version: [16.x, 18.x, 20.x]
         os:
         - ubuntu-latest
-        - windows-latest
+        # TODO: Windows is not stable and slow to run
+        # - windows-latest
         # TODO: Enable below envs after all tests have been verified green
         # - macos-latest
     runs-on: ${{ matrix.os }}

@@ -10,14 +10,16 @@ export const IDX_PREFIX = `${ATTR_PREFIX}index`;
 
 const PARSE_OPTS = {
   ignoreAttributes: false,
+  ignoreDeclaration: true,
   attributeNamePrefix: ATTR_PREFIX,
-  arrayMode: true,
+  isArray: (name, jPath, isLeafNode, isAttribute) => !isAttribute,
 };
 
 const GEN_OPTS = {
   ignoreAttributes: false,
   attributeNamePrefix: ATTR_PREFIX,
-  arrayMode: true,
+  allowBooleanAttributes: true,
+  suppressBooleanAttributes: false,
   format: true,
 };
 
@@ -214,7 +216,6 @@ export function transformAttrs(nodeObj, attrs, platform) {
   }
   return unknownAttrs;
 }
-
 
 /**
  * @typedef {{nodes: string[], attrs: string[]}} NodesAndAttributes

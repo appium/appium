@@ -21,8 +21,8 @@ const GEN_OPTS = {
   format: true,
 };
 
-const isAttr = (/** @type {string} */ k) => k.substring(0, 2) === ATTR_PREFIX;
-const isNode = (k) => !isAttr(k);
+const isAttr = (/** @type {string} */ k) => k.startsWith(ATTR_PREFIX);
+const isNode = (/** @type {string} */ k) => !isAttr(k);
 
 /**
  *

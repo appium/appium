@@ -118,7 +118,7 @@
     "fancy-log": "2.0.0",
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
-    "handlebars": "4.7.7",
+    "handlebars": "4.7.8",
     "husky": "8.0.3",
     "json-schema-to-typescript": "13.0.2",
     "lerna": "6.6.2",

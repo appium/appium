@@ -12,6 +12,7 @@ import * as tp from 'teen_process';
 import {withMocks, stubEnv} from '@appium/test-support';
 import B from 'bluebird';
 import {removeColors} from './helper';
+import {createSandbox} from 'sinon';
 
 describe('android', function () {
   const apkAnalyzerFilename = system.isWindows() ? 'apkanalyzer.bat' : 'apkanalyzer';
@@ -59,8 +60,17 @@ describe('android', function () {
     })
   );
   describe(
-    'AndroidToolCheck',
-    withMocks({adb}, (mocks) => {
+    'AndroidToolCheck', function () {
+      // withMocks won't work with ESM modules: https://github.com/sinonjs/sinon/issues/2530
+      /** @type {sinon.SinonSandbox} */
+      let sandbox;
+      beforeEach(function () {
+        sandbox = createSandbox();
+      });
+      afterEach(function () {
+        sandbox.restore();
+      });
+
       stubEnv();
       const check = new AndroidToolCheck();
       it('autofix', function () {
@@ -68,16 +78,13 @@ describe('android', function () {
       });
       it('diagnose - success', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb
-          .expects('getAndroidBinaryPath')
-          .exactly(check.tools.length)
-          .returns(B.resolve('/path/to/binary'));
+        sandbox.stub(adb, 'getAndroidBinaryPath')
+          .get(() => sandbox.fake.resolves('/path/to/binary'));
         (await check.diagnose()).should.deep.equal({
           ok: true,
           optional: false,
           message: `adb, emulator, ${apkAnalyzerFilename} exist: /a/b/c/d`,
         });
-        mocks.verify();
       });
       it('diagnose - failure - no ANDROID_HOME', async function () {
         delete process.env.ANDROID_HOME;
@@ -87,17 +94,16 @@ describe('android', function () {
           optional: false,
           message: `adb, emulator, ${apkAnalyzerFilename} could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!`,
         });
-        mocks.verify();
       });
       it('diagnose - failure - path not valid', async function () {
         process.env.ANDROID_HOME = '/a/b/c/d';
-        mocks.adb.expects('getAndroidBinaryPath').exactly(check.tools.length).throws();
+        sandbox.stub(adb, 'getAndroidBinaryPath')
+          .get(() => sandbox.fake.throws());
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
           message: `adb, emulator, ${apkAnalyzerFilename} could NOT be found in /a/b/c/d!`,
         });
-        mocks.verify();
       });
       it('fix - ANDROID_HOME', async function () {
         delete process.env.ANDROID_HOME;
@@ -111,7 +117,7 @@ describe('android', function () {
           `Manually install adb, emulator, ${apkAnalyzerFilename} and add it to PATH. https://developer.android.com/studio#cmdline-tools and https://developer.android.com/studio/intro/update#sdk-manager may help to setup.`
         );
       });
-    })
+    }
   );
 
   describe(

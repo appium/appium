@@ -63,7 +63,7 @@
     "handlebars": "4.7.8",
     "lodash": "4.17.21",
     "pluralize": "8.0.0",
-    "type-fest": "3.11.1"
+    "type-fest": "3.13.1"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

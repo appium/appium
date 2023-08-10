@@ -276,7 +276,14 @@ function adjustNodePath() {
 /**
  * Pulls the initial values of Appium settings from the given capabilities argument.
  * Each setting item must satisfy the following format:
- * `setting[setting_name]: setting_value`
+ * `settings[setting_name]: setting_value`
+ * or
+ * ```
+ * settings = {
+ *   setting_name1: 'setting_value1',
+ *   setting_name2: 'setting_value2',
+ * }
+ * ```
  * The capabilities argument itself gets mutated, so it does not contain parsed
  * settings anymore to avoid further parsing issues.
  * Check
@@ -295,14 +302,19 @@ function pullSettings(caps) {
   }
 
   const result = {};
+  const singleSettings = {};
   for (const [key, value] of _.toPairs(caps)) {
-    const match = /\bsettings\[(\S+)\]$/.exec(key);
-    if (!match) {
-      continue;
+    let match;
+    if (/^(s|appium:s)ettings$/.test(key) && _.isPlainObject(value)) {
+      Object.assign(result, value);
+      delete caps[key];
+    } else if ((match = /^(s|appium:s)ettings\[(\S+)\]$/.exec(key))) {
+      singleSettings[match[2]] = value;
+      delete caps[key];
     }
-
-    result[match[1]] = value;
-    delete caps[key];
+  }
+  if (!_.isEmpty(singleSettings)) {
+    Object.assign(result, singleSettings);
   }
   return result;
 }

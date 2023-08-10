@@ -232,6 +232,26 @@ describe('utils', function () {
       settings.should.eql({});
       caps.should.eql({});
     });
+    it('should pull combined settings', function () {
+      const caps = {
+        platformName: 'foo',
+        browserName: 'bar',
+        'appium:settings[foo]': 'baz2',
+        'appium:settings': {
+          foo: 'baz',
+          yolo: 'bar',
+        },
+      };
+      const settings = pullSettings(caps);
+      settings.should.eql({
+        foo: 'baz2',
+        yolo: 'bar',
+      });
+      caps.should.eql({
+        platformName: 'foo',
+        browserName: 'bar',
+      });
+    });
   });
 
   describe('inspect()', function () {

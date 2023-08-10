@@ -114,6 +114,7 @@ class AppiumDriver extends DriverCore {
     this.sessionPlugins = {};
     this.sessionlessPlugins = [];
     this.desiredCapConstraints = desiredCapabilityConstraints;
+    this._isShuttingDown = false;
 
     // allow this to happen in the background, so no `await`
     (async () => {
@@ -155,9 +156,30 @@ class AppiumDriver extends DriverCore {
 
   // eslint-disable-next-line require-await
   async getStatus() {
+    // https://www.w3.org/TR/webdriver/#dfn-status
+    const statusObj = this._isShuttingDown
+      ? {
+        ready: false,
+        message: 'The server is shutting down',
+      } : {
+        ready: true,
+        message: 'The server is ready to accept new connections',
+      };
     return {
+      ...statusObj,
       build: _.clone(getBuildInfo()),
     };
+  }
+
+  /**
+   * @param {string|null} reason An optional shutdown reason
+   */
+  async shutdown(reason = null) {
+    this._isShuttingDown = true;
+    await this.deleteAllSessions({
+      force: true,
+      reason,
+    });
   }
 
   async getSessions() {

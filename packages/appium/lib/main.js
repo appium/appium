@@ -440,10 +440,7 @@ async function main(args) {
     process.once(signal, async function onSignal() {
       logger.info(`Received ${signal} - shutting down`);
       try {
-        await appiumDriver.deleteAllSessions({
-          force: true,
-          reason: `The process has received ${signal} signal`,
-        });
+        await appiumDriver.shutdown(`The process has received ${signal} signal`);
         await server.close();
         process.exit(0);
       } catch (e) {

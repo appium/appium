@@ -80,7 +80,7 @@ body:
       placeholder: 'https://gist.github.com/...'
   - type: textarea
     attributes:
-      label: Futher Information
+      label: Further Information
       description: |
         Links? References? Anything that will give us more context about the issue you are encountering!
 

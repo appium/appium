@@ -278,10 +278,12 @@ function adjustNodePath() {
  * Each setting item must satisfy the following format:
  * `settings[setting_name]: setting_value`
  * or
- * `settings = {
+ * ```
+ * settings = {
  *   setting_name1: 'setting_value1',
  *   setting_name2: 'setting_value2',
- * }`
+ * }
+ * ```
  * The capabilities argument itself gets mutated, so it does not contain parsed
  * settings anymore to avoid further parsing issues.
  * Check

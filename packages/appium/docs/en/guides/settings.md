@@ -41,6 +41,18 @@ would construct a set of capabilities that includes the following in its JSON re
 }
 ```
 
+Also, since base-driver version 9.4.0, there is a possibility to provide multiple settings
+in a single `appium:settings` capability value:
+
+```json
+{
+    "appium:settings": {
+        "ignoreUnimportantViews": true,
+        "allowInvisibleElements": true
+    }
+}
+```
+
 Of course, initializing a setting via capabilities doesn't prevent you from changing it later on
 via the Settings API. To learn more about how to use the Settings API in the context of your
 specific client library, visit the documentation for that library.

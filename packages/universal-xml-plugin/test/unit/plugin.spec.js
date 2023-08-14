@@ -1,4 +1,4 @@
-import UniversalXMLPlugin from '../../lib/plugin';
+import {UniversalXMLPlugin} from '../..';
 import BaseDriver from 'appium/driver';
 import {XML_IOS, XML_ANDROID, XML_IOS_TRANSFORMED, XML_ANDROID_TRANSFORMED} from '../fixtures';
 import {runQuery, getNodeAttrVal} from '../../lib/xpath';

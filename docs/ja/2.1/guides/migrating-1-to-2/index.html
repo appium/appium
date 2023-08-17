@@ -1,0 +1,1353 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.io/docs/ja/2.1/guides/migrating-1-to-2/">
+      
+      
+        <link rel="prev" href="../../intro/">
+      
+      
+      <link rel="icon" href="../../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+    
+    
+      
+        <title>Migrating 1 to 2 - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.484 4.484 0 0 1-.563-1.191 3.835 3.835 0 0 1-.05-2.063 4.647 4.647 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .748.748 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.425 2.425 0 0 1-.507-.441 3.075 3.075 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.884.884 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.737 3.737 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75Z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>');}</style>
+
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#title-appium-1xappium-2x" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Migrating 1 to 2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+            
+          
+        </form>
+      
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="言語切り替え">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        はじめに
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          導入
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          導入
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Appiumについて
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Appiumについて
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../intro/" class="md-nav__link">
+        Appiumの全体像
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          手引き
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          手引き
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Migrating 1 to 2
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Migrating 1 to 2
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#title-appium-1xappium-2x" class="md-nav__link">
+    title: Appium 1.xからAppium 2.xへ移行する
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appium-20" class="md-nav__link">
+    Appium 2.0の概要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    破壊的変更
+  </a>
+  
+    <nav class="md-nav" aria-label="破壊的変更">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-path" class="md-nav__link">
+    初期設定のbase path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    ドライバーのインストール
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivers-installation-path" class="md-nav__link">
+    Drivers installation path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chromedriver-installation-flags" class="md-nav__link">
+    Chromedriver installation flags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-specific-command-line-options" class="md-nav__link">
+    Driver-specific command line options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-specific-automation-commands" class="md-nav__link">
+    Driver-specific automation commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-updates" class="md-nav__link">
+    Driver updates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol-changes" class="md-nav__link">
+    Protocol changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capabilities" class="md-nav__link">
+    Capabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed-commands" class="md-nav__link">
+    Removed Commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-analysis-features-moved-to-plugin" class="md-nav__link">
+    Image analysis features moved to plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execute-driver-script-command-moved-to-plugin" class="md-nav__link">
+    Execute Driver Script command moved to plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-files-no-longer-supported-for-nodeconfig-default-capabilities-allow-insecure-and-deny-insecure" class="md-nav__link">
+    External Files No Longer Supported for --nodeconfig, --default-capabilities, --allow-insecure and --deny-insecure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#old-drivers-removed" class="md-nav__link">
+    Old drivers removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-can-no-longer-be-started-with-port-0" class="md-nav__link">
+    Server can no longer be started with --port 0
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-packages-renamed" class="md-nav__link">
+    Internal packages renamed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wd-javascript-client-library-no-longer-supported" class="md-nav__link">
+    "WD" JavaScript client library no longer supported
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appium-inspector-split-out-from-appium-desktop" class="md-nav__link">
+    Appium Inspector split out from Appium Desktop
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#major-new-features" class="md-nav__link">
+    Major New Features
+  </a>
+  
+    <nav class="md-nav" aria-label="Major New Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    Plugins
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-plugins" class="md-nav__link">
+    Server Plugins
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client-plugins" class="md-nav__link">
+    Client Plugins
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-drivers-and-plugins-from-anywhere" class="md-nav__link">
+    Install drivers and plugins from anywhere
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    Configuration Files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    Special Notes for Cloud Providers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#title-appium-1xappium-2x" class="md-nav__link">
+    title: Appium 1.xからAppium 2.xへ移行する
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#appium-20" class="md-nav__link">
+    Appium 2.0の概要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    破壊的変更
+  </a>
+  
+    <nav class="md-nav" aria-label="破壊的変更">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base-path" class="md-nav__link">
+    初期設定のbase path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    ドライバーのインストール
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivers-installation-path" class="md-nav__link">
+    Drivers installation path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chromedriver-installation-flags" class="md-nav__link">
+    Chromedriver installation flags
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-specific-command-line-options" class="md-nav__link">
+    Driver-specific command line options
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-specific-automation-commands" class="md-nav__link">
+    Driver-specific automation commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver-updates" class="md-nav__link">
+    Driver updates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#protocol-changes" class="md-nav__link">
+    Protocol changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capabilities" class="md-nav__link">
+    Capabilities
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed-commands" class="md-nav__link">
+    Removed Commands
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#image-analysis-features-moved-to-plugin" class="md-nav__link">
+    Image analysis features moved to plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execute-driver-script-command-moved-to-plugin" class="md-nav__link">
+    Execute Driver Script command moved to plugin
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#external-files-no-longer-supported-for-nodeconfig-default-capabilities-allow-insecure-and-deny-insecure" class="md-nav__link">
+    External Files No Longer Supported for --nodeconfig, --default-capabilities, --allow-insecure and --deny-insecure
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#old-drivers-removed" class="md-nav__link">
+    Old drivers removed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-can-no-longer-be-started-with-port-0" class="md-nav__link">
+    Server can no longer be started with --port 0
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#internal-packages-renamed" class="md-nav__link">
+    Internal packages renamed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wd-javascript-client-library-no-longer-supported" class="md-nav__link">
+    "WD" JavaScript client library no longer supported
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appium-inspector-split-out-from-appium-desktop" class="md-nav__link">
+    Appium Inspector split out from Appium Desktop
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#major-new-features" class="md-nav__link">
+    Major New Features
+  </a>
+  
+    <nav class="md-nav" aria-label="Major New Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    Plugins
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#server-plugins" class="md-nav__link">
+    Server Plugins
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#client-plugins" class="md-nav__link">
+    Client Plugins
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-drivers-and-plugins-from-anywhere" class="md-nav__link">
+    Install drivers and plugins from anywhere
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-files" class="md-nav__link">
+    Configuration Files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    Special Notes for Cloud Providers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Migrating 1 to 2</h1>
+
+<!---Current latest commit hash in the original English documentation is e4dfa52 --->
+
+<hr />
+<h2 id="title-appium-1xappium-2x">title: Appium 1.xからAppium 2.xへ移行する</h2>
+<!---
+This document is a guide for those who are using Appium 1.x and wish to migrate to Appium 2.x. It contains a list of breaking changes and how to migrate your environments or test suites to ensure compatibility with Appium 2.0.
+--->
+<p>このドキュメントは既にAppium 1.xを利用している人がAppium 2.xに移行するための手引きです。
+破壊的変更（breaking changes）の一覧や、実行環境・テストコードをAppium 2.0互換にするための方法が含まれます。</p>
+<!---
+## Overview of Appium 2.0
+--->
+
+<h2 id="appium-20">Appium 2.0の概要</h2>
+<!---
+Appium 2.0 is the most major new release of Appium in over 5 years. The changes in Appium 2.0 are _not_ primarily related to changes in automation behaviors for specific platforms. Instead, Appium 2.0 reenvisions Appium as a _platform_ where "drivers" (code projects that introduce support for automation of a given platform) and "plugins" (code projects that allow for overriding, altering, extending, or adding behaviors to Appium) can be easily created and shared.
+--->
+
+<p>Appium 2.0は過去5年間におけるAppiumのリリース野中で最も大きなリリースです。Appium 2.0の主要な変更は特定のプラットフォームに対する自動化された動作に関するものでは<strong>ありません</strong>。Appium 2.0はAppiumをドライバー（drivers）（あるプラットフォームに対する自動化を支援するためのプロジェクト）とプラグイン（plugins）（Appiumの動作を上書き、代替、拡張、もしくは追加するためのプロジェクト）という容易に実装、共有できる<strong>仕組みを提供するプラットフォーム</strong>として再考しています。</p>
+<!---
+At the same time, the Appium project is taking the opportunity to remove many old and deprecated bits of functionality.
+--->
+
+<p>同時に、Appiumプロジェクトは多くの古くなったり非推奨となっている機能や依存を取り除こうとしています。</p>
+<!---
+Together these do introduce a few breaking changes to how Appium is installed, how drivers and various features are managed, and protocol support. These are detailed below.
+--->
+
+<p>これらに合わせて、Appiumのインストール方法、ドライバーやフィーチャーの管理、プロトコルサポートに関していくつかの破壊的変更をが導入されます。詳細は以下になります。</p>
+<!---
+## Breaking Changes
+--->
+
+<h2 id="_1">破壊的変更</h2>
+<!---
+Here we call out the breaking changes and what you need to do to account for them.
+--->
+
+<p>以下では破壊的変更と、何をする必要があるのかを示します。</p>
+<!---
+### :bangbang: Installing drivers during setup
+--->
+
+<h3 id="base-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> 初期設定のbase path</h3>
+<!---
+With Appium 1.x, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
+`/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
+2, and is no longer relevant. As such the default base path for the server is now `/`. If you want
+to retain the old behaviour, you can set the base path via a command line argument as follows:
+--->
+
+<p>Appium 1.xでは、AppiumサーバーのURLは<code>http://localhost:4723/wd/hub</code>でした。この<code>/wd/hub</code>であるbase pathはSelenium 1からSelenium 2へ移行した時の名残であり、今となっては何ら意味を持ちません。そのため、初期設定のbase pathは<code>/</code>となります。もしあたなが以前の挙動を保持したいのであれば、以下の通りにAppiumサーバを起動してください。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium --base-path=/wd/hub
+</code></pre></div>
+<!---
+You can also set server arguments as [Config file](./config.md) properties.
+--->
+
+<p>この設定は<a href="./config.md">Config file</a>からでも可能です。</p>
+<h3 id="_2"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> ドライバーのインストール</h3>
+<!---
+When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm install --location=global appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+--->
+
+<p>Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば <code>npm install --location=global appium</code>）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい<a href="../cli/extensions.md">Appium拡張コマンドラインインタフェース（Appium extension CLI）</a>を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2<span class="w">     </span><span class="c1"># installs the latest driver version</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.12.2<span class="w">  </span><span class="c1"># installs a specific driver version</span>
+</code></pre></div>
+<!---
+At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it. If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
+--->
+
+<p>これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>npm<span class="w"> </span>install<span class="w"> </span>--location<span class="o">=</span>global<span class="w"> </span>appium<span class="w"> </span>--drivers<span class="o">=</span>xcuitest,uiautomator2
+</code></pre></div>
+<!---
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall --location=global appium`) if you get an installation or startup error. 
+--->
+
+<p>これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを<code>npm uninstall --location=global appium</code>で削除してみてください。</p>
+<h3 id="drivers-installation-path"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Drivers installation path</h3>
+<p>When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
+The path was <code>/path/to/appium/node_modules</code>.
+For example, <code>appium-webdriveragent</code> to build WebDriverAgent manually was <code>/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code>.</p>
+<p>Appium 2.0 installs such dependencies in <code>APPIUM_HOME</code> environment variable. The default path is <code>~/.appium</code>.
+So, the path to  <code>appium-webdriveragent</code> could be <code>$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent</code> after installing the XCUITest driver package.</p>
+<h3 id="chromedriver-installation-flags"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Chromedriver installation flags</h3>
+<p>In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:</p>
+<ul>
+<li><code>--chromedriver-skip-install</code></li>
+<li><code>--chromedriver-version</code></li>
+<li><code>--chromedriver-cdnurl</code></li>
+</ul>
+<p>Because Appium 2.0 now installs drivers for you, and because these flags were implemented as NPM config flags, they will no longer work. Instead, use the following environment variables during driver installation:</p>
+<ul>
+<li><code>APPIUM_SKIP_CHROMEDRIVER_INSTALL</code></li>
+<li><code>CHROMEDRIVER_VERSION</code></li>
+<li><code>CHROMEDRIVER_CDNURL</code></li>
+</ul>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">APPIUM_SKIP_CHROMEDRIVER_INSTALL</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
+</code></pre></div>
+<h3 id="driver-specific-command-line-options"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver-specific command line options</h3>
+<p>With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, <code>--chromedriver-executable</code> was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.</p>
+<p>With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either <code>driver</code> or <code>plugin</code>) and the name of the extension. For example, <code>--chromedriver-executable</code> becomes <code>--driver-uiautomator2-chromedriver-executable</code>.</p>
+<h3 id="driver-specific-automation-commands"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver-specific automation commands</h3>
+<p>The definition of certain commands that pertain only to specific drivers has been moved to those
+drivers' implementations. For example, <code>pressKeyCode</code> is specific to the UiAutomator2 driver and is
+now understood only by that driver. In practice, the only breaking change here is the kind of error
+you would encounter if the appropriate driver is not installed. Previously, you would get a <code>501
+Not Yet Implemented</code> error if using a driver that didn't implement the command. Now, you will get
+a <code>404 Not Found</code> error because if a driver that doesn't know about the command is not active, the
+main Appium server will not define the route corresponding to the command.</p>
+<h3 id="driver-updates"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Driver updates</h3>
+<p>In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>list<span class="w"> </span>--updates
+</code></pre></div>
+<p>If any updates are available, you can then run the <code>update</code> command for any given driver:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>update<span class="w"> </span>xcuitest
+</code></pre></div>
+<p>(For a complete description of the update command, check out the <a href="../cli/extensions.md">Extension
+CLI</a> doc)</p>
+<p>To update the Appium server itself, you do the same thing as in the past: <code>npm install --location=global appium</code>. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.</p>
+<p>If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the <code>install</code> subcommand instead of <code>update</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>uninstall<span class="w"> </span>xcuitest
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>xcuitest@4.11.1
+</code></pre></div>
+<h3 id="protocol-changes"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Protocol changes</h3>
+<p>Appium's API is based on the <a href="https://www.w3.org/TR/webdriver/">W3C WebDriver Protocol</a>, and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.</p>
+<p>Up until Appium 2.0, Appium supported both protocols, so that older Selenium/Appium clients could still communicate with newer Appium servers. Moving forward, support for older protocols will be removed.</p>
+<h3 id="capabilities"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>Capabilities</em></h3>
+<p>One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the <a href="https://www.w3.org/TR/webdriver/#capabilities">WebDriver Protocol spec</a>, and includes a few commonly used capabilities such as <code>browserName</code> and <code>platformName</code>.</p>
+<p>These standard capabilities continue to be used as-is. All other capabilities must include a "vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as <code>appium:</code>. Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include vendor prefixes (we recommend that you use <code>appium:</code> unless directed otherwise by documentation). For example:</p>
+<ul>
+<li><code>appium:app</code></li>
+<li><code>appium:noReset</code></li>
+<li><code>appium:deviceName</code></li>
+</ul>
+<p>This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the <code>appium:</code> prefix for you on all necessary capabilities automatically. New versions of <a href="https://github.com/appium/appium-inspector">Appium Inspector</a> will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.</p>
+<p>On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).</p>
+<p>To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, <code>appium:options</code>. You can bundle together anything that you would normally put an <code>appium:</code> prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using <code>appium:options</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">  </span><span class="nt">&quot;browserName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Safari&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
+</code></pre></div>
+<p>(Of course, each client will have a different way of creating structured capabilities like <code>appium:options</code> or other ones that you might have seen such as <code>goog:chromeOptions</code>). NB: capabilities that show up in <code>appium:options</code> will overwrite capabilities of the same name that show up at the top level of the object. (The new <code>appium:options</code> syntax support by cloud providers may vary.)</p>
+<p>For more information on capabilities, have a look at the <a href="caps.md">Capabilities Guide</a>.</p>
+<h3 id="removed-commands"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> <em>Removed Commands</em></h3>
+<p>In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:</p>
+<ul>
+<li>TODO (these commands are being identified and removed and will be updated here when complete)</li>
+</ul>
+<p>If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.</p>
+<h3 id="image-analysis-features-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Image analysis features moved to plugin</h3>
+<p>One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called <a href="../ecosystem/index.md">plugins</a>. This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called <a href="https://github.com/appium/appium/tree/master/packages/images-plugin">images</a>.</p>
+<p>If you use these image-related methods, to continue accessing them you will need to do two things.</p>
+<ol>
+<li>Install the plugin: <code>appium plugin install images</code></li>
+<li>Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., <code>appium --use-plugins=images</code></li>
+</ol>
+<p>Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.</p>
+<h3 id="execute-driver-script-command-moved-to-plugin"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Execute Driver Script command moved to plugin</h3>
+<p>If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO script to have it executed completely on the server instead of command-by-command from the client), this functionality has been moved to a plugin. Here's what to do to keep using it:</p>
+<ol>
+<li>Install the plugin: <code>appium plugin install execute-driver</code></li>
+<li>Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., <code>appium --use-plugins=execute-driver</code></li>
+</ol>
+<h3 id="external-files-no-longer-supported-for-nodeconfig-default-capabilities-allow-insecure-and-deny-insecure"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> External Files No Longer Supported for <code>--nodeconfig</code>, <code>--default-capabilities</code>, <code>--allow-insecure</code> and <code>--deny-insecure</code></h3>
+<p>These options can be provided as strings on the command line (a JSON string for <code>--nodeconfig</code> and a comma-separated list of strings for <code>--allow-insecure</code> and <code>--deny-insecure</code>). Arguments provided on the command line will likely need to be quoted or escaped.</p>
+<p>The recommended method to provide these options is now via a <a href="#tada-configuration-files">configuration file</a>.</p>
+<p>In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the <code>server.nodeconfig</code> property.  Any CSV-like files you had previously provided for <code>--allow-insecure</code> and <code>--deny-insecure</code> become the values of the <code>server.allow-insecure</code> and <code>server.deny-insecure</code> properties in the Appium config files (respectively); both are arrays of strings.</p>
+<h3 id="old-drivers-removed"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Old drivers removed</h3>
+<p>The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., <code>authorize-ios</code>) have been removed. They haven't been relevant for many years anyway.</p>
+<h3 id="server-can-no-longer-be-started-with-port-0"><img alt="‼" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/203c.svg" title=":bangbang:" /> Server can no longer be started with <code>--port 0</code></h3>
+<p>In Appium 1.x, it was possible to specify <code>--port 0</code> during server startup. This had the effect of
+starting Appium on a random free port. In Appium 2.0, port values must be <code>1</code> or higher. The random
+port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
+HTTP servers work and the fact that there was no port input validation in Appium 1.x. If you want
+to find a random free port to start Appium on, you must now take care of this on your own prior to
+starting Appium. Starting Appium on an explicit and known port is the correct practice moving
+forward.</p>
+<h3 id="internal-packages-renamed"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Internal packages renamed</h3>
+<p>Some Appium-internal NPM packages have been renamed (for example, <code>appium-base-driver</code> is now <code>@appium/base-driver</code>). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.</p>
+<h3 id="wd-javascript-client-library-no-longer-supported"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> "WD" JavaScript client library no longer supported</h3>
+<p>For many years, some of Appium's authors maintained the <a href="https://github.com/admc/wd">WD</a> client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend <a href="https://webdriver.io">WebdriverIO</a>.</p>
+<h3 id="appium-inspector-split-out-from-appium-desktop"><img alt="⚠" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/26a0.svg" title=":warning:" /> Appium Inspector split out from Appium Desktop</h3>
+<p>The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: <a href="https://github.com/appium/appium-inspector">github.com/appium/appium-inspector</a>. It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: <a href="https://github.com/appium/appium-desktop">github.com/appium/appium-desktop</a>. It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated <a href="https://github.com/admc/wd">WD</a> client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app.</p>
+<p>You can also now use the Appium Inspector without downloading anything, by visiting the <a href="https://inspector.appiumpro.com">web version of Appium Inspector</a>. Note that to test against local servers, you'll need to start the server with <code>--allow-cors</code> so that the browser-based version of Appium Inspector can access your Appium server to start sessions.</p>
+<h2 id="major-new-features">Major New Features</h2>
+<p>Apart from the breaking changes mentioned above, in this section is a list of some of the major new features you may wish to take advantage of with Appium 2.0.</p>
+<h3 id="plugins">Plugins</h3>
+<h4 id="server-plugins"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>Server Plugins</em></h4>
+<p>Appium extension authors can now develop their own server plugins, which can intercept and modify
+any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
+more about plugins, read the new <a href="../../intro/">Appium Introduction</a>. Interested in building
+a plugin? Check out the <a href="../ecosystem/build-plugins.md">Building Plugins</a> guide.</p>
+<h4 id="client-plugins"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> <em>Client Plugins</em></h4>
+<p>TODO</p>
+<h3 id="install-drivers-and-plugins-from-anywhere"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> Install drivers and plugins from anywhere</h3>
+<p>You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
+about! Appium extension authors can now develop custom drivers, which can be downloaded or
+installed via Appium's <a href="../cli/extensions.md">Extension CLI</a> from NPM, Git, GitHub, or even the
+local filesystem. Interested in building a driver? Check out the <a href="../ecosystem/build-drivers.md">Building
+Drivers</a> guide.</p>
+<h3 id="configuration-files"><img alt="🎉" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f389.svg" title=":tada:" /> Configuration Files</h3>
+<p>Appium now supports <em>configuration files</em> in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the <a href="config.md">Config Guide</a> for a full explanation.</p>
+<h2 id="special-notes-for-cloud-providers">Special Notes for Cloud Providers</h2>
+<p>The rest of this document has applied to Appium generally, but some of the architectural changes in Appium 2.0 will constitute breaking changes for Appium-related service providers, whether a cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium server is responsible for installing and making available the various Appium drivers and plugins that end users may wish to use.</p>
+<p>We encourage cloud providers to thoroughly read and understand our <a href="caps.md#special-notes-for-cloud-providers">recommendation for cloud
+provider capabilities</a> in order to support user needs in
+an industry-compatible way!</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      
+    
+  </body>
+</html>

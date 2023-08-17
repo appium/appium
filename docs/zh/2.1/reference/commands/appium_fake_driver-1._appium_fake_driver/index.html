@@ -1,0 +1,3452 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.io/docs/zh/2.1/reference/commands/appium_fake_driver-1._appium_fake_driver/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+    
+    
+      
+        <title>Driver: @appium/fake-driver - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.484 4.484 0 0 1-.563-1.191 3.835 3.835 0 0 1-.05-2.063 4.647 4.647 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .748.748 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.425 2.425 0 0 1-.507-.441 3.075 3.075 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.884.884 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.737 3.737 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75Z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>');}</style>
+
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#driver-appiumfake-driver" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Driver: @appium/fake-driver
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+            
+          
+        </form>
+      
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="选择当前语言">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        首页
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          简介
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          简介
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          介绍 Appium
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          介绍 Appium
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Appium 概述
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/drivers/" class="md-nav__link">
+        Intro to Appium Drivers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/clients/" class="md-nav__link">
+        Appium客户端介绍
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/requirements/" class="md-nav__link">
+        Appium Requirements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/history/" class="md-nav__link">
+        历史
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          快速开始
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          快速开始
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/" class="md-nav__link">
+        快速开始
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/install/" class="md-nav__link">
+        Install Appium
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/uiauto2-driver/" class="md-nav__link">
+        Install the UiAutomator2 Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+          编写测试
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3_4">
+          <span class="md-nav__icon md-icon"></span>
+          编写测试
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-js/" class="md-nav__link">
+        Write a Test (JS)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-py/" class="md-nav__link">
+        Write a Test (Python)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/test-java/" class="md-nav__link">
+        Write a Test (Java)
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quickstart/next-steps/" class="md-nav__link">
+        Next Steps
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          命令行参考
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          命令行参考
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        命令行介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/args/" class="md-nav__link">
+        Server CLI Args
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/extensions/" class="md-nav__link">
+        The Extension CLI
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          指南
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          指南
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        自 Appium 1.x 迁移到 Appium 2.x
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/managing-exts/" class="md-nav__link">
+        Managing Appium Drivers and Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/config/" class="md-nav__link">
+        The Appium Config File
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/security/" class="md-nav__link">
+        Appium Server Security
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/caps/" class="md-nav__link">
+        Capabilities
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/context/" class="md-nav__link">
+        The Context API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/settings/" class="md-nav__link">
+        The Settings API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/execute-script-overload/" class="md-nav__link">
+        Execute Script Overloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/event-timing/" class="md-nav__link">
+        The Event Timing API
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/log-filters/" class="md-nav__link">
+        Log Filtering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/grid/" class="md-nav__link">
+        Appium and Selenium Grid
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          生态系统
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          生态系统
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/" class="md-nav__link">
+        Appium生态系统
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+          开发 Appium 扩展
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6_2">
+          <span class="md-nav__icon md-icon"></span>
+          开发 Appium 扩展
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-drivers/" class="md-nav__link">
+        构建Appium驱动程序
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-plugins/" class="md-nav__link">
+        Building Appium Plugins
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ecosystem/build-docs/" class="md-nav__link">
+        Building Docs for Appium Extensions
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        贡献
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../resources/" class="md-nav__link">
+        更多 Appium 资源
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/appium/appium/issues" class="md-nav__link">
+        问题
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    Commands
+  </a>
+  
+    <nav class="md-nav" aria-label="Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-session" class="md-nav__link">
+    POST /session
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionid" class="md-nav__link">
+    GET /session/:sessionId
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_1" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionid" class="md-nav__link">
+    DELETE /session/:sessionId
+  </a>
+  
+    <nav class="md-nav" aria-label="DELETE /session/:sessionId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_2" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidaccept_alert" class="md-nav__link">
+    POST /session/:sessionId/accept_alert
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidactions" class="md-nav__link">
+    POST /session/:sessionId/actions
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-sessionsessionidactions" class="md-nav__link">
+    DELETE /session/:sessionId/actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalertaccept" class="md-nav__link">
+    POST /session/:sessionId/alert/accept
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalertdismiss" class="md-nav__link">
+    POST /session/:sessionId/alert/dismiss
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidalerttext" class="md-nav__link">
+    GET /session/:sessionId/alert/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalerttext" class="md-nav__link">
+    POST /session/:sessionId/alert/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidalert_text" class="md-nav__link">
+    GET /session/:sessionId/alert_text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidalert_text" class="md-nav__link">
+    POST /session/:sessionId/alert_text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumappreset" class="md-nav__link">
+    POST /session/:sessionId/appium/app/reset
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/app/reset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_3" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumdeviceshake" class="md-nav__link">
+    POST /session/:sessionId/appium/device/shake
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumevents" class="md-nav__link">
+    POST /session/:sessionId/appium/events
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/events">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_4" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumlog_event" class="md-nav__link">
+    POST /session/:sessionId/appium/log_event
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/log_event">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_5" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidappiumsettings" class="md-nav__link">
+    POST /session/:sessionId/appium/settings
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/appium/settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_1" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_6" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidappiumsettings" class="md-nav__link">
+    GET /session/:sessionId/appium/settings
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/appium/settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_7" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcontext" class="md-nav__link">
+    GET /session/:sessionId/context
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidcontext" class="md-nav__link">
+    POST /session/:sessionId/context
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/context">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_2" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidcontexts" class="md-nav__link">
+    GET /session/:sessionId/contexts
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessioniddeprecated" class="md-nav__link">
+    POST /session/:sessionId/deprecated
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/deprecated">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_8" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessioniddismiss_alert" class="md-nav__link">
+    POST /session/:sessionId/dismiss_alert
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessioniddoubleclick" class="md-nav__link">
+    POST /session/:sessionId/doubleclick
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelement" class="md-nav__link">
+    POST /session/:sessionId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_3" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidattributename" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/attribute/:name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidclear" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/clear
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidclick" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/click
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidcsspropertyname" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/css/:propertyName
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementiddisplayed" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/displayed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidelement" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_4" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidelements" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_5" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidenabled" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/enabled
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidlocation" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidlocation_in_view" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/location_in_view
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidname" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/name
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidselected" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/selected
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidelementelementidtext" class="md-nav__link">
+    GET /session/:sessionId/element/:elementId/text
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelementelementidvalue" class="md-nav__link">
+    POST /session/:sessionId/element/:elementId/value
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/element/:elementId/value">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidelements" class="md-nav__link">
+    POST /session/:sessionId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_6" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecute" class="md-nav__link">
+    POST /session/:sessionId/execute
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_7" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidexecutesync" class="md-nav__link">
+    POST /session/:sessionId/execute/sync
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/execute/sync">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_8" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidfakedriver" class="md-nav__link">
+    GET /session/:sessionId/fakedriver
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/fakedriver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_9" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidfakedriver" class="md-nav__link">
+    POST /session/:sessionId/fakedriver
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/fakedriver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_10" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidfakedriverargs" class="md-nav__link">
+    GET /session/:sessionId/fakedriverargs
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/fakedriverargs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_11" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidframe" class="md-nav__link">
+    POST /session/:sessionId/frame
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/frame">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_9" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidkeys" class="md-nav__link">
+    POST /session/:sessionId/keys
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/keys">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_10" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidlocation" class="md-nav__link">
+    GET /session/:sessionId/location
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidlocation" class="md-nav__link">
+    POST /session/:sessionId/location
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/location">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_11" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidlog" class="md-nav__link">
+    POST /session/:sessionId/log
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_12" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidlogtypes" class="md-nav__link">
+    GET /session/:sessionId/log/types
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/log/types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_12" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidorientation" class="md-nav__link">
+    GET /session/:sessionId/orientation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidorientation" class="md-nav__link">
+    POST /session/:sessionId/orientation
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/orientation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_13" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidscreenshot" class="md-nav__link">
+    GET /session/:sessionId/screenshot
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidselog" class="md-nav__link">
+    POST /session/:sessionId/se/log
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/se/log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_14" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidselogtypes" class="md-nav__link">
+    GET /session/:sessionId/se/log/types
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/se/log/types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_13" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidshadowshadowidelement" class="md-nav__link">
+    POST /session/:sessionId/shadow/:shadowId/element
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/shadow/:shadowId/element">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_14" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidshadowshadowidelements" class="md-nav__link">
+    POST /session/:sessionId/shadow/:shadowId/elements
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/shadow/:shadowId/elements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_15" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidsource" class="md-nav__link">
+    GET /session/:sessionId/source
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidtimeouts" class="md-nav__link">
+    GET /session/:sessionId/timeouts
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/timeouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_16" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtimeouts" class="md-nav__link">
+    POST /session/:sessionId/timeouts
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/timeouts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optional-parameters_1" class="md-nav__link">
+    Optional Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_17" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtimeoutsimplicit_wait" class="md-nav__link">
+    POST /session/:sessionId/timeouts/implicit_wait
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/timeouts/implicit_wait">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_18" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidtitle" class="md-nav__link">
+    GET /session/:sessionId/title
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /session/:sessionId/title">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javascript" class="md-nav__link">
+    JavaScript
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python" class="md-nav__link">
+    Python
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java" class="md-nav__link">
+    Java
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidtouchclick" class="md-nav__link">
+    POST /session/:sessionId/touch/click
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/touch/click">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_15" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowwindowhandlesize" class="md-nav__link">
+    GET /session/:sessionId/window/:windowhandle/size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessionsessionidwindowrect" class="md-nav__link">
+    GET /session/:sessionId/window/rect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-sessionsessionidwindowrect" class="md-nav__link">
+    POST /session/:sessionId/window/rect
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /session/:sessionId/window/rect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#required-parameters_16" class="md-nav__link">
+    Required Parameters
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-sessions" class="md-nav__link">
+    GET /sessions
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /sessions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#response_19" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-status" class="md-nav__link">
+    GET /status
+  </a>
+  
+    <nav class="md-nav" aria-label="GET /status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#javascript_1" class="md-nav__link">
+    JavaScript
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#python_1" class="md-nav__link">
+    Python
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java_1" class="md-nav__link">
+    Java
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ruby" class="md-nav__link">
+    Ruby
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response_20" class="md-nav__link">
+    Response
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#execute-methods" class="md-nav__link">
+    Execute Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Execute Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-fake-addition" class="md-nav__link">
+    Script: fake: addition
+  </a>
+  
+    <nav class="md-nav" aria-label="Script: fake: addition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route" class="md-nav__link">
+    Route
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-fake-getdeprecatedcommandscalled" class="md-nav__link">
+    Script: fake: getDeprecatedCommandsCalled
+  </a>
+  
+    <nav class="md-nav" aria-label="Script: fake: getDeprecatedCommandsCalled">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route_1" class="md-nav__link">
+    Route
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-fake-getthing" class="md-nav__link">
+    Script: fake: getThing
+  </a>
+  
+    <nav class="md-nav" aria-label="Script: fake: getThing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route_2" class="md-nav__link">
+    Route
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-fake-setthing" class="md-nav__link">
+    Script: fake: setThing
+  </a>
+  
+    <nav class="md-nav" aria-label="Script: fake: setThing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#route_3" class="md-nav__link">
+    Route
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="driver-appiumfake-driver">Driver: @appium/fake-driver</h1>
+<h2 id="commands">Commands</h2>
+<h3 id="post-session"><code>POST</code> <code>/session</code></h3>
+<p>Comment for <code>createSession</code> in <code>FakeDriver</code></p>
+<p><strong><code>Param</code></strong></p>
+<p>W3C Capabilities</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#new-session">https://w3c.github.io/webdriver/#new-session</a></p>
+<p><strong><code>Remarks</code></strong></p>
+<p>The shape of this method is strange because it used to support both JSONWP and W3C
+capabilities. This will likely change in the future to simplify.</p>
+<!-- comment source: multiple -->
+
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>desiredCapabilities?</code></td>
+<td align="left"><a href="../../modules/appium_fake_driver-1/#w3cfakedrivercaps"><code>W3CFakeDriverCaps</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>requiredCapabilities?</code></td>
+<td align="left"><a href="../../modules/appium_fake_driver-1/#w3cfakedrivercaps"><code>W3CFakeDriverCaps</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>capabilities?</code></td>
+<td align="left"><a href="../../modules/appium_fake_driver-1/#w3cfakedrivercaps"><code>W3CFakeDriverCaps</code></a></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response">Response</h4>
+<p>[<code>string</code>, <code>Partial</code>&lt;<a href="../../modules/appium_types/#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a> &amp; { <code>app</code>: { <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true } ; <code>uniqueApp</code>: { <code>isBoolean</code>: <code>true</code> = true }  }> &amp; <code>void</code>>]</p>
+<p>Session ID and normalized capabilities</p>
+<h3 id="get-sessionsessionid"><code>GET</code> <code>/session/:sessionId</code></h3>
+<p>Get the data for the current session</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_1">Response</h4>
+<p><code>SingularSessionData</code>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a>, <code>void</code>></p>
+<p>A session data object</p>
+<h3 id="delete-sessionsessionid"><code>DELETE</code> <code>/session/:sessionId</code></h3>
+<p>Get the data for the current session</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_2">Response</h4>
+<p><code>SingularSessionData</code>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a>, <code>void</code>></p>
+<p>A session data object</p>
+<h3 id="post-sessionsessionidaccept_alert"><code>POST</code> <code>/session/:sessionId/accept_alert</code></h3>
+<p>Accept a simple dialog/alert</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#accept-alert">https://w3c.github.io/webdriver/#accept-alert</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidactions"><code>POST</code> <code>/session/:sessionId/actions</code></h3>
+<p>Release all keys or buttons that are currently pressed</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#release-actions">https://w3c.github.io/webdriver/#release-actions</a></p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters">Required Parameters</h5>
+<ul>
+<li><code>actions</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="delete-sessionsessionidactions"><code>DELETE</code> <code>/session/:sessionId/actions</code></h3>
+<p>Release all keys or buttons that are currently pressed</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#release-actions">https://w3c.github.io/webdriver/#release-actions</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidalertaccept"><code>POST</code> <code>/session/:sessionId/alert/accept</code></h3>
+<p>Accept a simple dialog/alert</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#accept-alert">https://w3c.github.io/webdriver/#accept-alert</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidalertdismiss"><code>POST</code> <code>/session/:sessionId/alert/dismiss</code></h3>
+<p>Dismiss a simple dialog/alert</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#dismiss-alert">https://w3c.github.io/webdriver/#dismiss-alert</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidalerttext"><code>GET</code> <code>/session/:sessionId/alert/text</code></h3>
+<p>Set the text field of an alert prompt</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#send-alert-text">https://w3c.github.io/webdriver/#send-alert-text</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the text to send to the prompt</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidalerttext"><code>POST</code> <code>/session/:sessionId/alert/text</code></h3>
+<p>Set the text field of an alert prompt</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#send-alert-text">https://w3c.github.io/webdriver/#send-alert-text</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the text to send to the prompt</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidalert_text"><code>GET</code> <code>/session/:sessionId/alert_text</code></h3>
+<p>Set the text field of an alert prompt</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#send-alert-text">https://w3c.github.io/webdriver/#send-alert-text</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the text to send to the prompt</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidalert_text"><code>POST</code> <code>/session/:sessionId/alert_text</code></h3>
+<p>Set the text field of an alert prompt</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#send-alert-text">https://w3c.github.io/webdriver/#send-alert-text</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the text to send to the prompt</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidappiumappreset"><code>POST</code> <code>/session/:sessionId/appium/app/reset</code></h3>
+<p>Reset the current session (run the delete session and create session subroutines)</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use explicit session management commands instead</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_3">Response</h4>
+<p><code>void</code></p>
+<h3 id="post-sessionsessionidappiumdeviceshake"><code>POST</code> <code>/session/:sessionId/appium/device/shake</code></h3>
+<p>Shake the device</p>
+<p><strong><code>Deprecated</code></strong></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidappiumevents"><code>POST</code> <code>/session/:sessionId/appium/events</code></h3>
+<p>Get a list of events that have occurred in the current session</p>
+<p><strong><code>Param</code></strong></p>
+<p>filter the returned events by including one or more types</p>
+<!-- comment source: method-signature -->
+
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type?</code></td>
+<td align="left"><code>string</code> | <code>string</code>[]</td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_4">Response</h4>
+<p><a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a> | <code>Record</code>&lt;<code>string</code>, <code>number</code>></p>
+<p>The event history for the session</p>
+<h3 id="post-sessionsessionidappiumlog_event"><code>POST</code> <code>/session/:sessionId/appium/log_event</code></h3>
+<p>Add a custom-named event to the Appium event log</p>
+<p><strong><code>Param</code></strong></p>
+<p>the name of the vendor or tool the event belongs to, to namespace the event</p>
+<!-- comment source: multiple -->
+
+<h4 id="parameters_2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>vendor</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>event</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_5">Response</h4>
+<p><code>void</code></p>
+<h3 id="post-sessionsessionidappiumsettings"><code>POST</code> <code>/session/:sessionId/appium/settings</code></h3>
+<p>Get the current settings for the session</p>
+<!-- comment source: method-signature -->
+
+<h5 id="required-parameters_1">Required Parameters</h5>
+<ul>
+<li><code>settings</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_6">Response</h4>
+<p><code>StringRecord</code></p>
+<p>The settings object</p>
+<h3 id="get-sessionsessionidappiumsettings"><code>GET</code> <code>/session/:sessionId/appium/settings</code></h3>
+<p>Get the current settings for the session</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_7">Response</h4>
+<p><code>StringRecord</code></p>
+<p>The settings object</p>
+<h3 id="get-sessionsessionidcontext"><code>GET</code> <code>/session/:sessionId/context</code></h3>
+<p>Switch to a context by name</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the context name</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidcontext"><code>POST</code> <code>/session/:sessionId/context</code></h3>
+<p>Switch to a context by name</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the context name</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_2">Required Parameters</h5>
+<ul>
+<li><code>name</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidcontexts"><code>GET</code> <code>/session/:sessionId/contexts</code></h3>
+<p>Get the list of available contexts</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts">https://github.com/SeleniumHQ/mobile-spec/blob/master/spec-draft.md#webviews-and-other-contexts</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessioniddeprecated"><code>POST</code> <code>/session/:sessionId/deprecated</code></h3>
+<p>This is a command that exists just to be an example of a deprecated command</p>
+<!-- comment source: method -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_8">Response</h4>
+<p><code>void</code></p>
+<h3 id="post-sessionsessioniddismiss_alert"><code>POST</code> <code>/session/:sessionId/dismiss_alert</code></h3>
+<p>Dismiss a simple dialog/alert</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#dismiss-alert">https://w3c.github.io/webdriver/#dismiss-alert</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessioniddoubleclick"><code>POST</code> <code>/session/:sessionId/doubleclick</code></h3>
+<p>Double-click the current mouse location</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use the Actions API instead</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelement"><code>POST</code> <code>/session/:sessionId/element</code></h3>
+<p>Find a UI element given a locator strategy and a selector, erroring if it can't be found</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element">https://w3c.github.io/webdriver/#find-element</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_3">Required Parameters</h5>
+<ul>
+<li><code>using</code></li>
+<li><code>value</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidattributename"><code>GET</code> <code>/session/:sessionId/element/:elementId/attribute/:name</code></h3>
+<p>Retrieve the value of an element's attribute</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-element-attribute">https://w3c.github.io/webdriver/#get-element-attribute</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the attribute name</p>
+<!-- comment source: multiple -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelementelementidclear"><code>POST</code> <code>/session/:sessionId/element/:elementId/clear</code></h3>
+<p>Clear the text/value of an editable element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#element-clear">https://w3c.github.io/webdriver/#element-clear</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelementelementidclick"><code>POST</code> <code>/session/:sessionId/element/:elementId/click</code></h3>
+<p>Click/tap an element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#element-click">https://w3c.github.io/webdriver/#element-click</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidcsspropertyname"><code>GET</code> <code>/session/:sessionId/element/:elementId/css/:propertyName</code></h3>
+<p>Retrieve the value of a CSS property of an element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-element-css-value">https://w3c.github.io/webdriver/#get-element-css-value</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the CSS property name</p>
+<!-- comment source: multiple -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementiddisplayed"><code>GET</code> <code>/session/:sessionId/element/:elementId/displayed</code></h3>
+<p>Determine whether an element is displayed</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#element-displayedness">https://w3c.github.io/webdriver/#element-displayedness</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelementelementidelement"><code>POST</code> <code>/session/:sessionId/element/:elementId/element</code></h3>
+<p>Find a UI element given a locator strategy and a selector, erroring if it can't be found. Only
+look for elements among the set of descendants of a given element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-element">https://w3c.github.io/webdriver/#find-element-from-element</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_4">Required Parameters</h5>
+<ul>
+<li><code>using</code></li>
+<li><code>value</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelementelementidelements"><code>POST</code> <code>/session/:sessionId/element/:elementId/elements</code></h3>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector. Only
+look for elements among the set of descendants of a given element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements-from-element">https://w3c.github.io/webdriver/#find-elements-from-element</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_5">Required Parameters</h5>
+<ul>
+<li><code>using</code></li>
+<li><code>value</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidenabled"><code>GET</code> <code>/session/:sessionId/element/:elementId/enabled</code></h3>
+<p>Determine whether an element is enabled</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#is-element-enabled">https://w3c.github.io/webdriver/#is-element-enabled</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidlocation"><code>GET</code> <code>/session/:sessionId/element/:elementId/location</code></h3>
+<p>Get the position of an element on screen</p>
+<p><strong><code>Param</code></strong></p>
+<p>the element ID</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use getElementRect instead</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidlocation_in_view"><code>GET</code> <code>/session/:sessionId/element/:elementId/location_in_view</code></h3>
+<p>Get the position of an element on screen within a certain other view</p>
+<p><strong><code>Param</code></strong></p>
+<p>the element ID</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use getElementRect instead</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidname"><code>GET</code> <code>/session/:sessionId/element/:elementId/name</code></h3>
+<p>Get the tag name of an element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-element-tag-name">https://w3c.github.io/webdriver/#get-element-tag-name</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidselected"><code>GET</code> <code>/session/:sessionId/element/:elementId/selected</code></h3>
+<p>Determine if the reference element is selected or not</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#is-element-selected">https://w3c.github.io/webdriver/#is-element-selected</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidelementelementidtext"><code>GET</code> <code>/session/:sessionId/element/:elementId/text</code></h3>
+<p>Get the text of an element as rendered</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-element-text">https://w3c.github.io/webdriver/#get-element-text</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelementelementidvalue"><code>POST</code> <code>/session/:sessionId/element/:elementId/value</code></h3>
+<p>Send keystrokes to an element (or otherwise set its value)</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#element-send-keys">https://w3c.github.io/webdriver/#element-send-keys</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the text to send to the element</p>
+<!-- comment source: multiple -->
+
+<h5 id="optional-parameters">Optional Parameters</h5>
+<ul>
+<li><code>value</code></li>
+<li><code>text</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidelements"><code>POST</code> <code>/session/:sessionId/elements</code></h3>
+<p>Find a a list of all UI elements matching a given a locator strategy and a selector</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-elements">https://w3c.github.io/webdriver/#find-elements</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_6">Required Parameters</h5>
+<ul>
+<li><code>using</code></li>
+<li><code>value</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidexecute"><code>POST</code> <code>/session/:sessionId/execute</code></h3>
+<p>Execute JavaScript (or some other kind of script) in the browser/app context</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#execute-script">https://w3c.github.io/webdriver/#execute-script</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the string to be evaluated as the script, which will be made the body of an
+anonymous function in the case of JS</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_7">Required Parameters</h5>
+<ul>
+<li><code>script</code></li>
+<li><code>args</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidexecutesync"><code>POST</code> <code>/session/:sessionId/execute/sync</code></h3>
+<p>Execute JavaScript (or some other kind of script) in the browser/app context</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#execute-script">https://w3c.github.io/webdriver/#execute-script</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the string to be evaluated as the script, which will be made the body of an
+anonymous function in the case of JS</p>
+<!-- comment source: multiple -->
+
+<h5 id="required-parameters_8">Required Parameters</h5>
+<ul>
+<li><code>script</code></li>
+<li><code>args</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidfakedriver"><code>GET</code> <code>/session/:sessionId/fakedriver</code></h3>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_9">Response</h4>
+<p><code>any</code></p>
+<h3 id="post-sessionsessionidfakedriver"><code>POST</code> <code>/session/:sessionId/fakedriver</code></h3>
+<p>Sets a fake thing</p>
+<p><strong><code>Param</code></strong></p>
+<!-- comment source: multiple -->
+
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>thing</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_10">Response</h4>
+<p><code>null</code></p>
+<h3 id="get-sessionsessionidfakedriverargs"><code>GET</code> <code>/session/:sessionId/fakedriverargs</code></h3>
+<p>Get the driver args that were sent in via the CLI</p>
+<!-- comment source: method -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_11">Response</h4>
+<p><a href="../../modules/appium_types/#stringrecord"><code>StringRecord</code></a> &amp; <a href="../../modules/appium_types/#serverargs"><code>ServerArgs</code></a></p>
+<h3 id="post-sessionsessionidframe"><code>POST</code> <code>/session/:sessionId/frame</code></h3>
+<p>Switch the current browsing context to a frame</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#switch-to-frame">https://w3c.github.io/webdriver/#switch-to-frame</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the frame id, index, or <code>null</code> (indicating the top-level context)</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_9">Required Parameters</h5>
+<ul>
+<li><code>id</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidkeys"><code>POST</code> <code>/session/:sessionId/keys</code></h3>
+<p>Send keys to the app</p>
+<p><strong><code>Param</code></strong></p>
+<p>the array of keys to send</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use the W3C send keys method instead</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_10">Required Parameters</h5>
+<ul>
+<li><code>value</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidlocation"><code>GET</code> <code>/session/:sessionId/location</code></h3>
+<p>Get the virtual or real geographical location of a device</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidlocation"><code>POST</code> <code>/session/:sessionId/location</code></h3>
+<p>Get the virtual or real geographical location of a device</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_11">Required Parameters</h5>
+<ul>
+<li><code>location</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidlog"><code>POST</code> <code>/session/:sessionId/log</code></h3>
+<p>Get the log for a given log type.</p>
+<p><strong><code>Param</code></strong></p>
+<p>Name/key of log type as defined in ILogCommands.supportedLogTypes.</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_12">Required Parameters</h5>
+<ul>
+<li><code>type</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidlogtypes"><code>GET</code> <code>/session/:sessionId/log/types</code></h3>
+<p>Get available log types as a list of strings</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_12">Response</h4>
+<p><code>string</code>[]</p>
+<h3 id="get-sessionsessionidorientation"><code>GET</code> <code>/session/:sessionId/orientation</code></h3>
+<p>Set the device orientation</p>
+<p><strong><code>Param</code></strong></p>
+<p>the orientation string</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidorientation"><code>POST</code> <code>/session/:sessionId/orientation</code></h3>
+<p>Set the device orientation</p>
+<p><strong><code>Param</code></strong></p>
+<p>the orientation string</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_13">Required Parameters</h5>
+<ul>
+<li><code>orientation</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidscreenshot"><code>GET</code> <code>/session/:sessionId/screenshot</code></h3>
+<p>Get a screenshot of the current document as rendered</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#take-screenshot">https://w3c.github.io/webdriver/#take-screenshot</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidselog"><code>POST</code> <code>/session/:sessionId/se/log</code></h3>
+<p>Get the log for a given log type.</p>
+<p><strong><code>Param</code></strong></p>
+<p>Name/key of log type as defined in ILogCommands.supportedLogTypes.</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_14">Required Parameters</h5>
+<ul>
+<li><code>type</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidselogtypes"><code>GET</code> <code>/session/:sessionId/se/log/types</code></h3>
+<p>Get available log types as a list of strings</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_13">Response</h4>
+<p><code>string</code>[]</p>
+<h3 id="post-sessionsessionidshadowshadowidelement"><code>POST</code> <code>/session/:sessionId/shadow/:shadowId/element</code></h3>
+<p>Find an element from a shadow root</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>using</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_14">Response</h4>
+<p><code>Element</code></p>
+<p>The element inside the shadow root matching the selector</p>
+<h3 id="post-sessionsessionidshadowshadowidelements"><code>POST</code> <code>/session/:sessionId/shadow/:shadowId/elements</code></h3>
+<p>Find elements from a shadow root</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#find-element-from-shadow-root">https://w3c.github.io/webdriver/#find-element-from-shadow-root</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the locator strategy</p>
+<!-- comment source: multiple -->
+
+<h4 id="parameters_5">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>using</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_15">Response</h4>
+<p><a href="../../interfaces/appium_types.Element/"><code>Element</code></a>[]</p>
+<p>A possibly empty list of elements inside the shadow root matching the selector</p>
+<h3 id="get-sessionsessionidsource"><code>GET</code> <code>/session/:sessionId/source</code></h3>
+<p>Get the current page/app source as HTML/XML</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-page-source">https://w3c.github.io/webdriver/#get-page-source</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidtimeouts"><code>GET</code> <code>/session/:sessionId/timeouts</code></h3>
+<p>Get the current timeouts</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-timeouts">https://w3c.github.io/webdriver/#get-timeouts</a></p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_16">Response</h4>
+<p><code>Record</code>&lt;<code>string</code>, <code>number</code>></p>
+<p>A map of timeout names to ms values</p>
+<h3 id="post-sessionsessionidtimeouts"><code>POST</code> <code>/session/:sessionId/timeouts</code></h3>
+<p>Get the current timeouts</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-timeouts">https://w3c.github.io/webdriver/#get-timeouts</a></p>
+<!-- comment source: method-signature -->
+
+<h5 id="optional-parameters_1">Optional Parameters</h5>
+<ul>
+<li><code>type</code></li>
+<li><code>ms</code></li>
+<li><code>script</code></li>
+<li><code>pageLoad</code></li>
+<li><code>implicit</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_17">Response</h4>
+<p><code>Record</code>&lt;<code>string</code>, <code>number</code>></p>
+<p>A map of timeout names to ms values</p>
+<h3 id="post-sessionsessionidtimeoutsimplicit_wait"><code>POST</code> <code>/session/:sessionId/timeouts/implicit_wait</code></h3>
+<p>Set the implicit wait timeout</p>
+<p><strong><code>Param</code></strong></p>
+<p>the timeout in ms</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use <code>timeouts</code> instead</p>
+<!-- comment source: method-signature -->
+
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>ms</code></td>
+<td align="left"><code>string</code> | <code>number</code></td>
+</tr>
+</tbody>
+</table>
+<!-- END:EXAMPLES -->
+
+<h4 id="response_18">Response</h4>
+<p><code>void</code></p>
+<h3 id="get-sessionsessionidtitle"><code>GET</code> <code>/session/:sessionId/title</code></h3>
+<hr />
+<p>GENERAL *</p>
+<hr />
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-title">https://w3c.github.io/webdriver/#get-title</a></p>
+<!-- comment source: multiple -->
+
+<h4 id="examples">Examples</h4>
+<!-- BEGIN:EXAMPLES -->
+<h5 id="javascript">JavaScript</h5>
+<!-- BEGIN:EXAMPLE lang=JavaScript -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">getTitle</span><span class="p">()</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<h5 id="python">Python</h5>
+<!-- BEGIN:EXAMPLE lang=Python -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">title</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<h5 id="java">Java</h5>
+<!-- BEGIN:EXAMPLE lang=Java -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">();</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidtouchclick"><code>POST</code> <code>/session/:sessionId/touch/click</code></h3>
+<p>Click/tap an element</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#element-click">https://w3c.github.io/webdriver/#element-click</a></p>
+<p><strong><code>Param</code></strong></p>
+<p>the id of the element</p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_15">Required Parameters</h5>
+<ul>
+<li><code>element</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidwindowwindowhandlesize"><code>GET</code> <code>/session/:sessionId/window/:windowhandle/size</code></h3>
+<p>Get the window size</p>
+<p><strong><code>Deprecated</code></strong></p>
+<p>Use getWindowRect instead</p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessionsessionidwindowrect"><code>GET</code> <code>/session/:sessionId/window/rect</code></h3>
+<p>Get the size and position of the current window</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-window-rect">https://w3c.github.io/webdriver/#get-window-rect</a></p>
+<!-- comment source: builtin-interface -->
+
+<!-- END:EXAMPLES -->
+
+<h3 id="post-sessionsessionidwindowrect"><code>POST</code> <code>/session/:sessionId/window/rect</code></h3>
+<p>Get the size and position of the current window</p>
+<p><strong><code>See</code></strong></p>
+<p><a href="https://w3c.github.io/webdriver/#get-window-rect">https://w3c.github.io/webdriver/#get-window-rect</a></p>
+<!-- comment source: builtin-interface -->
+
+<h5 id="required-parameters_16">Required Parameters</h5>
+<ul>
+<li><code>x</code></li>
+<li><code>y</code></li>
+<li><code>width</code></li>
+<li><code>height</code></li>
+</ul>
+<!-- END:EXAMPLES -->
+
+<h3 id="get-sessions"><code>GET</code> <code>/sessions</code></h3>
+<p>Get data for all sessions running on an Appium server</p>
+<!-- comment source: method-signature -->
+
+<!-- END:EXAMPLES -->
+
+<h4 id="response_19">Response</h4>
+<p><a href="../../interfaces/appium_types.MultiSessionData/"><code>MultiSessionData</code></a>&lt;typeof <a href="../../modules/appium_types/#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a>, <code>void</code>>[]</p>
+<p>A list of session data objects</p>
+<h3 id="get-status"><code>GET</code> <code>/status</code></h3>
+<p><strong><code>Summary</code></strong></p>
+<p>Retrieve the server's current status.</p>
+<p><strong><code>Description</code></strong></p>
+<p>Returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.</p>
+<p>The readiness state is represented by the ready property of the body, which is false if an attempt to create a session at the current time would fail. However, the value true does not guarantee that a New Session command will succeed.</p>
+<p>Implementations may optionally include additional meta information as part of the body, but the top-level properties ready and message are reserved and must not be overwritten.</p>
+<!-- comment source: builtin-interface -->
+
+<h4 id="examples_1">Examples</h4>
+<!-- BEGIN:EXAMPLES -->
+<h5 id="javascript_1">JavaScript</h5>
+<!-- BEGIN:EXAMPLE lang=JavaScript -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">// webdriver.io example</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">status</span><span class="p">();</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<h5 id="python_1">Python</h5>
+<!-- BEGIN:EXAMPLE lang=Python -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">get_status</span><span class="p">()</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<h5 id="java_1">Java</h5>
+<!-- BEGIN:EXAMPLE lang=Java -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">driver</span><span class="p">.</span><span class="na">getStatus</span><span class="p">();</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<h5 id="ruby">Ruby</h5>
+<!-- BEGIN:EXAMPLE lang=Ruby -->
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># ruby_lib example</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">remote_status</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># ruby_lib_core example</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="vi">@driver</span><span class="o">.</span><span class="n">remote_status</span>
+</code></pre></div>
+<!-- END:EXAMPLE -->
+<!-- END:EXAMPLES -->
+
+<h4 id="response_20">Response</h4>
+<p><code>Object</code></p>
+<h2 id="execute-methods">Execute Methods</h2>
+<h3 id="script-fake-addition">Script: <code>fake: addition</code></h3>
+<h4 id="route">Route</h4>
+<p><code>POST /session/:sessionId/execute</code></p>
+<h3 id="script-fake-getdeprecatedcommandscalled">Script: <code>fake: getDeprecatedCommandsCalled</code></h3>
+<p>This is a command that will return a list of deprecated command names called</p>
+<h4 id="route_1">Route</h4>
+<p><code>POST /session/:sessionId/execute</code></p>
+<h3 id="script-fake-getthing">Script: <code>fake: getThing</code></h3>
+<p>Gets a thing (a fake thing)</p>
+<h4 id="route_2">Route</h4>
+<p><code>POST /session/:sessionId/execute</code></p>
+<h3 id="script-fake-setthing">Script: <code>fake: setThing</code></h3>
+<p>Set the 'thing' value (so that it can be retrieved later)</p>
+<p><strong><code>Param</code></strong></p>
+<h4 id="route_3">Route</h4>
+<p><code>POST /session/:sessionId/execute</code></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      
+    
+  </body>
+</html>

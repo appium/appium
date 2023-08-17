@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/appium@2.0.1...appium@2.1.0) (2023-08-17)
+
+
+### Features
+
+* **base-driver:** Make it possible to provide settings as a map in session capabilities ([#18970](https://github.com/appium/appium/issues/18970)) ([aaf58c3](https://github.com/appium/appium/commit/aaf58c3de66fee2eb10225d05e156e7416a4ac79))
+
+
+### Bug Fixes
+
+* **appium:** Fix the plural form ([97d8f0d](https://github.com/appium/appium/commit/97d8f0df44d915b346a6ecd0d052369dd80a9569))
+* **appium:** update dependency winston to v3.10.0 ([b85a92a](https://github.com/appium/appium/commit/b85a92a912b3d2854e8102b41119fc780e1a6cc2))
+* **appium:** Update the GET /status response to be in sync with the standard ([#18972](https://github.com/appium/appium/issues/18972)) ([5a26111](https://github.com/appium/appium/commit/5a2611137b2a7428bb2e593fc945e21874c4cdae))
+* **support:** update dependency glob to v10 ([#18490](https://github.com/appium/appium/issues/18490)) ([aaf31a5](https://github.com/appium/appium/commit/aaf31a577cb0b9cbe22646dcd888dc393a03aa11))
+* **support:** update dependency semver to v7.5.4 ([03ddcdf](https://github.com/appium/appium/commit/03ddcdfcafbccf6698868a272e499cbdac41d791))
+* **types:** update dependency type-fest to v3.13.1 ([fb34ab9](https://github.com/appium/appium/commit/fb34ab917216121d2b554677a12f07a03393d218))
+
+
+
 ## [2.0.1](https://github.com/appium/appium/compare/appium@2.0.0...appium@2.0.1) (2023-07-24)
 
 

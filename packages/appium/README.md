@@ -38,7 +38,13 @@ To install Appium 2 server using Node Package Manager (npm) run the following co
 npm i --location=global appium
 ```
 
-:bangbang: Make sure Appium 1 is fully unistalled before upgrading it to Appium 2 (`npm uninstall --location=global appium`). Unexpected errors might appear if this has not been done.
+To update Appium 2 server using Node Package Manager (npm) run the following command:
+
+ ```bash
+npm install --location=global appium@latest
+```
+
+:bangbang: Make sure Appium 1 is fully uninstalled before upgrading it to Appium 2 (`npm uninstall --location=global appium`). Unexpected errors might appear if this has not been done.
 
 ### Drivers
 
@@ -187,10 +193,6 @@ Repo](https://github.com/appium/appium/tree/master/packages/appium/docs) as well
 
 Please take a look at our [contribution documentation](CONTRIBUTING.md)
 for instructions on how to build, test, and run Appium from the source.
-
-### Roadmap
-
-Interested in where Appium is heading in the future? Check out the [Roadmap](ROADMAP.md)
 
 ### Project History, Credits & Inspiration
 

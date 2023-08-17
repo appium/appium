@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.23](https://github.com/appium/appium/compare/@appium/doctor@2.0.22...@appium/doctor@2.0.23) (2023-08-17)
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v9.14.4 ([#18844](https://github.com/appium/appium/issues/18844)) ([a9e86aa](https://github.com/appium/appium/commit/a9e86aabc657bf22df8b1c5f67ab93acc0ced934))
+* **doctor:** update dependency inquirer to v8.2.6 ([#18940](https://github.com/appium/appium/issues/18940)) ([a8cc551](https://github.com/appium/appium/commit/a8cc551210c31b014025f7c56b091163f4d15df1))
+* **test-support:** update dependency @colors/colors to v1.6.0 ([1358937](https://github.com/appium/appium/commit/1358937db2edf08ce1ebe3dff2f70ac6b07cd373))
+
+
+
 ## [2.0.22](https://github.com/appium/appium/compare/@appium/doctor@2.0.21...@appium/doctor@2.0.22) (2023-07-24)
 
 

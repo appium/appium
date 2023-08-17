@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.22](https://github.com/appium/appium/compare/@appium/test-support@3.0.21...@appium/test-support@3.0.22) (2023-08-17)
+
+
+### Bug Fixes
+
+* **test-support:** update dependency @colors/colors to v1.6.0 ([1358937](https://github.com/appium/appium/commit/1358937db2edf08ce1ebe3dff2f70ac6b07cd373))
+* **test-support:** update dependency sinon to v15.2.0 ([a21ae6a](https://github.com/appium/appium/commit/a21ae6ab2bcaba44ecdacae67076cf011b4e5ae8))
+
+
+
 ## [3.0.21](https://github.com/appium/appium/compare/@appium/test-support@3.0.20...@appium/test-support@3.0.21) (2023-07-24)
 
 

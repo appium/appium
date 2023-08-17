@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.6](https://github.com/appium/appium/compare/@appium/docutils@0.4.5...@appium/docutils@0.4.6) (2023-08-17)
+
+
+### Bug Fixes
+
+* **support:** update dependency semver to v7.5.4 ([03ddcdf](https://github.com/appium/appium/commit/03ddcdfcafbccf6698868a272e499cbdac41d791))
+* **types:** update dependency type-fest to v3.13.1 ([fb34ab9](https://github.com/appium/appium/commit/fb34ab917216121d2b554677a12f07a03393d218))
+
+
+
 ## [0.4.5](https://github.com/appium/appium/compare/@appium/docutils@0.4.4...@appium/docutils@0.4.5) (2023-07-24)
 
 

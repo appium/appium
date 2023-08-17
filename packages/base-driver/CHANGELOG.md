@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.17](https://github.com/appium/appium/compare/@appium/base-driver@9.3.16...@appium/base-driver@9.3.17) (2023-08-17)
+
+
+### Bug Fixes
+
+* **base-driver:** Tune responses caching logic ([#18922](https://github.com/appium/appium/issues/18922)) ([de5b55a](https://github.com/appium/appium/commit/de5b55ae90fefcce86962a48d5aceb73962e56b6))
+* **driver-test-support:** update definitelytyped ([c320e8a](https://github.com/appium/appium/commit/c320e8a1a61cb6d980d6d944ae47b60da97aa398))
+* **support:** update dependency glob to v10 ([#18490](https://github.com/appium/appium/issues/18490)) ([aaf31a5](https://github.com/appium/appium/commit/aaf31a577cb0b9cbe22646dcd888dc393a03aa11))
+* **test-support:** update dependency @colors/colors to v1.6.0 ([1358937](https://github.com/appium/appium/commit/1358937db2edf08ce1ebe3dff2f70ac6b07cd373))
+* **types:** update dependency type-fest to v3.13.1 ([fb34ab9](https://github.com/appium/appium/commit/fb34ab917216121d2b554677a12f07a03393d218))
+
+
+
 ## [9.3.16](https://github.com/appium/appium/compare/@appium/base-driver@9.3.15...@appium/base-driver@9.3.16) (2023-07-24)
 
 

@@ -28,6 +28,7 @@ nav:
   - CLI Reference:
       - cli/index.md
       - cli/args.md
+      - cli/env-vars.md
       - cli/extensions.md
   - Guides:
       - guides/migrating-1-to-2.md

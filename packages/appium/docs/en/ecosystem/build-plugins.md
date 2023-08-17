@@ -141,7 +141,9 @@ Appium's start server methods to handle starting and stopping the Appium server 
 Of course, you can always install it locally as described above as well.
 
 Anytime you make changes to your plugin code, you'll need to restart the Appium server to make sure
-it picks up the latest code.
+it picks up the latest code. As with drivers, you can set the `APPIUM_RELOAD_EXTENSIONS`
+environment variable if you wish Appium to try to re-require your plugin module when a new session
+starts.
 
 ## Standard plugin implementation ideas
 

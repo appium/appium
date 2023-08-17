@@ -152,6 +152,16 @@ your driver locally:
 appium driver install --source=local /path/to/your/driver/dev/dir
 ```
 
+### Refreshing your driver during development
+
+When the Appium server starts, it loads your driver into memory. Changes to your driver code will
+not take effect until the next time the Appium server starts. Simply starting a new session is not
+sufficient to cause your driver's code to be reloaded.
+
+However, you can set the `APPIUM_RELOAD_EXTENSIONS` environment variable to `1` to request that
+Appium clear its module cache and reload extensions whenever a new session is requested. This may
+obviate the need to restart the server when you make code changes to your driver.
+
 ## Standard driver implementation ideas
 
 These are things you will probably find yourself wanting to do when creating a driver.

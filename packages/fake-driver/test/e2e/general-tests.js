@@ -131,7 +131,7 @@ function generalTests() {
     it('should throw an error if a required overload param is missing', async function () {
       await driver
         .executeScript('fake: addition', [{num3: 4}])
-        .should.be.rejectedWith(/Parameters were incorrect/);
+        .should.be.rejectedWith(/required parameters are missing/);
     });
 
     it('should throw an error if sending in wrong types of params', async function () {

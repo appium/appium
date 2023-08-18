@@ -860,7 +860,7 @@ function generateBadParametersMessage(requiredParams, actualParams) {
   if (!_.isEmpty(requiredParamNames)) {
     resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
   }
-  const optionalParamNames = toArray(requiredParams?.optional);
+  const optionalParamNames = _.difference(toArray(requiredParams?.optional), ['sessionId', 'id']);
   if (!_.isEmpty(optionalParamNames)) {
     resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
   }

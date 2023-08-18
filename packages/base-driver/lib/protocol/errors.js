@@ -843,24 +843,43 @@ export class UnableToCaptureScreen extends ProtocolError {
   }
 }
 
+function generateBadParametersMessage(requiredParams, actualParams) {
+  const toArray = (/** @type {any} */ x) => _.isArray(x) ? x : [];
+
+  const requiredParamNames = toArray(requiredParams?.required);
+  const actualParamNames = toArray(actualParams);
+  const missingRequiredParamNames = _.difference(requiredParamNames, actualParamNames);
+  /** @type {string[]} */
+  const resultLines = [];
+  resultLines.push(_.isEmpty(missingRequiredParamNames)
+    // This should not happen
+    ? 'Some of the provided parameters are not known'
+    : (`The following required parameter${missingRequiredParamNames.length === 1 ? ' is ' : 's are '}`
+      + `missing: ${JSON.stringify(missingRequiredParamNames)}`)
+  );
+  if (!_.isEmpty(requiredParamNames)) {
+    resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
+  }
+  const optionalParamNames = toArray(requiredParams?.optional);
+  if (!_.isEmpty(optionalParamNames)) {
+    resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
+  }
+  resultLines.push(
+    `You have provided${_.isEmpty(actualParamNames) ? ' none' : (': ' + JSON.stringify(actualParams, null, 2))}`
+  );
+  return resultLines.join('\n');
+}
+
 // Equivalent to W3C InvalidArgumentError
 export class BadParametersError extends ES6Error {
   static error() {
     return 'invalid argument';
   }
   constructor(requiredParams, actualParams, errMessage) {
-    let message;
-    if (!errMessage) {
-      message =
-        `Parameters were incorrect. We wanted ` +
-        `${JSON.stringify(requiredParams)} and you ` +
-        `sent ${JSON.stringify(actualParams)}`;
-    } else {
-      message = `Parameters were incorrect. You sent ${JSON.stringify(
-        actualParams
-      )}, ${errMessage}`;
-    }
-    super(message);
+    super(errMessage
+      ? `Parameters were incorrect. You sent ${JSON.stringify(actualParams)}, ${errMessage}`
+      : generateBadParametersMessage(requiredParams, actualParams)
+    );
     this.w3cStatus = HTTPStatusCodes.BAD_REQUEST;
   }
 }

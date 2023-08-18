@@ -362,12 +362,19 @@ async function configureApp(
  * @returns {Promise<RemoteAppData>}
  */
 async function queryAppLink(appLink, reqHeaders) {
-  const {href} = url.parse(appLink);
+  const {href, auth} = url.parse(appLink);
+  const axiosUrl = auth ? href.replace(`${auth}@`, '') : href;
+  /** @type {import('axios').AxiosBasicCredentials|undefined} */
+  const axiosAuth = auth ? {
+    username: auth.substring(0, auth.indexOf(':')),
+    password: auth.substring(auth.indexOf(':') + 1),
+  } : undefined;
   /**
    * @type {import('axios').RawAxiosRequestConfig}
    */
   const requestOpts = {
-    url: href,
+    url: axiosUrl,
+    auth: axiosAuth,
     responseType: 'stream',
     timeout: APP_DOWNLOAD_TIMEOUT_MS,
     validateStatus: (status) =>
@@ -382,7 +389,7 @@ async function queryAppLink(appLink, reqHeaders) {
       status,
     };
   } catch (err) {
-    throw new Error(`Cannot download the app from ${href}: ${err.message}`);
+    throw new Error(`Cannot download the app from ${axiosUrl}: ${err.message}`);
   }
 }
 

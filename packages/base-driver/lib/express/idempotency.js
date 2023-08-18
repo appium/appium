@@ -9,7 +9,9 @@ const IDEMPOTENT_RESPONSES = new LRU({
   updateAgeOnGet: true,
   updateAgeOnHas: true,
   dispose: (key, {responseStateListener}) => {
-    responseStateListener.removeAllListeners();
+    if (responseStateListener) {
+      responseStateListener.removeAllListeners();
+    }
   }
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];

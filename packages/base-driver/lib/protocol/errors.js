@@ -865,7 +865,7 @@ function generateBadParametersMessage(requiredParams, actualParams) {
     resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
   }
   resultLines.push(
-    `You have provided${_.isEmpty(actualParamNames) ? ' none' : (': ' + JSON.stringify(actualParams, null, 2))}`
+    `You have provided${_.isEmpty(actualParamNames) ? ' none' : (': ' + JSON.stringify(actualParams))}`
   );
   return resultLines.join('\n');
 }

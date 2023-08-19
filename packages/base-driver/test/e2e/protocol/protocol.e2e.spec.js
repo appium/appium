@@ -428,7 +428,7 @@ describe('Protocol', function () {
           status.should.equal(400);
 
           const {error: w3cError, message, stacktrace} = data.value;
-          message.should.match(/Parameters were incorrect/);
+          message.should.match(/following required parameter/);
           stacktrace.should.match(/protocol.js/);
           w3cError.should.be.a.string;
           w3cError.should.equal(errors.InvalidArgumentError.error());

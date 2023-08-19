@@ -138,6 +138,7 @@ class ZipExtractor {
     const openReadStream = B.promisify(this.zipfile.openReadStream.bind(this.zipfile));
     const readStream = await openReadStream(entry);
     if (isSymlink) {
+      // @ts-ignore This typecast is ok
       const link = await getStream(readStream);
       await fs.symlink(link, dest);
     } else {

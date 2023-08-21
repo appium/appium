@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.5](https://github.com/appium/appium/compare/@appium/support@4.1.4...@appium/support@4.1.5) (2023-08-21)
+
+
+### Bug Fixes
+
+* **support:** update dependency archiver to v5.3.2 ([e73e47d](https://github.com/appium/appium/commit/e73e47de18ff7e327a06584121e85756506ab21d))
+
+
+
 ## [4.1.4](https://github.com/appium/appium/compare/@appium/support@4.1.3...@appium/support@4.1.4) (2023-08-17)
 
 

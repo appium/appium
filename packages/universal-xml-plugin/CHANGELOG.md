@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.11](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.10...@appium/universal-xml-plugin@1.0.11) (2023-08-21)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency xpath to v0.0.33 ([#18952](https://github.com/appium/appium-plugins/issues/18952)) ([f2cff24](https://github.com/appium/appium-plugins/commit/f2cff24685e96578f17549454de7b7931c13df83))
+
+
+
 ## [1.0.10](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.9...@appium/universal-xml-plugin@1.0.10) (2023-08-17)
 
 

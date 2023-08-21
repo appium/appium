@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.18](https://github.com/appium/appium/compare/@appium/base-driver@9.3.17...@appium/base-driver@9.3.18) (2023-08-21)
+
+
+### Bug Fixes
+
+* **base-driver:** Fix possible NPE while cleaning up the state listener ([#19020](https://github.com/appium/appium/issues/19020)) ([53bfc68](https://github.com/appium/appium/commit/53bfc68eee5766ca8c6851c424c89d6b123d602e))
+* **base-driver:** Respect basic auth credentials if provided ([#19000](https://github.com/appium/appium/issues/19000)) ([ed8e83c](https://github.com/appium/appium/commit/ed8e83c76c5b660e619833515c2ea2ec29082e18))
+* **driver-test-support:** update dependency @types/lodash to v4.14.197 ([a080b72](https://github.com/appium/appium/commit/a080b729208b4e3c352456f0f230b63b0b7ee9ee))
+
+
+
 ## [9.3.17](https://github.com/appium/appium/compare/@appium/base-driver@9.3.16...@appium/base-driver@9.3.17) (2023-08-17)
 
 

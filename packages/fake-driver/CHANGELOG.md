@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.8](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.7...@appium/fake-driver@5.2.8) (2023-08-21)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency xpath to v0.0.33 ([#18952](https://github.com/appium/appium/issues/18952)) ([f2cff24](https://github.com/appium/appium/commit/f2cff24685e96578f17549454de7b7931c13df83))
+
+
+
 ## [5.2.7](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.6...@appium/fake-driver@5.2.7) (2023-08-17)
 
 

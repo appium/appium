@@ -4,6 +4,7 @@ import path from 'path';
 import XMLDom from '@xmldom/xmldom';
 import xpath from 'xpath';
 import log from './logger';
+import _ from 'lodash';
 import {FakeElement} from './fake-element';
 
 const SCREENSHOT = path.join(__dirname, 'screen.png');
@@ -28,7 +29,7 @@ export class FakeApp {
 
   get title() {
     let nodes = this.xpathQuery('//title');
-    if (nodes.length < 1) {
+    if (!_.isArray(nodes) || nodes.length < 1) {
       throw new Error('No title!');
     }
     const node = /** @type {Node} */ (nodes[0]);
@@ -75,6 +76,11 @@ export class FakeApp {
 
   setDims() {
     const nodes = this.xpathQuery('//app');
+    if (!_.isArray(nodes)) {
+      throw new Error(
+        'Cannot fetch app dimensions because no corresponding node has benn found in the source'
+      );
+    }
     const app = new FakeElement(nodes[0], this);
     this._width = parseInt(app.nodeAttrs.width, 10);
     this._height = parseInt(app.nodeAttrs.height, 10);
@@ -93,7 +99,8 @@ export class FakeApp {
   }
 
   getWebviews() {
-    return this.xpathQuery('//MockWebView/*[1]').map((n) => new FakeWebView(n));
+    const nodes = this.xpathQuery('//MockWebView/*[1]');
+    return _.isArray(nodes) ? nodes.map((n) => new FakeWebView(n)) : [];
   }
 
   activateWebview(wv) {
@@ -153,7 +160,7 @@ export class FakeApp {
 
   showAlert(alertId) {
     let nodes = this.xpathQuery(`//alert[@id="${alertId}"]`);
-    if (nodes.length < 1) {
+    if (!_.isArray(nodes) || _.isEmpty(nodes)) {
       throw new Error(`Alert ${alertId} doesn't exist!`);
     }
     this.activeAlert = new FakeElement(nodes[0], this);

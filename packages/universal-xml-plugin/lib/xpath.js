@@ -1,5 +1,6 @@
 import {select as xpathQuery} from 'xpath';
 import {DOMParser} from '@xmldom/xmldom';
+import _ from 'lodash';
 
 export function runQuery(query, xmlStr) {
   const dom = new DOMParser().parseFromString(xmlStr);
@@ -7,8 +8,18 @@ export function runQuery(query, xmlStr) {
   return nodes;
 }
 
+/**
+ *
+ * @param {string} query
+ * @param {string} xmlStr
+ * @param {boolean} multiple
+ * @returns {string|null}
+ */
 export function transformQuery(query, xmlStr, multiple) {
   const nodes = runQuery(query, xmlStr);
+  if (!_.isArray(nodes)) {
+    return null;
+  }
 
   const newQueries = nodes.map((node) => {
     const indexPath = getNodeAttrVal(node, 'indexPath');

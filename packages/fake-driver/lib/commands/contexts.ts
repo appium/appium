@@ -73,7 +73,7 @@ const ContextsMixin: FakeDriverContextsMixin = {
       this.appModel.deactivateFrame();
     } else {
       const nodes = this.appModel.xpathQuery(`//iframe[@id="${frameId}"]`);
-      if (!nodes.length) {
+      if (!_.isArray(nodes) || _.isEmpty(nodes)) {
         throw new errors.NoSuchFrameError();
       }
       this.appModel.activateFrame(nodes[0]);

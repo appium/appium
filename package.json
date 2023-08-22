@@ -143,7 +143,7 @@
     "typedoc": "0.23.28",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
-    "typescript": "5.0.4",
+    "typescript": "5.1.6",
     "validate.js": "0.13.1",
     "webdriverio": "8.15.4",
     "ws": "8.13.0",

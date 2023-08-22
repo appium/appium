@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.12](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.11...@appium/universal-xml-plugin@1.0.12) (2023-08-22)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** actually export plugin using correct CJS syntax ([#19032](https://github.com/appium/appium-plugins/issues/19032)) ([b2560b5](https://github.com/appium/appium-plugins/commit/b2560b5c1dbd3ba5104439c25454bec2275dcccf))
+
+
+
 ## [1.0.11](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.10...@appium/universal-xml-plugin@1.0.11) (2023-08-21)
 
 

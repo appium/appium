@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.0...@appium/tsconfig@0.3.1) (2023-08-22)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8 ([#18095](https://github.com/appium/appium/issues/18095)) ([b608db9](https://github.com/appium/appium/commit/b608db91a8ef0e3cad43ce3e14b625bf9234d383))
+
+
+
 # [0.3.0](https://github.com/appium/appium/compare/@appium/tsconfig@0.2.4...@appium/tsconfig@0.3.0) (2023-04-10)
 
 

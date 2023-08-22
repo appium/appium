@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./build/lib/index.js",
+    "test:smoke": "node -e 'require(\"./index.js\")'",
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {

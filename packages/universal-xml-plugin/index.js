@@ -4,4 +4,4 @@ if (require.main === module) {
   main();
 }
 
-export {UniversalXMLPlugin};
+module.exports = {UniversalXMLPlugin};

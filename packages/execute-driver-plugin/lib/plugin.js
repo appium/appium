@@ -67,12 +67,14 @@ export default class ExecuteDriverPlugin extends BasePlugin {
 
     const driverOpts = {
       sessionId: driver.sessionId,
-      // Appium probably won't be behind ssl locally; if it ever is, might need to update this to
-      // provide a user configurable parameter
-      protocol: 'http',
-      hostname: driver.serverHost,
-      port: driver.serverPort,
-      path: driver.serverPath,
+      options: {
+        // Appium probably won't be behind ssl locally; if it ever is, might need to update this to
+        // provide a user configurable parameter
+        protocol: 'http',
+        hostname: driver.serverHost,
+        port: driver.serverPort,
+        path: driver.serverPath,
+      },
       isW3C: true,
       isMobile: true,
       capabilities: driver.caps,

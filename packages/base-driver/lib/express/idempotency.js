@@ -36,17 +36,17 @@ function cacheResponse(key, req, res) {
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
   let responseChunks = [];
-  let responseChunksSize = 0;
+  let responseSize = 0;
   let errorMessage = null;
   const patchedWriter = (chunk, encoding, next) => {
     if (errorMessage) {
       responseChunks = [];
-      responseChunksSize = 0;
+      responseSize = 0;
     } else {
       const buf = Buffer.from(chunk, encoding);
       responseChunks.push(buf);
-      responseChunksSize += buf.length;
-      if (responseChunksSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
+      responseSize += buf.length;
+      if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
         errorMessage = `The actual response size exceeds ` +
           `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
       }
@@ -84,6 +84,7 @@ function cacheResponse(key, req, res) {
       value.response = Buffer.concat(responseChunks);
     }
     responseChunks = [];
+    responseSize = 0;
     responseStateListener.emit('ready', value?.response ?? null);
   });
 }

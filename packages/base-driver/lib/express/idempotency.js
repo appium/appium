@@ -35,27 +35,34 @@ function cacheResponse(key, req, res) {
     responseStateListener,
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
+  const responseRef = new WeakRef(res);
   let responseChunks = [];
   let responseSize = 0;
   let errorMessage = null;
   const patchedWriter = (chunk, encoding, next) => {
-    if (errorMessage) {
+    if (errorMessage || !responseRef.deref()) {
       responseChunks = [];
       responseSize = 0;
-    } else {
-      const buf = Buffer.from(chunk, encoding);
-      responseChunks.push(buf);
-      responseSize += buf.length;
-      if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
-        errorMessage = `The actual response size exceeds ` +
-          `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
-      }
+      return originalSocketWriter(chunk, encoding, next);
+    }
+
+    const buf = Buffer.from(chunk, encoding);
+    responseChunks.push(buf);
+    responseSize += buf.length;
+    if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
+      errorMessage = `The actual response size exceeds ` +
+        `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
     }
     return originalSocketWriter(chunk, encoding, next);
   };
   res.socket.write = patchedWriter;
   let isResponseFullySent = false;
-  res.once('error', (e) => { errorMessage = e.message; });
+  res.once('error', (e) => {
+    errorMessage = e.message;
+    if (res.socket?.write === patchedWriter) {
+      res.socket.write = originalSocketWriter;
+    }
+  });
   res.once('finish', () => { isResponseFullySent = true; });
   res.once('close', () => {
     if (res.socket?.write === patchedWriter) {

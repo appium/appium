@@ -34,20 +34,17 @@ function cacheResponse(key, req, res) {
     responseStateListener,
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
-  let response = '';
+  let responseChunks = [];
+  let httpErrorMessage = null;
   const patchedWriter = (chunk, encoding, next) => {
-    if (_.isString(chunk)) {
-      response += chunk;
-    } else if (_.isFunction(chunk.toString)) {
-      response += chunk.toString(_.isString(encoding) ? encoding : undefined);
+    if (!httpErrorMessage) {
+      responseChunks.push(Buffer.from(chunk, encoding));
     }
     return originalSocketWriter(chunk, encoding, next);
   };
   res.socket.write = patchedWriter;
-  let httpErrorMessage = null;
   let isResponseFullySent = false;
   res.once('error', (e) => { httpErrorMessage = e.message; });
-  req.once('error', (e) => { httpErrorMessage = e.message; });
   res.once('finish', () => { isResponseFullySent = true; });
   res.once('close', () => {
     if (res.socket?.write === patchedWriter) {
@@ -73,11 +70,10 @@ function cacheResponse(key, req, res) {
 
     const value = IDEMPOTENT_RESPONSES.get(key);
     if (value) {
-      value.response = Buffer.from(response, 'utf8');
-      responseStateListener.emit('ready', value.response);
-    } else {
-      responseStateListener.emit('ready', null);
+      value.response = Buffer.concat(responseChunks);
     }
+    responseChunks = [];
+    responseStateListener.emit('ready', value?.response ?? null);
   });
 }
 
@@ -87,7 +83,7 @@ function cacheResponse(key, req, res) {
  */
 async function handleIdempotency(req, res, next) {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
-  if (!keyOrArr) {
+  if (_.isEmpty(keyOrArr) || !keyOrArr) {
     return next();
   }
 

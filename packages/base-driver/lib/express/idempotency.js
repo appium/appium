@@ -14,6 +14,7 @@ const IDEMPOTENT_RESPONSES = new LRU({
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
+const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1Mib
 
 /**
  *
@@ -35,16 +36,26 @@ function cacheResponse(key, req, res) {
   });
   const originalSocketWriter = res.socket.write.bind(res.socket);
   let responseChunks = [];
-  let httpErrorMessage = null;
+  let responseChunksSize = 0;
+  let errorMessage = null;
   const patchedWriter = (chunk, encoding, next) => {
-    if (!httpErrorMessage) {
-      responseChunks.push(Buffer.from(chunk, encoding));
+    if (errorMessage) {
+      responseChunks = [];
+      responseChunksSize = 0;
+    } else {
+      const buf = Buffer.from(chunk, encoding);
+      responseChunks.push(buf);
+      responseChunksSize += buf.length;
+      if (responseChunksSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
+        errorMessage = `The actual response size exceeds ` +
+          `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
+      }
     }
     return originalSocketWriter(chunk, encoding, next);
   };
   res.socket.write = patchedWriter;
   let isResponseFullySent = false;
-  res.once('error', (e) => { httpErrorMessage = e.message; });
+  res.once('error', (e) => { errorMessage = e.message; });
   res.once('finish', () => { isResponseFullySent = true; });
   res.once('close', () => {
     if (res.socket?.write === patchedWriter) {
@@ -56,8 +67,8 @@ function cacheResponse(key, req, res) {
         `Could not cache the response identified by '${key}'. ` +
         `Cache consistency has been damaged`
       );
-    } else if (httpErrorMessage) {
-      log.info(`Could not cache the response identified by '${key}': ${httpErrorMessage}`);
+    } else if (errorMessage) {
+      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
     } else if (!isResponseFullySent) {
       log.info(

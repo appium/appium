@@ -14,7 +14,7 @@ const IDEMPOTENT_RESPONSES = new LRU({
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
-const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1Mib
+const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
 /**
  *

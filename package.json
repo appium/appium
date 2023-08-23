@@ -124,7 +124,7 @@
     "lerna": "6.6.2",
     "lint-staged": "13.3.0",
     "log-symbols": "4.1.0",
-    "midnight-smoker": "2.0.4",
+    "midnight-smoker": "5.1.0",
     "mjpeg-consumer": "2.0.0",
     "mjpeg-server": "0.3.1",
     "mocha": "10.2.0",

@@ -34,7 +34,8 @@ function cacheResponse(key, req, res) {
     response: null,
     responseStateListener,
   });
-  const originalSocketWriter = res.socket.write.bind(res.socket);
+  const socket = res.socket;
+  const originalSocketWriter = socket.write.bind(socket);
   const responseRef = new WeakRef(res);
   let responseChunks = [];
   let responseSize = 0;
@@ -55,18 +56,34 @@ function cacheResponse(key, req, res) {
     }
     return originalSocketWriter(chunk, encoding, next);
   };
-  res.socket.write = patchedWriter;
-  let isResponseFullySent = false;
+  socket.write = patchedWriter;
+  let didEmitReady = false;
   res.once('error', (e) => {
     errorMessage = e.message;
-    if (res.socket?.write === patchedWriter) {
-      res.socket.write = originalSocketWriter;
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
+    }
+
+    if (!IDEMPOTENT_RESPONSES.has(key)) {
+      log.info(
+        `Could not cache the response identified by '${key}'. ` +
+        `Cache consistency has been damaged`
+      );
+    } else {
+      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
+      IDEMPOTENT_RESPONSES.delete(key);
+    }
+
+    responseChunks = [];
+    responseSize = 0;
+    if (!didEmitReady) {
+      responseStateListener.emit('ready', null);
+      didEmitReady = true;
     }
   });
-  res.once('finish', () => { isResponseFullySent = true; });
-  res.once('close', () => {
-    if (res.socket?.write === patchedWriter) {
-      res.socket.write = originalSocketWriter;
+  res.once('finish', () => {
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
     }
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
@@ -77,13 +94,6 @@ function cacheResponse(key, req, res) {
     } else if (errorMessage) {
       log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
-    } else if (!isResponseFullySent) {
-      log.info(
-        `Could not cache the response identified by '${key}', ` +
-        `because it has not been completed`
-      );
-      log.info('Does the client terminate connections too early?');
-      IDEMPOTENT_RESPONSES.delete(key);
     }
 
     const value = IDEMPOTENT_RESPONSES.get(key);
@@ -92,7 +102,21 @@ function cacheResponse(key, req, res) {
     }
     responseChunks = [];
     responseSize = 0;
-    responseStateListener.emit('ready', value?.response ?? null);
+    if (!didEmitReady) {
+      responseStateListener.emit('ready', value?.response ?? null);
+      didEmitReady = true;
+    }
+  });
+  res.once('close', () => {
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
+    }
+
+    if (!didEmitReady) {
+      const value = IDEMPOTENT_RESPONSES.get(key);
+      responseStateListener.emit('ready', value?.response ?? null);
+      didEmitReady = true;
+    }
   });
 }
 

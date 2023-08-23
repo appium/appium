@@ -8,7 +8,7 @@ const IDEMPOTENT_RESPONSES = new LRU({
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
   updateAgeOnHas: true,
-  dispose: ({responseStateListener}, key) => {
+  dispose: ({responseStateListener}) => {
     responseStateListener?.removeAllListeners();
   }
 });

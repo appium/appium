@@ -14,6 +14,7 @@ const IDEMPOTENT_RESPONSES = new LRU({
 });
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
+const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
 /**
  *
@@ -33,25 +34,34 @@ function cacheResponse(key, req, res) {
     response: null,
     responseStateListener,
   });
-  const originalSocketWriter = res.socket.write.bind(res.socket);
-  let response = '';
+  const socket = res.socket;
+  const originalSocketWriter = socket.write.bind(socket);
+  const responseRef = new WeakRef(res);
+  let responseChunks = [];
+  let responseSize = 0;
+  let errorMessage = null;
   const patchedWriter = (chunk, encoding, next) => {
-    if (_.isString(chunk)) {
-      response += chunk;
-    } else if (_.isFunction(chunk.toString)) {
-      response += chunk.toString(_.isString(encoding) ? encoding : undefined);
+    if (errorMessage || !responseRef.deref()) {
+      responseChunks = [];
+      responseSize = 0;
+      return originalSocketWriter(chunk, encoding, next);
+    }
+
+    const buf = Buffer.from(chunk, encoding);
+    responseChunks.push(buf);
+    responseSize += buf.length;
+    if (responseSize > MAX_CACHED_PAYLOAD_SIZE_BYTES) {
+      errorMessage = `The actual response size exceeds ` +
+        `the maximum allowed limit of ${MAX_CACHED_PAYLOAD_SIZE_BYTES} bytes`;
     }
     return originalSocketWriter(chunk, encoding, next);
   };
-  res.socket.write = patchedWriter;
-  let httpErrorMessage = null;
-  let isResponseFullySent = false;
-  res.once('error', (e) => { httpErrorMessage = e.message; });
-  req.once('error', (e) => { httpErrorMessage = e.message; });
-  res.once('finish', () => { isResponseFullySent = true; });
-  res.once('close', () => {
-    if (res.socket?.write === patchedWriter) {
-      res.socket.write = originalSocketWriter;
+  socket.write = patchedWriter;
+  let didEmitReady = false;
+  res.once('error', (e) => {
+    errorMessage = e.message;
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
     }
 
     if (!IDEMPOTENT_RESPONSES.has(key)) {
@@ -59,24 +69,53 @@ function cacheResponse(key, req, res) {
         `Could not cache the response identified by '${key}'. ` +
         `Cache consistency has been damaged`
       );
-    } else if (httpErrorMessage) {
-      log.info(`Could not cache the response identified by '${key}': ${httpErrorMessage}`);
+    } else {
+      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
-    } else if (!isResponseFullySent) {
+    }
+
+    responseChunks = [];
+    responseSize = 0;
+    if (!didEmitReady) {
+      responseStateListener.emit('ready', null);
+      didEmitReady = true;
+    }
+  });
+  res.once('finish', () => {
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
+    }
+
+    if (!IDEMPOTENT_RESPONSES.has(key)) {
       log.info(
-        `Could not cache the response identified by '${key}', ` +
-        `because it has not been completed`
+        `Could not cache the response identified by '${key}'. ` +
+        `Cache consistency has been damaged`
       );
-      log.info('Does the client terminate connections too early?');
+    } else if (errorMessage) {
+      log.info(`Could not cache the response identified by '${key}': ${errorMessage}`);
       IDEMPOTENT_RESPONSES.delete(key);
     }
 
     const value = IDEMPOTENT_RESPONSES.get(key);
     if (value) {
-      value.response = Buffer.from(response, 'utf8');
-      responseStateListener.emit('ready', value.response);
-    } else {
-      responseStateListener.emit('ready', null);
+      value.response = Buffer.concat(responseChunks);
+    }
+    responseChunks = [];
+    responseSize = 0;
+    if (!didEmitReady) {
+      responseStateListener.emit('ready', value?.response ?? null);
+      didEmitReady = true;
+    }
+  });
+  res.once('close', () => {
+    if (socket.write === patchedWriter) {
+      socket.write = originalSocketWriter;
+    }
+
+    if (!didEmitReady) {
+      const value = IDEMPOTENT_RESPONSES.get(key);
+      responseStateListener.emit('ready', value?.response ?? null);
+      didEmitReady = true;
     }
   });
 }
@@ -87,7 +126,7 @@ function cacheResponse(key, req, res) {
  */
 async function handleIdempotency(req, res, next) {
   const keyOrArr = req.headers[IDEMPOTENCY_KEY_HEADER];
-  if (!keyOrArr) {
+  if (_.isEmpty(keyOrArr) || !keyOrArr) {
     return next();
   }
 

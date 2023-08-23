@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.3.20](https://github.com/appium/appium/compare/@appium/base-driver@9.3.19...@appium/base-driver@9.3.20) (2023-08-23)
+
+
+### Bug Fixes
+
+* **base-driver:** Avoid RangeError while caching the response data ([#19043](https://github.com/appium/appium/issues/19043)) ([315a5e6](https://github.com/appium/appium/commit/315a5e6cc75d53d5fbbdae598dc4523ab85b7cb1))
+* **base-driver:** fix the LRUCache.dispose callback param order ([#19037](https://github.com/appium/appium/issues/19037)) ([abcf0d4](https://github.com/appium/appium/commit/abcf0d451f47f5c7c285f0988693c4bef9c29024))
+
+
+
 ## [9.3.19](https://github.com/appium/appium/compare/@appium/base-driver@9.3.18...@appium/base-driver@9.3.19) (2023-08-22)
 
 **Note:** Version bump only for package @appium/base-driver

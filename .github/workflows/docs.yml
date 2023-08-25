@@ -35,7 +35,7 @@ jobs:
     name: Docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
       - name: Install dependencies (Node.js)
         uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:

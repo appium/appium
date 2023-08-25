@@ -2066,6 +2066,10 @@ export interface CachedAppInfo {
    */
   lastModified?: Date;
   /**
+   * The value of the file's `Etag` header
+   */
+  etag?: string;
+  /**
    * `true` if the file contains an `immutable` mark in `Cache-control` header
    */
   immutable?: boolean;

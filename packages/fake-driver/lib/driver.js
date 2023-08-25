@@ -1,6 +1,8 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
-import {deprecatedCommandsLogged} from '@appium/base-driver/lib/protocol/protocol';
+// @ts-ignore This import is intended for education purposes (it's probbaly not)
+// eslint-disable-next-line import/no-unresolved
+import {deprecatedCommandsLogged} from '@appium/base-driver/lib/build/protocol/protocol';
 import {FakeApp} from './fake-app';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({

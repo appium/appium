@@ -21,6 +21,5 @@
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],
   "useNx": false,
-  "useWorkspaces": true,
   "version": "independent"
 }

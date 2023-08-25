@@ -84,10 +84,8 @@ function localIp() {
   let ip = _.chain(os.networkInterfaces())
     .values()
     .flatten()
-    // @ts-ignore
-    .filter(function (val) {
-      return val.family === 'IPv4' && val.internal === false;
-    })
+    // @ts-ignore this filter works fine
+    .filter(({family, internal}) => family === 'IPv4' && internal === false)
     .map('address')
     .first()
     .value();
@@ -136,23 +134,21 @@ function safeJsonParse(obj) {
   }
 }
 
-/*
+/**
  * Stringifies the object passed in, converting Buffers into Strings for better
  * display. This mimics JSON.stringify (see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
  * except the `replacer` argument can only be a function.
  *
- * @param {object} obj - the object to be serialized
- * @param {?function} replacer - function to transform the properties added to the
+ * @param {any} obj - the object to be serialized
+ * @param {((key:any, value:any) => any)?} replacer - function to transform the properties added to the
  *                               serialized object
- * @param {?number|string} space - used to insert white space into the output JSON
+ * @param {number|string|undefined} space - used to insert white space into the output JSON
  *                                 string for readability purposes. Defaults to 2
- * returns {string} - the JSON object serialized as a string
+ * @returns {string} - the JSON object serialized as a string
  */
-function jsonStringify(obj, replacer, space = 2) {
+function jsonStringify(obj, replacer = null, space = 2) {
   // if no replacer is passed, or it is not a function, just use a pass-through
-  if (!_.isFunction(replacer)) {
-    replacer = (k, v) => v;
-  }
+  const replacerFunc = _.isFunction(replacer) ? replacer : (k, v) => v;
 
   // Buffers cannot be serialized in a readable way
   const bufferToJSON = Buffer.prototype.toJSON;
@@ -162,7 +158,7 @@ function jsonStringify(obj, replacer, space = 2) {
       obj,
       (key, value) => {
         const updatedValue = Buffer.isBuffer(value) ? value.toString('utf8') : value;
-        return replacer(key, updatedValue);
+        return replacerFunc(key, updatedValue);
       },
       space
     );

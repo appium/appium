@@ -1,5 +1,5 @@
 import log from './logger';
-import LRU from 'lru-cache';
+import { LRU } from 'lru-cache';
 import _ from 'lodash';
 import {EventEmitter} from 'events';
 

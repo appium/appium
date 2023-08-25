@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import LRU from 'lru-cache';
+import { LRU } from 'lru-cache';
 import {errors} from 'appium/driver';
 import {ImageElement} from './image-element';
 import {compareImages} from './compare';

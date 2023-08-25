@@ -3,7 +3,7 @@ import path from 'path';
 import url from 'url';
 import logger from './logger';
 import {tempDir, fs, util, zip, timing, node} from '@appium/support';
-import LRU from 'lru-cache';
+import { LRU } from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import B from 'bluebird';
@@ -24,7 +24,7 @@ const APPLICATIONS_CACHE = new LRU({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
   updateAgeOnGet: true,
-  dispose: (app, {fullPath}) => {
+  dispose: ({fullPath}, app) => {
     logger.info(
       `The application '${app}' cached at '${fullPath}' has ` +
         `expired after ${CACHED_APPS_MAX_AGE}ms`

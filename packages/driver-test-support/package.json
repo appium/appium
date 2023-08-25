@@ -46,7 +46,7 @@
     "@types/stoppable": "1.1.1",
     "axios": "1.4.0",
     "bluebird": "3.7.2",
-    "chai": "4.3.7",
+    "chai": "4.3.8",
     "get-port": "5.1.1",
     "lodash": "4.17.21",
     "sinon": "15.2.0",

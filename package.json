@@ -103,7 +103,7 @@
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "asyncbox": "2.9.4",
-    "chai": "4.3.7",
+    "chai": "4.3.8",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",
     "conventional-changelog-conventionalcommits": "6.1.0",

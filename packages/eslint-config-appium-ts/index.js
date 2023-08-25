@@ -58,7 +58,10 @@ module.exports = {
      * want to be replaced with `import()` (I am not sure if there's a rule about that?).  **If this check fails**, disable the rule for the particular line.
      */
     '@typescript-eslint/no-var-requires': 'error',
-    // 'no-unused-vars': 'off',
+    /**
+     * Sometimes we want unused variables to be present in base class method declarations.
+     */
+    '@typescript-eslint/no-unused-vars': 'warn',
     /**
      * Allow native `Promise`s. **This overrides `@appium/eslint-config-appium`.**
      * @remarks Originally, this was so that we could use [bluebird](https://npm.im/bluebird)

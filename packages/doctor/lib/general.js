@@ -3,7 +3,6 @@ import {exec} from 'teen_process';
 import {DoctorCheck} from './doctor';
 import NodeDetector from './node-detector';
 import {util, env} from '@appium/support';
-import {EOL} from 'os';
 import '@colors/colors';
 
 /**

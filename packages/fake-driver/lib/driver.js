@@ -1,8 +1,5 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
-// @ts-ignore This import is intended for education purposes (it's probbaly not)
-// eslint-disable-next-line import/no-unresolved
-import {deprecatedCommandsLogged} from '@appium/base-driver/lib/build/protocol/protocol';
 import {FakeApp} from './fake-app';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
@@ -169,7 +166,8 @@ export class FakeDriver extends BaseDriver {
    */
   async getDeprecatedCommandsCalled() {
     await B.delay(1);
-    return Array.from(deprecatedCommandsLogged);
+    // TODO: Properly get deprecatedCommandsLogged list from the base-driver
+    return [];
   }
 
   /**

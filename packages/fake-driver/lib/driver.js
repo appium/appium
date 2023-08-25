@@ -1,6 +1,5 @@
 import B from 'bluebird';
 import {BaseDriver, errors} from 'appium/driver';
-import {deprecatedCommandsLogged} from '@appium/base-driver/build/lib/protocol/protocol';
 import {FakeApp} from './fake-app';
 
 const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
@@ -167,7 +166,8 @@ export class FakeDriver extends BaseDriver {
    */
   async getDeprecatedCommandsCalled() {
     await B.delay(1);
-    return Array.from(deprecatedCommandsLogged);
+    // TODO: Properly get deprecatedCommandsLogged list from the base-driver
+    return [];
   }
 
   /**

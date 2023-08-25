@@ -1,13 +1,14 @@
 import log from './logger';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import _ from 'lodash';
 import {EventEmitter} from 'events';
 
-const IDEMPOTENT_RESPONSES = new LRU({
+const IDEMPOTENT_RESPONSES = new LRUCache({
   max: 64,
   ttl: 30 * 60 * 1000,
   updateAgeOnGet: true,
   updateAgeOnHas: true,
+  // @ts-ignore The value must contain responseStateListener
   dispose: ({responseStateListener}) => {
     responseStateListener?.removeAllListeners();
   }
@@ -15,6 +16,14 @@ const IDEMPOTENT_RESPONSES = new LRU({
 const MONITORED_METHODS = ['POST', 'PATCH'];
 const IDEMPOTENCY_KEY_HEADER = 'x-idempotency-key';
 const MAX_CACHED_PAYLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
+
+/**
+ * @typedef {Object} CachedResponse
+ * @property {string} method
+ * @property {string} path
+ * @property {Buffer?} response
+ * @property {EventEmitter|null|undefined} responseStateListener
+ */
 
 /**
  *
@@ -96,6 +105,8 @@ function cacheResponse(key, req, res) {
       IDEMPOTENT_RESPONSES.delete(key);
     }
 
+    /** @type {CachedResponse|undefined} */
+    // @ts-ignore The returned type is ok
     const value = IDEMPOTENT_RESPONSES.get(key);
     if (value) {
       value.response = Buffer.concat(responseChunks);
@@ -113,6 +124,8 @@ function cacheResponse(key, req, res) {
     }
 
     if (!didEmitReady) {
+      /** @type {CachedResponse|undefined} */
+      // @ts-ignore The returned type is ok
       const value = IDEMPOTENT_RESPONSES.get(key);
       responseStateListener.emit('ready', value?.response ?? null);
       didEmitReady = true;
@@ -144,10 +157,8 @@ async function handleIdempotency(req, res, next) {
   }
 
   const {
-    method,
-    path,
-    response,
-    responseStateListener,
+    // @ts-ignore We have asserted the presence of the key above
+    method, path, response, responseStateListener,
   } = IDEMPOTENT_RESPONSES.get(key);
   if (req.method !== method || req.path !== path) {
     log.warn(`Got two different requests with the same idempotency key '${key}'`);

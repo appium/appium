@@ -19,7 +19,7 @@ const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
 const GET_STATUS_COMMAND = 'getStatus';
 
-/** type {Set<string>} */
+/** @type {Set<string>} */
 const deprecatedCommandsLogged = new Set();
 
 function determineProtocol(createSessionArgs) {

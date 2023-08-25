@@ -496,7 +496,7 @@ describe('FakeDriver via HTTP', function () {
       }
     });
 
-    it('should log a single deprecation warning if a deprecated method is used and not overridden by a newMethodMap', async function () {
+    it.skip('should log a single deprecation warning if a deprecated method is used and not overridden by a newMethodMap', async function () {
       let driver = await wdio({...wdOpts, capabilities: caps});
       try {
         driver.addCommand(

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import {errors} from 'appium/driver';
 import {ImageElement} from './image-element';
 import {compareImages} from './compare';
@@ -41,7 +41,7 @@ export default class ImageElementFinder {
    * @param {number} max
    */
   constructor(max = MAX_CACHE_ITEMS) {
-    this._imgElCache = new LRU({
+    this._imgElCache = new LRUCache({
       ttl: MAX_CACHE_AGE_MS,
       updateAgeOnGet: true,
       max,

@@ -3,7 +3,7 @@ import path from 'path';
 import url from 'url';
 import logger from './logger';
 import {tempDir, fs, util, zip, timing, node} from '@appium/support';
-import LRU from 'lru-cache';
+import { LRUCache } from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import B from 'bluebird';
@@ -20,11 +20,12 @@ const DEFAULT_REQ_HEADERS = Object.freeze({
   'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
-const APPLICATIONS_CACHE = new LRU({
+const APPLICATIONS_CACHE = new LRUCache({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
   updateAgeOnGet: true,
-  dispose: (app, {fullPath}) => {
+  // @ts-ignore The fullPath property exists
+  dispose: ({fullPath}, app) => {
     logger.info(
       `The application '${app}' cached at '${fullPath}' has ` +
         `expired after ${CACHED_APPS_MAX_AGE}ms`
@@ -45,7 +46,9 @@ process.on('exit', () => {
     return;
   }
 
-  const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
+  const appPaths = [...APPLICATIONS_CACHE.values()]
+    // @ts-ignore The fullPath property exists
+    .map(({fullPath}) => fullPath);
   logger.debug(
     `Performing cleanup of ${appPaths.length} cached ` +
       util.pluralize('application', appPaths.length)
@@ -140,6 +143,8 @@ async function configureApp(
   const {protocol, pathname} = url.parse(newApp);
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
+  /** @type {import('@appium/types').CachedAppInfo|undefined} */
+  // @ts-ignore We know the returned type
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
   if (cachedAppInfo) {
     logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
@@ -279,7 +284,7 @@ async function configureApp(
     if (isPackageAFile && shouldUnzipApp && !_.isFunction(onPostProcess)) {
       const archivePath = newApp;
       if (packageHash === cachedAppInfo?.packageHash) {
-        const {fullPath} = cachedAppInfo;
+        const fullPath = cachedAppInfo?.fullPath;
         if (await isAppIntegrityOk(fullPath, cachedAppInfo?.integrity)) {
           if (archivePath !== app) {
             await fs.rimraf(archivePath);

@@ -121,7 +121,7 @@
     "handlebars": "4.7.8",
     "husky": "8.0.3",
     "json-schema-to-typescript": "13.1.1",
-    "lerna": "7.1.5",
+    "lerna": "7.2.0",
     "lint-staged": "14.0.1",
     "log-symbols": "4.1.0",
     "midnight-smoker": "6.1.1",

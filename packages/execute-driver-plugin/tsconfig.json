@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "build",
-    "checkJs": true
+    "checkJs": true,
+    "moduleResolution": "node10"
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib"]

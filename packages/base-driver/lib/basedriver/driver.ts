@@ -355,7 +355,7 @@ export class BaseDriver<
     const extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));
     if (extraCaps.length) {
       this.log.warn(
-        `The following capabilities were provided, but are not ` + `recognized by Appium:`
+        `The following provided capabilities were not recognized by this driver:`
       );
       for (const cap of extraCaps) {
         this.log.warn(`  ${cap}`);

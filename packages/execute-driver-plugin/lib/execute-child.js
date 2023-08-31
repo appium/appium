@@ -89,7 +89,7 @@ function coerceScriptResult(obj) {
   } catch (e) {
     log.warn(
       'Could not convert executeDriverScript to safe response!' +
-        `Result was: ${JSON.stringify(obj)}. Will make it null`
+        `Result was: ${JSON.stringify(obj)}. Will make it null`,
     );
     return null;
   }

@@ -36,7 +36,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@types/xmldom": "0.1.31",
+    "@types/xmldom": "0.1.32",
     "@xmldom/xmldom": "0.8.10",
     "fast-xml-parser": "4.2.7",
     "lodash": "4.17.21",

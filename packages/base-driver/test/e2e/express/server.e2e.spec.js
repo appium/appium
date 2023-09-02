@@ -3,7 +3,18 @@ import axios from 'axios';
 import {createSandbox} from 'sinon';
 import B from 'bluebird';
 import _ from 'lodash';
+import { exec } from 'teen_process';
+import https from 'node:https';
 import {TEST_HOST, getTestPort} from '@appium/driver-test-support';
+
+async function generateCertificate (certPath, keyPath) {
+  await exec('openssl', [
+    'req', '-nodes', '-new', '-x509',
+    '-keyout', keyPath,
+    '-out', certPath,
+    '-subj', '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
+  ]);
+}
 
 describe('server', function () {
   let hwServer;
@@ -93,6 +104,52 @@ describe('server', function () {
       port,
       hostname: '1.1.1.1',
     }).should.be.rejectedWith(/EADDRNOTAVAIL/);
+  });
+});
+
+describe('tls server', function () {
+  let hwServer;
+  let port;
+  let certPath = 'certificate.cert';
+  let keyPath = 'certificate.key';
+  const client = axios.create({
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false
+    })
+  });
+
+  before(async function () {
+    try {
+      await generateCertificate(certPath, keyPath);
+    } catch (e) {
+      return this.skip();
+    }
+
+    port = await getTestPort(true);
+
+    function configureRoutes(app) {
+      app.get('/', (req, res) => {
+        res.header['content-type'] = 'text/html';
+        res.status(200).send('Hello World!');
+      });
+    }
+
+    hwServer = await server({
+      routeConfiguringFunction: configureRoutes,
+      cliArgs: {
+        sslCertificatePath: certPath,
+        sslKeyPath: keyPath,
+      },
+      port,
+    });
+  });
+  after(async function () {
+    await hwServer.close();
+  });
+
+  it('should start up with our middleware', async function () {
+    const {data} = await client.get(`https://${TEST_HOST}:${port}/`);
+    data.should.eql('Hello World!');
   });
 });
 

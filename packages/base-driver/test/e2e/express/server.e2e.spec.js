@@ -157,6 +157,9 @@ describe('tls server', function () {
   it('should throw if untrusted', async function () {
     await axios.get(`https://${TEST_HOST}:${port}/`).should.eventually.be.rejected;
   });
+  it('should throw if not secure', async function () {
+    await axios.get(`http://${TEST_HOST}:${port}/`).should.eventually.be.rejected;
+  });
 });
 
 describe('server plugins', function () {

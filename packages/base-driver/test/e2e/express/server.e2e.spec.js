@@ -112,7 +112,7 @@ describe('tls server', function () {
   let port;
   let certPath = 'certificate.cert';
   let keyPath = 'certificate.key';
-  const client = axios.create({
+  const looseClient = axios.create({
     httpsAgent: new https.Agent({
       rejectUnauthorized: false
     })
@@ -122,6 +122,9 @@ describe('tls server', function () {
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
+      if (process.env.CI) {
+        throw e;
+      }
       return this.skip();
     }
 
@@ -148,8 +151,11 @@ describe('tls server', function () {
   });
 
   it('should start up with our middleware', async function () {
-    const {data} = await client.get(`https://${TEST_HOST}:${port}/`);
+    const {data} = await looseClient.get(`https://${TEST_HOST}:${port}/`);
     data.should.eql('Hello World!');
+  });
+  it('should throw if untrusted', async function () {
+    await axios.get(`https://${TEST_HOST}:${port}/`).should.eventually.be.rejected;
   });
 });
 

@@ -27,7 +27,6 @@ import {
 import B from 'bluebird';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {EventEmitter} from 'events';
-import spdy from 'spdy';
 import {fs} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
@@ -60,7 +59,8 @@ async function createServer (app, cliArgs) {
   }
   const [cert, key] = await B.all(certKey.map((p) => fs.readFile(p, 'utf8')));
   log.debug('Enabling TLS/SPDY on the server using the provided certificate');
-  return spdy.createServer({
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('spdy').createServer({
     cert,
     key,
     spdy: {

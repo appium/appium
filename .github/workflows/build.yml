@@ -72,16 +72,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Install latest npm (win)
-        if: ${{ matrix.os == 'windows-latest' }}
-        # for some reason there's a bug in upgrading npm on win, have to install a specific version first
-        # https://github.com/actions/setup-node/issues/623
-        run: |
-          npm install -g npm@8.3.1
-          npm install -g npm@latest
-      - name: Install latest npm (non-win)
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: npm install -g npm
       - name: Install dependencies
         uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
         with:

@@ -150,7 +150,7 @@ export type WebhookConfig = string;
  */
 export type CertFilePath = string;
 /**
- * Full path to the .key file if TLS is used. Must be provided together with "ssl-certificate-path"
+ * Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"
  */
 export type KeyFilePath = string;
 
@@ -198,7 +198,7 @@ export interface ServerConfig {
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
-  "ssl-certificate-path"?: CertFilePath;
+  "ssl-cert-path"?: CertFilePath;
   "ssl-key-path"?: KeyFilePath;
 }
 /**

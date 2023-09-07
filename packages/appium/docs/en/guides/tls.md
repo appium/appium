@@ -6,8 +6,8 @@ title: Starting the Server with SSL/TLS/SPDY support
 
 Since version 2.2 of the server there is a possibility to start it with SSL/TLS support. In order to enable secure connections to the server you need to provide the following command line arguments:
 
-```bash
-appium server --ssl-certificate-path=/path/to/cert.pem --ssl-key-path=/path/to/key.pem
+```bashs
+appium server --ssl-cert-path=/path/to/cert.pem --ssl-key-path=/path/to/key.pem
 ```
 
 Both arguments must be provided and should contain paths to a valid [X509 PEM](https://www.ssl.com/guide/pem-der-crt-and-cer-x-509-encodings-and-conversions/) certificate and its corresponding private key.

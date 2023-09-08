@@ -145,6 +145,14 @@ export type UsePluginsConfig = string[];
  * Also send log output to this http listener
  */
 export type WebhookConfig = string;
+/**
+ * Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"
+ */
+export type CertFilePath = string;
+/**
+ * Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"
+ */
+export type KeyFilePath = string;
 
 /**
  * A schema for Appium configuration files
@@ -190,6 +198,8 @@ export interface ServerConfig {
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
+  "ssl-cert-path"?: CertFilePath;
+  "ssl-key-path"?: KeyFilePath;
 }
 /**
  * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.

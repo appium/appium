@@ -27,8 +27,48 @@ import {
 import B from 'bluebird';
 import {DEFAULT_BASE_PATH} from '../constants';
 import {EventEmitter} from 'events';
+import {fs} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+
+/**
+ *
+ * @param {import('express').Express} app
+ * @param {Partial<import('@appium/types').ServerArgs>} [cliArgs]
+ * @returns {Promise<http.Server>}
+ */
+async function createServer (app, cliArgs) {
+  const {sslCertificatePath, sslKeyPath} = cliArgs ?? {};
+  if (!sslCertificatePath && !sslKeyPath) {
+    return http.createServer(app);
+  }
+  if (!sslCertificatePath || !sslKeyPath) {
+    throw new Error(`Both certificate path and key path must be provided to enable TLS`);
+  }
+
+  const certKey = [sslCertificatePath, sslKeyPath];
+  const zipped = _.zip(
+    await B.all(certKey.map((p) => fs.exists(p))),
+    ['certificate', 'key'],
+    certKey,
+  );
+  for (const [exists, desc, p] of zipped) {
+    if (!exists) {
+      throw new Error(`The provided SSL ${desc} at '${p}' does not exist or is not accessible`);
+    }
+  }
+  const [cert, key] = await B.all(certKey.map((p) => fs.readFile(p, 'utf8')));
+  log.debug('Enabling TLS/SPDY on the server using the provided certificate');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  return require('spdy').createServer({
+    cert,
+    key,
+    spdy: {
+      plain: false,
+      ssl: true,
+    }
+  }, app);
+}
 
 /**
  *
@@ -48,9 +88,9 @@ async function server(opts) {
     keepAliveTimeout = KEEP_ALIVE_TIMEOUT_MS,
   } = opts;
 
-  // create the actual http server
   const app = express();
-  const httpServer = http.createServer(app);
+  const httpServer = await createServer(app, cliArgs);
+
   return await new B(async (resolve, reject) => {
     // we put an async function as the promise constructor because we want some things to happen in
     // serial (application of plugin updates, for example). But we still need to use a promise here
@@ -118,7 +158,6 @@ function configureServer({
   } else {
     app.use(allowCrossDomainAsyncExecute(basePath));
   }
-  // @ts-ignore
   app.use(handleIdempotency);
   app.use(fixPythonContentType(basePath));
   app.use(defaultToJSONContentType);

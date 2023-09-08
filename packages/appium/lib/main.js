@@ -450,8 +450,9 @@ async function main(args) {
     });
   }
 
+  const protocol = 'secure' in server && server.secure ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
-  logServerAddress(`http://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`);
+  logServerAddress(`${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`);
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

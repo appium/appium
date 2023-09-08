@@ -288,6 +288,18 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           title: 'webhook config',
           type: 'string',
         },
+        'ssl-cert-path': {
+          description: 'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
+          title: '.cert file path',
+          appiumCliDest: 'sslCertificatePath',
+          type: 'string',
+        },
+        'ssl-key-path': {
+          description: 'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
+          title: '.key file path',
+          appiumCliDest: 'sslKeyPath',
+          type: 'string',
+        },
       },
       title: 'server config',
       type: 'object',

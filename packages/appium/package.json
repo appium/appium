@@ -90,7 +90,7 @@
     "resolve-from": "5.0.0",
     "semver": "7.5.4",
     "source-map-support": "0.5.21",
-    "teen_process": "2.0.13",
+    "teen_process": "2.0.18",
     "type-fest": "3.13.1",
     "winston": "3.10.0",
     "wrap-ansi": "7.0.0",

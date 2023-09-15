@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import {URL} from 'url';
 import B from 'bluebird';
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 
 const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 

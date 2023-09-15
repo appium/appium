@@ -2,6 +2,7 @@
 import _ from 'lodash';
 import {URL} from 'url';
 import B from 'bluebird';
+import { pathToRegexp } from 'path-to-regexp';
 
 const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 
@@ -16,12 +17,12 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
     this.on('upgrade', (request, socket, head) => {
       let currentPathname;
       try {
-        currentPathname = new URL(/** @type {string} */ (request.url)).pathname;
+        currentPathname = new URL(request.url ?? '').pathname;
       } catch {
-        currentPathname = request.url;
+        currentPathname = request.url ?? '';
       }
       for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
-        if (currentPathname === pathname) {
+        if (pathToRegexp(pathname).test(currentPathname)) {
           wsServer.handleUpgrade(request, socket, head, (ws) => {
             wsServer.emit('connection', ws, request);
           });

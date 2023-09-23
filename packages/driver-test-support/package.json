@@ -42,7 +42,7 @@
   "types": "./build/lib/index.d.ts",
   "dependencies": {
     "@appium/types": "^0.13.4",
-    "@types/lodash": "4.14.198",
+    "@types/lodash": "4.14.199",
     "@types/stoppable": "1.1.1",
     "axios": "1.5.0",
     "bluebird": "3.7.2",

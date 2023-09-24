@@ -53,7 +53,7 @@
     "@types/mv": "2.1.2",
     "@types/ncp": "2.0.6",
     "@types/npmlog": "4.1.4",
-    "@types/pluralize": "0.0.30",
+    "@types/pluralize": "0.0.31",
     "@types/semver": "7.5.2",
     "@types/shell-quote": "1.7.1",
     "@types/supports-color": "8.1.1",

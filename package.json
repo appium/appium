@@ -99,7 +99,7 @@
     "@types/source-map-support": "0.5.7",
     "@types/teen_process": "2.0.1",
     "@types/ws": "8.5.5",
-    "@types/yargs": "17.0.24",
+    "@types/yargs": "17.0.25",
     "@typescript-eslint/eslint-plugin": "6.7.2",
     "@typescript-eslint/parser": "6.7.2",
     "asyncbox": "2.9.4",

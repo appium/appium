@@ -52,7 +52,7 @@
     "@types/express": "4.17.18",
     "@types/lodash": "4.14.199",
     "@types/method-override": "0.0.32",
-    "@types/serve-favicon": "2.5.4",
+    "@types/serve-favicon": "2.5.5",
     "async-lock": "1.4.0",
     "asyncbox": "2.9.4",
     "axios": "1.5.0",

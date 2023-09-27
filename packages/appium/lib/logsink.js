@@ -212,12 +212,10 @@ async function init(args) {
     let msg = message;
     if (prefix) {
       const decoratedPrefix = `[${prefix}]`;
-      const toColorizedPrefix = () => prefix === APPIUM_LOGGER_NAME
+      const toColorizedDecoratedPrefix = () => prefix === APPIUM_LOGGER_NAME
         ? decoratedPrefix.magenta
         : getColorizedPrefix(decoratedPrefix);
-      msg = args.logNoColors
-        ? `${decoratedPrefix} ${msg}`
-        : `${toColorizedPrefix()} ${msg}`;
+      msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
     }
     log[winstonLevel](msg);
     if (args.logHandler && _.isFunction(args.logHandler)) {

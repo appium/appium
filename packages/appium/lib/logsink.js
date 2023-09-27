@@ -1,6 +1,7 @@
 import npmlog from 'npmlog';
 import {createLogger, format, transports} from 'winston';
 import {fs, logger} from '@appium/support';
+import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
 
 // set up distributed logging before everything else
@@ -64,8 +65,7 @@ const stripColorFormat = format(function stripColor(info) {
 
 function createConsoleTransport(args, logLvl) {
   return new transports.Console({
-    // `name` is unsupported per winston's type declarations
-    // @ts-expect-error
+    // @ts-expect-error The 'name' property should exist
     name: 'console',
     handleExceptions: true,
     exitOnError: false,
@@ -73,14 +73,6 @@ function createConsoleTransport(args, logLvl) {
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
-      format(function adjustDebug(info) {
-        // prepend debug marker, and shift to `info` log level
-        if (info.level === 'debug') {
-          info.level = 'info';
-          info.message = `[debug] ${info.message}`;
-        }
-        return info;
-      })(),
       timestampFormat,
       args.logNoColors ? stripColorFormat : colorizeFormat,
       format.printf(function printInfo(info) {
@@ -92,7 +84,7 @@ function createConsoleTransport(args, logLvl) {
 
 function createFileTransport(args, logLvl) {
   return new transports.File({
-    // @ts-expect-error
+    // @ts-expect-error The 'name' property should exist
     name: 'file',
     filename: args.logFile,
     maxFiles: 1,
@@ -121,7 +113,7 @@ function createHttpTransport(args, logLvl) {
   }
 
   return new transports.Http({
-    // @ts-expect-error
+    // @ts-expect-error The 'name' property should exist
     name: 'http',
     host,
     port,
@@ -215,22 +207,19 @@ async function init(args) {
   });
 
   // Capture logs emitted via npmlog and pass them through winston
-  npmlog.on('log', (logObj) => {
-    const winstonLevel = npmToWinstonLevels[logObj.level] || 'info';
-    let msg = logObj.message;
-    if (logObj.prefix) {
-      const prefix = `[${logObj.prefix}]`;
-      if (args.logNoColors) {
-        msg = `${prefix} ${msg}`;
-      } if (prefix === '[Appium]') {
-        msg = `${prefix.magenta} ${msg}`;
-      } else {
-        msg = `${getColorizedPrefix(prefix)} ${msg}`;
-      }
-      log[winstonLevel](msg);
-      if (args.logHandler && _.isFunction(args.logHandler)) {
-        args.logHandler(logObj.level, msg);
-      }
+  npmlog.on('log', ({level, message, prefix}) => {
+    const winstonLevel = npmToWinstonLevels[level] || 'info';
+    let msg = message;
+    if (prefix) {
+      const decoratedPrefix = `[${prefix}]`;
+      const toColorizedDecoratedPrefix = () => prefix === APPIUM_LOGGER_NAME
+        ? decoratedPrefix.magenta
+        : getColorizedPrefix(decoratedPrefix);
+      msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
+    }
+    log[winstonLevel](msg);
+    if (args.logHandler && _.isFunction(args.logHandler)) {
+      args.logHandler(level, msg);
     }
   });
 }

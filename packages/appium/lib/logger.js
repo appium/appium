@@ -1,5 +1,6 @@
 import {logger} from '@appium/support';
 
-let log = logger.getLogger('Appium');
+export const APPIUM_LOGGER_NAME = 'Appium';
+let log = logger.getLogger(APPIUM_LOGGER_NAME);
 
 export default log;

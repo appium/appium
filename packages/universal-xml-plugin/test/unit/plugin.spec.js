@@ -14,7 +14,7 @@ describe('UniversalXMLPlugin', function () {
       await p.getPageSource(next, driver).should.eventually.eql(XML_IOS_TRANSFORMED);
     });
     it('should transform page source for android', async function () {
-      next = driver.getPageSourcce = () => XML_ANDROID;
+      next = driver.getPageSource = () => XML_ANDROID;
       driver.caps = {platformName: 'Android'};
       driver.opts = {appPackage: 'io.cloudgrey.the_app'};
       await p.getPageSource(next, driver).should.eventually.eql(XML_ANDROID_TRANSFORMED);

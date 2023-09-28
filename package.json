@@ -91,7 +91,7 @@
     "@types/chai": "4.3.6",
     "@types/chai-as-promised": "7.1.6",
     "@types/diff": "5.0.5",
-    "@types/mocha": "10.0.1",
+    "@types/mocha": "10.0.2",
     "@types/node": "18.17.19",
     "@types/semver": "7.5.3",
     "@types/sinon": "10.0.17",

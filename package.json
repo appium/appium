@@ -145,7 +145,7 @@
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "5.0.4",
     "validate.js": "0.13.1",
-    "webdriverio": "8.16.15",
+    "webdriverio": "8.16.17",
     "ws": "8.14.2",
     "yaml-js": "0.3.1"
   },

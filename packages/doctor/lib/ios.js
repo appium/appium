@@ -155,7 +155,7 @@ class OptionalApplesimutilsCommandCheck extends DoctorCheck {
   async fix() {
     return `Why ${
       'applesimutils'.bold
-    } is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/`;
+    } is needed and how to install it: https://github.com/appium/appium-xcuitest-driver/blob/master/docs/execute-methods.md#mobile-setpermission`;
   }
 }
 checks.push(new OptionalApplesimutilsCommandCheck());

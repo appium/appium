@@ -346,7 +346,7 @@ describe('ios', function () {
       });
       it('fix', async function () {
         removeColors(await check.fix()).should.equal(
-          'Why applesimutils is needed and how to install it: http://appium.io/docs/en/drivers/ios-xcuitest/'
+          'Why applesimutils is needed and how to install it: https://github.com/appium/appium-xcuitest-driver/blob/master/docs/execute-methods.md#mobile-setpermission'
         );
       });
     })

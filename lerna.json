@@ -14,9 +14,7 @@
     "version": {
       "conventionalCommits": true,
       "createRelease": "github",
-      "version": {
-        "allowBranch": "master"
-      }
+      "allowBranch": "master"
     }
   },
   "ignoreChanges": ["**/test/**", "**/*.md"],

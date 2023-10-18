@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.0](https://github.com/appium/appium/compare/@appium/schema@0.3.1...@appium/schema@0.4.0) (2023-10-18)
+
+
+### Features
+
+* **base-driver:** Add server support of TLS and SPDY protocols ([#19105](https://github.com/appium/appium/issues/19105)) ([5926919](https://github.com/appium/appium/commit/5926919177e3df675723c80d800f933fdbda5824))
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+
+
+
 ## [0.3.1](https://github.com/appium/appium/compare/@appium/schema@0.3.0...@appium/schema@0.3.1) (2023-07-03)
 
 

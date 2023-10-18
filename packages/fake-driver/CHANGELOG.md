@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.9](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.8...@appium/fake-driver@5.2.9) (2023-10-18)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10 ([#19050](https://github.com/appium/appium/issues/19050)) ([72a806b](https://github.com/appium/appium/commit/72a806bec7c3a80747192d24dfd9d8286a751810))
+* **opencv:** update definitelytyped ([d2a9a99](https://github.com/appium/appium/commit/d2a9a99418af9ce9b569bb9b98ee396faab932bb))
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+
+
+
 ## [5.2.8](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.7...@appium/fake-driver@5.2.8) (2023-08-21)
 
 

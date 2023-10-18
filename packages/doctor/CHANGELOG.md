@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.26](https://github.com/appium/appium/compare/@appium/doctor@2.0.25...@appium/doctor@2.0.26) (2023-10-18)
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v10 ([#19308](https://github.com/appium/appium/issues/19308)) ([3315671](https://github.com/appium/appium/commit/33156712b142b1cb2ffdcf1cfdf65f5b504e7751))
+* **doctor:** update dependency appium-adb to v9.14.10 ([809b2da](https://github.com/appium/appium/commit/809b2daea5304942c849b7015f0a74447fb7b57c))
+* **doctor:** update dependency appium-adb to v9.14.11 ([c81e99f](https://github.com/appium/appium/commit/c81e99fd80739d97b3dc2099a43cc66245035bc5))
+* **doctor:** update dependency appium-adb to v9.14.12 ([0220a9f](https://github.com/appium/appium/commit/0220a9f8e9a890f84031cfeaea026fceb0a303e9))
+* **doctor:** update dependency appium-adb to v9.14.7 ([#19058](https://github.com/appium/appium/issues/19058)) ([f8039a7](https://github.com/appium/appium/commit/f8039a70ca851dcc120a2b217e14e3e3b922ba21))
+* **doctor:** update dependency appium-adb to v9.14.9 ([9f700bf](https://github.com/appium/appium/commit/9f700bfdf9e09de3cea9f81029fadef84b8e956b))
+* **opencv:** update definitelytyped ([d2a9a99](https://github.com/appium/appium/commit/d2a9a99418af9ce9b569bb9b98ee396faab932bb))
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+* **support:** update dependency @types/teen_process to v2.0.1 ([d2f19aa](https://github.com/appium/appium/commit/d2f19aab935cc6ec00a51f042b5f02674a772198))
+* **support:** update dependency teen_process to v2.0.10 ([bc1b56a](https://github.com/appium/appium/commit/bc1b56a3c162ed8686d3d7956c30eb1f7682b1a7))
+* **support:** update dependency teen_process to v2.0.12 ([c5d6df7](https://github.com/appium/appium/commit/c5d6df7a000d64e8591a56ce5ef65baa2071a36b))
+* **support:** update dependency teen_process to v2.0.13 ([a0c4b84](https://github.com/appium/appium/commit/a0c4b84fb7d3977b7a4ca0a07fadd49ee355791a))
+* **support:** update dependency teen_process to v2.0.18 ([ffeebc7](https://github.com/appium/appium/commit/ffeebc74b72e5eadf658325e67708ae6ed5b8346))
+* **support:** update dependency teen_process to v2.0.19 ([2ef40fe](https://github.com/appium/appium/commit/2ef40febdc717f54ea618ecfe1058b858fe2daf9))
+* **support:** update dependency teen_process to v2.0.23 ([1b0459e](https://github.com/appium/appium/commit/1b0459edd656514d8706aab8e21cd4d40de2ec5d))
+* **support:** update dependency teen_process to v2.0.24 ([bc72c66](https://github.com/appium/appium/commit/bc72c6676a5412b60e74bb143a223738ce059977))
+* **support:** update dependency teen_process to v2.0.27 ([03b2aa6](https://github.com/appium/appium/commit/03b2aa6b6e45fa0ea24c4691b039255bc4399733))
+* **support:** update dependency teen_process to v2.0.30 ([7cdb142](https://github.com/appium/appium/commit/7cdb1429a1104ad3699547f2a2dd9b237135891a))
+* **support:** update dependency teen_process to v2.0.34 ([#19218](https://github.com/appium/appium/issues/19218)) ([c28fcef](https://github.com/appium/appium/commit/c28fcefa725fbce5a0464e57946051e3cb023d85))
+* **support:** update dependency teen_process to v2.0.37 ([6d894be](https://github.com/appium/appium/commit/6d894bef6f377ebfdffdeb1adde7a72624844414))
+* **support:** update dependency teen_process to v2.0.38 ([a32dc11](https://github.com/appium/appium/commit/a32dc1110125d0f1fac9c66c17f1309145a634c7))
+* **support:** update dependency teen_process to v2.0.40 ([2837bcd](https://github.com/appium/appium/commit/2837bcdeb19532fe973a2902db5c8d730252d962))
+* **support:** update dependency teen_process to v2.0.41 ([1a34396](https://github.com/appium/appium/commit/1a34396339f71d40353d323feaf78afcf2269fc9))
+* **support:** update dependency teen_process to v2.0.42 ([e2a670e](https://github.com/appium/appium/commit/e2a670e1c4a0f061b0bfb08a6b534d9deb7bdd9c))
+* **support:** update dependency teen_process to v2.0.45 ([ea731bf](https://github.com/appium/appium/commit/ea731bf117d680496fce453ac42cfee7f05ada60))
+* **support:** update dependency teen_process to v2.0.48 ([eebc651](https://github.com/appium/appium/commit/eebc651f31c282baa7e77a6384d3ee8efc0072d6))
+* **support:** update dependency teen_process to v2.0.50 ([ca3e5d9](https://github.com/appium/appium/commit/ca3e5d90e4c51fc1dda32154e1d77e65cb44fb54))
+* **support:** update dependency teen_process to v2.0.9 ([6c7f3ef](https://github.com/appium/appium/commit/6c7f3ef670d441bdc4b693948a19dcbdc54e4764))
+
+
+
 ## [2.0.25](https://github.com/appium/appium/compare/@appium/doctor@2.0.24...@appium/doctor@2.0.25) (2023-08-22)
 
 **Note:** Version bump only for package @appium/doctor

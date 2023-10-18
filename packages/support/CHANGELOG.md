@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.7](https://github.com/appium/appium/compare/@appium/support@4.1.6...@appium/support@4.1.7) (2023-10-18)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10 ([#19050](https://github.com/appium/appium/issues/19050)) ([72a806b](https://github.com/appium/appium/commit/72a806bec7c3a80747192d24dfd9d8286a751810))
+* **support:** update definitelytyped ([3b44c7d](https://github.com/appium/appium/commit/3b44c7d8f5b89f9357dfe6bb56b54799bbe0a921))
+* **support:** update definitelytyped ([595d460](https://github.com/appium/appium/commit/595d460ac8dc41d310f9e4f653acbad3c7fd50b9))
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+* **support:** update definitelytyped ([3e73600](https://github.com/appium/appium/commit/3e7360021dba0f8e8967094476fe92646ba5e35b))
+* **support:** update definitelytyped ([81b077f](https://github.com/appium/appium/commit/81b077fdc9300d2dbcd6b6a6a49dc5a84982c84c))
+* **support:** update dependency @types/pluralize to v0.0.31 ([26a6c62](https://github.com/appium/appium/commit/26a6c62512afb5c1b39854173fdc34be6d7665f1))
+* **support:** update dependency @types/semver to v7.5.1 ([a0f59d0](https://github.com/appium/appium/commit/a0f59d05945e627602407d1d42e7a3a58861b11f))
+* **support:** update dependency @types/teen_process to v2.0.1 ([d2f19aa](https://github.com/appium/appium/commit/d2f19aab935cc6ec00a51f042b5f02674a772198))
+* **support:** update dependency archiver to v6 ([#19051](https://github.com/appium/appium/issues/19051)) ([a3245dc](https://github.com/appium/appium/commit/a3245dcf2b58d9c40e72e666ccd4a095b7cc984b))
+* **support:** update dependency archiver to v6.0.1 ([#19111](https://github.com/appium/appium/issues/19111)) ([263bb43](https://github.com/appium/appium/commit/263bb43086c5e753cf4170953cb282f85d59b5a8))
+* **support:** update dependency axios to v1.5.0 ([08913cd](https://github.com/appium/appium/commit/08913cddde295f616f0fb376cc2cb71a9409a253))
+* **support:** update dependency axios to v1.5.1 ([#19217](https://github.com/appium/appium/issues/19217)) ([3df047d](https://github.com/appium/appium/commit/3df047d128d5d032826c8f5fb605b019078b717d))
+* **support:** update dependency glob to v10 ([#19094](https://github.com/appium/appium/issues/19094)) ([faca496](https://github.com/appium/appium/commit/faca49690a327095362619ba5cc04a03b3e11993))
+* **support:** update dependency glob to v10 ([#19185](https://github.com/appium/appium/issues/19185)) ([d336b51](https://github.com/appium/appium/commit/d336b51578e449a110c002f9bc216e114c2dd5e0))
+* **support:** update dependency teen_process to v2.0.10 ([bc1b56a](https://github.com/appium/appium/commit/bc1b56a3c162ed8686d3d7956c30eb1f7682b1a7))
+* **support:** update dependency teen_process to v2.0.12 ([c5d6df7](https://github.com/appium/appium/commit/c5d6df7a000d64e8591a56ce5ef65baa2071a36b))
+* **support:** update dependency teen_process to v2.0.13 ([a0c4b84](https://github.com/appium/appium/commit/a0c4b84fb7d3977b7a4ca0a07fadd49ee355791a))
+* **support:** update dependency teen_process to v2.0.18 ([ffeebc7](https://github.com/appium/appium/commit/ffeebc74b72e5eadf658325e67708ae6ed5b8346))
+* **support:** update dependency teen_process to v2.0.19 ([2ef40fe](https://github.com/appium/appium/commit/2ef40febdc717f54ea618ecfe1058b858fe2daf9))
+* **support:** update dependency teen_process to v2.0.23 ([1b0459e](https://github.com/appium/appium/commit/1b0459edd656514d8706aab8e21cd4d40de2ec5d))
+* **support:** update dependency teen_process to v2.0.24 ([bc72c66](https://github.com/appium/appium/commit/bc72c6676a5412b60e74bb143a223738ce059977))
+* **support:** update dependency teen_process to v2.0.27 ([03b2aa6](https://github.com/appium/appium/commit/03b2aa6b6e45fa0ea24c4691b039255bc4399733))
+* **support:** update dependency teen_process to v2.0.30 ([7cdb142](https://github.com/appium/appium/commit/7cdb1429a1104ad3699547f2a2dd9b237135891a))
+* **support:** update dependency teen_process to v2.0.34 ([#19218](https://github.com/appium/appium/issues/19218)) ([c28fcef](https://github.com/appium/appium/commit/c28fcefa725fbce5a0464e57946051e3cb023d85))
+* **support:** update dependency teen_process to v2.0.37 ([6d894be](https://github.com/appium/appium/commit/6d894bef6f377ebfdffdeb1adde7a72624844414))
+* **support:** update dependency teen_process to v2.0.38 ([a32dc11](https://github.com/appium/appium/commit/a32dc1110125d0f1fac9c66c17f1309145a634c7))
+* **support:** update dependency teen_process to v2.0.40 ([2837bcd](https://github.com/appium/appium/commit/2837bcdeb19532fe973a2902db5c8d730252d962))
+* **support:** update dependency teen_process to v2.0.41 ([1a34396](https://github.com/appium/appium/commit/1a34396339f71d40353d323feaf78afcf2269fc9))
+* **support:** update dependency teen_process to v2.0.42 ([e2a670e](https://github.com/appium/appium/commit/e2a670e1c4a0f061b0bfb08a6b534d9deb7bdd9c))
+* **support:** update dependency teen_process to v2.0.45 ([ea731bf](https://github.com/appium/appium/commit/ea731bf117d680496fce453ac42cfee7f05ada60))
+* **support:** update dependency teen_process to v2.0.48 ([eebc651](https://github.com/appium/appium/commit/eebc651f31c282baa7e77a6384d3ee8efc0072d6))
+* **support:** update dependency teen_process to v2.0.50 ([ca3e5d9](https://github.com/appium/appium/commit/ca3e5d90e4c51fc1dda32154e1d77e65cb44fb54))
+* **support:** update dependency teen_process to v2.0.9 ([6c7f3ef](https://github.com/appium/appium/commit/6c7f3ef670d441bdc4b693948a19dcbdc54e4764))
+* **support:** update dependency uuid to v9.0.1 ([73aa017](https://github.com/appium/appium/commit/73aa01786d113a0a3c885c40f58ef9cef3c4e52b))
+* **support:** update dependency which to v4 ([#19095](https://github.com/appium/appium/issues/19095)) ([6f51456](https://github.com/appium/appium/commit/6f51456da948685f606bed7575b5a4cf98b99c74))
+
+
+
 ## [4.1.6](https://github.com/appium/appium/compare/@appium/support@4.1.5...@appium/support@4.1.6) (2023-08-22)
 
 **Note:** Version bump only for package @appium/support

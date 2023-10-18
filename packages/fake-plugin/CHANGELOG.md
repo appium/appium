@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.25](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.24...@appium/fake-plugin@3.1.25) (2023-10-18)
+
+
+### Bug Fixes
+
+* **opencv:** update definitelytyped ([d2a9a99](https://github.com/appium/appium/commit/d2a9a99418af9ce9b569bb9b98ee396faab932bb))
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+
+
+
 ## [3.1.24](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.23...@appium/fake-plugin@3.1.24) (2023-08-23)
 
 **Note:** Version bump only for package @appium/fake-plugin

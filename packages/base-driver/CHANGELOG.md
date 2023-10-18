@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.4.0](https://github.com/appium/appium/compare/@appium/base-driver@9.3.20...@appium/base-driver@9.4.0) (2023-10-18)
+
+
+### Features
+
+* **base-driver:** Add server support of TLS and SPDY protocols ([#19105](https://github.com/appium/appium/issues/19105)) ([5926919](https://github.com/appium/appium/commit/5926919177e3df675723c80d800f933fdbda5824))
+
+
+### Bug Fixes
+
+* **base-driver:** update definitelytyped ([5e09589](https://github.com/appium/appium/commit/5e095893ee8f65cb8744d2cd6c6abd70f402fa55))
+* **base-driver:** update dependency http-status-codes to v2.3.0 ([331171d](https://github.com/appium/appium/commit/331171dd8c511aba15e1b5b24329b30224e3e6ac))
+* **driver-test-support:** update dependency @types/lodash to v4.14.198 ([84fefd2](https://github.com/appium/appium/commit/84fefd214c40408cbbcd145723b5d8dbeec665af))
+* **images-plugin:** update dependency lru-cache to v10 ([#19050](https://github.com/appium/appium/issues/19050)) ([72a806b](https://github.com/appium/appium/commit/72a806bec7c3a80747192d24dfd9d8286a751810))
+* **opencv:** update definitelytyped ([d2a9a99](https://github.com/appium/appium/commit/d2a9a99418af9ce9b569bb9b98ee396faab932bb))
+* **support:** update definitelytyped ([3b44c7d](https://github.com/appium/appium/commit/3b44c7d8f5b89f9357dfe6bb56b54799bbe0a921))
+* **support:** update definitelytyped ([595d460](https://github.com/appium/appium/commit/595d460ac8dc41d310f9e4f653acbad3c7fd50b9))
+* **support:** update definitelytyped ([b6a76ce](https://github.com/appium/appium/commit/b6a76ce91e2765c22f84e389b93f780e0b4490c0))
+* **support:** update dependency axios to v1.5.0 ([08913cd](https://github.com/appium/appium/commit/08913cddde295f616f0fb376cc2cb71a9409a253))
+* **support:** update dependency axios to v1.5.1 ([#19217](https://github.com/appium/appium/issues/19217)) ([3df047d](https://github.com/appium/appium/commit/3df047d128d5d032826c8f5fb605b019078b717d))
+* **types:** update definitelytyped ([96b0a44](https://github.com/appium/appium/commit/96b0a44629c451102c44541a8d5b9e7be972f1ea))
+* Use pathToRegexp to match websocket endpoints ([#19162](https://github.com/appium/appium/issues/19162)) ([de02ed8](https://github.com/appium/appium/commit/de02ed87fc665ec9c6e563a634634307c3f21e44))
+
+
+
 ## [9.3.20](https://github.com/appium/appium/compare/@appium/base-driver@9.3.19...@appium/base-driver@9.3.20) (2023-08-23)
 
 

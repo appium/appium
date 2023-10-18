@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.15](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.14...@appium/driver-test-support@0.4.15) (2023-10-18)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.14.198 ([84fefd2](https://github.com/appium/appium/commit/84fefd214c40408cbbcd145723b5d8dbeec665af))
+* **driver-test-support:** update dependency chai to v4.3.10 ([7a06ec5](https://github.com/appium/appium/commit/7a06ec5041e0ca4f6bf1ed9c771cb722dd707dc4))
+* **driver-test-support:** update dependency chai to v4.3.8 ([#19059](https://github.com/appium/appium/issues/19059)) ([d85b216](https://github.com/appium/appium/commit/d85b2161b5b8ac8654e25c2f357de50a7068d8e1))
+* **support:** update definitelytyped ([595d460](https://github.com/appium/appium/commit/595d460ac8dc41d310f9e4f653acbad3c7fd50b9))
+* **support:** update dependency axios to v1.5.0 ([08913cd](https://github.com/appium/appium/commit/08913cddde295f616f0fb376cc2cb71a9409a253))
+* **support:** update dependency axios to v1.5.1 ([#19217](https://github.com/appium/appium/issues/19217)) ([3df047d](https://github.com/appium/appium/commit/3df047d128d5d032826c8f5fb605b019078b717d))
+* **test-support:** update dependency sinon to v16 ([#19161](https://github.com/appium/appium/issues/19161)) ([49b3434](https://github.com/appium/appium/commit/49b3434c2bc324b5dc9f8204242c12f04b5252af))
+* **test-support:** update dependency sinon to v16.1.0 ([126daec](https://github.com/appium/appium/commit/126daeca4e600b75cf37f9fc15a1b6e563058b3c))
+
+
+
 ## [0.4.14](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.13...@appium/driver-test-support@0.4.14) (2023-08-22)
 
 **Note:** Version bump only for package @appium/driver-test-support

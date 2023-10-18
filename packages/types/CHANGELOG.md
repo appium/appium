@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.0](https://github.com/appium/appium/compare/@appium/types@0.13.4...@appium/types@0.14.0) (2023-10-18)
+
+
+### Features
+
+* **base-driver:** Add server support of TLS and SPDY protocols ([#19105](https://github.com/appium/appium/issues/19105)) ([5926919](https://github.com/appium/appium/commit/5926919177e3df675723c80d800f933fdbda5824))
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10 ([#19050](https://github.com/appium/appium/issues/19050)) ([72a806b](https://github.com/appium/appium/commit/72a806bec7c3a80747192d24dfd9d8286a751810))
+* **support:** update definitelytyped ([3b44c7d](https://github.com/appium/appium/commit/3b44c7d8f5b89f9357dfe6bb56b54799bbe0a921))
+* **support:** update definitelytyped ([595d460](https://github.com/appium/appium/commit/595d460ac8dc41d310f9e4f653acbad3c7fd50b9))
+* **types:** update definitelytyped ([96b0a44](https://github.com/appium/appium/commit/96b0a44629c451102c44541a8d5b9e7be972f1ea))
+
+
+
 ## [0.13.4](https://github.com/appium/appium/compare/@appium/types@0.13.3...@appium/types@0.13.4) (2023-08-22)
 
 **Note:** Version bump only for package @appium/types

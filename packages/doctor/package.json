@@ -46,7 +46,7 @@
   "dependencies": {
     "@appium/support": "^4.1.7",
     "@colors/colors": "1.6.0",
-    "@types/bluebird": "3.5.40",
+    "@types/bluebird": "3.5.41",
     "@types/teen_process": "2.0.1",
     "appium-adb": "10.0.0",
     "bluebird": "3.7.2",

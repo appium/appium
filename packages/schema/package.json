@@ -38,7 +38,7 @@
     "test": "exit 0"
   },
   "dependencies": {
-    "@types/json-schema": "7.0.13",
+    "@types/json-schema": "7.0.14",
     "json-schema": "0.4.0",
     "source-map-support": "0.5.21"
   },

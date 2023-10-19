@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/appium/appium/compare/appium@2.2.0...appium@2.2.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* **appium:** Make sure type definitions are always in sync across modules ([#19323](https://github.com/appium/appium/issues/19323)) ([de39013](https://github.com/appium/appium/commit/de39013ae501d4fc11988435737efb862cc1d820))
+* **support:** update definitelytyped ([a306ce7](https://github.com/appium/appium/commit/a306ce741a806d21bc44f3b979803b8af5da99aa))
+
+
+
 ## [2.2.0](https://github.com/appium/appium/compare/appium@2.1.3...appium@2.2.0) (2023-10-18)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.23](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.22...@appium/plugin-test-support@0.3.23) (2023-10-19)
+
+
+### Bug Fixes
+
+* **appium:** Make sure type definitions are always in sync across modules ([#19323](https://github.com/appium/appium/issues/19323)) ([de39013](https://github.com/appium/appium/commit/de39013ae501d4fc11988435737efb862cc1d820))
+
+
+
 ## [0.3.22](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.21...@appium/plugin-test-support@0.3.22) (2023-10-18)
 
 

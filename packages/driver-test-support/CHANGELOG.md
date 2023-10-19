@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.16](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.15...@appium/driver-test-support@0.4.16) (2023-10-19)
+
+
+### Bug Fixes
+
+* **appium:** Make sure type definitions are always in sync across modules ([#19323](https://github.com/appium/appium/issues/19323)) ([de39013](https://github.com/appium/appium/commit/de39013ae501d4fc11988435737efb862cc1d820))
+* **support:** update definitelytyped ([a306ce7](https://github.com/appium/appium/commit/a306ce741a806d21bc44f3b979803b8af5da99aa))
+* **test-support:** update dependency sinon to v16.1.3 ([aaa7668](https://github.com/appium/appium/commit/aaa7668ae6d58f1ac6a5af957b9b214ee71c6a48))
+
+
+
 ## [0.4.15](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.14...@appium/driver-test-support@0.4.15) (2023-10-18)
 
 

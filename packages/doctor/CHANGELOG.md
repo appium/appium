@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.27](https://github.com/appium/appium/compare/@appium/doctor@2.0.26...@appium/doctor@2.0.27) (2023-10-19)
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v11 ([#19321](https://github.com/appium/appium/issues/19321)) ([408885a](https://github.com/appium/appium/commit/408885a5b28f8691dbbb3716f3c1a409d662275b))
+* **support:** update definitelytyped ([a306ce7](https://github.com/appium/appium/commit/a306ce741a806d21bc44f3b979803b8af5da99aa))
+
+
+
 ## [2.0.26](https://github.com/appium/appium/compare/@appium/doctor@2.0.25...@appium/doctor@2.0.26) (2023-10-18)
 
 

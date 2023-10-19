@@ -41,8 +41,8 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/tsconfig": "^0.3.2",
-    "@appium/types": "^0.14.0",
+    "@appium/tsconfig": "^0.x",
+    "@appium/types": "^0.x",
     "@colors/colors": "1.6.0",
     "@types/archiver": "5.3.4",
     "@types/base64-stream": "1.0.4",

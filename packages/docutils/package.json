@@ -50,8 +50,8 @@
   },
   "dependencies": {
     "@appium/support": "^4.1.7",
-    "@appium/tsconfig": "^0.3.2",
-    "@appium/typedoc-plugin-appium": "^0.6.6",
+    "@appium/tsconfig": "^0.x",
+    "@appium/typedoc-plugin-appium": "^0.x",
     "@sliphua/lilconfig-ts-loader": "3.2.2",
     "@types/which": "3.0.0",
     "chalk": "4.1.2",

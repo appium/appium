@@ -41,7 +41,7 @@
     "test:unit": "exit 0"
   },
   "dependencies": {
-    "@appium/types": "^0.14.0",
+    "@appium/types": "^0.x",
     "get-port": "5.1.1",
     "log-symbols": "4.1.0",
     "source-map-support": "0.5.21",

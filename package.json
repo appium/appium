@@ -85,8 +85,8 @@
   },
   "devDependencies": {
     "@colors/colors": "1.6.0",
-    "@commitlint/cli": "17.8.0",
-    "@commitlint/config-conventional": "17.8.0",
+    "@commitlint/cli": "17.8.1",
+    "@commitlint/config-conventional": "17.8.1",
     "@tsconfig/node14": "14.1.0",
     "@types/chai": "4.3.9",
     "@types/chai-as-promised": "7.1.7",

@@ -136,20 +136,22 @@ export default class ImageElementFinder {
     }
 
     const results = [];
+    let didFixTemplateImageScale = false;
     const performLookup = async () => {
       try {
-        // We do not want `template` to be mutated multiple times when the
-        // wrapping lambda is retried
-        let innerTemplate = Buffer.from(template);
+
         const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
 
-        if (scale) {
-          innerTemplate = await this.fixImageTemplateScale(innerTemplate, {
+        if (!didFixTemplateImageScale) {
+          template = await this.fixImageTemplateScale(template, {
             defaultImageTemplateScale,
             ignoreDefaultImageTemplateScale,
             fixImageTemplateScale,
-            ...scale,
+            ...(scale || {}),
           });
+          // We do not want `template` to be mutated multiple times when the
+          // wrapping lambda is retried
+          didFixTemplateImageScale = true;
         }
 
         const comparisonOpts = {
@@ -173,7 +175,9 @@ export default class ImageElementFinder {
           return true;
         };
 
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, innerTemplate, comparisonOpts);
+        const elOrEls = await compareImages(
+          MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts
+        );
         return _.some((_.isArray(elOrEls) ? elOrEls : [elOrEls]).map(pushIfOk));
       } catch (err) {
         // if compareImages fails, we'll get a specific error, but we should
@@ -407,13 +411,13 @@ export default class ImageElementFinder {
 
   /**
    * @typedef ImageTemplateSettings
-   * @property {boolean} fixImageTemplateScale - fixImageTemplateScale in device-settings
-   * @property {number} defaultImageTemplateScale - defaultImageTemplateScale in device-settings
-   * @property {boolean} ignoreDefaultImageTemplateScale - Ignore defaultImageTemplateScale if it has true.
+   * @property {boolean} [fixImageTemplateScale=false] - fixImageTemplateScale in device-settings
+   * @property {number} [defaultImageTemplateScale=DEFAULT_TEMPLATE_IMAGE_SCALE] - defaultImageTemplateScale in device-settings
+   * @property {boolean} [ignoreDefaultImageTemplateScale=false] - Ignore defaultImageTemplateScale if it has true.
    * If the template has been scaled to defaultImageTemplateScale or should ignore the scale,
    * this parameter should be true. e.g. click in image-element module
-   * @property {number} xScale - Scale ratio for width
-   * @property {number} yScale - Scale ratio for height
+   * @property {number} [xScale=DEFAULT_FIX_IMAGE_TEMPLATE_SCALE] - Scale ratio for width
+   * @property {number} [yScale=DEFAULT_FIX_IMAGE_TEMPLATE_SCALE] - Scale ratio for height
 
    */
   /**

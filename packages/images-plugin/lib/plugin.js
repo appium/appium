@@ -33,7 +33,7 @@ export default class ImageElementPlugin extends BasePlugin {
   });
 
   async compareImages(next, driver, ...args) {
-    // @ts-ignore Argument should be ok there
+    // @ts-ignore Arguments should be ok there
     return await compareImages(...args);
   }
 
@@ -51,7 +51,7 @@ export default class ImageElementPlugin extends BasePlugin {
    * @param {*} next
    * @param {*} driver
    * @param  {...any} args
-   * @returns
+   * @returns {Promise<any>}
    */
   async _find(multiple, next, driver, ...args) {
     const [strategy, selector] = args;

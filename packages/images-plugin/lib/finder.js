@@ -1,6 +1,5 @@
 import _ from 'lodash';
-import { LRUCache } from 'lru-cache';
-// @ts-ignore It does export errors
+import {LRUCache} from 'lru-cache';
 import {errors} from 'appium/driver';
 import {ImageElement} from './image-element';
 import {compareImages} from './compare';
@@ -363,7 +362,7 @@ export default class ImageElementFinder {
       const yScale = (1.0 * shotHeight) / screenSize.height;
       const scaleFactor = Math.min(xScale, yScale);
       const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor]
-        .map((x) => parseInt(`${x}`, 10));
+        .map(Math.trunc);
 
       log.warn(
         `Resizing screenshot to ${newWidth}x${newHeight} to match ` +
@@ -391,8 +390,8 @@ export default class ImageElementFinder {
         `screen at ${screenSize.width}x${screenSize.height}`
       );
       imgObj = imgObj.resize({
-        width: parseInt(`${screenSize.width}`, 10),
-        height: parseInt(`${screenSize.height}`, 10),
+        width: Math.trunc(screenSize.width),
+        height: Math.trunc(screenSize.height),
         fit: 'fill',
       });
 

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { LRUCache } from 'lru-cache';
+// @ts-ignore It does export errors
 import {errors} from 'appium/driver';
 import {ImageElement} from './image-element';
 import {compareImages} from './compare';
@@ -34,7 +35,7 @@ const CONDITION_UNMET_PATTERN = /Condition unmet/;
 
 
 export default class ImageElementFinder {
-  /** @type {LRU<string,ImageElement>} */
+  /** @type {LRUCache<string,ImageElement>} */
   _imgElCache;
 
   /**
@@ -78,7 +79,7 @@ export default class ImageElementFinder {
    * @property {boolean} [ignoreDefaultImageTemplateScale=false] - Whether we
    * ignore defaultImageTemplateScale. It can be used when you would like to
    * scale template with defaultImageTemplateScale setting.
-   * @property {import('@appium/types').Rect?} containerRect - The bounding
+   * @property {import('@appium/types').Rect?} [containerRect=null] - The bounding
    * rectangle to limit the search in
    */
 
@@ -109,7 +110,7 @@ export default class ImageElementFinder {
     } = settings;
 
     log.info(`Finding image element with match threshold ${threshold}`);
-    if (!driver.getWindowRect && !driver.getWindowSize) {
+    if (!driver.getWindowRect && !_.has(driver, 'getWindowSize')) {
       throw new Error("This driver does not support the required 'getWindowRect' command");
     }
     let screenSize;
@@ -120,7 +121,7 @@ export default class ImageElementFinder {
         height: screenRect.height,
       };
     } else {
-      // TODO: Drop the deprecated endpoint
+      // @ts-ignore TODO: Drop the deprecated endpoint
       screenSize = await driver.getWindowSize();
     }
 
@@ -136,16 +137,21 @@ export default class ImageElementFinder {
     }
 
     const results = [];
-    const condition = async () => {
+    const performLookup = async () => {
       try {
+        // We do not want `template` to be mutated multiple times when the
+        // wrapping lambda is retried
+        let innerTemplate = Buffer.from(template);
         const {screenshot, scale} = await this.getScreenshotForImageFind(driver, screenSize);
 
-        template = await this.fixImageTemplateScale(template, {
-          defaultImageTemplateScale,
-          ignoreDefaultImageTemplateScale,
-          fixImageTemplateScale,
-          ...scale,
-        });
+        if (scale) {
+          innerTemplate = await this.fixImageTemplateScale(innerTemplate, {
+            defaultImageTemplateScale,
+            ignoreDefaultImageTemplateScale,
+            fixImageTemplateScale,
+            ...scale,
+          });
+        }
 
         const comparisonOpts = {
           threshold,
@@ -168,7 +174,7 @@ export default class ImageElementFinder {
           return true;
         };
 
-        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, template, comparisonOpts);
+        const elOrEls = await compareImages(MATCH_TEMPLATE_MODE, screenshot, innerTemplate, comparisonOpts);
         return _.some((_.isArray(elOrEls) ? elOrEls : [elOrEls]).map(pushIfOk));
       } catch (err) {
         // if compareImages fails, we'll get a specific error, but we should
@@ -183,7 +189,7 @@ export default class ImageElementFinder {
     };
 
     try {
-      await driver.implicitWaitForCondition(condition);
+      await driver.implicitWaitForCondition(performLookup);
     } catch (err) {
       // this `implicitWaitForCondition` method will throw a 'Condition unmet'
       // error if an element is not found eventually. In that case, we will
@@ -238,6 +244,9 @@ export default class ImageElementFinder {
   async ensureTemplateSize(template, maxSize) {
     const imgObj = sharp(template);
     const {width: tplWidth, height: tplHeight} = await imgObj.metadata();
+    if (_.isNil(tplWidth) || _.isNil(tplHeight)) {
+      throw new Error(`Template width/height cannot be determined. Is it a valid image?`);
+    }
 
     log.info(
       `Template image is ${tplWidth}x${tplHeight}. Bounding rectangle size is ${maxSize.width}x${maxSize.height}`
@@ -254,8 +263,8 @@ export default class ImageElementFinder {
     // otherwise, scale it to fit inside the bounding rectangle dimensions:
     // https://sharp.pixelplumbing.com/api-resize
     return await imgObj.resize({
-      width: parseInt(maxSize.width, 10),
-      height: parseInt(maxSize.height, 10),
+      width: Math.trunc(maxSize.width),
+      height: Math.trunc(maxSize.height),
       fit: 'inside',
     })
     .toBuffer();
@@ -301,7 +310,7 @@ export default class ImageElementFinder {
     let imgObj = sharp(screenshot);
     let {width: shotWidth, height: shotHeight} = await imgObj.metadata();
 
-    if (shotWidth < 1 || shotHeight < 1) {
+    if (!shotWidth || shotWidth < 1 || !shotHeight || shotHeight < 1) {
       log.warn(
         `The retrieved screenshot size ${shotWidth}x${shotHeight} does ` +
         `not seem to be valid. No changes will be applied to the screenshot`
@@ -354,7 +363,7 @@ export default class ImageElementFinder {
       const yScale = (1.0 * shotHeight) / screenSize.height;
       const scaleFactor = Math.min(xScale, yScale);
       const [newWidth, newHeight] = [shotWidth * scaleFactor, shotHeight * scaleFactor]
-        .map((x) => parseInt(x, 10));
+        .map((x) => parseInt(`${x}`, 10));
 
       log.warn(
         `Resizing screenshot to ${newWidth}x${newHeight} to match ` +
@@ -382,8 +391,8 @@ export default class ImageElementFinder {
         `screen at ${screenSize.width}x${screenSize.height}`
       );
       imgObj = imgObj.resize({
-        width: parseInt(screenSize.width, 10),
-        height: parseInt(screenSize.height, 10),
+        width: parseInt(`${screenSize.width}`, 10),
+        height: parseInt(`${screenSize.height}`, 10),
         fit: 'fill',
       });
 
@@ -469,6 +478,9 @@ export default class ImageElementFinder {
 
     let imgObj = sharp(template);
     const {width: baseTempWidth, height: baseTempHeigh} = await imgObj.metadata();
+    if (_.isNil(baseTempWidth) || _.isNil(baseTempHeigh)) {
+      throw new Error(`Template width/height cannot be determined. Is it a valid image?`);
+    }
 
     const scaledWidth = baseTempWidth * xScale;
     const scaledHeight = baseTempHeigh * yScale;
@@ -477,8 +489,8 @@ export default class ImageElementFinder {
     );
     log.info(`The ratio is ${xScale} and ${yScale}`);
     imgObj = imgObj.resize({
-      width: parseInt(scaledWidth, 10),
-      height: parseInt(scaledHeight, 10),
+      width: Math.trunc(scaledWidth),
+      height: Math.trunc(scaledHeight),
       fit: 'fill',
     });
     return await imgObj.toBuffer();

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {errors} from 'appium/driver';
-import {util} from 'appium/support';
+import {util} from '@appium/support';
 import log from './logger';
 import {
   IMAGE_STRATEGY, DEFAULT_SETTINGS, IMAGE_TAP_STRATEGIES,
@@ -39,7 +39,7 @@ const TAP_DURATION_MS = 125;
  */
 export default class ImageElement {
   /**
-   * @param {ImageElementOpts}
+   * @param {ImageElementOpts} options
    */
   constructor({
     template,
@@ -123,12 +123,11 @@ export default class ImageElement {
    * Use a driver to tap the screen at the center of this ImageElement's
    * position
    *
-   * @param {BaseDriver} driver - driver for calling actions with
+   * @param {import('appium/driver').BaseDriver} driver - driver for calling actions with
    */
   async click(driver) {
     // before we click we need to make sure the element is actually still there
     // where we expect it to be
-    let newImgEl;
     const settings = Object.assign({}, DEFAULT_SETTINGS, driver.settings.getSettings());
     const {
       autoUpdateImageElementPosition: updatePos,
@@ -145,16 +144,19 @@ export default class ImageElement {
       );
     }
 
+    let newImgEl;
     if (checkForImageElementStaleness || updatePos) {
       log.info('Checking image element for staleness before clicking');
       try {
-        newImgEl = await this.finder.findByImage(this.template, driver, {
-          shouldCheckStaleness: true,
-          // Set ignoreDefaultImageTemplateScale because this.template is device screenshot based image
-          // managed inside Appium after finidng image by template which managed by a user
-          ignoreDefaultImageTemplateScale: true,
-          containerRect: this.containerRect,
-        });
+        newImgEl = /** @type {ImageElement} */ (await (/** @type {import('./finder').default} */ (this.finder))
+          .findByImage(
+            this.template, driver, {
+            shouldCheckStaleness: true,
+            // Set ignoreDefaultImageTemplateScale because this.template is device screenshot based image
+            // managed inside Appium after finidng image by template which managed by a user
+            ignoreDefaultImageTemplateScale: true,
+            containerRect: this.containerRect,
+          }));
       } catch (err) {
         throw new errors.StaleElementReferenceError();
       }
@@ -199,7 +201,7 @@ export default class ImageElement {
       };
 
       // check if the driver has the appropriate performActions method
-      if (driver.performActions) {
+      if ('performActions' in driver && _.isFunction(driver.performActions)) {
         return await driver.performActions([action]);
       }
 
@@ -215,7 +217,7 @@ export default class ImageElement {
       options: {x, y},
     };
 
-    if (driver.performTouch) {
+    if ('performTouch' in driver && _.isFunction(driver.performTouch)) {
       return await driver.performTouch([action]);
     }
 
@@ -239,7 +241,7 @@ export default class ImageElement {
     if (strategy !== IMAGE_STRATEGY) {
       throw new errors.InvalidSelectorError(`Lookup strategies other than '${IMAGE_STRATEGY}' are not supported`);
     }
-    return await this.finder.findByImage(
+    return await (/** @type {import('./finder').default} */ (this.finder)).findByImage(
       Buffer.from(selector, 'base64'),
       driver,
       {multiple, containerRect: this.rect}
@@ -251,10 +253,10 @@ export default class ImageElement {
    *
    * @param {import('appium/driver').BaseDriver} driver - the driver to use for commands
    * @param {string} cmd - the name of the driver command
-   * @param {string} imgElId - the id of the ImageElement to work with
+   * @param {any} imgEl - image element object
    * @param {string[]} args - Rest of arguments for executeScripts
    *
-   * @returns {object} - the result of running a command
+   * @returns {Promise<any>} - the result of running a command
    */
   static async execute(driver, imgEl, cmd, ...args) {
     switch (cmd) {

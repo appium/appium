@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
     "outDir": "build",
+    "checkJs": true,
+    "esModuleInterop": true,
+    "strict": false,
     "paths": {
       "@appium/opencv": ["../opencv"]
     }

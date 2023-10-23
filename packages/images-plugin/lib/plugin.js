@@ -2,7 +2,7 @@
 
 import _ from 'lodash';
 import {errors} from 'appium/driver';
-import BasePlugin from 'appium/plugin';
+import {BasePlugin} from 'appium/plugin';
 import {compareImages} from './compare';
 import ImageElementFinder from './finder';
 import {ImageElement} from './image-element';
@@ -33,6 +33,7 @@ export default class ImageElementPlugin extends BasePlugin {
   });
 
   async compareImages(next, driver, ...args) {
+    // @ts-ignore Arguments should be ok there
     return await compareImages(...args);
   }
 
@@ -44,6 +45,14 @@ export default class ImageElementPlugin extends BasePlugin {
     return await this._find(true, next, driver, ...args);
   }
 
+  /**
+   *
+   * @param {boolean} multiple
+   * @param {*} next
+   * @param {*} driver
+   * @param  {...any} args
+   * @returns {Promise<any>}
+   */
   async _find(multiple, next, driver, ...args) {
     const [strategy, selector] = args;
 

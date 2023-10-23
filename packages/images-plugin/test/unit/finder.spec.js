@@ -73,7 +73,8 @@ describe('finding elements by image', function () {
         y: 0,
         ...size,
       });
-      const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind').returns(screenshot);
+      const screenStub = sandbox.stub(finder, 'getScreenshotForImageFind')
+        .returns({screenshot});
       return {rectStub, screenStub};
     }
 

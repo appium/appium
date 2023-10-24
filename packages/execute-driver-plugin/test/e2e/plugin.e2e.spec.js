@@ -67,7 +67,7 @@ describe('ExecuteDriverPlugin', function () {
     it('should not work unless the allowInsecure feature flag is set', async function () {
       driver = await wdio({...WDIO_OPTS, port: this.port});
       await driver
-        .driverScript(basicScript)
+        .executeDriverScript(basicScript)
         .should.be.rejectedWith(/allow-insecure.+execute_driver_script/i);
     });
   });
@@ -91,7 +91,7 @@ describe('ExecuteDriverPlugin', function () {
         return [timeouts, status];
       `;
       const expectedTimeouts = {command: 60000, implicit: 0};
-      const {result, logs} = await driver.driverScript(script);
+      const {result, logs} = await driver.executeDriverScript(script);
       result[0].should.eql(expectedTimeouts);
       result[1].build.should.exist;
       result[1].build.version.should.exist;
@@ -100,14 +100,14 @@ describe('ExecuteDriverPlugin', function () {
 
     it('should fail with any script type other than webdriverio currently', async function () {
       const script = `return 'foo'`;
-      await driver.driverScript(script, 'wd').should.be.rejectedWith(/webdriverio/);
+      await driver.executeDriverScript(script, 'wd').should.be.rejectedWith(/webdriverio/);
     });
 
     it('should execute a webdriverio script that returns elements correctly', async function () {
       const script = `
         return await driver.$("#Button1");
       `;
-      const {result} = await driver.driverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       result.should.eql({
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
@@ -119,7 +119,7 @@ describe('ExecuteDriverPlugin', function () {
         const el = await driver.$("#Button1");
         return {element: el, elements: [el, el]};
       `;
-      const {result} = await driver.driverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       const elObj = {
         [W3C_ELEMENT_KEY]: '1',
         [MJSONWP_ELEMENT_KEY]: '1',
@@ -135,7 +135,7 @@ describe('ExecuteDriverPlugin', function () {
         console.error("baz");
         return null;
       `;
-      const {logs} = await driver.driverScript(script);
+      const {logs} = await driver.executeDriverScript(script);
       logs.should.eql({log: ['foo', 'foo2'], warn: ['bar'], error: ['baz']});
     });
 
@@ -143,7 +143,7 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return typeof driver.lock;
       `;
-      const {result} = await driver.driverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       result.should.eql('function');
     });
 
@@ -151,7 +151,7 @@ describe('ExecuteDriverPlugin', function () {
       const script = `
         return await driver.$("~notfound");
       `;
-      const {result} = await driver.driverScript(script);
+      const {result} = await driver.executeDriverScript(script);
       result.error.error.should.equal('no such element');
       result.error.message.should.match(/element could not be located/);
       result.error.stacktrace.should.includes('NoSuchElementError:');
@@ -164,7 +164,7 @@ describe('ExecuteDriverPlugin', function () {
         return {;
       `;
       await driver
-        .driverScript(script)
+        .executeDriverScript(script)
         .should.be.rejectedWith(/Could not execute driver script.+Unexpected token/);
     });
 
@@ -174,7 +174,7 @@ describe('ExecuteDriverPlugin', function () {
         return true;
       `;
       await driver
-        .driverScript(script, 'webdriverio', 50)
+        .executeDriverScript(script, 'webdriverio', 50)
         .should.be.rejectedWith(/.+50.+timeout.+/);
     });
   });

@@ -77,7 +77,7 @@
     "ajv-formats": "2.1.1",
     "argparse": "2.0.1",
     "async-lock": "1.4.0",
-    "asyncbox": "2.9.4",
+    "asyncbox": "3.0.0",
     "axios": "1.5.1",
     "bluebird": "3.7.2",
     "cross-env": "7.0.3",

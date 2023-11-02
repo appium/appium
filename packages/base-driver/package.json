@@ -54,7 +54,7 @@
     "@types/method-override": "0.0.34",
     "@types/serve-favicon": "2.5.6",
     "async-lock": "1.4.0",
-    "asyncbox": "2.9.4",
+    "asyncbox": "3.0.0",
     "axios": "1.5.1",
     "bluebird": "3.7.2",
     "body-parser": "1.20.2",

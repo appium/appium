@@ -73,7 +73,7 @@
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "5.0.4",
-    "yaml": "2.3.3",
+    "yaml": "2.3.4",
     "yargs": "17.7.2",
     "yargs-parser": "21.1.1"
   },

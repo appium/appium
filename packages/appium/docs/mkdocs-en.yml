@@ -24,6 +24,7 @@ nav:
           - quickstart/test-py.md
           - quickstart/test-java.md
           - quickstart/test-rb.md
+          - quickstart/test-dotnet.md
       - quickstart/next-steps.md
   - CLI Reference:
       - cli/index.md

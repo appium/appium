@@ -9,7 +9,7 @@ an official Appium client in C#. This driver is an extension of the Selenium C# 
 git clone https://github.com/appium/dotnet-client.git
 ```
 
-Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. WE will also add the references to the Appium.Net driver, and other dependencies.
+Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. Ww will also add the references to the Appium.Net driver, and other dependencies.
 
 ```bash
 cd dotnet-client
@@ -20,7 +20,7 @@ dotnet add reference ..\src\Appium.Net\Appium.Net.csproj
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
 
-Once this is done, your project should have a placeholder file `UnitTest1.cs`. We will replace the code to include the OpenQA namespaces, an initialization of the driver and the actual test.
+Once this is done, your project should have a placeholder file `UnitTest1.cs`. We will replace the code to include the OpenQA namespaces, an initialization of the driver, and the actual test.
 
 ```C# title="UnitTest1.cs"
 using OpenQA.Selenium;
@@ -42,8 +42,6 @@ public class Tests
             AutomationName = AutomationName.AndroidUIAutomator2,
             PlatformName = "Android",
             DeviceName = "Android Emulator",
-           // App = "com.google.android" 
-          
         };
 
         driverOptions.AddAdditionalAppiumOption("appPackage", "com.android.settings");

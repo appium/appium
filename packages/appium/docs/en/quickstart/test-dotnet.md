@@ -2,11 +2,7 @@
 title: Write a Test (dotnet)
 ---
 
-This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this.
-
-https://github.com/appium/dotnet-client/
-
-The [Appium dotnet Client](https://github.com/appium/python-client) is
+The [Appium dotnet Client](https://github.com/appium/dotnet-client/) is
 an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is not available under Nuget, since some of the dependencies do not have a signed version. With that said, you are more than welcome to download the code and build a signed version yourself. For the purposes of this quickstart we will proceed to clone the project code.
 
 ```bash

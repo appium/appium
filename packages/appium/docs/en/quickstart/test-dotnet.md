@@ -3,11 +3,7 @@ title: Write a Test (dotnet)
 ---
 
 The [Appium dotnet Client](https://github.com/appium/dotnet-client/) is
-an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is not available under Nuget, since some of the dependencies do not have a signed version. With that said, you are more than welcome to download the code and build a signed version yourself. For the purposes of this quickstart we will proceed to clone the project code.
-
-```bash
-git clone https://github.com/appium/dotnet-client.git
-```
+an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is available on the (public NuGet Gallery as Appium.WebDriver)[https://www.nuget.org/packages/Appium.WebDriver/5.0.0-rc.1].
 
 Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
 
@@ -16,7 +12,9 @@ cd dotnet-client
 dotnet new nunit --name appiumtest 
 
 cd appiumtest
-dotnet add reference ..\src\Appium.Net\Appium.Net.csproj
+
+# This will install the latest 5.x version
+dotnet add package Appium.WebDriver  --prerelease
 dotnet add package Newtonsoft.Json --version 13.0.3
 ```
 

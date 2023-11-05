@@ -59,6 +59,7 @@ public class Tests
     [Test]
     public void TestBattery()
     {
+        _driver.StartActivity("com.android.settings", ".Settings");
         _driver.FindElement(By.XPath("//*[@text='Battery']")).Click();
     }
 }

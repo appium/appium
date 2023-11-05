@@ -9,7 +9,7 @@ an official Appium client in C#. This driver is an extension of the Selenium C# 
 git clone https://github.com/appium/dotnet-client.git
 ```
 
-Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. Ww will also add the references to the Appium.Net driver, and other dependencies.
+Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
 
 ```bash
 cd dotnet-client

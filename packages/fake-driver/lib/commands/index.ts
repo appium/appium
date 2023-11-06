@@ -71,7 +71,6 @@ import './general';
   //rest.post('/wd/hub/session/:sessionId?/appium/device/press_keycode', controller.pressKeyCode);
   //rest.post('/wd/hub/session/:sessionId?/appium/device/long_press_keycode', controller.longPressKeyCode);
   //rest.post('/wd/hub/session/:sessionId?/appium/device/keyevent', controller.keyevent);
-  //rest.post('/wd/hub/session/:sessionId?/appium/device/rotate', controller.mobileRotation);
   //rest.get('/wd/hub/session/:sessionId?/appium/device/current_activity', controller.getCurrentActivity);
   //rest.post('/wd/hub/session/:sessionId?/appium/device/install_app', controller.installApp);
   //rest.post('/wd/hub/session/:sessionId?/appium/device/remove_app', controller.removeApp);

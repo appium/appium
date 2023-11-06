@@ -33,7 +33,7 @@ public class Tests
     private AndroidDriver _driver;
 
     [OneTimeSetUp]
-    public void BeforeAll()
+    public void SetUp()
     {
         var serverUri = new Uri(Environment.GetEnvironmentVariable("APPIUM_HOST") ?? "http://127.0.0.1:4723/");
         var driverOptions = new AppiumOptions() {
@@ -51,9 +51,10 @@ public class Tests
         _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
     }
 
-    [SetUp]
-    public void Setup()
+    [OneTimeTearDown]
+    public void TearDown()
     {
+        _driver.Dispose();
     }
 
     [Test]

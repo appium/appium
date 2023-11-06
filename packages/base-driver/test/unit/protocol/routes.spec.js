@@ -35,7 +35,7 @@ describe('Protocol', function () {
       }
       let hash = shasum.digest('hex').substring(0, 8);
       // Modify the hash whenever the protocol has intentionally been modified.
-      hash.should.equal('484810b0');
+      hash.should.equal('6e93ad90');
     });
   });
 

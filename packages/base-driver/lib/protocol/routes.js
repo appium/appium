@@ -568,16 +568,6 @@ const METHOD_MAP = /** @type {const} */ ({
       deprecated: true,
     },
   },
-  '/session/:sessionId/appium/device/rotate': {
-    POST: {
-      command: 'mobileRotation',
-      payloadParams: {
-        required: ['x', 'y', 'radius', 'rotation', 'touchCount', 'duration'],
-        optional: ['element'],
-      },
-      deprecated: true,
-    },
-  },
   '/session/:sessionId/appium/device/current_activity': {
     GET: {command: 'getCurrentActivity', deprecated: true},
   },

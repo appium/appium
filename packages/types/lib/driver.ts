@@ -1360,29 +1360,6 @@ export interface ExternalDriver<
   keyevent?(keycode: string | number, metastate?: string | number): Promise<void>;
 
   /**
-   * Construct a rotation gesture? Unclear what this command does and it does not appear to be used
-   *
-   * @param x - the x coordinate of the rotation center
-   * @param y - the y coordinate of the rotation center
-   * @param radius - the radius of the rotation circle
-   * @param rotation - the rotation angle? idk
-   * @param touchCount - how many fingers to rotate
-   * @param elementId - if we're rotating around an element
-   *
-   * @deprecated Use setRotation instead
-   * @privateRemarks Not implemented in `appium-xcuitest-driver`
-   */
-  mobileRotation?(
-    x: number,
-    y: number,
-    radius: number,
-    rotation: number,
-    touchCount: number,
-    duration: string,
-    elementId?: string
-  ): Promise<void>;
-
-  /**
    * Get the current activity name
    *
    * @returns The activity name

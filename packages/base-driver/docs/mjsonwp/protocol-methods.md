@@ -116,7 +116,6 @@ POST        | `session/{sessionId}/appium/getPerformanceData`				 | returns the 
 POST        | `session/{sessionId}/appium/device/press_keycode`              | Press a particular key code on the device.
 POST        | `session/{sessionId}/appium/device/long_press_keycode`         | Press and hold a particular key code on the device.
 POST        | `session/{sessionId}/appium/device/keyevent`                   | Send a key code to the device.
-POST        | `session/{sessionId}/appium/device/rotate`                     | Rotate the device in three dimensions.
 GET         | `session/{sessionId}/appium/device/current_activity`           | Retrieve the current activity running on the device.
 GET         | `session/{sessionId}/appium/device/current_package`            | Retrieve the current package running on the device.
 POST        | `session/{sessionId}/appium/device/install_app`                | Install the given app onto the device.

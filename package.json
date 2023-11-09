@@ -102,7 +102,7 @@
     "@types/yargs": "17.0.29",
     "@typescript-eslint/eslint-plugin": "6.9.1",
     "@typescript-eslint/parser": "6.9.1",
-    "asyncbox": "2.9.4",
+    "asyncbox": "3.0.0",
     "chai": "4.3.10",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.7.0",

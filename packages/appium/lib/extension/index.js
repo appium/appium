@@ -47,6 +47,10 @@ export function getActivePlugins(pluginConfig, usePlugins = []) {
     for (const pluginName of usePlugins) {
       if (pluginName in pluginConfig.installedExtensions) {
         filteredPluginNames.push(pluginName);
+      } else if (pluginName === USE_ALL_PLUGINS) {
+        throw new Error(
+          `The reserved plugin name '${pluginName}' cannot be combined with other names.`
+        );
       } else {
         throw new Error(
           `Could not load the plugin '${pluginName}' because it is not installed. ` +

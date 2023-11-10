@@ -32,7 +32,7 @@ export interface ITimeoutCommands {
     ms: number | string,
     script?: number,
     pageLoad?: number,
-    implicit?: number | string
+    implicit?: number | string,
   ): Promise<void>;
 
   /**
@@ -169,10 +169,10 @@ export interface IExecuteCommands {
    */
   executeMethod<
     TArgs extends readonly any[] | readonly [StringRecord<unknown>] = unknown[],
-    TReturn = unknown
+    TReturn = unknown,
   >(
     script: string,
-    args: TArgs
+    args: TArgs,
   ): Promise<TReturn>;
 }
 
@@ -190,7 +190,7 @@ export interface MultiSessionData<C extends Constraints = Constraints> {
  */
 export type SingularSessionData<
   C extends Constraints = Constraints,
-  T extends StringRecord = StringRecord
+  T extends StringRecord = StringRecord,
 > = DriverCaps<C> & {
   events?: EventHistory;
   error?: string;
@@ -248,7 +248,7 @@ export interface IFindCommands {
   findElementsFromElement(
     strategy: string,
     selector: string,
-    elementId: string
+    elementId: string,
   ): Promise<Element[]>;
 
   /**
@@ -263,7 +263,7 @@ export interface IFindCommands {
   findElementFromShadowRoot?(
     strategy: string,
     selector: string,
-    shadowId: string
+    shadowId: string,
   ): Promise<Element>;
 
   /**
@@ -278,7 +278,7 @@ export interface IFindCommands {
   findElementsFromShadowRoot?(
     strategy: string,
     selector: string,
-    shadowId: string
+    shadowId: string,
   ): Promise<Element[]>;
 
   /**
@@ -309,13 +309,13 @@ export interface IFindCommands {
     strategy: string,
     selector: string,
     mult: true,
-    context?: any
+    context?: any,
   ): Promise<Element[]>;
   findElOrElsWithProcessing(
     strategy: string,
     selector: string,
     mult: false,
-    context?: any
+    context?: any,
   ): Promise<Element>;
 
   /**
@@ -344,6 +344,11 @@ export interface ILogCommands {
    * @param logType - Name/key of log type as defined in {@linkcode ILogCommands.supportedLogTypes}.
    */
   getLog(logType: string): Promise<any>;
+}
+
+export interface IBidiCommands {
+  bidiSubscribe(events: string[], contexts: string[]): Promise<void>;
+  bidiUnsubscribe(events: string[], contexts: string[]): Promise<void>;
 }
 
 /**
@@ -393,7 +398,7 @@ export interface ISettingsCommands<T extends object = object> {
  */
 export type DefaultCreateSessionResult<C extends Constraints> = [
   sessionId: string,
-  capabilities: DriverCaps<C>
+  capabilities: DriverCaps<C>,
 ];
 
 /**
@@ -408,7 +413,7 @@ export interface ISessionHandler<
   C extends Constraints = Constraints,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord
+  SessionData extends StringRecord = StringRecord,
 > {
   /**
    * Start a new automation session
@@ -431,7 +436,7 @@ export interface ISessionHandler<
     w3cCaps1: W3CDriverCaps<C>,
     w3cCaps2?: W3CDriverCaps<C>,
     w3cCaps3?: W3CDriverCaps<C>,
-    driverData?: DriverData[]
+    driverData?: DriverData[],
   ): Promise<CreateResult>;
 
   /**
@@ -485,7 +490,7 @@ export type Constraints = {
 export interface DriverHelpers {
   configureApp: (
     app: string,
-    supportedAppExtensions?: string | string[] | ConfigureAppOptions
+    supportedAppExtensions?: string | string[] | ConfigureAppOptions,
   ) => Promise<string>;
   isPackageOrBundle: (app: string) => boolean;
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
@@ -496,7 +501,7 @@ export interface DriverHelpers {
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (
   prop: keyof T,
   newValue: unknown,
-  curValue: unknown
+  curValue: unknown,
 ) => Promise<void>;
 
 // WebDriver
@@ -596,6 +601,8 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   driverData: DriverData;
   isCommandsQueueEnabled: boolean;
   eventHistory: EventHistory;
+  bidiEventSubs: Record<string, string[]>;
+  doesSupportBidi: boolean;
   onUnexpectedShutdown(handler: () => any): void;
   /**
    * @summary Retrieve the server's current status.
@@ -636,6 +643,7 @@ export interface Core<C extends Constraints, Settings extends StringRecord = Str
   assertFeatureEnabled(name: string): void;
   validateLocatorStrategy(strategy: string, webContext?: boolean): void;
   proxyActive(sessionId?: string): boolean;
+  get bidiProxyUrl(): string | null;
   getProxyAvoidList(sessionId?: string): RouteMatcher[];
   canProxy(sessionId?: string): boolean;
   proxyRouteIsAvoided(sessionId: string, method: string, url: string, body?: any): boolean;
@@ -660,7 +668,7 @@ export interface Driver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord
+  SessionData extends StringRecord = StringRecord,
 > extends ILogCommands,
     IFindCommands,
     ISettingsCommands<Settings>,
@@ -690,6 +698,12 @@ export interface Driver<
    * @returns The result of running the command
    */
   executeCommand(cmd: string, ...args: any[]): Promise<any>;
+
+  /** Execute a driver (WebDriver Bidi protocol) command by its name as defined in the bidi commands file
+   * @param bidiCmd - the name of the command in the bidi spec
+   * @param args - arguments to pass to the command
+   */
+  executeBidiCommand(bidiCmd: string, ...args: any[]): Promise<any>;
 
   /**
    * Signify to any owning processes that this driver encountered an error which should cause the
@@ -771,7 +785,7 @@ export interface ExternalDriver<
   Settings extends StringRecord = StringRecord,
   CreateResult = DefaultCreateSessionResult<C>,
   DeleteResult = DefaultDeleteSessionResult,
-  SessionData extends StringRecord = StringRecord
+  SessionData extends StringRecord = StringRecord,
 > extends Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData> {
   // WebDriver spec commands
 
@@ -1247,7 +1261,7 @@ export interface ExternalDriver<
   getPerformanceData?(
     packageName: string,
     dataType: string,
-    dataReadTimeout?: number
+    dataReadTimeout?: number,
   ): Promise<any>;
 
   /**
@@ -1445,7 +1459,7 @@ export interface ExternalDriver<
     strategy?: string,
     key?: string,
     keyCode?: string,
-    keyName?: string
+    keyName?: string,
   ): Promise<boolean>;
 
   /**
@@ -1548,7 +1562,7 @@ export interface ExternalDriver<
     intentCategory?: string,
     intentFlags?: string,
     optionalIntentArguments?: string,
-    dontStopAppOnReset?: boolean
+    dontStopAppOnReset?: boolean,
   ): Promise<void>;
 
   /**
@@ -1759,7 +1773,7 @@ export interface ExternalDriver<
     ySpeed?: number,
     xOffset?: number,
     yOffset?: number,
-    speed?: number
+    speed?: number,
   ): Promise<void>;
 
   /**
@@ -1885,7 +1899,7 @@ export interface ExternalDriver<
     hasResidentKey?: boolean,
     hasUserVerification?: boolean,
     isUserConsenting?: boolean,
-    isUserVerified?: boolean
+    isUserVerified?: boolean,
   ): Promise<string>;
 
   /**
@@ -1915,7 +1929,7 @@ export interface ExternalDriver<
     privateKey: string,
     userHandle: string,
     signCount: number,
-    authenticatorId: string
+    authenticatorId: string,
   ): Promise<void>;
 
   /**
@@ -1963,7 +1977,7 @@ export interface ExternalDriver<
   proxyCommand?<TReq = any, TRes = unknown>(
     url: string,
     method: HTTPMethod,
-    body?: TReq
+    body?: TReq,
   ): Promise<TRes>;
 }
 
@@ -2108,7 +2122,7 @@ export interface ConfigureAppOptions {
    * @returns
    */
   onPostProcess?: (
-    obj: PostProcessOptions
+    obj: PostProcessOptions,
   ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
   supportedExtensions: string[];
 }

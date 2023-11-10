@@ -28,6 +28,27 @@ export class ProtocolError extends ES6Error {
   set stacktrace(value) {
     this._stacktrace = value;
   }
+
+  /**
+   * Get the Bidi protocol version of an error
+   * @param {string|number} id - the id used in the request for which this error forms the response
+   * @see https://w3c.github.io/webdriver-bidi/#protocol-definition
+   * @returns The object conforming to the shape of a BiDi error response
+   */
+  bidiErrObject(id) {
+    // if we don't have an id, the client didn't send one, so we have nothing to send back.
+    // send back an empty string rather than making something up
+    if (_.isNil(id)) {
+      id = '';
+    }
+    return {
+      id,
+      type: 'error',
+      error: this.error,
+      stacktrace: this.stacktrace,
+      message: this.message,
+    };
+  }
 }
 
 // https://github.com/SeleniumHQ/selenium/blob/176b4a9e3082ac1926f2a436eb346760c37a5998/java/client/src/org/openqa/selenium/remote/ErrorCodes.java#L215

@@ -1,6 +1,7 @@
 // @ts-check
 
 import {BaseDriver} from '@appium/base-driver';
+import {exec} from 'teen_process';
 import {fs, tempDir} from '@appium/support';
 import axios from 'axios';
 import {command} from 'webdriver';
@@ -43,6 +44,35 @@ const wdOpts = {
   connectionRetryCount: 0,
 };
 
+/**
+ * @param {string} appiumHome
+ */
+async function initFakeDriver(appiumHome) {
+  const {driverConfig} = await loadExtensions(appiumHome);
+  const driverList = await runExtensionCommand(
+    {
+      driverCommand: 'list',
+      subcommand: DRIVER_TYPE,
+      suppressOutput: true,
+      showInstalled: true,
+    },
+    driverConfig,
+  );
+  if (!_.has(driverList, 'fake')) {
+    await runExtensionCommand(
+      {
+        driverCommand: 'install',
+        driver: FAKE_DRIVER_DIR,
+        installType: INSTALL_TYPE_LOCAL,
+        subcommand: DRIVER_TYPE,
+      },
+      driverConfig,
+    );
+  }
+
+  return await driverConfig.requireAsync('fake');
+}
+
 describe('FakeDriver via HTTP', function () {
   /** @type {AppiumServer} */
   let server;
@@ -64,30 +94,7 @@ describe('FakeDriver via HTTP', function () {
     wdOpts.port = port = await getTestPort();
     testServerBaseUrl = `http://${TEST_HOST}:${port}`;
     testServerBaseSessionUrl = `${testServerBaseUrl}/session`;
-    // first ensure we have fakedriver installed
-    const {driverConfig} = await loadExtensions(appiumHome);
-    const driverList = await runExtensionCommand(
-      {
-        driverCommand: 'list',
-        subcommand: DRIVER_TYPE,
-        suppressOutput: true,
-        showInstalled: true,
-      },
-      driverConfig,
-    );
-    if (!_.has(driverList, 'fake')) {
-      await runExtensionCommand(
-        {
-          driverCommand: 'install',
-          driver: FAKE_DRIVER_DIR,
-          installType: INSTALL_TYPE_LOCAL,
-          subcommand: DRIVER_TYPE,
-        },
-        driverConfig,
-      );
-    }
-
-    FakeDriver = await driverConfig.requireAsync('fake');
+    FakeDriver = await initFakeDriver(appiumHome);
   });
 
   after(async function () {
@@ -535,6 +542,149 @@ describe('FakeDriver via HTTP', function () {
         await driver.deleteSession();
       }
     });
+  });
+
+  describe('Bidi protocol', function () {
+    withServer();
+    const capabilities = {...caps, webSocketUrl: true, 'appium:runClock': true};
+    let driver;
+
+    beforeEach(async function () {
+      driver = await wdio({...wdOpts, capabilities});
+    });
+
+    afterEach(async function () {
+      if (driver) {
+        await driver.deleteSession();
+      }
+    });
+
+    it('should respond with bidi specific capability when a driver supports it', async function () {
+      should.exist(driver.capabilities.webSocketUrl);
+    });
+
+    it('should interpret the bidi protocol and let the driver handle it by command', async function () {
+      should.not.exist(await driver.getUrl());
+
+      await driver.browsingContextNavigate({
+        context: 'foo',
+        url: 'https://appium.io',
+        wait: 'complete',
+      });
+      await driver.getUrl().should.eventually.eql('https://appium.io');
+    });
+
+    it('should be able to subscribe and unsubscribe to bidi events', async function () {
+      let collectedEvents = [];
+      // asyncrhonously start our listener
+      driver.on('clock.currentTime', ({time}) => {
+        collectedEvents.push(time);
+      });
+
+      // wait for some time to be sure clock events have happened, and assert we don't receive
+      // any yet
+      await B.delay(750);
+      collectedEvents.should.be.empty;
+
+      // now subscribe and wait and assert that some events have been collected
+      await driver.sessionSubscribe({events: ['clock.currentTime']});
+      await B.delay(750);
+      collectedEvents.should.not.be.empty;
+
+      // finally  unsubscribe and wait and assert that some events have been collected
+      collectedEvents = [];
+      await driver.sessionUnsubscribe({events: ['clock.currentTime']});
+      await B.delay(750);
+      collectedEvents.should.be.empty;
+    });
+  });
+});
+
+describe('Bidi over SSL', function () {
+  /**
+   * @param {string} certPath
+   * @param {string} keyPath
+   */
+  async function generateCertificate(certPath, keyPath) {
+    await exec('openssl', [
+      'req',
+      '-nodes',
+      '-new',
+      '-x509',
+      '-keyout',
+      keyPath,
+      '-out',
+      certPath,
+      '-subj',
+      '/C=US/ST=State/L=City/O=company/OU=Com/CN=www.testserver.local',
+    ]);
+  }
+
+  /** @type {AppiumServer} */
+  let server;
+  /** @type {string} */
+  let appiumHome;
+  /** @type {import('webdriverio').Browser} */
+  let driver;
+  // since we update the FakeDriver.prototype below, make sure we update the FakeDriver which is
+  // actually going to be required by Appium
+  /** @type {import('@appium/types').DriverClass} */
+  let FakeDriver;
+  /** @type {string} */
+  let testServerBaseSessionUrl;
+  /** @type {import('sinon').SinonSandbox} */
+  let sandbox;
+  let certPath = 'certificate.cert';
+  let keyPath = 'certificate.key';
+  const capabilities = {...caps, webSocketUrl: true};
+
+  before(async function () {
+    try {
+      await generateCertificate(certPath, keyPath);
+    } catch (e) {
+      if (process.env.CI) {
+        throw e;
+      }
+      return this.skip();
+    }
+    sandbox = createSandbox();
+    appiumHome = await tempDir.openDir();
+    wdOpts.port = port = await getTestPort();
+    testServerBaseUrl = `https://${TEST_HOST}:${port}`;
+    FakeDriver = await initFakeDriver(appiumHome);
+    server = await appiumServer({
+      address: TEST_HOST,
+      port,
+      appiumHome,
+      sslCertificatePath: certPath,
+      sslKeyPath: keyPath,
+    });
+  });
+
+  after(async function () {
+    await fs.rimraf(appiumHome);
+    await server.close();
+  });
+
+  beforeEach(async function () {
+    driver = await wdio({...wdOpts, protocol: 'https', strictSSL: false, capabilities});
+  });
+
+  afterEach(async function () {
+    if (driver) {
+      await driver.deleteSession();
+    }
+  });
+
+  it('should still run bidi over ssl', async function () {
+    should.not.exist(await driver.getUrl());
+
+    await driver.browsingContextNavigate({
+      context: 'foo',
+      url: 'https://appium.io',
+      wait: 'complete',
+    });
+    await driver.getUrl().should.eventually.eql('https://appium.io');
   });
 });
 

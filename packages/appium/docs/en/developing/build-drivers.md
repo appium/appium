@@ -270,7 +270,7 @@ access the `this.cliArgs` and `this.caps` objects explicitly.
 In all cases, the `appium:` capability prefix will have been stripped away by the time you are
 accessing values here, for convenience.
 
-### Implement WebDriver commands
+### Implement WebDriver classic commands
 
 You handle WebDriver commands by implementing functions in your driver class. Each member of the
 WebDriver Protocol, plus the various Appium extensions, has a corresponding function that you
@@ -308,6 +308,21 @@ A few notes:
 - all element-based commands receive the `elementId` parameter as the second-to-last parameter
 - if your driver doesn't implement a command, users can still try to access the command, and will
   get a `501 Not Yet Implemented` response error.
+
+### Implement WebDriver BiDi commands
+
+[WebDriver BiDi](https://w3c.github.io/webdriver-bidi) is a newer version of the WebDriver spec
+which is implemented over Websockets instead of HTTP. As an Appium driver author you can take
+advantage of Appium's BiDi support without having to know anything about the BiDi protocol or
+Websockets. Implementing handlers for BiDi commands works just the same as implementing handlers
+for WebDriver classic commands (described in the previous section). You simply define a method on
+your driver of the appropriate name, and it will be called when the BiDi command is requested by
+the client. To see which specific names you should use for BiDi commands, have a look at
+[bidi-commands.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/bidi-commands.js)
+
+Currently, you also need to define a `doesSupportBidi` field on your driver instances, and ensure
+it is set to `true`. Appium will not turn on its Websocket servers for your driver and set up any
+handlers unless your driver says that it supports BiDi in this way.
 
 ### Implement element finding
 
@@ -540,6 +555,21 @@ proxyActive() {
 With those pieces in play, you won't have to reimplement anything that's already implemented by the
 remote endpoint you're proxying to. Appium will take care of all the proxying for you.
 
+### Proxy BiDi commands to another BiDi implementation
+
+All of the above about proxying WebDriver commands is conceptually also valid for proxying BiDi
+commands specifically. In order to enable BiDi proxying, you need to:
+
+1. Set the `doesSupportBidi` field on your driver instances to `true`.
+1. Implement `get bidiProxyUrl` on your driver. This should return a Websocket URL which is the
+   address of the upstream socket you want BiDi commands to be proxied to.
+
+The intended pattern here is for you to start a session on the upstream implementation, check
+whether it has an active BiDi socket in the returned capabilities (e.g., the `webSocketUrl`
+capability), and then to set an internal field to that value, so that it can be returned by `get
+bidiProxyUrl`. Once all this is in place, Appium will proxy BiDi commands from the client straight
+to the upstream connection.
+
 ### Extend the existing protocol with new commands
 
 You may find that the existing commands don't cut it for your driver. If you want to expose
@@ -658,6 +688,29 @@ async onSettingsUpdate(key, value) {
   // do anything you want here with key and value
 }
 ```
+
+### Emit BiDi events
+
+With the WebDriver BiDi protocol, clients can subscribe to arbitrary events which can be sent
+asynchronously to the client over the BiDi socket connection. As an Appium driver author you don't
+need to worry about event subscription. If you want to emit an event with a certain method name and
+payload, it's as easy as using the built-in event emitter with the `bidiEvent` event.
+
+As an
+example, let's say our driver wants to periodically emit CPU load information. We could define an
+event called `system.cpu`, and a payload that looks like `{load: 0.97}` to signify 97% CPU usage.
+Whenever we want, our driver can simply call the following code (assuming we have the current load
+in `this.currentCpuLoad`):
+
+```js
+this.eventEmitter.emit('bidiEvent', {
+  method: 'system.cpu',
+  params: {load: this.currentCpuLoad},
+})
+```
+
+Now, if the client has subscribed to the `system.cpu` event, it will be notified with the load
+whenever the driver emits it.
 
 ### Make itself aware of resources other concurrent drivers are using
 

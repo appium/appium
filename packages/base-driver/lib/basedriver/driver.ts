@@ -37,7 +37,7 @@ export class BaseDriver<
     Settings extends StringRecord = StringRecord,
     CreateResult = DefaultCreateSessionResult<C>,
     DeleteResult = DefaultDeleteSessionResult,
-    SessionData extends StringRecord = StringRecord
+    SessionData extends StringRecord = StringRecord,
   >
   extends DriverCore<C, Settings>
   implements Driver<C, CArgs, Settings, CreateResult, DeleteResult, SessionData>
@@ -55,7 +55,6 @@ export class BaseDriver<
     super(opts, shouldValidateCaps);
 
     this.caps = {} as DriverCaps<C>;
-
     this.cliArgs = {} as CArgs & ServerArgs;
   }
 
@@ -114,7 +113,7 @@ export class BaseDriver<
           // This is needed to prevent memory leaks
           this.eventEmitter.removeListener(
             ON_UNEXPECTED_SHUTDOWN_EVENT,
-            unexpectedShutdownListener
+            unexpectedShutdownListener,
           );
           unexpectedShutdownListener = null;
         }
@@ -147,7 +146,7 @@ export class BaseDriver<
   }
 
   async startUnexpectedShutdown(
-    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!')
+    err: Error = new errors.NoSuchDriverError('The driver was unexpectedly shut down!'),
   ) {
     this.eventEmitter.emit(ON_UNEXPECTED_SHUTDOWN_EVENT, err); // allow others to listen for this
     this.shutdownUnexpectedly = true;
@@ -170,7 +169,7 @@ export class BaseDriver<
     this.noCommandTimer = setTimeout(async () => {
       this.log.warn(
         `Shutting down because we waited ` +
-          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`
+          `${this.newCommandTimeoutMs / 1000.0} seconds for a command`,
       );
       const errorMessage =
         `New Command Timeout of ` +
@@ -234,23 +233,23 @@ export class BaseDriver<
     w3cCapabilities2?: W3CDriverCaps<C>,
     w3cCapabilities?: W3CDriverCaps<C>,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    driverData?: DriverData[]
+    driverData?: DriverData[],
   ): Promise<CreateResult> {
     if (this.sessionId !== null) {
       throw new errors.SessionNotCreatedError(
-        'Cannot create a new session while one is in progress'
+        'Cannot create a new session while one is in progress',
       );
     }
 
     this.log.debug();
 
     const originalCaps = _.cloneDeep(
-      [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps)
+      [w3cCapabilities, w3cCapabilities1, w3cCapabilities2].find(isW3cCaps),
     );
     if (!originalCaps) {
       throw new errors.SessionNotCreatedError(
         'Appium only supports W3C-style capability objects. ' +
-          'Your client is sending an older capabilities format. Please update your client library.'
+          'Your client is sending an older capabilities format. Please update your client library.',
       );
     }
 
@@ -258,7 +257,7 @@ export class BaseDriver<
 
     this.originalCaps = originalCaps;
     this.log.debug(
-      `Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`
+      `Creating session with W3C capabilities: ${JSON.stringify(originalCaps, null, 2)}`,
     );
 
     let caps: DriverCaps<C>;
@@ -266,7 +265,7 @@ export class BaseDriver<
       caps = processCapabilities(
         originalCaps,
         this._desiredCapConstraints,
-        this.shouldValidateCaps
+        this.shouldValidateCaps,
       ) as DriverCaps<C>;
       caps = fixCaps(caps, this._desiredCapConstraints, this.log) as DriverCaps<C>;
     } catch (e) {
@@ -287,7 +286,7 @@ export class BaseDriver<
       throw new Error(
         "The 'noReset' and 'fullReset' capabilities are mutually " +
           'exclusive and should not both be set to true. You ' +
-          "probably meant to just use 'fullReset' on its own"
+          "probably meant to just use 'fullReset' on its own",
       );
     }
     if (this.opts.noReset === true) {
@@ -354,9 +353,7 @@ export class BaseDriver<
   logExtraCaps(caps: Capabilities<C>) {
     const extraCaps = _.difference(_.keys(caps), _.keys(this._desiredCapConstraints));
     if (extraCaps.length) {
-      this.log.warn(
-        `The following provided capabilities were not recognized by this driver:`
-      );
+      this.log.warn(`The following provided capabilities were not recognized by this driver:`);
       for (const cap of extraCaps) {
         this.log.warn(`  ${cap}`);
       }
@@ -374,8 +371,8 @@ export class BaseDriver<
       this.log.errorAndThrow(
         new errors.SessionNotCreatedError(
           `The desiredCapabilities object was not valid for the ` +
-            `following reason(s): ${e.message}`
-        )
+            `following reason(s): ${e.message}`,
+        ),
       );
     }
 

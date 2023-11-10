@@ -73,7 +73,7 @@ describe('FakeDriver via HTTP', function () {
         suppressOutput: true,
         showInstalled: true,
       },
-      driverConfig
+      driverConfig,
     );
     if (!_.has(driverList, 'fake')) {
       await runExtensionCommand(
@@ -83,7 +83,7 @@ describe('FakeDriver via HTTP', function () {
           installType: INSTALL_TYPE_LOCAL,
           subcommand: DRIVER_TYPE,
         },
-        driverConfig
+        driverConfig,
       );
     }
 
@@ -123,7 +123,7 @@ describe('FakeDriver via HTTP', function () {
       // arg got through.
       (await axios.post(`http://${TEST_HOST}:${port}/fakedriverCliArgs`)).data.should.have.property(
         'appiumHome',
-        appiumHome
+        appiumHome,
       );
     });
   });
@@ -233,7 +233,7 @@ describe('FakeDriver via HTTP', function () {
         {
           'appium:newCommandTimeout': 0.25,
         },
-        caps
+        caps,
       );
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
@@ -249,7 +249,7 @@ describe('FakeDriver via HTTP', function () {
         {
           'appium:newCommandTimeout': 0.25,
         },
-        caps
+        caps,
       );
       let driver = await wdio({...wdOpts, capabilities: localCaps});
       should.exist(driver.sessionId);
@@ -506,7 +506,7 @@ describe('FakeDriver via HTTP', function () {
             description: 'Call a deprecated command',
             parameters: [],
             ref: '',
-          })
+          }),
         );
         driver.addCommand(
           'doubleClick',
@@ -515,7 +515,7 @@ describe('FakeDriver via HTTP', function () {
             description: 'Global double click',
             parameters: [],
             ref: '',
-          })
+          }),
         );
         await driver
           .executeScript('fake: getDeprecatedCommandsCalled', [])

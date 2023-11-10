@@ -159,12 +159,13 @@ class AppiumDriver extends DriverCore {
     // https://www.w3.org/TR/webdriver/#dfn-status
     const statusObj = this._isShuttingDown
       ? {
-        ready: false,
-        message: 'The server is shutting down',
-      } : {
-        ready: true,
-        message: 'The server is ready to accept new connections',
-      };
+          ready: false,
+          message: 'The server is shutting down',
+        }
+      : {
+          ready: true,
+          message: 'The server is ready to accept new connections',
+        };
     return {
       ...statusObj,
       build: _.clone(getBuildInfo()),
@@ -193,18 +194,18 @@ class AppiumDriver extends DriverCore {
     this.log.info(
       driverVersion
         ? `Appium v${APPIUM_VER} creating new ${driverName} (v${driverVersion}) session`
-        : `Appium v${APPIUM_VER} creating new ${driverName} session`
+        : `Appium v${APPIUM_VER} creating new ${driverName} session`,
     );
     this.log.info(`Checking BaseDriver versions for Appium and ${driverName}`);
     this.log.info(
       AppiumDriver.baseVersion
         ? `Appium's BaseDriver version is ${AppiumDriver.baseVersion}`
-        : `Could not determine Appium's BaseDriver version`
+        : `Could not determine Appium's BaseDriver version`,
     );
     this.log.info(
       driverBaseVersion
         ? `${driverName}'s BaseDriver version is ${driverBaseVersion}`
-        : `Could not determine ${driverName}'s BaseDriver version`
+        : `Could not determine ${driverName}'s BaseDriver version`,
     );
   }
 
@@ -280,7 +281,7 @@ class AppiumDriver extends DriverCore {
         jsonwpCaps,
         promoteAppiumOptions(/** @type {W3CAppiumDriverCaps} */ (w3cCapabilities)),
         this.desiredCapConstraints,
-        defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined
+        defaultCapabilities ? promoteAppiumOptionsForObject(defaultCapabilities) : undefined,
       );
 
       const {desiredCaps, processedJsonwpCapabilities, processedW3CCapabilities} =
@@ -324,7 +325,7 @@ class AppiumDriver extends DriverCore {
         this.log.info(
           `Applying relaxed security to '${InnerDriver.name}' as per ` +
             `server command line argument. All insecure features will be ` +
-            `enabled unless explicitly disabled by --deny-insecure`
+            `enabled unless explicitly disabled by --deny-insecure`,
         );
         driverInstance.relaxedSecurityEnabled = true;
       }
@@ -365,7 +366,7 @@ class AppiumDriver extends DriverCore {
       await pendingDriversGuard.acquire(AppiumDriver.name, () => {
         this.pendingDrivers[InnerDriver.name] = this.pendingDrivers[InnerDriver.name] || [];
         otherPendingDriversData = _.compact(
-          this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData)
+          this.pendingDrivers[InnerDriver.name].map((drv) => drv.driverData),
         );
         this.pendingDrivers[InnerDriver.name].push(driverInstance);
       });
@@ -375,7 +376,7 @@ class AppiumDriver extends DriverCore {
           processedJsonwpCapabilities,
           reqCaps,
           processedW3CCapabilities,
-          [...runningDriversData, ...otherPendingDriversData]
+          [...runningDriversData, ...otherPendingDriversData],
         );
         protocol = driverInstance.protocol;
         this.sessions[innerSessionId] = driverInstance;
@@ -389,7 +390,7 @@ class AppiumDriver extends DriverCore {
 
       this.log.info(
         `New ${InnerDriver.name} session created successfully, session ` +
-          `${innerSessionId} added to master session list`
+          `${innerSessionId} added to master session list`,
       );
 
       // set the New Command Timeout for the inner driver
@@ -399,13 +400,13 @@ class AppiumDriver extends DriverCore {
       if (driverInstance.isW3CProtocol() && !_.isEmpty(w3cSettings)) {
         this.log.info(
           `Applying the initial values to Appium settings parsed from W3C caps: ` +
-            JSON.stringify(w3cSettings)
+            JSON.stringify(w3cSettings),
         );
         await driverInstance.updateSettings(w3cSettings);
       } else if (driverInstance.isMjsonwpProtocol() && !_.isEmpty(jwpSettings)) {
         this.log.info(
           `Applying the initial values to Appium settings parsed from MJSONWP caps: ` +
-            JSON.stringify(jwpSettings)
+            JSON.stringify(jwpSettings),
         );
         await driverInstance.updateSettings(jwpSettings);
       }
@@ -435,13 +436,13 @@ class AppiumDriver extends DriverCore {
         for (const plugin of this.sessionPlugins[innerSessionId]) {
           if (_.isFunction(plugin.onUnexpectedShutdown)) {
             this.log.debug(
-              `Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`
+              `Plugin ${plugin.name} defines an unexpected shutdown handler; calling it now`,
             );
             try {
               plugin.onUnexpectedShutdown(driver, cause);
             } catch (e) {
               this.log.warn(
-                `Got an error when running plugin ${plugin.name} shutdown handler: ${e}`
+                `Got an error when running plugin ${plugin.name} shutdown handler: ${e}`,
               );
             }
           } else {
@@ -460,7 +461,7 @@ class AppiumDriver extends DriverCore {
     } else {
       this.log.warn(
         `Failed to attach the unexpected shutdown listener. ` +
-          `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`
+          `Is 'onUnexpectedShutdown' method available for '${driver.constructor.name}'?`,
       );
     }
   }
@@ -476,13 +477,13 @@ class AppiumDriver extends DriverCore {
     const data = _.compact(
       _.values(this.sessions)
         .filter((s) => s.constructor.name === InnerDriver.name)
-        .map((s) => s.driverData)
+        .map((s) => s.driverData),
     );
     for (const datum of data) {
       if (!datum) {
         throw new Error(
           `Problem getting session data for driver type ` +
-            `${InnerDriver.name}; does it implement 'get driverData'?`
+            `${InnerDriver.name}; does it implement 'get driverData'?`,
         );
       }
     }
@@ -503,7 +504,7 @@ class AppiumDriver extends DriverCore {
         const curConstructorName = this.sessions[sessionId].constructor.name;
         otherSessionsData = _.toPairs(this.sessions)
           .filter(
-            ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId
+            ([key, value]) => value.constructor.name === curConstructorName && key !== sessionId,
           )
           .map(([, value]) => value.driverData);
         const dstSession = this.sessions[sessionId];
@@ -545,7 +546,7 @@ class AppiumDriver extends DriverCore {
     this.log.debug(`Cleaning up ${util.pluralize('active session', sessionsCount, true)}`);
     const cleanupPromises = force
       ? _.values(this.sessions).map((drv) =>
-          drv.startUnexpectedShutdown(reason && new Error(reason))
+          drv.startUnexpectedShutdown(reason && new Error(reason)),
         )
       : _.keys(this.sessions).map((id) => this.deleteSession(id));
     for (const cleanupPromise of cleanupPromises) {
@@ -591,7 +592,7 @@ class AppiumDriver extends DriverCore {
     // to handle a given command, a plugin should either implement that command as a plugin
     // instance method or it should implement a generic 'handle' method
     return this.pluginsForSession(sessionId).filter(
-      (p) => _.isFunction(p[cmd]) || _.isFunction(p.handle)
+      (p) => _.isFunction(p[cmd]) || _.isFunction(p.handle),
     );
   }
 
@@ -667,7 +668,7 @@ class AppiumDriver extends DriverCore {
     // newCommandTimeout will be cleared. So we do it here as well.
     if (plugins.length && dstSession) {
       this.log.debug(
-        'Clearing new command timeout pre-emptively since plugin(s) will handle this command'
+        'Clearing new command timeout pre-emptively since plugin(s) will handle this command',
       );
       await dstSession.clearNewCommandTimeout();
     }
@@ -704,7 +705,7 @@ class AppiumDriver extends DriverCore {
         return await dstSession.proxyCommand(
           reqForProxy.originalUrl,
           reqForProxy.method,
-          reqForProxy.body
+          reqForProxy.body,
         );
       }
 
@@ -748,7 +749,7 @@ class AppiumDriver extends DriverCore {
     ) {
       this.log.debug(
         'Restarting new command timeout via umbrella driver since plugin did not ' +
-          'allow default handler to execute'
+          'allow default handler to execute',
       );
       await dstSession.startNewCommandTimeout();
     }
@@ -760,7 +761,7 @@ class AppiumDriver extends DriverCore {
       const sessionId = _.first(res.value);
       this.log.info(
         `Promoting ${this.sessionlessPlugins.length} sessionless plugins to be attached ` +
-          `to session ID ${sessionId}`
+          `to session ID ${sessionId}`,
       );
       this.sessionPlugins[sessionId] = this.sessionlessPlugins;
       this.sessionlessPlugins = [];
@@ -812,7 +813,7 @@ class AppiumDriver extends DriverCore {
       this.log.info(
         `Command '${cmd}' was *not* handled by the following behaviours or plugins, even ` +
           `though they were registered to handle it: ${JSON.stringify(didntHandle)}. The ` +
-          `command *was* handled by these: ${JSON.stringify(didHandle)}.`
+          `command *was* handled by these: ${JSON.stringify(didHandle)}.`,
       );
     }
   }
@@ -885,7 +886,7 @@ export class NoDriverProxyCommandError extends Error {
       `The default behavior for this command was to proxy, but the driver ` +
         `did not have the 'proxyCommand' method defined. To fully support ` +
         `plugins, drivers should have 'proxyCommand' set to a jwpProxy object's ` +
-        `'command()' method, in addition to the normal 'proxyReqRes'`
+        `'command()' method, in addition to the normal 'proxyReqRes'`,
     );
   }
 }

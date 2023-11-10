@@ -52,7 +52,7 @@ class AndroidToolCheck extends DoctorCheck {
     const sdkRoot = getSdkRootFromEnv();
     if (!sdkRoot) {
       return nok(
-        `${listOfTools} could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!`
+        `${listOfTools} could not be found because ANDROID_HOME is NOT set!`
       );
     }
 

@@ -55,7 +55,7 @@ export class FakeDriver extends BaseDriver {
 
   constructor(
     opts = /** @type {import('@appium/types').InitialOpts} */ ({}),
-    shouldValidateCaps = true
+    shouldValidateCaps = true,
   ) {
     super(opts, shouldValidateCaps);
     this.curContext = 'NATIVE_APP';
@@ -113,7 +113,7 @@ export class FakeDriver extends BaseDriver {
       if (d.isUnique) {
         throw new errors.SessionNotCreatedError(
           'Cannot start session; another ' +
-            'unique session is in progress that requires all resources'
+            'unique session is in progress that requires all resources',
         );
       }
     }

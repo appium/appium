@@ -30,7 +30,7 @@ export const KNOWN_PLUGINS = Object.freeze(
     'execute-driver': '@appium/execute-driver-plugin',
     'relaxed-caps': '@appium/relaxed-caps-plugin',
     'universal-xml': '@appium/universal-xml-plugin',
-  })
+  }),
 );
 
 // This is a map of driver names to npm packages representing those drivers.
@@ -46,7 +46,7 @@ export const KNOWN_DRIVERS = Object.freeze(
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
     chromium: 'appium-chromium-driver',
-  })
+  }),
 );
 
 /**

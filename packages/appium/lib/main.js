@@ -92,7 +92,7 @@ function logNonDefaultArgsWarning(args) {
 function logDefaultCapabilitiesWarning(caps) {
   logger.info(
     'Default capabilities, which will be added to each request ' +
-      'unless overridden by desired capabilities:'
+      'unless overridden by desired capabilities:',
   );
   inspect(caps);
 }
@@ -144,7 +144,7 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
       ...map,
       ...(klass.newMethodMap ?? {}),
     }),
-    {}
+    {},
   );
 }
 
@@ -173,12 +173,12 @@ async function prepareAppiumHome(name, appiumHome) {
     throw new Error(
       `The path '${appiumHome}' provided in the ${name} must point ` +
         `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
-        `Original error: ${err.message}`
+        `Original error: ${err.message}`,
     );
   }
   if (!stat.isDirectory()) {
     throw new Error(
-      `The path '${appiumHome}' provided in the ${name} must point to a valid folder`
+      `The path '${appiumHome}' provided in the ${name} must point to a valid folder`,
     );
   }
   try {
@@ -187,7 +187,7 @@ async function prepareAppiumHome(name, appiumHome) {
     throw new Error(
       `The folder path '${appiumHome}' provided in the ${name} must be ` +
         `writeable for the current user account '${os.userInfo().username}. ` +
-        `Original error: ${e.message}`
+        `Original error: ${e.message}`,
     );
   }
   return appiumHome;
@@ -250,7 +250,7 @@ async function init(args) {
     throw new Error(
       `Errors in config file ${configResult.filepath}:\n ${
         configResult.reason ?? configResult.errors
-      }`
+      }`,
     );
   }
 
@@ -274,23 +274,23 @@ async function init(args) {
 
     if (serverArgs.logFilters) {
       const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
-        serverArgs.logFilters
+        serverArgs.logFilters,
       );
       if (!_.isEmpty(issues)) {
         throw new Error(
           `The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
-            JSON.stringify(issues, null, 2)
+            JSON.stringify(issues, null, 2),
         );
       }
       if (_.isEmpty(rules)) {
         logger.warn(
-          `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`
+          `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
         );
       } else {
         logger.info(
           `Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${
             serverArgs.logFilters
-          }'`
+          }'`,
         );
       }
     }
@@ -298,7 +298,7 @@ async function init(args) {
     const appiumDriver = new AppiumDriver(
       /** @type {import('@appium/types').DriverOpts<import('./appium').AppiumDriverConstraints>} */ (
         serverArgs
-      )
+      ),
     );
     // set the config on the umbrella driver so it can match drivers to caps
     appiumDriver.driverConfig = driverConfig;
@@ -342,14 +342,12 @@ function logServerAddress(url) {
   const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
   const toLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
     const href = urlObj.href.replace(urlObj.hostname, iface.address);
-    return iface.internal
-      ? `${href} (only accessible from the same host)`
-      : href;
+    return iface.internal ? `${href} (only accessible from the same host)` : href;
   };
   logger.info(
     `You can provide the following ${interfaces.length === 1 ? 'URL' : 'URLs'} ` +
-    `in your client code to connect to this server:\n` +
-    interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n')
+      `in your client code to connect to this server:\n` +
+      interfaces.map((iface) => `\t${toLabel(iface)}`).join('\n'),
   );
 }
 
@@ -406,7 +404,7 @@ async function main(args) {
   } catch (err) {
     logger.error(
       `Could not configure Appium server. It's possible that a driver or plugin tried ` +
-        `to update the server and failed. Original error: ${err.message}`
+        `to update the server and failed. Original error: ${err.message}`,
     );
     logger.debug(err.stack);
     return process.exit(1);
@@ -416,7 +414,7 @@ async function main(args) {
     logger.warn(
       'You have enabled CORS requests from any host. Be careful not ' +
         'to visit sites which could maliciously try to start Appium ' +
-        'sessions on your machine'
+        'sessions on your machine',
     );
   }
   appiumDriver.server = server;
@@ -428,7 +426,7 @@ async function main(args) {
         parsedArgs.nodeconfig,
         parsedArgs.address,
         parsedArgs.port,
-        parsedArgs.basePath
+        parsedArgs.basePath,
       );
     }
   } catch (err) {
@@ -452,7 +450,9 @@ async function main(args) {
 
   const protocol = 'secure' in server && server.secure ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
-  logServerAddress(`${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`);
+  logServerAddress(
+    `${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`,
+  );
 
   driverConfig.print();
   pluginConfig.print([...pluginClasses.values()]);

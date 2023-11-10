@@ -53,7 +53,7 @@ export class NoSuchDriverError extends ProtocolError {
       message || 'A session is either terminated or not started',
       NoSuchDriverError.code(),
       NoSuchDriverError.w3cStatus(),
-      NoSuchDriverError.error()
+      NoSuchDriverError.error(),
     );
   }
 }
@@ -77,7 +77,7 @@ export class NoSuchElementError extends ProtocolError {
         'An element could not be located on the page using the given ' + 'search parameters.',
       NoSuchElementError.code(),
       NoSuchElementError.w3cStatus(),
-      NoSuchElementError.error()
+      NoSuchElementError.error(),
     );
   }
 }
@@ -103,7 +103,7 @@ export class NoSuchFrameError extends ProtocolError {
           'the frame could not be found.',
       NoSuchFrameError.code(),
       NoSuchFrameError.w3cStatus(),
-      NoSuchFrameError.error()
+      NoSuchFrameError.error(),
     );
   }
 }
@@ -130,7 +130,7 @@ export class UnknownCommandError extends ProtocolError {
           'resource.',
       UnknownCommandError.code(),
       UnknownCommandError.w3cStatus(),
-      UnknownCommandError.error()
+      UnknownCommandError.error(),
     );
   }
 }
@@ -156,7 +156,7 @@ export class StaleElementReferenceError extends ProtocolError {
           'longer attached to the DOM.',
       StaleElementReferenceError.code(),
       StaleElementReferenceError.w3cStatus(),
-      StaleElementReferenceError.error()
+      StaleElementReferenceError.error(),
     );
   }
 }
@@ -181,7 +181,7 @@ export class ElementNotVisibleError extends ProtocolError {
           'not visible on the page.',
       ElementNotVisibleError.code(),
       ElementNotVisibleError.w3cStatus(),
-      ElementNotVisibleError.error()
+      ElementNotVisibleError.error(),
     );
   }
 }
@@ -207,7 +207,7 @@ export class InvalidElementStateError extends ProtocolError {
           'in an invalid state (e.g. attempting to click a disabled element).',
       InvalidElementStateError.code(),
       InvalidElementStateError.w3cStatus(),
-      InvalidElementStateError.error()
+      InvalidElementStateError.error(),
     );
   }
 }
@@ -252,7 +252,7 @@ export class UnknownMethodError extends ProtocolError {
         'The requested command matched a known URL but did not match an method for that URL',
       UnknownMethodError.code(),
       UnknownMethodError.w3cStatus(),
-      UnknownMethodError.error()
+      UnknownMethodError.error(),
     );
   }
 }
@@ -275,7 +275,7 @@ export class UnsupportedOperationError extends ProtocolError {
       message || 'A server-side error occurred. Command cannot be supported.',
       UnsupportedOperationError.code(),
       UnsupportedOperationError.w3cStatus(),
-      UnsupportedOperationError.error()
+      UnsupportedOperationError.error(),
     );
   }
 }
@@ -298,7 +298,7 @@ export class ElementIsNotSelectableError extends ProtocolError {
       message || 'An attempt was made to select an element that cannot be selected.',
       ElementIsNotSelectableError.code(),
       ElementIsNotSelectableError.w3cStatus(),
-      ElementIsNotSelectableError.error()
+      ElementIsNotSelectableError.error(),
     );
   }
 }
@@ -323,7 +323,7 @@ export class ElementClickInterceptedError extends ProtocolError {
           'the events is obscuring the element that was requested clicked',
       ElementClickInterceptedError.code(),
       ElementClickInterceptedError.w3cStatus(),
-      ElementClickInterceptedError.error()
+      ElementClickInterceptedError.error(),
     );
   }
 }
@@ -347,7 +347,7 @@ export class ElementNotInteractableError extends ProtocolError {
         'A command could not be completed because the element is not pointer- or keyboard interactable',
       ElementNotInteractableError.code(),
       ElementNotInteractableError.w3cStatus(),
-      ElementNotInteractableError.error()
+      ElementNotInteractableError.error(),
     );
   }
 }
@@ -365,7 +365,7 @@ export class InsecureCertificateError extends ProtocolError {
         'Navigation caused the user agent to hit a certificate warning, which is usually the result of an expired or invalid TLS certificate',
       ElementIsNotSelectableError.code(),
       null,
-      InsecureCertificateError.error()
+      InsecureCertificateError.error(),
     );
   }
 }
@@ -388,7 +388,7 @@ export class JavaScriptError extends ProtocolError {
       message || 'An error occurred while executing user supplied JavaScript.',
       JavaScriptError.code(),
       JavaScriptError.w3cStatus(),
-      JavaScriptError.error()
+      JavaScriptError.error(),
     );
   }
 }
@@ -411,7 +411,7 @@ export class XPathLookupError extends ProtocolError {
       message || 'An error occurred while searching for an element by XPath.',
       XPathLookupError.code(),
       XPathLookupError.w3cStatus(),
-      XPathLookupError.error()
+      XPathLookupError.error(),
     );
   }
 }
@@ -434,7 +434,7 @@ export class TimeoutError extends ProtocolError {
       message || 'An operation did not complete before its timeout expired.',
       TimeoutError.code(),
       TimeoutError.w3cStatus(),
-      TimeoutError.error()
+      TimeoutError.error(),
     );
   }
 }
@@ -459,7 +459,7 @@ export class NoSuchWindowError extends ProtocolError {
           'because the window could not be found.',
       NoSuchWindowError.code(),
       NoSuchWindowError.w3cStatus(),
-      NoSuchWindowError.error()
+      NoSuchWindowError.error(),
     );
   }
 }
@@ -482,7 +482,7 @@ export class InvalidArgumentError extends ProtocolError {
       err || 'The arguments passed to the command are either invalid or malformed',
       InvalidArgumentError.code(),
       InvalidArgumentError.w3cStatus(),
-      InvalidArgumentError.error()
+      InvalidArgumentError.error(),
     );
   }
 }
@@ -507,7 +507,7 @@ export class InvalidCookieDomainError extends ProtocolError {
           'domain than the current page.',
       InvalidCookieDomainError.code(),
       InvalidCookieDomainError.w3cStatus(),
-      InvalidCookieDomainError.error()
+      InvalidCookieDomainError.error(),
     );
   }
 }
@@ -531,7 +531,7 @@ export class NoSuchCookieError extends ProtocolError {
         'No cookie matching the given path name was found amongst the associated cookies of the current browsing context’s active document',
       NoSuchCookieError.code(),
       NoSuchCookieError.w3cStatus(),
-      NoSuchCookieError.error()
+      NoSuchCookieError.error(),
     );
   }
 }
@@ -554,7 +554,7 @@ export class UnableToSetCookieError extends ProtocolError {
       err || "A request to set a cookie's value could not be satisfied.",
       UnableToSetCookieError.code(),
       UnableToSetCookieError.w3cStatus(),
-      UnableToSetCookieError.error()
+      UnableToSetCookieError.error(),
     );
   }
 }
@@ -577,7 +577,7 @@ export class UnexpectedAlertOpenError extends ProtocolError {
       message || 'A modal dialog was open, blocking this operation',
       UnexpectedAlertOpenError.code(),
       UnexpectedAlertOpenError.w3cStatus(),
-      UnexpectedAlertOpenError.error()
+      UnexpectedAlertOpenError.error(),
     );
   }
 }
@@ -601,7 +601,7 @@ export class NoAlertOpenError extends ProtocolError {
       message || 'An attempt was made to operate on a modal dialog when one ' + 'was not open.',
       NoAlertOpenError.code(),
       NoAlertOpenError.w3cStatus(),
-      NoAlertOpenError.error()
+      NoAlertOpenError.error(),
     );
   }
 }
@@ -626,7 +626,7 @@ export class ScriptTimeoutError extends ProtocolError {
       err || 'A script did not complete before its timeout expired.',
       ScriptTimeoutError.code(),
       ScriptTimeoutError.w3cStatus(),
-      ScriptTimeoutError.error()
+      ScriptTimeoutError.error(),
     );
   }
 }
@@ -649,7 +649,7 @@ export class InvalidElementCoordinatesError extends ProtocolError {
       err || 'The coordinates provided to an interactions operation are invalid.',
       InvalidElementCoordinatesError.code(),
       InvalidElementCoordinatesError.w3cStatus(),
-      InvalidElementCoordinatesError.error()
+      InvalidElementCoordinatesError.error(),
     );
   }
 }
@@ -674,7 +674,7 @@ export class IMENotAvailableError extends ProtocolError {
       message || 'IME was not available.',
       IMENotAvailableError.code(),
       IMENotAvailableError.w3cStatus(),
-      IMENotAvailableError.error()
+      IMENotAvailableError.error(),
     );
   }
 }
@@ -697,7 +697,7 @@ export class IMEEngineActivationFailedError extends ProtocolError {
       err || 'An IME engine could not be started.',
       IMEEngineActivationFailedError.code(),
       IMEEngineActivationFailedError.w3cStatus(),
-      IMEEngineActivationFailedError.error()
+      IMEEngineActivationFailedError.error(),
     );
   }
 }
@@ -720,7 +720,7 @@ export class InvalidSelectorError extends ProtocolError {
       err || 'Argument was an invalid selector (e.g. XPath/CSS).',
       InvalidSelectorError.code(),
       InvalidSelectorError.w3cStatus(),
-      InvalidSelectorError.error()
+      InvalidSelectorError.error(),
     );
   }
 }
@@ -745,7 +745,7 @@ export class SessionNotCreatedError extends ProtocolError {
       message,
       SessionNotCreatedError.code(),
       SessionNotCreatedError.w3cStatus(),
-      SessionNotCreatedError.error()
+      SessionNotCreatedError.error(),
     );
   }
 }
@@ -768,7 +768,7 @@ export class MoveTargetOutOfBoundsError extends ProtocolError {
       err || 'Target provided for a move action is out of bounds.',
       MoveTargetOutOfBoundsError.code(),
       MoveTargetOutOfBoundsError.w3cStatus(),
-      MoveTargetOutOfBoundsError.error()
+      MoveTargetOutOfBoundsError.error(),
     );
   }
 }
@@ -797,7 +797,7 @@ export class InvalidContextError extends ProtocolError {
   constructor(message) {
     super(
       message || 'That command could not be executed in the current context.',
-      InvalidContextError.code()
+      InvalidContextError.code(),
     );
   }
 }
@@ -838,24 +838,26 @@ export class UnableToCaptureScreen extends ProtocolError {
       err || 'A screen capture was made impossible',
       UnableToCaptureScreen.code(),
       UnableToCaptureScreen.w3cStatus(),
-      UnableToCaptureScreen.error()
+      UnableToCaptureScreen.error(),
     );
   }
 }
 
 function generateBadParametersMessage(requiredParams, actualParams) {
-  const toArray = (/** @type {any} */ x) => _.isArray(x) ? x : [];
+  const toArray = (/** @type {any} */ x) => (_.isArray(x) ? x : []);
 
   const requiredParamNames = toArray(requiredParams?.required);
   const actualParamNames = toArray(actualParams);
   const missingRequiredParamNames = _.difference(requiredParamNames, actualParamNames);
   /** @type {string[]} */
   const resultLines = [];
-  resultLines.push(_.isEmpty(missingRequiredParamNames)
-    // This should not happen
-    ? 'Some of the provided parameters are not known'
-    : (`The following required parameter${missingRequiredParamNames.length === 1 ? ' is ' : 's are '}`
-      + `missing: ${JSON.stringify(missingRequiredParamNames)}`)
+  resultLines.push(
+    _.isEmpty(missingRequiredParamNames)
+      ? // This should not happen
+        'Some of the provided parameters are not known'
+      : `The following required parameter${
+          missingRequiredParamNames.length === 1 ? ' is ' : 's are '
+        }` + `missing: ${JSON.stringify(missingRequiredParamNames)}`,
   );
   if (!_.isEmpty(requiredParamNames)) {
     resultLines.push(`Known required parameters are: ${JSON.stringify(requiredParamNames)}`);
@@ -865,7 +867,9 @@ function generateBadParametersMessage(requiredParams, actualParams) {
     resultLines.push(`Known optional parameters are: ${JSON.stringify(optionalParamNames)}`);
   }
   resultLines.push(
-    `You have provided${_.isEmpty(actualParamNames) ? ' none' : (': ' + JSON.stringify(actualParams))}`
+    `You have provided${
+      _.isEmpty(actualParamNames) ? ' none' : ': ' + JSON.stringify(actualParams)
+    }`,
   );
   return resultLines.join('\n');
 }
@@ -876,9 +880,10 @@ export class BadParametersError extends ES6Error {
     return 'invalid argument';
   }
   constructor(requiredParams, actualParams, errMessage) {
-    super(errMessage
-      ? `Parameters were incorrect. You sent ${JSON.stringify(actualParams)}, ${errMessage}`
-      : generateBadParametersMessage(requiredParams, actualParams)
+    super(
+      errMessage
+        ? `Parameters were incorrect. You sent ${JSON.stringify(actualParams)}, ${errMessage}`
+        : generateBadParametersMessage(requiredParams, actualParams),
     );
     this.w3cStatus = HTTPStatusCodes.BAD_REQUEST;
   }
@@ -928,7 +933,7 @@ export class ProxyRequestError extends ES6Error {
       return errorFromW3CJsonCode(
         this.w3c.error,
         this.w3c.message || this.message,
-        this.w3c.stacktrace
+        this.w3c.stacktrace,
       );
     }
     return new UnknownError(this.message);

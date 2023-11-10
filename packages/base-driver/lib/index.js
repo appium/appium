@@ -11,11 +11,11 @@ export {DeviceSettings} from './basedriver/device-settings';
 
 export {BaseDriver};
 export default BaseDriver;
+export {MAX_LOG_BODY_LENGTH, DEFAULT_BASE_PATH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants';
 
 // MJSONWP exports
 export * from './protocol';
 export {errorFromMJSONWPStatusCode as errorFromCode} from './protocol';
-export {DEFAULT_BASE_PATH, PROTOCOLS, W3C_ELEMENT_KEY} from './constants';
 
 // Express exports
 export {STATIC_DIR} from './express/static';

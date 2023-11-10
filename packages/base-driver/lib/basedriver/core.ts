@@ -14,15 +14,17 @@ import type {
   Protocol,
   RouteMatcher,
   StringRecord,
+  BidiMethodDef,
 } from '@appium/types';
 import AsyncLock from 'async-lock';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import os from 'node:os';
-import {DEFAULT_BASE_PATH, PROTOCOLS} from '../constants';
+import {DEFAULT_BASE_PATH, PROTOCOLS, MAX_LOG_BODY_LENGTH} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
 import helpers, {BASEDRIVER_VER} from './helpers';
+import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
@@ -99,6 +101,10 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   protocol?: Protocol;
 
+  bidiEventSubs: Record<string, string[]>;
+
+  doesSupportBidi: boolean;
+
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this as Core<C>));
 
@@ -132,6 +138,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     this.shutdownUnexpectedly = false;
     this.commandsQueueGuard = new AsyncLock();
     this.settings = new DeviceSettings();
+    this.bidiEventSubs = {};
+    this.doesSupportBidi = false;
   }
 
   get log() {
@@ -293,7 +301,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
         `Potentially insecure feature '${name}' has not been ` +
           `enabled. If you want to enable this feature and accept ` +
           `the security ramifications, please do so by following ` +
-          `the documented instructions at http://appium.io/docs/en/2.0/guides/security/`
+          `the documented instructions at http://appium.io/docs/en/2.0/guides/security/`,
       );
     }
   }
@@ -308,9 +316,21 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
     if (!_.includes(validStrategies, strategy)) {
       throw new errors.InvalidSelectorError(
-        `Locator Strategy '${strategy}' is not supported for this session`
+        `Locator Strategy '${strategy}' is not supported for this session`,
       );
     }
+  }
+
+  /**
+   * If this driver has requested proxying of bidi connections to an upstream bidi endpoint, this
+   * method should be overridden to return the URL of that websocket, to indicate that bidi
+   * proxying is enabled. Otherwise, a null return will indicate that bidi proxying should not be
+   * active and bidi commands will be handled by this driver.
+   *
+   * @returns {string | null}
+   */
+  get bidiProxyUrl(): string | null {
+    return null;
   }
 
   proxyActive(sessionId: string): boolean {
@@ -375,5 +395,61 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
       clearTimeout(this.noCommandTimer);
       this.noCommandTimer = null;
     }
+  }
+
+  async executeBidiCommand(bidiCmd: string, bidiParams: StringRecord): Promise<any> {
+    const [moduleName, methodName] = bidiCmd.split('.');
+
+    // if we don't get a valid format for bidi command name, reject
+    if (!moduleName || !methodName) {
+      throw new errors.UnknownCommandError(
+        `Did not receive a valid BiDi module and method name ` +
+          `of the form moduleName.methodName. Instead received ` +
+          `'${moduleName}.${methodName}'`,
+      );
+    }
+
+    // if the command module isn't part of our spec, reject
+    if (!BIDI_COMMANDS[moduleName]) {
+      throw new errors.UnknownCommandError();
+    }
+
+    const {command, params} = BIDI_COMMANDS[moduleName][methodName] as BidiMethodDef;
+    // if the command method isn't part of our spec, also reject
+    if (!command) {
+      throw new errors.UnknownCommandError();
+    }
+
+    // If the driver doesn't have this command, it must not be implemented
+    if (!this[command]) {
+      throw new errors.NotYetImplementedError();
+    }
+
+    // TODO improve param parsing and error messages along the lines of what we have in the http
+    // handlers
+    const args: any[] = [];
+    if (params?.required?.length) {
+      for (const requiredParam of params.required) {
+        if (_.isUndefined(bidiParams[requiredParam])) {
+          throw new errors.InvalidArgumentError(
+            `The ${requiredParam} parameter was required but you omitted it`,
+          );
+        }
+        args.push(bidiParams[requiredParam]);
+      }
+    }
+    if (params?.optional?.length) {
+      for (const optionalParam of params.optional) {
+        args.push(bidiParams[optionalParam]);
+      }
+    }
+    const logParams = _.truncate(JSON.stringify(bidiParams), {length: MAX_LOG_BODY_LENGTH});
+    this.log.debug(
+      `Executing bidi command '${bidiCmd}' with params ${logParams} by passing to driver ` +
+        `method '${command}'`,
+    );
+    const res = (await this[command](...args)) ?? null;
+    this.log.debug(`Responding to bidi command '${bidiCmd}' with ${JSON.stringify(res)}`);
+    return res;
   }
 }

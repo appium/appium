@@ -10,6 +10,9 @@ const FAKE_DRIVER_CONSTRAINTS = /** @type {const} */ ({
   uniqueApp: {
     isBoolean: true,
   },
+  runClock: {
+    isBoolean: true,
+  },
 });
 
 /**
@@ -53,6 +56,12 @@ export class FakeDriver extends BaseDriver {
   /** @type {Record<string,import('./fake-element').FakeElement>} */
   elMap;
 
+  /** @type {string|null} */
+  _bidiProxyUrl;
+
+  /** @type {boolean} */
+  _clockRunning = false;
+
   constructor(
     opts = /** @type {import('@appium/types').InitialOpts} */ ({}),
     shouldValidateCaps = true,
@@ -67,6 +76,8 @@ export class FakeDriver extends BaseDriver {
     this.shook = false;
     this.appModel = new FakeApp();
     this.desiredCapConstraints = FAKE_DRIVER_CONSTRAINTS;
+    this.doesSupportBidi = true;
+    this._bidiProxyUrl = null;
   }
 
   proxyActive() {
@@ -75,6 +86,10 @@ export class FakeDriver extends BaseDriver {
 
   canProxy() {
     return true;
+  }
+
+  get bidiProxyUrl() {
+    return this._bidiProxyUrl;
   }
 
   proxyReqRes(req, res) {
@@ -123,7 +138,19 @@ export class FakeDriver extends BaseDriver {
     );
     this.caps = caps;
     await this.appModel.loadApp(caps.app);
+    if (this.caps.runClock) {
+      this.startClock();
+    }
     return [sessionId, caps];
+  }
+
+  /**
+   * @param {string} [sessionId]
+   * @returns {Promise<void>}
+   */
+  async deleteSession(sessionId) {
+    this.stopClock();
+    return await super.deleteSession(sessionId);
   }
 
   get driverData() {
@@ -135,6 +162,21 @@ export class FakeDriver extends BaseDriver {
   async getFakeThing() {
     await B.delay(1);
     return this.fakeThing;
+  }
+
+  async startClock() {
+    this._clockRunning = true;
+    while (this._clockRunning) {
+      await B.delay(500);
+      this.eventEmitter.emit('bidiEvent', {
+        method: 'clock.currentTime',
+        params: {time: Date.now()},
+      });
+    }
+  }
+
+  stopClock() {
+    this._clockRunning = false;
   }
 
   /**

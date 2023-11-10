@@ -23,6 +23,9 @@ interface FakeDriverGeneralMixin {
   execute(script: string, args: any[]): Promise<any>;
   fakeAddition(a: number, b: number, c?: number): Promise<number>;
   getLog(type: string): Promise<any>;
+  getUrl(): Promise<string>;
+
+  bidiNavigate(context: string, url: string): Promise<void>;
 }
 
 declare module '../driver' {
@@ -110,6 +113,14 @@ const GeneralMixin: FakeDriverGeneralMixin = {
    */
   async fakeAddition(this: FakeDriver, num1: number, num2: number, num3 = 0) {
     return num1 + num2 + (num3 ?? 0);
+  },
+
+  async getUrl() {
+    return this.url;
+  },
+
+  async bidiNavigate(context: string, url: string) {
+    this.url = url;
   },
 };
 

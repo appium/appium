@@ -78,3 +78,14 @@ export const CURRENT_SCHEMA_REV = 4;
  * memory usage, perf, and/or log output, and higher limits may be difficult to scan.
  */
 export const LONG_STACKTRACE_LIMIT = 100;
+
+/**
+ * Where should the bidi websocket handler live on the server?
+ */
+export const BIDI_BASE_PATH = '/bidi';
+
+/**
+ * The name of the event for drivers to emit when they want to send bidi events to a client over
+ * a bidi socket
+ */
+export const BIDI_EVENT_NAME = 'bidiEvent';

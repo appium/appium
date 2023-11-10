@@ -29,6 +29,8 @@ build/
 .idea
 *DerivedData
 __pycache__
+certificate.cert
+certificate.key
 
 # csharp
 *.pyc

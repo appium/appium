@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import {WebSocketServer} from 'ws';
 import {init as logsinkInit} from './logsink'; // this import needs to come first since it sets up global npmlog
 import logger from './logger'; // logger needs to remain second
 import {
@@ -373,8 +374,13 @@ async function main(args) {
     serverOpts.keepAliveTimeout = parsedArgs.keepAliveTimeout * 1000;
   }
   let server;
+  const bidiServer = new WebSocketServer({noServer: true});
+  bidiServer.on('connection', appiumDriver.onBidiConnection.bind(appiumDriver));
+  bidiServer.on('error', appiumDriver.onBidiServerError.bind(appiumDriver));
   try {
     server = await baseServer(serverOpts);
+    server.addWebSocketHandler('/bidi', bidiServer);
+    server.addWebSocketHandler('/bidi/:sessionId', bidiServer);
   } catch (err) {
     logger.error(
       `Could not configure Appium server. It's possible that a driver or plugin tried ` +

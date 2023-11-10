@@ -38,14 +38,30 @@ export async function loadExtensions(appiumHome) {
  * @returns {PluginNameMap} Mapping of PluginClass to name
  */
 export function getActivePlugins(pluginConfig, usePlugins = []) {
+  /** @type {string[]} */
+  let filteredPluginNames = [];
+  if (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS) {
+    filteredPluginNames = _.keys(pluginConfig.installedExtensions);
+  } else {
+    // It is important to load plugins in the same order that was used while enumerating them
+    for (const pluginName of usePlugins) {
+      if (pluginName in pluginConfig.installedExtensions) {
+        filteredPluginNames.push(pluginName);
+      } else if (pluginName === USE_ALL_PLUGINS) {
+        throw new Error(
+          `The reserved plugin name '${pluginName}' cannot be combined with other names.`
+        );
+      } else {
+        throw new Error(
+          `Could not load the plugin '${pluginName}' because it is not installed. ` +
+          `Only the following plugins are available: ${_.keys(pluginConfig.installedExtensions)}`
+        );
+      }
+    }
+  }
   return new Map(
     _.compact(
-      Object.keys(pluginConfig.installedExtensions)
-        .filter(
-          (pluginName) =>
-            _.includes(usePlugins, pluginName) ||
-            (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS)
-        )
+      filteredPluginNames
         .map((pluginName) => {
           try {
             log.info(`Attempting to load plugin ${pluginName}...`);

@@ -107,55 +107,23 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   });
 
   describe('without plugin registered', function () {
-    /** @type {AppiumServer} */
-    let server;
-
-    before(async function () {
+    it('should reject server creation if plugin is not activated', async function () {
       const args = {
         appiumHome,
         port,
         address: TEST_HOST,
         usePlugins: ['other1', 'other2'],
       };
-      server = /** @type {AppiumServer} */ (await appiumServer(args));
+      await appiumServer(args).should.eventually.be.rejected;
     });
-
-    after(async function () {
-      if (server) {
-        await server.close();
-      }
-    });
-
-    it('should not update the server if plugin is not activated', async function () {
-      await axios.post(`http://${TEST_HOST}:${port}/fake`).should.eventually.be.rejectedWith(/404/);
-    });
-    it('should not update method map if plugin is not activated', async function () {
-      const driver = await wdio(wdOpts);
-      const {sessionId} = driver;
-      try {
-        await axios
-          .post(`${testServerBaseSessionUrl}/${sessionId}/fake_data`, {
-            data: {fake: 'data'},
-          })
-          .should.eventually.be.rejectedWith(/404/);
-      } finally {
-        await driver.deleteSession();
-      }
-    });
-    it('should not handle commands if plugin is not activated', async function () {
-      const driver = await wdio(wdOpts);
-      const {sessionId} = driver;
-      try {
-        const el = (
-          await axios.post(`${testServerBaseSessionUrl}/${sessionId}/element`, {
-            using: 'xpath',
-            value: '//MockWebView',
-          })
-        ).data.value;
-        el.should.not.have.property('fake');
-      } finally {
-        await driver.deleteSession();
-      }
+    it('should reject server creation if reserved plugin name is provided with other names', async function () {
+      const args = {
+        appiumHome,
+        port,
+        address: TEST_HOST,
+        usePlugins: ['fake', 'all'],
+      };
+      await appiumServer(args).should.eventually.be.rejected;
     });
   });
 
@@ -167,7 +135,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
       let usePlugins;
       before(async function () {
         // then start server if we need to
-        usePlugins = registrationType === 'explicit' ? ['fake', 'p2', 'p3'] : ['all'];
+        usePlugins = registrationType === 'explicit' ? ['fake'] : ['all'];
         const args = {
           appiumHome,
           port,
@@ -358,7 +326,7 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
     /** @type {AppiumServer} */
     let server;
 
-    /** @type {import('webdriverio').Browser<'async'>} */
+    /** @type {import('webdriverio').Browser} */
     let driver;
 
     before(async function () {

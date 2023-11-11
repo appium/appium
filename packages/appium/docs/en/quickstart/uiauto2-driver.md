@@ -23,7 +23,7 @@ According to the driver, in addition to a working Appium server, we also need to
 - Set an environment variable pointing to the directory on disk where the Android tools are
 installed. You can usually find the path to this directory in the Android Studio SDK manager. It
 will contain the `platform-tools` and other directories. We need to define and persist the
-environment variable as `ANDROID_HOME` (or alternatively `ANDROID_SDK_ROOT`).
+environment variable as `ANDROID_HOME`.
 - Use the Android SDK manager to download whichever Android platform we want to automate (for
 example, API level 30)
 - Install the Java JDK (for the most recent Android API levels, JDK 9 is required, otherwise JDK

@@ -92,7 +92,7 @@ describe('android', function () {
         (await check.diagnose()).should.deep.equal({
           ok: false,
           optional: false,
-          message: `adb, emulator, ${apkAnalyzerFilename} could not be found because ANDROID_HOME or ANDROID_SDK_ROOT is NOT set!`,
+          message: `adb, emulator, ${apkAnalyzerFilename} could not be found because ANDROID_HOME is NOT set!`,
         });
       });
       it('diagnose - failure - path not valid', async function () {

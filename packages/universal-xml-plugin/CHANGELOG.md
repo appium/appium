@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.15](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.14...@appium/universal-xml-plugin@1.0.15) (2023-11-14)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([5ae8df3](https://github.com/appium/appium-plugins/commit/5ae8df3c36c7f03fbf3420087b532086f6742348))
+
+
+
 ## [1.0.14](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.13...@appium/universal-xml-plugin@1.0.14) (2023-10-19)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.7](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.6...@appium/images-plugin@2.1.7) (2023-11-14)
+
+
+### Bug Fixes
+
+* **images-plugin:** Prevent repeatable template modification ([#19334](https://github.com/appium/appium/issues/19334)) ([63a0b05](https://github.com/appium/appium/commit/63a0b05e1b99d8879ac928ca91111d3c62745133))
+
+
+
 ## [2.1.6](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.5...@appium/images-plugin@2.1.6) (2023-10-19)
 
 **Note:** Version bump only for package @appium/images-plugin

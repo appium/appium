@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.2](https://github.com/appium/appium/compare/@appium/schema@0.4.1...@appium/schema@0.4.2) (2023-11-14)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([5ae8df3](https://github.com/appium/appium/commit/5ae8df3c36c7f03fbf3420087b532086f6742348))
+
+
+
 ## [0.4.1](https://github.com/appium/appium/compare/@appium/schema@0.4.0...@appium/schema@0.4.1) (2023-10-19)
 
 

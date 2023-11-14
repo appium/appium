@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.24](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.23...@appium/plugin-test-support@0.3.24) (2023-11-14)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.0.57 ([1fbd503](https://github.com/appium/appium/commit/1fbd503a66b965a9b32bbb6702062861a8480333))
+* **support:** update dependency teen_process to v2.0.63 ([fa57192](https://github.com/appium/appium/commit/fa571925b7ac980cc99c8d23f659420eacd8546c))
+* **support:** update dependency teen_process to v2.0.64 ([332bb59](https://github.com/appium/appium/commit/332bb59ee3fdd14c03f6b3c4fd6587a30319d568))
+* **support:** update dependency teen_process to v2.0.66 ([3205b5d](https://github.com/appium/appium/commit/3205b5d06f073f1e5c7735c6e36ad08fdf091182))
+* **support:** update dependency teen_process to v2.0.67 ([3b5ae2a](https://github.com/appium/appium/commit/3b5ae2ab17c74c9890b53c081aec146152f11c7a))
+* **support:** update dependency teen_process to v2.0.73 ([8e453be](https://github.com/appium/appium/commit/8e453bed3f440c1dcf82f016f7d4431365b9cdff))
+* **support:** update dependency teen_process to v2.0.75 ([fbb6fd9](https://github.com/appium/appium/commit/fbb6fd9a2780eb00c15584abeaf644a1fcdecb4d))
+* **support:** update teen_process-related packages ([84d96db](https://github.com/appium/appium/commit/84d96dbae45dfe56218d32330f8ff2d26b750fb7))
+* **support:** update teen_process-related packages ([3d0b97c](https://github.com/appium/appium/commit/3d0b97cae76c616da0aea5b92cebcd38d59263b7))
+
+
+
 ## [0.3.23](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.22...@appium/plugin-test-support@0.3.23) (2023-10-19)
 
 

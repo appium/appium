@@ -2,6 +2,8 @@ name: Build Docs
 
 on:
   pull_request:
+    branches:
+      - master
     paths:
       - '**/typedoc.json'
       - '**/tsconfig*.json'
@@ -16,6 +18,8 @@ on:
       - '!**/test/**'
       - '!**/sample-code/**'
   push:
+    branches:
+      - master
     paths:
       - '**/typedoc.json'
       - '**/tsconfig*.json'

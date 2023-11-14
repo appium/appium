@@ -1,11 +1,15 @@
 name: Validate Renovate Configs
 on:
   push:
+    branches:
+      - master
     paths:
       - '.github/workflows/renovate.yml' # this file
       - '.renovaterc.json'
       - 'renovate/default.json'
   pull_request:
+    branches:
+      - master
     paths:
       - '.github/workflows/renovate.yml' # this file
       - '.renovaterc.json'

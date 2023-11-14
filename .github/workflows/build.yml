@@ -1,6 +1,8 @@
 name: Appium Build
 on:
   push:
+    branches:
+      - master
     # this list of paths could potentially impact the build
     paths:
       - '**/tsconfig*.json'
@@ -20,6 +22,8 @@ on:
       - '!**/sample-code/**'
       - '!packages/*/docs/**'
   pull_request:
+    branches:
+      - master
     paths:
       - '**/tsconfig*.json'
       - 'packages/base-driver/static/**/*'

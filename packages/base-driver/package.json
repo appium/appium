@@ -82,9 +82,6 @@
     "access": "public"
   },
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
-  "typedoc": {
-    "entryPoint": "./lib/index.js"
-  },
   "tsd": {
     "directory": "test/types"
   }

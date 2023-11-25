@@ -43,15 +43,6 @@
     "!build/tsconfig.tsbuildinfo"
   ],
   "scripts": {
-    "build:docs": "node docs/scripts/build-docs.js",
-    "build:docs:preview": "cross-env APPIUM_DOCS_PREVIEW=1 npm run build:docs",
-    "build:docs:assets": "node docs/scripts/copy-assets.js",
-    "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
-    "build:docs:reference": "node docs/scripts/build-reference.js",
-    "dev:docs": "npm run build:docs:assets && npm run dev:docs:en",
-    "dev:docs:en": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-en.yml",
-    "dev:docs:ja": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-ja.yml",
-    "dev:docs:zh": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-zh.yml",
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",
@@ -62,7 +53,6 @@
   "dependencies": {
     "@appium/base-driver": "^9.4.2",
     "@appium/base-plugin": "^2.2.23",
-    "@appium/docutils": "^0.4.12",
     "@appium/schema": "^0.4.2",
     "@appium/support": "^4.1.9",
     "@appium/types": "^0.14.2",
@@ -103,8 +93,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "3fa73a1d1a95e3868fbceb005f8b1deb4ac53eaf",
-  "typedoc": {
-    "entryPoint": "./lib/main.js"
-  }
+  "gitHead": "3fa73a1d1a95e3868fbceb005f8b1deb4ac53eaf"
 }

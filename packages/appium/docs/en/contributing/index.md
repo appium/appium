@@ -100,22 +100,3 @@ Run via:
 ```sh { name=test-slow }
 npm run test:slow
 ```
-
-### Deploy Docs Locally
-
-Our documentation system uses [MKDocs](https://www.mkdocs.org/) and therefor requires [Python](https://www.python.org/) to be installed on your system. You can run the docs by:
-
-```sh
-# installing needed Python dependencies
-pip install -r packages/docutils/requirements.txt
-# build the project
-npm run build
-# run dev server
-npm run dev:docs
-```
-
-You should be able to view the page at `http://127.0.0.1:8000/docs/en`:
-
-```sh
-open http://127.0.0.1:8000/docs/en
-```

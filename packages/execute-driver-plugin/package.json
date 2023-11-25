@@ -59,8 +59,5 @@
     "pluginName": "execute-driver",
     "mainClass": "ExecuteDriverPlugin"
   },
-  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02",
-  "typedoc": {
-    "entryPoint": "./lib/plugin.js"
-  }
+  "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

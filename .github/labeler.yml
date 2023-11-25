@@ -18,7 +18,7 @@ labels:
     matcher:
       commits: '^docs.*?:'
       title: '^docs.*?:'
-      files: ['packages/docutils/**', 'packages/appium/docs/**', '**/*.md']
+      files: ['packages/appium/docs/**', '**/*.md']
 
   - label: 'chore'
     sync: true
@@ -67,11 +67,6 @@ labels:
     sync: true
     matcher:
       files: ['packages/doctor/**']
-
-  - label: '@appium/docutils'
-    sync: true
-    matcher:
-      files: ['packages/docutils/**']
 
   - label: '@appium/driver-test-support'
     sync: true
@@ -133,11 +128,6 @@ labels:
     matcher:
       files: ['packages/tsconfig/**']
 
-  - label: '@appium/typedoc-plugin-appium'
-    sync: true
-    matcher:
-      files: ['packages/typedoc-plugin-appium/**']
-
   - label: '@appium/types'
     sync: true
     matcher:
@@ -147,7 +137,7 @@ labels:
     sync: true
     matcher:
       files: ['packages/universal-xml-plugin/**']
-  
+
   - label: '@appium/strongbox'
     sync: true
     matcher:

@@ -25,7 +25,6 @@
         "./test/setup.js",
         "./**/scripts/**/*.js",
         "./packages/*/index.js",
-        "./packages/docutils/bin/appium-docs.js"
       ],
       "rules": {
         "@typescript-eslint/no-var-requires": "off"

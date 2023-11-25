@@ -49,8 +49,6 @@ targets:
       path: ./packages/relaxed-caps-plugin
     - type: npm
       path: ./packages/fake-plugin
-    - type: npm
-      path: ./packages/docutils
 
 revision:
   branch: master

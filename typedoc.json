@@ -9,7 +9,6 @@
     "./packages/types",
     "./packages/base-plugin",
     "./packages/fake-driver",
-    "./packages/typedoc-plugin-appium",
     "./packages/universal-xml-plugin",
     "./packages/relaxed-caps-plugin",
     "./packages/images-plugin",

@@ -63,9 +63,6 @@
       "path": "packages/fake-driver"
     },
     {
-      "path": "packages/typedoc-plugin-appium"
-    },
-    {
       "path": "packages/doctor"
     },
     {

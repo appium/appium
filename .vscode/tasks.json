@@ -14,14 +14,6 @@
       "label": "npm: dev",
       "detail": "npm run dev",
       "isBackground": true
-    },
-    {
-      "type": "npm",
-      "script": "typedoc",
-      "problemMatcher": [],
-      "label": "npm: typedoc",
-      "detail": "typedoc --logLevel Verbose",
-      "group": "build"
     }
   ]
 }

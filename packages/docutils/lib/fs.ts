@@ -4,28 +4,18 @@
  */
 
 import {fs} from '@appium/support';
-import findUp from 'find-up';
 import * as JSON5 from 'json5';
 import _ from 'lodash';
 import path from 'node:path';
 import _pkgDir from 'pkg-dir';
 import readPkg, {NormalizedPackageJson, PackageJson} from 'read-pkg';
 import {JsonValue} from 'type-fest';
-import {Application, TypeDocReader} from 'typedoc';
 import YAML from 'yaml';
-import {
-  NAME_MIKE,
-  NAME_MKDOCS_YML,
-  NAME_NPM,
-  NAME_PACKAGE_JSON,
-  NAME_PYTHON,
-  NAME_TYPEDOC,
-  NAME_TYPEDOC_JSON,
-} from './constants';
+import {NAME_MIKE, NAME_MKDOCS_YML, NAME_NPM, NAME_PACKAGE_JSON, NAME_PYTHON} from './constants';
 import {DocutilsError} from './error';
 import {getLogger} from './logger';
 import {MkDocsYml} from './model';
-import { exec } from 'teen_process';
+import {exec} from 'teen_process';
 
 const log = getLogger('fs');
 
@@ -44,7 +34,7 @@ export const findPkgDir = _.memoize(_pkgDir);
 export const stringifyYaml: (value: JsonValue) => string = _.partialRight(
   YAML.stringify,
   {indent: 2},
-  undefined
+  undefined,
 );
 
 /**
@@ -65,17 +55,17 @@ export const stringifyJson5: (value: JsonValue) => string = _.partialRight(JSON5
 export const stringifyJson: (value: JsonValue) => string = _.partialRight(
   JSON.stringify,
   2,
-  undefined
+  undefined,
 );
 
 /**
  * Reads a YAML file, parses it and caches the result
  */
-export const readYaml = _.memoize(async (filepath: string) =>
+const readYaml = _.memoize(async (filepath: string) =>
   YAML.parse(await fs.readFile(filepath, 'utf8'), {
     prettyErrors: false,
     logLevel: 'silent',
-  })
+  }),
 );
 
 /**
@@ -87,7 +77,7 @@ export const readYaml = _.memoize(async (filepath: string) =>
  */
 export async function findInPkgDir(
   filename: string,
-  cwd = process.cwd()
+  cwd = process.cwd(),
 ): Promise<string | undefined> {
   const pkgDir = await findPkgDir(cwd);
   if (!pkgDir) {
@@ -95,19 +85,6 @@ export async function findInPkgDir(
   }
   return path.join(pkgDir, filename);
 }
-
-/**
- * Finds a `typedoc.json`, expected to be a sibling of `package.json`
- *
- * Caches the result.
- * @param cwd - Current working directory
- * @returns Path to `typedoc.json`
- */
-export const findTypeDocJsonPath = _.memoize(async (cwd = process.cwd()) => {
-  const filepath = await findUp(NAME_TYPEDOC_JSON, {cwd, type: 'file'});
-  log.debug('Found `typedoc.json` at %s', filepath);
-  return filepath;
-});
 
 /**
  * Finds an `mkdocs.yml`, expected to be a sibling of `package.json`
@@ -126,20 +103,20 @@ export const findMkDocsYml = _.memoize(_.partial(findInPkgDir, NAME_MKDOCS_YML))
  */
 async function _readPkgJson(
   cwd: string,
-  normalize: true
+  normalize: true,
 ): Promise<{pkgPath: string; pkg: NormalizedPackageJson}>;
 async function _readPkgJson(
   cwd: string,
-  normalize?: false
+  normalize?: false,
 ): Promise<{pkgPath: string; pkg: PackageJson}>;
 async function _readPkgJson(
   cwd: string,
-  normalize?: boolean
+  normalize?: boolean,
 ): Promise<{pkgPath: string; pkg: PackageJson | NormalizedPackageJson}> {
   const pkgDir = await findPkgDir(cwd);
   if (!pkgDir) {
     throw new DocutilsError(
-      `Could not find a ${NAME_PACKAGE_JSON} near ${cwd}; please create it before using this utility`
+      `Could not find a ${NAME_PACKAGE_JSON} near ${cwd}; please create it before using this utility`,
     );
   }
   const pkgPath = path.join(pkgDir, NAME_PACKAGE_JSON);
@@ -159,26 +136,11 @@ async function _readPkgJson(
 export const readPackageJson = _.memoize(_readPkgJson);
 
 /**
- * Reads a `typedoc.json` file and returns its parsed contents.
- *
- * TypeDoc expands the "extends" field, which is why we use its facilities.  It, unfortunately, is a
- * blocking operation.
- */
-export const readTypedocJson = _.memoize((typedocJsonPath: string) => {
-  const app = new Application();
-  app.options.setValue('plugin', 'none');
-  app.options.setValue('logger', 'none');
-  app.options.addReader(new TypeDocReader());
-  app.bootstrap({options: path.dirname(typedocJsonPath)});
-  return app.options.getRawValues();
-});
-
-/**
  * Reads a JSON5 file and parses it
  */
 export const readJson5 = _.memoize(
   async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON5.parse(await fs.readFile(filepath, 'utf8'))
+    JSON5.parse(await fs.readFile(filepath, 'utf8')),
 );
 
 /**
@@ -186,7 +148,7 @@ export const readJson5 = _.memoize(
  */
 export const readJson = _.memoize(
   async <T extends JsonValue>(filepath: string): Promise<T> =>
-    JSON.parse(await fs.readFile(filepath, 'utf8'))
+    JSON.parse(await fs.readFile(filepath, 'utf8')),
 );
 
 /**
@@ -226,11 +188,6 @@ const whichPython = _.partial(cachedWhich, NAME_PYTHON, {nothrow: true});
 const whichPython3 = _.partial(cachedWhich, `${NAME_PYTHON}3`, {nothrow: true});
 
 /**
- * Finds `typedoc` executable
- */
-const whichTypeDoc = _.partial(cachedWhich, NAME_TYPEDOC, {nothrow: true});
-
-/**
  * `mike` cannot be invoked via `python -m`, so we need to find the script.
  */
 export const findMike = _.partial(async () => {
@@ -254,21 +211,7 @@ export const findMike = _.partial(async () => {
         return mikePath;
       }
     }
-  }
-  catch {}
-});
-
-/**
- * Finds the `typedoc` executable.
- *
- * Looks in the `node_modules/.bin` dir from the current working directory, and if this fails, in the `node_modules` dir for the file which `.bin/typedoc` should be a symlink of, and if _that_ fails, try the `PATH`.
- */
-export const findTypeDoc = _.memoize(async (cwd = process.cwd()): Promise<string | undefined> => {
-  // .cmd is for win32, of course. note that glob _always_ uses posix dir separators.
-  const globResult =
-    (await fs.glob('node_modules/.bin/typedoc?(.cmd)', {cwd, nodir: true})) ??
-    (await fs.glob('node_modules/**/typedoc/bin/typedoc', {cwd, nodir: true, follow: true}));
-  return _.first(globResult) ?? (await whichTypeDoc());
+  } catch {}
 });
 
 /**
@@ -277,7 +220,7 @@ export const findTypeDoc = _.memoize(async (cwd = process.cwd()): Promise<string
  * `python3` is preferred over `python`, since the latter could be Python 2.
  */
 export const findPython = _.memoize(
-  async (): Promise<string | undefined> => (await whichPython3()) ?? (await whichPython())
+  async (): Promise<string | undefined> => (await whichPython3()) ?? (await whichPython()),
 );
 
 /**
@@ -313,16 +256,5 @@ export const readMkDocsYml = _.memoize(
       }
     }
     return mkDocsYml;
-  }
+  },
 );
-
-/**
- * Given an abs path to a directory, return a list of all abs paths of all directories in it
- */
-export const findDirsIn = _.memoize(async (dirpath: string): Promise<string[]> => {
-  if (!path.isAbsolute(dirpath)) {
-    throw new DocutilsError(`Expected absolute path, got '${dirpath}'`);
-  }
-  const dirEnts = await fs.readdir(dirpath, {withFileTypes: true});
-  return dirEnts.filter((ent) => ent.isDirectory()).map((ent) => path.join(dirpath, ent.name));
-});

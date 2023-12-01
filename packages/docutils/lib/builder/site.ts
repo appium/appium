@@ -1,6 +1,6 @@
 /**
- * Runs `mkdocs`, pulling in reference markdown from TypeDoc and any other documentation from the
- * `docs_dir` directory (as configured in `mkdocs.yml`).
+ * Runs `mkdocs`, pulling in documentation from the `docs_dir` directory
+ * (as configured in `mkdocs.yml`).
  *
  * @module
  */
@@ -25,7 +25,7 @@ const log = getLogger('mkdocs');
 async function doServe(
   pythonPath: string,
   args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {}
+  opts: SpawnBackgroundProcessOpts = {},
 ) {
   const finalArgs = ['-m', NAME_MKDOCS, 'serve', ...args];
   log.debug('Executing %s via: %s, %O', NAME_MKDOCS, pythonPath, finalArgs);
@@ -61,7 +61,7 @@ export async function buildSite({
   const pythonPath = await findPython();
   if (!pythonPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`,
     );
   }
 
@@ -70,7 +70,7 @@ export async function buildSite({
     : await findMkDocsYml(cwd);
   if (!mkDocsYmlPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`,
     );
   }
   const mkdocsArgs = ['-f', mkDocsYmlPath];
@@ -95,7 +95,7 @@ export async function buildSite({
         log.warn(
           'No site_dir specified in args or %s; using default site_dir: %s',
           NAME_MKDOCS_YML,
-          DEFAULT_SITE_DIR
+          DEFAULT_SITE_DIR,
         );
         relSiteDir = relative(cwd, DEFAULT_SITE_DIR);
       }

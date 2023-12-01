@@ -12,7 +12,6 @@ import path from 'node:path';
 import {satisfies} from 'semver';
 import {exec} from 'teen_process';
 import {
-  DEFAULT_REL_TYPEDOC_OUT_PATH,
   DOCUTILS_PKG,
   NAME_BIN,
   NAME_ERR_ENOENT,
@@ -24,24 +23,13 @@ import {
   NAME_PYTHON,
   NAME_REQUIREMENTS_TXT,
   NAME_TSCONFIG_JSON,
-  NAME_TYPEDOC,
-  NAME_TYPEDOC_JSON,
   NAME_TYPESCRIPT,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {DocutilsError} from './error';
-import {
-  findMkDocsYml,
-  findPkgDir,
-  findTypeDoc,
-  readJson5,
-  readMkDocsYml,
-  readTypedocJson,
-  whichNpm,
-  findPython,
-} from './fs';
+import {findMkDocsYml, findPkgDir, readJson5, readMkDocsYml, whichNpm, findPython} from './fs';
 import {getLogger} from './logger';
-import {MkDocsYml, PipPackage, TypeDocJson} from './model';
+import {MkDocsYml, PipPackage} from './model';
 import {relative} from './util';
 
 /**
@@ -53,11 +41,6 @@ const PYTHON_VER_STR = 'Python 3.';
  * Matches the TypeScript version string from `tsc --version`
  */
 const TYPESCRIPT_VERSION_REGEX = /Version\s(\d+\.\d+\..+)/;
-
-/**
- * Matches the TypeDoc version string from `typedoc --version`
- */
-const TYPEDOC_VERSION_REGEX = /TypeDoc\s(\d+\.\d+\..+)/;
 
 /**
  * Matches the MkDocs version string from `mkdocs --version`
@@ -72,7 +55,6 @@ const log = getLogger('validate');
 export type ValidationKind =
   | typeof NAME_PYTHON
   | typeof NAME_TYPESCRIPT
-  | typeof NAME_TYPEDOC
   | typeof NAME_NPM
   | typeof NAME_MKDOCS;
 
@@ -138,13 +120,6 @@ export class DocutilsValidator extends EventEmitter {
   protected tsconfigJsonPath?: string;
 
   /**
-   * Path to `typedoc.json`.  If not provided, will be lazily resolved.
-   */
-  protected typeDocJsonPath?: string;
-
-  protected typeDocPath?: string;
-
-  /**
    * Emitted when validation begins with a list of validation kinds to be performed
    * @event
    */
@@ -180,21 +155,15 @@ export class DocutilsValidator extends EventEmitter {
     this.pythonPath = opts.pythonPath;
     this.cwd = opts.cwd ?? process.cwd();
     this.tsconfigJsonPath = opts.tsconfigJson;
-    this.typeDocJsonPath = opts.typedocJson;
     this.npmPath = opts.npm;
     this.mkDocsYmlPath = opts.mkdocsYml;
-    this.typeDocPath = opts.typedocPath;
 
     if (opts.python) {
       this.validations.add(NAME_PYTHON);
     }
     if (opts.typescript) {
       this.validations.add(NAME_TYPESCRIPT);
-      // npm validation is required for both typescript and typedoc validation
-      this.validations.add(NAME_NPM);
-    }
-    if (opts.typedoc) {
-      this.validations.add(NAME_TYPEDOC);
+      // npm validation is required for typescript
       this.validations.add(NAME_NPM);
     }
     if (opts.mkdocs) {
@@ -231,11 +200,6 @@ export class DocutilsValidator extends EventEmitter {
       if (this.validations.has(NAME_TYPESCRIPT)) {
         await this.validateTypeScript();
         await this.validateTypeScriptConfig();
-      }
-
-      if (this.validations.has(NAME_TYPEDOC)) {
-        await this.validateTypeDoc();
-        await this.validateTypeDocConfig();
       }
 
       this.emit(DocutilsValidator.END, this.emittedErrors.size);
@@ -321,7 +285,7 @@ export class DocutilsValidator extends EventEmitter {
 
     if (!pythonPath) {
       return this.fail(
-        `Could not find ${NAME_PYTHON} executable in PATH. If it is installed, check your PATH environment variable.`
+        `Could not find ${NAME_PYTHON} executable in PATH. If it is installed, check your PATH environment variable.`,
       );
     }
 
@@ -338,18 +302,18 @@ export class DocutilsValidator extends EventEmitter {
       const mkDocsPipPkg = _.find(reqs, {name: NAME_MKDOCS});
       if (!mkDocsPipPkg) {
         throw new DocutilsError(
-          `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug.`
+          `No ${NAME_MKDOCS} package in ${REQUIREMENTS_TXT_PATH}. This is a bug.`,
         );
       }
       const {version: mkDocsReqdVersion} = mkDocsPipPkg;
       if (version !== mkDocsReqdVersion) {
         return this.fail(
-          `${NAME_MKDOCS} is v${version}, but ${REQUIREMENTS_TXT_PATH} requires v${mkDocsReqdVersion}`
+          `${NAME_MKDOCS} is v${version}, but ${REQUIREMENTS_TXT_PATH} requires v${mkDocsReqdVersion}`,
         );
       }
     } else {
       throw new DocutilsError(
-        `Could not parse version from MkDocs. This is a bug. Output was ${rawMkDocsVersion}`
+        `Could not parse version from MkDocs. This is a bug. Output was ${rawMkDocsVersion}`,
       );
     }
 
@@ -365,7 +329,7 @@ export class DocutilsValidator extends EventEmitter {
     mkDocsYmlPath = mkDocsYmlPath ?? this.mkDocsYmlPath ?? (await findMkDocsYml(this.cwd));
     if (!mkDocsYmlPath) {
       return this.fail(
-        `Could not find ${NAME_MKDOCS_YML} from ${this.cwd}. Run "${NAME_BIN} init" to create it`
+        `Could not find ${NAME_MKDOCS_YML} from ${this.cwd}. Run "${NAME_BIN} init" to create it`,
       );
     }
     let mkDocsYml: MkDocsYml;
@@ -375,7 +339,7 @@ export class DocutilsValidator extends EventEmitter {
       const err = e as NodeJS.ErrnoException;
       if (err.code === NAME_ERR_ENOENT) {
         return this.fail(
-          `Could not find ${NAME_MKDOCS_YML} at ${mkDocsYmlPath}. Use --mkdocs-yml to specify a different path.`
+          `Could not find ${NAME_MKDOCS_YML} at ${mkDocsYmlPath}. Use --mkdocs-yml to specify a different path.`,
         );
       }
       return this.fail(`Could not parse ${mkDocsYmlPath}: ${err}`);
@@ -402,7 +366,7 @@ export class DocutilsValidator extends EventEmitter {
       const npmPath = this.npmPath ?? (await whichNpm());
       if (!npmPath) {
         throw new DocutilsError(
-          `Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`
+          `Could not find ${NAME_NPM} in PATH. That seems weird, doesn't it?`,
         );
       }
       const {stdout: npmVersion} = await exec(npmPath, ['-v']);
@@ -445,7 +409,7 @@ export class DocutilsValidator extends EventEmitter {
       installedPkgs = JSON.parse(pipListOutput) as PipPackage[];
     } catch {
       throw new DocutilsError(
-        `Could not parse output of "${NAME_PIP} list" as JSON: ${pipListOutput}`
+        `Could not parse output of "${NAME_PIP} list" as JSON: ${pipListOutput}`,
       );
     }
 
@@ -470,23 +434,23 @@ export class DocutilsValidator extends EventEmitter {
       msgParts.push(
         `The following required ${util.pluralize(
           'package',
-          missingPackages.length
+          missingPackages.length,
         )} could not be found:\n${missingPackages
           .map((p) => chalk`- {yellow ${p.name}} @ {yellow ${p.version}}`)
-          .join('\n')}`
+          .join('\n')}`,
       );
     }
     if (invalidVersionPackages.length) {
       msgParts.push(
         `The following required ${util.pluralize(
           'package',
-          invalidVersionPackages.length
+          invalidVersionPackages.length,
         )} are installed, but at the wrong version:\n${invalidVersionPackages
           .map(
             ([expected, actual]) =>
-              chalk`- {yellow ${expected.name}} @ {yellow ${expected.version}} (found {red ${actual.version}})`
+              chalk`- {yellow ${expected.name}} @ {yellow ${expected.version}} (found {red ${actual.version}})`,
           )
-          .join('\n')}`
+          .join('\n')}`,
       );
     }
     if (msgParts.length) {
@@ -509,114 +473,13 @@ export class DocutilsValidator extends EventEmitter {
       const {stdout} = await exec(pythonPath, ['--version']);
       if (!stdout.includes(PYTHON_VER_STR)) {
         return this.fail(
-          `Could not find Python 3.x in PATH; found ${stdout}.  Please use --python-path`
+          `Could not find Python 3.x in PATH; found ${stdout}.  Please use --python-path`,
         );
       }
     } catch {
       return this.fail(`Could not find Python 3.x in PATH.`);
     }
     this.ok('Python version OK');
-  }
-
-  /**
-   * Asserts TypeDoc is installed, runnable, the correct version, and that the config file is readable
-   * and constaints required options
-   *
-   * @todo Another option would be to `npm exec typedoc@<version>` which delegates to `npx`.
-   */
-  protected async validateTypeDoc() {
-    const pkgDir = await this.findPkgDir();
-    const typeDocPath = this.typeDocPath ?? (await findTypeDoc(pkgDir));
-
-    if (!typeDocPath) {
-      return this.fail(`Could not find ${NAME_TYPEDOC}; is it installed?`);
-    }
-    log.debug('Found %s at %s', NAME_TYPEDOC, typeDocPath);
-
-    let rawTypeDocVersion: string;
-    let typeDocVersion: string;
-    try {
-      ({stdout: rawTypeDocVersion} = await exec(process.execPath, [typeDocPath, '--version'], {
-        cwd: pkgDir,
-      }));
-    } catch (err) {
-      return this.fail(
-        `Could not execute ${process.execPath} ${typeDocPath} from ${pkgDir}. Reason: ${
-          (err as Error).message
-        }`
-      );
-    }
-
-    if (rawTypeDocVersion) {
-      const match = rawTypeDocVersion.match(TYPEDOC_VERSION_REGEX);
-      if (match) {
-        typeDocVersion = match[1];
-      } else {
-        throw new DocutilsError(
-          `Could not parse TypeDoc version from "typedoc --version"; output was:\n ${rawTypeDocVersion}`
-        );
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const reqdTypeDocVersion = DOCUTILS_PKG.dependencies!.typedoc!; // this is our own package.json
-      if (!satisfies(typeDocVersion, reqdTypeDocVersion)) {
-        return this.fail(
-          `Found TypeDoc version ${typeDocVersion}, but ${reqdTypeDocVersion} is required`
-        );
-      }
-      this.ok('TypeDoc install OK');
-    }
-  }
-
-  /**
-   * Validates the `typedoc.json` file
-   */
-  protected async validateTypeDocConfig() {
-    const pkgDir = await this.findPkgDir();
-    if (!pkgDir) {
-      return this.fail(new DocutilsError(`Could not find package.json in ${this.cwd}`));
-    }
-    const typeDocJsonPath = (this.typeDocJsonPath =
-      this.typeDocJsonPath ?? path.join(pkgDir, NAME_TYPEDOC_JSON));
-    const relTypeDocJsonPath = relative(this.cwd, typeDocJsonPath);
-    let typeDocJson: TypeDocJson;
-
-    // handle the case where the user passes a JS file as the typedoc config
-    // (which is allowed by TypeDoc)
-    if (typeDocJsonPath.endsWith('.js')) {
-      try {
-        typeDocJson = require(typeDocJsonPath);
-      } catch (err) {
-        throw new DocutilsError(
-          `TypeDoc config at ${relTypeDocJsonPath} threw an exception: ${err}`
-        );
-      }
-    } else {
-      try {
-        typeDocJson = readTypedocJson(typeDocJsonPath);
-      } catch (e) {
-        if (e instanceof SyntaxError) {
-          return this.fail(
-            new DocutilsError(`Unparseable ${NAME_TYPEDOC_JSON} at ${relTypeDocJsonPath}: ${e}`)
-          );
-        }
-        return this.fail(
-          new DocutilsError(
-            `Missing ${NAME_TYPEDOC_JSON} at ${relTypeDocJsonPath}; "${NAME_BIN} init" can help`
-          )
-        );
-      }
-    }
-
-    if (!typeDocJson.out) {
-      return this.fail(
-        new DocutilsError(
-          `Missing "out" property in ${relTypeDocJsonPath}; path "${DEFAULT_REL_TYPEDOC_OUT_PATH}" is recommended`
-        )
-      );
-    }
-
-    this.ok('TypeDoc config OK');
   }
 
   /**
@@ -642,7 +505,7 @@ export class DocutilsValidator extends EventEmitter {
       typeScriptVersion = match[1];
     } else {
       return this.fail(
-        `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`
+        `Could not parse TypeScript version from "tsc --version"; output was:\n ${rawTypeScriptVersion}`,
       );
     }
 
@@ -650,13 +513,13 @@ export class DocutilsValidator extends EventEmitter {
 
     if (!reqdTypeScriptVersion) {
       throw new DocutilsError(
-        `Could not find a dep for ${NAME_TYPESCRIPT} in ${NAME_PACKAGE_JSON}. This is a bug.`
+        `Could not find a dep for ${NAME_TYPESCRIPT} in ${NAME_PACKAGE_JSON}. This is a bug.`,
       );
     }
 
     if (!satisfies(typeScriptVersion, reqdTypeScriptVersion)) {
       return this.fail(
-        `Found TypeScript version ${typeScriptVersion}, but ${reqdTypeScriptVersion} is required`
+        `Found TypeScript version ${typeScriptVersion}, but ${reqdTypeScriptVersion} is required`,
       );
     }
     this.ok('TypeScript install OK');
@@ -678,13 +541,13 @@ export class DocutilsValidator extends EventEmitter {
     } catch (e) {
       if (e instanceof SyntaxError) {
         return this.fail(
-          new DocutilsError(`Unparseable ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}: ${e}`)
+          new DocutilsError(`Unparseable ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}: ${e}`),
         );
       }
       return this.fail(
         new DocutilsError(
-          `Missing ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}; "${NAME_BIN} init" can help`
-        )
+          `Missing ${NAME_TSCONFIG_JSON} at ${relTsconfigJsonPath}; "${NAME_BIN} init" can help`,
+        ),
       );
     }
 
@@ -725,18 +588,6 @@ export interface DocutilsValidatorOpts {
    * Path to `tsconfig.json`
    */
   tsconfigJson?: string;
-  /**
-   * If `true`, run TypeDoc validation
-   */
-  typedoc?: boolean;
-  /**
-   * Path to `typedoc` executable
-   */
-  typedocPath?: string;
-  /**
-   * Path to `typedoc.json`
-   */
-  typedocJson?: string;
   /**
    * If `true`, run TypeScript validation
    */

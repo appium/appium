@@ -44,9 +44,6 @@ nav:
       - guides/log-filters.md
       - guides/grid.md
       - guides/caching.md
-  - Developer Reference:
-      - BaseDriver Commands: reference/commands/base-driver.md
-      - FakeDriver Commands: reference/commands/fake-driver.md
   - Ecosystem:
       - ecosystem/index.md
       - Developing Appium Extensions:
@@ -58,10 +55,10 @@ nav:
       - contributing/config-system.md
   - More Appium Resources: resources.md
   - Issues: https://github.com/appium/appium/issues
-  - Reference:
+  - Command Reference:
       - reference/commands/base-driver.md
-      - reference/commands/execute-driver-plugin.md
       - reference/commands/fake-driver.md
+      - reference/commands/execute-driver-plugin.md
       - reference/commands/images-plugin.md
       - reference/commands/relaxed-caps-plugin.md
       - reference/commands/universal-xml-plugin.md

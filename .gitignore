@@ -60,4 +60,3 @@ appium.zip
 packages/*/LICENSE
 local_appium_home
 *.tgz
-packages/appium/docs/*/reference

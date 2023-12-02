@@ -62,7 +62,7 @@
   "dependencies": {
     "@appium/base-driver": "^9.4.2",
     "@appium/base-plugin": "^2.2.23",
-    "@appium/docutils": "^0.4.12",
+    "@appium/docutils": "^1.0.0",
     "@appium/schema": "^0.4.2",
     "@appium/support": "^4.1.9",
     "@appium/types": "^0.14.2",

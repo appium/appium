@@ -1,6 +1,6 @@
 {
   "name": "@appium/images-plugin",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "Plugin for working with images and image elements in Appium",
   "keywords": [
     "automation",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@appium/opencv": "^2.1.6",
-    "@appium/support": "^4.1.9",
+    "@appium/support": "^4.1.10",
     "lodash": "4.17.21",
     "lru-cache": "10.0.1",
     "sharp": "0.32.6",

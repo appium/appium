@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.4.3](https://github.com/appium/appium/compare/@appium/base-driver@9.4.2...@appium/base-driver@9.4.3) (2023-12-04)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([2c02be4](https://github.com/appium/appium/commit/2c02be440c21db0bf8a3832143e61ef8fb30a2cf))
+* **support:** update dependency axios to v1.6.2 ([fda40e6](https://github.com/appium/appium/commit/fda40e60410e97d5ba5093442aad0b2d63d3d539))
+
+
+
 ## [9.4.2](https://github.com/appium/appium/compare/@appium/base-driver@9.4.1...@appium/base-driver@9.4.2) (2023-11-14)
 
 

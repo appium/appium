@@ -48,7 +48,7 @@
     "start": "node ./build/lib/cli/index.js"
   },
   "dependencies": {
-    "@appium/support": "^4.1.9",
+    "@appium/support": "^4.1.10",
     "@appium/tsconfig": "^0.x",
     "@sliphua/lilconfig-ts-loader": "3.2.2",
     "@types/which": "3.0.1",

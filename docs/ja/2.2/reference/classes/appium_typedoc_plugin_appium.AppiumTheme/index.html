@@ -1,0 +1,4064 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.io/docs/ja/2.2/reference/classes/appium_typedoc_plugin_appium.AppiumTheme/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+    
+    
+      
+        <title>Class: AppiumTheme - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.484 4.484 0 0 1-.563-1.191 3.835 3.835 0 0 1-.05-2.063 4.647 4.647 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .748.748 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.425 2.425 0 0 1-.507-.441 3.075 3.075 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.884.884 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.737 3.737 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75Z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>');}</style>
+
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#class-appiumtheme" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Class: AppiumTheme
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+            
+          
+        </form>
+      
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="言語切り替え">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        はじめに
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          導入
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          導入
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Appiumについて
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Appiumについて
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Appiumの全体像
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          手引き
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          手引き
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating 1 to 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#hierarchy" class="md-nav__link">
+    Hierarchy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    Constructors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    Properties
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accessors" class="md-nav__link">
+    Accessors
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructors_1" class="md-nav__link">
+    Constructors
+  </a>
+  
+    <nav class="md-nav" aria-label="Constructors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    constructor
+  </a>
+  
+    <nav class="md-nav" aria-label="constructor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overrides" class="md-nav__link">
+    Overrides
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#properties_1" class="md-nav__link">
+    Properties
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#extensiontemplaterenderer" class="md-nav__link">
+    #extensionTemplateRenderer
+  </a>
+  
+    <nav class="md-nav" aria-label="#extensionTemplateRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_1" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#log" class="md-nav__link">
+    #log
+  </a>
+  
+    <nav class="md-nav" aria-label="#log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#opts" class="md-nav__link">
+    #opts
+  </a>
+  
+    <nav class="md-nav" aria-label="#opts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allreflectionshaveowndocument" class="md-nav__link">
+    allReflectionsHaveOwnDocument
+  </a>
+  
+    <nav class="md-nav" aria-label="allReflectionsHaveOwnDocument">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_4" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anchormap" class="md-nav__link">
+    anchorMap
+  </a>
+  
+    <nav class="md-nav" aria-label="anchorMap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_1" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_5" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#componentname" class="md-nav__link">
+    componentName
+  </a>
+  
+    <nav class="md-nav" aria-label="componentName">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_2" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_6" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrydocument" class="md-nav__link">
+    entryDocument
+  </a>
+  
+    <nav class="md-nav" aria-label="entryDocument">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_3" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_7" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entrypoints" class="md-nav__link">
+    entryPoints
+  </a>
+  
+    <nav class="md-nav" aria-label="entryPoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_4" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_8" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filenameseparator" class="md-nav__link">
+    filenameSeparator
+  </a>
+  
+    <nav class="md-nav" aria-label="filenameSeparator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_5" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_9" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hidebreadcrumbs" class="md-nav__link">
+    hideBreadcrumbs
+  </a>
+  
+    <nav class="md-nav" aria-label="hideBreadcrumbs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_6" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_10" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hideinpagetoc" class="md-nav__link">
+    hideInPageTOC
+  </a>
+  
+    <nav class="md-nav" aria-label="hideInPageTOC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_7" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_11" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hidememberssymbol" class="md-nav__link">
+    hideMembersSymbol
+  </a>
+  
+    <nav class="md-nav" aria-label="hideMembersSymbol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_8" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_12" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hidepagetitle" class="md-nav__link">
+    hidePageTitle
+  </a>
+  
+    <nav class="md-nav" aria-label="hidePageTitle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_9" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_13" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#includes" class="md-nav__link">
+    includes
+  </a>
+  
+    <nav class="md-nav" aria-label="includes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_10" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_14" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#indextitle" class="md-nav__link">
+    indexTitle
+  </a>
+  
+    <nav class="md-nav" aria-label="indexTitle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_11" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_15" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#location" class="md-nav__link">
+    location
+  </a>
+  
+    <nav class="md-nav" aria-label="location">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_12" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_16" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mediadirectory" class="md-nav__link">
+    mediaDirectory
+  </a>
+  
+    <nav class="md-nav" aria-label="mediaDirectory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_13" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_17" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namedanchors" class="md-nav__link">
+    namedAnchors
+  </a>
+  
+    <nav class="md-nav" aria-label="namedAnchors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_14" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_18" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objectliteraltypedeclarationstyle" class="md-nav__link">
+    objectLiteralTypeDeclarationStyle
+  </a>
+  
+    <nav class="md-nav" aria-label="objectLiteralTypeDeclarationStyle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_15" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_19" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#out" class="md-nav__link">
+    out
+  </a>
+  
+    <nav class="md-nav" aria-label="out">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_16" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_20" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preserveanchorcasing" class="md-nav__link">
+    preserveAnchorCasing
+  </a>
+  
+    <nav class="md-nav" aria-label="preserveAnchorCasing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_17" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_21" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#project" class="md-nav__link">
+    project
+  </a>
+  
+    <nav class="md-nav" aria-label="project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_18" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_22" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publicpath" class="md-nav__link">
+    publicPath
+  </a>
+  
+    <nav class="md-nav" aria-label="publicPath">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_19" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_23" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readme" class="md-nav__link">
+    readme
+  </a>
+  
+    <nav class="md-nav" aria-label="readme">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_20" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_24" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reflection" class="md-nav__link">
+    reflection
+  </a>
+  
+    <nav class="md-nav" aria-label="reflection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_21" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_25" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#url_prefix" class="md-nav__link">
+    URL_PREFIX
+  </a>
+  
+    <nav class="md-nav" aria-label="URL_PREFIX">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_22" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_26" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessors_1" class="md-nav__link">
+    Accessors
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_listenid" class="md-nav__link">
+    _listenId
+  </a>
+  
+    <nav class="md-nav" aria-label="_listenId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_23" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_27" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#application" class="md-nav__link">
+    application
+  </a>
+  
+    <nav class="md-nav" aria-label="application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_24" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_28" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#globalsfile" class="md-nav__link">
+    globalsFile
+  </a>
+  
+    <nav class="md-nav" aria-label="globalsFile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_25" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_29" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mappings" class="md-nav__link">
+    mappings
+  </a>
+  
+    <nav class="md-nav" aria-label="mappings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#overrides_1" class="md-nav__link">
+    Overrides
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_30" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#owner" class="md-nav__link">
+    owner
+  </a>
+  
+    <nav class="md-nav" aria-label="owner">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_26" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_31" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods_1" class="md-nav__link">
+    Methods
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#createtemplaterenderer" class="md-nav__link">
+    #createTemplateRenderer
+  </a>
+  
+    <nav class="md-nav" aria-label="#createTemplateRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_5" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_32" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#applyanchorurl" class="md-nav__link">
+    applyAnchorUrl
+  </a>
+  
+    <nav class="md-nav" aria-label="applyAnchorUrl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_6" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_27" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_33" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bubble" class="md-nav__link">
+    bubble
+  </a>
+  
+    <nav class="md-nav" aria-label="bubble">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_7" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_28" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_34" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#buildurls" class="md-nav__link">
+    buildUrls
+  </a>
+  
+    <nav class="md-nav" aria-label="buildUrls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_8" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_29" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_35" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getindextemplate" class="md-nav__link">
+    getIndexTemplate
+  </a>
+  
+    <nav class="md-nav" aria-label="getIndexTemplate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_9" class="md-nav__link">
+    Returns
+  </a>
+  
+    <nav class="md-nav" aria-label="Returns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_10" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_30" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_36" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getnavigation" class="md-nav__link">
+    getNavigation
+  </a>
+  
+    <nav class="md-nav" aria-label="getNavigation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_6" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_11" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_31" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_37" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getoption" class="md-nav__link">
+    getOption
+  </a>
+  
+    <nav class="md-nav" aria-label="getOption">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_7" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_12" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_32" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_38" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getreflectionmembertemplate" class="md-nav__link">
+    getReflectionMemberTemplate
+  </a>
+  
+    <nav class="md-nav" aria-label="getReflectionMemberTemplate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_13" class="md-nav__link">
+    Returns
+  </a>
+  
+    <nav class="md-nav" aria-label="Returns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_8" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_14" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_33" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_39" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getreflectiontemplate" class="md-nav__link">
+    getReflectionTemplate
+  </a>
+  
+    <nav class="md-nav" aria-label="getReflectionTemplate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_15" class="md-nav__link">
+    Returns
+  </a>
+  
+    <nav class="md-nav" aria-label="Returns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_9" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_16" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_34" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_40" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getrelativeurl" class="md-nav__link">
+    getRelativeUrl
+  </a>
+  
+    <nav class="md-nav" aria-label="getRelativeUrl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_10" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_17" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_35" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_41" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geturl" class="md-nav__link">
+    getUrl
+  </a>
+  
+    <nav class="md-nav" aria-label="getUrl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_11" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_18" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_36" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_42" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#geturls" class="md-nav__link">
+    getUrls
+  </a>
+  
+    <nav class="md-nav" aria-label="getUrls">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_12" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_19" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_37" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_43" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initialize" class="md-nav__link">
+    initialize
+  </a>
+  
+    <nav class="md-nav" aria-label="initialize">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_20" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_38" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_44" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listento" class="md-nav__link">
+    listenTo
+  </a>
+  
+    <nav class="md-nav" aria-label="listenTo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_13" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_21" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_39" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_45" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#listentoonce" class="md-nav__link">
+    listenToOnce
+  </a>
+  
+    <nav class="md-nav" aria-label="listenToOnce">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_14" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_22" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_40" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_46" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_15" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_23" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_41" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_47" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#off" class="md-nav__link">
+    off
+  </a>
+  
+    <nav class="md-nav" aria-label="off">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_24" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_42" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_48" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_16" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_25" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_43" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_49" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_17" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_26" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_44" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_50" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#on" class="md-nav__link">
+    on
+  </a>
+  
+    <nav class="md-nav" aria-label="on">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_18" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_27" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_45" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_51" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_19" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_28" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_46" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_52" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_20" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_29" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_47" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_53" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onbeginpage" class="md-nav__link">
+    onBeginPage
+  </a>
+  
+    <nav class="md-nav" aria-label="onBeginPage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_21" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_30" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_48" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_54" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onbeginrenderer" class="md-nav__link">
+    onBeginRenderer
+  </a>
+  
+    <nav class="md-nav" aria-label="onBeginRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_22" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_31" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_49" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_55" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#once" class="md-nav__link">
+    once
+  </a>
+  
+    <nav class="md-nav" aria-label="once">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_23" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_32" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_50" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_56" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_24" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_33" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_51" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_57" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#render" class="md-nav__link">
+    render
+  </a>
+  
+    <nav class="md-nav" aria-label="render">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_25" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_34" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_52" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_58" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stoplistening" class="md-nav__link">
+    stopListening
+  </a>
+  
+    <nav class="md-nav" aria-label="stopListening">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_26" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_35" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_53" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_59" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toanchorref" class="md-nav__link">
+    toAnchorRef
+  </a>
+  
+    <nav class="md-nav" aria-label="toAnchorRef">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_27" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_36" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_54" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_60" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tourl" class="md-nav__link">
+    toUrl
+  </a>
+  
+    <nav class="md-nav" aria-label="toUrl">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_28" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_37" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_55" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_61" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trigger" class="md-nav__link">
+    trigger
+  </a>
+  
+    <nav class="md-nav" aria-label="trigger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_29" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_38" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inherited-from_56" class="md-nav__link">
+    Inherited from
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_62" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="class-appiumtheme">Class: AppiumTheme</h1>
+<p><a href="../../modules/appium_typedoc_plugin_appium/">@appium/typedoc-plugin-appium</a>.AppiumTheme</p>
+<p>This theme uses everything from <code>MarkdownTheme</code> and adds a new section for commands.</p>
+<h2 id="hierarchy">Hierarchy</h2>
+<ul>
+<li><code>MarkdownTheme</code></li>
+</ul>
+<p>↳ <strong><code>AppiumTheme</code></strong></p>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="constructors">Constructors</h3>
+<ul>
+<li><a href="./#constructor">constructor</a></li>
+</ul>
+<h3 id="properties">Properties</h3>
+<ul>
+<li><a href="./##extensiontemplaterenderer">#extensionTemplateRenderer</a></li>
+<li><a href="./##log">#log</a></li>
+<li><a href="./##opts">#opts</a></li>
+<li><a href="./#allreflectionshaveowndocument">allReflectionsHaveOwnDocument</a></li>
+<li><a href="./#anchormap">anchorMap</a></li>
+<li><a href="./#componentname">componentName</a></li>
+<li><a href="./#entrydocument">entryDocument</a></li>
+<li><a href="./#entrypoints">entryPoints</a></li>
+<li><a href="./#filenameseparator">filenameSeparator</a></li>
+<li><a href="./#hidebreadcrumbs">hideBreadcrumbs</a></li>
+<li><a href="./#hideinpagetoc">hideInPageTOC</a></li>
+<li><a href="./#hidememberssymbol">hideMembersSymbol</a></li>
+<li><a href="./#hidepagetitle">hidePageTitle</a></li>
+<li><a href="./#includes">includes</a></li>
+<li><a href="./#indextitle">indexTitle</a></li>
+<li><a href="./#location">location</a></li>
+<li><a href="./#mediadirectory">mediaDirectory</a></li>
+<li><a href="./#namedanchors">namedAnchors</a></li>
+<li><a href="./#objectliteraltypedeclarationstyle">objectLiteralTypeDeclarationStyle</a></li>
+<li><a href="./#out">out</a></li>
+<li><a href="./#preserveanchorcasing">preserveAnchorCasing</a></li>
+<li><a href="./#project">project</a></li>
+<li><a href="./#publicpath">publicPath</a></li>
+<li><a href="./#readme">readme</a></li>
+<li><a href="./#reflection">reflection</a></li>
+<li><a href="./#url_prefix">URL_PREFIX</a></li>
+</ul>
+<h3 id="accessors">Accessors</h3>
+<ul>
+<li><a href="./#_listenid">_listenId</a></li>
+<li><a href="./#application">application</a></li>
+<li><a href="./#globalsfile">globalsFile</a></li>
+<li><a href="./#mappings">mappings</a></li>
+<li><a href="./#owner">owner</a></li>
+</ul>
+<h3 id="methods">Methods</h3>
+<ul>
+<li><a href="./##createtemplaterenderer">#createTemplateRenderer</a></li>
+<li><a href="./#applyanchorurl">applyAnchorUrl</a></li>
+<li><a href="./#bubble">bubble</a></li>
+<li><a href="./#buildurls">buildUrls</a></li>
+<li><a href="./#getindextemplate">getIndexTemplate</a></li>
+<li><a href="./#getnavigation">getNavigation</a></li>
+<li><a href="./#getoption">getOption</a></li>
+<li><a href="./#getreflectionmembertemplate">getReflectionMemberTemplate</a></li>
+<li><a href="./#getreflectiontemplate">getReflectionTemplate</a></li>
+<li><a href="./#getrelativeurl">getRelativeUrl</a></li>
+<li><a href="./#geturl">getUrl</a></li>
+<li><a href="./#geturls">getUrls</a></li>
+<li><a href="./#initialize">initialize</a></li>
+<li><a href="./#listento">listenTo</a></li>
+<li><a href="./#listentoonce">listenToOnce</a></li>
+<li><a href="./#off">off</a></li>
+<li><a href="./#on">on</a></li>
+<li><a href="./#onbeginpage">onBeginPage</a></li>
+<li><a href="./#onbeginrenderer">onBeginRenderer</a></li>
+<li><a href="./#once">once</a></li>
+<li><a href="./#render">render</a></li>
+<li><a href="./#stoplistening">stopListening</a></li>
+<li><a href="./#toanchorref">toAnchorRef</a></li>
+<li><a href="./#tourl">toUrl</a></li>
+<li><a href="./#trigger">trigger</a></li>
+</ul>
+<h2 id="constructors_1">Constructors</h2>
+<h3 id="constructor">constructor</h3>
+<p>• <strong>new AppiumTheme</strong>(<code>renderer</code>)</p>
+<p>Creates template renderers and registers all Handlebars helpers.</p>
+<p><strong><code>Todo</code></strong></p>
+<p>Use declaration merging to add an instance of <code>AppiumPluginLogger</code> to <code>Application</code>,
+which we can then reference here.</p>
+<h4 id="parameters">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>renderer</code></td>
+<td align="left"><code>Renderer</code></td>
+<td align="left">TypeDoc renderer</td>
+</tr>
+</tbody>
+</table>
+<h4 id="overrides">Overrides</h4>
+<p>MarkdownTheme.constructor</p>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L39">packages/typedoc-plugin-appium/lib/theme/index.ts:39</a></p>
+<h2 id="properties_1">Properties</h2>
+<h3 id="extensiontemplaterenderer">#extensionTemplateRenderer</h3>
+<p>• <code>Private</code> <strong>#extensionTemplateRenderer</strong>: <a href="../../modules/appium_typedoc_plugin_appium/#templaterenderer"><code>TemplateRenderer</code></a></p>
+<p>A template renderer for <code>CommandReflection</code>s</p>
+<h4 id="defined-in_1">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L21">packages/typedoc-plugin-appium/lib/theme/index.ts:21</a></p>
+<hr />
+<h3 id="log">#log</h3>
+<p>• <code>Private</code> <strong>#log</strong>: <a href="../appium_typedoc_plugin_appium.AppiumPluginLogger/"><code>AppiumPluginLogger</code></a></p>
+<p>Custom logger.  This is not the same as the one created by the plugin loader.</p>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L25">packages/typedoc-plugin-appium/lib/theme/index.ts:25</a></p>
+<hr />
+<h3 id="opts">#opts</h3>
+<p>• <code>Private</code> <strong>#opts</strong>: <a href="../../modules/appium_typedoc_plugin_appium/#appiumpluginoptions"><code>AppiumPluginOptions</code></a></p>
+<p>Options specific to this plugin</p>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L30">packages/typedoc-plugin-appium/lib/theme/index.ts:30</a></p>
+<hr />
+<h3 id="allreflectionshaveowndocument">allReflectionsHaveOwnDocument</h3>
+<p>• <strong>allReflectionsHaveOwnDocument</strong>: <code>boolean</code></p>
+<h4 id="inherited-from">Inherited from</h4>
+<p>MarkdownTheme.allReflectionsHaveOwnDocument</p>
+<h4 id="defined-in_4">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:5</p>
+<hr />
+<h3 id="anchormap">anchorMap</h3>
+<p>• <strong>anchorMap</strong>: <code>Record</code>&lt;<code>string</code>, <code>string</code>[]></p>
+<h4 id="inherited-from_1">Inherited from</h4>
+<p>MarkdownTheme.anchorMap</p>
+<h4 id="defined-in_5">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:25</p>
+<hr />
+<h3 id="componentname">componentName</h3>
+<p>• <strong>componentName</strong>: <code>string</code></p>
+<p>The name of this component as set by the</p>
+<p><strong><code>Component</code></strong></p>
+<p>decorator.</p>
+<h4 id="inherited-from_2">Inherited from</h4>
+<p>MarkdownTheme.componentName</p>
+<h4 id="defined-in_6">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/component.d.ts:48</p>
+<hr />
+<h3 id="entrydocument">entryDocument</h3>
+<p>• <strong>entryDocument</strong>: <code>string</code></p>
+<h4 id="inherited-from_3">Inherited from</h4>
+<p>MarkdownTheme.entryDocument</p>
+<h4 id="defined-in_7">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:6</p>
+<hr />
+<h3 id="entrypoints">entryPoints</h3>
+<p>• <strong>entryPoints</strong>: <code>string</code>[]</p>
+<h4 id="inherited-from_4">Inherited from</h4>
+<p>MarkdownTheme.entryPoints</p>
+<h4 id="defined-in_8">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:7</p>
+<hr />
+<h3 id="filenameseparator">filenameSeparator</h3>
+<p>• <strong>filenameSeparator</strong>: <code>string</code></p>
+<h4 id="inherited-from_5">Inherited from</h4>
+<p>MarkdownTheme.filenameSeparator</p>
+<h4 id="defined-in_9">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:8</p>
+<hr />
+<h3 id="hidebreadcrumbs">hideBreadcrumbs</h3>
+<p>• <strong>hideBreadcrumbs</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_6">Inherited from</h4>
+<p>MarkdownTheme.hideBreadcrumbs</p>
+<h4 id="defined-in_10">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:9</p>
+<hr />
+<h3 id="hideinpagetoc">hideInPageTOC</h3>
+<p>• <strong>hideInPageTOC</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_7">Inherited from</h4>
+<p>MarkdownTheme.hideInPageTOC</p>
+<h4 id="defined-in_11">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:10</p>
+<hr />
+<h3 id="hidememberssymbol">hideMembersSymbol</h3>
+<p>• <strong>hideMembersSymbol</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_8">Inherited from</h4>
+<p>MarkdownTheme.hideMembersSymbol</p>
+<h4 id="defined-in_12">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:12</p>
+<hr />
+<h3 id="hidepagetitle">hidePageTitle</h3>
+<p>• <strong>hidePageTitle</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_9">Inherited from</h4>
+<p>MarkdownTheme.hidePageTitle</p>
+<h4 id="defined-in_13">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:11</p>
+<hr />
+<h3 id="includes">includes</h3>
+<p>• <strong>includes</strong>: <code>string</code></p>
+<h4 id="inherited-from_10">Inherited from</h4>
+<p>MarkdownTheme.includes</p>
+<h4 id="defined-in_14">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:13</p>
+<hr />
+<h3 id="indextitle">indexTitle</h3>
+<p>• <strong>indexTitle</strong>: <code>string</code></p>
+<h4 id="inherited-from_11">Inherited from</h4>
+<p>MarkdownTheme.indexTitle</p>
+<h4 id="defined-in_15">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:14</p>
+<hr />
+<h3 id="location">location</h3>
+<p>• <strong>location</strong>: <code>string</code></p>
+<h4 id="inherited-from_12">Inherited from</h4>
+<p>MarkdownTheme.location</p>
+<h4 id="defined-in_16">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:24</p>
+<hr />
+<h3 id="mediadirectory">mediaDirectory</h3>
+<p>• <strong>mediaDirectory</strong>: <code>string</code></p>
+<h4 id="inherited-from_13">Inherited from</h4>
+<p>MarkdownTheme.mediaDirectory</p>
+<h4 id="defined-in_17">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:15</p>
+<hr />
+<h3 id="namedanchors">namedAnchors</h3>
+<p>• <strong>namedAnchors</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_14">Inherited from</h4>
+<p>MarkdownTheme.namedAnchors</p>
+<h4 id="defined-in_18">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:16</p>
+<hr />
+<h3 id="objectliteraltypedeclarationstyle">objectLiteralTypeDeclarationStyle</h3>
+<p>• <strong>objectLiteralTypeDeclarationStyle</strong>: <code>ObjectLiteralDeclarationStyle</code></p>
+<h4 id="inherited-from_15">Inherited from</h4>
+<p>MarkdownTheme.objectLiteralTypeDeclarationStyle</p>
+<h4 id="defined-in_19">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:21</p>
+<hr />
+<h3 id="out">out</h3>
+<p>• <strong>out</strong>: <code>string</code></p>
+<h4 id="inherited-from_16">Inherited from</h4>
+<p>MarkdownTheme.out</p>
+<h4 id="defined-in_20">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:18</p>
+<hr />
+<h3 id="preserveanchorcasing">preserveAnchorCasing</h3>
+<p>• <strong>preserveAnchorCasing</strong>: <code>boolean</code></p>
+<h4 id="inherited-from_17">Inherited from</h4>
+<p>MarkdownTheme.preserveAnchorCasing</p>
+<h4 id="defined-in_21">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:20</p>
+<hr />
+<h3 id="project">project</h3>
+<p>• <code>Optional</code> <strong>project</strong>: <code>ProjectReflection</code></p>
+<h4 id="inherited-from_18">Inherited from</h4>
+<p>MarkdownTheme.project</p>
+<h4 id="defined-in_22">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:22</p>
+<hr />
+<h3 id="publicpath">publicPath</h3>
+<p>• <strong>publicPath</strong>: <code>string</code></p>
+<h4 id="inherited-from_19">Inherited from</h4>
+<p>MarkdownTheme.publicPath</p>
+<h4 id="defined-in_23">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:19</p>
+<hr />
+<h3 id="readme">readme</h3>
+<p>• <strong>readme</strong>: <code>string</code></p>
+<h4 id="inherited-from_20">Inherited from</h4>
+<p>MarkdownTheme.readme</p>
+<h4 id="defined-in_24">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:17</p>
+<hr />
+<h3 id="reflection">reflection</h3>
+<p>• <code>Optional</code> <strong>reflection</strong>: <code>DeclarationReflection</code></p>
+<h4 id="inherited-from_21">Inherited from</h4>
+<p>MarkdownTheme.reflection</p>
+<h4 id="defined-in_25">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:23</p>
+<hr />
+<h3 id="url_prefix">URL_PREFIX</h3>
+<p>▪ <code>Static</code> <strong>URL_PREFIX</strong>: <code>RegExp</code></p>
+<h4 id="inherited-from_22">Inherited from</h4>
+<p>MarkdownTheme.URL_PREFIX</p>
+<h4 id="defined-in_26">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:26</p>
+<h2 id="accessors_1">Accessors</h2>
+<h3 id="_listenid">_listenId</h3>
+<p>• <code>Private</code> <code>get</code> <strong>_listenId</strong>(): <code>any</code></p>
+<p>A unique id that identifies this instance.</p>
+<h4 id="returns">Returns</h4>
+<p><code>any</code></p>
+<h4 id="inherited-from_23">Inherited from</h4>
+<p>MarkdownTheme._listenId</p>
+<h4 id="defined-in_27">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:70</p>
+<hr />
+<h3 id="application">application</h3>
+<p>• <code>get</code> <strong>application</strong>(): <code>Application</code></p>
+<p>Return the application / root component instance.</p>
+<h4 id="returns_1">Returns</h4>
+<p><code>Application</code></p>
+<h4 id="inherited-from_24">Inherited from</h4>
+<p>MarkdownTheme.application</p>
+<h4 id="defined-in_28">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/component.d.ts:61</p>
+<hr />
+<h3 id="globalsfile">globalsFile</h3>
+<p>• <code>get</code> <strong>globalsFile</strong>(): <code>string</code></p>
+<h4 id="returns_2">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_25">Inherited from</h4>
+<p>MarkdownTheme.globalsFile</p>
+<h4 id="defined-in_29">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:49</p>
+<hr />
+<h3 id="mappings">mappings</h3>
+<p>• <code>get</code> <strong>mappings</strong>(): <a href="../../modules/appium_typedoc_plugin_appium/#templatemapping"><code>TemplateMapping</code></a>[]</p>
+<p>A lookup of ReflectionKinds to templates.  It also controls in which directory the output files live.</p>
+<p>This is part of MarkdownTheme and adds a new template.</p>
+<p>If <code>isLeaf</code> is <code>false</code>, the model gets its own document.</p>
+<h4 id="returns_3">Returns</h4>
+<p><a href="../../modules/appium_typedoc_plugin_appium/#templatemapping"><code>TemplateMapping</code></a>[]</p>
+<h4 id="overrides_1">Overrides</h4>
+<p>MarkdownTheme.mappings</p>
+<h4 id="defined-in_30">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L69">packages/typedoc-plugin-appium/lib/theme/index.ts:69</a></p>
+<hr />
+<h3 id="owner">owner</h3>
+<p>• <code>get</code> <strong>owner</strong>(): <code>O</code></p>
+<p>Return the owner of this component.</p>
+<h4 id="returns_4">Returns</h4>
+<p><code>O</code></p>
+<h4 id="inherited-from_26">Inherited from</h4>
+<p>MarkdownTheme.owner</p>
+<h4 id="defined-in_31">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/component.d.ts:65</p>
+<h2 id="methods_1">Methods</h2>
+<h3 id="createtemplaterenderer">#createTemplateRenderer</h3>
+<p>▸ <code>Private</code> <strong>#createTemplateRenderer</strong>(<code>template</code>): <a href="../../modules/appium_typedoc_plugin_appium/#templaterenderer"><code>TemplateRenderer</code></a></p>
+<p>Given a <a href="../../enums/appium_typedoc_plugin_appium.AppiumThemeTemplate/"><code>AppiumThemeTemplate</code></a> return a function which will render the template
+given some data.</p>
+<h4 id="parameters_1">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>template</code></td>
+<td align="left"><a href="../../enums/appium_typedoc_plugin_appium.AppiumThemeTemplate/#extension"><code>Extension</code></a></td>
+<td align="left">Template to render</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_5">Returns</h4>
+<p><a href="../../modules/appium_typedoc_plugin_appium/#templaterenderer"><code>TemplateRenderer</code></a></p>
+<p>Rendering function</p>
+<h4 id="defined-in_32">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/typedoc-plugin-appium/lib/theme/index.ts#L87">packages/typedoc-plugin-appium/lib/theme/index.ts:87</a></p>
+<hr />
+<h3 id="applyanchorurl">applyAnchorUrl</h3>
+<p>▸ <strong>applyAnchorUrl</strong>(<code>reflection</code>, <code>container</code>, <code>isSymbol?</code>): <code>void</code></p>
+<h4 id="parameters_2">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>reflection</code></td>
+<td align="left"><code>Reflection</code></td>
+</tr>
+<tr>
+<td align="left"><code>container</code></td>
+<td align="left"><code>Reflection</code></td>
+</tr>
+<tr>
+<td align="left"><code>isSymbol?</code></td>
+<td align="left"><code>boolean</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_6">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_27">Inherited from</h4>
+<p>MarkdownTheme.applyAnchorUrl</p>
+<h4 id="defined-in_33">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:34</p>
+<hr />
+<h3 id="bubble">bubble</h3>
+<p>▸ <code>Protected</code> <strong>bubble</strong>(<code>name</code>, <code>...args</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_3">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code> | <code>Event</code> | <code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>any</code>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_7">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_28">Inherited from</h4>
+<p>MarkdownTheme.bubble</p>
+<h4 id="defined-in_34">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/component.d.ts:57</p>
+<hr />
+<h3 id="buildurls">buildUrls</h3>
+<p>▸ <strong>buildUrls</strong>(<code>reflection</code>, <code>urls</code>): <code>UrlMapping</code>&lt;<code>any</code>>[]</p>
+<h4 id="parameters_4">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>reflection</code></td>
+<td align="left"><code>DeclarationReflection</code></td>
+</tr>
+<tr>
+<td align="left"><code>urls</code></td>
+<td align="left"><code>UrlMapping</code>&lt;<code>any</code>>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_8">Returns</h4>
+<p><code>UrlMapping</code>&lt;<code>any</code>>[]</p>
+<h4 id="inherited-from_29">Inherited from</h4>
+<p>MarkdownTheme.buildUrls</p>
+<h4 id="defined-in_35">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:31</p>
+<hr />
+<h3 id="getindextemplate">getIndexTemplate</h3>
+<p>▸ <strong>getIndexTemplate</strong>(): (<code>pageEvent</code>: <code>PageEvent</code>&lt;<code>ContainerReflection</code>>) =&gt; <code>string</code></p>
+<h4 id="returns_9">Returns</h4>
+<p><code>fn</code></p>
+<p>▸ (<code>pageEvent</code>): <code>string</code></p>
+<h5 id="parameters_5">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>pageEvent</code></td>
+<td align="left"><code>PageEvent</code>&lt;<code>ContainerReflection</code>></td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_10">Returns</h5>
+<p><code>string</code></p>
+<h4 id="inherited-from_30">Inherited from</h4>
+<p>MarkdownTheme.getIndexTemplate</p>
+<h4 id="defined-in_36">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:39</p>
+<hr />
+<h3 id="getnavigation">getNavigation</h3>
+<p>▸ <strong>getNavigation</strong>(<code>project</code>): <code>NavigationItem</code></p>
+<h4 id="parameters_6">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>project</code></td>
+<td align="left"><code>ProjectReflection</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_11">Returns</h4>
+<p><code>NavigationItem</code></p>
+<h4 id="inherited-from_31">Inherited from</h4>
+<p>MarkdownTheme.getNavigation</p>
+<h4 id="defined-in_37">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:40</p>
+<hr />
+<h3 id="getoption">getOption</h3>
+<p>▸ <strong>getOption</strong>(<code>key</code>): <code>unknown</code></p>
+<h4 id="parameters_7">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>key</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_12">Returns</h4>
+<p><code>unknown</code></p>
+<h4 id="inherited-from_32">Inherited from</h4>
+<p>MarkdownTheme.getOption</p>
+<h4 id="defined-in_38">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:29</p>
+<hr />
+<h3 id="getreflectionmembertemplate">getReflectionMemberTemplate</h3>
+<p>▸ <strong>getReflectionMemberTemplate</strong>(): (<code>pageEvent</code>: <code>PageEvent</code>&lt;<code>ContainerReflection</code>>) =&gt; <code>string</code></p>
+<h4 id="returns_13">Returns</h4>
+<p><code>fn</code></p>
+<p>▸ (<code>pageEvent</code>): <code>string</code></p>
+<h5 id="parameters_8">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>pageEvent</code></td>
+<td align="left"><code>PageEvent</code>&lt;<code>ContainerReflection</code>></td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_14">Returns</h5>
+<p><code>string</code></p>
+<h4 id="inherited-from_33">Inherited from</h4>
+<p>MarkdownTheme.getReflectionMemberTemplate</p>
+<h4 id="defined-in_39">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:38</p>
+<hr />
+<h3 id="getreflectiontemplate">getReflectionTemplate</h3>
+<p>▸ <strong>getReflectionTemplate</strong>(): (<code>pageEvent</code>: <code>PageEvent</code>&lt;<code>ContainerReflection</code>>) =&gt; <code>string</code></p>
+<h4 id="returns_15">Returns</h4>
+<p><code>fn</code></p>
+<p>▸ (<code>pageEvent</code>): <code>string</code></p>
+<h5 id="parameters_9">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>pageEvent</code></td>
+<td align="left"><code>PageEvent</code>&lt;<code>ContainerReflection</code>></td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_16">Returns</h5>
+<p><code>string</code></p>
+<h4 id="inherited-from_34">Inherited from</h4>
+<p>MarkdownTheme.getReflectionTemplate</p>
+<h4 id="defined-in_40">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:37</p>
+<hr />
+<h3 id="getrelativeurl">getRelativeUrl</h3>
+<p>▸ <strong>getRelativeUrl</strong>(<code>absolute</code>): <code>string</code></p>
+<h4 id="parameters_10">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>absolute</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_17">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_35">Inherited from</h4>
+<p>MarkdownTheme.getRelativeUrl</p>
+<h4 id="defined-in_41">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:36</p>
+<hr />
+<h3 id="geturl">getUrl</h3>
+<p>▸ <strong>getUrl</strong>(<code>reflection</code>, <code>relative?</code>): <code>string</code></p>
+<h4 id="parameters_11">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>reflection</code></td>
+<td align="left"><code>Reflection</code></td>
+</tr>
+<tr>
+<td align="left"><code>relative?</code></td>
+<td align="left"><code>Reflection</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_18">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_36">Inherited from</h4>
+<p>MarkdownTheme.getUrl</p>
+<h4 id="defined-in_42">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:33</p>
+<hr />
+<h3 id="geturls">getUrls</h3>
+<p>▸ <strong>getUrls</strong>(<code>project</code>): <code>UrlMapping</code>&lt;<code>any</code>>[]</p>
+<h4 id="parameters_12">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>project</code></td>
+<td align="left"><code>ProjectReflection</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_19">Returns</h4>
+<p><code>UrlMapping</code>&lt;<code>any</code>>[]</p>
+<h4 id="inherited-from_37">Inherited from</h4>
+<p>MarkdownTheme.getUrls</p>
+<h4 id="defined-in_43">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:30</p>
+<hr />
+<h3 id="initialize">initialize</h3>
+<p>▸ <code>Protected</code> <strong>initialize</strong>(): <code>void</code></p>
+<p>Initialize this component.</p>
+<h4 id="returns_20">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_38">Inherited from</h4>
+<p>MarkdownTheme.initialize</p>
+<h4 id="defined-in_44">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/component.d.ts:56</p>
+<hr />
+<h3 id="listento">listenTo</h3>
+<p>▸ <strong>listenTo</strong>(<code>obj</code>, <code>name</code>, <code>callback?</code>, <code>priority?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Inversion-of-control versions of <code>on</code>. Tell <em>this</em> object to listen to
+an event in another object... keeping track of what it's listening to
+for easier unbinding later.</p>
+<h4 id="parameters_13">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>obj</code></td>
+<td align="left"><code>EventDispatcher</code></td>
+</tr>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code> | <code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback?</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>priority?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_21">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_39">Inherited from</h4>
+<p>MarkdownTheme.listenTo</p>
+<h4 id="defined-in_45">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:105</p>
+<hr />
+<h3 id="listentoonce">listenToOnce</h3>
+<p>▸ <strong>listenToOnce</strong>(<code>obj</code>, <code>eventMap</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Inversion-of-control versions of <code>once</code>.</p>
+<h4 id="parameters_14">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>obj</code></td>
+<td align="left"><code>EventDispatcher</code></td>
+</tr>
+<tr>
+<td align="left"><code>eventMap</code></td>
+<td align="left"><code>EventMap</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_22">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_40">Inherited from</h4>
+<p>MarkdownTheme.listenToOnce</p>
+<h4 id="defined-in_46">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:109</p>
+<p>▸ <strong>listenToOnce</strong>(<code>obj</code>, <code>name</code>, <code>callback</code>, <code>priority?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_15">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>obj</code></td>
+<td align="left"><code>EventDispatcher</code></td>
+</tr>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>priority?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_23">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_41">Inherited from</h4>
+<p>MarkdownTheme.listenToOnce</p>
+<h4 id="defined-in_47">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:110</p>
+<hr />
+<h3 id="off">off</h3>
+<p>▸ <strong>off</strong>(): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Remove one or many callbacks. If <code>context</code> is null, removes all
+callbacks with that function. If <code>callback</code> is null, removes all
+callbacks for the event. If <code>name</code> is null, removes all bound
+callbacks for all events.</p>
+<h4 id="returns_24">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_42">Inherited from</h4>
+<p>MarkdownTheme.off</p>
+<h4 id="defined-in_48">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:97</p>
+<p>▸ <strong>off</strong>(<code>eventMap</code>, <code>context?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_16">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>eventMap</code></td>
+<td align="left"><code>undefined</code> | <code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_25">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_43">Inherited from</h4>
+<p>MarkdownTheme.off</p>
+<h4 id="defined-in_49">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:98</p>
+<p>▸ <strong>off</strong>(<code>name</code>, <code>callback?</code>, <code>context?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_17">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>undefined</code> | <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback?</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_26">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_44">Inherited from</h4>
+<p>MarkdownTheme.off</p>
+<h4 id="defined-in_50">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:99</p>
+<hr />
+<h3 id="on">on</h3>
+<p>▸ <strong>on</strong>(<code>eventMap</code>, <code>context?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Bind an event to a <code>callback</code> function. Passing <code>"all"</code> will bind
+the callback to all events fired.</p>
+<h4 id="parameters_18">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>eventMap</code></td>
+<td align="left"><code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_27">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_45">Inherited from</h4>
+<p>MarkdownTheme.on</p>
+<h4 id="defined-in_51">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:76</p>
+<p>▸ <strong>on</strong>(<code>eventMap</code>, <code>callback?</code>, <code>context?</code>, <code>priority?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_19">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>eventMap</code></td>
+<td align="left"><code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback?</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>priority?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_28">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_46">Inherited from</h4>
+<p>MarkdownTheme.on</p>
+<h4 id="defined-in_52">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:77</p>
+<p>▸ <strong>on</strong>(<code>name</code>, <code>callback</code>, <code>context?</code>, <code>priority?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_20">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>priority?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_29">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_47">Inherited from</h4>
+<p>MarkdownTheme.on</p>
+<h4 id="defined-in_53">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:78</p>
+<hr />
+<h3 id="onbeginpage">onBeginPage</h3>
+<p>▸ <code>Protected</code> <strong>onBeginPage</strong>(<code>page</code>): <code>void</code></p>
+<h4 id="parameters_21">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>page</code></td>
+<td align="left"><code>PageEvent</code>&lt;<code>unknown</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_30">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_48">Inherited from</h4>
+<p>MarkdownTheme.onBeginPage</p>
+<h4 id="defined-in_54">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:48</p>
+<hr />
+<h3 id="onbeginrenderer">onBeginRenderer</h3>
+<p>▸ <code>Protected</code> <strong>onBeginRenderer</strong>(<code>event</code>): <code>void</code></p>
+<h4 id="parameters_22">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>event</code></td>
+<td align="left"><code>RendererEvent</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_31">Returns</h4>
+<p><code>void</code></p>
+<h4 id="inherited-from_49">Inherited from</h4>
+<p>MarkdownTheme.onBeginRenderer</p>
+<h4 id="defined-in_55">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:47</p>
+<hr />
+<h3 id="once">once</h3>
+<p>▸ <strong>once</strong>(<code>eventMap</code>, <code>context?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Bind an event to only be triggered a single time. After the first time
+the callback is invoked, its listener will be removed. If multiple events
+are passed in using the space-separated syntax, the handler will fire
+once for each event, not once for a combination of all events.</p>
+<h4 id="parameters_23">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>eventMap</code></td>
+<td align="left"><code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_32">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_50">Inherited from</h4>
+<p>MarkdownTheme.once</p>
+<h4 id="defined-in_56">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:89</p>
+<p>▸ <strong>once</strong>(<code>name</code>, <code>callback</code>, <code>context?</code>, <code>priority?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="parameters_24">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+<tr>
+<td align="left"><code>context?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>priority?</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_33">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_51">Inherited from</h4>
+<p>MarkdownTheme.once</p>
+<h4 id="defined-in_57">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:90</p>
+<hr />
+<h3 id="render">render</h3>
+<p>▸ <strong>render</strong>(<code>page</code>): <code>string</code></p>
+<h4 id="parameters_25">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>page</code></td>
+<td align="left"><code>PageEvent</code>&lt;<code>Reflection</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_34">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_52">Inherited from</h4>
+<p>MarkdownTheme.render</p>
+<h4 id="defined-in_58">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:28</p>
+<hr />
+<h3 id="stoplistening">stopListening</h3>
+<p>▸ <strong>stopListening</strong>(<code>obj?</code>, <code>name?</code>, <code>callback?</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Tell this object to stop listening to either specific events ... or
+to every object it's currently listening to.</p>
+<h4 id="parameters_26">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>obj?</code></td>
+<td align="left"><code>EventDispatcher</code></td>
+</tr>
+<tr>
+<td align="left"><code>name?</code></td>
+<td align="left"><code>string</code> | <code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>callback?</code></td>
+<td align="left"><code>EventCallback</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_35">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_53">Inherited from</h4>
+<p>MarkdownTheme.stopListening</p>
+<h4 id="defined-in_59">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:115</p>
+<hr />
+<h3 id="toanchorref">toAnchorRef</h3>
+<p>▸ <strong>toAnchorRef</strong>(<code>reflectionId</code>): <code>string</code></p>
+<h4 id="parameters_27">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>reflectionId</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_36">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_54">Inherited from</h4>
+<p>MarkdownTheme.toAnchorRef</p>
+<h4 id="defined-in_60">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:35</p>
+<hr />
+<h3 id="tourl">toUrl</h3>
+<p>▸ <strong>toUrl</strong>(<code>mapping</code>, <code>reflection</code>): <code>string</code></p>
+<h4 id="parameters_28">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>mapping</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>reflection</code></td>
+<td align="left"><code>DeclarationReflection</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_37">Returns</h4>
+<p><code>string</code></p>
+<h4 id="inherited-from_55">Inherited from</h4>
+<p>MarkdownTheme.toUrl</p>
+<h4 id="defined-in_61">Defined in</h4>
+<p>node_modules/typedoc-plugin-markdown/dist/theme.d.ts:32</p>
+<hr />
+<h3 id="trigger">trigger</h3>
+<p>▸ <strong>trigger</strong>(<code>name</code>, <code>...args</code>): <a href="./"><code>AppiumTheme</code></a></p>
+<p>Trigger one or many events, firing all bound callbacks. Callbacks are
+passed the same arguments as <code>trigger</code> is, apart from the event name
+(unless you're listening on <code>"all"</code>, which will cause your callback to
+receive the true name of the event as the first argument).</p>
+<h4 id="parameters_29">Parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>string</code> | <code>Event</code> | <code>EventMap</code></td>
+</tr>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>any</code>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="returns_38">Returns</h4>
+<p><a href="./"><code>AppiumTheme</code></a></p>
+<h4 id="inherited-from_56">Inherited from</h4>
+<p>MarkdownTheme.trigger</p>
+<h4 id="defined-in_62">Defined in</h4>
+<p>node_modules/typedoc/dist/lib/utils/events.d.ts:122</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      
+    
+  </body>
+</html>

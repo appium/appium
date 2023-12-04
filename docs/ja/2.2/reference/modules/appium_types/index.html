@@ -1,0 +1,4551 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The Appium automation project documentation">
+      
+      
+      
+        <link rel="canonical" href="https://appium.io/docs/ja/2.2/reference/modules/appium_types/">
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/appium-logo.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+    
+    
+      
+        <title>Module: @appium/types - Appium Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ecc896b0.min.css">
+      
+      
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+  
+  <style>:root{--md-admonition-icon--note:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/></svg>');--md-admonition-icon--abstract:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 0 1 0 1.5H2.75A1.75 1.75 0 0 1 1 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v7.736a.75.75 0 0 1-1.5 0V1.75a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Zm13.274 9.537v-.001l-4.557 4.45a.75.75 0 0 1-1.055-.008l-1.943-1.95a.75.75 0 0 1 1.062-1.058l1.419 1.425 4.026-3.932a.75.75 0 1 1 1.048 1.074ZM4.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM4 7.75A.75.75 0 0 1 4.75 7h2a.75.75 0 0 1 0 1.5h-2A.75.75 0 0 1 4 7.75Z"/></svg>');--md-admonition-icon--info:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>');--md-admonition-icon--tip:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M3.499.75a.75.75 0 0 1 1.5 0v.996C5.9 2.903 6.793 3.65 7.662 4.376l.24.202c-.036-.694.055-1.422.426-2.163C9.1.873 10.794-.045 12.622.26 14.408.558 16 1.94 16 4.25c0 1.278-.954 2.575-2.44 2.734l.146.508.065.22c.203.701.412 1.455.476 2.226.142 1.707-.4 3.03-1.487 3.898C11.714 14.671 10.27 15 8.75 15h-6a.75.75 0 0 1 0-1.5h1.376a4.484 4.484 0 0 1-.563-1.191 3.835 3.835 0 0 1-.05-2.063 4.647 4.647 0 0 1-2.025-.293.75.75 0 0 1 .525-1.406c1.357.507 2.376-.006 2.698-.318l.009-.01a.747.747 0 0 1 1.06 0 .748.748 0 0 1-.012 1.074c-.912.92-.992 1.835-.768 2.586.221.74.745 1.337 1.196 1.621H8.75c1.343 0 2.398-.296 3.074-.836.635-.507 1.036-1.31.928-2.602-.05-.603-.216-1.224-.422-1.93l-.064-.221c-.12-.407-.246-.84-.353-1.29a2.425 2.425 0 0 1-.507-.441 3.075 3.075 0 0 1-.633-1.248.75.75 0 0 1 1.455-.364c.046.185.144.436.31.627.146.168.353.305.712.305.738 0 1.25-.615 1.25-1.25 0-1.47-.95-2.315-2.123-2.51-1.172-.196-2.227.387-2.706 1.345-.46.92-.27 1.774.019 3.062l.042.19a.884.884 0 0 1 .01.05c.348.443.666.949.94 1.553a.75.75 0 1 1-1.365.62c-.553-1.217-1.32-1.94-2.3-2.768L6.7 5.527c-.814-.68-1.75-1.462-2.692-2.619a3.737 3.737 0 0 0-1.023.88c-.406.495-.663 1.036-.722 1.508.116.122.306.21.591.239.388.038.797-.06 1.032-.19a.75.75 0 0 1 .728 1.31c-.515.287-1.23.439-1.906.373-.682-.067-1.473-.38-1.879-1.193L.75 5.677V5.5c0-.984.48-1.94 1.077-2.664.46-.559 1.05-1.055 1.673-1.353V.75Z"/></svg>');--md-admonition-icon--success:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/></svg>');--md-admonition-icon--question:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.92 6.085h.001a.749.749 0 1 1-1.342-.67c.169-.339.436-.701.849-.977C6.845 4.16 7.369 4 8 4a2.756 2.756 0 0 1 1.637.525c.503.377.863.965.863 1.725 0 .448-.115.83-.329 1.15-.205.307-.47.513-.692.662-.109.072-.22.138-.313.195l-.006.004a6.24 6.24 0 0 0-.26.16.952.952 0 0 0-.276.245.75.75 0 0 1-1.248-.832c.184-.264.42-.489.692-.661.103-.067.207-.132.313-.195l.007-.004c.1-.061.182-.11.258-.161a.969.969 0 0 0 .277-.245C8.96 6.514 9 6.427 9 6.25a.612.612 0 0 0-.262-.525A1.27 1.27 0 0 0 8 5.5c-.369 0-.595.09-.74.187a1.01 1.01 0 0 0-.34.398ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--warning:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>');--md-admonition-icon--failure:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M2.344 2.343h-.001a8 8 0 0 1 11.314 11.314A8.002 8.002 0 0 1 .234 10.089a8 8 0 0 1 2.11-7.746Zm1.06 10.253a6.5 6.5 0 1 0 9.108-9.275 6.5 6.5 0 0 0-9.108 9.275ZM6.03 4.97 8 6.94l1.97-1.97a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-1.97 1.97a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L6.94 8 4.97 6.03a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018Z"/></svg>');--md-admonition-icon--danger:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M9.504.43a1.516 1.516 0 0 1 2.437 1.713L10.415 5.5h2.123c1.57 0 2.346 1.909 1.22 3.004l-7.34 7.142a1.249 1.249 0 0 1-.871.354h-.302a1.25 1.25 0 0 1-1.157-1.723L5.633 10.5H3.462c-1.57 0-2.346-1.909-1.22-3.004L9.503.429Zm1.047 1.074L3.286 8.571A.25.25 0 0 0 3.462 9H6.75a.75.75 0 0 1 .694 1.034l-1.713 4.188 6.982-6.793A.25.25 0 0 0 12.538 7H9.25a.75.75 0 0 1-.683-1.06l2.008-4.418.003-.006a.036.036 0 0 0-.004-.009l-.006-.006-.008-.001c-.003 0-.006.002-.009.004Z"/></svg>');--md-admonition-icon--bug:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4.72.22a.75.75 0 0 1 1.06 0l1 .999a3.488 3.488 0 0 1 2.441 0l.999-1a.748.748 0 0 1 1.265.332.75.75 0 0 1-.205.729l-.775.776c.616.63.995 1.493.995 2.444v.327c0 .1-.009.197-.025.292.408.14.764.392 1.029.722l1.968-.787a.75.75 0 0 1 .556 1.392L13 7.258V9h2.25a.75.75 0 0 1 0 1.5H13v.5c0 .409-.049.806-.141 1.186l2.17.868a.75.75 0 0 1-.557 1.392l-2.184-.873A4.997 4.997 0 0 1 8 16a4.997 4.997 0 0 1-4.288-2.427l-2.183.873a.75.75 0 0 1-.558-1.392l2.17-.868A5.036 5.036 0 0 1 3 11v-.5H.75a.75.75 0 0 1 0-1.5H3V7.258L.971 6.446a.75.75 0 0 1 .558-1.392l1.967.787c.265-.33.62-.583 1.03-.722a1.677 1.677 0 0 1-.026-.292V4.5c0-.951.38-1.814.995-2.444L4.72 1.28a.75.75 0 0 1 0-1.06Zm.53 6.28a.75.75 0 0 0-.75.75V11a3.5 3.5 0 1 0 7 0V7.25a.75.75 0 0 0-.75-.75ZM6.173 5h3.654A.172.172 0 0 0 10 4.827V4.5a2 2 0 1 0-4 0v.327c0 .096.077.173.173.173Z"/></svg>');--md-admonition-icon--example:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M5 5.782V2.5h-.25a.75.75 0 0 1 0-1.5h6.5a.75.75 0 0 1 0 1.5H11v3.282l3.666 5.76C15.619 13.04 14.543 15 12.767 15H3.233c-1.776 0-2.852-1.96-1.899-3.458Zm-2.4 6.565a.75.75 0 0 0 .633 1.153h9.534a.75.75 0 0 0 .633-1.153L12.225 10.5h-8.45ZM9.5 2.5h-3V6c0 .143-.04.283-.117.403L4.73 9h6.54L9.617 6.403A.746.746 0 0 1 9.5 6Z"/></svg>');--md-admonition-icon--quote:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M1.75 2.5h10.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Zm4 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2.5 7.75v6a.75.75 0 0 1-1.5 0v-6a.75.75 0 0 1 1.5 0Z"/></svg>');}</style>
+
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-appiumtypes" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="/" title="Appium Documentation" class="md-header__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Appium Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Module: @appium/types
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+          
+            
+            
+            
+            <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+            
+          
+        </form>
+      
+    
+    
+      <div class="md-header__option">
+        <div class="md-select">
+          
+          <button class="md-header__button md-icon" aria-label="言語切り替え">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+          </button>
+          <div class="md-select__inner">
+            <ul class="md-select__list">
+              
+                <li class="md-select__item">
+                  <a href="/docs/en/" hreflang="en" class="md-select__link">
+                    English
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/ja/" hreflang="ja" class="md-select__link">
+                    日本
+                  </a>
+                </li>
+              
+                <li class="md-select__item">
+                  <a href="/docs/zh/" hreflang="zh" class="md-select__link">
+                    中文简体
+                  </a>
+                </li>
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="/" title="Appium Documentation" class="md-nav__button md-logo" aria-label="Appium Documentation" data-md-component="logo">
+      
+  <img src="../../../assets/images/appium-logo-white.png" alt="logo">
+
+    </a>
+    Appium Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/appium/appium" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    appium/appium
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        はじめに
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          導入
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          導入
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+          Appiumについて
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          Appiumについて
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../intro/" class="md-nav__link">
+        Appiumの全体像
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          手引き
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          手引き
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/migrating-1-to-2/" class="md-nav__link">
+        Migrating 1 to 2
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/base-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/execute-driver-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/fake-driver.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/images-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/relaxed-caps-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../en/reference/commands/universal-xml-plugin.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#table-of-contents" class="md-nav__link">
+    Table of contents
+  </a>
+  
+    <nav class="md-nav" aria-label="Table of contents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#actions" class="md-nav__link">
+    Actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interfaces" class="md-nav__link">
+    Interfaces
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-aliases" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    Variables
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#actions_1" class="md-nav__link">
+    Actions
+  </a>
+  
+    <nav class="md-nav" aria-label="Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#actionsequence" class="md-nav__link">
+    ActionSequence
+  </a>
+  
+    <nav class="md-nav" aria-label="ActionSequence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_1" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyaction" class="md-nav__link">
+    KeyAction
+  </a>
+  
+    <nav class="md-nav" aria-label="KeyAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_2" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyactionsequence" class="md-nav__link">
+    KeyActionSequence
+  </a>
+  
+    <nav class="md-nav" aria-label="KeyActionSequence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_3" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keydownaction" class="md-nav__link">
+    KeyDownAction
+  </a>
+  
+    <nav class="md-nav" aria-label="KeyDownAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_1" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_4" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keyupaction" class="md-nav__link">
+    KeyUpAction
+  </a>
+  
+    <nav class="md-nav" aria-label="KeyUpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_2" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_5" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nullaction" class="md-nav__link">
+    NullAction
+  </a>
+  
+    <nav class="md-nav" aria-label="NullAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_6" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nullactionsequence" class="md-nav__link">
+    NullActionSequence
+  </a>
+  
+    <nav class="md-nav" aria-label="NullActionSequence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_3" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_7" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pauseaction" class="md-nav__link">
+    PauseAction
+  </a>
+  
+    <nav class="md-nav" aria-label="PauseAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_4" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_8" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointeraction" class="md-nav__link">
+    PointerAction
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_9" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointeractionsequence" class="md-nav__link">
+    PointerActionSequence
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerActionSequence">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_5" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_10" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointerdownaction" class="md-nav__link">
+    PointerDownAction
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerDownAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_6" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_11" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointermoveaction" class="md-nav__link">
+    PointerMoveAction
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerMoveAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_7" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_12" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointerparameters" class="md-nav__link">
+    PointerParameters
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerParameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_8" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_13" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pointerupaction" class="md-nav__link">
+    PointerUpAction
+  </a>
+  
+    <nav class="md-nav" aria-label="PointerUpAction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_9" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_14" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#type-aliases_1" class="md-nav__link">
+    Type Aliases
+  </a>
+  
+    <nav class="md-nav" aria-label="Type Aliases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#addressconfig" class="md-nav__link">
+    AddressConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="AddressConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_15" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowcorsconfig" class="md-nav__link">
+    AllowCorsConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="AllowCorsConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_16" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#allowinsecureconfig" class="md-nav__link">
+    AllowInsecureConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="AllowInsecureConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_17" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#anycase" class="md-nav__link">
+    AnyCase
+  </a>
+  
+    <nav class="md-nav" aria-label="AnyCase">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_18" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appiumconfig" class="md-nav__link">
+    AppiumConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="AppiumConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_19" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appiumloggerlevel" class="md-nav__link">
+    AppiumLoggerLevel
+  </a>
+  
+    <nav class="md-nav" aria-label="AppiumLoggerLevel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_20" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appiumloggerprefix" class="md-nav__link">
+    AppiumLoggerPrefix
+  </a>
+  
+    <nav class="md-nav" aria-label="AppiumLoggerPrefix">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_21" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appiumserver" class="md-nav__link">
+    AppiumServer
+  </a>
+  
+    <nav class="md-nav" aria-label="AppiumServer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_22" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basecapabilities" class="md-nav__link">
+    BaseCapabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="BaseCapabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_23" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basedrivercapconstraints" class="md-nav__link">
+    BaseDriverCapConstraints
+  </a>
+  
+    <nav class="md-nav" aria-label="BaseDriverCapConstraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_24" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basenscapabilities" class="md-nav__link">
+    BaseNSCapabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="BaseNSCapabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_25" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basepathconfig" class="md-nav__link">
+    BasePathConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="BasePathConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_26" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#callbackaddressconfig" class="md-nav__link">
+    CallbackAddressConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="CallbackAddressConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_27" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#callbackportconfig" class="md-nav__link">
+    CallbackPortConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="CallbackPortConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_28" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capabilities" class="md-nav__link">
+    Capabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_1" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_29" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#capstonscaps" class="md-nav__link">
+    CapsToNSCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="CapsToNSCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_2" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_30" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#class" class="md-nav__link">
+    Class
+  </a>
+  
+    <nav class="md-nav" aria-label="Class">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_3" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_31" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constrainttocap" class="md-nav__link">
+    ConstraintToCap
+  </a>
+  
+    <nav class="md-nav" aria-label="ConstraintToCap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_4" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_32" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constraints" class="md-nav__link">
+    Constraints
+  </a>
+  
+    <nav class="md-nav" aria-label="Constraints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_33" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#constraintstocaps" class="md-nav__link">
+    ConstraintsToCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="ConstraintsToCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_5" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_34" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debuglogspacingconfig" class="md-nav__link">
+    DebugLogSpacingConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="DebugLogSpacingConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_35" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#denyinsecureconfig" class="md-nav__link">
+    DenyInsecureConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="DenyInsecureConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_36" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivercaps" class="md-nav__link">
+    DriverCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_6" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_37" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverclass" class="md-nav__link">
+    DriverClass
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverClass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_7" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_38" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivercommand" class="md-nav__link">
+    DriverCommand
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverCommand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_8" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_10" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_39" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivercommands" class="md-nav__link">
+    DriverCommands
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverCommands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_9" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_40" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driverdata" class="md-nav__link">
+    DriverData
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_41" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driveropts" class="md-nav__link">
+    DriverOpts
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverOpts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_10" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_42" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drivertype" class="md-nav__link">
+    DriverType
+  </a>
+  
+    <nav class="md-nav" aria-label="DriverType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_43" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#executemethodmap" class="md-nav__link">
+    ExecuteMethodMap
+  </a>
+  
+    <nav class="md-nav" aria-label="ExecuteMethodMap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_11" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_44" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extensiontype" class="md-nav__link">
+    ExtensionType
+  </a>
+  
+    <nav class="md-nav" aria-label="ExtensionType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_45" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#httpmethod" class="md-nav__link">
+    HTTPMethod
+  </a>
+  
+    <nav class="md-nav" aria-label="HTTPMethod">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_46" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#keepalivetimeoutconfig" class="md-nav__link">
+    KeepAliveTimeoutConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="KeepAliveTimeoutConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_47" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#localtimezoneconfig" class="md-nav__link">
+    LocalTimezoneConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LocalTimezoneConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_48" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logconfig" class="md-nav__link">
+    LogConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LogConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_49" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logdefrecord" class="md-nav__link">
+    LogDefRecord
+  </a>
+  
+    <nav class="md-nav" aria-label="LogDefRecord">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_12" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_50" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logfilter" class="md-nav__link">
+    LogFilter
+  </a>
+  
+    <nav class="md-nav" aria-label="LogFilter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_51" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logfiltersconfig" class="md-nav__link">
+    LogFiltersConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LogFiltersConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_52" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loglevelconfig" class="md-nav__link">
+    LogLevelConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LogLevelConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_53" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lognocolorsconfig" class="md-nav__link">
+    LogNoColorsConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LogNoColorsConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_54" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logtimestampconfig" class="md-nav__link">
+    LogTimestampConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LogTimestampConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_55" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#longstacktraceconfig" class="md-nav__link">
+    LongStacktraceConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="LongStacktraceConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_56" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#methodmap" class="md-nav__link">
+    MethodMap
+  </a>
+  
+    <nav class="md-nav" aria-label="MethodMap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_13" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_57" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nscapabilities" class="md-nav__link">
+    NSCapabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="NSCapabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_14" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_58" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nsdrivercaps" class="md-nav__link">
+    NSDriverCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="NSDriverCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_15" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_59" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#namespacedstring" class="md-nav__link">
+    NamespacedString
+  </a>
+  
+    <nav class="md-nav" aria-label="NamespacedString">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_16" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_60" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#newwindowtype" class="md-nav__link">
+    NewWindowType
+  </a>
+  
+    <nav class="md-nav" aria-label="NewWindowType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_61" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nextplugincallback" class="md-nav__link">
+    NextPluginCallback
+  </a>
+  
+    <nav class="md-nav" aria-label="NextPluginCallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_11" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_62" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nopermscheckconfig" class="md-nav__link">
+    NoPermsCheckConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="NoPermsCheckConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_63" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalizedappiumconfig" class="md-nav__link">
+    NormalizedAppiumConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="NormalizedAppiumConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_12" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_64" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#normalizedserverconfig" class="md-nav__link">
+    NormalizedServerConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="NormalizedServerConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_65" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pluginclass" class="md-nav__link">
+    PluginClass
+  </a>
+  
+    <nav class="md-nav" aria-label="PluginClass">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_17" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_66" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plugincommand" class="md-nav__link">
+    PluginCommand
+  </a>
+  
+    <nav class="md-nav" aria-label="PluginCommand">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_18" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_13" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_2" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_67" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plugintype" class="md-nav__link">
+    PluginType
+  </a>
+  
+    <nav class="md-nav" aria-label="PluginType">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_68" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#portconfig" class="md-nav__link">
+    PortConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="PortConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_69" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position" class="md-nav__link">
+    Position
+  </a>
+  
+    <nav class="md-nav" aria-label="Position">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_70" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relaxedsecurityconfig" class="md-nav__link">
+    RelaxedSecurityConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="RelaxedSecurityConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_71" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#routematcher" class="md-nav__link">
+    RouteMatcher
+  </a>
+  
+    <nav class="md-nav" aria-label="RouteMatcher">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_72" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#serverargs" class="md-nav__link">
+    ServerArgs
+  </a>
+  
+    <nav class="md-nav" aria-label="ServerArgs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_73" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sessionoverrideconfig" class="md-nav__link">
+    SessionOverrideConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="SessionOverrideConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_74" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#settingsupdatelistener" class="md-nav__link">
+    SettingsUpdateListener
+  </a>
+  
+    <nav class="md-nav" aria-label="SettingsUpdateListener">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_19" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_14" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_3" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_75" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#singularsessiondata" class="md-nav__link">
+    SingularSessionData
+  </a>
+  
+    <nav class="md-nav" aria-label="SingularSessionData">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_20" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_76" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size" class="md-nav__link">
+    Size
+  </a>
+  
+    <nav class="md-nav" aria-label="Size">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_77" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strictcapsconfig" class="md-nav__link">
+    StrictCapsConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="StrictCapsConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_78" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stringrecord" class="md-nav__link">
+    StringRecord
+  </a>
+  
+    <nav class="md-nav" aria-label="StringRecord">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_79" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tmpconfig" class="md-nav__link">
+    TmpConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="TmpConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_80" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracedirconfig" class="md-nav__link">
+    TraceDirConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="TraceDirConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_81" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updateservercallback" class="md-nav__link">
+    UpdateServerCallback
+  </a>
+  
+    <nav class="md-nav" aria-label="UpdateServerCallback">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_15" class="md-nav__link">
+    Type declaration
+  </a>
+  
+    <nav class="md-nav" aria-label="Type declaration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_4" class="md-nav__link">
+    Returns
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_82" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usedriversconfig" class="md-nav__link">
+    UseDriversConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="UseDriversConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_83" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usepluginsconfig" class="md-nav__link">
+    UsePluginsConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="UsePluginsConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_84" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w3ccapabilities" class="md-nav__link">
+    W3CCapabilities
+  </a>
+  
+    <nav class="md-nav" aria-label="W3CCapabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_21" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_16" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_85" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w3cdrivercaps" class="md-nav__link">
+    W3CDriverCaps
+  </a>
+  
+    <nav class="md-nav" aria-label="W3CDriverCaps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-parameters_22" class="md-nav__link">
+    Type parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_86" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#w3c_appium_prefix" class="md-nav__link">
+    W3C_APPIUM_PREFIX
+  </a>
+  
+    <nav class="md-nav" aria-label="W3C_APPIUM_PREFIX">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_87" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#webhookconfig" class="md-nav__link">
+    WebhookConfig
+  </a>
+  
+    <nav class="md-nav" aria-label="WebhookConfig">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_88" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variables_1" class="md-nav__link">
+    Variables
+  </a>
+  
+    <nav class="md-nav" aria-label="Variables">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#base_desired_cap_constraints" class="md-nav__link">
+    BASE_DESIRED_CAP_CONSTRAINTS
+  </a>
+  
+    <nav class="md-nav" aria-label="BASE_DESIRED_CAP_CONSTRAINTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#type-declaration_17" class="md-nav__link">
+    Type declaration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defined-in_89" class="md-nav__link">
+    Defined in
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="module-appiumtypes">Module: @appium/types</h1>
+<h2 id="table-of-contents">Table of contents</h2>
+<h3 id="actions">Actions</h3>
+<ul>
+<li><a href="../../enums/appium_types.Key/">Key</a></li>
+<li><a href="./#actionsequence">ActionSequence</a></li>
+<li><a href="./#keyaction">KeyAction</a></li>
+<li><a href="./#keyactionsequence">KeyActionSequence</a></li>
+<li><a href="./#keydownaction">KeyDownAction</a></li>
+<li><a href="./#keyupaction">KeyUpAction</a></li>
+<li><a href="./#nullaction">NullAction</a></li>
+<li><a href="./#nullactionsequence">NullActionSequence</a></li>
+<li><a href="./#pauseaction">PauseAction</a></li>
+<li><a href="./#pointeraction">PointerAction</a></li>
+<li><a href="./#pointeractionsequence">PointerActionSequence</a></li>
+<li><a href="./#pointerdownaction">PointerDownAction</a></li>
+<li><a href="./#pointermoveaction">PointerMoveAction</a></li>
+<li><a href="./#pointerparameters">PointerParameters</a></li>
+<li><a href="./#pointerupaction">PointerUpAction</a></li>
+</ul>
+<h3 id="interfaces">Interfaces</h3>
+<ul>
+<li><a href="../../interfaces/appium_types.AppiumConfiguration/">AppiumConfiguration</a></li>
+<li><a href="../../interfaces/appium_types.AppiumLogger/">AppiumLogger</a></li>
+<li><a href="../../interfaces/appium_types.AppiumServerExtension/">AppiumServerExtension</a></li>
+<li><a href="../../interfaces/appium_types.AppiumServerSocket/">AppiumServerSocket</a></li>
+<li><a href="../../interfaces/appium_types.Constraint/">Constraint</a></li>
+<li><a href="../../interfaces/appium_types.Cookie/">Cookie</a></li>
+<li><a href="../../interfaces/appium_types.Core/">Core</a></li>
+<li><a href="../../interfaces/appium_types.Credential/">Credential</a></li>
+<li><a href="../../interfaces/appium_types.DefaultCapabilitiesConfig/">DefaultCapabilitiesConfig</a></li>
+<li><a href="../../interfaces/appium_types.DeviceSettings/">DeviceSettings</a></li>
+<li><a href="../../interfaces/appium_types.Driver/">Driver</a></li>
+<li><a href="../../interfaces/appium_types.DriverConfig/">DriverConfig</a></li>
+<li><a href="../../interfaces/appium_types.DriverHelpers/">DriverHelpers</a></li>
+<li><a href="../../interfaces/appium_types.DriverStatic/">DriverStatic</a></li>
+<li><a href="../../interfaces/appium_types.Element/">Element</a></li>
+<li><a href="../../interfaces/appium_types.EventHistory/">EventHistory</a></li>
+<li><a href="../../interfaces/appium_types.EventHistoryCommand/">EventHistoryCommand</a></li>
+<li><a href="../../interfaces/appium_types.ExecuteMethodDef/">ExecuteMethodDef</a></li>
+<li><a href="../../interfaces/appium_types.ExternalDriver/">ExternalDriver</a></li>
+<li><a href="../../interfaces/appium_types.ExtraDriverOpts/">ExtraDriverOpts</a></li>
+<li><a href="../../interfaces/appium_types.IEventCommands/">IEventCommands</a></li>
+<li><a href="../../interfaces/appium_types.IExecuteCommands/">IExecuteCommands</a></li>
+<li><a href="../../interfaces/appium_types.IFindCommands/">IFindCommands</a></li>
+<li><a href="../../interfaces/appium_types.ILogCommands/">ILogCommands</a></li>
+<li><a href="../../interfaces/appium_types.ISessionCommands/">ISessionCommands</a></li>
+<li><a href="../../interfaces/appium_types.ISettingsCommands/">ISettingsCommands</a></li>
+<li><a href="../../interfaces/appium_types.ITimeoutCommands/">ITimeoutCommands</a></li>
+<li><a href="../../interfaces/appium_types.Location/">Location</a></li>
+<li><a href="../../interfaces/appium_types.LogDef/">LogDef</a></li>
+<li><a href="../../interfaces/appium_types.LogFilterRegex/">LogFilterRegex</a></li>
+<li><a href="../../interfaces/appium_types.LogFilterText/">LogFilterText</a></li>
+<li><a href="../../interfaces/appium_types.MethodDef/">MethodDef</a></li>
+<li><a href="../../interfaces/appium_types.MultiSessionData/">MultiSessionData</a></li>
+<li><a href="../../interfaces/appium_types.NewWindow/">NewWindow</a></li>
+<li><a href="../../interfaces/appium_types.NodeconfigConfig/">NodeconfigConfig</a></li>
+<li><a href="../../interfaces/appium_types.PayloadParams/">PayloadParams</a></li>
+<li><a href="../../interfaces/appium_types.Plugin/">Plugin</a></li>
+<li><a href="../../interfaces/appium_types.PluginConfig/">PluginConfig</a></li>
+<li><a href="../../interfaces/appium_types.PluginStatic/">PluginStatic</a></li>
+<li><a href="../../interfaces/appium_types.Rect/">Rect</a></li>
+<li><a href="../../interfaces/appium_types.Rotation/">Rotation</a></li>
+<li><a href="../../interfaces/appium_types.ServerConfig/">ServerConfig</a></li>
+<li><a href="../../interfaces/appium_types.SessionHandler/">SessionHandler</a></li>
+<li><a href="../../interfaces/appium_types.StandardCapabilities/">StandardCapabilities</a></li>
+<li><a href="../../interfaces/appium_types.StartScreenRecordOptions/">StartScreenRecordOptions</a></li>
+<li><a href="../../interfaces/appium_types.StopScreenRecordOptions/">StopScreenRecordOptions</a></li>
+</ul>
+<h3 id="type-aliases">Type Aliases</h3>
+<ul>
+<li><a href="./#addressconfig">AddressConfig</a></li>
+<li><a href="./#allowcorsconfig">AllowCorsConfig</a></li>
+<li><a href="./#allowinsecureconfig">AllowInsecureConfig</a></li>
+<li><a href="./#anycase">AnyCase</a></li>
+<li><a href="./#appiumconfig">AppiumConfig</a></li>
+<li><a href="./#appiumloggerlevel">AppiumLoggerLevel</a></li>
+<li><a href="./#appiumloggerprefix">AppiumLoggerPrefix</a></li>
+<li><a href="./#appiumserver">AppiumServer</a></li>
+<li><a href="./#basecapabilities">BaseCapabilities</a></li>
+<li><a href="./#basedrivercapconstraints">BaseDriverCapConstraints</a></li>
+<li><a href="./#basenscapabilities">BaseNSCapabilities</a></li>
+<li><a href="./#basepathconfig">BasePathConfig</a></li>
+<li><a href="./#callbackaddressconfig">CallbackAddressConfig</a></li>
+<li><a href="./#callbackportconfig">CallbackPortConfig</a></li>
+<li><a href="./#capabilities">Capabilities</a></li>
+<li><a href="./#capstonscaps">CapsToNSCaps</a></li>
+<li><a href="./#class">Class</a></li>
+<li><a href="./#constrainttocap">ConstraintToCap</a></li>
+<li><a href="./#constraints">Constraints</a></li>
+<li><a href="./#constraintstocaps">ConstraintsToCaps</a></li>
+<li><a href="./#debuglogspacingconfig">DebugLogSpacingConfig</a></li>
+<li><a href="./#denyinsecureconfig">DenyInsecureConfig</a></li>
+<li><a href="./#drivercaps">DriverCaps</a></li>
+<li><a href="./#driverclass">DriverClass</a></li>
+<li><a href="./#drivercommand">DriverCommand</a></li>
+<li><a href="./#drivercommands">DriverCommands</a></li>
+<li><a href="./#driverdata">DriverData</a></li>
+<li><a href="./#driveropts">DriverOpts</a></li>
+<li><a href="./#drivertype">DriverType</a></li>
+<li><a href="./#executemethodmap">ExecuteMethodMap</a></li>
+<li><a href="./#extensiontype">ExtensionType</a></li>
+<li><a href="./#httpmethod">HTTPMethod</a></li>
+<li><a href="./#keepalivetimeoutconfig">KeepAliveTimeoutConfig</a></li>
+<li><a href="./#localtimezoneconfig">LocalTimezoneConfig</a></li>
+<li><a href="./#logconfig">LogConfig</a></li>
+<li><a href="./#logdefrecord">LogDefRecord</a></li>
+<li><a href="./#logfilter">LogFilter</a></li>
+<li><a href="./#logfiltersconfig">LogFiltersConfig</a></li>
+<li><a href="./#loglevelconfig">LogLevelConfig</a></li>
+<li><a href="./#lognocolorsconfig">LogNoColorsConfig</a></li>
+<li><a href="./#logtimestampconfig">LogTimestampConfig</a></li>
+<li><a href="./#longstacktraceconfig">LongStacktraceConfig</a></li>
+<li><a href="./#methodmap">MethodMap</a></li>
+<li><a href="./#nscapabilities">NSCapabilities</a></li>
+<li><a href="./#nsdrivercaps">NSDriverCaps</a></li>
+<li><a href="./#namespacedstring">NamespacedString</a></li>
+<li><a href="./#newwindowtype">NewWindowType</a></li>
+<li><a href="./#nextplugincallback">NextPluginCallback</a></li>
+<li><a href="./#nopermscheckconfig">NoPermsCheckConfig</a></li>
+<li><a href="./#normalizedappiumconfig">NormalizedAppiumConfig</a></li>
+<li><a href="./#normalizedserverconfig">NormalizedServerConfig</a></li>
+<li><a href="./#pluginclass">PluginClass</a></li>
+<li><a href="./#plugincommand">PluginCommand</a></li>
+<li><a href="./#plugintype">PluginType</a></li>
+<li><a href="./#portconfig">PortConfig</a></li>
+<li><a href="./#position">Position</a></li>
+<li><a href="./#relaxedsecurityconfig">RelaxedSecurityConfig</a></li>
+<li><a href="./#routematcher">RouteMatcher</a></li>
+<li><a href="./#serverargs">ServerArgs</a></li>
+<li><a href="./#sessionoverrideconfig">SessionOverrideConfig</a></li>
+<li><a href="./#settingsupdatelistener">SettingsUpdateListener</a></li>
+<li><a href="./#singularsessiondata">SingularSessionData</a></li>
+<li><a href="./#size">Size</a></li>
+<li><a href="./#strictcapsconfig">StrictCapsConfig</a></li>
+<li><a href="./#stringrecord">StringRecord</a></li>
+<li><a href="./#tmpconfig">TmpConfig</a></li>
+<li><a href="./#tracedirconfig">TraceDirConfig</a></li>
+<li><a href="./#updateservercallback">UpdateServerCallback</a></li>
+<li><a href="./#usedriversconfig">UseDriversConfig</a></li>
+<li><a href="./#usepluginsconfig">UsePluginsConfig</a></li>
+<li><a href="./#w3ccapabilities">W3CCapabilities</a></li>
+<li><a href="./#w3cdrivercaps">W3CDriverCaps</a></li>
+<li><a href="./#w3c_appium_prefix">W3C_APPIUM_PREFIX</a></li>
+<li><a href="./#webhookconfig">WebhookConfig</a></li>
+</ul>
+<h3 id="variables">Variables</h3>
+<ul>
+<li><a href="./#base_desired_cap_constraints">BASE_DESIRED_CAP_CONSTRAINTS</a></li>
+</ul>
+<h2 id="actions_1">Actions</h2>
+<p>• <strong>Key</strong>: <code>Object</code></p>
+<h4 id="defined-in">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L127">packages/types/lib/action.ts:127</a></p>
+<h3 id="actionsequence">ActionSequence</h3>
+<p>Ƭ <strong>ActionSequence</strong>: <a href="./#nullactionsequence"><code>NullActionSequence</code></a> | <a href="./#keyactionsequence"><code>KeyActionSequence</code></a> | <a href="./#pointeractionsequence"><code>PointerActionSequence</code></a></p>
+<h4 id="defined-in_1">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L119">packages/types/lib/action.ts:119</a></p>
+<hr />
+<h3 id="keyaction">KeyAction</h3>
+<p>Ƭ <strong>KeyAction</strong>: <a href="./#pauseaction"><code>PauseAction</code></a> | <a href="./#keydownaction"><code>KeyDownAction</code></a> | <a href="./#keyupaction"><code>KeyUpAction</code></a></p>
+<h4 id="defined-in_2">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L70">packages/types/lib/action.ts:70</a></p>
+<hr />
+<h3 id="keyactionsequence">KeyActionSequence</h3>
+<p>Ƭ <strong>KeyActionSequence</strong>: <code>Object</code></p>
+<h4 id="type-declaration">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>actions</code></td>
+<td align="left"><a href="./#keyaction"><code>KeyAction</code></a>[]</td>
+</tr>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"key"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_3">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L93">packages/types/lib/action.ts:93</a></p>
+<hr />
+<h3 id="keydownaction">KeyDownAction</h3>
+<p>Ƭ <strong>KeyDownAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_1">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"keyDown"</code></td>
+</tr>
+<tr>
+<td align="left"><code>value</code></td>
+<td align="left"><a href="../../enums/appium_types.Key/"><code>Key</code></a> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_4">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L22">packages/types/lib/action.ts:22</a></p>
+<hr />
+<h3 id="keyupaction">KeyUpAction</h3>
+<p>Ƭ <strong>KeyUpAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_2">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"keyUp"</code></td>
+</tr>
+<tr>
+<td align="left"><code>value</code></td>
+<td align="left"><a href="../../enums/appium_types.Key/"><code>Key</code></a> | <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_5">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L30">packages/types/lib/action.ts:30</a></p>
+<hr />
+<h3 id="nullaction">NullAction</h3>
+<p>Ƭ <strong>NullAction</strong>: <a href="./#pauseaction"><code>PauseAction</code></a></p>
+<h4 id="defined-in_6">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L65">packages/types/lib/action.ts:65</a></p>
+<hr />
+<h3 id="nullactionsequence">NullActionSequence</h3>
+<p>Ƭ <strong>NullActionSequence</strong>: <code>Object</code></p>
+<h4 id="type-declaration_3">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>actions</code></td>
+<td align="left"><a href="./#nullaction"><code>NullAction</code></a>[]</td>
+</tr>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"none"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_7">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L84">packages/types/lib/action.ts:84</a></p>
+<hr />
+<h3 id="pauseaction">PauseAction</h3>
+<p>Ƭ <strong>PauseAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_4">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>duration</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"pause"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_8">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L14">packages/types/lib/action.ts:14</a></p>
+<hr />
+<h3 id="pointeraction">PointerAction</h3>
+<p>Ƭ <strong>PointerAction</strong>: <a href="./#pauseaction"><code>PauseAction</code></a> | <a href="./#pointermoveaction"><code>PointerMoveAction</code></a> | <a href="./#pointerupaction"><code>PointerUpAction</code></a> | <a href="./#pointerdownaction"><code>PointerDownAction</code></a></p>
+<h4 id="defined-in_9">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L75">packages/types/lib/action.ts:75</a></p>
+<hr />
+<h3 id="pointeractionsequence">PointerActionSequence</h3>
+<p>Ƭ <strong>PointerActionSequence</strong>: <code>Object</code></p>
+<h4 id="type-declaration_5">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>actions</code></td>
+<td align="left"><a href="./#pointeraction"><code>PointerAction</code></a>[]</td>
+</tr>
+<tr>
+<td align="left"><code>id</code></td>
+<td align="left"><code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>parameters?</code></td>
+<td align="left"><a href="./#pointerparameters"><code>PointerParameters</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"pointer"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_10">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L109">packages/types/lib/action.ts:109</a></p>
+<hr />
+<h3 id="pointerdownaction">PointerDownAction</h3>
+<p>Ƭ <strong>PointerDownAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_6">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>button</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"pointerDown"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_11">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L57">packages/types/lib/action.ts:57</a></p>
+<hr />
+<h3 id="pointermoveaction">PointerMoveAction</h3>
+<p>Ƭ <strong>PointerMoveAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_7">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>duration?</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>origin?</code></td>
+<td align="left"><code>"viewport"</code> | <code>"pointer"</code> | <a href="../../interfaces/appium_types.Element/"><code>Element</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"pointerMove"</code></td>
+</tr>
+<tr>
+<td align="left"><code>x</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>y</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_12">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L38">packages/types/lib/action.ts:38</a></p>
+<hr />
+<h3 id="pointerparameters">PointerParameters</h3>
+<p>Ƭ <strong>PointerParameters</strong>: <code>Object</code></p>
+<h4 id="type-declaration_8">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>pointerType</code></td>
+<td align="left"><code>"mouse"</code> | <code>"pen"</code> | <code>"touch"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_13">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L102">packages/types/lib/action.ts:102</a></p>
+<hr />
+<h3 id="pointerupaction">PointerUpAction</h3>
+<p>Ƭ <strong>PointerUpAction</strong>: <code>Object</code></p>
+<h4 id="type-declaration_9">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>button</code></td>
+<td align="left"><code>number</code></td>
+</tr>
+<tr>
+<td align="left"><code>type</code></td>
+<td align="left"><code>"pointerUp"</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_14">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/action.ts#L49">packages/types/lib/action.ts:49</a></p>
+<h2 id="type-aliases_1">Type Aliases</h2>
+<h3 id="addressconfig">AddressConfig</h3>
+<p>Ƭ <strong>AddressConfig</strong>: <code>string</code></p>
+<p>IP address to listen on</p>
+<h4 id="defined-in_15">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L11">packages/types/lib/appium-config.ts:11</a></p>
+<hr />
+<h3 id="allowcorsconfig">AllowCorsConfig</h3>
+<p>Ƭ <strong>AllowCorsConfig</strong>: <code>boolean</code></p>
+<p>Whether the Appium server should allow web browser connections from any host</p>
+<h4 id="defined-in_16">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L15">packages/types/lib/appium-config.ts:15</a></p>
+<hr />
+<h3 id="allowinsecureconfig">AllowInsecureConfig</h3>
+<p>Ƭ <strong>AllowInsecureConfig</strong>: <code>string</code>[]</p>
+<p>Set which insecure features are allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Note that features defined via "deny-insecure" will be disabled, even if also listed here. If string, a path to a text file containing policy or a comma-delimited list.</p>
+<h4 id="defined-in_17">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L19">packages/types/lib/appium-config.ts:19</a></p>
+<hr />
+<h3 id="anycase">AnyCase</h3>
+<p>Ƭ <strong>AnyCase</strong>&lt;<code>T</code>>: <code>string</code> extends <code>T</code> ? <code>string</code> : <code>T</code> extends `${infer F1}${infer F2}${infer R}` ? `${Uppercase&lt;F1> | Lowercase&lt;F1>}${Uppercase&lt;F2> | Lowercase&lt;F2>}${AnyCase&lt;R>}` : <code>T</code> extends `${infer F}${infer R}` ? `${Uppercase&lt;F> | Lowercase&lt;F>}${AnyCase&lt;R>}` : <code>""</code></p>
+<p>Given <code>string</code> <code>T</code>, this is a case-insensitive version of <code>T</code>.</p>
+<h4 id="type-parameters">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_18">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L66">packages/types/lib/capabilities.ts:66</a></p>
+<hr />
+<h3 id="appiumconfig">AppiumConfig</h3>
+<p>Ƭ <strong>AppiumConfig</strong>: <code>Partial</code>&lt;<a href="../../interfaces/appium_types.AppiumConfiguration/"><code>AppiumConfiguration</code></a>></p>
+<p>The Appium configuration as it would be in a user-provided configuration file.</p>
+<h4 id="defined-in_19">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/config.ts#L7">packages/types/lib/config.ts:7</a></p>
+<hr />
+<h3 id="appiumloggerlevel">AppiumLoggerLevel</h3>
+<p>Ƭ <strong>AppiumLoggerLevel</strong>: <code>"silly"</code> | <code>"verbose"</code> | <code>"debug"</code> | <code>"info"</code> | <code>"http"</code> | <code>"warn"</code> | <code>"error"</code></p>
+<p>Possible "log levels" for <a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a>.</p>
+<p>Extracted from <code>npmlog</code>.</p>
+<h4 id="defined-in_20">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L37">packages/types/lib/index.ts:37</a></p>
+<hr />
+<h3 id="appiumloggerprefix">AppiumLoggerPrefix</h3>
+<p>Ƭ <strong>AppiumLoggerPrefix</strong>: <code>string</code> | () =&gt; <code>string</code></p>
+<p>A log prefix for <a href="../../interfaces/appium_types.AppiumLogger/"><code>AppiumLogger</code></a></p>
+<p>If a function, the function will return the prefix.  Log messages will be prefixed with this value.</p>
+<h4 id="defined-in_21">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L30">packages/types/lib/index.ts:30</a></p>
+<hr />
+<h3 id="appiumserver">AppiumServer</h3>
+<p>Ƭ <strong>AppiumServer</strong>: <code>Omit</code>&lt;<code>Server</code>, <code>"close"</code>> &amp; <a href="../../interfaces/appium_types.AppiumServerExtension/"><code>AppiumServerExtension</code></a></p>
+<p>Appium's slightly-modified Server http.Server.</p>
+<h4 id="defined-in_22">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L68">packages/types/lib/index.ts:68</a></p>
+<hr />
+<h3 id="basecapabilities">BaseCapabilities</h3>
+<p>Ƭ <strong>BaseCapabilities</strong>: <a href="./#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a>></p>
+<p>Base capabilities as derived from <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a>.</p>
+<h4 id="defined-in_23">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L12">packages/types/lib/capabilities.ts:12</a></p>
+<hr />
+<h3 id="basedrivercapconstraints">BaseDriverCapConstraints</h3>
+<p>Ƭ <strong>BaseDriverCapConstraints</strong>&lt;>: typeof <a href="./#base_desired_cap_constraints"><code>BASE_DESIRED_CAP_CONSTRAINTS</code></a></p>
+<h4 id="defined-in_24">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/constraints.js#L57">packages/types/lib/constraints.js:57</a></p>
+<hr />
+<h3 id="basenscapabilities">BaseNSCapabilities</h3>
+<p>Ƭ <strong>BaseNSCapabilities</strong>: <a href="./#capstonscaps"><code>CapsToNSCaps</code></a>&lt;<a href="./#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a>>></p>
+<p>Like <a href="./#basecapabilities"><code>BaseCapabilities</code></a>, except all Appium-specific keys are namespaced.</p>
+<h4 id="defined-in_25">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L17">packages/types/lib/capabilities.ts:17</a></p>
+<hr />
+<h3 id="basepathconfig">BasePathConfig</h3>
+<p>Ƭ <strong>BasePathConfig</strong>: <code>string</code></p>
+<p>Base path to use as the prefix for all webdriver routes running on the server</p>
+<h4 id="defined-in_26">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L23">packages/types/lib/appium-config.ts:23</a></p>
+<hr />
+<h3 id="callbackaddressconfig">CallbackAddressConfig</h3>
+<p>Ƭ <strong>CallbackAddressConfig</strong>: <code>string</code></p>
+<p>Callback IP address (default: same as "address")</p>
+<h4 id="defined-in_27">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L27">packages/types/lib/appium-config.ts:27</a></p>
+<hr />
+<h3 id="callbackportconfig">CallbackPortConfig</h3>
+<p>Ƭ <strong>CallbackPortConfig</strong>: <code>number</code></p>
+<p>Callback port (default: same as "port")</p>
+<h4 id="defined-in_28">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L31">packages/types/lib/appium-config.ts:31</a></p>
+<hr />
+<h3 id="capabilities">Capabilities</h3>
+<p>Ƭ <strong>Capabilities</strong>&lt;<code>C</code>, <code>Extra</code>>: <code>Partial</code>&lt;<a href="./#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>> &amp; <code>Extra</code>></p>
+<p>Given some constraints, return the entire set of supported capabilities it supports (including whatever is in its desired caps).</p>
+<p>Does not contain <a href="./#basecapabilities"><code>BaseCapabilities</code></a>; see <a href="./#drivercaps"><code>DriverCaps</code></a>.</p>
+<h4 id="type-parameters_1">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a> = <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_29">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L102">packages/types/lib/capabilities.ts:102</a></p>
+<hr />
+<h3 id="capstonscaps">CapsToNSCaps</h3>
+<p>Ƭ <strong>CapsToNSCaps</strong>&lt;<code>T</code>, <code>NS</code>>: { [K in keyof T as K extends keyof StandardCapabilities ? K : NamespacedString&lt;K &amp; string, NS>]: T[K] }</p>
+<p>Given <a href="./#stringrecord"><code>StringRecord</code></a> <code>T</code> and namespace string <code>NS</code>, a type with the key names prefixed by <code>${NS}:</code> <em>except</em> for standard capabilities.  <code>NS</code> defaults to <code>appium</code>.</p>
+<p>If <code>T</code> is already namespaced, well, it'll get <em>double</em>-namespaced.</p>
+<h4 id="type-parameters_2">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>NS</code></td>
+<td align="left">extends <code>string</code> = <a href="./#w3c_appium_prefix"><code>W3C_APPIUM_PREFIX</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_30">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L79">packages/types/lib/capabilities.ts:79</a></p>
+<hr />
+<h3 id="class">Class</h3>
+<p>Ƭ <strong>Class</strong>&lt;<code>Proto</code>, <code>StaticMembers</code>, <code>Args</code>>: <code>_Class</code>&lt;<code>Proto</code>, <code>Args</code>> &amp; <code>StaticMembers</code></p>
+<p>Wraps _Class <code>type-fest</code>'s <code>Class</code> to include static members.</p>
+<h4 id="type-parameters_3">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Proto</code></td>
+<td align="left"><code>Proto</code></td>
+</tr>
+<tr>
+<td align="left"><code>StaticMembers</code></td>
+<td align="left">extends <code>object</code> = {}</td>
+</tr>
+<tr>
+<td align="left"><code>Args</code></td>
+<td align="left">extends <code>unknown</code>[] = <code>any</code>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_31">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L154">packages/types/lib/index.ts:154</a></p>
+<hr />
+<h3 id="constrainttocap">ConstraintToCap</h3>
+<p>Ƭ <strong>ConstraintToCap</strong>&lt;<code>C</code>>: <code>C</code>[<code>"presence"</code>] extends <code>true</code> | { <code>allowEmpty</code>: <code>boolean</code>  } ? <code>ConstraintToCapKind</code>&lt;<code>C</code>> : <code>ConstraintToCapKind</code>&lt;<code>C</code>> | <code>undefined</code></p>
+<p>Given <a href="../../interfaces/appium_types.Constraint/"><code>Constraint</code></a> <code>C</code>, determine if it is required or optional.</p>
+<p>In practice, <em>all</em> capabilities are considered optional per types, but various errors might be thrown if some are not present.</p>
+<h4 id="type-parameters_4">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.Constraint/"><code>Constraint</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_32">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L57">packages/types/lib/capabilities.ts:57</a></p>
+<hr />
+<h3 id="constraints">Constraints</h3>
+<p>Ƭ <strong>Constraints</strong>: <code>Readonly</code>&lt;<code>Record</code>&lt;<code>string</code>, <a href="../../interfaces/appium_types.Constraint/"><code>Constraint</code></a>>></p>
+<h4 id="defined-in_33">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L467">packages/types/lib/driver.ts:467</a></p>
+<hr />
+<h3 id="constraintstocaps">ConstraintsToCaps</h3>
+<p>Ƭ <strong>ConstraintsToCaps</strong>&lt;<code>C</code>>: { -readonly [K in keyof C]: ConstraintToCap&lt;C[K]> }</p>
+<p>Converts <a href="../../interfaces/appium_types.Constraint/"><code>Constraint</code></a> <code>C</code> to a <a href="./#capabilities"><code>Capabilities</code></a> object.</p>
+<h4 id="type-parameters_5">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_34">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L93">packages/types/lib/capabilities.ts:93</a></p>
+<hr />
+<h3 id="debuglogspacingconfig">DebugLogSpacingConfig</h3>
+<p>Ƭ <strong>DebugLogSpacingConfig</strong>: <code>boolean</code></p>
+<p>Add exaggerated spacing in logs to help with visual inspection</p>
+<h4 id="defined-in_35">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L35">packages/types/lib/appium-config.ts:35</a></p>
+<hr />
+<h3 id="denyinsecureconfig">DenyInsecureConfig</h3>
+<p>Ƭ <strong>DenyInsecureConfig</strong>: <code>string</code>[]</p>
+<p>Set which insecure features are not allowed to run in this server's sessions. Features are defined on a driver level; see documentation for more details. Features listed here will not be enabled even if also listed in "allow-insecure", and even if "relaxed-security" is enabled. If string, a path to a text file containing policy or a comma-delimited list.</p>
+<h4 id="defined-in_36">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L39">packages/types/lib/appium-config.ts:39</a></p>
+<hr />
+<h3 id="drivercaps">DriverCaps</h3>
+<p>Ƭ <strong>DriverCaps</strong>&lt;<code>C</code>, <code>Extra</code>>: <a href="./#capabilities"><code>Capabilities</code></a>&lt;<a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a> &amp; <code>C</code>, <code>Extra</code>></p>
+<p>Capabilities for drivers extending <code>BaseDriver</code>.</p>
+<p>Includes <a href="./#basecapabilities"><code>BaseCapabilities</code></a>.</p>
+<p><strong><code>Example</code></strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">class</span><span class="w"> </span><span class="nx">MyDriver</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseDriver</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">createSession</span><span class="w"> </span><span class="p">(</span><span class="nx">w3ccaps</span><span class="o">:</span><span class="w"> </span><span class="kt">W3CDriverCaps</span><span class="o">&lt;</span><span class="nx">MyDriverConstraints</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="nx">...args</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nx">sessionId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">      </span><span class="nx">caps</span><span class="o">:</span><span class="w"> </span><span class="kt">DriverCaps</span><span class="o">&lt;</span><span class="nx">MyDriverConstraints</span><span class="o">&gt;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">super</span><span class="p">.</span><span class="nx">createSession</span><span class="p">(</span><span class="nx">w3ccaps</span><span class="p">,</span><span class="w"> </span><span class="p">...</span><span class="nx">args</span><span class="p">);</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="type-parameters_6">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_37">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L150">packages/types/lib/capabilities.ts:150</a></p>
+<hr />
+<h3 id="driverclass">DriverClass</h3>
+<p>Ƭ <strong>DriverClass</strong>&lt;<code>D</code>>: <a href="./#class"><code>Class</code></a>&lt;<code>D</code>, <a href="../../interfaces/appium_types.DriverStatic/"><code>DriverStatic</code></a>&lt;<code>D</code>>, [] | [<code>Partial</code>&lt;<a href="./#serverargs"><code>ServerArgs</code></a>>] | [<code>Partial</code>&lt;<a href="./#serverargs"><code>ServerArgs</code></a>>, <code>boolean</code>]></p>
+<p>Represents a driver class, which is used internally by Appium.</p>
+<p>This is likely unusable by external consumers, but YMMV!</p>
+<h4 id="type-parameters_7">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>D</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a> = <a href="../../interfaces/appium_types.ExternalDriver/"><code>ExternalDriver</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_38">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2220">packages/types/lib/driver.ts:2220</a></p>
+<hr />
+<h3 id="drivercommand">DriverCommand</h3>
+<p>Ƭ <strong>DriverCommand</strong>&lt;<code>TArgs</code>, <code>TRetval</code>>: (...<code>args</code>: <code>TArgs</code>[]) =&gt; <code>Promise</code>&lt;<code>TRetval</code>></p>
+<h4 id="type-parameters_8">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>TArgs</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>TRetval</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="type-declaration_10">Type declaration</h4>
+<p>▸ (<code>...args</code>): <code>Promise</code>&lt;<code>TRetval</code>></p>
+<p>An instance method of a driver class, whose name may be referenced by <a href="../../interfaces/appium_types.MethodDef/#command"><code>command</code></a>, and serves as an Appium command.</p>
+<p>Note that this signature differs from a <code>PluginCommand</code>.</p>
+<h5 id="parameters">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>TArgs</code>[]</td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns">Returns</h5>
+<p><code>Promise</code>&lt;<code>TRetval</code>></p>
+<h4 id="defined-in_39">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L124">packages/types/lib/index.ts:124</a></p>
+<hr />
+<h3 id="drivercommands">DriverCommands</h3>
+<p>Ƭ <strong>DriverCommands</strong>&lt;<code>TArgs</code>, <code>TReturn</code>>: <code>Record</code>&lt;<code>string</code>, <a href="./#drivercommand"><code>DriverCommand</code></a>&lt;<code>TArgs</code>, <code>TReturn</code>>></p>
+<h4 id="type-parameters_9">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>TArgs</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+<tr>
+<td align="left"><code>TReturn</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_40">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2241">packages/types/lib/driver.ts:2241</a></p>
+<hr />
+<h3 id="driverdata">DriverData</h3>
+<p>Ƭ <strong>DriverData</strong>: <code>Record</code>&lt;<code>string</code>, <code>unknown</code>></p>
+<p>Custom session data for a driver.</p>
+<h4 id="defined-in_41">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L441">packages/types/lib/driver.ts:441</a></p>
+<hr />
+<h3 id="driveropts">DriverOpts</h3>
+<p>Ƭ <strong>DriverOpts</strong>&lt;<code>C</code>>: <a href="./#serverargs"><code>ServerArgs</code></a> &amp; <a href="../../interfaces/appium_types.ExtraDriverOpts/"><code>ExtraDriverOpts</code></a> &amp; <code>Partial</code>&lt;<a href="./#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>>></p>
+<p>Options as passed into a driver constructor, which is just a union of <a href="./#serverargs"><code>ServerArgs</code></a> and <a href="./#capabilities"><code>Capabilities</code></a>.</p>
+<p>The combination happens within Appium prior to calling the constructor.</p>
+<h4 id="type-parameters_10">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a> = <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_42">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2235">packages/types/lib/driver.ts:2235</a></p>
+<hr />
+<h3 id="drivertype">DriverType</h3>
+<p>Ƭ <strong>DriverType</strong>: <code>"driver"</code></p>
+<p>The string referring to a "driver"-type extension</p>
+<h4 id="defined-in_43">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L163">packages/types/lib/index.ts:163</a></p>
+<hr />
+<h3 id="executemethodmap">ExecuteMethodMap</h3>
+<p>Ƭ <strong>ExecuteMethodMap</strong>&lt;<code>Ext</code>>: <code>Readonly</code>&lt;<code>Record</code>&lt;<code>string</code>, <code>Readonly</code>&lt;<a href="../../interfaces/appium_types.ExecuteMethodDef/"><code>ExecuteMethodDef</code></a>&lt;<code>Ext</code>>>>></p>
+<h4 id="type-parameters_11">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Ext</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a> | <a href="../../interfaces/appium_types.Plugin/"><code>Plugin</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_44">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L115">packages/types/lib/index.ts:115</a></p>
+<hr />
+<h3 id="extensiontype">ExtensionType</h3>
+<p>Ƭ <strong>ExtensionType</strong>: <a href="./#drivertype"><code>DriverType</code></a> | <a href="./#plugintype"><code>PluginType</code></a></p>
+<p>The strings referring to all extension types.</p>
+<h4 id="defined-in_45">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L174">packages/types/lib/index.ts:174</a></p>
+<hr />
+<h3 id="httpmethod">HTTPMethod</h3>
+<p>Ƭ <strong>HTTPMethod</strong>: <code>"get"</code> | <code>"GET"</code> | <code>"delete"</code> | <code>"DELETE"</code> | <code>"head"</code> | <code>"HEAD"</code> | <code>"options"</code> | <code>"OPTIONS"</code> | <code>"post"</code> | <code>"POST"</code> | <code>"put"</code> | <code>"PUT"</code> | <code>"patch"</code> | <code>"PATCH"</code> | <code>"purge"</code> | <code>"PURGE"</code> | <code>"link"</code> | <code>"LINK"</code> | <code>"unlink"</code> | <code>"UNLINK"</code></p>
+<p>Possible HTTP methods, as stolen from <code>axios</code>.</p>
+<p><strong><code>See</code></strong></p>
+<p>https://npm.im/axios</p>
+<h4 id="defined-in_46">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L200">packages/types/lib/index.ts:200</a></p>
+<hr />
+<h3 id="keepalivetimeoutconfig">KeepAliveTimeoutConfig</h3>
+<p>Ƭ <strong>KeepAliveTimeoutConfig</strong>: <code>number</code></p>
+<p>Number of seconds the Appium server should apply as both the keep-alive timeout and the connection timeout for all requests. A value of 0 disables the timeout.</p>
+<h4 id="defined-in_47">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L43">packages/types/lib/appium-config.ts:43</a></p>
+<hr />
+<h3 id="localtimezoneconfig">LocalTimezoneConfig</h3>
+<p>Ƭ <strong>LocalTimezoneConfig</strong>: <code>boolean</code></p>
+<p>Use local timezone for timestamps</p>
+<h4 id="defined-in_48">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L47">packages/types/lib/appium-config.ts:47</a></p>
+<hr />
+<h3 id="logconfig">LogConfig</h3>
+<p>Ƭ <strong>LogConfig</strong>: <code>string</code></p>
+<p>Also send log output to this file</p>
+<h4 id="defined-in_49">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L51">packages/types/lib/appium-config.ts:51</a></p>
+<hr />
+<h3 id="logdefrecord">LogDefRecord</h3>
+<p>Ƭ <strong>LogDefRecord</strong>&lt;<code>C</code>>: <code>Record</code>&lt;<code>string</code>, <a href="../../interfaces/appium_types.LogDef/"><code>LogDef</code></a>&lt;<code>C</code>>></p>
+<p>A record of <a href="../../interfaces/appium_types.LogDef/"><code>LogDef</code></a> objects, keyed by the log type name.
+Used in <a href="../../interfaces/appium_types.ILogCommands/#supportedlogtypes"><code>supportedLogTypes</code></a></p>
+<h4 id="type-parameters_12">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_50">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L360">packages/types/lib/driver.ts:360</a></p>
+<hr />
+<h3 id="logfilter">LogFilter</h3>
+<p>Ƭ <strong>LogFilter</strong>: { <code>[k: string]</code>: <code>unknown</code>; <code>flags?</code>: <code>string</code> ; <code>replacer?</code>: <code>string</code>  } &amp; <a href="../../interfaces/appium_types.LogFilterText/"><code>LogFilterText</code></a> | <a href="../../interfaces/appium_types.LogFilterRegex/"><code>LogFilterRegex</code></a></p>
+<p>Log filtering rule</p>
+<h4 id="defined-in_51">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L55">packages/types/lib/appium-config.ts:55</a></p>
+<hr />
+<h3 id="logfiltersconfig">LogFiltersConfig</h3>
+<p>Ƭ <strong>LogFiltersConfig</strong>: <a href="./#logfilter"><code>LogFilter</code></a>[]</p>
+<p>One or more log filtering rules</p>
+<h4 id="defined-in_52">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L69">packages/types/lib/appium-config.ts:69</a></p>
+<hr />
+<h3 id="loglevelconfig">LogLevelConfig</h3>
+<p>Ƭ <strong>LogLevelConfig</strong>: <code>"info"</code> | <code>"info:debug"</code> | <code>"info:info"</code> | <code>"info:warn"</code> | <code>"info:error"</code> | <code>"warn"</code> | <code>"warn:debug"</code> | <code>"warn:info"</code> | <code>"warn:warn"</code> | <code>"warn:error"</code> | <code>"error"</code> | <code>"error:debug"</code> | <code>"error:info"</code> | <code>"error:warn"</code> | <code>"error:error"</code> | <code>"debug"</code> | <code>"debug:debug"</code> | <code>"debug:info"</code> | <code>"debug:warn"</code> | <code>"debug:error"</code></p>
+<p>Log level (console[:file])</p>
+<h4 id="defined-in_53">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L73">packages/types/lib/appium-config.ts:73</a></p>
+<hr />
+<h3 id="lognocolorsconfig">LogNoColorsConfig</h3>
+<p>Ƭ <strong>LogNoColorsConfig</strong>: <code>boolean</code></p>
+<p>Do not use color in console output</p>
+<h4 id="defined-in_54">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L97">packages/types/lib/appium-config.ts:97</a></p>
+<hr />
+<h3 id="logtimestampconfig">LogTimestampConfig</h3>
+<p>Ƭ <strong>LogTimestampConfig</strong>: <code>boolean</code></p>
+<p>Show timestamps in console output</p>
+<h4 id="defined-in_55">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L101">packages/types/lib/appium-config.ts:101</a></p>
+<hr />
+<h3 id="longstacktraceconfig">LongStacktraceConfig</h3>
+<p>Ƭ <strong>LongStacktraceConfig</strong>: <code>boolean</code></p>
+<p>Add long stack traces to log entries. Recommended for debugging only.</p>
+<h4 id="defined-in_56">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L105">packages/types/lib/appium-config.ts:105</a></p>
+<hr />
+<h3 id="methodmap">MethodMap</h3>
+<p>Ƭ <strong>MethodMap</strong>&lt;<code>Ext</code>>: <code>Readonly</code>&lt;<code>Record</code>&lt;<code>string</code>, { <code>DELETE?</code>: <a href="../../interfaces/appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>Ext</code>> ; <code>GET?</code>: <a href="../../interfaces/appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>Ext</code>> ; <code>POST?</code>: <a href="../../interfaces/appium_types.MethodDef/"><code>MethodDef</code></a>&lt;<code>Ext</code>>  }>></p>
+<p>A mapping of URL paths to HTTP methods to <a href="../../interfaces/appium_types.MethodDef/"><code>MethodDef</code></a>s.</p>
+<h4 id="type-parameters_13">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>Ext</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.Plugin/"><code>Plugin</code></a> | <a href="../../interfaces/appium_types.Driver/"><code>Driver</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_57">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L140">packages/types/lib/index.ts:140</a></p>
+<hr />
+<h3 id="nscapabilities">NSCapabilities</h3>
+<p>Ƭ <strong>NSCapabilities</strong>&lt;<code>C</code>, <code>Extra</code>, <code>NS</code>>: <code>Partial</code>&lt;<a href="./#capstonscaps"><code>CapsToNSCaps</code></a>&lt;<a href="./#constraintstocaps"><code>ConstraintsToCaps</code></a>&lt;<code>C</code>> &amp; <code>Extra</code>, <code>NS</code>>></p>
+<p>Namespaced caps (where appropriate).</p>
+<p>Does not contain <a href="./#basecapabilities"><code>BaseCapabilities</code></a>; see <a href="./#nsdrivercaps"><code>NSDriverCaps</code></a>.</p>
+<h4 id="type-parameters_14">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a> = <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+<tr>
+<td align="left"><code>NS</code></td>
+<td align="left">extends <code>string</code> = <a href="./#w3c_appium_prefix"><code>W3C_APPIUM_PREFIX</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_58">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L125">packages/types/lib/capabilities.ts:125</a></p>
+<hr />
+<h3 id="nsdrivercaps">NSDriverCaps</h3>
+<p>Ƭ <strong>NSDriverCaps</strong>&lt;<code>C</code>, <code>Extra</code>>: <a href="./#nscapabilities"><code>NSCapabilities</code></a>&lt;<a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a> &amp; <code>C</code>, <code>Extra</code>></p>
+<p>Namespaced capabilities for drivers extending <code>BaseDriver</code>.</p>
+<p>Includes <a href="./#basecapabilities"><code>BaseCapabilities</code></a>.</p>
+<h4 id="type-parameters_15">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_59">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L179">packages/types/lib/capabilities.ts:179</a></p>
+<hr />
+<h3 id="namespacedstring">NamespacedString</h3>
+<p>Ƭ <strong>NamespacedString</strong>&lt;<code>S</code>, <code>NS</code>>: `${NS}:${S}`</p>
+<h4 id="type-parameters_16">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>S</code></td>
+<td align="left">extends <code>string</code></td>
+</tr>
+<tr>
+<td align="left"><code>NS</code></td>
+<td align="left">extends <code>string</code> = <a href="./#w3c_appium_prefix"><code>W3C_APPIUM_PREFIX</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_60">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L85">packages/types/lib/capabilities.ts:85</a></p>
+<hr />
+<h3 id="newwindowtype">NewWindowType</h3>
+<p>Ƭ <strong>NewWindowType</strong>: <code>"tab"</code> | <code>"window"</code></p>
+<h4 id="defined-in_61">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L497">packages/types/lib/driver.ts:497</a></p>
+<hr />
+<h3 id="nextplugincallback">NextPluginCallback</h3>
+<p>Ƭ <strong>NextPluginCallback</strong>: () =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="type-declaration_11">Type declaration</h4>
+<p>▸ (): <code>Promise</code>&lt;<code>void</code>></p>
+<p>A reference to an async function which encapsulates what would normally
+happen if this plugin were not handling a command. Used by PluginInterface.handle.</p>
+<p>Given <code>next()</code> is a <code>NextPluginCallback</code>: if this is the only plugin
+handling the command, <code>await next()</code> would therefore trigger the normal
+handling logic in the driver which is in use. If another plugin is
+registered, it would run <em>that</em> plugin's <code>handle</code> method and return the
+result for use here. Note that if this plugin does <em>not</em> call <code>await next()</code>,
+then the normal command logic will not be run, and this plugin is responsible
+for managing new command timeouts and command logging, for example:
+<code>driver.stopNewCommandTimeout()</code> -- before running plugin logic
+<code>driver.startNewCommandTimeout()</code> -- after running plugin logic
+<code>driver._eventHistory.commands.push({cmd: cmdName, startTime, endTime})</code> --
+after running plugin logic</p>
+<h5 id="returns_1">Returns</h5>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_62">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L72">packages/types/lib/plugin.ts:72</a></p>
+<hr />
+<h3 id="nopermscheckconfig">NoPermsCheckConfig</h3>
+<p>Ƭ <strong>NoPermsCheckConfig</strong>: <code>boolean</code></p>
+<p>Do not check that needed files are readable and/or writable</p>
+<h4 id="defined-in_63">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L109">packages/types/lib/appium-config.ts:109</a></p>
+<hr />
+<h3 id="normalizedappiumconfig">NormalizedAppiumConfig</h3>
+<p>Ƭ <strong>NormalizedAppiumConfig</strong>: <code>Object</code></p>
+<p>"Normalized" config, which is camel-cased (instead of kebab-case, like the schema). It is <em>not</em> flattened.</p>
+<h4 id="type-declaration_12">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>server</code></td>
+<td align="left"><a href="./#normalizedserverconfig"><code>NormalizedServerConfig</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_64">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/config.ts#L32">packages/types/lib/config.ts:32</a></p>
+<hr />
+<h3 id="normalizedserverconfig">NormalizedServerConfig</h3>
+<p>Ƭ <strong>NormalizedServerConfig</strong>: { [Prop in keyof ServerConfigMapping as AppiumServerJsonSchema[Prop] extends WithDest ? AppiumServerJsonSchema[Prop]["appiumCliDest"] : KebabToCamel&lt;Prop>]: ServerConfig[Prop] }</p>
+<p>Camel-cased server config. <em>Not</em> flattened.</p>
+<h4 id="defined-in_65">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/config.ts#L23">packages/types/lib/config.ts:23</a></p>
+<hr />
+<h3 id="pluginclass">PluginClass</h3>
+<p>Ƭ <strong>PluginClass</strong>&lt;<code>P</code>>: <a href="./#class"><code>Class</code></a>&lt;<code>P</code>, <a href="../../interfaces/appium_types.PluginStatic/"><code>PluginStatic</code></a>&lt;<code>P</code>>, [pluginName: string, cliArgs: Record&lt;string, unknown>]></p>
+<p>Mainly for internal use.</p>
+<p>The third parameter is the possible constructor signatures for the plugin class.</p>
+<h4 id="type-parameters_17">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>P</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.Plugin/"><code>Plugin</code></a> = <a href="../../interfaces/appium_types.Plugin/"><code>Plugin</code></a></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_66">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L90">packages/types/lib/plugin.ts:90</a></p>
+<hr />
+<h3 id="plugincommand">PluginCommand</h3>
+<p>Ƭ <strong>PluginCommand</strong>&lt;<code>D</code>, <code>TArgs</code>, <code>TReturn</code>>: (<code>next</code>: <a href="./#nextplugincallback"><code>NextPluginCallback</code></a>, <code>driver</code>: <code>D</code>, ...<code>args</code>: <code>TArgs</code>) =&gt; <code>Promise</code>&lt;<code>TReturn</code>></p>
+<h4 id="type-parameters_18">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>D</code></td>
+<td align="left">extends <a href="../../interfaces/appium_types.ExternalDriver/"><code>ExternalDriver</code></a> = <a href="../../interfaces/appium_types.ExternalDriver/"><code>ExternalDriver</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>TArgs</code></td>
+<td align="left">extends readonly <code>any</code>[] = <code>any</code>[]</td>
+</tr>
+<tr>
+<td align="left"><code>TReturn</code></td>
+<td align="left"><code>any</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="type-declaration_13">Type declaration</h4>
+<p>▸ (<code>next</code>, <code>driver</code>, <code>...args</code>): <code>Promise</code>&lt;<code>TReturn</code>></p>
+<p>Implementation of a command within a plugin</p>
+<p>At minimum, <code>D</code> must be <code>ExternalDriver</code>, but a plugin can be more narrow about which drivers it supports.</p>
+<h5 id="parameters_1">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>next</code></td>
+<td align="left"><a href="./#nextplugincallback"><code>NextPluginCallback</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>driver</code></td>
+<td align="left"><code>D</code></td>
+</tr>
+<tr>
+<td align="left"><code>...args</code></td>
+<td align="left"><code>TArgs</code></td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_2">Returns</h5>
+<p><code>Promise</code>&lt;<code>TReturn</code>></p>
+<h4 id="defined-in_67">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/plugin.ts#L79">packages/types/lib/plugin.ts:79</a></p>
+<hr />
+<h3 id="plugintype">PluginType</h3>
+<p>Ƭ <strong>PluginType</strong>: <code>"plugin"</code></p>
+<p>The string referring to a "plugin"-type extension</p>
+<h4 id="defined-in_68">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L169">packages/types/lib/index.ts:169</a></p>
+<hr />
+<h3 id="portconfig">PortConfig</h3>
+<p>Ƭ <strong>PortConfig</strong>: <code>number</code></p>
+<p>Port to listen on</p>
+<h4 id="defined-in_69">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L113">packages/types/lib/appium-config.ts:113</a></p>
+<hr />
+<h3 id="position">Position</h3>
+<p>Ƭ <strong>Position</strong>: <code>Pick</code>&lt;<a href="../../interfaces/appium_types.Rect/"><code>Rect</code></a>, <code>"x"</code> | <code>"y"</code>></p>
+<h4 id="defined-in_70">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L547">packages/types/lib/driver.ts:547</a></p>
+<hr />
+<h3 id="relaxedsecurityconfig">RelaxedSecurityConfig</h3>
+<p>Ƭ <strong>RelaxedSecurityConfig</strong>: <code>boolean</code></p>
+<p>Disable additional security checks, so it is possible to use some advanced features, provided by drivers supporting this option. Only enable it if all the clients are in the trusted network and it's not the case if a client could potentially break out of the session sandbox. Specific features can be overridden by using "deny-insecure"</p>
+<h4 id="defined-in_71">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L117">packages/types/lib/appium-config.ts:117</a></p>
+<hr />
+<h3 id="routematcher">RouteMatcher</h3>
+<p>Ƭ <strong>RouteMatcher</strong>: [<a href="./#httpmethod"><code>HTTPMethod</code></a>, <code>RegExp</code>]</p>
+<p>Tuple of an HTTP method with a regex matching a request path</p>
+<h4 id="defined-in_72">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L2249">packages/types/lib/driver.ts:2249</a></p>
+<hr />
+<h3 id="serverargs">ServerArgs</h3>
+<p>Ƭ <strong>ServerArgs</strong>: { [Prop in keyof ServerConfigMapping as SetKeyForProp&lt;Prop>]: KeyOrDefaultForProp&lt;Prop> }</p>
+<p>The final shape of the parsed CLI arguments.</p>
+<p>These will be camel-cased unless overridden by <code>appiumCliDest</code> field in schema(s).</p>
+<h4 id="defined-in_73">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/config.ts#L61">packages/types/lib/config.ts:61</a></p>
+<hr />
+<h3 id="sessionoverrideconfig">SessionOverrideConfig</h3>
+<p>Ƭ <strong>SessionOverrideConfig</strong>: <code>boolean</code></p>
+<p>Enables session override (clobbering)</p>
+<h4 id="defined-in_74">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L121">packages/types/lib/appium-config.ts:121</a></p>
+<hr />
+<h3 id="settingsupdatelistener">SettingsUpdateListener</h3>
+<p>Ƭ <strong>SettingsUpdateListener</strong>&lt;<code>T</code>>: (<code>prop</code>: keyof <code>T</code>, <code>newValue</code>: <code>unknown</code>, <code>curValue</code>: <code>unknown</code>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="type-parameters_19">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>T</code></td>
+<td align="left">extends <code>Record</code>&lt;<code>string</code>, <code>unknown</code>> = <code>Record</code>&lt;<code>string</code>, <code>unknown</code>></td>
+</tr>
+</tbody>
+</table>
+<h4 id="type-declaration_14">Type declaration</h4>
+<p>▸ (<code>prop</code>, <code>newValue</code>, <code>curValue</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<h5 id="parameters_2">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>prop</code></td>
+<td align="left">keyof <code>T</code></td>
+</tr>
+<tr>
+<td align="left"><code>newValue</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+<tr>
+<td align="left"><code>curValue</code></td>
+<td align="left"><code>unknown</code></td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_3">Returns</h5>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_75">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L477">packages/types/lib/driver.ts:477</a></p>
+<hr />
+<h3 id="singularsessiondata">SingularSessionData</h3>
+<p>Ƭ <strong>SingularSessionData</strong>&lt;<code>C</code>, <code>Extra</code>>: <a href="./#capabilities"><code>Capabilities</code></a>&lt;<code>C</code>, <code>Extra</code>> &amp; { <code>error?</code>: <code>string</code> ; <code>events?</code>: <a href="../../interfaces/appium_types.EventHistory/"><code>EventHistory</code></a>  }</p>
+<h4 id="type-parameters_20">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a> = <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_76">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L197">packages/types/lib/driver.ts:197</a></p>
+<hr />
+<h3 id="size">Size</h3>
+<p>Ƭ <strong>Size</strong>: <code>Pick</code>&lt;<a href="../../interfaces/appium_types.Rect/"><code>Rect</code></a>, <code>"width"</code> | <code>"height"</code>></p>
+<h4 id="defined-in_77">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/driver.ts#L545">packages/types/lib/driver.ts:545</a></p>
+<hr />
+<h3 id="strictcapsconfig">StrictCapsConfig</h3>
+<p>Ƭ <strong>StrictCapsConfig</strong>: <code>boolean</code></p>
+<p>Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device</p>
+<h4 id="defined-in_78">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L125">packages/types/lib/appium-config.ts:125</a></p>
+<hr />
+<h3 id="stringrecord">StringRecord</h3>
+<p>Ƭ <strong>StringRecord</strong>: <code>Record</code>&lt;<code>string</code>, <code>any</code>></p>
+<p>Utility type for a object with string-only props</p>
+<h4 id="defined-in_79">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L23">packages/types/lib/index.ts:23</a></p>
+<hr />
+<h3 id="tmpconfig">TmpConfig</h3>
+<p>Ƭ <strong>TmpConfig</strong>: <code>string</code></p>
+<p>Absolute path to directory Appium can use to manage temp files. Defaults to C:\Windows\Temp on Windows and /tmp otherwise.</p>
+<h4 id="defined-in_80">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L129">packages/types/lib/appium-config.ts:129</a></p>
+<hr />
+<h3 id="tracedirconfig">TraceDirConfig</h3>
+<p>Ƭ <strong>TraceDirConfig</strong>: <code>string</code></p>
+<p>Absolute path to directory Appium can use to save iOS instrument traces; defaults to <tmp>/appium-instruments</p>
+<h4 id="defined-in_81">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L133">packages/types/lib/appium-config.ts:133</a></p>
+<hr />
+<h3 id="updateservercallback">UpdateServerCallback</h3>
+<p>Ƭ <strong>UpdateServerCallback</strong>: (<code>expressApp</code>: <code>Express</code>, <code>httpServer</code>: <a href="./#appiumserver"><code>AppiumServer</code></a>, <code>cliArgs</code>: <code>Partial</code>&lt;<a href="./#serverargs"><code>ServerArgs</code></a>>) =&gt; <code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="type-declaration_15">Type declaration</h4>
+<p>▸ (<code>expressApp</code>, <code>httpServer</code>, <code>cliArgs</code>): <code>Promise</code>&lt;<code>void</code>></p>
+<p>Optionally updates an Appium express app and http server, by calling
+methods that may mutate those objects. For example, you could call:</p>
+<p><code>expressApp.get('/foo', handler)</code></p>
+<p>In order to add a new route to Appium with this plugin. Or, you could add
+new listeners to the httpServer object.</p>
+<h5 id="parameters_3">Parameters</h5>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>expressApp</code></td>
+<td align="left"><code>Express</code></td>
+<td align="left">the Express 'app' object used by Appium for route handling</td>
+</tr>
+<tr>
+<td align="left"><code>httpServer</code></td>
+<td align="left"><a href="./#appiumserver"><code>AppiumServer</code></a></td>
+<td align="left">the node HTTP server that hosts the app</td>
+</tr>
+<tr>
+<td align="left"><code>cliArgs</code></td>
+<td align="left"><code>Partial</code>&lt;<a href="./#serverargs"><code>ServerArgs</code></a>></td>
+<td align="left">Arguments from config files, CLI, etc.</td>
+</tr>
+</tbody>
+</table>
+<h5 id="returns_4">Returns</h5>
+<p><code>Promise</code>&lt;<code>void</code>></p>
+<h4 id="defined-in_82">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/index.ts#L189">packages/types/lib/index.ts:189</a></p>
+<hr />
+<h3 id="usedriversconfig">UseDriversConfig</h3>
+<p>Ƭ <strong>UseDriversConfig</strong>: <code>string</code>[]</p>
+<p>A list of drivers to activate. By default, all installed drivers will be activated.</p>
+<h4 id="defined-in_83">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L137">packages/types/lib/appium-config.ts:137</a></p>
+<hr />
+<h3 id="usepluginsconfig">UsePluginsConfig</h3>
+<p>Ƭ <strong>UsePluginsConfig</strong>: <code>string</code>[]</p>
+<p>A list of plugins to activate. To activate all plugins, the value should be an array with a single item "all".</p>
+<h4 id="defined-in_84">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L141">packages/types/lib/appium-config.ts:141</a></p>
+<hr />
+<h3 id="w3ccapabilities">W3CCapabilities</h3>
+<p>Ƭ <strong>W3CCapabilities</strong>&lt;<code>C</code>, <code>Extra</code>>: <code>Object</code></p>
+<p>Like <a href="./#capabilities"><code>Capabilities</code></a>, except W3C-style.</p>
+<p>Does not contain <a href="./#basecapabilities"><code>BaseCapabilities</code></a>; see <a href="./#w3cdrivercaps"><code>W3CDriverCaps</code></a>.</p>
+<h4 id="type-parameters_21">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a> = <a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="type-declaration_16">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>alwaysMatch</code></td>
+<td align="left"><a href="./#nscapabilities"><code>NSCapabilities</code></a>&lt;<code>C</code>, <code>Extra</code>></td>
+</tr>
+<tr>
+<td align="left"><code>firstMatch</code></td>
+<td align="left"><a href="./#nscapabilities"><code>NSCapabilities</code></a>&lt;<code>C</code>, <code>Extra</code>>[]</td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_85">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L112">packages/types/lib/capabilities.ts:112</a></p>
+<hr />
+<h3 id="w3cdrivercaps">W3CDriverCaps</h3>
+<p>Ƭ <strong>W3CDriverCaps</strong>&lt;<code>C</code>, <code>Extra</code>>: <a href="./#w3ccapabilities"><code>W3CCapabilities</code></a>&lt;<a href="./#basedrivercapconstraints"><code>BaseDriverCapConstraints</code></a> &amp; <code>C</code>, <code>Extra</code>></p>
+<p>W3C-style capabilities for drivers extending <code>BaseDriver</code>.</p>
+<p>Includes <a href="./#basecapabilities"><code>BaseCapabilities</code></a>.</p>
+<p><strong><code>Example</code></strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">class</span><span class="w"> </span><span class="nx">MyDriver</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">BaseDriver</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">createSession</span><span class="w"> </span><span class="p">(</span><span class="nx">w3ccaps</span><span class="o">:</span><span class="w"> </span><span class="kt">W3CDriverCaps</span><span class="o">&lt;</span><span class="nx">MyDriverConstraints</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="nx">...args</span><span class="o">:</span><span class="w"> </span><span class="kt">any</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="c1">// ...</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">}</span>
+</code></pre></div>
+<h4 id="type-parameters_22">Type parameters</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>C</code></td>
+<td align="left">extends <a href="./#constraints"><code>Constraints</code></a></td>
+</tr>
+<tr>
+<td align="left"><code>Extra</code></td>
+<td align="left">extends <a href="./#stringrecord"><code>StringRecord</code></a> | <code>void</code> = <code>void</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_86">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L169">packages/types/lib/capabilities.ts:169</a></p>
+<hr />
+<h3 id="w3c_appium_prefix">W3C_APPIUM_PREFIX</h3>
+<p>Ƭ <strong>W3C_APPIUM_PREFIX</strong>: <code>"appium"</code></p>
+<h4 id="defined-in_87">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/capabilities.ts#L7">packages/types/lib/capabilities.ts:7</a></p>
+<hr />
+<h3 id="webhookconfig">WebhookConfig</h3>
+<p>Ƭ <strong>WebhookConfig</strong>: <code>string</code></p>
+<p>Also send log output to this http listener</p>
+<h4 id="defined-in_88">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/appium-config.ts#L145">packages/types/lib/appium-config.ts:145</a></p>
+<h2 id="variables_1">Variables</h2>
+<h3 id="base_desired_cap_constraints">BASE_DESIRED_CAP_CONSTRAINTS</h3>
+<p>• <code>Const</code> <strong>BASE_DESIRED_CAP_CONSTRAINTS</strong>: <code>Object</code></p>
+<h4 id="type-declaration_17">Type declaration</h4>
+<table>
+<thead>
+<tr>
+<th align="left">Name</th>
+<th align="left">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>app</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>app.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoLaunch</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>autoLaunch.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>autoWebview</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>autoWebview.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>automationName</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>automationName.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>deviceName</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>deviceName.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>eventTimings</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>eventTimings.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>fullReset</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>fullReset.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>language</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>language.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>locale</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>locale.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>newCommandTimeout</code></td>
+<td align="left">{ <code>isNumber</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>newCommandTimeout.isNumber</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>noReset</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>noReset.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>orientation</code></td>
+<td align="left">{ <code>inclusion</code>: readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]  }</td>
+</tr>
+<tr>
+<td align="left"><code>orientation.inclusion</code></td>
+<td align="left">readonly [<code>"LANDSCAPE"</code>, <code>"PORTRAIT"</code>]</td>
+</tr>
+<tr>
+<td align="left"><code>platformName</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true; <code>presence</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>platformName.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>platformName.presence</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>platformVersion</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>platformVersion.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>printPageSourceOnFindFailure</code></td>
+<td align="left">{ <code>isBoolean</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>printPageSourceOnFindFailure.isBoolean</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>udid</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>udid.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>webSocketUrl</code></td>
+<td align="left">{ <code>isString</code>: <code>true</code> = true }</td>
+</tr>
+<tr>
+<td align="left"><code>webSocketUrl.isString</code></td>
+<td align="left"><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="defined-in_89">Defined in</h4>
+<p><a href="https://github.com/appium/appium/blob/388df9d30/packages/types/lib/constraints.js#L1">packages/types/lib/constraints.js:1</a></p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2012 OpenJS Foundation
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/AppiumDevs" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      
+    
+  </body>
+</html>

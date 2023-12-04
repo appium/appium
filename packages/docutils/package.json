@@ -70,7 +70,7 @@
     "teen_process": "2.0.101",
     "type-fest": "3.13.1",
     "typedoc": "0.23.28",
-    "typedoc-plugin-markdown": "3.14.0",
+    "typedoc-plugin-markdown": "3.17.1",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "5.0.4",
     "yaml": "2.3.4",

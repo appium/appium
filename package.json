@@ -140,7 +140,7 @@
     "through2": "4.0.2",
     "ts-node": "10.9.1",
     "tsd": "0.29.0",
-    "typedoc": "0.23.28",
+    "typedoc": "0.25.4",
     "typedoc-plugin-markdown": "3.14.0",
     "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "5.0.4",

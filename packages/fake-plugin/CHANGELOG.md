@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.28](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.27...@appium/fake-plugin@3.1.28) (2023-12-04)
+
+**Note:** Version bump only for package @appium/fake-plugin
+
+
+
+
+
 ## [3.1.27](https://github.com/appium/appium/compare/@appium/fake-plugin@3.1.26...@appium/fake-plugin@3.1.27) (2023-11-14)
 
 

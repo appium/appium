@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.3](https://github.com/appium/appium/compare/@appium/types@0.14.2...@appium/types@0.14.3) (2023-12-04)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([2c02be4](https://github.com/appium/appium/commit/2c02be440c21db0bf8a3832143e61ef8fb30a2cf))
+
+
+
 ## [0.14.2](https://github.com/appium/appium/compare/@appium/types@0.14.1...@appium/types@0.14.2) (2023-11-14)
 
 

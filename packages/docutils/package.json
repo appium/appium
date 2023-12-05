@@ -1,6 +1,6 @@
 {
   "name": "@appium/docutils",
-  "version": "0.4.13",
+  "version": "1.0.0",
   "description": "Documentation generation utilities for Appium and related projects",
   "keywords": [
     "automation",
@@ -38,7 +38,6 @@
     "build",
     "tsconfig.json",
     "!build/tsconfig.tsbuildinfo",
-    "typedoc-shared.json",
     "requirements.txt"
   ],
   "scripts": {
@@ -51,14 +50,12 @@
   "dependencies": {
     "@appium/support": "^4.1.10",
     "@appium/tsconfig": "^0.x",
-    "@appium/typedoc-plugin-appium": "^0.x",
     "@sliphua/lilconfig-ts-loader": "3.2.2",
     "@types/which": "3.0.1",
     "chalk": "4.1.2",
     "consola": "2.15.3",
     "diff": "5.1.0",
     "figures": "3.2.0",
-    "find-up": "5.0.0",
     "json5": "2.2.3",
     "lilconfig": "2.1.0",
     "lodash": "4.17.21",
@@ -69,9 +66,6 @@
     "source-map-support": "0.5.21",
     "teen_process": "2.0.101",
     "type-fest": "3.13.1",
-    "typedoc": "0.23.28",
-    "typedoc-plugin-markdown": "3.14.0",
-    "typedoc-plugin-resolve-crossmodule-references": "0.3.3",
     "typescript": "5.0.4",
     "yaml": "2.3.4",
     "yargs": "17.7.2",

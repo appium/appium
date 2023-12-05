@@ -10,7 +10,7 @@
 /* eslint-disable promise/prefer-await-to-callbacks */
 /* eslint-disable promise/prefer-await-to-then */
 
-const {buildReferenceDocs, deploy, updateNav, buildSite} = require('@appium/docutils');
+const {deploy, buildSite} = require('@appium/docutils');
 const {
   log,
   LANGS,
@@ -36,11 +36,6 @@ async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
 
   await copyAssets();
-  await buildReferenceDocs();
-
-  for (const lang of LANGS) {
-    await updateNav({mkdocsYml: path.join(DOCS_DIR, `mkdocs-${lang}.yml`)});
-  }
 
   const semVersion = semver.parse(version);
   if (!semVersion) {

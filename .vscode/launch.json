@@ -44,22 +44,6 @@
       ],
       "sourceMaps": true,
       "type": "node"
-    },
-    {
-      "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "internalConsoleOptions": "openOnSessionStart",
-      "name": "Typedoc",
-      "program": "${workspaceFolder}/node_modules/.bin/typedoc",
-      "args": ["--logLevel", "Verbose"],
-      "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**",
-        "**/node_modules/lodash/**",
-        "**/node_modules/**/handlebars/**"
-      ],
-      "sourceMaps": true,
-      "type": "node"
     }
   ],
   "version": "0.2.0"

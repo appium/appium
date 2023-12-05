@@ -133,11 +133,6 @@ labels:
     matcher:
       files: ['packages/tsconfig/**']
 
-  - label: '@appium/typedoc-plugin-appium'
-    sync: true
-    matcher:
-      files: ['packages/typedoc-plugin-appium/**']
-
   - label: '@appium/types'
     sync: true
     matcher:

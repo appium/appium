@@ -27,10 +27,6 @@ export const NAME_TSCONFIG_JSON = 'tsconfig.json';
  */
 export const NAME_PYTHON = 'python';
 /**
- * Default name of the `typedoc.json` config file
- */
-export const NAME_TYPEDOC_JSON = 'typedoc.json';
-/**
  * It's `package.json`!
  */
 export const NAME_PACKAGE_JSON = 'package.json';
@@ -52,11 +48,6 @@ export const NAME_MKDOCS = 'mkdocs';
  * Name of the `mike` executable
  */
 export const NAME_MIKE = 'mike';
-
-/**
- * Name of the `typedoc` executable
- */
-export const NAME_TYPEDOC = 'typedoc';
 
 /**
  * Name of the `pip` module.
@@ -104,7 +95,7 @@ export const PKG_ROOT_DIR = fs.findRoot(__dirname);
  */
 
 export const DOCUTILS_PKG: PackageJson = JSON.parse(
-  readFileSync(path.join(PKG_ROOT_DIR, NAME_PACKAGE_JSON), 'utf8')
+  readFileSync(path.join(PKG_ROOT_DIR, NAME_PACKAGE_JSON), 'utf8'),
 );
 
 /**
@@ -112,11 +103,6 @@ export const DOCUTILS_PKG: PackageJson = JSON.parse(
  */
 
 export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_TXT);
-
-/**
- * The default output path for Typedoc, computed relative to the consuming package's root
- */
-export const DEFAULT_REL_TYPEDOC_OUT_PATH = path.join('docs', 'reference');
 
 /**
  * The default branch to deploy to
@@ -148,11 +134,6 @@ export const LogLevelMap = {
   info: LogLevel.Info,
   debug: LogLevel.Debug,
 } as const;
-
-/**
- * Default site nav header text
- */
-export const DEFAULT_NAV_HEADER = 'Reference';
 
 /**
  * If the user does not specify a site directory _and_ the `mkdocs.yml` doesn't either, use this dir.

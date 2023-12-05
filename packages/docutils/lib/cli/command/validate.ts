@@ -66,30 +66,6 @@ const opts = {
     requiresArg: true,
     type: 'string',
   },
-  typedoc: {
-    default: true,
-    description: 'Validate TypoDoc environment',
-    group: ValidateCommandGroup.Behavior,
-    type: 'boolean',
-  },
-  'typedoc-json': {
-    defaultDescription: './typedoc.json',
-    describe: 'Path to typedoc.json',
-    group: ValidateCommandGroup.Paths,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-  },
-  'typedoc-path': {
-    defaultDescription: '(derived from shell)',
-    description: 'Path to typedoc executable',
-    group: ValidateCommandGroup.Paths,
-    nargs: 1,
-    normalize: true,
-    requiresArg: true,
-    type: 'string',
-  },
   typescript: {
     default: true,
     description: 'Validate TypeScript environment',
@@ -105,8 +81,8 @@ export default {
   describe: 'Validate Environment',
   builder(yargs) {
     return yargs.options(opts).check(async (argv) => {
-      if (!argv.python && !argv.typedoc && !argv.typescript && !argv.mkdocs) {
-        return 'No validation targets specified; one or more of --python, --typescript, --typedoc or --mkdocs must be provided';
+      if (!argv.python && !argv.typescript && !argv.mkdocs) {
+        return 'No validation targets specified; one or more of --python, --typescript or --mkdocs must be provided';
       }
       return checkMissingPaths(opts, ValidateCommandGroup.Paths, argv);
     });
@@ -131,7 +107,7 @@ export default {
 
     if (errorCount) {
       throw new DocutilsError(
-        `Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`
+        `Validation failed with ${errorCount} ${util.pluralize('error', errorCount)}`,
       );
     }
   },

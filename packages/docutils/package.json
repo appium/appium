@@ -65,7 +65,7 @@
     "semver": "7.5.4",
     "source-map-support": "0.5.21",
     "teen_process": "2.0.109",
-    "type-fest": "3.13.1",
+    "type-fest": "4.8.3",
     "typescript": "5.2.2",
     "yaml": "2.3.4",
     "yargs": "17.7.2",

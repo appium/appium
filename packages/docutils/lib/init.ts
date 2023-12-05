@@ -11,6 +11,7 @@ import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
 import {DocutilsError} from './error';
 import {createScaffoldTask, ScaffoldTaskOptions} from './scaffold';
+import type { ScaffoldTask } from './scaffold';
 import {getLogger} from './logger';
 import {MkDocsYml, TsConfigJson} from './model';
 import _ from 'lodash';
@@ -76,7 +77,7 @@ export const initTsConfigJson = createScaffoldTask<InitTsConfigOptions, TsConfig
 /**
  * Function which scaffolds an `mkdocs.yml` file
  */
-export const initMkDocs = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
+export const initMkDocs: ScaffoldTask<InitMkDocsOptions, MkDocsYml> = createScaffoldTask<InitMkDocsOptions, MkDocsYml>(
   NAME_MKDOCS_YML,
   BASE_MKDOCS_YML,
   'MkDocs configuration',

@@ -66,7 +66,7 @@
     "@appium/schema": "^0.4.2",
     "@appium/support": "^4.1.10",
     "@appium/types": "^0.14.3",
-    "@sidvind/better-ajv-errors": "2.1.0",
+    "@sidvind/better-ajv-errors": "2.1.2",
     "@types/argparse": "2.0.14",
     "@types/bluebird": "3.5.42",
     "@types/fancy-log": "2.0.2",

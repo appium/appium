@@ -36,7 +36,6 @@ Appium extension authors--or anyone else--may use this config as well.
 
 - `config:js-app` - everything gets pinned except peer deps (plus a bunch of other reasonable defaults)
 - `group:definitelyTyped` - Groups all `@types/*` packages into one PR
-- `helpers:pinGitHubActionDigests` - Pins SHAs of GitHub Actions
 - `workarounds:typesNodeVersioning` - `@types/node` tracks Node.js versions instead
 - `:automergePatch` - Automatically merges "patch" and "pin" updates (assuming they pass CI)
 - `:automergeMinor` - Automatically merges "minor" updates (assuming they pass CI)

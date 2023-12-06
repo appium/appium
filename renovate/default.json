@@ -4,7 +4,6 @@
   "extends": [
     "config:js-app",
     "group:definitelyTyped",
-    "helpers:pinGitHubActionDigests",
     "workarounds:typesNodeVersioning",
     ":automergePatch",
     ":automergeMinor",

@@ -136,13 +136,6 @@ const opts = {
     choices: ['symlink', 'redirect', 'copy'],
     defaultDescription: 'redirect',
   },
-  rebase: {
-    describe: 'Rebase <branch> with remote before deploy',
-    implies: 'deploy',
-    group: BuildCommandGroup.Deploy,
-    type: 'boolean',
-    defaultDescription: 'true',
-  },
   serve: {
     describe: 'Start development server',
     group: BuildCommandGroup.Serve,

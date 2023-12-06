@@ -77,11 +77,10 @@ npx appium-docs build
 npx appium-docs build --serve
 
 # Build the docs and deploy them with mike versioning to the docs-site branch
-# using the included commit message and rebase strategy on the branch.
+# using the included commit message.
 # This is particularly useful for pushing content to a GitHub pages branch!
 npx appium-docs build \
   --deploy \
   -b docs-site \
-  -m 'docs: auto-build docs for appium-xcuitest-driver@%s' \
-  --rebase
+  -m 'docs: auto-build docs for appium-xcuitest-driver@%s'
 ```

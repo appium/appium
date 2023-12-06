@@ -12,7 +12,6 @@ describe('argify', function () {
       branch: 'gh-pages',
       'deploy-prefix': '2.0',
       message: 'docs: a thing',
-      rebase: true,
       port: 8100,
       host: 'localhost',
     };
@@ -37,8 +36,6 @@ describe('argify', function () {
       '2.0',
       '--message',
       'docs: a thing',
-      '--rebase',
-      '2.0',
     ]);
   });
 });

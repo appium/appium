@@ -60,7 +60,6 @@ async function main() {
         deployVersion: majMinVer,
         push,
         alias: LATEST_ALIAS,
-        rebase: true, // we always want to rebase if branch is out of sync
         message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
       });
     }

@@ -92,7 +92,6 @@ export async function deploy({
   message,
   alias,
   aliasType = DEFAULT_DEPLOY_ALIAS_TYPE,
-  rebase = true,
   port = DEFAULT_SERVE_PORT,
   host = DEFAULT_SERVE_HOST,
   serveOpts,
@@ -126,7 +125,6 @@ export async function deploy({
     branch,
     'deploy-prefix': deployPrefix,
     message,
-    rebase,
     port,
     host,
   };
@@ -233,10 +231,6 @@ export interface DeployOpts {
    * The approach for creating build alias (`symlink`, `redirect` or `copy`)
    */
   aliasType?: string;
-  /**
-   * If `true`, rebase `branch` before pushing
-   */
-  rebase?: boolean;
   /**
    * Port to serve on
    * @defaultValue 8000

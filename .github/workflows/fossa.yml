@@ -11,11 +11,11 @@ jobs:
     name: Run FOSSA Analysis
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@v4
         with:
           ref: master
       - name: Install dependencies
-        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        uses: bahmutov/npm-install@v1
       - name: Install fossa-cli
         run: ./scripts/install-fossa.sh -d
       - name: Run FOSSA analysis

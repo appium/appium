@@ -13,4 +13,4 @@ jobs:
     name: Auto-Label PRs
     runs-on: ubuntu-latest
     steps:
-      - uses: fuxingloh/multi-labeler@6704db0bcba106d07482efabbc79d3092af74fa2 # v2
+      - uses: fuxingloh/multi-labeler@v2

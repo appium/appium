@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check for "On Hold" label
-        uses: egmacke/action-check-label@0eb29f801fb482a95c9bd2dd22834ecc8f4e8af9 # v2
+        uses: egmacke/action-check-label@v2
         with:
           label: On Hold
           state: absent

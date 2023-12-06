@@ -8,6 +8,7 @@ import _ from 'lodash';
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
 import {
+  DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
   DEFAULT_DEPLOY_REMOTE,
   DEFAULT_SERVE_HOST,
@@ -90,6 +91,7 @@ export async function deploy({
   deployPrefix,
   message,
   alias,
+  aliasType = DEFAULT_DEPLOY_ALIAS_TYPE,
   rebase = true,
   port = DEFAULT_SERVE_PORT,
   host = DEFAULT_SERVE_HOST,
@@ -141,6 +143,7 @@ export async function deploy({
     ];
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
+      mikeArgs.push('--alias-type', aliasType);
     } else {
       mikeArgs.push(version);
     }
@@ -159,6 +162,7 @@ export async function deploy({
     ];
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
+      mikeArgs.push('--alias-type', aliasType);
     } else {
       mikeArgs.push(version);
     }
@@ -225,6 +229,10 @@ export interface DeployOpts {
    * Alias for the build (e.g., `latest`); triggers alias update
    */
   alias?: string;
+  /**
+   * The approach for creating build alias (`symlink`, `redirect` or `copy`)
+   */
+  aliasType?: string;
   /**
    * If `true`, rebase `branch` before pushing
    */

@@ -126,6 +126,16 @@ const opts = {
     requiresArg: true,
     defaultDescription: 'latest',
   },
+  'alias-type': {
+    describe: 'Alias creation strategy',
+    implies: 'deploy',
+    group: BuildCommandGroup.Deploy,
+    type: 'string',
+    nargs: 1,
+    requiresArg: true,
+    choices: ['symlink', 'redirect', 'copy'],
+    defaultDescription: 'redirect',
+  },
   rebase: {
     describe: 'Rebase <branch> with remote before deploy',
     implies: 'deploy',

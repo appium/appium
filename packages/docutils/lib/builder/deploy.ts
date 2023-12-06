@@ -8,6 +8,7 @@ import _ from 'lodash';
 import path from 'node:path';
 import {exec, TeenProcessExecOptions} from 'teen_process';
 import {
+  DEFAULT_DEPLOY_ALIAS_TYPE,
   DEFAULT_DEPLOY_BRANCH,
   DEFAULT_DEPLOY_REMOTE,
   DEFAULT_SERVE_HOST,
@@ -33,7 +34,7 @@ const log = getLogger('builder:deploy');
 async function doServe(
   mikePath: string,
   args: string[] = [],
-  opts: SpawnBackgroundProcessOpts = {}
+  opts: SpawnBackgroundProcessOpts = {},
 ) {
   const finalArgs = ['serve', ...args];
   return spawnBackgroundProcess(mikePath, finalArgs, opts);
@@ -61,7 +62,7 @@ async function findDeployVersion(packageJsonPath?: string, cwd = process.cwd()):
   const version = pkg.version;
   if (!version) {
     throw new DocutilsError(
-      'No "version" field found in package.json; please add one or specify a version to deploy'
+      'No "version" field found in package.json; please add one or specify a version to deploy',
     );
   }
 
@@ -87,10 +88,10 @@ export async function deploy({
   push = false,
   branch = DEFAULT_DEPLOY_BRANCH,
   remote = DEFAULT_DEPLOY_REMOTE,
-  prefix,
+  deployPrefix,
   message,
   alias,
-  rebase = true,
+  aliasType = DEFAULT_DEPLOY_ALIAS_TYPE,
   port = DEFAULT_SERVE_PORT,
   host = DEFAULT_SERVE_HOST,
   serveOpts,
@@ -102,14 +103,14 @@ export async function deploy({
 
   if (!pythonPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`
+      `Could not find ${NAME_PYTHON}3/${NAME_PYTHON} executable in PATH; please install Python v3`,
     );
   }
 
   mkDocsYmlPath = mkDocsYmlPath ?? (await findMkDocsYml(cwd));
   if (!mkDocsYmlPath) {
     throw new DocutilsError(
-      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`
+      `Could not find ${NAME_MKDOCS_YML} from ${cwd}; run "${NAME_BIN} init" to create it`,
     );
   }
   version = version ?? (await findDeployVersion(packageJsonPath, cwd));
@@ -122,9 +123,8 @@ export async function deploy({
     push,
     remote,
     branch,
-    prefix,
+    'deploy-prefix': deployPrefix,
     message,
-    rebase,
     port,
     host,
   };
@@ -132,15 +132,16 @@ export async function deploy({
   const mikePath = await findMike();
   if (!mikePath) {
     throw new DocutilsError(
-      `Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`
+      `Could not find ${NAME_MIKE} executable; please run "${NAME_BIN} init"`,
     );
   }
   if (serve) {
     const mikeArgs = [
-      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value)))
+      ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
     ];
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
+      mikeArgs.push('--alias-type', aliasType);
     } else {
       mikeArgs.push(version);
     }
@@ -153,12 +154,13 @@ export async function deploy({
       ...argify(
         _.omitBy(
           mikeOpts,
-          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value)
-        )
+          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value),
+        ),
       ),
     ];
     if (alias) {
       mikeArgs.push('--update-aliases', version, alias);
+      mikeArgs.push('--alias-type', aliasType);
     } else {
       mikeArgs.push(version);
     }
@@ -212,7 +214,7 @@ export interface DeployOpts {
   /**
    * Subdirectory within `branch` to deploy to
    */
-  prefix?: string;
+  deployPrefix?: string;
   /**
    * Commit message
    */
@@ -226,9 +228,9 @@ export interface DeployOpts {
    */
   alias?: string;
   /**
-   * If `true`, rebase `branch` before pushing
+   * The approach for creating build alias (`symlink`, `redirect` or `copy`)
    */
-  rebase?: boolean;
+  aliasType?: string;
   /**
    * Port to serve on
    * @defaultValue 8000

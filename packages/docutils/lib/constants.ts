@@ -105,6 +105,12 @@ export const DOCUTILS_PKG: PackageJson = JSON.parse(
 export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_TXT);
 
 /**
+ * The default alias creation strategy to pass to `mike` when deploying
+ * (`symlink`, `redirect` or `copy`)
+ */
+export const DEFAULT_DEPLOY_ALIAS_TYPE = 'redirect';
+
+/**
  * The default branch to deploy to
  */
 export const DEFAULT_DEPLOY_BRANCH = 'gh-pages';

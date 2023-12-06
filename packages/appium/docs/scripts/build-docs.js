@@ -55,12 +55,11 @@ async function main() {
       await deploy({
         mkdocsYml: configFile,
         branch,
-        prefix: path.join(basePrefix, lang),
+        deployPrefix: path.join(basePrefix, lang),
         remote,
         deployVersion: majMinVer,
         push,
         alias: LATEST_ALIAS,
-        rebase: true, // we always want to rebase if branch is out of sync
         message: `docs(appium): auto-build docs for appium@${majMinVer}, language ${lang}`,
       });
     }

@@ -10,9 +10,8 @@ describe('argify', function () {
       push: true,
       remote: 'origin',
       branch: 'gh-pages',
-      prefix: '2.0',
+      'deploy-prefix': '2.0',
       message: 'docs: a thing',
-      rebase: true,
       port: 8100,
       host: 'localhost',
     };
@@ -20,8 +19,8 @@ describe('argify', function () {
       ...argify(
         _.omitBy(
           mikeOpts,
-          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value)
-        )
+          (value, key) => _.includes(['port', 'host'], key) || (!_.isNumber(value) && !value),
+        ),
       ),
       version,
     ];
@@ -33,11 +32,10 @@ describe('argify', function () {
       'origin',
       '--branch',
       'gh-pages',
-      '--prefix',
+      '--deploy-prefix',
       '2.0',
       '--message',
       'docs: a thing',
-      '--rebase',
       '2.0',
     ]);
   });

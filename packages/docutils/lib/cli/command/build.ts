@@ -91,7 +91,7 @@ const opts = {
     nargs: 1,
     defaultDescription: 'origin',
   },
-  prefix: {
+  'deploy-prefix': {
     describe: 'Subdirectory within <branch> to commit to',
     implies: 'branch',
     group: BuildCommandGroup.Deploy,
@@ -126,12 +126,15 @@ const opts = {
     requiresArg: true,
     defaultDescription: 'latest',
   },
-  rebase: {
-    describe: 'Rebase <branch> with remote before deploy',
+  'alias-type': {
+    describe: 'Alias creation strategy',
     implies: 'deploy',
     group: BuildCommandGroup.Deploy,
-    type: 'boolean',
-    defaultDescription: 'true',
+    type: 'string',
+    nargs: 1,
+    requiresArg: true,
+    choices: ['symlink', 'redirect', 'copy'],
+    defaultDescription: 'redirect',
   },
   serve: {
     describe: 'Start development server',
@@ -171,7 +174,7 @@ export default {
       .check(async (argv) => {
         // either this method doesn't provide camel-cased props, or the types are wrong.
         if (argv.deploy === true && argv['site-dir']) {
-          return `--site-dir is unsupported when running "${NAME_BIN} deploy"; use --prefix if needed, but remember that the default behavior is to deploy to the root of the branch (${argv.branch}) instead of a subdirectory`;
+          return `--site-dir is unsupported when running "${NAME_BIN} deploy"; use --deploy-prefix if needed, but remember that the default behavior is to deploy to the root of the branch (${argv.branch}) instead of a subdirectory`;
         }
 
         return await checkMissingPaths(opts, BuildCommandGroup.BuildPaths, argv);

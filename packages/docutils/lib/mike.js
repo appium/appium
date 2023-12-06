@@ -17,14 +17,14 @@ const MIKE_VER_STRING = 'mike 1.';
 export class Mike {
   /** @type {string} */ remote;
   /** @type {string} */ branch;
-  /** @type {string?} */ prefix;
+  /** @type {string?} */ deployPrefix;
   /** @type {string} */ configFile;
   /** @type {boolean} */ _mikeVerified = false;
 
   constructor(/** @type MikeOpts */ opts) {
     this.remote = opts.remote || DEFAULT_REMOTE;
     this.branch = opts.branch || DEFAULT_BRANCH;
-    this.prefix = opts.prefix;
+    this.deployPrefix = opts.deployPrefix;
     this.configFile = opts.configFile;
   }
 
@@ -67,8 +67,8 @@ export class Mike {
       this.remote,
       '--branch',
       this.branch,
-      '--prefix',
-      this.prefix,
+      '--deploy-prefix',
+      this.deployPrefix,
     ];
   }
 
@@ -139,7 +139,7 @@ export class Mike {
  * @typedef MikeOpts - options for instantiating a Mike object
  * @property {string} [remote="origin"] - the git remote to push docs to
  * @property {string} [branch="gh-pages"] - the git branch to push docs to
- * @property {string?} prefix - the path prefix on the branch if any
+ * @property {string?} deployPrefix - the path prefix on the branch if any
  * @property {string} configFile - the mkdocs config file to use
  */
 

@@ -7,7 +7,7 @@ describe('Mike', function () {
       configFile: '1',
       remote: '2',
       branch: '3',
-      prefix: '4',
+      deployPrefix: '4',
     });
     expect(m.getMikeArgs('cmd', ['arg1', 'arg2'])).eql([
       'cmd',
@@ -19,7 +19,7 @@ describe('Mike', function () {
       '2',
       '--branch',
       '3',
-      '--prefix',
+      '--deploy-prefix',
       '4',
     ]);
   });

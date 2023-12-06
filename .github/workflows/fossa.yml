@@ -15,7 +15,7 @@ jobs:
         with:
           ref: master
       - name: Install dependencies
-        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # tag=v1
+        uses: bahmutov/npm-install@cb39a46f27f14697fec763d60fb23ad347e2befa # v1
       - name: Install fossa-cli
         run: ./scripts/install-fossa.sh -d
       - name: Run FOSSA analysis

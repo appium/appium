@@ -77,7 +77,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
-        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # v1
         with:
           useRollingCache: true
           install-command: npm ci --foreground-scripts
@@ -90,7 +90,7 @@ jobs:
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
       - name: Install dependencies
-        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # v1
         with:
           useRollingCache: true
           install-command: npm ci

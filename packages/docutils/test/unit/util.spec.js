@@ -36,6 +36,7 @@ describe('argify', function () {
       '2.0',
       '--message',
       'docs: a thing',
+      '2.0',
     ]);
   });
 });

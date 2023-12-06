@@ -70,14 +70,14 @@ jobs:
         # - macos-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
-        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
           install-command: npm ci --foreground-scripts
@@ -88,9 +88,9 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@v4
       - name: Install dependencies
-        uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+        uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
           install-command: npm ci

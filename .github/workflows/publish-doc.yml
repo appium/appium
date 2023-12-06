@@ -17,7 +17,7 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+    - uses: actions/checkout@v4
     - run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies (Node.js)
-      uses: bahmutov/npm-install@1a235c31658a322a3b024444759650ee6345c26d # tag=v1
+      uses: bahmutov/npm-install@v1
       with:
         useRollingCache: true
         install-command: npm ci

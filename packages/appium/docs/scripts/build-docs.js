@@ -55,7 +55,7 @@ async function main() {
       await deploy({
         mkdocsYml: configFile,
         branch,
-        prefix: path.join(basePrefix, lang),
+        deployPrefix: path.join(basePrefix, lang),
         remote,
         deployVersion: majMinVer,
         push,

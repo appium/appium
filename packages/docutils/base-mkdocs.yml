@@ -25,16 +25,26 @@ plugins:
 theme:
   name: material
   palette:
-    - scheme: default
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: deep purple
+      toggle:
+        icon: material/theme-light-dark
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: deep purple
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
-    - scheme: slate
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: deep purple
       toggle:
         icon: material/weather-sunny
-        name: Switch to light mode
+        name: Switch to system preference
   icon:
     repo: fontawesome/brands/github
     admonition:

@@ -49,3 +49,4 @@ theme:
     - content.action.edit
     - navigation.sections
     - navigation.tabs
+    - navigation.top

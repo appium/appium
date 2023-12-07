@@ -47,4 +47,5 @@ theme:
       quote: octicons/quote-16
   features:
     - content.action.edit
+    - navigation.sections
     - navigation.tabs

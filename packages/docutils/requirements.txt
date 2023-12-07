@@ -1,3 +1,4 @@
 mkdocs==1.5.3
+mkdocs-git-revision-date-localized-plugin==1.2.1
 mkdocs-material==9.5.0
 mike==2.0.0

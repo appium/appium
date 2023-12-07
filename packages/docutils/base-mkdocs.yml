@@ -17,6 +17,11 @@ markdown_extensions:
   - toc:
       permalink: true
 
+plugins:
+  - git-revision-date-localized:
+      type: timeago
+  - search
+
 theme:
   name: material
   palette:

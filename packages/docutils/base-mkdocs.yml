@@ -50,3 +50,4 @@ theme:
     - navigation.sections
     - navigation.tabs
     - navigation.top
+    - toc.follow

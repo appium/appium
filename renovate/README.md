@@ -37,8 +37,7 @@ Appium extension authors--or anyone else--may use this config as well.
 - `config:js-app` - everything gets pinned except peer deps (plus a bunch of other reasonable defaults)
 - `group:definitelyTyped` - Groups all `@types/*` packages into one PR
 - `workarounds:typesNodeVersioning` - `@types/node` tracks Node.js versions instead
-- `:automergePatch` - Automatically merges "patch" and "pin" updates (assuming they pass CI)
-- `:automergeMinor` - Automatically merges "minor" updates (assuming they pass CI)
+- `:automergeStableNonMajor` - Automatically merges "patch" and "minor" updates for semver stable (>=1.0.0) packages (assuming they pass CI)
 - `:automergeDigest` - Automatically merges "digest" updates (assuming they pass CI)
 - `:enableVulnerabilityAlerts` - For "security" purposes
 - `:rebaseStalePrs` - Renovate will automatically rebase its PRs

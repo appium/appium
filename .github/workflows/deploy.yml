@@ -9,12 +9,23 @@ permissions:
   contents: read
 
 jobs:
+  prepare_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.generate-matrix.outputs.versions }}
+    steps:
+    - name: Select 2 most recent LTS versions of Node.js
+      id: generate-matrix
+      run: echo "versions=$(curl -s https://endoflife.date/api/nodejs.json | jq -c '[[.[] | select(.lts != false)][:2] | .[].cycle | tonumber]')" >> "$GITHUB_OUTPUT"
+
   check:
+    needs:
+    - prepare_matrix
     name: Check
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: ${{ fromJSON(needs.prepare_matrix.outputs.versions) }}
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Use Node.js ${{ matrix.node-version }}

@@ -136,7 +136,7 @@
     "sinon-chai": "3.7.0",
     "sync-monorepo-packages": "1.0.2",
     "through2": "4.0.2",
-    "ts-node": "10.9.1",
+    "ts-node": "10.9.2",
     "tsd": "0.29.0",
     "typescript": "5.2.2",
     "validate.js": "0.13.1",

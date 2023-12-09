@@ -140,7 +140,7 @@
     "tsd": "0.29.0",
     "typescript": "5.2.2",
     "validate.js": "0.13.1",
-    "webdriverio": "8.24.12",
+    "webdriverio": "8.26.0",
     "ws": "8.14.2",
     "yaml-js": "0.3.1"
   },

@@ -7,7 +7,8 @@ import {timing} from '@appium/support';
 import {PluginConfig} from './plugin-config';
 import B from 'bluebird';
 
-const MAX_PARALLEL_IMPORTS = 3;
+const MAX_PARALLEL_PLUGIN_IMPORTS = 7;
+const MAX_PARALLEL_DRIVER_IMPORTS = 3;
 
 /**
  * Loads extensions and creates `ExtensionConfig` instances.
@@ -35,16 +36,17 @@ export async function loadExtensions(appiumHome) {
  * @param {TExtType} extType
  * @param {import('./extension-config').ExtensionConfig} config
  * @param {string[]} extNames
+ * @param {number} asyncImportChunkSize
  * @returns {Promise<[TExtType extends 'driver' ? DriverClass : PluginClass, string][]>}
  */
-async function importExtensions(extType, config, extNames) {
+async function importExtensions(extType, config, extNames, asyncImportChunkSize) {
   /** @type {B[]} */
   const allPromises = [];
   /** @type {B[]} */
   const activePromisesChunk = [];
   for (const extName of extNames) {
     _.remove(activePromisesChunk, (p) => p.isFulfilled());
-    if (activePromisesChunk.length >= MAX_PARALLEL_IMPORTS) {
+    if (activePromisesChunk.length >= asyncImportChunkSize) {
       await B.any(activePromisesChunk);
     }
     const promise = B.resolve((async () => {
@@ -106,7 +108,7 @@ export async function getActivePlugins(pluginConfig, usePlugins = []) {
       }
     }
   }
-  return new Map(await importExtensions('plugin', pluginConfig, filteredPluginNames));
+  return new Map(await importExtensions('plugin', pluginConfig, filteredPluginNames, MAX_PARALLEL_PLUGIN_IMPORTS));
 }
 
 /**
@@ -137,7 +139,7 @@ export async function getActiveDrivers(driverConfig, useDrivers = []) {
       }
     }
   }
-  return new Map(await importExtensions('driver', driverConfig, filteredDriverNames));
+  return new Map(await importExtensions('driver', driverConfig, filteredDriverNames, MAX_PARALLEL_DRIVER_IMPORTS));
 }
 
 /**

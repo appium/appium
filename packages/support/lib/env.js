@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
 import readPkg from 'read-pkg';
-import fs from './fs';
+import { fs } from './fs';
 import semver from 'semver';
 
 /**

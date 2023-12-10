@@ -3,7 +3,6 @@ import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
 import readPkg from 'read-pkg';
-import { fs } from './fs';
 import semver from 'semver';
 
 /**
@@ -73,12 +72,9 @@ export const findAppiumDependencyPackage = _.memoize(
     let currentDir = path.resolve(cwd);
     let isAtFsRoot = false;
     while (!isAtFsRoot) {
-      const manifestPath = path.join(currentDir, 'package.json');
-      if (await fs.exists(manifestPath)) {
-        const result = await readPkg(currentDir);
-        if (result) {
-          return result;
-        }
+      const result = await readPkg(currentDir);
+      if (result) {
+        return result;
       }
       currentDir = path.dirname(currentDir);
       isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;

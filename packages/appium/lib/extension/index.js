@@ -7,6 +7,8 @@ import {timing} from '@appium/support';
 import {PluginConfig} from './plugin-config';
 import B from 'bluebird';
 
+const MAX_PARALLEL_IMPORTS = 3;
+
 /**
  * Loads extensions and creates `ExtensionConfig` instances.
  *
@@ -26,6 +28,46 @@ export async function loadExtensions(appiumHome) {
 
   await B.all([driverConfig.validate(), pluginConfig.validate()]);
   return {driverConfig, pluginConfig};
+}
+
+/**
+ * @template {'driver'|'plugin'} TExtType
+ * @param {TExtType} extType
+ * @param {import('./extension-config').ExtensionConfig} config
+ * @param {string[]} extNames
+ * @returns {Promise<[TExtType extends 'driver' ? DriverClass : PluginClass, string][]>}
+ */
+async function importExtensions(extType, config, extNames) {
+  /** @type {B[]} */
+  const allPromises = [];
+  /** @type {B[]} */
+  const activePromisesChunk = [];
+  for (const extName of extNames) {
+    _.remove(activePromisesChunk, (p) => p.isFulfilled());
+    if (activePromisesChunk.length >= MAX_PARALLEL_IMPORTS) {
+      await B.any(activePromisesChunk);
+    }
+    const promise = B.resolve((async () => {
+      log.info(`Attempting to load ${extType} ${extName}...`);
+      const timer = new timing.Timer().start();
+      try {
+        const extClass = await config.requireAsync(extName);
+        log.debug(`${extClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
+        return extClass;
+      } catch (err) {
+        log.error(
+          `Could not load ${extType} '${extName}', so it will not be available. Error ` +
+            `in loading the ${extType} was: ${err.message}`
+        );
+        log.debug(err.stack);
+      }
+    })());
+    activePromisesChunk.push(promise);
+    allPromises.push(promise);
+  }
+  return /** @type {[TExtType extends 'driver' ? DriverClass : PluginClass, string][]} */ (
+    _.zip(await B.all(allPromises), extNames).filter(([extClass,]) => Boolean(extClass))
+  );
 }
 
 /**
@@ -64,31 +106,7 @@ export async function getActivePlugins(pluginConfig, usePlugins = []) {
       }
     }
   }
-  const loadPromises = /** @type {[Promise<PluginClass>, string][]} */ (filteredPluginNames
-    .map((pluginName) => {
-      const promise = (async () => {
-        log.info(`Attempting to load plugin ${pluginName}...`);
-        const timer = new timing.Timer().start();
-        try {
-          const pluginClass = await pluginConfig.requireAsync(pluginName);
-          log.debug(`${pluginClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
-          return pluginClass;
-        } catch (err) {
-          log.error(
-            `Could not load plugin '${pluginName}', so it will not be available. Error ` +
-              `in loading the plugin was: ${err.message}`
-          );
-          log.debug(err.stack);
-        }
-      })();
-      return [promise, pluginName];
-    })
-    .filter(([p,]) => Boolean(p)));
-  const resolvedPairs = /** @type {[PluginClass, string][]} */ (_.zip(
-    await B.all(loadPromises.map(([p]) => p)),
-    loadPromises.map(([, name]) => name)
-  ));
-  return new Map(resolvedPairs);
+  return new Map(await importExtensions('plugin', pluginConfig, filteredPluginNames));
 }
 
 /**
@@ -119,32 +137,7 @@ export async function getActiveDrivers(driverConfig, useDrivers = []) {
       }
     }
   }
-  const loadPromises = /** @type {[Promise<DriverClass>, string][]} */ (filteredDriverNames
-    .map((driverName) => {
-      const promise = (async () => {
-        log.info(`Attempting to load driver ${driverName}...`);
-        const timer = new timing.Timer().start();
-        try {
-          const driverClass = await driverConfig.requireAsync(driverName);
-          log.debug(`${driverClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
-          return driverClass;
-        } catch (err) {
-          log.error(
-            `Could not load driver '${driverName}', so it will not be available. Error ` +
-              `in loading the driver was: ${err.message}`
-          );
-          log.debug(err.stack);
-        }
-      })();
-      return [promise, driverName];
-    })
-    .filter(([p,]) => Boolean(p)));
-
-  const resolvedPairs = /** @type {[DriverClass, string][]} */ (_.zip(
-    await B.all(loadPromises.map(([p]) => p)),
-    loadPromises.map(([, name]) => name)
-  ));
-  return new Map(resolvedPairs);
+  return new Map(await importExtensions('driver', driverConfig, filteredDriverNames));
 }
 
 /**

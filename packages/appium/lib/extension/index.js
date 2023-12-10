@@ -3,6 +3,7 @@ import {USE_ALL_PLUGINS} from '../constants';
 import log from '../logger';
 import {DriverConfig} from './driver-config';
 import {Manifest} from './manifest';
+import {timing} from '@appium/support';
 import {PluginConfig} from './plugin-config';
 import B from 'bluebird';
 
@@ -35,9 +36,13 @@ export async function loadExtensions(appiumHome) {
  *
  * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
  * @param {string[]} usePlugins
- * @returns {PluginNameMap} Mapping of PluginClass to name
+ * @returns {Promise<PluginNameMap>} Mapping of PluginClass to name
  */
-export function getActivePlugins(pluginConfig, usePlugins = []) {
+export async function getActivePlugins(pluginConfig, usePlugins = []) {
+  if (_.isEmpty(usePlugins)) {
+    return new Map();
+  }
+
   /** @type {string[]} */
   let filteredPluginNames = [];
   if (usePlugins.length === 1 && usePlugins[0] === USE_ALL_PLUGINS) {
@@ -59,24 +64,31 @@ export function getActivePlugins(pluginConfig, usePlugins = []) {
       }
     }
   }
-  return new Map(
-    _.compact(
-      filteredPluginNames
-        .map((pluginName) => {
-          try {
-            log.info(`Attempting to load plugin ${pluginName}...`);
-            const PluginClass = pluginConfig.require(pluginName);
-            return [PluginClass, pluginName];
-          } catch (err) {
-            log.error(
-              `Could not load plugin '${pluginName}', so it will not be available. Error ` +
-                `in loading the plugin was: ${err.message}`
-            );
-            log.debug(err.stack);
-          }
-        })
-    )
-  );
+  const loadPromises = /** @type {[Promise<PluginClass>, string][]} */ (filteredPluginNames
+    .map((pluginName) => {
+      const promise = (async () => {
+        log.info(`Attempting to load plugin ${pluginName}...`);
+        const timer = new timing.Timer().start();
+        try {
+          const pluginClass = await pluginConfig.requireAsync(pluginName);
+          log.debug(`${pluginClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
+          return pluginClass;
+        } catch (err) {
+          log.error(
+            `Could not load plugin '${pluginName}', so it will not be available. Error ` +
+              `in loading the plugin was: ${err.message}`
+          );
+          log.debug(err.stack);
+        }
+      })();
+      return [promise, pluginName];
+    })
+    .filter(([p,]) => Boolean(p)));
+  const resolvedPairs = /** @type {[PluginClass, string][]} */ (_.zip(
+    await B.all(loadPromises.map(([p]) => p)),
+    loadPromises.map(([, name]) => name)
+  ));
+  return new Map(resolvedPairs);
 }
 
 /**
@@ -86,28 +98,53 @@ export function getActivePlugins(pluginConfig, usePlugins = []) {
  *
  * @param {import('./driver-config').DriverConfig} driverConfig - a driver extension config
  * @param {string[]} [useDrivers] - optional list of drivers to load
- * @returns {DriverNameMap}
+ * @returns {Promise<DriverNameMap>}
  */
-export function getActiveDrivers(driverConfig, useDrivers = []) {
-  return new Map(
-    _.compact(
-      Object.keys(driverConfig.installedExtensions)
-        .filter((driverName) => _.includes(useDrivers, driverName) || useDrivers.length === 0)
-        .map((driverName) => {
-          try {
-            log.info(`Attempting to load driver ${driverName}...`);
-            const DriverClass = driverConfig.require(driverName);
-            return [DriverClass, driverName];
-          } catch (err) {
-            log.error(
-              `Could not load driver '${driverName}', so it will not be available. Error ` +
-                `in loading the driver was: ${err.message}`
-            );
-            log.debug(err.stack);
-          }
-        })
-    )
-  );
+export async function getActiveDrivers(driverConfig, useDrivers = []) {
+  /** @type {string[]} */
+  let filteredDriverNames = [];
+  if (useDrivers.length === 0) {
+    // load all drivers if none are requested
+    filteredDriverNames = _.keys(driverConfig.installedExtensions);
+  } else {
+    // Load drivers in the same order that was used while enumerating them
+    for (const driverName of useDrivers) {
+      if (driverName in driverConfig.installedExtensions) {
+        filteredDriverNames.push(driverName);
+      } else {
+        throw new Error(
+          `Could not load the driver '${driverName}' because it is not installed. ` +
+          `Only the following drivers are available: ${_.keys(driverConfig.installedExtensions)}`
+        );
+      }
+    }
+  }
+  const loadPromises = /** @type {[Promise<DriverClass>, string][]} */ (filteredDriverNames
+    .map((driverName) => {
+      const promise = (async () => {
+        log.info(`Attempting to load driver ${driverName}...`);
+        const timer = new timing.Timer().start();
+        try {
+          const driverClass = await driverConfig.requireAsync(driverName);
+          log.debug(`${driverClass.name} has been successfully loaded in ${timer.getDuration().asSeconds.toFixed(3)}s`);
+          return driverClass;
+        } catch (err) {
+          log.error(
+            `Could not load driver '${driverName}', so it will not be available. Error ` +
+              `in loading the driver was: ${err.message}`
+          );
+          log.debug(err.stack);
+        }
+      })();
+      return [promise, driverName];
+    })
+    .filter(([p,]) => Boolean(p)));
+
+  const resolvedPairs = /** @type {[DriverClass, string][]} */ (_.zip(
+    await B.all(loadPromises.map(([p]) => p)),
+    loadPromises.map(([, name]) => name)
+  ));
+  return new Map(resolvedPairs);
 }
 
 /**

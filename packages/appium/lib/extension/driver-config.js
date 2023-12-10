@@ -135,9 +135,9 @@ export class DriverConfig extends ExtensionConfig {
    * Given capabilities, find a matching driver within the config. Load its class and return it along with version and driver name.
    * @template {import('@appium/types').StringRecord} C
    * @param {C} caps
-   * @returns {MatchedDriver}
+   * @returns {Promise<MatchedDriver>}
    */
-  findMatchingDriver({automationName, platformName}) {
+  async findMatchingDriver({automationName, platformName}) {
     if (!_.isString(platformName)) {
       throw new Error('You must include a platformName capability');
     }
@@ -158,7 +158,7 @@ export class DriverConfig extends ExtensionConfig {
       );
       log.info(`The '${driverName}' driver was installed and matched caps.`);
       log.info(`Will require it at ${this.getInstallPath(driverName)}`);
-      const driver = this.require(driverName);
+      const driver = await this.requireAsync(driverName);
       if (!driver) {
         throw new Error(
           `Driver '${driverName}' did not export a class with name '${mainClass}'. Contact the author of the driver!`

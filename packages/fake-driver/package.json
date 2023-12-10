@@ -23,9 +23,6 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "bin": {
-    "appium-fake-driver": "index.js"
-  },
   "directories": {
     "lib": "lib"
   },

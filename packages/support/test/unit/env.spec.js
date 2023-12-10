@@ -149,6 +149,7 @@ describe('env', function () {
             });
           });
         });
+      });
 
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {

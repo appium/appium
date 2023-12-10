@@ -63,7 +63,7 @@ export const findAppiumDependencyPackage = _.memoize(
           pkg?.devDependencies?.appium ??
           pkg?.peerDependencies?.appium
         ));
-        return version && semver.satisfies(version, '>=2.0.0', {includePrerelease: true})
+        return version && semver.satisfies(version, '>=2.0.0-beta', {includePrerelease: true})
           ? root
           : undefined;
       } catch {}

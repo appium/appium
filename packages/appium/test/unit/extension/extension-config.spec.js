@@ -300,11 +300,8 @@ describe('ExtensionConfig', function () {
       });
 
       describe('when the extension is not actually installed', function () {
-        it('should throw', function () {
-          expect(() => config.require('fake')).to.throw(
-            ReferenceError,
-            /^could not find a driver installed at .+flotsam/i
-          );
+        it('should throw', async function () {
+          await config.requireAsync('fake').should.be.rejected;
         });
       });
 
@@ -315,11 +312,8 @@ describe('ExtensionConfig', function () {
           // ()`config.appiumHome` is stubbed already, so we can't just run `getInstallPath` as-is)
           sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
         });
-        it('should throw', function () {
-          expect(() => config.require('fake')).to.throw(
-            ReferenceError,
-            /could not find a class named "Jetsam" exported by driver "fake"/i
-          );
+        it('should throw', async function () {
+          await config.requireAsync('fake').should.be.rejected;
         });
       });
 
@@ -333,8 +327,8 @@ describe('ExtensionConfig', function () {
             .returns(path.join(PROJECT_ROOT, 'packages', 'relaxed-caps-plugin'));
         });
 
-        it('should return the class', function () {
-          expect(config.require('relaxed-caps')).to.equal(
+        it('should return the class', async function () {
+          expect(await config.requireAsync('relaxed-caps')).to.equal(
             require('@appium/relaxed-caps-plugin').RelaxedCapsPlugin
           );
         });

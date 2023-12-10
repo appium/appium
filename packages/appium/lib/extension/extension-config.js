@@ -581,7 +581,7 @@ export class ExtensionConfig {
     return [entryPointPath, mainClass];
   }
 
-    /**
+  /**
    * Loads extension asynchronously and returns its main class (constructor)
    *
    * @param {ExtName<ExtType>} extName

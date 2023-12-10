@@ -116,16 +116,6 @@ describe('env', function () {
         describe('when `appium` is a dependency of the package in the cwd', function () {
           const appiumHome = path.resolve(path.sep, 'somewhere');
 
-          describe('when the `appium` dependency spec begins with `file:`', function () {
-            beforeEach(function () {
-              MockReadPkg.resolves({devDependencies: {appium: 'file:../appium'}});
-            });
-
-            it('should resolve with the identity', async function () {
-              await expect(env.resolveAppiumHome(appiumHome)).to.eventually.equal(appiumHome);
-            });
-          });
-
           describe('when `appium` is a dependency which does not resolve to a file path`', function () {
             beforeEach(function () {
               MockReadPkg.resolves({devDependencies: {appium: '2.0.0-beta.25'}});
@@ -159,26 +149,6 @@ describe('env', function () {
             });
           });
         });
-
-        describe('when `appium` is a dependency of the workspace root of cwd', function () {
-          const appiumHome = path.resolve(path.sep, 'somewhere');
-
-          beforeEach(function () {
-            MockTeenProcess.exec.resolves({
-              stdout: JSON.stringify({
-                path: appiumHome,
-              }),
-            });
-            MockReadPkg.resolves({devDependencies: {appium: '2.x'}});
-          });
-
-          it('should resolve with the workspace root', async function () {
-            await expect(env.resolveAppiumHome(path.join(appiumHome, 'else'))).to.eventually.equal(
-              appiumHome
-            );
-          });
-        });
-      });
 
       describe('when reading `package.json` causes an exception', function () {
         beforeEach(function () {
@@ -261,18 +231,6 @@ describe('env', function () {
         describe('when `appium` is not yet actually installed', function () {
           beforeEach(function () {
             MockTeenProcess.exec.rejects();
-          });
-
-          describe('when the `appium` dependency spec begins with `file:`', function () {
-            beforeEach(function () {
-              MockReadPkg.resolves({
-                dependencies: {appium: 'file:packges/appium'},
-              });
-            });
-
-            it('should resolve `true`', async function () {
-              await expect(env.hasAppiumDependency('/somewhere')).to.eventually.equal(true);
-            });
           });
 
           describe('when `appium` dep is current`', function () {

@@ -45,11 +45,11 @@
     "bluebird": "3.7.2",
     "lodash": "4.17.21",
     "opencv-bindings": "4.5.5",
-    "sharp": "0.32.6",
+    "sharp": "0.33.0",
     "source-map-support": "0.5.21"
   },
   "engines": {
-    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
+    "node": "^18.12.0 || >=20.9.0",
     "npm": ">=8"
   },
   "publishConfig": {

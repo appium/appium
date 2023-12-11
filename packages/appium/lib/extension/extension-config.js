@@ -12,6 +12,7 @@ import {
   isAllowedSchemaFileExtension,
   registerSchema,
 } from '../schema/schema';
+import { pathToFileURL } from 'url';
 
 /**
  * "npm" install type
@@ -590,7 +591,8 @@ export class ExtensionConfig {
   async requireAsync(extName) {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
-    const MainClass = (await import(reqPath))[mainClass];
+    // https://github.com/nodejs/node/issues/31710
+    const MainClass = (await import(pathToFileURL(reqPath).href))[mainClass];
     if (!MainClass) {
       throw new ReferenceError(
         `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`

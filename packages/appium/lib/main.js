@@ -7,7 +7,7 @@ import {
   server as baseServer,
   normalizeBasePath,
 } from '@appium/base-driver';
-import {logger as logFactory, util, env, fs} from '@appium/support';
+import {logger as logFactory, util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';

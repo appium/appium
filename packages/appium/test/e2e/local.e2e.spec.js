@@ -45,14 +45,6 @@ describe('when Appium is a dependency of the current project', function () {
   }
 
   /**
-   * Helper fn
-   * @returns {Promise<string>}
-   */
-  async function readHash() {
-    return await fs.readFile(hashPath, 'utf8');
-  }
-
-  /**
    * @template {CliExtensionSubcommand} ExtSubcommand
    * @type {import('lodash').CurriedFunction1<CliExtArgs<ExtSubcommand> | CliArgs, Promise<unknown>>}
    */
@@ -140,28 +132,15 @@ describe('when Appium is a dependency of the current project', function () {
           manifestParsed.should.have.nested.property('drivers.fake');
         });
 
-        it('should update the package hash', async function () {
-          (await fs.exists(hashPath)).should.be.true;
-        });
-
         describe('when a different driver is installed via "appium driver install"', function () {
-          /** @type {string} */
-          let oldHash;
-
           before(async function () {
             await runJson([DRIVER_TYPE, LIST]);
-            oldHash = await readHash();
             await installLocalExtension(appiumHome, DRIVER_TYPE, testDriverPath);
           });
 
           it('should update package.json', async function () {
             const newPkg = JSON.parse(await fs.readFile(appiumHomePkgPath, 'utf8'));
             expect(newPkg).to.have.nested.property('devDependencies.@appium/test-driver');
-          });
-
-          it('should update the hash', async function () {
-            const newHash = await readHash();
-            newHash.should.not.equal(oldHash);
           });
 
           it('should update the manifest with the new driver', async function () {

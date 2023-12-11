@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {homedir} from 'os';
 import path from 'path';
 import readPkg from 'read-pkg';
-import {npm} from './npm';
+import semver from 'semver';
 
 /**
  * Path to the default `APPIUM_HOME` dir (`~/.appium`).
@@ -28,8 +28,6 @@ export const MANIFEST_RELATIVE_PATH = path.join(
   MANIFEST_BASENAME
 );
 
-const OLD_VERSION_REGEX = /^[01]/;
-
 /**
  * Resolves `true` if an `appium` dependency can be found somewhere in the given `cwd`.
  *
@@ -52,39 +50,35 @@ export const findAppiumDependencyPackage = _.memoize(
    */
   async (cwd = process.cwd()) => {
     /**
-     * Tries to read `package.json` in `cwd` and resolves the identity if it depends on `appium`;
+     * Tries to read `package.json` in `root` and resolves the identity if it depends on `appium`;
      * otherwise resolves `undefined`.
-     * @param {string} cwd
+     * @param {string} root
      * @returns {Promise<string|undefined>}
      */
-    const readPkg = async (cwd) => {
-      /** @type {string|undefined} */
-      let pkgPath;
+    const readPkg = async (root) => {
       try {
-        const pkg = await readPackageInDir(cwd);
-        const version =
+        const pkg = await readPackageInDir(root);
+        const version = semver.clean(String(
           pkg?.dependencies?.appium ??
           pkg?.devDependencies?.appium ??
-          pkg?.peerDependencies?.appium;
-        pkgPath = version && !OLD_VERSION_REGEX.test(String(version)) ? cwd : undefined;
+          pkg?.peerDependencies?.appium
+        ));
+        return version && semver.satisfies(version, '>=2.0.0-beta', {includePrerelease: true})
+          ? root
+          : undefined;
       } catch {}
-      return pkgPath;
     };
 
-    cwd = path.resolve(cwd);
-
-    /** @type {string} */
-    let pkgDir;
-    try {
-      const {json: list} = await npm.exec('list', ['--long', '--json'], {cwd});
-      ({path: pkgDir} = list);
-      if (pkgDir !== cwd) {
-        pkgDir = pkgDir ?? cwd;
+    let currentDir = path.resolve(cwd);
+    let isAtFsRoot = false;
+    while (!isAtFsRoot) {
+      const result = await readPkg(currentDir);
+      if (result) {
+        return result;
       }
-    } catch {
-      pkgDir = cwd;
+      currentDir = path.dirname(currentDir);
+      isAtFsRoot = currentDir.length <= path.dirname(currentDir).length;
     }
-    return await readPkg(pkgDir);
   }
 );
 
@@ -124,11 +118,7 @@ export const resolveAppiumHome = _.memoize(
       return path.resolve(cwd, process.env.APPIUM_HOME);
     }
 
-    const pkgPath = await findAppiumDependencyPackage(cwd);
-    if (pkgPath) {
-      return pkgPath;
-    }
-    return DEFAULT_APPIUM_HOME;
+    return await findAppiumDependencyPackage(cwd) ?? DEFAULT_APPIUM_HOME;
   }
 );
 

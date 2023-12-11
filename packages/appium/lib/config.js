@@ -12,7 +12,6 @@ const npmPackage = fs.readPackageJsonFrom(__dirname);
 const APPIUM_VER = npmPackage.version;
 const ENGINES = /** @type {Record<string,string>} */ (npmPackage.engines);
 const MIN_NODE_VERSION = ENGINES.node;
-const MIN_NPM_VERSION = ENGINES.npm;
 
 const GIT_META_ROOT = '.git';
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
@@ -27,15 +26,6 @@ const BUILD_INFO = {
 
 function getNodeVersion() {
   return /** @type {import('semver').SemVer} */ (semver.coerce(process.version));
-}
-
-/**
- * Returns version of `npm`
- * @returns {Promise<string>}
- */
-async function getNpmVersion() {
-  const {stdout} = await exec(system.isWindows() ? 'npm.cmd' : 'npm', ['--version']);
-  return stdout.trim();
 }
 
 /**
@@ -147,28 +137,6 @@ function checkNodeOk() {
       `Node version must be at least ${MIN_NODE_VERSION}; current is ${version.version}`
     );
   }
-}
-
-export async function checkNpmOk() {
-  const npmVersion = await getNpmVersion();
-  if (!semver.satisfies(npmVersion, MIN_NPM_VERSION)) {
-    throw new Error(
-      `npm version must be at least ${MIN_NPM_VERSION}; current is ${npmVersion}. Run "npm install -g npm" to upgrade.`
-    );
-  }
-}
-
-function warnNodeDeprecations() {
-  /**
-   * Uncomment this section to get node version deprecation warnings
-   * Also add test cases to config-specs.js to cover the cases added
-   **/
-  // const version = getNodeVersion();
-  // if (version.major < 8) {
-  //   logger.warn(`Appium support for versions of node < ${version.major} has been ` +
-  //               'deprecated and will be removed in a future version. Please ' +
-  //               'upgrade!');
-  // }
 }
 
 async function showBuildInfo() {
@@ -330,7 +298,6 @@ export {
   getBuildInfo,
   checkNodeOk,
   showBuildInfo,
-  warnNodeDeprecations,
   validateTmpDir,
   getNonDefaultServerArgs,
   getGitRev,

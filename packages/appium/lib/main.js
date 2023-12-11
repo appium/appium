@@ -21,8 +21,6 @@ import {
   showConfig,
   showBuildInfo,
   validateTmpDir,
-  warnNodeDeprecations,
-  checkNpmOk,
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
@@ -53,7 +51,6 @@ const {resolveAppiumHome} = env;
 async function preflightChecks(args, throwInsteadOfExit = false) {
   try {
     checkNodeOk();
-    await checkNpmOk();
     if (args.longStacktrace) {
       Error.stackTraceLimit = LONG_STACKTRACE_LIMIT;
     }
@@ -61,7 +58,6 @@ async function preflightChecks(args, throwInsteadOfExit = false) {
       await showBuildInfo();
       process.exit(0);
     }
-    warnNodeDeprecations();
 
     validate(args);
 

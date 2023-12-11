@@ -7,9 +7,6 @@ import {timing} from '@appium/support';
 import {PluginConfig} from './plugin-config';
 import B from 'bluebird';
 
-const MAX_PARALLEL_PLUGIN_IMPORTS = 7;
-const MAX_PARALLEL_DRIVER_IMPORTS = 3;
-
 /**
  * Loads extensions and creates `ExtensionConfig` instances.
  *
@@ -79,10 +76,11 @@ async function importExtensions(extType, config, extNames, asyncImportChunkSize)
  * to wrap command execution
  *
  * @param {import('./plugin-config').PluginConfig} pluginConfig - a plugin extension config
+ * @param {number} maxParallelImports the maximum amount of plugins to import in parallel
  * @param {string[]} usePlugins
  * @returns {Promise<PluginNameMap>} Mapping of PluginClass to name
  */
-export async function getActivePlugins(pluginConfig, usePlugins = []) {
+export async function getActivePlugins(pluginConfig, maxParallelImports, usePlugins = []) {
   if (_.isEmpty(usePlugins)) {
     return new Map();
   }
@@ -108,7 +106,7 @@ export async function getActivePlugins(pluginConfig, usePlugins = []) {
       }
     }
   }
-  return new Map(await importExtensions('plugin', pluginConfig, filteredPluginNames, MAX_PARALLEL_PLUGIN_IMPORTS));
+  return new Map(await importExtensions('plugin', pluginConfig, filteredPluginNames, maxParallelImports));
 }
 
 /**
@@ -117,10 +115,11 @@ export async function getActivePlugins(pluginConfig, usePlugins = []) {
  * If the --drivers flag was given, this method only loads the given drivers.
  *
  * @param {import('./driver-config').DriverConfig} driverConfig - a driver extension config
+ * @param {number} maxParallelImports the maximum amount of plugins to import in parallel
  * @param {string[]} [useDrivers] - optional list of drivers to load
  * @returns {Promise<DriverNameMap>}
  */
-export async function getActiveDrivers(driverConfig, useDrivers = []) {
+export async function getActiveDrivers(driverConfig, maxParallelImports, useDrivers = []) {
   /** @type {string[]} */
   let filteredDriverNames = [];
   if (useDrivers.length === 0) {
@@ -139,7 +138,7 @@ export async function getActiveDrivers(driverConfig, useDrivers = []) {
       }
     }
   }
-  return new Map(await importExtensions('driver', driverConfig, filteredDriverNames, MAX_PARALLEL_DRIVER_IMPORTS));
+  return new Map(await importExtensions('driver', driverConfig, filteredDriverNames, maxParallelImports));
 }
 
 /**

@@ -39,6 +39,8 @@ automatic docs generation tooling! Do not edit by hand! -->
 |`--log-level`|Log level (console[:file]) (Value must be one of: `info`, `info:debug`, `info:info`, `info:warn`, `info:error`, `warn`, `warn:debug`, `warn:info`, `warn:warn`, `warn:error`, `error`, `error:debug`, `error:info`, `error:warn`, `error:error`, `debug`, `debug:debug`, `debug:info`, `debug:warn`, `debug:error`)|string|`debug`||
 |`--log-no-colors`|Do not use color in console output|boolean|`false`||
 |`--log-timestamp`|Show timestamps in console output|boolean|`false`||
+|`--plugins-import-chunk-size`|The maximum amount of plugins that could be imported in parallel on server startup|number|7||
+|`--drivers-import-chunk-size`|The maximum amount of drivers that could be imported in parallel on server startup|number|3||
 |`--long-stacktrace`|Add long stack traces to log entries. Recommended for debugging only.|boolean|`false`||
 |`--no-perms-check`|Do not check that needed files are readable and/or writable|boolean|`false`||
 |`--nodeconfig`|Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself|object|||

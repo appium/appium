@@ -369,14 +369,18 @@ async function main(args) {
   const {appiumDriver, pluginConfig, driverConfig, parsedArgs} =
     /** @type {InitResult<ServerCommand>} */ (initResult);
 
-  const pluginClasses = await getActivePlugins(pluginConfig, parsedArgs.usePlugins);
+  const pluginClasses = await getActivePlugins(
+    pluginConfig, parsedArgs.pluginsImportChunkSize, parsedArgs.usePlugins
+  );
   // set the active plugins on the umbrella driver so it can use them for commands
   appiumDriver.pluginClasses = pluginClasses;
 
   await logStartupInfo(parsedArgs);
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
-  const driverClasses = await getActiveDrivers(driverConfig, parsedArgs.useDrivers);
+  const driverClasses = await getActiveDrivers(
+    driverConfig, parsedArgs.driversImportChunkSize, parsedArgs.useDrivers
+  );
   const serverUpdaters = getServerUpdaters(driverClasses, pluginClasses);
   const extraMethodMap = getExtraMethodMap(driverClasses, pluginClasses);
 

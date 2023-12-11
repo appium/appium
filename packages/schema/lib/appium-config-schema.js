@@ -183,6 +183,18 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           title: 'log-timestamp config',
           type: 'boolean',
         },
+        'plugins-import-chunk-size': {
+          default: 7,
+          description: 'The maximum amount of plugins that could be imported in parallel on server startup',
+          title: 'plugins-import-chunk-size config',
+          type: 'number',
+        },
+        'drivers-import-chunk-size': {
+          default: 3,
+          description: 'The maximum amount of drivers that could be imported in parallel on server startup',
+          title: 'drivers-import-chunk-size config',
+          type: 'number',
+        },
         'long-stacktrace': {
           default: false,
           description: 'Add long stack traces to log entries. Recommended for debugging only.',

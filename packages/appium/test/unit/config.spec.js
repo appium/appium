@@ -10,10 +10,8 @@ import {
   showBuildInfo,
   showConfig,
   validateTmpDir,
-  warnNodeDeprecations,
 } from '../../lib/config';
 import {PLUGIN_TYPE} from '../../lib/constants';
-import logger from '../../lib/logger';
 import {
   finalizeSchema,
   getDefaultsForSchema,
@@ -159,28 +157,6 @@ describe('Config', function () {
           process.version = 'v18.0.0';
           checkNodeOk.should.not.throw();
         });
-      });
-    });
-
-    describe('warnNodeDeprecations', function () {
-      let spy;
-      before(function () {
-        spy = sandbox.spy(logger, 'warn');
-      });
-      beforeEach(function () {
-        spy.resetHistory();
-      });
-      it('should not log a warning if node is 8+', function () {
-        // @ts-expect-error
-        process.version = 'v8.0.0';
-        warnNodeDeprecations();
-        logger.warn.should.not.be.called;
-      });
-      it('should not log a warning if node is 9+', function () {
-        // @ts-expect-error
-        process.version = 'v9.0.0';
-        warnNodeDeprecations();
-        logger.warn.should.not.be.called;
       });
     });
   });

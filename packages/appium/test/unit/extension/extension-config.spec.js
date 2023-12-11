@@ -301,7 +301,7 @@ describe('ExtensionConfig', function () {
 
       describe('when the extension is not actually installed', function () {
         it('should throw', async function () {
-          await config.requireAsync('fake').should.be.rejected;
+          await config.requireAsync('fake').should.be.rejectedWith(/cannot find module/i);
         });
       });
 
@@ -313,7 +313,7 @@ describe('ExtensionConfig', function () {
           sandbox.stub(config, 'getInstallPath').returns(FAKE_DRIVER_DIR);
         });
         it('should throw', async function () {
-          await config.requireAsync('fake').should.be.rejected;
+          await config.requireAsync('fake').should.be.rejectedWith(/cannot find module/i);
         });
       });
 

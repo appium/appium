@@ -122,7 +122,7 @@ export async function getActivePlugins(pluginConfig, maxParallelImports, usePlug
 export async function getActiveDrivers(driverConfig, maxParallelImports, useDrivers = []) {
   /** @type {string[]} */
   let filteredDriverNames = [];
-  if (useDrivers.length === 0) {
+  if (_.isEmpty(useDrivers)) {
     // load all drivers if none are requested
     filteredDriverNames = _.keys(driverConfig.installedExtensions);
   } else {

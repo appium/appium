@@ -40,7 +40,7 @@ automatic docs generation tooling! Do not edit by hand! -->
 |`--log-no-colors`|Do not use color in console output|boolean|`false`||
 |`--log-timestamp`|Show timestamps in console output|boolean|`false`||
 |`--long-stacktrace`|Add long stack traces to log entries. Recommended for debugging only.|boolean|`false`||
-|`--no-perms-check`|Do not check that needed files are readable and/or writable|boolean|`false`||
+|`--no-perms-check`|Skip various permission checks on the server startup if set to true|boolean|`false`||
 |`--nodeconfig`|Path to configuration JSON file to register Appium as a node with Selenium Grid 3; otherwise the configuration itself|object|||
 |`--plugin`|Plugin-specific configuration. Keys should correspond to plugin package names|object|||
 |`--port`|Port to listen on (Value must be between `1` and `65535`)|integer|`4723`|`-p`|

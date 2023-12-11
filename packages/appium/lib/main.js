@@ -20,13 +20,13 @@ import {
   getNonDefaultServerArgs,
   showConfig,
   showBuildInfo,
-  validateTmpDir,
+  requireDir,
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
 import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
 import registerNode from './grid-register';
-import {getDefaultsForSchema, validate} from './schema/schema';
+import {getDefaultsForSchema, validate as validateSchema} from './schema/schema';
 import {
   inspect,
   adjustNodePath,
@@ -38,7 +38,6 @@ import {
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
 } from './utils';
-import os from 'node:os';
 import net from 'node:net';
 
 const {resolveAppiumHome} = env;
@@ -59,10 +58,10 @@ async function preflightChecks(args, throwInsteadOfExit = false) {
       process.exit(0);
     }
 
-    validate(args);
+    validateSchema(args);
 
     if (args.tmpDir) {
-      await validateTmpDir(args.tmpDir);
+      await requireDir(args.tmpDir, !args.noPermsCheck, 'tmpDir argument value');
     }
   } catch (err) {
     logger.error(err.message.red);
@@ -145,48 +144,16 @@ function getExtraMethodMap(driverClasses, pluginClasses) {
 }
 
 /**
- * Prepares and validates appium home path folder
- *
- * @param {string} name The name of the appium home source (needed for error messages)
- * @param {string} appiumHome The actual value to be verified
- * @returns {Promise<string>} Same appiumHome value
- * @throws {Error} If the validation has failed
+ * @param {string?} [appiumHomeFromArgs] - Appium home value retrieved from progrmmatic server args
+ * @returns {string}
  */
-async function prepareAppiumHome(name, appiumHome) {
-  let stat;
-  try {
-    stat = await fs.stat(appiumHome);
-  } catch (e) {
-    let err = e;
-    if (e.code === 'ENOENT') {
-      try {
-        await fs.mkdir(appiumHome, {recursive: true});
-        return appiumHome;
-      } catch (e1) {
-        err = e1;
-      }
-    }
-    throw new Error(
-      `The path '${appiumHome}' provided in the ${name} must point ` +
-        `to a valid folder writeable for the current user account '${os.userInfo().username}'. ` +
-        `Original error: ${err.message}`,
-    );
+function determineAppiumHomeSource(appiumHomeFromArgs) {
+  if (!_.isNil(appiumHomeFromArgs)) {
+    return 'appiumHome config value';
+  } else if (process.env.APPIUM_HOME) {
+    return 'APPIUM_HOME environment variable';
   }
-  if (!stat.isDirectory()) {
-    throw new Error(
-      `The path '${appiumHome}' provided in the ${name} must point to a valid folder`,
-    );
-  }
-  try {
-    await fs.access(appiumHome, fs.constants.W_OK);
-  } catch (e) {
-    throw new Error(
-      `The folder path '${appiumHome}' provided in the ${name} must be ` +
-        `writeable for the current user account '${os.userInfo().username}. ` +
-        `Original error: ${e.message}`,
-    );
-  }
-  return appiumHome;
+  return 'autodetected Appium home path';
 }
 
 /**
@@ -208,13 +175,10 @@ async function prepareAppiumHome(name, appiumHome) {
  */
 async function init(args) {
   const appiumHome = args?.appiumHome ?? (await resolveAppiumHome());
-  let appiumHomeSourceName = 'autodetected appium home path';
-  if (!_.isNil(args?.appiumHome)) {
-    appiumHomeSourceName = 'appiumHome config value';
-  } else if (process.env.APPIUM_HOME) {
-    appiumHomeSourceName = 'APPIUM_HOME environment variable';
-  }
-  await prepareAppiumHome(appiumHomeSourceName, appiumHome);
+  const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
+  // We verify the writeability later based on requested server arguments
+  // Here we just need to make sure the path exists and is a folder
+  await requireDir(appiumHome, false, appiumHomeSourceName);
 
   adjustNodePath();
 
@@ -291,6 +255,10 @@ async function init(args) {
       }
     }
 
+    if (!serverArgs.noPermsCheck) {
+      await requireDir(appiumHome, true, appiumHomeSourceName);
+    }
+
     const appiumDriver = new AppiumDriver(
       /** @type {import('@appium/types').DriverOpts<import('./appium').AppiumDriverConstraints>} */ (
         serverArgs
@@ -305,8 +273,10 @@ async function init(args) {
       parsedArgs: serverArgs,
       driverConfig,
       pluginConfig,
+      appiumHome,
     });
   } else {
+    await requireDir(appiumHome, true, appiumHomeSourceName);
     if (isExtensionCommandArgs(preConfigArgs)) {
       // if the user has requested the 'driver' CLI, don't run the normal server,
       // but instead pass control to the driver CLI
@@ -336,7 +306,7 @@ function logServerAddress(url) {
   }
 
   const interfaces = fetchInterfaces(urlObj.hostname === V4_BROADCAST_IP ? 4 : 6);
-  const toLabel = (/** @type {os.NetworkInterfaceInfo} */ iface) => {
+  const toLabel = (/** @type {import('node:os').NetworkInterfaceInfo} */ iface) => {
     const href = urlObj.href.replace(urlObj.hostname, iface.address);
     return iface.internal ? `${href} (only accessible from the same host)` : href;
   };
@@ -366,7 +336,7 @@ async function main(args) {
     );
   }
 
-  const {appiumDriver, pluginConfig, driverConfig, parsedArgs} =
+  const {appiumDriver, pluginConfig, driverConfig, parsedArgs, appiumHome} =
     /** @type {InitResult<ServerCommand>} */ (initResult);
 
   const pluginClasses = getActivePlugins(pluginConfig, parsedArgs.usePlugins);
@@ -374,6 +344,10 @@ async function main(args) {
   appiumDriver.pluginClasses = pluginClasses;
 
   await logStartupInfo(parsedArgs);
+
+  const appiumHomeSourceName = determineAppiumHomeSource(args?.appiumHome);
+  logger.debug(`The ${appiumHomeSourceName}: ${appiumHome}`);
+
   let routeConfiguringFunction = makeRouter(appiumDriver);
 
   const driverClasses = getActiveDrivers(driverConfig, parsedArgs.useDrivers);
@@ -494,6 +468,7 @@ export {main, init, resolveAppiumHome};
  * @typedef ServerInitData
  * @property {import('./appium').AppiumDriver} appiumDriver - The Appium driver
  * @property {import('appium/types').ParsedArgs} parsedArgs - The parsed arguments
+ * @property {string} appiumHome - The full path to the Appium home folder
  */
 
 /**

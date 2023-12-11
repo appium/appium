@@ -1,4 +1,4 @@
-import {util, fs} from '@appium/support';
+import {util, fs, system} from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
@@ -592,7 +592,8 @@ export class ExtensionConfig {
     const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
     // https://github.com/nodejs/node/issues/31710
-    const MainClass = (await import(pathToFileURL(reqPath).href))[mainClass];
+    const importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    const MainClass = (await import(importPath))[mainClass];
     if (!MainClass) {
       throw new ReferenceError(
         `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`

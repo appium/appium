@@ -54,6 +54,7 @@ nav:
       - guides/grid.md
       - guides/caching.md
       - guides/tls.md
+  - More Resources: resources.md
   - Developing:
       - developing/index.md
       - developing/build-drivers.md
@@ -62,4 +63,3 @@ nav:
   - Contributing:
       - contributing/index.md
       - contributing/config-system.md
-  - More Appium Resources: resources.md

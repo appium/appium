@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Server CLI Args
 ---
 

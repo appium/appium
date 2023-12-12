@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Write a Test (Ruby)
 ---
 

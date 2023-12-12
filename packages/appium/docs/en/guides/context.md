@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: The Context API
 ---
 

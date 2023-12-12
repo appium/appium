@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Appium Requirements
 ---
 

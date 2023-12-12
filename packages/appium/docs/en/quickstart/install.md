@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Install Appium
 ---
 

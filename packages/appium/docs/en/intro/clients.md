@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Intro to Appium Clients
 ---
 

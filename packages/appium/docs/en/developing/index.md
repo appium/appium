@@ -2,12 +2,12 @@
 hide:
   - toc
 
-title: Developing Appium Extensions
+title: Intro to Development
 ---
 
-The move to a modular structure in Appium 2 means that Appium extensions (drivers and plugins)
-are now decoupled from the main Appium module, and you only need to install the extensions that you
-want to use. Not only that, but this also unlocks the ability to develop entirely new extensions!
+Appium 2 is built with a modular structure, which means that Appium extensions (drivers and plugins)
+are decoupled from the main Appium module, and you only need to install the extensions that you
+want to use. This modular structure also unlocks the ability to develop entirely new extensions!
 
 This section of the Appium documentation is intended to help aspiring developers with creating their
 own Appium extension:

@@ -2,15 +2,14 @@
 hide:
   - toc
 
-title: Server CLI Args
+title: Server Command-Line Arguments
 ---
 
 To start the Appium server, you may either run `appium` or `appium server`. The `server` subcommand
 is considered to be the default, so if you omit it, Appium will interpret this as your request to
-run the Appium server. (You could run different subcommands, like `appium driver` or `appium
-plugin`: see the [Extensions CLI](./extensions.md) for more info).
+run the Appium server.
 
-The invocation of `appium` (or `appium server`) takes a number of arguments, which are detailed
+The invocation of `appium` (or `appium server`) can take a number of arguments, which are detailed
 below.
 
 !!! note

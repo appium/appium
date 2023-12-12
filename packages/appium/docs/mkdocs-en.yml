@@ -28,6 +28,10 @@ nav:
       - quickstart/next-steps.md
   - Ecosystem:
       - ecosystem/index.md
+      - ecosystem/drivers.md
+      - ecosystem/clients.md
+      - ecosystem/plugins.md
+      - ecosystem/tools.md
   - CLI Reference:
       - cli/index.md
       - cli/args.md

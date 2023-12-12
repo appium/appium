@@ -2,13 +2,12 @@ INHERIT: ../../docutils/base-mkdocs.yml
 site_name: Appium Documentation
 repo_url: https://github.com/appium/appium
 repo_name: appium/appium
-copyright: Copyright &copy; 2012 OpenJS Foundation
+edit_uri: edit/master/packages/appium/docs
+copyright: Copyright &copy; 2012 OpenJS Foundation - <a href="#__consent">Change cookie settings</a>
 
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
-  features:
-    - navigation.sections
 
 extra_css:
   - assets/stylesheets/extra.css

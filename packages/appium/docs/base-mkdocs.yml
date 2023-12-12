@@ -15,6 +15,12 @@ plugins:
       'ecosystem/build-drivers.md': 'developing/build-drivers.md'
       'ecosystem/build-plugins.md': 'developing/build-plugins.md'
       'ecosystem/build-docs.md': 'developing/build-docs.md'
+      'reference/commands/base-driver.md': 'commands/base-driver.md'
+      'reference/commands/execute-driver-plugin.md': 'commands/execute-driver-plugin.md'
+      'reference/commands/fake-driver.md': 'commands/fake-driver.md'
+      'reference/commands/images-plugin.md': 'commands/images-plugin.md'
+      'reference/commands/relaxed-caps-plugin.md': 'commands/relaxed-caps-plugin.md'
+      'reference/commands/universal-xml-plugin.md': 'commands/universal-xml-plugin.md'
 
 extra_css:
   - assets/stylesheets/extra.css

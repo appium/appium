@@ -33,6 +33,13 @@ nav:
       - cli/args.md
       - cli/env-vars.md
       - cli/extensions.md
+  - Command Reference:
+      - commands/base-driver.md
+      - commands/fake-driver.md
+      - commands/execute-driver-plugin.md
+      - commands/images-plugin.md
+      - commands/relaxed-caps-plugin.md
+      - commands/universal-xml-plugin.md
   - Guides:
       - guides/migrating-1-to-2.md
       - guides/managing-exts.md
@@ -56,11 +63,3 @@ nav:
       - contributing/index.md
       - contributing/config-system.md
   - More Appium Resources: resources.md
-  - Issues: https://github.com/appium/appium/issues
-  - Command Reference:
-      - reference/commands/base-driver.md
-      - reference/commands/fake-driver.md
-      - reference/commands/execute-driver-plugin.md
-      - reference/commands/images-plugin.md
-      - reference/commands/relaxed-caps-plugin.md
-      - reference/commands/universal-xml-plugin.md

@@ -3,11 +3,13 @@ hide:
   - navigation
   - toc
 
-title: Appium Documentation
+title: Welcome
 ---
-
-# Appium Documentation
-
+<style>
+  .md-typeset h1 {
+    display: none;
+  }
+</style>
 <div style="text-align: center">
   <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
 </div>

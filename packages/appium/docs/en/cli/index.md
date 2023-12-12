@@ -14,5 +14,5 @@ subcommands, each of which has its own set of documentation:
 1. The [`server`](./args.md) subcommand starts an Appium server listening for new session requests,
    and takes a variety of parameters related to the operation of the server and also those consumed
    by active drivers or plugins.
-2. The [Extension](./extensions) (`driver` and `plugin`) subcommands assist in managing Appium
+2. The [Extension](./extensions.md) (`driver` and `plugin`) subcommands assist in managing Appium
    drivers and plugins.

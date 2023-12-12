@@ -17,8 +17,8 @@ software, designed to facilitate UI automation of many app platforms, including 
 Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS,
 Android TV, Samsung), and more.
 
-If you're new to Appium, it's recommended that you start off with the [Introduction](intro/), then
-move on to the [Quickstart](quickstart/). And you can always find Appium's code on GitHub at
+If you're new to Appium, it's recommended that you start off with the [Introduction](intro/index.md), then
+move on to the [Quickstart](quickstart/index.md). And you can always find Appium's code on GitHub at
 [appium/appium](https://github.com/appium/appium).
 
 ## What is Appium for?
@@ -37,16 +37,16 @@ a single stable interface, accessible via most popular programming languages (yo
 scripts in Java, Python, Ruby, JS, and more).
 
 To learn more about how Appium accomplishes this goal, and the various components involved, have
-a read through our [Introduction](intro/).
+a read through our [Introduction](intro/index.md).
 
 ## Learning Appium
 
 This documentation is a great way to learn more about Appium:
 
-- Check out the [Introduction](intro/) first to make sure you understand all the concepts involved in Appium.
-- Go through the [Quickstart](quickstart/) to get set up and run a basic Android test.
+- Check out the [Introduction](intro/index.md) first to make sure you understand all the concepts involved in Appium.
+- Go through the [Quickstart](quickstart/index.md) to get set up and run a basic Android test.
 - Have a look at the various guides and references.
-- Using Appium for a real project means using an Appium driver for a specific platform, so you'll want to have a look at the [Ecosystem](ecosystem/) page where we keep links to the drivers and plugins you might want to use; you can refer to those projects for specific information about using Appium for a given platform.
+- Using Appium for a real project means using an Appium driver for a specific platform, so you'll want to have a look at the [Ecosystem](ecosystem/index.md) page where we keep links to the drivers and plugins you might want to use; you can refer to those projects for specific information about using Appium for a given platform.
 
 You can also check out a list of third-party [Resources](resources.md) to explore Appium around the
 web.
@@ -62,4 +62,4 @@ As such, we welcome contributions! The project moves forward in relation to the 
 contributions of code, documentation, maintenance, and support from companies and volunteers. To
 learn more about contributing, check out our GitHub repo at
 [appium/appium](https://github.com/appium/appium) and read through our
-[Contributing](contributing/) guides.
+[Contributing](contributing/index.md) guides.

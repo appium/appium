@@ -6,7 +6,7 @@ title: Quickstart Intro
 ---
 
 Let's get up and running with Appium! To successfully use this quickstart, it's recommended that
-you first have read the [Introduction](../intro), so that you understand the concepts involved in
+you first have read the [Introduction](../intro/index.md), so that you understand the concepts involved in
 running Appium and writing Appium scripts.
 
 The basic plan for this quickstart is as follows:

@@ -9,6 +9,13 @@ theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
 
+plugins:
+  redirects:
+    redirect_maps:
+      'ecosystem/build-drivers.md': 'developing/build-drivers.md'
+      'ecosystem/build-plugins.md': 'developing/build-plugins.md'
+      'ecosystem/build-docs.md': 'developing/build-docs.md'
+
 extra_css:
   - assets/stylesheets/extra.css
 

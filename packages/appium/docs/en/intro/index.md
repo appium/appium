@@ -115,7 +115,7 @@ platform, implementing as much or little of the WebDriver protocol as desired. T
 be installed by anyone using Appium.
 
 [^3]: You can build and share your own drivers! Check out [Building
-  Drivers](../ecosystem/build-drivers.md) to learn more about how to develop drivers in Node.js
+  Drivers](../developing/build-drivers.md) to learn more about how to develop drivers in Node.js
   that can be used with Appium.
 
 ## Universal programming language access
@@ -195,7 +195,7 @@ sorts of things, for example adding the ability for Appium to find and interact 
 based on a template image (as in the [`images`
 plugin](https://github.com/appium/appium/tree/2.0/packages/images-plugin)). There are very few
 limitations on what you can do with plugins, so you might also be interested in learning how to
-[Build Plugins](../ecosystem/build-plugins.md) in Node.js that can be used with Appium.
+[Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.
 
 So that's Appium: an extensible, universal interface for the UI automation of potentially
 everything! Read on into some of the specific intro docs for more details, or check out the various

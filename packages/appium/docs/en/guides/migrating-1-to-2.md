@@ -242,7 +242,7 @@ Apart from the breaking changes mentioned above, in this section is a list of so
 Appium extension authors can now develop their own server plugins, which can intercept and modify
 any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
 more about plugins, read the new [Appium Introduction](../intro/index.md). Interested in building
-a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
+a plugin? Check out the [Building Plugins](../developing/build-plugins.md) guide.
 
 ### :tada: Install drivers and plugins from anywhere
 
@@ -250,7 +250,7 @@ You're no longer limited to the drivers that come with Appium, or that the Appiu
 about! Appium extension authors can now develop custom drivers, which can be downloaded or
 installed via Appium's [Extension CLI](../cli/extensions.md) from NPM, Git, GitHub, or even the
 local filesystem. Interested in building a driver? Check out the [Building
-Drivers](../ecosystem/build-drivers.md) guide.
+Drivers](../developing/build-drivers.md) guide.
 
 ### :tada: Configuration Files
 

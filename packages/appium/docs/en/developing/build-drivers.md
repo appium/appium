@@ -1,5 +1,5 @@
 ---
-title: Building Appium Drivers
+title: Building Drivers
 ---
 
 Appium wants to make it easy for anyone to develop their own automation drivers as part of the

@@ -26,6 +26,8 @@ nav:
           - quickstart/test-rb.md
           - quickstart/test-dotnet.md
       - quickstart/next-steps.md
+  - Ecosystem:
+      - ecosystem/index.md
   - CLI Reference:
       - cli/index.md
       - cli/args.md
@@ -45,12 +47,11 @@ nav:
       - guides/grid.md
       - guides/caching.md
       - guides/tls.md
-  - Ecosystem:
-      - ecosystem/index.md
-      - Developing Appium Extensions:
-          - ecosystem/build-drivers.md
-          - ecosystem/build-plugins.md
-          - ecosystem/build-docs.md
+  - Developing:
+      - developing/index.md
+      - developing/build-drivers.md
+      - developing/build-plugins.md
+      - developing/build-docs.md
   - Contributing:
       - contributing/index.md
       - contributing/config-system.md

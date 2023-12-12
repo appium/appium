@@ -15,7 +15,7 @@ But because many Appium users might not be able to guarantee such a safe environ
 team puts many features behind a security protection mechanism which forces system admins (the
 people that are in charge of starting the Appium server) to _explicitly opt-in_ to these features.
 (Third-party driver and plugin authors can also [hide behaviour behind security
-flags](../ecosystem/build-drivers.md).)
+flags](../developing/build-drivers.md).)
 
 For security reasons, Appium client sessions can _not_ request feature enablement via capabilities;
 this is the responsibility of the server admin who configures and launches the Appium server.

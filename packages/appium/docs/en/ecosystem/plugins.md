@@ -9,6 +9,11 @@ Plugins offer various ways to extend or modify Appium's behaviour. They are _com
 and are not needed for standard automation functionality, but you may find them to be useful
 for more specialised automation workflows.
 
+Generally, plugins can be installed using their listed installation key, with the following command:
+```
+appium plugin install <installation key>
+```
+
 ### Official Plugins
 
 This is the list of plugins that are currently maintained by the Appium team:

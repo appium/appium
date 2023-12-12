@@ -38,6 +38,7 @@ nav:
       - cli/env-vars.md
       - cli/extensions.md
   - Command Reference:
+      - commands/index.md
       - commands/base-driver.md
       - commands/execute-driver-plugin.md
       - commands/images-plugin.md

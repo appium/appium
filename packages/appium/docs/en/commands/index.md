@@ -1,0 +1,23 @@
+---
+hide:
+  - toc
+
+title: Intro to Commands
+---
+
+Here you can find various commands exposed by the main Appium module through its core driver (`base-driver`),
+as well as the commands available in several plugins.
+
+!!! note
+
+    The Appium core driver only exposes a few commands, as it is not meant to be used on its own.
+    Please refer to the documentation of your [Appium driver](../ecosystem/drivers.md) to learn about the commands it
+    exposes, and then check your [Appium client](../ecosystem/clients.md) documentation for the exact syntax of that command.
+
+The command listings can be found here:
+
+* [Core driver (`base-driver`)](./base-driver.md)
+* [Execute Driver Plugin](./execute-driver-plugin.md)
+* [Images Plugin](./images-plugin.md)
+* [Relaxed Caps Plugin](./relaxed-caps-plugin.md)
+* [Universal XML Plugin](./universal-xml-plugin.md)

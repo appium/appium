@@ -114,7 +114,7 @@ export type DriversImportChunkSizeConfig = number;
  */
 export type LongStacktraceConfig = boolean;
 /**
- * Do not check that needed files are readable and/or writable
+ * Skip various permission checks on the server startup if set to true
  */
 export type NoPermsCheckConfig = boolean;
 /**

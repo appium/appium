@@ -203,7 +203,7 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
         },
         'no-perms-check': {
           default: false,
-          description: 'Do not check that needed files are readable and/or writable',
+          description: 'Skip various permission checks on the server startup if set to true',
           title: 'no-perms-check config',
           type: 'boolean',
         },

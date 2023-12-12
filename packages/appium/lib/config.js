@@ -5,6 +5,7 @@ import axios from 'axios';
 import {exec} from 'teen_process';
 import semver from 'semver';
 import findUp from 'find-up';
+import os from 'node:os';
 import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 
 const npmPackage = fs.readPackageJsonFrom(__dirname);
@@ -279,16 +280,36 @@ function showConfig(nonDefaultPreConfigParsedArgs, configResult, defaults, parse
 }
 
 /**
- * @param {string} tmpDir
+ * @param {string} root
+ * @param {boolean} [requireWriteable=true]
+ * @param {string} [displayName='folder path']
+ * @throws {Error}
  */
-async function validateTmpDir(tmpDir) {
+export async function requireDir(root, requireWriteable = true, displayName = 'folder path') {
+  let stat;
   try {
-    await fs.mkdirp(tmpDir);
+    stat = await fs.stat(root);
   } catch (e) {
-    throw new Error(
-      `We could not ensure that the temp dir you specified ` +
-        `(${tmpDir}) exists. Please make sure it's writeable.`
-    );
+    if (e.code === 'ENOENT') {
+      try {
+        await fs.mkdir(root, {recursive: true});
+        return;
+      } catch {}
+    }
+    throw new Error(`The ${displayName} '${root}' must exist and be a valid directory`);
+  }
+  if (stat && !stat.isDirectory()) {
+    throw new Error(`The ${displayName} '${root}' must be a valid directory`);
+  }
+  if (requireWriteable) {
+    try {
+      await fs.access(root, fs.constants.W_OK);
+    } catch (e) {
+      throw new Error(
+        `The ${displayName} '${root}' must be ` +
+        `writeable for the current user account '${os.userInfo().username}'`
+      );
+    }
   }
 }
 
@@ -298,7 +319,6 @@ export {
   getBuildInfo,
   checkNodeOk,
   showBuildInfo,
-  validateTmpDir,
   getNonDefaultServerArgs,
   getGitRev,
   APPIUM_VER,

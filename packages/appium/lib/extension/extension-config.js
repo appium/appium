@@ -1,4 +1,4 @@
-import {util} from '@appium/support';
+import {util, fs, system} from '@appium/support';
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
@@ -12,6 +12,7 @@ import {
   isAllowedSchemaFileExtension,
   registerSchema,
 } from '../schema/schema';
+import { pathToFileURL } from 'url';
 
 /**
  * "npm" install type
@@ -554,28 +555,45 @@ export class ExtensionConfig {
   }
 
   /**
-   * Loads extension and returns its main class (constructor)
+   *
    * @param {ExtName<ExtType>} extName
-   * @returns {ExtClass<ExtType>}
+   * @returns {Promise<[string, string]>}
    */
-  require(extName) {
+  async _resolveExtension(extName) {
     const {mainClass} = this.installedExtensions[extName];
-    const reqPath = this.getInstallPath(extName);
-    /** @type {string} */
-    let reqResolved;
+    const moduleRoot = this.getInstallPath(extName);
+    const packageJsonPath = path.join(moduleRoot, 'package.json');
+    let entryPointPath;
     try {
-      reqResolved = require.resolve(reqPath);
-    } catch (err) {
-      throw new ReferenceError(`Could not find a ${this.extensionType} installed at ${reqPath}`);
+      entryPointPath = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).main ?? 'index.js';
+    } catch (e) {
+      throw new ReferenceError(`Could not find a ${this.extensionType} installed at ${moduleRoot}`);
+    }
+    if (entryPointPath) {
+      entryPointPath = path.resolve(moduleRoot, entryPointPath);
+    } else {
+      throw new ReferenceError(`Cannot find a valid ${this.extensionType} main entry point in '${packageJsonPath}'`);
     }
     // note: this will only reload the entry point
-    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[reqResolved]) {
-      log.debug(`Removing ${reqResolved} from require cache`);
-      delete require.cache[reqResolved];
+    if (process.env.APPIUM_RELOAD_EXTENSIONS && require.cache[entryPointPath]) {
+      log.debug(`Removing ${entryPointPath} from require cache`);
+      delete require.cache[entryPointPath];
     }
+    return [entryPointPath, mainClass];
+  }
+
+  /**
+   * Loads extension asynchronously and returns its main class (constructor)
+   *
+   * @param {ExtName<ExtType>} extName
+   * @returns {Promise<ExtClass<ExtType>>}
+   */
+  async requireAsync(extName) {
+    const [reqPath, mainClass] = await this._resolveExtension(extName);
     log.debug(`Requiring ${this.extensionType} at ${reqPath}`);
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const MainClass = require(reqPath)[mainClass];
+    // https://github.com/nodejs/node/issues/31710
+    const importPath = system.isWindows() ? pathToFileURL(reqPath).href : reqPath;
+    const MainClass = (await import(importPath))[mainClass];
     if (!MainClass) {
       throw new ReferenceError(
         `Could not find a class named "${mainClass}" exported by ${this.extensionType} "${extName}"`

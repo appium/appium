@@ -87,7 +87,7 @@ describe('FakeDriver via HTTP', function () {
       );
     }
 
-    FakeDriver = driverConfig.require('fake');
+    FakeDriver = await driverConfig.requireAsync('fake');
   });
 
   after(async function () {

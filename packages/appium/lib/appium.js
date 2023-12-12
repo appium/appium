@@ -299,7 +299,7 @@ class AppiumDriver extends DriverCore {
         driver: InnerDriver,
         version: driverVersion,
         driverName,
-      } = this.driverConfig.findMatchingDriver(desiredCaps);
+      } = await this.driverConfig.findMatchingDriver(desiredCaps);
       this.printNewSessionAnnouncement(InnerDriver.name, driverVersion, InnerDriver.baseVersion);
 
       if (this.args.sessionOverride) {

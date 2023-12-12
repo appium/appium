@@ -223,7 +223,7 @@ If you use a modern Appium or Selenium client, you should no longer have access 
 
 ### :bangbang: Image analysis features moved to plugin
 
-One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/index.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin).
+One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin).
 
 If you use these image-related methods, to continue accessing them you will need to do two things.
 

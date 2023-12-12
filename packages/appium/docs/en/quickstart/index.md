@@ -15,7 +15,7 @@ The basic plan for this quickstart is as follows:
 1. Install an Appium driver and its dependencies (we'll be using the [UiAutomator2
 driver](https://github.com/appium/appium-uiautomator2-driver) for these examples)
 1. Install an Appium client library in your language or choice (this guide contains options for
-JavaScript, Python, and Java, though [Appium clients](../ecosystem/index.md#clients) also exist in other language).
+JavaScript, Python, and Java, though [Appium clients](../ecosystem/clients.md) also exist in other language).
 1. Write and run a simple Appium automation script using a sample application
 
 ### Requirements

@@ -18,7 +18,7 @@ WebDriver 规范](https://w3c.github.io/webdriver/webdriver-spec.html).
 
     有关服务端的更多信息(例如, Appium如何实际控制设备？) , 
     可以查看我们的[Appium驱动简介](./drivers.md).
-    要跳到Appium客户端的链接列表, 请查看[生态系统](../ecosystem/index.md) 文档
+    要跳到Appium客户端的链接列表, 请查看[生态系统](../ecosystem/clients.md) 文档
 
 有哪些类型的自动化命令可用？
 这取决于您在任何给定会话中使用的特定的驱动程序和插件. 
@@ -43,7 +43,7 @@ WebDriver 规范](https://w3c.github.io/webdriver/webdriver-spec.html).
 对于试图编写Appium或Selenium测试的人来说, 
 它不是特别有用. 当你编写一个Appium测试时, 
 你想使用你熟悉的编程语言. 
-幸运的是存在一组[Appium客户端库](../ecosystem/index.md)[^1], 
+幸运的是存在一组[Appium客户端库](../ecosystem/clients.md)[^1], 
 用于处理负责向Appium服务器发送HTTP请求.
 相反, 它们为特定编程语言公开了一组 "原生" 命令, 
 因此, 对于测试作者来说, 感觉就像是在编写Python、JavaScript或Java.
@@ -127,6 +127,6 @@ WebDriver 规范](https://w3c.github.io/webdriver/webdriver-spec.html).
 您可能需要访问Appium客户端文档以及Selenium客户端文档.
 
 这就是您需要了解的关于Appium客户端的所有信息!
-转到[生态系统](../ecosystem/index.md) 页面查看当前的客户端列表.
+转到[生态系统](../ecosystem/clients.md) 页面查看当前的客户端列表.
 
 [^1]: 这些库又称为 "客户端"、"客户端库" 或 "客户端绑定". 他们是同一种概念!

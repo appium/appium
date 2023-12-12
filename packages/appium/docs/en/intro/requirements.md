@@ -17,6 +17,6 @@ requirements. It can even be run in resource-constrained environments like Raspb
 Node.js is available.
 
 To use Appium to automate a particular platform, please refer to the documentation of the [Appium
-driver(s)](../ecosystem/index.md#drivers) for that platform for additional dependencies. It is
+driver(s)](../ecosystem/drivers.md) for that platform for additional dependencies. It is
 almost universally the case that Appium drivers for a given platform will require the developer
 toolchain and SDKs for that platform to be available.

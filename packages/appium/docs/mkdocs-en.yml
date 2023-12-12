@@ -44,6 +44,7 @@ nav:
       - guides/log-filters.md
       - guides/grid.md
       - guides/caching.md
+      - guides/tls.md
   - Ecosystem:
       - ecosystem/index.md
       - Developing Appium Extensions:

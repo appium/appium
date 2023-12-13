@@ -1,6 +1,5 @@
 ---
 title: Contributing to Appium
-cwd: ../../../../../
 ---
 
 Appium is open source, available under an Apache 2.0 license. Appium's copyright is held by the
@@ -45,14 +44,14 @@ To contribute to the Appium code base make sure to check out the Git repository.
 
 It is advised to [fork](https://github.com/appium/appium/fork) before cloning it to your system.
 
-```sh { name=clone }
+```sh
 export GITHUB_USERNAME=<your-username>
 git clone git@github.com:$GITHUB_USERNAME/appium.git
 ```
 
 After cloning you can go ahead and install the project dependencies:
 
-```sh { name=install }
+```sh
 npm install
 ```
 
@@ -62,7 +61,7 @@ From here on there are several things you can do.
 
 When developing Appium code we have to watch all JavaScript and TypeScript files to re-compile them after every change. You can run this watch process via:
 
-```sh { name=watch, background=true }
+```sh
 npm run dev
 ```
 
@@ -70,7 +69,7 @@ npm run dev
 
 To test your changes you can run Appium in dev mode via:
 
-```sh { name=start }
+```sh
 npm start
 ```
 
@@ -80,38 +79,34 @@ The project maintains a set of different test variations you can run to verify t
 
 #### Linting
 
-Appium uses EsLint for static code analysis and linting. You can run these checks via:
+Appium uses [`eslint`](https://eslint.org/) for static code analysis and linting. You can run these checks via:
 
-```sh { name=test-linting }
+```sh
 npm run lint
 ```
 
 #### Unit
 
-Run via:
-
-```sh { name=test-unit }
+```sh
 npm run test:unit
 ```
 
 You can also run tests for specific workspaces, e.g.:
 
-```sh { name=test-workspace }
+```sh
 export APPIUM_WORKSPACE=@appium/doctor
 npm run test:unit -w $APPIUM_WORKSPACE
 ```
 
-#### Smoke and e2e Tests
+#### Smoke and E2E
 
-Run via:
-
-```sh { name=test-slow }
+```sh 
 npm run test:slow
 ```
 
 ### Deploy Docs Locally
 
-Our documentation system uses [MKDocs](https://www.mkdocs.org/) and therefor requires [Python](https://www.python.org/) to be installed on your system. You can run the docs by:
+Our documentation system uses [MKDocs](https://www.mkdocs.org/) and therefore requires [Python](https://www.python.org/) to be installed on your system. You can run the docs by:
 
 ```sh
 # installing needed Python dependencies

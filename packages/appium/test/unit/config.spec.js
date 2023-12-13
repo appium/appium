@@ -9,7 +9,7 @@ import {
   getNonDefaultServerArgs,
   showBuildInfo,
   showConfig,
-  validateTmpDir,
+  requireDir,
 } from '../../lib/config';
 import {PLUGIN_TYPE} from '../../lib/constants';
 import {
@@ -214,18 +214,21 @@ describe('Config', function () {
     });
   });
 
-  describe('validateTmpDir', function () {
-    it('should fail to use a tmp dir with incorrect permissions', function () {
-      validateTmpDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(
-        /could not ensure/
+  describe('requireDir', function () {
+    it('should fail to use a dir with incorrect permissions', function () {
+      requireDir('/private/if_you_run_with_sudo_this_wont_fail').should.be.rejectedWith(
+        /must exist/
       );
     });
-    it('should fail to use an undefined tmp dir', function () {
+    it('should fail to use an undefined dir', function () {
       // @ts-expect-error
-      validateTmpDir().should.be.rejectedWith(/could not ensure/);
+      requireDir().should.be.rejectedWith(/must exist/);
     });
-    it('should be able to use a tmp dir with correct permissions', function () {
-      validateTmpDir('/tmp/test_tmp_dir/with/any/number/of/levels').should.not.be.rejected;
+    it('should fail to use an non-writeable dir', function () {
+      requireDir('/private').should.be.rejectedWith(/must be writeable/);
+    });
+    it('should be able to use a dir with correct permissions', function () {
+      requireDir('/tmp/test_tmp_dir/with/any/number/of/levels').should.not.be.rejected;
     });
   });
 

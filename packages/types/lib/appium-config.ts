@@ -102,11 +102,19 @@ export type LogNoColorsConfig = boolean;
  */
 export type LogTimestampConfig = boolean;
 /**
+ * The maximum amount of plugins that could be imported in parallel on server startup
+ */
+export type PluginsImportChunkSizeConfig = number;
+/**
+ * The maximum amount of drivers that could be imported in parallel on server startup
+ */
+export type DriversImportChunkSizeConfig = number;
+/**
  * Add long stack traces to log entries. Recommended for debugging only.
  */
 export type LongStacktraceConfig = boolean;
 /**
- * Do not check that needed files are readable and/or writable
+ * Skip various permission checks on the server startup if set to true
  */
 export type NoPermsCheckConfig = boolean;
 /**
@@ -185,6 +193,8 @@ export interface ServerConfig {
   "log-level"?: LogLevelConfig;
   "log-no-colors"?: LogNoColorsConfig;
   "log-timestamp"?: LogTimestampConfig;
+  "plugins-import-chunk-size"?: PluginsImportChunkSizeConfig;
+  "drivers-import-chunk-size"?: DriversImportChunkSizeConfig;
   "long-stacktrace"?: LongStacktraceConfig;
   "no-perms-check"?: NoPermsCheckConfig;
   nodeconfig?: NodeconfigConfig;

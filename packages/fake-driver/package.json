@@ -23,14 +23,10 @@
   },
   "license": "Apache-2.0",
   "author": "https://github.com/appium",
-  "bin": {
-    "appium-fake-driver": "index.js"
-  },
   "directories": {
     "lib": "lib"
   },
   "files": [
-    "index.js",
     "lib",
     "build",
     "test/fixtures",
@@ -79,6 +75,7 @@
       "fake-stdin": "./build/lib/scripts/fake-stdin.js"
     }
   },
+  "main": "./build/lib/index.js",
   "types": "./build/lib/index.d.ts",
   "gitHead": "8480a85ce2fa466360e0fb1a7f66628331907f02"
 }

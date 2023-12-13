@@ -9,12 +9,13 @@ theme:
 nav:
   - Welcome: index.md
   - Introduction:
-      - Intro to Appium:
-          - Overview of Appium: intro/index.md
+      - intro/index.md
+      - Background:
+          - intro/appium.md
           - intro/drivers.md
           - intro/clients.md
+          - intro/history.md
       - intro/requirements.md
-      - intro/history.md
   - Quickstart:
       - quickstart/index.md
       - quickstart/install.md

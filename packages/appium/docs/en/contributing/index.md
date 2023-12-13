@@ -3,6 +3,14 @@ title: Contributing to Appium
 cwd: ../../../../../
 ---
 
+Appium is open source, available under an Apache 2.0 license. Appium's copyright is held by the
+[OpenJS Foundation](https://openjsf.org), and Appium receives contributions from many companies
+across several software industries, regardless of their competitive status. (3rd-party drivers and
+plugins are available under the licenses provided by their authors.)
+
+As such, we welcome contributions! The project moves forward in relation to the investment of
+contributions of code, documentation, maintenance, and support from companies and volunteers.
+
 This section of Appium's documentation is for those who are interested in contributing to Appium's
 development. It contains developer overviews, guides, and notes. Use the navigation menu to find
 a specific topic. All the information in these guides assumes in-depth familiarity with Appium

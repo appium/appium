@@ -5,7 +5,7 @@ hide:
 title: Intro to Appium Clients
 ---
 
-For all the reasons discussed in the [main intro](./index.md), Appium is based on the [W3C
+For all the reasons discussed in the [main Overview](./appium.md), Appium is based on the [W3C
 WebDriver specification](https://w3c.github.io/webdriver/webdriver-spec.html). This means that
 Appium implements a client-server architecture. The server (consisting of Appium itself along with
 any drivers or plugins you are using for automation) is connected to the devices under test, and

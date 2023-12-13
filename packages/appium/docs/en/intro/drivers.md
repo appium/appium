@@ -2,7 +2,7 @@
 title: Intro to Appium Drivers
 ---
 
-As the [main Overview](index.md) makes clear, "drivers" are basically Appium's answer to the
+As the [main Overview](./appium.md) makes clear, "drivers" are basically Appium's answer to the
 question, "how do we support automation of multiple, unrelated platforms?" In this doc we'll get
 into a little more detail about how drivers work. The specific details of how drivers work probably
 don't matter too much for you, unless you're planning on writing your own driver or contributing to

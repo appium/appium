@@ -12,6 +12,7 @@ theme:
 plugins:
   redirects:
     redirect_maps:
+      'intro/requirements.md': 'quickstart/requirements.md'
       'ecosystem/build-drivers.md': 'developing/build-drivers.md'
       'ecosystem/build-plugins.md': 'developing/build-plugins.md'
       'ecosystem/build-docs.md': 'developing/build-docs.md'

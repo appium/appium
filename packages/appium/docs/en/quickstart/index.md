@@ -14,14 +14,14 @@ The basic plan for this quickstart is as follows:
 1. Install Appium
 1. Install an Appium driver and its dependencies (we'll be using the [UiAutomator2
 driver](https://github.com/appium/appium-uiautomator2-driver) for these examples)
-1. Install an Appium client library in your language or choice (this guide contains options for
-JavaScript, Python, and Java, though [Appium clients](../ecosystem/clients.md) also exist in other language).
+1. Install an Appium client library in your language of choice (this guide contains options for
+JavaScript, Python, Java, Ruby, and .NET).
 1. Write and run a simple Appium automation script using a sample application
 
 ### Requirements
 
 Before getting started, make sure your system satisfies the
-[requirements](../intro/requirements.md) for running the Appium server. Additional requirements
+[requirements](../quickstart/requirements.md) for running the Appium server. Additional requirements
 will be discussed in conjunction with installing the UiAutomator2 driver. The guide also assumes
 you have basic command line proficiency on your platform, for example being able to run commands, set
 and persist environment variables, etc...

@@ -19,3 +19,5 @@ article to learn more about the current driver class implementations.
 
 Follow the [Usage Examples](https://github.com/appium/java-client#usage-examples) article in order understand
 how to invoke Java client features from your test framework.
+
+Once you've managed to successfully run a test, you can read on for some [next steps](./next-steps.md) to explore.

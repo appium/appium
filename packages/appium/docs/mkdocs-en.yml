@@ -15,9 +15,9 @@ nav:
           - intro/drivers.md
           - intro/clients.md
           - intro/history.md
-      - intro/requirements.md
   - Quickstart:
       - quickstart/index.md
+      - quickstart/requirements.md
       - quickstart/install.md
       - quickstart/uiauto2-driver.md
       - Write a Test:

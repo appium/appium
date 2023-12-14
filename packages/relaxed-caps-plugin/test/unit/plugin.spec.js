@@ -56,13 +56,18 @@ describe('relaxed caps plugin', function () {
 
   describe('#fixCapsIfW3C', function () {
     it('should not transform standard caps', function () {
-      rcp.fixCapsIfW3C(STD_CAPS).should.eql(STD_CAPS);
+      rcp.fixCapsIfW3C({alwaysMatch: STD_CAPS}).should.eql({alwaysMatch: STD_CAPS});
     });
     it('should transform non-standard caps', function () {
-      rcp.fixCapsIfW3C(MIXED_CAPS).should.eql(ADJUSTED_CAPS);
+      rcp.fixCapsIfW3C({alwaysMatch: MIXED_CAPS}).should.eql({alwaysMatch: ADJUSTED_CAPS});
     });
     it('should not transform already prefixed caps', function () {
-      rcp.fixCapsIfW3C(VENDOR_CAPS).should.eql(ADJUSTED_VENDOR_CAPS);
+      rcp.fixCapsIfW3C({firstMatch: [VENDOR_CAPS], alwaysMatch: VENDOR_CAPS})
+        .should.eql({firstMatch: [ADJUSTED_VENDOR_CAPS], alwaysMatch: ADJUSTED_VENDOR_CAPS});
+    });
+    it('should not transform non-W3C caps', function () {
+      rcp.fixCapsIfW3C({desiredCapabilities: VENDOR_CAPS})
+        .should.eql({desiredCapabilities: VENDOR_CAPS});
     });
   });
 

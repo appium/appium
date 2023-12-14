@@ -32,7 +32,7 @@ coding it up and making it available as an Appium driver should be the easy part
 
 One of the greatest things about building an Appium driver is that there are already a number of
 open source Appium drivers which you can look at for reference. There is
-a [fake-driver](https://github.com/appium/appium/tree/2.0/packages/fake-driver) sample driver which
+a [fake-driver](https://github.com/appium/appium/tree/master/packages/fake-driver) sample driver which
 does basically nothing other than showcase some of the things described in this guide.
 
 And of course, all of Appium's official drivers are open source and available in repositories at
@@ -52,7 +52,7 @@ All Appium drivers are fundamentally Node.js packages, and therefore must have a
 
 Your `package.json` must include `appium` as a `peerDependency`. The requirements for the
 dependency versions should be as loose as possible (unless you happen to know your driver will only
-work with certain versions of Appium). For Appium 2.0, for example, this would look something like
+work with certain versions of Appium). For Appium 2, for example, this would look something like
 `^2.0.0`, declaring that your driver works with any version of Appium that starts with 2.x.
 
 Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension
@@ -276,7 +276,7 @@ You handle WebDriver commands by implementing functions in your driver class. Ea
 WebDriver Protocol, plus the various Appium extensions, has a corresponding function that you
 implement if you want to support that command in your driver. The best way to see which commands
 Appium supports and which method you need to implement for each command is to look at Appium's
-[routes.js](https://github.com/appium/appium/blob/2.0/packages/base-driver/lib/protocol/routes.js).
+[routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
 Each route object in this file tells you the command name as well as the parameters you'd expect to
 receive for that command.
 

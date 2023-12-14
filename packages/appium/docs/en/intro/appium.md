@@ -3,7 +3,7 @@ title: How Does Appium Work?
 ---
 
 As mentioned on the main page, Appium is an open-source project and ecosystem of related software,
-designed to facilitate UI automation of many app platforms. With the release of Appium 2.0, Appium
+designed to facilitate UI automation of many app platforms. With the release of Appium 2, Appium
 has the following primary goals:[^1]
 
 - Make platform-specific automation capabilities available under a cross-platform, standard API
@@ -171,7 +171,7 @@ a *platform*. This is what we call the Appium "ecosystem".
 The Appium team does officially maintain a few drivers itself (for example, the XCUITest driver
 that we spoke about earlier). But it cannot hope to have the platform-specific expertise or the
 capacity to maintain drivers for many different platforms. But what we have done, particularly
-beginning with Appium 2.0, is to provide tools to empower the community to join in our vision:
+beginning with Appium 2, is to provide tools to empower the community to join in our vision:
 
 - Anyone can create a driver simply by creating a Node.js module that conforms to the appropriate
   conventions and implements any (sub|super)set of the WebDriver protocol. Creating a driver often
@@ -186,14 +186,14 @@ Appium's vision of being a platform for development extends beyond the support o
 all app platforms. As a popular automation tool, there are many opportunities for integrating
 Appium with all kinds of other tools and services. In addition, there are many feature ideas for
 Appium, either as a core server or in its incarnation across various drivers, which the core team
-will never have time to build. And so, with Appium 2.0, Appium has released a plugin system that
+will never have time to build. And so, with Appium 2, Appium has released a plugin system that
 enables anyone to build and share modules that change how Appium works!
 
 In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
 can be published and consumed via a parallel [Plugin CLI](../cli/extensions.md). Plugins can do all
 sorts of things, for example adding the ability for Appium to find and interact with screen regions
 based on a template image (as in the [`images`
-plugin](https://github.com/appium/appium/tree/2.0/packages/images-plugin)). There are very few
+plugin](https://github.com/appium/appium/tree/master/packages/images-plugin)). There are very few
 limitations on what you can do with plugins, so you might also be interested in learning how to
 [Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.
 

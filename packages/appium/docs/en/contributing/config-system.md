@@ -323,7 +323,7 @@ One of the design goals of this system is the following:
 _An extension should be able to register custom CLI arguments with the Appium, and a user should be
 able to use them like any other argument_.
 
-Previously, Appium 2.0 accepted arguments in this manner (via `--driverArgs`), but validation was
+Previously, Appium 2 accepted arguments in this manner (via `--driverArgs`), but validation was
 hand-rolled and required extension implementors to use a custom API. It also required the user to
 awkwardly pass a JSON string as the configuration on the command-line. Further, no contextual help
 (via `--help`) existed for these arguments.

@@ -41,7 +41,7 @@ Node.js so it can be loaded by Appium.
 
 Your `package.json` must include `appium` as a `peerDependency`. The requirements for the
 dependency versions should be as loose as possible (unless you happen to know your plugin will only
-work with certain versions of Appium). For Appium 2.0, for example, this would look something like
+work with certain versions of Appium). For Appium 2, for example, this would look something like
 `^2.0.0`, declaring that your plugin works with any version of Appium that starts with 2.x.
 
 Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension

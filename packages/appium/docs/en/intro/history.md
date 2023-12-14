@@ -177,6 +177,6 @@ is currently an Impact Project in the foundation.
 
 ## Appium 2.0
 
-Appium 2.0 was released in 2022, with a new focus on Appium as an ecosystem rather than a singular
+Appium 2 was released in 2023, with a new focus on Appium as an ecosystem rather than a singular
 project. Drivers and plugins can be developed and shared by anyone, opening up a world of
 possibilities for automation-related development for platforms far beyond iOS and Android.

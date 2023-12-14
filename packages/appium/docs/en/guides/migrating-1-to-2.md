@@ -314,7 +314,7 @@ standalone Appium 2 servers, but also works with later versions of Appium 1 serv
 itself has been deprecated and is not compatible with Appium 2.
 
 In addition to the app, Appium Inspector also has a browser version, accessible at
-(https://inspector.appiumpro.com)[https://inspector.appiumpro.com]. Note that in order to use the
+[inspector.appiumpro.com](https://inspector.appiumpro.com). Note that in order to use the
 browser version with a local Appium server, you'll need to first start the server with the
 `--allow-cors` flag.
 

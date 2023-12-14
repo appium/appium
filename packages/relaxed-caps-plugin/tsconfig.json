@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "build"
+    "outDir": "build",
+    "checkJs": true
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib"]

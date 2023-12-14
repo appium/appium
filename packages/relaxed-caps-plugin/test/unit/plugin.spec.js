@@ -94,8 +94,8 @@ describe('relaxed caps plugin', function () {
       const w3cAdjusted = {
         firstMatch: [ADJUSTED_CAPS, STD_CAPS, ADJUSTED_CAPS],
       };
-      mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
-      await rcp.createSession(next, driver, null, null, w3c);
+      mock.expects('createSession').once().withExactArgs(null, {}, w3cAdjusted);
+      await rcp.createSession(next, driver, null, {}, w3c);
       mock.verify();
     });
 

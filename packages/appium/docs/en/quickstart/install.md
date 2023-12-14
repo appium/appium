@@ -8,7 +8,7 @@ title: Install Appium
 Installing Appium is as easy as running a single NPM command:
 
 ```bash
-npm i --location=global appium
+npm i -g appium
 ```
 
 This command installs Appium globally on your system so that you can access it from the command

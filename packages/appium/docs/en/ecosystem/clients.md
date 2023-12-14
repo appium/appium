@@ -34,3 +34,8 @@ These clients are not maintained by the Appium team and can be used with other l
 
 In general, any W3C WebDriver spec-compatible client will also integrate well with Appium, though
 some Appium-specific commands may not be implemented in other clients.
+
+!!! note
+
+    If you maintain an Appium client that you would like to be listed in the Appium docs, feel free
+    to make a PR to add it to this section with a link to the documentation for the client.

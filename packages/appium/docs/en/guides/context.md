@@ -2,7 +2,7 @@
 hide:
   - toc
 
-title: The Context API
+title: Managing Contexts
 ---
 
 A common feature of many app platforms is the ability for developers to embed web content inside of
@@ -19,7 +19,7 @@ basic commands that Appium has added to the W3C WebDriver spec for this purpose:
 |-----------------------|-----------------------------|-------------------|-----------------------------------------------|-----------------|
 | `Get Contexts`        | `GET /session/:id/contexts` |                   | Get a list of the available contexts          | `array<string>` |
 | `Get Current Context` | `GET /session/:id/context`  |                   | Get the name of the active context            | `string`        |
-| `Set Context`         | `POST /session/:id/context` | `name` (`string)` | Switch into the context with the given `name` | `null`          |
+| `Set Context`         | `POST /session/:id/context` | `name` (`string`) | Switch into the context with the given `name` | `null`          |
 
 This API is flexible enough to handle a variety of semantic interpretations on the part of the
 driver. For example, the XCUITest driver includes two kinds of contexts: the native app context and

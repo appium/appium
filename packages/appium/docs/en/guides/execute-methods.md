@@ -18,7 +18,8 @@ by client libraries. There are two main strategies for this:
 There are pros and cons for each strategy, but it is ultimately up to the extension author to
 decide how they wish implement new commands. 
 
-This guide is designed to specifically help you understand the "Execute Method" strategy.  This pattern is commonly used in official Appium drivers and other third-party extensions.
+This guide is designed to specifically help you understand the "Execute Method" strategy.  This
+pattern is commonly used in official Appium drivers and other third-party extensions.
 Here's an example of how the `Execute Script` command is designed to work in the world of WebDriver
 and browser automation:
 
@@ -54,20 +55,23 @@ and browser automation:
     ```
 
 What's happening here is that we are defining a snippet of Javascript (technically,
-a function body) to be executed within the web browser. The client can send arguments which are serialized, sent over HTTP, and finally provided to the function as parameters.  In this example, we are essentially defining
-an addition function. The return value of the `Execute Script` command is whatever the return value
-of the Javascript snippet is! In the case of this example, that value would be the number `7` (`3`
-+ `4`).
+a function body) to be executed within the web browser. The client can send arguments which are
+serialized, sent over HTTP, and finally provided to the function as parameters.  In this example,
+we are essentially defining an addition function. The return value of the `Execute Script` command
+is whatever the return value of the Javascript snippet is! In the case of this example, that value
+would be the number `7` (`3` + `4`).
 
-Each client library has its own way of calling the command and providing any arguments to the
-script function, but the function itself—the snippet—is always a string and is the same across all languages.
+Each client library has its own way of calling the command and providing any arguments to the script
+function, but the function itself—the snippet—is always a string and is the same across all languages.
 
 In the world of Appium, we are usually not automating a web browser, which means this command is
 not particularly useful. But it *is* useful as a way to encode the name of an arbitrary command and
 to provide parameters. For example, the [XCUITest
 Driver](https://github.com/appium/appium-xcuitest-driver) has implemented a command that lets a client
 terminate a running application if you know the ID (the `bundleId`) of the app. The way that the
-driver makes this command available is via the Execute Method `mobile: terminateApp`. Instead of providing a JavaScript function to the "Execute Script" command, the user provides a _known string_ as defined by the driver. The only other thing a client needs to know is the set of
+driver makes this command available is via the Execute Method `mobile: terminateApp`. Instead of
+providing a JavaScript function to the "Execute Script" command, the user provides a _known string_
+as defined by the driver. The only other thing a client needs to know is the set of
 parameters for the method, which are documented by the driver. In this case, we have a parameter
 named `bundleId`, whose value should be a string encoding the ID of the app to terminate. Here is
 how this Execute Method would be called:

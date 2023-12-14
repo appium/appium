@@ -1,8 +1,8 @@
 ---
-title: Application Bundles Caching Logic
+title: Caching of Application Bundles
 ---
 
-Appium Base driver provides a feature which enables caching of application builds provided, for example,
+Appium's base driver provides a feature which enables caching of application builds provided, for example,
 as `app` capability value or to endpoints similar to the `installApp` one. This article explains common caching
 principles, so you could create more performant and efficient test suite execution strategies.
 
@@ -21,7 +21,7 @@ rule of thumb is that we need to cache locally all application bundles need to b
 first before they could be actually installed on the device under test. On iOS, for example, these are `.ipa` or
 `.zip` compressed application bundles, or .`aab` on Android.
 
-## How Remote Application Bundles Are Cached
+## Caching of Remote Application Bundles
 
 In order to validate whether an app bundle downloaded from the given URL could be (re)used from the cache the following
 steps are applied:
@@ -39,7 +39,7 @@ and its current header values along with hashsum are added to the cache.
 5. If all validations above succeed then the cached build is returned, otherwise the currently cached entry gets
 deleted and a new one is downloaded instead.
 
-## How Local Application Bundles Are Cached
+## Caching of Local Application Bundles
 
 It only makes sense to cache application bundles if they need some preprocessing before being installed on the device under test.
 For example, on iOS `.ipa` bundles must be unzipped, because the system installer only works with `.app` folders.

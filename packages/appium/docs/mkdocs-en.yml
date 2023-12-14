@@ -46,19 +46,22 @@ nav:
       - commands/relaxed-caps-plugin.md
       - commands/universal-xml-plugin.md
   - Guides:
-      - guides/migrating-1-to-2.md
-      - guides/managing-exts.md
-      - guides/config.md
-      - guides/security.md
-      - guides/caps.md
-      - guides/context.md
-      - guides/settings.md
-      - guides/execute-methods.md
-      - guides/event-timing.md
-      - guides/log-filters.md
-      - guides/grid.md
-      - guides/caching.md
-      - guides/tls.md
+      - Migration:
+          - guides/migrating-1-to-2.md
+      - Server/Driver Configuration:
+          - guides/managing-exts.md
+          - guides/config.md
+          - guides/security.md
+          - guides/log-filters.md
+          - guides/grid.md
+          - guides/caching.md
+          - guides/tls.md
+      - Session Configuration:
+          - guides/caps.md
+          - guides/settings.md
+          - guides/execute-methods.md
+          - guides/context.md
+          - guides/event-timing.md
   - More Resources: resources.md
   - Developing:
       - developing/index.md

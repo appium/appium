@@ -20,4 +20,4 @@ toolchain and SDKs for that platform to be available.
 
 [appium-doctor](https://github.com/appium/appium/tree/master/packages/doctor) would help 
 to check your local configuration for Appium.
-Please use the latest version that is available via `npm install @appium/doctor -g`.
+Please use the latest version that is available via `npm install @appium/doctor --location=global`.

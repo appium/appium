@@ -59,7 +59,7 @@ async function compareImages(mode, firstImage, secondImage, options = {}) {
       result = await getImageOccurrence(
         img1, img2, opts
       );
-      if (opts.multiple) {
+      if (opts.multiple && result.multiple) {
         return result.multiple.map(convertVisualizationToBase64);
       }
       break;

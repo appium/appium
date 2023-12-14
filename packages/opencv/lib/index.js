@@ -142,10 +142,11 @@ function calculateMatchedRect(matchedPoints) {
 
   const pointsSortedByDistance = matchedPoints
     .map((point) => [Math.sqrt(point.x * point.x + point.y * point.y), point])
+    // @ts-ignore TS does not understand this, maybe its bug
     .sort((pair1, pair2) => pair1[0] >= pair2[0])
-    .map((pair) => pair[1]);
-  const firstPoint = _.head(pointsSortedByDistance);
-  const lastPoint = _.last(pointsSortedByDistance);
+    .map((/** @type {[number, Point]} */ pair) => pair[1]);
+  const firstPoint = /** @type {Point} */ (_.head(pointsSortedByDistance));
+  const lastPoint = /** @type {Point} */ (_.last(pointsSortedByDistance));
   const topLeftPoint = {
     x: firstPoint.x <= lastPoint.x ? firstPoint.x : lastPoint.x,
     y: firstPoint.y <= lastPoint.y ? firstPoint.y : lastPoint.y,
@@ -165,10 +166,10 @@ function calculateMatchedRect(matchedPoints) {
 /**
  * Draws a rectanngle on the given image matrix
  *
- * @param {cv.Mat} mat The source image
+ * @param {OpenCVBindings['Mat']} mat The source image
  * @param {Rect} region The region to highlight
  *
- * @returns {cv.Mat} The same image with the rectangle on it
+ * @returns {OpenCVBindings['Mat']} The same image with the rectangle on it
  */
 function highlightRegion(mat, region) {
   if (region.width <= 0 || region.height <= 0) {
@@ -191,17 +192,17 @@ function highlightRegion(mat, region) {
 
 /**
  * @typedef MatchingOptions
- * @property {string} detectorName ['ORB'] One of possible OpenCV feature detector names
+ * @property {string} [detectorName='ORB'] One of possible OpenCV feature detector names
  * from keys of the `AVAILABLE_DETECTORS` object.
  * Some of these methods (FAST, AGAST, GFTT, FAST, SIFT and MSER) are not available
  * in the default OpenCV installation and have to be enabled manually before
  * library compilation.
- * @property {string} matchFunc ['BruteForce'] The name of the matching function.
+ * @property {string} [matchFunc='BruteForce'] The name of the matching function.
  * Should be one of the keys of the `AVAILABLE_MATCHING_FUNCTIONS` object.
- * @property {number|Function?} goodMatchesFactor The maximum count of "good" matches
+ * @property {number|Function?} [goodMatchesFactor] The maximum count of "good" matches
  * (e. g. with minimal distances) or a function, which accepts 3 arguments: the current distance,
  * minimal distance, maximum distance and returns true or false to include or exclude the match.
- * @property {boolean?} visualize [false] Whether to return the resulting visalization
+ * @property {boolean} [visualize=false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
  */
 
@@ -213,7 +214,7 @@ function highlightRegion(mat, region) {
  * It is equal to `count` if `goodMatchesFactor` does not limit the matches,
  * otherwise it contains the total count of matches before `goodMatchesFactor` is
  * applied.
- * @property {Buffer?} visualization The visualization of the matching result
+ * @property {Buffer?} [visualization] The visualization of the matching result
  * represented as PNG image buffer. This visualization looks like
  * https://user-images.githubusercontent.com/31125521/29702731-c79e3142-8972-11e7-947e-db109d415469.jpg
  * @property {Point[]} points1 The array of matching points on the first image
@@ -230,7 +231,7 @@ function highlightRegion(mat, region) {
  *
  * @param {Buffer} img1Data The data of the first image packed into a NodeJS buffer
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
- * @param {MatchingOptions} options [{}] Set of matching options
+ * @param {MatchingOptions} [options={}] Set of matching options
  *
  * @returns {Promise<MatchingResult>} Maching result
  * @throws {Error} If `detectorName` value is unknown.
@@ -356,9 +357,9 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
 
 /**
  * @typedef SimilarityOptions
- * @property {boolean?} visualize [false] Whether to return the resulting visalization
+ * @property {boolean} [visualize=false] Whether to return the resulting visalization
  * as an image (useful for debugging purposes)
- * @property {string} method [TM_CCOEFF_NORMED] The name of the template matching method.
+ * @property {string} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
  * Acceptable values are:
  * - `TM_CCOEFF`
  * - `TM_CCOEFF_NORMED` (default)
@@ -374,7 +375,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  * @typedef SimilarityResult
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {Buffer?} visualization The visualization of the matching result
+ * @property {Buffer?} [visualization] The visualization of the matching result
  * represented as PNG image buffer. This image includes both input pictures where
  * difference regions are highlighted with rectangles.
  */
@@ -385,7 +386,7 @@ async function getImagesMatches(img1Data, img2Data, options = {}) {
  *
  * @param {Buffer} img1Data The data of the first image packed into a NodeJS buffer
  * @param {Buffer} img2Data The data of the second image packed into a NodeJS buffer
- * @param {SimilarityOptions} options [{}] Set of similarity calculation options
+ * @param {SimilarityOptions} [options={}] Set of similarity calculation options
  *
  * @returns {Promise<SimilarityResult>} The calculation result
  * @throws {Error} If the given images have different resolution.
@@ -458,25 +459,22 @@ async function getImagesSimilarity(img1Data, img2Data, options = {}) {
  * @property {number|boolean} [multiple=false] find multiple matches in the image
  * @property {number} [matchNeighbourThreshold=10] The pixel distance between matches we consider
  * to be part of the same template match
- */
-
-/**
- * @typedef {'TM_CCOEFF'|'TM_CCOEFF_NORMED'|'TM_CCORR'|'TM_CCORR_NORMED'|'TM_SQDIFF'|'TMSQDIFF_NORMED'} OccurrenceResultMethod
+ * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED']
  */
 
 /**
  * @typedef OccurrenceResult
  * @property {import('@appium/types').Rect} rect The region of the partial image occurence
  * on the full image
- * @property {Buffer} visualization The visualization of the matching result
+ * @property {Buffer?} [visualization] The visualization of the matching result
  * represented as PNG image buffer. On this image the matching
  * region is highlighted with a rectangle. If the multiple option is passed,
  * all results are highlighted here.
  * @property {number} score The similarity score as a float number in range [0.0, 1.0].
  * 1.0 is the highest score (means both images are totally equal).
- * @property {OccurrenceResult[]} multiple The array of matching OccurenceResults
+ * @property {OccurrenceResult[]} [multiple] The array of matching OccurenceResults
  * - only when multiple option is passed
- * @property {OccurrenceResultMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
+ * @property {TemplateMatchingMethod} [method='TM_CCOEFF_NORMED'] The name of the template matching method.
  * Acceptable values are:
  * - `TM_CCOEFF`
  * - `TM_CCOEFF_NORMED` (default)
@@ -589,6 +587,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
         [cvMatToPng(fullHighlightedImage), ...visualisePromises]
       );
       for (const [result, pngBuffer] of _.zip(results, restPngBuffers)) {
+        // @ts-ignore This is fine
         result.visualization = pngBuffer;
       }
     }
@@ -606,7 +605,7 @@ async function getImageOccurrence(fullImgData, partialImgData, options = {}) {
 /**
  * Convert an opencv image matrix into a PNG buffer
  *
- * @param {cv.Mat} mat OpenCV image matrix
+ * @param {OpenCVBindings['Mat']} mat OpenCV image matrix
  * @return {Promise<Buffer>} PNG image data buffer
  */
 async function cvMatToPng(mat) {
@@ -626,7 +625,7 @@ async function cvMatToPng(mat) {
  *
  * @param {Buffer} img image data buffer. All image formats avilable for
  * https://www.npmjs.com/package/sharp node library are supported.
- * @return {Promise<cv.Mat>} OpenCV image matrix
+ * @return {Promise<OpenCVBindings['Mat']>} OpenCV image matrix
  */
 async function cvMatFromImage(img) {
   const {data, info} = await sharp(img)
@@ -638,16 +637,24 @@ async function cvMatFromImage(img) {
 }
 
 /**
+ * @typedef {Object} Match
+ * @property {number} score
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
  * Filter out match results which have a matched neighbour
  *
- * @param {Point[]} nonZeroMatchResults matrix of image match results
+ * @param {Match[]} nonZeroMatchResults matrix of image match results
  * @param {number} matchNeighbourThreshold The pixel distance within which we
  * consider an element being a neighbour of an existing match
- * @return {Point[]} the filtered array of matched points
+ * @returns {Match[]} the filtered array of matched points
  */
 function filterNearMatches(nonZeroMatchResults, matchNeighbourThreshold) {
   return nonZeroMatchResults.reduce((acc, element) => {
     if (!acc.some((match) => distance(match, element) <= matchNeighbourThreshold)) {
+      // @ts-ignore TS cannot properly undertstand types here
       acc.push(element);
     }
     return acc;
@@ -674,4 +681,8 @@ export {getImagesMatches, getImagesSimilarity, getImageOccurrence, initOpenCv};
  * @property {any} Mat
  * @property {any} KeyPointVector
  * @property {any} FeatureDetector
+ */
+
+/**
+ * @typedef {'TM_CCOEFF'|'TM_CCOEFF_NORMED'|'TM_CCORR'|'TM_CCORR_NORMED'|'TM_SQDIFF'|'TMSQDIFF_NORMED'} TemplateMatchingMethod
  */

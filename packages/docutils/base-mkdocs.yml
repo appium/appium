@@ -2,6 +2,7 @@ markdown_extensions:
   - meta
   - attr_list
   - admonition
+  - md_in_html
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -18,9 +19,9 @@ markdown_extensions:
       permalink: true
 
 plugins:
-  - git-revision-date-localized:
-      type: timeago
-  - search
+  git-revision-date-localized:
+    type: timeago
+  search: {}
 
 theme:
   name: material
@@ -36,14 +37,14 @@ theme:
       scheme: default
       primary: deep purple
       toggle:
-        icon: material/weather-night
+        icon: material/weather-sunny
         name: Switch to dark mode
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: deep purple
       toggle:
-        icon: material/weather-sunny
+        icon: material/weather-night
         name: Switch to system preference
   icon:
     repo: fontawesome/brands/github

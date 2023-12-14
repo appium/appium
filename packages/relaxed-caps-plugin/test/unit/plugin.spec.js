@@ -54,15 +54,15 @@ describe('relaxed caps plugin', function () {
     should.exist(RelaxedCapsPlugin);
   });
 
-  describe('#transformCaps', function () {
+  describe('#fixCapsIfW3C', function () {
     it('should not transform standard caps', function () {
-      rcp.transformCaps(STD_CAPS).should.eql(STD_CAPS);
+      rcp.fixCapsIfW3C(STD_CAPS).should.eql(STD_CAPS);
     });
     it('should transform non-standard caps', function () {
-      rcp.transformCaps(MIXED_CAPS).should.eql(ADJUSTED_CAPS);
+      rcp.fixCapsIfW3C(MIXED_CAPS).should.eql(ADJUSTED_CAPS);
     });
     it('should not transform already prefixed caps', function () {
-      rcp.transformCaps(VENDOR_CAPS).should.eql(ADJUSTED_VENDOR_CAPS);
+      rcp.fixCapsIfW3C(VENDOR_CAPS).should.eql(ADJUSTED_VENDOR_CAPS);
     });
   });
 
@@ -76,6 +76,15 @@ describe('relaxed caps plugin', function () {
       const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS]};
       mock.expects('createSession').once().withExactArgs(null, null, w3cAdjusted);
       await rcp.createSession(next, driver, null, null, w3c);
+      mock.verify();
+    });
+
+    it('should work with any argument', async function () {
+      const mock = sandbox.mock(driver);
+      const w3c = {firstMatch: [MIXED_CAPS]};
+      const w3cAdjusted = {firstMatch: [ADJUSTED_CAPS]};
+      mock.expects('createSession').once().withExactArgs(w3cAdjusted, w3cAdjusted, null);
+      await rcp.createSession(next, driver, w3c, w3c, null);
       mock.verify();
     });
 

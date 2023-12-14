@@ -70,4 +70,5 @@ nav:
       - developing/build-docs.md
   - Contributing:
       - contributing/index.md
+      - contributing/develop.md
       - contributing/config-system.md

@@ -19,7 +19,7 @@ software, designed to facilitate UI automation of many app platforms, including 
 Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS,
 Android TV, Samsung), and more!
 
-## Learning Appium
+## Explore the Documentation
 
 <div class="grid cards" markdown>
 

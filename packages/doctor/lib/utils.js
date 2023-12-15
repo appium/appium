@@ -1,5 +1,3 @@
-import B from 'bluebird';
-import _inquirer from 'inquirer';
 import log from '../lib/logger';
 import {fs, system} from '@appium/support';
 import {exec} from 'teen_process';
@@ -7,48 +5,48 @@ import {isFunction} from 'lodash';
 
 /**
  * @param {string} message
- * @returns {UtilsResult}
+ * @returns {CheckResult}
  */
-function ok(message) {
+export function ok(message) {
   return {ok: true, optional: false, message};
 }
 
 /**
  * @param {string} message
- * @returns {UtilsResult}
+ * @returns {CheckResult}
  */
-function nok(message) {
+export function nok(message) {
   return {ok: false, optional: false, message};
 }
 
 /**
  * @param {string} message
- * @returns {UtilsResult}
+ * @returns {CheckResult}
  */
-function okOptional(message) {
+export function okOptional(message) {
   return {ok: true, optional: true, message};
 }
 
 /**
  * @param {string} message
- * @returns {UtilsResult}
+ * @returns {CheckResult}
  */
-function nokOptional(message) {
+export function nokOptional(message) {
   return {ok: false, optional: true, message};
 }
 
-const inquirer = {
-  prompt: B.promisify(function (question, cb) {
-    // eslint-disable-line promise/prefer-await-to-callbacks
-    _inquirer.prompt(question, function (resp) {
-      cb(null, resp);
-    }); // eslint-disable-line promise/prefer-await-to-callbacks
-  }),
-};
+/**
+ * @param {any} question https://www.npmjs.com/package/inquirer#question
+ * @returns {Promise<{confirmation: string}>}
+ */
+export async function prompt(question) {
+  const {default: inquirer} = await import('inquirer');
+  return await inquirer.prompt(question);
+}
 
 let actualLog;
 
-function configureBinaryLog(opts) {
+export function configureBinaryLog(opts) {
   actualLog = log.unwrap().log;
   log.unwrap().log = function (level, prefix, msg) {
     let l = this.levels[level];
@@ -65,7 +63,7 @@ function configureBinaryLog(opts) {
 /**
  * If {@link configureBinaryLog} was called, this will restore the original `log` function.
  */
-function resetLog() {
+export function resetLog() {
   if (actualLog) {
     log.unwrap().log = actualLog;
   }
@@ -75,9 +73,9 @@ function resetLog() {
  * Return an executable path of cmd
  *
  * @param {string} cmd Standard output by command
- * @return {?string} The full path of cmd. `null` if the cmd is not found.
+ * @return {Promise<string?>} The full path of cmd. `null` if the cmd is not found.
  */
-async function resolveExecutablePath(cmd) {
+export async function resolveExecutablePath(cmd) {
   let executablePath;
   try {
     executablePath = await fs.which(cmd);
@@ -103,15 +101,16 @@ async function resolveExecutablePath(cmd) {
  * @property {string} version - version
  * @property {string} path - A path to npm root
  */
+
 /**
  * Returns the path and version of given package name
  * @param {string} packageName A package name to get path and version data
- * @return {?NpmPackageInfo}
+ * @return {Promise<NpmPackageInfo?>}
  */
-async function getNpmPackageInfo(packageName) {
+export async function getNpmPackageInfo(packageName) {
   const npmPath = await resolveExecutablePath(`npm${system.isWindows() ? `.cmd` : ''}`);
   if (!npmPath) {
-    return nokOptional(`'npm' binary not found in PATH: ${process.env.PATH}`);
+    return null;
   }
 
   let pJson = {};
@@ -130,20 +129,8 @@ async function getNpmPackageInfo(packageName) {
   return null;
 }
 
-export {
-  ok,
-  nok,
-  okOptional,
-  nokOptional,
-  inquirer,
-  configureBinaryLog,
-  resolveExecutablePath,
-  getNpmPackageInfo,
-  resetLog,
-};
-
 /**
- * @typedef UtilsResult
+ * @typedef CheckResult
  * @property {boolean} ok
  * @property {boolean} optional
  * @property {string} message

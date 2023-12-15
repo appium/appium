@@ -1,7 +1,7 @@
-import {inquirer} from './utils';
+import { prompt } from './utils';
 
 /**
- * @type {string}
+ * @type {string|undefined}
  */
 let persistentResponse;
 
@@ -20,7 +20,10 @@ const fixItQuestion = {
   },
 };
 
-function configure(opts) {
+/**
+ * @param {Record<string, any>} opts
+ */
+export function configure(opts) {
   if (opts.yes) {
     persistentResponse = 'yes';
   }
@@ -29,18 +32,22 @@ function configure(opts) {
   }
 }
 
-function clear() {
+/**
+ * @returns {void}
+ */
+export function clear() {
   persistentResponse = undefined;
 }
 
-async function fixIt() {
+/**
+ * @returns {Promise<string|undefined>}
+ */
+export async function fixIt() {
   if (persistentResponse) {
     return persistentResponse;
   }
-  let resp = await inquirer.prompt(fixItQuestion);
+  const resp = await prompt(fixItQuestion);
   persistentResponse = resp.confirmation === 'always' ? 'yes' : persistentResponse;
   persistentResponse = resp.confirmation === 'never' ? 'no' : persistentResponse;
   return persistentResponse || resp.confirmation;
 }
-
-export {configure, fixIt, clear};

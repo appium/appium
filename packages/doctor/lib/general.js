@@ -8,23 +8,30 @@ import '@colors/colors';
 /**
  * @type {import('./factory').DoctorCheckList}
  */
-let checks = [];
+const checks = [];
 
-class AppiumHomeCheck extends DoctorCheck {
+export class AppiumHomeCheck extends DoctorCheck {
   /**
-   *
-   * @returns {UtilsResult}
+   * @override
    */
   async diagnose() {
     return ok(`APPIUM_HOME is ${await env.resolveAppiumHome()}`);
   }
 
-  fix() {}
+  /**
+   * @override
+   */
+  async fix() {
+    return null;
+  }
 }
 checks.push(new AppiumHomeCheck());
 
 // Node Binary
-class NodeBinaryCheck extends DoctorCheck {
+export class NodeBinaryCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     let nodePath = await NodeDetector.detect();
     return nodePath
@@ -32,7 +39,10 @@ class NodeBinaryCheck extends DoctorCheck {
       : nok('The Node.js binary was NOT found!');
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     return `Manually setup ${'Node.js'.bold}.`;
   }
 }
@@ -41,7 +51,10 @@ checks.push(new NodeBinaryCheck());
 const REQUIRED_NODE_VERSION = '14.0.0';
 
 // Node version
-class NodeVersionCheck extends DoctorCheck {
+export class NodeVersionCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     let nodePath = await NodeDetector.detect();
     if (!nodePath) {
@@ -58,16 +71,18 @@ class NodeVersionCheck extends DoctorCheck {
     }
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     return `Manually upgrade ${'Node.js'.bold}.`;
   }
 }
 checks.push(new NodeVersionCheck());
 
-class OptionalFfmpegCommandCheck extends DoctorCheck {
+export class OptionalFfmpegCommandCheck extends DoctorCheck {
   /**
-   *
-   * @returns {Promise<UtilsResult>}
+   * @override
    */
   async diagnose() {
     const ffmpegPath = await resolveExecutablePath('ffmpeg');
@@ -79,11 +94,11 @@ class OptionalFfmpegCommandCheck extends DoctorCheck {
         )
       : nokOptional('ffmpeg cannot be found');
   }
+
   /**
-   *
-   * @returns {string}
+   * @override
    */
-  fix() {
+  async fix() {
     return `${
       'ffmpeg'.bold
     } is needed to record screen features. Please read https://www.ffmpeg.org/ to install it`;
@@ -91,7 +106,10 @@ class OptionalFfmpegCommandCheck extends DoctorCheck {
 }
 checks.push(new OptionalFfmpegCommandCheck());
 
-class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
+export class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const packageName = 'mjpeg-consumer';
     const packageInfo = await getNpmPackageInfo(packageName);
@@ -103,7 +121,10 @@ class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
     }
     return nokOptional(`${packageName} cannot be found.`);
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @override
+   */
   async fix() {
     return `${
       'mjpeg-consumer'.bold
@@ -112,15 +133,8 @@ class OptionalMjpegConsumerCommandCheck extends DoctorCheck {
 }
 checks.push(new OptionalMjpegConsumerCommandCheck());
 
-export {
-  AppiumHomeCheck,
-  NodeBinaryCheck,
-  NodeVersionCheck,
-  OptionalFfmpegCommandCheck,
-  OptionalMjpegConsumerCommandCheck,
-};
 export default checks;
 
 /**
- * @typedef {import('./utils').UtilsResult} UtilsResult
+ * @typedef {import('./utils').CheckResult} UtilsResult
  */

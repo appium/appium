@@ -10,7 +10,7 @@ import log from './logger';
 /**
  * @type {import('./factory').DoctorCheckList}
  */
-let checks = [];
+const checks = [];
 
 const javaHome = system.isWindows() ? '%JAVA_HOME%' : '$JAVA_HOME';
 
@@ -18,7 +18,10 @@ checks.push(new EnvVarAndPathCheck('ANDROID_HOME'));
 checks.push(new EnvVarAndPathCheck('JAVA_HOME'));
 
 // Check that the PATH includes the jdk's bin directory
-class JavaOnPathCheck extends DoctorCheck {
+export class JavaOnPathCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     if (process.env.JAVA_HOME) {
       const javaHomeBin = path.resolve(process.env.JAVA_HOME, 'bin');
@@ -34,19 +37,25 @@ class JavaOnPathCheck extends DoctorCheck {
     );
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     return `Set ${javaHome} environment variable to the root folder path of your local JDK installation`;
   }
 }
 
 // Check tools
-class AndroidToolCheck extends DoctorCheck {
+export class AndroidToolCheck extends DoctorCheck {
   constructor() {
     super();
     this.tools = ['adb', 'emulator', `apkanalyzer${system.isWindows() ? '.bat' : ''}`];
     this.noBinaries = [];
   }
 
+  /**
+   * @override
+   */
   async diagnose() {
     const listOfTools = this.tools.join(', ');
     const sdkRoot = getSdkRootFromEnv();
@@ -73,7 +82,10 @@ class AndroidToolCheck extends DoctorCheck {
     return ok(`${listOfTools} exist: ${sdkRoot}`);
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     if (typeof process.env.ANDROID_HOME === 'undefined') {
       return `Manually configure ${'ANDROID_HOME'.bold} and run appium-doctor again.`;
     }
@@ -88,14 +100,20 @@ class AndroidToolCheck extends DoctorCheck {
 checks.push(new AndroidToolCheck());
 checks.push(new JavaOnPathCheck());
 
-class OptionalAppBundleCheck extends DoctorCheck {
+export class OptionalAppBundleCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const bundletoolPath = await resolveExecutablePath('bundletool.jar');
     return bundletoolPath
       ? okOptional(`bundletool.jar is installed at: ${bundletoolPath}`)
       : nokOptional('bundletool.jar cannot be found');
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @override
+   */
   async fix() {
     return (
       `${
@@ -111,10 +129,13 @@ class OptionalAppBundleCheck extends DoctorCheck {
 }
 checks.push(new OptionalAppBundleCheck());
 
-class OptionalGstreamerCheck extends DoctorCheck {
+export class OptionalGstreamerCheck extends DoctorCheck {
   GSTREAMER_BINARY = `gst-launch-1.0${system.isWindows() ? '.exe' : ''}`;
   GST_INSPECT_BINARY = `gst-inspect-1.0${system.isWindows() ? '.exe' : ''}`;
 
+  /**
+   * @override
+   */
   async diagnose() {
     const gstreamerPath = await resolveExecutablePath(this.GSTREAMER_BINARY);
     const gstInspectPath = await resolveExecutablePath(this.GST_INSPECT_BINARY);
@@ -125,7 +146,10 @@ class OptionalGstreamerCheck extends DoctorCheck {
         )
       : nokOptional(`${this.GSTREAMER_BINARY} and/or ${this.GST_INSPECT_BINARY} cannot be found`);
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @override
+   */
   async fix() {
     return (
       `${
@@ -137,11 +161,5 @@ class OptionalGstreamerCheck extends DoctorCheck {
 }
 checks.push(new OptionalGstreamerCheck());
 
-export {
-  EnvVarAndPathCheck,
-  AndroidToolCheck,
-  JavaOnPathCheck,
-  OptionalAppBundleCheck,
-  OptionalGstreamerCheck,
-};
+export {EnvVarAndPathCheck};
 export default checks;

@@ -2,6 +2,7 @@
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
+    "checkJs": true,
     "paths": {
       "@appium/support": ["../support"]
     }

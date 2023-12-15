@@ -12,7 +12,7 @@ class FixSkippedError extends Error {}
  */
 class DoctorCheck {
   /**
-   * @param {DoctorOpts} opts
+   * @param {DoctorOpts} [opts={}]
    */
   constructor(opts = {}) {
     this.autofix = !!opts.autofix;
@@ -20,17 +20,19 @@ class DoctorCheck {
 
   /**
    * Every doctor diagnose the symptoms
+   * @returns {Promise<import('./utils').CheckResult>}
    * @throws {Error}
    */
-  diagnose() {
+  async diagnose() {
     throw new Error('Not Implemented!');
   }
 
   /**
    * Every doctor suggest the solutions to fix the sickness
+   * @returns {Promise<string|null>}
    * @throws {Error}
    */
-  fix() {
+  async fix() {
     // return string for manual fixes.
     throw new Error('Not Implemented!');
   }
@@ -43,8 +45,11 @@ class Doctor {
      * @type {DoctorCheck[]}
      */
     this.checks = [];
+    /** @type {DoctorCheck[]} */
     this.checkOptionals = [];
+    /** @type {DoctorIssue[]} */
     this.toFix = [];
+    /** @type {DoctorIssue[]} */
     this.toFixOptionals = [];
   }
 
@@ -53,8 +58,7 @@ class Doctor {
    * @param {DoctorCheck[] | DoctorCheck} checks
    */
   register(checks) {
-    checks = Array.isArray(checks) ? checks : [checks];
-    this.checks = this.checks.concat(checks);
+    this.checks.push(...(Array.isArray(checks) ? checks : [checks]));
   }
 
   /**
@@ -96,17 +100,24 @@ class Doctor {
     log.info('');
   }
 
-  async reportManualFixes(fix, fixOptioal) {
-    const manualFixes = _.filter(fix, (f) => !f?.check?.autofix);
-    const manualFixesOptional = _.filter(fixOptioal, (f) => !f?.check?.autofix);
+  /**
+   * @param {DoctorIssue[]} fixes
+   * @param {DoctorIssue[]} optionalFixes
+   */
+  async reportManualFixes(fixes, optionalFixes) {
+    const manualFixes = _.filter(fixes, (f) => !f?.check?.autofix);
+    const manualFixesOptional = _.filter(optionalFixes, (f) => !f?.check?.autofix);
 
     if (manualFixes.length > 0) {
       log.info('### Manual Fixes Needed ###');
       log.info('The configuration cannot be automatically fixed, please do the following first:');
-      // for manual fixes, the fix method always return a string
+      /** @type {string[]} */
       const fixMessages = [];
       for (const f of manualFixes) {
-        fixMessages.push(await f.check.fix());
+        const message = await f.check.fix();
+        if (message) {
+          fixMessages.push(message);
+        }
       }
       for (const m of _.uniq(fixMessages)) {
         log.warn(` \u279C ${m}`);
@@ -116,10 +127,13 @@ class Doctor {
     if (manualFixesOptional.length > 0) {
       log.info('### Optional Manual Fixes ###');
       log.info('The configuration can install optionally. Please do the following manually:');
-      // for manual fixes, the fix method always return a string
+      /** @type {string[]} */
       const fixMessages = [];
       for (const f of manualFixesOptional) {
-        fixMessages.push(await f.check.fix());
+        const message = await f.check.fix();
+        if (message) {
+          fixMessages.push(message);
+        }
       }
       for (const m of _.uniq(fixMessages)) {
         log.warn(` \u279C ${m}`);
@@ -137,6 +151,9 @@ class Doctor {
     return false;
   }
 
+  /**
+   * @param {DoctorIssue} f
+   */
   async runAutoFix(f) {
     log.info(`### Fixing: ${f.error} ###`);
     try {
@@ -152,7 +169,7 @@ class Doctor {
       }
     }
     log.info('Checking if this was fixed:');
-    let res = await f.check.diagnose();
+    const res = await f.check.diagnose();
     if (res.ok) {
       f.fixed = true;
       log.info(` ${'\u2714'.green} ${res.message}`);
@@ -164,8 +181,8 @@ class Doctor {
   }
 
   async runAutoFixes() {
-    let autoFixes = _.filter(this.toFix, (f) => f?.check?.autofix);
-    for (let f of autoFixes) {
+    const autoFixes = _.filter(this.toFix, (f) => f?.check?.autofix);
+    for (const f of autoFixes) {
       await this.runAutoFix(f);
       log.info('');
     }
@@ -191,8 +208,13 @@ class Doctor {
     await this.runAutoFixes();
   }
 
-  //// generating messages
-  // eslint-disable-next-line require-await
+  /**
+   * Generating messages
+   *
+   * @param {import('./utils').CheckResult} result
+   * @param {DoctorIssue[]} toFixList
+   * @param {DoctorCheck} check
+   */
   async diagnosticResultMessage(result, toFixList, check) {
     if (result.ok) {
       log.info(` ${'\u2714'.green} ${result.message}`);
@@ -208,7 +230,11 @@ class Doctor {
     }
   }
 
-  // eslint-disable-next-line require-await
+  /**
+   * @param {number} length
+   * @param {boolean} [optional=false]
+   * @returns {Promise<string>}
+   */
   async fixMessage(length, optional = false) {
     let message;
     switch (length) {
@@ -223,7 +249,12 @@ class Doctor {
     }
     return `${message} ${optional ? 'possible' : 'needed'}`;
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @param {number} length
+   * @param {number} lengthOptional
+   * @returns {Promise<boolean>}
+   */
   async reportSuccess(length, lengthOptional) {
     if (length === 0 && lengthOptional === 0) {
       log.info('Everything looks good, bye!');
@@ -239,5 +270,12 @@ export {Doctor, DoctorCheck, FixSkippedError};
 
 /**
  * @typedef DoctorOpts
- * @property {boolean?} autofix
+ * @property {boolean?} [autofix]
+ */
+
+/**
+ * @typedef DoctorIssue
+ * @property {DoctorCheck} check
+ * @property {string} error
+ * @property {boolean} [fixed]
  */

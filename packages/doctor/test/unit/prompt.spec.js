@@ -1,14 +1,14 @@
 import {fixIt, clear} from '../../lib/prompt';
-import {inquirer} from '../../lib/utils';
+import * as utils from '../../lib/utils';
 import {withMocks} from '@appium/test-support';
 import B from 'bluebird';
 
 describe(
   'prompt',
-  withMocks({inquirer}, (mocks) => {
+  withMocks({utils}, (mocks) => {
     it('fixit - yes', async function () {
       clear();
-      mocks.inquirer
+      mocks.utils
         .expects('prompt')
         .once()
         .returns(B.resolve({confirmation: 'yes'}));
@@ -18,7 +18,7 @@ describe(
 
     it('fixit always ', async function () {
       clear();
-      mocks.inquirer
+      mocks.utils
         .expects('prompt')
         .once()
         .returns(B.resolve({confirmation: 'always'}));
@@ -30,7 +30,7 @@ describe(
 
     it('fixit never ', async function () {
       clear();
-      mocks.inquirer
+      mocks.utils
         .expects('prompt')
         .once()
         .returns(B.resolve({confirmation: 'never'}));

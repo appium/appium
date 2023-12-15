@@ -4,12 +4,18 @@ import {ok, nok} from './utils';
 import '@colors/colors';
 
 // Check env variables
-class EnvVarAndPathCheck extends DoctorCheck {
+export class EnvVarAndPathCheck extends DoctorCheck {
+  /**
+   * @param {string} varName
+   */
   constructor(varName) {
     super();
     this.varName = varName;
   }
 
+  /**
+   * @override
+   */
   async diagnose() {
     let varValue = process.env[this.varName];
     if (typeof varValue === 'undefined') {
@@ -29,7 +35,10 @@ class EnvVarAndPathCheck extends DoctorCheck {
     return nok(err_msg);
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     return (
       `Make sure the environment variable ${this.varName.bold} is properly configured for the Appium process. ` +
       `Refer https://github.com/appium/java-client/blob/master/docs/environment.md for more details.`

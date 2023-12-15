@@ -7,15 +7,21 @@ import '@colors/colors';
 /**
  * @type {import('./factory').DoctorCheckList}
  */
-let checks = [];
+const checks = [];
 
 // Check PATH binaries
-class BinaryIsInPathCheck extends DoctorCheck {
+export class BinaryIsInPathCheck extends DoctorCheck {
+  /**
+   * @param {string} binary
+   */
   constructor(binary) {
     super();
     this.binary = binary;
   }
 
+  /**
+   * @override
+   */
   async diagnose() {
     const resolvedPath = await resolveExecutablePath(this.binary);
     if (!resolvedPath) {
@@ -25,22 +31,33 @@ class BinaryIsInPathCheck extends DoctorCheck {
     return ok(`${this.binary} was found at ${resolvedPath}`);
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     return `Manually install the ${this.binary.bold} binary and add it to ${'PATH'.bold}.`;
   }
 }
 
-checks.push(new BinaryIsInPathCheck(system.isWindows() ? 'mvn.bat' : 'mvn'));
-checks.push(new BinaryIsInPathCheck(system.isWindows() ? 'ant.bat' : 'ant'));
-checks.push(new BinaryIsInPathCheck(system.isWindows() ? 'adb.exe' : 'adb'));
+checks.push(
+  new BinaryIsInPathCheck(system.isWindows() ? 'mvn.bat' : 'mvn'),
+  new BinaryIsInPathCheck(system.isWindows() ? 'ant.bat' : 'ant'),
+  new BinaryIsInPathCheck(system.isWindows() ? 'adb.exe' : 'adb'),
+);
 
 // Check Android SDKs
-class AndroidSdkExists extends DoctorCheck {
+export class AndroidSdkExists extends DoctorCheck {
+  /**
+   * @param {string} sdk
+   */
   constructor(sdk) {
     super();
     this.sdk = sdk;
   }
 
+  /**
+   * @override
+   */
   async diagnose() {
     if (typeof process.env.ANDROID_HOME === 'undefined') {
       return nok(`${this.sdk} could not be found because ANDROID_HOME is NOT set!`);
@@ -51,7 +68,10 @@ class AndroidSdkExists extends DoctorCheck {
       : nok(`${this.sdk} could NOT be found at '${sdkPath}'!`);
   }
 
-  fix() {
+  /**
+   * @override
+   */
+  async fix() {
     if (typeof process.env.ANDROID_HOME === 'undefined') {
       return `Manually configure ${'ANDROID_HOME'.bold}.`;
     }
@@ -59,8 +79,9 @@ class AndroidSdkExists extends DoctorCheck {
   }
 }
 
-checks.push(new AndroidSdkExists('android-16'));
-checks.push(new AndroidSdkExists('android-19'));
+checks.push(
+  new AndroidSdkExists('android-16'),
+  new AndroidSdkExists('android-19'),
+);
 
-export {BinaryIsInPathCheck, AndroidSdkExists};
 export default checks;

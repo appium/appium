@@ -9,11 +9,11 @@ import demoChecks from './demo';
 /**
  * @type {DoctorGroup}
  */
-let checks = {generalChecks, iosChecks, androidChecks, devChecks, demoChecks};
+const checks = {generalChecks, iosChecks, androidChecks, devChecks, demoChecks};
 
-let newDoctor = (opts) => {
-  let doctor = new Doctor();
-  for (let [k, v] of _.toPairs(opts)) {
+const newDoctor = (/** @type {Record<string, any>} */ opts) => {
+  const doctor = new Doctor();
+  for (const [k, v] of _.toPairs(opts)) {
     if (v) {
       doctor.register(checks[`${k}Checks`] || []);
     }

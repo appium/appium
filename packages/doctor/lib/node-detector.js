@@ -2,7 +2,10 @@ import log from './logger';
 import {resolveExecutablePath} from './utils';
 
 // Look for node
-class NodeDetector {
+export class NodeDetector {
+  /**
+   * @returns {Promise<string?>}
+   */
   static async retrieveUsingSystemCall() {
     const nodePath = await resolveExecutablePath('node');
 
@@ -15,6 +18,9 @@ class NodeDetector {
     return nodePath;
   }
 
+  /**
+   * @returns {Promise<string?>}
+   */
   static async detect() {
     const nodePath = await NodeDetector.retrieveUsingSystemCall();
     if (nodePath) {

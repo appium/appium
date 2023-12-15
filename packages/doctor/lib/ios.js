@@ -10,11 +10,14 @@ import '@colors/colors';
 /**
  * @type {import('./factory').DoctorCheckList}
  */
-let checks = [];
-let fixes = {};
+const checks = [];
+export const fixes = {};
 
 // Check for Xcode.
-class XcodeCheck extends DoctorCheck {
+export class XcodeCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     let xcodePath;
     try {
@@ -34,7 +37,9 @@ class XcodeCheck extends DoctorCheck {
       : nok(`Xcode cannot be found at '${xcodePath}'!`);
   }
 
-  // eslint-disable-next-line require-await
+  /**
+   * @override
+   */
   async fix() {
     return `Manually install ${
       'Xcode'.bold
@@ -44,11 +49,14 @@ class XcodeCheck extends DoctorCheck {
 checks.push(new XcodeCheck());
 
 // Check for Xcode Command Line Tools.
-class XcodeCmdLineToolsCheck extends DoctorCheck {
+export class XcodeCmdLineToolsCheck extends DoctorCheck {
   constructor() {
     super({autofix: true});
   }
 
+  /**
+   * @override
+   */
   async diagnose() {
     const errMess = 'Xcode Command Line Tools are NOT installed!';
     try {
@@ -61,6 +69,9 @@ class XcodeCmdLineToolsCheck extends DoctorCheck {
     }
   }
 
+  /**
+   * @override
+   */
   async fix() {
     log.info(`The following command need be executed: xcode-select --install`);
     let yesno = await fixIt();
@@ -70,13 +81,17 @@ class XcodeCmdLineToolsCheck extends DoctorCheck {
       log.info(`Skipping you will need to install ${'Xcode'.bold} manually.`);
       throw new FixSkippedError();
     }
+    return null;
   }
 }
 
 checks.push(new XcodeCmdLineToolsCheck());
 
 // Dev Tools Security
-class DevToolsSecurityCheck extends DoctorCheck {
+export class DevToolsSecurityCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const errMess = 'DevToolsSecurity is NOT enabled!';
     let stdout;
@@ -89,11 +104,15 @@ class DevToolsSecurityCheck extends DoctorCheck {
     return stdout && stdout.match(/enabled/) ? ok('DevToolsSecurity is enabled.') : nok(errMess);
   }
 }
-checks.push(new DevToolsSecurityCheck());
+checks.push(
+  new DevToolsSecurityCheck(),
+  new EnvVarAndPathCheck('HOME'),
+);
 
-checks.push(new EnvVarAndPathCheck('HOME'));
-
-class OptionalLyftCommandCheck extends DoctorCheck {
+export class OptionalLyftCommandCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const lyftCmd = await resolveExecutablePath('set-simulator-location');
     if (lyftCmd) {
@@ -102,7 +121,10 @@ class OptionalLyftCommandCheck extends DoctorCheck {
 
     return nokOptional('set-simulator-location is not installed');
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @override
+   */
   async fix() {
     return (
       `${'set-simulator-location'.bold} is needed to set location for Simulator. ` +
@@ -112,7 +134,10 @@ class OptionalLyftCommandCheck extends DoctorCheck {
 }
 checks.push(new OptionalLyftCommandCheck());
 
-class OptionalIdbCommandCheck extends DoctorCheck {
+export class OptionalIdbCommandCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const fbIdbPath = await resolveExecutablePath('idb');
     const fbCompanionIdbPath = await resolveExecutablePath('idb_companion');
@@ -127,7 +152,10 @@ class OptionalIdbCommandCheck extends DoctorCheck {
     }
     return nokOptional('idb and idb_companion are not installed');
   }
-  // eslint-disable-next-line require-await
+
+  /**
+   * @override
+   */
   async fix() {
     return `Why ${'idb'.bold} is needed and how to install it: ${
       OptionalIdbCommandCheck.idbReadmeURL
@@ -139,7 +167,10 @@ class OptionalIdbCommandCheck extends DoctorCheck {
 OptionalIdbCommandCheck.idbReadmeURL = 'https://git.io/JnxQc';
 checks.push(new OptionalIdbCommandCheck());
 
-class OptionalApplesimutilsCommandCheck extends DoctorCheck {
+export class OptionalApplesimutilsCommandCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const applesimutilsPath = await resolveExecutablePath('applesimutils');
     return applesimutilsPath
@@ -151,16 +182,22 @@ class OptionalApplesimutilsCommandCheck extends DoctorCheck {
       : nokOptional('applesimutils cannot be found');
   }
 
-  // eslint-disable-next-line require-await
+  /**
+   * @override
+   */
   async fix() {
     return `Why ${
       'applesimutils'.bold
-    } is needed and how to install it: https://github.com/appium/appium-xcuitest-driver/blob/master/docs/execute-methods.md#mobile-setpermission`;
+    } is needed and how to install it: ` +
+    `https://github.com/appium/appium-xcuitest-driver/blob/master/docs/execute-methods.md#mobile-setpermission`;
   }
 }
 checks.push(new OptionalApplesimutilsCommandCheck());
 
-class OptionalIOSDeployCommandCheck extends DoctorCheck {
+export class OptionalIOSDeployCommandCheck extends DoctorCheck {
+  /**
+   * @override
+   */
   async diagnose() {
     const iosDeployPath = await resolveExecutablePath('ios-deploy');
     return iosDeployPath
@@ -172,23 +209,16 @@ class OptionalIOSDeployCommandCheck extends DoctorCheck {
       : nokOptional('ios-deploy cannot be found');
   }
 
-  // eslint-disable-next-line require-await
+  /**
+   * @override
+   */
   async fix() {
     return `${
       'ios-deploy'.bold
-    } is used as a fallback command to install iOS applications to real device. Please read https://github.com/ios-control/ios-deploy/ to install it`;
+    } is used as a fallback command to install iOS applications to real device. ` +
+    `Please read https://github.com/ios-control/ios-deploy/ to install it`;
   }
 }
 checks.push(new OptionalIOSDeployCommandCheck());
 
-export {
-  fixes,
-  XcodeCheck,
-  XcodeCmdLineToolsCheck,
-  DevToolsSecurityCheck,
-  OptionalIdbCommandCheck,
-  OptionalApplesimutilsCommandCheck,
-  OptionalIOSDeployCommandCheck,
-  OptionalLyftCommandCheck,
-};
 export default checks;

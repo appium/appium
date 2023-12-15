@@ -14,12 +14,16 @@ Appium has a graphical client which can be used to inspect application screensho
 application hierarchy, run Appium commands, record app interactions, and more. It is very useful
 for Appium test development.
 
-Learn more on its GitHub page: [Appium Inspector](https://github.com/appium/appium-inspector)
+Find downloads and more information on its GitHub page: [Appium Inspector](https://github.com/appium/appium-inspector)
 
 ### Appium Doctor
 
 The `appium-doctor` CLI tool can be used to validate proper environment setup for Android and iOS
-automation, and identify any common configuration issues.
+automation, and identify any common configuration issues. It can be installed with `npm`:
+
+```sh
+npm install -g @appium/doctor
+```
 
 Learn more on its GitHub page: [Appium Doctor](https://github.com/appium/appium/tree/master/packages/doctor)
 

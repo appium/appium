@@ -78,7 +78,7 @@ export class XcodeCmdLineToolsCheck extends DoctorCheck {
     if (yesno === 'yes') {
       await exec('xcode-select', ['--install']);
     } else {
-      log.info(`Skipping you will need to install ${'Xcode'.bold} manually.`);
+      log.info(`Skipping. You will need to install ${'Xcode'.bold} manually.`);
       throw new FixSkippedError();
     }
     return null;

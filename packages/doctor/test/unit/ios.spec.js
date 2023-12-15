@@ -179,7 +179,7 @@ describe('ios', function () {
         logStub.output.should.equal(
           [
             'info: The following command need be executed: xcode-select --install',
-            'info: Skipping you will need to install Xcode manually.',
+            'info: Skipping. You will need to install Xcode manually.',
           ].join('\n')
         );
       });

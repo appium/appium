@@ -117,7 +117,7 @@ describe('demo', function () {
         logStub.output.should.equal(
           [
             "info: The following command need be executed: touch '/a/b/c/d'",
-            "info: Skipping you will need to touch '/a/b/c/d' manually.",
+            "info: Skipping. You will need to touch '/a/b/c/d' manually.",
           ].join('\n')
         );
       });

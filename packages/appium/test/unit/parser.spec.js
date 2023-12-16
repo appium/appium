@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
 import {getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
@@ -354,7 +355,7 @@ describe('parser', function () {
         args.subcommand.should.eql(DRIVER_TYPE);
         args.driverCommand.should.eql('run');
         args.driver.should.eql('foo');
-        args.scriptName.should.eql(null);
+        _.isNull(args.scriptName).should.be.true;
         args.json.should.eql(false);
       });
       it('should take a driverName and scriptName to run', function () {
@@ -377,7 +378,7 @@ describe('parser', function () {
         args.subcommand.should.eql(PLUGIN_TYPE);
         args.pluginCommand.should.eql('run');
         args.plugin.should.eql('foo');
-        args.scriptName.should.eql(null);
+        _.isNull(args.scriptName).should.be.true;
         args.json.should.eql(false);
       });
       it('should take a pluginName and scriptName to run', function () {

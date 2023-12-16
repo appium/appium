@@ -349,8 +349,13 @@ describe('parser', function () {
       it('should not allow an empty driver argument list', function () {
         (() => p.parseArgs([DRIVER_TYPE, 'run'])).should.throw();
       });
-      it('should not allow no driver scriptName', function () {
-        (() => p.parseArgs([DRIVER_TYPE, 'run', 'foo'])).should.throw();
+      it('should allow no driver scriptName', function () {
+        const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo']);
+        args.subcommand.should.eql(DRIVER_TYPE);
+        args.driverCommand.should.eql('run');
+        args.driver.should.eql('foo');
+        args.scriptName.should.eql(null);
+        args.json.should.eql(false);
       });
       it('should take a driverName and scriptName to run', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar']);
@@ -367,8 +372,13 @@ describe('parser', function () {
       it('should not allow an empty plugin argument list', function () {
         (() => p.parseArgs([PLUGIN_TYPE, 'run'])).should.throw();
       });
-      it('should not allow no plugin scriptName', function () {
-        (() => p.parseArgs([PLUGIN_TYPE, 'run', 'foo'])).should.throw();
+      it('should allow no plugin scriptName', function () {
+        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);
+        args.subcommand.should.eql(PLUGIN_TYPE);
+        args.pluginCommand.should.eql('run');
+        args.plugin.should.eql('foo');
+        args.scriptName.should.eql(null);
+        args.json.should.eql(false);
       });
       it('should take a pluginName and scriptName to run', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);

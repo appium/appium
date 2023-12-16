@@ -888,7 +888,7 @@ export {ExtensionCliCommand as ExtensionCommand};
  * @typedef RunOptions
  * @property {string} installSpec - name of the extension to run a script from
  * @property {string} [scriptName] - name of the script to run. If not provided
- * then all scripts will be pronted
+ * then all available script names will be printed
  * @property {string[]} [extraArgs] - arguments to pass to the script
  * @property {boolean} [bufferOutput] - if true, will buffer the output of the script and return it
  */

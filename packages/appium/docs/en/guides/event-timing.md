@@ -1,5 +1,8 @@
 ---
-title: The Event Timing API
+hide:
+  - toc
+
+title: Retrieving Event Timings
 ---
 
 Appium comes with the ability to retrieve timing information about startup

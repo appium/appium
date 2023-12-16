@@ -1,4 +1,7 @@
 ---
+hide:
+  - toc
+
 title: Write a Test (Ruby)
 ---
 
@@ -53,4 +56,4 @@ bundle exec ruby test.rb
 If all goes well, you'll see the Settings app open up and navigate to the "Battery" view before the
 app closes again.
 
-Congratulations, you've started your Appium journey! Read on for some next steps to explore.
+Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.

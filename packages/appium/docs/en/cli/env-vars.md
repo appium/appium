@@ -1,8 +1,11 @@
 ---
+hide:
+  - toc
+
 title: Server Environment Variables
 ---
 
-The primary way of configuring the Appium server is via [CLI Args](./args.md). However, some more
+The primary way of configuring the Appium server is via [Command-Line Arguments](./args.md). However, some more
 advanced features are toggled or configured via environment variables. To set environment
 variables, refer to the documentation for your operating system and terminal. These are the
 environment variables that the Appium server understands:
@@ -14,5 +17,5 @@ environment variables that the Appium server understands:
 |`APPIUM_PREFER_SYSTEM_UNZIP`|Set to `0` or `false` to request that Appium not use the `unzip` binary included on your system for unzipping downloaded apps or other artifacts. Instead it will use a JS-based unzip library. This could help on some systems with non-existent or non-standard `unzip` commands. Note that if unzipping fails using the system library, the fallback library will be attempted in any case, so setting this env var merely saves time in the event you know the system unzip will fail.|
 |`APPIUM_HOST`|Same as the `--address` CLI arg|
 |`APPIUM_PORT`|Same as the `--port` CLI arg|
-|`APPIUM_RELOAD_EXTENSIONS`|Set to `1` to cause Appium to re-require extensions when new sessions are created. This is mostly useful for [building extensions](../ecosystem/build-drivers.md)|
+|`APPIUM_RELOAD_EXTENSIONS`|Set to `1` to cause Appium to re-require extensions when new sessions are created. This is mostly useful for [building extensions](../developing/build-drivers.md)|
 |`APPIUM_OMIT_PEER_DEPS`|Adds `--omit=peer` to all the NPM commands run internally by Appium. Mostly an internal feature.|

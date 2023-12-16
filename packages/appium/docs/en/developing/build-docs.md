@@ -1,5 +1,5 @@
 ---
-title: Building Docs for Appium Extensions
+title: Building Documentation
 ---
 
 Once you've [built a driver](./build-drivers.md) or [built a plugin](./build-plugins.md) for Appium,

@@ -11,12 +11,11 @@ nav:
   - 導入:
       - Appiumについて:
           - Appiumの全体像: intro/index.md
+  - Command Reference:
+      - ../en/commands/base-driver.md
+      - ../en/commands/execute-driver-plugin.md
+      - ../en/commands/images-plugin.md
+      - ../en/commands/relaxed-caps-plugin.md
+      - ../en/commands/universal-xml-plugin.md
   - 手引き:
       - guides/migrating-1-to-2.md
-  - Reference:
-      - ../en/reference/commands/base-driver.md
-      - ../en/reference/commands/execute-driver-plugin.md
-      - ../en/reference/commands/fake-driver.md
-      - ../en/reference/commands/images-plugin.md
-      - ../en/reference/commands/relaxed-caps-plugin.md
-      - ../en/reference/commands/universal-xml-plugin.md

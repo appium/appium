@@ -227,7 +227,7 @@ Appium 的大多数capabilities都超出了标准的 W3C capabilities,
 ### :bangbang: 图像分析功能移至插件
 
 Appium 2.0 的设计目标之一是
-将非核心功能迁移到名为 [plugins](../ecosystem/index.md)的特殊扩展中.
+将非核心功能迁移到名为 [plugins](../ecosystem/plugins.md)的特殊扩展中.
 这允许人们选择使用额外时间来下载或扩展系统设置的功能. 
 Appium的各种图像相关功能 (图像比较, 按图像查找元素等) 已被移动到一个名为 [images](https://github.com/appium/appium/tree/master/packages/images-plugin)的官方支持的插件中. 
 

@@ -24,10 +24,22 @@ nav:
           - quickstart/test-py.md
           - quickstart/test-java.md
       - quickstart/next-steps.md
+  - 生态系统:
+      - ecosystem/index.md
+      - 开发 Appium 扩展:
+          - ecosystem/build-drivers.md
+          - ecosystem/build-plugins.md
+          - ecosystem/build-docs.md
   - 命令行参考:
       - cli/index.md
       - cli/args.md
       - cli/extensions.md
+  - Command Reference:
+      - ../en/commands/base-driver.md
+      - ../en/commands/execute-driver-plugin.md
+      - ../en/commands/images-plugin.md
+      - ../en/commands/relaxed-caps-plugin.md
+      - ../en/commands/universal-xml-plugin.md
   - 指南:
       - guides/migrating-1-to-2.md
       - guides/managing-exts.md
@@ -40,19 +52,5 @@ nav:
       - guides/event-timing.md
       - guides/log-filters.md
       - guides/grid.md
-  - 生态系统:
-      - ecosystem/index.md
-      - 开发 Appium 扩展:
-          - ecosystem/build-drivers.md
-          - ecosystem/build-plugins.md
-          - ecosystem/build-docs.md
-  - 贡献: contributing/index.md
   - 更多 Appium 资源: resources.md
-  - 问题: https://github.com/appium/appium/issues
-  - Reference:
-      - ../en/reference/commands/base-driver.md
-      - ../en/reference/commands/execute-driver-plugin.md
-      - ../en/reference/commands/fake-driver.md
-      - ../en/reference/commands/images-plugin.md
-      - ../en/reference/commands/relaxed-caps-plugin.md
-      - ../en/reference/commands/universal-xml-plugin.md
+  - 贡献: contributing/index.md

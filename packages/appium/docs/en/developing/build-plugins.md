@@ -1,10 +1,10 @@
 ---
-title: Building Appium Plugins
+title: Building Plugins
 ---
 
 This is a high-level guide for developing Appium plugins, which is not something most Appium users
 need to know or care about. If you are not familiar with Appium plugins yet from a user
-perspective, check out the [list of plugins](./index.md#plugins) to play around with some and get
+perspective, check out the [list of plugins](../ecosystem/plugins.md) to play around with some and get
 an idea of the sorts of things that plugins can do. Plugins are a powerful system for augmenting
 Appium's functionality or changing the way Appium works. They can be distributed to other Appium
 users and can extend Appium's ecosystem in all kinds of interesting ways! (There is also
@@ -27,7 +27,7 @@ There are a wide variety of open source Appium plugins available for perusal. It
 recommended to explore the code for some other plugins before embarking on writing your own. The
 Appium team maintains a set of official plugins in the [Appium GitHub
 repo](https://github.com/appium/appium). Links to other open source plugins can be found in the
-[Plugin list](./index.md#plugins)
+[Plugin list](../ecosystem/plugins.md)
 
 ## Basic requirements for plugins
 
@@ -41,7 +41,7 @@ Node.js so it can be loaded by Appium.
 
 Your `package.json` must include `appium` as a `peerDependency`. The requirements for the
 dependency versions should be as loose as possible (unless you happen to know your plugin will only
-work with certain versions of Appium). For Appium 2.0, for example, this would look something like
+work with certain versions of Appium). For Appium 2, for example, this would look something like
 `^2.0.0`, declaring that your plugin works with any version of Appium that starts with 2.x.
 
 Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension

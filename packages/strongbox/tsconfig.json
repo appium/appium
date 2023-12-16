@@ -4,6 +4,7 @@
     "rootDir": ".",
     "outDir": "build",
     "strict": true,
+    "checkJs": true,
     "types": ["node", "mocha", "chai", "chai-as-promised", "sinon-chai"]
   },
   "include": ["lib", "test"],

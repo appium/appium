@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "build",
+    "checkJs": true,
     "paths": {
       "@appium/support": ["../support"],
       "@appium/types": ["../types"]

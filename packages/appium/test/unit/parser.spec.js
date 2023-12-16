@@ -373,7 +373,7 @@ describe('parser', function () {
         (() => p.parseArgs([PLUGIN_TYPE, 'run'])).should.throw();
       });
       it('should allow no plugin scriptName', function () {
-        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);
+        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo']);
         args.subcommand.should.eql(PLUGIN_TYPE);
         args.pluginCommand.should.eql('run');
         args.plugin.should.eql('foo');

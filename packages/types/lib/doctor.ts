@@ -8,11 +8,11 @@ export interface DoctorCheckResult {
    */
   ok: boolean;
   /**
-   * Whether the diagnosed issue is dafe to ignore
+   * Whether the diagnosed issue is safe to ignore
    */
   optional: boolean;
   /**
-   * The actual issue description if {@link ok} is false
+   * The text message describing the diagnostic result
    */
   message: string;
 }

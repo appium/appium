@@ -1,8 +1,9 @@
 import '@colors/colors';
 import _ from 'lodash';
-import log from '../logger';
-import { util } from '@appium/support';
+import { util, logger } from '@appium/support';
 import { FixSkippedError } from '@appium/types';
+
+const log = logger.getLogger('Doctor');
 
 export class Doctor {
   /**
@@ -40,7 +41,7 @@ export class Doctor {
    * The doctor shows the report
    */
   async diagnose() {
-    log.info(`### Diagnostic for ${'necessary'.green} starting ###`);
+    log.info(`### Starting doctor diagnostics  ###`);
     this.foundIssues = [];
     for (const check of this.checks) {
       const res = await check.diagnose();
@@ -50,7 +51,7 @@ export class Doctor {
       }
     }
     log.info(
-      `### Diagnostic for dependencies completed, ${this.buildFixMessage()}. ###`
+      `### Diagnostic completed, ${this.buildFixMessage()}. ###`
     );
     log.info('');
   }
@@ -96,7 +97,7 @@ export class Doctor {
     if (manualIssues.length > 0) {
       log.info('###');
       log.info('');
-      log.info('Bye! Run appium-doctor again when all manual fixes have been applied!');
+      log.info('Bye! Run doctor again when all manual fixes have been applied!');
       log.info('');
       return true;
     }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {fs, system} = require('@appium/support');
+const {fs} = require('@appium/support');
 
 /**
  * @param {string} message
@@ -18,7 +18,7 @@ function nok(message) {
 }
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */
-export class EnvVarAndPathCheck {
+class EnvVarAndPathCheck {
   /**
    * @param {string} varName
    */
@@ -43,6 +43,14 @@ export class EnvVarAndPathCheck {
     return (
       `Make sure the environment variable ${this.varName} is properly configured for the Appium server process`
     );
+  }
+
+  hasAutofix() {
+    return false;
+  }
+
+  isOptional() {
+    return false;
   }
 }
 

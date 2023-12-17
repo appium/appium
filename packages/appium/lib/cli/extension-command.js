@@ -734,9 +734,8 @@ class ExtensionCliCommand {
       );
     }
     const paths = doctorSpec.checks.map((/** @type {string} */ p) => {
-      const relative = path.relative(moduleRoot, p);
-      const isSubPath = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
-      if (!isSubPath) {
+      const fullPath = path.normalize(path.join(moduleRoot, p));
+      if (!fullPath.startsWith(path.normalize(moduleRoot))) {
         this.log.error(
           `The doctor check script '${p}' in the package manifest '${packageJsonPath}' must be located ` +
           `in the '${moduleRoot}' root folder. It will be skipped`
@@ -760,10 +759,7 @@ class ExtensionCliCommand {
       loadChecksPromises.push(promise);
     }
     const isDoctorCheck = (/** @type {any} */ x) =>
-      _.has(x, 'diagnose') && _.isFunction(x.diagnose)
-      && _.has(x, 'fix') && _.isFunction(x.fix)
-      && _.has(x, 'hasAutofix') && _.isFunction(x.isAutofix)
-      && _.has(x, 'isOptional') && _.isFunction(x.isOptional);
+      ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) => _.isFunction(x?.[method]));
     /** @type {import('@appium/types').IDoctorCheck[]} */
     const checks = _.flatMap((await B.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
       .map(([, value]) => value)
@@ -772,7 +768,10 @@ class ExtensionCliCommand {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
       return [];
     }
-    this.log.debug(`Successfully loaded ${util.pluralize('doctor check', checks.length, true)}`);
+    this.log.debug(
+      `Running ${util.pluralize('doctor check', checks.length, true)} ` +
+      `for the "${installSpec}" ${this.type}`
+    );
     await new Doctor(checks).run();
     return checks;
   }

@@ -734,15 +734,15 @@ class ExtensionCliCommand {
       );
     }
     const paths = doctorSpec.checks.map((/** @type {string} */ p) => {
-      const fullPath = path.normalize(path.join(moduleRoot, p));
-      if (!fullPath.startsWith(path.normalize(moduleRoot))) {
+      const scriptPath = path.resolve(moduleRoot, p);
+      if (!path.normalize(scriptPath).startsWith(path.normalize(moduleRoot))) {
         this.log.error(
           `The doctor check script '${p}' from the package manifest '${packageJsonPath}' must be located ` +
           `in the '${moduleRoot}' root folder. It will be skipped`
         );
         return null;
       }
-      return path.join(moduleRoot, p);
+      return scriptPath;
     }).filter(Boolean);
     /** @type {Promise[]} */
     const loadChecksPromises = [];

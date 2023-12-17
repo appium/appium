@@ -730,14 +730,14 @@ class ExtensionCliCommand {
     if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
       throw this._createFatalError(
         `The 'doctor' entry in the package manifest '${packageJsonPath}' must be a proper object ` +
-        `'checks' key with the array of script names`
+        `containing the 'checks' key with the array of script paths`
       );
     }
     const paths = doctorSpec.checks.map((/** @type {string} */ p) => {
       const fullPath = path.normalize(path.join(moduleRoot, p));
       if (!fullPath.startsWith(path.normalize(moduleRoot))) {
         this.log.error(
-          `The doctor check script '${p}' in the package manifest '${packageJsonPath}' must be located ` +
+          `The doctor check script '${p}' from the package manifest '${packageJsonPath}' must be located ` +
           `in the '${moduleRoot}' root folder. It will be skipped`
         );
         return null;

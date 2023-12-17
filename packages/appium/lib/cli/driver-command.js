@@ -67,6 +67,18 @@ export default class DriverCliCommand extends ExtensionCliCommand {
   }
 
   /**
+   * Runs doctor checks for the given driver
+   *
+   * @param {DriverDoctorOptions} opts
+   * @returns {Promise<void>}
+   */
+  async doctor({driver}) {
+    return await super._doctor({
+      installSpec: driver,
+    });
+  }
+
+  /**
    *
    * @param {import('./extension-command').ExtensionArgs} opts
    * @returns {string}
@@ -150,4 +162,10 @@ export default class DriverCliCommand extends ExtensionCliCommand {
  * @property {string} driver - name of the driver to run a script from
  * @property {string} scriptName - name of the script to run
  * @property {string[]} [extraArgs] - arguments to pass to the script
+ */
+
+/**
+ * Options for {@linkcode DriverCliCommand.doctor}.
+ * @typedef DriverDoctorOptions
+ * @property {string} driver - name of the driver to run doctor checks for
  */

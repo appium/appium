@@ -10,3 +10,4 @@ export * from './http';
 export * from './util';
 export * from './server';
 export * from './logger';
+export * from './doctor';

@@ -19,7 +19,7 @@ export type CliCommand = CliCommandServer | CliExtensionCommand;
  * Possible subcommands of {@linkcode CliCommandDriver} or
  * {@linkcode CliCommandPlugin}.
  */
-export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update';
+export type CliExtensionSubcommand = 'install' | 'list' | 'run' | 'uninstall' | 'update'| 'doctor';
 
 export interface CliExtensionSubcommandListArgs {
   showInstalled?: boolean;

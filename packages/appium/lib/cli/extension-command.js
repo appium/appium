@@ -2,7 +2,7 @@
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
-import {npm, util, env, console} from '@appium/support';
+import {npm, util, env, console, fs, system} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
 import {
   INSTALL_TYPE_NPM,
@@ -15,6 +15,8 @@ import {SubProcess} from 'teen_process';
 import {packageDidChange} from '../extension/package-changed';
 import {spawn} from 'child_process';
 import {inspect} from 'node:util';
+import {pathToFileURL} from 'url';
+import {Doctor} from '../doctor/doctor';
 
 const UPDATE_ALL = 'installed';
 
@@ -696,6 +698,86 @@ class ExtensionCliCommand {
   }
 
   /**
+   * Runs doctor checks for the given extension
+   *
+   * @param {DoctorOptions} opts
+   * @returns {Promise<void>}
+   */
+  async _doctor({installSpec}) {
+    if (!this.config.isInstalled(installSpec)) {
+      throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
+    }
+
+    const moduleRoot = this.config.getInstallPath(installSpec);
+    const packageJsonPath = path.join(moduleRoot, 'package.json');
+    if (!await fs.exists(packageJsonPath)) {
+      throw this._createFatalError(
+        `No package.json could be found for "${installSpec}" ${this.type}`
+      );
+    }
+    let doctorSpec;
+    try {
+      doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).doctor;
+    } catch (e) {
+      throw this._createFatalError(
+        `The manifest at '${packageJsonPath}' cannot be parsed: ${e.message}`
+      );
+    }
+    if (!doctorSpec) {
+      this.log.info(`The ${this.type} "${installSpec}" does not export any doctor checks`);
+      return;
+    }
+    if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
+      throw this._createFatalError(
+        `The 'doctor' entry in the package manifest '${packageJsonPath}' must be a proper object ` +
+        `'checks' key with the array of script names`
+      );
+    }
+    const paths = doctorSpec.checks.map((/** @type {string} */ p) => {
+      const relative = path.relative(moduleRoot, p);
+      const isSubPath = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+      if (!isSubPath) {
+        throw this._createFatalError(
+          `The 'doctor' check script '${p}' in the package manifest '${packageJsonPath}' must be located ` +
+          `in the '${moduleRoot}' root folder`
+        );
+      }
+      return path.join(moduleRoot, p);
+    });
+    this.log.debug(`Found ${util.pluralize('script', paths.length, true)} scripts containing doctor checks. ` +
+      `Loading them...`);
+    /** @type {Promise[]} */
+    const loadChecksPromises = [];
+    for (const p of paths) {
+      const promise = (async () => {
+        // https://github.com/nodejs/node/issues/31710
+        const scriptPath = system.isWindows() ? pathToFileURL(p).href : p;
+        try {
+          return await import(scriptPath);
+        } catch (e) {
+          this.log.warn(`Unable to load doctor checks from '${p}': ${e.message}`);
+        }
+      })();
+      loadChecksPromises.push(promise);
+    }
+    const isDoctorCheck = (/** @type {any} */ x) =>
+      _.has(x, 'diagnose') && _.isFunction(x.diagnose)
+      && _.has(x, 'fix') && _.isFunction(x.fix)
+      && _.has(x, 'hasAutofix') && _.isFunction(x.isAutofix)
+      && _.has(x, 'isOptional') && _.isFunction(x.isOptional);
+    /** @type {import('@appium/types').IDoctorCheck[]} */
+    const checks = _.flatMap((await B.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
+      .map(([, value]) => value)
+      .filter(isDoctorCheck);
+    if (_.isEmpty(checks)) {
+      this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
+      return;
+    }
+    this.log.debug(`Successfully loaded ${util.pluralize('doctor check', checks.length, true)}`);
+    await new Doctor(checks).run();
+  }
+
+  /**
    * Runs a script cached inside the `scripts` field under `appium`
    * inside of the extension's `package.json` file. Will throw
    * an error if the driver/plugin does not contain a `scripts` field
@@ -877,6 +959,12 @@ export {ExtensionCliCommand as ExtensionCommand};
  * @property {string} scriptName - name of the script to run
  * @property {string[]} [extraArgs] - arguments to pass to the script
  * @property {boolean} [bufferOutput] - if true, will buffer the output of the script and return it
+ */
+
+/**
+ * Options for {@linkcode ExtensionCliCommand.doctor}.
+ * @typedef DoctorOptions
+ * @property {string} installSpec - name of the extension to run doctor checks for
  */
 
 /**

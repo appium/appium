@@ -701,7 +701,7 @@ class ExtensionCliCommand {
    * Runs doctor checks for the given extension
    *
    * @param {DoctorOptions} opts
-   * @returns {Promise<void>}
+   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
    */
   async _doctor({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
@@ -717,7 +717,7 @@ class ExtensionCliCommand {
     }
     let doctorSpec;
     try {
-      doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).doctor;
+      doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).appium?.doctor;
     } catch (e) {
       throw this._createFatalError(
         `The manifest at '${packageJsonPath}' cannot be parsed: ${e.message}`
@@ -725,7 +725,7 @@ class ExtensionCliCommand {
     }
     if (!doctorSpec) {
       this.log.info(`The ${this.type} "${installSpec}" does not export any doctor checks`);
-      return;
+      return [];
     }
     if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
       throw this._createFatalError(
@@ -737,15 +737,14 @@ class ExtensionCliCommand {
       const relative = path.relative(moduleRoot, p);
       const isSubPath = relative && !relative.startsWith('..') && !path.isAbsolute(relative);
       if (!isSubPath) {
-        throw this._createFatalError(
-          `The 'doctor' check script '${p}' in the package manifest '${packageJsonPath}' must be located ` +
-          `in the '${moduleRoot}' root folder`
+        this.log.error(
+          `The doctor check script '${p}' in the package manifest '${packageJsonPath}' must be located ` +
+          `in the '${moduleRoot}' root folder. It will be skipped`
         );
+        return null;
       }
       return path.join(moduleRoot, p);
-    });
-    this.log.debug(`Found ${util.pluralize('script', paths.length, true)} scripts containing doctor checks. ` +
-      `Loading them...`);
+    }).filter(Boolean);
     /** @type {Promise[]} */
     const loadChecksPromises = [];
     for (const p of paths) {
@@ -771,10 +770,11 @@ class ExtensionCliCommand {
       .filter(isDoctorCheck);
     if (_.isEmpty(checks)) {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
-      return;
+      return [];
     }
     this.log.debug(`Successfully loaded ${util.pluralize('doctor check', checks.length, true)}`);
     await new Doctor(checks).run();
+    return checks;
   }
 
   /**

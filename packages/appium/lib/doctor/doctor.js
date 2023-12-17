@@ -140,7 +140,7 @@ export class Doctor {
     }
     if (_.find(autoFixes, (f) => !f.fixed)) {
       // a few issues remain.
-      log.info('Bye! A few issues remain, fix manually and/or rerun appium-doctor!');
+      log.info('Bye! A few issues remain, fix manually and/or rerun doctor!');
     } else {
       // nothing left to fix.
       log.info('Bye! All issues have been fixed!');

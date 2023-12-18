@@ -735,9 +735,18 @@ class ExtensionCliCommand {
       );
     }
 
+    const scriptPath = extScripts[scriptName];
+    const moduleRoot = this.config.getInstallPath(installSpec);
+    const normalizedScriptPath = path.normalize(path.resolve(moduleRoot, scriptPath));
+    if (!normalizedScriptPath.startsWith(path.normalize(moduleRoot))) {
+      throw this._createFatalError(
+        `The '${scriptPath}' script must be located in the '${moduleRoot}' folder`
+      );
+    }
+
     if (bufferOutput) {
-      const runner = new SubProcess(process.execPath, [extScripts[scriptName], ...extraArgs], {
-        cwd: this.config.getInstallPath(installSpec),
+      const runner = new SubProcess(process.execPath, [scriptPath, ...extraArgs], {
+        cwd: moduleRoot,
       });
 
       const output = new RingBuffer(50);
@@ -761,11 +770,7 @@ class ExtensionCliCommand {
 
     try {
       await new B((resolve, reject) => {
-        this._runUnbuffered(
-          this.config.getInstallPath(installSpec),
-          extScripts[scriptName],
-          extraArgs
-        )
+        this._runUnbuffered(moduleRoot, scriptPath, extraArgs)
           .on('error', (err) => {
             // generally this is of the "I can't find the script" variety.
             // this is a developer bug: the extension is pointing to a script that is not where the

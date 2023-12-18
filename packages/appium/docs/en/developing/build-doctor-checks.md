@@ -16,7 +16,8 @@ to deal with complicated setup or configuration steps.
 ### Typing Requirements
 
 The term `Doctor Check` literally describes a single javascript class instance that implements the
-[IDoctorCheck interface](../../../../types/lib/doctor.ts). The interface defines the following methods:
+[IDoctorCheck interface](https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts).
+The interface defines the following methods:
 
 - `diagnose(): Promise<DoctorCheckResult>`: Contains the code to diagnose a possible issue
 - `fix(): Promise<string|null>`: Either fixes the actual problem if `hasAutofix()` returns true or

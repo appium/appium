@@ -23,12 +23,12 @@ These drivers are currently maintained by the Appium team:
 |--|--|--|--|
 |[Chromium](https://github.com/appium/appium-chromium-driver)|`chromium`|macOS, Windows, Linux|Web|
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native|
+|[Flutter](https://github.com/appium/appium-flutter-driver)|`flutter`|iOS, Android|Native|
 |[Gecko](https://github.com/appium/appium-geckodriver)|`gecko`|macOS, Windows, Linux, Android|Web|
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
-|[Flutter](https://github.com/appium/appium-flutter-driver)|`flutter`|iOS, Android|Native|
 
 ### Other Drivers
 

@@ -20,6 +20,7 @@ This includes all changes from 1.0.0.
 ### Features
 * **docutils:** enhance base mkdocs configuration ([#19493](https://github.com/appium/appium/issues/19493)) ([9de6f40](https://github.com/appium/appium/commit/9de6f409ec506017d6aa865cfafbd3ad5bc8d423))
 * **docutils:** further adjust base mkdocs configuration ([#19527](https://github.com/appium/appium/issues/19527)) ([3dff112](https://github.com/appium/appium/commit/3dff11253db9a4681b39794b60f44dce01a7ddd3))
+* **docutils:** add `--alias-type` option ([#19485](https://github.com/appium/appium/issues/19485)) ([0003304](https://github.com/appium/appium/commit/00033044e08f932b5daf1234cfb381c6f46c8bb8))
 
 ### Bug Fixes
 * **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))

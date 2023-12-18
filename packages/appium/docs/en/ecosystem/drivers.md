@@ -28,7 +28,7 @@ These drivers are currently maintained by the Appium team:
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
-|[Flutter](https://github.com/appium/appium-flutter-driver)|`--source=npm appium-flutter-driver`|iOS, Android|Native|
+|[Flutter](https://github.com/appium/appium-flutter-driver)|`flutter`|iOS, Android|Native|
 
 ### Other Drivers
 

@@ -43,6 +43,7 @@ export const KNOWN_DRIVERS = Object.freeze(
     xcuitest: 'appium-xcuitest-driver',
     mac2: 'appium-mac2-driver',
     espresso: 'appium-espresso-driver',
+    flutter: 'appium-flutter-driver',
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
     chromium: 'appium-chromium-driver',

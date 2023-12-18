@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.3.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.11...@appium/fake-driver@5.3.0) (2023-12-18)
+
+
+### Features
+
+* **appium:** Load drivers and plugins asynchronously ([#19512](https://github.com/appium/appium/issues/19512)) ([06e7f34](https://github.com/appium/appium/commit/06e7f3489dff820fa16b16e47417acd0c10e0b05))
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **universal-xml-plugin:** update dependency xpath to v0.0.34 ([#19540](https://github.com/appium/appium/issues/19540)) ([cdd8a65](https://github.com/appium/appium/commit/cdd8a65887d1718af0d520bc7ad25add6e6466fb))
+
+
+
 ## [5.2.11](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.10...@appium/fake-driver@5.2.11) (2023-11-14)
 
 

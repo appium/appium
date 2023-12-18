@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.26](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.25...@appium/plugin-test-support@0.3.26) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **support:** update dependency teen_process to v2.0.109 ([85dce4a](https://github.com/appium/appium/commit/85dce4a72b21e017b4661ddf997c096817e5fd7f))
+* **support:** update dependency teen_process to v2.0.110 ([b602693](https://github.com/appium/appium/commit/b60269371662de4c42ccd7586512c9d685d95d52))
+* **support:** update dependency teen_process to v2.0.112 ([#19491](https://github.com/appium/appium/issues/19491)) ([d2d8ea7](https://github.com/appium/appium/commit/d2d8ea7a105eb93f59793fbc4d3438a66a191cd8))
+* **support:** update dependency teen_process to v2.1.1 ([b79ed2b](https://github.com/appium/appium/commit/b79ed2bed5329b904b15fa5b1fbde7885087c9ad))
+
+
+
 ## [0.3.25](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.24...@appium/plugin-test-support@0.3.25) (2023-12-04)
 
 

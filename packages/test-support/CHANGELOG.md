@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.29](https://github.com/appium/appium/compare/@appium/test-support@3.0.28...@appium/test-support@3.0.29) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **test-support:** update dependency sinon to v17 ([#19501](https://github.com/appium/appium/issues/19501)) ([0592bc5](https://github.com/appium/appium/commit/0592bc505fdec8ef0fdd19a6816a45e1e2887d25))
+
+
+
 ## [3.0.28](https://github.com/appium/appium/compare/@appium/test-support@3.0.27...@appium/test-support@3.0.28) (2023-12-04)
 
 **Note:** Version bump only for package @appium/test-support

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.22](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.21...@appium/execute-driver-plugin@3.0.22) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **docutils:** update dependency typescript to v5.2.2 ([#19472](https://github.com/appium/appium/issues/19472)) ([cb950df](https://github.com/appium/appium/commit/cb950dffb82e114341d2e0e0faa5ce6d551ec267))
+* **execute-driver-plugin:** update dependency webdriverio to v8.24.12 ([5b40b87](https://github.com/appium/appium/commit/5b40b87236a697f554b804c25c312ce242993068))
+* **execute-driver-plugin:** update dependency webdriverio to v8.24.6 ([2e79385](https://github.com/appium/appium/commit/2e7938578d785f49d6f9e1428afb91aae3d4e4ba))
+* **execute-driver-plugin:** update dependency webdriverio to v8.26.0 ([dfd1707](https://github.com/appium/appium/commit/dfd17074e94b2406caa87184ac73d992706e8e4d))
+* **execute-driver-plugin:** update dependency webdriverio to v8.26.1 ([070cdfe](https://github.com/appium/appium/commit/070cdfe44f3dcd1c5530512b70191719a0047b8c))
+* **execute-driver-plugin:** update dependency webdriverio to v8.26.2 ([#19537](https://github.com/appium/appium/issues/19537)) ([1f2c053](https://github.com/appium/appium/commit/1f2c053573f0df91449365dfe19dbd350f09ee89))
+
+
+
 ## [3.0.21](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.20...@appium/execute-driver-plugin@3.0.21) (2023-12-04)
 
 

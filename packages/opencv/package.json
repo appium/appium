@@ -1,6 +1,6 @@
 {
   "name": "@appium/opencv",
-  "version": "2.1.6",
+  "version": "3.0.0",
   "description": "OpenCV-related helper library",
   "keywords": [
     "automation",
@@ -49,7 +49,7 @@
     "source-map-support": "0.5.21"
   },
   "engines": {
-    "node": "^18.12.0 || >=20.9.0",
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"
   },
   "publishConfig": {

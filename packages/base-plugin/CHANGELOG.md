@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.25](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.24...@appium/base-plugin@2.2.25) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+
+
+
 ## [2.2.24](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.23...@appium/base-plugin@2.2.24) (2023-12-04)
 
 **Note:** Version bump only for package @appium/base-plugin

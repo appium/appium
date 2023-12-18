@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.0](https://github.com/appium/appium/compare/@appium/schema@0.4.2...@appium/schema@0.5.0) (2023-12-18)
+
+
+### Features
+
+* **appium:** Load drivers and plugins asynchronously ([#19512](https://github.com/appium/appium/issues/19512)) ([06e7f34](https://github.com/appium/appium/commit/06e7f3489dff820fa16b16e47417acd0c10e0b05))
+
+
+### Bug Fixes
+
+* **appium:** Respect the value of no-perms-check server arg ([#19518](https://github.com/appium/appium/issues/19518)) ([22ca747](https://github.com/appium/appium/commit/22ca74710718ddeda0526acd9dd3dd1703001e22))
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+
+
+
 ## [0.4.2](https://github.com/appium/appium/compare/@appium/schema@0.4.1...@appium/schema@0.4.2) (2023-11-14)
 
 

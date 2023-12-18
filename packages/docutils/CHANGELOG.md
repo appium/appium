@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/appium/appium/compare/@appium/docutils@0.4.13...@appium/docutils@1.0.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** enhance base mkdocs configuration ([#19493](https://github.com/appium/appium/issues/19493)) ([9de6f40](https://github.com/appium/appium/commit/9de6f409ec506017d6aa865cfafbd3ad5bc8d423))
+* **docutils:** further adjust base mkdocs configuration ([#19527](https://github.com/appium/appium/issues/19527)) ([3dff112](https://github.com/appium/appium/commit/3dff11253db9a4681b39794b60f44dce01a7ddd3))
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **docutils:** update dependency mike to v2.0.0 ([#19485](https://github.com/appium/appium/issues/19485)) ([0003304](https://github.com/appium/appium/commit/00033044e08f932b5daf1234cfb381c6f46c8bb8))
+* **docutils:** update dependency typescript to v5.2.2 ([#19472](https://github.com/appium/appium/issues/19472)) ([cb950df](https://github.com/appium/appium/commit/cb950dffb82e114341d2e0e0faa5ce6d551ec267))
+* **support:** update dependency teen_process to v2.0.109 ([85dce4a](https://github.com/appium/appium/commit/85dce4a72b21e017b4661ddf997c096817e5fd7f))
+* **support:** update dependency teen_process to v2.0.110 ([b602693](https://github.com/appium/appium/commit/b60269371662de4c42ccd7586512c9d685d95d52))
+* **support:** update dependency teen_process to v2.0.112 ([#19491](https://github.com/appium/appium/issues/19491)) ([d2d8ea7](https://github.com/appium/appium/commit/d2d8ea7a105eb93f59793fbc4d3438a66a191cd8))
+* **support:** update dependency teen_process to v2.1.1 ([b79ed2b](https://github.com/appium/appium/commit/b79ed2bed5329b904b15fa5b1fbde7885087c9ad))
+* **types:** update definitelytyped ([#19373](https://github.com/appium/appium/issues/19373)) ([39ebb34](https://github.com/appium/appium/commit/39ebb344086deb2e1ffd0007488de16945fe1add))
+* **types:** update dependency type-fest to v4 ([#19104](https://github.com/appium/appium/issues/19104)) ([8bfa1b5](https://github.com/appium/appium/commit/8bfa1b5a4d090b0102dbb914c9b72aea52d96788))
+
+
+
 ## [0.4.13](https://github.com/appium/appium/compare/@appium/docutils@0.4.12...@appium/docutils@0.4.13) (2023-12-04)
 
 

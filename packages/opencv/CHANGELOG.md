@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/opencv@2.1.6...@appium/opencv@3.0.0) (2023-12-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **images-plugin,opencv:** Drop support for Node 14 and Node 16
+
+* chore: adjust engine ranges to current LTS
+
+* chore: update package-lock.json
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+
+
+### Miscellaneous Chores
+
+* **images-plugin,opencv:** update dependency sharp to 0.33.0 ([#19498](https://github.com/appium/appium/issues/19498)) ([73d0aa5](https://github.com/appium/appium/commit/73d0aa5d1cd8b3b0e72b879308fd215fb03f428d))
+
+
+
 ## [2.1.6](https://github.com/appium/appium/compare/@appium/opencv@2.1.5...@appium/opencv@2.1.6) (2023-11-14)
 
 

@@ -196,3 +196,24 @@ Example (run the `reset` script included with the UiAutomator2 driver):
 ```
 appium driver run uiautomator2 reset
 ```
+
+### `doctor`
+
+Run doctor checks for the given extension if it has any. Extension authors can include
+runnable scripts that assist with driver or plugin preconditions validations. These scripts
+must be valid Node.js sources, must be listed in the package manifest, and must export
+class instances that comply to the particular requirements.
+See the [Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more
+details on these requirements.
+
+Usage:
+
+```
+appium <ext-type> doctor <ext-name>
+```
+
+Example (run doctor checks for the UiAutomator2 driver):
+
+```
+appium driver doctor uiautomator2
+```

@@ -4,7 +4,7 @@
  */
 export interface DoctorCheckResult {
   /**
-   * Whether the diagnose found no issues
+   * Whether the diagnosis found no issues
    */
   ok: boolean;
   /**
@@ -40,8 +40,3 @@ export interface IDoctorCheck {
    */
   isOptional(): boolean;
 }
-
-/**
- * Is thrown by {@link fix()} method if it should be skipped
- */
-export class FixSkippedError extends Error {};

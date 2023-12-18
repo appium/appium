@@ -15,3 +15,4 @@ own Appium extension:
 * For creating a driver, see the [Build Drivers](./build-drivers.md) page
 * For creating a plugin, take a look at the [Build Plugins](build-plugins.md) page
 * Drivers and plugins both need documentation, so check out the [Build Documentation](./build-docs.md) page
+* For creating a doctor check, see the [Building Doctor Checks](./build-doctor-checks.md) page

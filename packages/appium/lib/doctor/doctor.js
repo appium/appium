@@ -1,9 +1,9 @@
 import '@colors/colors';
 import _ from 'lodash';
 import { util, logger } from '@appium/support';
-import { FixSkippedError } from '@appium/types';
 
 const log = logger.getLogger('Doctor');
+const SKIP_AUTOFIX_ERROR_NAME = 'FixSkippedError';
 
 export class Doctor {
   /**
@@ -112,7 +112,7 @@ export class Doctor {
     try {
       await f.check.fix();
     } catch (err) {
-      if (err instanceof FixSkippedError) {
+      if (err.constructor.name === SKIP_AUTOFIX_ERROR_NAME) {
         log.info(`### Skipped fix ###`);
         return;
       } else {

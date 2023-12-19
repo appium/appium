@@ -91,7 +91,7 @@ export class Doctor {
     ], manualIssues);
     await handleIssues([
       '### Optional Manual Fixes  ###',
-      'The configuration can install optionally. Please do the following manually:',
+      'To fix these optional issues, please do the following manually:',
     ], manualIssuesOptional);
 
     if (manualIssues.length > 0) {

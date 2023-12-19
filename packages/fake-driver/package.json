@@ -73,6 +73,12 @@
       "fake-error": "./build/lib/scripts/fake-error.js",
       "fake-success": "./build/lib/scripts/fake-success.js",
       "fake-stdin": "./build/lib/scripts/fake-stdin.js"
+    },
+    "doctor": {
+      "checks": [
+        "./doctor/fake1.js",
+        "./doctor/fake2.js"
+      ]
     }
   },
   "main": "./build/lib/index.js",

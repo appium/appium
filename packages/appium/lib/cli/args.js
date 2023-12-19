@@ -7,6 +7,7 @@ import {
   EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
+  EXT_SUBCOMMAND_DOCTOR,
 } from '../constants';
 import {INSTALL_TYPES} from '../extension/extension-config';
 import {toParserArgs} from '../schema/cli-args';
@@ -49,6 +50,7 @@ const getExtensionArgs = _.memoize(function getExtensionArgs() {
       [EXT_SUBCOMMAND_UNINSTALL]: makeUninstallArgs(type),
       [EXT_SUBCOMMAND_UPDATE]: makeUpdateArgs(type),
       [EXT_SUBCOMMAND_RUN]: makeRunArgs(type),
+      [EXT_SUBCOMMAND_DOCTOR]: makeDoctorArgs(type),
     };
   }
   return /** @type {Record<ExtensionType, Record<import('appium/types').CliExtensionSubcommand,ArgumentDefinitions>>} */ (
@@ -156,7 +158,28 @@ function makeUninstallArgs(type) {
       {
         type: 'str',
         help:
-          'Name of the driver to uninstall, for example: ' + type === DRIVER_TYPE
+          `Name of the ${type} to uninstall, for example: ` + type === DRIVER_TYPE
+            ? DRIVER_EXAMPLE
+            : PLUGIN_EXAMPLE,
+      },
+    ],
+  ]);
+}
+
+/**
+ * Makes the opts for the `doctor` subcommand for each extension type
+ * @param {ExtensionType} type
+ * @returns {ArgumentDefinitions}
+ */
+function makeDoctorArgs(type) {
+  return new Map([
+    ...globalExtensionArgs,
+    [
+      [type],
+      {
+        type: 'str',
+        help:
+          `Name of the ${type} to run doctor checks for, for example: ` + type === DRIVER_TYPE
             ? DRIVER_EXAMPLE
             : PLUGIN_EXAMPLE,
       },

@@ -2,7 +2,17 @@ import {fs} from '@appium/support';
 import {ArgumentParser} from 'argparse';
 import _ from 'lodash';
 import path from 'path';
-import {DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND} from '../constants';
+import {
+  DRIVER_TYPE,
+  EXT_SUBCOMMAND_DOCTOR,
+  EXT_SUBCOMMAND_INSTALL,
+  EXT_SUBCOMMAND_LIST,
+  EXT_SUBCOMMAND_RUN,
+  EXT_SUBCOMMAND_UNINSTALL,
+  EXT_SUBCOMMAND_UPDATE,
+  PLUGIN_TYPE,
+  SERVER_SUBCOMMAND
+} from '../constants';
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
@@ -191,8 +201,7 @@ class ArgParser {
 
     const serverArgs = getServerArgs();
     for (const [flagsOrNames, opts] of serverArgs) {
-      // TS doesn't like the spread operator here.
-      // @ts-ignore
+      // @ts-ignore TS doesn't like the spread operator here.
       serverParser.add_argument(...flagsOrNames, {...opts});
     }
 
@@ -221,32 +230,37 @@ class ArgParser {
        */
       const parserSpecs = [
         {
-          command: 'list',
+          command: EXT_SUBCOMMAND_LIST,
           args: extensionArgs[type].list,
           help: `List available and installed ${type}s`,
           aliases: ['ls'],
         },
         {
-          command: 'install',
+          command: EXT_SUBCOMMAND_INSTALL,
           args: extensionArgs[type].install,
           help: `Install a ${type}`,
         },
         {
-          command: 'uninstall',
+          command: EXT_SUBCOMMAND_UNINSTALL,
           args: extensionArgs[type].uninstall,
           help: `Uninstall a ${type}`,
         },
         {
-          command: 'update',
+          command: EXT_SUBCOMMAND_UPDATE,
           args: extensionArgs[type].update,
           help: `Update installed ${type}s to the latest version`,
         },
         {
-          command: 'run',
+          command: EXT_SUBCOMMAND_RUN,
           args: extensionArgs[type].run,
           help:
             `Run a script (defined inside the ${type}'s package.json under the ` +
             `“scripts” field inside the “appium” field) from an installed ${type}`,
+        },
+        {
+          command: EXT_SUBCOMMAND_DOCTOR,
+          args: extensionArgs[type].doctor,
+          help: `Run doctor checks (if any defined) for the given ${type}`,
         },
       ];
 

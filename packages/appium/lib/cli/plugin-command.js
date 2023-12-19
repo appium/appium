@@ -66,6 +66,18 @@ export default class PluginCliCommand extends ExtensionCliCommand {
   }
 
   /**
+   * Runs doctor checks for the given plugin
+   *
+   * @param {PluginDoctorOptions} opts
+   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
+   */
+  async doctor({plugin}) {
+    return await super._doctor({
+      installSpec: plugin,
+    });
+  }
+
+  /**
    *
    * @param {import('./extension-command').ExtensionArgs} opts
    * @returns {string}
@@ -140,4 +152,10 @@ export default class PluginCliCommand extends ExtensionCliCommand {
  * @property {string} plugin - name of the plugin to run a script from
  * @property {string} scriptName - name of the script to run
  * @property {string[]} [extraArgs] - arguments to pass to the script
+ */
+
+/**
+ * Options for {@linkcode PluginCliCommand.doctor}.
+ * @typedef PluginDoctorOptions
+ * @property {string} plugin - name of the plugin to run doctor checks for
  */

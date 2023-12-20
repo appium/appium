@@ -810,6 +810,24 @@ class ExtensionCliCommand {
       );
     }
 
+    if (!scriptName) {
+      const allScripts = _.toPairs(extScripts);
+      const root = this.config.getInstallPath(installSpec);
+      const existingScripts = await B.filter(
+        allScripts,
+        async ([, p]) => await fs.exists(path.join(root, p))
+      );
+      if (_.isEmpty(existingScripts)) {
+        this.log.info(`The ${this.type} named '${installSpec}' does not contain any scripts`);
+      } else {
+        this.log.info(`The ${this.type} named '${installSpec}' contains ` +
+          `${util.pluralize('script', existingScripts.length, true)}:`);
+        existingScripts.forEach(([name]) => this.log.info(`  - ${name}`));
+      }
+      this.log.ok(`Successfully retrieved the list of scripts`.green);
+      return {};
+    }
+
     if (!(scriptName in /** @type {Record<string,string>} */ (extScripts))) {
       throw this._createFatalError(
         `The ${this.type} named '${installSpec}' does not support the script: '${scriptName}'`
@@ -955,7 +973,8 @@ export {ExtensionCliCommand as ExtensionCommand};
  * Options for {@linkcode ExtensionCliCommand._run}.
  * @typedef RunOptions
  * @property {string} installSpec - name of the extension to run a script from
- * @property {string} scriptName - name of the script to run
+ * @property {string} [scriptName] - name of the script to run. If not provided
+ * then all available script names will be printed
  * @property {string[]} [extraArgs] - arguments to pass to the script
  * @property {boolean} [bufferOutput] - if true, will buffer the output of the script and return it
  */

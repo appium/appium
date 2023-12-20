@@ -245,10 +245,12 @@ function makeRunArgs(type) {
       ['scriptName'],
       {
         default: null,
+        nargs: '?',
         type: 'str',
         help:
           `Name of the script to run from the ${type}. The script name must be a key ` +
-          `inside the "appium.scripts" field inside the ${type}'s "package.json" file`,
+          `inside the "appium.scripts" field inside the ${type}'s "package.json" file. ` +
+          `If not provided then all available script names are going to be listed.`,
       },
     ],
   ]);

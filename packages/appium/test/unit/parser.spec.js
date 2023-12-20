@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
 import {getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
@@ -349,8 +350,13 @@ describe('parser', function () {
       it('should not allow an empty driver argument list', function () {
         (() => p.parseArgs([DRIVER_TYPE, 'run'])).should.throw();
       });
-      it('should not allow no driver scriptName', function () {
-        (() => p.parseArgs([DRIVER_TYPE, 'run', 'foo'])).should.throw();
+      it('should allow no driver scriptName', function () {
+        const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo']);
+        args.subcommand.should.eql(DRIVER_TYPE);
+        args.driverCommand.should.eql('run');
+        args.driver.should.eql('foo');
+        _.isNull(args.scriptName).should.be.true;
+        args.json.should.eql(false);
       });
       it('should take a driverName and scriptName to run', function () {
         const args = p.parseArgs([DRIVER_TYPE, 'run', 'foo', 'bar']);
@@ -367,8 +373,13 @@ describe('parser', function () {
       it('should not allow an empty plugin argument list', function () {
         (() => p.parseArgs([PLUGIN_TYPE, 'run'])).should.throw();
       });
-      it('should not allow no plugin scriptName', function () {
-        (() => p.parseArgs([PLUGIN_TYPE, 'run', 'foo'])).should.throw();
+      it('should allow no plugin scriptName', function () {
+        const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo']);
+        args.subcommand.should.eql(PLUGIN_TYPE);
+        args.pluginCommand.should.eql('run');
+        args.plugin.should.eql('foo');
+        _.isNull(args.scriptName).should.be.true;
+        args.json.should.eql(false);
       });
       it('should take a pluginName and scriptName to run', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar']);

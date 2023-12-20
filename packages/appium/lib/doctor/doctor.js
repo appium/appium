@@ -2,13 +2,12 @@ import '@colors/colors';
 import _ from 'lodash';
 import { util, doctor } from '@appium/support';
 
-const log = doctor.configureLogger();
-
 export class Doctor {
   /**
    * @param {DoctorCheck[]} [checks=[]]
    */
   constructor(checks = []) {
+    this.log = doctor.configureLogger();
     this.checks = checks;
     /** @type {DoctorIssue[]} */
     this.foundIssues = [];
@@ -32,11 +31,11 @@ export class Doctor {
    * The doctor shows the report
    */
   async diagnose() {
-    log.info(`### Starting doctor diagnostics  ###`);
+    this.log.info(`### Starting doctor diagnostics  ###`);
     this.foundIssues = [];
     for (const check of this.checks) {
       if (_.isNil(check.log)) {
-        check.log = log;
+        check.log = this.log;
       }
       const res = await check.diagnose();
       const issue = this.toIssue(res, check);
@@ -44,10 +43,10 @@ export class Doctor {
         this.foundIssues.push(issue);
       }
     }
-    log.info(
+    this.log.info(
       `### Diagnostic completed, ${this.buildFixMessage()}. ###`
     );
-    log.info('');
+    this.log.info('');
   }
 
   /**
@@ -63,7 +62,7 @@ export class Doctor {
       }
 
       for (const logMsg of headerLogs) {
-        log.info(logMsg);
+        this.log.info(logMsg);
       }
       /** @type {string[]} */
       const fixMessages = [];
@@ -74,9 +73,9 @@ export class Doctor {
         }
       }
       for (const m of _.uniq(fixMessages)) {
-        log.warn(` \u279C ${m}`);
+        this.log.warn(` \u279C ${m}`);
       }
-      log.info('');
+      this.log.info('');
     };
 
     await handleIssues([
@@ -89,10 +88,10 @@ export class Doctor {
     ], manualIssuesOptional);
 
     if (manualIssues.length > 0) {
-      log.info('###');
-      log.info('');
-      log.info('Bye! Run doctor again when all manual fixes have been applied!');
-      log.info('');
+      this.log.info('###');
+      this.log.info('');
+      this.log.info('Bye! Run doctor again when all manual fixes have been applied!');
+      this.log.info('');
       return true;
     }
     return false;
@@ -102,28 +101,28 @@ export class Doctor {
    * @param {DoctorIssue} f
    */
   async runAutoFix(f) {
-    log.info(`### Fixing: ${f.error} ###`);
+    this.log.info(`### Fixing: ${f.error} ###`);
     try {
       await f.check.fix();
     } catch (err) {
       if (err.constructor.name === doctor.SKIP_AUTOFIX_ERROR_NAME) {
-        log.info(`### Skipped fix ###`);
+        this.log.info(`### Skipped fix ###`);
         return;
       } else {
-        log.warn(`${err}`.replace(/\n$/g, ''));
-        log.info(`### Fix did not succeed ###`);
+        this.log.warn(`${err}`.replace(/\n$/g, ''));
+        this.log.info(`### Fix did not succeed ###`);
         return;
       }
     }
-    log.info('Checking if this was fixed:');
+    this.log.info('Checking if this was fixed:');
     const res = await f.check.diagnose();
     if (res.ok) {
       f.fixed = true;
-      log.info(` ${'\u2714'.green} ${res.message}`);
-      log.info(`### Fix was successfully applied ###`);
+      this.log.info(` ${'\u2714'.green} ${res.message}`);
+      this.log.info(`### Fix was successfully applied ###`);
     } else {
-      log.info(` ${'\u2716'.red} ${res.message}`);
-      log.info(`### Fix was applied but issue remains ###`);
+      this.log.info(` ${'\u2716'.red} ${res.message}`);
+      this.log.info(`### Fix was applied but issue remains ###`);
     }
   }
 
@@ -131,16 +130,16 @@ export class Doctor {
     const autoFixes = _.filter(this.foundIssues, (f) => f.check.hasAutofix());
     for (const f of autoFixes) {
       await this.runAutoFix(f);
-      log.info('');
+      this.log.info('');
     }
     if (_.find(autoFixes, (f) => !f.fixed)) {
       // a few issues remain.
-      log.info('Bye! A few issues remain, fix manually and/or rerun doctor!');
+      this.log.info('Bye! A few issues remain, fix manually and/or rerun doctor!');
     } else {
       // nothing left to fix.
-      log.info('Bye! All issues have been fixed!');
+      this.log.info('Bye! All issues have been fixed!');
     }
-    log.info('');
+    this.log.info('');
   }
 
   async run() {
@@ -161,14 +160,14 @@ export class Doctor {
    */
   toIssue(result, check) {
     if (result.ok) {
-      log.info(` ${'\u2714'.green} ${result.message}`);
+      this.log.info(` ${'\u2714'.green} ${result.message}`);
       return null;
     }
 
     const errorMessage = result.optional
       ? ` ${'\u2716'.yellow} ${result.message}`
       : ` ${'\u2716'.red} ${result.message}`;
-    log.warn(errorMessage);
+    this.log.warn(errorMessage);
     return {
       error: errorMessage,
       check,
@@ -188,8 +187,8 @@ export class Doctor {
    */
   reportSuccess() {
     if (this.issuesRequiredToFix.length === 0 && this.issuesOptionalToFix.length === 0) {
-      log.info('Everything looks good, bye!');
-      log.info('');
+      this.log.info('Everything looks good, bye!');
+      this.log.info('');
       return true;
     }
     return false;

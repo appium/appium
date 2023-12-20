@@ -101,7 +101,7 @@ export async function getActivePlugins(pluginConfig, maxParallelImports, usePlug
       } else {
         const suffix = _.isEmpty(pluginConfig.installedExtensions)
           ? `You don't have any plugins installed yet.`
-          : `Only the following ${_.size(pluginConfig.installedExtensions) === 1 ? `plugin is ` : `plugins are`} ` +
+          : `Only the following ${_.size(pluginConfig.installedExtensions) === 1 ? `plugin is` : `plugins are`} ` +
             `available: ${_.keys(pluginConfig.installedExtensions)}`;
         throw new Error(
           `Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`
@@ -136,7 +136,7 @@ export async function getActiveDrivers(driverConfig, maxParallelImports, useDriv
       } else {
         const suffix = _.isEmpty(driverConfig.installedExtensions)
           ? `You don't have any drivers installed yet.`
-          : `Only the following ${_.size(driverConfig.installedExtensions) === 1 ? `driver is ` : `drivers are`} ` +
+          : `Only the following ${_.size(driverConfig.installedExtensions) === 1 ? `driver is` : `drivers are`} ` +
             `available: ${_.keys(driverConfig.installedExtensions)}`;
         throw new Error(
           `Could not load the driver '${driverName}' because it is not installed. ${suffix}`

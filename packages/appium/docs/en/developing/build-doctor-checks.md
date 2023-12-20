@@ -17,7 +17,7 @@ to deal with complicated setup or configuration steps.
 
 The term `Doctor Check` literally describes a single javascript class instance that implements the
 [IDoctorCheck interface](https://github.com/appium/appium/blob/master/packages/types/lib/doctor.ts).
-The interface defines the following methods:
+The interface defines the following methods and properties:
 
 - `diagnose(): Promise<DoctorCheckResult>`: Contains the code to diagnose a possible issue
 - `fix(): Promise<string|null>`: Either fixes the actual problem if `hasAutofix()` returns true or
@@ -26,6 +26,8 @@ The interface defines the following methods:
   is going to be ignored.
 - `hasAutofix(): boolean`: Whether calling `fix()` would resolve the found issue
 - `isOptional(): boolean`: Whether the found issue can be ignored and is not a showstopper
+- `log: AppiumLogger`: May be used for logging. This property may be assigned
+  by the instance itself or by the Appium server if it is left unassigned.
 
 The `DoctorCheckResult` object returned by the `diagnose()` method must contain the following properties:
 
@@ -73,23 +75,7 @@ to the package dev dependencies.
 The below example is a "raw" Node.JS implementation that does not use any transpilation:
 
 ```js
-const {fs} = require('@appium/support');
-
-/**
- * @param {string} message
- * @returns {CheckResult}
- */
-function ok(message) {
-  return {ok: true, optional: false, message};
-}
-
-/**
- * @param {string} message
- * @returns {CheckResult}
- */
-function nok(message) {
-  return {ok: false, optional: false, message};
-}
+const {fs, doctor} = require('@appium/support');
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */
 class EnvVarAndPathCheck {
@@ -103,14 +89,14 @@ class EnvVarAndPathCheck {
   async diagnose() {
     const varValue = process.env[this.varName];
     if (typeof varValue === 'undefined') {
-      return nok(`${this.varName} environment variable is NOT set!`);
+      return doctor.nok(`${this.varName} environment variable is NOT set!`);
     }
 
     if (await fs.exists(varValue)) {
-      return ok(`${this.varName} is set to: ${varValue}`);
+      return doctor.ok(`${this.varName} is set to: ${varValue}`);
     }
 
-    return nok(`${this.varName} is set to '${varValue}' but this is NOT a valid path!`);
+    return doctor.nok(`${this.varName} is set to '${varValue}' but this is NOT a valid path!`);
   }
 
   async fix() {

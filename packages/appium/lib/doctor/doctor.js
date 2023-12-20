@@ -1,9 +1,8 @@
 import '@colors/colors';
 import _ from 'lodash';
-import { util, logger } from '@appium/support';
+import { util, doctor } from '@appium/support';
 
-const log = logger.getLogger('Doctor');
-const SKIP_AUTOFIX_ERROR_NAME = 'FixSkippedError';
+const log = doctor.configureLogger();
 
 export class Doctor {
   /**
@@ -13,14 +12,6 @@ export class Doctor {
     this.checks = checks;
     /** @type {DoctorIssue[]} */
     this.foundIssues = [];
-  }
-
-  /**
-   * Register all the sub check and combine them together
-   * @param {DoctorCheck[] | DoctorCheck} checks
-   */
-  register(checks) {
-    this.checks.push(...(Array.isArray(checks) ? checks : [checks]));
   }
 
   /**
@@ -44,6 +35,9 @@ export class Doctor {
     log.info(`### Starting doctor diagnostics  ###`);
     this.foundIssues = [];
     for (const check of this.checks) {
+      if (_.isNil(check.log)) {
+        check.log = log;
+      }
       const res = await check.diagnose();
       const issue = this.toIssue(res, check);
       if (issue) {
@@ -112,7 +106,7 @@ export class Doctor {
     try {
       await f.check.fix();
     } catch (err) {
-      if (err.constructor.name === SKIP_AUTOFIX_ERROR_NAME) {
+      if (err.constructor.name === doctor.SKIP_AUTOFIX_ERROR_NAME) {
         log.info(`### Skipped fix ###`);
         return;
       } else {

@@ -1,3 +1,5 @@
+import type { AppiumLogger } from './logger';
+
 /**
  * The object with below properties is expected
  * to be returned from the Doctor Check's {@link diagnose} method
@@ -21,6 +23,11 @@ export interface DoctorCheckResult {
  * Each compatible Doctor Check class must implement this interface
  */
 export interface IDoctorCheck {
+  /**
+   * This property will be assigned by the server automatically if unset
+   */
+  log: AppiumLogger;
+
   /**
    * Diagnoses the actual problem
    */

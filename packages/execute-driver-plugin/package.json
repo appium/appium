@@ -1,6 +1,6 @@
 {
   "name": "@appium/execute-driver-plugin",
-  "version": "3.0.21",
+  "version": "3.0.22",
   "description": "Plugin for batching and executing driver commands with Appiums",
   "keywords": [
     "automation",
@@ -43,7 +43,7 @@
     "lodash": "4.17.21",
     "source-map-support": "0.5.21",
     "vm2": "3.9.19",
-    "webdriverio": "8.26.2"
+    "webdriverio": "8.26.3"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.35"

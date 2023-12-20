@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.5...@appium/relaxed-caps-plugin@1.0.6) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+
+
+
 ## [1.0.5](https://github.com/appium/appium/compare/@appium/relaxed-caps-plugin@1.0.4...@appium/relaxed-caps-plugin@1.0.5) (2023-02-09)
 
 **Note:** Version bump only for package @appium/relaxed-caps-plugin

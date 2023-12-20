@@ -1,12 +1,13 @@
 ---
-title: The Extension CLI
+title: Extension Command-Line Usage
 ---
 
-Appium allows for the flexible installation and management of _drivers_ (which provide Appium with
-the capability to automate a given platform) and *plugins* (which can augment or alter the way
-individual Appium commands work). For a conceptual understanding of these entities, please review
-the [Introduction](../intro/index.md). Management of drivers and plugins is handled by Appium's
-Extension CLI.
+Appium allows for the flexible installation and management of various _extensions_, such as _drivers_
+(which provide Appium with the capability to automate a given platform) and _plugins_ (which can
+augment or alter the way individual Appium commands work). For a conceptual understanding of these
+entities, please review the [Introduction](../intro/index.md).
+
+Management of drivers and plugins is handled by Appium's Extension CLI (command-line interface).
 
 !!! note
 
@@ -194,4 +195,25 @@ Example (run the `reset` script included with the UiAutomator2 driver):
 
 ```
 appium driver run uiautomator2 reset
+```
+
+### `doctor`
+
+Run doctor checks for the given extension if it has any. Extension authors can include
+runnable scripts that assist with driver or plugin preconditions validations. These scripts
+must be valid Node.js sources, must be listed in the package manifest, and must export
+class instances that comply to the particular requirements.
+See the [Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more
+details on these requirements.
+
+Usage:
+
+```
+appium <ext-type> doctor <ext-name>
+```
+
+Example (run doctor checks for the UiAutomator2 driver):
+
+```
+appium driver doctor uiautomator2
 ```

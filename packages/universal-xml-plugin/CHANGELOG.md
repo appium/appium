@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.16](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.15...@appium/universal-xml-plugin@1.0.16) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium-plugins/issues/19465)) ([7528fcf](https://github.com/appium/appium-plugins/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **universal-xml-plugin:** update dependency xpath to v0.0.34 ([#19540](https://github.com/appium/appium-plugins/issues/19540)) ([cdd8a65](https://github.com/appium/appium-plugins/commit/cdd8a65887d1718af0d520bc7ad25add6e6466fb))
+
+
+
 ## [1.0.15](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.14...@appium/universal-xml-plugin@1.0.15) (2023-11-14)
 
 

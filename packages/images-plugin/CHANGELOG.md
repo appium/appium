@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.8...@appium/images-plugin@3.0.0) (2023-12-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **images-plugin,opencv:** Drop support for Node 14 and Node 16
+
+* chore: adjust engine ranges to current LTS
+
+* chore: update package-lock.json
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **images-plugin:** update dependency lru-cache to v10 ([#19490](https://github.com/appium/appium/issues/19490)) ([19c30b4](https://github.com/appium/appium/commit/19c30b490b244f52918f72bdeeb957a999fdbcb9))
+* **images-plugin:** update dependency lru-cache to v10 ([#19497](https://github.com/appium/appium/issues/19497)) ([4dd95c0](https://github.com/appium/appium/commit/4dd95c096e4e4685c4f464b8251370ea001a562a))
+
+
+### Miscellaneous Chores
+
+* **images-plugin,opencv:** update dependency sharp to 0.33.0 ([#19498](https://github.com/appium/appium/issues/19498)) ([73d0aa5](https://github.com/appium/appium/commit/73d0aa5d1cd8b3b0e72b879308fd215fb03f428d))
+
+
+
 ## [2.1.8](https://github.com/appium/appium/compare/@appium/images-plugin@2.1.7...@appium/images-plugin@2.1.8) (2023-12-04)
 
 **Note:** Version bump only for package @appium/images-plugin

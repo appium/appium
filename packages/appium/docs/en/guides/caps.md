@@ -1,15 +1,12 @@
 ---
-title: Capabilities
+title: Session Capabilities
 ---
 
 "Capabilities" is the name given to the set of parameters used to start an Appium session. The
-information in the set is used to describe what sort of "capabilities" you want your session to
-have, for example, a certain mobile operating system or a certain version of a device. When you
-start your Appium session, your Appium client will include the set of capabilities you've defined
-as an object in the JSON-formatted body of the request. Capabilities are represented as key-value
-pairs, with values allowed to be any valid JSON type, including other objects. Appium will then
-examine the capabilities and make sure that it can satisfy them before proceeding to start the
-session and return an ID representing the session to your client library.
+information in the set describes what sort of "capabilities" you want your session to have, for
+example, a certain mobile operating system or a certain version of a device. Capabilities are
+represented as key-value pairs, with values allowed to be any valid JSON type, including
+other objects.
 
 The W3C WebDriver spec's [section on Capabilities](https://w3c.github.io/webdriver/#capabilities)
 identifies a small set of 10 standard capabilities, including the following:
@@ -20,7 +17,7 @@ identifies a small set of 10 standard capabilities, including the following:
 | `browserVersion` | `string` | The specific version of the browser            |
 | `platformName`   | `string` | The type of platform hosting the browser       |
 
-## Appium capabilities
+## Common Appium Capabilities
 
 Appium understands these browser-focused capabilities, but introduces a number of additional
 capabilities. According to the WebDriver spec, any
@@ -30,26 +27,26 @@ introducing the capability), ending in a `:`. Appium's vendor prefix is
 client you are using, the prefix may be added automatically or in conjunction with certain
 interfaces, but it is always a good practice to explicitly include it for clarity.
 
-Here is a list of all the globally-recognized Appium capabilities. Notes:
+Here is a list of all the globally-recognized Appium capabilities:
 
-- Individual drivers and plugins can support other capabilities, so refer to their documentation for lists of extension-specific
-capability names.
-- Some drivers might not implement support for all of these capabilities
-- A few Appium extension capabilities are required to start any Appium session; these are noted below as "Required"
+!!! info
 
-| Capability&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Type      | Required? | Description                                                                                                                                                                                                                                       |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `platformName`                                                                                                                                                                     | `string`  | Required  | The type of platform hosting the app or browser                                                                                                                                                                                                   |
-| `appium:automationName`                                                                                                                                                            | `string`  | Required  | The name of the Appium driver to use                                                                                                                                                                                                              |
-| `browserName`                                                                                                                                                                      | `string`  |           | The name of the browser to launch and automate, if the driver supports web browsers as a special case                                                                                                                                             |
-| `appium:app`                                                                                                                                                                       | `string`  |           | The path to an installable application                                                                                                                                                                                                            |
-| `appium:deviceName`                                                                                                                                                                | `string`  |           | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
-| `appium:platformVersion`                                                                                                                                                           | `string`  |           | The version of a platform, e.g., for iOS, `16.0`                                                                                                                                                                                                  |
-| `appium:newCommandTimeout`                                                                                                                                                         | `number`  |           | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down                                                                                   |
-| `appium:noReset`                                                                                                                                                                   | `boolean` |           | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`)                                                                                                                              |
-| `appium:fullReset`                                                                                                                                                                 | `boolean` |           | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`)                                                                                       |
-| `appium:eventTimings`                                                                                                                                                              | `boolean` |           | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`)                                                                                                                                                |
-| `appium:printPageSourceOnFindFailure`                                                                                                                                              | `boolean` |           | If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default `false`)                                                                                                                     |
+    Individual drivers and plugins can support other capabilities, so refer to their documentation
+    for lists ofspecific capability names. Some drivers may also not support all of these capabilities
+
+| <div style="width:12em">Capability</div>   | Type      | Required? | Description  |
+|--------------------------------------------|-----------|-----------|----------------------------|
+| `platformName`                             | `string`  | yes       | The type of platform hosting the app or browser |
+| `appium:automationName`                    | `string`  | yes       | The name of the Appium driver to use |
+| `browserName`                              | `string`  | no        | The name of the browser to launch and automate, if the driver supports web browsers as a special case |
+| `appium:app`                               | `string`  | no        | The path to an installable application |
+| `appium:deviceName`                        | `string`  | no        | The name of a particular device to automate, e.g., `iPhone 14` (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the `appium:udid` capability). |
+| `appium:platformVersion`                   | `string`  | no        | The version of a platform, e.g., for iOS, `16.0` |
+| `appium:newCommandTimeout`                 | `number`  | no        | The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down |
+| `appium:noReset`                           | `boolean` | no        | If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default `false`) |
+| `appium:fullReset`                         | `boolean` | no        | If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default `false`) |
+| `appium:eventTimings`                      | `boolean` | no        | If true, instruct an Appium driver to collect [Event Timings](./event-timing.md) (default `false`) |
+| `appium:printPageSourceOnFindFailure`      | `boolean` | no        | If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default `false`) |
 
 
 Some drivers place more complex constraints on capabilities as a group. For example, while the
@@ -70,7 +67,7 @@ Each Appium client has its own way of constructing capabilities and starting a s
 examples of doing this in each client library, head to the [Ecosystem](../ecosystem/index.md) page
 and click through to the appropriate client documentation.
 
-## `appium:options`
+## Using `appium:options` to Group Capabilities
 
 If you use a lot of `appium:` capabilities in your tests, it can get a little repetitive. You can
 combine all capabilities as an object value of a single `appium:options` capability instead, in
@@ -97,14 +94,17 @@ your client documentation for further examples on how to achieve this.
     If you include the same capabilities both inside and outside of `appium:options`, the values
     inside of `appium:options` take precedence.
 
-## Always-match and first-match capabilities
+## Always-Match and First-Match Capabilities
 
 The W3C spec allows clients to give the Appium server some flexibility in the kind of session it
 creates in response to a new session request. This is through the concept of "always-match" and
 "first-match" capabilities:
 
-- Always-match capabilities consist of a single set of capabilities, every member of which must be satisfied by the server in order for the new session request to proceed.
-- First-match capabilities consist of an array of capability sets. Each set is merged with the always-match capabilities, and the first set that the server knows how to handle will be the set that is used to start the session.
+- Always-match capabilities consist of a single set of capabilities, every member of which must
+  be satisfied by the server in order for the new session request to proceed.
+- First-match capabilities consist of an array of capability sets. Each set is merged with the
+  always-match capabilities, and the first set that the server knows how to handle will be the set
+  that is used to start the session.
 
 !!! note
 
@@ -122,7 +122,7 @@ defined in the W3C spec, so if you use these features, Appium will work as expec
 defining always-match and first-match capabilities is unique to each client library, so refer to
 the documentation for your client library to see examples of how it works.
 
-## Special notes for cloud providers
+## Special Notes for Cloud Providers
 
 !!! warning
 
@@ -131,11 +131,10 @@ the documentation for your client library to see examples of how it works.
 
 When managing an Appium cloud, your users may wish to target various independent versions of Appium
 drivers and plugins. It is of course up to each service provider how they wish to implement the
-discovery, installation, and availability of any official or third party drivers or plugins. _But
-the Appium team makes the following recommendations in terms of the *capabilities* service
-providers support, for consistency across the industry._ This is a recommendation only, and not
-a standard, but adopting it will help users to navigate the increased complexity that working with
-Appium 2.0 in a cloud environment may bring.
+discovery, installation, and availability of any official or third party drivers or plugins. But
+the Appium team does provide several suggestions, for consistency across the industry. _These are
+recommendations only,_ and not a standard, but adopting it will help users to navigate the increased
+complexity that working with Appium 2 in a cloud environment may bring.
 
 ### Suggested capabilities
 
@@ -146,12 +145,12 @@ vendor prefix (so for HeadSpin it would be `headspin`, Sauce Labs it would be `s
 BrowserStack it would be `browserstack`, to name just a few examples). The `$cloud:appiumOptions`
 capability would itself be a JSON object, with the following internal keys:
 
-| Capability          | Used for                                                                                                                                                                                                  | Example                                                                         |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `version`           | Designating which version of the Appium server is used to host and manage drivers. If ommitted, behavior left up to the provider, but the recommendation would be to provide the latest official version. | `2.0.0`                                                                         |
-| `automationVersion` | Designating which version of the specified driver should be used.                                                                                                                                         | `1.55.2`                                                                        |
-| `automation`        | Designating a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`                                                                  | `{"name": "@org/custom-driver", "source": "github", "package": "custom-driver"}` |
-| `plugins`           | Designating the list of plugins (and potentially versions of plugins) to be activated (see below for more info).                                                                                          | `["images", "universal-xml"]`                                                   |
+| <div style="width:10em">Capability</div> | Usage  | Example |
+| ---------------------------------------- | ------ | ------- |
+| `version`           | The version of the Appium server that is used to host and manage drivers. If omitted, the behavior is left up to the provider, but the recommendation would be to provide the latest official version. | `2.0.0` |
+| `automationVersion` | The version of the driver (as specified by `appium:automationName`) that should be used. | `1.55.2` |
+| `automation`        | The name of a custom driver to use (see below for more info). This would override `appium:automationName` and `$cloud:automationVersion`. | `{"name": "@org/custom-driver", "source": "github", "package": "custom-driver"}` |
+| `plugins`           | The list of plugins (and potentially versions of plugins) that should be activated (see below for more info). | `["images", "universal-xml"]` |
 
 ### Basic example
 
@@ -209,13 +208,17 @@ set of capabilities into the following:
 ### Extension objects
 
 Some service providers may wish to dynamically allow access to all of the features of the Appium
-2.0 CLI, including downloading arbitrary drivers and plugins. To represent these extensions, we can
+2 CLI, including downloading arbitrary drivers and plugins. To represent these extensions, we can
 define special JSON "extension objects", with the following keys:
 
-- `name`: the name of the extension. This would be an NPM package name (if downloading from NPM), or a git or GitHub spec (if downloading from a git server or GitHub).
-- `version`: the version of the extension, e.g., the NPM package version or Git SHA.
-- (optional) `source`: a denotation of where the extension can be downloaded from. Recommended to support the following values: `appium`, `npm`, `git`, `github`. Here, `appium` means "Appium's own official list", and should be the default value if this key is not included.
-- (optional) `package`: when downloading extensions from git or github, the NPM package name of the extension must also be provided. This is optional for non-git sources.
+- `name`: the name of the extension. This would be an `npm` package name (if downloading from `npm`),
+  or a `git` or GitHub spec (if downloading from a `git` server or GitHub).
+- `version`: the version of the extension, e.g., the `npm` package version or `git` SHA.
+- (optional) `source`: a denotation of where the extension can be downloaded from. It is recommended
+  to support the following values: `appium`, `npm`, `git`, `github`. Here, `appium` means "Appium's
+  own official list", and should be the default value if this key is not included.
+- (optional) `package`: when downloading extensions from `git` or GitHub, the `npm` package name of
+  the extension must also be provided. This is optional for non-`git` sources.
 
 Since each session is handled by a single driver, the `$cloud:appiumOptions`/`$automation`
 capability could be used with an extension object value to denote this driver, for example:
@@ -253,10 +256,10 @@ requested:
 }
 ```
 
-These serve as illustrative examples for the recommendations here. Of course it is up to the
+These serve as illustrative examples for the recommendations here. Of course, it is up to the
 service providers to implement the handling of these capabilities at their front end / load
 balancer, to perform any error checking, or to actually run any of the `appium driver` or `appium
 plugin` CLI commands that support the end user's request. This section is merely a suggestion as to
 how service providers might design their user-facing capabilities API in a way which in principle
-supports all of the capabilities Appium itself would provide to the end user if they were running
-Appium on their own.
+supports all of the capabilities that Appium itself would provide to the end user if they were
+running Appium on their own.

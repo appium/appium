@@ -2,7 +2,7 @@
 title: Intro to Appium Drivers
 ---
 
-As the [main Overview](index.md) makes clear, "drivers" are basically Appium's answer to the
+As the [main Overview](./appium.md) makes clear, "drivers" are basically Appium's answer to the
 question, "how do we support automation of multiple, unrelated platforms?" In this doc we'll get
 into a little more detail about how drivers work. The specific details of how drivers work probably
 don't matter too much for you, unless you're planning on writing your own driver or contributing to
@@ -50,7 +50,7 @@ async setUrl(url) {
 [^1]: You might notice that `setUrl` doesn't look anything like `Navigate To`, so how did we know
   to use it rather than some other random string? Well, Appium's WebDriver-protocol-to-method-name
   mapping is defined in a special file within the `@appium/base-driver` package called
-  [routes.js](https://github.com/appium/appium/blob/2.0/packages/base-driver/lib/protocol/routes.js).
+  [routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
   So if you're writing a driver, this is where you would go to figure out what method names to use
   and what parameters to expect. Or you could look at the source for any of the main Appium
   drivers!

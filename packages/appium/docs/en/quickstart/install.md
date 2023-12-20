@@ -1,15 +1,25 @@
 ---
+hide:
+  - toc
+
 title: Install Appium
 ---
 
-Installing Appium is as easy as running a single NPM command:
+!!! info
+
+    Before installing, make sure to check the [System Requirements](./requirements.md).
+
+You can install Appium globally using `npm`:
 
 ```bash
-npm i --location=global appium
+npm i -g appium
 ```
 
-This command installs Appium globally on your system so that you can access it from the command
-line simply by running the `appium` command. Go ahead and run it now:
+!!! note
+
+    Other package managers are not currently supported.
+
+After installation, you should be able to run Appium from the command line:
 
 ```
 appium
@@ -21,5 +31,5 @@ You should see some output that starts with a line like this:
 [Appium] Welcome to Appium v2.0.0
 ```
 
-That's it! If you get this kind of output, the Appium server is up and running. Go ahead and quit
-it (CTRL-C) and move on to the next step, where we'll install a driver for automating Android apps.
+That's it! If you see this, the Appium server is up and running. Go ahead and quit
+it (Ctrl-C) and move on to the [next step](./uiauto2-driver.md), where we'll install a driver for automating Android apps.

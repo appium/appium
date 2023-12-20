@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.0](https://github.com/appium/appium/compare/@appium/types@0.14.3...@appium/types@0.15.0) (2023-12-18)
+
+
+### Features
+
+* **appium:** Load drivers and plugins asynchronously ([#19512](https://github.com/appium/appium/issues/19512)) ([06e7f34](https://github.com/appium/appium/commit/06e7f3489dff820fa16b16e47417acd0c10e0b05))
+
+
+### Bug Fixes
+
+* **appium:** Respect the value of no-perms-check server arg ([#19518](https://github.com/appium/appium/issues/19518)) ([22ca747](https://github.com/appium/appium/commit/22ca74710718ddeda0526acd9dd3dd1703001e22))
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **types:** update definitelytyped ([#19373](https://github.com/appium/appium/issues/19373)) ([39ebb34](https://github.com/appium/appium/commit/39ebb344086deb2e1ffd0007488de16945fe1add))
+* **types:** update dependency type-fest to v4 ([#19104](https://github.com/appium/appium/issues/19104)) ([8bfa1b5](https://github.com/appium/appium/commit/8bfa1b5a4d090b0102dbb914c9b72aea52d96788))
+
+
+
 ## [0.14.3](https://github.com/appium/appium/compare/@appium/types@0.14.2...@appium/types@0.14.3) (2023-12-04)
 
 

@@ -17,39 +17,43 @@ documentation and bookmarking it, because it will be an invaluable reference dow
 
 ## Set up Android automation requirements
 
-According to the driver, in addition to a working Appium server, we also need to do the following:
+According to the driver, in addition to a working Appium server, we also need to set up the following:
 
-- Download [Android SDK platform tools](https://developer.android.com/studio/releases/platform-tools). You will probably want to download [Android Studio](https://developer.android.com/studio) and manage the SDK tools from within it for the easiest experience.
-- Set an environment variable pointing to the directory on disk where the Android tools are
+### Android SDK
+
+- The easiest way to set up the Android SDK requirements is by downloading [Android Studio](https://developer.android.com/studio).
+We need to use its SDK manager (_Settings -> Appearance & Behavior -> System Settings -> Android SDK_)
+to download the following items:
+    - Android SDK Platform (select whichever Android platform we want to automate, for example, API level 30)
+    - Android SDK Platform-Tools
+- If you wish, you can also download these items without Android Studio:
+    - Android SDK Platform can be downloaded using `sdkmanager` included in [Android command-line tools](https://developer.android.com/studio#command-line-tools-only)
+    - [Android SDK Platform-Tools](https://developer.android.com/tools/releases/platform-tools)
+- Set up the `ANDROID_HOME` environment variable to point to the directory where the Android SDK is
 installed. You can usually find the path to this directory in the Android Studio SDK manager. It
-will contain the `platform-tools` and other directories. We need to define and persist the
-environment variable as `ANDROID_HOME`.
-- Use the Android SDK manager to download whichever Android platform we want to automate (for
-example, API level 30)
+will contain the `platform-tools` and other directories.
+
+### Java JDK
+
 - Install the Java JDK (for the most recent Android API levels, JDK 9 is required, otherwise JDK
-8 is required). It's easiest to use the [OpenJDK packages](https://openjdk.java.net/install/). Make
-sure you get the JDK and not the JRE.
-- When the JDK is installed, you'll need to find the path to the JDK home directory as it was
-installed on your system. This will be the directory that *contains* the `bin`, `include`, and
-other directories. The path must be persisted as an environment variable named `JAVA_HOME`, so that
-Appium can find the appropriate Java tooling that is required to work with the Android platform.
-- Use Android Studio to create and launch an Android Virtual Device (an AVD, otherwise known as an
-emulator). You may need to download the system images for the API level of the emulator you want to
+8 is required). You can download this from [Oracle](https://jdk.java.net/) or [Adoptium](https://adoptium.net/en-GB/temurin/releases/).
+Make sure you get the JDK and not the JRE.
+- Set up the `JAVA_HOME` environment variable to point to the JDK home directory. It will contain
+the `bin`, `include`, and other directories.
+
+### Prepare the Device
+
+- If using an emulator, use Android Studio to create and launch an Android Virtual Device (AVD).
+You may need to download the system images for the API level of the emulator you want to
 create. Using the AVD creation wizard in Android Studio is generally the easiest way to do all of
 this.
-
-    !!! note
-
-        You can also use a physical Android device, so long as it is configured for debugging and
-        development
-
+- If using a real device, you should [set it up for development and enable USB Debugging](https://developer.android.com/studio/debug/dev-options).
 - With the emulator or device connected, you can run `adb devices` (via the binary located at
 `$ANDROID_HOME/platform-tools/adb`) to verify that your device shows up as connected.
 
-Once your device shows up as connected in ADB, and you've verified that the environment variables
-are set up correctly in the terminal context where you are going to run Appium, you should be good
-to go! If you ran into problems with any of these steps, refer to the driver documentation, or the
-various Android or Java documentation sites as necessary.
+Once your device shows up as connected in `adb`, and you've verified that the environment variables
+are set up correctly, you should be good to go! If you ran into problems with any of these steps,
+refer to the driver documentation, or the various Android or Java documentation sites as necessary.
 
 Also, congratulations: whether or not you intended to, you now have the Android developer toolchain
 set up on your system, so you can get busy making Android apps if you want!
@@ -81,10 +85,10 @@ session (in this case, `UiAutomator2`).
 
 !!! note
 
-    In this quickstart we have used the Extension CLI to install the UiAutomator2 driver, but if you
-    are incorporating Appium into a Node.js project, you might prefer to use NPM to manage Appium
-    and its connected drivers. To learn more about this technique, visit the guide on [managing
-    Appium extensions](../guides/managing-exts.md).
+    In this quickstart we have used the [Extension CLI](../cli/extensions.md) to install the
+    UiAutomator2 driver, but if you are incorporating Appium into a Node.js project, you might
+    prefer to use `npm` to manage Appium and its connected drivers. To learn more about this
+    technique, visit the guide on [managing Appium extensions](../guides/managing-exts.md).
 
 Now, start the Appium server again (run `appium`), and you should see that the newly-installed
 driver is listed as available:
@@ -95,5 +99,14 @@ driver is listed as available:
 ```
 
 With the Android setup complete and the UiAutomator2 driver installed, you're ready to write your
-first test! So pick the language you're most comfortable with under the quickstart menu and give it
-a shot.
+first test! Now select your preferred language and give it a shot:
+
+<div class="grid cards" markdown>
+
+-   :material-language-javascript: [__JavaScript__](./test-js.md)
+-   :material-language-java: [__Java__](./test-java.md)
+-   :material-language-python: [__Python__](./test-py.md)
+-   :material-language-ruby: [__Ruby__](./test-rb.md)
+-   :material-dot-net: [__.NET C#__](./test-dotnet.md)
+
+</div>

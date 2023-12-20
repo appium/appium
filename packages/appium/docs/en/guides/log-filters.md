@@ -1,5 +1,5 @@
 ---
-title: Log Filtering
+title: Filtering the Appium Log
 ---
 
 Sometimes it might be necessary to hide sensitive information, like passwords, device identifiers,
@@ -18,8 +18,11 @@ Each rule is an object with a set of predefined properties. The following rule p
 supported:
 
 - `pattern`: A valid Javascript RegExp pattern to replace. Must be a valid non-empty pattern.
-- `text`: A simple non-empty exact text match to replace. Either this property or the above one must be provided. `pattern` has priority over `text` if both are provided.
-- `flags`: Regular expression flags for the given pattern. Supported flags are the same as for the standard JavaScript [RegExp constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2). Note that the `g` (global matching) flag is always enabled.
+- `text`: A simple non-empty exact text match to replace. Either this property or the above one must
+  be provided. `pattern` has priority over `text` if both are provided.
+- `flags`: Regular expression flags for the given pattern. Supported flags are the same as for the
+  standard JavaScript [RegExp constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2).
+  Note that the `g` (global matching) flag is always enabled.
 - `replacer`: The replacer value to use. By default it is `**SECURE**`. Empty values are allowed.
 
 ### Config Examples

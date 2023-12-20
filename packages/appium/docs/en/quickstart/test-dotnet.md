@@ -1,8 +1,11 @@
 ---
-title: Write a Test (dotnet)
+hide:
+  - toc
+
+title: Write a Test (.NET)
 ---
 
-The [Appium dotnet Client](https://github.com/appium/dotnet-client/) is
+The [Appium .NET Client](https://github.com/appium/dotnet-client/) is
 an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is available on the public NuGet Gallery as [Appium.WebDriver](https://www.nuget.org/packages/Appium.WebDriver/).
 
 Now, we get inside the directory and create a new [NUnit](https://nunit.org/) project. We will also add the references to the Appium.Net driver, and other dependencies.
@@ -99,4 +102,4 @@ dotnet test
 
 If all goes well, you'll see the Settings app open up and navigate to the "Battery" view in the emulator before the app closes again.
 
-Congratulations, you've started your Appium journey! Read on for some next steps to explore.
+Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.

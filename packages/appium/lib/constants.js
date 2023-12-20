@@ -64,6 +64,7 @@ export const EXT_SUBCOMMAND_INSTALL = 'install';
 export const EXT_SUBCOMMAND_UNINSTALL = 'uninstall';
 export const EXT_SUBCOMMAND_UPDATE = 'update';
 export const EXT_SUBCOMMAND_RUN = 'run';
+export const EXT_SUBCOMMAND_DOCTOR = 'doctor';
 
 /**
  * Current revision of the manifest (`extensions.yaml`) schema

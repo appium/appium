@@ -1,5 +1,5 @@
 ---
-title: Managing Appium Drivers and Plugins
+title: Managing Drivers and Plugins
 ---
 
 To do anything useful with Appium, you need to have at least one [Driver](../intro/drivers.md)
@@ -8,9 +8,11 @@ installed, otherwise Appium won't know how to automate anything. There is an ent
 
 This guide helps explain how to manage these drivers and plugins. There are
 two basic strategies: using Appium's extension CLI interface, or managing extensions yourself in an
-npm-based project.
+`npm`-based project.
 
-> Note: Alternative package managers are not supported by Appium at the time of this writing.
+!!! note
+
+    Other package managers are not currently supported.
 
 ## Using Appium's Extension CLI
 
@@ -22,7 +24,8 @@ or remove. Here's an example of how you might install a driver using the CLI:
 appium driver install xcuitest
 ```
 
-This command will install the latest version of the [XCUITest Driver](https://github.com/appium/appium-xcuitest-driver). The Extension CLI comes with a variety
+This command will install the latest version of the
+[XCUITest Driver](https://github.com/appium/appium-xcuitest-driver). The Extension CLI comes with a variety
 of commands and parameters; see the documentation for that command for all the specifics.
 
 The all-important question when Appium is managing your extensions for you is: where are they installed?
@@ -53,17 +56,18 @@ These installed packages will be managed by `extensions.yaml` in `$APPIUM_HOME/n
 ## Do-It-Yourself with `npm`
 
 Because Appium and Appium drivers are Node.js programs, if you are integrating your Appium scripts
-into your own Node.js project, there is an alternative way to manage drivers and plugins: via `npm`, like any other dependency.
-Basically, whenever you run Appium, if you have not explicitly set `APPIUM_HOME`, it will:
+into your own Node.js project, there is an alternative way to manage drivers and plugins: via `npm`,
+like any other dependency. Basically, whenever you run Appium, if you have not explicitly set
+`APPIUM_HOME`, it will:
 
 1. Try to determine whether the _current directory_ is inside an `npm` package.
 1. If so, it will check whether `appium` is a dependency (dev, prod, or peer) in the project's
    `package.json`
-1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load drivers and plugins defined in that
-   `package.json` file instead.
+1. If so, _unless you have specified `APPIUM_HOME` in your environment_, Appium will ignore load
+   drivers and plugins defined in that `package.json` file instead.
 
-This means you are freely able to add Appium drivers and plugins as regular package dependencies or dev dependencies. For
-example, if your project has a `package.json` which includes the following:
+This means you are freely able to add Appium drivers and plugins as regular package dependencies or
+dev dependencies. For example, if your project has a `package.json` which includes the following:
 
 ```json
 {

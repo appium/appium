@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.19](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.18...@appium/driver-test-support@0.4.19) (2023-12-18)
+
+
+### Bug Fixes
+
+* **docutils:** remove `@appium/typedoc-plugin-appium` and all other uses of `typedoc` ([#19465](https://github.com/appium/appium/issues/19465)) ([7528fcf](https://github.com/appium/appium/commit/7528fcf890f79f4017f5e718bb1952bf907ee479))
+* **test-support:** update dependency sinon to v17 ([#19501](https://github.com/appium/appium/issues/19501)) ([0592bc5](https://github.com/appium/appium/commit/0592bc505fdec8ef0fdd19a6816a45e1e2887d25))
+* **types:** update dependency type-fest to v4 ([#19104](https://github.com/appium/appium/issues/19104)) ([8bfa1b5](https://github.com/appium/appium/commit/8bfa1b5a4d090b0102dbb914c9b72aea52d96788))
+
+
+
 ## [0.4.18](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.17...@appium/driver-test-support@0.4.18) (2023-12-04)
 
 

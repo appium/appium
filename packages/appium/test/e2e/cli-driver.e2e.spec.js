@@ -10,6 +10,7 @@ import {
   EXT_SUBCOMMAND_LIST as LIST,
   EXT_SUBCOMMAND_RUN as RUN,
   EXT_SUBCOMMAND_UNINSTALL as UNINSTALL,
+  EXT_SUBCOMMAND_DOCTOR as DOCTOR,
   KNOWN_DRIVERS,
 } from '../../lib/constants';
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
@@ -51,6 +52,11 @@ describe('Driver CLI', function () {
    */
   let runUninstall;
 
+  /**
+   * @type {(args: string[]) => Promise<ExtRecord<DriverType>>}
+   */
+  let runDoctor;
+
   async function resetAppiumHome() {
     await fs.rimraf(appiumHome);
     await fs.mkdirp(appiumHome);
@@ -67,6 +73,8 @@ describe('Driver CLI', function () {
       /** @type {ReturnType<typeof runList>} */ (await run([DRIVER_TYPE, LIST, ...args]));
     runRun = async (args) =>
       /** @type {ReturnType<typeof runRun>} */ (await run([DRIVER_TYPE, RUN, ...args]));
+    runDoctor = async (args) =>
+      /** @type {ReturnType<typeof runDoctor>} */ (await run([DRIVER_TYPE, DOCTOR, ...args]));
   });
 
   after(async function () {
@@ -401,6 +409,22 @@ describe('Driver CLI', function () {
       it('should throw an error', async function () {
         const driverName = 'foo';
         await expect(runRun([driverName, 'bar'])).to.be.rejectedWith(Error);
+      });
+    });
+  });
+
+  describe('doctor', function () {
+    const driverName = 'fake';
+
+    before(async function () {
+      await resetAppiumHome();
+      await installLocalExtension(appiumHome, DRIVER_TYPE, FAKE_DRIVER_DIR);
+    });
+
+    describe('when the driver defines doctor checks', function () {
+      it('should load and run them', async function () {
+        const checks = await runDoctor([driverName]);
+        checks.length.should.eql(2);
       });
     });
   });

@@ -2,7 +2,7 @@
 import B from 'bluebird';
 import _ from 'lodash';
 import path from 'path';
-import {npm, util, env, console, fs} from '@appium/support';
+import {npm, util, env, console, fs, system} from '@appium/support';
 import {spinWith, RingBuffer} from './utils';
 import {
   INSTALL_TYPE_NPM,
@@ -15,6 +15,8 @@ import {SubProcess} from 'teen_process';
 import {packageDidChange} from '../extension/package-changed';
 import {spawn} from 'child_process';
 import {inspect} from 'node:util';
+import {pathToFileURL} from 'url';
+import {Doctor} from '../doctor/doctor';
 
 const UPDATE_ALL = 'installed';
 
@@ -696,6 +698,85 @@ class ExtensionCliCommand {
   }
 
   /**
+   * Runs doctor checks for the given extension
+   *
+   * @param {DoctorOptions} opts
+   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
+   */
+  async _doctor({installSpec}) {
+    if (!this.config.isInstalled(installSpec)) {
+      throw this._createFatalError(`The ${this.type} "${installSpec}" is not installed`);
+    }
+
+    const moduleRoot = this.config.getInstallPath(installSpec);
+    const packageJsonPath = path.join(moduleRoot, 'package.json');
+    if (!await fs.exists(packageJsonPath)) {
+      throw this._createFatalError(
+        `No package.json could be found for "${installSpec}" ${this.type}`
+      );
+    }
+    let doctorSpec;
+    try {
+      doctorSpec = JSON.parse(await fs.readFile(packageJsonPath, 'utf8')).appium?.doctor;
+    } catch (e) {
+      throw this._createFatalError(
+        `The manifest at '${packageJsonPath}' cannot be parsed: ${e.message}`
+      );
+    }
+    if (!doctorSpec) {
+      this.log.info(`The ${this.type} "${installSpec}" does not export any doctor checks`);
+      return [];
+    }
+    if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
+      throw this._createFatalError(
+        `The 'doctor' entry in the package manifest '${packageJsonPath}' must be a proper object ` +
+        `containing the 'checks' key with the array of script paths`
+      );
+    }
+    const paths = doctorSpec.checks.map((/** @type {string} */ p) => {
+      const scriptPath = path.resolve(moduleRoot, p);
+      if (!path.normalize(scriptPath).startsWith(path.normalize(moduleRoot))) {
+        this.log.error(
+          `The doctor check script '${p}' from the package manifest '${packageJsonPath}' must be located ` +
+          `in the '${moduleRoot}' root folder. It will be skipped`
+        );
+        return null;
+      }
+      return scriptPath;
+    }).filter(Boolean);
+    /** @type {Promise[]} */
+    const loadChecksPromises = [];
+    for (const p of paths) {
+      const promise = (async () => {
+        // https://github.com/nodejs/node/issues/31710
+        const scriptPath = system.isWindows() ? pathToFileURL(p).href : p;
+        try {
+          return await import(scriptPath);
+        } catch (e) {
+          this.log.warn(`Unable to load doctor checks from '${p}': ${e.message}`);
+        }
+      })();
+      loadChecksPromises.push(promise);
+    }
+    const isDoctorCheck = (/** @type {any} */ x) =>
+      ['diagnose', 'fix', 'hasAutofix', 'isOptional'].every((method) => _.isFunction(x?.[method]));
+    /** @type {import('@appium/types').IDoctorCheck[]} */
+    const checks = _.flatMap((await B.all(loadChecksPromises)).filter(Boolean).map(_.toPairs))
+      .map(([, value]) => value)
+      .filter(isDoctorCheck);
+    if (_.isEmpty(checks)) {
+      this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
+      return [];
+    }
+    this.log.debug(
+      `Running ${util.pluralize('doctor check', checks.length, true)} ` +
+      `for the "${installSpec}" ${this.type}`
+    );
+    await new Doctor(checks).run();
+    return checks;
+  }
+
+  /**
    * Runs a script cached inside the `scripts` field under `appium`
    * inside of the extension's `package.json` file. Will throw
    * an error if the driver/plugin does not contain a `scripts` field
@@ -753,9 +834,18 @@ class ExtensionCliCommand {
       );
     }
 
+    const scriptPath = extScripts[scriptName];
+    const moduleRoot = this.config.getInstallPath(installSpec);
+    const normalizedScriptPath = path.normalize(path.resolve(moduleRoot, scriptPath));
+    if (!normalizedScriptPath.startsWith(path.normalize(moduleRoot))) {
+      throw this._createFatalError(
+        `The '${scriptPath}' script must be located in the '${moduleRoot}' folder`
+      );
+    }
+
     if (bufferOutput) {
-      const runner = new SubProcess(process.execPath, [extScripts[scriptName], ...extraArgs], {
-        cwd: this.config.getInstallPath(installSpec),
+      const runner = new SubProcess(process.execPath, [scriptPath, ...extraArgs], {
+        cwd: moduleRoot,
       });
 
       const output = new RingBuffer(50);
@@ -779,11 +869,7 @@ class ExtensionCliCommand {
 
     try {
       await new B((resolve, reject) => {
-        this._runUnbuffered(
-          this.config.getInstallPath(installSpec),
-          extScripts[scriptName],
-          extraArgs
-        )
+        this._runUnbuffered(moduleRoot, scriptPath, extraArgs)
           .on('error', (err) => {
             // generally this is of the "I can't find the script" variety.
             // this is a developer bug: the extension is pointing to a script that is not where the
@@ -891,6 +977,12 @@ export {ExtensionCliCommand as ExtensionCommand};
  * then all available script names will be printed
  * @property {string[]} [extraArgs] - arguments to pass to the script
  * @property {boolean} [bufferOutput] - if true, will buffer the output of the script and return it
+ */
+
+/**
+ * Options for {@linkcode ExtensionCliCommand.doctor}.
+ * @typedef DoctorOptions
+ * @property {string} installSpec - name of the extension to run doctor checks for
  */
 
 /**

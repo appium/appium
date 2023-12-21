@@ -99,9 +99,12 @@ export async function getActivePlugins(pluginConfig, maxParallelImports, usePlug
           `The reserved plugin name '${pluginName}' cannot be combined with other names.`
         );
       } else {
+        const suffix = _.isEmpty(pluginConfig.installedExtensions)
+          ? `You don't have any plugins installed yet.`
+          : `Only the following ${_.size(pluginConfig.installedExtensions) === 1 ? `plugin is` : `plugins are`} ` +
+            `available: ${_.keys(pluginConfig.installedExtensions)}`;
         throw new Error(
-          `Could not load the plugin '${pluginName}' because it is not installed. ` +
-          `Only the following plugins are available: ${_.keys(pluginConfig.installedExtensions)}`
+          `Could not load the plugin '${pluginName}' because it is not installed. ${suffix}`
         );
       }
     }
@@ -131,9 +134,12 @@ export async function getActiveDrivers(driverConfig, maxParallelImports, useDriv
       if (driverName in driverConfig.installedExtensions) {
         filteredDriverNames.push(driverName);
       } else {
+        const suffix = _.isEmpty(driverConfig.installedExtensions)
+          ? `You don't have any drivers installed yet.`
+          : `Only the following ${_.size(driverConfig.installedExtensions) === 1 ? `driver is` : `drivers are`} ` +
+            `available: ${_.keys(driverConfig.installedExtensions)}`;
         throw new Error(
-          `Could not load the driver '${driverName}' because it is not installed. ` +
-          `Only the following drivers are available: ${_.keys(driverConfig.installedExtensions)}`
+          `Could not load the driver '${driverName}' because it is not installed. ${suffix}`
         );
       }
     }

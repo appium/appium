@@ -81,7 +81,6 @@
     "axios": "1.6.2",
     "bluebird": "3.7.2",
     "cross-env": "7.0.3",
-    "find-up": "5.0.0",
     "lilconfig": "2.1.0",
     "lodash": "4.17.21",
     "npmlog": "7.0.1",

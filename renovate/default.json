@@ -23,7 +23,6 @@
         "env-paths",
         "execa",
         "figures",
-        "find-up",
         "get-port",
         "get-stream",
         "globby",

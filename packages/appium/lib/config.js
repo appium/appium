@@ -4,7 +4,6 @@ import {system, fs} from '@appium/support';
 import axios from 'axios';
 import {exec} from 'teen_process';
 import semver from 'semver';
-import findUp from 'find-up';
 import os from 'node:os';
 import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 
@@ -14,7 +13,6 @@ const APPIUM_VER = npmPackage.version;
 const ENGINES = /** @type {Record<string,string>} */ (npmPackage.engines);
 const MIN_NODE_VERSION = ENGINES.node;
 
-const GIT_META_ROOT = '.git';
 const GIT_BINARY = `git${system.isWindows() ? '.exe' : ''}`;
 const GITHUB_API = 'https://api.github.com/repos/appium/appium';
 
@@ -44,27 +42,25 @@ async function updateBuildInfo(useGithubApiFallback = false) {
   }
 }
 
-/**
- * Finds the Git metadata dir (see `GIT_META_ROOT`)
- *
- * This is needed because Appium cannot assume `package.json` and `.git` are in the same
- * directory.  Monorepos, see?
- * @returns {Promise<string|undefined>} Path to dir or `undefined` if not found
- */
-async function findGitRoot() {
-  return await findUp(GIT_META_ROOT, {cwd: rootDir, type: 'directory'});
-}
+/** @type {() => Promise<string?>} */
+const getFullGitPath = _.memoize(async function getFullGitPath() {
+  try {
+    return await fs.which(GIT_BINARY);
+  } catch {
+    return null;
+  }
+});
 
 /**
  * @param {boolean} [useGithubApiFallback]
  * @returns {Promise<string?>}
  */
 async function getGitRev(useGithubApiFallback = false) {
-  const gitRoot = await findGitRoot();
-  if (gitRoot) {
+  const fullGitPath = await getFullGitPath();
+  if (fullGitPath) {
     try {
-      const {stdout} = await exec(GIT_BINARY, ['rev-parse', 'HEAD'], {
-        cwd: gitRoot,
+      const {stdout} = await exec(fullGitPath, ['rev-parse', 'HEAD'], {
+        cwd: __dirname,
       });
       return stdout.trim();
     } catch (ign) {}
@@ -94,11 +90,11 @@ async function getGitRev(useGithubApiFallback = false) {
  * @returns {Promise<string?>}
  */
 async function getGitTimestamp(commitSha, useGithubApiFallback = false) {
-  const gitRoot = await findGitRoot();
-  if (gitRoot) {
+  const fullGitPath = await getFullGitPath();
+  if (fullGitPath) {
     try {
-      const {stdout} = await exec(GIT_BINARY, ['show', '-s', '--format=%ci', commitSha], {
-        cwd: gitRoot,
+      const {stdout} = await exec(fullGitPath, ['show', '-s', '--format=%ci', commitSha], {
+        cwd: __dirname,
       });
       return stdout.trim();
     } catch (ign) {}

@@ -1,21 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {fs} = require('@appium/support');
-
-/**
- * @param {string} message
- * @returns {CheckResult}
- */
-function ok(message) {
-  return {ok: true, optional: false, message};
-}
-
-/**
- * @param {string} message
- * @returns {CheckResult}
- */
-function nok(message) {
-  return {ok: false, optional: false, message};
-}
+const {fs, doctor} = require('@appium/support');
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */
 class EnvVarAndPathCheck {
@@ -29,14 +13,14 @@ class EnvVarAndPathCheck {
   async diagnose() {
     const varValue = process.env[this.varName];
     if (typeof varValue === 'undefined') {
-      return nok(`${this.varName} environment variable is NOT set!`);
+      return doctor.nok(`${this.varName} environment variable is NOT set!`);
     }
 
     if (await fs.exists(varValue)) {
-      return ok(`${this.varName} is set to: ${varValue}`);
+      return doctor.ok(`${this.varName} is set to: ${varValue}`);
     }
 
-    return nok(`${this.varName} is set to '${varValue}' but this is NOT a valid path!`);
+    return doctor.nok(`${this.varName} is set to '${varValue}' but this is NOT a valid path!`);
   }
 
   async fix() {
@@ -54,7 +38,7 @@ class EnvVarAndPathCheck {
   }
 }
 
-module.exports = {ok, nok, EnvVarAndPathCheck};
+module.exports = {EnvVarAndPathCheck};
 
 /**
  * @typedef {import('@appium/types').DoctorCheckResult} CheckResult

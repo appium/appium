@@ -14,6 +14,7 @@ import * as node from './node';
 import * as timing from './timing';
 import * as env from './env';
 import * as console from './console';
+import * as doctor from './doctor';
 
 export {npm} from './npm';
 
@@ -37,6 +38,7 @@ export {
   timing,
   env,
   console,
+  doctor,
 };
 export default {
   tempDir,
@@ -56,6 +58,7 @@ export default {
   timing,
   env,
   console,
+  doctor,
 };
 
 export type {ConsoleOpts} from './console';

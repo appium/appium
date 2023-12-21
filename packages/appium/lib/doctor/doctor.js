@@ -8,7 +8,11 @@ export class Doctor {
    */
   constructor(checks = []) {
     this.log = logger.getLogger('Doctor');
+    /** @type {DoctorCheck[]} */
     this.checks = checks;
+    this.checks
+      .filter((c) => _.isNil(c.log))
+      .forEach((c) => { c.log = this.log; });
     /** @type {DoctorIssue[]} */
     this.foundIssues = [];
   }
@@ -34,9 +38,6 @@ export class Doctor {
     this.log.info(`### Starting doctor diagnostics  ###`);
     this.foundIssues = [];
     for (const check of this.checks) {
-      if (_.isNil(check.log)) {
-        check.log = this.log;
-      }
       const res = await check.diagnose();
       const issue = this.toIssue(res, check);
       if (issue) {

@@ -1,7 +1,3 @@
-import {getLogger} from './logging';
-
-export const SKIP_AUTOFIX_ERROR_NAME = 'FixSkippedError';
-
 /**
  * A shortcut for a successful required doctor check
  *
@@ -42,19 +38,11 @@ export function nokOptional(message) {
   return {ok: false, optional: true, message};
 }
 
-/** @type {import('@appium/types').AppiumLogger|undefined} */
-let doctorLogger;
-
 /**
- * Configures the logger used in doctor checks
- *
- * @param {string} [prefix='Doctor']
- * @returns {import('@appium/types').AppiumLogger}
+ * Throw this exception in the fix() method
+ * of your doctor check to skip the actual fix if hasAutofix() is true
  */
-export function configureLogger(prefix = 'Doctor') {
-  doctorLogger = doctorLogger ?? getLogger(prefix);
-  return doctorLogger;
-}
+export class FixSkippedError extends Error {}
 
 /**
  * @typedef {import('@appium/types').DoctorCheckResult} DoctorCheckResult

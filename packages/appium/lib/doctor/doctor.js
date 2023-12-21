@@ -1,13 +1,13 @@
 import '@colors/colors';
 import _ from 'lodash';
-import { util, doctor } from '@appium/support';
+import { util, doctor, logger } from '@appium/support';
 
 export class Doctor {
   /**
    * @param {DoctorCheck[]} [checks=[]]
    */
   constructor(checks = []) {
-    this.log = doctor.configureLogger();
+    this.log = logger.getLogger('Doctor');
     this.checks = checks;
     /** @type {DoctorIssue[]} */
     this.foundIssues = [];
@@ -105,7 +105,7 @@ export class Doctor {
     try {
       await f.check.fix();
     } catch (err) {
-      if (err.constructor.name === doctor.SKIP_AUTOFIX_ERROR_NAME) {
+      if (err.constructor.name === doctor.FixSkippedError.name) {
         this.log.info(`### Skipped fix ###`);
         return;
       } else {

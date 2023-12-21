@@ -56,6 +56,8 @@ Wrappers for the command line interface abstraction used by the Appium server.
 
 Utilities to work with images. Use [sharp](https://github.com/lovell/sharp) under the hood.
 
+:bangbang: Node >=18.17 is required to use these utilities
+
 #### log-internal
 
 Utilities needed for internal Appium log config assistance.

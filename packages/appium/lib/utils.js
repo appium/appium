@@ -2,7 +2,7 @@ import _ from 'lodash';
 import logger from './logger';
 import {processCapabilities, PROTOCOLS, STANDARD_CAPS, errors} from '@appium/base-driver';
 import {inspect as dump} from 'util';
-import {node} from '@appium/support';
+import {node, fs} from '@appium/support';
 import path from 'path';
 import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE} from './constants';
 import os from 'node:os';
@@ -11,6 +11,7 @@ const W3C_APPIUM_PREFIX = 'appium';
 const STANDARD_CAPS_LOWERCASE = new Set([...STANDARD_CAPS].map((cap) => cap.toLowerCase()));
 export const V4_BROADCAST_IP = '0.0.0.0';
 export const V6_BROADCAST_IP = '::';
+export const npmPackage = fs.readPackageJsonFrom(__dirname);
 
 
 /**

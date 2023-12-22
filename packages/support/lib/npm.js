@@ -262,6 +262,19 @@ export class NPM {
       lockFile: this._getInstallLockfilePath(cwd),
     });
   }
+
+  /**
+   * @param {string} pkg Npm package spec to query
+   * @param {string[]} [entries=[]] Field names to be included into the
+   * resulting output. By default all fields are included.
+   * @returns {Promise<import('@appium/types').StringRecord>}
+   */
+  async getPackageInfo(pkg, entries = []) {
+    return (await this.exec('info', [pkg, ...entries], {
+      cwd: process.cwd(),
+      json: true
+    })).json;
+  }
 }
 
 export const npm = new NPM();

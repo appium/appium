@@ -211,7 +211,7 @@ export class NPM {
       }
     }
 
-    const installOpts = ['--save-dev', '--no-progress', '--no-audit', '--prefer-offline'];
+    const installOpts = ['--save-dev', '--no-progress', '--no-audit'];
     if (!(await hasAppiumDependency(cwd))) {
       if (process.env.APPIUM_OMIT_PEER_DEPS) {
         installOpts.push('--omit=peer');

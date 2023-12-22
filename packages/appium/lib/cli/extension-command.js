@@ -43,7 +43,7 @@ function receiptToManifest(receipt) {
  */
 async function getRemoteExtensionVersionReq(installSpec) {
   const currentVersion = npmPackage.version;
-  const allDeps = await npm.showPackageDependencies(installSpec);
+  const allDeps = await npm.getPackageInfo(installSpec, ['peerDependencies', 'dependencies']);
   const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
     .find(([name]) => name === 'appium');
   return [currentVersion, requiredVersionPair ? requiredVersionPair[1] : null];

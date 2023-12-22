@@ -264,17 +264,13 @@ export class NPM {
   }
 
   /**
-   * @typedef NpmDepsInfo
-   * @property {import('@appium/types').StringRecord} [peerDependencies]
-   * @property {import('@appium/types').StringRecord} [dependencies]
+   * @param {string} pkg Npm package spec to query
+   * @param {string[]} [entries=[]] Field names to be included into the
+   * resulting output. By default all fields are included.
+   * @returns {Promise<import('@appium/types').StringRecord>}
    */
-
-  /**
-   * @param {string} pkg
-   * @returns {Promise<NpmDepsInfo>}
-   */
-  async showPackageDependencies(pkg) {
-    return (await this.exec('info', [pkg, 'peerDependencies', 'dependencies'], {
+  async getPackageInfo(pkg, entries = []) {
+    return (await this.exec('info', [pkg, ...entries], {
       cwd: process.cwd(),
       json: true
     })).json;

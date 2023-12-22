@@ -262,6 +262,23 @@ export class NPM {
       lockFile: this._getInstallLockfilePath(cwd),
     });
   }
+
+  /**
+   * @typedef NpmDepsInfo
+   * @property {import('@appium/types').StringRecord} [peerDependencies]
+   * @property {import('@appium/types').StringRecord} [dependencies]
+   */
+
+  /**
+   * @param {string} pkg
+   * @returns {Promise<NpmDepsInfo>}
+   */
+  async showPackageDependencies(pkg) {
+    return (await this.exec('info', [pkg, 'peerDependencies', 'dependencies'], {
+      cwd: process.cwd(),
+      json: true
+    })).json;
+  }
 }
 
 export const npm = new NPM();

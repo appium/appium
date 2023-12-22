@@ -2,14 +2,14 @@
 
 import ora from 'ora';
 
-const JSON_SPACES = 4;
+export const JSON_SPACES = 4;
 
 /***
  * Log an error to the console and exit the process.
  * @param {boolean} json - whether we should log json or text
  * @param {any} msg - error message, object, Error instance, etc.
  */
-function errAndQuit(json, msg) {
+export function errAndQuit(json, msg) {
   if (json) {
     console.log(JSON.stringify({error: `${msg}`}, null, JSON_SPACES));
   } else {
@@ -26,7 +26,7 @@ function errAndQuit(json, msg) {
  * @param {boolean} json - whether we are in json mode (and should therefore not log)
  * @param {string} msg - string to log
  */
-function log(json, msg) {
+export function log(json, msg) {
   !json && console.log(msg);
 }
 
@@ -36,7 +36,7 @@ function log(json, msg) {
  * @param {string} msg - string to log
  * @param {function} fn - function to wrap with spinning
  */
-async function spinWith(json, msg, fn) {
+export async function spinWith(json, msg, fn) {
   if (json) {
     return await fn();
   }
@@ -52,7 +52,7 @@ async function spinWith(json, msg, fn) {
   }
 }
 
-class RingBuffer {
+export class RingBuffer {
   constructor(size = 50) {
     this.size = size;
     this.buffer = [];
@@ -70,5 +70,3 @@ class RingBuffer {
     this.buffer.push(item);
   }
 }
-
-export {errAndQuit, log, spinWith, JSON_SPACES, RingBuffer};

@@ -17,6 +17,8 @@ import {spawn} from 'child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'url';
 import {Doctor} from '../doctor/doctor';
+import {npmPackage} from '../utils';
+import semver from 'semver';
 
 const UPDATE_ALL = 'installed';
 
@@ -31,6 +33,20 @@ class NoUpdatesAvailableError extends Error {}
  */
 function receiptToManifest(receipt) {
   return /** @type {ExtManifest<ExtType>} */ (_.omit(receipt, 'driverName', 'pluginName'));
+}
+
+/**
+ * Fetches the remote extension version requirement
+ *
+ * @param {string} installSpec Extension name (could also contain the version suffix)
+ * @returns {Promise<[string, string|null]>}
+ */
+async function getRemoteExtensionVersionReq(installSpec) {
+  const currentVersion = npmPackage.version;
+  const allDeps = await npm.showPackageDependencies(installSpec);
+  const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
+    .find(([name]) => name === 'appium');
+  return [currentVersion, requiredVersionPair ? requiredVersionPair[1] : null];
 }
 
 /**
@@ -226,6 +242,29 @@ class ExtensionCliCommand {
   }
 
   /**
+   * Checks whether the given extension is compatible with the currently installed server
+   *
+   * @param {InstallViaNpmArgs} installViaNpmOpts
+   * @returns {Promise<void>}
+   */
+  async _checkInstallCompatibility({installSpec, pkgName, installType}) {
+    if (INSTALL_TYPE_NPM !== installType) {
+      return;
+    }
+
+    await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
+      const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(installSpec);
+      if (serverVersion && extVersionRequirement && !semver.satisfies(serverVersion, extVersionRequirement)) {
+        throw this._createFatalError(
+          `'${installSpec}' cannot be installed because the server version it requires (${extVersionRequirement}) ` +
+          `does not meet the currently installed one (${serverVersion}). Please install ` +
+          `a compatible server version first.`
+        );
+      }
+    });
+  }
+
+  /**
    * Install an extension
    *
    * @param {InstallOpts} opts
@@ -333,6 +372,8 @@ class ExtensionCliCommand {
           `installed ${this.type}s with "appium ${this.type} list --installed".`
       );
     }
+
+    await this._checkInstallCompatibility(installViaNpmOpts);
 
     receipt = await this.installViaNpm(installViaNpmOpts);
 

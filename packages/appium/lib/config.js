@@ -5,11 +5,10 @@ import axios from 'axios';
 import {exec} from 'teen_process';
 import semver from 'semver';
 import os from 'node:os';
+import {npmPackage} from './utils';
 import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 
-const npmPackage = fs.readPackageJsonFrom(__dirname);
-
-const APPIUM_VER = npmPackage.version;
+export const APPIUM_VER = npmPackage.version;
 const ENGINES = /** @type {Record<string,string>} */ (npmPackage.engines);
 const MIN_NODE_VERSION = ENGINES.node;
 
@@ -317,7 +316,6 @@ export {
   showBuildInfo,
   getNonDefaultServerArgs,
   getGitRev,
-  APPIUM_VER,
   updateBuildInfo,
   showConfig,
   rootDir,

@@ -43,7 +43,7 @@
     "@appium/support": "^4.1.11",
     "lodash": "4.17.21",
     "lru-cache": "10.1.0",
-    "sharp": "0.33.0",
+    "sharp": "0.33.1",
     "source-map-support": "0.5.21"
   },
   "peerDependencies": {

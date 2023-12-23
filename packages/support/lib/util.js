@@ -360,11 +360,11 @@ function quote(args) {
  * caused by NodeJS string interning
  * behavior described in https://bugs.chromium.org/p/v8/issues/detail?id=2869
  *
- * @param {*} s - The string to unleak
+ * @param {any} s - The string to unleak
  * @return {string} Either the unleaked string or the original object converted to string
  */
 function unleakString(s) {
-  return ` ${s}`.substr(1);
+  return ` ${s}`.substring(1);
 }
 
 /**

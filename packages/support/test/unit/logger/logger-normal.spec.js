@@ -30,10 +30,10 @@ describe('normal logger', function () {
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
     (() => {
-      log.errorAndThrow('msg1');
+      throw log.errorWithException('msg1');
     }).should.throw('msg1');
     (() => {
-      log.errorAndThrow(new Error('msg2'));
+      throw log.errorWithException(new Error('msg2'));
     }).should.throw('msg2');
     assertOutputContains(writers, 'msg1');
     assertOutputContains(writers, 'msg2');
@@ -87,7 +87,7 @@ describe('normal logger with static prefix', function () {
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
     (() => {
-      log.errorAndThrow('msg');
+      throw log.errorWithException('msg');
     }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);
@@ -117,7 +117,7 @@ describe('normal logger with dynamic prefix', function () {
   });
   it('throw should not rewrite log levels outside of testing and throw error', function () {
     (() => {
-      log.errorAndThrow('msg');
+      throw log.errorWithException('msg');
     }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, PREFIX);

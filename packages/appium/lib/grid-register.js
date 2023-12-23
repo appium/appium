@@ -30,10 +30,9 @@ async function registerNode(data, addr, port, basePath) {
     try {
       data = JSON.parse(data);
     } catch (err) {
-      logger.errorAndThrow(
+      throw logger.errorWithException(
         `Syntax error in node configuration file ${configFilePath}: ${err.message}`
       );
-      return;
     }
   }
 

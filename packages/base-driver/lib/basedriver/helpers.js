@@ -491,7 +491,7 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
       })
     ).sort((a, b) => a.split(path.sep).length - b.split(path.sep).length);
     if (_.isEmpty(sortedBundleItems)) {
-      logger.errorAndThrow(
+      throw logger.errorWithException(
         `App unzipped OK, but we could not find any '${supportedAppExtensions}' ` +
           util.pluralize('bundle', supportedAppExtensions.length, false) +
           ` in it. Make sure your archive contains at least one package having ` +

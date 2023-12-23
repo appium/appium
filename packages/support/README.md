@@ -184,9 +184,9 @@ let logs = npmlogger.record;
 // logs === [ { id: 0, level: 'info', prefix: 'mymodule', message: 'hi!', messageRaw: [ 'hi!' ] }]
 ```
 
-`log.errorAndThrow(error)`
+`log.errorWithException(error)`
 
-- logs the error passed in, at `error` level, and then throws the error. If the error passed in is not an instance of [Error](https://nodejs.org/api/errors.html#errors_class_error) (either directly, or a subclass of `Error`) it will be wrapped in a generic `Error` object.
+- logs the error passed in, at `error` level, and then returns the error. If the error passed in is not an instance of [Error](https://nodejs.org/api/errors.html#errors_class_error) (either directly, or a subclass of `Error`) it will be wrapped in a generic `Error` object.
 
 ```js
 import { getLogger } from 'appium-base-driver';
@@ -197,5 +197,5 @@ log.error('This is an error');
 throw new Error('This is an error');
 
 // now is compacted
-log.errorAndThrow('This is an error');
+throw log.errorWithException('This is an error');
 ```

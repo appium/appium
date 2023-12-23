@@ -28,7 +28,7 @@ describe('logger with force log', function () {
     log.error('error');
     assertOutputContains(writers, 'error');
     (() => {
-      log.errorAndThrow('msg');
+      throw log.errorWithException('msg');
     }).should.throw('msg');
     assertOutputContains(writers, 'error');
     assertOutputContains(writers, 'msg');

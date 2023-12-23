@@ -37,5 +37,9 @@ export interface AppiumLogger {
   verbose(...args: any[]): void;
   silly(...args: any[]): void;
   http(...args: any[]): void;
+  /**
+   * @deprecated Please use {@link errorWithException} instead
+   */
   errorAndThrow(...args: any[]): never;
+  errorWithException(...args: any[]): Error;
 }

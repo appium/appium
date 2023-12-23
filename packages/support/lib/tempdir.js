@@ -77,7 +77,7 @@ async function open(affixes) {
     // opens the file in mode 384
     return {path: filePath, fd};
   } catch (err) {
-    return log.errorAndThrow(err);
+    throw log.errorWithException(err);
   }
 }
 

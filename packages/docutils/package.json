@@ -57,7 +57,7 @@
     "diff": "5.1.0",
     "figures": "3.2.0",
     "json5": "2.2.3",
-    "lilconfig": "2.1.0",
+    "lilconfig": "3.0.0",
     "lodash": "4.17.21",
     "log-symbols": "4.1.0",
     "pkg-dir": "5.0.0",

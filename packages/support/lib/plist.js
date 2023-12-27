@@ -31,7 +31,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
   // handle nonexistant file
   if (!(await fs.exists(plist))) {
     if (mustExist) {
-      log.errorAndThrow(`Plist file doesn't exist: '${plist}'`);
+      throw log.errorWithException(`Plist file doesn't exist: '${plist}'`);
     } else {
       log.debug(`Plist file '${plist}' does not exist. Returning an empty plist.`);
       return {};
@@ -52,7 +52,7 @@ async function parsePlistFile(plist, mustExist = true, quiet = true) {
       obj = await parseXmlPlistFile(plist);
       type = 'xml';
     } catch (err) {
-      log.errorAndThrow(`Could not parse plist file '${plist}' as XML: ${err.message}`);
+      throw log.errorWithException(`Could not parse plist file '${plist}' as XML: ${err.message}`);
     }
   }
 
@@ -81,14 +81,14 @@ async function updatePlistFile(
   try {
     obj = await parsePlistFile(plist, mustExist);
   } catch (err) {
-    log.errorAndThrow(`Could not update plist: ${err.message}`);
+    throw log.errorWithException(`Could not update plist: ${err.message}`);
   }
   _.extend(obj, updatedFields);
   let newPlist = binary ? bplistCreate(obj) : xmlplist.build(obj);
   try {
     await fs.writeFile(plist, newPlist);
   } catch (err) {
-    log.errorAndThrow(`Could not save plist: ${err.message}`);
+    throw log.errorWithException(`Could not save plist: ${err.message}`);
   }
   if (!quiet) {
     log.debug(`Wrote plist file '${plist}'`);

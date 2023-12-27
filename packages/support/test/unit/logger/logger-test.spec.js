@@ -32,7 +32,7 @@ describe('test logger', function () {
     log.warn(text);
     log.error(text);
     (() => {
-      log.errorAndThrow(text);
+      throw log.errorWithException(text);
     }).should.throw(text);
     assertOutputDoesntContain(writers, text);
   });

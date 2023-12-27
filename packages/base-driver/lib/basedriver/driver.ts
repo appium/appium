@@ -368,7 +368,7 @@ export class BaseDriver<
     try {
       validateCaps(caps, this._desiredCapConstraints);
     } catch (e) {
-      this.log.errorAndThrow(
+      throw this.log.errorWithException(
         new errors.SessionNotCreatedError(
           `The desiredCapabilities object was not valid for the ` +
             `following reason(s): ${e.message}`,
@@ -383,14 +383,14 @@ export class BaseDriver<
 
   async updateSettings(newSettings: Settings) {
     if (!this.settings) {
-      this.log.errorAndThrow('Cannot update settings; settings object not found');
+      throw this.log.errorWithException('Cannot update settings; settings object not found');
     }
     return await this.settings.update(newSettings);
   }
 
   async getSettings() {
     if (!this.settings) {
-      this.log.errorAndThrow('Cannot get settings; settings object not found');
+      throw this.log.errorWithException('Cannot get settings; settings object not found');
     }
     return this.settings.getSettings();
   }

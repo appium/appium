@@ -73,7 +73,7 @@ async function requirePackage(packageName) {
     log.debug(`Retrying load of linked package '${packageName}'`);
     return require(packageName);
   } catch (err) {
-    log.errorAndThrow(`Unable to load package '${packageName}': ${err.message}`);
+    throw log.errorWithException(`Unable to load package '${packageName}': ${err.message}`);
   }
 }
 

@@ -108,11 +108,16 @@ function getLogger(prefix = null) {
       }
     };
   }
-  // add method to log an error, and throw it, for convenience
-  wrappedLogger.errorAndThrow = function (err) {
-    this.error(err);
+  wrappedLogger.errorWithException = function (/** @type {any[]} */ ...args) {
+    this.error(...args);
     // make sure we have an `Error` object. Wrap if necessary
-    throw _.isError(err) ? err : new Error(unleakString(err));
+    return _.isError(args[0]) ? args[0] : new Error(args.map(unleakString).join('\n'));
+  };
+  /**
+   * @deprecated Use {@link errorWithException} instead
+   */
+  wrappedLogger.errorAndThrow = function (/** @type {any[]} */ ...args) {
+    throw this.errorWithException(args);
   };
   if (!usingGlobalLog) {
     // if we're not using a global log specified from some top-level package,

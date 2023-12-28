@@ -2,7 +2,9 @@
 
 > Appium plugin for transforming platform-specific XML into a universal syntax
 
-This plugin takes the XML page source retrieved using an iOS or Android driver, and changes various node and attribute names to use common terminology that can apply to both platforms. This is achieved by altering the behavior of the `getPageSource` and `findElement` methods.
+This plugin takes the XML page source retrieved using an iOS or Android driver, and changes various
+node and attribute names to use common terminology that can apply to both platforms. This is
+achieved by altering the behavior of the `getPageSource` and `findElement` methods.
 
 ## Motivation
 
@@ -29,7 +31,8 @@ appium --use-plugins=universal-xml
 |`XCUIElementTypeAlert`|`android.widget.Toast`|`Alert`|
 |`XCUIElementTypeSwitch`|`android.widget.Switch`|`SwitchInput`|
 
-See [the mapping file](./lib/node-map.js) for a full list of node name translations. Any names not specified are left as-is.
+See [the mapping file](./lib/node-map.js) for a full list of node name translations. Any names not
+specified are left as-is.
 
 ### Attribute names
 |iOS|Android|Transformed|
@@ -38,7 +41,9 @@ See [the mapping file](./lib/node-map.js) for a full list of node name translati
 |`label`|`text`|`text`|
 |`visible`|`displayed`|`visible`|
 
-Note that this plugin also removes a few attributes from the transformed XML. See [the mapping file](./lib/attr-map.js) for a full list of attribute name translations and removed attributes. Any names not specified are left as-is.
+Note that this plugin also removes a few attributes from the transformed XML. See
+[the mapping file](./lib/attr-map.js) for a full list of attribute name translations and removed
+attributes. Any names not specified are left as-is.
 
 ## License
 

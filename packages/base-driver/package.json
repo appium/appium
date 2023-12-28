@@ -68,7 +68,7 @@
     "path-to-regexp": "6.2.1",
     "serve-favicon": "2.5.0",
     "source-map-support": "0.5.21",
-    "type-fest": "4.8.3",
+    "type-fest": "4.9.0",
     "validate.js": "0.13.1"
   },
   "optionalDependencies": {

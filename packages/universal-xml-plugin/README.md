@@ -1,27 +1,46 @@
-# Appium Universal XML Plugin
+# @appium/universal-xml-plugin
 
-This is an official Appium plugin designed to make XML source retrieved from iOS and Android use the same node and attribute names, to facilitate cross-platform test writing.
+> Appium plugin for transforming platform-specific XML into a universal syntax
 
-## Features
+This plugin takes the XML page source retrieved using an iOS or Android driver, and changes various node and attribute names to use common terminology that can apply to both platforms. This is achieved by altering the behavior of the `getPageSource` and `findElement` methods.
 
-TODO
+## Motivation
 
-## Installation - Server
+Having compatibility between iOS and Android XML sources can simplify creation of cross-platform tests.
 
-TODO
+## Installation
 
-## Installation - Client
+```
+appium plugin install universal-xml
+```
 
-No special action is needed to make the features available in the various Appium clients, as this plugin simply alters the behavior of the existing "get page source" and "find element" methods.
-
-## Activation
-
-The plugin will not be active unless turned on when invoking the Appium server:
+The plugin must be explicitly activated when launching the Appium server:
 
 ```
 appium --use-plugins=universal-xml
 ```
 
-## Usage
+## Examples
 
-TODO
+### Node names
+|iOS|Android|Transformed|
+|-|-|-|
+|`XCUIElementTypeButton`|`android.widget.Button`|`Button`|
+|`XCUIElementTypeAlert`|`android.widget.Toast`|`Alert`|
+|`XCUIElementTypeSwitch`|`android.widget.Switch`|`SwitchInput`|
+
+See [the mapping file](./lib/node-map.js) for a full list of node name translations. Any names not specified are left as-is.
+
+### Attribute names
+|iOS|Android|Transformed|
+|-|-|-|
+|`name`|`content-desc`|`axId`|
+|`label`|`text`|`text`|
+|`visible`|`displayed`|`visible`|
+
+Note that this plugin also removes a few attributes from the transformed XML. See [the mapping file](./lib/attr-map.js) for a full list of attribute name translations and removed attributes. Any names not specified are left as-is.
+
+## License
+
+Apache-2.0
+

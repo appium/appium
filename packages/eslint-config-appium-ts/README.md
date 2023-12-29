@@ -1,4 +1,4 @@
-# @appium/eslint-config-appium
+# @appium/eslint-config-appium-ts
 
 > Provides a reusable [ESLint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) for [Appium](https://github.com/appium/appium) and Appium-adjacent projects (for TypeScript)
 

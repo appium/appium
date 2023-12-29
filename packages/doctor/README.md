@@ -1,6 +1,6 @@
-appium-doctor
-===================
-Attempts to diagnose and fix common Node, iOS and Android configuration issues before starting Appium.
+# @appium/doctor
+
+> Attempts to diagnose and fix common Appium configuration issues
 
 ### Install
 
@@ -26,24 +26,6 @@ Options:
   -h, --help  Show help                                   [boolean]
 ```
 
-## Dev
+## License
 
-## Watch
-
-```
-npm run watch
-```
-
-## Test
-
-```
-npm test
-```
-
-## Hack Cli
-
-Use the `--demo` option to simulate the fix process.
-
-```
-appium-doctor --demo
-```
+Apache-2.0

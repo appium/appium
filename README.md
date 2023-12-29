@@ -18,7 +18,7 @@
 
 <p align="center"><b>
    <a href="https://appium.io">Documentation</a> |
-   <a href="https://appium.io/docs/en/latest/quickstart/">Get Started</a> |
+   <a href="https://appium.io/docs/en/latest/intro/">Get Started</a> |
    <a href="https://appium.io/docs/en/latest/ecosystem/">Ecosystem</a> |
    <a href="https://github.com/appium/appium/blob/master/packages/appium/CHANGELOG.md">Changelog</a> |
    <a href="https://github.com/appium/appium/blob/master/ROADMAP.md">Roadmap</a> |
@@ -164,8 +164,8 @@ Obj-C/Swift, and you can only run tests through Xcode. Similarly, with Google's 
 Espresso, you can only write tests in Java/Kotlin. Appium opens up the possibility of true
 cross-platform native app automation, for mobile and beyond!
 
-If you're new to Appium or want a more comprehensive description of what this is all
-about, please read our [Intro to Appium](https://appium.io/docs/en/latest/intro/).
+If you are looking for a more comprehensive description of what this is all about, please read our
+documentation on [How Does Appium Work?](https://appium.io/docs/en/latest/intro/appium/).
 
 ## License
 

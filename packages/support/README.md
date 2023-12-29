@@ -2,6 +2,9 @@
 
 > Utility functions used to support Appium drivers and plugins
 
+[![NPM version](http://img.shields.io/npm/v/@appium/support.svg)](https://npmjs.org/package/@appium/support)
+[![Downloads](http://img.shields.io/npm/dm/@appium/support.svg)](https://npmjs.org/package/@appium/support)
+
 ## Usage in drivers and plugins
 
 Drivers and plugins are recommended to have Appium as a peer dependency, as it already includes

@@ -2,6 +2,9 @@
 
 > A collection of test utility libs used across Appium packages
 
+[![NPM version](http://img.shields.io/npm/v/@appium/test-support.svg)](https://npmjs.org/package/@appium/test-support)
+[![Downloads](http://img.shields.io/npm/dm/@appium/test-support.svg)](https://npmjs.org/package/@appium/test-support)
+
 ## Installation
 
 ```

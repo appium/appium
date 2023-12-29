@@ -2,6 +2,9 @@
 
 > Attempts to diagnose and fix common Appium configuration issues
 
+[![NPM version](http://img.shields.io/npm/v/@appium/doctor.svg)](https://npmjs.org/package/@appium/doctor)
+[![Downloads](http://img.shields.io/npm/dm/@appium/doctor.svg)](https://npmjs.org/package/@appium/doctor)
+
 ### Install
 
 ```

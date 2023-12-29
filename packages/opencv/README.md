@@ -2,6 +2,9 @@
 
 > OpenCV-related helper methods
 
+[![NPM version](http://img.shields.io/npm/v/@appium/opencv.svg)](https://npmjs.org/package/@appium/opencv)
+[![Downloads](http://img.shields.io/npm/dm/@appium/opencv.svg)](https://npmjs.org/package/@appium/opencv)
+
 ## Installation
 
 `npm install @appium/opencv`

@@ -2,6 +2,9 @@
 
 > Provides a reusable [ESLint](http://eslint.org/) [shared configuration](http://eslint.org/docs/developer-guide/shareable-configs) for [Appium](https://github.com/appium/appium) and Appium-adjacent projects.
 
+[![NPM version](http://img.shields.io/npm/v/@appium/eslint-config-appium.svg)](https://npmjs.org/package/@appium/eslint-config-appium)
+[![Downloads](http://img.shields.io/npm/dm/@appium/eslint-config-appium.svg)](https://npmjs.org/package/@appium/eslint-config-appium)
+
 ## Usage
 
 Install the package with **`npm` v8 or newer**:

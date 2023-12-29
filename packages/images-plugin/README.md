@@ -2,6 +2,9 @@
 
 > Appium plugin for image comparison, visual testing, and image-based functional testing
 
+[![NPM version](http://img.shields.io/npm/v/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
+[![Downloads](http://img.shields.io/npm/dm/@appium/images-plugin.svg)](https://npmjs.org/package/@appium/images-plugin)
+
 ## Features
 
 1. **Image Comparison** ([docs](./docs/image-comparison.md)) - A new Appium command and route that allows sending in two different images and comparing them in various ways.

@@ -1,17 +1,14 @@
-@appium/test-support
-===================
+# @appium/test-support
 
-A collection of test utility lib used across Appium packages.
+> A collection of test utility libs used across Appium packages
 
-[![Build Status](https://travis-ci.org/appium/@appium/test-support.svg?branch=master)](https://travis-ci.org/appium/@appium/test-support)
-
-## Install
+## Installation
 
 ```
 npm install @appium/test-support --save-dev
 ```
 
-## Api
+## Usage
 
 ### stubEnv
 
@@ -59,7 +56,7 @@ describe('myTest', () => {
 
 ### withSandbox
 
-Use when mixing up sinon apis (mocks, spies stubs).
+Use when mixing up `sinon` APIs (mocks, spies, stubs).
 
 ```js
 import { withSandbox } from '@appium/test-support';
@@ -145,14 +142,6 @@ can be scripted. Toward that, there are two scripts:
 * `android-emu-travis-post` - waits for the device to be booted, and then goes
   to its home screen
 
-## Watch
+## License
 
-```
-npm run watch
-```
-
-## Test
-
-```
-npm test
-```
+Apache-2.0

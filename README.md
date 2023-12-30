@@ -43,7 +43,8 @@ supported platform drivers are only compatible with Appium 2.
 __[Please read the Migration Guide](https://appium.io/docs/en/latest/guides/migrating-1-to-2/) if you
 are still using Appium 1.__
 
-If you use Appium Desktop or Appium Server GUI, you will not be able to upgrade to Appium 2, as
+> [!WARNING]
+> If you use Appium Desktop or Appium Server GUI, you will not be able to upgrade to Appium 2, as
 both of these tools have been deprecated. Please use [Appium Inspector](https://github.com/appium/appium-inspector)
 in combination with a standalone Appium 2 server.
 
@@ -77,10 +78,15 @@ Driver management is done using [Appium's Extension command-line interface](http
 appium driver install <driver-name>
 # Install any driver from npm
 appium driver install --source=npm <driver-name>
+# See documentation for installation from other sources
+
 # List already installed drivers
 appium driver list --installed
 # Update a driver (it must be already installed)
+# This will NOT update the major version, in order to prevent breaking changes
 appium driver update <driver-name>
+# Update a driver to the most recent version (may include breaking changes)
+appium driver update <driver-name> --unsafe
 # Uninstall a driver (it won't last forever, will it?)
 appium driver uninstall <driver-name>
 ```
@@ -113,10 +119,15 @@ Similarly to drivers, plugin management is also done using
 appium plugin install <plugin-name>
 # Install any plugin from npm
 appium plugin install --source=npm <plugin-name>
+# See documentation for installation from other sources
+
 # List already installed plugins
 appium plugin list --installed
 # Update a plugin (it must be already installed)
+# This will NOT update the major version, in order to prevent breaking changes
 appium plugin update <plugin-name>
+# Update a plugin to the most recent version (may include breaking changes)
+appium plugin update <plugin-name> --unsafe
 # Uninstall a plugin
 appium plugin uninstall <plugin-name>
 ```

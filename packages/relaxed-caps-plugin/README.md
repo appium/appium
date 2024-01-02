@@ -1,26 +1,35 @@
-# Appium Relaxed Caps Plugin
+# @appium/relaxed-caps-plugin
 
-With the advent of Appium 2.0, the Appium server begins to require that all capabilities conform to the W3C [requirements for capabilities](https://www.w3.org/TR/webdriver/#capabilities). Among these requirements is one that restricts capabilities to those found in a predetermined set. Appium supports many additional capabilities as extension capabilities, and these must be accessed with the prefix `appium:` in front of the capability name.
+> Appium plugin for handling extension capabilities with no prefix
 
-There are a lot of test scripts out there that don't conform to the requirement, and so this plugin is designed to make it easy to keep running these scripts even with the new stricter capabilities requirements beginning with Appium 2.0. Basically, it inserts the `appium:` prefix for you!
+[![NPM version](http://img.shields.io/npm/v/@appium/relaxed-caps-plugin.svg)](https://npmjs.org/package/@appium/relaxed-caps-plugin)
+[![Downloads](http://img.shields.io/npm/dm/@appium/relaxed-caps-plugin.svg)](https://npmjs.org/package/@appium/relaxed-caps-plugin)
 
-## Installation - Server
+Appium conforms to the W3C WebDriver Protocol [requirements for capabilities](https://www.w3.org/TR/webdriver/#capabilities),
+which means that all non-standard (extension) capabilities used with Appium must have a prefix
+(usually this prefix is `appium:`). Any non-standard capabilities without a prefix are rejected.
 
-Install the plugin using Appium's plugin CLI, either as a named plugin or via NPM:
+This plugin can be used to automatically add the `appium:` prefix to non-standard capabilities that
+do not have a prefix.
+
+## Motivation
+
+There are a lot of test scripts out there that don't conform to the W3C capability requirements,
+so this plugin is designed to make it easy to keep running these scripts even with the stricter
+capability requirements in Appium 2.
+
+## Installation
 
 ```
 appium plugin install relaxed-caps
-appium plugin install --source=npm @appium/relaxed-caps-plugin
 ```
 
-## Installation - Client
-
-No special action is needed to make things work on the client side. Just keep sending in your unprefixed caps!
-
-## Activation
-
-The plugin will not be active unless turned on when invoking the Appium server:
+The plugin must be explicitly activated when launching the Appium server:
 
 ```
 appium --use-plugins=relaxed-caps
 ```
+
+## License
+
+Apache-2.0

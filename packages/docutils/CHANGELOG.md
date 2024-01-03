@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/appium/appium/compare/@appium/docutils@1.0.1...@appium/docutils@1.0.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3 ([#19489](https://github.com/appium/appium/issues/19489)) ([ea8394a](https://github.com/appium/appium/commit/ea8394a888c835bc54f7f68174a4b6cae85339ea))
+* **types:** update dependency type-fest to v4 ([#19592](https://github.com/appium/appium/issues/19592)) ([94b3580](https://github.com/appium/appium/commit/94b358022fdba3050ef94c1f881895f07e24fb75))
+
+
+
 ## [1.0.1](https://github.com/appium/appium/compare/@appium/docutils@0.4.13...@appium/docutils@1.0.1) (2023-12-18)
 
 This includes all changes from 1.0.0.

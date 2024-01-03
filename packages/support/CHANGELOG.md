@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.0](https://github.com/appium/appium/compare/@appium/support@4.1.11...@appium/support@4.2.0) (2024-01-03)
+
+
+### Features
+
+* **appium,support:** Add common shortcuts for doctor checks ([#19562](https://github.com/appium/appium/issues/19562)) ([893b9e1](https://github.com/appium/appium/commit/893b9e15d64d2356ea339596e805543df51fa505))
+* Deny install/upgrade of packages which server dep does not meet the current Appium version ([#19575](https://github.com/appium/appium/issues/19575)) ([73bf68c](https://github.com/appium/appium/commit/73bf68cc602de0999e1956110be225c3fd9087c2))
+
+
+### Bug Fixes
+
+* **support:** Appium version comparison ([#19602](https://github.com/appium/appium/issues/19602)) ([eff6d33](https://github.com/appium/appium/commit/eff6d331f21070e646dc75fbc9ff7a6835cd0f13))
+* **support:** update dependency axios to v1.6.3 ([441b284](https://github.com/appium/appium/commit/441b2848dae28472356f37fc5d51ac27af7bbe29))
+* **support:** update dependency moment to v2.30.0 ([#19587](https://github.com/appium/appium/issues/19587)) ([e77aa41](https://github.com/appium/appium/commit/e77aa417a0e028111dd60052142a15411aca953d))
+* **support:** update dependency moment to v2.30.1 ([b11366c](https://github.com/appium/appium/commit/b11366c3fcadce37567a809d172d58110f82affd))
+* **types:** update dependency type-fest to v4 ([#19592](https://github.com/appium/appium/issues/19592)) ([94b3580](https://github.com/appium/appium/commit/94b358022fdba3050ef94c1f881895f07e24fb75))
+
+
+
 ## [4.1.11](https://github.com/appium/appium/compare/@appium/support@4.1.10...@appium/support@4.1.11) (2023-12-18)
 
 

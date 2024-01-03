@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.0](https://github.com/appium/appium/compare/appium@2.3.0...appium@2.4.0) (2024-01-03)
+
+
+### Features
+
+* add webdriver bidi support ([2b21e66](https://github.com/appium/appium/commit/2b21e66891e8ab8c3929f04f32e94eb4efdba691))
+* **appium,support:** Add common shortcuts for doctor checks ([#19562](https://github.com/appium/appium/issues/19562)) ([893b9e1](https://github.com/appium/appium/commit/893b9e15d64d2356ea339596e805543df51fa505))
+* **appium:** Make doctor extensible ([#19542](https://github.com/appium/appium/issues/19542)) ([a30286b](https://github.com/appium/appium/commit/a30286b6e7b9753f73e55a8f9db14211b3124578))
+* **appium:** Print the list of available extension scripts if no script name is provided ([#19539](https://github.com/appium/appium/issues/19539)) ([dc2cedf](https://github.com/appium/appium/commit/dc2cedfecd19581321f6947ef1c847065ba2d3d6))
+* Deny install/upgrade of packages which server dep does not meet the current Appium version ([#19575](https://github.com/appium/appium/issues/19575)) ([73bf68c](https://github.com/appium/appium/commit/73bf68cc602de0999e1956110be225c3fd9087c2))
+
+
+### Bug Fixes
+
+* **appium:** update dependency ws to v8.15.1 ([92d1172](https://github.com/appium/appium/commit/92d117298442e72ae262f224733068ddf147f4c8))
+* **appium:** update dependency ws to v8.16.0 ([#19586](https://github.com/appium/appium/issues/19586)) ([fe5245a](https://github.com/appium/appium/commit/fe5245a42784181a9cd7a8ff6b095a622ae40920))
+* **base-driver:** update dependency async-lock to v1.4.1 ([a304a1f](https://github.com/appium/appium/commit/a304a1f78e658f6f70cbe8e1efd6d06b81d8d34e))
+* **docutils:** update dependency lilconfig to v3 ([#19489](https://github.com/appium/appium/issues/19489)) ([ea8394a](https://github.com/appium/appium/commit/ea8394a888c835bc54f7f68174a4b6cae85339ea))
+* **execute-driver-plugin:** update dependency webdriverio to v8.26.3 ([ff767b7](https://github.com/appium/appium/commit/ff767b7f25e97ec9643f691b57ca6ba159dcdcf9))
+* **execute-driver-plugin:** update dependency webdriverio to v8.27.0 ([9b06b87](https://github.com/appium/appium/commit/9b06b871eb3d9c60428130442ea7ab433ce4df31))
+* **support:** update dependency axios to v1.6.3 ([441b284](https://github.com/appium/appium/commit/441b2848dae28472356f37fc5d51ac27af7bbe29))
+* **types:** update dependency type-fest to v4 ([#19592](https://github.com/appium/appium/issues/19592)) ([94b3580](https://github.com/appium/appium/commit/94b358022fdba3050ef94c1f881895f07e24fb75))
+
+
+
 ## [2.3.0](https://github.com/appium/appium/compare/appium@2.2.3...appium@2.3.0) (2023-12-18)
 
 

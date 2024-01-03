@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.3.0...@appium/fake-driver@5.4.0) (2024-01-03)
+
+
+### Features
+
+* add webdriver bidi support ([2b21e66](https://github.com/appium/appium/commit/2b21e66891e8ab8c3929f04f32e94eb4efdba691))
+* **appium,support:** Add common shortcuts for doctor checks ([#19562](https://github.com/appium/appium/issues/19562)) ([893b9e1](https://github.com/appium/appium/commit/893b9e15d64d2356ea339596e805543df51fa505))
+* **appium:** Make doctor extensible ([#19542](https://github.com/appium/appium/issues/19542)) ([a30286b](https://github.com/appium/appium/commit/a30286b6e7b9753f73e55a8f9db14211b3124578))
+
+
+
 ## [5.3.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.2.11...@appium/fake-driver@5.3.0) (2023-12-18)
 
 

@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.0](https://github.com/appium/appium/compare/@appium/base-driver@9.4.4...@appium/base-driver@9.5.0) (2024-01-03)
+
+
+### Features
+
+* add webdriver bidi support ([2b21e66](https://github.com/appium/appium/commit/2b21e66891e8ab8c3929f04f32e94eb4efdba691))
+
+
+### Bug Fixes
+
+* **base-driver:** update dependency async-lock to v1.4.1 ([a304a1f](https://github.com/appium/appium/commit/a304a1f78e658f6f70cbe8e1efd6d06b81d8d34e))
+* **support:** update dependency axios to v1.6.3 ([441b284](https://github.com/appium/appium/commit/441b2848dae28472356f37fc5d51ac27af7bbe29))
+* **types:** update dependency type-fest to v4 ([#19592](https://github.com/appium/appium/issues/19592)) ([94b3580](https://github.com/appium/appium/commit/94b358022fdba3050ef94c1f881895f07e24fb75))
+
+
+
 ## [9.4.4](https://github.com/appium/appium/compare/@appium/base-driver@9.4.3...@appium/base-driver@9.4.4) (2023-12-18)
 
 

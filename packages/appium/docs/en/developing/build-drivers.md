@@ -657,6 +657,13 @@ A couple notes about this system:
 1. The `executeMethod` helper will reject with an error if a script name doesn't match one of the
    script names defined as a command in `executeMethodMap`, or if there are missing parameters.
 
+
+### Build Appium Doctor checks
+
+Your users can run `appium driver doctor <driverName>` to run installation and health checks. Visit
+the [Building Doctor Checks](./build-doctor-checks.md) guide for more information on this
+capability.
+
 ### Implement handling of Appium settings
 
 Appium users can send parameters to your driver via CLI args as well as via capabilities. But these

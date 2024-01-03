@@ -68,6 +68,7 @@ nav:
       - developing/build-drivers.md
       - developing/build-plugins.md
       - developing/build-docs.md
+      - developing/build-doctor-checks.md
   - Contributing:
       - contributing/index.md
       - contributing/develop.md

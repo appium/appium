@@ -412,6 +412,12 @@ Overriding Execute Methods from drivers works as you'd expect: if your plugin de
 Method with the same name as that of a driver, your command (in this case `plugMeIn`) will be
 called first. You can choose to run the driver's original behaviour via `next` if you want.
 
+### Build Appium Doctor checks
+
+Your users can run `appium plugin doctor <pluginName>` to run installation and health checks. Visit
+the [Building Doctor Checks](./build-doctor-checks.md) guide for more information on this
+capability.
+
 ### Update the Appium server object
 
 You probably don't normally need to update the Appium server object (which is an

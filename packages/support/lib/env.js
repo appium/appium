@@ -58,7 +58,7 @@ export const findAppiumDependencyPackage = _.memoize(
     const readPkg = async (root) => {
       try {
         const pkg = await readPackageInDir(root);
-        const version = semver.clean(String(
+        const version = semver.coerce(String(
           pkg?.dependencies?.appium ??
           pkg?.devDependencies?.appium ??
           pkg?.peerDependencies?.appium

@@ -21,7 +21,7 @@ The `appium_lib_core` is the main part as an Appium client.
 This example is by the `appium_lib_core` with `test-unit` gem module.
 Tes code in `appium_lib` should be similar.
 
-```python title="test.py"
+```python title="test.rb"
 --8<-- "./sample-code/quickstarts/rb/test.rb"
 ```
 

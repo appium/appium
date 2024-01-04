@@ -36,13 +36,17 @@ function receiptToManifest(receipt) {
 }
 
 /**
- * Fetches the remote extension version requirement
+ * Fetches the remote extension version requirements
  *
- * @param {string} installSpec Extension name (could also contain the version suffix)
+ * @param {string} pkgName Extension name
+ * @param {string} [pkgVer] Extension version (if not provided then the latest is assumed)
  * @returns {Promise<[string, string|null]>}
  */
-async function getRemoteExtensionVersionReq(installSpec) {
-  const allDeps = await npm.getPackageInfo(installSpec, ['peerDependencies', 'dependencies']);
+async function getRemoteExtensionVersionReq(pkgName, pkgVer) {
+  const allDeps = await npm.getPackageInfo(
+    `${pkgName}${pkgVer ? `@${pkgVer}` : ``}`,
+    ['peerDependencies', 'dependencies']
+  );
   const requiredVersionPair = _.flatMap(_.values(allDeps).map(_.toPairs))
     .find(([name]) => name === 'appium');
   return [npmPackage.version, requiredVersionPair ? requiredVersionPair[1] : null];
@@ -246,13 +250,13 @@ class ExtensionCliCommand {
    * @param {InstallViaNpmArgs} installViaNpmOpts
    * @returns {Promise<void>}
    */
-  async _checkInstallCompatibility({installSpec, pkgName, installType}) {
+  async _checkInstallCompatibility({installSpec, pkgName, pkgVer, installType}) {
     if (INSTALL_TYPE_NPM !== installType) {
       return;
     }
 
     await spinWith(this.isJsonOutput, `Checking if '${pkgName}' is compatible`, async () => {
-      const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(installSpec);
+      const [serverVersion, extVersionRequirement] = await getRemoteExtensionVersionReq(pkgName, pkgVer);
       if (serverVersion && extVersionRequirement && !semver.satisfies(serverVersion, extVersionRequirement)) {
         throw this._createFatalError(
           `'${installSpec}' cannot be installed because the server version it requires (${extVersionRequirement}) ` +

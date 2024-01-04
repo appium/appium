@@ -592,8 +592,8 @@ describe('FakeDriver via HTTP', function () {
       collectedEvents.should.not.be.empty;
 
       // finally  unsubscribe and wait and assert that some events have been collected
-      collectedEvents = [];
       await driver.sessionUnsubscribe({events: ['clock.currentTime']});
+      collectedEvents = [];
       await B.delay(750);
       collectedEvents.should.be.empty;
     });

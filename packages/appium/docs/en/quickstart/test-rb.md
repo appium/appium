@@ -9,9 +9,10 @@ title: Write a Test (Ruby)
 The [AppiumLib](https://github.com/appium/ruby_lib) and the [AppiumLibCore](https://github.com/appium/ruby_lib_core) (**recommended**) are official Appium client libraries in Ruby, which are available via gem under the [appium_lib](https://rubygems.org/gems/appium_lib) and the [appium_lib_core](https://rubygems.org/gems/appium_lib_core) package names. The appium_lib_core inherits from the Selenium Ruby Binding, and the appium_lib inherits from the appium_lib_core, so installing these libraries include the selenium binding. We recommend `appium_lib_core` if you need a less complex client-side solution. The `appium_lib` has some useful methods the core does not have, but for the cost of greater complexity.
 
 ```bash
-gem install appium_lib
+bundle init
+bundle add appium_lib
 # or
-gem install appium_lib_core
+bundle add appium_lib_core
 ```
 
 The `appium_lib_core` is the main part as an Appium client.
@@ -21,7 +22,7 @@ The `appium_lib_core` is the main part as an Appium client.
 This example is by the `appium_lib_core` with `test-unit` gem module.
 Tes code in `appium_lib` should be similar.
 
-```python title="test.rb"
+```ruby title="test.rb"
 --8<-- "./sample-code/quickstarts/rb/test.rb"
 ```
 
@@ -49,7 +50,6 @@ running in another terminal session, otherwise you'll get an error about not bei
 to one. Then, you can execute the script:
 
 ```bash
-bundle install
 bundle exec ruby test.rb
 ```
 

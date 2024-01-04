@@ -2,267 +2,267 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.io/docs/en/2.4/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/resources/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/cli/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/cli/args/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/cli/env-vars/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/cli/extensions/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/base-driver/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/execute-driver-plugin/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/images-plugin/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/relaxed-caps-plugin/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/commands/universal-xml-plugin/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/contributing/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/contributing/config-system/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/contributing/develop/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/developing/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/developing/build-docs/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/developing/build-doctor-checks/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/developing/build-drivers/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/developing/build-plugins/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/ecosystem/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/ecosystem/clients/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/ecosystem/drivers/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/ecosystem/plugins/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/ecosystem/tools/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/caching/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/caps/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/config/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/context/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/event-timing/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/execute-methods/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/grid/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/log-filters/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/managing-exts/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/migrating-1-to-2/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/security/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/settings/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/guides/tls/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/intro/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/intro/appium/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/intro/clients/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/intro/drivers/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/intro/history/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/install/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/next-steps/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/requirements/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/test-dotnet/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/test-java/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/test-js/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/test-py/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/test-rb/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/en/2.4/quickstart/uiauto2-driver/</loc>
-         <lastmod>2024-01-03</lastmod>
+         <lastmod>2024-01-04</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

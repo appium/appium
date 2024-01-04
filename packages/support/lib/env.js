@@ -69,9 +69,7 @@ export const findAppiumDependencyPackage = _.memoize(
           pkg?.devDependencies?.appium ??
           pkg?.peerDependencies?.appium
         ));
-        return version && semver.satisfies(version, acceptableVersionRange)
-          ? root
-          : undefined;
+        return version && semver.satisfies(version, acceptableVersionRange) ? root : undefined;
       } catch {}
     };
 

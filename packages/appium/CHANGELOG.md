@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/appium/appium/compare/appium@2.4.0...appium@2.4.1) (2024-01-04)
+
+
+### Bug Fixes
+
+* **appium:** Properly handle version check for aliases ([474f3ce](https://github.com/appium/appium/commit/474f3ce092c68981655d9deba546a6202acea141))
+
+
+
 ## [2.4.0](https://github.com/appium/appium/compare/appium@2.3.0...appium@2.4.0) (2024-01-03)
 
 

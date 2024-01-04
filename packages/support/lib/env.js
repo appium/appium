@@ -46,9 +46,15 @@ export async function hasAppiumDependency(cwd) {
 export const findAppiumDependencyPackage = _.memoize(
   /**
    * @param {string} [cwd]
+   * @param {string|semver.Range} [acceptableVersionRange='>=2.0.0-beta'] The expected
+   * semver-compatible range for the Appium dependency. Packages that have 'appium' dependency
+   * not satisfying this range will be skipped.
    * @returns {Promise<string|undefined>}
    */
-  async (cwd = process.cwd()) => {
+  async function findAppiumDependencyPackage (
+    cwd = process.cwd(),
+    acceptableVersionRange = '>=2.0.0-beta'
+  ) {
     /**
      * Tries to read `package.json` in `root` and resolves the identity if it depends on `appium`;
      * otherwise resolves `undefined`.
@@ -58,12 +64,12 @@ export const findAppiumDependencyPackage = _.memoize(
     const readPkg = async (root) => {
       try {
         const pkg = await readPackageInDir(root);
-        const version = semver.coerce(String(
+        const version = semver.minVersion(String(
           pkg?.dependencies?.appium ??
           pkg?.devDependencies?.appium ??
           pkg?.peerDependencies?.appium
         ));
-        return version && semver.satisfies(version, '>=2.0.0-beta', {includePrerelease: true})
+        return version && semver.satisfies(version, acceptableVersionRange)
           ? root
           : undefined;
       } catch {}

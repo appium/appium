@@ -47,6 +47,11 @@ contents:
     [WebdriverIO documentation](https://webdriver.io/docs/gettingstarted) for a fuller explanation
     of the various API commands you see and what their purpose is.
 
+!!! note
+
+    The sample code is available from [GitHub Appium repository](https://github.com/appium/appium/tree/master/packages/appium/sample-code/quickstarts/js).
+
+
 Basically, this code is doing the following:
 
 1. Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
@@ -68,4 +73,3 @@ If all goes well, you'll see the Settings app open up and navigate to the "Batte
 app closes again.
 
 Congratulations, you've started your Appium journey! Read on for some [next steps](./next-steps.md) to explore.
-

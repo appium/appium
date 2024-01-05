@@ -311,7 +311,9 @@ export class ExtensionConfig {
       const invalidFieldsText = invalidFields.map((field) => `"${field}"`).join(', ');
 
       warnings.push(
-        `${extTypeText} "${extName}" (package \`${pkgName}\`) has ${invalidFieldsEnumerationText} (${invalidFieldsText}) in \`extensions.yaml\`; this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`
+        `${extTypeText} "${extName}" (package \`${pkgName}\`) has ${invalidFieldsEnumerationText} (${invalidFieldsText}) in \`extensions.yaml\`; ` +
+        `this may cause upgrades done via the \`appium\` CLI tool to fail. Please reinstall with \`appium ${this.extensionType} uninstall ` +
+        `${extName}\` and \`appium ${this.extensionType} install ${extName}\` to attempt a fix.`
       );
     }
 
@@ -331,16 +333,16 @@ export class ExtensionConfig {
         );
       if (extListData?.installed) {
         const {updateVersion, upToDate} = extListData;
-        if (!upToDate) {
+        if (!upToDate && updateVersion) {
           warnings.push(
             createPeerWarning(
-              `its peer dependency on older Appium v${appiumVersion}. Please upgrade \`${pkgName}\` to v${updateVersion} or newer.`
+              `its peer dependency on Appium ${appiumVersion}. Try to upgrade \`${pkgName}\` to v${updateVersion} or newer.`
             )
           );
         } else {
           warnings.push(
             createPeerWarning(
-              `its peer dependency on older Appium v${appiumVersion}. Please ask the developer of \`${pkgName}\` to update the peer dependency on Appium to v${APPIUM_VER}.`
+              `its peer dependency on Appium ${appiumVersion}. Please install a compatible version of the ${_.toLower(extTypeText)}.`
             )
           );
         }
@@ -354,13 +356,15 @@ export class ExtensionConfig {
       if (!extListData?.upToDate && extListData?.updateVersion) {
         warnings.push(
           createPeerWarning(
-            `an invalid or missing peer dependency on Appium. A newer version of \`${pkgName}\` is available; please attempt to upgrade "${extName}" to v${extListData.updateVersion} or newer.`
+            `an invalid or missing peer dependency on Appium. A newer version of \`${pkgName}\` is available; ` +
+            `please attempt to upgrade "${extName}" to v${extListData.updateVersion} or newer.`
           )
         );
       } else {
         warnings.push(
           createPeerWarning(
-            `an invalid or missing peer dependency on Appium. Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`
+            `an invalid or missing peer dependency on Appium. ` +
+            `Please ask the developer of \`${pkgName}\` to add a peer dependency on \`^appium@${APPIUM_VER}\`.`
           )
         );
       }

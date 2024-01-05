@@ -239,7 +239,7 @@ describe('ExtensionConfig', function () {
             await expect(
               config.getGenericConfigWarnings(extData, extData.pkgName)
             ).to.eventually.eql([
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Try to upgrade \`${extData.pkgName}\` to v${updateVersion} or newer.`,
             ]);
           });
         });
@@ -254,7 +254,7 @@ describe('ExtensionConfig', function () {
             await expect(
               config.getGenericConfigWarnings(extData, extData.pkgName)
             ).to.eventually.eql([
-              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on older Appium v${extData.appiumVersion}. Please ask the developer of \`${extData.pkgName}\` to update the peer dependency on Appium to v${APPIUM_VER}.`,
+              `Driver "${extData.pkgName}" (package \`${extData.pkgName}\`) may be incompatible with the current version of Appium (v${APPIUM_VER}) due to its peer dependency on Appium ${extData.appiumVersion}. Please install a compatible version of the driver.`,
             ]);
           });
         });

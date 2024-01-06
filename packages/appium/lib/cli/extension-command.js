@@ -16,7 +16,7 @@ import {packageDidChange} from '../extension/package-changed';
 import {spawn} from 'child_process';
 import {inspect} from 'node:util';
 import {pathToFileURL} from 'url';
-import {Doctor} from '../doctor/doctor';
+import {Doctor, EXIT_CODE as DOCTOR_EXIT_CODE} from '../doctor/doctor';
 import {npmPackage} from '../utils';
 import semver from 'semver';
 
@@ -742,10 +742,13 @@ class ExtensionCliCommand {
   }
 
   /**
-   * Runs doctor checks for the given extension
+   * Runs doctor checks for the given extension.
+   * ! If any of the required Doctor checks fails this method terminates
+   * the current node process with a non-zero exit code.
    *
    * @param {DoctorOptions} opts
-   * @returns {Promise<number>}
+   * @returns {Promise<number>} The amount of Doctor checks that were
+   * successfully loaded and executed for the given extension
    */
   async _doctor({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
@@ -817,7 +820,7 @@ class ExtensionCliCommand {
       `for the "${installSpec}" ${this.type}`
     );
     const exitCode = await new Doctor(checks).run();
-    if (exitCode !== 0) {
+    if (exitCode !== DOCTOR_EXIT_CODE.SUCCESS) {
       process.exit(exitCode);
     }
     return checks.length;

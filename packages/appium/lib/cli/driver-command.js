@@ -67,10 +67,12 @@ export default class DriverCliCommand extends ExtensionCliCommand {
   }
 
   /**
-   * Runs doctor checks for the given driver
+   * Runs doctor checks for the given driver.
+   * ! If any of the required Doctor checks fails this method terminates
+   * the current node process with a non-zero exit code.
    *
    * @param {DriverDoctorOptions} opts
-   * @returns {Promise<number>}
+   * @returns {Promise<number>} The amount of executed doctor checks.
    */
   async doctor({driver}) {
     return await super._doctor({

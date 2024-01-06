@@ -2,7 +2,7 @@ import '@colors/colors';
 import _ from 'lodash';
 import { util, doctor, logger } from '@appium/support';
 
-const EXIT_CODE = Object.freeze({
+export const EXIT_CODE = /** @type {const} */ Object.freeze({
   SUCCESS: 0,
   HAS_MAJOR_ISSUES: 127,
 });
@@ -159,7 +159,7 @@ export class Doctor {
   }
 
   /**
-   * @returns {Promise<number>} The process exit code
+   * @returns {Promise<number>} The exit code, where non-zero means a failure
    */
   async run() {
     await this.diagnose();

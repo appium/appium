@@ -67,11 +67,10 @@ export default class PluginCliCommand extends ExtensionCliCommand {
 
   /**
    * Runs doctor checks for the given plugin
-   * ! If any of the required Doctor checks fails this method terminates
-   * the current node process with a non-zero exit code.
    *
    * @param {PluginDoctorOptions} opts
    * @returns {Promise<number>} The amount of executed doctor checks.
+   * @throws {Error} If any of the mandatory Doctor checks fails.
    */
   async doctor({plugin}) {
     return await super._doctor({

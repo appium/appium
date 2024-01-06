@@ -159,7 +159,7 @@ export class Doctor {
   }
 
   /**
-   * @returns {Promise<number>} The exit code, where non-zero means a failure
+   * @returns {Promise<EXIT_CODE[keyof EXIT_CODE]>}
    */
   async run() {
     await this.diagnose();

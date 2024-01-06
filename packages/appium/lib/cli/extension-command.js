@@ -743,12 +743,11 @@ class ExtensionCliCommand {
 
   /**
    * Runs doctor checks for the given extension.
-   * ! If any of the required Doctor checks fails this method terminates
-   * the current node process with a non-zero exit code.
    *
    * @param {DoctorOptions} opts
    * @returns {Promise<number>} The amount of Doctor checks that were
    * successfully loaded and executed for the given extension
+   * @throws {Error} If any of the mandatory Doctor checks fails.
    */
   async _doctor({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
@@ -821,7 +820,7 @@ class ExtensionCliCommand {
     );
     const exitCode = await new Doctor(checks).run();
     if (exitCode !== DOCTOR_EXIT_CODE.SUCCESS) {
-      process.exit(exitCode);
+      throw this._createFatalError('Treatment required');
     }
     return checks.length;
   }

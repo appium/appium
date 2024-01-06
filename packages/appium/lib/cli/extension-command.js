@@ -817,7 +817,7 @@ class ExtensionCliCommand {
       `for the "${installSpec}" ${this.type}`
     );
     const exitCode = await new Doctor(checks).run();
-    if (exitCode > 0) {
+    if (exitCode !== 0) {
       process.exit(exitCode);
     }
     return checks.length;

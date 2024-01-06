@@ -69,7 +69,8 @@ export default class PluginCliCommand extends ExtensionCliCommand {
    * Runs doctor checks for the given plugin
    *
    * @param {PluginDoctorOptions} opts
-   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
+   * @returns {Promise<number>} The amount of executed doctor checks.
+   * @throws {Error} If any of the mandatory Doctor checks fails.
    */
   async doctor({plugin}) {
     return await super._doctor({

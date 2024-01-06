@@ -67,10 +67,11 @@ export default class DriverCliCommand extends ExtensionCliCommand {
   }
 
   /**
-   * Runs doctor checks for the given driver
+   * Runs doctor checks for the given driver.
    *
    * @param {DriverDoctorOptions} opts
-   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
+   * @returns {Promise<number>} The amount of executed doctor checks.
+   * @throws {Error} If any of the mandatory Doctor checks fails.
    */
   async doctor({driver}) {
     return await super._doctor({

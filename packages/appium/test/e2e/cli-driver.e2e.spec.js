@@ -423,8 +423,8 @@ describe('Driver CLI', function () {
 
     describe('when the driver defines doctor checks', function () {
       it('should load and run them', async function () {
-        const checks = await runDoctor([driverName]);
-        checks.length.should.eql(2);
+        const checksLen = await runDoctor([driverName]);
+        checksLen.should.eql(2);
       });
     });
   });

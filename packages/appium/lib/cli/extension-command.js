@@ -745,7 +745,7 @@ class ExtensionCliCommand {
    * Runs doctor checks for the given extension
    *
    * @param {DoctorOptions} opts
-   * @returns {Promise<import('@appium/types').IDoctorCheck[]>}
+   * @returns {Promise<number>}
    */
   async _doctor({installSpec}) {
     if (!this.config.isInstalled(installSpec)) {
@@ -769,7 +769,7 @@ class ExtensionCliCommand {
     }
     if (!doctorSpec) {
       this.log.info(`The ${this.type} "${installSpec}" does not export any doctor checks`);
-      return [];
+      return 0;
     }
     if (!_.isPlainObject(doctorSpec) || !_.isArray(doctorSpec.checks)) {
       throw this._createFatalError(
@@ -810,14 +810,17 @@ class ExtensionCliCommand {
       .filter(isDoctorCheck);
     if (_.isEmpty(checks)) {
       this.log.info(`The ${this.type} "${installSpec}" exports no valid doctor checks`);
-      return [];
+      return 0;
     }
     this.log.debug(
       `Running ${util.pluralize('doctor check', checks.length, true)} ` +
       `for the "${installSpec}" ${this.type}`
     );
-    await new Doctor(checks).run();
-    return checks;
+    const exitCode = await new Doctor(checks).run();
+    if (exitCode > 0) {
+      process.exit(exitCode);
+    }
+    return checks.length;
   }
 
   /**

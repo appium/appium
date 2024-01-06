@@ -2,6 +2,11 @@ import '@colors/colors';
 import _ from 'lodash';
 import { util, doctor, logger } from '@appium/support';
 
+const EXIT_CODE = Object.freeze({
+  SUCCESS: 0,
+  HAS_MAJOR_ISSUES: 127,
+});
+
 export class Doctor {
   /**
    * @param {DoctorCheck[]} [checks=[]]
@@ -68,7 +73,12 @@ export class Doctor {
       /** @type {string[]} */
       const fixMessages = [];
       for (const issue of issues) {
-        const message = await issue.check.fix();
+        let message;
+        try {
+          message = await issue.check.fix();
+        } catch (e) {
+          message = e.message;
+        }
         if (message) {
           fixMessages.push(message);
         }
@@ -84,7 +94,7 @@ export class Doctor {
       'The configuration cannot be automatically fixed, please do the following first:',
     ], manualIssues);
     await handleIssues([
-      '### Optional Manual Fixes  ###',
+      '### Optional Manual Fixes ###',
       'To fix these optional issues, please do the following manually:',
     ], manualIssuesOptional);
 
@@ -127,6 +137,9 @@ export class Doctor {
     }
   }
 
+  /**
+   * @returns {Promise<boolean>}
+   */
   async runAutoFixes() {
     const autoFixes = _.filter(this.foundIssues, (f) => f.check.hasAutofix());
     for (const f of autoFixes) {
@@ -136,22 +149,30 @@ export class Doctor {
     if (_.find(autoFixes, (f) => !f.fixed)) {
       // a few issues remain.
       this.log.info('Bye! A few issues remain, fix manually and/or rerun doctor!');
-    } else {
-      // nothing left to fix.
-      this.log.info('Bye! All issues have been fixed!');
+      this.log.info('');
+      return false;
     }
+    // nothing left to fix.
+    this.log.info('Bye! All issues have been fixed!');
     this.log.info('');
+    return true;
   }
 
+  /**
+   * @returns {Promise<number>} The process exit code
+   */
   async run() {
     await this.diagnose();
     if (this.reportSuccess()) {
-      return;
+      return EXIT_CODE.SUCCESS;
     }
     if (await this.reportManualIssues()) {
-      return;
+      return EXIT_CODE.HAS_MAJOR_ISSUES;
     }
-    await this.runAutoFixes();
+    if (!await this.runAutoFixes()) {
+      return EXIT_CODE.HAS_MAJOR_ISSUES;
+    }
+    return EXIT_CODE.SUCCESS;
   }
 
   /**

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {fs, doctor} = require('@appium/support');
+const {doctor} = require('@appium/support');
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */
 class EnvVarAndPathCheck {
@@ -11,16 +11,7 @@ class EnvVarAndPathCheck {
   }
 
   async diagnose() {
-    const varValue = process.env[this.varName];
-    if (typeof varValue === 'undefined') {
-      return doctor.nok(`${this.varName} environment variable is NOT set!`);
-    }
-
-    if (await fs.exists(varValue)) {
-      return doctor.ok(`${this.varName} is set to: ${varValue}`);
-    }
-
-    return doctor.nok(`${this.varName} is set to '${varValue}' but this is NOT a valid path!`);
+    return doctor.ok(`${this.varName} environment variable is always set because it's fake`);
   }
 
   async fix() {
@@ -39,7 +30,3 @@ class EnvVarAndPathCheck {
 }
 
 module.exports = {EnvVarAndPathCheck};
-
-/**
- * @typedef {import('@appium/types').DoctorCheckResult} CheckResult
- */

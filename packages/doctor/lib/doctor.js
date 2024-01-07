@@ -198,6 +198,9 @@ class Doctor {
 
   async run() {
     log.info(`Appium Doctor v.${version}`);
+    log.warn(`This package is deprecated since the Appium server version 2.4.0 and will be removed in the future.`);
+    log.warn(`Use doctor checks (if any exist) integrated into your installed driver or plugin by ` +
+      `running \`appium driver doctor <driver_name>\` or \`appium plugin doctor <plugin_name>\`.`);
     await this.diagnose();
     if (await this.reportSuccess(this.toFix.length, this.toFixOptionals.length)) {
       return;

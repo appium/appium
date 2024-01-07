@@ -7,7 +7,7 @@
 
 !!! warning
 
-    This package is deprecated since the server v 2.4.0 and will be removed in the future.
+    This package is deprecated since the Appium server v 2.4.0 and will be removed in the future.
     Use doctor checks (if any exist) integrated into your installed driver or plugin by
     running `appium driver doctor <driver_name>` or `appium plugin doctor <plugin_name>`.
 

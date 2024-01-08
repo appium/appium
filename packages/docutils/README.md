@@ -14,7 +14,8 @@ This package does not need to be run directly. Instead, execute this command in 
 npm run dev:docs:en
 ```
 
-Note that this will only build the English docs. See the `scripts` field of the `package.json` for
+> [!NOTE]
+> This will only build the English docs. See the `scripts` field of the `package.json` for
 other languages.
 
 ## Setup for Appium Drivers and Plugins

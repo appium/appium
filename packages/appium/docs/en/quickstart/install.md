@@ -28,7 +28,13 @@ appium
 You should see some output that starts with a line like this:
 
 ```
-[Appium] Welcome to Appium v2.0.0
+[Appium] Welcome to Appium v2.4.1
+```
+
+In order to update Appium using `npm`:
+
+```bash
+npm update -g appium
 ```
 
 That's it! If you see this, the Appium server is up and running. Go ahead and quit

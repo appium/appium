@@ -1,27 +1,36 @@
 ---
 hide:
+  - navigation
   - toc
 
-title: 快速入门简介
+title: 欢迎
 ---
+<style>
+  .md-typeset h1 {
+    display: none;
+  }
+</style>
+<div style="text-align: center">
+  <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
+</div>
 
-让我们快速上手使用 Appium！为了成功使用此快速入门指南，建议您首先阅读[介绍](../intro/index.md), 以便您了解
-运行 Appium 和编写 Appium 脚本所涉及的概念。
+欢迎访问 Appium 文档！Appium 是一个开源项目和相关软件的生态系统。
+软件，旨在促进许多应用程序平台的用户界面自动化，包括移动平台（iOS、
+Android、Tizen）、浏览器（Chrome、Firefox、Safari）、桌面（macOS、Windows）、电视（Roku、tvOS、
+Android TV、三星）等！
 
-快速入门的基本计划如下：
+## 探索文档
 
-1. 安装 Appium
-1. 安装 Appium 驱动程序及其依赖项（我们将使用[UiAutomator2
-driver](https://github.com/appium/appium-uiautomator2-driver)作为示例)
-1. 用您选择的语言安装 Appium 客户端库 (本指南包含以下选项
-JavaScript、Python、Java、Ruby 和 .NET).
-1. 使用示例应用程序编写并运行简单的 Appium 自动化脚本
+<div class="grid cards" markdown>
 
-### 要求
+-   查看 [__介绍__](./intro/index.md) 确保您理解关键概念
+-   通过 [__快速入门__](./quickstart/index.md) 来进行设置并运行基本的 Android 测试
+-   访问 [__生态系统__](./ecosystem/index.md) 页面，查看您可能需要使用的驱动程序、客户端和插件列表
+-   参考 [__CLI 参考__](./cli/index.md) 用于从命令行使用 Appium
+-   查看 [__命令说明__](./commands/index.md) Appium 和插件公开的命令列表
+-   阅读不同的 [__指南__](./guides/migrating-1-to-2.md) 来获取各种说明、技巧和窍门
+-   查阅各种第三方的 [__资源__](./resources.md) 来探索网上的Appium运用
+-   为了创建您自己的Appium拓展, 请查看 [__开发者__](./developing/index.md) 文档
+-   对 Appium 自身的贡献，请查阅 [__贡献__](./contributing/index.md) 页面
 
-在开始之前，请确保您的系统满足运行 Appium 服务器的
-[要求](../quickstart/requirements.md) 用于运行 Appium 服务器。其他要求
-将在安装 UiAutomator2 驱动程序时一并讨论。本指南还假设
-您已熟练掌握平台上的基本命令行功能，例如能够运行命令、设置和持久化环境变量等...
-
-现在您已经准备好开始了！请前往[安装Appium](./install.md).
+</div>

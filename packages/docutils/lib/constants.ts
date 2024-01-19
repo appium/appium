@@ -108,7 +108,7 @@ export const REQUIREMENTS_TXT_PATH = path.join(PKG_ROOT_DIR, NAME_REQUIREMENTS_T
  * The default alias creation strategy to pass to `mike` when deploying
  * (`symlink`, `redirect` or `copy`)
  */
-export const DEFAULT_DEPLOY_ALIAS_TYPE = 'redirect';
+export const DEFAULT_DEPLOY_ALIAS_TYPE = 'symlink';
 
 /**
  * The default branch to deploy to

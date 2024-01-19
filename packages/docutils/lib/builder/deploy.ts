@@ -139,12 +139,6 @@ export async function deploy({
     const mikeArgs = [
       ...argify(_.pickBy(mikeOpts, (value) => _.isNumber(value) || Boolean(value))),
     ];
-    if (alias) {
-      mikeArgs.push('--update-aliases', version, alias);
-      mikeArgs.push('--alias-type', aliasType);
-    } else {
-      mikeArgs.push(version);
-    }
     stop(); // discard
     // unsure about how SIGHUP is handled here
     await doServe(mikePath, mikeArgs, serveOpts);
@@ -159,8 +153,8 @@ export async function deploy({
       ),
     ];
     if (alias) {
-      mikeArgs.push('--update-aliases', version, alias);
-      mikeArgs.push('--alias-type', aliasType);
+      mikeArgs.push('--update-aliases', '--alias-type', aliasType);
+      mikeArgs.push(version, alias);
     } else {
       mikeArgs.push(version);
     }

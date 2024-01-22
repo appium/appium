@@ -18,4 +18,3 @@ title: 其他资源
 - [Appium 和 Selenium 基础](https://ui.headspin.io/university/learn/appium-selenium-fundamentals-2020) - Jonathan Lipps 编写的学习 Python、Selenium 和 Appium 的综合视频课程
 - [使用 Appium 实现移动测试自动化](https://testautomationu.applitools.com/appium-java-tutorial/) - 由 Moataz Nabil 制作的视频课程
 - [高级Appoium](https://www.linkedin.com/learning/advanced-appium) - 乔纳森-利普斯（Jonathan Lipps）的视频课程
-  

@@ -25,17 +25,17 @@ After installation, you should be able to run Appium from the command line:
 appium
 ```
 
-你应该会看到一些输出结果，开头一行是这样的:
+You should see some output that starts with a line like this:
 
 ```
 [Appium] Welcome to Appium v2.4.1
 ```
 
-为了更新Appiums使用 `npm`:
+In order to update Appium using `npm`:
 
 ```bash
 npm update -g appium
 ```
 
-就是这样！如果你看到这个，说明 Appium 服务器已经启动并运行。按 (Ctrl-C)
-继续退出并跳转到到 [下一步](./uiauto2-driver.md), 在这里我们将安装一个用于自动运行 Android 应用程序的驱动程序.
+That's it! If you see this, the Appium server is up and running. Go ahead and quit
+it (Ctrl-C) and move on to the [next step](./uiauto2-driver.md), where we'll install a driver for automating Android apps.

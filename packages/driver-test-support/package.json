@@ -52,7 +52,7 @@
     "sinon": "17.0.1",
     "source-map-support": "0.5.21",
     "stoppable": "1.1.0",
-    "type-fest": "4.10.0"
+    "type-fest": "4.10.1"
   },
   "peerDependencies": {
     "appium": "^2.0.0-beta.43",

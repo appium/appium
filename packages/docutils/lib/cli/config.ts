@@ -4,7 +4,6 @@
  */
 
 import loadTs from '@sliphua/lilconfig-ts-loader';
-import {LogLevel} from 'consola';
 import {lilconfig, Loader} from 'lilconfig';
 import _ from 'lodash';
 import path from 'node:path';
@@ -46,9 +45,9 @@ export async function findConfig(argv: string[] = hideBin(process.argv)) {
 
   // if --verbose is used, set the log level to debug.
   // otherwise use --log-level or the default.
-  let logLevel: LogLevel | keyof typeof LogLevelMap;
+  let logLevel: keyof typeof LogLevelMap;
   if (preArgs.verbose) {
-    logLevel = LogLevel.Debug;
+    logLevel = 'debug';
   } else {
     // if the loglevel is valid, use it, otherwise use the default
     logLevel = isLogLevelString(preArgs.logLevel) ? preArgs.logLevel : DEFAULT_LOG_LEVEL;

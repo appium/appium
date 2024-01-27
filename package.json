@@ -117,7 +117,7 @@
     "fancy-log": "2.0.0",
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
-    "husky": "8.0.3",
+    "husky": "9.0.6",
     "json-schema-to-typescript": "13.1.2",
     "lerna": "8.0.2",
     "lint-staged": "15.2.0",

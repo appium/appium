@@ -113,7 +113,7 @@
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
     "json-schema-to-typescript": "13.1.2",
-    "lerna": "8.0.2",
+    "lerna": "8.1.2",
     "log-symbols": "4.1.0",
     "midnight-smoker": "8.0.0",
     "mjpeg-consumer": "2.0.0",

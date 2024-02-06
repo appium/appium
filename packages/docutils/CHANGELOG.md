@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3](https://github.com/appium/appium/compare/@appium/docutils@1.0.2...@appium/docutils@1.0.3) (2024-02-06)
+
+
+### Bug Fixes
+
+* **docutils:** change default alias type to `symlink` ([#19681](https://github.com/appium/appium/issues/19681)) ([d9711b4](https://github.com/appium/appium/commit/d9711b4191d19ed0b89944b2732a1a4f4c4d9c0b))
+* **types:** update dependency type-fest to v4.10 ([#19694](https://github.com/appium/appium/issues/19694)) ([966d305](https://github.com/appium/appium/commit/966d305e5eade9369a3875243bcad951df88545c))
+* **types:** update dependency type-fest to v4.10.1 ([#19703](https://github.com/appium/appium/issues/19703)) ([501395c](https://github.com/appium/appium/commit/501395c9489320b84ab49ff78af4270f66070d62))
+
+
+
 ## [1.0.2](https://github.com/appium/appium/compare/@appium/docutils@1.0.1...@appium/docutils@1.0.2) (2024-01-03)
 
 

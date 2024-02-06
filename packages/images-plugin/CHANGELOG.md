@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.1...@appium/images-plugin@3.0.2) (2024-02-06)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10 ([#19723](https://github.com/appium/appium/issues/19723)) ([202da83](https://github.com/appium/appium/commit/202da83449073ddb3da8fb2cfbcfce482a5ecd40))
+
+
+
 ## [3.0.1](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.0...@appium/images-plugin@3.0.1) (2024-01-03)
 
 **Note:** Version bump only for package @appium/images-plugin

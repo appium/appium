@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.1](https://github.com/appium/appium/compare/@appium/support@4.2.0...@appium/support@4.2.1) (2024-02-06)
+
+
+### Bug Fixes
+
+* **support:** Prefer semver.minVersion to semver.coerce API ([#19610](https://github.com/appium/appium/issues/19610)) ([b5460fc](https://github.com/appium/appium/commit/b5460fc131fd23e8a3feb0b15d3fe9eb8bdac5e9))
+* **support:** update dependency axios to v1.6.4 ([332cc48](https://github.com/appium/appium/commit/332cc48a09b5532a8d51f85f3a24785e2c754e00))
+* **support:** update dependency axios to v1.6.5 ([#19616](https://github.com/appium/appium/issues/19616)) ([ac73522](https://github.com/appium/appium/commit/ac73522351b31bd6c11972c61daa8b6b8d18fb91))
+* **support:** update dependency axios to v1.6.6 ([6313704](https://github.com/appium/appium/commit/6313704ee5a8ee3aee726eb512ef259b6fa1041c))
+* **support:** update dependency axios to v1.6.7 ([795092a](https://github.com/appium/appium/commit/795092a97f6d7569cccc4b5c166f52fef821514b))
+* **types:** update dependency type-fest to v4.10 ([#19694](https://github.com/appium/appium/issues/19694)) ([966d305](https://github.com/appium/appium/commit/966d305e5eade9369a3875243bcad951df88545c))
+* **types:** update dependency type-fest to v4.10.1 ([#19703](https://github.com/appium/appium/issues/19703)) ([501395c](https://github.com/appium/appium/commit/501395c9489320b84ab49ff78af4270f66070d62))
+
+
+
 ## [4.2.0](https://github.com/appium/appium/compare/@appium/support@4.1.11...@appium/support@4.2.0) (2024-01-03)
 
 

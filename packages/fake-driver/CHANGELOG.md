@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.4.0...@appium/fake-driver@5.5.0) (2024-02-06)
+
+
+### Features
+
+* **appium:** Set a proper exit code if any of required doctor checks fails ([#19617](https://github.com/appium/appium/issues/19617)) ([f4011f1](https://github.com/appium/appium/commit/f4011f17d4d03bc854c43462848a4c38427acb85))
+
+
+
 ## [5.4.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.3.0...@appium/fake-driver@5.4.0) (2024-01-03)
 
 

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.16.1](https://github.com/appium/appium/compare/@appium/types@0.16.0...@appium/types@0.16.1) (2024-02-06)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.10 ([#19694](https://github.com/appium/appium/issues/19694)) ([966d305](https://github.com/appium/appium/commit/966d305e5eade9369a3875243bcad951df88545c))
+* **types:** update dependency type-fest to v4.10.1 ([#19703](https://github.com/appium/appium/issues/19703)) ([501395c](https://github.com/appium/appium/commit/501395c9489320b84ab49ff78af4270f66070d62))
+
+
+
 ## [0.16.0](https://github.com/appium/appium/compare/@appium/types@0.15.0...@appium/types@0.16.0) (2024-01-03)
 
 

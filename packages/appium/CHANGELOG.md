@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.0](https://github.com/appium/appium/compare/appium@2.4.1...appium@2.5.0) (2024-02-06)
+
+
+### Features
+
+* **appium:** Set a proper exit code if any of required doctor checks fails ([#19617](https://github.com/appium/appium/issues/19617)) ([f4011f1](https://github.com/appium/appium/commit/f4011f17d4d03bc854c43462848a4c38427acb85))
+
+
+### Bug Fixes
+
+* **appium:** Tune warning messages about installed extensions ([#19612](https://github.com/appium/appium/issues/19612)) ([5cd9ca5](https://github.com/appium/appium/commit/5cd9ca5c21393c70d259f7525d2c9d35b7eeb2a2))
+* **execute-driver-plugin:** update dependency webdriverio to v8.27.2 ([35f1dba](https://github.com/appium/appium/commit/35f1dbabf6e852c4ae84ec128879bc7e61321a16))
+* **execute-driver-plugin:** update dependency webdriverio to v8.28.0 ([e8e0444](https://github.com/appium/appium/commit/e8e0444bd28d94963090065a813a4b10be665caa))
+* **execute-driver-plugin:** update dependency webdriverio to v8.28.6 ([da84efc](https://github.com/appium/appium/commit/da84efc42dd62b2be07a52dd4379791e2cef6eb2))
+* **execute-driver-plugin:** update dependency webdriverio to v8.28.8 ([1fdf117](https://github.com/appium/appium/commit/1fdf117c63f6e9871f4de3c0bd93ecbdb13a9235))
+* **execute-driver-plugin:** update dependency webdriverio to v8.29.0 ([6f0101e](https://github.com/appium/appium/commit/6f0101eb6343eb8b372e00a6b71d2b2ee909404c))
+* **execute-driver-plugin:** update dependency webdriverio to v8.29.1 ([fb0f8f7](https://github.com/appium/appium/commit/fb0f8f776c6a03174f4569efa60d817a930809cf))
+* **execute-driver-plugin:** update dependency webdriverio to v8.29.3 ([6dacb5e](https://github.com/appium/appium/commit/6dacb5e70ca3529a080f629f5245c2b676746e2c))
+* **execute-driver-plugin:** update dependency webdriverio to v8.29.7 ([52a6f96](https://github.com/appium/appium/commit/52a6f96e085ff13acdf8d5013673861b7e0da818))
+* **execute-driver-plugin:** update dependency webdriverio to v8.30.0 ([91320dd](https://github.com/appium/appium/commit/91320ddd02dca89a8cec258d0ab44a49d344d71c))
+* **support:** update dependency axios to v1.6.4 ([332cc48](https://github.com/appium/appium/commit/332cc48a09b5532a8d51f85f3a24785e2c754e00))
+* **support:** update dependency axios to v1.6.5 ([#19616](https://github.com/appium/appium/issues/19616)) ([ac73522](https://github.com/appium/appium/commit/ac73522351b31bd6c11972c61daa8b6b8d18fb91))
+* **support:** update dependency axios to v1.6.6 ([6313704](https://github.com/appium/appium/commit/6313704ee5a8ee3aee726eb512ef259b6fa1041c))
+* **support:** update dependency axios to v1.6.7 ([795092a](https://github.com/appium/appium/commit/795092a97f6d7569cccc4b5c166f52fef821514b))
+* **types:** update dependency type-fest to v4.10 ([#19694](https://github.com/appium/appium/issues/19694)) ([966d305](https://github.com/appium/appium/commit/966d305e5eade9369a3875243bcad951df88545c))
+* **types:** update dependency type-fest to v4.10.1 ([#19703](https://github.com/appium/appium/issues/19703)) ([501395c](https://github.com/appium/appium/commit/501395c9489320b84ab49ff78af4270f66070d62))
+
+
+
 ## [2.4.1](https://github.com/appium/appium/compare/appium@2.4.0...appium@2.4.1) (2024-01-04)
 
 

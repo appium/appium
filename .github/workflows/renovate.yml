@@ -25,6 +25,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate Renovate Config
-        uses: rinchsan/renovate-config-validator@v0.0.12
+        uses: rinchsan/renovate-config-validator@v0.2.0
         with:
           pattern: '{.renovaterc.json,renovate/default.json}'

@@ -42,6 +42,7 @@
     "test:unit": "mocha --timeout 10s --slow 5s \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
+    "@appium/support": "^4.2.1",
     "@types/bluebird": "3.5.42",
     "@xmldom/xmldom": "0.8.10",
     "asyncbox": "3.0.0",

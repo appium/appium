@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const {doctor} = require('@appium/support');
+const {doctor} = require('appium/support');
 
 /** @satisfies {import('@appium/types').IDoctorCheck} */
 class EnvVarAndPathCheck {

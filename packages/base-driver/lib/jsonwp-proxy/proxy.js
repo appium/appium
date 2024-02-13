@@ -249,7 +249,7 @@ class JWProxy {
         this.downstreamProtocol = this.getProtocolFromResBody(data);
         this.log.info(`Determined the downstream protocol as '${this.downstreamProtocol}'`);
       }
-      if (_.has(data, 'status') && parseInt(data.status, 10) !== 0) {
+      if (this.downstreamProtocol == W3C && _.has(data, 'status') && parseInt(data.status, 10) !== 0) {
         // Some servers, like chromedriver may return response code 200 for non-zero JSONWP statuses
         throwProxyError(data);
       }

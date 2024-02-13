@@ -3,7 +3,7 @@ import {Element} from '@appium/types';
 import {errors} from 'appium/driver';
 import {FakeElement} from '../fake-element';
 import {FakeDriver} from '../driver';
-import {util} from '@appium/support';
+import {util} from 'appium/support';
 import {mixin} from './mixin';
 
 const {W3C_WEB_ELEMENT_IDENTIFIER} = util;

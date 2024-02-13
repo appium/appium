@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/appium/appium/compare/appium@2.5.0...appium@2.5.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8.31.1 ([db0eec0](https://github.com/appium/appium/commit/db0eec05c58fe970351a309a01507cad824bdad2))
+* **support:** update dependency @types/semver to v7.5.7 ([bd8a92f](https://github.com/appium/appium/commit/bd8a92f588d40c97fbe51f8bd3b7835c96e9fe8f))
+* **support:** update dependency semver to v7.6.0 ([7b40a32](https://github.com/appium/appium/commit/7b40a3225ebe0f5976a26d05db2f22ba7b13a130))
+
+
+
 ## [2.5.0](https://github.com/appium/appium/compare/appium@2.4.1...appium@2.5.0) (2024-02-06)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/appium/appium/compare/@appium/fake-driver@5.5.0...@appium/fake-driver@5.5.1) (2024-02-13)
+
+
+### Bug Fixes
+
+* **fake-driver:** fix dependencies ([#19782](https://github.com/appium/appium/issues/19782)) ([889a533](https://github.com/appium/appium/commit/889a533eef8b7a0805dd786d358f5729e03f0c40))
+
+
+
 ## [5.5.0](https://github.com/appium/appium/compare/@appium/fake-driver@5.4.0...@appium/fake-driver@5.5.0) (2024-02-06)
 
 

@@ -1,8 +1,8 @@
 ---
-title: Local Validation Of Driver or Plugin PRs
+title: Local Validation Of Extension PRs
 ---
 
-Sometimes it might be necessary to validate if a remote driver or plugin PR works for the particular local
+Sometimes it might be necessary to validate if a remote driver or a plugin PR works for the particular local
 environment before it is merged or published. This tutorial describes how to achieve that.
 
 ## Requirements
@@ -31,8 +31,8 @@ environment before it is merged or published. This tutorial describes how to ach
 - Run the following command in order to link the driver/plugin sources to the Appium server:
   `appium driver install --source=local <full_path_to_driver_folder_with_fetched_sources>` or
   `appium plugin install --source=local <full_path_to_plugin_folder_with_fetched_sources>`.
-- Restart the Appium server (`appium server --use-drivers=<driver_name>`) and check the list of
-  loaded drivers. If the linking succeeded then you must see the driver name and the path to its
+- Stop the Appium server if it is running and start it again (`appium server --use-drivers=<driver_name>`)
+  to check the list of loaded drivers. If the linking succeeded then you must see the driver name and the path to its
   parent folder in the server logs. In case of a plugin it is required to explicitly request
   this plugin to be loaded upon server startup: `appium server --use-plugins=<plugin_name>`.
 

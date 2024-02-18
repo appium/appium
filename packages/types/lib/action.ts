@@ -60,6 +60,19 @@ export type PointerDownAction = {
 /**
  * @group Actions
  */
+export type ScrollAction = {
+  type: 'scroll';
+  x: number;
+  y: number;
+  deltaX: number;
+  deltaY: number;
+  duration?: number;
+  origin?: 'viewport' | Element;
+};
+
+/**
+ * @group Actions
+ */
 export type NullAction = PauseAction;
 
 /**
@@ -71,6 +84,11 @@ export type KeyAction = PauseAction | KeyDownAction | KeyUpAction;
  * @group Actions
  */
 export type PointerAction = PauseAction | PointerMoveAction | PointerUpAction | PointerDownAction;
+
+/**
+ * @group Actions
+ */
+export type WheelAction = PauseAction | ScrollAction;
 
 /**
  * @group Actions
@@ -110,7 +128,20 @@ export type PointerActionSequence = {
 /**
  * @group Actions
  */
-export type ActionSequence = NullActionSequence | KeyActionSequence | PointerActionSequence;
+export type WheelActionSequence = {
+  type: 'wheel';
+  id: string;
+  actions: WheelAction[];
+};
+
+/**
+ * @group Actions
+ */
+export type ActionSequence =
+  | NullActionSequence
+  | KeyActionSequence
+  | PointerActionSequence
+  | WheelActionSequence;
 
 /**
  * @group Actions

@@ -50,6 +50,7 @@ nav:
           - guides/migrating-1-to-2.md
       - Server/Driver Configuration:
           - guides/managing-exts.md
+          - guides/branch-testing.md
           - guides/config.md
           - guides/security.md
           - guides/log-filters.md

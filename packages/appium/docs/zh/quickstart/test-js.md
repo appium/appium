@@ -42,8 +42,8 @@ npm i --save-dev webdriverio
     本指南的范围不包括完整介绍 WebdriverIO 客户端
     库或这里发生的一切，因此我们暂且不对代码本身进行详细解释。
     所以目前我们暂时不对代码本身进行详细解释。您可能需要特别阅读 Appium
-    [Capabilities](../guides/caps.md), 除了熟悉优秀的
-    [WebdriverIO documentation](https://webdriver.io/docs/gettingstarted) 来获得更全面的解释,
+    [能力](../guides/caps.md), 除了熟悉优秀的
+    [WebdriverIO 文档](https://webdriver.io/docs/gettingstarted) 来获得更全面的解释,
     你还可以看到的各种 API 命令以及用途。
 
 !!! 注意
@@ -53,7 +53,7 @@ npm i --save-dev webdriverio
 
 基本上，这段代码正在执行以下操作：
 
-1. 定义一组 "Capabilities" (参数)，以便 Appium 知道您想自动执行哪种任务。
+1. 定义一组 "Capabilities" 能力值(参数)，以便 Appium 知道您想自动执行哪种任务。
 要自动执行的任务。
 1. 在内置的 Android 设置应用程序上启动 Appium 会话。
 1. 找到 "Battery"列表项并点击它。

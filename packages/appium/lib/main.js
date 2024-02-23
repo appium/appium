@@ -233,8 +233,6 @@ async function init(args) {
 
     await logsinkInit(serverArgs);
 
-    // this is string in --log-filters
-    logger.info(`----> ${JSON.stringify(serverArgs.logFilters)}`)
     if (serverArgs.logFilters) {
       const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
         serverArgs.logFilters,
@@ -250,12 +248,10 @@ async function init(args) {
           `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
         );
       } else {
-        // Filtering aims to "hide" these values, so it would be nice to not show them
-        // in the log as well.
-        logger.debug(
-          `Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${
-            JSON.stringify(serverArgs.logFilters, null, 0)
-          }'`,
+        // Filtering aims to "hide" these values from the log,
+        // so it would be nice to not show them in the log as well.
+        logger.info(
+          `Loaded ${util.pluralize('filtering rule', rules.length, true)}`,
         );
       }
     }

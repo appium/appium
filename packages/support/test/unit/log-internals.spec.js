@@ -88,4 +88,21 @@ describe('Log Internals', function () {
     await fs.writeFile(CONFIG_PATH, 'blabla', 'utf8');
     await preprocessor.loadRules(CONFIG_PATH).should.eventually.be.rejected;
   });
+
+  it('should preprocess a string and make replacements with multiple complex rules with JSON file', async function () {
+    const replacer2 = '***';
+    await fs.writeFile(CONFIG_PATH, `${JSON.stringify(
+      [
+        {text: 'yolo', flags: 'i'},
+        {pattern: '^:', replacer: replacer2},
+      ]
+    )}`, 'utf8');
+    const issues = await preprocessor.loadRules(CONFIG_PATH);
+    issues.length.should.eql(0);
+    preprocessor.rules.length.should.eql(2);
+    const replacer = preprocessor.rules[0].replacer;
+    preprocessor
+      .preprocess(':yolo" yo Yolo yyol')
+      .should.eql(`${replacer2}${replacer}" yo ${replacer} yyolo`);
+  });
 });

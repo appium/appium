@@ -205,6 +205,14 @@ async function init(args) {
     preConfigArgs = /** @type {Args<Cmd, SubCmd>} */ (parser.parseArgs());
   }
 
+  // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
+  logger.info(`before==> ${JSON.stringify(preConfigArgs["logFilters"])}`)
+  if (preConfigArgs["logFilters"]) {
+    preConfigArgs["logFilters"] = JSON.parse(preConfigArgs["logFilters"]);
+  }
+  // after==> [{"text":"xcuitest"},{"text":"XCUITest","replacer":"bar"}]
+  logger.info(`after==> ${JSON.stringify(preConfigArgs["logFilters"])}`)
+
   const configResult = await readConfigFile(preConfigArgs.configFile);
 
   if (!_.isEmpty(configResult.errors)) {
@@ -233,6 +241,8 @@ async function init(args) {
 
     await logsinkInit(serverArgs);
 
+    // this is string in --log-filters
+    logger.info(`----> ${JSON.stringify(serverArgs.logFilters)}`)
     if (serverArgs.logFilters) {
       const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
         serverArgs.logFilters,
@@ -248,9 +258,11 @@ async function init(args) {
           `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
         );
       } else {
-        logger.info(
+        // Filtering aims to "hide" these values, so it would be nice to not show them
+        // in the log as well.
+        logger.debug(
           `Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${
-            serverArgs.logFilters
+            JSON.stringify(serverArgs.logFilters, null, 0)
           }'`,
         );
       }

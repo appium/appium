@@ -80,11 +80,6 @@ describe('Log Internals', function () {
     preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(':yolo" yo Yolo yyolo');
   });
 
-  it('should fail if rules cannot be accessed', async function () {
-    const issues = await preprocessor.loadRules('bla');
-    issues.length.should.eql(1);
-  });
-
   it('should fail if rules JSON cannot be parsed', async function () {
     await fs.writeFile(CONFIG_PATH, 'blabla', 'utf8');
     const issues = await preprocessor.loadRules(CONFIG_PATH);

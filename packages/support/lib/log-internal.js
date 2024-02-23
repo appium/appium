@@ -28,8 +28,8 @@ class SecureValuesPreprocessor {
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|import('@appium/types').LogFilter} rule The rule might either be represented as a single string
-   * or a configuration object
+   * @param {string|import('@appium/types').LogFilter} rule T
+   * he rule might either be represented as a single string or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
@@ -90,28 +90,42 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|import('@appium/types').LogFiltersConfig} source The full path to the JSON file containing secure
+   * @param {string|string[]|import('@appium/types').LogFiltersConfig} sources
+   * The full path to the JSON file containing secure
    * values replacement rules or the rules themselves represented as an array
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules(source) {
-    let rules;
-    if (_.isArray(source)) {
-      rules = source;
-    } else {
-      if (!(await fs.exists(source))) {
-        throw new Error(`'${source}' does not exist or is not accessible`);
-      }
+  async loadRules(sources) {
+    /** @type {(filePath: string) => Promise<(import('@appium/types').LogFilter|string)[]>} */
+    const loadFromFile = async (/** @type {import("fs").PathLike} */ filePath) => {
+      let result;
       try {
-        rules = JSON.parse(await fs.readFile(source, 'utf8'));
+        result = JSON.parse(await fs.readFile(filePath, 'utf8'));
       } catch (e) {
-        throw new Error(`'${source}' must be a valid JSON file. Original error: ${e.message}`);
+        throw new Error(`'${filePath}' must be a valid JSON file. Original error: ${e.message}`);
       }
-      if (!_.isArray(rules)) {
-        throw new Error(`'${source}' must contain a valid JSON array`);
+      if (!_.isArray(result)) {
+        throw new Error(`'${filePath}' must contain a valid JSON array`);
+      }
+      return result;
+    };
+
+    /** @type {(import('@appium/types').LogFilter|string)[]} */
+    let rules = [];
+    for (const source of (_.isArray(sources) ? sources : [sources])) {
+      if (_.isPlainObject(source)) {
+        rules.push(/** @type {import('@appium/types').LogFilter} */ (source));
+      } else if (_.isString(source)) {
+        if (await fs.exists(source)) {
+          rules.push(...(await loadFromFile(source)));
+        } else {
+          rules.push(source);
+        }
+      } else {
+        throw new TypeError(`'${source}' must be either a log filtering rule or a file path`);
       }
     }
 

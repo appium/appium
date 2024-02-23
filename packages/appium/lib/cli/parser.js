@@ -150,8 +150,8 @@ class ArgParser {
 
   static _fixConfigArgFormat(args) {
     // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
-    if (args["logFilters"]) {
-      args["logFilters"] = JSON.parse(args["logFilters"]);
+    if (args.logFilters) {
+      args.logFilters = JSON.parse(args.logFilters);
       // after==> [{"text":"xcuitest"},{"text":"XCUITest","replacer":"bar"}]
     }
     return args

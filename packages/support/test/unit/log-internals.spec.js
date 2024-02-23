@@ -89,7 +89,7 @@ describe('Log Internals', function () {
     await preprocessor.loadRules(CONFIG_PATH).should.eventually.be.rejected;
   });
 
-  it('should preprocess a string and make replacements with multiple complex rules with JSON file', async function () {
+  it('should preprocess a string and make replacements with multiple complex rules defined as a JSON file', async function () {
     const replacer2 = '***';
     await fs.writeFile(CONFIG_PATH, `${JSON.stringify(
       [
@@ -102,7 +102,7 @@ describe('Log Internals', function () {
     preprocessor.rules.length.should.eql(2);
     const replacer = preprocessor.rules[0].replacer;
     preprocessor
-      .preprocess(':yolo" yo Yolo yyol')
+      .preprocess(':yolo" yo Yolo yyolo')
       .should.eql(`${replacer2}${replacer}" yo ${replacer} yyolo`);
   });
 });

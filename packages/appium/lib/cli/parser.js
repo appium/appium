@@ -122,13 +122,13 @@ class ArgParser {
         unknownArgs?.length &&
         (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
       ) {
-        return ArgParser._fixArgValueFormat(
+        return this._fixArgValueFormat(
           ArgParser._transformParsedArgs(knownArgs, unknownArgs)
         );
       } else if (unknownArgs?.length) {
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
       }
-      return ArgParser._fixArgValueFormat(
+      return this._fixArgValueFormat(
         ArgParser._transformParsedArgs(knownArgs)
       );
     } catch (err) {
@@ -155,7 +155,7 @@ class ArgParser {
    * @param {object} args
    * @returns {import('appium/types').Args<Cmd>} - The parsed arguments
    */
-  static _fixArgValueFormat(args) {
+  _fixArgValueFormat(args) {
 
     // "--log-filters" argument parsed as an string instead of JSON object.
     // Current definition in appium-config-scheme.js works expectedly for

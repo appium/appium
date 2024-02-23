@@ -122,11 +122,15 @@ class ArgParser {
         unknownArgs?.length &&
         (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
       ) {
-        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
+        return ArgParser._fixConfigArgFormat(
+          ArgParser._transformParsedArgs(knownArgs, unknownArgs)
+        );
       } else if (unknownArgs?.length) {
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
       }
-      return ArgParser._transformParsedArgs(knownArgs);
+      return ArgParser._fixConfigArgFormat(
+        ArgParser._transformParsedArgs(knownArgs)
+      );
     } catch (err) {
       if (this.debug) {
         throw err;
@@ -142,6 +146,15 @@ class ArgParser {
         process.exit(1);
       }
     }
+  }
+
+  static _fixConfigArgFormat(args) {
+    // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
+    if (args["logFilters"]) {
+      args["logFilters"] = JSON.parse(args["logFilters"]);
+      // after==> [{"text":"xcuitest"},{"text":"XCUITest","replacer":"bar"}]
+    }
+    return args
   }
 
   /**

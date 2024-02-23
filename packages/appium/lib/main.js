@@ -205,14 +205,6 @@ async function init(args) {
     preConfigArgs = /** @type {Args<Cmd, SubCmd>} */ (parser.parseArgs());
   }
 
-  // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
-  logger.info(`before==> ${JSON.stringify(preConfigArgs["logFilters"])}`)
-  if (preConfigArgs["logFilters"]) {
-    preConfigArgs["logFilters"] = JSON.parse(preConfigArgs["logFilters"]);
-  }
-  // after==> [{"text":"xcuitest"},{"text":"XCUITest","replacer":"bar"}]
-  logger.info(`after==> ${JSON.stringify(preConfigArgs["logFilters"])}`)
-
   const configResult = await readConfigFile(preConfigArgs.configFile);
 
   if (!_.isEmpty(configResult.errors)) {

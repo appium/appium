@@ -81,11 +81,13 @@ describe('Log Internals', function () {
   });
 
   it('should fail if rules cannot be accessed', async function () {
-    await preprocessor.loadRules('bla').should.eventually.be.rejected;
+    const issues = await preprocessor.loadRules('bla');
+    issues.length.should.eql(1);
   });
 
   it('should fail if rules JSON cannot be parsed', async function () {
     await fs.writeFile(CONFIG_PATH, 'blabla', 'utf8');
-    await preprocessor.loadRules(CONFIG_PATH).should.eventually.be.rejected;
+    const issues = await preprocessor.loadRules(CONFIG_PATH);
+    issues.length.should.eql(1);
   });
 });

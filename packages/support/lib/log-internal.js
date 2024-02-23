@@ -100,7 +100,7 @@ class SecureValuesPreprocessor {
    */
   async loadRules(sources) {
     /** @type {(filePath: string) => Promise<(import('@appium/types').LogFilter|string)[]>} */
-    const loadFromFile = async (/** @type {import("fs").PathLike} */ filePath) => {
+    const loadFromFile = async (filePath) => {
       let result;
       try {
         result = JSON.parse(await fs.readFile(filePath, 'utf8'));

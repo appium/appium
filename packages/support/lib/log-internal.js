@@ -28,8 +28,8 @@ class SecureValuesPreprocessor {
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|import('@appium/types').LogFilter} rule T
-   * he rule might either be represented as a single string or a configuration object
+   * @param {string|import('@appium/types').LogFilter} rule The rule might
+   * either be represented as a single string or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
@@ -113,27 +113,32 @@ class SecureValuesPreprocessor {
       return result;
     };
 
+    /** @type {string[]} */
+    const issues = [];
     /** @type {(import('@appium/types').LogFilter|string)[]} */
-    let rules = [];
+    let rawRules = [];
     for (const source of (_.isArray(sources) ? sources : [sources])) {
       if (_.isPlainObject(source)) {
-        rules.push(/** @type {import('@appium/types').LogFilter} */ (source));
+        rawRules.push(/** @type {import('@appium/types').LogFilter} */ (source));
       } else if (_.isString(source)) {
         if (await fs.exists(source)) {
-          rules.push(...(await loadFromFile(source)));
+          try {
+            rawRules.push(...(await loadFromFile(source)));
+          } catch (e) {
+            issues.push(e.message);
+          }
         } else {
-          rules.push(source);
+          rawRules.push(source);
         }
       } else {
-        throw new TypeError(`'${source}' must be either a log filtering rule or a file path`);
+        issues.push(`'${source}' must be either a log filtering rule or a file path`);
       }
     }
 
-    const issues = [];
     this._rules = [];
-    for (const rule of rules) {
+    for (const rawRule of rawRules) {
       try {
-        this._rules.push(this.parseRule(rule));
+        this._rules.push(this.parseRule(rawRule));
       } catch (e) {
         issues.push(e.message);
       }

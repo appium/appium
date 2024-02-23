@@ -161,6 +161,7 @@ class ArgParser {
     // appium config. We may be able to update the scheme properly to
     // make it work for both, "--log-filters" and "--config", but
     // it may take more time.
+    // FIXME: Possibly 'appiumCliTransformer' in scheme does not work properly(?)
     if (args.logFilters) {
       // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
       args.logFilters = JSON.parse(args.logFilters);

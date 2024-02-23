@@ -122,15 +122,11 @@ class ArgParser {
         unknownArgs?.length &&
         (knownArgs.driverCommand === 'run' || knownArgs.pluginCommand === 'run')
       ) {
-        return this._fixArgValueFormat(
-          ArgParser._transformParsedArgs(knownArgs, unknownArgs)
-        );
+        return ArgParser._transformParsedArgs(knownArgs, unknownArgs);
       } else if (unknownArgs?.length) {
         throw new Error(`[ERROR] Unrecognized arguments: ${unknownArgs.join(' ')}`);
       }
-      return this._fixArgValueFormat(
-        ArgParser._transformParsedArgs(knownArgs)
-      );
+      return ArgParser._transformParsedArgs(knownArgs);
     } catch (err) {
       if (this.debug) {
         throw err;
@@ -146,29 +142,6 @@ class ArgParser {
         process.exit(1);
       }
     }
-  }
-
-  /**
-   * Fix values of parsed arguments.
-   *
-   * @template {import('appium/types').CliCommand} [Cmd=import('appium/types').CliCommandServer]
-   * @param {object} args
-   * @returns {import('appium/types').Args<Cmd>} - The parsed arguments
-   */
-  _fixArgValueFormat(args) {
-
-    // "--log-filters" argument parsed as an string instead of JSON object.
-    // Current definition in appium-config-scheme.js works expectedly for
-    // appium config. We may be able to update the scheme properly to
-    // make it work for both, "--log-filters" and "--config", but
-    // it may take more time.
-    // FIXME: Possibly 'appiumCliTransformer' in scheme does not work properly(?)
-    if (args.logFilters) {
-      // before==> ["[{\"text\": \"xcuitest\"}","{\"text\": \"XCUITest\"","\"replacer\": \"bar\"}]"]
-      args.logFilters = JSON.parse(args.logFilters);
-      // after==> [{"text":"xcuitest"},{"text":"XCUITest","replacer":"bar"}]
-    }
-    return args;
   }
 
   /**

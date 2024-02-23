@@ -16,7 +16,6 @@ import {
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
-import log from '../logger';
 
 export const EXTRA_ARGS = 'extraArgs';
 
@@ -152,8 +151,9 @@ class ArgParser {
   /**
    * Fix values of parsed arguments.
    *
+   * @template {import('appium/types').CliCommand} [Cmd=import('appium/types').CliCommandServer]
    * @param {object} args
-   * @returns {object}
+   * @returns {import('appium/types').Args<Cmd>} - The parsed arguments
    */
   static _fixArgValueFormat(args) {
 

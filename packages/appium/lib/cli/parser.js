@@ -16,6 +16,7 @@ import {
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
+import log from '../logger';
 
 export const EXTRA_ARGS = 'extraArgs';
 

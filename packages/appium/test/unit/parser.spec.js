@@ -5,6 +5,7 @@ import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
 import {readConfigFile} from '../../lib/config-file';
 import {resolveFixture} from '../helpers';
+import { fs } from '@appium/support';
 
 // these paths should not make assumptions about the current working directory
 const ALLOW_FIXTURE = resolveFixture('allow-feat.txt');
@@ -169,8 +170,9 @@ describe('parser', function () {
         p.parseArgs(['--log-level', 'debug']).should.have.property('loglevel', 'debug');
       });
 
-      it('should parse a file for --log-filters', function () {
-        p.parseArgs(['--log-filters', LOG_FILTERS_FIXTURE]).should.have.property('logFilters');
+      it('should parse a file for --log-filters', async function () {
+        // giving the file path directly caused wrong format content format, so here gives loaded content.
+        p.parseArgs(['--log-filters', (await fs.readFile(LOG_FILTERS_FIXTURE, 'utf8'))]).should.have.property('logFilters');
       });
     });
 

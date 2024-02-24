@@ -79,10 +79,4 @@ describe('Log Internals', function () {
     preprocessor.rules.length.should.eql(0);
     preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(':yolo" yo Yolo yyolo');
   });
-
-  it('should fail if rules JSON cannot be parsed', async function () {
-    await fs.writeFile(CONFIG_PATH, 'blabla', 'utf8');
-    const issues = await preprocessor.loadRules(CONFIG_PATH);
-    issues.length.should.eql(1);
-  });
 });

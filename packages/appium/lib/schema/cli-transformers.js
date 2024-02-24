@@ -15,11 +15,24 @@ import {readFileSync, existsSync} from 'fs';
  * @param {string} value
  * @returns {string[]}
  */
-function parseCsvLine(value) {
+export function parseCsvLine(value) {
   return value
     .split(',')
     .map((v) => v.trim())
     .filter(Boolean);
+}
+
+/**
+ * Split a file by newline then calls {@link parseCsvLine} on each line.
+ * @param {string} value
+ * @returns {string[]}
+ */
+function parseCsvFile(value) {
+  return value
+    .split(/\r?\n/)
+    .map((v) => v.trim())
+    .filter(Boolean)
+    .flatMap(parseCsvLine);
 }
 
 /**
@@ -39,15 +52,30 @@ function parseCsvLine(value) {
  */
 export const transformers = {
   /**
-   * Given a CSV-style string parse it into an array.
-   * @param {string} commaSeparatedString
+   * Given a CSV-style string or pathname, parse it into an array.
+   * The file can also be split on newlines.
+   * @param {string} csvOrPath
    * @returns {string[]}
    */
-  csv: (commaSeparatedString) => {
+  csv: (csvOrPath) => {
+    let csv = csvOrPath;
+    let loadedFromFile = false;
+    // since this value could be a single string (no commas) _or_ a pathname, we will need
+    // to attempt to parse it as a file _first_.
+    if (existsSync(csvOrPath)) {
+      try {
+        csv = readFileSync(csvOrPath, 'utf8');
+      } catch (err) {
+        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${err.message}`);
+      }
+      loadedFromFile = true;
+    }
     try {
-      return parseCsvLine(commaSeparatedString);
+      return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
     } catch (err) {
-      const msg = `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
+      const msg = loadedFromFile
+        ? `The provided value of '${csvOrPath}' must be a valid CSV`
+        : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
       throw new TypeError(`${msg}. Original error: ${err.message}`);
     }
   },

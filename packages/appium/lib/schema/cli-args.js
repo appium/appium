@@ -2,7 +2,7 @@ import {ArgumentTypeError} from 'argparse';
 import _ from 'lodash';
 import {formatErrors as formatErrors} from '../config-file';
 import {flattenSchema, validate} from './schema';
-import {transformers} from './cli-transformers';
+import {transformers, parseCsvLine} from './cli-transformers';
 
 /**
  * This module concerns functions which convert schema definitions to
@@ -142,7 +142,7 @@ function subSchemaToArgDef(subSchema, argSpec) {
 
     // arrays are treated as CSVs, because `argparse` doesn't handle array data.
     case TYPENAMES.ARRAY: {
-      argTypeFunction = transformers.csv;
+      argTypeFunction = parseCsvLine;
       break;
     }
 
@@ -189,11 +189,8 @@ function subSchemaToArgDef(subSchema, argSpec) {
   if (appiumCliTransformer && transformers[appiumCliTransformer]
       && argTypeFunction !== transformers[appiumCliTransformer]) {
     if (type === TYPENAMES.ARRAY) {
-      const firstTransformer = argTypeFunction;
-      argTypeFunction = (val) => {
-        const arr = /** @type {any[]} */ (firstTransformer ? firstTransformer(val) : val);
-        return arr.map(transformers[appiumCliTransformer]);
-      };
+      const csvTransformer = /** @type {(x: string) => string[]} */ (argTypeFunction);
+      argTypeFunction = (val) => csvTransformer(val).map(transformers[appiumCliTransformer]);
     } else {
       argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
     }

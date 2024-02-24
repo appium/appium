@@ -139,7 +139,7 @@ function subSchemaToArgDef(subSchema, argSpec) {
       argTypeFunction = _.flow(transformers.json, (o) => {
         // Arrays and plain strings are also valid JSON
         if (!_.isPlainObject(o)) {
-          throw new ArgumentTypeError(`'${_.truncate(o, {length: 100})}' is not an object`);;
+          throw new ArgumentTypeError(`'${_.truncate(o, {length: 100})}' must be a plain object`);;
         }
         return o;
       });

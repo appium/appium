@@ -190,7 +190,7 @@ function subSchemaToArgDef(subSchema, argSpec) {
       && argTypeFunction !== transformers[appiumCliTransformer]) {
     if (type === TYPENAMES.ARRAY) {
       const csvTransformer = /** @type {(x: string) => string[]} */ (argTypeFunction);
-      argTypeFunction = (val) => csvTransformer(val).map(transformers[appiumCliTransformer]);
+      argTypeFunction = (val) => _.flatMap(csvTransformer(val).map(transformers[appiumCliTransformer]));
     } else {
       argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
     }

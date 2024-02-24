@@ -100,7 +100,7 @@ class SecureValuesPreprocessor {
     /** @type {string[]} */
     const issues = [];
     /** @type {(import('@appium/types').LogFilter|string)[]} */
-    let rawRules = [];
+    const rawRules = [];
     for (const source of (_.isArray(filters) ? filters : [filters])) {
       if (_.isPlainObject(source)) {
         rawRules.push(/** @type {import('@appium/types').LogFilter} */ (source));

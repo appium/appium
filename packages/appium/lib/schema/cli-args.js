@@ -136,7 +136,13 @@ function subSchemaToArgDef(subSchema, argSpec) {
     }
 
     case TYPENAMES.OBJECT: {
-      argTypeFunction = transformers.json;
+      argTypeFunction = _.flow(transformers.json, (o) => {
+        // Arrays and plain strings are also valid JSON
+        if (!_.isPlainObject(o)) {
+          throw new ArgumentTypeError(`'${_.truncate(o, {length: 100})}' is not an object`);;
+        }
+        return o;
+      });
       break;
     }
 
@@ -182,12 +188,7 @@ function subSchemaToArgDef(subSchema, argSpec) {
     argOpts.metavar = screamingSnakeCase(name);
   }
 
-  // the validity of "appiumCliTransformer" should already have been determined
-  // by ajv during schema validation in `finalizeSchema()`. the `array` &
-  // `object` types have already added a formatter (see above, so we don't do it
-  // twice).
-  if (appiumCliTransformer && transformers[appiumCliTransformer]
-      && argTypeFunction !== transformers[appiumCliTransformer]) {
+  if (appiumCliTransformer && transformers[appiumCliTransformer]) {
     if (type === TYPENAMES.ARRAY) {
       const csvTransformer = /** @type {(x: string) => string[]} */ (argTypeFunction);
       argTypeFunction = (val) => _.flatMap(csvTransformer(val).map(transformers[appiumCliTransformer]));

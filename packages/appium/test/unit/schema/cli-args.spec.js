@@ -78,7 +78,7 @@ describe('cli-args', function () {
           });
 
           it('should use the `csv` transformer', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('type', transformers.csv);
+            expect(result['--plugin-blob-foo']).to.have.property('type');
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {

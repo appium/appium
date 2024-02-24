@@ -2,7 +2,7 @@ import {ArgumentTypeError} from 'argparse';
 import _ from 'lodash';
 import {formatErrors as formatErrors} from '../config-file';
 import {flattenSchema, validate} from './schema';
-import {transformers} from './cli-transformers';
+import {transformers, parseCsvLine} from './cli-transformers';
 
 /**
  * This module concerns functions which convert schema definitions to
@@ -136,13 +136,19 @@ function subSchemaToArgDef(subSchema, argSpec) {
     }
 
     case TYPENAMES.OBJECT: {
-      argTypeFunction = transformers.json;
+      argTypeFunction = _.flow(transformers.json, (o) => {
+        // Arrays and plain strings are also valid JSON
+        if (!_.isPlainObject(o)) {
+          throw new ArgumentTypeError(`'${_.truncate(o, {length: 100})}' must be a plain object`);;
+        }
+        return o;
+      });
       break;
     }
 
     // arrays are treated as CSVs, because `argparse` doesn't handle array data.
     case TYPENAMES.ARRAY: {
-      argTypeFunction = transformers.csv;
+      argTypeFunction = parseCsvLine;
       break;
     }
 
@@ -182,12 +188,13 @@ function subSchemaToArgDef(subSchema, argSpec) {
     argOpts.metavar = screamingSnakeCase(name);
   }
 
-  // the validity of "appiumCliTransformer" should already have been determined
-  // by ajv during schema validation in `finalizeSchema()`. the `array` &
-  // `object` types have already added a formatter (see above, so we don't do it
-  // twice).
-  if (type !== TYPENAMES.ARRAY && type !== TYPENAMES.OBJECT && appiumCliTransformer) {
-    argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
+  if (appiumCliTransformer && transformers[appiumCliTransformer]) {
+    if (type === TYPENAMES.ARRAY) {
+      const csvTransformer = /** @type {(x: string) => string[]} */ (argTypeFunction);
+      argTypeFunction = (val) => _.flatMap(csvTransformer(val).map(transformers[appiumCliTransformer]));
+    } else {
+      argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
+    }
   }
 
   if (argTypeFunction) {

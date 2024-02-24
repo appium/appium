@@ -248,10 +248,10 @@ async function init(args) {
           `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
         );
       } else {
+        // Filtering aims to "hide" these values from the log,
+        // so it would be nice to not show them in the log as well.
         logger.info(
-          `Loaded ${util.pluralize('filtering rule', rules.length, true)} from '${
-            serverArgs.logFilters
-          }'`,
+          `Loaded ${util.pluralize('filtering rule', rules.length, true)}`,
         );
       }
     }

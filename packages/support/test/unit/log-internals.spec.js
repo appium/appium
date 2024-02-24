@@ -1,9 +1,4 @@
-import {fs} from '../../lib/index';
-import os from 'os';
-import path from 'path';
 import {SecureValuesPreprocessor} from '../../lib/log-internal';
-
-const CONFIG_PATH = path.resolve(os.tmpdir(), 'rules.json');
 
 describe('Log Internals', function () {
   /** @type {import('../../lib/log-internal').SecureValuesPreprocessor} */
@@ -78,14 +73,5 @@ describe('Log Internals', function () {
     issues.length.should.eql(3);
     preprocessor.rules.length.should.eql(0);
     preprocessor.preprocess(':yolo" yo Yolo yyolo').should.eql(':yolo" yo Yolo yyolo');
-  });
-
-  it('should fail if rules cannot be accessed', async function () {
-    await preprocessor.loadRules('bla').should.eventually.be.rejected;
-  });
-
-  it('should fail if rules JSON cannot be parsed', async function () {
-    await fs.writeFile(CONFIG_PATH, 'blabla', 'utf8');
-    await preprocessor.loadRules(CONFIG_PATH).should.eventually.be.rejected;
   });
 });

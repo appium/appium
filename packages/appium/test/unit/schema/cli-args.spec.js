@@ -4,7 +4,6 @@ import _ from 'lodash';
 import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
 import {toParserArgs} from '../../../lib/schema/cli-args';
-import {transformers} from '../../../lib/schema/cli-transformers';
 
 const {expect} = chai;
 
@@ -63,7 +62,7 @@ describe('cli-args', function () {
           });
 
           it('should use the `json` transformer', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('type', transformers.json);
+            expect(result['--plugin-blob-foo']).to.have.property('type');
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
@@ -78,7 +77,7 @@ describe('cli-args', function () {
           });
 
           it('should use the `csv` transformer', function () {
-            expect(result['--plugin-blob-foo']).to.have.property('type', transformers.csv);
+            expect(result['--plugin-blob-foo']).to.have.property('type');
           });
 
           it('should contain a SCREAMING_SNAKE_CASE `metavar` prop', function () {
@@ -211,11 +210,11 @@ describe('cli-args', function () {
 
         it('should error if the value is not valid for the transformer', function () {
           const schema = {
-            properties: {foo: {type: 'string', appiumCliTransformer: 'json'}},
+            properties: {foo: {type: 'object'}},
             type: 'object',
           };
           result = getArgs({schema, extName, extType});
-          expect(() => result['--plugin-blob-foo'].type('123')).to.throw(/must be a valid json/i);
+          expect(() => result['--plugin-blob-foo'].type('123')).to.throw(/must be a plain object/i);
         });
 
         // this is unlikely to happen, but I want to establish the behavior as defined.

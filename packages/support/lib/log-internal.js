@@ -1,4 +1,3 @@
-import fs from './fs';
 import _ from 'lodash';
 
 const DEFAULT_REPLACER = '**SECURE**';
@@ -28,8 +27,8 @@ class SecureValuesPreprocessor {
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|import('@appium/types').LogFilter} rule The rule might either be represented as a single string
-   * or a configuration object
+   * @param {string|import('@appium/types').LogFilter} rule The rule might
+   * either be represented as a single string or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
@@ -90,36 +89,31 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|import('@appium/types').LogFiltersConfig} source The full path to the JSON file containing secure
-   * values replacement rules or the rules themselves represented as an array
+   * @param {string|string[]|import('@appium/types').LogFiltersConfig} filters
+   * One or more log parsing rules
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules(source) {
-    let rules;
-    if (_.isArray(source)) {
-      rules = source;
-    } else {
-      if (!(await fs.exists(source))) {
-        throw new Error(`'${source}' does not exist or is not accessible`);
-      }
-      try {
-        rules = JSON.parse(await fs.readFile(source, 'utf8'));
-      } catch (e) {
-        throw new Error(`'${source}' must be a valid JSON file. Original error: ${e.message}`);
-      }
-      if (!_.isArray(rules)) {
-        throw new Error(`'${source}' must contain a valid JSON array`);
+  async loadRules(filters) {
+    /** @type {string[]} */
+    const issues = [];
+    /** @type {(import('@appium/types').LogFilter|string)[]} */
+    const rawRules = [];
+    for (const source of (_.isArray(filters) ? filters : [filters])) {
+      if (_.isPlainObject(source)) {
+        rawRules.push(/** @type {import('@appium/types').LogFilter} */ (source));
+      } else if (_.isString(source)) {
+        rawRules.push(source);
+      } else {
+        issues.push(`'${source}' must be a valid log filtering rule`);
       }
     }
-
-    const issues = [];
     this._rules = [];
-    for (const rule of rules) {
+    for (const rawRule of rawRules) {
       try {
-        this._rules.push(this.parseRule(rule));
+        this._rules.push(this.parseRule(rawRule));
       } catch (e) {
         issues.push(e.message);
       }

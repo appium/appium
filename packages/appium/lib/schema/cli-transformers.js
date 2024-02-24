@@ -1,6 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
 import {readFileSync, existsSync} from 'fs';
-import _ from 'lodash';
 
 /**
  * This module provides custom keywords for Appium schemas, as well as
@@ -16,7 +15,7 @@ import _ from 'lodash';
  * @param {string} value
  * @returns {string[]}
  */
-function parseCsvLine(value) {
+export function parseCsvLine(value) {
   return value
     .split(',')
     .map((v) => v.trim())
@@ -71,7 +70,6 @@ export const transformers = {
       }
       loadedFromFile = true;
     }
-
     try {
       return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
     } catch (err) {
@@ -104,14 +102,10 @@ export const transformers = {
       loadedFromFile = true;
     }
     try {
-      const result = JSON.parse(json);
-      if (!_.isPlainObject(result)) {
-        throw new Error(`'${_.truncate(result, {length: 100})}' is not an object`);
-      }
-      return result;
+      return JSON.parse(json);
     } catch (e) {
       const msg = loadedFromFile
-        ? `The provided value of '${jsonOrPath}' must be a valid JSON`
+        ? `'${jsonOrPath}' must be a valid JSON`
         : `The provided value must be a valid JSON`;
       throw new TypeError(`${msg}. Original error: ${e.message}`);
     }

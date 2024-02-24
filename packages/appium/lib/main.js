@@ -235,7 +235,10 @@ async function init(args) {
 
     if (serverArgs.logFilters) {
       const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
-        serverArgs.logFilters,
+        // If passed from the CLI then logFilters will be an array of arrays, where
+        // top level items correspond to JSON files and low level ones
+        // are arrays of rules loaded from each file
+        _.flatMap(serverArgs.logFilters),
       );
       if (!_.isEmpty(issues)) {
         throw new Error(

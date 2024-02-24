@@ -1,6 +1,5 @@
 import {ArgumentTypeError} from 'argparse';
 import {readFileSync, existsSync} from 'fs';
-import _ from 'lodash';
 
 /**
  * This module provides custom keywords for Appium schemas, as well as
@@ -24,19 +23,6 @@ function parseCsvLine(value) {
 }
 
 /**
- * Split a file by newline then calls {@link parseCsvLine} on each line.
- * @param {string} value
- * @returns {string[]}
- */
-function parseCsvFile(value) {
-  return value
-    .split(/\r?\n/)
-    .map((v) => v.trim())
-    .filter(Boolean)
-    .flatMap(parseCsvLine);
-}
-
-/**
  * Namespace containing _transformers_ for CLI arguments.  "Validators" and
  * "formatters" do not actually modify the value, but these do.
  *
@@ -53,31 +39,15 @@ function parseCsvFile(value) {
  */
 export const transformers = {
   /**
-   * Given a CSV-style string or pathname, parse it into an array.
-   * The file can also be split on newlines.
-   * @param {string} csvOrPath
+   * Given a CSV-style string parse it into an array.
+   * @param {string} commaSeparatedString
    * @returns {string[]}
    */
-  csv: (csvOrPath) => {
-    let csv = csvOrPath;
-    let loadedFromFile = false;
-    // since this value could be a single string (no commas) _or_ a pathname, we will need
-    // to attempt to parse it as a file _first_.
-    if (existsSync(csvOrPath)) {
-      try {
-        csv = readFileSync(csvOrPath, 'utf8');
-      } catch (err) {
-        throw new ArgumentTypeError(`Could not read file '${csvOrPath}': ${err.message}`);
-      }
-      loadedFromFile = true;
-    }
-
+  csv: (commaSeparatedString) => {
     try {
-      return loadedFromFile ? parseCsvFile(csv) : parseCsvLine(csv);
+      return parseCsvLine(commaSeparatedString);
     } catch (err) {
-      const msg = loadedFromFile
-        ? `The provided value of '${csvOrPath}' must be a valid CSV`
-        : `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
+      const msg = `Must be a comma-delimited string, e.g., "foo,bar,baz"`;
       throw new TypeError(`${msg}. Original error: ${err.message}`);
     }
   },
@@ -104,14 +74,10 @@ export const transformers = {
       loadedFromFile = true;
     }
     try {
-      const result = JSON.parse(json);
-      if (!_.isPlainObject(result)) {
-        throw new Error(`'${_.truncate(result, {length: 100})}' is not an object`);
-      }
-      return result;
+      return JSON.parse(json);
     } catch (e) {
       const msg = loadedFromFile
-        ? `The provided value of '${jsonOrPath}' must be a valid JSON`
+        ? `'${jsonOrPath}' must be a valid JSON`
         : `The provided value must be a valid JSON`;
       throw new TypeError(`${msg}. Original error: ${e.message}`);
     }

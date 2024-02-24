@@ -186,8 +186,17 @@ function subSchemaToArgDef(subSchema, argSpec) {
   // by ajv during schema validation in `finalizeSchema()`. the `array` &
   // `object` types have already added a formatter (see above, so we don't do it
   // twice).
-  if (type !== TYPENAMES.ARRAY && type !== TYPENAMES.OBJECT && appiumCliTransformer) {
-    argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
+  if (appiumCliTransformer && transformers[appiumCliTransformer]
+      && argTypeFunction !== transformers[appiumCliTransformer]) {
+    if (type === TYPENAMES.ARRAY) {
+      const firstTransformer = argTypeFunction;
+      argTypeFunction = (val) => {
+        const arr = /** @type {any[]} */ (firstTransformer ? firstTransformer(val) : val);
+        return arr.map(transformers[appiumCliTransformer]);
+      };
+    } else {
+      argTypeFunction = _.flow(argTypeFunction ?? _.identity, transformers[appiumCliTransformer]);
+    }
   }
 
   if (argTypeFunction) {

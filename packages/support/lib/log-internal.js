@@ -1,4 +1,3 @@
-import fs from './fs';
 import _ from 'lodash';
 
 const DEFAULT_REPLACER = '**SECURE**';
@@ -90,51 +89,27 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|import('@appium/types').LogFiltersConfig} sources
-   * The full path to the JSON file containing secure
-   * values replacement rules or the rules themselves represented as an array
+   * @param {string|string[]|import('@appium/types').LogFiltersConfig} filters
+   * One or more log parsing rules
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules(sources) {
-    /** @type {(filePath: string) => Promise<(import('@appium/types').LogFilter|string)[]>} */
-    const loadFromFile = async (filePath) => {
-      let result;
-      try {
-        result = JSON.parse(await fs.readFile(filePath, 'utf8'));
-      } catch (e) {
-        throw new Error(`'${filePath}' must be a valid JSON file. Original error: ${e.message}`);
-      }
-      if (!_.isArray(result)) {
-        throw new Error(`'${filePath}' must contain a valid JSON array`);
-      }
-      return result;
-    };
-
+  async loadRules(filters) {
     /** @type {string[]} */
     const issues = [];
     /** @type {(import('@appium/types').LogFilter|string)[]} */
     let rawRules = [];
-    for (const source of (_.isArray(sources) ? sources : [sources])) {
+    for (const source of (_.isArray(filters) ? filters : [filters])) {
       if (_.isPlainObject(source)) {
         rawRules.push(/** @type {import('@appium/types').LogFilter} */ (source));
       } else if (_.isString(source)) {
-        if (await fs.exists(source)) {
-          try {
-            rawRules.push(...(await loadFromFile(source)));
-          } catch (e) {
-            issues.push(e.message);
-          }
-        } else {
-          rawRules.push(source);
-        }
+        rawRules.push(source);
       } else {
-        issues.push(`'${source}' must be either a log filtering rule or a file path`);
+        issues.push(`'${source}' must be a valid log filtering rule`);
       }
     }
-
     this._rules = [];
     for (const rawRule of rawRules) {
       try {

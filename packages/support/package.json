@@ -60,7 +60,7 @@
     "@types/teen_process": "2.0.4",
     "@types/uuid": "9.0.8",
     "@types/which": "3.0.3",
-    "archiver": "6.0.1",
+    "archiver": "6.0.2",
     "axios": "1.6.7",
     "base64-stream": "1.0.0",
     "bluebird": "3.7.2",

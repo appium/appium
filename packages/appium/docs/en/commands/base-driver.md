@@ -319,9 +319,22 @@ Get data for all sessions running on an Appium server
 
 #### Response
 
-`MultiSessionData`<`C`\>[]
+A list of session data objects. E
+ach data object must have `id` and the session's capabilities as `capabilities` key.
 
-A list of session data objects
+```json
+[
+  {
+    "id":"ba30c6da-c266-4734-8ddb-c16f5bb53e16",
+    "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.2","deviceName":"iPhone 15" }
+  },
+  {
+    "id":"1441110c-1ece-4e45-abbf-ebf404f45f0a",
+    "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.0","deviceName":"iPhone 14" }
+  },
+  ...
+]
+```
 
 ### `getSettings`
 

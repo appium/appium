@@ -319,8 +319,8 @@ Get data for all sessions running on an Appium server
 
 #### Response
 
-A list of session data objects. E
-ach data object must have `id` and the session's capabilities as `capabilities` key.
+A list of session data objects.
+Each session data object will be returned with `id` and the session's capabilities as `capabilities` keys like an example below:
 
 ```json
 [

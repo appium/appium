@@ -49,6 +49,8 @@ A session data object
 
 Returns capabilities for the session and event history (if applicable)
 
+**`Deprecated`**
+
 <!-- comment source: multiple -->
 
 #### Response
@@ -217,6 +219,8 @@ A possibly empty list of elements inside the shadow root matching the selector
 
 Get the log for a given log type.
 
+**`Deprecated`**
+
 <!-- comment source: method-signature -->
 
 #### Parameters
@@ -273,6 +277,8 @@ The event history for the session
 
 Get available log types as a list of strings
 
+**`Deprecated`**
+
 <!-- comment source: method-signature -->
 
 #### Response
@@ -314,6 +320,8 @@ The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 `GET` **`/sessions`**
 
 Get data for all sessions running on an Appium server
+
+**`Deprecated`**
 
 <!-- comment source: method-signature -->
 

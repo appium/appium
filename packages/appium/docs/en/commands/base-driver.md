@@ -217,7 +217,9 @@ A possibly empty list of elements inside the shadow root matching the selector
 
 Get the log for a given log type.
 
-**`Deprecated`**
+!!! warning "Deprecated"
+
+    Please use the `/session/:sessionId/se/log` endpoint instead
 
 <!-- comment source: method-signature -->
 
@@ -275,7 +277,9 @@ The event history for the session
 
 Get available log types as a list of strings
 
-**`Deprecated`**
+!!! warning "Deprecated"
+
+    Please use the `/session/:sessionId/se/log/types` endpoint instead
 
 <!-- comment source: method-signature -->
 
@@ -482,7 +486,9 @@ Set the various timeouts associated with a session
 
 Set the implicit wait timeout
 
-**`Deprecated`**
+!!! warning "Deprecated"
+
+    Please use the `/session/:sessionId/timeouts` endpoint instead
 
 Use `timeouts` instead
 
@@ -523,7 +529,9 @@ Add a custom-named event to the Appium event log
 
 Reset the current session (run the delete session and create session subroutines)
 
-**`Deprecated`**
+!!! warning "Deprecated"
+
+    Please use each driver's launch, activate, terminate or cleanup method.
 
 Use explicit session management commands instead
 

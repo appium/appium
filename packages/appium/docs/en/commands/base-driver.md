@@ -217,6 +217,8 @@ A possibly empty list of elements inside the shadow root matching the selector
 
 Get the log for a given log type.
 
+**`Deprecated`**
+
 <!-- comment source: method-signature -->
 
 #### Parameters
@@ -273,6 +275,8 @@ The event history for the session
 
 Get available log types as a list of strings
 
+**`Deprecated`**
+
 <!-- comment source: method-signature -->
 
 #### Response
@@ -319,9 +323,22 @@ Get data for all sessions running on an Appium server
 
 #### Response
 
-`MultiSessionData`<`C`\>[]
+A list of session data objects.
+Each session data object will be returned with `id` and the session's capabilities as `capabilities` keys like an example below:
 
-A list of session data objects
+```json
+[
+  {
+    "id":"ba30c6da-c266-4734-8ddb-c16f5bb53e16",
+    "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.2","deviceName":"iPhone 15" }
+  },
+  {
+    "id":"1441110c-1ece-4e45-abbf-ebf404f45f0a",
+    "capabilities":{ "platformName":"ios","browserName":"safari","automationName":"xcuitest","platformVersion":"17.0","deviceName":"iPhone 14" }
+  },
+  ...
+]
+```
 
 ### `getSettings`
 

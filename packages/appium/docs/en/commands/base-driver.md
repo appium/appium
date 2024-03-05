@@ -49,8 +49,6 @@ A session data object
 
 Returns capabilities for the session and event history (if applicable)
 
-**`Deprecated`**
-
 <!-- comment source: multiple -->
 
 #### Response
@@ -320,8 +318,6 @@ The UI hierarchy in a platform-appropriate format (e.g., HTML for a web page)
 `GET` **`/sessions`**
 
 Get data for all sessions running on an Appium server
-
-**`Deprecated`**
 
 <!-- comment source: method-signature -->
 

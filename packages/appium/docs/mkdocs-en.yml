@@ -8,6 +8,7 @@ theme:
   language: en
 nav:
   - Welcome: index.md
+  - Blog: blog/index.md
   - Introduction:
       - intro/index.md
       - Background:

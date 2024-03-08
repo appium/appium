@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.io/docs/en/2.5/guides/execute-methods/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.5/guides/branch-testing/">
       
       
-        <link rel="prev" href="../settings/">
+        <link rel="prev" href="../managing-exts/">
       
       
-        <link rel="next" href="../context/">
+        <link rel="next" href="../config/">
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Execute Methods - Appium Documentation</title>
+        <title>Local Validation Of Extension PRs - Appium Documentation</title>
       
     
     
@@ -120,6 +120,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#requirements" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -153,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Execute Methods
+              Local Validation Of Extension PRs
             
           </span>
         </div>
@@ -515,8 +520,6 @@
         <div class="md-main__inner md-grid">
           
             
-              
-                
               
               <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
@@ -1669,8 +1672,10 @@
                 
   
   
+    
   
   
+  
     
     
     
@@ -1679,12 +1684,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
         
           
           <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="">
@@ -1698,7 +1703,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_8_2">
             <span class="md-nav__icon md-icon"></span>
             Server/Driver Configuration
@@ -1730,10 +1735,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../branch-testing/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Local Validation Of Extension PRs
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1742,6 +1765,60 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-back-to-a-stable-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching Back To a Stable Release
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1885,8 +1962,6 @@
                 
   
   
-    
-  
   
   
     
@@ -1897,12 +1972,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
         
           
           <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="">
@@ -1916,7 +1991,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8_3">
             <span class="md-nav__icon md-icon"></span>
             Session Configuration
@@ -1969,17 +2044,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../execute-methods/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1988,7 +2056,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -2341,9 +2408,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -2352,6 +2417,50 @@
   
   
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Requirements
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Update
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#switching-back-to-a-stable-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Switching Back To a Stable Release
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -2366,7 +2475,7 @@
                   
 
   
-    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/guides/execute-methods.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/guides/branch-testing.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -2374,105 +2483,59 @@
   
 
 
-  <h1>Execute Methods</h1>
+  <h1>Local Validation Of Extension PRs</h1>
 
-<p>Because the scope of commands implemented in Appium drivers is broader than the scope of commands
-defined by the W3C WebDriver spec, Appium needs a way for these "extended" commands to be accessible
-by client libraries. There are two main strategies for this:</p>
-<ol>
-<li>Appium drivers define new W3C-compatible API routes, and Appium clients are updated to include
-   support for those new routes.</li>
-<li>Appium drivers define so-called "Execute Methods" which provide new functionality by
-   overloading the existing <code>Execute Script</code> command which is already available in any WebDriver-
-   based client library (including all Selenium and Appium clients).</li>
-</ol>
-<p>There are pros and cons for each strategy, but it is ultimately up to the extension author to
-decide how they wish implement new commands. </p>
-<p>This guide is designed to specifically help you understand the "Execute Method" strategy.  This
-pattern is commonly used in official Appium drivers and other third-party extensions.
-Here's an example of how the <code>Execute Script</code> command is designed to work in the world of WebDriver
-and browser automation:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">JS (WebDriverIO)</label><label for="__tabbed_1_2">Java</label><label for="__tabbed_1_3">Python</label><label for="__tabbed_1_4">Ruby</label><label for="__tabbed_1_5">C#</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">&#39;return arguments[0] + arguments[1]&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="w"> </span><span class="mf">4</span><span class="p">])</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">jsDriver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">jsDriver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;return arguments[0] + arguments[1]&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;return arguments[0] + arguments[1]&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;return arguments[0] + arguments[1]&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>((IJavaScriptExecutor)driver).ExecuteScript(&quot;return arguments[0] + arguments[1]&quot;, 3, 4);
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>What's happening here is that we are defining a snippet of Javascript (technically,
-a function body) to be executed within the web browser. The client can send arguments which are
-serialized, sent over HTTP, and finally provided to the function as parameters.  In this example,
-we are essentially defining an addition function. The return value of the <code>Execute Script</code> command
-is whatever the return value of the Javascript snippet is! In the case of this example, that value
-would be the number <code>7</code> (<code>3</code> + <code>4</code>).</p>
-<p>Each client library has its own way of calling the command and providing any arguments to the script
-function, but the function itself—the snippet—is always a string and is the same across all languages.</p>
-<p>In the world of Appium, we are usually not automating a web browser, which means this command is
-not particularly useful. But it <em>is</em> useful as a way to encode the name of an arbitrary command and
-to provide parameters. For example, the <a href="https://github.com/appium/appium-xcuitest-driver">XCUITest
-Driver</a> has implemented a command that lets a client
-terminate a running application if you know the ID (the <code>bundleId</code>) of the app. The way that the
-driver makes this command available is via the Execute Method <code>mobile: terminateApp</code>. Instead of
-providing a JavaScript function to the "Execute Script" command, the user provides a <em>known string</em>
-as defined by the driver. The only other thing a client needs to know is the set of
-parameters for the method, which are documented by the driver. In this case, we have a parameter
-named <code>bundleId</code>, whose value should be a string encoding the ID of the app to terminate. Here is
-how this Execute Method would be called:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:5"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><input id="__tabbed_2_5" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">JS (WebDriverIO)</label><label for="__tabbed_2_2">Java</label><label for="__tabbed_2_3">Python</label><label for="__tabbed_2_4">Ruby</label><label for="__tabbed_2_5">C#</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">await</span><span class="w"> </span><span class="nx">driver</span><span class="p">.</span><span class="nx">executeScript</span><span class="p">(</span><span class="s1">&#39;mobile: terminateApp&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[{</span><span class="nx">bundleId</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;com.my.app&#39;</span><span class="p">}])</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">JavascriptExecutor</span><span class="w"> </span><span class="n">jsDriver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">JavascriptExecutor</span><span class="p">)</span><span class="w"> </span><span class="n">driver</span><span class="p">;</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">jsDriver</span><span class="p">.</span><span class="na">executeScript</span><span class="p">(</span><span class="s">&quot;mobile: terminateApp&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ImmutableMap</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="s">&quot;bundleId&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;com.my.app&quot;</span><span class="p">));</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s1">&#39;mobile: terminateApp&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;bundleId&#39;</span><span class="p">:</span> <span class="s1">&#39;com.my.app&#39;</span><span class="p">})</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">driver</span><span class="o">.</span><span class="n">execute_script</span><span class="w"> </span><span class="s1">&#39;mobile: terminateApp&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="ss">bundleId</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;com.my.app&#39;</span><span class="w"> </span><span class="p">}</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>((IJavaScriptExecutor)driver).ExecuteScript(&quot;mobile: terminateApp&quot;,
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    new Dictionary&lt;string, string&gt; { { &quot;bundleId&quot;, &quot;com.my.app&quot; } });
-</code></pre></div>
-</div>
-</div>
-</div>
-<p>There are two important differences in using Appium Execute Methods from vanilla Selenium
-Javascript execution:</p>
-<ol>
-<li>The script string is just a command name; it will be provided by the driver documentation</li>
-<li>The standard way to provide parameters is as a <em>single</em> object with keys representing parameter
-   names and values representing parameter values. So in this case, we had to specify both the
-   parameter name (<code>bundleId</code>) as the key of the parameters object, and the parameter value
-   (<code>com.my.app</code>) as the value for that key. A driver can define parameters as <em>required</em> or <em>optional</em>.</li>
-</ol>
-<p>Of course, always refer to the documentation for the particular Execute Method in case the author
-has made any alterations to the standard access method.</p>
+<p>Sometimes it might be necessary to validate if a remote driver or a plugin PR works for the particular local
+environment before it is merged or published. This tutorial describes how to achieve that.</p>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Recent LTS version of NodeJS. Check <a href="https://nodejs.org">Node.js main page</a> for the download link.</li>
+<li>Recent version of the Appium server. Use the following commands to ensure you have
+  the latest version installed: <code>npm uninstall appium</code> and <code>npm install -g appium</code>.</li>
+<li><a href="https://git-scm.com/">Git</a> should be available locally.</li>
+</ul>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="(https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally)">Check out</a> the PR locally.
+  There is also an option (although it is less flexible, because you won't be able to easily fetch
+  any changes to this PR later) to simply <a href="https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives">download</a> and unzip the sources
+  locally. If you choose the later option then no <code>git</code> tool would be necessary.</li>
+<li>Navigate to the local driver or plugin folder and run <code>npm i</code> from that folder.</li>
+<li>Make sure you don't have the given driver or plugin already installed. Use the <code>appium driver uninstall &lt;driver_name&gt;</code>
+  or <code>appium plugin uninstall &lt;plugin_name&gt;</code> CLI in order to delete any leftovers. The value of
+  <code>&lt;driver_name&gt;</code>/<code>&lt;plugin_name&gt;</code> depends on the actual driver or plugin name the PR has been prepared for.
+  If you are not sure which name you need to use then check the content of the <code>package.json</code> manifest,
+  which must be always located under the root folder of the fetched sources. You should be looking for
+  the <code>"appium" -&gt; "driverName"</code> entry value there.</li>
+<li>Change the current folder to the one, which is NOT the driver/plugin folder root or its subfolder.
+  Also, make sure your current working folder does not contain any extra <code>package.json</code> file. If
+  it does then simply navigate to any other folder that does not.</li>
+<li>Run the following command in order to link the driver/plugin sources to the Appium server:
+  <code>appium driver install --source=local &lt;full_path_to_driver_folder_with_fetched_sources&gt;</code> or
+  <code>appium plugin install --source=local &lt;full_path_to_plugin_folder_with_fetched_sources&gt;</code>.</li>
+<li>Stop the Appium server if it is running and start it again (<code>appium server --use-drivers=&lt;driver_name&gt;</code>)
+  to check the list of loaded drivers. If the linking succeeded then you must see the driver name and the path to its
+  parent folder in the server logs. In case of a plugin it is required to explicitly request
+  this plugin to be loaded upon server startup: <code>appium server --use-plugins=&lt;plugin_name&gt;</code>.</li>
+</ul>
+<h2 id="update">Update<a class="headerlink" href="#update" title="Permanent link">&para;</a></h2>
+<p>After you have tested the PR and there are issues it might be necessary to update the local branch with
+the recent changes from Git. Follow the next steps for that:</p>
+<ul>
+<li>Navigate to the parent folder of your local driver/plugin and run <code>git pull</code>.</li>
+<li>Stop Appium server if it is running.</li>
+<li>Run <code>npm i</code> in the parent folder of your local driver/plugin to rebuild it and update any dependencies if necessary.</li>
+<li>Start Appium server again similarly to how this is done in the corresponding <a href="#installation">Installation</a> step above.</li>
+</ul>
+<h2 id="switching-back-to-a-stable-release">Switching Back To a Stable Release<a class="headerlink" href="#switching-back-to-a-stable-release" title="Permanent link">&para;</a></h2>
+<p>After the PR is merged there is no need to use the local plugin/driver deployment anymore, and it makes sense
+to switch back to the package managed by NPM. Follow the next steps for that:</p>
+<ul>
+<li>Unlink the installed driver/plugin from the server by running <code>appium driver uninstall &lt;driver_name&gt;</code> or
+  <code>appium plugin uninstall &lt;driver_name&gt;</code>.</li>
+<li>Delete the local source folder (<code>rm -rf &lt;full_path_to_plugin_or_driver_folder_with_fetched_sources&gt;</code>).</li>
+<li>Install the driver or the plugin from NPM. Check the component README in order to find a proper command for that.</li>
+</ul>
 
 
 
@@ -2493,7 +2556,7 @@ has made any alterations to the standard access method.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2023-12-16T16:11:43+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-16</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-02-18T16:07:02+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-02-18</span>
   </span>
 
     
@@ -2503,8 +2566,6 @@ has made any alterations to the standard access method.</p>
   </aside>
 
 
-
-  
 
 
 

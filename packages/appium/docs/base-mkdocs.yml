@@ -10,6 +10,9 @@ theme:
   favicon: assets/images/appium-logo.png
 
 plugins:
+  blog:
+    enabled: true
+    post_excerpt: required
   redirects:
     redirect_maps:
       'intro/requirements.md': 'quickstart/requirements.md'
@@ -34,7 +37,7 @@ extra:
       link: https://twitter.com/AppiumDevs
   alternate:
     - name: English
-      link: /docs/en/ 
+      link: /docs/en/
       lang: en
     - name: 日本
       link: /docs/ja/

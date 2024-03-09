@@ -111,7 +111,7 @@ export function pluginE2EHarness(opts) {
       console.log(`${info} Will use port ${port} for Appium server`);
       this.port = port;
 
-      /** @type {import('appium').Args} */
+      /** @type {import('appium/types').Args} */
       const args = {
         port,
         address: host,
@@ -141,7 +141,7 @@ export function pluginE2EHarness(opts) {
  * @property {string} [appiumHome] - Path to Appium home directory
  * @property {Mocha.before} before - Mocha "before all" hook function
  * @property {Mocha.after} after - Mocha "after all" hook function
- * @property {Partial<import('appium').Args>} [serverArgs] - Arguments to pass to Appium server
+ * @property {Partial<import('appium/types').Args>} [serverArgs] - Arguments to pass to Appium server
  * @property {import('appium/types').InstallType & string} driverSource - Source of driver to install
  * @property {string} [driverPackage] - Package name of driver to install
  * @property {string} driverName - Name of driver to install

@@ -1085,7 +1085,7 @@ class AppiumDriver extends DriverCore {
         // is to do the proxy and retrieve the result internally so it can be passed to the plugin
         // in case it calls 'await next()'. This requires that the driver have defined
         // 'proxyCommand' and not just 'proxyReqRes'.
-        if (!dstSession.proxyCommand) {
+        if (!dstSession?.proxyCommand) {
           throw new NoDriverProxyCommandError();
         }
         return await dstSession.proxyCommand(
@@ -1106,7 +1106,7 @@ class AppiumDriver extends DriverCore {
       }
 
       // here we know that we are executing a session command, and have a valid session driver
-      return await dstSession.executeCommand(cmd, ...args);
+      return await (/** @type {any} */ (dstSession)).executeCommand(cmd, ...args);
     };
 
     // now take our default behavior, wrap it with any number of plugin behaviors, and run it

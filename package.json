@@ -131,7 +131,7 @@
     "through2": "4.0.2",
     "ts-node": "10.9.2",
     "tsd": "0.30.7",
-    "typescript": "5.2.2",
+    "typescript": "5.4.2",
     "validate.js": "0.13.1",
     "webdriverio": "8.33.1",
     "ws": "8.16.0",

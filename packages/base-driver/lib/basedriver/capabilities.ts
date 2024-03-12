@@ -3,7 +3,6 @@ import type {
   NSCapabilities,
   Capabilities,
   W3CCapabilities,
-  CapsToNSCaps,
   StandardCapabilities,
 } from '@appium/types';
 import type {
@@ -145,9 +144,7 @@ export function isStandardCap(cap: string): boolean {
  * @see https://www.w3.org/TR/webdriver/#dfn-extension-capabilities
  * @internal
  */
-export function stripAppiumPrefixes<C extends Constraints>(
-  caps: Partial<CapsToNSCaps<Capabilities<C>, 'appium'>>
-): Capabilities<C> {
+export function stripAppiumPrefixes<C extends Constraints>(caps: NSCapabilities<C>): Capabilities<C> {
   // split into prefixed and non-prefixed.
   // non-prefixed should be standard caps at this point
   const [prefixedCaps, nonPrefixedCaps] = _.partition(_.keys(caps), (cap) =>

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {BasePlugin} from 'appium/plugin';
 import _ from 'lodash';
 import cp from 'child_process';

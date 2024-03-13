@@ -7,6 +7,9 @@ import { LRUCache } from 'lru-cache';
 import AsyncLock from 'async-lock';
 import axios from 'axios';
 import B from 'bluebird';
+import { getLocalAppsFolder, getSharedFolderForAppUrl, getLocalFileForAppUrl, getFileContentLength } from './mcloud-utils';
+// @ts-ignore
+import { stat } from 'fs';
 
 // for compat with running tests transpiled and in-place
 const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
@@ -31,6 +34,7 @@ const APPLICATIONS_CACHE = new LRUCache({
         `expired after ${CACHED_APPS_MAX_AGE}ms`
     );
     if (fullPath) {
+      logger.info(`[MCLOUD] APPLICATIONS_CACHE setting. Deleting files by path: ${fullPath}`);
       fs.rimraf(fullPath);
     }
   },
@@ -56,6 +60,7 @@ process.on('exit', () => {
   for (const appPath of appPaths) {
     try {
       // Asynchronous calls are not supported in onExit handler
+      logger.info(`[MCLOUD] process.on('exit'). Deleting files by path: ${appPath}`);
       fs.rimrafSync(appPath);
     } catch (e) {
       logger.warn(e.message);
@@ -131,6 +136,7 @@ async function configureApp(
   let newApp = app;
   let shouldUnzipApp = false;
   let packageHash = null;
+  let localAppsFolder;
   /** @type {import('axios').AxiosResponse['headers']|undefined} */
   let headers = undefined;
   /** @type {RemoteAppProps} */
@@ -183,6 +189,127 @@ async function configureApp(
             }
           }
         }
+
+        // ***** Custom logic for verification of local static path for APPs *****
+        let downloadIsNeaded = true;
+        localAppsFolder = await getLocalAppsFolder();
+        let localFile;
+        let lockFile = '';
+        const waitingTime = 1000;
+        const maxAttemptsCount = Number(process.env.APPIUM_APP_WAITING_TIMEOUT);
+        const maxLockFileLifetime = Number(process.env.APPIUM_MAX_LOCK_FILE_LIFETIME);
+        const appSizeCheckDisabled = Boolean(process.env.APPIUM_APP_SIZE_DISABLE?.toLowerCase?.() === 'true');
+        let appFetchRetries = Number(process.env.APPIUM_APP_FETCH_RETRIES);
+
+        if(localAppsFolder != undefined) {
+          localFile = await getLocalFileForAppUrl(newApp);
+          lockFile = localFile + '.lock';
+
+          if(await fs.exists(localFile)) {
+            if(appSizeCheckDisabled === false) {
+              // Checking of local application actuality
+              logger.info(`[MCLOUD] Local version of app was found. Will check actuality of the file`);
+              // At this point local file might be deleted by parallel session which updates outdated app
+              let attemptsCount = 0;
+              while(!await fs.exists(localFile) && (attemptsCount++ < maxAttemptsCount)) {
+                await new Promise((resolve) => {
+                  logger.info(`[MCLOUD] Attempt #${attemptsCount} for local app file to appear again`);
+                  setTimeout(resolve, waitingTime);
+                });
+              }
+              if(!await fs.exists(localFile)) {
+                throw Error(`[MCLOUD] Local application file has not appeared after updating by parallel Appium session`);
+              }
+              const stats = await fs.stat(localFile);
+              const localFileLength = stats.size;
+              const remoteFileLength = await getFileContentLength(app);
+              logger.info(`[MCLOUD] Remote file size is ${remoteFileLength} and local file size is ${localFileLength}`);
+              if(remoteFileLength != localFileLength) {
+                logger.info(`[MCLOUD] Sizes differ. Hence that's needed to download fresh version of the app`);
+                if (await fs.exists(localFile)) {
+                  await fs.unlink(localFile);
+                } else {
+                  logger.warn(`[MCLOUD] Old local application file ${localFile} was not found. Probably it was removed by another thread which was downloading app in parallel`);
+                }
+                downloadIsNeaded = true;
+              } else {
+                logger.info(`[MCLOUD] Sizes are the same. Hence will use already stored application for the session`);
+                newApp = localFile;
+                shouldUnzipApp = ZIP_EXTS.has(path.extname(newApp));
+                downloadIsNeaded = false;
+              }
+            } else {
+              logger.info(`[MCLOUD] APPIUM_APP_SIZE_DISABLE=true hence skipping file size checking and going to use found file as application source`);
+              newApp = localFile;
+              shouldUnzipApp = ZIP_EXTS.has(path.extname(newApp));
+              downloadIsNeaded = false;
+            }
+          } else if (await fs.exists(lockFile)) {
+            logger.info(`[MCLOUD] Local version of app not found but .lock file exists. Waiting for .lock to disappear`);
+            logger.info(`[MCLOUD] .lock file parameters. Сreated time: ${(await fs.stat(lockFile)).ctime.toLocaleString('en-US', { timeZoneName: 'short' })}; device/session details: ${await fs.readFile(lockFile, 'utf8')}`);
+            // Wait for some time till App is downloaded by some parallel Appium instance
+            let attemptsCount = 0;
+            while(await fs.exists(lockFile) && (attemptsCount++ < maxAttemptsCount)) {
+              const stats = await fs.stat(lockFile);
+              var diffInSeconds = (new Date().getTime() - stats.ctime.getTime()) / 1000;
+
+              if (diffInSeconds >= maxLockFileLifetime) {
+                logger.info(`[MCLOUD] Removing .lock file since its lifetime reached to the limit`);
+                if (await fs.exists(lockFile)) {
+                  await fs.unlink(lockFile);
+                  throw Error(`[MCLOUD] .lock file was removed due to lifetime limit. New download attempt will start for the next session request`);
+                } else {
+                  logger.warn(`[MCLOUD] Lock file ${lockFile} was not found. Probably it was removed by another thread which was downloading app in parallel`);
+                }
+              }
+
+              await new Promise((resolve) => {
+                logger.info(`[MCLOUD] Attempt #${attemptsCount} for .lock file checking`);
+                setTimeout(resolve, waitingTime);
+              });
+            }
+            if(await fs.exists(lockFile)) {
+              throw Error(`[MCLOUD] .lock file for downloading application has not disappeared after ${waitingTime * maxAttemptsCount}ms`);
+            }
+            if(!await fs.exists(localFile)) {
+              throw Error(`[MCLOUD] Local application file has not appeared after .lock file removal`);
+            }
+            logger.info(`[MCLOUD] Local version of app was found after .lock file removal. Will use it for new session`);
+            newApp = localFile;
+            shouldUnzipApp = ZIP_EXTS.has(path.extname(newApp));
+            downloadIsNeaded = false;
+          } else {
+            logger.info(`[MCLOUD] Neither local version of app nor .lock file was found. Will download app from remote URL.`);
+            downloadIsNeaded = true;
+          }
+        } else {
+          logger.info(`[MCLOUD] Local apps folder is not defined via environment properties, hence skipping this logic. Use variable APPIUM_APPS_DIR for path setting`);
+        }
+        if(downloadIsNeaded) {
+
+          if(localAppsFolder != undefined) {
+            logger.info(`[MCLOUD] Local version of app was not found. Hence using default Appium logic for downloading`);
+            const sharedFolderPath = await getSharedFolderForAppUrl(app);
+            logger.info(`[MCLOUD] Folder for local shared apps: ${sharedFolderPath}`);
+            // @ts-ignore
+            await fs.close(await fs.open(lockFile, 'w'));
+            var sessionId = process.env.sessionId;
+            var deviceId = process.env.DEVICE_UDID;
+            if(sessionId === undefined) {
+              sessionId = "could not define session ID";
+            }
+            if(deviceId === undefined) {
+              deviceId = "could not define device UUID";
+            }
+            var msg = `device UUID: ${deviceId}, session ID: ${sessionId}`;
+            logger.info(`[MCLOUD] session/device info: ${msg}`);
+            await fs.writeFile(lockFile, msg);
+            logger.info(`[MCLOUD] lock file was written successfully`);
+          }
+        }
+
+        try {
+
         if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
           if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
             logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
@@ -255,7 +382,38 @@ async function configureApp(
           prefix: fileName,
           suffix: '',
         });
-        newApp = await fetchApp(stream, targetPath);
+
+        // newApp = await fetchApp(stream, stargetPath);
+        while(appFetchRetries-- >= 0 && !(await fs.exists(newApp)))
+        {
+          try {
+            logger.info(`[MCLOUD] Going to fetch remote app`);
+            newApp = await fetchApp(stream, targetPath);
+          } catch (err) {
+            logger.error(`[MCLOUD] Error during fetching of the application ${err.message}. Attempts left ${appFetchRetries}`);
+          }
+        }
+              
+        // ***** Custom logic for copying of downloaded app to static location *****
+        if(localAppsFolder != undefined) {
+          logger.info(`[MCLOUD] New app path: ${newApp}`);
+          // @ts-ignore
+          await fs.copyFile(newApp, localFile);
+        }
+        }
+        finally {
+          if(localAppsFolder != undefined) {
+            logger.info(`[MCLOUD] Going to remove lock file ${lockFile}`)
+            // @ts-ignore
+            if (await fs.exists(lockFile)) {
+              // @ts-ignore
+              await fs.unlink(lockFile);
+            } else {
+              logger.warn(`[MCLOUD] Lock file ${lockFile} was not found. Probably it was removed by another thread which was downloading app in parallel`);
+            }
+          }
+        }
+
       } finally {
         if (!stream.closed) {
           stream.destroy();
@@ -286,7 +444,9 @@ async function configureApp(
       if (packageHash === cachedAppInfo?.packageHash) {
         const fullPath = cachedAppInfo?.fullPath;
         if (await isAppIntegrityOk(fullPath, cachedAppInfo?.integrity)) {
-          if (archivePath !== app) {
+          // if (archivePath !== app) {
+          if (archivePath !== app && localAppsFolder === undefined) {
+            logger.info(`[MCLOUD] isAppIntegrityOk=true. Deleting files by path: ${archivePath}`);
             await fs.rimraf(archivePath);
           }
           logger.info(`Will reuse previously cached application at '${fullPath}'`);
@@ -302,7 +462,9 @@ async function configureApp(
       try {
         newApp = await unzipApp(archivePath, tmpRoot, supportedAppExtensions);
       } finally {
-        if (newApp !== archivePath && archivePath !== app) {
+        // if (newApp !== archivePath && archivePath !== app) {
+        if (newApp !== archivePath && archivePath !== app && localAppsFolder === undefined) {
+          logger.info(`[MCLOUD] Remove after unzipApp(). Deleting files by path: ${archivePath}`);
           await fs.rimraf(archivePath);
         }
       }
@@ -318,7 +480,11 @@ async function configureApp(
 
     const storeAppInCache = async (appPathToCache) => {
       const cachedFullPath = cachedAppInfo?.fullPath;
-      if (cachedFullPath && cachedFullPath !== appPathToCache) {
+      // if (cachedFullPath && cachedFullPath !== appPathToCache) {
+      // [MCLOUD] We control actuality of the file in custom logic.
+      // so no need to remove file phisically from shared location when updating Appium cache.
+      if (cachedFullPath && cachedFullPath !== appPathToCache && localAppsFolder === undefined) {
+        logger.info(`[MCLOUD] storeAppInCache(). Deleting files by path: ${cachedFullPath}`);
         await fs.rimraf(cachedFullPath);
       }
       const integrity = {};
@@ -514,6 +680,7 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
     await fs.mv(path.resolve(tmpRoot, matchedBundle), dstPath, {mkdirp: true});
     return dstPath;
   } finally {
+    logger.info(`[MCLOUD] unzipApp(). Deleting files by path: ${tmpRoot}`);
     await fs.rimraf(tmpRoot);
   }
 }

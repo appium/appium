@@ -458,6 +458,42 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
           })}`
       );
     } catch (err) {
+      // PATCH #2 <appium>/node_modules/appium/node_modules/appium-base-driver/build/lib/protocol/protocol.js to return to carina "DEBUG info" about problematic step
+      if (err.message !== 'An element could not be located on the page using the given search parameters.') {
+        err.message = `${err.message}[[[--udid ${process.env.DEVICE_UDID} --name ${process.env.DEVICE_NAME} --sessionId ${process.env.sessionId}]]]`;
+      }
+      
+      // handling error with Cannot find any free port in range
+      if (err.message.toLowerCase().includes("cannot find any free port in range")) {
+            console.log(`Cannot find any free port in range. Error message: ${err.message} Appium exit with code 1 `);
+            // Exiting with code 1 to indicate an error
+            process.exit(1);
+      }
+      
+      // handling error with ENOSPC: no space left on device, mkdir '/tmp/ and exit with code 0
+      if(err.message.toLowerCase().includes('no space left on device') || err.message.toLowerCase().includes('adb: failed to install')){
+          console.log(`- [BaseDriver] ENOSPC error, no space left on device, Error message:${err.message} appium exit with code 0`)
+          process.exit(0);
+      }
+      
+      // Check if the error 'socket hang up' occurred and do exit 0 
+      if (err.message.toLowerCase().includes("socket hang up") && err.message.toLowerCase().includes("could not proxy command to the remote server")) {
+          console.log(`- [BaseDriver] Error occurred, socket hang up. Original error: ${err.message} Appium exit with code 0`);
+          process.exit(0);
+      }
+      
+      // Check if the error 'device setup is not yet complete' occurred and do exit 1 
+      if (err.message.toLowerCase().includes("device setup is not yet complete")) {
+          console.log(`- [BaseDriver] Error occurred, device setup is not yet complete. Original error: ${err.message} Appium exit with code 0`);
+          process.exit(0);
+      }
+      
+      // Check if the error is related to executing the 'am' shell command and do exit code 0
+      if (err.message.toLowerCase().includes("сannot execute the 'am' shell command")) {
+          console.log(`- [BaseDriver] Got error: Cannot execute the 'am' shell command. Error message: ${err.message} Appium exit with code 0`);
+          process.exit(0);
+      }
+    
       // if anything goes wrong, figure out what our response should be
       // based on the type of error that we encountered
       let actualErr;

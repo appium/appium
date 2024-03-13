@@ -311,6 +311,9 @@ export class BaseDriver<
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
+    // save current sessionId globally to handle negative use-case instead of desired fallbackSessionId
+    process.env.sessionId = this.sessionId;
+
     return [this.sessionId, caps] as CreateResult;
   }
   async getSessions() {

@@ -25,6 +25,8 @@ import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
 import helpers, {BASEDRIVER_VER} from './helpers';
 import {BIDI_COMMANDS} from '../protocol/bidi-commands';
+import { executeShellWPromise, parseWDAUrl, getWDAStatus } from './mcloud-utils';
+
 
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
@@ -218,7 +220,59 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
   async getStatus() {
     return {};
   }
-
+  
+  async getStatusWDA(exitCode?: number | null) {
+    const wdaURL = await parseWDAUrl();
+    if (!wdaURL) {
+      throw new Error("Environment variable WDA_ENV is undefined");
+    }
+    const status = await getWDAStatus(wdaURL);
+    if (!status || 'success' != status.value.state) {
+      if (exitCode != null) {
+        this.log.error("Error for sending of WDA status http call. See appium logs for details")
+        this.log.warn(`[MCLOUD] Killing Appium instance with "exit(${exitCode})"`);
+        process.exit(exitCode);
+      }
+      throw new Error("Error for sending of WDA status http call. See appium logs for details");
+    }
+    return {"status": "success", "details": status};
+  }
+  
+  async getStatusADB(exitCode?: number | null) {
+    const deviceUDID = process.env.DEVICE_UDID;
+    if (deviceUDID) {
+      const adbDevicesCmd = 'adb devices | grep $DEVICE_UDID | grep "device"';
+      try {
+        await executeShellWPromise(adbDevicesCmd);
+        return {"status": "success", "details": `Connected device with UDID ${deviceUDID} is ready for execution`};
+      } catch (error) {
+        if (exitCode != null) {
+          this.log.error(`Connected device with UDID ${deviceUDID} is NOT ready for execution. Device was not returned by adb`)
+          this.log.warn(`[MCLOUD] Killing Appium instance with "exit(${exitCode})"`);
+          process.exit(exitCode);
+        }
+        throw new Error(`Connected device with UDID ${deviceUDID} is NOT ready for execution. Device was not returned by adb`);
+      }
+    } else {
+      const deviceName = process.env.ANDROID_DEVICES;
+      if(!deviceName) {
+        throw new Error(`Neither DEVICE_UDID nor ANDROID_DEVICES environment variables were found.`);
+      }
+      const adbDevicesCmd = 'adb devices | grep $ANDROID_DEVICES | grep "device"';
+      try {
+        await executeShellWPromise(adbDevicesCmd);
+        return {"status": "success", "details": `Connected device with name ${deviceName} is ready for execution`};
+      } catch (error) {
+        if (exitCode != null) {
+          this.log.error(`Connected device with name ${deviceName} is NOT ready for execution. Device was not returned by adb`)
+          this.log.warn(`[MCLOUD] Killing Appium instance with "exit(${exitCode})"`);
+          process.exit(exitCode);
+        }
+        throw new Error(`Connected device with name ${deviceName} is NOT ready for execution. Device was not returned by adb`);
+      }
+    }
+  }
+  
   /**
    * method required by MJSONWP in order to determine whether it should
    * respond with an invalid session response

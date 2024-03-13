@@ -24,6 +24,12 @@ const METHOD_MAP = /** @type {const} */ ({
   '/status': {
     GET: {command: 'getStatus'},
   },
+  '/status-wda': {
+    GET: {command: 'getStatusWDA', payloadParams: {optional: ['exitCode']}}
+  },
+  '/status-adb': {
+    GET: {command: 'getStatusADB', payloadParams: {optional: ['exitCode']}}
+  },
   '/session': {
     POST: {
       command: 'createSession',
@@ -1002,6 +1008,7 @@ function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
 }
 
 // driver commands that do not require a session to already exist
-const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
+// const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getSessions'];
+const NO_SESSION_ID_COMMANDS = ['createSession', 'getStatus', 'getStatusWDA', 'getStatusADB', 'getSessions'];
 
 export {METHOD_MAP, ALL_COMMANDS, NO_SESSION_ID_COMMANDS, routeToCommandName};

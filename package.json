@@ -82,11 +82,11 @@
   "devDependencies": {
     "@colors/colors": "1.6.0",
     "@tsconfig/node14": "14.1.0",
-    "@types/chai": "4.3.12",
+    "@types/chai": "4.3.13",
     "@types/chai-as-promised": "7.1.8",
     "@types/diff": "5.0.9",
     "@types/mocha": "10.0.6",
-    "@types/node": "20.11.28",
+    "@types/node": "20.11.30",
     "@types/semver": "7.5.8",
     "@types/sinon": "17.0.3",
     "@types/sinon-chai": "3.2.12",

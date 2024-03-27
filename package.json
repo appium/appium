@@ -97,7 +97,7 @@
     "@typescript-eslint/eslint-plugin": "7.3.1",
     "@typescript-eslint/parser": "7.3.1",
     "asyncbox": "3.0.0",
-    "chai": "4.4.1",
+    "chai": "5.1.0",
     "chai-as-promised": "7.1.1",
     "chai-webdriverio-async": "2.8.0",
     "conventional-changelog-conventionalcommits": "7.0.2",

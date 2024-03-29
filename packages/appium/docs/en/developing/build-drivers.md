@@ -58,20 +58,20 @@ work with certain versions of Appium). For Appium 2, for example, this would loo
 Your `package.json` must contain an `appium` field, like this (we call this the 'Appium extension
 metadata'):
 
-    ```json
-    {
-      ...,
-      "appium": {
-        "driverName": "fake",
-        "automationName": "Fake",
-        "platformNames": [
-          "Fake"
-        ],
-        "mainClass": "FakeDriver"
-      },
-      ...
-    }
-    ```
+```json
+{
+  ...,
+  "appium": {
+    "driverName": "fake",
+    "automationName": "Fake",
+    "platformNames": [
+      "Fake"
+    ],
+    "mainClass": "FakeDriver"
+  },
+  ...
+}
+```
 
 The required subfields are:
 
@@ -130,12 +130,12 @@ like this:
 
 ```json
 {
-    "devDependencies": {
-        ...,
-        "appium": "^2.0.0",
-        "your-driver": "file:.",
-        ...
-    }
+  "devDependencies": {
+    ...,
+    "appium": "^2.0.0",
+    "your-driver": "file:.",
+    ...
+  }
 }
 ```
 

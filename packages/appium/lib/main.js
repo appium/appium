@@ -97,7 +97,7 @@ function logDefaultCapabilitiesWarning(caps) {
  * @param {ParsedArgs} args
  */
 async function logStartupInfo(args) {
-  let welcome = `Welcome to Appium v${APPIUM_VER}`;
+  let welcome = `Welcome to Appium updated by Zebrunner v${APPIUM_VER}`;
   let appiumRev = await getGitRev();
   if (appiumRev) {
     welcome += ` (REV ${appiumRev})`;

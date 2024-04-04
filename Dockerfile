@@ -103,8 +103,7 @@ RUN mkdir -p ~/.android && \
 ENV PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools
 
 #====================================
-# Install latest nodejs, npm, appium
-# Using this workaround to install Appium -> https://github.com/appium/appium/issues/10020 -> Please remove this workaround asap
+# Install appium and costomize it 
 #====================================
 
 WORKDIR /appium-fork
@@ -167,5 +166,3 @@ EXPOSE 4723
 #==============
 
 CMD ["bash", "/appium-fork/appium-scripts/start.sh"]
-# RUN npm config get prefix
-# CMD ["appium"]

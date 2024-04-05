@@ -18,6 +18,7 @@ export class ProtocolError extends Error {
     }
     this.w3cStatus = w3cStatus || HTTPStatusCodes.BAD_REQUEST;
     this._stacktrace = null;
+    this.name = this.constructor.name;
   }
 
   get stacktrace() {
@@ -906,6 +907,7 @@ export class BadParametersError extends Error {
         : generateBadParametersMessage(requiredParams, actualParams),
     );
     this.w3cStatus = HTTPStatusCodes.BAD_REQUEST;
+    this.name = this.constructor.name;
   }
 }
 
@@ -943,6 +945,7 @@ export class ProxyRequestError extends Error {
     } else {
       this.jsonwp = responseErrorObj;
     }
+    this.name = this.constructor.name;
   }
 
   getActualError() {

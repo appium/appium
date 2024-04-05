@@ -7,8 +7,36 @@ const w3cLog = logger.getLogger('W3C');
 
 const W3C_UNKNOWN_ERROR = 'unknown error';
 
+class BaseError extends Error {
+  constructor(message = '') {
+    super(message);
+    /** @type {[string, () => any][]} */
+    const propsMap = [
+      ['message', () => message],
+      ['name', () => this.constructor.name],
+      ['stack', () => (new Error(message)).stack],
+    ];
+    // eslint-disable-next-line no-prototype-builtins
+    const shouldSkipStack = Error.hasOwnProperty('captureStackTrace');
+    for (const [propName, valueGetter] of propsMap) {
+      if (propName === 'stack' && shouldSkipStack) {
+        continue;
+      }
+      Object.defineProperty(this, propName, {
+        configurable: true,
+        enumerable: false,
+        value: valueGetter(),
+        writable: true,
+      });
+    }
+    if (shouldSkipStack) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+}
+
 // base error class for all of our errors
-export class ProtocolError extends Error {
+export class ProtocolError extends BaseError {
   constructor(msg, jsonwpCode, w3cStatus, error) {
     super(msg);
     this.jsonwpCode = jsonwpCode;
@@ -18,7 +46,6 @@ export class ProtocolError extends Error {
     }
     this.w3cStatus = w3cStatus || HTTPStatusCodes.BAD_REQUEST;
     this._stacktrace = null;
-    this.name = this.constructor.name;
   }
 
   get stacktrace() {
@@ -896,7 +923,7 @@ function generateBadParametersMessage(requiredParams, actualParams) {
 }
 
 // Equivalent to W3C InvalidArgumentError
-export class BadParametersError extends Error {
+export class BadParametersError extends BaseError {
   static error() {
     return 'invalid argument';
   }
@@ -907,7 +934,6 @@ export class BadParametersError extends Error {
         : generateBadParametersMessage(requiredParams, actualParams),
     );
     this.w3cStatus = HTTPStatusCodes.BAD_REQUEST;
-    this.name = this.constructor.name;
   }
 }
 
@@ -917,7 +943,7 @@ export class BadParametersError extends Error {
  * In case of ProxyRequestError should fetch the actual error by calling `getActualError()`
  * for proxy failure to generate the client response.
  */
-export class ProxyRequestError extends Error {
+export class ProxyRequestError extends BaseError {
   constructor(err, responseError, httpStatus) {
     let responseErrorObj = util.safeJsonParse(responseError);
     if (!_.isPlainObject(responseErrorObj)) {
@@ -945,7 +971,6 @@ export class ProxyRequestError extends Error {
     } else {
       this.jsonwp = responseErrorObj;
     }
-    this.name = this.constructor.name;
   }
 
   getActualError() {

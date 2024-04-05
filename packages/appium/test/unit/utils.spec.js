@@ -82,12 +82,10 @@ describe('utils', function () {
           'appium:foo2': 'bar2',
         }
       );
-      res.error.should.eql({
-        jsonwpCode: 61,
-        error: 'invalid argument',
-        w3cStatus: 400,
-        _stacktrace: null,
-      });
+      res.error.jsonwpCode.should.eql(61);
+      res.error.error.should.eql('invalid argument');
+      res.error.w3cStatus.should.eql(400);
+      _.isNull(res.error._stacktrace).should.be.true;
     });
     it('should reject if W3C caps are not passing constraints', function () {
       const err = parseCapsForInnerDriver(undefined, W3C_CAPS, {
@@ -101,14 +99,13 @@ describe('utils', function () {
         ...W3C_CAPS,
         firstMatch: [{foo: 'bar'}, {'appium:hello': 'world'}],
       };
-      parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {
+      const error = parseCapsForInnerDriver(BASE_CAPS, w3cCaps, {
         hello: {presence: true},
-      }).error.should.eql({
-        jsonwpCode: 61,
-        error: 'invalid argument',
-        w3cStatus: 400,
-        _stacktrace: null,
-      });
+      }).error;
+      error.jsonwpCode.should.eql(61);
+      error.error.should.eql('invalid argument');
+      error.w3cStatus.should.eql(400);
+      _.isNull(error._stacktrace).should.be.true;
     });
     it('should add appium prefixes to W3C caps that are not standard in W3C', function () {
       parseCapsForInnerDriver(undefined, {

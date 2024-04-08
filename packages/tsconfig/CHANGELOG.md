@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.3](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.2...@appium/tsconfig@0.3.3) (2024-04-08)
+
+
+### Bug Fixes
+
+* **tsconfig:** update dependency @tsconfig/node14 to v14.1.1 ([de057fa](https://github.com/appium/appium/commit/de057fa8b043a26f4854c930df5a560d89808ca6))
+* **tsconfig:** update dependency @tsconfig/node14 to v14.1.2 ([66626d2](https://github.com/appium/appium/commit/66626d26e52b6241b5618dc1052c86d48230d15e))
+
+
+
 ## [0.3.2](https://github.com/appium/appium/compare/@appium/tsconfig@0.3.1...@appium/tsconfig@0.3.2) (2023-10-18)
 
 

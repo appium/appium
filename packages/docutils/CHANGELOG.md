@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.5](https://github.com/appium/appium/compare/@appium/docutils@1.0.4...@appium/docutils@1.0.5) (2024-04-08)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.0 ([f92640a](https://github.com/appium/appium/commit/f92640a824644545b680e23c7f3ec7f51de9df98))
+* **docutils:** update dependency lilconfig to v3.1.1 ([e04e4e9](https://github.com/appium/appium/commit/e04e4e902a212cf17ca79b3edc0b7545a1af507b))
+* **docutils:** update dependency typescript to v5.4.2 ([#19876](https://github.com/appium/appium/issues/19876)) ([2448fa0](https://github.com/appium/appium/commit/2448fa0145620657ccc72b5637f1b7737fe52580))
+* **docutils:** update dependency typescript to v5.4.3 ([cf79227](https://github.com/appium/appium/commit/cf792279b1df40f67fef0913b6f3e00a5a1a097d))
+* **docutils:** update dependency typescript to v5.4.4 ([5899c2d](https://github.com/appium/appium/commit/5899c2db93be1a72799f5c9d9cf9b0e731b5b1a1))
+* **docutils:** update dependency yaml to v2.4.0 ([26ded7a](https://github.com/appium/appium/commit/26ded7a4cce1fa9bca28521e4b60cad0edacbe96))
+* **docutils:** update dependency yaml to v2.4.1 ([636d6b3](https://github.com/appium/appium/commit/636d6b3802268ec6532f9f3a958f304c6760d172))
+
+
+
 ## [1.0.4](https://github.com/appium/appium/compare/@appium/docutils@1.0.3...@appium/docutils@1.0.4) (2024-02-13)
 
 

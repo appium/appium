@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/appium/appium/compare/@appium/support@4.2.2...@appium/support@4.2.3) (2024-04-08)
+
+
+### Bug Fixes
+
+* **appium:** make --log-filters work ([#19825](https://github.com/appium/appium/issues/19825)) ([0d5a0a5](https://github.com/appium/appium/commit/0d5a0a572787d913412bbfd70835e5ba8f94334c))
+* **support:** update dependency @types/semver to v7.5.8 ([d1705e2](https://github.com/appium/appium/commit/d1705e2818d435b4c37cb70753af1de5427378e2))
+* **support:** update dependency archiver to v6.0.2 ([e4ae277](https://github.com/appium/appium/commit/e4ae2772acf6cd1c2119dd7f8c1f7804e3a2394f))
+* **support:** update dependency archiver to v7 ([#19844](https://github.com/appium/appium/issues/19844)) ([c905be0](https://github.com/appium/appium/commit/c905be032fd97fcce726097e4f861b142a355f0d))
+* **support:** update dependency archiver to v7.0.1 ([b126df6](https://github.com/appium/appium/commit/b126df6234625a5c90a1b171e2844ed666120b8d))
+* **support:** update dependency axios to v1.6.8 ([bd6ab81](https://github.com/appium/appium/commit/bd6ab81c9408ab0f90fc25fc112f9257ec2973ad))
+* **support:** update dependency glob to v10.3.12 ([#19937](https://github.com/appium/appium/issues/19937)) ([9a0c059](https://github.com/appium/appium/commit/9a0c059c3ae3f762fa31b91eb903fd76e827f96d))
+* **support:** update dependency yauzl to v3 ([#19790](https://github.com/appium/appium/issues/19790)) ([41cb869](https://github.com/appium/appium/commit/41cb86945314869b8c5165d62b9790403fc07985))
+* **support:** update dependency yauzl to v3 ([#19809](https://github.com/appium/appium/issues/19809)) ([bd7b420](https://github.com/appium/appium/commit/bd7b42007d4b02a798344e722840975e7e975624))
+* **support:** update dependency yauzl to v3 ([#19878](https://github.com/appium/appium/issues/19878)) ([3da17b6](https://github.com/appium/appium/commit/3da17b6ecdfe9d55300b7e7b13605352a24ab347))
+* **support:** update dependency yauzl to v3.1.1 ([#19845](https://github.com/appium/appium/issues/19845)) ([e1ccdd2](https://github.com/appium/appium/commit/e1ccdd2d483e78e2e8f55508d80b712bd6a33b38))
+
+
+
 ## [4.2.2](https://github.com/appium/appium/compare/@appium/support@4.2.1...@appium/support@4.2.2) (2024-02-13)
 
 

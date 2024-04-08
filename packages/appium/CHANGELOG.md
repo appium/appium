@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.2](https://github.com/appium/appium/compare/appium@2.5.1...appium@2.5.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* **appium:** make --log-filters work ([#19825](https://github.com/appium/appium/issues/19825)) ([0d5a0a5](https://github.com/appium/appium/commit/0d5a0a572787d913412bbfd70835e5ba8f94334c))
+* **appium:** update definitelytyped ([2687fa4](https://github.com/appium/appium/commit/2687fa47a0c2f11983e5ccb2ee17eaae9279469d))
+* **appium:** update definitelytyped ([68456b8](https://github.com/appium/appium/commit/68456b8aea3c6ae7225814748fb36d9d4117cc9f))
+* **appium:** update dependency ajv-formats to v3 ([#19957](https://github.com/appium/appium/issues/19957)) ([59ef09d](https://github.com/appium/appium/commit/59ef09d9558f1a6a9f4ee3d81d4cb0b7218706b4))
+* **appium:** update dependency winston to v3.12.0 ([8eb4e88](https://github.com/appium/appium/commit/8eb4e888f624acfc1d42977eeda2d4c1ae139efc))
+* **appium:** update dependency winston to v3.13.0 ([03f8dc9](https://github.com/appium/appium/commit/03f8dc9b18f226975f025ceda7e1d907de8b45d5))
+* **docutils:** update dependency lilconfig to v3.1.0 ([f92640a](https://github.com/appium/appium/commit/f92640a824644545b680e23c7f3ec7f51de9df98))
+* **docutils:** update dependency lilconfig to v3.1.1 ([e04e4e9](https://github.com/appium/appium/commit/e04e4e902a212cf17ca79b3edc0b7545a1af507b))
+* **docutils:** update dependency typescript to v5.4.2 ([#19876](https://github.com/appium/appium/issues/19876)) ([2448fa0](https://github.com/appium/appium/commit/2448fa0145620657ccc72b5637f1b7737fe52580))
+* **docutils:** update dependency yaml to v2.4.0 ([26ded7a](https://github.com/appium/appium/commit/26ded7a4cce1fa9bca28521e4b60cad0edacbe96))
+* **docutils:** update dependency yaml to v2.4.1 ([636d6b3](https://github.com/appium/appium/commit/636d6b3802268ec6532f9f3a958f304c6760d172))
+* **execute-driver-plugin:** update dependency webdriverio to v8.32.0 ([d25a0fc](https://github.com/appium/appium/commit/d25a0fca9b3a94880525fd956068f59427a40b26))
+* **execute-driver-plugin:** update dependency webdriverio to v8.32.1 ([ea8c74b](https://github.com/appium/appium/commit/ea8c74b372e73e88cf0303aa17db943014416e64))
+* **execute-driver-plugin:** update dependency webdriverio to v8.32.2 ([#19807](https://github.com/appium/appium/issues/19807)) ([6c034aa](https://github.com/appium/appium/commit/6c034aa84af573d36fa934c71d3d4ff328772553))
+* **execute-driver-plugin:** update dependency webdriverio to v8.32.3 ([f837a6a](https://github.com/appium/appium/commit/f837a6a9eaf34914ffdbfddcc3cb2f7e7427bc63))
+* **execute-driver-plugin:** update dependency webdriverio to v8.32.4 ([7516d41](https://github.com/appium/appium/commit/7516d4135a1eec37ba298f407254d825961795af))
+* **execute-driver-plugin:** update dependency webdriverio to v8.33.1 ([#19877](https://github.com/appium/appium/issues/19877)) ([0e6c3ee](https://github.com/appium/appium/commit/0e6c3eede250193fad390387ec494918367176d9))
+* **execute-driver-plugin:** update dependency webdriverio to v8.34.1 ([7fc7446](https://github.com/appium/appium/commit/7fc7446612f3257fa421dfec006d02730df10f59))
+* **execute-driver-plugin:** update dependency webdriverio to v8.35.1 ([63d7550](https://github.com/appium/appium/commit/63d7550d02f049a5c3bea5d27e7e8385d7698a4f))
+* **support:** update dependency @types/semver to v7.5.8 ([d1705e2](https://github.com/appium/appium/commit/d1705e2818d435b4c37cb70753af1de5427378e2))
+* **support:** update dependency axios to v1.6.8 ([bd6ab81](https://github.com/appium/appium/commit/bd6ab81c9408ab0f90fc25fc112f9257ec2973ad))
+
+
+
 ## [2.5.1](https://github.com/appium/appium/compare/appium@2.5.0...appium@2.5.1) (2024-02-13)
 
 

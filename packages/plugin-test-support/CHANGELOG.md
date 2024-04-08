@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.29](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.28...@appium/plugin-test-support@0.3.29) (2024-04-08)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.4.2 ([#19876](https://github.com/appium/appium/issues/19876)) ([2448fa0](https://github.com/appium/appium/commit/2448fa0145620657ccc72b5637f1b7737fe52580))
+
+
+
 ## [0.3.28](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.27...@appium/plugin-test-support@0.3.28) (2024-02-06)
 
 **Note:** Version bump only for package @appium/plugin-test-support

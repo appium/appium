@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.3](https://github.com/appium/appium/compare/@appium/base-driver@9.5.2...@appium/base-driver@9.5.3) (2024-04-08)
+
+
+### Bug Fixes
+
+* **base-driver:** update dependency express to v4.18.3 ([917084c](https://github.com/appium/appium/commit/917084ccca23c5483e7d83ce97721061dd2fe345))
+* **base-driver:** update dependency express to v4.19.1 ([a74132c](https://github.com/appium/appium/commit/a74132cc96d201bb5c7b7f11a7e3b1b79e7d2424))
+* **base-driver:** update dependency express to v4.19.2 ([7cb1621](https://github.com/appium/appium/commit/7cb1621e80bc4225c48833cc2bd02fe80dccd382))
+* **base-driver:** update dependency path-to-regexp to v6.2.2 ([#19979](https://github.com/appium/appium/issues/19979)) ([b8368bb](https://github.com/appium/appium/commit/b8368bb666fda44e3b0c45cc7307bff69fe40202))
+* **docutils:** update dependency typescript to v5.4.2 ([#19876](https://github.com/appium/appium/issues/19876)) ([2448fa0](https://github.com/appium/appium/commit/2448fa0145620657ccc72b5637f1b7737fe52580))
+* **driver-test-support:** update definitelytyped ([4776574](https://github.com/appium/appium/commit/47765747b66c5e0076f6ffe4619d6b98a42aee29))
+* **support:** update dependency axios to v1.6.8 ([bd6ab81](https://github.com/appium/appium/commit/bd6ab81c9408ab0f90fc25fc112f9257ec2973ad))
+
+
+
 ## [9.5.2](https://github.com/appium/appium/compare/@appium/base-driver@9.5.1...@appium/base-driver@9.5.2) (2024-02-13)
 
 **Note:** Version bump only for package @appium/base-driver

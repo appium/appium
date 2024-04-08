@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.22](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.21...@appium/driver-test-support@0.4.22) (2024-04-08)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([4776574](https://github.com/appium/appium/commit/47765747b66c5e0076f6ffe4619d6b98a42aee29))
+* **support:** update dependency axios to v1.6.8 ([bd6ab81](https://github.com/appium/appium/commit/bd6ab81c9408ab0f90fc25fc112f9257ec2973ad))
+
+
+
 ## [0.4.21](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.20...@appium/driver-test-support@0.4.21) (2024-02-06)
 
 

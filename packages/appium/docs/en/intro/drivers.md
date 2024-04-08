@@ -32,7 +32,7 @@ driver install`.
 So, from a technical perspective, an Appium driver is just a bit of code that inherits from some
 other Appium code. That's it! Now, inheriting from `BaseDriver` actually gives us a lot, because
 `BaseDriver` is essentially an encapsulation of the entire WebDriver protocol. So all a driver
-needs to do to do something useful is to *implement* Node.js methods with names corresponding to
+needs to do something useful is to *implement* Node.js methods with names corresponding to
 their WebDriver protocol equivalents.
 
 So let's say I wanted to do something with this empty driver; first I have to decide which

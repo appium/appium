@@ -15,12 +15,8 @@ The project is officially led by a Technical Committee (TC), currently
 consisting of:
 
 * [@jlipps](https://github.com/jlipps)
-* [@bootstraponline](https://github.com/bootstraponline)
-* [@penguinho](https://github.com/penguinho)
-* [@dandoveralba](https://github.com/dandoveralba)
 * [@mykola-mokhnach](https://github.com/mykola-mokhnach)
-* [@imurchie](https://github.com/imurchie)
-* [@TikhomirovSergey](https://github.com/TikhomirovSergey)
+* [@eglitise](https://github.com/eglitise)
 * [@KazuCocoa](https://github.com/KazuCocoa)
 
 They all represent different companies and different types of contribution to
@@ -31,7 +27,7 @@ changes to the project's governance processes.
 
 * Membership in the TC is granted by unanimous vote of current TC members.
 * TC members can step down at any time.
-* No more than 1/3 of TC members may belong to the same company.
+* No more than 1/3 (or 2, whichever is higher) of TC members may belong to the same company.
 * Changes to project governance require unanimous vote of the TC.
 
 ### Project Committers
@@ -52,40 +48,14 @@ and so on.
 
 The current committers are (in addition to the TC members above):
 
-* [@hugs](https://github.com/hugs)
-* [@filmaj](https://github.com/filmaj)
-* [@aluedeke](https://github.com/aluedeke)
-* [@sebv](https://github.com/sebv)
-* [@vgrigoruk](https://github.com/vgrigoruk)
-* [@DylanLacey](https://github.com/DylanLacey)
-* [@maudineormsby](https://github.com/maudineormsby)
-* [@titusfortner](https://github.com/titusfortner)
-* [@bayandin](https://github.com/bayandin)
-* [@jdeff](https://github.com/jdeff)
-* [@moizjv](https://github.com/moizjv)
-* [@gempesaw](https://github.com/gempesaw)
-* [@Jonahss](https://github.com/Jonahss)
-* [@JamieEdge](https://github.com/JamieEdge)
 * [@saikrishna321](https://github.com/saikrishna321)
-* [@sravanmedarapu](https://github.com/sravanmedarapu)
-* [@peepa](https://github.com/peepa)
-* [@scottdixon](https://github.com/scottdixon)
-* [@drpy](https://github.com/drpy)
-* [@Astro03](https://github.com/Astro03)
-* [@sbonebrake](https://github.com/sbonebrake)
 * [@SrinivasanTarget](https://github.com/SrinivasanTarget)
-* [@triager](https://github.com/triager)
-* [@ddkjin](https://github.com/ddkjin)
-* [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
-* [@vmaxim](https://github.com/vmaxim)
 * [@Dan-Maor](https://github.com/Dan-Maor)
 * [@laolubenson](https://github.com/laolubenson)
 * [@Dor-bl](https://github.com/Dor-bl)
-* [@boneskull](https://github.com/boneskull)
 * [@mwakizaka](https://github.com/mwakizaka)
 * [@rerorero](https://github.com/rerorero)
 * [@tomriddly](https://github.com/tomriddly)
-* [@eglitise](https://github.com/eglitise)
 
 ### Contributors
 
@@ -94,11 +64,74 @@ Other, less formal, kinds of contribution are outlined in our
 
 ### Sponsorship
 
-The Appium project welcomes sponsorship of various organizations. Specific
-details are not yet available but in general we will accept monetary donations,
-contribution of code, contribution of dedicated committers, or donations of
-other goods or service (internet hosting, etc...). To begin the conversation,
-reach out to one of the TC members.
+The Appium project welcomes the sponsorship of individuals and organizations. There are two types
+of sponsorship: those related to contributions of Appium maintenance and leadership, and those
+related to contributions of funds. Both are extremely important to the ongoing health of the
+project. Financial sponsorship is mediated through our [OpenCollective page](https://opencollective.com/appium).
+Sponsorship tiers and benefits are described below:
+
+- **Development Partners**: The primary need of any open source project is for sustained maintenance and contributorship. Companies that officially sponsor such development with dedicated employee time are recognized as Development Partners, and receive the same benefits as the highest tier of financial sponsorship. To be considered a Development Partner, a company must devote at least 50% of a full-time employee's time to Appium maintenance.
+- **Platinum Sponsors**: Representing the highest tier of ongoing financial support for the project, Platinum Sponsors are what make our compensation scheme for contributors possible, and we thank them for their significant investment into the project! Along with the Development Partners, Platinum Sponsors have their logos displayed prominently on our website, and have the ability to link to their Appium-related products in a few relevant places in our documentation.
+- **Gold, Silver, and Bronze Sponsors**: these sponsorship levels correspond to different amounts of recurring financial contribution that generously support our contributor compensation scheme. Sponsors at these levels also have the opportunity to display their logo on our website.
+- **Backers**: individuals who benefit from the Appium project can also donate on a one-time or recurring basis, at any amount, and will be recognized as Backers for their contribution!
+
+To become a sponsor at one of these levels, follow the process indicated at the [OpenCollective
+page](https://opencollective.com/appium).
+
+### Compensation for TC Members, Committers, Contributors, and upstream projects
+
+With funds received through sponsorship, the Appium project wants to incentivize contributions of
+code, documentation efforts, maintenance, and project leadership. We have developed a scheme
+(inspired by one developed at the [WebdriverIO](https://github.com/webdriverio/webdriverio)
+project) for disbursing funds on a monthly basis to those who contribute to the project, as well as
+some other "upstream" open source projects.
+
+Each month, 15% of sponsorship funds received will be donated to upstream projects, based on the
+discretion of the current TC. At this point, no attempt will be made to formalize quantitative
+notions of relevance. If you manage a project upstream of Appium and would like to be considered as
+part of this donation group, give us a shout!
+
+Of the remaining 85% of sponsorship funds, 70% (roughly 60% of the original total) will go to
+project Committers (i.e., those in a role of maintenance), and 30% (roughly 25% of the original
+total) will go to Contributors (i.e., those making one-off or periodic contributions). The way that
+Committers and Contributors are paid for their efforts differs.
+
+For Committers, each Committer will keep a monthly time sheet of hours contributed to the project.
+At the end of each month, the hours tracked from all Committers will be totalled, and then the
+Committer-allocated funds will be disbursed (via OpenCollective) on a pro rata basis. Within this
+scheme, Committers agree not to submit hours worked as part of their employment with a Development
+Partner (since this is part of the "sponsorship" contribution of the Development Partner).
+
+For Contributors, when they make contributions which are successfully merged into the project,
+a Committer can discretionarily assign a "value tier" to the contribution. The "value tiers" and
+corresponding payouts are as follows:
+
+- XS: a trivial change (e.g. a typo change or applying of an automatically suggested security
+patch). \$0.
+- S: a small but useful change. \$25.
+- M: a medium-small or slightly more complex change. \$50.
+- L: a very valuable or sizable change. \$100.
+- XL: a massive change or set of changes. \$500.
+
+At the end of each month, Committers will total up the number of changes receiving potential
+payout. If the total amount of funds allocated for Contributor payout exceeds the total amount to
+be paid, then each Contributor will receive an OpenCollective link to claim their funds. If not
+enough funds exist to cover all payouts, then the payout amounts will be scaled down in a pro rata
+fashion.
+
+The scope for Committer or Contributor payouts is work completed within any "core" Appium
+repository (i.e., those officially maintained by the Appium team, residing within the Appium
+organization on GitHub, under `https://github.com/appium`).
+
+Some disclaimers: Payments will happen exclusively via OpenCollective. Recipients of funds are
+responsible for maintaining their OpenCollective account in a fashion where funds can be disbursed,
+and are responsible for any and all tax, financial, or legal consequences of receiving money in
+this way. Receipt of funds from this scheme holds the Appium project and the OpenJS Foundation free
+of any claim or obligation. While this document exists to clearly and publicly lay out the terms
+under which payments are generally made, the TC retains the right to grant or withhold funding on
+a discretionary of special basis. Basically, this scheme is run at the project's discretion, and is
+not a public service. Making contributions to the project under this scheme does not obligate the
+project to pay you for such work, or otherwise compensate you in any way.
 
 ### Raising Issues Related to Governance
 

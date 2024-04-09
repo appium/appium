@@ -99,7 +99,7 @@
     "asyncbox": "3.0.0",
     "chai": "4.4.1",
     "chai-as-promised": "7.1.1",
-    "chai-webdriverio-async": "2.8.0",
+    "chai-webdriverio-async": "3.0.0",
     "conventional-changelog-conventionalcommits": "7.0.2",
     "cpy-cli": "5.0.0",
     "eslint": "8.57.0",

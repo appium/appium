@@ -74,7 +74,8 @@ validator.validators.isArray = function isArray(value) {
   return 'must be of type array';
 };
 validator.validators.deprecated = function deprecated(value, options, key) {
-  if (options) {
+  // do not print caps that hasn't been provided.
+  if (typeof value !== 'undefined' && options) {
     log.warn(`${key} is a deprecated capability`);
   }
   return null;

@@ -28,6 +28,7 @@ export type ParsedCaps<C extends Constraints> = {
 export type ValidateCapsOpts = {
   /** if true, skip the presence constraint */
   skipPresenceConstraint?: boolean | undefined;
+  skipDeprecatedCheck?: boolean | undefined;
 }
 
 /**
@@ -71,11 +72,13 @@ export function validateCaps<C extends Constraints>(
   constraints: C | undefined = {} as C,
   opts: ValidateCapsOpts | undefined = {}
 ): Capabilities<C> {
-  const {skipPresenceConstraint} = opts;
+  const {skipPresenceConstraint, skipDeprecatedCheck} = opts;
 
   if (!_.isPlainObject(caps)) {
     throw new errors.InvalidArgumentError(`must be a JSON object`);
   }
+
+  const omitConst = (constraint, key) => _.omit(constraint, key)
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = (
@@ -83,11 +86,16 @@ export function validateCaps<C extends Constraints>(
       constraints,
       skipPresenceConstraint
         ? /** @param {Constraint} constraint */
-          (constraint) => _.omit(constraint, 'presence')
+          (constraint) => {
+            const newConstraint = omitConst(constraint, 'presence');
+            return skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
+          }
         : /** @param {Constraint} constraint */
           (constraint) => {
             if (constraint.presence === true) {
-              return {..._.omit(constraint, 'presence'), presence: {allowEmpty: false}};
+              let newConstraint = omitConst(constraint, 'presence');
+              newConstraint = skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
+              return {...newConstraint, presence: {allowEmpty: false}}
             }
             return constraint;
           }
@@ -259,10 +267,12 @@ export function parseCaps<C extends Constraints>(
   let strippedRequiredCaps = stripAppiumPrefixes(requiredCaps);
   const strippedAllFirstMatchCaps: Capabilities<C>[] = allFirstMatchCaps.map(stripAppiumPrefixes);
 
-  // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys
+  // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys.
+  // Do not check deprecated property to reduce duplicated logs.
   if (shouldValidateCaps) {
     strippedRequiredCaps = validateCaps(strippedRequiredCaps, constraints, {
       skipPresenceConstraint: true,
+      skipDeprecatedCheck: true,
     });
   }
   // Remove the 'presence' constraint for any keys that are already present in 'requiredCaps'

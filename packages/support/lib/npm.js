@@ -272,7 +272,10 @@ export class NPM {
   async getPackageInfo(pkg, entries = []) {
     return (await this.exec('info', [pkg, ...entries], {
       cwd: process.cwd(),
-      json: true
+      json: true,
+    }, {
+      // https://discuss.appium.io/t/appium-driver-install-fails-while-checking-drivers-compatibility/42209
+      shell: system.isWindows(),
     })).json;
   }
 }

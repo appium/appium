@@ -141,7 +141,6 @@ async function configureApp(
   const {protocol, pathname} = url.parse(newApp);
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
-  /** @type {import('@appium/types').CachedAppInfo|undefined} */
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
   if (cachedAppInfo) {
     logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);

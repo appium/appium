@@ -82,7 +82,5 @@ Android 设置完成并且 UiAutomator2 驱动已安装后，你就可以编写�
 -   :material-language-javascript: [__JavaScript__](./test-js.md)
 -   :material-language-java: [__Java__](./test-java.md)
 -   :material-language-python: [__Python__](./test-py.md)
--   :material-language-ruby: [__Ruby__](./test-rb.md)
--   :material-dot-net: [__.NET C#__](./test-dotnet.md)
 
 </div>

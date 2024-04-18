@@ -8,6 +8,7 @@ import type {HTTPHeaders, HTTPMethod} from './http';
 import type {AppiumLogger} from './logger';
 import type {AppiumServer, UpdateServerCallback} from './server';
 import type {Class, Element, StringRecord} from './util';
+import type internal from 'node:stream';
 
 /**
  * Interface implemented by the `DeviceSettings` class in `@appium/base-driver`
@@ -2055,11 +2056,11 @@ export interface CachedAppInfo {
   /**
    * Date instance; the value of the file's `Last-Modified` header
    */
-  lastModified?: Date;
+  lastModified?: Date|null;
   /**
    * The value of the file's `Etag` header
    */
-  etag?: string;
+  etag?: string|null;
   /**
    * `true` if the file contains an `immutable` mark in `Cache-control` header
    */
@@ -2067,7 +2068,7 @@ export interface CachedAppInfo {
   /**
    * Integer representation of `maxAge` parameter in `Cache-control` header
    */
-  maxAge?: number;
+  maxAge?: number|null;
   /**
    * The timestamp this item has been added to the cache (measured in Unix epoch milliseconds)
    */
@@ -2109,6 +2110,18 @@ export interface PostProcessOptions<Headers = HTTPHeaders> {
   appPath?: string;
 }
 
+export interface DownloadAppOptions<Headers = HTTPHeaders> {
+  /**
+   * Response headers from the download url.
+   */
+  headers: Headers;
+
+  /**
+   * Response stream.
+   */
+  stream: internal.Readable;
+}
+
 export interface ConfigureAppOptions {
   /**
    *
@@ -2124,5 +2137,13 @@ export interface ConfigureAppOptions {
   onPostProcess?: (
     obj: PostProcessOptions,
   ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
+  /**
+   * Optional function, which should be applied to the application upon download
+   * progress initialization instead of the standard download procedure.
+   * @returns The full path to the downloaded app
+   */
+  onDownload?: (
+    obj: DownloadAppOptions,
+  ) => Promise<string>;
   supportedExtensions: string[];
 }

@@ -20,11 +20,11 @@ const DEFAULT_REQ_HEADERS = Object.freeze({
   'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
+/** @type {LRUCache<string, import('@appium/types').CachedAppInfo>} */
 const APPLICATIONS_CACHE = new LRUCache({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
   updateAgeOnGet: true,
-  // @ts-ignore The fullPath property exists
   dispose: ({fullPath}, app) => {
     logger.info(
       `The application '${app}' cached at '${fullPath}' has ` +
@@ -46,16 +46,14 @@ process.on('exit', () => {
     return;
   }
 
-  const appPaths = [...APPLICATIONS_CACHE.values()]
-    // @ts-ignore The fullPath property exists
-    .map(({fullPath}) => fullPath);
+  const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
   logger.debug(
     `Performing cleanup of ${appPaths.length} cached ` +
       util.pluralize('application', appPaths.length)
   );
   for (const appPath of appPaths) {
     try {
-      // Asynchronous calls are not supported in onExit handler
+      // @ts-ignore it's defined
       fs.rimrafSync(appPath);
     } catch (e) {
       logger.warn(e.message);
@@ -114,8 +112,8 @@ async function configureApp(
   }
 
   let supportedAppExtensions;
-  const onPostProcess =
-    !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
+  const onPostProcess = !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
+  const onDownload = !_.isString(options) && !_.isArray(options) ? options.onDownload : undefined;
 
   if (_.isString(options)) {
     supportedAppExtensions = [options];
@@ -144,7 +142,6 @@ async function configureApp(
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
   /** @type {import('@appium/types').CachedAppInfo|undefined} */
-  // @ts-ignore We know the returned type
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
   if (cachedAppInfo) {
     logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
@@ -251,11 +248,15 @@ async function configureApp(
           }
           fileName = `${resultingName}${resultingExt}`;
         }
-        const targetPath = await tempDir.path({
-          prefix: fileName,
-          suffix: '',
-        });
-        newApp = await fetchApp(stream, targetPath);
+        newApp = onDownload
+          ? await onDownload({
+            headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
+            stream,
+          })
+          : await fetchApp(stream, await tempDir.path({
+            prefix: fileName,
+            suffix: '',
+          }));
       } finally {
         if (!stream.closed) {
           stream.destroy();

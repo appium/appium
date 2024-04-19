@@ -51,7 +51,7 @@ export class NPM {
     const teenProcessExecOpts = {
       ...execOpts,
       // https://github.com/nodejs/node/issues/52572
-      shell: system.isWindows(),
+      shell: system.isWindows() || execOpts.shell,
       cwd,
     };
 

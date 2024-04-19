@@ -2139,7 +2139,11 @@ export interface ConfigureAppOptions {
   ) => Promise<PostProcessResult | undefined> | PostProcessResult | undefined;
   /**
    * Optional function, which should be applied to the application upon download
-   * progress initialization instead of the standard download procedure.
+   * progress initialization instead of the standard download handler.
+   * The callback does not get invoked if the original application is not a URL.
+   * It is expected that `onPostProcess` is also provided if this callback is defined.
+   * Otherwise, there is a possibility the app configuration flow could be broken.
+   *
    * @returns The full path to the downloaded app
    */
   onDownload?: (

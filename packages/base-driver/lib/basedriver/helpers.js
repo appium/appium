@@ -198,9 +198,9 @@ export async function configureApp(
           }
         }
         if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
-          if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
+          if (await isAppIntegrityOk(/** @type {string} */ (cachedAppInfo.fullPath), cachedAppInfo.integrity)) {
             logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
-            return verifyAppExtension(cachedAppInfo.fullPath, supportedAppExtensions);
+            return verifyAppExtension(/** @type {string} */ (cachedAppInfo.fullPath), supportedAppExtensions);
           }
           logger.info(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
@@ -303,12 +303,12 @@ export async function configureApp(
       const archivePath = newApp;
       if (packageHash === cachedAppInfo?.packageHash) {
         const fullPath = cachedAppInfo?.fullPath;
-        if (await isAppIntegrityOk(fullPath, cachedAppInfo?.integrity)) {
+        if (await isAppIntegrityOk(/** @type {string} */ (fullPath), cachedAppInfo?.integrity)) {
           if (archivePath !== app) {
             await fs.rimraf(archivePath);
           }
           logger.info(`Will reuse previously cached application at '${fullPath}'`);
-          return verifyAppExtension(fullPath, supportedAppExtensions);
+          return verifyAppExtension(/** @type {string} */ (fullPath), supportedAppExtensions);
         }
         logger.info(
           `The application at '${fullPath}' does not exist anymore ` +

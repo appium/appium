@@ -176,20 +176,22 @@ export async function configureApp(
       } else if (cachedAppInfo?.lastModified) {
         reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toUTCString();
       }
+      logger.debug(`Request headers: ${JSON.stringify(reqHeaders)}`);
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
+      logger.debug(`Response status: ${status}`);
       try {
         if (!_.isEmpty(headers)) {
-          logger.debug(`Etag: ${headers.etag}`);
           if (headers.etag) {
+            logger.debug(`Etag: ${headers.etag}`);
             remoteAppProps.etag = headers.etag;
           }
-          logger.debug(`Last-Modified: ${headers['last-modified']}`);
           if (headers['last-modified']) {
+            logger.debug(`Last-Modified: ${headers['last-modified']}`);
             remoteAppProps.lastModified = new Date(headers['last-modified']);
           }
-          logger.debug(`Cache-Control: ${headers['cache-control']}`);
           if (headers['cache-control']) {
+            logger.debug(`Cache-Control: ${headers['cache-control']}`);
             remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
             const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
             if (maxAgeMatch) {

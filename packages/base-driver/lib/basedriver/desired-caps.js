@@ -76,7 +76,10 @@ validator.validators.isArray = function isArray(value) {
 validator.validators.deprecated = function deprecated(value, options, key) {
   // do not print caps that hasn't been provided.
   if (typeof value !== 'undefined' && options) {
-    log.warn(`${key} is a deprecated capability`);
+    log.warn(
+      `The '${key}' capability has been deprecated and must not be used anymore. ` +
+      `Please check the driver documentation for possible alternatives.`
+    );
   }
   return null;
 };

@@ -9,7 +9,7 @@ import axios from 'axios';
 import B from 'bluebird';
 
 // for compat with running tests transpiled and in-place
-const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
+export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 const IPA_EXT = '.ipa';
 const ZIP_EXTS = new Set(['.zip', IPA_EXT]);
 const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
@@ -61,6 +61,11 @@ process.on('exit', () => {
   }
 });
 
+/**
+ * @param {string} app
+ * @param {string[]} supportedAppExtensions
+ * @returns {string}
+ */
 function verifyAppExtension(app, supportedAppExtensions) {
   if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
     return app;
@@ -72,14 +77,27 @@ function verifyAppExtension(app, supportedAppExtensions) {
   );
 }
 
+/**
+ * @param {string} folderPath
+ * @returns {Promise<number>}
+ */
 async function calculateFolderIntegrity(folderPath) {
   return (await fs.glob('**/*', {cwd: folderPath})).length;
 }
 
+/**
+ * @param {string} filePath
+ * @returns {Promise<string>}
+ */
 async function calculateFileIntegrity(filePath) {
   return await fs.hash(filePath);
 }
 
+/**
+ * @param {string} currentPath
+ * @param {import('@appium/types').StringRecord} expectedIntegrity
+ * @returns {Promise<boolean>}
+ */
 async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
   if (!(await fs.exists(currentPath))) {
     return false;
@@ -102,7 +120,7 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
  * @param {string} app
  * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
  */
-async function configureApp(
+export async function configureApp(
   app,
   options = /** @type {import('@appium/types').ConfigureAppOptions} */ ({})
 ) {
@@ -518,7 +536,11 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
   }
 }
 
-function isPackageOrBundle(app) {
+/**
+ * @param {string} app
+ * @returns {boolean}
+ */
+export function isPackageOrBundle(app) {
   return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
 }
 
@@ -532,7 +554,7 @@ function isPackageOrBundle(app) {
  * @param {String} firstKey The first key to duplicate
  * @param {String} secondKey The second key to duplicate
  */
-function duplicateKeys(input, firstKey, secondKey) {
+export function duplicateKeys(input, firstKey, secondKey) {
   // If array provided, recursively call on all elements
   if (_.isArray(input)) {
     return input.map((item) => duplicateKeys(item, firstKey, secondKey));
@@ -563,7 +585,7 @@ function duplicateKeys(input, firstKey, secondKey) {
  *
  * @param {string|Array<String>} cap A desired capability
  */
-function parseCapsArray(cap) {
+export function parseCapsArray(cap) {
   if (_.isArray(cap)) {
     return cap;
   }
@@ -590,7 +612,7 @@ function parseCapsArray(cap) {
  * @param {string?} sessionId session identifier (if exists)
  * @returns {string}
  */
-function generateDriverLogPrefix(obj, sessionId = null) {
+export function generateDriverLogPrefix(obj, sessionId = null) {
   const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
   return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
 }
@@ -602,14 +624,6 @@ export default {
   duplicateKeys,
   parseCapsArray,
   generateDriverLogPrefix,
-};
-export {
-  configureApp,
-  isPackageOrBundle,
-  duplicateKeys,
-  parseCapsArray,
-  generateDriverLogPrefix,
-  BASEDRIVER_VER,
 };
 
 /**

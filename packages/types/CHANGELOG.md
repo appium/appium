@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.17.0](https://github.com/appium/appium/compare/@appium/types@0.16.2...@appium/types@0.17.0) (2024-04-21)
+
+
+### Features
+
+* **base-driver:** Add onDownload handler to the configureApp helper ([#20015](https://github.com/appium/appium/issues/20015)) ([8cf3efd](https://github.com/appium/appium/commit/8cf3efdbed6c0868f2d7838e249a3d2478f186d4))
+
+
+
 ## [0.16.2](https://github.com/appium/appium/compare/@appium/types@0.16.1...@appium/types@0.16.2) (2024-04-08)
 
 **Note:** Version bump only for package @appium/types

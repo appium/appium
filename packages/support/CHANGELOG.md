@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.5](https://github.com/appium/appium/compare/@appium/support@4.2.4...@appium/support@4.2.5) (2024-04-21)
+
+
+### Bug Fixes
+
+* **support:** Enable shell option for all npm-related commands on Windows ([#20010](https://github.com/appium/appium/issues/20010)) ([270fd42](https://github.com/appium/appium/commit/270fd42a2086e68d061e4bad5cb504125e22a493))
+* **support:** update dependency yauzl to v3.1.3 ([#20017](https://github.com/appium/appium/issues/20017)) ([77a27ab](https://github.com/appium/appium/commit/77a27ab16cb9ec6038f9b88762fe7f08c7871a48))
+
+
+
 ## [4.2.4](https://github.com/appium/appium/compare/@appium/support@4.2.3...@appium/support@4.2.4) (2024-04-16)
 
 

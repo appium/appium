@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.23](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.22...@appium/driver-test-support@0.4.23) (2024-04-21)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
 ## [0.4.22](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.21...@appium/driver-test-support@0.4.22) (2024-04-08)
 
 

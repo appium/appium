@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.4](https://github.com/appium/appium/compare/appium@2.5.3...appium@2.5.4) (2024-04-21)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8.36.1 ([9ad20ff](https://github.com/appium/appium/commit/9ad20ff1c266923f3efe50bfe2ae4b1ab8ecb20a))
+
+
+
 ## [2.5.3](https://github.com/appium/appium/compare/appium@2.5.2...appium@2.5.3) (2024-04-16)
 
 

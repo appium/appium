@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.0](https://github.com/appium/appium/compare/@appium/base-driver@9.5.4...@appium/base-driver@9.6.0) (2024-04-21)
+
+
+### Features
+
+* **base-driver:** Add onDownload handler to the configureApp helper ([#20015](https://github.com/appium/appium/issues/20015)) ([8cf3efd](https://github.com/appium/appium/commit/8cf3efdbed6c0868f2d7838e249a3d2478f186d4))
+
+
+
 ## [9.5.4](https://github.com/appium/appium/compare/@appium/base-driver@9.5.3...@appium/base-driver@9.5.4) (2024-04-16)
 
 

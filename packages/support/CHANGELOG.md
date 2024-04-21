@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.4](https://github.com/appium/appium/compare/@appium/support@4.2.3...@appium/support@4.2.4) (2024-04-16)
+
+
+### Bug Fixes
+
+* **support:** Enable `shell` option on Windows ([#19996](https://github.com/appium/appium/issues/19996)) ([572037a](https://github.com/appium/appium/commit/572037a0e256ea1ac0d7b0551463b79e07f9e56f))
+
+
+
 ## [4.2.3](https://github.com/appium/appium/compare/@appium/support@4.2.2...@appium/support@4.2.3) (2024-04-08)
 
 

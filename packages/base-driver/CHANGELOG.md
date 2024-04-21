@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.4](https://github.com/appium/appium/compare/@appium/base-driver@9.5.3...@appium/base-driver@9.5.4) (2024-04-16)
+
+
+### Bug Fixes
+
+* do not print deprecation errors for non-provided caps ([#19986](https://github.com/appium/appium/issues/19986)) ([9f655f6](https://github.com/appium/appium/commit/9f655f6f852bc10ca1f51529183c7c44eb4c79ea))
+
+
+
 ## [9.5.3](https://github.com/appium/appium/compare/@appium/base-driver@9.5.2...@appium/base-driver@9.5.3) (2024-04-08)
 
 

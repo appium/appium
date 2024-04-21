@@ -44,11 +44,16 @@ export class NPM {
    * @param {Omit<TeenProcessExecOptions, 'cwd'>} [execOpts]
    */
   async exec(cmd, args, opts, execOpts = {}) {
-    let {cwd, json, lockFile} = opts;
+    const {cwd, json, lockFile} = opts;
 
     // make sure we perform the current operation in cwd
     /** @type {TeenProcessExecOptions} */
-    const teenProcessExecOpts = {...execOpts, cwd};
+    const teenProcessExecOpts = {
+      ...execOpts,
+      // https://github.com/nodejs/node/issues/52572
+      shell: system.isWindows() || execOpts.shell,
+      cwd,
+    };
 
     args.unshift(cmd);
     if (json) {
@@ -273,9 +278,6 @@ export class NPM {
     return (await this.exec('info', [pkg, ...entries], {
       cwd: process.cwd(),
       json: true,
-    }, {
-      // https://discuss.appium.io/t/appium-driver-install-fails-while-checking-drivers-compatibility/42209
-      shell: system.isWindows(),
     })).json;
   }
 }

@@ -9,7 +9,7 @@ import axios from 'axios';
 import B from 'bluebird';
 
 // for compat with running tests transpiled and in-place
-const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
+export const {version: BASEDRIVER_VER} = fs.readPackageJsonFrom(__dirname);
 const IPA_EXT = '.ipa';
 const ZIP_EXTS = new Set(['.zip', IPA_EXT]);
 const ZIP_MIME_TYPES = ['application/zip', 'application/x-zip-compressed', 'multipart/x-zip'];
@@ -20,11 +20,11 @@ const DEFAULT_REQ_HEADERS = Object.freeze({
   'user-agent': `Appium (BaseDriver v${BASEDRIVER_VER})`,
 });
 const AVG_DOWNLOAD_SPEED_MEASUREMENT_THRESHOLD_SEC = 2;
+/** @type {LRUCache<string, import('@appium/types').CachedAppInfo>} */
 const APPLICATIONS_CACHE = new LRUCache({
   max: MAX_CACHED_APPS,
   ttl: CACHED_APPS_MAX_AGE, // expire after 24 hours
   updateAgeOnGet: true,
-  // @ts-ignore The fullPath property exists
   dispose: ({fullPath}, app) => {
     logger.info(
       `The application '${app}' cached at '${fullPath}' has ` +
@@ -46,16 +46,14 @@ process.on('exit', () => {
     return;
   }
 
-  const appPaths = [...APPLICATIONS_CACHE.values()]
-    // @ts-ignore The fullPath property exists
-    .map(({fullPath}) => fullPath);
+  const appPaths = [...APPLICATIONS_CACHE.values()].map(({fullPath}) => fullPath);
   logger.debug(
     `Performing cleanup of ${appPaths.length} cached ` +
       util.pluralize('application', appPaths.length)
   );
   for (const appPath of appPaths) {
     try {
-      // Asynchronous calls are not supported in onExit handler
+      // @ts-ignore it's defined
       fs.rimrafSync(appPath);
     } catch (e) {
       logger.warn(e.message);
@@ -63,6 +61,11 @@ process.on('exit', () => {
   }
 });
 
+/**
+ * @param {string} app
+ * @param {string[]} supportedAppExtensions
+ * @returns {string}
+ */
 function verifyAppExtension(app, supportedAppExtensions) {
   if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
     return app;
@@ -74,14 +77,27 @@ function verifyAppExtension(app, supportedAppExtensions) {
   );
 }
 
+/**
+ * @param {string} folderPath
+ * @returns {Promise<number>}
+ */
 async function calculateFolderIntegrity(folderPath) {
   return (await fs.glob('**/*', {cwd: folderPath})).length;
 }
 
+/**
+ * @param {string} filePath
+ * @returns {Promise<string>}
+ */
 async function calculateFileIntegrity(filePath) {
   return await fs.hash(filePath);
 }
 
+/**
+ * @param {string} currentPath
+ * @param {import('@appium/types').StringRecord} expectedIntegrity
+ * @returns {Promise<boolean>}
+ */
 async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
   if (!(await fs.exists(currentPath))) {
     return false;
@@ -104,7 +120,7 @@ async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
  * @param {string} app
  * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
  */
-async function configureApp(
+export async function configureApp(
   app,
   options = /** @type {import('@appium/types').ConfigureAppOptions} */ ({})
 ) {
@@ -114,8 +130,8 @@ async function configureApp(
   }
 
   let supportedAppExtensions;
-  const onPostProcess =
-    !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
+  const onPostProcess = !_.isString(options) && !_.isArray(options) ? options.onPostProcess : undefined;
+  const onDownload = !_.isString(options) && !_.isArray(options) ? options.onDownload : undefined;
 
   if (_.isString(options)) {
     supportedAppExtensions = [options];
@@ -143,8 +159,6 @@ async function configureApp(
   const {protocol, pathname} = url.parse(newApp);
   const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
 
-  /** @type {import('@appium/types').CachedAppInfo|undefined} */
-  // @ts-ignore We know the returned type
   const cachedAppInfo = APPLICATIONS_CACHE.get(app);
   if (cachedAppInfo) {
     logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
@@ -162,20 +176,22 @@ async function configureApp(
       } else if (cachedAppInfo?.lastModified) {
         reqHeaders['if-modified-since'] = cachedAppInfo.lastModified.toUTCString();
       }
+      logger.debug(`Request headers: ${JSON.stringify(reqHeaders)}`);
 
       let {headers, stream, status} = await queryAppLink(newApp, reqHeaders);
+      logger.debug(`Response status: ${status}`);
       try {
         if (!_.isEmpty(headers)) {
-          logger.debug(`Etag: ${headers.etag}`);
           if (headers.etag) {
+            logger.debug(`Etag: ${headers.etag}`);
             remoteAppProps.etag = headers.etag;
           }
-          logger.debug(`Last-Modified: ${headers['last-modified']}`);
           if (headers['last-modified']) {
+            logger.debug(`Last-Modified: ${headers['last-modified']}`);
             remoteAppProps.lastModified = new Date(headers['last-modified']);
           }
-          logger.debug(`Cache-Control: ${headers['cache-control']}`);
           if (headers['cache-control']) {
+            logger.debug(`Cache-Control: ${headers['cache-control']}`);
             remoteAppProps.immutable = /\bimmutable\b/i.test(headers['cache-control']);
             const maxAgeMatch = /\bmax-age=(\d+)\b/i.exec(headers['cache-control']);
             if (maxAgeMatch) {
@@ -184,9 +200,9 @@ async function configureApp(
           }
         }
         if (cachedAppInfo && status === HTTP_STATUS_NOT_MODIFIED) {
-          if (await isAppIntegrityOk(cachedAppInfo.fullPath, cachedAppInfo.integrity)) {
+          if (await isAppIntegrityOk(/** @type {string} */ (cachedAppInfo.fullPath), cachedAppInfo.integrity)) {
             logger.info(`Reusing previously downloaded application at '${cachedAppInfo.fullPath}'`);
-            return verifyAppExtension(cachedAppInfo.fullPath, supportedAppExtensions);
+            return verifyAppExtension(/** @type {string} */ (cachedAppInfo.fullPath), supportedAppExtensions);
           }
           logger.info(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
@@ -251,11 +267,15 @@ async function configureApp(
           }
           fileName = `${resultingName}${resultingExt}`;
         }
-        const targetPath = await tempDir.path({
-          prefix: fileName,
-          suffix: '',
-        });
-        newApp = await fetchApp(stream, targetPath);
+        newApp = onDownload
+          ? await onDownload({
+            headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
+            stream,
+          })
+          : await fetchApp(stream, await tempDir.path({
+            prefix: fileName,
+            suffix: '',
+          }));
       } finally {
         if (!stream.closed) {
           stream.destroy();
@@ -285,12 +305,12 @@ async function configureApp(
       const archivePath = newApp;
       if (packageHash === cachedAppInfo?.packageHash) {
         const fullPath = cachedAppInfo?.fullPath;
-        if (await isAppIntegrityOk(fullPath, cachedAppInfo?.integrity)) {
+        if (await isAppIntegrityOk(/** @type {string} */ (fullPath), cachedAppInfo?.integrity)) {
           if (archivePath !== app) {
             await fs.rimraf(archivePath);
           }
           logger.info(`Will reuse previously cached application at '${fullPath}'`);
-          return verifyAppExtension(fullPath, supportedAppExtensions);
+          return verifyAppExtension(/** @type {string} */ (fullPath), supportedAppExtensions);
         }
         logger.info(
           `The application at '${fullPath}' does not exist anymore ` +
@@ -518,7 +538,11 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
   }
 }
 
-function isPackageOrBundle(app) {
+/**
+ * @param {string} app
+ * @returns {boolean}
+ */
+export function isPackageOrBundle(app) {
   return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
 }
 
@@ -532,7 +556,7 @@ function isPackageOrBundle(app) {
  * @param {String} firstKey The first key to duplicate
  * @param {String} secondKey The second key to duplicate
  */
-function duplicateKeys(input, firstKey, secondKey) {
+export function duplicateKeys(input, firstKey, secondKey) {
   // If array provided, recursively call on all elements
   if (_.isArray(input)) {
     return input.map((item) => duplicateKeys(item, firstKey, secondKey));
@@ -563,7 +587,7 @@ function duplicateKeys(input, firstKey, secondKey) {
  *
  * @param {string|Array<String>} cap A desired capability
  */
-function parseCapsArray(cap) {
+export function parseCapsArray(cap) {
   if (_.isArray(cap)) {
     return cap;
   }
@@ -590,7 +614,7 @@ function parseCapsArray(cap) {
  * @param {string?} sessionId session identifier (if exists)
  * @returns {string}
  */
-function generateDriverLogPrefix(obj, sessionId = null) {
+export function generateDriverLogPrefix(obj, sessionId = null) {
   const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
   return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
 }
@@ -602,14 +626,6 @@ export default {
   duplicateKeys,
   parseCapsArray,
   generateDriverLogPrefix,
-};
-export {
-  configureApp,
-  isPackageOrBundle,
-  duplicateKeys,
-  parseCapsArray,
-  generateDriverLogPrefix,
-  BASEDRIVER_VER,
 };
 
 /**

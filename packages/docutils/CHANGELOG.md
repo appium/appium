@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/appium/appium/compare/@appium/docutils@1.0.5...@appium/docutils@1.0.6) (2024-04-16)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.4.5 ([#19993](https://github.com/appium/appium/issues/19993)) ([d7cf013](https://github.com/appium/appium/commit/d7cf01340199edc30cf7befe351865e7c9124d1a))
+
+
+
 ## [1.0.5](https://github.com/appium/appium/compare/@appium/docutils@1.0.4...@appium/docutils@1.0.5) (2024-04-08)
 
 

@@ -78,7 +78,13 @@ export function validateCaps<C extends Constraints>(
     throw new errors.InvalidArgumentError(`must be a JSON object`);
   }
 
-  const omitConst = (constraint, key) => _.omit(constraint, key);
+  const keysToOmit = (skipDeprecatedCheck) => {
+    const keys = ['presence'];
+    if (skipDeprecatedCheck) {
+      keys.push('deprecated');
+    };
+    return keys;
+  }
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = (
@@ -87,15 +93,12 @@ export function validateCaps<C extends Constraints>(
       skipPresenceConstraint
         ? /** @param {Constraint} constraint */
           (constraint) => {
-            const newConstraint = omitConst(constraint, 'presence');
-            return skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
+            return  _.omit(constraint, keysToOmit(skipDeprecatedCheck));
           }
         : /** @param {Constraint} constraint */
           (constraint) => {
             if (constraint.presence === true) {
-              let newConstraint = omitConst(constraint, 'presence');
-              newConstraint = skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
-              return {...newConstraint, presence: {allowEmpty: false}};
+              return {..._.omit(constraint, keysToOmit(skipDeprecatedCheck)), presence: {allowEmpty: false}};
             }
             return constraint;
           }

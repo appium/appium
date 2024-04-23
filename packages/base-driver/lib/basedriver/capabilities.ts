@@ -28,7 +28,6 @@ export type ParsedCaps<C extends Constraints> = {
 export type ValidateCapsOpts = {
   /** if true, skip the presence constraint */
   skipPresenceConstraint?: boolean | undefined;
-  skipDeprecatedCheck?: boolean | undefined;
 }
 
 /**
@@ -77,8 +76,6 @@ export function validateCaps<C extends Constraints>(
   if (!_.isPlainObject(caps)) {
     throw new errors.InvalidArgumentError(`must be a JSON object`);
   }
-
-  const omitConst = (constraint, key) => _.omit(constraint, key);
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = (
@@ -262,8 +259,7 @@ export function parseCaps<C extends Constraints>(
   let strippedRequiredCaps = stripAppiumPrefixes(requiredCaps);
   const strippedAllFirstMatchCaps: Capabilities<C>[] = allFirstMatchCaps.map(stripAppiumPrefixes);
 
-  // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys.
-  // Do not check deprecated property to reduce duplicated logs.
+  // Validate the requiredCaps. But don't validate 'presence' because if that constraint fails on 'alwaysMatch' it could still pass on one of the 'firstMatch' keys
   if (shouldValidateCaps) {
     strippedRequiredCaps = validateCaps(strippedRequiredCaps, constraints, {
       skipPresenceConstraint: true,

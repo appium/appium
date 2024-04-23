@@ -84,7 +84,7 @@ export function validateCaps<C extends Constraints>(
       keys.push('deprecated');
     };
     return keys;
-  }
+  };
 
   // Remove the 'presence' constraint if we're not checking for it
   constraints = (
@@ -92,9 +92,7 @@ export function validateCaps<C extends Constraints>(
       constraints,
       skipPresenceConstraint
         ? /** @param {Constraint} constraint */
-          (constraint) => {
-            return  _.omit(constraint, keysToOmit(skipDeprecatedCheck));
-          }
+          (constraint) => _.omit(constraint, keysToOmit(skipDeprecatedCheck))
         : /** @param {Constraint} constraint */
           (constraint) => {
             if (constraint.presence === true) {

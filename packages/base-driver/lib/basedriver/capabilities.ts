@@ -72,7 +72,7 @@ export function validateCaps<C extends Constraints>(
   constraints: C | undefined = {} as C,
   opts: ValidateCapsOpts | undefined = {}
 ): Capabilities<C> {
-  const {skipPresenceConstraint, skipDeprecatedCheck} = opts;
+  const {skipPresenceConstraint} = opts;
 
   if (!_.isPlainObject(caps)) {
     throw new errors.InvalidArgumentError(`must be a JSON object`);
@@ -86,16 +86,11 @@ export function validateCaps<C extends Constraints>(
       constraints,
       skipPresenceConstraint
         ? /** @param {Constraint} constraint */
-          (constraint) => {
-            const newConstraint = omitConst(constraint, 'presence');
-            return skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
-          }
+          (constraint) => _.omit(constraint, 'presence')
         : /** @param {Constraint} constraint */
           (constraint) => {
             if (constraint.presence === true) {
-              let newConstraint = omitConst(constraint, 'presence');
-              newConstraint = skipDeprecatedCheck ? omitConst(newConstraint, 'deprecated') : newConstraint;
-              return {...newConstraint, presence: {allowEmpty: false}};
+              return {..._.omit(constraint, 'presence'), presence: {allowEmpty: false}};
             }
             return constraint;
           }
@@ -272,7 +267,6 @@ export function parseCaps<C extends Constraints>(
   if (shouldValidateCaps) {
     strippedRequiredCaps = validateCaps(strippedRequiredCaps, constraints, {
       skipPresenceConstraint: true,
-      skipDeprecatedCheck: true,
     });
   }
   // Remove the 'presence' constraint for any keys that are already present in 'requiredCaps'

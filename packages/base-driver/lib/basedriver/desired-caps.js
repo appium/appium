@@ -2,6 +2,13 @@ import log from './logger';
 import _validator from 'validate.js';
 import B from 'bluebird';
 
+
+/**
+ * Global variable to store what capabilities have been logged as deprecated.
+ * @type {Record<string, boolean>}
+*/
+const loggedAsDeprecated = {};
+
 export const validator =
   /** @type {import('validate.js').ValidateJS & {promise: typeof import('bluebird')}} */ (
     _validator
@@ -76,10 +83,14 @@ validator.validators.isArray = function isArray(value) {
 validator.validators.deprecated = function deprecated(value, options, key) {
   // do not print caps that hasn't been provided.
   if (typeof value !== 'undefined' && options) {
+    if (loggedAsDeprecated[key]) {
+      return null;
+    }
     log.warn(
       `The '${key}' capability has been deprecated and must not be used anymore. ` +
       `Please check the driver documentation for possible alternatives.`
     );
+    loggedAsDeprecated[key] = true;
   }
   return null;
 };

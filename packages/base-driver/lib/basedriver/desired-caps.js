@@ -4,7 +4,8 @@ import B from 'bluebird';
 
 
 /**
- * Global variable to store what capabilities have been logged as deprecated.
+ * Storing what capabilities have been logged as deprecated
+ * in order to control log messages.
  * @type {Record<string, boolean>}
 */
 const loggedAsDeprecated = {};

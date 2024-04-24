@@ -145,6 +145,7 @@ export async function configureApp(
   }
 
   let newApp = app;
+  const originalAppLink = app;
   let shouldUnzipApp = false;
   let packageHash = null;
   /** @type {import('axios').AxiosResponse['headers']|undefined} */
@@ -269,7 +270,7 @@ export async function configureApp(
         }
         newApp = onDownload
           ? await onDownload({
-            url: newApp,
+            url: originalAppLink,
             headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
             stream,
           })
@@ -363,6 +364,7 @@ export async function configureApp(
         /** @type {import('@appium/types').PostProcessOptions<import('axios').AxiosResponseHeaders>} */ ({
           cachedAppInfo: _.clone(cachedAppInfo),
           isUrl,
+          originalAppLink,
           headers: _.clone(headers),
           appPath: newApp,
         })

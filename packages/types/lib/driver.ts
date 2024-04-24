@@ -2091,6 +2091,10 @@ export interface CachedAppInfo {
  */
 export interface PostProcessOptions<Headers = HTTPHeaders> {
   /**
+   * The original application url or path
+   */
+  originalAppLink: string;
+  /**
    * The information about the previously cached app instance (if exists)
    */
   cachedAppInfo?: CachedAppInfo;

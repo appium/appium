@@ -2112,6 +2112,10 @@ export interface PostProcessOptions<Headers = HTTPHeaders> {
 
 export interface DownloadAppOptions<Headers = HTTPHeaders> {
   /**
+   * The original application url.
+   */
+  url: string;
+  /**
    * Response headers from the download url.
    */
   headers: Headers;

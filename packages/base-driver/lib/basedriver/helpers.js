@@ -269,6 +269,7 @@ export async function configureApp(
         }
         newApp = onDownload
           ? await onDownload({
+            url: newApp,
             headers: /** @type {import('@appium/types').HTTPHeaders} */ (_.clone(headers)),
             stream,
           })

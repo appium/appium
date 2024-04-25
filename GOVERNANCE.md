@@ -46,16 +46,23 @@ and so on.
 * Any committer can decide to close a PR or issue if they determine the change doesn't suit the project.
 * Appium has a large ecosystem of repositories. Some are 'core' in the sense of being central subpackages with a lot of traffic like `appium/appium` or `appium/appium-ios-driver`. Others are 'peripheral' in the sense of receiving few changes, being maintained by 1 person or no one, etc..., like `appium/ruby_lib` or `appium/appium_thor` For 'core' repos, committers should not merge their own code straightaway. Like all contributors they should open a PR and get a +1 from another committer. For 'peripheral' repos for which they are the sole maintainer or for which they have a good understanding, it is obtuse to insist on another contributor's +1 and this rule should be relaxed in that case. In sum: use good judgment and don't ram code through without a review when you can help it.
 
-The current committers are (in addition to the TC members above):
+The current committers are (along with their primary areas(s) of ownership or maintenance):
 
-* [@saikrishna321](https://github.com/saikrishna321)
-* [@SrinivasanTarget](https://github.com/SrinivasanTarget)
-* [@Dan-Maor](https://github.com/Dan-Maor)
-* [@laolubenson](https://github.com/laolubenson)
-* [@Dor-bl](https://github.com/Dor-bl)
+* [@Dan-Maor](https://github.com/Dan-Maor) - XCUITest driver and iOS internals
+* [@Dor-bl](https://github.com/Dor-bl) - DotNet client
+* [@KazuCocoa](https://github.com/KazuCocoa) - all Appium projects
+* [@SrinivasanTarget](https://github.com/SrinivasanTarget) - Java client
+* [@eglitise](https://github.com/eglitise) - Appium server, Inspector
+* [@jlipps](https://github.com/jlipps) - Appium server, Inspector
+* [@laolubenson](https://github.com/laolubenson) - DotNet client
 * [@mwakizaka](https://github.com/mwakizaka)
+* [@mykola-mokhnach](https://github.com/mykola-mokhnach) - all Appium projects
 * [@rerorero](https://github.com/rerorero)
+* [@saikrishna321](https://github.com/saikrishna321) - Java client
 * [@tomriddly](https://github.com/tomriddly)
+
+See [Emeritus Contributors](#emeritus-contributors) below for a list of people who formerly made
+significant contributions to the project but are no longer actively committing.
 
 ### Contributors
 
@@ -139,3 +146,38 @@ This governance model necessarily leaves many situations unspecified. If
 questions arise as to how a given situation should proceed according to the
 overall goals of the project, the best thing to do is to open a GitHub issue
 and ping the TC members.
+
+### Emeritus Contributors
+
+* [@aluedeke](https://github.com/aluedeke)
+* [@astro03](https://github.com/Astro03)
+* [@bayandin](https://github.com/bayandin)
+* [@boneskull](https://github.com/boneskull)
+* [@bootstraponline](https://github.com/bootstraponline)
+* [@dandoveralba](https://github.com/dandoveralba)
+* [@ddkjin](https://github.com/ddkjin)
+* [@drpy](https://github.com/drpy)
+* [@dylanLacey](https://github.com/DylanLacey)
+* [@filmaj](https://github.com/filmaj)
+* [@gempesaw](https://github.com/gempesaw)
+* [@hugs](https://github.com/hugs)
+* [@imurchie](https://github.com/imurchie)
+* [@jamieEdge](https://github.com/JamieEdge)
+* [@jdeff](https://github.com/jdeff)
+* [@jonahss](https://github.com/Jonahss)
+* [@maudineormsby](https://github.com/maudineormsby)
+* [@moizjv](https://github.com/moizjv)
+* [@mwakizaka](https://github.com/mwakizaka)
+* [@peepa](https://github.com/peepa)
+* [@penguinho](https://github.com/penguinho)
+* [@rerorero](https://github.com/rerorero)
+* [@sbonebrake](https://github.com/sbonebrake)
+* [@scottdixon](https://github.com/scottdixon)
+* [@sebv](https://github.com/sebv)
+* [@sravanmedarapu](https://github.com/sravanmedarapu)
+* [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
+* [@tikhomirovSergey](https://github.com/TikhomirovSergey)
+* [@titusfortner](https://github.com/titusfortner)
+* [@tomriddly](https://github.com/tomriddly)
+* [@vgrigoruk](https://github.com/vgrigoruk)
+* [@vmaxim](https://github.com/vmaxim)

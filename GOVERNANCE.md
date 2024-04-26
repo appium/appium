@@ -48,26 +48,31 @@ and so on.
 
 The current committers are (along with their primary areas(s) of ownership or maintenance):
 
-* [@Dan-Maor](https://github.com/Dan-Maor) - XCUITest driver and iOS internals
-* [@Dor-bl](https://github.com/Dor-bl) - DotNet client
-* [@KazuCocoa](https://github.com/KazuCocoa) - all Appium projects
-* [@SrinivasanTarget](https://github.com/SrinivasanTarget) - Java client
+* [@dan-maor](https://github.com/Dan-Maor) - XCUITest driver and iOS internals
+* [@dor-bl](https://github.com/Dor-bl) - DotNet client
 * [@eglitise](https://github.com/eglitise) - Appium server, Inspector
 * [@jlipps](https://github.com/jlipps) - Appium server, Inspector
+* [@kazucocoa](https://github.com/KazuCocoa) - all Appium projects
 * [@laolubenson](https://github.com/laolubenson) - DotNet client
 * [@mwakizaka](https://github.com/mwakizaka)
 * [@mykola-mokhnach](https://github.com/mykola-mokhnach) - all Appium projects
 * [@rerorero](https://github.com/rerorero)
 * [@saikrishna321](https://github.com/saikrishna321) - Java client
+* [@srinivasantarget](https://github.com/SrinivasanTarget) - Java client
 * [@tomriddly](https://github.com/tomriddly)
 
 See [Emeritus Contributors](#emeritus-contributors) below for a list of people who formerly made
 significant contributions to the project but are no longer actively committing.
 
-### Contributors
+### Other Contributors
 
 Other, less formal, kinds of contribution are outlined in our
-[CONTRIBUTING](/CONTRIBUTING.md) doc.
+[CONTRIBUTING](/CONTRIBUTING.md) doc. We also very much appreciate those who spend their valuable
+time assisting with the [Appium forums](https://discuss.appium.io). Current high-level forum
+contributors and mods include:
+
+* [aleksei](https://discuss.appium.io/u/aleksei/summary)
+* [wreed](https://discuss.appium.io/u/wreed/summary)
 
 ### Sponsorship
 
@@ -167,10 +172,8 @@ and ping the TC members.
 * [@jonahss](https://github.com/Jonahss)
 * [@maudineormsby](https://github.com/maudineormsby)
 * [@moizjv](https://github.com/moizjv)
-* [@mwakizaka](https://github.com/mwakizaka)
 * [@peepa](https://github.com/peepa)
 * [@penguinho](https://github.com/penguinho)
-* [@rerorero](https://github.com/rerorero)
 * [@sbonebrake](https://github.com/sbonebrake)
 * [@scottdixon](https://github.com/scottdixon)
 * [@sebv](https://github.com/sebv)
@@ -178,6 +181,5 @@ and ping the TC members.
 * [@stuartbrussell-intuit](https://github.com/stuartbrussell-intuit)
 * [@tikhomirovSergey](https://github.com/TikhomirovSergey)
 * [@titusfortner](https://github.com/titusfortner)
-* [@tomriddly](https://github.com/tomriddly)
 * [@vgrigoruk](https://github.com/vgrigoruk)
 * [@vmaxim](https://github.com/vmaxim)

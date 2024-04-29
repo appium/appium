@@ -57,10 +57,10 @@ of it. It is a [LRU Cache](https://www.npmjs.com/package/lru-cache) with the fol
 
 - Max items: 1024. You may customize it by providing a new value to
   the [APPIUM_APPS_CACHE_MAX_ITEMS](../cli/env-vars.md) environment variable.
-  Do not set it to a lower number than the amount of parallel sessions per process.
+  Do not set it to a lower number than the amount of apps in all parallel sessions per process.
 - Max time to live (TTL) for each entry: 24 hours.
   You may customize it by providing a new value to the
-  [APPIUM_APPS_CACHE_MAX_AGE_MIN](../cli/env-vars.md) environment variable.
+  [APPIUM_APPS_CACHE_MAX_AGE](../cli/env-vars.md) environment variable.
   Do not set it to a lower number than the duration of a single session startup.
 - TTL is refreshed for each entry upon access
 

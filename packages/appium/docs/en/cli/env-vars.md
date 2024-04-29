@@ -19,5 +19,5 @@ environment variables that the Appium server understands:
 |`APPIUM_PORT`|Same as the `--port` CLI arg|
 |`APPIUM_RELOAD_EXTENSIONS`|Set to `1` to cause Appium to re-require extensions when new sessions are created. This is mostly useful for [building extensions](../developing/build-drivers.md)|
 |`APPIUM_OMIT_PEER_DEPS`|Adds `--omit=peer` to all the NPM commands run internally by Appium. Mostly an internal feature.|
-|`APPIUM_APPS_CACHE_MAX_AGE_MIN`|Allows to set the maximum age (in minutes) for [cached applications](../guides/caching.md). The default value is `60 * 24` (24 hours). Do not set it to a lower number than the duration of a single session startup.|
-|`APPIUM_APPS_CACHE_MAX_ITEMS`|Allows to set the maximum amount of [cached applications](../guides/caching.md). The default value is `1024`. Do not set it to a lower number than the minimum amount of parallel sessions per process.|
+|`APPIUM_APPS_CACHE_MAX_AGE`|Allows to set the maximum age (in minutes) for [cached applications](../guides/caching.md). The default value is `60 * 24` (24 hours). Do not set it to a lower number than the duration of a single session startup.|
+|`APPIUM_APPS_CACHE_MAX_ITEMS`|Allows to set the maximum amount of [cached applications](../guides/caching.md). The default value is `1024`. Do not set it to a lower number than the amount of apps in all parallel sessions per process.|

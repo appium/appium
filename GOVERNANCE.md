@@ -54,12 +54,13 @@ The current committers are (along with their primary areas(s) of ownership or ma
 * [@jlipps](https://github.com/jlipps) - Appium server, Inspector
 * [@kazucocoa](https://github.com/KazuCocoa) - all Appium projects
 * [@laolubenson](https://github.com/laolubenson) - DotNet client
-* [@mwakizaka](https://github.com/mwakizaka)
+* [@mwakizaka](https://github.com/mwakizaka) - XCUITest driver
 * [@mykola-mokhnach](https://github.com/mykola-mokhnach) - all Appium projects
-* [@rerorero](https://github.com/rerorero)
+* [@rerorero](https://github.com/rerorero) - XCUITest/UIA2 driver
 * [@saikrishna321](https://github.com/saikrishna321) - Java client
 * [@srinivasantarget](https://github.com/SrinivasanTarget) - Java client
-* [@tomriddly](https://github.com/tomriddly)
+* [@tomriddly](https://github.com/tomriddly) - appium-ios-device
+* [@valfirst](https://github.com/valfirst) - Java client
 
 See [Emeritus Contributors](#emeritus-contributors) below for a list of people who formerly made
 significant contributions to the project but are no longer actively committing.

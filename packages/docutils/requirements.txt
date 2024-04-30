@@ -1,5 +1,5 @@
 mkdocs==1.6.0
 mkdocs-git-revision-date-localized-plugin==1.2.4
-mkdocs-material==9.5.19
+mkdocs-material==9.5.20
 mkdocs-redirects==1.2.1
 mike==2.0.0

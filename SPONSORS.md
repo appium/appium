@@ -30,4 +30,5 @@ a significant ongoing investment of funds to help the project attract and reward
 
 ## Bronze Sponsors
 
+- [MagicPod](https://magicpod.com/en/)
 * [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)

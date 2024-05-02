@@ -14,9 +14,9 @@ jobs:
     outputs:
       versions: ${{ steps.generate-matrix.outputs.versions }}
     steps:
-    - name: Select 2 most recent LTS versions of Node.js
+    - name: Select 3 most recent LTS versions of Node.js
       id: generate-matrix
-      run: echo "versions=$(curl -s https://endoflife.date/api/nodejs.json | jq -c '[[.[] | select(.lts != false)][:2] | .[].cycle | tonumber]')" >> "$GITHUB_OUTPUT"
+      run: echo "versions=$(curl -s https://endoflife.date/api/nodejs.json | jq -c '[[.[] | select(.lts != false)][:3] | .[].cycle | tonumber]')" >> "$GITHUB_OUTPUT"
 
   check:
     needs:

@@ -213,6 +213,7 @@ async function init(args) {
     levels,
   });
 
+  const reportedLoggerErrors = new Set();
   // Capture logs emitted via npmlog and pass them through winston
   npmlog.on('log', ({level, message, prefix}) => {
     const winstonLevel = npmToWinstonLevels[level] || 'info';
@@ -227,11 +228,14 @@ async function init(args) {
     try {
       log[winstonLevel](msg);
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(
-        `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
-        `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
-      );
+      if (!reportedLoggerErrors.has(e.message)) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
+          `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
+        );
+        reportedLoggerErrors.add(e.message);
+      }
     }
     if (args.logHandler && _.isFunction(args.logHandler)) {
       args.logHandler(level, msg);

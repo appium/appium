@@ -227,6 +227,9 @@ async function init(args) {
     }
     try {
       log[winstonLevel](msg);
+      if (_.isFunction(args.logHandler)) {
+        args.logHandler(level, msg);
+      }
     } catch (e) {
       if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
@@ -236,9 +239,6 @@ async function init(args) {
         );
         reportedLoggerErrors.add(e.message);
       }
-    }
-    if (args.logHandler && _.isFunction(args.logHandler)) {
-      args.logHandler(level, msg);
     }
   });
 }

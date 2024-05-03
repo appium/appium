@@ -131,8 +131,13 @@ function createHttpTransport(args, logLvl) {
   });
 }
 
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @returns {Promise<import('winston-transport')[]>}
+ */
 async function createTransports(args) {
-  let transports = [];
+  const transports = [];
   let consoleLogLevel = null;
   let fileLogLevel = null;
 
@@ -201,8 +206,10 @@ async function init(args) {
   // clean up in case we have initiated before since npmlog is a global object
   clear();
 
+  const transports = await createTransports(args);
+  const transportNames = new Set(transports.map((tr) => tr.constructor.name));
   log = createLogger({
-    transports: await createTransports(args),
+    transports,
     levels,
   });
 
@@ -217,7 +224,15 @@ async function init(args) {
         : getColorizedPrefix(decoratedPrefix);
       msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
     }
-    log[winstonLevel](msg);
+    try {
+      log[winstonLevel](msg);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(
+        `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
+        `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
+      );
+    }
     if (args.logHandler && _.isFunction(args.logHandler)) {
       args.logHandler(level, msg);
     }

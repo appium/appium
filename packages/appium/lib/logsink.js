@@ -228,7 +228,7 @@ async function init(args) {
     try {
       log[winstonLevel](msg);
     } catch (e) {
-      if (!reportedLoggerErrors.has(e.message)) {
+      if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
         // eslint-disable-next-line no-console
         console.error(
           `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +

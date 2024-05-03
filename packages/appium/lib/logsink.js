@@ -131,8 +131,13 @@ function createHttpTransport(args, logLvl) {
   });
 }
 
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @returns {Promise<import('winston-transport')[]>}
+ */
 async function createTransports(args) {
-  let transports = [];
+  const transports = [];
   let consoleLogLevel = null;
   let fileLogLevel = null;
 
@@ -201,11 +206,14 @@ async function init(args) {
   // clean up in case we have initiated before since npmlog is a global object
   clear();
 
+  const transports = await createTransports(args);
+  const transportNames = new Set(transports.map((tr) => tr.constructor.name));
   log = createLogger({
-    transports: await createTransports(args),
+    transports,
     levels,
   });
 
+  const reportedLoggerErrors = new Set();
   // Capture logs emitted via npmlog and pass them through winston
   npmlog.on('log', ({level, message, prefix}) => {
     const winstonLevel = npmToWinstonLevels[level] || 'info';
@@ -217,9 +225,20 @@ async function init(args) {
         : getColorizedPrefix(decoratedPrefix);
       msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
     }
-    log[winstonLevel](msg);
-    if (args.logHandler && _.isFunction(args.logHandler)) {
-      args.logHandler(level, msg);
+    try {
+      log[winstonLevel](msg);
+      if (_.isFunction(args.logHandler)) {
+        args.logHandler(level, msg);
+      }
+    } catch (e) {
+      if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
+          `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
+        );
+        reportedLoggerErrors.add(e.message);
+      }
     }
   });
 }

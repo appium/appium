@@ -49,7 +49,7 @@
     "chai": "4.4.1",
     "get-port": "5.1.1",
     "lodash": "4.17.21",
-    "sinon": "17.0.1",
+    "sinon": "17.0.2",
     "source-map-support": "0.5.21",
     "stoppable": "1.1.0",
     "type-fest": "4.10.1"

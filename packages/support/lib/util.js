@@ -122,8 +122,11 @@ function multiResolve(roots, ...args) {
   return roots.map((root) => path.resolve(root, ...args));
 }
 
-/*
+/**
  * Parses an object if possible. Otherwise returns the object without parsing.
+ *
+ * @param {any} obj
+ * @returns {any}
  */
 function safeJsonParse(obj) {
   try {
@@ -178,7 +181,7 @@ function jsonStringify(obj, replacer = null, space = 2) {
 function unwrapElement(el) {
   for (const propName of [W3C_WEB_ELEMENT_IDENTIFIER, 'ELEMENT']) {
     if (_.has(el, propName)) {
-      return el[propName];
+      return /** @type {string} */ (el[propName]);
     }
   }
   return /** @type {string} */(el);

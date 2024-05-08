@@ -122,7 +122,7 @@ const ElementsMixin: FakeDriverElementsMixin = {
   async getCssProperty(this: FakeDriver, prop: string, elementId: string) {
     this.assertWebviewContext();
     const el = this.getElement(elementId);
-    return el.getCss(prop);
+    return el.getCss(prop) ?? '';
   },
 
   async getLocation(this: FakeDriver, elementId: string) {

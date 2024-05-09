@@ -134,10 +134,12 @@ class ProtocolConverter {
     const bodyObj = util.safeJsonParse(body);
     if (_.isPlainObject(bodyObj)) {
       if (this.downstreamProtocol === W3C && _.has(bodyObj, 'name') && !_.has(bodyObj, 'handle')) {
-        this.log.debug(`Copied 'name' value '${bodyObj.name}' to 'handle' as per W3C spec`);
+        this.log.debug(
+          `Copied 'name' value '${/** @type {import('@appium/types').StringRecord} */ (bodyObj).name}' to 'handle' as per W3C spec`
+        );
         return await this.proxyFunc(url, method, {
-          ...bodyObj,
-          handle: bodyObj.name,
+          .../** @type {import('@appium/types').StringRecord} */ (bodyObj),
+          handle: /** @type {import('@appium/types').StringRecord} */ (bodyObj).name,
         });
       }
       if (
@@ -145,10 +147,12 @@ class ProtocolConverter {
         _.has(bodyObj, 'handle') &&
         !_.has(bodyObj, 'name')
       ) {
-        this.log.debug(`Copied 'handle' value '${bodyObj.handle}' to 'name' as per JSONWP spec`);
+        this.log.debug(
+          `Copied 'handle' value '${/** @type {import('@appium/types').StringRecord} */ (bodyObj).handle}' to 'name' as per JSONWP spec`
+        );
         return await this.proxyFunc(url, method, {
-          ...bodyObj,
-          name: bodyObj.handle,
+          .../** @type {import('@appium/types').StringRecord} */ (bodyObj),
+          name: /** @type {import('@appium/types').StringRecord} */ (bodyObj).handle,
         });
       }
     }

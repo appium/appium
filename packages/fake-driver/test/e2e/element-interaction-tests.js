@@ -102,9 +102,9 @@ function elementTests() {
       let {elementId} = await driver.$('body');
       (await driver.getElementCSSValue(elementId, 'background-color')).should.equal('#000');
     });
-    it('should return null for an unspecified css property', async function () {
+    it('should return empty string for an unspecified css property', async function () {
       let {elementId} = await driver.$('body');
-      should.equal(await driver.getElementCSSValue(elementId, 'font-size'), null);
+      should.equal(await driver.getElementCSSValue(elementId, 'font-size'), '');
     });
   });
 }

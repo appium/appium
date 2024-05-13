@@ -13,10 +13,11 @@ maintenance as part of their employees' core job duties!
 
 * *Coming Soon!*
 
-## Platinum Sponsors
+## Strategic Partners
 
-We are very grateful for the financial support of our exclusive Platinum Sponsors, who contribute
-a significant ongoing investment of funds to help the project attract and reward contributors!
+We are very grateful for the financial and marketing support of our exclusive Strategic Partners,
+who contribute a significant ongoing investment of funds to help the project attract and reward
+contributors!
 
 * *Coming Soon!*
 

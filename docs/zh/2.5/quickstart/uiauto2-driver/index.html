@@ -24,7 +24,7 @@
     
     
       
-        <title>Install the UiAutomator2 Driver - Appium Documentation</title>
+        <title>安装 UiAutomator2 驱动 - Appium Documentation</title>
       
     
     
@@ -120,6 +120,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#android" class="md-skip">
+          跳转至
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -153,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Install the UiAutomator2 Driver
+              安装 UiAutomator2 驱动
             
           </span>
         </div>
@@ -829,15 +834,94 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    安装 UiAutomator2 驱动
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Install the UiAutomator2 Driver
+    安装 UiAutomator2 驱动
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#android" class="md-nav__link">
+    <span class="md-ellipsis">
+      设置 Android 自动化要求
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="设置 Android 自动化要求">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#android-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Android SDK
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-jdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java JDK
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      准备设备
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装驱动本身
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -916,7 +1000,7 @@
         
   
   <span class="md-ellipsis">
-    Write a Test (Python)
+    编写一个测试 (Python)
   </span>
   
 
@@ -1760,6 +1844,65 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#android" class="md-nav__link">
+    <span class="md-ellipsis">
+      设置 Android 自动化要求
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="设置 Android 自动化要求">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#android-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Android SDK
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#java-jdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      Java JDK
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      准备设备
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      安装驱动本身
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1781,9 +1924,74 @@
   
 
 
-  <h1>Install the UiAutomator2 Driver</h1>
+  <h1>安装 UiAutomator2 驱动</h1>
 
-<p>TODO</p>
+<p>如果没有<a href="../../intro/drivers/">驱动</a>，你几乎无法使用 Appium，驱动是允许 Appium 自动化特定平台的接口。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>在本快速入门指南中，我们将自动化一个 Android 平台的应用，因为通过 Appium 进行 Android 自动化的系统要求与 Appium 本身相同（而 iOS 驱动例如，需要你使用 macOS）。</p>
+</div>
+<p>我们将使用的驱动称为 <a href="https://github.com/appium/appium-uiautomator2-driver">UiAutomator2 驱动</a>。值得访问该驱动的文档并将其加入书签，因为这将是今后不可或缺的参考资料。</p>
+<h2 id="android">设置 Android 自动化要求<a class="headerlink" href="#android" title="Permanent link">&para;</a></h2>
+<p>根据驱动的要求，除了一个运行中的 Appium 服务器，我们还需要设置以下内容：</p>
+<h3 id="android-sdk">Android SDK<a class="headerlink" href="#android-sdk" title="Permanent link">&para;</a></h3>
+<ul>
+<li>设置 Android SDK 要求的最简单方法是下载 <a href="https://developer.android.com/studio">Android Studio</a>。
+我们需要使用其 SDK 管理器 (<em>设置 -&gt; 外观和行为 -&gt; 系统设置 -&gt; Android SDK</em>) 来下载以下项目：<ul>
+<li>Android SDK 平台（选择我们想要自动化的任何 Android 平台，例如，API 级别 30）</li>
+<li>Android SDK 平台工具</li>
+</ul>
+</li>
+<li>如果愿意，你也可以不通过 Android Studio 下载这些项目：<ul>
+<li>可以使用 <a href="https://developer.android.com/studio#command-line-tools-only">Android 命令行工具</a> 中包含的 <code>sdkmanager</code> 下载 Android SDK 平台</li>
+<li><a href="https://developer.android.com/tools/releases/platform-tools">Android SDK 平台工具</a></li>
+</ul>
+</li>
+<li>设置 <code>ANDROID_HOME</code> 环境变量，指向安装 Android SDK 的目录。通常可以在 Android Studio 的 SDK 管理器中找到这个目录的路径。它将包含 <code>platform-tools</code> 和其他目录。</li>
+</ul>
+<h3 id="java-jdk">Java JDK<a class="headerlink" href="#java-jdk" title="Permanent link">&para;</a></h3>
+<ul>
+<li>安装 Java JDK（对于最新的 Android API 级别，需要 JDK 9，否则需要 JDK 8）。你可以从 <a href="https://jdk.java.net/">Oracle</a> 或 <a href="https://adoptium.net/en-GB/temurin/releases/">Adoptium</a> 下载。
+确保下载的是 JDK 而不是 JRE。</li>
+<li>设置 <code>JAVA_HOME</code> 环境变量，指向 JDK 的安装目录。它将包含 <code>bin</code>、<code>include</code> 和其他目录。</li>
+</ul>
+<h3 id="_1">准备设备<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>如果使用模拟器，使用 Android Studio 创建并启动一个 Android 虚拟设备 (AVD)。
+你可能需要下载你想要创建的模拟器的 API 级别的系统镜像。使用 Android Studio 中的 AVD 创建向导通常是完成所有这些操作的最简单方式。</li>
+<li>如果使用真实设备，应该<a href="https://developer.android.com/studio/debug/dev-options">为开发设置并启用 USB 调试</a>。</li>
+<li>连接模拟器或设备后，你可以运行 <code>adb devices</code>（通过位于 <code>$ANDROID_HOME/platform-tools/adb</code> 的二进制文件）来验证你的设备是否显示为已连接。</li>
+</ul>
+<p>一旦你的设备在 <code>adb</code> 中显示为已连接，并且你已验证环境变量设置正确，你就可以开始了！如果在这些步骤中遇到任何问题，请参考驱动文档，或必要时查看各种 Android 或 Java 文档网站。</p>
+<p>此外，恭喜你：不管你是否打算，你现在已经在你的系统上设置了 Android 开发者工具链，所以你可以开始制作 Android 应用了！</p>
+<h2 id="_2">安装驱动本身<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<p>由于 UiAutomator2 驱动是由核心 Appium 团队维护的，它有一个官方的驱动名称，你可以通过 <a href="../../cli/extensions/">Appium 扩展 CLI</a> 轻松安装：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>appium<span class="w"> </span>driver<span class="w"> </span>install<span class="w"> </span>uiautomator2
+</code></pre></div>
+<p>它应该产生类似下面的输出：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Attempting to find and install driver &#39;uiautomator2&#39;
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>✔ Installing &#39;uiautomator2&#39; using NPM install spec &#39;appium-uiautomator2-driver&#39;
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Driver uiautomator2@2.0.5 successfully installed
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>- automationName: UiAutomator2
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>- platformNames: [&quot;Android&quot;]
+</code></pre></div>
+<p>运行此命令将定位并安装 UiAutomator2 驱动的最新版本，使其可用于自动化。请注意，当安装时，它会告诉你哪些平台它适用（在这种情况下是 <code>Android</code>），以及在 Appium 会话中使用此驱动时必须使用的自动化名称（在这种情况下是 <code>UiAutomator2</code> 的 <code>appium:automationName</code> <a href="../../guides/caps/">capability</a>）。</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>在这个快速入门中，我们使用了 <a href="../../cli/extensions/">扩展 CLI</a> 来安装 UiAutomator2 驱动，但如果你将 Appium 集成到一个 Node.js 项目中，你可能更喜欢使用 <code>npm</code> 来管理 Appium 及其相关驱动。要了解更多关于这种技术的信息，请访问关于<a href="../../guides/managing-exts/">管理 Appium 扩展</a>的指南。</p>
+</div>
+<p>现在，再次启动 Appium 服务器（运行 <code>appium</code>），你应该看到新安装的驱动被列为可用：</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[Appium] Available drivers:
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>[Appium]   - uiautomator2@2.0.5 (automationName &#39;UiAutomator2&#39;)
+</code></pre></div>
+<p>Android 设置完成并且 UiAutomator2 驱动已安装后，你就可以编写你的第一个测试了！现在选择你喜欢的语言并试一试：</p>
+<div class="grid cards">
+<ul>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h18v18H3V3m4.73 15.04c.4.85 1.19 1.55 2.54 1.55 1.5 0 2.53-.8 2.53-2.55v-5.78h-1.7V17c0 .86-.35 1.08-.9 1.08-.58 0-.82-.4-1.09-.87l-1.38.83m5.98-.18c.5.98 1.51 1.73 3.09 1.73 1.6 0 2.8-.83 2.8-2.36 0-1.41-.81-2.04-2.25-2.66l-.42-.18c-.73-.31-1.04-.52-1.04-1.02 0-.41.31-.73.81-.73.48 0 .8.21 1.09.73l1.31-.87c-.55-.96-1.33-1.33-2.4-1.33-1.51 0-2.48.96-2.48 2.23 0 1.38.81 2.03 2.03 2.55l.42.18c.78.34 1.24.55 1.24 1.13 0 .48-.45.83-1.15.83-.83 0-1.31-.43-1.67-1.03l-1.38.8Z"/></svg></span> <a href="../test-js/"><strong>JavaScript</strong></a></li>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.5 6.08s-6.84 1.71-3.56 5.48c.97 1.11-.25 2.11-.25 2.11s2.45-1.25 1.31-2.85c-1.06-1.47-1.86-2.2 2.5-4.74m-4.47 1.2C16.08 4.08 14 2 14 2c.84 3.3-2.96 4.3-4.33 6.36-.94 1.4.46 2.91 2.33 4.64-.71-1.7-3.22-3.16.03-5.72M9.37 17.47c-3.08.86 1.88 2.63 5.79.96-.38-.15-.75-.33-1.1-.54-1.36.31-2.76.37-4.14.18-1.31-.16-.55-.6-.55-.6m5.32-1.68c-1.75.38-3.56.47-5.34.26-1.31-.13-.45-.77-.45-.77-3.4 1.13 1.88 2.4 6.6 1.02-.29-.11-.57-.3-.81-.51m3.42 3.3s.57.47-.61.83c-2.28.68-9.43.89-11.41.03-.71-.31.63-.74 1.05-.83.23-.06.46-.08.69-.08-.79-.54-5.13 1.1-2.19 1.56 7.97 1.3 14.54-.6 12.47-1.51m-2.74-4.86c.29-.19.6-.35.92-.49 0 0-1.51.26-3.02.4-1.6.16-3.21.18-4.81.06-2.35-.31 1.29-1.2 1.29-1.2-1.1 0-2.18.26-3.16.75-2.05 1 5.1 1.45 8.78.48m.9 2.42c-.02.04-.04.07-.08.1 5.01-1.31 3.17-4.64.77-3.81-.13.06-.24.14-.31.25.14-.05.28-.09.43-.12 1.2-.24 2.92 1.63-.81 3.58m.13 4.61c-3.01.52-6.09.56-9.12.14 0 0 .46.38 2.81.53 3.6.23 9.13-.13 9.26-1.83.03.01-.23.65-2.95 1.16Z"/></svg></span> <a href="../test-java/"><strong>Java</strong></a></li>
+<li><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 7.5A2.86 2.86 0 0 1 22 10.36v3.78A2.86 2.86 0 0 1 19.14 17H12c0 .39.32.96.71.96H17v1.68a2.86 2.86 0 0 1-2.86 2.86H9.86A2.86 2.86 0 0 1 7 19.64v-3.75a2.85 2.85 0 0 1 2.86-2.85h5.25a2.85 2.85 0 0 0 2.85-2.86V7.5h1.18m-4.28 11.79c-.4 0-.72.3-.72.89 0 .59.32.71.72.71a.71.71 0 0 0 .71-.71c0-.59-.32-.89-.71-.89m-10-1.79A2.86 2.86 0 0 1 2 14.64v-3.78A2.86 2.86 0 0 1 4.86 8H12c0-.39-.32-.96-.71-.96H7V5.36A2.86 2.86 0 0 1 9.86 2.5h4.28A2.86 2.86 0 0 1 17 5.36v3.75a2.85 2.85 0 0 1-2.86 2.85H8.89a2.85 2.85 0 0 0-2.85 2.86v2.68H4.86M9.14 5.71c.4 0 .72-.3.72-.89 0-.59-.32-.71-.72-.71-.39 0-.71.12-.71.71s.32.89.71.89Z"/></svg></span> <a href="../test-py/"><strong>Python</strong></a></li>
+</ul>
+</div>
 
 
 
@@ -1804,7 +2012,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-07-06T19:46:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-07-06</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-04-18T05:46:46+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-04-18</span>
   </span>
 
     

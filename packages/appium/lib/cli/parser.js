@@ -309,14 +309,13 @@ class ArgParser {
         {
           command: 'all',
           help: `Install all known drivers '${_.join(_.keys(KNOWN_DRIVERS), ',')}' ` +
-            `and plugins '${_.join(_.keys(KNOWN_PLUGINS), ',')}'` +
-            `if APPIUM_HOME has no drivers and plugins`,
-          aliases: ['a'],
+            `and plugins '${_.join(_.keys(KNOWN_PLUGINS), ',')}' ` +
+            `if APPIUM_HOME has no drivers and plugins`
         },
       ];
 
-      for (const {command, help, aliases} of parserSpecs) {
-        const parser = extSubParsers.add_parser(command, {help, aliases: aliases ?? []});
+      for (const {command, help} of parserSpecs) {
+        const parser = extSubParsers.add_parser(command, {help});
         ArgParser._patchExit(parser);
       }
     }

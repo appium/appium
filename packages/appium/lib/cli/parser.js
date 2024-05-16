@@ -292,7 +292,7 @@ class ArgParser {
     static _addSetupToParser(subParser) {
       const setupParser = subParser.add_parser('setup', {
         add_help: true,
-        help: 'Install latest uiautomator2 and xcuitest driver if no APPIUM_HOME was empty',
+        help: 'Install latest preset drivers and plugins if APPIUM_HOME has no drivers and plugins',
       });
 
       ArgParser._patchExit(setupParser);
@@ -303,7 +303,7 @@ class ArgParser {
       const parserSpecs = [
         {
           command: 'all',
-          help: `Install all available known drivers and plugins`,
+          help: `Install all known drivers and plugins`,
           aliases: ['a'],
         },
       ];

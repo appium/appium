@@ -5,12 +5,12 @@ import {runExtensionCommand} from './extension';
 /**
  * Driver names listed in KNOWN_DRIVERS to install by default.
  */
-const DEFAULT_DRIVERS = ['uiautomator2', 'xcuitest'];
+export const DEFAULT_DRIVERS = ['uiautomator2', 'xcuitest'];
 
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
-const DEFAULT_PLUGINS = ['images'];
+export const DEFAULT_PLUGINS = ['images'];
 
 /**
  * Subcommand for 'setup' to install all known drivers/plugins.
@@ -19,19 +19,16 @@ const SUBCOMMAND_ALL = 'all';
 
 
 /**
- * @template {import('appium/types').CliExtensionCommand} Cmd
- * @template {import('appium/types').CliExtensionSubcommand} SubCmd
- */
-
-/**
- * Run 'setup' command.
+ * Run 'setup' command to install drivers/plugins into the given appium home.
+ * @template {import('appium/types').CliCommandSetup} SetupCmd
+ * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {string} appiumHome
- * @param {import('appium/types').Args<Cmd, SubCmd>} preConfigArgs
- * @param {import('../extension/extension-config').ExtensionConfig<Cmd>} driverConfig
- * @param {import('../extension/extension-config').ExtensionConfig<Cmd>} pluginConfig
+ * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
  * @returns
  */
-export async function setupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
+export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
     throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: '${
       _.isEmpty(driverConfig.installedExtensions)
@@ -44,7 +41,6 @@ export async function setupCommand(appiumHome, preConfigArgs, driverConfig, plug
     }'`);
   }
 
-  // @ts-ignore not yet
   if (preConfigArgs.setupCommand === SUBCOMMAND_ALL) {
     await setupDriverFull(preConfigArgs, driverConfig);
     await setupPluginFull(preConfigArgs, pluginConfig);

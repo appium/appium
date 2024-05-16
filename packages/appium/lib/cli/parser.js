@@ -10,6 +10,8 @@ import {
   EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
+  KNOWN_DRIVERS,
+  KNOWN_PLUGINS,
   PLUGIN_TYPE,
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND
@@ -17,6 +19,7 @@ import {
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
+import { DEFAULT_DRIVERS, DEFAULT_PLUGINS } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
 
@@ -292,7 +295,9 @@ class ArgParser {
     static _addSetupToParser(subParser) {
       const setupParser = subParser.add_parser('setup', {
         add_help: true,
-        help: 'Install latest preset drivers and plugins if APPIUM_HOME has no drivers and plugins',
+        help: `Install latest drivers '${_.join(DEFAULT_DRIVERS, ',')}' and ` +
+          `plugins '${_.join(DEFAULT_PLUGINS, ',')}' ` +
+          `if APPIUM_HOME has no drivers and plugins`,
       });
 
       ArgParser._patchExit(setupParser);
@@ -303,7 +308,9 @@ class ArgParser {
       const parserSpecs = [
         {
           command: 'all',
-          help: `Install all known drivers and plugins`,
+          help: `Install all known drivers '${_.join(_.keys(KNOWN_DRIVERS), ',')}' ` +
+            `and plugins '${_.join(_.keys(KNOWN_PLUGINS), ',')}'` +
+            `if APPIUM_HOME has no drivers and plugins`,
           aliases: ['a'],
         },
       ];

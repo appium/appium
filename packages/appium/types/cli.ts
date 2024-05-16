@@ -17,6 +17,11 @@ export type CliExtensionCommand = CliCommandDriver | CliCommandPlugin;
 export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetup;
 
 /**
+ * Possible subcommands of ${@linkcode CliCommandSetup}
+ */
+export type CliCommandSetupSubcommand = 'all';
+
+/**
  * Possible subcommands of {@linkcode CliCommandDriver} or
  * {@linkcode CliCommandPlugin}.
  */
@@ -106,6 +111,10 @@ export interface PluginExtArgs {
   plugin?: string;
 }
 
+export interface SetupArgs {
+  setupCommand: CliCommandSetupSubcommand;
+}
+
 /**
  * These are args which the user will specify if using an extension command
  */
@@ -133,9 +142,11 @@ export interface BaseExtArgs<Cmd extends CliExtensionCommand> {
  */
 export type ExtArgs<
   Cmd extends CliExtensionCommand,
-  SubCmd extends CliExtensionSubcommand
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand
 > = BaseExtArgs<Cmd> &
-  (Cmd extends CliCommandDriver
+  (Cmd extends CliCommandSetup
+    ? SetupArgs
+    : Cmd extends CliCommandDriver
     ? DriverExtArgs
     : Cmd extends CliCommandPlugin
     ? PluginExtArgs
@@ -153,13 +164,15 @@ export type ExtArgs<
  */
 export type CommonArgs<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = MoreArgs &
   ProgrammaticArgs &
   (Cmd extends CliCommandServer
     ? ServerArgs
+    : Cmd extends CliCommandSetup
+    ? SetupArgs
     : Cmd extends CliExtensionCommand
-    ? SubCmd extends CliExtensionSubcommand
+    ? SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand
       ? ExtArgs<Cmd, SubCmd>
       : never
     : never);
@@ -169,7 +182,7 @@ export type CommonArgs<
  */
 export type ParsedArgs<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = CommonArgs<Cmd, SubCmd>;
 
 /**
@@ -179,7 +192,7 @@ export type ParsedArgs<
  */
 export type Args<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = Cmd extends CliCommandServer
   ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs>
   : ParsedArgs<Cmd, SubCmd>;

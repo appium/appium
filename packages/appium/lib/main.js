@@ -13,7 +13,7 @@ import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
-import { setupCommand } from './cli/setup-command';
+import { runSetupCommand } from './cli/setup-command';
 import {getParser} from './cli/parser';
 import {
   APPIUM_VER,
@@ -279,8 +279,7 @@ async function init(args) {
       appiumHome,
     });
   } else if (isSetupCommandArgs(preConfigArgs)) {
-    // @ts-ignore not defined yet
-    await setupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
+    await runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
     return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);

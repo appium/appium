@@ -4,7 +4,7 @@ import {processCapabilities, PROTOCOLS, STANDARD_CAPS, errors} from '@appium/bas
 import {inspect as dump} from 'util';
 import {node, fs} from '@appium/support';
 import path from 'path';
-import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE} from './constants';
+import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from './constants';
 import os from 'node:os';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -328,6 +328,10 @@ function pullSettings(caps) {
  */
 export function isServerCommandArgs(args) {
   return args.subcommand === SERVER_SUBCOMMAND;
+}
+
+export function isSetupCommandArgs(args) {
+  return args.subcommand === SETUP_SUBCOMMAND;
 }
 
 /**

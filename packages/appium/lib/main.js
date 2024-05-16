@@ -25,7 +25,7 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
+import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT, SETUP_SUBCOMMAND} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate as validateSchema} from './schema/schema';
 import {
@@ -38,6 +38,7 @@ import {
   fetchInterfaces,
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
+  isSetupCommandArgs,
 } from './utils';
 import net from 'node:net';
 
@@ -216,7 +217,7 @@ async function init(args) {
   }
 
   // merge config and apply defaults.
-  // the order of precendece is:
+  // the order of precedence is:
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
@@ -276,6 +277,22 @@ async function init(args) {
       pluginConfig,
       appiumHome,
     });
+  } else if (isSetupCommandArgs(preConfigArgs)) {
+    if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
+      throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: ${
+        _.isEmpty(driverConfig.installedExtensions)
+        ? '(no drivers)'
+        : _.join(_.keys(driverConfig.installedExtensions), ',')
+      }, plugins: ${
+        _.isEmpty(pluginConfig.installedExtensions)
+        ? '(no plugins)'
+        : _.join(_.keys(pluginConfig.installedExtensions), ',')
+      }`);
+    }
+    logger.info(`appiumHome: ${appiumHome}`);
+    logger.info(`appiumHomeSourceName: ${appiumHomeSourceName}`);
+    logger.info(`installing`);
+    return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);
     if (isExtensionCommandArgs(preConfigArgs)) {

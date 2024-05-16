@@ -18,7 +18,7 @@ export const SERVER_SUBCOMMAND = 'server';
 /**
  * The `setup` command of the `appium` CLI
  */
-export const SETUP_STANDARD = 'setup'
+export const SETUP_SUBCOMMAND = 'setup'
 
 
 /**

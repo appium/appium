@@ -12,7 +12,7 @@ import {
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
   SERVER_SUBCOMMAND,
-  SETUP_STANDARD
+  SETUP_SUBCOMMAND
 } from '../constants';
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
@@ -25,7 +25,7 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatially inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([SETUP_STANDARD, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
+  new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;

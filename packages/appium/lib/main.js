@@ -13,6 +13,7 @@ import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
+import { setupCommand } from './cli/setup-command';
 import {getParser} from './cli/parser';
 import {
   APPIUM_VER,
@@ -278,35 +279,7 @@ async function init(args) {
       appiumHome,
     });
   } else if (isSetupCommandArgs(preConfigArgs)) {
-    if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
-      throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: ${
-        _.isEmpty(driverConfig.installedExtensions)
-        ? '(no drivers)'
-        : _.join(_.keys(driverConfig.installedExtensions), ',')
-      }, plugins: ${
-        _.isEmpty(pluginConfig.installedExtensions)
-        ? '(no plugins)'
-        : _.join(_.keys(pluginConfig.installedExtensions), ',')
-      }`);
-    }
-    logger.info(`appiumHome: ${appiumHome}`);
-    logger.info(`appiumHomeSourceName: ${appiumHomeSourceName}`);
-    logger.info(`installing`);
-
-    const uia2PreConfigArgs = /** @type {Args<Cmd, SubCmd>} */ preConfigArgs;
-    uia2PreConfigArgs.subcommand = "driver";
-    uia2PreConfigArgs["driverCommand"] = "install";
-    uia2PreConfigArgs["driver"] = "uiautomator2";
-    // @ts-ignore
-    await runExtensionCommand(uia2PreConfigArgs, driverConfig);
-
-    const xcuitestPreConfigArgs = /** @type {Args<Cmd, SubCmd>} */ preConfigArgs;
-    xcuitestPreConfigArgs.subcommand = "driver";
-    xcuitestPreConfigArgs["driverCommand"] = "install";
-    xcuitestPreConfigArgs["driver"] = "xcuitest";
-    // @ts-ignore
-    await runExtensionCommand(xcuitestPreConfigArgs, driverConfig);
-
+    await setupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
     return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);

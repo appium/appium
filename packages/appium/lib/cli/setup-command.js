@@ -2,32 +2,57 @@ import _ from 'lodash';
 import { KNOWN_DRIVERS, KNOWN_PLUGINS, SETUP_SUBCOMMAND } from '../constants';
 import {runExtensionCommand} from './extension';
 
+/**
+ * Driver names listed in KNOWN_DRIVERS to install by default.
+ */
 const DEFAULT_DRIVERS = ['uiautomator2', 'xcuitest'];
+
+/**
+ * Plugin names listed in KNOWN_PLUGINS to install by default.
+ */
 const DEFAULT_PLUGINS = ['images'];
 
+/**
+ * Subcommand for 'setup' to install all known drivers/plugins.
+ */
 const SUBCOMMAND_ALL = 'all';
 
-export async function setupCommand(appiumHome, configArgs, driverConfig, pluginConfig) {
+
+/**
+ * @template {import('appium/types').CliExtensionCommand} Cmd
+ * @template {import('appium/types').CliExtensionSubcommand} SubCmd
+ */
+
+/**
+ * Run 'setup' command.
+ * @param {string} appiumHome
+ * @param {import('appium/types').Args<Cmd, SubCmd>} preConfigArgs
+ * @param {import('../extension/extension-config').ExtensionConfig<Cmd>} driverConfig
+ * @param {import('../extension/extension-config').ExtensionConfig<Cmd>} pluginConfig
+ * @returns
+ */
+export async function setupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
-    throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: ${
+    throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: '${
       _.isEmpty(driverConfig.installedExtensions)
       ? '(no drivers)'
       : _.join(_.keys(driverConfig.installedExtensions), ',')
-    }, plugins: ${
+    }', plugins: '${
       _.isEmpty(pluginConfig.installedExtensions)
       ? '(no plugins)'
       : _.join(_.keys(pluginConfig.installedExtensions), ',')
-    }`);
+    }'`);
   }
 
-  if (configArgs.setupCommand == SUBCOMMAND_ALL) {
-    await setupDriverFull(configArgs, driverConfig);
-    await setupPluginFull(configArgs, pluginConfig);
+  // @ts-ignore not yet
+  if (preConfigArgs.setupCommand === SUBCOMMAND_ALL) {
+    await setupDriverFull(preConfigArgs, driverConfig);
+    await setupPluginFull(preConfigArgs, pluginConfig);
     return;
   }
 
-  await setupDriverDefault(configArgs, driverConfig);
-  await setupPluginDefault(configArgs, pluginConfig);
+  await setupDriverDefault(preConfigArgs, driverConfig);
+  await setupPluginDefault(preConfigArgs, pluginConfig);
 };
 
 async function setupDriverDefault(configArgs, driverConfig) {

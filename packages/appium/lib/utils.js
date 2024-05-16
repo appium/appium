@@ -330,6 +330,12 @@ export function isServerCommandArgs(args) {
   return args.subcommand === SERVER_SUBCOMMAND;
 }
 
+/**
+ * @template {CliCommand} Cmd
+ * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<CliExtensionCommand, SubCmd>}
+ */
 export function isSetupCommandArgs(args) {
   return args.subcommand === SETUP_SUBCOMMAND;
 }
@@ -458,6 +464,7 @@ export {
  * @typedef {import('appium/types').CliCommandServer} ServerCommand
  * @typedef {import('appium/types').CliCommandDriver} DriverCommand
  * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandSetup} SetupCommand
  */
 
 /**

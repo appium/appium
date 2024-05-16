@@ -286,7 +286,7 @@ class ArgParser {
   }
 
   /**
-   *
+   * Add subcommand and sub-sub commands for 'setup' subcommand.
    * @param {import('argparse').SubParser} subParser
    */
     static _addSetupToParser(subParser) {

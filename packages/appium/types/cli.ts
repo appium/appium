@@ -2,6 +2,7 @@ import {DriverType, PluginType, ServerArgs} from '@appium/types';
 import {SetOptional} from 'type-fest';
 import {InstallType} from './manifest';
 export type CliCommandServer = 'server';
+export type CliCommandSetup = 'setup';
 export type CliCommandDriver = DriverType;
 export type CliCommandPlugin = PluginType;
 
@@ -13,7 +14,7 @@ export type CliExtensionCommand = CliCommandDriver | CliCommandPlugin;
 /**
  * Possible commands for the `appium` CLI.
  */
-export type CliCommand = CliCommandServer | CliExtensionCommand;
+export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetup;
 
 /**
  * Possible subcommands of {@linkcode CliCommandDriver} or

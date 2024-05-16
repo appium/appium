@@ -26,7 +26,7 @@ import {
 } from './config';
 import {readConfigFile} from './config-file';
 import {loadExtensions, getActivePlugins, getActiveDrivers} from './extension';
-import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT, SETUP_SUBCOMMAND} from './constants';
+import {SERVER_SUBCOMMAND, LONG_STACKTRACE_LIMIT} from './constants';
 import registerNode from './grid-register';
 import {getDefaultsForSchema, validate as validateSchema} from './schema/schema';
 import {
@@ -279,6 +279,7 @@ async function init(args) {
       appiumHome,
     });
   } else if (isSetupCommandArgs(preConfigArgs)) {
+    // @ts-ignore not defined yet
     await setupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
     return /** @type {InitResult<Cmd>} */ ({});
   } else {
@@ -470,6 +471,7 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('appium/types').CliCommandServer} ServerCommand
  * @typedef {import('appium/types').CliCommandDriver} DriverCommand
  * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandSetup} SetupCommand
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */

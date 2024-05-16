@@ -292,12 +292,28 @@ async function init(args) {
     logger.info(`appiumHome: ${appiumHome}`);
     logger.info(`appiumHomeSourceName: ${appiumHomeSourceName}`);
     logger.info(`installing`);
+
+    const uia2PreConfigArgs = /** @type {Args<Cmd, SubCmd>} */ preConfigArgs;
+    uia2PreConfigArgs.subcommand = "driver";
+    uia2PreConfigArgs["driverCommand"] = "install";
+    uia2PreConfigArgs["driver"] = "uiautomator2";
+    // @ts-ignore
+    await runExtensionCommand(uia2PreConfigArgs, driverConfig);
+
+    const xcuitestPreConfigArgs = /** @type {Args<Cmd, SubCmd>} */ preConfigArgs;
+    xcuitestPreConfigArgs.subcommand = "driver";
+    xcuitestPreConfigArgs["driverCommand"] = "install";
+    xcuitestPreConfigArgs["driver"] = "xcuitest";
+    // @ts-ignore
+    await runExtensionCommand(xcuitestPreConfigArgs, driverConfig);
+
     return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);
     if (isExtensionCommandArgs(preConfigArgs)) {
       // if the user has requested the 'driver' CLI, don't run the normal server,
       // but instead pass control to the driver CLI
+      logger.info(`preConfigArgs: ${JSON.stringify(preConfigArgs)}`)
       if (isDriverCommandArgs(preConfigArgs)) {
         await runExtensionCommand(preConfigArgs, driverConfig);
       }

@@ -288,7 +288,6 @@ class ArgParser {
   /**
    *
    * @param {import('argparse').SubParser} subParser
-   * @returns {import('./args').ArgumentDefinitions}
    */
     static _addSetupToParser(subParser) {
       const setupParser = subParser.add_parser('setup', {
@@ -297,7 +296,22 @@ class ArgParser {
       });
 
       ArgParser._patchExit(setupParser);
-      return new Map();
+      const extSubParsers = setupParser.add_subparsers({
+        dest: `setupCommand`,
+      });
+
+      const parserSpecs = [
+        {
+          command: 'all',
+          help: `Install all available known drivers and plugins`,
+          aliases: ['a'],
+        },
+      ];
+
+      for (const {command, help, aliases} of parserSpecs) {
+        const parser = extSubParsers.add_parser(command, {help, aliases: aliases ?? []});
+        ArgParser._patchExit(parser);
+      }
     }
 }
 

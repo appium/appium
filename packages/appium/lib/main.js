@@ -286,7 +286,6 @@ async function init(args) {
     if (isExtensionCommandArgs(preConfigArgs)) {
       // if the user has requested the 'driver' CLI, don't run the normal server,
       // but instead pass control to the driver CLI
-      logger.info(`preConfigArgs: ${JSON.stringify(preConfigArgs)}`)
       if (isDriverCommandArgs(preConfigArgs)) {
         await runExtensionCommand(preConfigArgs, driverConfig);
       }

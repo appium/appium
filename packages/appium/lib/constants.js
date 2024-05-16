@@ -16,6 +16,12 @@ export const PLUGIN_TYPE = 'plugin';
 export const SERVER_SUBCOMMAND = 'server';
 
 /**
+ * The `setup` command of the `appium` CLI
+ */
+export const SETUP_STANDARD = 'setup'
+
+
+/**
  * The value of `--use-plugins` if _all_ plugins should be loaded
  */
 export const USE_ALL_PLUGINS = 'all';

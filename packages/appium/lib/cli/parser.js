@@ -11,7 +11,8 @@ import {
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
-  SERVER_SUBCOMMAND
+  SERVER_SUBCOMMAND,
+  SETUP_STANDARD
 } from '../constants';
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
@@ -24,7 +25,7 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatially inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
+  new Set([SETUP_STANDARD, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;
@@ -75,6 +76,9 @@ class ArgParser {
     });
 
     const subParsers = parser.add_subparsers({dest: 'subcommand'});
+
+    // add the 'setup' command
+    ArgParser._addSetupToParser(subParsers);
 
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
@@ -280,6 +284,21 @@ class ArgParser {
       }
     }
   }
+
+  /**
+   *
+   * @param {import('argparse').SubParser} subParser
+   * @returns {import('./args').ArgumentDefinitions}
+   */
+    static _addSetupToParser(subParser) {
+      const setupParser = subParser.add_parser('setup', {
+        add_help: true,
+        help: 'Install latest uiautomator2 and xcuitest driver if no APPIUM_HOME was empty',
+      });
+
+      ArgParser._patchExit(setupParser);
+      return new Map();
+    }
 }
 
 /**

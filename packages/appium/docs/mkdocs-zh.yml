@@ -9,12 +9,12 @@ theme:
 nav:
   - 首页: index.md
   - 简介:
-      - 介绍 Appium:
-          - Appium 概述: intro/index.md
+      - intro/index.md
+      - 背景:
+          - intro/appium.md
           - intro/drivers.md
           - intro/clients.md
-      - intro/requirements.md
-      - 历史: intro/history.md
+          - intro/history.md
   - 快速开始:
       - quickstart/index.md
       - quickstart/install.md

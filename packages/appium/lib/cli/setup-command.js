@@ -6,7 +6,7 @@ import {
   SETUP_SUBCOMMAND
 } from '../constants';
 import {runExtensionCommand} from './extension';
-import { fs, system } from '@appium/support';
+import { system } from '@appium/support';
 
 /**
  * Subcommands of preset for setup
@@ -69,16 +69,15 @@ export function hostPlatformName() {
 /**
  * Run 'setup' command to install drivers/plugins into the given appium home.
  * @template {import('appium/types').CliCommandSetup} SetupCmd
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {string} appiumHome
  * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
+ * @param {DriverConfig} driverConfig
+ * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
 export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   if (preConfigArgs.setupCommand === SUBCOMMAND_RESET) {
-    await resetDriversPlugins(appiumHome, driverConfig, pluginConfig);
+    await resetDriversPlugins(driverConfig, pluginConfig);
     return;
   }
 
@@ -113,13 +112,11 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
 
 /**
  * Uninstall installed drivers and plugins in APPIUM_HOME.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {string} appiumHome
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
+ * @param {DriverConfig} driverConfig
+ * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
+async function resetDriversPlugins(driverConfig, pluginConfig) {
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
     await uninstallDriver(driverName, driverConfig);
   }
@@ -132,8 +129,8 @@ async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
 
 /**
  * Install drivers listed in DEFAULT_DRIVERS.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ * @param {DriverConfig} driverConfig
+ * @returns {Promise<void>}
  */
 async function setupDriverMobile(driverConfig) {
   for (const driverName of getPresetDrivers(SUBCOMMAND_MOBILE)) {
@@ -143,8 +140,8 @@ async function setupDriverMobile(driverConfig) {
 
 /**
  * Install all of known drivers listed in BROWSER_DRIVERS.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ * @param {DriverConfig} driverConfig
+ * @returns {Promise<void>}
  */
 async function setupDriverBrowser(driverConfig) {
   for (const driver of getPresetDrivers(SUBCOMMAND_BROWSER)) {
@@ -154,8 +151,7 @@ async function setupDriverBrowser(driverConfig) {
 
 /**
  * Install all of known drivers listed in DESKTOP_APP_DRIVERS.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ * @param {DriverConfig} driverConfig
  */
 async function setupDriverDesktopApp(driverConfig) {
   for (const driver of getPresetDrivers(SUBCOMMAND_DESKTOP)) {
@@ -166,7 +162,8 @@ async function setupDriverDesktopApp(driverConfig) {
 /**
  * Install the given driver name.
  * @param {string} driverName
- * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} driverConfig
+ * @param {DriverConfig} driverConfig
+ * @returns {Promise<void>}
  */
 async function setupDriver(driverName, driverConfig) {
   /** @type {Args} */
@@ -182,7 +179,8 @@ async function setupDriver(driverName, driverConfig) {
 /**
  * Uninstall the given driver name.
  * @param {string} driverName
- * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} driverConfig
+ * @param {DriverConfig} driverConfig
+ * @returns {Promise<void>}
  */
 async function uninstallDriver(driverName, driverConfig) {
   /** @type {Args} */
@@ -197,8 +195,8 @@ async function uninstallDriver(driverName, driverConfig) {
 
 /**
  * Install drivers listed in DEFAULT_PLUGINS.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
+ * @param {PluginConfig} pluginConfig
+ * @returns {Promise<void>}
  */
 async function setupPluginDefault(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
@@ -209,7 +207,8 @@ async function setupPluginDefault(pluginConfig) {
 /**
  * Install the given plugin name.
  * @param {string} pluginName
- * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} pluginConfig
+ * @param {PluginConfig} pluginConfig
+ * @returns {Promise<void>}
  */
 async function setupPlugin(pluginName, pluginConfig) {
   const pluginConfigArgs = {
@@ -224,7 +223,8 @@ async function setupPlugin(pluginName, pluginConfig) {
 /**
  * Uninstall the given driver name.
  * @param {string} pluginName
- * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} pluginConfig
+ * @param {DriverConfig} pluginConfig
+ * @returns {Promise<void>}
  */
 async function uninstallPlugin(pluginName, pluginConfig) {
   const pluginConfigArgs = {
@@ -239,8 +239,10 @@ async function uninstallPlugin(pluginName, pluginConfig) {
 /**
  * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
  * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
-
+ * @typedef {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} PluginConfig
+ * @typedef {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} DriverConfig
  */
+
 /**
  * @typedef {import('appium/types').Args<CliExtensionCommand, CliExtensionSubcommand>} Args
  */

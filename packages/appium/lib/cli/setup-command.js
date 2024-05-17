@@ -155,7 +155,8 @@ async function setupDriverDesktopApp(driverConfig) {
  */
 async function setupDriver(driverName, driverConfig) {
   if (_.keys(driverConfig.installedExtensions).includes(driverName)) {
-    log.info(`${driverName} (${driverConfig.installedExtensions[driverName].version}) is already installed.`);
+    log.info(`${driverName} (${driverConfig.installedExtensions[driverName].version}) is already installed. ` +
+      `Skipping the installation.`);
     return;
   }
 
@@ -205,7 +206,8 @@ async function setupPluginDefault(pluginConfig) {
  */
 async function setupPlugin(pluginName, pluginConfig) {
   if (_.keys(pluginConfig.installedExtensions).includes(pluginName)) {
-    log.info(`${pluginName} (${pluginConfig.installedExtensions[pluginName].version}) is already installed. Skipping the install.`);
+    log.info(`${pluginName} (${pluginConfig.installedExtensions[pluginName].version}) is already installed. ` +
+      `Skipping the installation.`);
     return;
   }
 

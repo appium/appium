@@ -7,6 +7,7 @@ import {
 } from '../constants';
 import {runExtensionCommand} from './extension';
 import { system } from '@appium/support';
+import log from '../logger';
 
 /**
  * Subcommands of preset for setup
@@ -69,31 +70,16 @@ export function hostPlatformName() {
 /**
  * Run 'setup' command to install drivers/plugins into the given appium home.
  * @template {import('appium/types').CliCommandSetup} SetupCmd
- * @param {string} appiumHome
  * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
  * @param {DriverConfig} driverConfig
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
-  if (preConfigArgs.setupCommand === SUBCOMMAND_RESET) {
-    await resetDriversPlugins(driverConfig, pluginConfig);
-    return;
-  }
-
-  if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
-    throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: '${
-      _.isEmpty(driverConfig.installedExtensions)
-      ? '(no drivers)'
-      : _.join(_.keys(driverConfig.installedExtensions), ',')
-    }', plugins: '${
-      _.isEmpty(pluginConfig.installedExtensions)
-      ? '(no plugins)'
-      : _.join(_.keys(pluginConfig.installedExtensions), ',')
-    }'`);
-  }
-
+export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig) {
   switch (preConfigArgs.setupCommand) {
+    case SUBCOMMAND_RESET:
+      await resetDriversPlugins(driverConfig, pluginConfig);
+      break;
     case SUBCOMMAND_DESKTOP:
       await setupDriverDesktopApp(driverConfig);
       await setupPluginDefault(pluginConfig);
@@ -117,6 +103,8 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
  * @returns {Promise<void>}
  */
 async function resetDriversPlugins(driverConfig, pluginConfig) {
+  log.info('Uninstalling drivers/plugins in APPIUM_HOME');
+
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
     await uninstallDriver(driverName, driverConfig);
   }
@@ -160,12 +148,17 @@ async function setupDriverDesktopApp(driverConfig) {
 }
 
 /**
- * Install the given driver name.
+ * Install the given driver name. It skips the installation if the given driver name was already installed.
  * @param {string} driverName
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
 async function setupDriver(driverName, driverConfig) {
+  if (_.keys(driverConfig.installedExtensions).includes(driverName)) {
+    log.info(`${driverName} (${driverConfig.installedExtensions[driverName].version}) is already installed.`);
+    return;
+  }
+
   /** @type {Args} */
   const driverConfigArgs = {
     'subcommand': 'driver',
@@ -205,12 +198,17 @@ async function setupPluginDefault(pluginConfig) {
 }
 
 /**
- * Install the given plugin name.
+ * Install the given plugin name. It skips the installation if the given plugin name was already installed.
  * @param {string} pluginName
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
 async function setupPlugin(pluginName, pluginConfig) {
+  if (_.keys(pluginConfig.installedExtensions).includes(pluginName)) {
+    log.info(`${pluginName} (${pluginConfig.installedExtensions[pluginName].version}) is already installed. Skipping the install.`);
+    return;
+  }
+
   const pluginConfigArgs = {
     'subcommand': 'plugin',
     'pluginCommand': 'install',

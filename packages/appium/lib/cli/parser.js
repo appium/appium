@@ -302,7 +302,7 @@ class ArgParser {
       add_help: true,
       help: `Install latest official drivers and/or plugins which, ` +
         `could work on current host platform ${hostPlatformName()}, ` +
-        `for specific usage if APPIUM_HOME has no drivers and plugins. ` +
+        `for specific usage. Existing drivers/plugins will remain. ` +
         `The default preset is 'mobile'.`,
     });
 

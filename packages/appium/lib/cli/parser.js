@@ -301,7 +301,7 @@ class ArgParser {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
       help: `Install latest official drivers and/or plugins which, ` +
-        `could work on current host platform ${hostPlatformName()}, ` +
+        `could work on current host platform '${hostPlatformName()}', ` +
         `for specific usage. Existing drivers/plugins will remain. ` +
         `The default preset is 'mobile'.`,
     });

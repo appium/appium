@@ -112,7 +112,7 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
 
 
 /**
- * Uninstall installed drivers and plugins, then remove the APPIUM_HOME.
+ * Uninstall installed drivers and plugins in APPIUM_HOME.
  * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {string} appiumHome
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
@@ -127,8 +127,6 @@ async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
   for (const driverName of _.keys(pluginConfig.installedExtensions)) {
     await uninstallPlugin(driverName, pluginConfig);
   }
-
-  await fs.rimraf(appiumHome);
 }
 
 

@@ -291,6 +291,16 @@ const serverArgsDisallowedInConfig = new Map([
     },
   ],
   [
+    ['--show-debug-info'],
+    {
+      dest: 'showDebugInfo',
+      action: 'store_const',
+      const: true,
+      required: false,
+      help: 'Show debug info about the current Appium deployment and exit',
+    },
+  ],
+  [
     ['--show-config'],
     {
       dest: 'showConfig',

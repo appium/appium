@@ -2,8 +2,7 @@ import _ from 'lodash';
 import {
   DESKTOP_BROWSER_DRIVERS,
   DESKTOP_DRIVERS,
-  MOBILE_DRIVERS,
-  SETUP_SUBCOMMAND
+  MOBILE_DRIVERS
 } from '../constants';
 import {runExtensionCommand} from './extension';
 import { system } from '@appium/support';
@@ -37,7 +36,7 @@ const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
-export const DEFAULT_PLUGINS = [];
+export const DEFAULT_PLUGINS = ['images'];
 
 /**
  * Return a list of drivers available for current host platform.
@@ -71,14 +70,15 @@ export function hostPlatformName() {
  * Run 'setup' command to install drivers/plugins into the given appium home.
  * @template {import('appium/types').CliCommandSetup} SetupCmd
  * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
+ * @param {string} appiumHome
  * @param {DriverConfig} driverConfig
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig) {
+export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   switch (preConfigArgs.setupCommand) {
     case SUBCOMMAND_RESET:
-      await resetDriversPlugins(driverConfig, pluginConfig);
+      await resetDriversPlugins(appiumHome, driverConfig, pluginConfig);
       break;
     case SUBCOMMAND_DESKTOP:
       await setupDriverDesktopApp(driverConfig);
@@ -98,12 +98,13 @@ export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig)
 
 /**
  * Uninstall installed drivers and plugins in APPIUM_HOME.
+ * @param {string} appiumHome
  * @param {DriverConfig} driverConfig
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-async function resetDriversPlugins(driverConfig, pluginConfig) {
-  log.info('Uninstalling drivers/plugins in APPIUM_HOME');
+async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
+  log.info(`Uninstalling drivers/plugins in APPIUM_HOME[${appiumHome}]`);
 
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
     await uninstallDriver(driverName, driverConfig);

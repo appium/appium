@@ -19,7 +19,7 @@ export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetu
 /**
  * Possible subcommands of ${@linkcode CliCommandSetup}
  */
-export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop';
+export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop' | 'reset';
 
 /**
  * Possible subcommands of {@linkcode CliCommandDriver} or

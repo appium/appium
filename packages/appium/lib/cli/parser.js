@@ -23,7 +23,8 @@ import {
   DESKTOP_APP_DRIVERS,
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_DESKTOP,
-  SUBCOMMAND_BROWSER
+  SUBCOMMAND_BROWSER,
+  SUBCOMMAND_RESET
 } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
@@ -324,6 +325,10 @@ class ArgParser {
         command: SUBCOMMAND_DESKTOP,
         help: `Install latest drivers for desktop app '${_.join(DESKTOP_APP_DRIVERS, ',')}' ` +
           `if APPIUM_HOME has no drivers.`
+      },
+      {
+        command: SUBCOMMAND_RESET,
+        help: `Delete contents in APPIUM_HOME.`
       },
     ];
 

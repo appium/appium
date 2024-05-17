@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { SETUP_SUBCOMMAND } from '../constants';
 import {runExtensionCommand} from './extension';
+import { fs } from '@appium/support';
 
 /**
  * Driver names listed in KNOWN_DRIVERS to install by default.
@@ -28,6 +29,12 @@ export const DEFAULT_PLUGINS = [];
 
 
 /**
+ * Remove ANDROID_HOME
+ */
+export const SUBCOMMAND_RESET = 'reset'
+
+
+/**
  * Run 'setup' command to install drivers/plugins into the given appium home.
  * @template {import('appium/types').CliCommandSetup} SetupCmd
  * @template {import('appium/types').CliExtensionCommand} ExtCmd
@@ -38,6 +45,11 @@ export const DEFAULT_PLUGINS = [];
  * @returns
  */
 export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
+  if (preConfigArgs.setupCommand === SUBCOMMAND_RESET) {
+    await fs.rimraf(appiumHome);
+    return;
+  }
+
   if (!_.isEmpty(driverConfig.installedExtensions) || !_.isEmpty(pluginConfig.installedExtensions)) {
     throw new Error(`'${SETUP_SUBCOMMAND}' will not run because '${appiumHome}' already has drivers: '${
       _.isEmpty(driverConfig.installedExtensions)
@@ -83,7 +95,7 @@ async function setupDriverMobile(driverConfig) {
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
 async function setupDriverBrowser(driverConfig) {
-  for (const driver of _.keys(BROWSER_DRIVERS)) {
+  for (const driver of BROWSER_DRIVERS) {
     await setupDriver(driver, driverConfig);
   }
 }
@@ -94,7 +106,7 @@ async function setupDriverBrowser(driverConfig) {
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
 async function setupDriverDesktopApp(driverConfig) {
-  for (const driver of _.keys(DESKTOP_APP_DRIVERS)) {
+  for (const driver of DESKTOP_APP_DRIVERS) {
     await setupDriver(driver, driverConfig);
   }
 }

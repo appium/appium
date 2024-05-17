@@ -17,7 +17,14 @@ import {
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
-import { MOBILE_DRIVERS, DEFAULT_PLUGINS, BROWSER_DRIVERS, DESKTOP_APP_DRIVERS, SUBCOMMAND_MOBILE, SUBCOMMAND_DESKTOP, SUBCOMMAND_BROWSER } from './setup-command';
+import {
+  MOBILE_DRIVERS,
+  BROWSER_DRIVERS,
+  DESKTOP_APP_DRIVERS,
+  SUBCOMMAND_MOBILE,
+  SUBCOMMAND_DESKTOP,
+  SUBCOMMAND_BROWSER
+} from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
 

@@ -29,9 +29,9 @@ export const DEFAULT_PLUGINS = [];
 
 
 /**
- * Remove ANDROID_HOME
+ * A subcommand to remove ANDROID_HOME
  */
-export const SUBCOMMAND_RESET = 'reset'
+export const SUBCOMMAND_RESET = 'reset';
 
 
 /**

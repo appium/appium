@@ -1,21 +1,30 @@
 import _ from 'lodash';
-import { KNOWN_DRIVERS, KNOWN_PLUGINS, SETUP_SUBCOMMAND } from '../constants';
+import { SETUP_SUBCOMMAND } from '../constants';
 import {runExtensionCommand} from './extension';
 
 /**
  * Driver names listed in KNOWN_DRIVERS to install by default.
  */
-export const DEFAULT_DRIVERS = ['uiautomator2', 'xcuitest'];
+export const MOBILE_DRIVERS = ['uiautomator2', 'espresso', 'xcuitest'];
+export const SUBCOMMAND_MOBILE = 'mobile';
+
+
+/**
+ * Driver names listed in KNOWN_DRIVERS to install by default.
+ */
+export const DESKTOP_APP_DRIVERS = ['mac2'];
+export const SUBCOMMAND_DESKTOP = 'desktop';
+
+/**
+ * Driver names listed in KNOWN_DRIVERS to install by default.
+ */
+export const BROWSER_DRIVERS = ['uiautomator2', 'xcuitest', 'chromium', 'safari', 'gecko'];
+export const SUBCOMMAND_BROWSER = 'browser';
 
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
-export const DEFAULT_PLUGINS = ['images'];
-
-/**
- * Subcommand for 'setup' to install all known drivers/plugins.
- */
-const SUBCOMMAND_ALL = 'all';
+export const DEFAULT_PLUGINS = [];
 
 
 /**
@@ -41,14 +50,20 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
     }'`);
   }
 
-  if (preConfigArgs.setupCommand === SUBCOMMAND_ALL) {
-    await setupDriverFull(driverConfig);
-    await setupPluginFull(pluginConfig);
-    return;
+  switch (preConfigArgs.setupCommand) {
+    case SUBCOMMAND_DESKTOP:
+      await setupDriverDesktopApp(driverConfig);
+      await setupPluginDefault(pluginConfig);
+      break;
+    case SUBCOMMAND_BROWSER:
+      await setupDriverBrowser(driverConfig);
+      await setupPluginDefault(pluginConfig);
+      break;
+    default:
+      await setupDriverMobile(driverConfig);
+      await setupPluginDefault(pluginConfig);
+      break;
   }
-
-  await setupDriverDefault(driverConfig);
-  await setupPluginDefault(pluginConfig);
 };
 
 /**
@@ -56,19 +71,30 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
  * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
-async function setupDriverDefault(driverConfig) {
-  for (const driverName of DEFAULT_DRIVERS) {
+async function setupDriverMobile(driverConfig) {
+  for (const driverName of MOBILE_DRIVERS) {
     await setupDriver(driverName, driverConfig);
   }
 }
 
 /**
- * Install all of known drivers listed in KNOWN_DRIVERS.
+ * Install all of known drivers listed in BROWSER_DRIVERS.
  * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
-async function setupDriverFull(driverConfig) {
-  for (const driver of _.keys(KNOWN_DRIVERS)) {
+async function setupDriverBrowser(driverConfig) {
+  for (const driver of _.keys(BROWSER_DRIVERS)) {
+    await setupDriver(driver, driverConfig);
+  }
+}
+
+/**
+ * Install all of known drivers listed in DESKTOP_APP_DRIVERS.
+ * @template {import('appium/types').CliExtensionCommand} ExtCmd
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ */
+async function setupDriverDesktopApp(driverConfig) {
+  for (const driver of _.keys(DESKTOP_APP_DRIVERS)) {
     await setupDriver(driver, driverConfig);
   }
 }
@@ -96,17 +122,6 @@ async function setupDriver(driverName, driverConfig) {
  */
 async function setupPluginDefault(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await setupPlugin(pluginName, pluginConfig);
-  }
-}
-
-/**
- * Install all of known plugins listed in driverConfig.
- * @template {import('appium/types').CliExtensionCommand} ExtCmd
- * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
- */
-async function setupPluginFull(pluginConfig) {
-  for (const pluginName of _.keys(KNOWN_PLUGINS)) {
     await setupPlugin(pluginName, pluginConfig);
   }
 }

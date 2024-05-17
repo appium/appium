@@ -10,8 +10,6 @@ import {
   EXT_SUBCOMMAND_RUN,
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
-  KNOWN_DRIVERS,
-  KNOWN_PLUGINS,
   PLUGIN_TYPE,
   SERVER_SUBCOMMAND,
   SETUP_SUBCOMMAND
@@ -19,7 +17,7 @@ import {
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
-import { DEFAULT_DRIVERS, DEFAULT_PLUGINS } from './setup-command';
+import { MOBILE_DRIVERS, DEFAULT_PLUGINS, BROWSER_DRIVERS, DESKTOP_APP_DRIVERS, SUBCOMMAND_MOBILE, SUBCOMMAND_DESKTOP, SUBCOMMAND_BROWSER } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
 
@@ -292,33 +290,41 @@ class ArgParser {
    * Add subcommand and sub-sub commands for 'setup' subcommand.
    * @param {import('argparse').SubParser} subParser
    */
-    static _addSetupToParser(subParser) {
-      const setupParser = subParser.add_parser('setup', {
-        add_help: true,
-        help: `Install latest drivers '${_.join(DEFAULT_DRIVERS, ',')}' and ` +
-          `plugins '${_.join(DEFAULT_PLUGINS, ',')}' ` +
-          `if APPIUM_HOME has no drivers and plugins`,
-      });
+  static _addSetupToParser(subParser) {
+    const setupParser = subParser.add_parser('setup', {
+      add_help: true,
+      help: `Install latest official drivers and/or plugins for specific usage ` +
+        `if APPIUM_HOME has no drivers and plugins. Default is 'mobile' set.`,
+    });
 
-      ArgParser._patchExit(setupParser);
-      const extSubParsers = setupParser.add_subparsers({
-        dest: `setupCommand`,
-      });
+    ArgParser._patchExit(setupParser);
+    const extSubParsers = setupParser.add_subparsers({
+      dest: `setupCommand`,
+    });
 
-      const parserSpecs = [
-        {
-          command: 'all',
-          help: `Install all known drivers '${_.join(_.keys(KNOWN_DRIVERS), ',')}' ` +
-            `and plugins '${_.join(_.keys(KNOWN_PLUGINS), ',')}' ` +
-            `if APPIUM_HOME has no drivers and plugins`
-        },
-      ];
+    const parserSpecs = [
+      {
+        command: SUBCOMMAND_MOBILE,
+        help: `Install latest drivers for Android and iOS '${_.join(MOBILE_DRIVERS, ',')}' ` +
+          `if APPIUM_HOME has no drivers.`
+      },
+      {
+        command: SUBCOMMAND_BROWSER,
+        help: `Install latest drivers for mobile and desktop browsers '${_.join(BROWSER_DRIVERS, ',')}' ` +
+          `if APPIUM_HOME has no drivers.`
+      },
+      {
+        command: SUBCOMMAND_DESKTOP,
+        help: `Install latest drivers for desktop app '${_.join(DESKTOP_APP_DRIVERS, ',')}' ` +
+          `if APPIUM_HOME has no drivers.`
+      },
+    ];
 
-      for (const {command, help} of parserSpecs) {
-        const parser = extSubParsers.add_parser(command, {help});
-        ArgParser._patchExit(parser);
-      }
+    for (const {command, help} of parserSpecs) {
+      const parser = extSubParsers.add_parser(command, {help});
+      ArgParser._patchExit(parser);
     }
+  }
 }
 
 /**

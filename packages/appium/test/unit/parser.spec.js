@@ -406,10 +406,10 @@ describe('parser', function () {
     });
 
     describe('all', function () {
-      it('should allow an empty argument all', function () {
-        const args = p.parseArgs([SETUP_SUBCOMMAND, 'all']);
+      it('should allow an empty argument mobile', function () {
+        const args = p.parseArgs([SETUP_SUBCOMMAND, 'mobile']);
         args.subcommand.should.eql(SETUP_SUBCOMMAND);
-        args.setupCommand.should.eql('all');
+        args.setupCommand.should.eql('mobile');
       });
     });
   });

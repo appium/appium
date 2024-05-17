@@ -326,7 +326,7 @@ class ArgParser {
       },
       {
         command: SUBCOMMAND_RESET,
-        help: `Delete contents in APPIUM_HOME.`
+        help: `Uninstall all drivers/plugins in APPIUM_HOME.`
       },
     ];
 

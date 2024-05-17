@@ -6,6 +6,7 @@ import {exec} from 'teen_process';
 import semver from 'semver';
 import os from 'node:os';
 import {npmPackage} from './utils';
+import B from 'bluebird';
 import {getDefaultsForSchema, getAllArgSpecs} from './schema/schema';
 
 export const APPIUM_VER = npmPackage.version;
@@ -62,15 +63,14 @@ const getFullGitPath = _.memoize(async function getFullGitPath() {
  * @returns {Promise<void>}
  */
 export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}) {
-  let npmVersion = 'unknown';
-  try {
+  const getNpmVersion = async () => {
     const {stdout} = await npm.exec('--version', [], {cwd: process.cwd()});
-    npmVersion = _.trim(stdout);
-  } catch {}
-  let npmLocation = 'unknown';
-  try {
-    npmLocation = await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
-  } catch {}
+    return _.trim(stdout);
+  };
+  const findNpmLocation = async () => await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
+  const [npmVersion, npmLocation] = await B.all(
+    [getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown'))
+  );
   const debugInfo = {
     os: {
       platform: os.platform(),
@@ -359,6 +359,23 @@ export async function requireDir(root, requireWriteable = true, displayName = 'f
         `writeable for the current user account '${os.userInfo().username}'`
       );
     }
+  }
+}
+
+/**
+ * Calculates the result of the given function and return its value
+ * or the default one if there was an exception.
+ *
+ * @template T
+ * @param {() => Promise<T>} f
+ * @param {T} defaultValue
+ * @returns {Promise<T>}
+ */
+async function getSafeResult(f, defaultValue) {
+  try {
+    return await f();
+  } catch {
+    return defaultValue;
   }
 }
 

@@ -18,13 +18,12 @@ import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
 import {
-  MOBILE_DRIVERS,
-  BROWSER_DRIVERS,
-  DESKTOP_APP_DRIVERS,
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_BROWSER,
-  SUBCOMMAND_RESET
+  SUBCOMMAND_RESET,
+  getPresetDrivers,
+  hostPlatformName
 } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
@@ -301,8 +300,10 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: `Install latest official drivers and/or plugins for specific usage ` +
-        `if APPIUM_HOME has no drivers and plugins. Default is 'mobile' set.`,
+      help: `Install latest official drivers and/or plugins which, ` +
+        `could work on current host platform ${hostPlatformName()}, ` +
+        `for specific usage if APPIUM_HOME has no drivers and plugins. ` +
+        `The default preset is 'mobile'.`,
     });
 
     ArgParser._patchExit(setupParser);
@@ -313,18 +314,15 @@ class ArgParser {
     const parserSpecs = [
       {
         command: SUBCOMMAND_MOBILE,
-        help: `Install latest drivers for Android and iOS '${_.join(MOBILE_DRIVERS, ',')}' ` +
-          `if APPIUM_HOME has no drivers.`
+        help: `The preset for mobile devices: ${_.join(getPresetDrivers(SUBCOMMAND_MOBILE), ',')}`
       },
       {
         command: SUBCOMMAND_BROWSER,
-        help: `Install latest drivers for mobile and desktop browsers '${_.join(BROWSER_DRIVERS, ',')}' ` +
-          `if APPIUM_HOME has no drivers.`
+        help: `The preset for desktop browser drivers: ${_.join(getPresetDrivers(SUBCOMMAND_BROWSER), ',')}`
       },
       {
         command: SUBCOMMAND_DESKTOP,
-        help: `Install latest drivers for desktop app '${_.join(DESKTOP_APP_DRIVERS, ',')}' ` +
-          `if APPIUM_HOME has no drivers.`
+        help: `The preset for desktop application drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}`
       },
       {
         command: SUBCOMMAND_RESET,

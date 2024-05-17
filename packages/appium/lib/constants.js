@@ -39,19 +39,37 @@ export const KNOWN_PLUGINS = Object.freeze(
   }),
 );
 
+export const MOBILE_DRIVERS = Object.freeze(
+  /** @type {const} */ ({
+    uiautomator2: 'appium-uiautomator2-driver',
+    xcuitest: 'appium-xcuitest-driver',
+    espresso: 'appium-espresso-driver',
+  }),
+);
+
+export const DESKTOP_DRIVERS = Object.freeze(
+  /** @type {const} */ ({
+    mac2: 'appium-mac2-driver',
+  }),
+);
+
+export const DESKTOP_BROWSER_DRIVERS = Object.freeze(
+  /** @type {const} */ ({
+    safari: 'appium-safari-driver',
+    gecko: 'appium-geckodriver',
+    chromium: 'appium-chromium-driver',
+  }),
+);
+
 // This is a map of driver names to npm packages representing those drivers.
 // The drivers in this list will be available to the CLI so users can just
 // type 'appium driver install 'name'', rather than having to specify the full
 // npm package. I.e., these are the officially recognized drivers.
 export const KNOWN_DRIVERS = Object.freeze(
   /** @type {const} */ ({
-    uiautomator2: 'appium-uiautomator2-driver',
-    xcuitest: 'appium-xcuitest-driver',
-    mac2: 'appium-mac2-driver',
-    espresso: 'appium-espresso-driver',
-    safari: 'appium-safari-driver',
-    gecko: 'appium-geckodriver',
-    chromium: 'appium-chromium-driver',
+    ...MOBILE_DRIVERS,
+    ...DESKTOP_DRIVERS,
+    ...DESKTOP_BROWSER_DRIVERS,
   }),
 );
 

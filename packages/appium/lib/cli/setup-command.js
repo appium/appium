@@ -1,38 +1,70 @@
 import _ from 'lodash';
-import { SETUP_SUBCOMMAND } from '../constants';
+import {
+  DESKTOP_BROWSER_DRIVERS,
+  DESKTOP_DRIVERS,
+  MOBILE_DRIVERS,
+  SETUP_SUBCOMMAND
+} from '../constants';
 import {runExtensionCommand} from './extension';
-import { fs } from '@appium/support';
+import { fs, system } from '@appium/support';
 
 /**
- * Driver names listed in KNOWN_DRIVERS to install by default.
+ * Subcommands of preset for setup
  */
-export const MOBILE_DRIVERS = ['uiautomator2', 'espresso', 'xcuitest'];
 export const SUBCOMMAND_MOBILE = 'mobile';
-
-
-/**
- * Driver names listed in KNOWN_DRIVERS to install by default.
- */
-export const DESKTOP_APP_DRIVERS = ['mac2'];
 export const SUBCOMMAND_DESKTOP = 'desktop';
+export const SUBCOMMAND_BROWSER = 'browser';
 
 /**
- * Driver names listed in KNOWN_DRIVERS to install by default.
+ * A subcommand to remove APPIUM_HOME
  */
-export const BROWSER_DRIVERS = ['uiautomator2', 'xcuitest', 'chromium', 'safari', 'gecko'];
-export const SUBCOMMAND_BROWSER = 'browser';
+export const SUBCOMMAND_RESET = 'reset';
+
+/**
+ * Pairs of preset subcommand and driver candidates.
+ * Driver names listed in KNOWN_DRIVERS to install by default
+ */
+const PRESET_PAIRS = Object.freeze(
+  /** @type {const} */ ({
+    mobile: _.keys(MOBILE_DRIVERS),
+    desktop: _.keys(DESKTOP_DRIVERS),
+    browser: _.keys(DESKTOP_BROWSER_DRIVERS)
+  }),
+);
+const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
 export const DEFAULT_PLUGINS = [];
 
+/**
+ * Return a list of drivers available for current host platform.
+ * @param {import('appium/types').CliCommandSetupSubcommand} subcmd
+ * @returns {Array<string>}
+ */
+export function getPresetDrivers(subcmd) {
+  return _.filter(PRESET_PAIRS[subcmd], (driver) => {
+    if (!system.isMac() && _.includes(DRIVERS_ONLY_MACOS, driver)) {
+      return;
+    }
+    return driver;
+  });
+}
+
 
 /**
- * A subcommand to remove ANDROID_HOME
+ * Return desktop platform name for setup command description.
+ * @returns {string}
  */
-export const SUBCOMMAND_RESET = 'reset';
-
+export function hostPlatformName() {
+  if (system.isMac()) {
+    return 'macOS';
+  } else if (system.isWindows()) {
+    return 'Windows';
+  }
+  return 'Linux';
+}
 
 /**
  * Run 'setup' command to install drivers/plugins into the given appium home.
@@ -42,11 +74,11 @@ export const SUBCOMMAND_RESET = 'reset';
  * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
- * @returns
+ * @returns {Promise<void>}
  */
 export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   if (preConfigArgs.setupCommand === SUBCOMMAND_RESET) {
-    await fs.rimraf(appiumHome);
+    await resetDriversPlugins(appiumHome, driverConfig, pluginConfig);
     return;
   }
 
@@ -78,13 +110,35 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
   }
 };
 
+
+/**
+ * Uninstall installed drivers and plugins, then remove the APPIUM_HOME.
+ * @template {import('appium/types').CliExtensionCommand} ExtCmd
+ * @param {string} appiumHome
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
+ * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} pluginConfig
+ * @returns {Promise<void>}
+ */
+async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
+  for (const driverName of _.keys(driverConfig.installedExtensions)) {
+    await uninstallDriver(driverName, driverConfig);
+  }
+
+  for (const driverName of _.keys(pluginConfig.installedExtensions)) {
+    await uninstallPlugin(driverName, pluginConfig);
+  }
+
+  await fs.rimraf(appiumHome);
+}
+
+
 /**
  * Install drivers listed in DEFAULT_DRIVERS.
  * @template {import('appium/types').CliExtensionCommand} ExtCmd
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
 async function setupDriverMobile(driverConfig) {
-  for (const driverName of MOBILE_DRIVERS) {
+  for (const driverName of getPresetDrivers(SUBCOMMAND_MOBILE)) {
     await setupDriver(driverName, driverConfig);
   }
 }
@@ -95,7 +149,7 @@ async function setupDriverMobile(driverConfig) {
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
 async function setupDriverBrowser(driverConfig) {
-  for (const driver of BROWSER_DRIVERS) {
+  for (const driver of getPresetDrivers(SUBCOMMAND_BROWSER)) {
     await setupDriver(driver, driverConfig);
   }
 }
@@ -106,7 +160,7 @@ async function setupDriverBrowser(driverConfig) {
  * @param {import('../extension/extension-config').ExtensionConfig<ExtCmd>} driverConfig
  */
 async function setupDriverDesktopApp(driverConfig) {
-  for (const driver of DESKTOP_APP_DRIVERS) {
+  for (const driver of getPresetDrivers(SUBCOMMAND_DESKTOP)) {
     await setupDriver(driver, driverConfig);
   }
 }
@@ -121,6 +175,22 @@ async function setupDriver(driverName, driverConfig) {
   const driverConfigArgs = {
     'subcommand': 'driver',
     'driverCommand': 'install',
+    'driver': driverName,
+    'extraArgs': []
+  };
+  await runExtensionCommand(driverConfigArgs, driverConfig);
+}
+
+/**
+ * Uninstall the given driver name.
+ * @param {string} driverName
+ * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} driverConfig
+ */
+async function uninstallDriver(driverName, driverConfig) {
+  /** @type {Args} */
+  const driverConfigArgs = {
+    'subcommand': 'driver',
+    'driverCommand': 'uninstall',
     'driver': driverName,
     'extraArgs': []
   };
@@ -147,6 +217,21 @@ async function setupPlugin(pluginName, pluginConfig) {
   const pluginConfigArgs = {
     'subcommand': 'plugin',
     'pluginCommand': 'install',
+    'plugin': pluginName,
+    'extraArgs': []
+  };
+  await runExtensionCommand(/** @type {Args} */(pluginConfigArgs), pluginConfig);
+}
+
+/**
+ * Uninstall the given driver name.
+ * @param {string} pluginName
+ * @param {import('../extension/extension-config').ExtensionConfig<CliExtensionCommand>} pluginConfig
+ */
+async function uninstallPlugin(pluginName, pluginConfig) {
+  const pluginConfigArgs = {
+    'subcommand': 'plugin',
+    'pluginCommand': 'uninstall',
     'plugin': pluginName,
     'extraArgs': []
   };

@@ -53,7 +53,7 @@ export const DESKTOP_DRIVERS = Object.freeze(
   }),
 );
 
-export const DESKTOP_BROWSER_DRIVERS = Object.freeze(
+export const DESKTOP_BROWSERS = Object.freeze(
   /** @type {const} */ ({
     safari: 'appium-safari-driver',
     gecko: 'appium-geckodriver',
@@ -69,7 +69,7 @@ export const KNOWN_DRIVERS = Object.freeze(
   /** @type {const} */ ({
     ...MOBILE_DRIVERS,
     ...DESKTOP_DRIVERS,
-    ...DESKTOP_BROWSER_DRIVERS,
+    ...DESKTOP_BROWSERS,
   }),
 );
 

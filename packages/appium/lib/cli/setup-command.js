@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  DESKTOP_BROWSER_DRIVERS,
+  DESKTOP_BROWSERS,
   DESKTOP_DRIVERS,
   MOBILE_DRIVERS
 } from '../constants';
@@ -28,7 +28,7 @@ const PRESET_PAIRS = Object.freeze(
   /** @type {const} */ ({
     mobile: _.keys(MOBILE_DRIVERS),
     desktop: _.keys(DESKTOP_DRIVERS),
-    browser: _.keys(DESKTOP_BROWSER_DRIVERS)
+    browser: _.keys(DESKTOP_BROWSERS)
   }),
 );
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];

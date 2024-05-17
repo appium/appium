@@ -112,7 +112,7 @@ export interface PluginExtArgs {
 }
 
 export interface SetupArgs {
-  setupCommand: CliCommandSetupSubcommand;
+  setupCommand?: CliCommandSetupSubcommand;
 }
 
 /**

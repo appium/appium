@@ -30,6 +30,7 @@ function getNodeVersion() {
 
 /**
  * @param {boolean} [useGithubApiFallback]
+ * @returns {Promise<void>}
  */
 export async function updateBuildInfo(useGithubApiFallback = false) {
   const sha = await getGitRev(useGithubApiFallback);
@@ -68,9 +69,10 @@ export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}) {
     return _.trim(stdout);
   };
   const findNpmLocation = async () => await fs.which(system.isWindows() ? 'npm.cmd' : 'npm');
-  const [npmVersion, npmLocation] = await B.all(
-    [getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown'))
-  );
+  const [npmVersion, npmLocation] = await B.all([
+    ...([getNpmVersion, findNpmLocation].map((f) => getSafeResult(f, 'unknown'))),
+    /** @type {any} */ (updateBuildInfo()),
+  ]);
   const debugInfo = {
     os: {
       platform: os.platform(),
@@ -93,6 +95,7 @@ export async function showDebugInfo({driverConfig, pluginConfig, appiumHome}) {
     appium: {
       location: rootDir,
       homedir: appiumHome,
+      build: getBuildInfo(),
       drivers: driverConfig.installedExtensions,
       plugins: pluginConfig.installedExtensions,
     },

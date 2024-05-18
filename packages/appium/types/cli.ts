@@ -56,13 +56,18 @@ export interface MoreArgs {
   showConfig?: boolean;
 
   /**
+   * If true, show the server debug info and exit
+   */
+  showDebugInfo?: boolean;
+
+  /**
    * If true, open a REPL
    */
   shell?: boolean;
 }
 
 /**
- * These arguments are _not_ supported by the CLI, but only via programmatic usage / tests.
+ * These arguments are not necessarily supported by the CLI, but via programmatic usage / tests.
  */
 export interface ProgrammaticArgs {
   /**
@@ -93,6 +98,11 @@ export interface ProgrammaticArgs {
    * If true, show config and exit
    */
   showConfig?: boolean;
+
+  /**
+   * If true, show debug info and exit
+   */
+  showDebugInfo?: boolean;
 }
 
 export interface DriverExtArgs {

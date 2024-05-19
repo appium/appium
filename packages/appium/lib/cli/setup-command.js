@@ -180,6 +180,21 @@ async function uninstallDrivers(driverConfig) {
 }
 
 /**
+ * Return the command config for plugin.
+ * @param {string} pluginName
+ * @param {'install' | 'uninstall'} command
+ * @returns {Args}
+ */
+function pluginCommand(pluginName, command) {
+  return {
+    'subcommand': 'plugin',
+    'pluginCommand': command,
+    'plugin': pluginName,
+    'extraArgs': []
+  }
+}
+
+/**
  * Install plugins listed in DEFAULT_PLUGINS.
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
@@ -188,12 +203,7 @@ async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
     await installExtention(
       pluginName,
-      {
-        'subcommand': 'plugin',
-        'pluginCommand': 'install',
-        'plugin': pluginName,
-        'extraArgs': []
-      },
+      pluginCommand(pluginName, 'install'),
       pluginConfig);
   }
 }
@@ -205,12 +215,7 @@ async function setupDefaultPlugins(pluginConfig) {
  */
 async function uninstallPlugin(pluginConfig) {
   for (const pluginName of _.keys(pluginConfig.installedExtensions)) {
-    await runExtensionCommand({
-      'subcommand': 'plugin',
-      'pluginCommand': 'uninstall',
-      'plugin': pluginName,
-      'extraArgs': []
-    }, pluginConfig);
+    await runExtensionCommand(pluginCommand(pluginName, 'uninstall'), pluginConfig);
   }
 }
 

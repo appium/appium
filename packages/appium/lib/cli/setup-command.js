@@ -149,7 +149,7 @@ function driverCommandArgs(driverName, command) {
     'driverCommand': command,
     'driver': driverName,
     'extraArgs': []
-  }
+  };
 }
 
 /**
@@ -160,7 +160,7 @@ function driverCommandArgs(driverName, command) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig)}
+    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig);}
 }
 
 /**
@@ -188,7 +188,7 @@ function pluginCommandArgs(pluginName, command) {
     'pluginCommand': command,
     'plugin': pluginName,
     'extraArgs': []
-  }
+  };
 }
 
 /**

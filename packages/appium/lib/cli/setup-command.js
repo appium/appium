@@ -144,6 +144,21 @@ async function setupDesktopAppDrivers(driverConfig) {
 }
 
 /**
+ * Return the command config for plugin.
+ * @param {string} driverName
+ * @param {'install' | 'uninstall'} command
+ * @returns {Args}
+ */
+function driverCommand(driverName, command) {
+  return {
+    'subcommand': 'driver',
+    'driverCommand': command,
+    'driver': driverName,
+    'extraArgs': []
+  }
+}
+
+/**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
  * @param {import('appium/types').CliCommandSetupSubcommand} subcommand
  * @param {DriverConfig} driverConfig
@@ -151,16 +166,7 @@ async function setupDesktopAppDrivers(driverConfig) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(
-      driverName,
-      {
-        'subcommand': 'driver',
-        'driverCommand': 'install',
-        'driver': driverName,
-        'extraArgs': []
-      },
-      driverConfig);
-  }
+    await installExtention(driverName, driverCommand(driverName, 'install'), driverConfig)}
 }
 
 /**
@@ -170,12 +176,7 @@ async function installDrivers(subcommand, driverConfig) {
  */
 async function uninstallDrivers(driverConfig) {
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
-    await runExtensionCommand({
-      'subcommand': 'driver',
-      'driverCommand': 'uninstall',
-      'driver': driverName,
-      'extraArgs': []
-    }, driverConfig);
+    await runExtensionCommand(driverCommand(driverName, 'uninstall'), driverConfig);
   }
 }
 

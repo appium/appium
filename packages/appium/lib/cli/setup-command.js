@@ -202,22 +202,22 @@ async function installExtention(extentionName, extensionConfigArgs, extentionCon
 /**
  * Return the command config for driver or plugin.
  * @param {CliExtensionCommand} extType
- * @param {string} extName
+ * @param {string} extentionName
  * @param {CliExtensionSubcommand} command
  * @returns {Args}
  */
-function exntentionCommandArgs(extType, extName, command) {
+function exntentionCommandArgs(extType, extentionName, command) {
   if (extType === 'plugin') {
       return {
         'subcommand': 'plugin',
         'pluginCommand': command,
-        'plugin': extName
+        'plugin': extentionName
       };
   }
   return {
     'subcommand': 'driver',
     'driverCommand': command,
-    'driver': extName
+    'driver': extentionName
   };
 }
 

@@ -18,7 +18,7 @@ Find downloads and more information on its GitHub page: [Appium Inspector](https
 
 ### Appium Doctor
 
-Each driver has their own `doctor` command as of Appium 2.4.0.
+Each driver has its own `doctor` command as of Appium 2.4.0.
 If a driver/plugin has its own requirement, the `doctor` command will help to setup the requirement.
 
 ```

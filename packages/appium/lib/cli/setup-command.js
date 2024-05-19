@@ -214,13 +214,20 @@ async function uninstallPlugin(pluginConfig) {
   }
 }
 
+/**
+ * Run the given extensionConfigArgs command after checking if the given extentionName was already installed.
+ * @param {string} extentionName
+ * @param {Args} extensionConfigArgs
+ * @param {DriverConfig|PluginConfig} extentionConfig
+ * @returns
+ */
 async function installExtention(extentionName, extensionConfigArgs, extentionConfig) {
   if (_.keys(extentionConfig.installedExtensions).includes(extentionName)) {
     log.info(`${extentionName} (${extentionConfig.installedExtensions[extentionName].version}) is already installed. ` +
       `Skipping the installation.`);
     return;
   }
-  await runExtensionCommand(/** @type {Args} */(extensionConfigArgs), extentionConfig);
+  await runExtensionCommand(extensionConfigArgs, extentionConfig);
 }
 
 /**

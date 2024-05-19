@@ -104,14 +104,8 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
  */
 async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
   log.info(`Uninstalling drivers/plugins in APPIUM_HOME[${appiumHome}]`);
-
-  try {
-    await uninstallDrivers(driverConfig);
-  } catch (ign) {}
-  try {
-    await uninstallPlugin(pluginConfig);
-  } catch (ign) {}
-
+  await uninstallDrivers(driverConfig);
+  await uninstallPlugin(pluginConfig);
   await fs.rimraf(appiumHome);
 }
 
@@ -149,7 +143,7 @@ async function setupDesktopAppDrivers(driverConfig) {
  * @param {'install' | 'uninstall'} command
  * @returns {Args}
  */
-function driverCommand(driverName, command) {
+function driverCommandArgs(driverName, command) {
   return {
     'subcommand': 'driver',
     'driverCommand': command,
@@ -166,7 +160,7 @@ function driverCommand(driverName, command) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, driverCommand(driverName, 'install'), driverConfig)}
+    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig)}
 }
 
 /**
@@ -176,7 +170,9 @@ async function installDrivers(subcommand, driverConfig) {
  */
 async function uninstallDrivers(driverConfig) {
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
-    await runExtensionCommand(driverCommand(driverName, 'uninstall'), driverConfig);
+    try {
+      await runExtensionCommand(driverCommandArgs(driverName, 'uninstall'), driverConfig);
+    } catch (ign) {}
   }
 }
 
@@ -186,7 +182,7 @@ async function uninstallDrivers(driverConfig) {
  * @param {'install' | 'uninstall'} command
  * @returns {Args}
  */
-function pluginCommand(pluginName, command) {
+function pluginCommandArgs(pluginName, command) {
   return {
     'subcommand': 'plugin',
     'pluginCommand': command,
@@ -204,7 +200,7 @@ async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
     await installExtention(
       pluginName,
-      pluginCommand(pluginName, 'install'),
+      pluginCommandArgs(pluginName, 'install'),
       pluginConfig);
   }
 }
@@ -216,7 +212,9 @@ async function setupDefaultPlugins(pluginConfig) {
  */
 async function uninstallPlugin(pluginConfig) {
   for (const pluginName of _.keys(pluginConfig.installedExtensions)) {
-    await runExtensionCommand(pluginCommand(pluginName, 'uninstall'), pluginConfig);
+    try {
+      await runExtensionCommand(pluginCommandArgs(pluginName, 'uninstall'), pluginConfig);
+    } catch (ign) {}
   }
 }
 

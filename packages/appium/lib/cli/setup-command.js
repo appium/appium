@@ -81,15 +81,15 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
       break;
     case SUBCOMMAND_DESKTOP:
       await setupDesktopAppDrivers(driverConfig);
-      await setupPluginDefault(pluginConfig);
+      await setupDefaultPlugins(pluginConfig);
       break;
     case SUBCOMMAND_BROWSER:
       await setupBrowserDrivers(driverConfig);
-      await setupPluginDefault(pluginConfig);
+      await setupDefaultPlugins(pluginConfig);
       break;
     default:
       await setupMobileDrivers(driverConfig);
-      await setupPluginDefault(pluginConfig);
+      await setupDefaultPlugins(pluginConfig);
       break;
   }
 };
@@ -105,17 +105,12 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
 async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
   log.info(`Uninstalling drivers/plugins in APPIUM_HOME[${appiumHome}]`);
 
-  for (const driverName of _.keys(driverConfig.installedExtensions)) {
-    try {
-      await uninstallDriver(driverName, driverConfig);
-    } catch (ign) {}
-  }
-
-  for (const driverName of _.keys(pluginConfig.installedExtensions)) {
-    try {
-      await uninstallPlugin(driverName, pluginConfig);
-    } catch (ign) {}
-  }
+  try {
+    await uninstallDrivers(driverConfig);
+  } catch (ign) {}
+  try {
+    await uninstallPlugin(pluginConfig);
+  } catch (ign) {}
 
   await fs.rimraf(appiumHome);
 }
@@ -127,9 +122,7 @@ async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
  * @returns {Promise<void>}
  */
 async function setupMobileDrivers(driverConfig) {
-  for (const driverName of getPresetDrivers(SUBCOMMAND_MOBILE)) {
-    await setupDriver(driverName, driverConfig);
-  }
+  await installDrivers(getPresetDrivers(SUBCOMMAND_MOBILE), driverConfig);
 }
 
 /**
@@ -138,9 +131,7 @@ async function setupMobileDrivers(driverConfig) {
  * @returns {Promise<void>}
  */
 async function setupBrowserDrivers(driverConfig) {
-  for (const driver of getPresetDrivers(SUBCOMMAND_BROWSER)) {
-    await setupDriver(driver, driverConfig);
-  }
+  await installDrivers(getPresetDrivers(SUBCOMMAND_BROWSER), driverConfig);
 }
 
 /**
@@ -149,49 +140,43 @@ async function setupBrowserDrivers(driverConfig) {
  * @returns {Promise<void>}
  */
 async function setupDesktopAppDrivers(driverConfig) {
-  for (const driver of getPresetDrivers(SUBCOMMAND_DESKTOP)) {
-    await setupDriver(driver, driverConfig);
-  }
+  await installDrivers(getPresetDrivers(SUBCOMMAND_DESKTOP), driverConfig);
 }
 
 /**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
- * @param {string} driverName
+ * @param {Array<string>} driverNames
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
-async function setupDriver(driverName, driverConfig) {
-  if (_.keys(driverConfig.installedExtensions).includes(driverName)) {
-    log.info(`${driverName} (${driverConfig.installedExtensions[driverName].version}) is already installed. ` +
-      `Skipping the installation.`);
-    return;
+async function installDrivers(driverNames, driverConfig) {
+  for (const driverName of driverNames) {
+    await installExtention(
+      driverName,
+      {
+        'subcommand': 'driver',
+        'driverCommand': 'install',
+        'driver': driverName,
+        'extraArgs': []
+      },
+      driverConfig);
   }
-
-  /** @type {Args} */
-  const driverConfigArgs = {
-    'subcommand': 'driver',
-    'driverCommand': 'install',
-    'driver': driverName,
-    'extraArgs': []
-  };
-  await runExtensionCommand(driverConfigArgs, driverConfig);
 }
 
 /**
  * Uninstall the given driver name.
- * @param {string} driverName
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
-async function uninstallDriver(driverName, driverConfig) {
-  /** @type {Args} */
-  const driverConfigArgs = {
-    'subcommand': 'driver',
-    'driverCommand': 'uninstall',
-    'driver': driverName,
-    'extraArgs': []
-  };
-  await runExtensionCommand(driverConfigArgs, driverConfig);
+async function uninstallDrivers(driverConfig) {
+  for (const driverName of _.keys(driverConfig.installedExtensions)) {
+    await runExtensionCommand({
+      'subcommand': 'driver',
+      'driverCommand': 'uninstall',
+      'driver': driverName,
+      'extraArgs': []
+    }, driverConfig);
+  }
 }
 
 /**
@@ -199,48 +184,43 @@ async function uninstallDriver(driverName, driverConfig) {
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-async function setupPluginDefault(pluginConfig) {
+async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await setupPlugin(pluginName, pluginConfig);
+    await installExtention(
+      pluginName,
+      {
+        'subcommand': 'plugin',
+        'pluginCommand': 'install',
+        'plugin': pluginName,
+        'extraArgs': []
+      },
+      pluginConfig);
   }
 }
 
-/**
- * Install the given plugin name. It skips the installation if the given plugin name was already installed.
- * @param {string} pluginName
- * @param {PluginConfig} pluginConfig
- * @returns {Promise<void>}
- */
-async function setupPlugin(pluginName, pluginConfig) {
-  if (_.keys(pluginConfig.installedExtensions).includes(pluginName)) {
-    log.info(`${pluginName} (${pluginConfig.installedExtensions[pluginName].version}) is already installed. ` +
+async function installExtention(extentionName, extensionConfigArgs, extentionConfig) {
+  if (_.keys(extentionConfig.installedExtensions).includes(extentionName)) {
+    log.info(`${extentionName} (${extentionConfig.installedExtensions[extentionName].version}) is already installed. ` +
       `Skipping the installation.`);
     return;
   }
-
-  const pluginConfigArgs = {
-    'subcommand': 'plugin',
-    'pluginCommand': 'install',
-    'plugin': pluginName,
-    'extraArgs': []
-  };
-  await runExtensionCommand(/** @type {Args} */(pluginConfigArgs), pluginConfig);
+  await runExtensionCommand(/** @type {Args} */(extensionConfigArgs), extentionConfig);
 }
 
 /**
  * Uninstall the given driver name.
- * @param {string} pluginName
  * @param {DriverConfig} pluginConfig
  * @returns {Promise<void>}
  */
-async function uninstallPlugin(pluginName, pluginConfig) {
-  const pluginConfigArgs = {
-    'subcommand': 'plugin',
-    'pluginCommand': 'uninstall',
-    'plugin': pluginName,
-    'extraArgs': []
-  };
-  await runExtensionCommand(/** @type {Args} */(pluginConfigArgs), pluginConfig);
+async function uninstallPlugin(pluginConfig) {
+  for (const pluginName of _.keys(pluginConfig.installedExtensions)) {
+    await runExtensionCommand({
+      'subcommand': 'plugin',
+      'pluginCommand': 'uninstall',
+      'plugin': pluginName,
+      'extraArgs': []
+    }, pluginConfig);
+  }
 }
 
 /**

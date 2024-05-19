@@ -142,7 +142,7 @@ async function setupDesktopAppDrivers(driverConfig) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, exntentionCommandArgs('driver', driverName, 'install'), driverConfig);
+    await installExtention(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
   }
 }
 
@@ -154,7 +154,7 @@ async function installDrivers(subcommand, driverConfig) {
 async function uninstallDrivers(driverConfig) {
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
     try {
-      await runExtensionCommand(exntentionCommandArgs('driver', driverName, 'uninstall'), driverConfig);
+      await runExtensionCommand(extensionCommandArgs('driver', driverName, 'uninstall'), driverConfig);
     } catch (ign) {}
   }
 }
@@ -166,7 +166,7 @@ async function uninstallDrivers(driverConfig) {
  */
 async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtention(pluginName, exntentionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
+    await installExtention(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
   }
 }
 
@@ -178,7 +178,7 @@ async function setupDefaultPlugins(pluginConfig) {
 async function uninstallPlugin(pluginConfig) {
   for (const pluginName of _.keys(pluginConfig.installedExtensions)) {
     try {
-      await runExtensionCommand(exntentionCommandArgs('plugin', pluginName, 'uninstall'), pluginConfig);
+      await runExtensionCommand(extensionCommandArgs('plugin', pluginName, 'uninstall'), pluginConfig);
     } catch (ign) {}
   }
 }
@@ -206,7 +206,7 @@ async function installExtention(extentionName, extensionConfigArgs, extentionCon
  * @param {CliExtensionSubcommand} command
  * @returns {Args}
  */
-function exntentionCommandArgs(extentionCommand, extentionName, command) {
+function extensionCommandArgs(extentionCommand, extentionName, command) {
   if (extentionCommand === 'plugin') {
       return {
         'subcommand': 'plugin',

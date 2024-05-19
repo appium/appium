@@ -116,7 +116,7 @@ async function setupDesktopAppDrivers(driverConfig) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
+    await installExtension(driverName, extensionCommandArgs('driver', driverName, 'install'), driverConfig);
   }
 }
 
@@ -127,37 +127,37 @@ async function installDrivers(subcommand, driverConfig) {
  */
 async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtention(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
+    await installExtension(pluginName, extensionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
   }
 }
 
 /**
- * Run the given extensionConfigArgs command after checking if the given extentionName was already installed.
- * @param {string} extentionName
+ * Run the given extensionConfigArgs command after checking if the given extensionName was already installed.
+ * @param {string} extensionName
  * @param {Args} extensionConfigArgs
- * @param {DriverConfig|PluginConfig} extentionConfig
+ * @param {DriverConfig|PluginConfig} extensionConfig
  * @returns
  */
-async function installExtention(extentionName, extensionConfigArgs, extentionConfig) {
-  if (_.keys(extentionConfig.installedExtensions).includes(extentionName)) {
-    log.info(`${extentionName} (${extentionConfig.installedExtensions[extentionName].version}) is already installed. ` +
+async function installExtension(extensionName, extensionConfigArgs, extensionConfig) {
+  if (_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
+    log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
       `Skipping the installation.`);
     return;
   }
-  await runExtensionCommand(extensionConfigArgs, extentionConfig);
+  await runExtensionCommand(extensionConfigArgs, extensionConfig);
 }
 
 /**
  * Return the command config for driver or plugin.
- * @param {CliExtensionCommand} extentionCommand
- * @param {string} extentionName
+ * @param {CliExtensionCommand} extensionCommand
+ * @param {string} extensionName
  * @param {CliExtensionSubcommand} command
  * @returns {Args}
  */
-function extensionCommandArgs(extentionCommand, extentionName, command) {
-  return (extentionCommand === 'plugin')
-  ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extentionName}
-  : {'subcommand': 'driver', 'driverCommand': command, 'driver': extentionName};
+function extensionCommandArgs(extensionCommand, extensionName, command) {
+  return (extensionCommand === 'plugin')
+  ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extensionName}
+  : {'subcommand': 'driver', 'driverCommand': command, 'driver': extensionName};
 }
 
 /**

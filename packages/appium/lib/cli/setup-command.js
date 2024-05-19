@@ -5,7 +5,7 @@ import {
   MOBILE_DRIVERS
 } from '../constants';
 import {runExtensionCommand} from './extension';
-import { fs, system } from '@appium/support';
+import { system } from '@appium/support';
 import log from '../logger';
 
 /**
@@ -39,11 +39,7 @@ export const DEFAULT_PLUGINS = ['images'];
  * @returns {Array<string>}
  */
 export function getPresetDrivers(subcmd) {
-  return _.filter(PRESET_PAIRS[subcmd], (driver) =>
-    (!system.isMac() && _.includes(DRIVERS_ONLY_MACOS, driver))
-    ? null
-    : driver
-  );
+  return _.filter(PRESET_PAIRS[subcmd], (driver) => system.isMac() || !_.includes(DRIVERS_ONLY_MACOS, driver));
 }
 
 /**
@@ -159,18 +155,9 @@ async function installExtention(extentionName, extensionConfigArgs, extentionCon
  * @returns {Args}
  */
 function extensionCommandArgs(extentionCommand, extentionName, command) {
-  if (extentionCommand === 'plugin') {
-      return {
-        'subcommand': 'plugin',
-        'pluginCommand': command,
-        'plugin': extentionName
-      };
-  }
-  return {
-    'subcommand': 'driver',
-    'driverCommand': command,
-    'driver': extentionName
-  };
+  return (extentionCommand === 'plugin')
+  ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extentionName}
+  : {'subcommand': 'driver', 'driverCommand': command, 'driver': extentionName};
 }
 
 /**

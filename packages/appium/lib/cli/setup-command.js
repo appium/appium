@@ -51,7 +51,6 @@ export function getPresetDrivers(subcmd) {
   );
 }
 
-
 /**
  * Return desktop platform name for setup command description.
  * @returns {string}
@@ -94,7 +93,6 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
   }
 };
 
-
 /**
  * Uninstall installed drivers and plugins in APPIUM_HOME. Then remove the entire Appium home.
  * @param {string} appiumHome
@@ -108,7 +106,6 @@ async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
   await uninstallPlugin(pluginConfig);
   await fs.rimraf(appiumHome);
 }
-
 
 /**
  * Install drivers listed in DEFAULT_DRIVERS.

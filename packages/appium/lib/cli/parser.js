@@ -21,7 +21,6 @@ import {
   SUBCOMMAND_MOBILE,
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_BROWSER,
-  SUBCOMMAND_RESET,
   getPresetDrivers,
   hostPlatformName
 } from './setup-command';
@@ -300,7 +299,7 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: `Select a preset of official drivers/plugins to install  ` +
+      help: `Select a preset of official drivers/plugins to install ` +
         `compatible with '${hostPlatformName()}' host platform. ` +
         `Existing drivers/plugins will remain. The default preset is 'mobile'.`,
     });
@@ -323,10 +322,6 @@ class ArgParser {
       {
         command: SUBCOMMAND_DESKTOP,
         help: `The preset for desktop application drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}`
-      },
-      {
-        command: SUBCOMMAND_RESET,
-        help: `Uninstall all drivers/plugins in APPIUM_HOME and remove the APPIUM_HOME entirely.`
       },
     ];
 

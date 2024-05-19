@@ -8,7 +8,7 @@ title: Appium-Related Tools
 There are several Appium tools that have been created to to assist with things not directly related
 to testing, such as Appium installation, test development, and more.
 
-### Appium Inspector
+### [Appium Inspector](https://appium.github.io/appium-inspector/latest/)
 
 Appium has a graphical client which can be used to inspect application screenshots, view the
 application hierarchy, run Appium commands, record app interactions, and more. It is very useful
@@ -18,14 +18,21 @@ Find downloads and more information on its GitHub page: [Appium Inspector](https
 
 ### Appium Doctor
 
-The `appium-doctor` CLI tool can be used to validate proper environment setup for Android and iOS
-automation, and identify any common configuration issues. It can be installed with `npm`:
+Each driver has their own `doctor` command as of Appium 2.4.0.
+If a driver/plugin has its own requirement, the `doctor` command will help to setup the requirement.
 
-```sh
-npm install -g @appium/doctor
+```
+appium driver doctor <driver_name>
+
+# e.g.
+# appium driver doctor uiautomator2
 ```
 
-Learn more on its GitHub page: [Appium Doctor](https://github.com/appium/appium/tree/master/packages/doctor)
+or
+
+```
+appium plugin doctor <plugin_name>
+```
 
 ### Other Tools
 

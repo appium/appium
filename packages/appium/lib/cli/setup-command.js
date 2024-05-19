@@ -138,21 +138,6 @@ async function setupDesktopAppDrivers(driverConfig) {
 }
 
 /**
- * Return the command config for plugin.
- * @param {string} driverName
- * @param {'install' | 'uninstall'} command
- * @returns {Args}
- */
-function driverCommandArgs(driverName, command) {
-  return {
-    'subcommand': 'driver',
-    'driverCommand': command,
-    'driver': driverName,
-    'extraArgs': []
-  };
-}
-
-/**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
  * @param {import('appium/types').CliCommandSetupSubcommand} subcommand
  * @param {DriverConfig} driverConfig
@@ -160,7 +145,7 @@ function driverCommandArgs(driverName, command) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig);
+    await installExtention(driverName, exntentionCommandArgs('driver', driverName, 'install'), driverConfig);
   }
 }
 
@@ -172,24 +157,9 @@ async function installDrivers(subcommand, driverConfig) {
 async function uninstallDrivers(driverConfig) {
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
     try {
-      await runExtensionCommand(driverCommandArgs(driverName, 'uninstall'), driverConfig);
+      await runExtensionCommand(exntentionCommandArgs('driver', driverName, 'uninstall'), driverConfig);
     } catch (ign) {}
   }
-}
-
-/**
- * Return the command config for plugin.
- * @param {string} pluginName
- * @param {'install' | 'uninstall'} command
- * @returns {Args}
- */
-function pluginCommandArgs(pluginName, command) {
-  return {
-    'subcommand': 'plugin',
-    'pluginCommand': command,
-    'plugin': pluginName,
-    'extraArgs': []
-  };
 }
 
 /**
@@ -199,7 +169,7 @@ function pluginCommandArgs(pluginName, command) {
  */
 async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtention(pluginName, pluginCommandArgs(pluginName, 'install'), pluginConfig);
+    await installExtention(pluginName, exntentionCommandArgs('plugin', pluginName, 'install'), pluginConfig);
   }
 }
 
@@ -211,7 +181,7 @@ async function setupDefaultPlugins(pluginConfig) {
 async function uninstallPlugin(pluginConfig) {
   for (const pluginName of _.keys(pluginConfig.installedExtensions)) {
     try {
-      await runExtensionCommand(pluginCommandArgs(pluginName, 'uninstall'), pluginConfig);
+      await runExtensionCommand(exntentionCommandArgs('plugin', pluginName, 'uninstall'), pluginConfig);
     } catch (ign) {}
   }
 }
@@ -230,6 +200,28 @@ async function installExtention(extentionName, extensionConfigArgs, extentionCon
     return;
   }
   await runExtensionCommand(extensionConfigArgs, extentionConfig);
+}
+
+/**
+ * Return the command config for driver or plugin.
+ * @param {CliExtensionCommand} extType
+ * @param {string} extName
+ * @param {CliExtensionSubcommand} command
+ * @returns {Args}
+ */
+function exntentionCommandArgs(extType, extName, command) {
+  if (extType === 'plugin') {
+      return {
+        'subcommand': 'plugin',
+        'pluginCommand': command,
+        'plugin': extName
+      };
+  }
+  return {
+    'subcommand': 'driver',
+    'driverCommand': command,
+    'driver': extName
+  };
 }
 
 /**

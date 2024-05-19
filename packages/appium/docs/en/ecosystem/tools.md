@@ -19,15 +19,16 @@ Find downloads and more information on its GitHub page: [Appium Inspector](https
 ### Appium Doctor
 
 Appium Doctor is a command-line tool built into Appium drivers and plugins.
-The command can be used to validate whether a driver or plugin has all of its prerequisites and other environment details set up correctly
-if the driver or plugin had the `doctor` command implementation.
+The command is expected to be used to validate whether a driver or plugin has all of its prerequisites and other environment details set up correctly
+if the driver/plugin author implemented the `doctor` command.
 
-For example `uiautomator2` driver provides the `doctor` subcommand.
-Then, you could run the `doctor` command as:
+For example, `uiautomator2` driver provides the `doctor` command below.
 
 ```
 appium driver doctor uiautomator2
 ```
+
+It shows no result if the driver/plugin author did not implement them.
 
 More information on this command can be found in the [Command-Line Usage documentation](../cli/extensions.md#doctor).
 For driver/plugin developers, please read [Building Doctor Checks](../developing/build-doctor-checks.md).

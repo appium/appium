@@ -122,7 +122,7 @@ async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
  * @returns {Promise<void>}
  */
 async function setupMobileDrivers(driverConfig) {
-  await installDrivers(getPresetDrivers(SUBCOMMAND_MOBILE), driverConfig);
+  await installDrivers(SUBCOMMAND_MOBILE, driverConfig);
 }
 
 /**
@@ -131,7 +131,7 @@ async function setupMobileDrivers(driverConfig) {
  * @returns {Promise<void>}
  */
 async function setupBrowserDrivers(driverConfig) {
-  await installDrivers(getPresetDrivers(SUBCOMMAND_BROWSER), driverConfig);
+  await installDrivers(SUBCOMMAND_BROWSER, driverConfig);
 }
 
 /**
@@ -140,17 +140,17 @@ async function setupBrowserDrivers(driverConfig) {
  * @returns {Promise<void>}
  */
 async function setupDesktopAppDrivers(driverConfig) {
-  await installDrivers(getPresetDrivers(SUBCOMMAND_DESKTOP), driverConfig);
+  await installDrivers(SUBCOMMAND_DESKTOP, driverConfig);
 }
 
 /**
  * Install the given driver name. It skips the installation if the given driver name was already installed.
- * @param {Array<string>} driverNames
+ * @param {import('appium/types').CliCommandSetupSubcommand} subcommand
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
-async function installDrivers(driverNames, driverConfig) {
-  for (const driverName of driverNames) {
+async function installDrivers(subcommand, driverConfig) {
+  for (const driverName of getPresetDrivers(subcommand)) {
     await installExtention(
       driverName,
       {

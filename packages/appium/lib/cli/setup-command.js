@@ -160,7 +160,8 @@ function driverCommandArgs(driverName, command) {
  */
 async function installDrivers(subcommand, driverConfig) {
   for (const driverName of getPresetDrivers(subcommand)) {
-    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig);}
+    await installExtention(driverName, driverCommandArgs(driverName, 'install'), driverConfig);
+  }
 }
 
 /**
@@ -198,10 +199,7 @@ function pluginCommandArgs(pluginName, command) {
  */
 async function setupDefaultPlugins(pluginConfig) {
   for (const pluginName of DEFAULT_PLUGINS) {
-    await installExtention(
-      pluginName,
-      pluginCommandArgs(pluginName, 'install'),
-      pluginConfig);
+    await installExtention(pluginName, pluginCommandArgs(pluginName, 'install'), pluginConfig);
   }
 }
 

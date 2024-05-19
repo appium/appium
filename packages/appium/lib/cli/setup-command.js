@@ -198,15 +198,6 @@ async function setupDefaultPlugins(pluginConfig) {
   }
 }
 
-async function installExtention(extentionName, extensionConfigArgs, extentionConfig) {
-  if (_.keys(extentionConfig.installedExtensions).includes(extentionName)) {
-    log.info(`${extentionName} (${extentionConfig.installedExtensions[extentionName].version}) is already installed. ` +
-      `Skipping the installation.`);
-    return;
-  }
-  await runExtensionCommand(/** @type {Args} */(extensionConfigArgs), extentionConfig);
-}
-
 /**
  * Uninstall the given driver name.
  * @param {DriverConfig} pluginConfig
@@ -221,6 +212,15 @@ async function uninstallPlugin(pluginConfig) {
       'extraArgs': []
     }, pluginConfig);
   }
+}
+
+async function installExtention(extentionName, extensionConfigArgs, extentionConfig) {
+  if (_.keys(extentionConfig.installedExtensions).includes(extentionName)) {
+    log.info(`${extentionName} (${extentionConfig.installedExtensions[extentionName].version}) is already installed. ` +
+      `Skipping the installation.`);
+    return;
+  }
+  await runExtensionCommand(/** @type {Args} */(extensionConfigArgs), extentionConfig);
 }
 
 /**

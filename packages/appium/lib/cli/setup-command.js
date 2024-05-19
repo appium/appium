@@ -5,7 +5,7 @@ import {
   MOBILE_DRIVERS
 } from '../constants';
 import {runExtensionCommand} from './extension';
-import { system } from '@appium/support';
+import { fs, system } from '@appium/support';
 import log from '../logger';
 
 /**
@@ -44,12 +44,11 @@ export const DEFAULT_PLUGINS = ['images'];
  * @returns {Array<string>}
  */
 export function getPresetDrivers(subcmd) {
-  return _.filter(PRESET_PAIRS[subcmd], (driver) => {
-    if (!system.isMac() && _.includes(DRIVERS_ONLY_MACOS, driver)) {
-      return;
-    }
-    return driver;
-  });
+  return _.filter(PRESET_PAIRS[subcmd], (driver) =>
+    (!system.isMac() && _.includes(DRIVERS_ONLY_MACOS, driver))
+    ? null
+    : driver
+  );
 }
 
 
@@ -78,18 +77,18 @@ export function hostPlatformName() {
 export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
   switch (preConfigArgs.setupCommand) {
     case SUBCOMMAND_RESET:
-      await resetDriversPlugins(appiumHome, driverConfig, pluginConfig);
+      await resetAppiumHome(appiumHome, driverConfig, pluginConfig);
       break;
     case SUBCOMMAND_DESKTOP:
-      await setupDriverDesktopApp(driverConfig);
+      await setupDesktopAppDrivers(driverConfig);
       await setupPluginDefault(pluginConfig);
       break;
     case SUBCOMMAND_BROWSER:
-      await setupDriverBrowser(driverConfig);
+      await setupBrowserDrivers(driverConfig);
       await setupPluginDefault(pluginConfig);
       break;
     default:
-      await setupDriverMobile(driverConfig);
+      await setupMobileDrivers(driverConfig);
       await setupPluginDefault(pluginConfig);
       break;
   }
@@ -97,22 +96,28 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
 
 
 /**
- * Uninstall installed drivers and plugins in APPIUM_HOME.
+ * Uninstall installed drivers and plugins in APPIUM_HOME. Then remove the entire Appium home.
  * @param {string} appiumHome
  * @param {DriverConfig} driverConfig
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
+async function resetAppiumHome(appiumHome, driverConfig, pluginConfig) {
   log.info(`Uninstalling drivers/plugins in APPIUM_HOME[${appiumHome}]`);
 
   for (const driverName of _.keys(driverConfig.installedExtensions)) {
-    await uninstallDriver(driverName, driverConfig);
+    try {
+      await uninstallDriver(driverName, driverConfig);
+    } catch (ign) {}
   }
 
   for (const driverName of _.keys(pluginConfig.installedExtensions)) {
-    await uninstallPlugin(driverName, pluginConfig);
+    try {
+      await uninstallPlugin(driverName, pluginConfig);
+    } catch (ign) {}
   }
+
+  await fs.rimraf(appiumHome);
 }
 
 
@@ -121,7 +126,7 @@ async function resetDriversPlugins(appiumHome, driverConfig, pluginConfig) {
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
-async function setupDriverMobile(driverConfig) {
+async function setupMobileDrivers(driverConfig) {
   for (const driverName of getPresetDrivers(SUBCOMMAND_MOBILE)) {
     await setupDriver(driverName, driverConfig);
   }
@@ -132,7 +137,7 @@ async function setupDriverMobile(driverConfig) {
  * @param {DriverConfig} driverConfig
  * @returns {Promise<void>}
  */
-async function setupDriverBrowser(driverConfig) {
+async function setupBrowserDrivers(driverConfig) {
   for (const driver of getPresetDrivers(SUBCOMMAND_BROWSER)) {
     await setupDriver(driver, driverConfig);
   }
@@ -141,8 +146,9 @@ async function setupDriverBrowser(driverConfig) {
 /**
  * Install all of known drivers listed in DESKTOP_APP_DRIVERS.
  * @param {DriverConfig} driverConfig
+ * @returns {Promise<void>}
  */
-async function setupDriverDesktopApp(driverConfig) {
+async function setupDesktopAppDrivers(driverConfig) {
   for (const driver of getPresetDrivers(SUBCOMMAND_DESKTOP)) {
     await setupDriver(driver, driverConfig);
   }
@@ -189,7 +195,7 @@ async function uninstallDriver(driverName, driverConfig) {
 }
 
 /**
- * Install drivers listed in DEFAULT_PLUGINS.
+ * Install plugins listed in DEFAULT_PLUGINS.
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */

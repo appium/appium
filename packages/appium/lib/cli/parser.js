@@ -300,11 +300,11 @@ class ArgParser {
   static _addSetupToParser(subParser) {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
-      help: `Install latest official drivers and/or plugins which, ` +
-        `could work on current host platform '${hostPlatformName()}', ` +
-        `for specific usage. Existing drivers/plugins will remain. ` +
-        `The default preset is 'mobile'.`,
+      help: `Select a preset of official drivers/plugins to install  ` +
+        `compatible with '${hostPlatformName()}' host platform. ` +
+        `Existing drivers/plugins will remain. The default preset is 'mobile'.`,
     });
+
 
     ArgParser._patchExit(setupParser);
     const extSubParsers = setupParser.add_subparsers({
@@ -326,7 +326,7 @@ class ArgParser {
       },
       {
         command: SUBCOMMAND_RESET,
-        help: `Uninstall all drivers/plugins in APPIUM_HOME.`
+        help: `Uninstall all drivers/plugins in APPIUM_HOME and remove the APPIUM_HOME entirely.`
       },
     ];
 

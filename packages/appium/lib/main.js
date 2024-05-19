@@ -22,6 +22,7 @@ import {
   getNonDefaultServerArgs,
   showConfig,
   showBuildInfo,
+  showDebugInfo,
   requireDir,
 } from './config';
 import {readConfigFile} from './config-file';
@@ -230,6 +231,15 @@ async function init(args) {
 
     if (preConfigArgs.showConfig) {
       showConfig(getNonDefaultServerArgs(preConfigArgs), configResult, defaults, serverArgs);
+      return /** @type {InitResult<Cmd>} */ ({});
+    }
+
+    if (preConfigArgs.showDebugInfo) {
+      await showDebugInfo({
+        driverConfig,
+        pluginConfig,
+        appiumHome,
+      });
       return /** @type {InitResult<Cmd>} */ ({});
     }
 

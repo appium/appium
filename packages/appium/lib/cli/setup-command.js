@@ -35,18 +35,18 @@ export const DEFAULT_PLUGINS = ['images'];
 
 /**
  * Return a list of drivers available for current host platform.
- * @param {import('appium/types').CliCommandSetupSubcommand} subcmd
+ * @param {import('appium/types').CliCommandSetupSubcommand} presetName
  * @returns {Array<string>}
  */
-export function getPresetDrivers(subcmd) {
-  return _.filter(PRESET_PAIRS[subcmd], (driver) => system.isMac() || !_.includes(DRIVERS_ONLY_MACOS, driver));
+export function getPresetDrivers(presetName) {
+  return _.filter(PRESET_PAIRS[presetName], (driver) => system.isMac() || !_.includes(DRIVERS_ONLY_MACOS, driver));
 }
 
 /**
  * Return desktop platform name for setup command description.
  * @returns {string}
  */
-export function hostPlatformName() {
+export function determinePlatformName() {
   if (system.isMac()) {
     return 'macOS';
   } else if (system.isWindows()) {
@@ -156,8 +156,8 @@ async function installExtension(extensionName, extensionConfigArgs, extensionCon
  */
 function extensionCommandArgs(extensionCommand, extensionName, command) {
   return (extensionCommand === 'plugin')
-  ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extensionName}
-  : {'subcommand': 'driver', 'driverCommand': command, 'driver': extensionName};
+    ? {'subcommand': 'plugin', 'pluginCommand': command, 'plugin': extensionName}
+    : {'subcommand': 'driver', 'driverCommand': command, 'driver': extensionName};
 }
 
 /**

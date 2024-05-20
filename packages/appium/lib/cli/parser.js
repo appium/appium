@@ -22,7 +22,7 @@ import {
   SUBCOMMAND_DESKTOP,
   SUBCOMMAND_BROWSER,
   getPresetDrivers,
-  hostPlatformName
+  determinePlatformName
 } from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
@@ -300,7 +300,7 @@ class ArgParser {
     const setupParser = subParser.add_parser('setup', {
       add_help: true,
       help: `Select a preset of official drivers/plugins to install ` +
-        `compatible with '${hostPlatformName()}' host platform. ` +
+        `compatible with '${determinePlatformName()}' host platform. ` +
         `Existing drivers/plugins will remain. The default preset is 'mobile'.`,
     });
 

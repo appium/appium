@@ -17,7 +17,8 @@ export type CliExtensionCommand = CliCommandDriver | CliCommandPlugin;
 export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetup;
 
 /**
- * Possible subcommands of ${@linkcode CliCommandSetup}
+ * Possible subcommands of {@linkcode CliCommandSetup}.
+ * The command name will be preset name to get drivers/plugins to be installed.
  */
 export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop';
 

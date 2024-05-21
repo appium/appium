@@ -11,11 +11,19 @@ import {
   EXT_SUBCOMMAND_UNINSTALL,
   EXT_SUBCOMMAND_UPDATE,
   PLUGIN_TYPE,
-  SERVER_SUBCOMMAND
+  SERVER_SUBCOMMAND,
+  SETUP_SUBCOMMAND
 } from '../constants';
 import {finalizeSchema, getArgSpec, hasArgSpec} from '../schema';
 import {rootDir} from '../config';
 import {getExtensionArgs, getServerArgs} from './args';
+import {
+  SUBCOMMAND_MOBILE,
+  SUBCOMMAND_DESKTOP,
+  SUBCOMMAND_BROWSER,
+  getPresetDrivers,
+  determinePlatformName
+} from './setup-command';
 
 export const EXTRA_ARGS = 'extraArgs';
 
@@ -24,7 +32,7 @@ export const EXTRA_ARGS = 'extraArgs';
  * will automatially inject the `server` subcommand.
  */
 const NON_SERVER_ARGS = Object.freeze(
-  new Set([DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
+  new Set([SETUP_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SERVER_SUBCOMMAND, '-h', '--help', '-v', '--version'])
 );
 
 const version = fs.readPackageJsonFrom(rootDir).version;
@@ -75,6 +83,9 @@ class ArgParser {
     });
 
     const subParsers = parser.add_subparsers({dest: 'subcommand'});
+
+    // add the 'setup' command
+    ArgParser._addSetupToParser(subParsers);
 
     // add the 'server' subcommand, and store the raw arguments on the parser
     // object as a way for other parts of the code to work with the arguments
@@ -278,6 +289,45 @@ class ArgParser {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Add subcommand and sub-sub commands for 'setup' subcommand.
+   * @param {import('argparse').SubParser} subParser
+   */
+  static _addSetupToParser(subParser) {
+    const setupParser = subParser.add_parser('setup', {
+      add_help: true,
+      help: `Select a preset of official drivers/plugins to install ` +
+        `compatible with '${determinePlatformName()}' host platform. ` +
+        `Existing drivers/plugins will remain. The default preset is 'mobile'.`,
+    });
+
+
+    ArgParser._patchExit(setupParser);
+    const extSubParsers = setupParser.add_subparsers({
+      dest: `setupCommand`,
+    });
+
+    const parserSpecs = [
+      {
+        command: SUBCOMMAND_MOBILE,
+        help: `The preset for mobile devices: ${_.join(getPresetDrivers(SUBCOMMAND_MOBILE), ',')}`
+      },
+      {
+        command: SUBCOMMAND_BROWSER,
+        help: `The preset for desktop browser drivers: ${_.join(getPresetDrivers(SUBCOMMAND_BROWSER), ',')}`
+      },
+      {
+        command: SUBCOMMAND_DESKTOP,
+        help: `The preset for desktop application drivers: ${_.join(getPresetDrivers(SUBCOMMAND_DESKTOP), ',')}`
+      },
+    ];
+
+    for (const {command, help} of parserSpecs) {
+      const parser = extSubParsers.add_parser(command, {help});
+      ArgParser._patchExit(parser);
     }
   }
 }

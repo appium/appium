@@ -4,7 +4,7 @@ import {processCapabilities, PROTOCOLS, STANDARD_CAPS, errors} from '@appium/bas
 import {inspect as dump} from 'util';
 import {node, fs} from '@appium/support';
 import path from 'path';
-import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE} from './constants';
+import {SERVER_SUBCOMMAND, DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from './constants';
 import os from 'node:os';
 
 const W3C_APPIUM_PREFIX = 'appium';
@@ -331,6 +331,16 @@ export function isServerCommandArgs(args) {
 }
 
 /**
+ * @template {CliCommand} Cmd
+ * @template {CliExtensionSubcommand|CliCommandSetupSubcommand|void} [SubCmd=void]
+ * @param {Args<Cmd, SubCmd>} args
+ * @returns {args is Args<SetupCommand>}
+ */
+export function isSetupCommandArgs(args) {
+  return args.subcommand === SETUP_SUBCOMMAND;
+}
+
+/**
  * @template {CliCommand} [Cmd=ServerCommand]
  * @template {CliExtensionSubcommand|void} [SubCmd=void]
  * @param {Args<Cmd, SubCmd>} args
@@ -451,19 +461,21 @@ export {
  * @typedef {import('appium/types').CliCommand} CliCommand
  * @typedef {import('appium/types').CliExtensionSubcommand} CliExtensionSubcommand
  * @typedef {import('appium/types').CliExtensionCommand} CliExtensionCommand
+ * @typedef {import('appium/types').CliCommandSetupSubcommand} CliCommandSetupSubcommand
  * @typedef {import('appium/types').CliCommandServer} ServerCommand
  * @typedef {import('appium/types').CliCommandDriver} DriverCommand
  * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandSetup} SetupCommand
  */
 
 /**
  * @template {CliCommand} [Cmd=ServerCommand]
- * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @template {CliExtensionSubcommand|CliCommandSetupSubcommand|void} [SubCmd=void]
  * @typedef {import('appium/types').Args<Cmd, SubCmd>} Args
  */
 
 /**
  * @template {CliCommand} [Cmd=ServerCommand]
- * @template {CliExtensionSubcommand|void} [SubCmd=void]
+ * @template {CliExtensionSubcommand|CliCommandSetupSubcommand|void} [SubCmd=void]
  * @typedef {import('appium/types').ParsedArgs<Cmd, SubCmd>} ParsedArgs
  */

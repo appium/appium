@@ -13,6 +13,7 @@ import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
+import { runSetupCommand } from './cli/setup-command';
 import {getParser} from './cli/parser';
 import {
   APPIUM_VER,
@@ -39,6 +40,7 @@ import {
   fetchInterfaces,
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
+  isSetupCommandArgs,
 } from './utils';
 import net from 'node:net';
 
@@ -217,7 +219,7 @@ async function init(args) {
   }
 
   // merge config and apply defaults.
-  // the order of precendece is:
+  // the order of precedence is:
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
@@ -286,6 +288,9 @@ async function init(args) {
       pluginConfig,
       appiumHome,
     });
+  } else if (isSetupCommandArgs(preConfigArgs)) {
+    await runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
+    return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);
     if (isExtensionCommandArgs(preConfigArgs)) {
@@ -475,6 +480,7 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('appium/types').CliCommandServer} ServerCommand
  * @typedef {import('appium/types').CliCommandDriver} DriverCommand
  * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandSetup} SetupCommand
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */

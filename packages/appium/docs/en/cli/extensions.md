@@ -30,27 +30,33 @@ All Extension CLI commands can take an optional `--json` argument, which will re
 the command as a machine-readable JSON string rather than the standard output, which is colourized
 and tuned for human consumption.
 
-### `list`
+### `doctor`
 
-List installed and available extensions. "Available" extensions include those which are officially
-recognized by the Appium team, but you are not limited to installing only the extensions displayed
-in this list.
+Run doctor checks for the given extension, which validate whether the extension has its prerequisites
+configured correctly. Note that not all extensions include doctor checks. See the
+[Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more details on
+how to create them.
 
 Usage:
 
 ```
-appium <ext-type> list [--installed] [--updates] [--json]
+appium <ext-type> doctor <ext-name>
 ```
 
 Required arguments:
 
 - `<ext-type>`: must be `driver` or `plugin`
+- `<ext-name>`: the name of the extension whose doctor checks you want to run
 
 Optional arguments:
 
-- `--installed`: show only installed extensions, not installed plus available extensions
-- `--updates`: for extensions installed via NPM, display a message if there are any updates
 - `--json`: return the result in JSON format
+
+Example (run doctor checks for the UiAutomator2 driver):
+
+```
+appium driver doctor uiautomator2
+```
 
 ### `install`
 
@@ -124,46 +130,26 @@ by `npm install`:
     appium plugin install --source=local /path/to/my/plugin
     ```
 
-### `update`
+### `list`
 
-Update one or more extensions that have been installed via NPM. By default, Appium will not
-automatically update any extension that has a revision in its major version, so as to prevent
-unintended breaking changes.
+List installed and available extensions. "Available" extensions include those which are officially
+recognized by the Appium team, but you are not limited to installing only the extensions displayed
+in this list.
 
 Usage:
 
 ```
-appium <ext-type> update <ext-name> [--unsafe] [--json]
+appium <ext-type> list [--installed] [--updates] [--json]
 ```
 
 Required arguments:
 
 - `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension to update, or the string `installed` (which will update
-  all installed extensions)
 
 Optional arguments:
 
-- `--unsafe`: direct Appium to go ahead and update passed a major version boundary
-- `--json`: return the result in JSON format
-
-### `uninstall`
-
-Remove an installed extension.
-
-Usage:
-
-```
-appium <ext-type> uninstall <ext-name> [--json]
-```
-
-Required arguments:
-
-- `<ext-type>`: must be `driver` or `plugin`
-- `<ext-name>`: the name of the extension to uninstall
-
-Optional arguments:
-
+- `--installed`: show only installed extensions, not installed plus available extensions
+- `--updates`: for extensions installed via NPM, display a message if there are any updates
 - `--json`: return the result in JSON format
 
 ### `run`
@@ -187,7 +173,7 @@ Required arguments:
 
 Optional arguments:
 
-* `script-args`: any arguments that Appium does not interpret as belonging to its own set of
+- `script-args`: any arguments that Appium does not interpret as belonging to its own set of
   arguments will be passed along to the extension script
 - `--json`: return the result in JSON format
 
@@ -197,23 +183,44 @@ Example (run the `reset` script included with the UiAutomator2 driver):
 appium driver run uiautomator2 reset
 ```
 
-### `doctor`
+### `update`
 
-Run doctor checks for the given extension if it has any. Extension authors can include
-runnable scripts that assist with driver or plugin preconditions validations. These scripts
-must be valid Node.js sources, must be listed in the package manifest, and must export
-class instances that comply to the particular requirements.
-See the [Building Doctor Checks](../developing/build-doctor-checks.md) tutorial for more
-details on these requirements.
+Update one or more extensions that have been installed via NPM. By default, Appium will not
+automatically update any extension past a major version boundary, so as to prevent
+unintended breaking changes.
 
 Usage:
 
 ```
-appium <ext-type> doctor <ext-name>
+appium <ext-type> update <ext-name> [--unsafe] [--json]
 ```
 
-Example (run doctor checks for the UiAutomator2 driver):
+Required arguments:
+
+- `<ext-type>`: must be `driver` or `plugin`
+- `<ext-name>`: the name of the extension to update, or the string `installed` (which will update
+  all installed extensions)
+
+Optional arguments:
+
+- `--unsafe`: direct Appium to go ahead and update past a major version boundary
+- `--json`: return the result in JSON format
+
+### `uninstall`
+
+Remove an installed extension.
+
+Usage:
 
 ```
-appium driver doctor uiautomator2
+appium <ext-type> uninstall <ext-name> [--json]
 ```
+
+Required arguments:
+
+- `<ext-type>`: must be `driver` or `plugin`
+- `<ext-name>`: the name of the extension to uninstall
+
+Optional arguments:
+
+- `--json`: return the result in JSON format

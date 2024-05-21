@@ -7,7 +7,7 @@ title: Setup Command-Line Usage
 
 The `setup` command aims to simplify the initial procedure of setting up Appium. It allows to install
 multiple extensions (drivers/plugins) in one go, without the need to run
-`appium <extension> install <ext-name>` multiple times.
+`appium <ext-name> install <ext-name>` multiple times.
 
 The command has several presets that can be used to install different sets of extensions.
 The presets are as follows:

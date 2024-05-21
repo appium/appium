@@ -9,10 +9,10 @@ title: Install Appium
 
     Before installing, make sure to check the [System Requirements](./requirements.md).
 
-Appium can be installed using `npm`:
+Appium can be installed globally using `npm`:
 
 ```bash
-npm install appium
+npm install -g appium
 ```
 
 !!! note
@@ -28,11 +28,12 @@ appium
 ```
 
 This launches the Appium server process, which loads all the installed Appium drivers, and
-begins waiting for new session requests from client connections (such as test automation scripts). Since the server process is
-independent from its clients, it must always be explicitly
-launched before starting a new session.
+begins waiting for new session requests from client connections (such as test automation scripts).
+Since the server process is independent from its clients, it must be explicitly launched before
+attempting to start a new session.
 
-The console log will list all the valid URLs that clients can use to connect to this server:
+When the server is launched, the console log will list all the valid URLs that clients can use to
+connect to this server:
 
 ```
 [Appium] You can provide the following URLs in your client code to connect to this server:
@@ -44,6 +45,6 @@ Once a client requests a new session, the Appium server process will start loggi
 this session until its termination. Keep this in mind - if you ever encounter issues with Appium
 tests, you can always check the server log for more details.
 
-Now, even though Appium is installed and running, it does not come bundled with any drivers, meaning
-it cannot automate anything yet. We will set up automation for Android - continue to the next step:
-[Installing the UiAutomator2 Driver](./uiauto2-driver.md).
+So what's next? Even though Appium is installed and running, it does not come bundled with any
+drivers, which means it cannot automate anything yet. We will therefore set up automation for
+Android - continue to [Installing the UiAutomator2 Driver](./uiauto2-driver.md).

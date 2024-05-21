@@ -60,11 +60,13 @@ set up on your system, so you can get busy making Android apps if you want!
 
 ## Install the driver itself
 
+### Standard Install
+
 Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../cli/extensions.md).
 Since UiAutomator2 is maintained by the core Appium team, it has an 'official' driver name
 (`uiautomator2`), which makes the installation simpler.
 
-Before installing, make sure your Appium server is _not_ running (if it is, quit it with Ctrl-C).
+Before installing, make sure your Appium server is _not_ running (if it is, quit it with _Ctrl-C_).
 Then run the following command:
 
 ```bash
@@ -91,6 +93,34 @@ must be used to select this driver for use during an Appium session (in this cas
     UiAutomator2 driver, but if you are incorporating Appium into a Node.js project, you might
     prefer to use `npm` to manage Appium and its connected drivers. To learn more about this
     technique, visit the guide on [managing Appium extensions](../guides/managing-exts.md).
+
+### Batch Install
+
+You may want to use Appium with more than one driver. One way to accomplish this is to run
+`appium driver install <driver-name>` for each individual driver, but you can also install multiple
+drivers in one go:
+
+```
+appium setup
+```
+
+Running this will install Appium's mobile-specific drivers: UiAutomator2, [XCUITest](https://appium.github.io/appium-xcuitest-driver/)
+(only if running macOS), and [Espresso](https://github.com/appium/appium-espresso-driver).
+
+You can also use this command to batch install drivers for desktop applications or desktop browsers.
+For more details on this, refer to the [Setup command documentation](../cli/setup.md).
+
+### Validating the Install
+
+The UiAutomator2 driver, like all official Appium drivers, comes with the Appium Doctor tool, which
+allows validating whether all prerequisites have been set up correctly:
+
+```
+appium driver doctor uiautomator2
+```
+
+This guide has focused on the essential requirements, so Appium Doctor may suggest one or more
+optional fixes. But if you see `0 required fixes needed`, that means everything is set up!
 
 Now, start the Appium server again (run `appium`), and you should see that the newly-installed
 driver is listed as available:

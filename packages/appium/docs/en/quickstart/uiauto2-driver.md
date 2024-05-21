@@ -60,8 +60,12 @@ set up on your system, so you can get busy making Android apps if you want!
 
 ## Install the driver itself
 
-Since the UiAutomator2 driver is maintained by the core Appium team, it has an 'official' driver
-name that you can use to install it easily via the [Appium Extension CLI](../cli/extensions.md):
+Like all Appium drivers, the UiAutomator2 driver is installed via the [Appium Extension CLI](../cli/extensions.md).
+Since UiAutomator2 is maintained by the core Appium team, it has an 'official' driver name
+(`uiautomator2`), which makes the installation simpler.
+
+Before installing, make sure your Appium server is _not_ running (if it is, quit it with Ctrl-C).
+Then run the following command:
 
 ```bash
 appium driver install uiautomator2
@@ -77,11 +81,9 @@ Driver uiautomator2@2.0.5 successfully installed
 - platformNames: ["Android"]
 ```
 
-Running this command will locate and install the latest version of the UiAutomator2 driver, making
-it available for automation. Note that when it is installed it tells you what platforms it is valid
-for (in this case, `Android`), and what automation name (the `appium:automationName`
-[capability](../guides/caps.md)) must be used to select this driver for use during an Appium
-session (in this case, `UiAutomator2`).
+Note how the installation process specifies what platforms is the driver valid for (in this case,
+`Android`), and what automation name (the `appium:automationName` [capability](../guides/caps.md))
+must be used to select this driver for use during an Appium session (in this case, `UiAutomator2`).
 
 !!! note
 

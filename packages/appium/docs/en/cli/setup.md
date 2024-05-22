@@ -15,7 +15,7 @@ The presets are as follows:
 |Preset|Installation Command|Included Drivers|Included Plugins|
 |--|--|--|--|
 |Mobile|`appium setup mobile` or `appium setup`|`uiautomator2`, `xcuitest`[^1], `espresso`|`images`|
-|Desktop application|`appium setup desktop`|`mac2`[^1]|`images`|
+|Desktop application|`appium setup desktop`|`mac2`[^1], `windows`[^2]|`images`|
 |Desktop browser|`appium setup browser`|`safari`[^1], `gecko`, `chromium`|`images`|
 
 Attempting to install a preset while already having one or more of its included extensions installed
@@ -25,3 +25,4 @@ Refer to the [Ecosystem documentation](../ecosystem/index.md) to learn more abou
 listed above.
 
 [^1]: Only installed if the host machine is running macOS.
+[^2]: Only installed if the host machine is running Windows.

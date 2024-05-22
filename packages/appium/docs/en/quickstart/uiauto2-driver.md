@@ -119,8 +119,8 @@ allows validating whether all prerequisites have been set up correctly:
 appium driver doctor uiautomator2
 ```
 
-This guide has focused on the essential requirements, so Appium Doctor may suggest one or more
-optional fixes. But if you see `0 required fixes needed`, that means everything is set up!
+This guide has focused on essential requirements, so Appium Doctor may suggest one or more optional
+fixes. But if you see `0 required fixes needed`, that means everything is set up!
 
 Now, start the Appium server again (run `appium`), and you should see that the newly-installed
 driver is listed as available:

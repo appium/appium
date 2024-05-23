@@ -25,9 +25,9 @@ These drivers are currently maintained by the Appium team:
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native|
 |[Gecko](https://github.com/appium/appium-geckodriver)|`gecko`|macOS, Windows, Linux, Android|Web|
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|
-|[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web|
+|[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
 
 ### Other Drivers

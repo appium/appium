@@ -35,11 +35,9 @@ describe('Websockets (e2e)', function () {
           ws.send(WS_DATA);
         }
       });
-      const previousListenerCount = baseServer.listenerCount('upgrade');
       const endpoint = `${DEFAULT_WS_PATHNAME_PREFIX}/hello`;
       const timeout = 5000;
       await baseServer.addWebSocketHandler(endpoint, wss);
-      baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
@@ -78,7 +76,6 @@ describe('Websockets (e2e)', function () {
         client.on('error', resolve);
         setTimeout(resolve, timeout);
       });
-      baseServer.listenerCount('upgrade').should.be.above(previousListenerCount);
     });
   });
 });

@@ -9,7 +9,10 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * @type {AppiumServer['addWebSocketHandler']}
  */
 async function addWebSocketHandler(handlerPathname, handlerServer) {
-  this.webSocketsMapping[handlerPathname] = handlerServer;
+  this.webSocketsMapping = {
+    ...(this.webSocketsMapping ?? {}),
+    [handlerPathname]: handlerServer,
+  };
 }
 
 /**

@@ -140,6 +140,7 @@ function configureServer({
   allowCors = true,
   basePath = DEFAULT_BASE_PATH,
   extraMethodMap = {},
+  webSocketsMapping = {},
 }) {
   basePath = normalizeBasePath(basePath);
 
@@ -153,11 +154,7 @@ function configureServer({
   app.use(`${basePath}/produce_error`, produceError);
   app.use(`${basePath}/crash`, produceCrash);
 
-  // add middlewares
-  // @ts-ignore We add this custom property deliberately
-  app.webSocketsMapping = {};
-  // @ts-ignore We add this custom property deliberately
-  app.use(handleUpgrade(app.webSocketsMapping));
+  app.use(handleUpgrade(webSocketsMapping));
   if (allowCors) {
     app.use(allowCrossDomain);
   } else {
@@ -200,6 +197,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
    * @type {AppiumServer}
    */
   const appiumServer = /** @type {any} */ (httpServer);
+  appiumServer.webSocketsMapping = {};
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
@@ -375,4 +373,5 @@ export {server, configureServer, normalizeBasePath};
  * @property {boolean} [allowCors]
  * @property {string} [basePath]
  * @property {MethodMap} [extraMethodMap]
+ * @property {import('@appium/types').StringRecord} [webSocketsMapping={}]
  */

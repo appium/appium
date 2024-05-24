@@ -28,6 +28,8 @@ const PRESET_PAIRS = Object.freeze(
 );
 const DRIVERS_ONLY_MACOS = ['xcuitest', 'safari', 'mac2'];
 
+const DRIVERS_ONLY_WINDOWS = ['windows'];
+
 /**
  * Plugin names listed in KNOWN_PLUGINS to install by default.
  */
@@ -39,7 +41,18 @@ export const DEFAULT_PLUGINS = ['images'];
  * @returns {Array<string>}
  */
 export function getPresetDrivers(presetName) {
-  return _.filter(PRESET_PAIRS[presetName], (driver) => system.isMac() || !_.includes(DRIVERS_ONLY_MACOS, driver));
+  return _.filter(PRESET_PAIRS[presetName], (driver) => {
+    if (_.includes(DRIVERS_ONLY_MACOS, driver)) {
+      return system.isMac();
+    }
+
+    if (_.includes(DRIVERS_ONLY_WINDOWS, driver)) {
+      return system.isWindows();
+    }
+
+    return true;
+  });
+
 }
 
 /**

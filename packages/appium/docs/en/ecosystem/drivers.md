@@ -27,6 +27,7 @@ These drivers are currently maintained by the Appium team:
 |[Mac2](https://github.com/appium/appium-mac2-driver)|`mac2`|macOS|Native|
 |[Safari](https://github.com/appium/appium-safari-driver)|`safari`|macOS, iOS|Web|
 |[UiAutomator2](https://github.com/appium/appium-uiautomator2-driver)|`uiautomator2`|Android|Native, Hybrid, Web|
+|[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
 
 ### Other Drivers
@@ -41,7 +42,6 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |[Roku](https://github.com/headspinio/appium-roku-driver)|`--source=npm @headspinio/appium-roku-driver`|Roku|Native|HeadSpin|
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
-|[Windows](https://github.com/appium/appium-windows-driver)|`--source=npm appium-windows-driver`|Windows|Native|Community / Microsoft|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
 
 !!! note

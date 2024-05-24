@@ -110,6 +110,7 @@ async function server(opts) {
         allowCors,
         basePath,
         extraMethodMap,
+        webSocketsMapping: appiumServer.webSocketsMapping,
       });
       // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {

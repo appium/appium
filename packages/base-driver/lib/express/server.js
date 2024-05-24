@@ -14,6 +14,7 @@ import {
   catchAllHandler,
   allowCrossDomainAsyncExecute,
   handleIdempotency,
+  handleUpgrade,
   catch404Handler,
 } from './middleware';
 import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
@@ -153,6 +154,10 @@ function configureServer({
   app.use(`${basePath}/crash`, produceCrash);
 
   // add middlewares
+  // @ts-ignore We add this custom property deliberately
+  app.webSocketsMapping = {};
+  // @ts-ignore We add this custom property deliberately
+  app.use(handleUpgrade(app.webSocketsMapping));
   if (allowCors) {
     app.use(allowCrossDomain);
   } else {

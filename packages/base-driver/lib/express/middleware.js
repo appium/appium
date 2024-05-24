@@ -84,7 +84,7 @@ export function defaultToJSONContentType(req, res, next) {
 
 /**
  *
- * @param {import('@appium/types').StringRecord} webSocketsMapping
+ * @param {import('@appium/types').StringRecord<import('@appium/types').WSServer>} webSocketsMapping
  * @returns {import('express').RequestHandler}
  */
 export function handleUpgrade(webSocketsMapping) {
@@ -100,13 +100,12 @@ export function handleUpgrade(webSocketsMapping) {
     }
     for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
       if (pathToRegexp(pathname).test(currentPathname)) {
-        wsServer.handleUpgrade(req, req.socket, undefined, (ws) => {
+        return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
           wsServer.emit('connection', ws, req);
         });
-        return;
       }
     }
-    log.error(`Did not match the websocket Upgrade at ${currentPathname} to any known route`);
+    log.info(`Did not match the websocket upgrade request at ${currentPathname} to any known route`);
     next();
   };
 }

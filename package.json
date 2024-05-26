@@ -146,10 +146,10 @@
   },
   "overrides": {
     "@sidvind/better-ajv-errors": {
-      "ajv": "8.13.0"
+      "ajv": "8.14.0"
     },
     "ajv-formats": {
-      "ajv": "8.13.0"
+      "ajv": "8.14.0"
     },
     "http-cache-semantics": "4.1.1"
   }

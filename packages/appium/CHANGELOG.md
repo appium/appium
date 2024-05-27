@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.0](https://github.com/appium/appium/compare/appium@2.5.4...appium@2.6.0) (2024-05-27)
+
+
+### Features
+
+* **appium:** Add --show-debug-info CLI argument ([#20108](https://github.com/appium/appium/issues/20108)) ([6f602d3](https://github.com/appium/appium/commit/6f602d3e501dbd9d44f6e7ba220f45ff1d4dfde8))
+* **appium:** prepare setup subcommand as shortcut for drivers/plugins installation ([#20102](https://github.com/appium/appium/issues/20102)) ([2b2fb18](https://github.com/appium/appium/commit/2b2fb185a6bc882717e4aa0580b0136bf5ae2942))
+* **base-driver:** Add env variables to control applications cache ([#20042](https://github.com/appium/appium/issues/20042)) ([4e8c91c](https://github.com/appium/appium/commit/4e8c91c8f647e545344d5b49282628413e1ccb19))
+
+
+### Bug Fixes
+
+* **appium:** Do not crash the process if there was an exception in a winston transport ([#20065](https://github.com/appium/appium/issues/20065)) ([0492fe4](https://github.com/appium/appium/commit/0492fe49dc34b3ef345a988bf56e49daf8dfcffe))
+* **appium:** update dependency ajv to v8.13.0 ([448e94e](https://github.com/appium/appium/commit/448e94ee50fa127ae93e657a3958726aa13e7df8))
+* **appium:** update dependency ajv to v8.14.0 ([e3dcd66](https://github.com/appium/appium/commit/e3dcd66714be603a8acbb3364f538c60772e76bd))
+* **appium:** update dependency ws to v8.17.0 ([395dc22](https://github.com/appium/appium/commit/395dc225e4d7f47dc55134fba9fb9306cabf7e19))
+* **docutils:** update dependency yaml to v2.4.2 ([0211174](https://github.com/appium/appium/commit/0211174300cf91c1cad2364d8ce3de7100139f5c))
+* **execute-driver-plugin:** update dependency webdriverio to v8.37.0 ([27ff9a0](https://github.com/appium/appium/commit/27ff9a00ef65a66aea8da8e3be5ffebb6d8c65e1))
+* **execute-driver-plugin:** update dependency webdriverio to v8.38.0 ([e80b682](https://github.com/appium/appium/commit/e80b6826efbe14ecfa6c0ff1f6aceb4db99b82d8))
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **support:** update dependency semver to v7.6.1 ([b5fd5b6](https://github.com/appium/appium/commit/b5fd5b6d2c585be8391b80ac67207da610e8ea64))
+* **support:** update dependency semver to v7.6.2 ([1b4f36c](https://github.com/appium/appium/commit/1b4f36cebe7aaf99976f24346b2d1325b79fc55c))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [2.5.4](https://github.com/appium/appium/compare/appium@2.5.3...appium@2.5.4) (2024-04-21)
 
 

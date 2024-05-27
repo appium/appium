@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.6](https://github.com/appium/appium/compare/@appium/support@4.2.5...@appium/support@4.2.6) (2024-05-27)
+
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **support:** update dependency glob to v10 ([#20127](https://github.com/appium/appium/issues/20127)) ([95be7dd](https://github.com/appium/appium/commit/95be7dd47748e9d20bfb38e24c469fda81fe93e4))
+* **support:** update dependency glob to v10.3.16 ([#20134](https://github.com/appium/appium/issues/20134)) ([56f72c0](https://github.com/appium/appium/commit/56f72c0af70d8a90a658035ab66e18e90b6f0b8c))
+* **support:** update dependency glob to v10.4.1 ([#20141](https://github.com/appium/appium/issues/20141)) ([82406f1](https://github.com/appium/appium/commit/82406f17759026000cef70ba258631adaa252358))
+* **support:** update dependency semver to v7.6.1 ([b5fd5b6](https://github.com/appium/appium/commit/b5fd5b6d2c585be8391b80ac67207da610e8ea64))
+* **support:** update dependency semver to v7.6.2 ([1b4f36c](https://github.com/appium/appium/commit/1b4f36cebe7aaf99976f24346b2d1325b79fc55c))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [4.2.5](https://github.com/appium/appium/compare/@appium/support@4.2.4...@appium/support@4.2.5) (2024-04-21)
 
 

@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.18.0](https://github.com/appium/appium/compare/@appium/types@0.17.0...@appium/types@0.18.0) (2024-05-27)
+
+
+### Features
+
+* **base-driver:** Add the original app link argument to configureApp callbacks ([#20035](https://github.com/appium/appium/issues/20035)) ([3423fd9](https://github.com/appium/appium/commit/3423fd9206f71481bb34919e02a3dc8c5e3bec00))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [0.17.0](https://github.com/appium/appium/compare/@appium/types@0.16.2...@appium/types@0.17.0) (2024-04-21)
 
 

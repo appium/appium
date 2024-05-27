@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.0.37](https://github.com/appium/appium/compare/@appium/doctor@2.0.36...@appium/doctor@2.0.37) (2024-05-27)
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v12.0.9 ([fd63e9b](https://github.com/appium/appium/commit/fd63e9bdbd0c941453963cfb9636972129a3b57a))
+* **doctor:** update dependency appium-adb to v12.2.0 ([e961a9b](https://github.com/appium/appium/commit/e961a9b9c5347ed85317de9bfc5687ad74a711ff))
+* **doctor:** update dependency appium-adb to v12.3.2 ([f764c38](https://github.com/appium/appium/commit/f764c38c29c657133dec1ea3f0e3c6c2663ee7df))
+* **doctor:** update dependency appium-adb to v12.4.0 ([33be2ee](https://github.com/appium/appium/commit/33be2ee45d725e6a64fc24683dfbcbff29dfbe84))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+
+
+
 ## [2.0.36](https://github.com/appium/appium/compare/@appium/doctor@2.0.35...@appium/doctor@2.0.36) (2024-04-21)
 
 **Note:** Version bump only for package @appium/doctor

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://appium.io/docs/ja/2.6/</loc>
+         <lastmod>2024-05-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.6/blog/</loc>
+         <lastmod>2024-05-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.6/guides/migrating-1-to-2/</loc>
+         <lastmod>2024-05-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://appium.io/docs/ja/2.6/intro/</loc>
+         <lastmod>2024-05-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>

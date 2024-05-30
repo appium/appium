@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@appium/tsconfig/tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,

@@ -27,8 +27,8 @@
     "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
   },
   "dependencies": {
-    "console-control-strings": "^1.1.0",
-    "set-blocking": "^2.0.0"
+    "console-control-strings": "1.1.0",
+    "set-blocking": "2.0.0"
   },
   "license": "Apache-2.0",
   "engines": {

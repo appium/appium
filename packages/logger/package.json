@@ -20,7 +20,9 @@
     "lib": "./lib"
   },
   "scripts": {
-    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
+    "test": "npm run test:unit",
+    "test:smoke": "node ./build/lib/index.js",
+    "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
   },
   "dependencies": {
     "console-control-strings": "^1.1.0",

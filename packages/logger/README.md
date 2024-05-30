@@ -6,13 +6,13 @@ Forked from [npmlog](https://github.com/npm/npmlog)
 # Installation
 
 ```console
-npm install appium-logger --save
+npm install @appium/logger --save
 ```
 
 # Basic Usage
 
 ```js
-import log from 'appium-logger';
+import log from '@appium/logger';
 
 // additional stuff ---------------------------+
 // message ----------+                         |

@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "npm run test:unit",
-    "test:smoke": "node ./build/lib/index.js",
+    "test:smoke": "node ./build/index.js",
     "test:unit": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
   },
   "dependencies": {

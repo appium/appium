@@ -1,6 +1,6 @@
 {
   "name": "@apppium/logger",
-  "version": "7.0.1",
+  "version": "1.0.0",
   "author": "https://github.com/appium",
   "description": "A Universal Logger For The Appium Ecosystem",
   "repository": {

@@ -1,0 +1,33 @@
+{
+  "name": "@apppium/logger",
+  "version": "7.0.1",
+  "author": "https://github.com/appium",
+  "description": "A Universal Logger For The Appium Ecosystem",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/appium.git",
+    "directory": "packages/logger"
+  },
+  "main": "build/index.js",
+  "types": "index.ts",
+  "files": [
+    "index.ts",
+    "lib",
+    "build",
+    "CHANGELOG.md"
+  ],
+  "directories": {
+    "lib": "./lib"
+  },
+  "scripts": {
+    "test": "mocha --exit --timeout 1m \"./test/unit/**/*-specs.js\""
+  },
+  "dependencies": {
+    "console-control-strings": "^1.1.0",
+    "set-blocking": "^2.0.0"
+  },
+  "license": "ISC",
+  "engines": {
+    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
+  }
+}

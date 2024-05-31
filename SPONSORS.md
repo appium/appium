@@ -23,13 +23,19 @@ contributors!
 
 ## Gold Sponsors
 
-* [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
+[Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 
 ## Silver Sponsors
 
- * [Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
+[Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
 
 ## Bronze Sponsors
 
 - [MagicPod](https://magicpod.com/en/)
-* [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)
+- [TestingBot](https://testingbot.com/)
+- [WebdriverIO](https://webdriver.io/)
+
+[Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)
+
+
+_Alphabetical order in each category_

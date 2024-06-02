@@ -121,7 +121,7 @@
     "mocha": "10.4.0",
     "mocha-chai-jest-snapshot": "1.1.4",
     "npm-run-all2": "6.2.0",
-    "prettier": "3.2.5",
+    "prettier": "3.3.0",
     "rewiremock": "3.14.5",
     "rimraf": "5.0.7",
     "serve-static": "1.15.0",

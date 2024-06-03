@@ -23,13 +23,18 @@ contributors!
 
 ## Gold Sponsors
 
-* [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false"/></a>
+
+[Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 
 ## Silver Sponsors
 
- * [Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/silver-sponsor.svg?avatarHeight=80&button=false"/></a>
+
+[Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
 
 ## Bronze Sponsors
 
-- [MagicPod](https://magicpod.com/en/)
-* [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/sponsors.svg?avatarHeight=60&button=false"/></a>
+
+[Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)

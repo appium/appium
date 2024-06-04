@@ -1,15 +1,15 @@
-import npmlog from 'npmlog';
+import globalLog from '@appium/logger';
 import {createLogger, format, transports} from 'winston';
 import {fs, logger} from '@appium/support';
 import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
 
 // set up distributed logging before everything else
-logger.patchLogger(npmlog);
-global._global_npmlog = npmlog;
+logger.patchLogger(globalLog);
+global._global_npmlog = globalLog;
 
 // npmlog is used only for emitting, we use winston for output
-npmlog.level = 'info';
+globalLog.level = 'info';
 const levels = {
   debug: 4,
   info: 3,
@@ -198,7 +198,7 @@ function getColorizedPrefix(prefix) {
 }
 
 async function init(args) {
-  npmlog.level = 'silent';
+  globalLog.level = 'silent';
 
   // set de facto param passed to timestamp function
   useLocalTimeZone = args.localTimezone;
@@ -215,7 +215,7 @@ async function init(args) {
 
   const reportedLoggerErrors = new Set();
   // Capture logs emitted via npmlog and pass them through winston
-  npmlog.on('log', ({level, message, prefix}) => {
+  globalLog.on('log', ({level, message, prefix}) => {
     const winstonLevel = npmToWinstonLevels[level] || 'info';
     let msg = message;
     if (prefix) {
@@ -249,7 +249,7 @@ function clear() {
       log.remove(transport);
     }
   }
-  npmlog.removeAllListeners('log');
+  globalLog.removeAllListeners('log');
 }
 
 export {init, clear};

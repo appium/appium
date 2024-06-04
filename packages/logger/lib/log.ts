@@ -1,5 +1,7 @@
 import {EventEmitter} from 'node:events';
+// @ts-ignore This module does not provide type definitons
 import setBlocking from 'set-blocking';
+// @ts-ignore This module does not provide type definitons
 import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
@@ -44,6 +46,7 @@ export class Log extends EventEmitter implements Logger {
     this.record = [];
     this.maxRecordSize = 10000;
     this.stream = process.stderr;
+    this.heading = '';
     this.prefixStyle = {fg: 'magenta'};
     this.headingStyle = {fg: 'white', bg: 'black'};
     this._id = 0;
@@ -142,8 +145,8 @@ export class Log extends EventEmitter implements Logger {
   addLevel(level: string, n: number, style?: StyleObject, disp?: string): void {
     this._levels[level] = n;
     this._style[level] = style;
-    if (!this[level]) {
-      this[level] = (prefix: string, message: any, ...args: any[]) => {
+    if (!(this as any)[level]) {
+      (this as any)[level] = (prefix: string, message: any, ...args: any[]) => {
         this.log(level, prefix, message, ...args);
       };
     }

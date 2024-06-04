@@ -18,6 +18,7 @@ export type AppiumLoggerLevel = 'silly' | 'verbose' | 'debug' | 'info' | 'http' 
 export interface AppiumLogger {
   /**
    * Returns the underlying `logger` {@link Logger}.
+   * @private This method is designed for private usage.
    */
   unwrap(): Logger;
   level: AppiumLoggerLevel;

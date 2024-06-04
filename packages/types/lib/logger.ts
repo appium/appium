@@ -9,8 +9,6 @@ export type AppiumLoggerPrefix = string | (() => string);
 
 /**
  * Possible "log levels" for {@linkcode AppiumLogger}.
- *
- * Extracted from ``.
  */
 export type AppiumLoggerLevel = 'silly' | 'verbose' | 'debug' | 'info' | 'http' | 'warn' | 'error';
 

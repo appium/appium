@@ -44,28 +44,26 @@ export async function prompt(question) {
   return await inquirer.prompt(question);
 }
 
-let actualLog;
+let onLogMessageHandler = null;
 
 export function configureBinaryLog(opts) {
-  actualLog = log.unwrap().log;
-  log.unwrap().log = function (level, prefix, msg) {
-    let l = this.levels[level];
-    if (l < this.levels[this.level]) return; // eslint-disable-line curly
-    actualLog(level, prefix, msg);
-
-    if (isFunction(opts.onLogMessage)) {
-      opts.onLogMessage(level, prefix, msg);
-    }
+  const internalLogger = log.unwrap();
+  if (isFunction(opts.onLogMessage) && !onLogMessageHandler) {
+    onLogMessageHandler = (/** @type {import('@appium/logger').MessageObject} */ msg) => opts.onLogMessage(
+      msg.level, msg.prefix, msg.message
+    );
+    internalLogger.on('log', onLogMessageHandler);
   };
-  log.level = opts.debug ? 'debug' : 'info';
+  internalLogger.level = opts.debug ? 'debug' : 'info';
 }
 
 /**
  * If {@link configureBinaryLog} was called, this will restore the original `log` function.
  */
 export function resetLog() {
-  if (actualLog) {
-    log.unwrap().log = actualLog;
+  if (onLogMessageHandler) {
+    log.unwrap().off('log', onLogMessageHandler);
+    onLogMessageHandler = null;
   }
 }
 

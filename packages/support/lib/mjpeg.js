@@ -172,13 +172,15 @@ class MJpegStream extends Writable {
    * the HTTP request itself. Then reset the state.
    */
   stop() {
-    if (!this.consumer) {
-      return;
+    if (this.consumer) {
+      this.consumer.unpipe(this);
     }
-
-    this.responseStream.unpipe(this.consumer);
-    this.consumer.unpipe(this);
-    this.responseStream.destroy();
+    if (this.responseStream) {
+      if (this.consumer) {
+        this.responseStream.unpipe(this.consumer);
+      }
+      this.responseStream.destroy();
+    }
     this.clear();
   }
 

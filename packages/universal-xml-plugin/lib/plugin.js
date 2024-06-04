@@ -47,8 +47,7 @@ export default class UniversalXMLPlugin extends BasePlugin {
 
   async _find(multiple, next, driver, strategy, selector) {
     const {platformName} = driver.caps;
-    const currentContext = await driver.getCurrentContext();
-    if (strategy.toLowerCase() !== 'xpath' || currentContext !== 'NATIVE_APP') {
+    if (strategy.toLowerCase() !== 'xpath' || (await driver.getCurrentContext()) !== 'NATIVE_APP') {
       return await next();
     }
     const xml = await this.getPageSource(null, driver, null, true);

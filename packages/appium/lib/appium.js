@@ -21,6 +21,10 @@ import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
 
+const MIN_WS_CODE_VAL = 1000;
+const MAX_WS_CODE_VAL = 1015;
+const WS_FALLBACK_CODE = 1011; // server encountered an error while fulfilling request
+
 const desiredCapabilityConstraints = /** @type {const} */ ({
   automationName: {
     presence: true,
@@ -418,6 +422,16 @@ class AppiumDriver extends DriverCore {
           `Upstream bidi socket closed connection (code ${code}, reason: '${reason}'). ` +
             `Closing proxy connection to client`,
         );
+        if (!_.isNumber(code)) {
+          code = parseInt(code, 10);
+        }
+        if (_.isNaN(code) || code < MIN_WS_CODE_VAL || code > MAX_WS_CODE_VAL) {
+          this.log.warn(
+            `Received code ${code} from upstream socket, but this is not a valid ` +
+              `websocket code. Rewriting to ${WS_FALLBACK_CODE} for ws compatibility`,
+          );
+          code = WS_FALLBACK_CODE;
+        }
         ws.close(code, reason);
       });
 
@@ -1106,7 +1120,7 @@ class AppiumDriver extends DriverCore {
       }
 
       // here we know that we are executing a session command, and have a valid session driver
-      return await (/** @type {any} */ (dstSession)).executeCommand(cmd, ...args);
+      return await /** @type {any} */ (dstSession).executeCommand(cmd, ...args);
     };
 
     // now take our default behavior, wrap it with any number of plugin behaviors, and run it

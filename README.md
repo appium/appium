@@ -178,6 +178,27 @@ cross-platform native app automation, for mobile and beyond!
 If you are looking for a more comprehensive description of what this is all about, please read our
 documentation on [How Does Appium Work?](https://appium.io/docs/en/latest/intro/appium/).
 
+## Sponsors
+
+Appium has a [Sponsorship Program](GOVERNANCE.md#sponsorship)! If you or your company uses Appium
+and wants to give back financially to the project, we use these funds to [encourage development and
+contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
+rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
+
+### Development Partner
+
+Appium is incredibly grateful to our Development Partner for their sustained contribution of
+project development and leadership!
+
+<p align="center">
+  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/assets/images/sponsor-logo-headspin.png"
+width="300" alt="HeadSpin" /></a>
+</p>
+
+### Other Sponsors
+
+A full list of sponsors is available at our [Sponsors page](SPONSORS.md).
+
 ## License
 
 [Apache-2.0](./LICENSE)

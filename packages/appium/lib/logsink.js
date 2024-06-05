@@ -4,6 +4,7 @@ import {fs, logger} from '@appium/support';
 import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
 import { adler32 } from './utils';
+import { LRUCache } from 'lru-cache';
 
 // set up distributed logging before everything else
 logger.patchLogger(globalLog);
@@ -38,6 +39,12 @@ const npmToWinstonLevels = {
 // https://www.ditig.com/publications/256-colors-cheat-sheet
 const MIN_COLOR = 17;
 const MAX_COLOR = 231;
+/** @type {LRUCache<string, number>} */
+const COLORS_CACHE = new LRUCache({
+  max: 1024,
+  ttl: 1000 * 60 * 60 * 24, // expire after 24 hours
+  updateAgeOnGet: true,
+});
 
 let log = null;
 let useLocalTimeZone = false;
@@ -206,8 +213,12 @@ function toDecoratedPrefix(text) {
  * @returns {string} Colorized text (with pseudocode cchars added)
  */
 function colorizePrefix(text) {
-  const hash = adler32(text);
-  const colorIndex = MIN_COLOR + hash % (MAX_COLOR - MIN_COLOR);
+  let colorIndex = COLORS_CACHE.get(text);
+  if (!colorIndex) {
+    const hash = adler32(text);
+    colorIndex = MIN_COLOR + hash % (MAX_COLOR - MIN_COLOR);
+    COLORS_CACHE.set(text, colorIndex);
+  }
   return `\x1b[38;5;${colorIndex}m${text}\x1b[0m`;
 }
 

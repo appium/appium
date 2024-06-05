@@ -6,7 +6,8 @@ hide:
 title: Welcome
 ---
 <style>
-  .md-typeset h1 {
+  .md-typeset h1,
+  .appium-sponsor-thanks {
     display: none;
   }
 </style>
@@ -18,6 +19,17 @@ Welcome to the Appium documentation! Appium is an open-source project and ecosys
 software, designed to facilitate UI automation of many app platforms, including mobile (iOS,
 Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV (Roku, tvOS,
 Android TV, Samsung), and more!
+
+
+<div style="text-align: center">
+  Appium is extremely grateful for the support of its key partners! (Learn more about our
+  sponsorship program and contributor compensation scheme 
+  <a href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">here</a>)
+  <br/>
+  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation">
+    <img src="assets/images/sponsor-logo-headspin.png" style="width: 200px;" />
+  </a>
+</div>
 
 ## Explore the Documentation
 

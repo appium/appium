@@ -4,3 +4,15 @@
 .md-source__fact:nth-child(1n + 2):before {
   margin-left: 0 !important;
 }
+
+.appium-sponsor-thanks {
+  width: 100%;
+  margin: auto 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.appium-sponsor-thanks img {
+  margin: auto 6px;
+  height: 50px;
+}

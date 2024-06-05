@@ -8,6 +8,7 @@ copyright: Copyright &copy; 2012 OpenJS Foundation - <a href="#__consent">Change
 theme:
   logo: assets/images/appium-logo-white.png
   favicon: assets/images/appium-logo.png
+  custom_dir: overrides
 
 plugins:
   blog:

@@ -1,14 +1,14 @@
-# Appium Logger
+# @appium/logger
 
-The logger util that Appium uses.
+> Appium's logging functionality
 
-# Installation
+## Installation
 
 ```console
 npm install @appium/logger --save
 ```
 
-# Basic Usage
+## Basic Usage
 
 ```js
 import log from '@appium/logger';
@@ -21,11 +21,11 @@ import log from '@appium/logger';
     log.info('fyi', 'I have a kitty cat: %j', myKittyCat);
 ```
 
-# History
+## History
 
 This module is forked from [npmlog](https://github.com/npm/npmlog) under ISC License because the original project has been archived.
 Please check [the npmlog changelog](https://github.com/npm/npmlog/blob/main/CHANGELOG.md) to see the list of former module updates before it was forked.
 
-# License
+## License
 
 ISC License

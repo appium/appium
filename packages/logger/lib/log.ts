@@ -5,7 +5,6 @@ import setBlocking from 'set-blocking';
 import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
-import type {StringRecord} from '@appium/types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 
@@ -32,7 +31,7 @@ export class Log extends EventEmitter implements Logger {
   heading: string;
   stream: Writable; // Defaults to process.stderr
 
-  _asyncStorage: AsyncLocalStorage<StringRecord>;
+  _asyncStorage: AsyncLocalStorage<Record<string, any>>;
   _colorEnabled?: boolean;
   _buffer: MessageObject[];
   _style: Record<LogLevel | string, StyleObject | undefined>;
@@ -72,7 +71,7 @@ export class Log extends EventEmitter implements Logger {
     );
   }
 
-  get asyncStorage(): AsyncLocalStorage<StringRecord> {
+  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
     return this._asyncStorage;
   }
 

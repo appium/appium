@@ -185,9 +185,9 @@ and wants to give back financially to the project, we use these funds to [encour
 contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
 rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
 
-### Development Partner
+### Development Partners
 
-Appium is incredibly grateful to our Development Partner for their sustained contribution of
+Appium is incredibly grateful to our Development Partners for their sustained contribution of
 project development and leadership!
 
 <p align="center">

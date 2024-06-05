@@ -48,16 +48,6 @@ labels:
     matcher:
       files: ['packages/base-driver/**']
 
-  - label: '@appium/eslint-config-appium'
-    sync: true
-    matcher:
-      files: ['packages/eslint-config-appium/**']
-
-  - label: '@appium/eslint-config-appium-ts'
-    sync: true
-    matcher:
-      files: ['packages/eslint-config-appium-ts/**']
-
   - label: '@appium/base-plugin'
     sync: true
     matcher:
@@ -78,6 +68,16 @@ labels:
     matcher:
       files: ['packages/driver-test-support/**']
 
+  - label: '@appium/eslint-config-appium'
+    sync: true
+    matcher:
+      files: ['packages/eslint-config-appium/**']
+
+  - label: '@appium/eslint-config-appium-ts'
+    sync: true
+    matcher:
+      files: ['packages/eslint-config-appium-ts/**']
+
   - label: '@appium/execute-driver-plugin'
     sync: true
     matcher:
@@ -97,6 +97,11 @@ labels:
     sync: true
     matcher:
       files: ['packages/images-plugin/**']
+
+  - label: '@appium/logger'
+    sync: true
+    matcher:
+      files: ['packages/logger/**']
 
   - label: '@appium/opencv'
     sync: true
@@ -123,6 +128,11 @@ labels:
     matcher:
       files: ['packages/support/**']
 
+  - label: '@appium/strongbox'
+    sync: true
+    matcher:
+      files: ['packages/strongbox/**']
+
   - label: '@appium/test-support'
     sync: true
     matcher:
@@ -142,8 +152,3 @@ labels:
     sync: true
     matcher:
       files: ['packages/universal-xml-plugin/**']
-  
-  - label: '@appium/strongbox'
-    sync: true
-    matcher:
-      files: ['packages/strongbox/**']

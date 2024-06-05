@@ -1,6 +1,6 @@
 // @ts-check
 
-import npmlog from 'npmlog';
+import globalLog from '@appium/logger';
 import _ from 'lodash';
 import {unleakString} from './util';
 import moment from 'moment';
@@ -20,7 +20,7 @@ for (let level of LEVELS) {
 
 /**
  *
- * @param {import('npmlog').Logger} logger
+ * @param {import('@appium/logger').Logger} logger
  */
 function patchLogger(logger) {
   if (!logger.debug) {
@@ -30,7 +30,7 @@ function patchLogger(logger) {
 
 /**
  *
- * @returns {[import('npmlog').Logger, boolean]}
+ * @returns {[import('@appium/logger').Logger, boolean]}
  */
 function _getLogger() {
   // check if the user set the `_TESTING` or `_FORCE_LOGS` flag
@@ -46,7 +46,7 @@ function _getLogger() {
     logger = mockLog;
   } else {
     // otherwise, either use the global, or a new `npmlog` object
-    logger = global._global_npmlog || npmlog;
+    logger = global._global_npmlog || globalLog;
     // The default value is 10000, which causes excessive memory usage
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }

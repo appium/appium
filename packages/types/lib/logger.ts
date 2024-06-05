@@ -1,4 +1,4 @@
-import type {Logger} from 'npmlog';
+import type {Logger} from '@appium/logger';
 
 /**
  * A log prefix for {@linkcode AppiumLogger}
@@ -9,19 +9,16 @@ export type AppiumLoggerPrefix = string | (() => string);
 
 /**
  * Possible "log levels" for {@linkcode AppiumLogger}.
- *
- * Extracted from `npmlog`.
  */
 export type AppiumLoggerLevel = 'silly' | 'verbose' | 'debug' | 'info' | 'http' | 'warn' | 'error';
 
 /**
- * Describes the `npmlog`-based internal logger.
- *
- * @see https://npm.im/npmlog
+ * Describes the internal logger.
  */
 export interface AppiumLogger {
   /**
-   * Returns the underlying `npmlog` {@link Logger}.
+   * Returns the underlying `logger` {@link Logger}.
+   * ! This method is designed for private usage.
    */
   unwrap(): Logger;
   level: AppiumLoggerLevel;

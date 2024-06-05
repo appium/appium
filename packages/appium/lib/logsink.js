@@ -3,6 +3,7 @@ import {createLogger, format, transports} from 'winston';
 import {fs, logger} from '@appium/support';
 import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
+import { adler32 } from './utils';
 
 // set up distributed logging before everything else
 logger.patchLogger(globalLog);
@@ -34,7 +35,9 @@ const npmToWinstonLevels = {
   error: 'error',
 };
 
-const encounteredPrefixes = [];
+// https://www.ditig.com/publications/256-colors-cheat-sheet
+const MIN_COLOR = 17;
+const MAX_COLOR = 231;
 
 let log = null;
 let useLocalTimeZone = false;
@@ -185,16 +188,27 @@ async function createTransports(args) {
   return transports;
 }
 
-function getColorizedPrefix(prefix) {
-  let prefixId = prefix.split('@')[0].trim();
-  prefixId = prefixId.split(' (')[0].trim();
-  if (encounteredPrefixes.indexOf(prefixId) < 0) {
-    encounteredPrefixes.push(prefixId);
-  }
-  // using a multiple of 16 should cause 16 colors to be created
-  const colorNumber = encounteredPrefixes.indexOf(prefixId) * 16;
-  // use the modulus to cycle around color wheel
-  return `\x1b[38;5;${colorNumber % 256}m${prefix}\x1b[0m`;
+/**
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function toDecoratedPrefix(text) {
+  return `[${text}]`;
+}
+
+/**
+ * Selects the color of the text in terminal from the MIN_COLOR..MAX_COLOR
+ * range. We use adler32 hashing to ensure that equal prefixes would always have
+ * same colors.
+ *
+ * @param {string} text Initial text
+ * @returns {string} Colorized text (with pseudocode cchars added)
+ */
+function colorizePrefix(text) {
+  const hash = adler32(text);
+  const colorIndex = MIN_COLOR + hash % (MAX_COLOR - MIN_COLOR);
+  return `\x1b[38;5;${colorIndex}m${text}\x1b[0m`;
 }
 
 async function init(args) {
@@ -216,22 +230,31 @@ async function init(args) {
   const reportedLoggerErrors = new Set();
   // Capture logs emitted via npmlog and pass them through winston
   globalLog.on('log', ({level, message, prefix}) => {
-    const winstonLevel = npmToWinstonLevels[level] || 'info';
-    let msg = message;
     const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
-    let nonFormattedPrefix = prefix;
+    /** @type {string[]} */
+    const prefixes = [];
     if (sessionSignature) {
-      nonFormattedPrefix = nonFormattedPrefix
-        ? `${nonFormattedPrefix} <${sessionSignature}>}`
-        : `<${sessionSignature}>`;
+      prefixes.push(sessionSignature);
     }
-    if (nonFormattedPrefix) {
-      const decoratedPrefix = `[${nonFormattedPrefix}]`;
-      const toColorizedDecoratedPrefix = () => nonFormattedPrefix === APPIUM_LOGGER_NAME
-        ? decoratedPrefix.magenta
-        : getColorizedPrefix(decoratedPrefix);
-      msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
+    if (prefix) {
+      prefixes.push(prefix);
     }
+    let msg = message;
+    if (!_.isEmpty(prefixes)) {
+      const finalPrefix = prefixes
+        .map(toDecoratedPrefix)
+        .map((decorated) => {
+          if (args.logNoColors) {
+            return decorated;
+          }
+          return decorated === toDecoratedPrefix(APPIUM_LOGGER_NAME)
+            ? decorated.magenta
+            : colorizePrefix(decorated);
+        })
+        .join('');
+      msg = `${finalPrefix} ${msg}`;
+    }
+    const winstonLevel = npmToWinstonLevels[level] || 'info';
     try {
       log[winstonLevel](msg);
       if (_.isFunction(args.logHandler)) {

@@ -6,11 +6,13 @@
 }
 
 .appium-sponsor-thanks {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border-top: 0.5px solid var(--md-default-fg-color--lightest);
-  padding-top: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  max-width: 61rem;
+  width: 100%;
+  margin: auto 0.6rem;
+  display: flex;
+  align-items: center;
+}
+
+.appium-sponsor-thanks img {
+  margin: auto 6px;
+  height: 50px;
 }

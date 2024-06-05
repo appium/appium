@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import log from './logger';
 import {errors} from '../protocol';
-import {handleIdempotency} from './idempotency';
+export {handleIdempotency} from './idempotency';
 import {pathToRegexp} from 'path-to-regexp';
 
 /**
@@ -66,6 +66,28 @@ export function fixPythonContentType(basePath) {
     }
     next();
   };
+}
+
+/**
+ *
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns {any}
+ */
+export function addLogContext(req, res, next) {
+  const contextStorage = global._global_npmlog?.asyncStorage;
+  if (!contextStorage) {
+    return next();
+  }
+
+  const sessionIdMatch = SESSION_ID_PATTERN.exec(req.url);
+  if (sessionIdMatch) {
+    contextStorage.enterWith({
+      sessionSignature: sessionIdMatch[1].substring(0, 8)
+    });
+  }
+  return next();
 }
 
 /**
@@ -168,5 +190,3 @@ function patchWithSessionId(req, body) {
   }
   return body;
 }
-
-export { handleIdempotency };

@@ -628,12 +628,11 @@ export function parseCapsArray(cap) {
  * Generate a string that uniquely describes driver instance
  *
  * @param {import('@appium/types').Core} obj driver instance
- * @param {string?} sessionId session identifier (if exists)
- * @returns {string}
+ * @param {string?} [sessionId=null] session identifier (if exists)
+ * This argument is deprecated and must not be used anymore.
  */
 export function generateDriverLogPrefix(obj, sessionId = null) {
-  const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
-  return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
+  return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
 }
 
 /** @type {import('@appium/types').DriverHelpers} */

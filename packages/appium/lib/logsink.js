@@ -218,9 +218,16 @@ async function init(args) {
   globalLog.on('log', ({level, message, prefix}) => {
     const winstonLevel = npmToWinstonLevels[level] || 'info';
     let msg = message;
-    if (prefix) {
-      const decoratedPrefix = `[${prefix}]`;
-      const toColorizedDecoratedPrefix = () => prefix === APPIUM_LOGGER_NAME
+    const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
+    let nonFormattedPrefix = prefix;
+    if (sessionSignature) {
+      nonFormattedPrefix = nonFormattedPrefix
+        ? `${nonFormattedPrefix} <${sessionSignature}>}`
+        : `<${sessionSignature}>`;
+    }
+    if (nonFormattedPrefix) {
+      const decoratedPrefix = `[${nonFormattedPrefix}]`;
+      const toColorizedDecoratedPrefix = () => nonFormattedPrefix === APPIUM_LOGGER_NAME
         ? decoratedPrefix.magenta
         : getColorizedPrefix(decoratedPrefix);
       msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;

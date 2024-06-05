@@ -1,4 +1,6 @@
 import type {EventEmitter} from 'node:events';
+import type {AsyncLocalStorage} from 'node:async_hooks';
+import type {StringRecord} from '@appium/types';
 
 export interface Logger extends EventEmitter {
   level: string;
@@ -47,6 +49,8 @@ export interface Logger extends EventEmitter {
   resume(): void;
 
   addLevel(level: string, n: number, style?: StyleObject, disp?: string): void;
+
+  get asyncStorage(): AsyncLocalStorage<StringRecord>;
 
   // Allows for custom log levels
   // log.addLevel("custom", level)

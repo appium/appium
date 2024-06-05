@@ -60,12 +60,9 @@ function getLogger(driver, sessionId = null) {
     return dstDriver.log;
   }
 
-  let logPrefix = dstDriver.constructor
+  const logPrefix = dstDriver.constructor
     ? `${dstDriver.constructor.name}@${node.getObjectId(dstDriver).substring(0, 8)}`
     : 'AppiumDriver';
-  if (sessionId) {
-    logPrefix += ` (${sessionId.substring(0, 8)})`;
-  }
   return logger.getLogger(logPrefix);
 }
 
@@ -259,9 +256,7 @@ function routeConfiguringFunction(driver) {
     throw new Error('Drivers must implement `sessionExists` property');
   }
 
-  // "execute" isn't defined anywhere
-  // @ts-expect-error
-  if (!(driver.executeCommand || driver.execute)) {
+  if (!(/** @type {any} */ (driver).executeCommand || /** @type {any} */ (driver).execute)) {
     throw new Error('Drivers must implement `executeCommand` or `execute` method');
   }
 

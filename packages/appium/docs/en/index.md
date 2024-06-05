@@ -6,7 +6,8 @@ hide:
 title: Welcome
 ---
 <style>
-  .md-typeset h1 {
+  .md-typeset h1,
+  .appium-sponsor-thanks {
     display: none;
   }
 </style>

@@ -75,18 +75,16 @@ export function fixPythonContentType(basePath) {
  * @param {import('express').NextFunction} next
  * @returns {any}
  */
-export function addLogContext(req, res, next) {
+export function handleLogContext(req, res, next) {
   const contextStorage = global._global_npmlog?.asyncStorage;
   if (!contextStorage) {
     return next();
   }
 
   const sessionIdMatch = SESSION_ID_PATTERN.exec(req.url);
-  if (sessionIdMatch) {
-    contextStorage.enterWith({
-      sessionSignature: sessionIdMatch[1].substring(0, 8)
-    });
-  }
+  contextStorage.enterWith(
+    sessionIdMatch ? {sessionSignature: sessionIdMatch[1].substring(0, 8)} : {}
+  );
   return next();
 }
 

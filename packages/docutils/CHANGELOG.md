@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.9](https://github.com/appium/appium/compare/@appium/docutils@1.0.8...@appium/docutils@1.0.9) (2024-06-06)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency yaml to v2.4.3 ([848eb00](https://github.com/appium/appium/commit/848eb00afbd1cab76a6a1c3d0f4a2a0b1acee0d0))
+* **support:** update dependency @types/which to v3 ([#20164](https://github.com/appium/appium/issues/20164)) ([57b0406](https://github.com/appium/appium/commit/57b0406a33bc687c731f9e7fedd56e1b07c3cc67))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
 ## [1.0.8](https://github.com/appium/appium/compare/@appium/docutils@1.0.7...@appium/docutils@1.0.8) (2024-05-27)
 
 

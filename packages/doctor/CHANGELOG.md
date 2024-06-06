@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.1.0](https://github.com/appium/appium/compare/@appium/doctor@2.0.37...@appium/doctor@2.1.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+
+
+### Bug Fixes
+
+* **doctor:** update dependency appium-adb to v12.4.1 ([e3e1757](https://github.com/appium/appium/commit/e3e1757c564cffd467f3e9931f9aaa5a973fa825))
+* **doctor:** update dependency appium-adb to v12.4.2 ([bea47aa](https://github.com/appium/appium/commit/bea47aacca1b1a27cce48b027246513e674c2bb7))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+
+
+
 ## [2.0.37](https://github.com/appium/appium/compare/@appium/doctor@2.0.36...@appium/doctor@2.0.37) (2024-05-27)
 
 

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.0](https://github.com/appium/appium/compare/@appium/support@4.3.0...@appium/support@4.4.0) (2024-06-06)
+
+
+### Features
+
+* **logger:** Add the 'debug' level to the default logger ([#20203](https://github.com/appium/appium/issues/20203)) ([7fd9d5f](https://github.com/appium/appium/commit/7fd9d5f6261b385c234580c2bfee4d576905458b))
+
+
+### Bug Fixes
+
+* add logger dependencies in package.json ([#20205](https://github.com/appium/appium/issues/20205)) ([3fbc4f1](https://github.com/appium/appium/commit/3fbc4f1fe07eadf9c7a2ef8fc9f4ba78dc3486a3))
+
+
+
 ## [4.3.0](https://github.com/appium/appium/compare/@appium/support@4.2.6...@appium/support@4.3.0) (2024-06-06)
 
 

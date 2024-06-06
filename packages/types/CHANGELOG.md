@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.1](https://github.com/appium/appium/compare/@appium/types@0.19.0...@appium/types@0.19.1) (2024-06-06)
+
+
+### Bug Fixes
+
+* add logger dependencies in package.json ([#20205](https://github.com/appium/appium/issues/20205)) ([3fbc4f1](https://github.com/appium/appium/commit/3fbc4f1fe07eadf9c7a2ef8fc9f4ba78dc3486a3))
+
+
+
 ## [0.19.0](https://github.com/appium/appium/compare/@appium/types@0.18.0...@appium/types@0.19.0) (2024-06-06)
 
 

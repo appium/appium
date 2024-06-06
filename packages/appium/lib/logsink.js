@@ -1,6 +1,6 @@
 import globalLog from '@appium/logger';
 import {createLogger, format, transports} from 'winston';
-import {fs, logger} from '@appium/support';
+import {fs} from '@appium/support';
 import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
 

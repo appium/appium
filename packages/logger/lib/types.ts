@@ -25,6 +25,7 @@ export interface Logger extends EventEmitter {
    */
   silly(prefix: string, message: any, ...args: any[]): void;
   verbose(prefix: string, message: any, ...args: any[]): void;
+  debug(prefix: string, message: any, ...args: any[]): void;
   info(prefix: string, message: any, ...args: any[]): void;
   timing(prefix: string, message: any, ...args: any[]): void;
   http(prefix: string, message: any, ...args: any[]): void;
@@ -61,6 +62,7 @@ export type LogLevel =
   | 'timing'
   | 'http'
   | 'notice'
+  | 'debug'
   | 'warn'
   | 'error'
   | 'silent';

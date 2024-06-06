@@ -5,7 +5,6 @@ import { APPIUM_LOGGER_NAME } from './logger';
 import _ from 'lodash';
 
 // set up distributed logging before everything else
-logger.patchLogger(globalLog);
 global._global_npmlog = globalLog;
 
 // npmlog is used only for emitting, we use winston for output

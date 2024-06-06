@@ -61,6 +61,7 @@
     "express": "4.19.2",
     "http-status-codes": "2.3.0",
     "lodash": "4.17.21",
+    "lru-cache": "10.2.2",
     "method-override": "3.0.0",
     "morgan": "1.10.0",
     "path-to-regexp": "6.2.2",

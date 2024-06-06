@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.19.0](https://github.com/appium/appium/compare/@appium/types@0.18.0...@appium/types@0.19.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
 ## [0.18.0](https://github.com/appium/appium/compare/@appium/types@0.17.0...@appium/types@0.18.0) (2024-05-27)
 
 

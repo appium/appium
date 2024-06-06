@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.0](https://github.com/appium/appium/compare/@appium/support@4.2.6...@appium/support@4.3.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+
+
+### Bug Fixes
+
+* **support:** Make sure response stream is defined while stopping it ([#20189](https://github.com/appium/appium/issues/20189)) ([4fd6893](https://github.com/appium/appium/commit/4fd68931465dd2ed3490bcebad7ccff3dacc9b3a))
+* **support:** update dependency @types/which to v3 ([#20164](https://github.com/appium/appium/issues/20164)) ([57b0406](https://github.com/appium/appium/commit/57b0406a33bc687c731f9e7fedd56e1b07c3cc67))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
 ## [4.2.6](https://github.com/appium/appium/compare/@appium/support@4.2.5...@appium/support@4.2.6) (2024-05-27)
 
 

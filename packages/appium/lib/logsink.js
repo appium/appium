@@ -1,12 +1,11 @@
 import globalLog from '@appium/logger';
 import {createLogger, format, transports} from 'winston';
-import {fs, logger} from '@appium/support';
+import {fs} from '@appium/support';
 import _ from 'lodash';
 import { adler32 } from './utils';
 import { LRUCache } from 'lru-cache';
 
 // set up distributed logging before everything else
-logger.patchLogger(globalLog);
 global._global_npmlog = globalLog;
 
 // npmlog is used only for emitting, we use winston for output

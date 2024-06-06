@@ -7,10 +7,12 @@ import * as util from 'node:util';
 import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
+import { unleakString } from './utils';
 
 const DEFAULT_LOG_LEVELS: any[][] = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
   ['verbose', 1000, {fg: 'cyan', bg: 'black'}, 'verb'],
+  ['debug', 1500, {fg: 'cyan', bg: 'black'}, 'dbug'],
   ['info', 2000, {fg: 'green'}],
   ['timing', 2500, {fg: 'green', bg: 'black'}],
   ['http', 3000, {fg: 'green', bg: 'black'}],
@@ -121,6 +123,10 @@ export class Log extends EventEmitter implements Logger {
     this.log('verbose', prefix, message, ...args);
   }
 
+  debug(prefix: string, message: any, ...args: any[]): void {
+    this.log('debug', prefix, message, ...args);
+  }
+
   info(prefix: string, message: any, ...args: any[]): void {
     this.log('info', prefix, message, ...args);
   }
@@ -197,8 +203,8 @@ export class Log extends EventEmitter implements Logger {
       id: this._id++,
       timestamp: Date.now(),
       level,
-      prefix: String(prefix || ''),
-      message: formattedMessage,
+      prefix: unleakString(prefix || ''),
+      message: unleakString(formattedMessage),
     };
 
     this.emit('log', m);

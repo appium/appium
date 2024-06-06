@@ -1,5 +1,4 @@
 import type {EventEmitter} from 'node:events';
-import type {AsyncLocalStorage} from 'node:async_hooks';
 
 export interface Logger extends EventEmitter {
   level: string;
@@ -26,7 +25,6 @@ export interface Logger extends EventEmitter {
    */
   silly(prefix: string, message: any, ...args: any[]): void;
   verbose(prefix: string, message: any, ...args: any[]): void;
-  debug(prefix: string, message: any, ...args: any[]): void;
   info(prefix: string, message: any, ...args: any[]): void;
   timing(prefix: string, message: any, ...args: any[]): void;
   http(prefix: string, message: any, ...args: any[]): void;
@@ -50,8 +48,6 @@ export interface Logger extends EventEmitter {
 
   addLevel(level: string, n: number, style?: StyleObject, disp?: string): void;
 
-  get asyncStorage(): AsyncLocalStorage<Record<string, any>>;
-
   // Allows for custom log levels
   // log.addLevel("custom", level)
   // log.custom(prefix, message)
@@ -61,7 +57,6 @@ export interface Logger extends EventEmitter {
 export type LogLevel =
   | 'silly'
   | 'verbose'
-  | 'debug'
   | 'info'
   | 'timing'
   | 'http'

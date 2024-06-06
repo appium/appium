@@ -401,13 +401,14 @@ export function parseCapsArray(cap) {
  * Generate a string that uniquely describes driver instance
  *
  * @param {import('@appium/types').Core} obj driver instance
- * @param {string?} [sessionId=null] session identifier (if exists).
- * This parameter is deprecated and is not used.
+ * @param {string?} sessionId session identifier (if exists)
  * @returns {string}
  */
 export function generateDriverLogPrefix(obj, sessionId = null) {
-  return `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
+  const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
+  return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
 }
+
 
 /**
  * Sends a HTTP GET query to fetch the app with caching enabled.

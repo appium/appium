@@ -70,10 +70,10 @@ function getActualPrefix(prefix, logTimestamp = false) {
  * @returns {AppiumLogger}
  */
 function getLogger(prefix = null) {
-  let [logger, usingGlobalLog] = _getLogger();
+  const [logger, usingGlobalLog] = _getLogger();
 
   // wrap the logger so that we can catch and modify any logging
-  let wrappedLogger = {
+  const wrappedLogger = {
     unwrap: () => logger,
     levels: LEVELS,
     prefix,

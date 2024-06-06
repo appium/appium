@@ -63,74 +63,6 @@ process.on('exit', () => {
 
 /**
  *
- * @param {string} [envVarName]
- * @param {number} defaultValue
- * @returns {number}
- */
-function toNaturalNumber(defaultValue, envVarName) {
-  if (!envVarName || _.isUndefined(process.env[envVarName])) {
-    return defaultValue;
-  }
-  const num = parseInt(`${process.env[envVarName]}`, 10);
-  return num > 0 ? num : defaultValue;
-}
-
-/**
- * @param {string} app
- * @param {string[]} supportedAppExtensions
- * @returns {string}
- */
-function verifyAppExtension(app, supportedAppExtensions) {
-  if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
-    return app;
-  }
-  throw new Error(
-    `New app path '${app}' did not have ` +
-      `${util.pluralize('extension', supportedAppExtensions.length, false)}: ` +
-      supportedAppExtensions
-  );
-}
-
-/**
- * @param {string} folderPath
- * @returns {Promise<number>}
- */
-async function calculateFolderIntegrity(folderPath) {
-  return (await fs.glob('**/*', {cwd: folderPath})).length;
-}
-
-/**
- * @param {string} filePath
- * @returns {Promise<string>}
- */
-async function calculateFileIntegrity(filePath) {
-  return await fs.hash(filePath);
-}
-
-/**
- * @param {string} currentPath
- * @param {import('@appium/types').StringRecord} expectedIntegrity
- * @returns {Promise<boolean>}
- */
-async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
-  if (!(await fs.exists(currentPath))) {
-    return false;
-  }
-
-  // Folder integrity check is simple:
-  // Verify the previous amount of files is not greater than the current one.
-  // We don't want to use equality comparison because of an assumption that the OS might
-  // create some unwanted service files/cached inside of that folder or its subfolders.
-  // Ofc, validating the hash sum of each file (or at least of file path) would be much
-  // more precise, but we don't need to be very precise here and also don't want to
-  // overuse RAM and have a performance drop.
-  return (await fs.stat(currentPath)).isDirectory()
-    ? (await calculateFolderIntegrity(currentPath)) >= expectedIntegrity?.folder
-    : (await calculateFileIntegrity(currentPath)) === expectedIntegrity?.file;
-}
-
-/**
- *
  * @param {string} app
  * @param {string|string[]|import('@appium/types').ConfigureAppOptions} options
  */
@@ -171,15 +103,16 @@ export async function configureApp(
     maxAge: null,
     etag: null,
   };
-  const {protocol, pathname} = url.parse(newApp);
-  const isUrl = protocol === null ? false : ['http:', 'https:'].includes(protocol);
+  const {protocol, pathname} = parseAppLink(app);
+  const isUrl = isSupportedUrl(app);
+  const appCacheKey = toCacheKey(app);
 
-  const cachedAppInfo = APPLICATIONS_CACHE.get(app);
+  const cachedAppInfo = APPLICATIONS_CACHE.get(appCacheKey);
   if (cachedAppInfo) {
     logger.debug(`Cached app data: ${JSON.stringify(cachedAppInfo, null, 2)}`);
   }
 
-  return await APPLICATIONS_CACHE_GUARD.acquire(app, async () => {
+  return await APPLICATIONS_CACHE_GUARD.acquire(appCacheKey, async () => {
     if (isUrl) {
       // Use the app from remote URL
       logger.info(`Using downloadable app '${newApp}'`);
@@ -223,7 +156,7 @@ export async function configureApp(
             `The application at '${cachedAppInfo.fullPath}' does not exist anymore ` +
               `or its integrity has been damaged. Deleting it from the internal cache`
           );
-          APPLICATIONS_CACHE.delete(app);
+          APPLICATIONS_CACHE.delete(appCacheKey);
 
           if (!stream.closed) {
             stream.destroy();
@@ -332,7 +265,7 @@ export async function configureApp(
           `The application at '${fullPath}' does not exist anymore ` +
             `or its integrity has been damaged. Deleting it from the cache`
         );
-        APPLICATIONS_CACHE.delete(app);
+        APPLICATIONS_CACHE.delete(appCacheKey);
       }
       const tmpRoot = await tempDir.openDir();
       try {
@@ -363,7 +296,7 @@ export async function configureApp(
       } else {
         integrity.file = await calculateFileIntegrity(appPathToCache);
       }
-      APPLICATIONS_CACHE.set(app, {
+      APPLICATIONS_CACHE.set(appCacheKey, {
         ...remoteAppProps,
         timestamp: Date.now(),
         packageHash,
@@ -389,11 +322,93 @@ export async function configureApp(
     }
 
     verifyAppExtension(newApp, supportedAppExtensions);
-    return app !== newApp && (packageHash || _.values(remoteAppProps).some(Boolean))
+    return appCacheKey !== toCacheKey(newApp) && (packageHash || _.values(remoteAppProps).some(Boolean))
       ? await storeAppInCache(newApp)
       : newApp;
   });
 }
+
+/**
+ * @param {string} app
+ * @returns {boolean}
+ */
+export function isPackageOrBundle(app) {
+  return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
+}
+
+/**
+ * Finds all instances 'firstKey' and create a duplicate with the key 'secondKey',
+ * Do the same thing in reverse. If we find 'secondKey', create a duplicate with the key 'firstKey'.
+ *
+ * This will cause keys to be overwritten if the object contains 'firstKey' and 'secondKey'.
+
+ * @param {*} input Any type of input
+ * @param {String} firstKey The first key to duplicate
+ * @param {String} secondKey The second key to duplicate
+ */
+export function duplicateKeys(input, firstKey, secondKey) {
+  // If array provided, recursively call on all elements
+  if (_.isArray(input)) {
+    return input.map((item) => duplicateKeys(item, firstKey, secondKey));
+  }
+
+  // If object, create duplicates for keys and then recursively call on values
+  if (_.isPlainObject(input)) {
+    const resultObj = {};
+    for (let [key, value] of _.toPairs(input)) {
+      const recursivelyCalledValue = duplicateKeys(value, firstKey, secondKey);
+      if (key === firstKey) {
+        resultObj[secondKey] = recursivelyCalledValue;
+      } else if (key === secondKey) {
+        resultObj[firstKey] = recursivelyCalledValue;
+      }
+      resultObj[key] = recursivelyCalledValue;
+    }
+    return resultObj;
+  }
+
+  // Base case. Return primitives without doing anything.
+  return input;
+}
+
+/**
+ * Takes a desired capability and tries to JSON.parse it as an array,
+ * and either returns the parsed array or a singleton array.
+ *
+ * @param {string|Array<String>} cap A desired capability
+ */
+export function parseCapsArray(cap) {
+  if (_.isArray(cap)) {
+    return cap;
+  }
+
+  let parsedCaps;
+  try {
+    parsedCaps = JSON.parse(cap);
+    if (_.isArray(parsedCaps)) {
+      return parsedCaps;
+    }
+  } catch (ign) {
+    logger.warn(`Failed to parse capability as JSON array`);
+  }
+  if (_.isString(cap)) {
+    return [cap];
+  }
+  throw new Error(`must provide a string or JSON Array; received ${cap}`);
+}
+
+/**
+ * Generate a string that uniquely describes driver instance
+ *
+ * @param {import('@appium/types').Core} obj driver instance
+ * @param {string?} sessionId session identifier (if exists)
+ * @returns {string}
+ */
+export function generateDriverLogPrefix(obj, sessionId = null) {
+  const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
+  return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
+}
+
 
 /**
  * Sends a HTTP GET query to fetch the app with caching enabled.
@@ -500,9 +515,7 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
   try {
     logger.debug(`Unzipping '${zipPath}'`);
     const timer = new timing.Timer().start();
-    const useSystemUnzipEnv = process.env.APPIUM_PREFER_SYSTEM_UNZIP;
-    const useSystemUnzip =
-      _.isEmpty(useSystemUnzipEnv) || !['0', 'false'].includes(_.toLower(useSystemUnzipEnv));
+    const useSystemUnzip = isEnvOptionEnabled('APPIUM_PREFER_SYSTEM_UNZIP', true);
     /**
      * Attempt to use use the system `unzip` (e.g., `/usr/bin/unzip`) due
      * to the significant performance improvement it provides over the native
@@ -556,84 +569,144 @@ async function unzipApp(zipPath, dstRoot, supportedAppExtensions) {
 }
 
 /**
- * @param {string} app
- * @returns {boolean}
- */
-export function isPackageOrBundle(app) {
-  return /^([a-zA-Z0-9\-_]+\.[a-zA-Z0-9\-_]+)+$/.test(app);
-}
-
-/**
- * Finds all instances 'firstKey' and create a duplicate with the key 'secondKey',
- * Do the same thing in reverse. If we find 'secondKey', create a duplicate with the key 'firstKey'.
+ * Transforms the given app link to the cache key.
+ * This is necessary to properly cache apps
+ * having the same address, but different query strings,
+ * for example ones stored in S3 using presigned URLs.
  *
- * This will cause keys to be overwritten if the object contains 'firstKey' and 'secondKey'.
-
- * @param {*} input Any type of input
- * @param {String} firstKey The first key to duplicate
- * @param {String} secondKey The second key to duplicate
+ * @param {string} app App link.
+ * @returns {string} Transformed app link or the original arg if
+ * no transfromation is needed.
  */
-export function duplicateKeys(input, firstKey, secondKey) {
-  // If array provided, recursively call on all elements
-  if (_.isArray(input)) {
-    return input.map((item) => duplicateKeys(item, firstKey, secondKey));
+function toCacheKey(app) {
+  if (!isEnvOptionEnabled('APPIUM_APPS_CACHE_IGNORE_URL_QUERY') || !isSupportedUrl(app)) {
+    return app;
   }
-
-  // If object, create duplicates for keys and then recursively call on values
-  if (_.isPlainObject(input)) {
-    const resultObj = {};
-    for (let [key, value] of _.toPairs(input)) {
-      const recursivelyCalledValue = duplicateKeys(value, firstKey, secondKey);
-      if (key === firstKey) {
-        resultObj[secondKey] = recursivelyCalledValue;
-      } else if (key === secondKey) {
-        resultObj[firstKey] = recursivelyCalledValue;
-      }
-      resultObj[key] = recursivelyCalledValue;
-    }
-    return resultObj;
-  }
-
-  // Base case. Return primitives without doing anything.
-  return input;
-}
-
-/**
- * Takes a desired capability and tries to JSON.parse it as an array,
- * and either returns the parsed array or a singleton array.
- *
- * @param {string|Array<String>} cap A desired capability
- */
-export function parseCapsArray(cap) {
-  if (_.isArray(cap)) {
-    return cap;
-  }
-
-  let parsedCaps;
   try {
-    parsedCaps = JSON.parse(cap);
-    if (_.isArray(parsedCaps)) {
-      return parsedCaps;
+    const {href, search} = parseAppLink(app);
+    if (href && search) {
+      return href.replace(search, '');
     }
-  } catch (ign) {
-    logger.warn(`Failed to parse capability as JSON array`);
-  }
-  if (_.isString(cap)) {
-    return [cap];
-  }
-  throw new Error(`must provide a string or JSON Array; received ${cap}`);
+    if (href) {
+      return href;
+    }
+  } catch {}
+  return app;
 }
 
 /**
- * Generate a string that uniquely describes driver instance
+ * Safely parses the given app link to a URL object
  *
- * @param {import('@appium/types').Core} obj driver instance
- * @param {string?} sessionId session identifier (if exists)
+ * @param {string} appLink
+ * @returns {URL|import('@appium/types').StringRecord} Parsed URL object
+ * or an empty object if the parsing has failed
+ */
+function parseAppLink(appLink) {
+  try {
+    return new URL(appLink);
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Checks whether we can threat the given app link
+ * as a URL,
+ *
+ * @param {string} app
+ * @returns {boolean} True if app is a supported URL
+ */
+function isSupportedUrl(app) {
+  try {
+    const {protocol} = parseAppLink(app);
+    return ['http:', 'https:'].includes(protocol);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if the given environment option is enabled
+ *
+ * @param {string} optionName Option name
+ * @param {boolean|null} [defaultValue=null] The value to return if the given env value
+ * is not set explcitly
+ * @returns {boolean} True if the option is enabled
+ */
+function isEnvOptionEnabled(optionName, defaultValue = null) {
+  const value = process.env[optionName];
+  if (!_.isNull(defaultValue) && _.isEmpty(value)) {
+    return defaultValue;
+  }
+  return !_.isEmpty(value) && !['0', 'false', 'no'].includes(_.toLower(value));
+}
+
+/**
+ *
+ * @param {string} [envVarName]
+ * @param {number} defaultValue
+ * @returns {number}
+ */
+function toNaturalNumber(defaultValue, envVarName) {
+  if (!envVarName || _.isUndefined(process.env[envVarName])) {
+    return defaultValue;
+  }
+  const num = parseInt(`${process.env[envVarName]}`, 10);
+  return num > 0 ? num : defaultValue;
+}
+
+/**
+ * @param {string} app
+ * @param {string[]} supportedAppExtensions
  * @returns {string}
  */
-export function generateDriverLogPrefix(obj, sessionId = null) {
-  const instanceName = `${obj.constructor.name}@${node.getObjectId(obj).substring(0, 4)}`;
-  return sessionId ? `${instanceName} (${sessionId.substring(0, 8)})` : instanceName;
+function verifyAppExtension(app, supportedAppExtensions) {
+  if (supportedAppExtensions.map(_.toLower).includes(_.toLower(path.extname(app)))) {
+    return app;
+  }
+  throw new Error(
+    `New app path '${app}' did not have ` +
+      `${util.pluralize('extension', supportedAppExtensions.length, false)}: ` +
+      supportedAppExtensions
+  );
+}
+
+/**
+ * @param {string} folderPath
+ * @returns {Promise<number>}
+ */
+async function calculateFolderIntegrity(folderPath) {
+  return (await fs.glob('**/*', {cwd: folderPath})).length;
+}
+
+/**
+ * @param {string} filePath
+ * @returns {Promise<string>}
+ */
+async function calculateFileIntegrity(filePath) {
+  return await fs.hash(filePath);
+}
+
+/**
+ * @param {string} currentPath
+ * @param {import('@appium/types').StringRecord} expectedIntegrity
+ * @returns {Promise<boolean>}
+ */
+async function isAppIntegrityOk(currentPath, expectedIntegrity = {}) {
+  if (!(await fs.exists(currentPath))) {
+    return false;
+  }
+
+  // Folder integrity check is simple:
+  // Verify the previous amount of files is not greater than the current one.
+  // We don't want to use equality comparison because of an assumption that the OS might
+  // create some unwanted service files/cached inside of that folder or its subfolders.
+  // Ofc, validating the hash sum of each file (or at least of file path) would be much
+  // more precise, but we don't need to be very precise here and also don't want to
+  // overuse RAM and have a performance drop.
+  return (await fs.stat(currentPath)).isDirectory()
+    ? (await calculateFolderIntegrity(currentPath)) >= expectedIntegrity?.folder
+    : (await calculateFileIntegrity(currentPath)) === expectedIntegrity?.file;
 }
 
 /** @type {import('@appium/types').DriverHelpers} */

@@ -18,7 +18,7 @@ href="https://www.headspin.io/solutions/appium-mobile-test-automation">HeadSpin<
 
 <div style="text-align:center;width:100%">
   <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img
-src="/docs/en/assets/images/sponsor-logo-headspin.png" style="width: 300px"/></a>
+src="/docs/en/latest/assets/images/sponsor-logo-headspin.png" style="width: 300px"/></a>
 </div>
 
 HeadSpin is a real device performance and UX analysis cloud, with full support for Appium. When you

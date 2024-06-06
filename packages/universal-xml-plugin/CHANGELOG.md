@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.20](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.19...@appium/universal-xml-plugin@1.0.20) (2024-06-06)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** add checks to disable the plguin in webview ([#20179](https://github.com/appium/appium-plugins/issues/20179)) ([7492c33](https://github.com/appium/appium-plugins/commit/7492c3357e72b76d301924fdf35a42d228c09175))
+
+
+
 ## [1.0.19](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.18...@appium/universal-xml-plugin@1.0.19) (2024-05-27)
 
 

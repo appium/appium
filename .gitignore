@@ -37,6 +37,9 @@ certificate.key
 *.pdb
 .vs
 
+#vscode
+.history
+
 old
 .tern-project
 coverage
@@ -62,3 +65,4 @@ appium.zip
 packages/*/LICENSE
 local_appium_home
 *.tgz
+

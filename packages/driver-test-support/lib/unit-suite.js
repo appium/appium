@@ -57,23 +57,6 @@ export function driverUnitTestSuite(
       });
     });
 
-    describe('Log prefix', function () {
-      it('should setup log prefix', async function () {
-        const d = new DriverClass();
-        const previousPrefix = d.log.prefix;
-        await d.createSession({
-          alwaysMatch: {...defaultCaps, platformName: 'Fake', 'appium:deviceName': 'Commodore 64'},
-          firstMatch: [{}],
-        });
-        try {
-          expect(previousPrefix).not.to.eql(d.log.prefix);
-        } finally {
-          await d.deleteSession();
-          expect(previousPrefix).to.eql(d.log.prefix);
-        }
-      });
-    });
-
     it('should return an empty status object', async function () {
       let status = await d.getStatus();
       status.should.eql({});

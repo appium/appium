@@ -63,6 +63,7 @@
     "@appium/base-driver": "^9.8.0",
     "@appium/base-plugin": "^2.2.33",
     "@appium/docutils": "^1.0.9",
+    "@appium/logger": "^1.1.0",
     "@appium/schema": "~0.5.0",
     "@appium/support": "^4.3.0",
     "@appium/types": "^0.19.0",

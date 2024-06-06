@@ -41,6 +41,7 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
+    "@appium/logger": "^1.1.0",
     "@appium/tsconfig": "^0.3.3",
     "@appium/types": "^0.19.0",
     "@colors/colors": "1.6.0",

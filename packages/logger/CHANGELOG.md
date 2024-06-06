@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/appium/appium/compare/@appium/logger@1.1.0...@appium/logger@1.2.0) (2024-06-06)
+
+
+### Features
+
+* **logger:** Add the 'debug' level to the default logger ([#20203](https://github.com/appium/appium/issues/20203)) ([7fd9d5f](https://github.com/appium/appium/commit/7fd9d5f6261b385c234580c2bfee4d576905458b))
+
+
+
 ## 1.1.0 (2024-06-06)
 
 

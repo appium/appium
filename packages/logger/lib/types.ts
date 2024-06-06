@@ -58,11 +58,11 @@ export interface Logger extends EventEmitter {
 export type LogLevel =
   | 'silly'
   | 'verbose'
+  | 'debug'
   | 'info'
   | 'timing'
   | 'http'
   | 'notice'
-  | 'debug'
   | 'warn'
   | 'error'
   | 'silent';

@@ -16,6 +16,7 @@ import {
   handleIdempotency,
   handleUpgrade,
   catch404Handler,
+  handleLogContext,
 } from './middleware';
 import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
 import {produceError, produceCrash} from './crash';
@@ -146,6 +147,7 @@ function configureServer({
   basePath = normalizeBasePath(basePath);
 
   app.use(endLogFormatter);
+  app.use(handleLogContext);
 
   // set up static assets
   app.use(favicon(path.resolve(STATIC_DIR, 'favicon.ico')));

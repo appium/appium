@@ -2,7 +2,6 @@
 
 import globalLog from '@appium/logger';
 import _ from 'lodash';
-import {unleakString} from './util';
 import moment from 'moment';
 import SECURE_VALUES_PREPROCESSOR from './log-internal';
 
@@ -16,16 +15,6 @@ const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
 let mockLog = {};
 for (let level of LEVELS) {
   mockLog[level] = () => {};
-}
-
-/**
- *
- * @param {import('@appium/logger').Logger} logger
- */
-function patchLogger(logger) {
-  if (!logger.debug) {
-    logger.addLevel('debug', 1000, {fg: 'blue', bg: 'black'}, 'dbug');
-  }
 }
 
 /**
@@ -50,7 +39,6 @@ function _getLogger() {
     // The default value is 10000, which causes excessive memory usage
     logger.maxRecordSize = MAX_LOG_RECORDS_COUNT;
   }
-  patchLogger(logger);
   return [logger, usingGlobalLog];
 }
 
@@ -100,10 +88,7 @@ function getLogger(prefix = null) {
       for (const arg of args) {
         const out = _.isError(arg) && arg.stack ? arg.stack : `${arg}`;
         for (const line of out.split('\n')) {
-          // it is necessary to unleak each line because `split` call
-          // creates "views" to the original string as well as the `substring` one
-          const unleakedLine = unleakString(line);
-          logger[level](actualPrefix, SECURE_VALUES_PREPROCESSOR.preprocess(unleakedLine));
+          logger[level](actualPrefix, SECURE_VALUES_PREPROCESSOR.preprocess(line));
         }
       }
     };
@@ -159,7 +144,7 @@ async function loadSecureValuesPreprocessingRules(rulesJsonPath) {
 // export a default logger with no prefix
 const log = getLogger();
 
-export {log, patchLogger, getLogger, loadSecureValuesPreprocessingRules};
+export {log, getLogger, loadSecureValuesPreprocessingRules};
 export default log;
 
 /**

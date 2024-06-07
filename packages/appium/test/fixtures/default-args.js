@@ -9,6 +9,7 @@ export default {
   driversImportChunkSize: 3,
   keepAliveTimeout: 600,
   localTimezone: false,
+  logFormat: 'text',
   loglevel: 'debug',
   logNoColors: false,
   logTimestamp: false,

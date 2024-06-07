@@ -171,6 +171,18 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           title: 'log-level config',
           type: 'string',
         },
+        'log-format': {
+          appiumCliDest: 'logFormat',
+          default: 'text',
+          description: 'Log format (text|json|pretty_json)',
+          enum: [
+            'text',
+            'json',
+            'pretty_json',
+          ],
+          title: 'log-format config',
+          type: 'string',
+        },
         'log-no-colors': {
           default: false,
           description: 'Do not use color in console output',

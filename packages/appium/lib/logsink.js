@@ -15,14 +15,12 @@ const levels = {
   warn: 2,
   error: 1,
 };
-
 const colors = {
   info: 'cyan',
   debug: 'grey',
   warn: 'yellow',
   error: 'red',
 };
-
 const npmToWinstonLevels = {
   silly: 'debug',
   verbose: 'debug',
@@ -32,23 +30,11 @@ const npmToWinstonLevels = {
   warn: 'warn',
   error: 'error',
 };
+const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
 const encounteredPrefixes = [];
 
 let log = null;
-let useLocalTimeZone = false;
-
-// add the timestamp in the correct format to the log info object
-const timestampFormat = format.timestamp({
-  format() {
-    let date = new Date();
-    if (useLocalTimeZone) {
-      date = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
-    }
-    // '2012-11-04T14:51:06.157Z' -> '2012-11-04 14:51:06:157'
-    return date.toISOString().replace(/[TZ]/g, ' ').replace(/\./g, ':').trim();
-  },
-});
 
 // set the custom colors
 const colorizeFormat = format.colorize({
@@ -57,11 +43,19 @@ const colorizeFormat = format.colorize({
 
 // Strip the color marking within messages
 const stripColorFormat = format(function stripColor(info) {
-  const code = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
-  info.message = info.message.replace(code, '');
-  return info;
+  return {
+    ...info,
+    level: stripColorCodes(info.level),
+    message: stripColorCodes(info.message),
+  };
 })();
 
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @param {string} logLvl
+ * @returns {transports.ConsoleTransportInstance}
+ */
 function createConsoleTransport(args, logLvl) {
   return new transports.Console({
     // @ts-expect-error The 'name' property should exist
@@ -72,15 +66,19 @@ function createConsoleTransport(args, logLvl) {
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
-      timestampFormat,
-      args.logNoColors ? stripColorFormat : colorizeFormat,
-      format.printf(function printInfo(info) {
-        return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
-      })
+      formatTimestamp(args),
+      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
+      format.printf(formatLogLine(args, true))
     ),
   });
 }
 
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @param {string} logLvl
+ * @returns {transports.FileTransportInstance}
+ */
 function createFileTransport(args, logLvl) {
   return new transports.File({
     // @ts-expect-error The 'name' property should exist
@@ -93,14 +91,18 @@ function createFileTransport(args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      timestampFormat,
-      format.printf(function printInfo(info) {
-        return `${info.timestamp} ${info.message}`;
-      })
+      formatTimestamp(args),
+      format.printf(formatLogLine(args, false))
     ),
   });
 }
 
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @param {string} logLvl
+ * @returns {transports.HttpTransportInstance}
+ */
 function createHttpTransport(args, logLvl) {
   let host = '127.0.0.1';
   let port = 9003;
@@ -123,9 +125,7 @@ function createHttpTransport(args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      format.printf(function printInfo(info) {
-        return `${info.timestamp} ${info.message}`;
-      })
+      format.printf(formatLogLine(args, false))
     ),
   });
 }
@@ -199,9 +199,6 @@ function getColorizedPrefix(prefix) {
 async function init(args) {
   globalLog.level = 'silent';
 
-  // set de facto param passed to timestamp function
-  useLocalTimeZone = args.localTimezone;
-
   // clean up in case we have initiated before since npmlog is a global object
   clear();
 
@@ -222,7 +219,10 @@ async function init(args) {
       const toColorizedDecoratedPrefix = () => prefix === APPIUM_LOGGER_NAME
         ? decoratedPrefix.magenta
         : getColorizedPrefix(decoratedPrefix);
-      msg = `${args.logNoColors ? decoratedPrefix : toColorizedDecoratedPrefix()} ${msg}`;
+      const messagePrefix = isLogColorEnabled(args)
+        ? toColorizedDecoratedPrefix()
+        : decoratedPrefix;
+      msg = `${messagePrefix} ${msg}`;
     }
     try {
       log[winstonLevel](msg);
@@ -249,6 +249,65 @@ function clear() {
     }
   }
   globalLog.removeAllListeners('log');
+}
+
+/**
+ * @param {import('@appium/types').StringRecord} args
+ * @param {boolean} targetConsole
+ * @returns {(info: import('logform').TransformableInfo) => string}
+ */
+function formatLogLine(args, targetConsole) {
+  return (info) => {
+    if (['json', 'pretty_json'].includes(args.logFormat)) {
+      let infoCopy = {...info};
+      if (targetConsole && !args.logTimestamp) {
+        delete infoCopy.timestamp;
+      }
+      return JSON.stringify(infoCopy, null, args.logFormat === 'pretty_json' ? 2 : undefined);
+    }
+    if (targetConsole) {
+      return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
+    }
+    return `${info.timestamp} ${info.message}`;
+  };
+}
+
+/**
+ * add the timestamp in the correct format to the log info object
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @returns {import('logform').Format}
+ */
+function formatTimestamp(args) {
+  return format.timestamp({
+    format() {
+      let date = new Date();
+      if (args.useLocalTimeZone) {
+        date = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
+      }
+      // '2012-11-04T14:51:06.157Z' -> '2012-11-04 14:51:06:157'
+      return date.toISOString().replace(/[TZ]/g, ' ').replace(/\./g, ':').trim();
+    },
+  });
+}
+
+/**
+ * Strips color control codes from the given string
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function stripColorCodes(text) {
+  return text.replace(COLOR_CODE_PATTERN, '');
+}
+
+/**
+ *
+ * @param {import('@appium/types').StringRecord} args
+ * @returns {boolean}
+ */
+function isLogColorEnabled(args) {
+  return !args.logNoColors && args.logFormat === 'text';
 }
 
 export {init, clear};

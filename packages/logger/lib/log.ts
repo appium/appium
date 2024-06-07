@@ -6,6 +6,7 @@ import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
 import type {Writable} from 'node:stream';
+import { unleakString } from './utils';
 
 const DEFAULT_LOG_LEVELS: any[][] = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -114,6 +115,10 @@ export class Log extends EventEmitter implements Logger {
     this.log('verbose', prefix, message, ...args);
   }
 
+  debug(prefix: string, message: any, ...args: any[]): void {
+    this.log('debug', prefix, message, ...args);
+  }
+
   info(prefix: string, message: any, ...args: any[]): void {
     this.log('info', prefix, message, ...args);
   }
@@ -190,8 +195,8 @@ export class Log extends EventEmitter implements Logger {
       id: this._id++,
       timestamp: Date.now(),
       level,
-      prefix: String(prefix || ''),
-      message: formattedMessage,
+      prefix: unleakString(prefix || ''),
+      message: unleakString(formattedMessage),
     };
 
     this.emit('log', m);

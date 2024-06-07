@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Log } from '../../lib/log';
-import { unleakString } from '../../lib/utils';
 import {Stream} from 'node:stream';
 
 describe('basic', async function () {
@@ -421,20 +420,6 @@ describe('basic', async function () {
       log.enableColor();
       const o = log._format('test message', { inverse: true });
       o.includes('\u001b[7mtest message\u001b[0m').should.be.true;
-    });
-  });
-
-  describe('unleakString', function () {
-    it('should unleak a string', function () {
-      unleakString('yolo').should.eql('yolo');
-    });
-    it('should unleak a multiline string', function () {
-      unleakString(' yolo\nbolo ').should.eql(' yolo\nbolo ');
-    });
-    it('should convert an object to a string', function () {
-      for (const obj of [{}, null, undefined, [], 0]) {
-        unleakString(obj).should.eql(`${obj}`);
-      }
     });
   });
 });

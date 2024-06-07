@@ -58,10 +58,10 @@ function getActualPrefix(prefix, logTimestamp = false) {
  * @returns {AppiumLogger}
  */
 function getLogger(prefix = null) {
-  const [logger, usingGlobalLog] = _getLogger();
+  let [logger, usingGlobalLog] = _getLogger();
 
   // wrap the logger so that we can catch and modify any logging
-  const wrappedLogger = {
+  let wrappedLogger = {
     unwrap: () => logger,
     levels: LEVELS,
     prefix,
@@ -96,7 +96,7 @@ function getLogger(prefix = null) {
   wrappedLogger.errorWithException = function (/** @type {any[]} */ ...args) {
     this.error(...args);
     // make sure we have an `Error` object. Wrap if necessary
-    return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
+    return _.isError(args[0]) ? args[0] : new Error(args.map(unleakString).join('\n'));
   };
   /**
    * @deprecated Use {@link errorWithException} instead

@@ -6,6 +6,7 @@ import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
 import type {Writable} from 'node:stream';
+import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
 
 const DEFAULT_LOG_LEVELS: any[][] = [
@@ -32,6 +33,7 @@ export class Log extends EventEmitter implements Logger {
   heading: string;
   stream: Writable; // Defaults to process.stderr
 
+  _asyncStorage: AsyncLocalStorage<Record<string, any>>;
   _colorEnabled?: boolean;
   _buffer: MessageObject[];
   _style: Record<LogLevel | string, StyleObject | undefined>;
@@ -53,6 +55,7 @@ export class Log extends EventEmitter implements Logger {
     this.headingStyle = {fg: 'white', bg: 'black'};
     this._id = 0;
     this._paused = false;
+    this._asyncStorage = new AsyncLocalStorage();
 
     this._style = {};
     this._levels = {};
@@ -68,6 +71,10 @@ export class Log extends EventEmitter implements Logger {
     return (
       this._colorEnabled ?? Boolean(this.stream && 'isTTY' in this.stream && this.stream.isTTY)
     );
+  }
+
+  get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
+    return this._asyncStorage;
   }
 
   enableColor(): void {

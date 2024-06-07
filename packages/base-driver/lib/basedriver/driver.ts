@@ -307,7 +307,7 @@ export class BaseDriver<
       this.newCommandTimeoutMs = (this.caps.newCommandTimeout as number) * 1000;
     }
 
-    this._log.prefix = helpers.generateDriverLogPrefix(this, this.sessionId);
+    this._log.prefix = helpers.generateDriverLogPrefix(this);
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
@@ -347,7 +347,6 @@ export class BaseDriver<
       }
     }
     this.sessionId = null;
-    this._log.prefix = helpers.generateDriverLogPrefix(this);
   }
 
   logExtraCaps(caps: Capabilities<C>) {

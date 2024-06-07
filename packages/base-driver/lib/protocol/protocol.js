@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {util, logger, node} from '@appium/support';
+import {util, logger} from '@appium/support';
 import {validators} from './validators';
 import {
   errors,
@@ -14,6 +14,7 @@ import {formatResponseValue, formatStatus} from './helpers';
 import {MAX_LOG_BODY_LENGTH, PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
 import {isW3cCaps} from '../helpers/capabilities';
 import log from '../basedriver/logger';
+import { generateDriverLogPrefix } from '../basedriver/helpers';
 
 const CREATE_SESSION_COMMAND = 'createSession';
 const DELETE_SESSION_COMMAND = 'deleteSession';
@@ -60,12 +61,7 @@ function getLogger(driver, sessionId = null) {
     return dstDriver.log;
   }
 
-  let logPrefix = dstDriver.constructor
-    ? `${dstDriver.constructor.name}@${node.getObjectId(dstDriver).substring(0, 8)}`
-    : 'AppiumDriver';
-  if (sessionId) {
-    logPrefix += ` (${sessionId.substring(0, 8)})`;
-  }
+  const logPrefix = generateDriverLogPrefix(dstDriver);
   return logger.getLogger(logPrefix);
 }
 
@@ -259,9 +255,7 @@ function routeConfiguringFunction(driver) {
     throw new Error('Drivers must implement `sessionExists` property');
   }
 
-  // "execute" isn't defined anywhere
-  // @ts-expect-error
-  if (!(driver.executeCommand || driver.execute)) {
+  if (!(/** @type {any} */ (driver).executeCommand || /** @type {any} */ (driver).execute)) {
     throw new Error('Drivers must implement `executeCommand` or `execute` method');
   }
 

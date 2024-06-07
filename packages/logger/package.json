@@ -30,7 +30,7 @@
     "console-control-strings": "1.1.0",
     "set-blocking": "2.0.0"
   },
-  "license": "Apache-2.0",
+  "license": "ISC",
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",
     "npm": ">=8"

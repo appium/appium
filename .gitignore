@@ -66,3 +66,4 @@ packages/*/LICENSE
 local_appium_home
 *.tgz
 
+packages/appium/docs/en/latest

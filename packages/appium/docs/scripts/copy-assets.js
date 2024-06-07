@@ -23,6 +23,12 @@ async function main() {
     log.info(`Copying assets into ${langAssetPath}`);
     await fs.copyFile(ASSETS_DIR, langAssetPath);
   }
+
+  log.info('Copying assets to "latest" for absolute reference');
+  const latestPath = path.join(DOCS_DIR, 'en', 'latest', 'assets');
+  log.info(`Deleting ${latestPath}`);
+  log.info(`Copying assets into ${latestPath}`);
+  await fs.copyFile(ASSETS_DIR, latestPath);
 }
 
 if (require.main === module) {

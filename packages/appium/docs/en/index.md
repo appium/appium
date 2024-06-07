@@ -21,14 +21,26 @@ Android, Tizen), browser (Chrome, Firefox, Safari), desktop (macOS, Windows), TV
 Android TV, Samsung), and more!
 
 
-<div style="text-align: center">
+<div style="text-align: center; margin-top: 2rem; font-style: italic;">
   Appium is extremely grateful for the support of its key partners! (Learn more about our
-  sponsorship program and contributor compensation scheme 
-  <a href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">here</a>)
-  <br/>
-  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation">
-    <img src="assets/images/sponsor-logo-headspin.png" style="width: 200px;" />
-  </a>
+  sponsorship program and contributor compensation scheme <a
+  href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">here</a>)
+  <div class="homepageSponsors">
+    <div class="homepageSponsor">
+      <a href="https://www.headspin.io/solutions/appium-mobile-test-automation">
+        <img src="assets/images/sponsor-logo-headspin.png" style="width: 200px;" />
+      </a>
+    </div>
+    <div class="homepageSponsor">
+      <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
+        <picture>
+          <source srcset="/docs/en/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+          <source srcset="/docs/en/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+          <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png" style="width: 220px;" />
+        </picture>
+      </a>
+    </div>
+  </div>
 </div>
 
 ## Explore the Documentation

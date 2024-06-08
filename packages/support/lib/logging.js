@@ -24,7 +24,7 @@ const MOCK_LOG = {
 
 /**
  *
- * @param {AppiumLoggerPrefix?} prefix
+ * @param {AppiumLoggerPrefix?} [prefix=null]
  * @returns {AppiumLogger}
  */
 export function getLogger(prefix = null) {

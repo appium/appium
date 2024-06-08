@@ -1,4 +1,4 @@
-import {SecureValuesPreprocessor} from '../../lib/secure-values-prepreocessor';
+import {SecureValuesPreprocessor} from '../../lib/secure-values-preprocessor';
 
 describe('Log Internals', function () {
   /** @type {import('../../lib/secure-values-prepreocessor').SecureValuesPreprocessor} */

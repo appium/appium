@@ -116,8 +116,8 @@ function getFinalPrefix(prefix, shouldLogTimestamp = false) {
   if (!shouldLogTimestamp) {
     return result;
   }
-  const formattedtimestamp = `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}]`;
-  return result ? `${formattedtimestamp} ${result}` : formattedtimestamp;
+  const formattedTimestamp = `[${moment().format(PREFIX_TIMESTAMP_FORMAT)}]`;
+  return result ? `${formattedTimestamp} ${result}` : formattedTimestamp;
 }
 
 export default log;

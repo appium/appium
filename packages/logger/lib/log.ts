@@ -16,7 +16,7 @@ import type {
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
-import { SecureValuesPreprocessor } from './secure-values-prepreocessor';
+import { SecureValuesPreprocessor } from './secure-values-preprocessor';
 
 const DEFAULT_LOG_LEVELS: any[][] = [
   ['silly', -Infinity, {inverse: true}, 'sill'],

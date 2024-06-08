@@ -94,6 +94,10 @@ export type LogLevelConfig =
   | "debug:warn"
   | "debug:error";
 /**
+ * Log format (text|json|pretty_json)
+ */
+export type LogFormatConfig = "text" | "json" | "pretty_json";
+/**
  * Do not use color in console output
  */
 export type LogNoColorsConfig = boolean;
@@ -191,6 +195,7 @@ export interface ServerConfig {
   log?: LogConfig;
   "log-filters"?: LogFiltersConfig;
   "log-level"?: LogLevelConfig;
+  "log-format"?: LogFormatConfig;
   "log-no-colors"?: LogNoColorsConfig;
   "log-timestamp"?: LogTimestampConfig;
   "plugins-import-chunk-size"?: PluginsImportChunkSizeConfig;

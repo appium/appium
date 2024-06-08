@@ -7,24 +7,21 @@ import { LRUCache } from 'lru-cache';
 
 // set up distributed logging before everything else
 global._global_npmlog = globalLog;
-
 // npmlog is used only for emitting, we use winston for output
 globalLog.level = 'info';
-const levels = {
+const LEVELS_MAP = {
   debug: 4,
   info: 3,
   warn: 2,
   error: 1,
 };
-
-const colors = {
+const COLORS_MAP = {
   info: 'cyan',
   debug: 'grey',
   warn: 'yellow',
   error: 'red',
 };
-
-const npmToWinstonLevels = {
+const TO_WINSTON_LEVELS_MAP = {
   silly: 'debug',
   verbose: 'debug',
   debug: 'debug',
@@ -33,6 +30,7 @@ const npmToWinstonLevels = {
   warn: 'warn',
   error: 'error',
 };
+const COLOR_CODE_PATTERN = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
 
 // https://www.ditig.com/publications/256-colors-cheat-sheet
 const MIN_COLOR = 17;
@@ -44,33 +42,94 @@ const COLORS_CACHE = new LRUCache({
   updateAgeOnGet: true,
 });
 
+/** @type {import('winston').Logger?} */
 let log = null;
-let useLocalTimeZone = false;
 
-// add the timestamp in the correct format to the log info object
-const timestampFormat = format.timestamp({
-  format() {
-    let date = new Date();
-    if (useLocalTimeZone) {
-      date = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
+/**
+ *
+ * @param {import('../types').ParsedArgs} args
+ * @returns {Promise<void>}
+ */
+export async function init(args) {
+  globalLog.level = 'silent';
+
+  // clean up in case we have initiated before since npmlog is a global object
+  clear();
+
+  const transports = await createTransports(args);
+  const transportNames = new Set(transports.map((tr) => tr.constructor.name));
+  log = createLogger({
+    transports,
+    levels: LEVELS_MAP,
+  });
+
+  const reportedLoggerErrors = new Set();
+  // Capture logs emitted via npmlog and pass them through winston
+  globalLog.on('log', (/** @type {MessageObject} */{level, message, prefix}) => {
+    const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
+    /** @type {string[]} */
+    const prefixes = [];
+    if (sessionSignature) {
+      prefixes.push(sessionSignature);
     }
-    // '2012-11-04T14:51:06.157Z' -> '2012-11-04 14:51:06:157'
-    return date.toISOString().replace(/[TZ]/g, ' ').replace(/\./g, ':').trim();
-  },
-});
+    if (prefix) {
+      prefixes.push(prefix);
+    }
+    let msg = message;
+    if (!_.isEmpty(prefixes)) {
+      const finalPrefix = prefixes
+        .map(toDecoratedPrefix)
+        .map((pfx) => isLogColorEnabled(args) ? colorizePrefix(pfx) : pfx)
+        .join('');
+      msg = `${finalPrefix} ${msg}`;
+    }
+    const winstonLevel = TO_WINSTON_LEVELS_MAP[level] || 'info';
+    try {
+      /** @type {import('winston').Logger} */(log)[winstonLevel](msg);
+      if (_.isFunction(args.logHandler)) {
+        args.logHandler(level, msg);
+      }
+    } catch (e) {
+      if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
+          `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
+        );
+        reportedLoggerErrors.add(e.message);
+      }
+    }
+  });
+}
+
+/**
+ * @returns {void}
+ */
+export function clear() {
+  log?.clear();
+  globalLog.removeAllListeners('log');
+}
 
 // set the custom colors
 const colorizeFormat = format.colorize({
-  colors,
+  colors: COLORS_MAP,
 });
 
 // Strip the color marking within messages
 const stripColorFormat = format(function stripColor(info) {
-  const code = /\u001b\[(\d+(;\d+)*)?m/g; // eslint-disable-line no-control-regex
-  info.message = info.message.replace(code, '');
-  return info;
+  return {
+    ...info,
+    level: stripColorCodes(info.level),
+    message: stripColorCodes(info.message),
+  };
 })();
 
+/**
+ *
+ * @param {ParsedArgs} args
+ * @param {string} logLvl
+ * @returns {transports.ConsoleTransportInstance}
+ */
 function createConsoleTransport(args, logLvl) {
   return new transports.Console({
     // @ts-expect-error The 'name' property should exist
@@ -81,15 +140,19 @@ function createConsoleTransport(args, logLvl) {
     level: logLvl,
     stderrLevels: ['error'],
     format: format.combine(
-      timestampFormat,
-      args.logNoColors ? stripColorFormat : colorizeFormat,
-      format.printf(function printInfo(info) {
-        return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
-      })
+      formatTimestamp(args),
+      isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
+      format.printf(formatLogLine(args, true))
     ),
   });
 }
 
+/**
+ *
+ * @param {ParsedArgs} args
+ * @param {string} logLvl
+ * @returns {transports.FileTransportInstance}
+ */
 function createFileTransport(args, logLvl) {
   return new transports.File({
     // @ts-expect-error The 'name' property should exist
@@ -102,19 +165,23 @@ function createFileTransport(args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      timestampFormat,
-      format.printf(function printInfo(info) {
-        return `${info.timestamp} ${info.message}`;
-      })
+      formatTimestamp(args),
+      format.printf(formatLogLine(args, false))
     ),
   });
 }
 
+/**
+ *
+ * @param {ParsedArgs} args
+ * @param {string} logLvl
+ * @returns {transports.HttpTransportInstance}
+ */
 function createHttpTransport(args, logLvl) {
   let host = '127.0.0.1';
   let port = 9003;
 
-  if (args.webhook.match(':')) {
+  if (args.webhook?.match(':')) {
     const hostAndPort = args.webhook.split(':');
     host = hostAndPort[0];
     port = parseInt(hostAndPort[1], 10);
@@ -132,28 +199,26 @@ function createHttpTransport(args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      format.printf(function printInfo(info) {
-        return `${info.timestamp} ${info.message}`;
-      })
+      format.printf(formatLogLine(args, false))
     ),
   });
 }
 
 /**
  *
- * @param {import('@appium/types').StringRecord} args
+ * @param {ParsedArgs} args
  * @returns {Promise<import('winston-transport')[]>}
  */
 async function createTransports(args) {
   const transports = [];
-  let consoleLogLevel = null;
-  let fileLogLevel = null;
-
+  /** @type {string} */
+  let consoleLogLevel;
+  /** @type {string} */
+  let fileLogLevel;
   if (args.loglevel && args.loglevel.match(':')) {
     // --log-level arg can optionally provide diff logging levels for console and file, separated by a colon
     const lvlPair = args.loglevel.split(':');
-    consoleLogLevel = lvlPair[0] || consoleLogLevel;
-    fileLogLevel = lvlPair[1] || fileLogLevel;
+    [consoleLogLevel, fileLogLevel] = lvlPair;
   } else {
     consoleLogLevel = fileLogLevel = args.loglevel;
   }
@@ -220,69 +285,68 @@ function colorizePrefix(text) {
   return `\x1b[38;5;${colorIndex}m${text}\x1b[0m`;
 }
 
-async function init(args) {
-  globalLog.level = 'silent';
-
-  // set de facto param passed to timestamp function
-  useLocalTimeZone = args.localTimezone;
-
-  // clean up in case we have initiated before since npmlog is a global object
-  clear();
-
-  const transports = await createTransports(args);
-  const transportNames = new Set(transports.map((tr) => tr.constructor.name));
-  log = createLogger({
-    transports,
-    levels,
-  });
-
-  const reportedLoggerErrors = new Set();
-  // Capture logs emitted via npmlog and pass them through winston
-  globalLog.on('log', ({level, message, prefix}) => {
-    const {sessionSignature} = globalLog.asyncStorage.getStore() ?? {};
-    /** @type {string[]} */
-    const prefixes = [];
-    if (sessionSignature) {
-      prefixes.push(sessionSignature);
-    }
-    if (prefix) {
-      prefixes.push(prefix);
-    }
-    let msg = message;
-    if (!_.isEmpty(prefixes)) {
-      const finalPrefix = prefixes
-        .map(toDecoratedPrefix)
-        .map((pfx) => args.logNoColors ? pfx : colorizePrefix(pfx))
-        .join('');
-      msg = `${finalPrefix} ${msg}`;
-    }
-    const winstonLevel = npmToWinstonLevels[level] || 'info';
-    try {
-      log[winstonLevel](msg);
-      if (_.isFunction(args.logHandler)) {
-        args.logHandler(level, msg);
+/**
+ * @param {ParsedArgs} args
+ * @param {boolean} targetConsole
+ * @returns {(info: import('logform').TransformableInfo) => string}
+ */
+function formatLogLine(args, targetConsole) {
+  return (info) => {
+    if (['json', 'pretty_json'].includes(args.logFormat)) {
+      let infoCopy = {...info};
+      if (targetConsole && !args.logTimestamp) {
+        delete infoCopy.timestamp;
       }
-    } catch (e) {
-      if (!reportedLoggerErrors.has(e.message) && process.stderr.writable) {
-        // eslint-disable-next-line no-console
-        console.error(
-          `The log message '${_.truncate(msg, {length: 30})}' cannot be written into ` +
-          `one or more requested destinations: ${transportNames}. Original error: ${e.message}`
-        );
-        reportedLoggerErrors.add(e.message);
-      }
+      return JSON.stringify(infoCopy, null, args.logFormat === 'pretty_json' ? 2 : undefined);
     }
+    if (targetConsole) {
+      return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
+    }
+    return `${info.timestamp} ${info.message}`;
+  };
+}
+
+/**
+ * add the timestamp in the correct format to the log info object
+ *
+ * @param {ParsedArgs} args
+ * @returns {import('logform').Format}
+ */
+function formatTimestamp(args) {
+  return format.timestamp({
+    format() {
+      let date = new Date();
+      if (args.localTimezone) {
+        date = new Date(date.valueOf() - date.getTimezoneOffset() * 60000);
+      }
+      // '2012-11-04T14:51:06.157Z' -> '2012-11-04 14:51:06:157'
+      return date.toISOString().replace(/[TZ]/g, ' ').replace(/\./g, ':').trim();
+    },
   });
 }
 
-function clear() {
-  if (log) {
-    for (let transport of _.keys(log.transports)) {
-      log.remove(transport);
-    }
-  }
-  globalLog.removeAllListeners('log');
+/**
+ * Strips color control codes from the given string
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+function stripColorCodes(text) {
+  return text.replace(COLOR_CODE_PATTERN, '');
 }
 
-export {init, clear};
+/**
+ *
+ * @param {ParsedArgs} args
+ * @returns {boolean}
+ */
+function isLogColorEnabled(args) {
+  return !args.logNoColors && args.logFormat === 'text';
+}
+
 export default init;
+
+/**
+ * @typedef {import('appium/types').ParsedArgs} ParsedArgs
+ * @typedef {import('@appium/logger').MessageObject} MessageObject
+ */

@@ -38,6 +38,7 @@ below.
 |`--log`|Also send log output to this file|string||`-g`|
 |`--log-filters`|One or more log filtering rules|array|||
 |`--log-level`|Log level (console[:file]) (Value must be one of: `info`, `info:debug`, `info:info`, `info:warn`, `info:error`, `warn`, `warn:debug`, `warn:info`, `warn:warn`, `warn:error`, `error`, `error:debug`, `error:info`, `error:warn`, `error:error`, `debug`, `debug:debug`, `debug:info`, `debug:warn`, `debug:error`)|string|`debug`||
+|`--log-format`|Log format (Value must be to one of: `text`, `json`, `pretty_json`). If logs are printed as JSON then the text coloring is always disabled.|string|`text`||
 |`--log-no-colors`|Do not use color in console output|boolean|`false`||
 |`--log-timestamp`|Show timestamps in console output|boolean|`false`||
 |`--long-stacktrace`|Add long stack traces to log entries. Recommended for debugging only.|boolean|`false`||

@@ -1,14 +1,19 @@
 import _ from 'lodash';
-import type { SecureValuePreprocessingRule } from './types';
+import type {
+  SecureValuePreprocessingRule,
+  LogFilterRegex,
+  LogFiltersConfig,
+  LogFilter,
+} from './types';
 
 const DEFAULT_REPLACER = '**SECURE**';
 
 /**
  * Type guard for log filter type
  * @param {object} value
- * @returns {value is import('@appium/types').LogFilterRegex}
+ * @returns {value is LogFilterRegex}
  */
-function isLogFilterRegex(value: object): value is import('@appium/types').LogFilterRegex {
+function isLogFilterRegex(value: object): value is LogFilterRegex {
   return 'pattern' in value;
 }
 
@@ -30,12 +35,12 @@ export class SecureValuesPreprocessor {
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|import('@appium/types').LogFilter} rule The rule might
+   * @param {string|LogFilter} rule The rule might
    * either be represented as a single string or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
-  parseRule(rule: string | import('@appium/types').LogFilter): SecureValuePreprocessingRule {
+  parseRule(rule: string | LogFilter): SecureValuePreprocessingRule {
     let pattern;
     let replacer = DEFAULT_REPLACER;
     let flags = ['g'];
@@ -92,19 +97,19 @@ export class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|import('@appium/types').LogFiltersConfig} filters
+   * @param {string|string[]|LogFiltersConfig} filters
    * One or more log parsing rules
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules(filters: string | string[] | import('@appium/types').LogFiltersConfig): Promise<string[]> {
+  async loadRules(filters: string | string[] | LogFiltersConfig): Promise<string[]> {
     const issues: string[] = [];
-    const rawRules: (import('@appium/types').LogFilter | string)[] = [];
+    const rawRules: (LogFilter | string)[] = [];
     for (const source of (_.isArray(filters) ? filters : [filters])) {
       if (_.isPlainObject(source)) {
-        rawRules.push(source as import('@appium/types').LogFilter);
+        rawRules.push(source as LogFilter);
       } else if (_.isString(source)) {
         rawRules.push(String(source));
       } else {

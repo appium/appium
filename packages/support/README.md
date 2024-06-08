@@ -51,7 +51,6 @@ All utility functions are split into a bunch of different categories. Each categ
 |env|Several helpers needed by the server to cope with internal dependencies and manifests|
 |fs|Most of the functions here are just thin wrappers over utility functions available in [Promises API](https://nodejs.org/api/fs.html#promises-api)|
 |image-util|Utilities to work with images. Use [sharp](https://github.com/lovell/sharp) under the hood.<br>:bangbang: Node >=18.17 is required to use these utilities|
-|log-internal|Utilities needed for internal Appium log config assistance|
 |logging|See [the logging section below](#logging)|
 |mjpeg|Helpers needed to implement [MJPEG streaming](https://en.wikipedia.org/wiki/Motion_JPEG#Video_streaming)|
 |net|Helpers needed for network interactions, for example, upload and download of files|

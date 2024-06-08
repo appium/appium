@@ -1,17 +1,25 @@
 import _ from 'lodash';
+import type {
+  SecureValuePreprocessingRule,
+  LogFilterRegex,
+  LogFiltersConfig,
+  LogFilter,
+} from './types';
 
 const DEFAULT_REPLACER = '**SECURE**';
 
 /**
  * Type guard for log filter type
  * @param {object} value
- * @returns {value is import('@appium/types').LogFilterRegex}
+ * @returns {value is LogFilterRegex}
  */
-function isLogFilterRegex(value) {
+function isLogFilterRegex(value: object): value is LogFilterRegex {
   return 'pattern' in value;
 }
 
-class SecureValuesPreprocessor {
+export class SecureValuesPreprocessor {
+  _rules: SecureValuePreprocessingRule[];
+
   constructor() {
     this._rules = [];
   }
@@ -20,20 +28,20 @@ class SecureValuesPreprocessor {
    * @returns {Array<SecureValuePreprocessingRule>} The list of successfully
    * parsed preprocessing rules
    */
-  get rules() {
+  get rules(): Array<SecureValuePreprocessingRule> {
     return this._rules;
   }
 
   /**
    * Parses single rule from the given JSON file
    *
-   * @param {string|import('@appium/types').LogFilter} rule The rule might
+   * @param {string|LogFilter} rule The rule might
    * either be represented as a single string or a configuration object
    * @throws {Error} If there was an error while parsing the rule
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
-  parseRule(rule) {
-    let pattern;
+  parseRule(rule: string | LogFilter): SecureValuePreprocessingRule {
+    let pattern: string | undefined;
     let replacer = DEFAULT_REPLACER;
     let flags = ['g'];
     if (_.isString(rule)) {
@@ -89,23 +97,21 @@ class SecureValuesPreprocessor {
   /**
    * Loads rules from the given JSON file
    *
-   * @param {string|string[]|import('@appium/types').LogFiltersConfig} filters
+   * @param {string|string[]|LogFiltersConfig} filters
    * One or more log parsing rules
    * @throws {Error} If the format of the source file is invalid or
    * it does not exist
    * @returns {Promise<string[]>} The list of issues found while parsing each rule.
    * An empty list is returned if no rule parsing issues were found
    */
-  async loadRules(filters) {
-    /** @type {string[]} */
-    const issues = [];
-    /** @type {(import('@appium/types').LogFilter|string)[]} */
-    const rawRules = [];
+  async loadRules(filters: string | string[] | LogFiltersConfig): Promise<string[]> {
+    const issues: string[] = [];
+    const rawRules: (LogFilter | string)[] = [];
     for (const source of (_.isArray(filters) ? filters : [filters])) {
       if (_.isPlainObject(source)) {
-        rawRules.push(/** @type {import('@appium/types').LogFilter} */ (source));
+        rawRules.push(source as LogFilter);
       } else if (_.isString(source)) {
-        rawRules.push(source);
+        rawRules.push(String(source));
       } else {
         issues.push(`'${source}' must be a valid log filtering rule`);
       }
@@ -115,7 +121,7 @@ class SecureValuesPreprocessor {
       try {
         this._rules.push(this.parseRule(rawRule));
       } catch (e) {
-        issues.push(e.message);
+        issues.push((e as Error).message);
       }
     }
     return issues;
@@ -129,27 +135,15 @@ class SecureValuesPreprocessor {
    * @param {string} str The string to make replacements in
    * @returns {string} The string with replacements made
    */
-  preprocess(str) {
-    if (this._rules.length === 0 || !_.isString(str)) {
+  preprocess(str: string): string {
+    if (this._rules.length === 0 || !str || !_.isString(str)) {
       return str;
     }
 
     let result = str;
     for (const rule of this._rules) {
-      result = result.replace(rule.pattern, rule.replacer);
+      result = result.replace(rule.pattern, rule.replacer ?? DEFAULT_REPLACER);
     }
     return result;
   }
 }
-
-const SECURE_VALUES_PREPROCESSOR = new SecureValuesPreprocessor();
-
-export {SECURE_VALUES_PREPROCESSOR, SecureValuesPreprocessor};
-export default SECURE_VALUES_PREPROCESSOR;
-
-/**
- * @typedef SecureValuePreprocessingRule
- * @property {RegExp} pattern The parsed pattern which is going to be used for replacement
- * @property {string} [replacer] The replacer value to use. By default
- * equals to `DEFAULT_SECURE_REPLACER`
- */

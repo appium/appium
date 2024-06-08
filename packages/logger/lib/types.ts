@@ -35,6 +35,10 @@ export interface Logger extends EventEmitter {
   error(prefix: string, message: any, ...args: any[]): void;
   silent(prefix: string, message: any, ...args: any[]): void;
 
+  loadSecureValuesPreprocessingRules(
+    rulesJsonPath: string | string[] | LogFiltersConfig
+  ): Promise<PreprocessingRulesLoadResult>;
+
   enableColor(): void;
   disableColor(): void;
 
@@ -85,4 +89,58 @@ export interface MessageObject {
   level: string;
   prefix: string;
   message: string;
+}
+
+export interface SecureValuePreprocessingRule {
+  /** The parsed pattern which is going to be used for replacement */
+  pattern: RegExp;
+  /** The replacer value to use. By default equals to `DEFAULT_SECURE_REPLACER` */
+  replacer?: string;
+}
+
+export interface PreprocessingRulesLoadResult {
+  /**
+   * The list of rule parsing issues (one item per rule).
+   * Rules with issues are skipped. An empty list is returned if no parsing issues exist.
+   */
+  issues: string[];
+  /**
+   * The list of successfully loaded
+   * replacement rules. The list could be empty if no rules were loaded.
+   */
+  rules: SecureValuePreprocessingRule[];
+}
+
+export type LogFilter = {
+  /**
+   * Replacement string for matched text
+   */
+  replacer?: string;
+  /**
+   * Matching flags; see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#advanced_searching_with_flags
+   */
+  flags?: string;
+  [k: string]: unknown;
+} & (LogFilterText | LogFilterRegex);
+/**
+ * One or more log filtering rules
+ */
+export type LogFiltersConfig = LogFilter[];
+
+export interface LogFilterText {
+  /**
+   * Text to match
+   */
+  text: string;
+  [k: string]: unknown;
+}
+/**
+ * Log filter with regular expression
+ */
+export interface LogFilterRegex {
+  /**
+   * Regex pattern to match
+   */
+  pattern: string;
+  [k: string]: unknown;
 }

@@ -3,7 +3,6 @@
 import globalLog from '@appium/logger';
 import _ from 'lodash';
 import moment from 'moment';
-import SECURE_VALUES_PREPROCESSOR from './log-internal';
 
 /** @type {import('@appium/types').AppiumLoggerLevel[]} */
 export const LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
@@ -11,11 +10,19 @@ const MAX_LOG_RECORDS_COUNT = 3000;
 
 const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
 
-// mock log object used in testing mode
-let mockLog = {};
-for (let level of LEVELS) {
-  mockLog[level] = () => {};
-}
+// mock log object used in testing mode to silence the output
+const MOCK_LOG = {
+  unwrap: () => ({
+    loadSecureValuesPreprocessingRules: () => ({
+      issues: [],
+      rules: [],
+    }),
+    level: '',
+    prefix: '',
+    log: _.noop,
+  }),
+  ...(_.fromPairs(LEVELS.map((l) => [l, _.noop]))),
+};
 
 /**
  *
@@ -32,7 +39,7 @@ function _getLogger() {
   let logger;
   if (testingMode && !forceLogMode) {
     // in testing mode, use a mock logger object that we can query
-    logger = mockLog;
+    logger = MOCK_LOG;
   } else {
     // otherwise, either use the global, or a new `npmlog` object
     logger = global._global_npmlog || globalLog;
@@ -85,12 +92,8 @@ function getLogger(prefix = null) {
   for (const level of LEVELS) {
     wrappedLogger[level] = /** @param {...any} args */ function (...args) {
       const actualPrefix = getActualPrefix(this.prefix, logTimestamp);
-      for (const arg of args) {
-        const out = _.isError(arg) && arg.stack ? arg.stack : `${arg}`;
-        for (const line of out.split('\n')) {
-          logger[level](actualPrefix, SECURE_VALUES_PREPROCESSOR.preprocess(line));
-        }
-      }
+      // @ts-ignore This is OK
+      logger[level](actualPrefix, ...args);
     };
   }
   wrappedLogger.errorWithException = function (/** @type {any[]} */ ...args) {
@@ -113,38 +116,10 @@ function getLogger(prefix = null) {
   return /** @type {AppiumLogger} */ (wrappedLogger);
 }
 
-/**
- * @typedef LoadResult
- * @property {string[]} issues The list of rule parsing issues (one item per rule).
- * Rules with issues are skipped. An empty list is returned if no parsing issues exist.
- * @property {import('./log-internal').SecureValuePreprocessingRule[]} rules The list of successfully loaded
- * replacement rules. The list could be empty if no rules were loaded.
- */
-
-/**
- * Loads the JSON file containing secure values replacement rules.
- * This might be necessary to hide sensitive values that may possibly
- * appear in Appium logs.
- * Each call to this method replaces the previously loaded rules if any existed.
- *
- * @param {string|string[]|import('@appium/types').LogFiltersConfig} rulesJsonPath The full path to the JSON file containing
- * the replacement rules. Each rule could either be a string to be replaced
- * or an object with predefined properties.
- * @throws {Error} If the given file cannot be loaded
- * @returns {Promise<LoadResult>}
- */
-async function loadSecureValuesPreprocessingRules(rulesJsonPath) {
-  const issues = await SECURE_VALUES_PREPROCESSOR.loadRules(rulesJsonPath);
-  return {
-    issues,
-    rules: _.cloneDeep(SECURE_VALUES_PREPROCESSOR.rules),
-  };
-}
-
 // export a default logger with no prefix
 const log = getLogger();
 
-export {log, getLogger, loadSecureValuesPreprocessingRules};
+export {log, getLogger};
 export default log;
 
 /**

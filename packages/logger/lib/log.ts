@@ -1,13 +1,22 @@
+import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 // @ts-ignore This module does not provide type definitons
 import setBlocking from 'set-blocking';
 // @ts-ignore This module does not provide type definitons
 import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
-import type {MessageObject, StyleObject, Logger, LogLevel} from './types';
+import type {
+  MessageObject,
+  StyleObject,
+  Logger,
+  LogLevel,
+  PreprocessingRulesLoadResult,
+  LogFiltersConfig
+} from './types';
 import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
+import { SecureValuesPreprocessor } from './secure-values-preprocessor';
 
 const DEFAULT_LOG_LEVELS: any[][] = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -41,6 +50,7 @@ export class Log extends EventEmitter implements Logger {
   _disp: Record<LogLevel | string, number | string>;
   _id: number;
   _paused: boolean;
+  _secureValuesPreprocessor: SecureValuesPreprocessor;
 
   constructor() {
     super();
@@ -56,6 +66,7 @@ export class Log extends EventEmitter implements Logger {
     this._id = 0;
     this._paused = false;
     this._asyncStorage = new AsyncLocalStorage();
+    this._secureValuesPreprocessor = new SecureValuesPreprocessor();
 
     this._style = {};
     this._levels = {};
@@ -186,7 +197,7 @@ export class Log extends EventEmitter implements Logger {
     for (const formatArg of [message, ...args]) {
       messageArguments.push(formatArg);
       // resolve stack traces to a plain string.
-      if (typeof formatArg === 'object' && formatArg instanceof Error && formatArg.stack) {
+      if (_.isError(formatArg) && formatArg.stack) {
         Object.defineProperty(formatArg, 'stack', {
           value: (stack = formatArg.stack + ''),
           enumerable: true,
@@ -203,8 +214,8 @@ export class Log extends EventEmitter implements Logger {
       id: this._id++,
       timestamp: Date.now(),
       level,
-      prefix: unleakString(prefix || ''),
-      message: unleakString(formattedMessage),
+      prefix: this._secureValuesPreprocessor.preprocess(unleakString(prefix || '')),
+      message: this._secureValuesPreprocessor.preprocess(unleakString(formattedMessage)),
     };
 
     this.emit('log', m);
@@ -220,6 +231,28 @@ export class Log extends EventEmitter implements Logger {
     }
 
     this.emitLog(m);
+  }
+
+  /**
+   * Loads the JSON file containing secure values replacement rules.
+   * This might be necessary to hide sensitive values that may possibly
+   * appear in Appium logs.
+   * Each call to this method replaces the previously loaded rules if any existed.
+   *
+   * @param {string|string[]|LogFiltersConfig} rulesJsonPath The full path to the JSON file containing
+   * the replacement rules. Each rule could either be a string to be replaced
+   * or an object with predefined properties.
+   * @throws {Error} If the given file cannot be loaded
+   * @returns {Promise<PreprocessingRulesLoadResult>}
+   */
+  async loadSecureValuesPreprocessingRules(
+    rulesJsonPath: string | string[] | LogFiltersConfig
+  ): Promise<PreprocessingRulesLoadResult> {
+    const issues = await this._secureValuesPreprocessor.loadRules(rulesJsonPath);
+    return {
+      issues,
+      rules: _.cloneDeep(this._secureValuesPreprocessor.rules),
+    };
   }
 
   private emitLog(m: MessageObject): void {

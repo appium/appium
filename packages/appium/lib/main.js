@@ -8,7 +8,7 @@ import {
   server as baseServer,
   normalizeBasePath,
 } from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
@@ -246,7 +246,7 @@ async function init(args) {
     await logsinkInit(serverArgs);
 
     if (serverArgs.logFilters) {
-      const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
+      const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(
         serverArgs.logFilters,
       );
       if (!_.isEmpty(issues)) {

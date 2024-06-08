@@ -80,4 +80,3 @@ export type {
   ZipCompressionOptions,
   ZipSourceOptions,
 } from './zip';
-export type {SecureValuePreprocessingRule} from './log-internal';

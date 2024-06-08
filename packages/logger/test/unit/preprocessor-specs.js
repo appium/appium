@@ -1,7 +1,7 @@
-import {SecureValuesPreprocessor} from '../../lib/log-internal';
+import {SecureValuesPreprocessor} from '../../lib/secure-values-prepreocessor';
 
 describe('Log Internals', function () {
-  /** @type {import('../../lib/log-internal').SecureValuesPreprocessor} */
+  /** @type {import('../../lib/secure-values-prepreocessor').SecureValuesPreprocessor} */
   let preprocessor;
 
   beforeEach(function () {

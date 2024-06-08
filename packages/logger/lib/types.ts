@@ -35,6 +35,10 @@ export interface Logger extends EventEmitter {
   error(prefix: string, message: any, ...args: any[]): void;
   silent(prefix: string, message: any, ...args: any[]): void;
 
+  loadSecureValuesPreprocessingRules(
+    rulesJsonPath: string | string[] | import('@appium/types').LogFiltersConfig
+  ): Promise<PreprocessingRulesLoadResult>;
+
   enableColor(): void;
   disableColor(): void;
 
@@ -85,4 +89,24 @@ export interface MessageObject {
   level: string;
   prefix: string;
   message: string;
+}
+
+export interface SecureValuePreprocessingRule {
+  /** The parsed pattern which is going to be used for replacement */
+  pattern: RegExp;
+  /** The replacer value to use. By default equals to `DEFAULT_SECURE_REPLACER` */
+  replacer?: string;
+}
+
+export interface PreprocessingRulesLoadResult {
+  /**
+   * The list of rule parsing issues (one item per rule).
+   * Rules with issues are skipped. An empty list is returned if no parsing issues exist.
+   */
+  issues: string[];
+  /**
+   * The list of successfully loaded
+   * replacement rules. The list could be empty if no rules were loaded.
+   */
+  rules: SecureValuePreprocessingRule[];
 }

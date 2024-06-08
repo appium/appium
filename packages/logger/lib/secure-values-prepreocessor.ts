@@ -41,7 +41,7 @@ export class SecureValuesPreprocessor {
    * @returns {SecureValuePreprocessingRule} The parsed rule
    */
   parseRule(rule: string | LogFilter): SecureValuePreprocessingRule {
-    let pattern;
+    let pattern: string | undefined;
     let replacer = DEFAULT_REPLACER;
     let flags = ['g'];
     if (_.isString(rule)) {

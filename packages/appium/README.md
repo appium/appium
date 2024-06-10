@@ -2,7 +2,7 @@
 
 <p align="center">
    <a href="https://appium.io/">
-      <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/assets/images/appium-logo-horiz.png" width="500">
+      <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/appium-logo-horiz.png" width="500">
    </a>
 </p>
 <p align="center">
@@ -191,7 +191,7 @@ Appium is incredibly grateful to our Development Partners for their sustained co
 project development and leadership!
 
 <p align="center">
-  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/assets/images/sponsor-logo-headspin.png"
+  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
 width="300" alt="HeadSpin" /></a>
 </p>
 

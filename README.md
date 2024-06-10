@@ -2,7 +2,7 @@
 
 <p align="center">
    <a href="https://appium.io/">
-      <img alt="Appium" src="packages/appium/docs/overrides/assets/images/appium-logo-horiz.png" width="500">
+      <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/appium-logo-horiz.png" width="500">
    </a>
 </p>
 <p align="center">

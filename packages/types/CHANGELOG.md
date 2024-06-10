@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.0](https://github.com/appium/appium/compare/@appium/types@0.19.2...@appium/types@0.20.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add a possibility to print logs in json format ([#20224](https://github.com/appium/appium/issues/20224)) ([1e86537](https://github.com/appium/appium/commit/1e86537e944f6beb7dbe72b35c267ae1dd9ebd36))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
 ## [0.19.2](https://github.com/appium/appium/compare/@appium/types@0.19.1...@appium/types@0.19.2) (2024-06-06)
 
 **Note:** Version bump only for package @appium/types

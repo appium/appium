@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.12](https://github.com/appium/appium/compare/@appium/docutils@1.0.11...@appium/docutils@1.0.12) (2024-06-10)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.2 ([1828501](https://github.com/appium/appium/commit/1828501c66d0c5f8f295c67cd12d6691f8020780))
+* **docutils:** update dependency yaml to v2.4.5 ([6a08c95](https://github.com/appium/appium/commit/6a08c95fc9bda5cf39b8a6d98e5394658355a38e))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
 ## [1.0.11](https://github.com/appium/appium/compare/@appium/docutils@1.0.10...@appium/docutils@1.0.11) (2024-06-06)
 
 **Note:** Version bump only for package @appium/docutils

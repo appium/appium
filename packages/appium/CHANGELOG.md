@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.10.0](https://github.com/appium/appium/compare/appium@2.9.0...appium@2.10.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add a possibility to print logs in json format ([#20224](https://github.com/appium/appium/issues/20224)) ([1e86537](https://github.com/appium/appium/commit/1e86537e944f6beb7dbe72b35c267ae1dd9ebd36))
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+* **logger:** Add the debug level to the default logger ([#20219](https://github.com/appium/appium/issues/20219)) ([8ee7d07](https://github.com/appium/appium/commit/8ee7d07af4e2375d2eb7c23badaaac34685bc59c))
+* **support:** Move SecureValuesPreprocessor to @appum/logger ([#20228](https://github.com/appium/appium/issues/20228)) ([dbc3b66](https://github.com/appium/appium/commit/dbc3b668a0a7a815d23f1cae4207d435fc09034d))
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.2 ([1828501](https://github.com/appium/appium/commit/1828501c66d0c5f8f295c67cd12d6691f8020780))
+* **docutils:** update dependency yaml to v2.4.5 ([6a08c95](https://github.com/appium/appium/commit/6a08c95fc9bda5cf39b8a6d98e5394658355a38e))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
 ## [2.9.0](https://github.com/appium/appium/compare/appium@2.8.0...appium@2.9.0) (2024-06-06)
 
 

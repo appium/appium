@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/appium/appium/compare/@appium/support@4.5.0...@appium/support@5.0.0) (2024-06-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **support:** Remove unleakString since it is now in appium/logger
+* **support:** Remove patchLogger exported method from logger
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+* **support:** Move SecureValuesPreprocessor to @appum/logger ([#20228](https://github.com/appium/appium/issues/20228)) ([dbc3b66](https://github.com/appium/appium/commit/dbc3b668a0a7a815d23f1cae4207d435fc09034d))
+* **support:** Remove patchLogger from logger ([#20220](https://github.com/appium/appium/issues/20220)) ([dd421b3](https://github.com/appium/appium/commit/dd421b397b41cf4d5ed5a434edf72701f5936bb1))
+* **support:** remove unleakString as no usage ([#20221](https://github.com/appium/appium/issues/20221)) ([93c271e](https://github.com/appium/appium/commit/93c271ec5d7ffc3f68b3ced3d15170387f9ab6c9))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
 ## [4.5.0](https://github.com/appium/appium/compare/@appium/support@4.4.0...@appium/support@4.5.0) (2024-06-06)
 
 

@@ -185,14 +185,29 @@ and wants to give back financially to the project, we use these funds to [encour
 contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
 rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
 
-### Development Partners
+### Development and Strategic Partners
 
-Appium is incredibly grateful to our Development Partners for their sustained contribution of
-project development and leadership!
+Appium is incredibly grateful to our Development and Strategic Partners for their sustained
+contribution of project development and leadership!
 
 <p align="center">
   <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
-width="300" alt="HeadSpin" /></a>
+width="275" alt="HeadSpin" /></a>
+</p>
+
+<p align="center">
+  <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
+    <picture>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="300" alt="Browserstack"/>
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
+width="300" alt="Sauce Labs" /></a>
 </p>
 
 ### Other Sponsors

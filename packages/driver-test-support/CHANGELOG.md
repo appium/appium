@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.5.0...@appium/driver-test-support@0.6.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.5 ([69bbb53](https://github.com/appium/appium/commit/69bbb5370e671d2809a5bf997936b0b3cc1a0a0b))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
 ## [0.5.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.26...@appium/driver-test-support@0.5.0) (2024-06-06)
 
 

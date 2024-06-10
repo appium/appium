@@ -14,7 +14,7 @@
 
 .appium-sponsor-thanks img {
   margin: auto 6px;
-  height: 50px;
+  height: 40px;
 }
 
 .homepageSponsors {
@@ -23,7 +23,7 @@
   justify-content: center;
   align-items: center;
   margin: 10px auto;
-  max-width: 500px;
+  max-width: 800px;
 }
 
 .homepageSponsor {

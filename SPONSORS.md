@@ -28,6 +28,8 @@ contributors!
   </picture>
 </a>
 
+<a href="https://saucelabs.com/resources/blog/appium-strategic-partner" target="_blank"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png" width="250"/></a>
+
 ## Gold Sponsors
 
 <a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false"/></a>

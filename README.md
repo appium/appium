@@ -192,7 +192,7 @@ contribution of project development and leadership!
 
 <p align="center">
   <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
-width="300" alt="HeadSpin" /></a>
+width="275" alt="HeadSpin" /></a>
 </p>
 
 <p align="center">
@@ -203,6 +203,11 @@ width="300" alt="HeadSpin" /></a>
       <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="300" alt="Browserstack"/>
     </picture>
   </a>
+</p>
+
+<p align="center">
+  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
+width="300" alt="Sauce Labs" /></a>
 </p>
 
 ### Other Sponsors

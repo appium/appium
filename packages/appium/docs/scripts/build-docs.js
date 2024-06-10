@@ -20,7 +20,6 @@ const {
   DOCS_REMOTE,
   LATEST_ALIAS,
 } = require('./utils');
-const copyAssets = require('./copy-assets');
 const path = require('path');
 const semver = require('semver');
 const {version} = require('../../package.json');
@@ -34,8 +33,6 @@ const push = Boolean(process.env.APPIUM_DOCS_PUBLISH);
 
 async function main() {
   log.info(`Building Appium docs and committing to ${DOCS_BRANCH}`);
-
-  await copyAssets();
 
   const semVersion = semver.parse(version);
   if (!semVersion) {

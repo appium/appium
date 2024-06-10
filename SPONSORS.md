@@ -20,7 +20,13 @@ We are very grateful for the financial and marketing support of our exclusive St
 who contribute a significant ongoing investment of funds to help the project attract and reward
 contributors!
 
-* *Coming Soon!*
+<a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
+  <picture>
+    <source srcset="packages/appium/docs/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+    <source srcset="packages/appium/docs/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+    <img src="packages/appium/docs/assets/images/sponsor-logo-browserstack-dark.png" width="250" alt="Browserstack"/>
+  </picture>
+</a>
 
 ## Gold Sponsors
 

@@ -33,11 +33,8 @@ Android TV, Samsung), and more!
     </div>
     <div class="homepageSponsor">
       <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
-        <picture>
-          <source srcset="/docs/en/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
-          <source srcset="/docs/en/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
-          <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png" style="width: 220px;" />
-        </picture>
+        <img src="assets/images/sponsor-logo-browserstack-dark.png#only-dark" style="width: 220px;" />
+        <img src="assets/images/sponsor-logo-browserstack-light.png#only-light" style="width: 220px;" />
       </a>
     </div>
   </div>

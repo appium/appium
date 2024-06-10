@@ -7,14 +7,13 @@
 
 .appium-sponsor-thanks {
   width: 100%;
-  margin: auto 0.6rem;
+  margin: 0.5rem 0.6rem auto 0.6rem;
   display: flex;
   align-items: center;
 }
 
 .appium-sponsor-thanks img {
   margin: auto 6px;
-  margin-top: 0.5rem;
   height: 50px;
 }
 

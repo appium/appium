@@ -27,6 +27,7 @@ contributors!
     <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="250" alt="Browserstack"/>
   </picture>
 </a>
+<a style="padding-left: 1em" href="https://saucelabs.com/resources/blog/appium-strategic-partner" target="_blank"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png" width="250"/></a>
 
 ## Gold Sponsors
 

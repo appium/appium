@@ -12,7 +12,7 @@ We are very grateful for the support of our Development Partners, who donate App
 maintenance as part of their employees' core job duties!
 
 <a href="https://www.headspin.io/solutions/appium-mobile-test-automation" target="_blank"><img
-src="packages/appium/docs/assets/images/sponsor-logo-headspin.png" width="250"/></a>
+src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png" width="250"/></a>
 
 ## Strategic Partners
 
@@ -22,9 +22,9 @@ contributors!
 
 <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
   <picture>
-    <source srcset="packages/appium/docs/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
-    <source srcset="packages/appium/docs/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
-    <img src="packages/appium/docs/assets/images/sponsor-logo-browserstack-dark.png" width="250" alt="Browserstack"/>
+    <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+    <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+    <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="250" alt="Browserstack"/>
   </picture>
 </a>
 

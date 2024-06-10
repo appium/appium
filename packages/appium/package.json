@@ -48,7 +48,7 @@
     "build:docs:assets": "node docs/scripts/copy-assets.js",
     "build:docs:cli": "node docs/scripts/gen-cli-args-docs.js",
     "build:docs:reference": "node docs/scripts/build-reference.js",
-    "dev:docs": "npm run build:docs:assets && npm run dev:docs:en",
+    "dev:docs": "npm run dev:docs:en",
     "dev:docs:en": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-en.yml",
     "dev:docs:ja": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-ja.yml",
     "dev:docs:zh": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-zh.yml",

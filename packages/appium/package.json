@@ -82,7 +82,7 @@
     "axios": "1.7.2",
     "bluebird": "3.7.2",
     "cross-env": "7.0.3",
-    "lilconfig": "3.1.1",
+    "lilconfig": "3.1.2",
     "lodash": "4.17.21",
     "lru-cache": "10.2.2",
     "ora": "5.4.1",

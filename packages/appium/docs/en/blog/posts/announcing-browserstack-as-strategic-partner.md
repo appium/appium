@@ -17,11 +17,8 @@ href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW000
 
 <div style="text-align:center;width:100%">
   <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
-    <picture>
-      <source srcset="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
-      <source srcset="/docs/en/latest/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
-      <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png" width="300" />
-    </picture>
+    <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-dark.png#only-dark" width="300" />
+    <img src="/docs/en/latest/assets/images/sponsor-logo-browserstack-light.png#only-light" width="300" />
   </a>
 </div>
 

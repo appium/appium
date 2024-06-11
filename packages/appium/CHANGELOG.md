@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.10.3](https://github.com/appium/appium/compare/appium@2.10.2...appium@2.10.3) (2024-06-11)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
 ## [2.10.2](https://github.com/appium/appium/compare/appium@2.10.1...appium@2.10.2) (2024-06-11)
 
 **Note:** Version bump only for package appium

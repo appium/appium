@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.3](https://github.com/appium/appium/compare/@appium/support@5.0.2...@appium/support@5.0.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
 ## [5.0.2](https://github.com/appium/appium/compare/@appium/support@5.0.1...@appium/support@5.0.2) (2024-06-11)
 
 **Note:** Version bump only for package @appium/support

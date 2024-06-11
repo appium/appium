@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.10.3](https://github.com/appium/appium/compare/@appium/base-driver@9.10.2...@appium/base-driver@9.10.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
 ## [9.10.2](https://github.com/appium/appium/compare/@appium/base-driver@9.10.1...@appium/base-driver@9.10.2) (2024-06-11)
 
 **Note:** Version bump only for package @appium/base-driver

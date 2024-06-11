@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.2](https://github.com/appium/appium/compare/@appium/logger@1.4.1...@appium/logger@1.4.2) (2024-06-11)
+
+
+### Bug Fixes
+
+* **logger:** use `index.d.ts` for types instead of `index.ts` ([#20247](https://github.com/appium/appium/issues/20247)) ([9469aae](https://github.com/appium/appium/commit/9469aaef0e31d27b4814bc14763b0abeb6e11bf7))
+
+
+
 ## [1.4.1](https://github.com/appium/appium/compare/@appium/logger@1.4.0...@appium/logger@1.4.1) (2024-06-11)
 
 

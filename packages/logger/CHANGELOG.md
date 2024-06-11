@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.1](https://github.com/appium/appium/compare/@appium/logger@1.4.0...@appium/logger@1.4.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* **logger:** Type declaration for DEFAULT_LOG_LEVELS ([#20244](https://github.com/appium/appium/issues/20244)) ([c670010](https://github.com/appium/appium/commit/c670010ec7ea1c2730839e86b308837a83fc026e))
+
+
+
 ## [1.4.0](https://github.com/appium/appium/compare/@appium/logger@1.3.0...@appium/logger@1.4.0) (2024-06-10)
 
 

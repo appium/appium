@@ -10,6 +10,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **support:** Remove unleakString since it is now in appium/logger
 * **support:** Remove patchLogger exported method from logger
+* **support:** The SecureValuesPreprocessor has been moved directly to the @appium/logger module and set as a private logger instance property.
+* **support:** The loadSecureValuesPreprocessingRules method is now public instance method of the Logger class. Unit tests were ported to the @appium/logger module as well.
 
 ### Features
 

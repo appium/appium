@@ -18,7 +18,7 @@ import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
 import { SecureValuesPreprocessor } from './secure-values-preprocessor';
 
-const DEFAULT_LOG_LEVELS: any[][] = [
+const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
   ['verbose', 1000, {fg: 'cyan', bg: 'black'}, 'verb'],
   ['debug', 1500, {fg: 'cyan', bg: 'black'}, 'dbug'],

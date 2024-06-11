@@ -9,7 +9,7 @@
     "directory": "packages/logger"
   },
   "main": "build/index.js",
-  "types": "index.ts",
+  "types": "build/index.d.ts",
   "files": [
     "index.ts",
     "lib",

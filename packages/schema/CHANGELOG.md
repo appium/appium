@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.1](https://github.com/appium/appium/compare/@appium/schema@0.6.0...@appium/schema@0.6.1) (2024-06-11)
+
+
+### Bug Fixes
+
+* **schema:** edit a comment in order to trigger a publish ([45cc948](https://github.com/appium/appium/commit/45cc9486711b6100e78317c9dd7fb4f65a41d1eb))
+
+
+
 ## [0.6.0](https://github.com/appium/appium/compare/@appium/schema@0.5.0...@appium/schema@0.6.0) (2024-06-10)
 
 

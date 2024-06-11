@@ -1,5 +1,5 @@
 /**
- * The single-source-of-truth of the Appium server configuration
+ * The single-source-of-truth of the Appium server configuration.
  *
  * This defines _both_ what the CLI supports and what the config files support.
  */
@@ -175,11 +175,7 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           appiumCliDest: 'logFormat',
           default: 'text',
           description: 'Log format (text|json|pretty_json)',
-          enum: [
-            'text',
-            'json',
-            'pretty_json',
-          ],
+          enum: ['text', 'json', 'pretty_json'],
           title: 'log-format config',
           type: 'string',
         },
@@ -197,13 +193,15 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
         },
         'plugins-import-chunk-size': {
           default: 7,
-          description: 'The maximum amount of plugins that could be imported in parallel on server startup',
+          description:
+            'The maximum amount of plugins that could be imported in parallel on server startup',
           title: 'plugins-import-chunk-size config',
           type: 'number',
         },
         'drivers-import-chunk-size': {
           default: 3,
-          description: 'The maximum amount of drivers that could be imported in parallel on server startup',
+          description:
+            'The maximum amount of drivers that could be imported in parallel on server startup',
           title: 'drivers-import-chunk-size config',
           type: 'number',
         },
@@ -313,13 +311,15 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           type: 'string',
         },
         'ssl-cert-path': {
-          description: 'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
+          description:
+            'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
           title: '.cert file path',
           appiumCliDest: 'sslCertificatePath',
           type: 'string',
         },
         'ssl-key-path': {
-          description: 'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
+          description:
+            'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
           title: '.key file path',
           appiumCliDest: 'sslKeyPath',
           type: 'string',

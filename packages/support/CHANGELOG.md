@@ -10,6 +10,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **support:** Remove unleakString since it is now in appium/logger
 * **support:** Remove patchLogger exported method from logger
+* **support:** Removed the 'log-internals' module
+* **support:** Moved the 'loadSecureValuesPreprocessingRules' API to the '@appium/logger' package
 
 ### Features
 

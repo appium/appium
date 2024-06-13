@@ -309,6 +309,8 @@ export class BaseDriver<
 
     this._log.prefix = helpers.generateDriverLogPrefix(this);
 
+    helpers.registerLogContext(this.sessionId);
+
     this.log.info(`Session created with session id: ${this.sessionId}`);
 
     return [this.sessionId, caps] as CreateResult;

@@ -249,15 +249,19 @@ async function init(args) {
       const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(
         serverArgs.logFilters,
       );
+      const argToLog = _.truncate(JSON.stringify(serverArgs.logFilters), {
+        length: 150
+      });
       if (!_.isEmpty(issues)) {
         throw new Error(
-          `The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
+          `The log filtering rules config ${argToLog} has issues: ` +
             JSON.stringify(issues, null, 2),
         );
       }
       if (_.isEmpty(rules)) {
         logger.warn(
-          `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
+          `Found no log filtering rules in the ${argToLog} config. ` +
+          `Is that expected?`,
         );
       } else {
         // Filtering aims to "hide" these values from the log,

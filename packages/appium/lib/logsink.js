@@ -70,7 +70,7 @@ export async function init(args) {
     /** @type {string[]} */
     const prefixes = [];
     if (sessionSignature) {
-      prefixes.push(sessionSignature);
+      prefixes.push(sessionSignature.substring(0, 8));
     }
     if (prefix) {
       prefixes.push(prefix);

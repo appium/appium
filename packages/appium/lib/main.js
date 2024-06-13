@@ -251,13 +251,14 @@ async function init(args) {
       );
       if (!_.isEmpty(issues)) {
         throw new Error(
-          `The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
+          `The log filtering rules config ${JSON.stringify(serverArgs.logFilters)} has issues: ` +
             JSON.stringify(issues, null, 2),
         );
       }
       if (_.isEmpty(rules)) {
         logger.warn(
-          `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
+          `Found no log filtering rules in the ${JSON.stringify(serverArgs.logFilters)} config. ` +
+          `Is that expected?`,
         );
       } else {
         // Filtering aims to "hide" these values from the log,

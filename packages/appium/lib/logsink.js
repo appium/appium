@@ -70,7 +70,7 @@ export async function init(args) {
     /** @type {string[]} */
     const prefixes = [];
     if (sessionSignature) {
-      prefixes.push(sessionSignature.substring(0, 8));
+      prefixes.push(sessionSignature);
     }
     if (prefix) {
       prefixes.push(prefix);
@@ -295,14 +295,14 @@ function formatLog(args, targetConsole) {
     return format.combine(
       format((info) => {
         const infoCopy = {...info};
-        const {sessionSignature: session} = globalLog.asyncStorage.getStore() ?? {};
+        const contextInfo = globalLog.asyncStorage.getStore() ?? {};
 
         if (targetConsole && !args.logTimestamp) {
           delete infoCopy.timestamp;
         }
 
-        if (session) {
-          infoCopy.context = {session};
+        if (!_.isEmpty(contextInfo)) {
+          infoCopy.context = {...contextInfo};
         }
 
         return infoCopy;

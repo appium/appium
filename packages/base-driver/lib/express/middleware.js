@@ -3,6 +3,7 @@ import log from './logger';
 import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
 import {pathToRegexp} from 'path-to-regexp';
+import {util} from '@appium/support';
 
 /**
  *
@@ -76,16 +77,13 @@ export function fixPythonContentType(basePath) {
  * @returns {any}
  */
 export function handleLogContext(req, res, next) {
-  /** @type {import('node:async_hooks').AsyncLocalStorage<Record<string, any>>|undefined} */
-  const contextStorage = global._global_npmlog?.asyncStorage;
-  if (!contextStorage) {
-    return next();
-  }
+  const requestId = util.uuidV4();
 
-  const sessionIdMatch = SESSION_ID_PATTERN.exec(req.url);
-  contextStorage.enterWith(
-    sessionIdMatch ? {sessionSignature: sessionIdMatch[1]} : {}
-  );
+  const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
+  const sessionInfo = sessionId ? {sessionId, sessionSignature: sessionId.substring(0, 8)} : {};
+
+  log.updateCurrentContext({requestId, ...sessionInfo}, true);
+
   return next();
 }
 

@@ -35,25 +35,30 @@ export function getLogger(prefix = null) {
     unwrap: () => logger,
     levels: LEVELS,
     prefix,
-    /**
-     * Logs given arguments at the error level and returns
-     * the error object.
-     *
-     * @param  {...any} args
-     * @returns {Error}
-     */
     errorWithException (/** @type {any[]} */ ...args) {
       this.error(...args);
       // make sure we have an `Error` object. Wrap if necessary
       return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
     },
-    /**
-     * @deprecated Use {@link errorWithException} instead
-     * @param {...any} args
-     * @throws {Error}
-     */
     errorAndThrow (/** @type {any[]} */ ...args) {
       throw this.errorWithException(args);
+    },
+    updateCurrentContext(
+      /** @type {import('@appium/types').AppiumLoggerContext} */ contextInfo,
+      replace = false,
+    ) {
+      if (!_.isPlainObject(contextInfo)) {
+        return;
+      }
+      const globalLog = this.unwrap();
+      const contextStorage = globalLog.asyncStorage;
+      if (replace) {
+        contextStorage.enterWith({...contextInfo});
+      } else {
+        const store = contextStorage.getStore() ?? {};
+        Object.assign(store, contextInfo);
+        contextStorage.enterWith(store);
+      }
     },
   };
   // allow access to the level of the underlying logger

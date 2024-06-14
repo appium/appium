@@ -497,7 +497,6 @@ export interface DriverHelpers {
   duplicateKeys: <T>(input: T, firstKey: string, secondKey: string) => T;
   parseCapsArray: (cap: string | string[]) => string[];
   generateDriverLogPrefix: <C extends Constraints>(obj: Core<C>, sessionId?: string) => string;
-  registerLogContext: (sessionId: string) => void;
 }
 
 export type SettingsUpdateListener<T extends Record<string, unknown> = Record<string, unknown>> = (

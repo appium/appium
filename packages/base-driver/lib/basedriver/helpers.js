@@ -410,20 +410,6 @@ export function generateDriverLogPrefix(obj, sessionId = null) {
 }
 
 /**
- * Register the session in the context to be used in the logs
- *
- * @param {string} sessionId session identifier
- */
-export function registerLogContext(sessionId) {
-  const contextStorage = global._global_npmlog?.asyncStorage;
-  if (contextStorage) {
-    const store = contextStorage.getStore() ?? {};
-    store.sessionSignature = sessionId;
-    contextStorage.enterWith(store);
-  }
-}
-
-/**
  * Sends a HTTP GET query to fetch the app with caching enabled.
  * Follows https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
  *
@@ -729,7 +715,6 @@ export default {
   duplicateKeys,
   parseCapsArray,
   generateDriverLogPrefix,
-  registerLogContext,
 };
 
 /**

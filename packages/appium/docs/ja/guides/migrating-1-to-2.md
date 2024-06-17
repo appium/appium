@@ -104,40 +104,62 @@ This will install Appium and the two drivers for you in one go. Please uninstall
 
 これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを`npm uninstall -g appium`で削除してみてください。
 
-### :bangbang: Drivers installation path
+### :bangbang: ドライバーがインストールされるパス
 
+<!---
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server.
 The path was `/path/to/appium/node_modules`.
 For example, `appium-webdriveragent` to build WebDriverAgent manually was `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
 
 Appium 2.0 installs such dependencies in `APPIUM_HOME` environment variable. The default path is `~/.appium`.
 So, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
+--->
 
-### :bangbang: Chromedriver installation flags
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。
+そのパスは`/path/to/appium/node_modules`です。
+例えば、手動でWebDriverAgentをビルドする`appium-webdriveragent`は、`/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`でした。
 
+Appium 2.0では、このような依存関係を環境変数 `APPIUM_HOME` にインストールします。デフォルトのパスは `~/.appium` です。
+そのため、XCUITest のドライバパッケージをインストールすると、`appium-webdriveragent` へのパスは `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` となります。
+
+### :bangbang: Chromeドライバーのインストールフラグ
+
+<!---
 In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:
+--->
+Appium 1.xでは、以下のコマンドラインフラグを使って、（例えばUiAutomator2ドライバーの一部として）Chromedriverをインストールする方法のカスタマイズが可能でした。
 
 * `--chromedriver-skip-install`
 * `--chromedriver-version`
 * `--chromedriver-cdnurl`
 
+<!---
 Because Appium 2.0 now installs drivers for you, and because these flags were implemented as NPM config flags, they will no longer work. Instead, use the following environment variables during driver installation:
+--->
+Appium 2.0ではドライバーをインストールしてくれるようになり、またこれらのフラグはnpmの設定フラグとして実装されたため、機能しません。代わりに、ドライバーのインストール時に以下の環境変数を使用してください：
 
 * `APPIUM_SKIP_CHROMEDRIVER_INSTALL`
 * `CHROMEDRIVER_VERSION`
 * `CHROMEDRIVER_CDNURL`
 
-For example:
+例：
 
 ```bash
 APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 ```
 
-### :bangbang: Driver-specific command line options
+### :bangbang: ドライバー特有のコマンドラインオプション
 
+<!---
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
+--->
+Appium 1.xでは、特定のドライバに特化したコマンドラインオプションは、すべて主となるAppiumサーバにホストされていました。
+そのため、例えば`--chromedriver-executable`はUiAutomator2ドライバーで使用する特定のChromedriverバージョンの場所を設定するために、Appiumで使用できるCLIパラメータでした。
 
+<!--
 With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either `driver` or `plugin`) and the name of the extension. For example, `--chromedriver-executable` becomes `--driver-uiautomator2-chromedriver-executable`.
+-->
+Appium 2.x では、すべてのドライバーとプラットフォーム固有の CLI パラメータは、それらのドライバー自体に移動しました。これらにアクセスするには、引数の前に拡張機能の種類 (`driver` または `plugin`) と拡張機能の名前を付ける必要があります。例えば、`--chromedriver-executable` は `--driver-uiautomator2-chromedriver-executable` となります。
 
 ### :bangbang: Driver-specific automation commands
 

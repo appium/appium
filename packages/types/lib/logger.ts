@@ -68,5 +68,5 @@ export interface AppiumLogger {
    * @param {AppiumLoggerContext} contextInfo key-value pairs to be added to the context
    * @param {boolean} [replace=false] if true, replace the existing context info object(default: false)
    */
-  updateCurrentContext(contextInfo: AppiumLoggerContext, replace?: boolean): void;
+  updateAsyncContext(contextInfo: AppiumLoggerContext, replace?: boolean): void;
 }

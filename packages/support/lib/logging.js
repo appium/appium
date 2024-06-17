@@ -43,22 +43,11 @@ export function getLogger(prefix = null) {
     errorAndThrow (/** @type {any[]} */ ...args) {
       throw this.errorWithException(args);
     },
-    updateCurrentContext(
+    updateAsyncContext(
       /** @type {import('@appium/types').AppiumLoggerContext} */ contextInfo,
       replace = false,
     ) {
-      if (!_.isPlainObject(contextInfo)) {
-        return;
-      }
-      const globalLog = this.unwrap();
-      const contextStorage = globalLog.asyncStorage;
-      if (replace) {
-        contextStorage.enterWith({...contextInfo});
-      } else {
-        const store = contextStorage.getStore() ?? {};
-        Object.assign(store, contextInfo);
-        contextStorage.enterWith(store);
-      }
+      this.unwrap().updateAsyncStorage(contextInfo, replace);
     },
   };
   // allow access to the level of the underlying logger

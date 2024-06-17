@@ -83,7 +83,7 @@ export function handleLogContext(req, res, next) {
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
   const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
 
-  log.updateCurrentContext({requestId, ...sessionInfo}, true);
+  log.updateAsyncContext({requestId, ...sessionInfo}, true);
 
   return next();
 }

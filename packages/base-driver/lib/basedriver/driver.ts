@@ -310,7 +310,7 @@ export class BaseDriver<
 
     this._log.prefix = helpers.generateDriverLogPrefix(this);
 
-    this.log.updateCurrentContext({
+    this.log.updateAsyncContext({
       sessionId: this.sessionId,
       sessionSignature: calcSignature(this.sessionId),
     });

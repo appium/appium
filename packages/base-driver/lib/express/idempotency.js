@@ -145,7 +145,7 @@ async function handleIdempotency(req, res, next) {
 
   const key = _.isArray(keyOrArr) ? keyOrArr[0] : keyOrArr;
 
-  log.updateCurrentContext({idempotencyKey: key});
+  log.updateAsyncContext({idempotencyKey: key});
 
   if (!MONITORED_METHODS.includes(req.method)) {
     // GET, DELETE, etc. requests are idempotent by default

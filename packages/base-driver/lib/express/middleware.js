@@ -4,6 +4,7 @@ import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
 import {pathToRegexp} from 'path-to-regexp';
 import {util} from '@appium/support';
+import {calcSignature} from '../helpers/session';
 
 /**
  *
@@ -80,7 +81,7 @@ export function handleLogContext(req, res, next) {
   const requestId = util.uuidV4();
 
   const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
-  const sessionInfo = sessionId ? {sessionId, sessionSignature: sessionId.substring(0, 8)} : {};
+  const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
 
   log.updateCurrentContext({requestId, ...sessionInfo}, true);
 

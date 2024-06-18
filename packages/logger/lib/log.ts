@@ -88,7 +88,7 @@ export class Log extends EventEmitter implements Logger {
     return this._asyncStorage;
   }
 
-  updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean) {
+  updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
     if (!_.isPlainObject(contextInfo)) {
       return;
     }

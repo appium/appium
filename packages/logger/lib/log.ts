@@ -88,6 +88,19 @@ export class Log extends EventEmitter implements Logger {
     return this._asyncStorage;
   }
 
+  updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
+    if (!_.isPlainObject(contextInfo)) {
+      return;
+    }
+    if (replace) {
+      this._asyncStorage.enterWith({...contextInfo});
+    } else {
+      const store = this._asyncStorage.getStore() ?? {};
+      Object.assign(store, contextInfo);
+      this._asyncStorage.enterWith(store);
+    }
+  }
+
   enableColor(): void {
     this._colorEnabled = true;
   }

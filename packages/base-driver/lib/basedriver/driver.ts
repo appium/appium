@@ -20,6 +20,7 @@ import {
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
@@ -308,6 +309,11 @@ export class BaseDriver<
     }
 
     this._log.prefix = helpers.generateDriverLogPrefix(this);
+
+    this.log.updateAsyncContext({
+      sessionId: this.sessionId,
+      sessionSignature: calcSignature(this.sessionId),
+    });
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 

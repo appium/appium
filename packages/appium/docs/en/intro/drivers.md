@@ -37,7 +37,7 @@ their WebDriver protocol equivalents.
 
 So let's say I wanted to do something with this empty driver; first I have to decide which
 WebDriver command I want to implement. For our example, let's take the [Navigate
-To](https://www.w3.org/TR/webdriver1/#navigate-to) WebDriver command. Leave aside for the moment
+To](https://w3c.github.io/webdriver/#navigate-to) WebDriver command. Leave aside for the moment
 what I want to have the driver *do* when this command is executed. To tell Appium the driver can
 handle the command, all we have to do is define a method like this in our driver class:[^1]
 
@@ -96,7 +96,7 @@ a driver becomes the task of mapping the WebDriver protocol to this underlying A
 a set of different underlying APIs--for example, the UiAutomator2 driver relies not only on the
 [UiAutomator2](https://developer.android.com/training/testing/other-components/ui-automator)
 technology from Google, but also functions only available through
-[ADB](https://developer.android.com/studio/command-line/adb), as well as functions only available
+[ADB](https://developer.android.com/tools/adb), as well as functions only available
 via the Android SDK inside a helper app). Tying it all together into a single, usable, WebDriver
 interface is the incredibly useful (but incredibly challenging) art of driver development!
 

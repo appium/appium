@@ -1,8 +1,6 @@
 /* eslint-disable require-await */
 import _ from 'lodash';
-import {URL} from 'url';
 import B from 'bluebird';
-import { pathToRegexp } from 'path-to-regexp';
 
 const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
 
@@ -11,27 +9,6 @@ const DEFAULT_WS_PATHNAME_PREFIX = '/ws';
  * @type {AppiumServer['addWebSocketHandler']}
  */
 async function addWebSocketHandler(handlerPathname, handlerServer) {
-  if (_.isUndefined(this.webSocketsMapping)) {
-    this.webSocketsMapping = {};
-    // https://github.com/websockets/ws/pull/885
-    this.on('upgrade', (request, socket, head) => {
-      let currentPathname;
-      try {
-        currentPathname = new URL(request.url ?? '').pathname;
-      } catch {
-        currentPathname = request.url ?? '';
-      }
-      for (const [pathname, wsServer] of _.toPairs(this.webSocketsMapping)) {
-        if (pathToRegexp(pathname).test(currentPathname)) {
-          wsServer.handleUpgrade(request, socket, head, (ws) => {
-            wsServer.emit('connection', ws, request);
-          });
-          return;
-        }
-      }
-      socket.destroy();
-    });
-  }
   this.webSocketsMapping[handlerPathname] = handlerServer;
 }
 
@@ -40,10 +17,6 @@ async function addWebSocketHandler(handlerPathname, handlerServer) {
  * @type {AppiumServer['getWebSocketHandlers']}
  */
 async function getWebSocketHandlers(keysFilter = null) {
-  if (_.isEmpty(this.webSocketsMapping)) {
-    return {};
-  }
-
   return _.toPairs(this.webSocketsMapping).reduce((acc, [pathname, wsServer]) => {
     if (!_.isString(keysFilter) || pathname.includes(keysFilter)) {
       acc[pathname] = wsServer;

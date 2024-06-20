@@ -83,7 +83,7 @@ related to contributions of funds. Both are extremely important to the ongoing h
 project. Financial sponsorship is mediated through our [OpenCollective page](https://opencollective.com/appium).
 Sponsorship tiers and benefits are described below:
 
-- **Development Partners**: The primary need of any open source project is for sustained maintenance and contributorship. Companies that officially sponsor such development with dedicated employee time are recognized as Development Partners, and receive the same benefits as the highest tier of financial sponsorship. To be considered a Development Partner, a company must devote at least 50% of a full-time employee's time to Appium maintenance.
+- **Development Partners**: The primary need of any open source project is for sustained maintenance and contributorship. Companies that officially sponsor such development with dedicated employee time are recognized as Development Partners, and receive the same benefits as the highest tier of financial sponsorship. To be considered a Development Partner, a company must devote at least 50% of a full-time employee's time to Appium maintenance. This means that the contributors designated by the company must have been appointed as "committers" in good standing of one or more core Appium repositories. (See above for a description of how to become a committer).
 - **Strategic Partners**: Representing the highest tier of ongoing financial support for the project, Strategic Partners are what make our compensation scheme for contributors possible, and we thank them for their significant investment into the project! More than financial contribution, Strategic Partners help elevate Appium's position in the industry through marketing and evangelism efforts, and partner with the Appium team to help make Appium better. Along with the Development Partners, Strategic Partners have their logos displayed prominently on our website, and have the ability to link to their Appium-related products in a few relevant places in our documentation.
 - **Gold, Silver, and Bronze Sponsors**: these sponsorship levels correspond to different amounts of recurring financial contribution that generously support our contributor compensation scheme. Sponsors at these levels also have the opportunity to display their logo on our website.
 - **Backers**: individuals who benefit from the Appium project can also donate on a one-time or recurring basis, at any amount, and will be recognized as Backers for their contribution!
@@ -91,7 +91,7 @@ Sponsorship tiers and benefits are described below:
 To become a sponsor at one of these levels, follow the process indicated at the [OpenCollective
 page](https://opencollective.com/appium).
 
-### Compensation for TC Members, Committers, Contributors, and upstream projects
+### Compensation Scheme
 
 With funds received through sponsorship, the Appium project wants to incentivize contributions of
 code, documentation efforts, maintenance, and project leadership. We have developed a scheme

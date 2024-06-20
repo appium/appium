@@ -1,6 +1,6 @@
 {
   "name": "@appium/base-driver",
-  "version": "9.6.0",
+  "version": "9.10.3",
   "description": "Base driver class for Appium drivers",
   "keywords": [
     "automation",
@@ -44,18 +44,18 @@
     "test:types": "tsd"
   },
   "dependencies": {
-    "@appium/support": "^4.2.5",
-    "@appium/types": "^0.17.0",
+    "@appium/support": "^5.0.3",
+    "@appium/types": "^0.20.3",
     "@colors/colors": "1.6.0",
     "@types/async-lock": "1.4.2",
     "@types/bluebird": "3.5.42",
     "@types/express": "4.17.21",
-    "@types/lodash": "4.17.1",
+    "@types/lodash": "4.17.5",
     "@types/method-override": "0.0.35",
     "@types/serve-favicon": "2.5.7",
     "async-lock": "1.4.1",
     "asyncbox": "3.0.0",
-    "axios": "1.6.8",
+    "axios": "1.7.2",
     "bluebird": "3.7.2",
     "body-parser": "1.20.2",
     "express": "4.19.2",
@@ -67,7 +67,7 @@
     "path-to-regexp": "6.2.2",
     "serve-favicon": "2.5.0",
     "source-map-support": "0.5.21",
-    "type-fest": "4.10.1",
+    "type-fest": "4.20.1",
     "validate.js": "0.13.1"
   },
   "optionalDependencies": {

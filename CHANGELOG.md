@@ -4,7 +4,7 @@ Appium contains many different modules and supports a variety of drivers, plugin
 
 ## Main Appium Module
 
-* ### [Appium 2.0 Changelog](packages/appium/CHANGELOG.md)
+* ### [Appium 2 Changelog](packages/appium/CHANGELOG.md)
 * [Appium 1.x Changelog](https://github.com/appium/appium/blob/1.x/CHANGELOG.md)
 
 ## Appium Drivers / Clients / Plugins
@@ -23,6 +23,7 @@ Appium contains many different modules and supports a variety of drivers, plugin
 * [fake-driver](packages/fake-driver/CHANGELOG.md)
 * [fake-plugin](packages/fake-plugin/CHANGELOG.md)
 * [images-plugin](packages/images-plugin/CHANGELOG.md)
+* [logger](packages/logger/CHANGELOG.md)
 * [opencv](packages/opencv/CHANGELOG.md)
 * [plugin-test-support](packages/plugin-test-support/CHANGELOG.md)
 * [relaxed-caps-plugin](packages/relaxed-caps-plugin/CHANGELOG.md)
@@ -31,6 +32,5 @@ Appium contains many different modules and supports a variety of drivers, plugin
 * [support](packages/support/CHANGELOG.md)
 * [test-support](packages/test-support/CHANGELOG.md)
 * [tsconfig](packages/tsconfig/CHANGELOG.md)
-* [typedoc-plugin-appium](packages/typedoc-plugin-appium/CHANGELOG.md)
 * [types](packages/types/CHANGELOG.md)
 * [universal-xml-plugin](packages/universal-xml-plugin/CHANGELOG.md)

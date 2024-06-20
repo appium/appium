@@ -3,6 +3,103 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.10.3](https://github.com/appium/appium/compare/@appium/base-driver@9.10.2...@appium/base-driver@9.10.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [9.10.2](https://github.com/appium/appium/compare/@appium/base-driver@9.10.1...@appium/base-driver@9.10.2) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [9.10.1](https://github.com/appium/appium/compare/@appium/base-driver@9.10.0...@appium/base-driver@9.10.1) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [9.10.0](https://github.com/appium/appium/compare/@appium/base-driver@9.9.0...@appium/base-driver@9.10.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.5 ([69bbb53](https://github.com/appium/appium/commit/69bbb5370e671d2809a5bf997936b0b3cc1a0a0b))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [9.9.0](https://github.com/appium/appium/compare/@appium/base-driver@9.8.1...@appium/base-driver@9.9.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([b3f8a47](https://github.com/appium/appium/commit/b3f8a47c2d3fa029bdb5592d7130c6d1664e53b5))
+
+
+### Bug Fixes
+
+* **appium:** Revert changes in 20203 and 20202 ([#20209](https://github.com/appium/appium/issues/20209)) ([40def9d](https://github.com/appium/appium/commit/40def9dbdbde64706111900967d66735257b7404)), closes [#20202](https://github.com/appium/appium/issues/20202) [#20203](https://github.com/appium/appium/issues/20203)
+
+
+
+## [9.8.1](https://github.com/appium/appium/compare/@appium/base-driver@9.8.0...@appium/base-driver@9.8.1) (2024-06-06)
+
+**Note:** Version bump only for package @appium/base-driver
+
+
+
+
+
+## [9.8.0](https://github.com/appium/appium/compare/@appium/base-driver@9.7.0...@appium/base-driver@9.8.0) (2024-06-06)
+
+
+### Features
+
+* **base-driver:** Make addition of search query params to cache optional ([#20195](https://github.com/appium/appium/issues/20195)) ([21316e9](https://github.com/appium/appium/commit/21316e94d05b2f97aa0349a82da229713e92446c))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [9.7.0](https://github.com/appium/appium/compare/@appium/base-driver@9.6.0...@appium/base-driver@9.7.0) (2024-05-27)
+
+
+### Features
+
+* **base-driver:** Add env variables to control applications cache ([#20042](https://github.com/appium/appium/issues/20042)) ([4e8c91c](https://github.com/appium/appium/commit/4e8c91c8f647e545344d5b49282628413e1ccb19))
+* **base-driver:** Add the original app link argument to configureApp callbacks ([#20035](https://github.com/appium/appium/issues/20035)) ([3423fd9](https://github.com/appium/appium/commit/3423fd9206f71481bb34919e02a3dc8c5e3bec00))
+
+
+### Bug Fixes
+
+* **base-driver:** Update the web socket upgrade behavior ([#20142](https://github.com/appium/appium/issues/20142)) ([275790e](https://github.com/appium/appium/commit/275790ec012d0c773b1248c3c2a541301cf0167b))
+* **driver-test-support:** update definitelytyped ([a8d36b0](https://github.com/appium/appium/commit/a8d36b0a981daf524bd4af422904193c087a8c2c))
+* **images-plugin:** update dependency lru-cache to v10.2.1 ([#20039](https://github.com/appium/appium/issues/20039)) ([f645b50](https://github.com/appium/appium/commit/f645b50d9d6008d374bc131be78d8be5d84a7f53))
+* **images-plugin:** update dependency lru-cache to v10.2.2 ([#20052](https://github.com/appium/appium/issues/20052)) ([f8d1fb7](https://github.com/appium/appium/commit/f8d1fb7df7b7d093d3664f58830cad5b5dffa244))
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [9.6.0](https://github.com/appium/appium/compare/@appium/base-driver@9.5.4...@appium/base-driver@9.6.0) (2024-04-21)
 
 

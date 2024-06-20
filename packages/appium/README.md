@@ -2,7 +2,7 @@
 
 <p align="center">
    <a href="https://appium.io/">
-      <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/assets/images/appium-logo-horiz.png" width="500">
+      <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/appium-logo-horiz.png" width="500">
    </a>
 </p>
 <p align="center">
@@ -178,8 +178,46 @@ cross-platform native app automation, for mobile and beyond!
 If you are looking for a more comprehensive description of what this is all about, please read our
 documentation on [How Does Appium Work?](https://appium.io/docs/en/latest/intro/appium/).
 
+## Sponsors
+
+Appium has a [Sponsorship Program](GOVERNANCE.md#sponsorship)! If you or your company uses Appium
+and wants to give back financially to the project, we use these funds to [encourage development and
+contributions](GOVERNANCE.md#compensation-scheme), as well as support other open source projects we
+rely on. [Become a sponsor](https://opencollective.com/appium) via our OpenCollective page.
+
+### Development and Strategic Partners
+
+Appium is incredibly grateful to our Development and Strategic Partners for their sustained
+contribution of project development and leadership!
+
+<p align="center">
+  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
+width="275" alt="HeadSpin" /></a>
+</p>
+
+<p align="center">
+  <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
+    <picture>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="300" alt="Browserstack"/>
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
+width="300" alt="Sauce Labs" /></a>
+</p>
+
+### Other Sponsors
+
+A full list of sponsors is available at our [Sponsors page](SPONSORS.md).
+
 ## License
 
 [Apache-2.0](./LICENSE)
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=large)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_large)
+
+`@appium/logger` package is under [ISC](./packages/logger/LICENSE) License.

@@ -61,8 +61,8 @@ body:
       value: |
           - Operating system:
           - Appium server version (output of `appium --version`):
-          - Appium driver(s) and their version(s):
-          - Appium plugin(s) and their version(s):
+          - Appium driver(s) and their version(s) (`appium driver list`):
+          - Appium plugin(s) and their version(s) (`appium plugin list`):
           - Node.js version (output of `node --version`):
           - `npm` version (output of `npm --version`):
           - Last component(s) version which did _not_ exhibit the problem:

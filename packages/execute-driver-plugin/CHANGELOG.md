@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.30](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.29...@appium/execute-driver-plugin@3.0.30) (2024-06-06)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8.38.2 ([c8f9979](https://github.com/appium/appium/commit/c8f997973cc21673f95d02c92d43a2981b8713b8))
+
+
+
+## [3.0.29](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.28...@appium/execute-driver-plugin@3.0.29) (2024-05-27)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** update dependency webdriverio to v8.37.0 ([27ff9a0](https://github.com/appium/appium/commit/27ff9a00ef65a66aea8da8e3be5ffebb6d8c65e1))
+* **execute-driver-plugin:** update dependency webdriverio to v8.38.0 ([e80b682](https://github.com/appium/appium/commit/e80b6826efbe14ecfa6c0ff1f6aceb4db99b82d8))
+
+
+
 ## [3.0.28](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.27...@appium/execute-driver-plugin@3.0.28) (2024-04-21)
 
 

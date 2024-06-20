@@ -3,6 +3,83 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.15](https://github.com/appium/appium/compare/@appium/docutils@1.0.14...@appium/docutils@1.0.15) (2024-06-11)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.14](https://github.com/appium/appium/compare/@appium/docutils@1.0.13...@appium/docutils@1.0.14) (2024-06-11)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.13](https://github.com/appium/appium/compare/@appium/docutils@1.0.12...@appium/docutils@1.0.13) (2024-06-11)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.12](https://github.com/appium/appium/compare/@appium/docutils@1.0.11...@appium/docutils@1.0.12) (2024-06-10)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.2 ([1828501](https://github.com/appium/appium/commit/1828501c66d0c5f8f295c67cd12d6691f8020780))
+* **docutils:** update dependency yaml to v2.4.5 ([6a08c95](https://github.com/appium/appium/commit/6a08c95fc9bda5cf39b8a6d98e5394658355a38e))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [1.0.11](https://github.com/appium/appium/compare/@appium/docutils@1.0.10...@appium/docutils@1.0.11) (2024-06-06)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.10](https://github.com/appium/appium/compare/@appium/docutils@1.0.9...@appium/docutils@1.0.10) (2024-06-06)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.9](https://github.com/appium/appium/compare/@appium/docutils@1.0.8...@appium/docutils@1.0.9) (2024-06-06)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency yaml to v2.4.3 ([848eb00](https://github.com/appium/appium/commit/848eb00afbd1cab76a6a1c3d0f4a2a0b1acee0d0))
+* **support:** update dependency @types/which to v3 ([#20164](https://github.com/appium/appium/issues/20164)) ([57b0406](https://github.com/appium/appium/commit/57b0406a33bc687c731f9e7fedd56e1b07c3cc67))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [1.0.8](https://github.com/appium/appium/compare/@appium/docutils@1.0.7...@appium/docutils@1.0.8) (2024-05-27)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency yaml to v2.4.2 ([0211174](https://github.com/appium/appium/commit/0211174300cf91c1cad2364d8ce3de7100139f5c))
+* **support:** update dependency semver to v7.6.1 ([b5fd5b6](https://github.com/appium/appium/commit/b5fd5b6d2c585be8391b80ac67207da610e8ea64))
+* **support:** update dependency semver to v7.6.2 ([1b4f36c](https://github.com/appium/appium/commit/1b4f36cebe7aaf99976f24346b2d1325b79fc55c))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [1.0.7](https://github.com/appium/appium/compare/@appium/docutils@1.0.6...@appium/docutils@1.0.7) (2024-04-21)
 
 **Note:** Version bump only for package @appium/docutils

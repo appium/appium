@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {DRIVER_TYPE, PLUGIN_TYPE} from '../../lib/constants';
+import {DRIVER_TYPE, PLUGIN_TYPE, SETUP_SUBCOMMAND} from '../../lib/constants';
 import {getParser} from '../../lib/cli/parser';
 import {INSTALL_TYPES} from '../../lib/extension/extension-config';
 import * as schema from '../../lib/schema/schema';
@@ -392,6 +392,24 @@ describe('parser', function () {
       it('should allow json format for plugin', function () {
         const args = p.parseArgs([PLUGIN_TYPE, 'run', 'foo', 'bar', '--json']);
         args.json.should.eql(true);
+      });
+    });
+  });
+
+  describe('Setup Parser', function () {
+    let p;
+    beforeEach(function () {
+      p = getParser(true);
+    });
+    it('should not allow random sub-subcommands', function () {
+      (() => p.parseArgs([SETUP_SUBCOMMAND, 'foo'])).should.throw();
+    });
+
+    describe('all', function () {
+      it('should allow an empty argument mobile', function () {
+        const args = p.parseArgs([SETUP_SUBCOMMAND, 'mobile']);
+        args.subcommand.should.eql(SETUP_SUBCOMMAND);
+        args.setupCommand.should.eql('mobile');
       });
     });
   });

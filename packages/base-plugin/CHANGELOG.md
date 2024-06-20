@@ -3,6 +3,70 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.39](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.38...@appium/base-plugin@2.2.39) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.38](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.37...@appium/base-plugin@2.2.38) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.37](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.36...@appium/base-plugin@2.2.37) (2024-06-11)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.36](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.35...@appium/base-plugin@2.2.36) (2024-06-10)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.35](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.34...@appium/base-plugin@2.2.35) (2024-06-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.34](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.33...@appium/base-plugin@2.2.34) (2024-06-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.33](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.32...@appium/base-plugin@2.2.33) (2024-06-06)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
+## [2.2.32](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.31...@appium/base-plugin@2.2.32) (2024-05-27)
+
+**Note:** Version bump only for package @appium/base-plugin
+
+
+
+
+
 ## [2.2.31](https://github.com/appium/appium/compare/@appium/base-plugin@2.2.30...@appium/base-plugin@2.2.31) (2024-04-21)
 
 **Note:** Version bump only for package @appium/base-plugin

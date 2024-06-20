@@ -3,6 +3,117 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.3](https://github.com/appium/appium/compare/@appium/support@5.0.2...@appium/support@5.0.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
+## [5.0.2](https://github.com/appium/appium/compare/@appium/support@5.0.1...@appium/support@5.0.2) (2024-06-11)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
+## [5.0.1](https://github.com/appium/appium/compare/@appium/support@5.0.0...@appium/support@5.0.1) (2024-06-11)
+
+**Note:** Version bump only for package @appium/support
+
+
+
+
+
+## [5.0.0](https://github.com/appium/appium/compare/@appium/support@4.5.0...@appium/support@5.0.0) (2024-06-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **support:** Remove unleakString since it is now in appium/logger
+* **support:** Remove patchLogger exported method from logger
+* **support:** Removed the 'log-internals' module
+* **support:** Moved the 'loadSecureValuesPreprocessingRules' API to the '@appium/logger' package
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+* **support:** Move SecureValuesPreprocessor to @appum/logger ([#20228](https://github.com/appium/appium/issues/20228)) ([dbc3b66](https://github.com/appium/appium/commit/dbc3b668a0a7a815d23f1cae4207d435fc09034d))
+* **support:** Remove patchLogger from logger ([#20220](https://github.com/appium/appium/issues/20220)) ([dd421b3](https://github.com/appium/appium/commit/dd421b397b41cf4d5ed5a434edf72701f5936bb1))
+* **support:** remove unleakString as no usage ([#20221](https://github.com/appium/appium/issues/20221)) ([93c271e](https://github.com/appium/appium/commit/93c271ec5d7ffc3f68b3ced3d15170387f9ab6c9))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [4.5.0](https://github.com/appium/appium/compare/@appium/support@4.4.0...@appium/support@4.5.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([b3f8a47](https://github.com/appium/appium/commit/b3f8a47c2d3fa029bdb5592d7130c6d1664e53b5))
+
+
+### Bug Fixes
+
+* **appium:** Revert changes in 20203 and 20202 ([#20209](https://github.com/appium/appium/issues/20209)) ([40def9d](https://github.com/appium/appium/commit/40def9dbdbde64706111900967d66735257b7404)), closes [#20202](https://github.com/appium/appium/issues/20202) [#20203](https://github.com/appium/appium/issues/20203)
+
+
+
+## [4.4.0](https://github.com/appium/appium/compare/@appium/support@4.3.0...@appium/support@4.4.0) (2024-06-06)
+
+
+### Features
+
+* **logger:** Add the 'debug' level to the default logger ([#20203](https://github.com/appium/appium/issues/20203)) ([7fd9d5f](https://github.com/appium/appium/commit/7fd9d5f6261b385c234580c2bfee4d576905458b))
+
+
+### Bug Fixes
+
+* add logger dependencies in package.json ([#20205](https://github.com/appium/appium/issues/20205)) ([3fbc4f1](https://github.com/appium/appium/commit/3fbc4f1fe07eadf9c7a2ef8fc9f4ba78dc3486a3))
+
+
+
+## [4.3.0](https://github.com/appium/appium/compare/@appium/support@4.2.6...@appium/support@4.3.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+
+
+### Bug Fixes
+
+* **support:** Make sure response stream is defined while stopping it ([#20189](https://github.com/appium/appium/issues/20189)) ([4fd6893](https://github.com/appium/appium/commit/4fd68931465dd2ed3490bcebad7ccff3dacc9b3a))
+* **support:** update dependency @types/which to v3 ([#20164](https://github.com/appium/appium/issues/20164)) ([57b0406](https://github.com/appium/appium/commit/57b0406a33bc687c731f9e7fedd56e1b07c3cc67))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [4.2.6](https://github.com/appium/appium/compare/@appium/support@4.2.5...@appium/support@4.2.6) (2024-05-27)
+
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **support:** update dependency glob to v10 ([#20127](https://github.com/appium/appium/issues/20127)) ([95be7dd](https://github.com/appium/appium/commit/95be7dd47748e9d20bfb38e24c469fda81fe93e4))
+* **support:** update dependency glob to v10.3.16 ([#20134](https://github.com/appium/appium/issues/20134)) ([56f72c0](https://github.com/appium/appium/commit/56f72c0af70d8a90a658035ab66e18e90b6f0b8c))
+* **support:** update dependency glob to v10.4.1 ([#20141](https://github.com/appium/appium/issues/20141)) ([82406f1](https://github.com/appium/appium/commit/82406f17759026000cef70ba258631adaa252358))
+* **support:** update dependency semver to v7.6.1 ([b5fd5b6](https://github.com/appium/appium/commit/b5fd5b6d2c585be8391b80ac67207da610e8ea64))
+* **support:** update dependency semver to v7.6.2 ([1b4f36c](https://github.com/appium/appium/commit/1b4f36cebe7aaf99976f24346b2d1325b79fc55c))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [4.2.5](https://github.com/appium/appium/compare/@appium/support@4.2.4...@appium/support@4.2.5) (2024-04-21)
 
 

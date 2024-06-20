@@ -2,6 +2,7 @@ import {DriverType, PluginType, ServerArgs} from '@appium/types';
 import {SetOptional} from 'type-fest';
 import {InstallType} from './manifest';
 export type CliCommandServer = 'server';
+export type CliCommandSetup = 'setup';
 export type CliCommandDriver = DriverType;
 export type CliCommandPlugin = PluginType;
 
@@ -13,7 +14,13 @@ export type CliExtensionCommand = CliCommandDriver | CliCommandPlugin;
 /**
  * Possible commands for the `appium` CLI.
  */
-export type CliCommand = CliCommandServer | CliExtensionCommand;
+export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetup;
+
+/**
+ * Possible subcommands of {@linkcode CliCommandSetup}.
+ * The command name will be preset name to get drivers/plugins to be installed.
+ */
+export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop';
 
 /**
  * Possible subcommands of {@linkcode CliCommandDriver} or
@@ -56,13 +63,18 @@ export interface MoreArgs {
   showConfig?: boolean;
 
   /**
+   * If true, show the server debug info and exit
+   */
+  showDebugInfo?: boolean;
+
+  /**
    * If true, open a REPL
    */
   shell?: boolean;
 }
 
 /**
- * These arguments are _not_ supported by the CLI, but only via programmatic usage / tests.
+ * These arguments are not necessarily supported by the CLI, but via programmatic usage / tests.
  */
 export interface ProgrammaticArgs {
   /**
@@ -93,6 +105,11 @@ export interface ProgrammaticArgs {
    * If true, show config and exit
    */
   showConfig?: boolean;
+
+  /**
+   * If true, show debug info and exit
+   */
+  showDebugInfo?: boolean;
 }
 
 export interface DriverExtArgs {
@@ -103,6 +120,10 @@ export interface DriverExtArgs {
 export interface PluginExtArgs {
   pluginCommand: CliExtensionSubcommand;
   plugin?: string;
+}
+
+export interface SetupArgs {
+  setupCommand?: CliCommandSetupSubcommand;
 }
 
 /**
@@ -132,9 +153,11 @@ export interface BaseExtArgs<Cmd extends CliExtensionCommand> {
  */
 export type ExtArgs<
   Cmd extends CliExtensionCommand,
-  SubCmd extends CliExtensionSubcommand
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand
 > = BaseExtArgs<Cmd> &
-  (Cmd extends CliCommandDriver
+  (Cmd extends CliCommandSetup
+    ? SetupArgs
+    : Cmd extends CliCommandDriver
     ? DriverExtArgs
     : Cmd extends CliCommandPlugin
     ? PluginExtArgs
@@ -152,13 +175,15 @@ export type ExtArgs<
  */
 export type CommonArgs<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = MoreArgs &
   ProgrammaticArgs &
   (Cmd extends CliCommandServer
     ? ServerArgs
+    : Cmd extends CliCommandSetup
+    ? SetupArgs
     : Cmd extends CliExtensionCommand
-    ? SubCmd extends CliExtensionSubcommand
+    ? SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand
       ? ExtArgs<Cmd, SubCmd>
       : never
     : never);
@@ -168,7 +193,7 @@ export type CommonArgs<
  */
 export type ParsedArgs<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = CommonArgs<Cmd, SubCmd>;
 
 /**
@@ -178,7 +203,7 @@ export type ParsedArgs<
  */
 export type Args<
   Cmd extends CliCommand = CliCommandServer,
-  SubCmd extends CliExtensionSubcommand | void = void
+  SubCmd extends CliExtensionSubcommand | CliCommandSetupSubcommand | void = void
 > = Cmd extends CliCommandServer
   ? SetOptional<CommonArgs<Cmd>, keyof ServerArgs>
   : ParsedArgs<Cmd, SubCmd>;

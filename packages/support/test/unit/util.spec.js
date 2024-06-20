@@ -503,20 +503,6 @@ describe('util', function () {
     });
   });
 
-  describe('unleakString', function () {
-    it('should unleak a string', function () {
-      util.unleakString('yolo').should.eql('yolo');
-    });
-    it('should unleak a multiline string', function () {
-      util.unleakString(' yolo\nbolo ').should.eql(' yolo\nbolo ');
-    });
-    it('should convert an object to a string', function () {
-      for (const obj of [{}, null, undefined, [], 0]) {
-        util.unleakString(obj).should.eql(`${obj}`);
-      }
-    });
-  });
-
   describe('pluralize', function () {
     /*
      * The pluralize library (https://github.com/blakeembrey/pluralize)

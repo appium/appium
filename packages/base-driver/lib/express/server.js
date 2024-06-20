@@ -14,7 +14,9 @@ import {
   catchAllHandler,
   allowCrossDomainAsyncExecute,
   handleIdempotency,
+  handleUpgrade,
   catch404Handler,
+  handleLogContext,
 } from './middleware';
 import {guineaPig, guineaPigScrollable, guineaPigAppBanner, welcome, STATIC_DIR} from './static';
 import {produceError, produceCrash} from './crash';
@@ -109,6 +111,7 @@ async function server(opts) {
         allowCors,
         basePath,
         extraMethodMap,
+        webSocketsMapping: appiumServer.webSocketsMapping,
       });
       // allow extensions to update the app and http server objects
       for (const updater of serverUpdaters) {
@@ -139,10 +142,12 @@ function configureServer({
   allowCors = true,
   basePath = DEFAULT_BASE_PATH,
   extraMethodMap = {},
+  webSocketsMapping = {},
 }) {
   basePath = normalizeBasePath(basePath);
 
   app.use(endLogFormatter);
+  app.use(handleLogContext);
 
   // set up static assets
   app.use(favicon(path.resolve(STATIC_DIR, 'favicon.ico')));
@@ -152,7 +157,7 @@ function configureServer({
   app.use(`${basePath}/produce_error`, produceError);
   app.use(`${basePath}/crash`, produceCrash);
 
-  // add middlewares
+  app.use(handleUpgrade(webSocketsMapping));
   if (allowCors) {
     app.use(allowCrossDomain);
   } else {
@@ -195,6 +200,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
    * @type {AppiumServer}
    */
   const appiumServer = /** @type {any} */ (httpServer);
+  appiumServer.webSocketsMapping = {};
   appiumServer.addWebSocketHandler = addWebSocketHandler;
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
@@ -370,4 +376,5 @@ export {server, configureServer, normalizeBasePath};
  * @property {boolean} [allowCors]
  * @property {string} [basePath]
  * @property {MethodMap} [extraMethodMap]
+ * @property {import('@appium/types').StringRecord} [webSocketsMapping={}]
  */

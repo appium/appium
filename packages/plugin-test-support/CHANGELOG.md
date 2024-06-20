@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.38](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.37...@appium/plugin-test-support@0.3.38) (2024-06-11)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.37](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.36...@appium/plugin-test-support@0.3.37) (2024-06-11)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.36](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.35...@appium/plugin-test-support@0.3.36) (2024-06-11)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.35](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.34...@appium/plugin-test-support@0.3.35) (2024-06-10)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.34](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.33...@appium/plugin-test-support@0.3.34) (2024-06-06)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.33](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.32...@appium/plugin-test-support@0.3.33) (2024-06-06)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.32](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.31...@appium/plugin-test-support@0.3.32) (2024-06-06)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+
+
+
+## [0.3.31](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.30...@appium/plugin-test-support@0.3.31) (2024-05-27)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+
+
+
 ## [0.3.30](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.29...@appium/plugin-test-support@0.3.30) (2024-04-21)
 
 **Note:** Version bump only for package @appium/plugin-test-support

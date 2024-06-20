@@ -3,6 +3,91 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.2...@appium/driver-test-support@0.6.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [0.6.2](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.1...@appium/driver-test-support@0.6.2) (2024-06-11)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [0.6.1](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.0...@appium/driver-test-support@0.6.1) (2024-06-11)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [0.6.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.5.0...@appium/driver-test-support@0.6.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.5 ([69bbb53](https://github.com/appium/appium/commit/69bbb5370e671d2809a5bf997936b0b3cc1a0a0b))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [0.5.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.26...@appium/driver-test-support@0.5.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([b3f8a47](https://github.com/appium/appium/commit/b3f8a47c2d3fa029bdb5592d7130c6d1664e53b5))
+
+
+### Bug Fixes
+
+* **appium:** Revert changes in 20203 and 20202 ([#20209](https://github.com/appium/appium/issues/20209)) ([40def9d](https://github.com/appium/appium/commit/40def9dbdbde64706111900967d66735257b7404)), closes [#20202](https://github.com/appium/appium/issues/20202) [#20203](https://github.com/appium/appium/issues/20203)
+
+
+
+## [0.4.26](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.25...@appium/driver-test-support@0.4.26) (2024-06-06)
+
+**Note:** Version bump only for package @appium/driver-test-support
+
+
+
+
+
+## [0.4.25](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.24...@appium/driver-test-support@0.4.25) (2024-06-06)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [0.4.24](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.23...@appium/driver-test-support@0.4.24) (2024-05-27)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([a8d36b0](https://github.com/appium/appium/commit/a8d36b0a981daf524bd4af422904193c087a8c2c))
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **test-support:** update dependency sinon to v17.0.2 ([#20078](https://github.com/appium/appium/issues/20078)) ([2acf262](https://github.com/appium/appium/commit/2acf262482750bb7b56f46dc3b9ad3168de8000a))
+* **test-support:** update dependency sinon to v18 ([#20128](https://github.com/appium/appium/issues/20128)) ([465495e](https://github.com/appium/appium/commit/465495ef2ae436039f80a1ba397bb26a22ec01c6))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [0.4.23](https://github.com/appium/appium/compare/@appium/driver-test-support@0.4.22...@appium/driver-test-support@0.4.23) (2024-04-21)
 
 **Note:** Version bump only for package @appium/driver-test-support

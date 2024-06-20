@@ -3,6 +3,90 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.20.3](https://github.com/appium/appium/compare/@appium/types@0.20.2...@appium/types@0.20.3) (2024-06-11)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.20.2](https://github.com/appium/appium/compare/@appium/types@0.20.1...@appium/types@0.20.2) (2024-06-11)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.20.1](https://github.com/appium/appium/compare/@appium/types@0.20.0...@appium/types@0.20.1) (2024-06-11)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.20.0](https://github.com/appium/appium/compare/@appium/types@0.19.2...@appium/types@0.20.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add a possibility to print logs in json format ([#20224](https://github.com/appium/appium/issues/20224)) ([1e86537](https://github.com/appium/appium/commit/1e86537e944f6beb7dbe72b35c267ae1dd9ebd36))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [0.19.2](https://github.com/appium/appium/compare/@appium/types@0.19.1...@appium/types@0.19.2) (2024-06-06)
+
+**Note:** Version bump only for package @appium/types
+
+
+
+
+
+## [0.19.1](https://github.com/appium/appium/compare/@appium/types@0.19.0...@appium/types@0.19.1) (2024-06-06)
+
+
+### Bug Fixes
+
+* add logger dependencies in package.json ([#20205](https://github.com/appium/appium/issues/20205)) ([3fbc4f1](https://github.com/appium/appium/commit/3fbc4f1fe07eadf9c7a2ef8fc9f4ba78dc3486a3))
+
+
+
+## [0.19.0](https://github.com/appium/appium/compare/@appium/types@0.18.0...@appium/types@0.19.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [0.18.0](https://github.com/appium/appium/compare/@appium/types@0.17.0...@appium/types@0.18.0) (2024-05-27)
+
+
+### Features
+
+* **base-driver:** Add the original app link argument to configureApp callbacks ([#20035](https://github.com/appium/appium/issues/20035)) ([3423fd9](https://github.com/appium/appium/commit/3423fd9206f71481bb34919e02a3dc8c5e3bec00))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [0.17.0](https://github.com/appium/appium/compare/@appium/types@0.16.2...@appium/types@0.17.0) (2024-04-21)
 
 

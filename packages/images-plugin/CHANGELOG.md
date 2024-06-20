@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.14](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.13...@appium/images-plugin@3.0.14) (2024-06-11)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.13](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.12...@appium/images-plugin@3.0.13) (2024-06-11)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.12](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.11...@appium/images-plugin@3.0.12) (2024-06-11)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.11](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.10...@appium/images-plugin@3.0.11) (2024-06-10)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.10](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.9...@appium/images-plugin@3.0.10) (2024-06-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.9](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.8...@appium/images-plugin@3.0.9) (2024-06-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.8](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.7...@appium/images-plugin@3.0.8) (2024-06-06)
+
+**Note:** Version bump only for package @appium/images-plugin
+
+
+
+
+
+## [3.0.7](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.6...@appium/images-plugin@3.0.7) (2024-05-27)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10.2.1 ([#20039](https://github.com/appium/appium/issues/20039)) ([f645b50](https://github.com/appium/appium/commit/f645b50d9d6008d374bc131be78d8be5d84a7f53))
+* **images-plugin:** update dependency lru-cache to v10.2.2 ([#20052](https://github.com/appium/appium/issues/20052)) ([f8d1fb7](https://github.com/appium/appium/commit/f8d1fb7df7b7d093d3664f58830cad5b5dffa244))
+
+
+
 ## [3.0.6](https://github.com/appium/appium/compare/@appium/images-plugin@3.0.5...@appium/images-plugin@3.0.6) (2024-04-21)
 
 **Note:** Version bump only for package @appium/images-plugin

@@ -8,11 +8,12 @@ import {
   server as baseServer,
   normalizeBasePath,
 } from '@appium/base-driver';
-import {logger as logFactory, util, env} from '@appium/support';
+import {util, env} from '@appium/support';
 import {asyncify} from 'asyncbox';
 import _ from 'lodash';
 import {AppiumDriver} from './appium';
 import {runExtensionCommand} from './cli/extension';
+import { runSetupCommand } from './cli/setup-command';
 import {getParser} from './cli/parser';
 import {
   APPIUM_VER,
@@ -21,6 +22,7 @@ import {
   getNonDefaultServerArgs,
   showConfig,
   showBuildInfo,
+  showDebugInfo,
   requireDir,
 } from './config';
 import {readConfigFile} from './config-file';
@@ -38,6 +40,7 @@ import {
   fetchInterfaces,
   V4_BROADCAST_IP,
   V6_BROADCAST_IP,
+  isSetupCommandArgs,
 } from './utils';
 import net from 'node:net';
 
@@ -216,7 +219,7 @@ async function init(args) {
   }
 
   // merge config and apply defaults.
-  // the order of precendece is:
+  // the order of precedence is:
   // 1. command line args
   // 2. config file
   // 3. defaults from config file.
@@ -231,21 +234,34 @@ async function init(args) {
       return /** @type {InitResult<Cmd>} */ ({});
     }
 
+    if (preConfigArgs.showDebugInfo) {
+      await showDebugInfo({
+        driverConfig,
+        pluginConfig,
+        appiumHome,
+      });
+      return /** @type {InitResult<Cmd>} */ ({});
+    }
+
     await logsinkInit(serverArgs);
 
     if (serverArgs.logFilters) {
-      const {issues, rules} = await logFactory.loadSecureValuesPreprocessingRules(
+      const {issues, rules} = await logger.unwrap().loadSecureValuesPreprocessingRules(
         serverArgs.logFilters,
       );
+      const argToLog = _.truncate(JSON.stringify(serverArgs.logFilters), {
+        length: 150
+      });
       if (!_.isEmpty(issues)) {
         throw new Error(
-          `The log filtering rules config '${serverArgs.logFilters}' has issues: ` +
+          `The log filtering rules config ${argToLog} has issues: ` +
             JSON.stringify(issues, null, 2),
         );
       }
       if (_.isEmpty(rules)) {
         logger.warn(
-          `Found no log filtering rules in '${serverArgs.logFilters}'. Is that expected?`,
+          `Found no log filtering rules in the ${argToLog} config. ` +
+          `Is that expected?`,
         );
       } else {
         // Filtering aims to "hide" these values from the log,
@@ -276,6 +292,9 @@ async function init(args) {
       pluginConfig,
       appiumHome,
     });
+  } else if (isSetupCommandArgs(preConfigArgs)) {
+    await runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
+    return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);
     if (isExtensionCommandArgs(preConfigArgs)) {
@@ -465,6 +484,7 @@ export {main, init, resolveAppiumHome};
  * @typedef {import('appium/types').CliCommandServer} ServerCommand
  * @typedef {import('appium/types').CliCommandDriver} DriverCommand
  * @typedef {import('appium/types').CliCommandPlugin} PluginCommand
+ * @typedef {import('appium/types').CliCommandSetup} SetupCommand
  * @typedef {import('./extension').DriverNameMap} DriverNameMap
  * @typedef {import('./extension').PluginNameMap} PluginNameMap
  */

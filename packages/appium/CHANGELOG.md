@@ -3,6 +3,126 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.10.3](https://github.com/appium/appium/compare/appium@2.10.2...appium@2.10.3) (2024-06-11)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [2.10.2](https://github.com/appium/appium/compare/appium@2.10.1...appium@2.10.2) (2024-06-11)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [2.10.1](https://github.com/appium/appium/compare/appium@2.10.0...appium@2.10.1) (2024-06-11)
+
+**Note:** Version bump only for package appium
+
+
+
+
+
+## [2.10.0](https://github.com/appium/appium/compare/appium@2.9.0...appium@2.10.0) (2024-06-10)
+
+
+### Features
+
+* **appium:** Add a possibility to print logs in json format ([#20224](https://github.com/appium/appium/issues/20224)) ([1e86537](https://github.com/appium/appium/commit/1e86537e944f6beb7dbe72b35c267ae1dd9ebd36))
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([#20214](https://github.com/appium/appium/issues/20214)) ([0363aab](https://github.com/appium/appium/commit/0363aab8ba4fe0ec49845db2f493001aa873578b)), closes [#20222](https://github.com/appium/appium/issues/20222)
+* **logger:** Add the debug level to the default logger ([#20219](https://github.com/appium/appium/issues/20219)) ([8ee7d07](https://github.com/appium/appium/commit/8ee7d07af4e2375d2eb7c23badaaac34685bc59c))
+* **support:** Move SecureValuesPreprocessor to @appum/logger ([#20228](https://github.com/appium/appium/issues/20228)) ([dbc3b66](https://github.com/appium/appium/commit/dbc3b668a0a7a815d23f1cae4207d435fc09034d))
+
+
+### Bug Fixes
+
+* **docutils:** update dependency lilconfig to v3.1.2 ([1828501](https://github.com/appium/appium/commit/1828501c66d0c5f8f295c67cd12d6691f8020780))
+* **docutils:** update dependency yaml to v2.4.5 ([6a08c95](https://github.com/appium/appium/commit/6a08c95fc9bda5cf39b8a6d98e5394658355a38e))
+* **types:** update dependency type-fest to v4.20.0 ([#20227](https://github.com/appium/appium/issues/20227)) ([ea00626](https://github.com/appium/appium/commit/ea00626091e3ce87f6e3ed7a61003295272835e3))
+
+
+
+## [2.9.0](https://github.com/appium/appium/compare/appium@2.8.0...appium@2.9.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Add session signature to all logs ([#20202](https://github.com/appium/appium/issues/20202)) ([b3f8a47](https://github.com/appium/appium/commit/b3f8a47c2d3fa029bdb5592d7130c6d1664e53b5))
+
+
+### Bug Fixes
+
+* **appium:** Revert changes in 20203 and 20202 ([#20209](https://github.com/appium/appium/issues/20209)) ([40def9d](https://github.com/appium/appium/commit/40def9dbdbde64706111900967d66735257b7404)), closes [#20202](https://github.com/appium/appium/issues/20202) [#20203](https://github.com/appium/appium/issues/20203)
+
+
+
+## [2.8.0](https://github.com/appium/appium/compare/appium@2.7.0...appium@2.8.0) (2024-06-06)
+
+
+### Features
+
+* **logger:** Add the 'debug' level to the default logger ([#20203](https://github.com/appium/appium/issues/20203)) ([7fd9d5f](https://github.com/appium/appium/commit/7fd9d5f6261b385c234580c2bfee4d576905458b))
+
+
+### Bug Fixes
+
+* add logger dependencies in package.json ([#20205](https://github.com/appium/appium/issues/20205)) ([3fbc4f1](https://github.com/appium/appium/commit/3fbc4f1fe07eadf9c7a2ef8fc9f4ba78dc3486a3))
+
+
+
+## [2.7.0](https://github.com/appium/appium/compare/appium@2.6.0...appium@2.7.0) (2024-06-06)
+
+
+### Features
+
+* **appium:** Replace npmlog with the local fork ([#20190](https://github.com/appium/appium/issues/20190)) ([8915934](https://github.com/appium/appium/commit/8915934270243bfb46c4d104a098ce1cc481b0ff))
+* **base-driver:** Make addition of search query params to cache optional ([#20195](https://github.com/appium/appium/issues/20195)) ([21316e9](https://github.com/appium/appium/commit/21316e94d05b2f97aa0349a82da229713e92446c))
+
+
+### Bug Fixes
+
+* **appium:** ensure ws close code is valid ([#20178](https://github.com/appium/appium/issues/20178)) ([65c47ac](https://github.com/appium/appium/commit/65c47acf5954bbf1947e896ef79c81a9b3c712a5))
+* **appium:** update dependency ajv to v8.16.0 ([ae7f74a](https://github.com/appium/appium/commit/ae7f74a0144d233653443622a84d49b1cb4e6222))
+* **docutils:** update dependency yaml to v2.4.3 ([848eb00](https://github.com/appium/appium/commit/848eb00afbd1cab76a6a1c3d0f4a2a0b1acee0d0))
+* **execute-driver-plugin:** update dependency webdriverio to v8.38.2 ([c8f9979](https://github.com/appium/appium/commit/c8f997973cc21673f95d02c92d43a2981b8713b8))
+* **support:** update dependency teen_process to v2.1.4 ([96a7a3f](https://github.com/appium/appium/commit/96a7a3f23bead7c1d18700550138cd2d70ce5e3c))
+* **types:** update dependency type-fest to v4.19.0 ([#20193](https://github.com/appium/appium/issues/20193)) ([db62358](https://github.com/appium/appium/commit/db62358dbac25de2a75fdc7493338d98b1422c84))
+
+
+
+## [2.6.0](https://github.com/appium/appium/compare/appium@2.5.4...appium@2.6.0) (2024-05-27)
+
+
+### Features
+
+* **appium:** Add --show-debug-info CLI argument ([#20108](https://github.com/appium/appium/issues/20108)) ([6f602d3](https://github.com/appium/appium/commit/6f602d3e501dbd9d44f6e7ba220f45ff1d4dfde8))
+* **appium:** prepare setup subcommand as shortcut for drivers/plugins installation ([#20102](https://github.com/appium/appium/issues/20102)) ([2b2fb18](https://github.com/appium/appium/commit/2b2fb185a6bc882717e4aa0580b0136bf5ae2942))
+* **base-driver:** Add env variables to control applications cache ([#20042](https://github.com/appium/appium/issues/20042)) ([4e8c91c](https://github.com/appium/appium/commit/4e8c91c8f647e545344d5b49282628413e1ccb19))
+
+
+### Bug Fixes
+
+* **appium:** Do not crash the process if there was an exception in a winston transport ([#20065](https://github.com/appium/appium/issues/20065)) ([0492fe4](https://github.com/appium/appium/commit/0492fe49dc34b3ef345a988bf56e49daf8dfcffe))
+* **appium:** update dependency ajv to v8.13.0 ([448e94e](https://github.com/appium/appium/commit/448e94ee50fa127ae93e657a3958726aa13e7df8))
+* **appium:** update dependency ajv to v8.14.0 ([e3dcd66](https://github.com/appium/appium/commit/e3dcd66714be603a8acbb3364f538c60772e76bd))
+* **appium:** update dependency ws to v8.17.0 ([395dc22](https://github.com/appium/appium/commit/395dc225e4d7f47dc55134fba9fb9306cabf7e19))
+* **docutils:** update dependency yaml to v2.4.2 ([0211174](https://github.com/appium/appium/commit/0211174300cf91c1cad2364d8ce3de7100139f5c))
+* **execute-driver-plugin:** update dependency webdriverio to v8.37.0 ([27ff9a0](https://github.com/appium/appium/commit/27ff9a00ef65a66aea8da8e3be5ffebb6d8c65e1))
+* **execute-driver-plugin:** update dependency webdriverio to v8.38.0 ([e80b682](https://github.com/appium/appium/commit/e80b6826efbe14ecfa6c0ff1f6aceb4db99b82d8))
+* **support:** update dependency axios to v1.7.1 ([11510cb](https://github.com/appium/appium/commit/11510cb1a5d50a20ced884e5404d0be1e04ff142))
+* **support:** update dependency axios to v1.7.2 ([a876f11](https://github.com/appium/appium/commit/a876f112b51dd25f70094b9e75330b9558050e42))
+* **support:** update dependency semver to v7.6.1 ([b5fd5b6](https://github.com/appium/appium/commit/b5fd5b6d2c585be8391b80ac67207da610e8ea64))
+* **support:** update dependency semver to v7.6.2 ([1b4f36c](https://github.com/appium/appium/commit/1b4f36cebe7aaf99976f24346b2d1325b79fc55c))
+* **support:** update dependency teen_process to v2.1.3 ([b34ce3c](https://github.com/appium/appium/commit/b34ce3cff0279be5bb5dcb9228f7e058d27a5e72))
+* **types:** update dependency type-fest to v4.18.2 ([#20103](https://github.com/appium/appium/issues/20103)) ([3b43be1](https://github.com/appium/appium/commit/3b43be17321f2ca16bac0abedabf9ef8cffa098a))
+* **types:** update dependency type-fest to v4.18.3 ([#20149](https://github.com/appium/appium/issues/20149)) ([d5369f8](https://github.com/appium/appium/commit/d5369f8b08e7439282c5a211e684b154cc9f0051))
+
+
+
 ## [2.5.4](https://github.com/appium/appium/compare/appium@2.5.3...appium@2.5.4) (2024-04-21)
 
 

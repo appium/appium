@@ -39,6 +39,7 @@ nav:
       - cli/args.md
       - cli/env-vars.md
       - cli/extensions.md
+      - cli/setup.md
   - Command Reference:
       - commands/index.md
       - commands/base-driver.md

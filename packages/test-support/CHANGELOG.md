@@ -3,6 +3,72 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.43](https://github.com/appium/appium/compare/@appium/test-support@3.0.42...@appium/test-support@3.0.43) (2024-06-11)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.42](https://github.com/appium/appium/compare/@appium/test-support@3.0.41...@appium/test-support@3.0.42) (2024-06-11)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.41](https://github.com/appium/appium/compare/@appium/test-support@3.0.40...@appium/test-support@3.0.41) (2024-06-11)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.40](https://github.com/appium/appium/compare/@appium/test-support@3.0.39...@appium/test-support@3.0.40) (2024-06-10)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.39](https://github.com/appium/appium/compare/@appium/test-support@3.0.38...@appium/test-support@3.0.39) (2024-06-06)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.38](https://github.com/appium/appium/compare/@appium/test-support@3.0.37...@appium/test-support@3.0.38) (2024-06-06)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.37](https://github.com/appium/appium/compare/@appium/test-support@3.0.36...@appium/test-support@3.0.37) (2024-06-06)
+
+**Note:** Version bump only for package @appium/test-support
+
+
+
+
+
+## [3.0.36](https://github.com/appium/appium/compare/@appium/test-support@3.0.35...@appium/test-support@3.0.36) (2024-05-27)
+
+
+### Bug Fixes
+
+* **test-support:** update dependency sinon to v17.0.2 ([#20078](https://github.com/appium/appium/issues/20078)) ([2acf262](https://github.com/appium/appium/commit/2acf262482750bb7b56f46dc3b9ad3168de8000a))
+* **test-support:** update dependency sinon to v18 ([#20128](https://github.com/appium/appium/issues/20128)) ([465495e](https://github.com/appium/appium/commit/465495ef2ae436039f80a1ba397bb26a22ec01c6))
+
+
+
 ## [3.0.35](https://github.com/appium/appium/compare/@appium/test-support@3.0.34...@appium/test-support@3.0.35) (2024-04-21)
 
 **Note:** Version bump only for package @appium/test-support

@@ -47,7 +47,7 @@ another project called WebDriver) developed a relatively stable API for browser 
 
 Over the years, Selenium worked with various web browser vendors and the [W3C](https://w3c.org)
 standards group to turn its API into an official web browser standard, called the [WebDriver
-specification](https://w3c.github.io/webdriver/webdriver-spec.html). All the main browsers now
+specification](https://w3c.github.io/webdriver/). All the main browsers now
 implement automation capabilities inline with the WebDriver spec, without the Selenium team having
 to maintain any software that performs actual automation; standards for the win!
 

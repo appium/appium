@@ -105,6 +105,14 @@ export async function configureApp(
   };
   const {protocol, pathname} = parseAppLink(app);
   const isUrl = isSupportedUrl(app);
+  if (!isUrl && !path.isAbsolute(newApp)) {
+    newApp = path.resolve(process.cwd(), newApp);
+    logger.warn(
+      `The current application path '${app}' is not absolute ` +
+      `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`
+    );
+    app = newApp;
+  }
   const appCacheKey = toCacheKey(app);
 
   const cachedAppInfo = APPLICATIONS_CACHE.get(appCacheKey);
@@ -276,13 +284,6 @@ export async function configureApp(
         }
       }
       logger.info(`Unzipped local app to '${newApp}'`);
-    } else if (!path.isAbsolute(newApp)) {
-      newApp = path.resolve(process.cwd(), newApp);
-      logger.warn(
-        `The current application path '${app}' is not absolute ` +
-          `and has been rewritten to '${newApp}'. Consider using absolute paths rather than relative`
-      );
-      app = newApp;
     }
 
     const storeAppInCache = async (appPathToCache) => {

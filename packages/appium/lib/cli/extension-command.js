@@ -578,7 +578,9 @@ class ExtensionCliCommand {
       return this.config.installedExtensions;
     }
     const pkgName = extRecord.pkgName;
-    await npm.uninstallPackage(this.config.appiumHome, pkgName);
+    await spinWith(this.isJsonOutput, `Uninstalling ${this.type} '${installSpec}'`, async () => {
+      await npm.uninstallPackage(this.config.appiumHome, pkgName);
+    });
     await this.config.removeExtension(installSpec);
     this.log.ok(`Successfully uninstalled ${this.type} '${installSpec}'`.green);
     return this.config.installedExtensions;

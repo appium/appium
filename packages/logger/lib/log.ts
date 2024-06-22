@@ -221,7 +221,9 @@ export class Log extends EventEmitter implements Logger {
     if (stack) {
       messageArguments.unshift(`${stack}\n`);
     }
-    const formattedMessage: string = util.format(...messageArguments);
+    const formattedMessage: string = messageArguments.length
+      ? util.format(...messageArguments)
+      : '';
 
     const m: MessageObject = {
       id: this._id++,

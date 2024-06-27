@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.0](https://github.com/appium/appium/compare/appium@2.10.3...appium@2.11.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+* **appium:** show extension update info message for newer major versions ([#20283](https://github.com/appium/appium/issues/20283)) ([f2c8b69](https://github.com/appium/appium/commit/f2c8b696085ba862553476f23509cac0674a447c))
+* **appium:** show spinner during extension uninstall ([#20282](https://github.com/appium/appium/issues/20282)) ([f250793](https://github.com/appium/appium/commit/f25079354bfd646810813ae47244a1e2e962dbfb))
+
+
+### Bug Fixes
+
+* **appium:** update dependency ws to v8.17.1 ([d2b24da](https://github.com/appium/appium/commit/d2b24daba056373160d680ec5f017b28e9cbde1a))
+* **execute-driver-plugin:** update dependency webdriverio to v8.39.0 ([faf9623](https://github.com/appium/appium/commit/faf9623a65868a6330d062076074da7c1c3acb2a))
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [2.10.3](https://github.com/appium/appium/compare/appium@2.10.2...appium@2.10.3) (2024-06-11)
 
 **Note:** Version bump only for package appium

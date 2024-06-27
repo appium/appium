@@ -191,21 +191,22 @@ Appium is incredibly grateful to our Development and Strategic Partners for thei
 contribution of project development and leadership!
 
 <p align="center">
-  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png" width="275" alt="HeadSpin" /></a>
+  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
+width="275" alt="HeadSpin" /></a>
 </p>
 
 <p align="center">
   <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
     <picture>
-      <source srcset="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
-      <source srcset="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
-      <img src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="300" alt="Browserstack"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>
+      <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-light.png" media="(prefers-color-scheme: light)"/>
+      <img src="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" width="300" alt="Browserstack"/>
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
+  <a href="https://saucelabs.com/resources/blog/appium-strategic-partner"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-sauce.png"
 width="300" alt="Sauce Labs" /></a>
 </p>
 

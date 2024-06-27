@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.0](https://github.com/appium/appium/compare/@appium/logger@1.4.2...@appium/logger@1.5.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **logger:** Print an empty message if no arguments are provided ([#20284](https://github.com/appium/appium/issues/20284)) ([87fc50c](https://github.com/appium/appium/commit/87fc50c2aff523492a353f20fa9dc7e759be06b3))
+
+
+
 ## [1.4.2](https://github.com/appium/appium/compare/@appium/logger@1.4.1...@appium/logger@1.4.2) (2024-06-11)
 
 

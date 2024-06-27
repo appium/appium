@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.0](https://github.com/appium/appium/compare/@appium/support@5.0.3...@appium/support@5.1.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **support:** update dependency @types/uuid to v10 ([#20280](https://github.com/appium/appium/issues/20280)) ([073447a](https://github.com/appium/appium/commit/073447ae4a69f82c284b17d122916746620d4fdf))
+* **support:** update dependency glob to v10.4.2 ([#20268](https://github.com/appium/appium/issues/20268)) ([d5e5186](https://github.com/appium/appium/commit/d5e5186cb7612b64634c98f21532f354f411bbb8))
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+* **support:** update dependency uuid to v10 ([#20236](https://github.com/appium/appium/issues/20236)) ([57bbb7f](https://github.com/appium/appium/commit/57bbb7f46db2aa0f16bce31c525286a6a94faf25))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [5.0.3](https://github.com/appium/appium/compare/@appium/support@5.0.2...@appium/support@5.0.3) (2024-06-11)
 
 **Note:** Version bump only for package @appium/support

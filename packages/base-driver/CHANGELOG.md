@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.0](https://github.com/appium/appium/compare/@appium/base-driver@9.10.3...@appium/base-driver@9.11.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **base-driver:** Check if app path is relative earlier ([#20276](https://github.com/appium/appium/issues/20276)) ([2882e71](https://github.com/appium/appium/commit/2882e7163159b7918d54cc4521105a1fdf55da9a))
+* **base-driver:** update dependency path-to-regexp to v7 ([#20279](https://github.com/appium/appium/issues/20279)) ([a746eef](https://github.com/appium/appium/commit/a746eefbbb627c7f7dd9d1ce13226a88d9527129))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [9.10.3](https://github.com/appium/appium/compare/@appium/base-driver@9.10.2...@appium/base-driver@9.10.3) (2024-06-11)
 
 **Note:** Version bump only for package @appium/base-driver

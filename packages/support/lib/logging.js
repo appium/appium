@@ -47,7 +47,8 @@ export function getLogger(prefix = null) {
       /** @type {import('@appium/types').AppiumLoggerContext} */ contextInfo,
       replace = false,
     ) {
-      this.unwrap().updateAsyncStorage(contextInfo, replace);
+      // Older Appium dependencies may not have 'updateAsyncStorage'
+      this.unwrap().updateAsyncStorage?.(contextInfo, replace);
     },
   };
   // allow access to the level of the underlying logger

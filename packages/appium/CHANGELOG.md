@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.1](https://github.com/appium/appium/compare/appium@2.11.0...appium@2.11.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10.3.0 ([#20306](https://github.com/appium/appium/issues/20306)) ([e43c7a4](https://github.com/appium/appium/commit/e43c7a4dce1f50fbd4d028cbeac5677422210b20))
+
+
+
 ## [2.11.0](https://github.com/appium/appium/compare/appium@2.10.3...appium@2.11.0) (2024-06-27)
 
 

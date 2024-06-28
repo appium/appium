@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.1](https://github.com/appium/appium/compare/@appium/support@5.1.0...@appium/support@5.1.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **support:** add ? in casae it does not have updateAsyncStorage function deps ([#20304](https://github.com/appium/appium/issues/20304)) ([f3d959e](https://github.com/appium/appium/commit/f3d959ef91714bca24fc09df38a866f48a416214))
+
+
+
 ## [5.1.0](https://github.com/appium/appium/compare/@appium/support@5.0.3...@appium/support@5.1.0) (2024-06-27)
 
 

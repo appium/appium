@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.1](https://github.com/appium/appium/compare/@appium/base-driver@9.11.0...@appium/base-driver@9.11.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.6 ([82e40c1](https://github.com/appium/appium/commit/82e40c1400e23f341c45d788982ccc5905827d7c))
+* **images-plugin:** update dependency lru-cache to v10.3.0 ([#20306](https://github.com/appium/appium/issues/20306)) ([e43c7a4](https://github.com/appium/appium/commit/e43c7a4dce1f50fbd4d028cbeac5677422210b20))
+
+
+
 ## [9.11.0](https://github.com/appium/appium/compare/@appium/base-driver@9.10.3...@appium/base-driver@9.11.0) (2024-06-27)
 
 

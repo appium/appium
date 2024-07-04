@@ -55,6 +55,11 @@ describe('Protocol', function () {
       cmdName.should.equal('getStatus');
     });
 
+    it('should properly lookup correct command name for endpoint with query params', function () {
+      const cmdName = routeToCommandName('/status?foo=1&bar=2', 'GET');
+      cmdName.should.equal('getStatus');
+    });
+
     it('should properly lookup correct command name for endpoint without leading slash', function () {
       const cmdName = routeToCommandName('status', 'GET');
       cmdName.should.equal('getStatus');

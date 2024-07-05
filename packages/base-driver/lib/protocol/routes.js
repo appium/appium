@@ -931,7 +931,9 @@ export const ALL_COMMANDS = _.flatMap(_.values(METHOD_MAP).map(_.values))
  * @returns {string|undefined}
  */
 export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PATH) {
-  let normalizedEndpoint = basePath ? endpoint.replace(basePath, '') : endpoint;
+  let normalizedEndpoint = basePath
+    ? endpoint.replace(new RegExp(`^${_.escapeRegExp(basePath)}`), '')
+    : endpoint;
   normalizedEndpoint = `${_.startsWith(normalizedEndpoint, '/') ? '' : '/'}${normalizedEndpoint}`;
   /** @type {string} */
   let normalizedPathname;

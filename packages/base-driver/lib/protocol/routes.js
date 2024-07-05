@@ -936,7 +936,7 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
   /** @type {string} */
   let normalizedPathname;
   try {
-    // we could use any prefix there as we anyway need to only extract pathname
+    // we could use any prefix there as we anyway need to only extract the pathname
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
   } catch (err) {
     try {
@@ -946,14 +946,17 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
     }
   }
 
-  const possiblePathnames = [
-    `/session/any-session-id${normalizedPathname}`,
-    normalizedPathname,
-  ];
-  for (const [routePattern, methods] of _.toPairs(METHOD_MAP)) {
-    const routeRegexp = pathToRegexp(routePattern);
+  /** @type {string[]} */
+  const possiblePathnames = [];
+  if (!normalizedPathname.startsWith('/session/')) {
+    possiblePathnames.push(`/session/any-session-id${normalizedPathname}`);
+  }
+  possiblePathnames.push(normalizedPathname);
+  const normalizedMethod = _.toUpper(method);
+  for (const [routeName, routeSpec] of _.toPairs(METHOD_MAP)) {
+    const routeRegexp = pathToRegexp(routeName);
     if (possiblePathnames.some((pp) => routeRegexp.test(pp))) {
-      const commandName = methods[_.toUpper(method)]?.command;
+      const commandName = routeSpec?.[normalizedMethod]?.command;
       if (commandName) {
         return commandName;
       }

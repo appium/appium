@@ -60,6 +60,11 @@ describe('Protocol', function () {
       cmdName.should.equal('getStatus');
     });
 
+    it('should properly lookup correct command name with custom base path', function () {
+      const cmdName = routeToCommandName('/wd/hub/status?foo=1&bar=2', 'GET', '/wd/hub');
+      cmdName.should.equal('getStatus');
+    });
+
     it('should properly lookup correct command name for endpoint without leading slash', function () {
       const cmdName = routeToCommandName('status', 'GET');
       cmdName.should.equal('getStatus');

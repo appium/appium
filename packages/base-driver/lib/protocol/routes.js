@@ -953,8 +953,8 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
   }
   possiblePathnames.push(normalizedPathname);
   const normalizedMethod = _.toUpper(method);
-  for (const [routeName, routeSpec] of _.toPairs(METHOD_MAP)) {
-    const routeRegexp = pathToRegexp(routeName);
+  for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
+    const routeRegexp = pathToRegexp(routePath);
     if (possiblePathnames.some((pp) => routeRegexp.test(pp))) {
       const commandName = routeSpec?.[normalizedMethod]?.command;
       if (commandName) {

@@ -19,18 +19,23 @@ export function driverUnitTestSuite(
   // to display the driver under test in report
   const className = DriverClass.name ?? '(unknown driver)';
 
-  describe(`BaseDriver unit suite (as ${className})`, async function () {
+  describe(`BaseDriver unit suite (as ${className})`, function () {
     /** @type {InstanceType<typeof DriverClass>} */
     let d;
     /** @type {import('@appium/types').W3CDriverCaps<C>} */
     let w3cCaps;
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    const expect = chai.expect;
-    const should = chai.should();
+    let expect;
+    let should;
+
+    before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      expect = chai.expect;
+      should = chai.should();
+    });
 
     beforeEach(function () {
       sandbox = createSandbox();

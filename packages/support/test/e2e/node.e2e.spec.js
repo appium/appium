@@ -1,6 +1,13 @@
 import {node} from '../../lib';
 
 describe('node utilities', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('requirePackage', function () {
     it('should be able to require a local package', async function () {
       await node.requirePackage('sinon').should.not.be.rejected;

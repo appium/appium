@@ -42,8 +42,14 @@ function initMJpegServer(port, intMs = 300, times = 20) {
 describe('MJpeg Stream (e2e)', function () {
   let mJpegServer, stream;
   let serverUrl, port;
+  let should;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+
     // TODO: remove when buffertools can handle v12
     if (process.version.startsWith('v12')) {
       return this.skip();

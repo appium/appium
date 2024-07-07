@@ -10,15 +10,20 @@ import {
   findAppiumDependencyPackage,
 } from '../../lib/env';
 
-const {expect} = chai;
-
 describe('environment', function () {
   /** @type {string} */
   let cwd;
   /** @type {string|undefined} */
   let oldEnvAppiumHome;
+  let expect;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     cwd = await tempDir.openDir();
   });
 

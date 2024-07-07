@@ -17,6 +17,11 @@ describe('OpenCV helpers', function () {
   let numberImage = null;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+
     const imagePath = path.resolve(FIXTURES_ROOT, 'full-image.b64');
     imgFixture = Buffer.from(await fs.readFile(imagePath, 'binary'), 'base64');
     fullImage = await fs.readFile(path.resolve(FIXTURES_ROOT, 'findwaldo.jpg'));

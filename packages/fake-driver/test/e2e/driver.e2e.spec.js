@@ -22,7 +22,14 @@ driverE2ETestSuite(FakeDriver, W3C_PREFIXED_CAPS);
 
 describe('FakeDriver - via HTTP', function () {
   let server = null;
+  let should;
+
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+
     if (shouldStartServer) {
       server = await startServer(TEST_PORT, TEST_HOST);
     }

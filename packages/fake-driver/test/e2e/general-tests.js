@@ -3,8 +3,13 @@ import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 function generalTests() {
   describe('generic actions', function () {
     let driver;
+    let should;
 
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      should = chai.should();
       driver = await initSession(W3C_PREFIXED_CAPS);
     });
 

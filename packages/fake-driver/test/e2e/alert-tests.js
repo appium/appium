@@ -4,6 +4,10 @@ function alertTests() {
   describe('alerts', function () {
     let driver;
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      chai.should();
       driver = await initSession(W3C_PREFIXED_CAPS);
     });
     after(async function () {

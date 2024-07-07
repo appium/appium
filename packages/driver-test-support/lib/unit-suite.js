@@ -2,11 +2,6 @@ import _ from 'lodash';
 import B from 'bluebird';
 import {createSandbox} from 'sinon';
 
-import chai from 'chai';
-
-const should = chai.should();
-const {expect} = chai;
-
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 
@@ -24,13 +19,18 @@ export function driverUnitTestSuite(
   // to display the driver under test in report
   const className = DriverClass.name ?? '(unknown driver)';
 
-  describe(`BaseDriver unit suite (as ${className})`, function () {
+  describe(`BaseDriver unit suite (as ${className})`, async function () {
     /** @type {InstanceType<typeof DriverClass>} */
     let d;
     /** @type {import('@appium/types').W3CDriverCaps<C>} */
     let w3cCaps;
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    const expect = chai.expect;
+    const should = chai.should();
 
     beforeEach(function () {
       sandbox = createSandbox();

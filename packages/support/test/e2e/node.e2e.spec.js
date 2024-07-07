@@ -3,7 +3,7 @@ import {node} from '../../lib';
 describe('node utilities', function () {
   describe('requirePackage', function () {
     it('should be able to require a local package', async function () {
-      await node.requirePackage('chai').should.not.be.rejected;
+      await node.requirePackage('sinon').should.not.be.rejected;
     });
     // XXX: see #15951
     it.skip('should be able to require a global package', async function () {

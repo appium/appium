@@ -11,12 +11,16 @@ describe('Desired Capabilities', function () {
   /** @type {BaseDriver} */
   let d;
   let sandbox;
+  /** @type {import('sinon').SinonSpy} */
+  let logWarnSpy;
+  /** @type {import('sinon').SinonStub} */
+  let deprecatedStub;
 
   beforeEach(function () {
     d = new BaseDriver();
     sandbox = createSandbox();
-    sandbox.spy(d.log, 'warn');
-    sandbox.stub(validator.validators, 'deprecated');
+    logWarnSpy = sandbox.spy(d.log, 'warn');
+    deprecatedStub = sandbox.stub(validator.validators, 'deprecated');
   });
 
   afterEach(function () {
@@ -118,7 +122,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    d.log.warn.should.have.been.called;
+    logWarnSpy.called.should.be.true;
   });
 
   it('should be sensitive to the case of caps', async function () {
@@ -143,7 +147,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.have.been.called;
+      logWarnSpy.called.should.be.true;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.noReset.should.eql(false);
@@ -158,7 +162,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.have.been.called;
+      logWarnSpy.called.should.be.true;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.noReset.should.eql(true);
@@ -172,7 +176,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.not.have.been.called;
+      logWarnSpy.called.should.be.false;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.language.should.eql('true');
@@ -189,7 +193,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.have.been.called;
+      logWarnSpy.called.should.be.true;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1);
@@ -204,7 +208,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.have.been.called;
+      logWarnSpy.called.should.be.true;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.newCommandTimeout.should.eql(1.1);
@@ -218,7 +222,7 @@ describe('Desired Capabilities', function () {
         },
         firstMatch: [{}],
       });
-      d.log.warn.should.not.have.been.called;
+      logWarnSpy.called.should.be.false;
 
       let sessions = await d.getSessions();
       sessions[0].capabilities.language.should.eql('1');
@@ -254,7 +258,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    validator.validators.deprecated.should.have.been.calledWith(5, true, 'lynx-version');
+    (deprecatedStub.calledWith(5, true, 'lynx-version')).should.be.true;
   });
 
   it('should not warn if deprecated=false', async function () {
@@ -274,7 +278,7 @@ describe('Desired Capabilities', function () {
       firstMatch: [{}],
     });
 
-    d.log.warn.should.not.have.been.called;
+    logWarnSpy.called.should.be.false;
   });
 
   it('should not validate against null/undefined caps', async function () {

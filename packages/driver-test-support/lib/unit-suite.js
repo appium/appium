@@ -45,8 +45,8 @@ export function driverUnitTestSuite(
       };
     });
     afterEach(async function () {
-      sandbox.restore();
-      await d.deleteSession();
+      sandbox?.restore();
+      await d?.deleteSession();
     });
 
     describe('static property', function () {

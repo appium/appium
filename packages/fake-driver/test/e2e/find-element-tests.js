@@ -14,23 +14,23 @@ function findElementTests() {
 
     describe('by XPath', function () {
       it('should find a single element by xpath', async function () {
-        (await driver.$('//MockWebView')).should.be.existing();
+        (await driver.$('//MockWebView')).should.not.be.empty;
       });
       it('should not find a single element that is not there', async function () {
-        (await driver.$('//dontexist')).should.not.be.existing();
+        await driver.$('//dontexist').should.eventually.be.rejected;
       });
       it('should find multiple elements', async function () {
-        (await driver.$$('//MockListItem')).should.have.count(3);
+        (await driver.$$('//MockListItem')).length.should.be.equal(3);
       });
     });
 
     describe('by classname', function () {
       it('should find a single element by class', async function () {
-        (await driver.$('.MockWebView')).should.be.existing();
+        (await driver.$('.MockWebView')).should.not.be.empty;
       });
 
       it('should not find a single element by class that is not there', async function () {
-        (await driver.$('.dontexist')).should.not.be.existing();
+        await driver.$('.dontexist').should.eventually.be.rejected;
       });
     });
 
@@ -53,15 +53,15 @@ function findElementTests() {
       });
       it('should find multiple elements from another element', async function () {
         let el = await driver.$('html');
-        (await el.$$('title')).should.have.count(2);
+        (await el.$$('title')).length.should.equal(2);
       });
       it(`should not find an element that doesn't exist from another element`, async function () {
         let el = await driver.$('#1');
-        (await el.$('marquee')).should.not.be.existing();
+        await el.$('marquee').should.eventually.be.rejected;
       });
       it(`should not find multiple elements that don't exist from another element`, async function () {
         let el = await driver.$('#1');
-        (await el.$$('marquee')).should.have.count(0);
+        (await el.$$('marquee')).length.should.equal(0);
       });
       it('should not find elements if root element does not exist', async function () {
         let el = await driver.$('#blub');

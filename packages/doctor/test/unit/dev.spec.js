@@ -7,6 +7,13 @@ import B from 'bluebird';
 import {removeColors} from './helper';
 
 describe('dev', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe(
     'BinaryIsInPathCheck',
     withMocks({tp, fs}, (mocks) => {

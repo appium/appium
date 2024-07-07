@@ -6,8 +6,6 @@ import {resetSchema} from '../../../lib/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 
-const {expect} = chai;
-
 describe('DriverConfig', function () {
   /** @type {string} */
   let yamlFixture;
@@ -31,7 +29,15 @@ describe('DriverConfig', function () {
    */
   let DriverConfig;
 
+  let expect;
+
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
@@ -338,7 +344,7 @@ describe('DriverConfig', function () {
           driverConfig.readExtensionSchema(extName, extData);
 
           // we don't have access to the schema registration cache directly, so this is as close as we can get.
-          expect(MockResolveFrom).to.have.been.calledOnce;
+          MockResolveFrom.calledOnce.should.be.true;
         });
       });
     });

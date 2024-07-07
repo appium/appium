@@ -3,9 +3,15 @@
 import {DRIVER_TYPE} from '../../../lib/constants';
 import {ArgSpec} from '../../../lib/schema/arg-spec';
 
-const {expect} = chai;
-
 describe('ArgSpec', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('class method', function () {
     describe('create()', function () {
       it('should return a new ArgSpec', function () {
@@ -69,9 +75,11 @@ describe('ArgSpec', function () {
       });
 
       describe('when provided the schema ID of an extension schema', function () {
-        expect(ArgSpec.extensionInfoFromRootSchemaId('driver-stuff.json')).to.eql({
-          extType: DRIVER_TYPE,
-          normalizedExtName: 'stuff',
+        it('should return an proper object', function () {
+          expect(ArgSpec.extensionInfoFromRootSchemaId('driver-stuff.json')).to.eql({
+            extType: DRIVER_TYPE,
+            normalizedExtName: 'stuff',
+          });
         });
       });
     });

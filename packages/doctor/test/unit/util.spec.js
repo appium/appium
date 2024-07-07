@@ -4,6 +4,11 @@ import path from 'path';
 import {Doctor} from '../../lib/doctor';
 
 describe('utils', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   it('fs.readFile', async function () {
     (await fs.readFile(path.resolve(__dirname, 'fixtures', 'wow.txt'), 'utf8')).should.include(
       'WOW'

@@ -15,6 +15,15 @@ import logger from '../../lib/logger';
 import {fs} from '@appium/support';
 
 describe('utils', function () {
+  let should;
+
+  beforeEach(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
+
   describe('parseCapsForInnerDriver()', function () {
     it('should return an error if only JSONWP provided', function () {
       let {error, protocol} = parseCapsForInnerDriver(BASE_CAPS);

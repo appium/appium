@@ -2,6 +2,13 @@ import _ from 'lodash';
 import {BaseDriver} from '../../../../lib';
 
 describe('logging custom events', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   it('should allow logging of events', async function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});
@@ -19,6 +26,13 @@ describe('logging custom events', function () {
 });
 
 describe('#getLogEvents', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   it('should allow to get all events', async function () {
     const d = new BaseDriver();
     d._eventHistory.should.eql({commands: []});

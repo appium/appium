@@ -1,5 +1,3 @@
-import chaiWebdriverIOAsync from 'chai-webdriverio-async';
-
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 function elementTests() {
@@ -7,7 +5,6 @@ function elementTests() {
     let driver;
     before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS);
-      chai.use(chaiWebdriverIOAsync(driver));
     });
     after(async function () {
       return await deleteSession(driver);

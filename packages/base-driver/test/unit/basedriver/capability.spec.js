@@ -16,6 +16,14 @@ describe('Desired Capabilities', function () {
   /** @type {import('sinon').SinonStub} */
   let deprecatedStub;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
+
   beforeEach(function () {
     d = new BaseDriver();
     sandbox = createSandbox();

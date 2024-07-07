@@ -1,4 +1,3 @@
-import chaiWebdriverIOAsync from 'chai-webdriverio-async';
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 function generalTests() {
@@ -7,7 +6,6 @@ function generalTests() {
 
     before(async function () {
       driver = await initSession(W3C_PREFIXED_CAPS);
-      chai.use(chaiWebdriverIOAsync(driver));
     });
 
     after(async function () {

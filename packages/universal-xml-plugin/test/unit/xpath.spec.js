@@ -3,8 +3,11 @@ import {transformSourceXml} from '../../lib/source';
 import {XML_IOS} from '../fixtures';
 
 describe('xpath functions', async function () {
-  const chai = await import('chai');
-  const should = chai.should();
+  let should;
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
 
   describe('runQuery', function () {
     it('should run an xpath query on an XML string and return nodes', function () {

@@ -8,8 +8,10 @@ import {
 import {transformAttrs, transformChildNodes, transformSourceXml} from '../../lib/source';
 
 describe('source functions', async function () {
-  const chai = await import('chai');
-  chai.should();
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
 
   describe('transformSourceXml', function () {
     it('should transform an xml doc based on platform', function () {

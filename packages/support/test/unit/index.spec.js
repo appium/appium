@@ -3,6 +3,11 @@ import AppiumSupport from '../../lib/';
 let {system, tempDir, util} = AppiumSupport;
 
 describe('index', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   describe('default', function () {
     it('should expose an object', function () {
       AppiumSupport.should.exist;

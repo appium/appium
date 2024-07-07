@@ -3,8 +3,12 @@ import path from 'path';
 import _ from 'lodash';
 
 describe('node utilities', async function () {
-  const chai = await import('chai');
-  const should = chai.should();
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
 
   describe('getObjectSize', function () {
     it('should be able to calculate size of different object types', function () {

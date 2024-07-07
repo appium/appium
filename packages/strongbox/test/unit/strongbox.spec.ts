@@ -4,7 +4,6 @@ import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../li
 import {createSandbox, SinonSandbox, SinonStubbedMember} from 'sinon';
 import type fs from 'node:fs/promises';
 
-const {expect} = chai;
 type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
 };
@@ -15,8 +14,15 @@ describe('Strongbox', function () {
   let sandbox: SinonSandbox;
   let DEFAULT_SUFFIX: string;
   let MockFs: MockFs = {} as any;
+  let expect: any;
 
   const DATA_DIR = path.resolve('some', 'dir', 'strongbox');
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    ({expect} = chai);
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

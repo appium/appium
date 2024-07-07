@@ -15,6 +15,13 @@ describe('ImageElement', function () {
 
   let sandbox;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(function () {
     sandbox = sinon.createSandbox();
   });

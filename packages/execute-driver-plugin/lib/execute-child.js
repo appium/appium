@@ -2,7 +2,6 @@ import _ from 'lodash';
 import B from 'bluebird';
 import {NodeVM} from 'vm2';
 import {logger, util} from 'appium/support';
-import {attach} from 'webdriverio';
 
 const log = logger.getLogger('ExecuteDriver Child');
 /**
@@ -38,6 +37,8 @@ async function runScript(eventParams) {
     logs[level] = [];
     consoleFns[level] = (...logMsgs) => logs[level].push(...logMsgs);
   }
+
+  const {attach} = await import('webdriverio');
 
   const driver = await attach(driverOpts);
 
@@ -163,13 +164,10 @@ if (require.main === module && _.isFunction(process.send)) {
   process.on('message', main);
 }
 
-/**
- * @typedef {import('webdriverio').AttachOptions} AttachOptions
- */
 
 /**
  * @typedef DriverScriptMessageEvent
- * @property {AttachOptions} driverOpts - the driver options
+ * @property {any} driverOpts - the driver options
  * @property {string} script - the javascript to execute
  * @property {number} timeoutMs - script timeout in milliseconds
  */

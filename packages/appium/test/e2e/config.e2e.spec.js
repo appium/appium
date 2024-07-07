@@ -6,6 +6,7 @@ import * as teenProcess from 'teen_process';
 
 describe('Config', function () {
   let sandbox;
+  let should;
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -13,6 +14,13 @@ describe('Config', function () {
 
   afterEach(function () {
     sandbox.restore();
+  });
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
   });
 
   describe('getGitRev', function () {

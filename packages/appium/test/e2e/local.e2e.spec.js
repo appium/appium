@@ -14,7 +14,6 @@ import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
 const {MANIFEST_RELATIVE_PATH} = env;
-const {expect} = chai;
 const testDriverPath = path.dirname(resolveFixture('test-driver/package.json'));
 
 describe('when Appium is a dependency of the current project', function () {
@@ -26,8 +25,15 @@ describe('when Appium is a dependency of the current project', function () {
   let appiumHomePkgPath;
   /** @type {string} */
   let appiumHome;
+  let expect;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     appiumHome = await tempDir.openDir();
   });
 

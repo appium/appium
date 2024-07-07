@@ -22,6 +22,13 @@ describe('config file behavior', function () {
   const EXT_PROPS_FILEPATH = resolveConfigFixture('appium-config-ext-good.json');
   const LOG_FILTERS_FILEPATH = resolveConfigFixture('appium-config-log-filters.json');
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(function () {
     finalizeSchema();
   });

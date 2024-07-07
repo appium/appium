@@ -21,8 +21,6 @@ import {
 const FAKE_ARGS = {sillyWebServerPort: 1234, host: 'hey'};
 const FAKE_PLUGIN_ARGS = {fake: FAKE_ARGS};
 
-const should = chai.should();
-
 /** @type {import('webdriverio').RemoteOptions} */
 const wdOpts = {
   hostname: TEST_HOST,
@@ -41,8 +39,14 @@ describe('FakePlugin w/ FakeDriver via HTTP', function () {
   let port;
   /** @type {string} */
   let testServerBaseSessionUrl;
+  let should;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+
     resetSchema();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();

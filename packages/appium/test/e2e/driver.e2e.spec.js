@@ -23,8 +23,6 @@ import {
   W3C_PREFIXED_CAPS,
 } from '../helpers';
 
-const should = chai.should();
-
 /** @type {string} */
 let testServerBaseUrl;
 
@@ -87,8 +85,14 @@ describe('FakeDriver via HTTP', function () {
 
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
+  let should;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();
     wdOpts.port = port = await getTestPort();

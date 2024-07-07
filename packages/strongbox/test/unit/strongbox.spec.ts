@@ -21,7 +21,7 @@ describe('Strongbox', function () {
   before(async function () {
     const chai = await import('chai');
     chai.should();
-    ({expect} = chai);
+    expect = chai.expect;
   });
 
   beforeEach(function () {

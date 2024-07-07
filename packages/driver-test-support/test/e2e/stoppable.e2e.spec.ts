@@ -4,9 +4,17 @@ import {Agent} from 'node:http';
 import {startStoppableAppium, TestAppiumServer} from '../../lib';
 import getPort from 'get-port';
 
-const {expect} = chai;
-
 describe('startStoppableAppium()', function () {
+  let expect: any;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
+
   it('should start an Appium server', async function () {
     let server: TestAppiumServer | undefined;
     try {

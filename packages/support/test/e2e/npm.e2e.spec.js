@@ -1,13 +1,14 @@
 import {npm} from '../../lib/npm';
 
-const {expect} = chai;
-
 describe('npm module', function () {
+  let expect;
+
   before(async function () {
     const chai = await import('chai');
     const chaiAsPromised = await import('chai-as-promised');
     chai.use(chaiAsPromised.default);
     chai.should();
+    expect = chai.expect;
   });
 
   describe('getLatestVersion()', function () {

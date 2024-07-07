@@ -50,7 +50,7 @@ describe('Strongbox', function () {
       describe('clear()', function () {
         it('should remove the item from the filesystem', async function () {
           await item.clear();
-          expect(MockFs.unlink).to.have.been.calledWith(item.id);
+          MockFs.unlink.calledWith(item.id).should.be.true;
         });
 
         describe('if the item does not exist', function () {
@@ -92,11 +92,11 @@ describe('Strongbox', function () {
         });
 
         it('should write the new item value to the filesystem', async function () {
-          expect(MockFs.writeFile).to.have.been.calledWith(item.id, 'bar');
+          MockFs.writeFile.calledWith(item.id, 'bar').should.be.true;
         });
 
         it('should create the container', function () {
-          expect(MockFs.mkdir).to.have.been.calledWith(path.dirname(item.id), {recursive: true});
+          MockFs.mkdir.calledWith(path.dirname(item.id), {recursive: true}).should.be.true;
         });
       });
     });

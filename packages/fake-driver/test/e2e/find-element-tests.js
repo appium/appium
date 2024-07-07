@@ -17,7 +17,7 @@ function findElementTests() {
         (await driver.$('//MockWebView')).should.not.be.empty;
       });
       it('should not find a single element that is not there', async function () {
-        await driver.$('//dontexist').should.eventually.be.rejected;
+        await chai.expect(driver.$('//dontexist')).to.eventually.be.rejected;
       });
       it('should find multiple elements', async function () {
         (await driver.$$('//MockListItem')).length.should.be.equal(3);
@@ -30,7 +30,7 @@ function findElementTests() {
       });
 
       it('should not find a single element by class that is not there', async function () {
-        await driver.$('.dontexist').should.eventually.be.rejected;
+        await chai.expect(driver.$('.dontexist')).to.eventually.be.rejected;
       });
     });
 
@@ -57,7 +57,7 @@ function findElementTests() {
       });
       it(`should not find an element that doesn't exist from another element`, async function () {
         let el = await driver.$('#1');
-        await el.$('marquee').should.eventually.be.rejected;
+        await chai.expect(el.$('marquee')).to.eventually.be.rejected;
       });
       it(`should not find multiple elements that don't exist from another element`, async function () {
         let el = await driver.$('#1');

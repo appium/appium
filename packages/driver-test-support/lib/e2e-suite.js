@@ -105,7 +105,7 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
   let port = defaultCaps['appium:port'];
   const className = DriverClass.name || '(unknown driver)';
 
-  describe(`BaseDriver E2E (as ${className})`, async function () {
+  describe(`BaseDriver E2E (as ${className})`, function () {
     let baseServer;
     /** @type {Driver} */
     let d;
@@ -125,13 +125,16 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
     let getCommand;
     /** @type {SessionHelpers['postCommand']} */
     let postCommand;
-    const chai = await import('chai');
-    const chaiAsPromised = await import('chai-as-promised');
-    chai.use(chaiAsPromised.default);
-    const expect = chai.expect;
-    const should = chai.should();
+    let expect;
+    let should;
 
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      expect = chai.expect;
+      should = chai.should();
+
       port = port ?? (await getTestPort());
       defaultCaps = {...defaultCaps};
       d = new DriverClass({port, address});
@@ -145,9 +148,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
       ({startSession, getSession, endSession, newSessionURL, getCommand, postCommand} =
         createSessionHelpers(port, address));
     });
-
     after(async function () {
-      await baseServer.close();
+      await baseServer?.close();
     });
 
     describe('session handling', function () {

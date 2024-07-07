@@ -941,11 +941,7 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
     // we could use any prefix there as we anyway need to only extract the pathname
     normalizedPathname = new URL(`https://appium.io${normalizedEndpoint}`).pathname;
   } catch (err) {
-    try {
-      normalizedPathname = new URL(endpoint).pathname;
-    } catch (ign) {
-      throw new Error(`'${endpoint}' is not a valid URL endpoint`);
-    }
+    throw new Error(`'${endpoint}' cannot be translated to a command name: ${err.message}`);
   }
 
   /** @type {string[]} */

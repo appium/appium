@@ -138,13 +138,7 @@ describe('environment', function () {
           });
 
           it('should resolve with `cwd`', async function () {
-            // NOTE: resolveAppiumHome() can resolve w/ a _real_ path by way of output from npm.
-            // on macOS, /var/whatever is really /private/var/whatever.
-            if (process.platform === 'darwin' && cwd.startsWith('/var/')) {
-              await expect(resolveAppiumHome(cwd)).to.eventually.equal(path.join('/private', cwd));
-            } else {
-              await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
-            }
+            await expect(resolveAppiumHome(cwd)).to.eventually.equal(cwd);
           });
         });
         describe('when `appium` is an old version', function () {

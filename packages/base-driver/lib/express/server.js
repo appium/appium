@@ -32,6 +32,7 @@ import {EventEmitter} from 'events';
 import {fs} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+const SERVER_CLOSE_TIMEOUT_MS = 5000;
 
 /**
  *
@@ -222,6 +223,12 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
       close((err) => {
         if (err) reject(err); // eslint-disable-line curly
       });
+      setTimeout(() => {
+        log.warn(
+          `Could not close all connections within ${SERVER_CLOSE_TIMEOUT_MS}ms. Exiting anyway.`
+        );
+        process.exit(0);
+      }, SERVER_CLOSE_TIMEOUT_MS);
     });
 
   appiumServer.on(

@@ -47,6 +47,9 @@ export interface AppiumServerExtension {
   webSocketsMapping: Record<string, WSServer>;
 }
 
+/**
+ * @deprecated This interface will be removed
+ */
 export interface AppiumServerSocket extends Socket {
   _openReqCount: number;
 }

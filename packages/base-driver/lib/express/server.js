@@ -28,7 +28,7 @@ import {
 } from './websocket';
 import B from 'bluebird';
 import {DEFAULT_BASE_PATH} from '../constants';
-import {fs} from '@appium/support';
+import {fs, timing} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 const SERVER_CLOSE_TIMEOUT_MS = 5000;
@@ -207,15 +207,20 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
     await new B((_resolve, _reject) => {
-      log.info('Closing the Appium HTTP server');
+      log.info('Closing Appium HTTP server');
+      const timer = new timing.Timer().start();
       const onTimeout = setTimeout(() => {
-        log.warn(
-          `Not all active connections were closed within ${SERVER_CLOSE_TIMEOUT_MS}ms. Exiting anyway.`
+        log.info(
+          `Not all active connections have been closed within ` +
+          `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. Exiting anyway.`
         );
         process.exit(0);
       }, SERVER_CLOSE_TIMEOUT_MS);
       httpServer.once('close', () => {
-        log.info('The Appium HTTP server has been succesfully closed');
+        log.info(
+          `Appium HTTP server has been succesfully closed after ` +
+          `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
+        );
         clearTimeout(onTimeout);
         _resolve();
       });

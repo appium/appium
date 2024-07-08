@@ -12,6 +12,7 @@ let baseUrl;
 
 describe('Protocol', function () {
   let sandbox;
+  let should;
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -25,7 +26,7 @@ describe('Protocol', function () {
     const chai = await import('chai');
     const chaisAsPromised = await import('chai-as-promised');
     chai.use(chaisAsPromised.default);
-    chai.should();
+    should = chai.should();
 
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;

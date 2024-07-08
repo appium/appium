@@ -5,6 +5,11 @@ describe('proxy', function () {
   const jwproxy = new JWProxy();
   let baseServer;
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     baseServer = await server({
       routeConfiguringFunction: routeConfiguringFunction(new FakeDriver()),
       port: 4444,

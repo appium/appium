@@ -22,6 +22,11 @@ describe('Protocol', function () {
   });
 
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     port = await getTestPort();
     baseUrl = `http://${TEST_HOST}:${port}`;
   });

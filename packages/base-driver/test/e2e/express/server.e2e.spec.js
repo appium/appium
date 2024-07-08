@@ -21,6 +21,11 @@ describe('server', function () {
   let port;
   let sandbox;
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     port = await getTestPort(true);
 
     function configureRoutes(app) {
@@ -119,6 +124,11 @@ describe('tls server', function () {
   });
 
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {
@@ -167,6 +177,11 @@ describe('server plugins', function () {
   let port;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     port = await getTestPort(true);
   });
 

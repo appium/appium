@@ -13,6 +13,11 @@ describe('Websockets (e2e)', function () {
   const WS_DATA = 'Hello';
 
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
     port = await getTestPort();

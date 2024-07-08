@@ -1,7 +1,6 @@
 import type {Express} from 'express';
 import type {Server as WSServer} from 'ws';
 import type {Server as HTTPServer} from 'node:http';
-import type {Socket} from 'node:net';
 import {ServerArgs} from './config';
 
 /**
@@ -45,10 +44,6 @@ export interface AppiumServerExtension {
     keysFilter?: string | null
   ): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
-}
-
-export interface AppiumServerSocket extends Socket {
-  _openReqCount: number;
 }
 
 export {WSServer};

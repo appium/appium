@@ -641,8 +641,14 @@ describe('Bidi over SSL', function () {
   let certPath = 'certificate.cert';
   let keyPath = 'certificate.key';
   const capabilities = {...caps, webSocketUrl: true};
+  let should;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+
     try {
       await generateCertificate(certPath, keyPath);
     } catch (e) {

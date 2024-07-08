@@ -1,9 +1,17 @@
 import {readFile} from 'node:fs/promises';
 import {Item, Strongbox, strongbox} from '../../lib';
 
-const {expect} = chai;
-
 describe('@appium/strongbox', function () {
+  let expect: any;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('default behavior', function () {
     let box: Strongbox;
 

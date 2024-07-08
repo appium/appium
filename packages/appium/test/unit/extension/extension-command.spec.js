@@ -5,8 +5,6 @@ import sinon from 'sinon';
 import {FAKE_DRIVER_DIR} from '../../helpers';
 import {Manifest} from '../../../lib/extension/manifest';
 
-const {expect} = chai;
-
 /**
  * Relative path from actual `package.json` of `FakeDriver` for the `fake-stdin` script
  */
@@ -19,6 +17,16 @@ describe('ExtensionCommand', function () {
 
     /** @type {sinon.SinonSandbox} */
     let sandbox;
+
+    let expect;
+
+    before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      chai.should();
+      expect = chai.expect;
+    });
 
     beforeEach(function () {
       sandbox = sinon.createSandbox();

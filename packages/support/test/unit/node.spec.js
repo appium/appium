@@ -1,9 +1,15 @@
-import {should} from 'chai';
 import {node} from '../../lib';
 import path from 'path';
 import _ from 'lodash';
 
-describe('node utilities', function () {
+describe('node utilities', async function () {
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
+
   describe('getObjectSize', function () {
     it('should be able to calculate size of different object types', function () {
       node.getObjectSize(1).should.eql(8);
@@ -51,11 +57,11 @@ describe('node utilities', function () {
       const obj1 = {};
       node.deepFreeze(obj1).should.eql(obj1);
       const obj2 = node.deepFreeze({a: {b: 'c'}});
-      should().throw(() => (obj2.a.b = 'd'));
+      should.throw(() => (obj2.a.b = 'd'));
       node.deepFreeze(1).should.eql(1);
-      should().equal(node.deepFreeze(null), null);
+      should.equal(node.deepFreeze(null), null);
       const obj3 = [1, {}, 3];
-      should().equal(node.deepFreeze(obj3), obj3);
+      should.equal(node.deepFreeze(obj3), obj3);
     });
   });
 });

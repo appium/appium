@@ -19,6 +19,13 @@ import {withMocks, withSandbox, stubLog} from '@appium/test-support';
 import {removeColors} from './helper';
 
 describe('ios', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe(
     'XcodeCheck',
     withMocks({tp, fs}, (mocks) => {

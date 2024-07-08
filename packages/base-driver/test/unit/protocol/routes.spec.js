@@ -7,6 +7,14 @@ import crypto from 'crypto';
 describe('Protocol', function () {
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
 
   describe('ensure protocol consistency', function () {
     it('should not change protocol between patch versions', function () {

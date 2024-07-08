@@ -2,10 +2,17 @@ import {createSandbox} from 'sinon';
 import {system} from '@appium/support';
 import {getPresetDrivers} from '../../../lib/cli/setup-command';
 
-const expect = chai.expect;
-
 describe('SetupCommand', function () {
   let sandbox;
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

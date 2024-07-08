@@ -4,6 +4,13 @@ import BaseDriver from '../../../lib';
 import {createSandbox} from 'sinon';
 
 describe('timeout', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   let driver = new BaseDriver();
   let implicitWaitSpy;
   let sandbox;

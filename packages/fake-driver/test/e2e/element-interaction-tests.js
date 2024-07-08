@@ -1,13 +1,17 @@
-import chaiWebdriverIOAsync from 'chai-webdriverio-async';
-
 import {initSession, deleteSession, W3C_PREFIXED_CAPS} from '../helpers';
 
 function elementTests() {
   describe('element interaction and introspection', function () {
     let driver;
+    let should;
+
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      should = chai.should();
+
       driver = await initSession(W3C_PREFIXED_CAPS);
-      chai.use(chaiWebdriverIOAsync(driver));
     });
     after(async function () {
       return await deleteSession(driver);
@@ -20,7 +24,7 @@ function elementTests() {
     it('should set value on an element and retrieve text', async function () {
       let el = await driver.$('//MockInputField');
       await el.setValue('test value');
-      await el.should.have.text('test value');
+      (await el.getText()).should.equal('test value');
     });
     it('should not clear an invalid element', async function () {
       await (await driver.$('//MockListItem'))
@@ -30,9 +34,9 @@ function elementTests() {
     it('should clear an element', async function () {
       let el = await driver.$('//MockInputField');
       await el.setValue('test value');
-      await el.should.not.have.text('');
+      (await el.getText()).should.not.equal('');
       await el.clearValue();
-      await el.should.have.text('');
+      (await el.getText()).should.equal('');
     });
     it('should not click an invisible element', async function () {
       await (await driver.$('#Button1')).click().should.eventually.be.rejectedWith(/invalid state/);
@@ -51,16 +55,16 @@ function elementTests() {
       (await el.getTagName()).should.equal('MockWebView');
     });
     it('should detect whether an element is displayed', async function () {
-      (await driver.$('#Button1')).should.not.be.displayed();
-      (await driver.$('#Button2')).should.be.displayed();
+      (await (await driver.$('#Button1')).isDisplayed()).should.be.false;
+      (await (await driver.$('#Button2')).isDisplayed()).should.be.true;
     });
     it('should detect whether an element is enabled', async function () {
-      (await driver.$('#Button1')).should.not.be.enabled();
-      (await driver.$('#Button2')).should.be.enabled();
+      (await (await driver.$('#Button1')).isEnabled()).should.be.false;
+      (await (await driver.$('#Button2')).isEnabled()).should.be.true;
     });
     it('should detect whether an element is selected', async function () {
-      (await driver.$('#Button1')).should.not.be.selected();
-      (await driver.$('#Button2')).should.be.selected();
+      (await (await driver.$('#Button1')).isSelected()).should.be.false;
+      (await (await driver.$('#Button2')).isSelected()).should.be.true;
     });
     it('should get the rect of an element', async function () {
       let {elementId} = await driver.$('#nav');

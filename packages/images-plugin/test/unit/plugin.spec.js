@@ -13,6 +13,14 @@ describe('ImageElementPlugin#handle', function () {
   const next = () => {};
   const driver = new BaseDriver();
   const p = new ImageElementPlugin();
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('compareImages', function () {
     this.timeout(6000);
     it('should compare images via match features mode', async function () {

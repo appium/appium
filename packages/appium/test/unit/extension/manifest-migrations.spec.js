@@ -2,9 +2,17 @@ import {Manifest} from '../../../lib/extension/manifest';
 import {migrate} from '../../../lib/extension/manifest-migrations';
 import {DRIVER_TYPE} from '../../../lib/constants';
 
-const {expect} = chai;
-
 describe('manifest-migrations', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('when no installPath property present in manifest', function () {
     it('should trigger refresh', async function () {
       const manifest = Manifest.getInstance(process.cwd());

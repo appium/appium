@@ -8,6 +8,13 @@ describe('#util', function () {
   let tmpFile;
   const content = 'YOLO';
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(async function () {
     tmpRoot = await tempDir.openDir();
     tmpFile = path.resolve(tmpRoot, 'example.txt');

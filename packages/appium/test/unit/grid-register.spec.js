@@ -6,6 +6,13 @@ import {rewiremock} from '../helpers';
 describe('grid-register', function () {
   let sandbox;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
   });
@@ -38,18 +45,18 @@ describe('grid-register', function () {
     describe('when provided a path to a config file', function () {
       it('should read the config file', async function () {
         await registerNode('/path/to/config-file.json');
-        mocks['@appium/support'].fs.readFile.should.have.been.calledOnceWith(
+        mocks['@appium/support'].fs.readFile.calledOnceWith(
           '/path/to/config-file.json',
           'utf-8'
-        );
+        ).should.be.true;
       });
 
       it('should parse the config file as JSON', async function () {
-        sandbox.spy(JSON, 'parse');
+        const parseSpy = sandbox.spy(JSON, 'parse');
         await registerNode('/path/to/config-file.json');
-        JSON.parse.should.have.been.calledOnceWith(
+        parseSpy.calledOnceWith(
           await mocks['@appium/support'].fs.readFile.firstCall.returnValue
-        );
+        ).should.be.true;
       });
 
       describe('when the config file is invalid', function () {
@@ -65,13 +72,13 @@ describe('grid-register', function () {
     describe('when provided a config object', function () {
       it('should not attempt to read the object as a config file', async function () {
         await registerNode({my: 'config'});
-        mocks['@appium/support'].fs.readFile.should.not.have.been.called;
+        mocks['@appium/support'].fs.readFile.called.should.be.false;
       });
 
       it('should not attempt to parse any JSON', async function () {
-        sandbox.spy(JSON, 'parse');
+        const parseSpy = sandbox.spy(JSON, 'parse');
         await registerNode({my: 'config'});
-        JSON.parse.should.not.have.been.called;
+        parseSpy.called.should.be.false;
       });
     });
   });

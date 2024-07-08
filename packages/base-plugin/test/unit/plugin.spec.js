@@ -1,6 +1,13 @@
 import BasePlugin from '../../lib/plugin';
 
 describe('base plugin', function () {
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
+
   it('should exist', function () {
     should.exist(BasePlugin);
   });

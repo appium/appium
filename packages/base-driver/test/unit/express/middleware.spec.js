@@ -1,6 +1,11 @@
 import {pathToRegexp} from 'path-to-regexp';
 
 describe('middleware', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   describe('pathToRegexp', function () {
     it('should match static path pattern', function () {
       const pathname = '/ws/session/1234/appium/device/syslog';

@@ -12,6 +12,14 @@ import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 describe('UniversalXMLPlugin', function () {
   let next;
   const p = new UniversalXMLPlugin();
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('getPageSource', function () {
     const driver = new BaseDriver();
     it('should transform page source for ios', async function () {

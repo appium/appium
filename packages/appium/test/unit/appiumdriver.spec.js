@@ -14,8 +14,6 @@ import BasePlugin from '@appium/base-plugin';
 
 const SESSION_ID = '1';
 
-const {expect} = chai;
-
 describe('AppiumDriver', function () {
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
@@ -25,6 +23,15 @@ describe('AppiumDriver', function () {
 
   /** @type {MockConfig} */
   let MockConfig;
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -64,10 +71,10 @@ describe('AppiumDriver', function () {
       // triggers the `log` getter to set `_log`
       ad.log;
       // now we can stub `_log`, since it exists
-      sandbox.stub(ad._log, 'debug');
+      const debugStrub = sandbox.stub(ad._log, 'debug');
       // finally, wait for `updateBuildInfo()` to finish up
       await promise;
-      ad._log.debug.should.have.been.calledOnce;
+      debugStrub.calledOnce.should.be.true;
     });
   });
 
@@ -403,7 +410,7 @@ describe('AppiumDriver', function () {
             [ArgsPlugin, 'args'],
           ]);
           for (const plugin of appium.createPluginInstances()) {
-            chai.expect(plugin.cliArgs).to.eql({});
+            expect(plugin.cliArgs).to.eql({});
           }
         });
       });

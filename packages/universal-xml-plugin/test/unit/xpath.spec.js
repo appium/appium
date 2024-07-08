@@ -1,11 +1,14 @@
-import chai from 'chai';
 import {runQuery, transformQuery, getNodeAttrVal} from '../../lib/xpath';
 import {transformSourceXml} from '../../lib/source';
 import {XML_IOS} from '../fixtures';
 
-const should = chai.should();
+describe('xpath functions', async function () {
+  let should;
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
 
-describe('xpath functions', function () {
   describe('runQuery', function () {
     it('should run an xpath query on an XML string and return nodes', function () {
       runQuery('//*', XML_IOS).should.have.length(31);

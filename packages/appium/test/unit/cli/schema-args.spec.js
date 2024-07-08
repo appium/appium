@@ -2,8 +2,6 @@ import {createSandbox} from 'sinon';
 import {finalizeSchema, resetSchema, SchemaFinalizationError} from '../../../lib/schema/schema';
 import {rewiremock} from '../../helpers';
 
-const expect = chai.expect;
-
 describe('cli/schema-args', function () {
   /** @type {import('appium/lib/schema/cli-args').toParserArgs} */
   let toParserArgs;
@@ -12,6 +10,15 @@ describe('cli/schema-args', function () {
    * @type {sinon.SinonSandbox}
    */
   let sandbox;
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

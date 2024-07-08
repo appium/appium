@@ -25,6 +25,14 @@ function buildReqRes(url, method, body) {
 
 describe('proxy', function () {
   let port;
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
 
   function mockProxy(opts = {}) {
     // sets default server/port

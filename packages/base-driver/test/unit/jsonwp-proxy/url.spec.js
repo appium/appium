@@ -21,6 +21,11 @@ describe('JWProxy', function () {
   }
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+
     port = await getTestPort();
     createTestURL = createAppiumURL(TEST_HOST, port);
     testStatusURL = createTestURL('', 'status');

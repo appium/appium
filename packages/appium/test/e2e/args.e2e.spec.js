@@ -10,15 +10,20 @@ import {
   runAppiumRaw,
 } from './e2e-helpers';
 
-const {expect} = chai;
-
 describe('argument parsing', function () {
   /**
    * @type {string}
    */
   let appiumHome;
+  let expect;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     appiumHome = await tempDir.openDir();
   });
 

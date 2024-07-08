@@ -3,6 +3,11 @@
 import {validators} from '../../../lib/protocol/validators';
 
 describe('Protocol', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   describe('direct to driver', function () {
     describe('setUrl', function () {
       it('should fail when no url passed', function () {

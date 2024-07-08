@@ -5,9 +5,17 @@ import {PLUGIN_TYPE} from '../../../lib/constants';
 import {finalizeSchema, registerSchema, resetSchema} from '../../../lib/schema';
 import {toParserArgs} from '../../../lib/schema/cli-args';
 
-const {expect} = chai;
-
 describe('cli-args', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('toParserArgs()', function () {
     /**
      *

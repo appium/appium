@@ -26,6 +26,14 @@ class PluginDriver extends BaseDriver {
 
 describe('finding elements by image', function () {
   let sandbox;
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
@@ -158,7 +166,7 @@ describe('finding elements by image', function () {
       compareStub.onFirstCall().throws(new Error('Cannot find any occurrences'));
       const imgElProto = await f.findByImage(template, d, {multiple: false});
       basicImgElVerify(imgElProto, f);
-      compareStub.should.have.been.calledTwice;
+      compareStub.calledTwice.should.be.true;
     });
     it('should not add element to cache and return it directly when checking staleness', async function () {
       const imgEl = await f.findByImage(template, d, {

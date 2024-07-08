@@ -6,8 +6,6 @@ import YAML from 'yaml';
 import * as schema from '../../lib/schema/schema';
 import {resolveFixture, rewiremock} from '../helpers';
 
-const expect = chai.expect;
-
 describe('config-file', function () {
   const GOOD_YAML_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.yaml');
   const GOOD_JSON_CONFIG_FILEPATH = resolveFixture('config', 'appium-config-good.json');
@@ -47,8 +45,15 @@ describe('config-file', function () {
   let lc;
 
   let mocks;
+  let expect;
 
-  before(function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     // generally called via the CLI parser, this needs to be done manually in tests.
     // we don't need to do this before _each_ test, because we're not changing the schema.
     // if we did change the schema, this would need to be in `beforeEach()` and `afterEach()`
@@ -120,19 +125,22 @@ describe('config-file', function () {
     it('should support yaml', async function () {
       const {config} = await readConfigFile(GOOD_YAML_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate).to.have.been.calledOnce;
+      // @ts-ignore
+      schema.validate.calledOnce.should.be.true;
     });
 
     it('should support json', async function () {
       const {config} = await readConfigFile(GOOD_JSON_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate).to.have.been.calledOnce;
+      // @ts-ignore
+      schema.validate.calledOnce.should.be.true;
     });
 
     it('should support js', async function () {
       const {config} = await readConfigFile(GOOD_JS_CONFIG_FILEPATH);
       expect(config).to.eql(normalizeConfig(GOOD_JSON_CONFIG));
-      expect(schema.validate).to.have.been.calledOnce;
+      // @ts-ignore
+      schema.validate.calledOnce.should.be.true;
     });
 
     describe('when no filepath provided', function () {
@@ -141,12 +149,13 @@ describe('config-file', function () {
       });
 
       it('should search for a config file', function () {
-        expect(lc.search).to.have.been.calledOnce;
-        expect(schema.validate).to.have.been.calledOnce;
+        lc.search.calledOnce.should.be.true;
+        // @ts-ignore
+        schema.validate.calledOnce.should.be.true;
       });
 
       it('should not try to load a config file directly', function () {
-        expect(lc.load).to.not.have.been.called;
+        lc.load.called.should.be.false;
       });
 
       describe('when no config file is found', function () {
@@ -160,7 +169,8 @@ describe('config-file', function () {
 
         it('should resolve with an empty object', function () {
           expect(result).to.be.an('object').that.is.empty;
-          expect(schema.validate).not.to.have.been.called;
+          // @ts-ignore
+          schema.validate.calledOnce.should.be.false;
         });
       });
 
@@ -183,7 +193,8 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate).to.have.been.calledOnceWith(GOOD_JSON_CONFIG);
+            // @ts-ignore
+            schema.validate.calledOnceWith(GOOD_JSON_CONFIG).should.be.true;
           });
 
           describe('when the config file is valid', function () {
@@ -226,11 +237,11 @@ describe('config-file', function () {
       });
 
       it('should not attempt to find a config file', function () {
-        expect(lc.search).to.not.have.been.called;
+        lc.search.called.should.be.false;
       });
 
       it('should try to load a config file directly', function () {
-        expect(lc.load).to.have.been.calledOnce;
+        lc.load.calledOnce.should.be.true;
       });
 
       describe('when no config file exists at path', function () {
@@ -285,7 +296,8 @@ describe('config-file', function () {
 
         describe('when the config file is not empty', function () {
           it('should validate the config against a schema', function () {
-            expect(schema.validate).to.have.been.calledOnceWith(GOOD_JSON_CONFIG);
+            // @ts-ignore
+            schema.validate.calledOnceWith(GOOD_JSON_CONFIG).should.be.true;
           });
 
           describe('when the config file is valid', function () {
@@ -340,12 +352,12 @@ describe('config-file', function () {
       it('should call `betterAjvErrors()` with option `json: opts.json`', function () {
         // @ts-expect-error
         formatErrors([{}], {}, {json: '{"foo": "bar"}'});
-        expect(mocks['@sidvind/better-ajv-errors']).to.have.been.calledWith(
+        mocks['@sidvind/better-ajv-errors'].calledWith(
           schema.getSchema(),
           {},
           [{}],
           {format: 'cli', json: '{"foo": "bar"}'}
-        );
+        ).should.be.true;
       });
     });
   });

@@ -206,22 +206,22 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   // all connections are closed and the `close` event is emitted
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
-    await new B((resolve, reject) => {
-      log.info('Waiting until all active connections are closed');
+    await new B((_resolve, _reject) => {
+      log.info('Closing the Appium HTTP server');
       const onTimeout = setTimeout(() => {
         log.warn(
           `Not all active connections were closed within ${SERVER_CLOSE_TIMEOUT_MS}ms. Exiting anyway.`
         );
         process.exit(0);
       }, SERVER_CLOSE_TIMEOUT_MS);
-      httpServer.on('close', () => {
+      httpServer.once('close', () => {
         log.info('The Appium HTTP server has been succesfully closed');
         clearTimeout(onTimeout);
-        resolve();
+        _resolve();
       });
       originalClose((/** @type {Error|undefined} */ err) => {
         if (err) {
-          reject(err);
+          _reject(err);
         }
       });
     });

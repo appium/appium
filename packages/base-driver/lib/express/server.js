@@ -249,10 +249,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
     }
   );
 
-  appiumServer.on('connection', (socket) => {
-    socket.setTimeout(keepAliveTimeout);
-    socket.once('error', reject);
-  });
+  appiumServer.on('connection', (socket) => socket.setTimeout(keepAliveTimeout));
 
   return appiumServer;
 }

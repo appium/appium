@@ -2,8 +2,7 @@
   "compilerOptions": {
     "outDir": "build",
     "checkJs": true,
-    "module": "commonjs",
-    "moduleResolution": "node10"
+    "esModuleInterop": true
   },
   "extends": "@appium/tsconfig/tsconfig.plugin.json",
   "include": ["lib"]

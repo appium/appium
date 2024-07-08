@@ -65,7 +65,7 @@
     "sync-pkgs:license": "sync-monorepo-packages --force --no-package-json --packages=\"!packages/logger\" LICENSE",
     "test": "run-s test:quick",
     "test:ci": "run-s test:smoke test:unit test:types test:e2e",
-    "test:e2e": "lerna run --concurrency=2 test:e2e",
+    "test:e2e": "lerna run test:e2e",
     "test:quick": "run-s lint test:unit test:types",
     "test:slow": "run-s test:quick test:smoke test:e2e",
     "test:smoke": "smoker --all test:smoke",

@@ -214,7 +214,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
           `Not all active connections have been closed within ` +
           `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. Exiting anyway.`
         );
-        process.exit(0);
+        process.exit(process.exitCode ?? 0);
       }, SERVER_CLOSE_TIMEOUT_MS);
       httpServer.once('close', () => {
         log.info(
@@ -231,7 +231,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
       });
     });
 
-  appiumServer.on(
+  appiumServer.once(
     'error',
     /** @param {NodeJS.ErrnoException} err */ (err) => {
       if (err.code === 'EADDRNOTAVAIL') {

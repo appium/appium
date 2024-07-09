@@ -45,9 +45,6 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
 |[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|Android, iOS|Native|Community / AppiumTestDistribution|
 
-
-
-
 !!! note
 
     If you maintain an Appium driver that you would like to be listed in the Appium docs, feel free

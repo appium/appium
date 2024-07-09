@@ -9,7 +9,7 @@ A common feature of many app platforms is the ability for developers to embed we
 the platform-native app frame. This allows developers to leverage web technologies or existing web
 content for some or all of the app functionality. However, the additional complexity of mixing
 "modes" within a single application can make it difficult for automation tools that are designed to
-target the "native" elements and behaviours.
+target the "native" elements and behaviors.
 
 Appium provides a set of APIs for working with different app modes, called "contexts", that Appium
 drivers can implement if they support automation commands in these different modes. There are three

@@ -43,6 +43,10 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
+|[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|Android, iOS|Native|Community / ATD|
+
+
+
 
 !!! note
 

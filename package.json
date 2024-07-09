@@ -122,7 +122,7 @@
     "npm-run-all2": "6.2.2",
     "prettier": "3.3.2",
     "rewiremock": "3.14.5",
-    "rimraf": "5.0.8",
+    "rimraf": "5.0.9",
     "serve-static": "1.15.0",
     "sinon": "18.0.0",
     "sync-monorepo-packages": "1.0.2",

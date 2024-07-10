@@ -37,13 +37,13 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |Driver|Installation Key|Platform(s)|Mode(s)|Supported By|
 |--|--|--|--|--|
 |[Flutter](https://github.com/appium/appium-flutter-driver)|`--source=npm appium-flutter-driver`|iOS, Android|Native|Community|
+|[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|iOS, Android|Native|Community / `@AppiumTestDistribution`|
 |[LG WebOS](https://github.com/headspinio/appium-lg-webos-driver)|`--source=npm appium-lg-webos-driver`|LG TV|Web|HeadSpin|
 |[Linux](https://github.com/fantonglang/appium-linux-driver)|`--source=npm @stdspa/appium-linux-driver`|Linux|Native|`@fantonglang`|
 |[Roku](https://github.com/headspinio/appium-roku-driver)|`--source=npm @headspinio/appium-roku-driver`|Roku|Native|HeadSpin|
 |[Tizen](https://github.com/Samsung/appium-tizen-driver)|`--source=npm appium-tizen-driver`|Android|Native|Community / Samsung|
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
-|[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|Android, iOS|Native|Community / AppiumTestDistribution|
 
 !!! note
 

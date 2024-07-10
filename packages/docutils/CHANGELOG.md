@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.18](https://github.com/appium/appium/compare/@appium/docutils@1.0.17...@appium/docutils@1.0.18) (2024-07-10)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.5.3 ([234ad59](https://github.com/appium/appium/commit/234ad597988be2560a63ba346dc5e4afbfb6e20d))
+* **support:** update dependency teen_process to v2.1.10 ([86f843b](https://github.com/appium/appium/commit/86f843b9e1fc56576d7a08bf95838a58971e98b3))
+* **support:** update dependency teen_process to v2.1.7 ([5226fa8](https://github.com/appium/appium/commit/5226fa897b90e9fec9be3e79a7d48fc7b4e0016d))
+* **support:** update dependency teen_process to v2.2.0 ([06607da](https://github.com/appium/appium/commit/06607da92e93d015747fd6d6d5bdabe1b3ac58d2))
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
 ## [1.0.17](https://github.com/appium/appium/compare/@appium/docutils@1.0.16...@appium/docutils@1.0.17) (2024-06-28)
 
 **Note:** Version bump only for package @appium/docutils

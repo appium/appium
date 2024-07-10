@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.6](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.5...@appium/driver-test-support@0.6.6) (2024-07-10)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
 ## [0.6.5](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.4...@appium/driver-test-support@0.6.5) (2024-06-28)
 
 

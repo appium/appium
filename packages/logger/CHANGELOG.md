@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.0](https://github.com/appium/appium/compare/@appium/logger@1.5.0...@appium/logger@1.6.0) (2024-07-10)
+
+
+### Features
+
+* **logger:** Use LRUCache to manage log history ([#20325](https://github.com/appium/appium/issues/20325)) ([e7665d1](https://github.com/appium/appium/commit/e7665d1cd93e1edb6c981aae09ff9df37fe43d0a))
+
+
+
 ## [1.5.0](https://github.com/appium/appium/compare/@appium/logger@1.4.2...@appium/logger@1.5.0) (2024-06-27)
 
 

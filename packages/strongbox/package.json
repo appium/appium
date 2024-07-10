@@ -1,6 +1,6 @@
 {
   "name": "@appium/strongbox",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Persistent storage for Appium extensions",
   "keywords": [
     "automation",

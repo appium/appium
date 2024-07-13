@@ -11,6 +11,9 @@ title: Welcome
     display: none;
   }
 </style>
+<div style="text-align:center;width:100%;color:#FF7065">
+  Appium Conf 2024 is coming online, 13 September. Have you got something to share with the community? <a href="https://confengine.com/conferences/appium-conf-2024/proposals?utm_medium=referal&utm_source=appium.io&utm_campaign=launch" target="blank">Submit a proposal</a>      
+</div>
 <div style="text-align: center">
   <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
 </div>

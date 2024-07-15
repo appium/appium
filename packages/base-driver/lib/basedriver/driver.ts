@@ -102,7 +102,7 @@ export class BaseDriver<
     }
 
     const runCommandPromise = async () => {
-      let unexpectedShutdownRejecter: ((error?: any) => any) | null = null;
+      let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
       let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
       let wasSessionShutdownUnexpectedly = false;
       const onUnexpectedShutdown = (e: Error) => {
@@ -126,7 +126,7 @@ export class BaseDriver<
           this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
           unexpectedShutdownRejecter = null;
           // @ts-ignore typescript cannot understand this
-          unexpectedShutdownResolver();
+          unexpectedShutdownResolver?.();
           unexpectedShutdownResolver = null;
         }
 

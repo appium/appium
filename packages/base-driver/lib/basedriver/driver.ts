@@ -98,6 +98,7 @@ export class BaseDriver<
 
     // If we don't have this command, it must not be implemented
     if (!this[cmd]) {
+      await this.startNewCommandTimeout();
       throw new errors.NotYetImplementedError();
     }
 

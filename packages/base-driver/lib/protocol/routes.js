@@ -824,7 +824,7 @@ export const METHOD_MAP = /** @type {const} */ ({
     GET: {command: 'getWindowRect'},
     POST: {
       command: 'setWindowRect',
-      payloadParams: {required: ['x', 'y', 'width', 'height']},
+      payloadParams: {optional: ['x', 'y', 'width', 'height']},
     },
   },
   '/session/:sessionId/window/maximize': {

@@ -8,6 +8,7 @@ theme:
   language: zh
 nav:
   - 首页: index.md
+  - 博客: blog/index.md
   - 简介:
       - intro/index.md
       - 背景:
@@ -30,7 +31,7 @@ nav:
           - ecosystem/build-drivers.md
           - ecosystem/build-plugins.md
           - ecosystem/build-docs.md
-  - 命令行参考:
+  - CLI Reference:
       - cli/index.md
       - cli/args.md
       - cli/extensions.md
@@ -52,5 +53,11 @@ nav:
       - guides/event-timing.md
       - guides/log-filters.md
       - guides/grid.md
-  - 更多 Appium 资源: resources.md
+  - 更多资源: resources.md
+  - 开发:
+      - developing/index.md
+      - developing/build-drivers.md
+      - developing/build-plugins.md
+      - developing/build-docs.md
+      - developing/build-doctor-checks.md
   - 贡献: contributing/index.md

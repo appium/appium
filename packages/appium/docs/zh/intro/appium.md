@@ -58,48 +58,21 @@ Driver](https://github.com/appium/appium-xcuitest-driver)，因为它最终的�
 
 [^3]:您可以构建和共享自己的驱动程序！查看[构建驱动程序](../developing/build-drivers.md)，了解更多关于如何在Node.js中开发可与Appium一起使用的驱动程序的信息。
 
-## Universal programming language access
+## 通用编程语言访问
 
-But what does it mean, or look like, to *use* Appium, anyway? Since Appium is ultimately a Node.js
-program, it *could* have looked like importing Appium and its drivers as libraries into your own
-Node.js programs. But that wouldn't meet Appium's goal of providing automation capabilities to
-people using any popular programming language.
+但使用Appium到底是什么意思，或者看起来是什么样子呢？由于Appium最终是一个Node.js程序，因此看起来就像将Appium及其驱动程序作为库导入到您自己的Node.js程序中。但这无法满足Appium为使用任何流行编程语言的人们提供自动化功能的目标。
 
-Luckily, the fact that Appium rode in on Selenium's coattails meant that we had a solution to this
-problem from day one. You see, the WebDriver specification is actually an HTTP-based protocol,
-meaning it is designed to be used over a network rather than within the memory of a single program.
+幸运的是，Appium搭上了Selenium的顺风车，这意味着我们从第一天起就有了解决这个问题的办法。你看，WebDriver规范实际上是一个基于HTTP的协议，这意味着它被设计为在网络上使用，而不是在单个程序的内存中使用。
 
-One of the main benefits of this "client-server" architecture is that it allows the automation
-implementer (the thing doing the automation, in this case the 'server') to be completely distinct
-from the automation runner (the thing defining what automation should be done, in what steps,
-etc..., in this case the 'client'). Basically, all the "hard stuff" (actually figuring out how to
-make automation happen on a given platform) can be handled in one place by the server, and "thin"
-client libraries can be written in any programming language which simply encode HTTP requests to
-the server in language-appropriate way. It's possible, in other words, to bring basic Appium
-/ WebDriver capabilities to a new programming language relatively easily, assuming high-level HTTP
-libraries exist, simply by coding up a basic HTTP client in that language.
+这种“客户端-服务器”架构的主要好处之一是，它允许自动化实现者（执行自动化的东西，这里指服务器端）与自动化运行者（定义自动化应该执行什么、在哪些步骤中等，这里指客户端）完全不同。基本上，所有“硬东西”（实际上是弄清楚如何在给定的平台上实现自动化）都可以由服务器在一个地方处理，而“瘦”客户端库可以用任何编程语言编写，这些语言只需以适当的语言对服务器的HTTP请求进行编码。换句话说，如果存在高级的HTTP库，那么通过在那种语言中编写一个基本的HTTP客户端，就可以相对容易地将基本的Appium/WebDriver功能引入到新的编程语言中。
 
-There are a couple important takeaways here for you, the Appium user:
+对于Appium用户来说，这里有几个重要的要点：
 
-- Appium is an *HTTP server*. It must run as a process on some computer for as long as you want to
-  be able to use it for automation. It must be accessible on the network to whichever computer you
-  want to use to run the automation from (whether that is the same machine or one across the
-  world).
-- Unless you want to write raw HTTP calls or use cURL, using Appium for automation involves the use
-  of an [Appium Client](clients.md) in the language of your choice. The goal of each of these
-  clients is to encapsulate the WebDriver protocol so that rather than worrying about the protocol
-  itself, you can work with objects and methods that feel idiomatic for your language.
-- The Appium server and the Appium client do *not* need to be running on the same computer. You
-  simply need to be able to send HTTP requests from the client to the server over some network.
-  This greatly facilitates the use of cloud providers for Appium, since they can host the Appium
-  server and any related drivers and devices, and all you need to do is point your client script to
-  their secure endpoints.
+- Appium是一个HTTP服务器。只要您想将其用于自动化，它就必须在某台计算机上作为进程运行。它必须可以在网络上访问您想用来运行自动化的任何计算机（无论是同一台机器还是世界各地的机器）。
+- 除非您想编写原始HTTP调用或使用cURL，否则使用Appium进行自动化需要使用您选择的语言的[Appium客户端](clients.md)。每个客户端的目标都是封装WebDriver协议，这样您就可以使用对您的语言来说习惯的对象和方法，而不用担心协议本身。
+- Appium服务器和Appium客户端不需要在同一台计算机上运行。您只需要能够通过某种网络将HTTP请求从客户端发送到服务器即可。这极大地方便了Appium云提供商的使用，因为它们可以托管Appium服务器以及任何相关驱动程序和设备，并且您需要做的就是将您的客户端脚本指向其安全端点。
 
-And of course, none of this is about "testing" per se, purely about the use of Appium and its
-client libraries for automation purposes. If you want to do automation for the purpose of
-"testing", you'll likely want to enlist the help of test runners, test frameworks, and the like,
-none of which need be related to Appium; one of the benefits of Appium's "universal accessibility"
-is that it plays well with whatever set of tools you find most beneficial for your situation.
+当然，这些都不是关于“测试”本身，而纯粹是关于使用Appium及其客户端库来实现自动化目的。如果你想以“测试”为目的进行自动化，你可能会希望获得测试运行者、测试框架等的帮助，这些都不需要与Appium相关；Appium的“通用可访问性”的好处之一是，它可以很好地与你认为对你的情况最有利的任何一组工具配合使用。
 
 ## Appium's huge scope
 

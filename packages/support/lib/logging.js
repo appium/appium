@@ -67,8 +67,12 @@ export function getLogger(prefix = null) {
   for (const level of LEVELS) {
     wrappedLogger[level] = /** @param {any[]} args */ function (...args) {
       const finalPrefix = getFinalPrefix(this.prefix, isDebugTimestampLoggingEnabled);
-      // @ts-ignore This is OK
-      logger[level](finalPrefix, ...args);
+      if (args.length) {
+        // @ts-ignore This is OK
+        logger[level](finalPrefix, ...args);
+      } else {
+        logger[level](finalPrefix, '');
+      }
     };
   }
   if (!usingGlobalLog) {

@@ -8,9 +8,7 @@ title: Appium驱动程序简介
 
 ## 接口实现
 
-At the most basic level, drivers are simply Node.js classes that extend a special class included in
-Appium, called `BaseDriver`. You could have something very close to a "working" driver, with these
-very simple lines of code:
+在最基本的层面上，驱动程序只是Node.js类，它扩展了Appium中包含的一个特殊类，称为`BaseDriver`。只需一些非常简单的代码，您就可以拥有一个接近可工作的驱动程序：
 
 ```js
 import BaseDriver from '@appium/base-driver'
@@ -19,58 +17,33 @@ class MyNewDriver extends BaseDriver {
 }
 ```
 
-This empty driver doesn't *do* anything, but you could wrap it up in a Node.js module, add a few
-Appium-related fields to the module's manifest (`package.json`), and then install it using `appium
-driver install`.
+这个空驱动程序什么也不做，但您可以把它包装在一个Node.js模块中，在模块的清单（`package.json`）中添加一些与Appium相关的字段，然后使用`appium driver install`来安装它。
 
-So, from a technical perspective, an Appium driver is just a bit of code that inherits from some
-other Appium code. That's it! Now, inheriting from `BaseDriver` actually gives us a lot, because
-`BaseDriver` is essentially an encapsulation of the entire WebDriver protocol. So all a driver
-needs to do something useful is to *implement* Node.js methods with names corresponding to
-their WebDriver protocol equivalents.
+因此，从技术角度来看，Appium驱动程序只是继承自其他Appium代码的一段代码。就是这样！现在，从`BaseDriver`继承实际上给了我们很多东西，因为`BaseDriver`本质上是整个WebDriver协议的封装。因此，驱动程序需要做的有用的事情就是实现Node.js方法，其名称与WebDriver协议中定义的名称相对应。
 
-So let's say I wanted to do something with this empty driver; first I have to decide which
-WebDriver command I want to implement. For our example, let's take the [Navigate
-To](https://w3c.github.io/webdriver/#navigate-to) WebDriver command. Leave aside for the moment
-what I want to have the driver *do* when this command is executed. To tell Appium the driver can
-handle the command, all we have to do is define a method like this in our driver class:[^1]
+假设我想用这个空驱动程序做一些事情；首先我必须决定我想实现哪个WebDriver命令。对于我们的示例，让我们实现[Navigate To](https://w3c.github.io/webdriver/#navigate-to)这个WebDriver命令。暂且不谈执行此命令时我想让驱动程序做什么。为了告诉Appium驱动程序可以处理该命令，我们所要做的就是在我们的驱动程序类中定义一个这样的方法：[^1]
 
 ```js
 async setUrl(url) {
-    // do whatever we want here
+    // 在这里做我们想做的事
 }
 ```
 
-[^1]: You might notice that `setUrl` doesn't look anything like `Navigate To`, so how did we know
-  to use it rather than some other random string? Well, Appium's WebDriver-protocol-to-method-name
-  mapping is defined in a special file within the `@appium/base-driver` package called
-  [routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js).
-  So if you're writing a driver, this is where you would go to figure out what method names to use
-  and what parameters to expect. Or you could look at the source for any of the main Appium
-  drivers!
+[^1]: 您可能会注意到`setUrl`看起来一点也不像`Navigate To`，那么我们怎么知道应该使用它而不是其他随机字符串呢？Appium中WebDriver协议到方法名的映射是在`@appium/base-driver`包中名为[routes.js](https://github.com/appium/appium/blob/master/packages/base-driver/lib/protocol/routes.js)的特殊文件中定义的。因此，如果您正在编写一个驱动程序，您可以在这里弄清楚要使用什么方法名以及需要什么参数。或者您可以查看任何主要的Appium驱动程序源代码！
 
-That's it! How we actually implement the command is totally up to us, and depends on the
-platform(s) we want to support. Here are some different example implementations of this command for
-different platforms:
+就是这样！我们如何实际实现命令完全取决于我们，取决于我们想要支持的平台。以下是该命令针对不同平台的一些不同示例实现：
 
-- Browsers: execute some JavaScript to set `window.location.href`
-- iOS apps: launch an app using a deep link
-- Android apps: launch an app using a deep link
-- React apps: load a specific route
-- Unity: go to a named scene
+- 浏览器: 执行一些JavaScript去设置`window.location.href`
+- iOS应用程序: 使用深度链接启动应用程序
+- Android应用程序: 使用深度链接启动应用程序
+- React应用程序: 加载特定路线
+- Unity: 转到指定的场景
 
-So you can see there can be a lot of differences between how drivers implement the same WebDriver
-command across platforms.[^2] What is the *same*, though, is how they express that they can handle
-a protocol command.
+因此，您可以看到，驱动程序在不同平台上实现相同WebDriver命令的方式存在很大差异。[^2]不过，他们表达他们能够处理协议命令的方式是相同的。
 
-[^2]: Of course, we want to keep the semantics as similar as possible, but in the world of iOS, for
-  example, launching an app via a deep link (a URL with a special app-specific scheme) is about as
-  close as we are going to get to navigating to a web URL.
+[^2]: 当然，我们希望语义尽可能相似，但在iOS世界中，例如，通过深度链接（一个带有特定应用程序协议的URL）启动应用程序，这几乎是我们能够实现的最接近于导航到网页URL的方式。
 
-We're going into this great amount of detail (which you don't need to remember, by the way),
-because it's important to stress the point that an Appium driver is not inherently anything in
-particular, other than a bit of JS code that can handle WebDriver protocol commands. Where you go
-from there is up to you, the driver author!
+我们要深入这么多细节（顺便说一下，您不需要记住这些），重点是要强调一个观点，即Appium驱动程序本质上并不是什么特别的东西，它不过是一段能够处理WebDriver协议命令的JavaScript代码。从那里开始，你能走多远就看你了，驱动程序的作者！
 
 ## 自动化映射
 

@@ -31,7 +31,7 @@ async function tempDir() {
   );
   // creates a temp directory using the date and a random string
 
-  await fs.mkdir(filePath);
+  await fs.mkdir(filePath, {recursive: true});
 
   return filePath;
 }

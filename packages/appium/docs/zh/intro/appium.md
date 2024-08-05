@@ -74,42 +74,17 @@ Driver](https://github.com/appium/appium-xcuitest-driver)，因为它最终的�
 
 当然，这些都不是关于“测试”本身，而纯粹是关于使用Appium及其客户端库来实现自动化目的。如果你想以“测试”为目的进行自动化，你可能会希望获得测试运行者、测试框架等的帮助，这些都不需要与Appium相关；Appium的“通用可访问性”的好处之一是，它可以很好地与你认为对你的情况最有利的任何一组工具配合使用。
 
-## Appium's huge scope
+## Appium的广阔应用范围
 
-Appium's vision (automation of everything under a single API) is huge! Certainly, much bigger than
-the team of core maintainers for the open source project. So how does Appium hope to achieve this
-goal? Basically, by empowering the community to develop functionality on top of Appium as
-a *platform*. This is what we call the Appium "ecosystem".
+Appium的愿景（在单个API下实现一切自动化）是巨大的！当然，这比开源项目的核心维护人员团队要大得多。那么Appium希望如何实现这个目标呢？基本上，通过授权社区在Appium作为平台的基础上开发功能。这就是我们所说的Appium“生态系统”。
 
-The Appium team does officially maintain a few drivers itself (for example, the XCUITest driver
-that we spoke about earlier). But it cannot hope to have the platform-specific expertise or the
-capacity to maintain drivers for many different platforms. But what we have done, particularly
-beginning with Appium 2, is to provide tools to empower the community to join in our vision:
+Appium团队本身确实正式维护了一些驱动程序（例如，我们之前谈到的XCUITest驱动程序）。但不能指望他们拥有特定于平台的专业知识或为许多不同平台维护驱动程序的能力。但我们所做的，特别是从Appium 2开始，是提供工具来帮助社区加入我们的愿景：
 
-- Anyone can create a driver simply by creating a Node.js module that conforms to the appropriate
-  conventions and implements any (sub|super)set of the WebDriver protocol. Creating a driver often
-  involves a minimal amount of code because the WebDriver protocol details are abstracted away, and
-  many helper libraries are available---the same libraries that power the Appium team's own
-  drivers.
-- Sharing drivers with others is easy using the Appium driver CLI. There is no central authority.
-  Anyone can share drivers publicly or privately, for free or for sale. Drivers can be open or
-  closed source (though obviously we appreciate open source!).
+- 任何人都可以通过创建一个符合约定的Node.js模块来创建驱动程序，并实现WebDriver协议的任何子集或超集。创建驱动程序通常需要最少的代码，因为WebDriver协议的细节被抽象出来，并且有许多辅助库可用——这些库也为Appium团队自己的驱动程序提供动力。
+- 使用Appium驱动程序CLI可以轻松地与他人共享驱动程序。没有中央权力机构。任何人都可以公开或私下、免费或出售共享驱动程序。驱动程序可以是开源的，也可以是闭源的（尽管我们很欣赏开源！）。
 
-Appium's vision of being a platform for development extends beyond the support of automation for
-all app platforms. As a popular automation tool, there are many opportunities for integrating
-Appium with all kinds of other tools and services. In addition, there are many feature ideas for
-Appium, either as a core server or in its incarnation across various drivers, which the core team
-will never have time to build. And so, with Appium 2, Appium has released a plugin system that
-enables anyone to build and share modules that change how Appium works!
+Appium作为开发平台的愿景不仅限于支持所有应用平台的自动化。作为一种流行的自动化工具，Appium有很多机会与各种其他工具和服务集成。此外，对于Appium，无论是作为核心服务器还是通过各种驱动程序的实现，都有许多特性的想法，这些是核心团队永远没有时间来构建的。因此，在Appium 2中，Appium发布了一个插件系统，使任何人都可以构建和共享改变Appium工作方式的模块！
 
-In the same way that drivers are easily shareable and consumable via the Appium driver CLI, plugins
-can be published and consumed via a parallel [Plugin CLI](../cli/extensions.md). Plugins can do all
-sorts of things, for example adding the ability for Appium to find and interact with screen regions
-based on a template image (as in the [`images`
-plugin](https://github.com/appium/appium/tree/master/packages/images-plugin)). There are very few
-limitations on what you can do with plugins, so you might also be interested in learning how to
-[Build Plugins](../developing/build-plugins.md) in Node.js that can be used with Appium.
+就像驱动程序可以通过Appium驱动程序CLI轻松共享和使用一样，插件也可以通过相似的[插件CLI](../cli/extensions.md)发布和使用。插件可以做各种各样的事情，例如为Appium添加根据模板图像查找屏幕区域并与屏幕区域交互的能力（如在[图像插件](https://github.com/appium/appium/tree/master/packages/images-plugin)中）。你可以用插件做什么几乎没有限制，所以你可能也有兴趣学习如何在Node.js中[构建](../developing/build-plugins.md)可以与Appium一起使用的插件。
 
-So that's Appium: an extensible, universal interface for the UI automation of potentially
-everything! Read on into some of the specific intro docs for more details, or check out the various
-guides to dive into some more general concepts and features of Appium.
+这就是Appium：一个可扩展的通用界面，用于实现潜在一切的UI自动化！请继续阅读一些具体的介绍文档以获取更多详细信息，或查看各种指南以深入了解Appium的一些概念和功能。

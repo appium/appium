@@ -24,24 +24,16 @@ Dan对现有的选择不满意，他要求经理再给他一些时间，看看�
 `eval（）`输出以执行命令，并用python将它们写回磁盘。然后，他用C#编写了实现Selenium风格语法的代码，以编写顺序排列的javascript命令。
 iOSAuto诞生了。
 
-## Selenium Conference 2012
+## 2012年Selenium会议
 
-Dan was selected to speak at Selenium Conference 2012 in London about an
-entirely different topic. As part of his presentation, he showed off iOS
-Automation using Selenium syntax to demonstrate writing platform-agnostic tests
-that use separate platform-specific page objects with a common interface. To
-his surprise, the cool test architecture would take a backseat to the spectacle
-of iOS tests running like WebDriver tests. Several people suggested that he
-give a lightning talk later in the conference to explain exactly how it worked.
+Dan被选中在2012年伦敦的Selenium大会上演讲，讨论一个完全不同的话题。
+在他的演讲中，他展示了如何使用Selenium语法进行iOS自动化，演示了编写平台无关的测试，同时使用具有共同接口的不同平台特定页面对象。
+令他惊讶的是，这种酷炫的测试架构却被iOS测试像WebDriver测试一样运行的场面掩盖了。
+几个人建议他在会议后再做一个闪电演讲，详细解释一下这个工作原理。
 
-On the second day of the conference, Dan stepped up on stage to give the
-lightning talk.  Jason Huggins, co-creator of Selenium, moderated the lightning
-talks.  Dan experienced technical difficulties getting his presentation to
-load, and Jason nearly had to move on to the next lightning talk.  At the last
-moment, the screen turned on and Dan jumped into his presentation. He explained
-the details of his implementation and how it worked, begged for contributors,
-and in five minutes it was over. The crowd applauded politely, and he left the
-stage.
+在会议的第二天，Dan登上舞台进行闪电演讲。Selenium的共同创始人Jason Huggins主持了闪电演讲。
+Dan在加载演示文稿时遇到了技术问题，Jason差点转到下一个闪电演讲。就在最后一刻，屏幕打开了，Dan迅速进入了他的演讲。
+他详细解释了他的实现细节和工作原理，恳求贡献者，并在五分钟内结束了演讲。观众礼貌地鼓掌，他离开了舞台。
 
 ## The Phone Rings
 

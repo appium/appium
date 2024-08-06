@@ -83,38 +83,16 @@ XCUITest驱动程序的作者所做的是将驱动程序分为两部分：一部
 
 ## 代理模式
 
-There's one other important architectural aspect of drivers to understand. It can be exemplified
-again by the XCUITest driver. Recall that we just discussed how the two "halves" of the XCUITest
-driver both speak the WebDriver protocol---the Node.js half clicks right into Appium's WebDriver
-server, and the Objective-c half (WebDriverAgent) is its own WebDriver implementation.
+驱动程序还有另一个重要的架构方面需要理解。XCUITest驱动程序再次证明了这一点。回想一下，我们刚刚讨论了XCUITest驱动程序的两个“部分”是如何使用WebDriver协议的，Node.js部分直接点击Appium的WebDriver服务器，而Objective-c部分（WebDriverAgent）是它自己的WebDriver实现。
 
-This opens up the possibility of Appium taking a shortcut in certain cases. Let's imagine that the
-XCUITest driver needs to implement the `Click Element` command. The internal code of this
-implementation would look something like taking the appropriate parameters and constructing an HTTP
-request to the WebDriverAgent server. In this case, we're basically just reconstructing the
-client's original call to the Appium server![^4] So there's really no need to even write a function
-implementing the `Click Element` command. Instead, the XCUITest driver can just let Appium know
-that this command should be proxied directly to some other WebDriver server.
+这为Appium在某些情况下走捷径提供了可能性。假设XCUITest驱动程序需要实现`Click Element`命令。此实现的内部代码看起来类似于获取适当的参数并构造对WebDriverAgent服务器的HTTP请求。在这种情况下，我们基本上只是在重建客户端对Appium服务器的原始调用！[^4] 所以实际上没有必要编写一个函数来实现`Click Element`命令，XCUITest驱动程序可以让Appium知道这个命令应该代理到其他一些WebDriver服务器。
 
-[^4]: It's not *exactly* the same call, because the Appium server and the WebDriverAgent server
-  will generate different session IDs, but these differences will be handled transparently.
+[^4]: 这不是完全相同的调用，因为Appium服务器和WebDriver Agent服务器将生成不同的会话ID，但这些差异将被透明地处理。
 
-If you're not familiar with the concept of "proxying," in this case it just means that the XCUITest
-driver will not be involved at all in handling the command. Instead it will merely be repackaged
-and forwarded to WebDriverAgent at the protocol level, and WebDriverAgent's response will likewise
-be passed back directly to the client, without any XCUITest driver code seeing it or modifying it.
+如果你不熟悉"代理"这个概念，在这种情况下，它只是意味着XCUITest驱动程序将不参与处理命令。相反，它将仅仅被重新打包并转发到协议层的WebDriverAgent，并且WebDriverAgent的响应也将直接传回给客户端，而无需XCUITest驱动程序代码查看它或修改它。
 
-This architectural pattern provides a nice bonus for driver authors who choose to deal with the
-WebDriver protocol everywhere, rather than constructing bespoke protocols. It also means that
-Appium can create wrapper drivers for any other existing WebDriver implementation very easily. If
-you look at the [Appium Safari driver](https://github.com/appium/appium-safari-driver) code, for
-example, you'll see that it implements basically no standard commands, because all of these are
-proxied directly to an underlying SafariDriver process.
+这种架构模式为驱动程序开发者提供了一个好处，使他们可以选择完全使用WebDriver协议，而不需要构建特定的协议。这也意味着Appium可以非常容易地为任何现有的WebDriver实现创建封装驱动程序。例如，如果你查看[Appium的Safari驱动程序](https://github.com/appium/appium-safari-driver)代码，你会发现它基本上没有实现任何标准命令，因为所有这些命令都直接代理到一个底层的SafariDriver进程。
 
-It's important to understand that this proxying business is sometimes happening under the hood,
-because if you're ever diving into some open source driver code trying to figure out where
-a command is implemented, you might be surprised to find no implementation at all in the Node.js
-driver code itself! In that case, you'll need to figure out where commands are being proxied to so
-you can look there for the appropriate implementation.
+理解这种代理机制在幕后运行有时非常重要，因为如果你深入研究一些开源驱动程序代码，试图找出命令是在哪里实现的，你可能会惊讶地发现Node.js驱动程序代码中根本没有任何实现！在这种情况下，你需要弄清楚命令被代理到哪里，以便在那里查找相应的实现。
 
-OK, that's enough for this very detailed introduction to drivers!
+好了，这就是关于驱动程序的详细介绍的全部内容！

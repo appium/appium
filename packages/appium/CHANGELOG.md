@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.3](https://github.com/appium/appium/compare/appium@2.11.2...appium@2.11.3) (2024-08-07)
+
+
+### Bug Fixes
+
+* **appium:** update dependency ajv to v8.17.1 ([7528971](https://github.com/appium/appium/commit/75289711ee344ac9a11a572f13ddb0471e2cbf79))
+* **appium:** update dependency winston to v3.13.1 ([dcfec17](https://github.com/appium/appium/commit/dcfec17d1ceab90939b5f199854ba630829e3d1f))
+* **docutils:** update dependency yaml to v2.5.0 ([0c755f5](https://github.com/appium/appium/commit/0c755f503c49e459315616e51be0c0776089b2bb))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.0 ([#20442](https://github.com/appium/appium/issues/20442)) ([b4612e0](https://github.com/appium/appium/commit/b4612e0c7a21902a3cab658fbdc05f3b48c55d0d))
+* **logger:** update dependency lru-cache to v10.4.3 ([#20364](https://github.com/appium/appium/issues/20364)) ([8d79467](https://github.com/appium/appium/commit/8d79467da8a0733ac3e49b9152bd6905989a57ca))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
 ## [2.11.2](https://github.com/appium/appium/compare/appium@2.11.1...appium@2.11.2) (2024-07-10)
 
 

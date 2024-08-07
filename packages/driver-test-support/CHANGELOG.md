@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.7](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.6...@appium/driver-test-support@0.6.7) (2024-08-07)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.7 ([#20382](https://github.com/appium/appium/issues/20382)) ([d5ef0f9](https://github.com/appium/appium/commit/d5ef0f9c8608ba545988c3016cefd0669f2400dc))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
 ## [0.6.6](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.5...@appium/driver-test-support@0.6.6) (2024-07-10)
 
 

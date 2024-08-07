@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.19](https://github.com/appium/appium/compare/@appium/docutils@1.0.18...@appium/docutils@1.0.19) (2024-08-07)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.5.4 ([e08e7eb](https://github.com/appium/appium/commit/e08e7ebec24866611e0718f0d038e9566abd3dd6))
+* **docutils:** update dependency yaml to v2.5.0 ([0c755f5](https://github.com/appium/appium/commit/0c755f503c49e459315616e51be0c0776089b2bb))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
 ## [1.0.18](https://github.com/appium/appium/compare/@appium/docutils@1.0.17...@appium/docutils@1.0.18) (2024-07-10)
 
 

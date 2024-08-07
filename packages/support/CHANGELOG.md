@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.3](https://github.com/appium/appium/compare/@appium/support@5.1.2...@appium/support@5.1.3) (2024-08-07)
+
+
+### Bug Fixes
+
+* **support:** Allow temp dir which do not have a parent folder ([#20440](https://github.com/appium/appium/issues/20440)) ([8a307a0](https://github.com/appium/appium/commit/8a307a078b48176dfd7cf7013cd5ca405fc6d870))
+* **support:** Print an empty string if no arguments are provided to a logging function ([#20424](https://github.com/appium/appium/issues/20424)) ([885570e](https://github.com/appium/appium/commit/885570e7caec486765c1baa67131f0b3adf1daf7))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **support:** update dependency glob to v10.4.5 ([#20365](https://github.com/appium/appium/issues/20365)) ([7159428](https://github.com/appium/appium/commit/715942845b8375f96dcd6c21f0273b2a386b19a3))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
 ## [5.1.2](https://github.com/appium/appium/compare/@appium/support@5.1.1...@appium/support@5.1.2) (2024-07-10)
 
 

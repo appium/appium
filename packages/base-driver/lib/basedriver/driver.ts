@@ -144,8 +144,19 @@ export class BaseDriver<
       }
     };
 
+    const synchronizationKey = BaseDriver.name;
+    // eslint-disable-next-line dot-notation
+    const commandsQueueLen: number = this.commandsQueueGuard['queues']?.[synchronizationKey]?.length ?? 0;
+    if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
+      this.log.debug(
+        `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
+        `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
+        `already waiting for execution.`
+      );
+    }
+
     const res = this.isCommandsQueueEnabled
-      ? await this.commandsQueueGuard.acquire(BaseDriver.name, runCommandPromise)
+      ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
       : await runCommandPromise();
 
     // log timing information about this command

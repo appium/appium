@@ -447,7 +447,7 @@ async function main(args) {
     });
   }
 
-  const protocol = 'secure' in server && server.secure ? 'https' : 'http';
+  const protocol = server.isSecure() ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
   logServerAddress(
     `${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`,

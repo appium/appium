@@ -201,6 +201,10 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
+  appiumServer.isSecure = function isSecure() {
+    // eslint-disable-next-line dot-notation
+    return Boolean(this['_spdyState']?.secure);
+  };
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted

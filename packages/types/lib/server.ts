@@ -45,6 +45,8 @@ export interface AppiumServerExtension {
     keysFilter?: string | null
   ): Promise<Record<string, WSServer>>;
   webSocketsMapping: Record<string, WSServer>;
+  /** Returns true if the server operates via HTTPS protocol */
+  isSecure(): boolean;
 }
 
 /**

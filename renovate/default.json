@@ -45,7 +45,7 @@
     },
     {
       "extends": ["packages:eslint"],
-      "matchPackagePrefixes": ["@appium/eslint-config-appium"],
+      "matchPackageNames": ["@appium/eslint-config-appium**"],
       "groupName": "ESLint-related packages",
       "groupSlug": "eslint"
     },
@@ -55,13 +55,10 @@
       "groupSlug": "teen_process"
     },
     {
-      "matchPackagePrefixes": ["@appium/"],
-      "excludePackageNames": ["@appium/eslint-config-appium", "@appium/eslint-config-appium-ts"],
-      "matchPackageNames": "appium",
+      "matchPackageNames": ["appium", "@appium/**", "!@appium/eslint-config-appium**"],
       "groupName": "Appium-related packages",
       "groupSlug": "appium"
     }
   ],
-  "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}",
-  "transitiveRemediation": true
+  "semanticCommitScope": "{{#if parentDir}}{{parentDir}}{{else}}deps{{/if}}"
 }

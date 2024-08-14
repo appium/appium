@@ -57,7 +57,6 @@ Appium extension authors--or anyone else--may use this config as well.
 ### Additional Config
 
 - Uses the parent directory for the commit scope if applicable; otherwise uses `deps`. The parent directory is _typically_ only applicable in monorepos.
-- Attempts transititive remediation of vulns
 
 ## License
 

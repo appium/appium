@@ -77,7 +77,7 @@
     "argparse": "2.0.1",
     "async-lock": "1.4.1",
     "asyncbox": "3.0.0",
-    "axios": "1.7.4",
+    "axios": "1.7.5",
     "bluebird": "3.7.2",
     "cross-env": "7.0.3",
     "lilconfig": "3.1.2",

@@ -55,7 +55,7 @@
     "@types/serve-favicon": "2.5.7",
     "async-lock": "1.4.1",
     "asyncbox": "3.0.0",
-    "axios": "1.7.4",
+    "axios": "1.7.5",
     "bluebird": "3.7.2",
     "body-parser": "1.20.2",
     "express": "4.19.2",

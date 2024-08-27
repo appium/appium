@@ -773,8 +773,7 @@ class AppiumDriver extends DriverCore {
       // information here!
       if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
         const {address, port, basePath} = this.args;
-        const isUsingSsl = this.args.sslCertificatePath && this.args.sslKeyPath;
-        const scheme = isUsingSsl ? 'wss' : 'ws';
+        const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const bidiUrl = `${scheme}://${address}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         // @ts-ignore webSocketUrl gets sent by the client as a boolean, but then it is supposed
         // to come back from the server as a string. TODO figure out how to express this in our

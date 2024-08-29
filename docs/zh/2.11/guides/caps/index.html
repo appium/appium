@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://appium.io/docs/zh/2.11/guides/caps/">
       
       
-        <link rel="prev" href="../security/">
+        <link rel="prev" href="../tls/">
       
       
-        <link rel="next" href="../context/">
+        <link rel="next" href="../settings/">
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Capabilities - Appium Documentation</title>
+        <title>Session Capabilities - Appium Documentation</title>
       
     
     
@@ -120,6 +120,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#common-appium-capabilities" class="md-skip">
+          跳转至
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -153,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Capabilities
+              Session Capabilities
             
           </span>
         </div>
@@ -318,6 +323,23 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+    
+  
+  博客
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
     
       <li class="md-tabs__item">
@@ -378,7 +400,7 @@
         <a href="../../cli/" class="md-tabs__link">
           
   
-  命令行参考
+  CLI Reference
 
         </a>
       </li>
@@ -393,7 +415,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../en/commands/base-driver.md" class="md-tabs__link">
+        <a href="../../commands/" class="md-tabs__link">
           
   
   Command Reference
@@ -412,6 +434,14 @@
   
     
     
+      
+  
+  
+    
+  
+  
+    
+    
       <li class="md-tabs__item md-tabs__item--active">
         <a href="../migrating-1-to-2/" class="md-tabs__link">
           
@@ -420,6 +450,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -434,7 +467,7 @@
   
     
   
-  更多 Appium 资源
+  更多资源
 
       </a>
     </li>
@@ -445,16 +478,35 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../contributing/" class="md-tabs__link">
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../developing/" class="md-tabs__link">
+          
+  
+  开发
+
+        </a>
+      </li>
+    
+  
+
+      
         
   
+  
+  
     
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/" class="md-tabs__link">
+          
   
   贡献
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -527,6 +579,28 @@
   
   
   
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    博客
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
   
     
     
@@ -541,10 +615,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -555,8 +629,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             简介
           </label>
@@ -573,7 +647,7 @@
         
   
   <span class="md-ellipsis">
-    Appium in a Nutshell
+    Appium 简介
   </span>
   
 
@@ -602,10 +676,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -616,8 +690,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
             背景
           </label>
@@ -630,11 +704,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../intro/appium.md" class="md-nav__link">
+      <a href="../../intro/appium/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Appium如何工作？
   </span>
   
 
@@ -655,7 +729,7 @@
         
   
   <span class="md-ellipsis">
-    Intro to Appium Drivers
+    Appium驱动程序简介
   </span>
   
 
@@ -741,10 +815,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -755,8 +829,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             快速开始
           </label>
@@ -774,6 +848,27 @@
   
   <span class="md-ellipsis">
     快速入门介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
   </span>
   
 
@@ -844,24 +939,24 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="">
             
   
   <span class="md-ellipsis">
-    编写测试
+    Write a Test
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
             <span class="md-nav__icon md-icon"></span>
-            编写测试
+            Write a Test
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -928,6 +1023,48 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-rb/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write a Test (Ruby)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-dotnet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write a Test (.NET)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -983,10 +1120,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -997,8 +1134,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             生态系统
           </label>
@@ -1015,68 +1152,7 @@
         
   
   <span class="md-ellipsis">
-    Appium生态系统
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-      
-      
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    开发 Appium 扩展
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            开发 Appium 扩展
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ecosystem/build-drivers/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    构建Appium驱动程序
+    Ecosystem Overview
   </span>
   
 
@@ -1093,11 +1169,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/build-plugins/" class="md-nav__link">
+      <a href="../../ecosystem/drivers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Building Appium Plugins
+    Appium Drivers
   </span>
   
 
@@ -1114,87 +1190,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/build-docs/" class="md-nav__link">
+      <a href="../../ecosystem/clients/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Building Docs for Appium Extensions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-      
-      
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    命令行参考
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            命令行参考
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    命令行介绍
+    Appium Clients
   </span>
   
 
@@ -1211,11 +1211,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/args/" class="md-nav__link">
+      <a href="../../ecosystem/plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Server CLI Args
+    Appium Plugins
   </span>
   
 
@@ -1232,11 +1232,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/extensions/" class="md-nav__link">
+      <a href="../../ecosystem/tools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    The Extension CLI
+    Appium-Related Tools
   </span>
   
 
@@ -1279,7 +1279,7 @@
             
   
   <span class="md-ellipsis">
-    Command Reference
+    CLI Reference
   </span>
   
 
@@ -1288,6 +1288,158 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CLI Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command-Line Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Command-Line Arguments
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/env-vars/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Environment Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/extensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extension Command-Line Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setup Command-Line Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Command Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Command Reference
           </label>
@@ -1300,11 +1452,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/base-driver.md" class="md-nav__link">
+      <a href="../../commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Intro to Commands
   </span>
   
 
@@ -1321,11 +1473,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/execute-driver-plugin.md" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Driver: base-driver
   </span>
   
 
@@ -1342,11 +1494,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/images-plugin.md" class="md-nav__link">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: execute-driver
   </span>
   
 
@@ -1363,11 +1515,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/relaxed-caps-plugin.md" class="md-nav__link">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: images
   </span>
   
 
@@ -1384,11 +1536,32 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/universal-xml-plugin.md" class="md-nav__link">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: relaxed-caps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugin: universal-xml
   </span>
   
 
@@ -1426,10 +1599,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1440,10 +1613,50 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             指南
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Migration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            Migration
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1458,7 +1671,76 @@
         
   
   <span class="md-ellipsis">
-    自 Appium 1.x 迁移到 Appium 2.x
+    Migrating to Appium 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Server/Driver Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            Server/Driver Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managing-exts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Managing Drivers and Plugins
   </span>
   
 
@@ -1475,11 +1757,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../managing-exts/" class="md-nav__link">
+      <a href="../branch-testing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Managing Appium Drivers and Plugins
+    Local Validation Of Extension PRs
   </span>
   
 
@@ -1535,119 +1817,6 @@
                 
   
   
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
-    Capabilities
-  </span>
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../context/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Context API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Settings API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Execute Script Overloads
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../event-timing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Event Timing API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
   
   
     <li class="md-nav__item">
@@ -1655,7 +1824,7 @@
         
   
   <span class="md-ellipsis">
-    Log Filtering
+    Filtering the Appium Log
   </span>
   
 
@@ -1686,6 +1855,325 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching of Application Bundles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tls/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSL/TLS/SPDY Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Session Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            Session Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Session Capabilities
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Session Capabilities
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-appium-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Appium Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-appiumoptions-to-group-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using appium:options to Group Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#always-match-and-first-match-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Always-Match and First-Match Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Notes for Cloud Providers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Special Notes for Cloud Providers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#suggested-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suggested capabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example-with-appiumoptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic example with appium:options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extension-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extension objects
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../settings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Session Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execute-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Execute Methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Managing Contexts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../event-timing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Retrieving Event Timings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1704,7 +2192,7 @@
         
   
   <span class="md-ellipsis">
-    更多 Appium 资源
+    更多资源
   </span>
   
 
@@ -1719,16 +2207,258 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../contributing/" class="md-nav__link">
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
         
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    开发
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            开发
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-drivers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    构建Appium驱动程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-docs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-doctor-checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Doctor Checks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
+            
   
   <span class="md-ellipsis">
     贡献
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            贡献
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to Appium
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/develop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing Code
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/config-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appium's Config System
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1751,6 +2481,92 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-appium-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Appium Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-appiumoptions-to-group-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using appium:options to Group Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#always-match-and-first-match-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Always-Match and First-Match Capabilities
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#special-notes-for-cloud-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Special Notes for Cloud Providers
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Special Notes for Cloud Providers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#suggested-capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      Suggested capabilities
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic example
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-example-with-appiumoptions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Basic example with appium:options
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extension-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extension objects
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1772,9 +2588,341 @@
   
 
 
-  <h1>Capabilities</h1>
+  <h1>Session Capabilities</h1>
 
-<p>TODO</p>
+<p>"Capabilities" is the name given to the set of parameters used to start an Appium session. The
+information in the set describes what sort of "capabilities" you want your session to have, for
+example, a certain mobile operating system or a certain version of a device. Capabilities are
+represented as key-value pairs, with values allowed to be any valid JSON type, including
+other objects.</p>
+<p>The W3C WebDriver spec's <a href="https://w3c.github.io/webdriver/#capabilities">section on Capabilities</a>
+identifies a small set of 10 standard capabilities, including the following:</p>
+<table>
+<thead>
+<tr>
+<th>Capability Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>browserName</code></td>
+<td><code>string</code></td>
+<td>The name of the browser to launch and automate</td>
+</tr>
+<tr>
+<td><code>browserVersion</code></td>
+<td><code>string</code></td>
+<td>The specific version of the browser</td>
+</tr>
+<tr>
+<td><code>platformName</code></td>
+<td><code>string</code></td>
+<td>The type of platform hosting the browser</td>
+</tr>
+</tbody>
+</table>
+<h2 id="common-appium-capabilities">Common Appium Capabilities<a class="headerlink" href="#common-appium-capabilities" title="Permanent link">&para;</a></h2>
+<p>Appium understands these browser-focused capabilities, but introduces a number of additional
+capabilities. According to the WebDriver spec, any
+non-standard "extension capabilities" must include a namespace prefix (signifying the vendor
+introducing the capability), ending in a <code>:</code>. Appium's vendor prefix is
+<code>appium:</code>, and so any Appium-specific capabilities must include this prefix. Depending on which
+client you are using, the prefix may be added automatically or in conjunction with certain
+interfaces, but it is always a good practice to explicitly include it for clarity.</p>
+<p>Here is a list of all the globally-recognized Appium capabilities:</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Individual drivers and plugins can support other capabilities, so refer to their documentation
+for lists ofspecific capability names. Some drivers may also not support all of these capabilities</p>
+</div>
+<table>
+<thead>
+<tr>
+<th><div style="width:12em">Capability</div></th>
+<th>Type</th>
+<th>Required?</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>platformName</code></td>
+<td><code>string</code></td>
+<td>yes</td>
+<td>The type of platform hosting the app or browser</td>
+</tr>
+<tr>
+<td><code>appium:automationName</code></td>
+<td><code>string</code></td>
+<td>yes</td>
+<td>The name of the Appium driver to use</td>
+</tr>
+<tr>
+<td><code>browserName</code></td>
+<td><code>string</code></td>
+<td>no</td>
+<td>The name of the browser to launch and automate, if the driver supports web browsers as a special case</td>
+</tr>
+<tr>
+<td><code>appium:app</code></td>
+<td><code>string</code></td>
+<td>no</td>
+<td>The path to an installable application</td>
+</tr>
+<tr>
+<td><code>appium:deviceName</code></td>
+<td><code>string</code></td>
+<td>no</td>
+<td>The name of a particular device to automate, e.g., <code>iPhone 14</code> (currently only actually useful for specifying iOS simulators, since in other situations it's typically recommended to use a specific device id via the <code>appium:udid</code> capability).</td>
+</tr>
+<tr>
+<td><code>appium:platformVersion</code></td>
+<td><code>string</code></td>
+<td>no</td>
+<td>The version of a platform, e.g., for iOS, <code>16.0</code></td>
+</tr>
+<tr>
+<td><code>appium:newCommandTimeout</code></td>
+<td><code>number</code></td>
+<td>no</td>
+<td>The number of seconds the Appium server should wait for clients to send commands before deciding that the client has gone away and the session should shut down</td>
+</tr>
+<tr>
+<td><code>appium:noReset</code></td>
+<td><code>boolean</code></td>
+<td>no</td>
+<td>If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:fullReset</code></td>
+<td><code>boolean</code></td>
+<td>no</td>
+<td>If true, instruct an Appium driver to augment its usual reset logic with additional steps to ensure maximum environmental reproducibility (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:eventTimings</code></td>
+<td><code>boolean</code></td>
+<td>no</td>
+<td>If true, instruct an Appium driver to collect <a href="../event-timing/">Event Timings</a> (default <code>false</code>)</td>
+</tr>
+<tr>
+<td><code>appium:printPageSourceOnFindFailure</code></td>
+<td><code>boolean</code></td>
+<td>no</td>
+<td>If true, collect the page source and print it to the Appium log whenever a request to find an element fails (default <code>false</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Some drivers place more complex constraints on capabilities as a group. For example, while the
+<code>appium:app</code> and <code>browserName</code> capabilities are listed above as optional, if you want to launch
+a session with a specific app, the XCUITest driver requires that at least one of <code>appium:app</code>,
+<code>browserName</code>, or <code>appium:bundleId</code> are included in the capabilities (otherwise it will not know
+what app to install and/or launch and will simply open a session on the home screen). Each driver
+will document how it interprets these capabilities and any other platform-specific requirements.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Capabilities are like parameters used when starting a session. After the capabilities are sent
+and the session is started, they cannot be changed. If a driver supports updating aspects of
+its behaviour in the course of a session, it will provide a <a href="../settings/">Setting</a> for this
+purpose instead of, or in addition to, a capability.</p>
+</div>
+<p>Each Appium client has its own way of constructing capabilities and starting a session. For
+examples of doing this in each client library, head to the <a href="../../ecosystem/">Ecosystem</a> page
+and click through to the appropriate client documentation.</p>
+<h2 id="using-appiumoptions-to-group-capabilities">Using <code>appium:options</code> to Group Capabilities<a class="headerlink" href="#using-appiumoptions-to-group-capabilities" title="Permanent link">&para;</a></h2>
+<p>If you use a lot of <code>appium:</code> capabilities in your tests, it can get a little repetitive. You can
+combine all capabilities as an object value of a single <code>appium:options</code> capability instead, in
+which case you don't need to use prefixes on the capabilities inside the object. For example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">        </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">        </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;16.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/path/to/your.app&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 12&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="nt">&quot;noReset&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+</code></pre></div>
+<p>Note that constructing a capability value which is itself an object differs by language; refer to
+your client documentation for further examples on how to achieve this.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you include the same capabilities both inside and outside of <code>appium:options</code>, the values
+inside of <code>appium:options</code> take precedence.</p>
+</div>
+<h2 id="always-match-and-first-match-capabilities">Always-Match and First-Match Capabilities<a class="headerlink" href="#always-match-and-first-match-capabilities" title="Permanent link">&para;</a></h2>
+<p>The W3C spec allows clients to give the Appium server some flexibility in the kind of session it
+creates in response to a new session request. This is through the concept of "always-match" and
+"first-match" capabilities:</p>
+<ul>
+<li>Always-match capabilities consist of a single set of capabilities, every member of which must
+  be satisfied by the server in order for the new session request to proceed.</li>
+<li>First-match capabilities consist of an array of capability sets. Each set is merged with the
+  always-match capabilities, and the first set that the server knows how to handle will be the set
+  that is used to start the session.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Check out the <a href="https://w3c.github.io/webdriver/#processing-capabilities">spec itself</a> or
+a <a href="https://github.com/jlipps/simple-wd-spec#processing-capabilities">summarized version</a> for
+a more in-depth description of how capabilities are processed.</p>
+</div>
+<p>In practice, use of first-match capabilities is not necessary or recommended for use with Appium.
+Instead, we recommend that you define the explicit set of capabilities you want the Appium
+server to handle. These will be encoded as the always-match capabilities, and the array of
+first-match capabilities will be empty.</p>
+<p>That being said, Appium <em>does</em> understand always-match and first-match capabilities as
+defined in the W3C spec, so if you use these features, Appium will work as expected. The process of
+defining always-match and first-match capabilities is unique to each client library, so refer to
+the documentation for your client library to see examples of how it works.</p>
+<h2 id="special-notes-for-cloud-providers">Special Notes for Cloud Providers<a class="headerlink" href="#special-notes-for-cloud-providers" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section is not intended for end-users of Appium; it is intended for developers building
+Appium-compatible cloud services.</p>
+</div>
+<p>When managing an Appium cloud, your users may wish to target various independent versions of Appium
+drivers and plugins. It is of course up to each service provider how they wish to implement the
+discovery, installation, and availability of any official or third party drivers or plugins. But
+the Appium team does provide several suggestions, for consistency across the industry. <em>These are
+recommendations only,</em> and not a standard, but adopting it will help users to navigate the increased
+complexity that working with Appium 2 in a cloud environment may bring.</p>
+<h3 id="suggested-capabilities">Suggested capabilities<a class="headerlink" href="#suggested-capabilities" title="Permanent link">&para;</a></h3>
+<p>In addition to the standard <code>platformName</code>, <code>appium:deviceName</code>, <code>appium:automationName</code>, and
+<code>appium:platformVersion</code>, we recommend adopting the capability <code>$cloud:appiumOptions</code>, where the
+label <code>$cloud</code> is not meant to be interpreted literally but instead should be replaced by your
+vendor prefix (so for HeadSpin it would be <code>headspin</code>, Sauce Labs it would be <code>sauce</code>, and
+BrowserStack it would be <code>browserstack</code>, to name just a few examples). The <code>$cloud:appiumOptions</code>
+capability would itself be a JSON object, with the following internal keys:</p>
+<table>
+<thead>
+<tr>
+<th><div style="width:10em">Capability</div></th>
+<th>Usage</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code></td>
+<td>The version of the Appium server that is used to host and manage drivers. If omitted, the behavior is left up to the provider, but the recommendation would be to provide the latest official version.</td>
+<td><code>2.0.0</code></td>
+</tr>
+<tr>
+<td><code>automationVersion</code></td>
+<td>The version of the driver (as specified by <code>appium:automationName</code>) that should be used.</td>
+<td><code>1.55.2</code></td>
+</tr>
+<tr>
+<td><code>automation</code></td>
+<td>The name of a custom driver to use (see below for more info). This would override <code>appium:automationName</code> and <code>$cloud:automationVersion</code>.</td>
+<td><code>{"name": "@org/custom-driver", "source": "github", "package": "custom-driver"}</code></td>
+</tr>
+<tr>
+<td><code>plugins</code></td>
+<td>The list of plugins (and potentially versions of plugins) that should be activated (see below for more info).</td>
+<td><code>["images", "universal-xml"]</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="basic-example">Basic example<a class="headerlink" href="#basic-example" title="Permanent link">&para;</a></h3>
+<p>Appium extensions (drivers and plugins) have a set of properties that specify where they can be
+installed from. Cloud providers are obviously under no obligation to provide support for
+arbitrarily specified extensions, seeing as these may represent untrusted code running in a managed
+environment. In the case where arbitrary extensions are not supported, the <code>appium:automationName</code>,
+<code>$cloud:automationVersion</code>, and <code>$cloud:appiumPlugins</code> capabilities should be sufficient. See the
+following JSON object representing capabilities for a session:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;appium:platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;appium:deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;appium:app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">&quot;appium:automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">}</span>
+</code></pre></div>
+<p>This set of capabilities requests an Appium 2+ server supporting the XCUITest driver at version
+<code>3.52.0</code>, and the <code>images</code> plugin active. This set is easy for a cloud provider to verify. The
+cloud provider can obviously do anything it wants in response to these capabilities, including
+downloading Appium and driver and plugin packages on the fly, or erroring out if the versions
+requested are not in a supported set, or if the plugin is not supported, etc...</p>
+<h3 id="basic-example-with-appiumoptions">Basic example with <code>appium:options</code><a class="headerlink" href="#basic-example-with-appiumoptions" title="Permanent link">&para;</a></h3>
+<p>The previous example still looks a bit disorganized, so of course we also recommend that cloud
+providers support the <code>appium:options</code> capability as detailed above, which could turn the previous
+set of capabilities into the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;platformName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iOS&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;appium:options&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">&quot;platformVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;14.4&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">&quot;deviceName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;iPhone 11&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">&quot;app&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Some-App.app.zip&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">&quot;automationName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;XCUITest&quot;</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2.0.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">&quot;automationVersion&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;3.52.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">]</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">}</span>
+</code></pre></div>
+<h3 id="extension-objects">Extension objects<a class="headerlink" href="#extension-objects" title="Permanent link">&para;</a></h3>
+<p>Some service providers may wish to dynamically allow access to all of the features of the Appium
+2 CLI, including downloading arbitrary drivers and plugins. To represent these extensions, we can
+define special JSON "extension objects", with the following keys:</p>
+<ul>
+<li><code>name</code>: the name of the extension. This would be an <code>npm</code> package name (if downloading from <code>npm</code>),
+  or a <code>git</code> or GitHub spec (if downloading from a <code>git</code> server or GitHub).</li>
+<li><code>version</code>: the version of the extension, e.g., the <code>npm</code> package version or <code>git</code> SHA.</li>
+<li>(optional) <code>source</code>: a denotation of where the extension can be downloaded from. It is recommended
+  to support the following values: <code>appium</code>, <code>npm</code>, <code>git</code>, <code>github</code>. Here, <code>appium</code> means "Appium's
+  own official list", and should be the default value if this key is not included.</li>
+<li>(optional) <code>package</code>: when downloading extensions from <code>git</code> or GitHub, the <code>npm</code> package name of
+  the extension must also be provided. This is optional for non-<code>git</code> sources.</li>
+</ul>
+<p>Since each session is handled by a single driver, the <code>$cloud:appiumOptions</code>/<code>$automation</code>
+capability could be used with an extension object value to denote this driver, for example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">&quot;automation&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git+https://some-git-host.com/custom-driver-project.git&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;some-git-sha&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;git&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;driver-npm-package-name&quot;</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">}</span>
+</code></pre></div>
+<p>And since sessions can handle multiple plugins, each value in the list of <code>$cloud:appiumPlugins</code>
+could also be an extension object rather than a string, so that specific versions could be
+requested:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span><span class="nt">&quot;$cloud:appiumOptions&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="nt">&quot;plugins&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;images&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1.1.0&quot;</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-github-org/my-custom-plugin&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">            </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a83f2e&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;github&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">            </span><span class="nt">&quot;package&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;custom-plugin&quot;</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="p">}]</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">}</span>
+</code></pre></div>
+<p>These serve as illustrative examples for the recommendations here. Of course, it is up to the
+service providers to implement the handling of these capabilities at their front end / load
+balancer, to perform any error checking, or to actually run any of the <code>appium driver</code> or <code>appium
+plugin</code> CLI commands that support the end user's request. This section is merely a suggestion as to
+how service providers might design their user-facing capabilities API in a way which in principle
+supports all of the capabilities that Appium itself would provide to the end user if they were
+running Appium on their own.</p>
 
 
 
@@ -1795,7 +2943,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-07-06T19:46:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-07-06</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-25T16:48:56+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-25</span>
   </span>
 
     

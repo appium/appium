@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://appium.io/docs/zh/2.11/guides/log-filters/">
       
       
-        <link rel="prev" href="../event-timing/">
+        <link rel="prev" href="../security/">
       
       
         <link rel="next" href="../grid/">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Log Filtering - Appium Documentation</title>
+        <title>Filtering the Appium Log - Appium Documentation</title>
       
     
     
@@ -120,6 +120,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#config-format" class="md-skip">
+          跳转至
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -153,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Log Filtering
+              Filtering the Appium Log
             
           </span>
         </div>
@@ -318,6 +323,23 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../../blog/" class="md-tabs__link">
+        
+  
+    
+  
+  博客
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
     
       <li class="md-tabs__item">
@@ -378,7 +400,7 @@
         <a href="../../cli/" class="md-tabs__link">
           
   
-  命令行参考
+  CLI Reference
 
         </a>
       </li>
@@ -393,7 +415,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../en/commands/base-driver.md" class="md-tabs__link">
+        <a href="../../commands/" class="md-tabs__link">
           
   
   Command Reference
@@ -412,6 +434,14 @@
   
     
     
+      
+  
+  
+    
+  
+  
+    
+    
       <li class="md-tabs__item md-tabs__item--active">
         <a href="../migrating-1-to-2/" class="md-tabs__link">
           
@@ -420,6 +450,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -434,7 +467,7 @@
   
     
   
-  更多 Appium 资源
+  更多资源
 
       </a>
     </li>
@@ -445,16 +478,35 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../contributing/" class="md-tabs__link">
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../developing/" class="md-tabs__link">
+          
+  
+  开发
+
+        </a>
+      </li>
+    
+  
+
+      
         
   
+  
+  
     
+    
+      <li class="md-tabs__item">
+        <a href="../../contributing/" class="md-tabs__link">
+          
   
   贡献
 
-      </a>
-    </li>
+        </a>
+      </li>
+    
   
 
       
@@ -527,6 +579,28 @@
   
   
   
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    博客
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
   
     
     
@@ -541,10 +615,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -555,8 +629,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             简介
           </label>
@@ -573,7 +647,7 @@
         
   
   <span class="md-ellipsis">
-    Appium in a Nutshell
+    Appium 简介
   </span>
   
 
@@ -602,10 +676,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -616,8 +690,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
             背景
           </label>
@@ -630,11 +704,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../intro/appium.md" class="md-nav__link">
+      <a href="../../intro/appium/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Appium如何工作？
   </span>
   
 
@@ -655,7 +729,7 @@
         
   
   <span class="md-ellipsis">
-    Intro to Appium Drivers
+    Appium驱动程序简介
   </span>
   
 
@@ -741,10 +815,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -755,8 +829,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             快速开始
           </label>
@@ -774,6 +848,27 @@
   
   <span class="md-ellipsis">
     快速入门介绍
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/requirements/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System Requirements
   </span>
   
 
@@ -844,24 +939,24 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
         
           
-          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="">
             
   
   <span class="md-ellipsis">
-    编写测试
+    Write a Test
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
             <span class="md-nav__icon md-icon"></span>
-            编写测试
+            Write a Test
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -928,6 +1023,48 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-rb/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write a Test (Ruby)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/test-dotnet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write a Test (.NET)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -983,10 +1120,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -997,8 +1134,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             生态系统
           </label>
@@ -1015,68 +1152,7 @@
         
   
   <span class="md-ellipsis">
-    Appium生态系统
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-    
-    
-    
-      
-      
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    开发 Appium 扩展
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_2">
-            <span class="md-nav__icon md-icon"></span>
-            开发 Appium 扩展
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../ecosystem/build-drivers/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    构建Appium驱动程序
+    Ecosystem Overview
   </span>
   
 
@@ -1093,11 +1169,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/build-plugins/" class="md-nav__link">
+      <a href="../../ecosystem/drivers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Building Appium Plugins
+    Appium Drivers
   </span>
   
 
@@ -1114,87 +1190,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../ecosystem/build-docs/" class="md-nav__link">
+      <a href="../../ecosystem/clients/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Building Docs for Appium Extensions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-      
-      
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    命令行参考
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
-            <span class="md-nav__icon md-icon"></span>
-            命令行参考
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../cli/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    命令行介绍
+    Appium Clients
   </span>
   
 
@@ -1211,11 +1211,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/args/" class="md-nav__link">
+      <a href="../../ecosystem/plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Server CLI Args
+    Appium Plugins
   </span>
   
 
@@ -1232,11 +1232,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../cli/extensions/" class="md-nav__link">
+      <a href="../../ecosystem/tools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    The Extension CLI
+    Appium-Related Tools
   </span>
   
 
@@ -1279,7 +1279,7 @@
             
   
   <span class="md-ellipsis">
-    Command Reference
+    CLI Reference
   </span>
   
 
@@ -1288,6 +1288,158 @@
         
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            CLI Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command-Line Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/args/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Command-Line Arguments
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/env-vars/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Server Environment Variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/extensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Extension Command-Line Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setup Command-Line Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Command Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Command Reference
           </label>
@@ -1300,11 +1452,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/base-driver.md" class="md-nav__link">
+      <a href="../../commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Intro to Commands
   </span>
   
 
@@ -1321,11 +1473,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/execute-driver-plugin.md" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Driver: base-driver
   </span>
   
 
@@ -1342,11 +1494,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/images-plugin.md" class="md-nav__link">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: execute-driver
   </span>
   
 
@@ -1363,11 +1515,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/relaxed-caps-plugin.md" class="md-nav__link">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: images
   </span>
   
 
@@ -1384,11 +1536,32 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../en/commands/universal-xml-plugin.md" class="md-nav__link">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    None
+    Plugin: relaxed-caps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Plugin: universal-xml
   </span>
   
 
@@ -1426,10 +1599,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1440,10 +1613,50 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_7">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
             指南
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_1" id="__nav_8_1_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Migration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_1">
+            <span class="md-nav__icon md-icon"></span>
+            Migration
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1458,7 +1671,78 @@
         
   
   <span class="md-ellipsis">
-    自 Appium 1.x 迁移到 Appium 2.x
+    Migrating to Appium 2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8_2" id="__nav_8_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Server/Driver Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8_2">
+            <span class="md-nav__icon md-icon"></span>
+            Server/Driver Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../managing-exts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Managing Drivers and Plugins
   </span>
   
 
@@ -1475,11 +1759,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../managing-exts/" class="md-nav__link">
+      <a href="../branch-testing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Managing Appium Drivers and Plugins
+    Local Validation Of Extension PRs
   </span>
   
 
@@ -1535,111 +1819,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../caps/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Capabilities
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../context/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Context API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../settings/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Settings API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../execute-script-overload/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Execute Script Overloads
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../event-timing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    The Event Timing API
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -1650,15 +1829,76 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Filtering the Appium Log
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
-    Log Filtering
+    Filtering the Appium Log
   </span>
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Config Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-errors-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Errors Handling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1686,6 +1926,209 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caching/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Caching of Application Bundles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tls/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSL/TLS/SPDY Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Session Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            Session Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Session Capabilities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../settings/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Session Settings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../execute-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Execute Methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../context/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Managing Contexts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../event-timing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Retrieving Event Timings
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1704,7 +2147,7 @@
         
   
   <span class="md-ellipsis">
-    更多 Appium 资源
+    更多资源
   </span>
   
 
@@ -1719,16 +2162,258 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../contributing/" class="md-nav__link">
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
         
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    开发
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            开发
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-drivers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    构建Appium驱动程序
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-plugins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Plugins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-docs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developing/build-doctor-checks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building Doctor Checks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="">
+            
   
   <span class="md-ellipsis">
     贡献
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            贡献
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing to Appium
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/develop/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing Code
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/config-system/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appium's Config System
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -1751,6 +2436,47 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#config-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Config Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-errors-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Config Errors Handling
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1772,9 +2498,74 @@
   
 
 
-  <h1>Log Filtering</h1>
+  <h1>Filtering the Appium Log</h1>
 
-<p>TODO</p>
+<p>Sometimes it might be necessary to hide sensitive information, like passwords, device identifiers,
+hashes, etc..., from the server log. Appium makes it possible to ensure such information is
+redacted in logs via the <code>--log-filters</code> command line argument. This argument allows you to provide
+the path to a special config file, containing one or more log obfuscation rules.</p>
+<h2 id="config-format">Config Format<a class="headerlink" href="#config-format" title="Permanent link">&para;</a></h2>
+<p>The filtering config must be one of:</p>
+<ul>
+<li>a path to a valid JSON file containing an array of filtering rules</li>
+<li>a <code>log-filters</code> entry in an <a href="../config/">Appium Config</a> file, with the rules array inline</li>
+</ul>
+<p>Each rule is an object with a set of predefined properties. The following rule properties are
+supported:</p>
+<ul>
+<li><code>pattern</code>: A valid Javascript RegExp pattern to replace. Must be a valid non-empty pattern.</li>
+<li><code>text</code>: A simple non-empty exact text match to replace. Either this property or the above one must
+  be provided. <code>pattern</code> has priority over <code>text</code> if both are provided.</li>
+<li><code>flags</code>: Regular expression flags for the given pattern. Supported flags are the same as for the
+  standard JavaScript <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Advanced_searching_with_flags_2">RegExp constructor</a>.
+  Note that the <code>g</code> (global matching) flag is always enabled.</li>
+<li><code>replacer</code>: The replacer value to use. By default it is <code>**SECURE**</code>. Empty values are allowed.</li>
+</ul>
+<h3 id="config-examples">Config Examples<a class="headerlink" href="#config-examples" title="Permanent link">&para;</a></h3>
+<p>Replace all occurrences of <code>my.magic.app</code> string with the default replacer:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">        </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my.magic.app&quot;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>
+</code></pre></div>
+<p>Replace all occurrences of <code>my.magic.&lt;any char&gt;</code> string with a custom replacer (case insensitive):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">[</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">        </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my\\.magic\\.\\w&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;i&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="nt">&quot;replacer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;***&quot;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">]</span>
+</code></pre></div>
+<p>Replace all occurrences of <code>my.magic.&lt;any chars&gt;</code> and/or <code>your.magic</code> strings with a custom
+replacer (case insensitive):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">[</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my\\.magic\\.\\w+&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;i&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="nt">&quot;replacer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;***&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;your\\.magic&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;i&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="nt">&quot;replacer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;***&quot;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">]</span>
+</code></pre></div>
+<p>Truncate all log lines to max 15 chars (advanced):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">[</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">        </span><span class="nt">&quot;pattern&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;(.{1,15}).*&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">        </span><span class="nt">&quot;flags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">        </span><span class="nt">&quot;replacer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;$1&quot;</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">]</span>
+</code></pre></div>
+<h3 id="config-errors-handling">Config Errors Handling<a class="headerlink" href="#config-errors-handling" title="Permanent link">&para;</a></h3>
+<p>If any of the config rules contains invalid items (such as empty/invalid pattern, empty rule, etc.)
+then Appium will print the detailed report about collected errors and will fail to start until
+these errors are addressed.</p>
 
 
 
@@ -1795,7 +2586,7 @@
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2022-07-06T19:46:53+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2022-07-06</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-25T16:48:56+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-25</span>
   </span>
 
     

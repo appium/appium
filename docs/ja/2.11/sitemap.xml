@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.io/docs/ja/2.11/</loc>
-         <lastmod>2024-07-13</lastmod>
+         <lastmod>2024-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/ja/2.11/blog/</loc>
-         <lastmod>2024-07-13</lastmod>
+         <lastmod>2024-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/ja/2.11/guides/migrating-1-to-2/</loc>
-         <lastmod>2024-07-13</lastmod>
+         <lastmod>2024-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://appium.io/docs/ja/2.11/intro/</loc>
-         <lastmod>2024-07-13</lastmod>
+         <lastmod>2024-08-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

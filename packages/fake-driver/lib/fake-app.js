@@ -106,7 +106,7 @@ export class FakeApp {
   activateWebview(wv) {
     this.activeWebview = wv;
     let fragment = new XMLDom.XMLSerializer().serializeToString(wv.node);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT);
   }
 
   deactivateWebview() {
@@ -117,7 +117,7 @@ export class FakeApp {
   activateFrame(frame) {
     this.activeFrame = frame;
     let fragment = new XMLDom.XMLSerializer().serializeToString(frame);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT);
   }
 
   deactivateFrame() {

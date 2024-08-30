@@ -94,7 +94,7 @@ export class FakeApp {
     this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
     this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
     this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
-    this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml);
+    this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml, XMLDom.MIME_TYPE.XML_TEXT);
     this.activeDom = this.dom;
   }
 

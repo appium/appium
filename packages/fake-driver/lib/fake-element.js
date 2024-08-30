@@ -108,7 +108,7 @@ export class FakeElement {
 
   get xmlFragment() {
     let frag = new XMLDom.XMLSerializer().serializeToString(this.node);
-    return new XMLDom.DOMParser().parseFromString(frag, 'application/xml');
+    return new XMLDom.DOMParser().parseFromString(frag, XMLDom.MIME_TYPE.XML_TEXT);
   }
 }
 

@@ -111,7 +111,7 @@
     "eslint-plugin-promise": "6.6.0",
     "finalhandler": "1.2.0",
     "get-port": "5.1.1",
-    "json-schema-to-typescript": "15.0.1",
+    "json-schema-to-typescript": "15.0.2",
     "lerna": "8.1.8",
     "log-symbols": "4.1.0",
     "midnight-smoker": "8.0.0",

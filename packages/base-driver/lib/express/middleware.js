@@ -2,7 +2,7 @@ import _ from 'lodash';
 import log from './logger';
 import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
-import {pathToRegexp} from 'path-to-regexp';
+import {match} from 'path-to-regexp';
 import {util} from '@appium/support';
 import {calcSignature} from '../helpers/session';
 
@@ -119,7 +119,7 @@ export function handleUpgrade(webSocketsMapping) {
       currentPathname = req.url ?? '';
     }
     for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
-      if (pathToRegexp(pathname).test(currentPathname)) {
+      if (match(pathname)(currentPathname)) {
         return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
           wsServer.emit('connection', ws, req);
         });

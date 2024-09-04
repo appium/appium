@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import {util} from '@appium/support';
 import {PROTOCOLS, DEFAULT_BASE_PATH} from '../constants';
-import {pathToRegexp} from 'path-to-regexp';
+import {match} from 'path-to-regexp';
 
 const SET_ALERT_TEXT_PAYLOAD_PARAMS = {
   validate: (jsonObj) =>
@@ -952,8 +952,8 @@ export function routeToCommandName(endpoint, method, basePath = DEFAULT_BASE_PAT
   possiblePathnames.push(normalizedPathname);
   const normalizedMethod = _.toUpper(method);
   for (const [routePath, routeSpec] of _.toPairs(METHOD_MAP)) {
-    const routeRegexp = pathToRegexp(routePath);
-    if (possiblePathnames.some((pp) => routeRegexp.test(pp))) {
+    const routeMatcher = match(routePath);
+    if (possiblePathnames.some((pp) => routeMatcher(pp))) {
       const commandName = routeSpec?.[normalizedMethod]?.command;
       if (commandName) {
         return commandName;

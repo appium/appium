@@ -1,4 +1,4 @@
-import {pathToRegexp} from 'path-to-regexp';
+import {match} from 'path-to-regexp';
 
 describe('middleware', function () {
   before(async function () {
@@ -6,19 +6,19 @@ describe('middleware', function () {
     chai.should();
   });
 
-  describe('pathToRegexp', function () {
+  describe('match', function () {
     it('should match static path pattern', function () {
       const pathname = '/ws/session/1234/appium/device/syslog';
       const url = 'ws://127.0.0.1:8000/ws/session/1234/appium/device/syslog';
       const currentPathname = new URL(url).pathname;
-      pathToRegexp(pathname).test(currentPathname).should.be.true;
+      match(pathname)(currentPathname).should.not.be.false;
     });
 
     it('should match dynamic path pattern', function () {
       const pathname = '/ws/session/:sessionId/appium/device/syslog';
       const url = 'ws://127.0.0.1:8000/ws/session/1234/appium/device/syslog';
       const currentPathname = new URL(url).pathname;
-      pathToRegexp(pathname).test(currentPathname).should.be.true;
+      match(pathname)(currentPathname).should.not.be.false;
     });
   });
 });

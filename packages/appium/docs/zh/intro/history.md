@@ -35,123 +35,75 @@ Dan被选中在2012年伦敦的Selenium大会上演讲，讨论一个完全不�
 Dan在加载演示文稿时遇到了技术问题，Jason差点转到下一个闪电演讲。就在最后一刻，屏幕打开了，Dan迅速进入了他的演讲。
 他详细解释了他的实现细节和工作原理，恳求贡献者，并在五分钟内结束了演讲。观众礼貌地鼓掌，他离开了舞台。
 
-## The Phone Rings
+## 电话响了
 
-Four months after the Selenium Conference, Jason called Dan. Jason had been
-working on iOS testing support for a client at Sauce Labs.  Jason remembered
-Dan's lightning talk and thought the project might be useful to Jason's work,
-but Dan's source code was not public. Jason asked Dan to meet up.  Later that
-week, Dan met Jason in a bar in San Francisco and showed him the source code
-for iOS Auto.
+在Selenium大会四个月后，Jason给Dan打了电话。Jason一直在为Sauce Labs的一位客户提供iOS测试支持。
+Jason记得Dan的闪电演讲，认为这个项目可能对Jason的工作有帮助，但Dan的源代码并没有公开。
+于是Jason邀请Dan见一面。那一周的晚些时候，Dan在旧金山的一家酒吧遇到了Jason，并向他展示了iOSAuto的源代码。
 
-A long-time open source advocate, Jason encouraged Dan to release his code
-under an open source license.  In August, Dan [released the source
-code](https://github.com/penguinho/appium-old/commit/3ab56d3a5601897b2790b5256351f9b5af3f9e90)
-on GitHub in C#. Jason encouraged Dan to change the language to make the
-project more appealing to potential contributors. Dan [uploaded a new version
-in
-Python](https://github.com/penguinho/appium-old/commit/9b891207be0957bf209a77242750da17d3eb8eda).
-In September, Jason added a web server and [began to implement the WebDriver
-wire
-protocol](https://github.com/hugs/appium-old/commit/ae8fe4578640d9af9137d0546190fa29317d1499)
-over HTTP, making iOS Auto scriptable from any Selenium WebDriver client
-library in any language.
+Jason是一位长期的开源倡导者，他鼓励Dan在开源许可证下发布他的代码。
+8月，Dan在GitHub上发布了C#版本的[源代码](https://github.com/penguinho/appium-old/commit/3ab56d3a5601897b2790b5256351f9b5af3f9e90)。
+Jason鼓励Dan改变开发语言，使该项目对潜在贡献者更具吸引力。
+Dan上传了基于Python实现的[新版本](https://github.com/penguinho/appium-old/commit/9b891207be0957bf209a77242750da17d3eb8eda)。
+9月，Jason添加了一个Web服务器，并开始通过HTTP实现[WebDriver有线协议](https://github.com/hugs/appium-old/commit/ae8fe4578640d9af9137d0546190fa29317d1499)，
+使iOSAuto可以从任何语言的任何Selenium WebDriver客户端库编写脚本。
 
-## The Mobile Testing Summit
+## 移动测试峰会
 
-Jason decided that the project should be presented at the [Mobile Testing
-Summit](https://twitter.com/mobtestsummit) in November, but suggested that the
-project get a new name first. Many ideas were thrown out and they settled on
-AppleCart. A day later, while he was perusing some of Apple's guidance on
-copyright and trademarks, Jason noticed that under the section of examples for
-names Apple would defend its trademarks against, the first example was
-"AppleCart". He called Dan and informed him of the situation, and they
-brainstormed for a bit before Jason hit the jackpot. Appium... Selenium for
-Apps.
+Jason决定在11月的[移动测试峰会](https://twitter.com/mobtestsummit)上展示该项目，但建议先给该项目取一个新名字。
+许多想法被抛弃了，他们最终选择了AppleCart。一天后，当Jason在浏览苹果公司关于版权和商标的一些指导时，他注意到，
+在苹果公司会捍卫其商标的名称示例部分，第一个例子是“AppleCart”。
+他打电话给Dan，告知了这一情况，然后他们一起头脑风暴了一会儿，接着Jason突然想到了一个绝妙的主意。Appium... Selenium for Apps。
 
-## Sauce Labs and Node.js
+## Sauce Labs和Node.js
 
-In January 2013, not long after the Mobile Testing Summit, Sauce Labs decided
-to fully back Appium and provide more developer power. A task force was created
-to evaluate the current state and how best to move forward with the project.
-The team, which included Jonathan Lipps (the current project lead), decided
-that Appium needed a rebirth, and ultimately settled on Node.js as the
-framework to use. Node is well-known as a fast and efficient web server
-backend, and at the end of the day, Appium is just a highly-specialized web
-server. It was also decided that JavaScript as a language was accessible enough
-that Appium would be able to grow into a larger community of open-source
-developers with JavaScript than the other options on the table.
+2013年1月，在移动测试峰会后不久，Sauce Labs决定全力支持Appium，并提供更多的开发能力，
+他们成立了一个工作小组，评估了项目的当前状态以及如何更好地推进项目。
+包括Jonathan Lipps（现任项目负责人）在内的团队认为Appium需要重生，并决定使用Node.js作为框架。
+Node.js是众所周知的快速高效的web服务器后端，而归根结底，Appium只是一个高度专业化的web服务器。
+同时JavaScript是一种非常容易使用的编程语言，这能让Appium比桌面上的其他选项，更容易地吸引更多开发者加入社区。
 
-In just a few days, the team leveraged the existing work on Appium and had
-a new version of Appium with as much functionality as the previous Python
-version. The foundation had been laid for Appium's basic architecture, and we
-have been successfully building on it since. A few weeks into this sprint,
-Jonathan Lipps was formally designated project lead and he began to strategize
-how to get more people from the community involved with Appium's development.
+短短几天内，团队基于Appium的现有功能，开发了一个新版本的Appium，他的功能与之前的Python版本一样多。
+这为Appium的基本架构奠定了基础，此后我们一直在此基础上成功地进行建设。
+冲刺开发几周后，Jonathan Lipps被正式指定为项目负责人，他开始制定战略，如何让更多的人参与Appium的开发。
 
-## Appium Around the World
+## Appium环游世界
 
-Ultimately, Jonathan decided that getting Appium in front of as many developers
-at conferences and meetups was the best way to attract users and contributions.
-Appium in its new incarnation was debuted at the [Google Test Automation
-Conference 2013](https://www.youtube.com/watch?v=1J0aXDbjiUE). Later in 2013,
-Appium was presented at conferences and meetups all around the US, as well as
-in England, Poland, Portugal, and Australia. Notably, Jonathan had Appium
-[perform as instruments in a band](https://www.youtube.com/watch?v=zsbNVkayYRQ)
-and Dan Cuellar put together a fun [Appium video
-montage](https://www.youtube.com/watch?v=xkzrEn0v0II) for Selenium Conference.
+最终Jonathan决定，让Appium在会议和聚会上，尽可能多的在开发人员面前展示，是吸引用户和贡献的最佳方式。
+Appium在[2013年谷歌测试自动化大会](https://www.youtube.com/watch?v=1J0aXDbjiUE)上首次亮相。
+2013年晚些时候，Appium在美国各地以及英国、波兰、葡萄牙和澳大利亚的会议和聚会上亮相。
+值得注意的是，Jonathan让Appium[像乐队中的乐器一样进行表演](https://www.youtube.com/watch?v=zsbNVkayYRQ)，
+而Dan Cuellar为Selenium大会制作了一个有趣的[Appium视频混剪](https://www.youtube.com/watch?v=xkzrEn0v0II)。
 
-But during all these presentations and conferences, the project continued to
-develop. Early in 2013 we released Android and Selendroid support, making
-Appium the first truly cross-platform automation framework. The project also
-continued to attract users and contributors, and by the end of 2013, we'd
-already had well over 1,000 commits.
+在所有这些演讲和会议中，项目仍在继续发展。2013年初，我们发布了对Android和Selendroid的支持，使Appium成为第一个真正的跨平台自动化框架。
+该项目也继续吸引用户和贡献者，到2013年底，我们已经有1000多个提交。
 
-## The Road to Appium 1.0
+## 通往Appium 1.0之路
 
-Appium began to grow and mature significantly. In May 2014,
-we released Appium 1.0, which stood as a milestone in Appium's development.
-Appium was given
-[various](http://sauceio.com/index.php/2014/01/appium-selected-as-a-black-duck-open-source-rookie-of-the-year/)
-[awards](http://sauceio.com/index.php/2014/10/appium-wins-a-bossy-award-from-infoworld/)
-and became the most popular open-source cross-platform mobile automation
-framework. Stability improved, bugs were prioritized and fixed, and features
-added. Sauce Labs increased the number of developers it donated to working
-on Appium, but the entire community stayed involved in guiding the project and
-contributing to it, and project governance continued to happen in the open, on
-public mailing lists and GitHub's issue tracker.
+Appium开始显著生长和成熟。2014年5月，我们发布了Appium 1.0，这是Appium发展的一个里程碑。Appium获得了
+[各种](http://sauceio.com/index.php/2014/01/appium-selected-as-a-black-duck-open-source-rookie-of-the-year/)
+[奖项](http://sauceio.com/index.php/2014/10/appium-wins-a-bossy-award-from-infoworld/)，
+成为最受欢迎的开源跨平台移动自动化框架。稳定性得到改善，错误得到优先处理和修复，并添加了新的功能。
+Sauce Labs增加了捐赠给Appium开发人员的数量，但整个社区都参与了项目的指导和贡献，
+项目治理继续在公开的公共邮件列表和GitHub的问题跟踪器上进行。
 
-## The Appium Umbrella Broadens
+## Appium的生态圈在扩大
 
-Eventually, it became clear that the Appium codebase was not optimized for
-a large team of distributed, sometime contributors. We took the opportunity as
-a committer team to rewrite Appium from the ground up, using a more modern
-version of the JavaScript language, and redoing Appium's architecture so that
-it was easy for users or third-party developers to build their own Appium
-"drivers". We wanted for it to be easier for new contributors to get ramped up
-on the Appium codebase, and to see support for new platforms added to Appium by
-groups other than the core team. That vision has begun to be fulfilled, with
-groups like Microsoft and Youi.tv adding drivers to Appium for Windows desktop
-app automation and Youi.tv app automation, respectively. Who knows what
-platforms will be added next?
+很明显Appium的代码库，并没有为一个由分散的、不定时贡献者组成的大型团队进行优化。我们作为提交者抓住了这个机会，从头开始重写Appium，
+使用更现代的JavaScript语言版本，并重新设计了Appium的架构，以便用户或第三方开发者能够轻松构建他们自己的Appium驱动程序。
+我们希望新的贡献者能够更容易地熟悉Appium的代码库，并看到，除了核心团队之外，还有其他团体为Appium增加对新平台的支持。
+这一愿景已经开始实现，像微软和Youi.tv这样的团队，分别为Windows桌面应用自动化和Youi.tv应用自动化增加了驱动程序。
+谁知道接下来会添加哪些平台呢？
 
-## Appium To The People
+## Appium走向大众
 
-In late 2016, Sauce Labs donated Appium as a project to the [JS
-Foundation](https://js.foundation), in order to cement for the world Sauce's
-commitment that Appium remains open source. The JS Foundation is a non-profit
-open source stewardship organization which takes responsibility for holding the
-copyright for open source projects, as well as ensuring they have a long and
-successful tenure in the community. As a result of our move to a non-profit
-foundation, we hope that the door will open even more widely for new
-contributors, either as individuals or representing one of the many companies
-which now have an interest in seeing Appium move forward.
+在2016年末，Sauce Labs将Appium作为一个项目捐赠给了[JS Foundation](https://js.foundation)，
+以此来向世界证明Sauce致力于保持Appium的开源状态。JS Foundation是一个非营利性的开源管理组织，负责持有开源项目的版权，并确保它们在社区中能够长期地发展。
+随着我们转移到这个非营利性基金会，我们希望对新的参与者能够更加敞开大门，无论是作为个人还是作为对Appium发展感兴趣的众多公司之一。
 
-Eventually, the JS Foundation merged into the [OpenJS Foundation](https://openjsf.org), and Appium
-is currently an Impact Project in the foundation.
+最终，JS Foundation合并到了[OpenJS Foundation](https://openjsf.org)中，而Appium是该基金会的一个有影响力的项目。
 
 ## Appium 2.0
 
-Appium 2 was released in 2023, with a new focus on Appium as an ecosystem rather than a singular
-project. Drivers and plugins can be developed and shared by anyone, opening up a world of
-possibilities for automation-related development for platforms far beyond iOS and Android.
+Appium 2于2023年发布，它将重点放在将Appium作为一个生态系统而不是单一的项目上。任何人都可以开发和共享驱动程序和插件，
+这为实现iOS和Android之外的平台自动化开发，开辟了无限的可能性。

@@ -47,109 +47,52 @@ async setUrl(url) {
 
 ## 自动化映射
 
-But *typically* what driver authors want to do is to provide automation behaviours for a given
-platform(s) that are semantically very similar to the the WebDriver spec implementations for
-browsers. When you want to find an element, you should get a reference to a UI element. When you
-want to click or tap that element, the resulting behaviour should be the same as if a person were
-to click or tap on the element. And so on.
+但通常驱动程序作者想要做的是为给定的平台提供自动化行为，这些行为在语义上与浏览器的WebDriver规范实现非常相似。当你想找到一个元素时，您应该得到一个对UI元素的引用。当您想要点击或轻触那个元素时，其产生的行为应该与一个人点击或轻触该元素时的行为相同。以此类推。
 
-So the real challenge for driver authors is not how to work with the WebDriver protocol (because
-`BaseDriver` encapsulates all that for you), but how to make the actual automation happen on the
-target platform. Every driver relies on its own set of underlying technologies here. As mentioned
-in the [Overview](index.md), the iOS driver uses an Apple technology called
-[XCUITest](https://developer.apple.com/documentation/xctest/xcuielement). These underlying
-automation technologies usually have proprietary or idiosyncratic APIs of their own. Writing
-a driver becomes the task of mapping the WebDriver protocol to this underlying API (or sometimes
-a set of different underlying APIs--for example, the UiAutomator2 driver relies not only on the
-[UiAutomator2](https://developer.android.com/training/testing/other-components/ui-automator)
-technology from Google, but also functions only available through
-[ADB](https://developer.android.com/tools/adb), as well as functions only available
-via the Android SDK inside a helper app). Tying it all together into a single, usable, WebDriver
-interface is the incredibly useful (but incredibly challenging) art of driver development!
+因此，驱动程序作者面临的真正挑战不是如何使用WebDriver协议（因为`BaseDriver`已经为您封装了所有），而是如何在目标平台上实现实际的自动化。每个驱动程序都依赖于自己的一套底层技术。正如[概述](index.md)中提到的，iOS驱动程序使用了一种名为[XCUITest](https://developer.apple.com/documentation/xctest/xcuielement)的苹果技术。这些底层自动化技术通常具有自己的专有或特殊API。编写驱动程序变成了将WebDriver协议映射到该底层API的任务（或者有时是一组不同的底层API，例如UiAutomator 2驱动程序不仅依赖于Google的[UiAutomator 2](https://developer.android.com/training/testing/other-components/ui-automator)技术，而且还具有仅通过[ADB](https://developer.android.com/tools/adb)提供的功能，以及仅通过Android SDK在助手应用程序中提供的功能）。将所有内容整合到一个可用的WebDriver界面中，是驱动程序开发中非常有用（但极具挑战性）的艺术！
 
 ## 多层架构
 
-In practice, this often results in a pretty complex architecture. Let's take iOS for example again.
-The XCUITest framework (the one used by the Appium driver) expects code that calls it to be written
-in Objective-C or Swift. Furthermore, XCUITest code can only be run in a special mode triggered by
-Xcode (and directly or indirectly, the Xcode command line tools). In other words, there's no
-straightforward way to go from a Node.js function implementation (like `setUrl()` above) to
-XCUITest API calls.
+在实践中，这通常会导致相当复杂的架构。让我们再次以iOS为例，XCUITest框架（Appium驱动程序使用的那个）期望调用它的代码是用Objective-C或Swift编写的。此外，XCUITest代码只能在Xcode（以及直接或间接的Xcode命令行工具）触发的特殊模式下运行。换句话说，没有简单的方法可以从Node.js函数实现（例如上面的`setUrl（）`）到XCUITest API调用。
 
-What the XCUITest driver authors have done is instead to split the driver into two parts: one part
-written in Node.js (the part which is incorporated into Appium and which initially handles the
-WebDriver commands), and the other part written in Objective-C (the part which actually gets run on
-an iOS device and makes XCUITest API calls). This makes interfacing with XCUITest possible, but
-introduces the new problem of coordination between the two parts.
+XCUITest驱动程序的作者所做的是将驱动程序分为两部分：一部分用Node.js编写（这部分被合并到Appium中，用于处理WebDriver命令），另一部分用Objective-C编写（这一部分实际上在iOS设备上运行，并进行XCUITest API调用）。这使得实现与XCUITest交互的接口成为可能，但引入了两个部分之间协调的新问题。
 
-The driver authors could have chosen any of a number of very different strategies to model the
-communication between the Node.js side and the Objective-C side, but at the end of the day decided
-to use ... the WebDriver protocol! That's right, the Objective-C side of the XCUITest driver is
-itself a WebDriver implementation, called
-[WebDriverAgent](https://github.com/appium/webdriveragent).[^3]
+驱动程序作者可以选择许多非常不同的策略中的任何一种来模拟Node.js端和Objective-C端之间的通信，但最终决定使用WebDriver协议！没错，XCUITest驱动程序的Objective-C端本身就是一个WebDriver实现，称为[WebDriverAgent](https://github.com/appium/webdriveragent).[^3]。
 
-[^3]: You could in theory, therefore, point your WebDriver client straight to WebDriverAgent and
-  bypass Appium entirely. This is usually not convenient, however, for a few reasons:
+[^3]: 因此，从理论上讲，您可以将WebDriver客户端直接指向WebDriverAgent并完全绕过Appium。然而，这通常不方便，原因有几个：
 
-  - The Appium XCUITest driver builds and manages WebDriverAgent for you, which can be a pain and
-    involves the use of Xcode.
-  - The XCUITest driver does lots more than what can be done by WebDriverAgent, for example working
-    with simulators or devices, installing apps, and the like.
+    - Appium的XCUITest驱动程序为您构建和管理WebDriverAgent，这可能是个麻烦事，并且涉及到使用Xcode。
 
-The moral of the story is that driver architectures can become quite complicated and multilayered,
-due to the nature of the problem we're trying to solve. It also means it can be difficult sometimes
-to tell where in this chain of technologies something has gone wrong, if you run into a problem
-with a particular test. With the XCUITest world again, we have something like the following set of
-technologies all in play at the same time:
+    - XCUITest驱动程序的功能比WebDriverAgent要多得多，例如使用模拟器或设备、安装应用程序等。
 
-- Your test code (in its programming language) - owned by you
-- The Appium client library - owned by Appium
-- The Selenium client library - owned by Selenium
-- The network (local or Internet)
-- The Appium server - owned by Appium
-- The Appium XCUITest driver - owned by Appium
-- WebDriverAgent - owned by Appium
-- Xcode - owned by Apple
-- XCUITest - owned by Apple
-- iOS itself - owned by Apple
-- macOS (where Xcode and iOS simulators run) - owned by Apple
+这个故事的寓意是，由于我们试图解决的问题的性质，驱动程序架构可能会变得非常复杂和多层次。这也意味着，如果你在特定的测试中遇到问题，有时很难判断这一技术链中哪里出了问题。在XCUITest世界中，我们有以下几项技术同时发挥作用：
 
-It's a pretty deep stack!
+- 您的测试代码（使用相应的编程语言） - 由您拥有
+- Appium客户端库 - 由Appium拥有
+- Selenium客户端库 - 由Selenium拥有
+- 网络（本地或Internet）
+- Appium服务器 - 由Appium拥有
+- Appium XCUITest驱动程序 - 由Appium拥有
+- WebDriverAgent - 由Appium拥有
+- Xcode - 由Apple拥有
+- XCUITest - 由Apple拥有
+- iOS本身 - 由Apple拥有
+- macOS（运行Xcode和iOS模拟器的地方）- 由Apple拥有
+
+这是一个相当深的堆栈！
 
 ## 代理模式
 
-There's one other important architectural aspect of drivers to understand. It can be exemplified
-again by the XCUITest driver. Recall that we just discussed how the two "halves" of the XCUITest
-driver both speak the WebDriver protocol---the Node.js half clicks right into Appium's WebDriver
-server, and the Objective-c half (WebDriverAgent) is its own WebDriver implementation.
+驱动程序还有另一个重要的架构方面需要理解。XCUITest驱动程序再次证明了这一点。回想一下，我们刚刚讨论了XCUITest驱动程序的两个“部分”是如何使用WebDriver协议的，Node.js部分直接点击Appium的WebDriver服务器，而Objective-c部分（WebDriverAgent）是它自己的WebDriver实现。
 
-This opens up the possibility of Appium taking a shortcut in certain cases. Let's imagine that the
-XCUITest driver needs to implement the `Click Element` command. The internal code of this
-implementation would look something like taking the appropriate parameters and constructing an HTTP
-request to the WebDriverAgent server. In this case, we're basically just reconstructing the
-client's original call to the Appium server![^4] So there's really no need to even write a function
-implementing the `Click Element` command. Instead, the XCUITest driver can just let Appium know
-that this command should be proxied directly to some other WebDriver server.
+这为Appium在某些情况下走捷径提供了可能性。假设XCUITest驱动程序需要实现`Click Element`命令。此实现的内部代码看起来类似于获取适当的参数并构造对WebDriverAgent服务器的HTTP请求。在这种情况下，我们基本上只是在重建客户端对Appium服务器的原始调用！[^4] 所以实际上没有必要编写一个函数来实现`Click Element`命令，XCUITest驱动程序可以让Appium知道这个命令应该代理到其他一些WebDriver服务器。
 
-[^4]: It's not *exactly* the same call, because the Appium server and the WebDriverAgent server
-  will generate different session IDs, but these differences will be handled transparently.
+[^4]: 这不是完全相同的调用，因为Appium服务器和WebDriver Agent服务器将生成不同的会话ID，但这些差异将被透明地处理。
 
-If you're not familiar with the concept of "proxying," in this case it just means that the XCUITest
-driver will not be involved at all in handling the command. Instead it will merely be repackaged
-and forwarded to WebDriverAgent at the protocol level, and WebDriverAgent's response will likewise
-be passed back directly to the client, without any XCUITest driver code seeing it or modifying it.
+如果你不熟悉"代理"这个概念，在这种情况下，它只是意味着XCUITest驱动程序将不参与处理命令。相反，它将仅仅被重新打包并转发到协议层的WebDriverAgent，并且WebDriverAgent的响应也将直接传回给客户端，而无需XCUITest驱动程序代码查看它或修改它。
 
-This architectural pattern provides a nice bonus for driver authors who choose to deal with the
-WebDriver protocol everywhere, rather than constructing bespoke protocols. It also means that
-Appium can create wrapper drivers for any other existing WebDriver implementation very easily. If
-you look at the [Appium Safari driver](https://github.com/appium/appium-safari-driver) code, for
-example, you'll see that it implements basically no standard commands, because all of these are
-proxied directly to an underlying SafariDriver process.
+这种架构模式为驱动程序开发者提供了一个好处，使他们可以选择完全使用WebDriver协议，而不需要构建特定的协议。这也意味着Appium可以非常容易地为任何现有的WebDriver实现创建封装驱动程序。例如，如果你查看[Appium的Safari驱动程序](https://github.com/appium/appium-safari-driver)代码，你会发现它基本上没有实现任何标准命令，因为所有这些命令都直接代理到一个底层的SafariDriver进程。
 
-It's important to understand that this proxying business is sometimes happening under the hood,
-because if you're ever diving into some open source driver code trying to figure out where
-a command is implemented, you might be surprised to find no implementation at all in the Node.js
-driver code itself! In that case, you'll need to figure out where commands are being proxied to so
-you can look there for the appropriate implementation.
+理解这种代理机制在幕后运行有时非常重要，因为如果你深入研究一些开源驱动程序代码，试图找出命令是在哪里实现的，你可能会惊讶地发现Node.js驱动程序代码中根本没有任何实现！在这种情况下，你需要弄清楚命令被代理到哪里，以便在那里查找相应的实现。
 
-OK, that's enough for this very detailed introduction to drivers!
+好了，这就是关于驱动程序的详细介绍的全部内容！

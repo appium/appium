@@ -1,19 +1,11 @@
 import {select as xpathQuery} from 'xpath';
-import {DOMParser, MIME_TYPE, Document} from '@xmldom/xmldom';
+import {DOMParser, MIME_TYPE} from '@xmldom/xmldom';
 import _ from 'lodash';
-
-/**
- * @param {Document} doc - The Document object to be converted.
- * @returns {Node} - The converted Node object.
- */
-function convertDocumentToNode(doc) {
-  // @ts-ignore
-  return /** @type {Node} */ (doc);
-}
 
 export function runQuery(query, xmlStr) {
   const dom = new DOMParser().parseFromString(xmlStr, MIME_TYPE.XML_TEXT);
-  const nodes = xpathQuery(query, convertDocumentToNode(dom));
+  // @ts-expect-error Misssing Node properties are not needed.
+  const nodes = xpathQuery(query, dom);
   return nodes;
 }
 

@@ -43,7 +43,7 @@
     "@appium/tsconfig": "^0.3.3",
     "@types/express": "4.17.21",
     "@types/ws": "8.5.12",
-    "type-fest": "4.26.0"
+    "type-fest": "4.26.1"
   },
   "engines": {
     "node": "^14.17.0 || ^16.13.0 || >=18.0.0",

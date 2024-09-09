@@ -344,7 +344,7 @@ function formatTimestamp(args) {
  * @param {string} text
  * @returns {string}
  */
-function stripColorCodes(text) {
+export function stripColorCodes(text) {
   return text.replace(COLOR_CODE_PATTERN, '');
 }
 

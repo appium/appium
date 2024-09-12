@@ -122,7 +122,7 @@
     "prettier": "3.3.3",
     "rewiremock": "3.14.5",
     "rimraf": "5.0.10",
-    "serve-static": "1.16.0",
+    "serve-static": "1.16.2",
     "sinon": "18.0.1",
     "sync-monorepo-packages": "1.0.2",
     "ts-node": "10.9.2",

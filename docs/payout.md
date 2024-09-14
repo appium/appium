@@ -13,10 +13,11 @@ This documentation is a note for the opencollective payout.
             -  `<year-month> contribution as a TC https://github.com/appium/appium/blob/master/GOVERNANCE.md#the-technical-committee and maintaining Appium project itself (development, review etc)`
             - i.e. `2024-07 contribution as a TC https://github.com/appium/appium/blob/master/GOVERNANCE.md#the-technical-committee and maintaining Appium project itself (development, review etc)`
         - for individuals
-            - `PR contribution: <PRs>`
+            - `PR contribution: <PRs>` for PRs. `Community contribution in Q&A forum at https://discuss.appium.io/` for appium forums
             - E.g.
                 - `PR contribution: https://github.com/appium/dotnet-client/pull/810, https://github.com/appium/dotnet-client/pull/808`
                 - `PR contribution: https://github.com/appium/java-client/pull/2206, https://github.com/appium/java-client/pull/2203 and a few PRs`
+                - `Community contribution in Q&A forum at https://discuss.appium.io/`
     - Amount
         - Type the amount in `USD`
 6. Approve each expense after getting response for each expense

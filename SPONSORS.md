@@ -31,18 +31,18 @@ contributors!
 
 ## Gold Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false"/></a>
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/gold-sponsor.svg?avatarHeight=100&button=false&random=1"/></a>
 
 [Become a Gold Sponsor](https://opencollective.com/appium/contribute/gold-sponsor-72877/checkout?interval=month&amount=500&contributeAs=me)
 
 ## Silver Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/silver-sponsor.svg?avatarHeight=80&button=false"/></a>
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/silver-sponsor.svg?avatarHeight=80&button=false&random=1"/></a>
 
 [Become a Silver Sponsor](https://opencollective.com/appium/contribute/silver-sponsor-72876/checkout?interval=month&amount=250&contributeAs=me)
 
 ## Bronze Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/sponsors.svg?avatarHeight=60&button=false"/></a>
+<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/sponsors.svg?avatarHeight=60&button=false&random=1"/></a>
 
 [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)

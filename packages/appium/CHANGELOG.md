@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.4](https://github.com/appium/appium/compare/appium@2.11.3...appium@2.11.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **appium:** Fix the condition for secure websocket ([#20497](https://github.com/appium/appium/issues/20497)) ([efdb1ce](https://github.com/appium/appium/commit/efdb1ce6ce1de5120f2f35ebe84abfa73ed5198a))
+* **appium:** update dependency @sidvind/better-ajv-errors to v3 ([#20552](https://github.com/appium/appium/issues/20552)) ([0ee7716](https://github.com/appium/appium/commit/0ee7716cf0644cfc6795f0949d8253d4c0b36597))
+* **appium:** update dependency winston to v3.14.2 ([#20465](https://github.com/appium/appium/issues/20465)) ([893fc04](https://github.com/appium/appium/commit/893fc040e16ec07c83d12c7c89180d962b0f6e68))
+* **base-driver:** Add a server flag to check if it operates a secure protocol ([#20449](https://github.com/appium/appium/issues/20449)) ([622b245](https://github.com/appium/appium/commit/622b245ea38793280d9785a59a0416ce025862fe))
+* **docutils:** update dependency yaml to v2.5.1 ([750872a](https://github.com/appium/appium/commit/750872af4756d2efcd19fe98762f82ecaa59d59a))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.3 ([4608563](https://github.com/appium/appium/commit/46085635a92c3a2b2b1b3ecf3966a174248a2829))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.5 ([dcb6de2](https://github.com/appium/appium/commit/dcb6de22eaabdcea2517cd9b7db120d681f0e38e))
+* **support:** update dependency axios to v1.7.4 ([d17d022](https://github.com/appium/appium/commit/d17d0222245ab94a78e578c0398734e65a89ba68))
+* **support:** update dependency axios to v1.7.5 ([fedabb1](https://github.com/appium/appium/commit/fedabb1fdc7af10f9e4b06ea23815c4bc7c6bf5e))
+* **support:** update dependency axios to v1.7.7 ([7fe67a2](https://github.com/appium/appium/commit/7fe67a286a15a917ce3b1b47a08e982e65bbd9e4))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
 ## [2.11.3](https://github.com/appium/appium/compare/appium@2.11.2...appium@2.11.3) (2024-08-07)
 
 

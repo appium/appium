@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.11.4](https://github.com/appium/appium/compare/@appium/base-driver@9.11.3...@appium/base-driver@9.11.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **base-driver:** Add a server flag to check if it operates a secure protocol ([#20449](https://github.com/appium/appium/issues/20449)) ([622b245](https://github.com/appium/appium/commit/622b245ea38793280d9785a59a0416ce025862fe))
+* **base-driver:** update dependency body-parser to v1.20.3 ([056baba](https://github.com/appium/appium/commit/056baba3a0c51973d5e834283355821eced6ee17))
+* **base-driver:** update dependency express to v4.20.0 ([ef163eb](https://github.com/appium/appium/commit/ef163eb8df512e89f4e62c99b32fc979008fcfaa))
+* **base-driver:** update dependency express to v4.21.0 ([cb9fb9c](https://github.com/appium/appium/commit/cb9fb9c6fef608e29284210be27356a488f4002c))
+* **base-driver:** update dependency path-to-regexp to v8 ([#20520](https://github.com/appium/appium/issues/20520)) ([63cb664](https://github.com/appium/appium/commit/63cb664af13d7411ff325095cd0e9b6fd24363c3))
+* **base-driver:** update dependency path-to-regexp to v8.1.0 ([#20562](https://github.com/appium/appium/issues/20562)) ([1cae549](https://github.com/appium/appium/commit/1cae549a7be5138e980af6661b96cd7d6268fdb0))
+* **support:** update dependency axios to v1.7.4 ([d17d022](https://github.com/appium/appium/commit/d17d0222245ab94a78e578c0398734e65a89ba68))
+* **support:** update dependency axios to v1.7.5 ([fedabb1](https://github.com/appium/appium/commit/fedabb1fdc7af10f9e4b06ea23815c4bc7c6bf5e))
+* **support:** update dependency axios to v1.7.7 ([7fe67a2](https://github.com/appium/appium/commit/7fe67a286a15a917ce3b1b47a08e982e65bbd9e4))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
 ## [9.11.3](https://github.com/appium/appium/compare/@appium/base-driver@9.11.2...@appium/base-driver@9.11.3) (2024-08-07)
 
 

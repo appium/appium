@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.48](https://github.com/appium/appium/compare/@appium/test-support@3.0.47...@appium/test-support@3.0.48) (2024-09-16)
+
+
+### Bug Fixes
+
+* **test-support:** update dependency sinon to v18.0.1 ([980aa69](https://github.com/appium/appium/commit/980aa69b931bab815e353945f392429a6772182d))
+
+
+
 ## [3.0.47](https://github.com/appium/appium/compare/@appium/test-support@3.0.46...@appium/test-support@3.0.47) (2024-08-07)
 
 **Note:** Version bump only for package @appium/test-support

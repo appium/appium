@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.20](https://github.com/appium/appium/compare/@appium/docutils@1.0.19...@appium/docutils@1.0.20) (2024-09-16)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency diff to v6 ([#20525](https://github.com/appium/appium/issues/20525)) ([f5f0aa5](https://github.com/appium/appium/commit/f5f0aa5068ac6a02c422273e9e857152fea1675a))
+* **docutils:** update dependency diff to v7 ([#20547](https://github.com/appium/appium/issues/20547)) ([d595990](https://github.com/appium/appium/commit/d5959902bc636f399da876f42b92969f8e2873aa))
+* **docutils:** update dependency yaml to v2.5.1 ([750872a](https://github.com/appium/appium/commit/750872af4756d2efcd19fe98762f82ecaa59d59a))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
 ## [1.0.19](https://github.com/appium/appium/compare/@appium/docutils@1.0.18...@appium/docutils@1.0.19) (2024-08-07)
 
 

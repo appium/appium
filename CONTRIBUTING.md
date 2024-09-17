@@ -8,7 +8,7 @@ Note that no matter how you contribute, your participation is governed by our
 ### Make changes to the Appium code or docs
 
 Fork the project, make a change, and send a pull request! Please have a look at
-our [Style Guide](/docs/en/contributing-to-appium/style-guide.md) before
+our [Style Guide](https://github.com/appium/appium/blob/master/packages/appium/docs/en/contributing/index.md) before
 getting to work.  Please make sure the unit and functional tests pass before
 sending a pull request; for more information on how to run tests, keep reading!
 

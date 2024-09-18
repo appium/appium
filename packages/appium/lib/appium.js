@@ -772,9 +772,15 @@ class AppiumDriver extends DriverCore {
       // internal bidi urls it might want to proxy to, cause we are going to overwrite that
       // information here!
       if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
-        const {address, port, basePath} = this.args;
+        const {port, basePath} = this.args;
+        // this is set by protocol.js when the client makes the request, so that we respond with the same host they used
+        const address = this.hostLastUsedByClient ?? this.args.address ;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
         const bidiUrl = `${scheme}://${address}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
+        this.log.info(
+          `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
+            `${bidiUrl} for response to client`
+        );
         // @ts-ignore webSocketUrl gets sent by the client as a boolean, but then it is supposed
         // to come back from the server as a string. TODO figure out how to express this in our
         // capability constraint system

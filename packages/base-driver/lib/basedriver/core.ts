@@ -105,6 +105,8 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
   doesSupportBidi: boolean;
 
+  hostLastUsedByClient?: string;
+
   constructor(opts: InitialOpts = <InitialOpts>{}, shouldValidateCaps = true) {
     this._log = logger.getLogger(helpers.generateDriverLogPrefix(this as Core<C>));
 

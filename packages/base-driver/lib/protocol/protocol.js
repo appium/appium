@@ -356,6 +356,12 @@ function buildHandler(app, method, path, spec, driver, isSessCmd) {
         currentProtocol = determineProtocol(
           makeArgs(req.params, jsonObj, spec.payloadParams || {})
         );
+
+        // when a client connects, register the hostname actually used by the client, since it
+        // could be a custom name or 127.0.0.1 or another IP. We need it so that when we rewrite
+        // URLs to send back to the client, we can use the hostname they sent in rather than the
+        // address used to start the server, which might be an uncontactable hostname like 0.0.0.0
+        driver.hostLastUsedByClient = req.hostname;
       }
 
       // ensure that the json payload conforms to the spec

@@ -51,6 +51,7 @@
     "dev:docs:en": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-en.yml",
     "dev:docs:ja": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-ja.yml",
     "dev:docs:zh": "appium-docs build --serve --mkdocs-yml ./docs/mkdocs-zh.yml",
+    "install-docs-deps": "appium-docs init --no-mkdocs",
     "postinstall": "node ./scripts/autoinstall-extensions.js",
     "publish:docs": "cross-env APPIUM_DOCS_PUBLISH=1 npm run build:docs",
     "test": "npm run test:unit",

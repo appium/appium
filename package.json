@@ -44,6 +44,7 @@
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "docs:publish": "npm run -w packages/appium publish:docs",
     "doctor": "node ./packages/doctor",
+    "install-docs-deps": "npm run -w packages/appium install-docs-deps",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",
     "lint:fix": "run-s \"lint -- --fix\"",

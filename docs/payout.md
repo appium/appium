@@ -1,6 +1,9 @@
 This documentation is a note for the opencollective payout.
 
 1. Select `Submit expense`
+
+<img width="200" alt="Screenshot 2024-09-17 at 11 04 32 PM" src="https://github.com/user-attachments/assets/5d598a46-8aa3-41e0-aadc-ce3f34b10f6b">
+
 2. Select `Invoice`
 3. Type proper account name in `Who is being paid for this expense?`
     - The form depends on the target user

@@ -67,10 +67,9 @@ significant contributions to the project but are no longer actively committing.
 
 ### Other Contributors
 
-Other, less formal, kinds of contribution are outlined in our
-[CONTRIBUTING](/CONTRIBUTING.md) doc. We also very much appreciate those who spend their valuable
-time assisting with the [Appium forums](https://discuss.appium.io). Current high-level forum
-contributors and mods include:
+Other, less formal, kinds of contribution are outlined in our [Contributing Guide](https://appium.io/docs/en/latest/contributing/).
+We also very much appreciate those who spend their valuable time assisting with the [Appium forums](https://discuss.appium.io).
+Current high-level forum contributors and mods include:
 
 * [aleksei](https://discuss.appium.io/u/aleksei/summary)
 * [wreed](https://discuss.appium.io/u/wreed/summary)

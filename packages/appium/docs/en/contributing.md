@@ -49,23 +49,59 @@ We are always open to pull requests for improving the Appium code or documentati
 
     Developer information may not be kept up to date as frequently as user-facing information, or
     it may be most relevant in its current form on the online repository, not in this published
-    version. Make sure to check the repo or discuss with maintainers. We're always happy to help
+    version. Make sure to check the repo or discuss with maintainers. We would be glad to help
     new contributors get started!
 
 Start by cloning the repository (we recommend [forking](https://github.com/appium/appium/fork)
-the repo first):
+it first):
 ```sh
 git clone https://github.com/appium/appium.git
 cd appium
 ```
 
-Install the dependencies:
+!!! info
+
+    If you are VS Code user, you can easily check out the project using [Runme](https://runme.dev/api/runme?repository=https%3A%2F%2Fgithub.com%2Fappium%2Fappium.git&fileToOpen=packages%2Fappium%2Fdocs%2Fen%2Fcontributing%2Findex.md).
+
+Install dependencies:
 ```sh
 npm install
 ```
 
-### Code
+From here on there are several things you can do.
 
+Build the project:
+```sh
+npm run build
+```
+
+Build the project and watch for changes:
+```sh
+npm run dev
+```
+
+Start the locally built Appium server:
+```sh
+npm start
+```
+
+Run various tests:
+```sh
+npm run lint
+npm run test:unit
+npm run test:types
+npm run test:smoke
+npm run test:e2e
+npm run test:quick # unit and types
+npm run test:slow # everything
+```
+
+You can also run tests for specific workspaces, e.g.:
+
+```sh
+export APPIUM_WORKSPACE=@appium/base-driver
+npm run test:unit -w $APPIUM_WORKSPACE
+```
 
 ### Documentation
 

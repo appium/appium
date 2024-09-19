@@ -74,6 +74,4 @@ nav:
       - developing/build-doctor-checks.md
       - Developer Reference:
           - developing/config-system.md
-  - Contributing:
-      - contributing/index.md
-      - contributing/develop.md
+  - Contributing: contributing.md

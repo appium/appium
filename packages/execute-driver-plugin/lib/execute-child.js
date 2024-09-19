@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import vm from 'vm';
+import vm from 'node:vm';
 import {logger, util} from 'appium/support';
 
 const log = logger.getLogger('ExecuteDriver Child');

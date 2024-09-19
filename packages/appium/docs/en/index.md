@@ -63,6 +63,6 @@ Android TV, Samsung), and more!
 -   Read the different [__Guides__](./guides/migrating-1-to-2.md) for a variety of instructions, tips and tricks
 -   Check out various third-party [__Resources__](./resources.md) to explore Appium around the web
 -   For creating your own Appium extensions, see the [__Developer__](./developing/index.md) documentation
--   For contributions to Appium itself, refer to the [__Contributing__](./contributing/index.md) page
+-   For contributions to Appium itself, refer to the [__Contributing__](./contributing.md) page
 
 </div>

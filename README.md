@@ -9,10 +9,14 @@
    Cross-platform test automation for native, hybrid, mobile web and desktop apps.
 </p>
 
+<div align="center">
+
 [![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)
 [![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
 [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/)
+
+</div>
 
 ***
 
@@ -21,7 +25,7 @@
    <a href="https://appium.io/docs/en/latest/intro/">Get Started</a> |
    <a href="https://appium.io/docs/en/latest/ecosystem/">Ecosystem</a> |
    <a href="https://github.com/appium/appium/blob/master/packages/appium/CHANGELOG.md">Changelog</a> |
-   <a href="https://github.com/appium/appium/blob/master/ROADMAP.md">Roadmap</a> |
+   <a href="https://appium.io/docs/en/latest/contributing/">Contributing Guide</a> |
    <a href="https://discuss.appium.io">Discussion Forum</a>
 </b></p>
 

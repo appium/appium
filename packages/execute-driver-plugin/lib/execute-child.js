@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import B from 'bluebird';
-import {NodeVM} from 'vm2';
+import vm from 'vm';
 import {logger, util} from 'appium/support';
 
 const log = logger.getLogger('ExecuteDriver Child');
@@ -42,34 +42,21 @@ async function runScript(eventParams) {
 
   const driver = await attach(driverOpts);
 
-  const fullScript = buildScript(script);
+  const fullScript = `(async () => {${script}})();`;
 
   log.info('Running driver script in Node vm');
 
-  const vmCtx = new NodeVM({timeout: timeoutMs});
-  const vmFn = vmCtx.run(fullScript);
-
   // run the driver script, giving user access to the driver object, a fake
   // console logger, and a promise library
-  let result = await vmFn(driver, consoleFns, B);
+  let result = await vm.runInNewContext(
+    fullScript,
+    {driver, console: consoleFns, Promise: B},
+    {timeout: timeoutMs, breakOnSigint: true},
+  );
 
   result = coerceScriptResult(result);
   log.info('Successfully ensured driver script result is appropriate type for return');
   return {result, logs};
-}
-
-/**
- * Embed a user-generated script inside a method which takes only the
- * predetermined objects we specify
- *
- * @param {string} script - the javascript to execute
- *
- * @return {string} - the full script to execute
- */
-function buildScript(script) {
-  return `module.exports = async function execute (driver, console, Promise) {
-    ${script}
-  }`;
 }
 
 /**

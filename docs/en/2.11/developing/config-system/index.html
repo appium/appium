@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://appium.io/docs/en/2.11/commands/images-plugin/">
+        <link rel="canonical" href="https://appium.io/docs/en/2.11/developing/config-system/">
       
       
-        <link rel="prev" href="../execute-driver-plugin/">
+        <link rel="prev" href="../build-doctor-checks/">
       
       
-        <link rel="next" href="../relaxed-caps-plugin/">
+        <link rel="next" href="../../contributing/">
       
       
       <link rel="icon" href="../../assets/images/appium-logo.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Plugin: images - Appium Documentation</title>
+        <title>Appium's Config System - Appium Documentation</title>
       
     
     
@@ -121,7 +121,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#plugin-images" class="md-skip">
+        <a href="#reading-a-config-file" class="md-skip">
           Skip to content
         </a>
       
@@ -158,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Plugin: images
+              Appium's Config System
             
           </span>
         </div>
@@ -411,13 +411,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../commands/" class="md-tabs__link">
           
   
   Command Reference
@@ -475,11 +473,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../developing/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   Developing
@@ -1406,30 +1406,25 @@
       
   
   
-    
   
   
-  
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -1440,7 +1435,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             Command Reference
@@ -1454,7 +1449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
+      <a href="../../commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1475,7 +1470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../base-driver/" class="md-nav__link">
+      <a href="../../commands/base-driver/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1496,7 +1491,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../execute-driver-plugin/" class="md-nav__link">
+      <a href="../../commands/execute-driver-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1514,30 +1509,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Plugin: images
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../commands/images-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1546,125 +1521,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#compareimages" class="md-nav__link">
-    <span class="md-ellipsis">
-      compareImages
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="compareImages">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
-    <span class="md-ellipsis">
-      Response
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#findelement" class="md-nav__link">
-    <span class="md-ellipsis">
-      findElement
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="findElement">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Response
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#findelements" class="md-nav__link">
-    <span class="md-ellipsis">
-      findElements
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="findElements">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      Response
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1677,7 +1533,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../relaxed-caps-plugin/" class="md-nav__link">
+      <a href="../../commands/relaxed-caps-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1698,7 +1554,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../universal-xml-plugin/" class="md-nav__link">
+      <a href="../../commands/universal-xml-plugin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2228,25 +2084,30 @@
       
   
   
+    
   
   
+  
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" checked>
         
           
-          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -2257,7 +2118,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             Developing
@@ -2271,7 +2132,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2292,7 +2153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing/build-drivers/" class="md-nav__link">
+      <a href="../build-drivers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2313,7 +2174,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing/build-plugins/" class="md-nav__link">
+      <a href="../build-plugins/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2334,7 +2195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing/build-docs/" class="md-nav__link">
+      <a href="../build-docs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2355,7 +2216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../developing/build-doctor-checks/" class="md-nav__link">
+      <a href="../build-doctor-checks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2373,25 +2234,30 @@
                 
   
   
+    
   
   
+  
     
     
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_6" >
         
           
-          <label class="md-nav__link" for="__nav_10_6" id="__nav_10_6_label" tabindex="0">
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_10_6" id="__nav_10_6_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -2402,7 +2268,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_6_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_6_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_10_6">
             <span class="md-nav__icon md-icon"></span>
             Developer Reference
@@ -2413,10 +2279,28 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../developing/config-system/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Appium's Config System
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -2425,6 +2309,174 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reading-a-config-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reading a Config File
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validating-config-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validating Config Files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validating-cli-arguments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validating CLI Arguments
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validating CLI Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-cli-arguments-via-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining CLI Arguments via Schema
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining CLI Arguments via Schema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-schema-incongruities" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI &amp; Schema Incongruities
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argument-types-via-ajv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argument Types via ajv
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Types via ajv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-as-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types as Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transformers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-of-individual-arguments-via-ajv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation of Individual Arguments via ajv
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Schema Loading
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extension-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Extension Support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-environment-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Environment Support
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-keyword-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Keyword Reference
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2482,8 +2534,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -2492,30 +2542,111 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#compareimages" class="md-nav__link">
+  <a href="#reading-a-config-file" class="md-nav__link">
     <span class="md-ellipsis">
-      compareImages
+      Reading a Config File
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="compareImages">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
+  <a href="#validating-config-files" class="md-nav__link">
     <span class="md-ellipsis">
-      Parameters
+      Validating Config Files
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#response" class="md-nav__link">
+  <a href="#validating-cli-arguments" class="md-nav__link">
     <span class="md-ellipsis">
-      Response
+      Validating CLI Arguments
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Validating CLI Arguments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-cli-arguments-via-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      Defining CLI Arguments via Schema
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining CLI Arguments via Schema">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cli-schema-incongruities" class="md-nav__link">
+    <span class="md-ellipsis">
+      CLI &amp; Schema Incongruities
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argument-types-via-ajv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Argument Types via ajv
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Argument Types via ajv">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#types-as-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Types as Functions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#transformers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Transformers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#validation-of-individual-arguments-via-ajv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation of Individual Arguments via ajv
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -2525,68 +2656,38 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#findelement" class="md-nav__link">
+  <a href="#schema-loading" class="md-nav__link">
     <span class="md-ellipsis">
-      findElement
+      Schema Loading
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="findElement">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#response_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Response
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#findelements" class="md-nav__link">
+  <a href="#extension-support" class="md-nav__link">
     <span class="md-ellipsis">
-      findElements
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="findElements">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#parameters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      Parameters
+      Extension Support
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#response_2" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#development-environment-support" class="md-nav__link">
     <span class="md-ellipsis">
-      Response
+      Development Environment Support
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
+      
+        <li class="md-nav__item">
+  <a href="#custom-keyword-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Keyword Reference
+    </span>
+  </a>
   
 </li>
       
@@ -2605,7 +2706,7 @@
                   
 
   
-    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/commands/images-plugin.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/appium/appium/edit/master/packages/appium/docs/en/developing/config-system.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -2613,95 +2714,398 @@
   
 
 
-<h1 id="plugin-images">Plugin: images<a class="headerlink" href="#plugin-images" title="Permanent link">&para;</a></h1>
-<h3 id="compareimages"><code>compareImages</code><a class="headerlink" href="#compareimages" title="Permanent link">&para;</a></h3>
-<p><code>POST</code> <strong><code>/session/:sessionId/appium/compare_images</code></strong></p>
-<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>mode</code></td>
-<td style="text-align: left;"><code>any</code>[]</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>options?</code></td>
-<td style="text-align: left;"><code>any</code>[]</td>
-</tr>
-</tbody>
-</table>
-<h4 id="response">Response<a class="headerlink" href="#response" title="Permanent link">&para;</a></h4>
-<p><code>ComparisonResult</code></p>
-<h3 id="findelement"><code>findElement</code><a class="headerlink" href="#findelement" title="Permanent link">&para;</a></h3>
-<p><code>POST</code> <strong><code>/session/:sessionId/element</code></strong></p>
-<p>Find a UI element given a locator strategy and a selector, erroring if it can't be found</p>
-<p><strong><code>See</code></strong></p>
-<p><a href="https://w3c.github.io/webdriver/#find-element">https://w3c.github.io/webdriver/#find-element</a></p>
-<!-- comment source: method-signature -->
+  <h1>Appium's Config System</h1>
 
-<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
+<p>Appium 2 supports <a href="../../guides/config/">configuration files</a>. A configuration file is intended to
+have (nearly) 1:1 parity with command-line arguments. An end user can supply Appium 2 with
+a configuration file, CLI args, or both (the args have precedence over the config file).</p>
+<p>This document will be a technical overview of how the configuration system works. It is intended
+for Appium contributors, but will also explain the system's fundamental features.</p>
+<h2 id="reading-a-config-file">Reading a Config File<a class="headerlink" href="#reading-a-config-file" title="Permanent link">&para;</a></h2>
+<p>A config file is a JSON, JavaScript, or YAML file which can be validated against a schema. By
+default, this file will be named <code>.appiumrc.{json,js,yaml,yml}</code> and should be in the root of the
+project which depends upon <code>appium</code>. Other filenames and locations are supported via the <code>--config
+&lt;file&gt;</code> flag. For obvious reasons, the <code>config</code> argument is disallowed within config files.</p>
+<p>In lieu of a separate file, configuration can be embedded in a project's <code>package.json</code> using the
+<code>appiumConfig</code> property, e.g.,:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;appiumConfig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="nt">&quot;port&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12345</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
+</code></pre></div>
+<p>When an Appium server is started via the <code>appium</code> executable, the <code>init</code> function in <code>lib/main.js</code>
+will call into <code>lib/config-file.js</code> to load and/or search for a configuration file and in
+<code>package.json</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is not an error if configuration isn't found!</p>
+</div>
+<p>The <a href="https://npm.im/lilconfig"><code>lilconfig</code></a> package provides the search &amp; load functionality; refer
+to its documentation for more information about the search paths. Additionally, Appium provides
+support for config files written in YAML via the package <a href="https://npm.im/yaml"><code>yaml</code></a>.</p>
+<p>If a config file is found and successfully <a href="#validation">validated</a>, the result will be merged with
+a set of defaults and any additionall CLI arguments. CLI arguments have precedence over config
+files, and config files have precedence over defaults.</p>
+<h2 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h2>
+<p>The same system is used for <em>both</em> validation of config files <em>and</em> command-line arguments.</p>
+<p>The package <a href="https://npm.im/ajv"><code>ajv</code></a> provides validation. Of course, to make <code>ajv</code> validate
+anything, it must be provided a <em>schema</em>.</p>
+<p>The <em>base</em> schema is a <a href="https://json-schema.org/draft/2020-12/json-schema-core.html">JSON Schema
+Draft-7</a>-compliant object exported by
+<code>lib/schema/appium-config-schema.js</code>. This schema defines configuration <em>native to Appium</em>, and
+only concerns its behavior as a <em>server</em>; it does not define configuration for any other
+functionality (e.g., the <code>plugin</code> or <code>driver</code> subcommands).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Note that this file is the <em>base</em> schema; this will become painfully relevant.</p>
+</div>
+<p>This file is is <em>not</em> a JSON file, because a) JSON is painful to work with for humans, b) is
+especially reviled by @jlipps, and c) <code>ajv</code> accepts objects, not JSON files.</p>
+<p>It is more straightforward to explain how config files are validated, so we'll start there.</p>
+<h3 id="validating-config-files">Validating Config Files<a class="headerlink" href="#validating-config-files" title="Permanent link">&para;</a></h3>
+<p>When a config file is found (<code>lib/config-file.js</code>), it will call the <code>validate</code> function exported
+from <code>lib/schema/schema.js</code> with the contents of the config file. In turn, this asks <code>ajv</code> to
+validate the data against the schema that Appium has provided it.</p>
+<p>If the config file is invalid, errors will be generated to be displayed to the user. Finally, the
+<code>init</code> function will detect these errors, display them, and the process will exit.</p>
+<p>I hope that made sense, because this is the easy part.</p>
+<h3 id="validating-cli-arguments">Validating CLI Arguments<a class="headerlink" href="#validating-cli-arguments" title="Permanent link">&para;</a></h3>
+<p>As mentioned earlier, the same system is used for validating both config files and CLI arguments.</p>
+<p>Totally not judging, but Appium uses <a href="https://npm.im/argparse"><code>argparse</code></a> for its CLI argument
+parsing. This package, and others like it, provides an API to define the arguments a command-line
+Node.js script accepts, and will ultimately return an object representation of the user-supplied
+arguments.</p>
+<p>Just as the schema defines what's allowed in a config file, it also defines what's allowed on the
+command-line.</p>
+<h4 id="defining-cli-arguments-via-schema">Defining CLI Arguments via Schema<a class="headerlink" href="#defining-cli-arguments-via-schema" title="Permanent link">&para;</a></h4>
+<p>CLI arguments must be <em>defined</em> before their values can be validated.</p>
+<p>A JSON schema isn't a natural fit for defining CLI args--it needs some grease to make it work--but
+it's close enough that we can do so with an adapter and some custom metadata.</p>
+<p>In <code>lib/cli/parser.js</code>, there's a wrapper around <code>argparse</code>'s <code>ArgumentParser</code>; it's called (wait
+for it)... <code>ArgParser</code>. The wrapper exists because we're doing some custom things with <code>argparse</code>,
+but is has nothing to do with the schema directly.</p>
+<p>An <code>ArgParser</code> instance is created and its <code>parseArgs()</code> method is called with the raw CLI
+arguments. The definition of the accepted arguments comes from <code>lib/cli/args.js</code> in part--here, all
+of the arguments <em>not</em> intended for use with the <code>server</code> subcommand are hard-coded (e.g., the
+<code>driver</code> subcommand and <em>its</em> subcommands). <code>args.js</code> also contains a function <code>getServerArgs()</code>,
+which in turn calls into <code>toParserArgs</code> in <code>lib/schema/cli-args.js</code>. <code>lib/schema/cli-args.js</code> can
+be considered the "adapter" layer between <code>argparse</code> and the schema.</p>
+<p><code>toParserArgs</code> uses the <code>flattenSchema</code> function exported by <code>lib/schema/schema.js</code>, which
+"squashes" the schema into a key/value representation. Then, <code>toParserArgs</code> iterates over each
+key/value pair and "converts" it into a suitable <code>ArgumentOption</code> object for final handoff to
+<code>ArgParser</code>.</p>
+<p>This adapter (<code>cli-args.js</code>) is where most of the mess is hidden; let's explore this rat's nest
+a bit further.</p>
+<h5 id="cli-schema-incongruities">CLI &amp; Schema Incongruities<a class="headerlink" href="#cli-schema-incongruities" title="Permanent link">&para;</a></h5>
+<p>The conversion algorithm (see function <code>subSchemaToArgDef</code> in <code>lib/schema/cli-args.js</code>) is mostly
+just hacks and special cases neatly packed into a function. Things that don't cleanly map from
+<code>argparse</code> to a JSON schema include, but are not limited to:</p>
+<ul>
+<li>A schema cannot natively express "store the value of <code>--foo=&lt;value&gt;</code> in a property called <code>bar</code>" in a schema (this corresponds to the <code>ArgumentOption['dest']</code> prop).</li>
+<li>A schema cannot natively express aliases; e.g., <code>--verbose</code> can also be <code>-v</code></li>
+<li>A schema <code>enum</code> is not restricted to multiple types, but <code>argparse</code>'s equivalent <code>ArgumentOption['choices']</code> prop <em>is</em></li>
+<li>A schema does not know about <code>argparse</code>'s concept of "actions" (note that Appium is not currently using custom actions--though it did, and it could again).</li>
+<li><code>argparse</code> has no native type for <code>email</code>, <code>hostname</code>, <code>ipv4</code>, <code>uri</code> etc., and the schema does</li>
+<li>Schema validation only <em>validates</em>, it does not perform translation, transformation, or coercion (mostly). <code>argparse</code> allows this.</li>
+<li>Schemas allow the <code>null</code> type, for whatever reason. Ever pass <code>null</code> on the CLI?</li>
+<li><code>argparse</code> does not understand anything other than primitives; no objects, arrays, etc., and certainly not arrays of a particular type.</li>
+</ul>
+<p>All of the above cases and others are handled by the adapter.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Some decisions made in the adapter were arrived at via coin toss. If you are curious about why
+something is the way it is, it's likely that it had to do <em>something</em>.</p>
+</div>
+<p>Let's look more closely at handling types.</p>
+<h4 id="argument-types-via-ajv">Argument Types via <code>ajv</code><a class="headerlink" href="#argument-types-via-ajv" title="Permanent link">&para;</a></h4>
+<p>While <code>argparse</code> allows consumers, via its API, to define the <em>type</em> of various arguments (e.g.,
+a string, number, boolean flag, etc.), Appium mostly avoids these built-in types. <em>Why is that?</em>
+Well:</p>
+<ol>
+<li>We already know the type of an argument, because we've defined it in a schema.</li>
+<li><code>ajv</code> provides validation against a schema.</li>
+<li>A schema allows for greater expression of types, allowed values, etc., than <code>argparse</code> can provide natively.</li>
+<li>The expressiveness of a schema allows for better error messaging.</li>
+</ol>
+<p>To that end, the adapter eschews <code>argparse</code>'s built-in types (see allowed string values of
+<code>ArgumentOption['type']</code>) and instead abuses the ability to provide a <em>function</em> as a <code>type</code>. The
+exception is <em>boolean</em> flags, which do not have a <code>type</code>, but rather <code>action: 'store_true'</code>. The
+world may never know why.</p>
+<h5 id="types-as-functions">Types as Functions<a class="headerlink" href="#types-as-functions" title="Permanent link">&para;</a></h5>
+<p>When a <code>type</code> is a function, the function performs both validation <em>and</em> coercion (if necessary).
+So what are these functions?</p>
+<blockquote>
+<p>Note: <code>type</code> is <em>omitted</em> (and thus <em>not</em> a function) from the <code>ArgumentOption</code> if the property
+type is <code>boolean</code>, and is instead provided an <code>action</code> property of <code>store_true</code>. Yes, this is
+weird. No, I don't know why.</p>
+</blockquote>
+<p>Well... it depends upon the schema. But generally speaking, we create a <em>pipeline</em> of functions,
+each corresponding to a keyword in the schema. Let's take the example of the <code>port</code> argument. In
+lieu of asking the OS which ports the <code>appium</code>-running user can bind to, this argument is expected
+to be an integer between 1 and 65535. This turns out to be two functions which we combine into
+a pipeline:</p>
+<ol>
+<li>Convert the value to an integer, if possible. Because <em>every value in <code>process.argv</code> is a string</em>, we must coerce if we want a number.</li>
+<li>Use <code>ajv</code> to validate the integer against the schema for <code>port</code>. A schema lets us define a range via the <code>minimum</code> and <code>maximum</code> keywords. Read more about how this works in</li>
+</ol>
+<p>Much like the config file validation, if errors are detected, Appium nicely tells the end-user and
+the process exits w/ some help text.</p>
+<p>For other arguments which are naturally of non-primitive types, things are not so straightforward.</p>
+<h5 id="transformers">Transformers<a class="headerlink" href="#transformers" title="Permanent link">&para;</a></h5>
+<p>Remember how <code>argparse</code> doesn't understand arrays? What if the most ergonomic way to express
+a value is, in fact, an array?</p>
+<p>Well, Appium can't accept an array on the CLI, even though it can accept one in the config file.
+But Appium <em>can</em> accept a comma-delimited string (a CSV "line"). Or a string filepath referring to
+a file which <em>contains</em> a delimited list. Either way: by the time the value gets out of the
+argument parser, it should be an array.</p>
+<p>And as mentioned above, the native facilities of a JSON schema cannot express this. However, it's
+possible to define a <em>custom keyword</em> which Appium can then detect and handle accordingly. So
+that's what Appium does.</p>
+<p>In this case, a custom keyword <code>appiumCliTransformer</code> is registered with <code>ajv</code>. The value of
+<code>appiumCliTransformer</code> (at the time of this writing) can be <code>csv</code> or <code>json</code>. In the base schema
+file, <code>appium-config-schema.js</code>, Appium uses <code>appiumCliTransformer: 'csv'</code> if this behavior is
+desired.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Any property defined in the schema having type <code>array</code> will <em>automatically</em> uses the <code>csv</code>
+transformer. Likewise, a property having type <code>object</code> will use the <code>json</code> transformer. It's
+conceivable that <code>array</code> may want to use the <code>json</code> transformer, but otherwise, the presence of
+the <code>appiumCliTransformer</code> keyword on an <code>array</code>-or-<code>object</code>-typed property is not stricly
+necessary.</p>
+</div>
+<p>The adapter (remember the adapter?) creates a pipeline function including a special "CSV
+transformer" (transformers are defined in <code>lib/schema/cli-transformers.js</code>), and uses this function
+as the <code>type</code> property of the <code>ArgumentOption</code> passed into <code>argparse</code>. In this case, the <code>type:
+'array'</code> in the schema is ignored.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The config file doesn't <em>need</em> to perform any complex transformation of values, because it
+naturally allows Appium to define exactly what it expects. So Appium does no post-processing of
+config file values.</p>
+</div>
+<p>Properties that do not need this special treatment use <code>ajv</code> directly for validation. How this
+works requires some explanation, so that's next.</p>
+<h4 id="validation-of-individual-arguments-via-ajv">Validation of Individual Arguments via <code>ajv</code><a class="headerlink" href="#validation-of-individual-arguments-via-ajv" title="Permanent link">&para;</a></h4>
+<p>When we think of a JSON schema, we tend to think, "I have this JSON file and I want to validate it
+against the schema". That's valid, and in fact Appium does just that with config files! However,
+Appium does not do this when validating arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>During implementation, I was tempted to mash all of the arguments together into
+a config-file-like data structure and then validate it all at once. I think that would have
+been <em>possible</em>, but since an object full of CLI arguments is a flat key/value structure and
+the schema is not, this seemed like trouble.</p>
+</div>
+<p>Instead, Appium validates a value against a specific property <em>within</em> the schema. To do this, it
+maintains a mapping between a CLI argument definition and its corresponding property. The mapping
+itself is a <code>Map</code> with a unique identifier for the argument as the key, and an <code>ArgSpec</code>
+(<code>lib/schema/arg-spec.js</code>) object as the value.</p>
+<p>An <code>ArgSpec</code> object stores the following metadata:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
+<th>Property Name</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>using</code></td>
-<td style="text-align: left;"><code>any</code></td>
-<td style="text-align: left;">the locator strategy</td>
+<td><code>name</code></td>
+<td>Canonical name of the argument, corresponding to the property name in the schema.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>value</code></td>
-<td style="text-align: left;"><code>any</code></td>
-<td style="text-align: left;">the selector to combine with the strategy to find the specific element</td>
+<td><code>extType?</code></td>
+<td><code>driver</code> or <code>plugin</code>, if appropriate</td>
+</tr>
+<tr>
+<td><code>extName?</code></td>
+<td>Extension name, if appropriate</td>
+</tr>
+<tr>
+<td><code>ref</code></td>
+<td>Computed <code>$id</code> of the property in the schema</td>
+</tr>
+<tr>
+<td><code>arg</code></td>
+<td>Argument as accepted on CLI, without leading dashes</td>
+</tr>
+<tr>
+<td><code>dest</code></td>
+<td>Property name in parsed arguments object (as returned by <code>argparse</code>'s <code>parse_args()</code>)</td>
+</tr>
+<tr>
+<td><code>defaultValue?</code></td>
+<td>Value of the <code>default</code> keyword in schema, if appropriate</td>
 </tr>
 </tbody>
 </table>
-<h4 id="response_1">Response<a class="headerlink" href="#response_1" title="Permanent link">&para;</a></h4>
-<p><code>any</code></p>
-<p>The element object encoding the element id which can be used in element-related
-commands</p>
-<h3 id="findelements"><code>findElements</code><a class="headerlink" href="#findelements" title="Permanent link">&para;</a></h3>
-<p><code>POST</code> <strong><code>/session/:sessionId/elements</code></strong></p>
-<p>Find a a list of all UI elements matching a given a locator strategy and a selector</p>
-<p><strong><code>See</code></strong></p>
-<p><a href="https://w3c.github.io/webdriver/#find-elements">https://w3c.github.io/webdriver/#find-elements</a></p>
-<!-- comment source: method-signature -->
-
-<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h4>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>using</code></td>
-<td style="text-align: left;"><code>any</code></td>
-<td style="text-align: left;">the locator strategy</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>value</code></td>
-<td style="text-align: left;"><code>any</code></td>
-<td style="text-align: left;">the selector to combine with the strategy to find the specific elements</td>
-</tr>
-</tbody>
-</table>
-<h4 id="response_2">Response<a class="headerlink" href="#response_2" title="Permanent link">&para;</a></h4>
-<p><code>any</code></p>
-<p>A possibly-empty list of element objects</p>
+<p>When a schema is <a href="#schema-finalization">finalized</a>, the <code>Map</code> is populated with <code>ArgSpec</code> objects
+for all known arguments.</p>
+<p>So when the adapter is creating the pipeline of functions for the argument's <code>type</code>, it already has
+an <code>ArgSpec</code> for the argument. It creates a function which calls <code>validate(value, ref)</code> (in
+<code>lib/schema/schema.js</code>) where <code>value</code> is whatever the user provided, and <code>ref</code> is the <code>ref</code>
+property of the <code>ArgSpec</code>. The concept is that <code>ajv</code> can validate using <em>any</em> <code>ref</code> it knows about;
+each property in a schema can be referenced by this <code>ref</code> whether it's defined or not. To help
+visualize, if a schema is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;$id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my-schema.json&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;number&quot;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">}</span>
+</code></pre></div>
+<p>The <code>ref</code> of <code>foo</code> would be <code>my-schema.json#/properties/foo</code>. Assuming our <code>Ajv</code> instance knows
+about this <code>my-schema.json</code>, then we can call its <code>getSchema(ref)</code> method (which has a <code>schema</code>
+property, but is a misnomer nonetheless) to get a validation function; <code>validate(value, ref)</code> in
+<code>schema.js</code> calls this validation function.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The schema spec says a schema author can supply an explicit <code>$id</code> keyword to override this;
+it's unsupported by Appium at this time. If needed, extension authors must carefully use <code>$ref</code>
+without custom <code>$id</code>s. It's highly unlikely an extension would have a schema so complicated as
+to need this, however; Appium itself doesn't even use <code>$ref</code> to define its own properties!</p>
+</div>
+<p>Next, let's take a look at how Appium loads schemas. This actually happens <em>before</em> any argument
+validation.</p>
+<h2 id="schema-loading">Schema Loading<a class="headerlink" href="#schema-loading" title="Permanent link">&para;</a></h2>
+<p>Let's ignore extensions for a moment, and start with the base schema.</p>
+<p>When something first imports the <code>lib/schema/schema.js</code> module, an instance of an <code>AppiumSchema</code> is
+created. This is a singleton, and its methods are exported from the module (all of which are bound
+to the instance).</p>
+<p>The constructor does very little; it instantiates an <code>Ajv</code> instance and configures it with Appium's
+<a href="#custom-keyword-reference">custom keywords</a> and adds support for the <code>format</code> keyword via the
+<a href="https://npm.im/ajv-formats">ajv-formats</a> module.</p>
+<p>Otherwise, the <code>AppiumSchema</code> instance does not interact with the <code>Ajv</code> instance until its
+<code>finalize()</code> method (exported as <code>finalizeSchema()</code>) is called. When this method is called, we're
+saying "we are not going to add any more schemas; go ahead and create <code>ArgSpec</code> objects and
+register schemas with <code>ajv</code>".</p>
+<p>When does finalization happen? Well:</p>
+<ol>
+<li>When the <code>appium</code> executable begins, it <em>checks for and configures extensions</em> (hand-wave) in <code>APPIUM_HOME</code>.</li>
+<li>Only then does it start to think about arguments--it instantiates an <code>ArgParser</code>, which (as you'll recall) runs the adapter to convert the schema to arguments.</li>
+<li><em>Finalization happens here</em>--when creating the parser. Appium need the schema(s) to be registered with <code>ajv</code> in order to create validation functions for arguments.</li>
+<li>Thereafter, Appium parses the arguments with the <code>ArgParser</code>.</li>
+<li>Finally, decides what to do with the returned object.</li>
+</ol>
+<p>Without extensions, <code>finalize()</code> still knows about the Appium base schema
+(<code>appium-config-schema.js</code>), and just registers that. However, step 1. above is doing a <em>lot of
+work</em>, so let's look at how extensions come into play.</p>
+<h2 id="extension-support">Extension Support<a class="headerlink" href="#extension-support" title="Permanent link">&para;</a></h2>
+<p>One of the design goals of this system is the following:</p>
+<p><em>An extension should be able to register custom CLI arguments with the Appium, and a user should be
+able to use them like any other argument</em>.</p>
+<p>Previously, Appium 2 accepted arguments in this manner (via <code>--driverArgs</code>), but validation was
+hand-rolled and required extension implementors to use a custom API. It also required the user to
+awkwardly pass a JSON string as the configuration on the command-line. Further, no contextual help
+(via <code>--help</code>) existed for these arguments.</p>
+<p>Now, by providing a schema for its options, a driver or plugin can register CLI arguments and
+config file schemas with Appium.</p>
+<p>To register a schema, an extension must provide the <code>appium.schema</code> property in its <code>package.json</code>.
+The value may be a schema or a path to a schema. If the latter, the schema should be JSON or
+a CommonJS module (ESM not supported at this time, nor is YAML).</p>
+<p>For any property in this schema, the property will appear as a CLI argument of the form
+<code>--&lt;extension-type&gt;-&lt;extension-name&gt;-&lt;property-name&gt;</code>. For example, if the <code>fake</code> driver provides
+a property <code>foo</code>, the argument will be <code>--driver-fake-foo</code>, and will show in <code>appium server --help</code>
+like any other CLI argument.</p>
+<p>The corresponding property in a config file would be
+<code>server.&lt;extension-type&gt;.&lt;extension-name&gt;.&lt;property-name&gt;</code>, e.g.:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">&quot;driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">      </span><span class="nt">&quot;fake&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">        </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="p">}</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">}</span>
+</code></pre></div>
+<p>The naming convention described above avoids problems of one extension type having a name conflict
+with a different extension type.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>While an extension can provide aliases via <code>appiumCliAliases</code>, "short" flags are disallowed,
+since all arguments from extensions are prefixed with <code>--&lt;extension-type&gt;-&lt;extension-name&gt;-</code>.
+The extension name and argument name will be kebab-cased for the CLI, according to <a href="https://lodash.com/docs/4.17.15#kebabCase">Lodash's
+rules</a> around kebab-casing.</p>
+</div>
+<p>The schema object will look much like Appium's base schema, but it will only have top-level
+properties (nested properties are currently unsupported). Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;my rad schema for the cowabunga driver&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;fizz&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;buzz&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">&quot;$comment&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;corresponds to CLI --driver-cowabunga-fizz&quot;</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="p">}</span>
+</code></pre></div>
+<p>As written in a user's config file, this would be the <code>server.driver.cowabunga.fizz</code> property.</p>
+<p>When extensions are loaded, the <code>schema</code> property is verified and the schema is registered with the
+<code>AppiumSchema</code> (it is <em>not</em> registered with <code>Ajv</code> until <code>finalize()</code> is called).</p>
+<p>During finalization, each registered schema is added to the <code>Ajv</code> instance. The schema is assigned
+an <code>$id</code> based on the extension type and name (which overrides whatever the extension provides, if
+anything). Schemas are also forced to disallowed unknown arguments via the <code>additionalProperties:
+false</code> keyword.</p>
+<p>Behind the scenes, the base schema has <code>driver</code> and <code>plugin</code> properties which are objects. When
+finalized, a property is added to each--corresponding to an extension name--and the value of this
+property is a reference to the <code>$id</code> of a property in the extension schema. For example, the
+<code>server.driver</code> property will look like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;driver&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">&quot;cowabunga&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">      </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;driver-cowabunga.json&quot;</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">}</span>
+</code></pre></div>
+<p>This is why we call it the "base" schema--it is <em>mutated</em> when extensions provide schemas. The
+extension schemas are kept separately, but the <em>references</em> are added to the schema before it's
+ultimately added to <code>ajv</code>. This works because an <code>Ajv</code> instance understands references <em>from</em> any
+schema it knows about <em>to</em> any schema it knows about.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This makes it impossible to provide a complete static schema for Appium <em>and</em> the installed
+extensions (as of Nov 5 2021). A static <code>.json</code> schema <em>is</em> generated from the base (via a Gulp
+task), but it does not contain any extension schemas. The static schema also has uses beyond
+Appium; e.g., IDEs can provide contextual error-checking of config files this way. Let's solve
+this?</p>
+</div>
+<p>Just like how we look up the reference ID of a particular argument in the base schema, validation
+of arguments from extensions happens the exact same way. If the <code>cowabunga</code> driver has the schema
+ID <code>driver-cowabunga.json</code>, then the <code>fizz</code> property can be referenced from any schema registered
+with <code>ajv</code> via <code>driver-cowabunga.json#/properties/fizz</code>. "Base" schema arguments begin with
+<code>appium.json#properties/</code> instead.</p>
+<h2 id="development-environment-support">Development Environment Support<a class="headerlink" href="#development-environment-support" title="Permanent link">&para;</a></h2>
+<p>During the flow of development, a couple extra tasks have been automated to maintain the base
+schema:</p>
+<ul>
+<li>As a post-transpilation step, a <code>lib/appium-config.schema.json</code> gets generated from</li>
+<li><code>lib/schema/appium-config-schema.js</code> (in addition to its CJS counterpart generated by Babel).</li>
+<li>This file is under version control. It ends up being <em>copied</em> to</li>
+<li><code>build/lib/appium-config.schema.json</code> in this step. A pre-commit hook (see</li>
+<li><code>scripts/generate-schema-declarations.js</code> in the root monorepo) generates</li>
+<li>a <code>types/appium-config-schema.d.ts</code> from the above JSON file. The types in <code>types/types.d.ts</code></li>
+<li>depend upon this file. This file is under version control.</li>
+</ul>
+<h2 id="custom-keyword-reference">Custom Keyword Reference<a class="headerlink" href="#custom-keyword-reference" title="Permanent link">&para;</a></h2>
+<p>Keywords are defined in <code>lib/schema/keywords.js</code>.</p>
+<ul>
+<li><code>appiumCliAliases</code>: allows a schema to express aliases (e.g., a CLI argument can be <code>--verbose</code> or <code>-v</code>). This is an array of strings. Strings shorter than three (3) characters will begin with a single dash (<code>-</code>) instead of a double-dash (<code>--</code>). Note that any argument provided by an extension will begin with a double-dash, because these are required to have the <code>--&lt;extension-type&gt;-&lt;extension-name&gt;-</code> prefix.</li>
+<li><code>appiumCliDest</code>: allows a schema to specify a custom property name in the post-<code>argprase</code> arguments objects. If not set, this becomes a camelCased string.</li>
+<li><code>appiumCliDescription</code>: allows a schema to override the description of the argument when displayed on the command-line. This is useful paired with <code>appiumCliTransformer</code> (or <code>array</code>/<code>object</code>-typed properties), since there's a substantial difference between what a CLI-using user can provide vs. what a config-file-using user can provide.</li>
+<li><code>appiumCliTransformer</code>: currently a choice between <code>csv</code> and <code>json</code>. These are custom functions which post-process a value. They are not used when loading &amp; validating config files, but the idea should be that they result in the same object you'd get if you used whatever the config file wanted (e.g., an array of strings). <code>csv</code> is for comma-delimited strings and CSV files; <code>json</code> is for raw JSON strings and <code>.json</code> files.</li>
+<li><code>appiumCliIgnore</code>: If <code>true</code>, do not support this property on the CLI.</li>
+<li><code>appiumDeprecated</code>: If <code>true</code>, the property is considered "deprecated", and will be displayed as such to the user (e.g., in the <code>--help</code> output). Note the JSON Schema draft-2019-09 introduces a new keyword <code>deprecated</code> which we should use instead if upgrading to this metaschema. When doing so, <code>appiumDeprecated</code> should itself be marked as <code>deprecated</code>.</li>
+</ul>
 
 
 
@@ -2722,7 +3126,7 @@ commands</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2023-12-16T16:11:43+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2023-12-16</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-09-19T16:38:14+00:00" locale="en"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-09-19</span>
   </span>
 
     

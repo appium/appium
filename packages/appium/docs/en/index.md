@@ -12,11 +12,6 @@ title: Welcome
   }
 </style>
 
-<div style="text-align:center;width:100%;background-color:#7f56c2" >
-  <h3 style="color:#ffffff;">
-    Appium Conf 2024 is coming online, 13 September. Improve your Appium skills and connect with the community. <br><a style="color:#fcba12" href="https://confengine.com/conferences/appium-conf-2024/register/selection?utm_medium=referal&utm_source=appium.io&utm_campaign=register" target="blank">Register Now</a>
-  </h3>        
-</div>
 <div style="text-align: center">
   <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
 </div>

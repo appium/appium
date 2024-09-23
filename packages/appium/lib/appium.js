@@ -20,6 +20,8 @@ import {
   pullSettings,
   makeNonW3cCapsError,
   isBroadcastIp,
+  fetchInterfaces,
+  V4_BROADCAST_IP,
 } from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -780,10 +782,7 @@ class AppiumDriver extends DriverCore {
       if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
-        // Clients cannot use broadcast addresses, like 0.0.0.0 or ::
-        // to create connections. Thus we prefer a hostname if such
-        // address is set.
-        const host = isBroadcastIp(address) ? os.hostname() : address;
+        const host = determineBiDiHost(address);
         const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
         this.log.info(
           `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
@@ -1282,6 +1281,25 @@ class AppiumDriver extends DriverCore {
 // should be handled by this, our umbrella driver
 function isAppiumDriverCommand(cmd) {
   return !isSessionCommand(cmd) || cmd === DELETE_SESSION_COMMAND;
+}
+
+/**
+ * Clients cannot use broadcast addresses, like 0.0.0.0 or ::
+ * to create connections. Thus we prefer a hostname if such
+ * address is provided or the actual address of a non-local interface,
+ * in case the host only has one such interface.
+ *
+ * @param {string} address
+ * @returns {string}
+ */
+function determineBiDiHost(address) {
+  if (!isBroadcastIp(address)) {
+    return address;
+  }
+
+  const nonLocalInterfaces = fetchInterfaces(address === V4_BROADCAST_IP ? 4 : 6)
+    .filter((iface) => !iface.internal);
+  return nonLocalInterfaces.length === 1 ? nonLocalInterfaces[0].address : os.hostname();
 }
 
 /**

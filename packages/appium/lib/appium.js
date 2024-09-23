@@ -15,11 +15,17 @@ import {
   promoteAppiumOptionsForObject,
 } from '@appium/base-driver';
 import AsyncLock from 'async-lock';
-import {parseCapsForInnerDriver, pullSettings, makeNonW3cCapsError} from './utils';
+import {
+  parseCapsForInnerDriver,
+  pullSettings,
+  makeNonW3cCapsError,
+  isBroadcastIp,
+} from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
 import {DRIVER_TYPE, BIDI_BASE_PATH, BIDI_EVENT_NAME} from './constants';
 import WebSocket from 'ws';
+import os from 'node:os';
 
 const MIN_WS_CODE_VAL = 1000;
 const MAX_WS_CODE_VAL = 1015;
@@ -774,7 +780,15 @@ class AppiumDriver extends DriverCore {
       if (dCaps.webSocketUrl && driverInstance.doesSupportBidi) {
         const {address, port, basePath} = this.args;
         const scheme = `ws${this.server.isSecure() ? 's' : ''}`;
-        const bidiUrl = `${scheme}://${address}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
+        // Clients cannot use broadcast addresses, like 0.0.0.0 or ::
+        // to create connections. Thus we prefer a hostname if such
+        // address is set.
+        const host = isBroadcastIp(address) ? os.hostname() : address;
+        const bidiUrl = `${scheme}://${host}:${port}${basePath}${BIDI_BASE_PATH}/${innerSessionId}`;
+        this.log.info(
+          `Upstream driver responded with webSocketUrl ${dCaps.webSocketUrl}, will rewrite to ` +
+          `${bidiUrl} for response to client`
+        );
         // @ts-ignore webSocketUrl gets sent by the client as a boolean, but then it is supposed
         // to come back from the server as a string. TODO figure out how to express this in our
         // capability constraint system

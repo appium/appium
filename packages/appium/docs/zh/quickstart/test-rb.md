@@ -21,7 +21,7 @@ bundle init
 
 ```bash
 bundle add appium_lib_core
-# or
+# 或
 # bundle add appium_lib
 ```
 
@@ -61,7 +61,7 @@ bundle add test-unit
 基本上，这段代码正在执行以下操作：
 
 1. 定义一组要发送到Appium服务器的“能力”（参数），以便Appium知道您想要自动化什么。
-1. 在内置的Android设置应用程序上启动Appium会话。Starting an Appium session on the built-in Android settings app.
+1. 在内置的Android设置应用程序上启动Appium会话。
 1. 找到“电池”列表项并单击它。
 1. 暂停片刻，纯粹是为了视觉效果。
 1. 结束Appium会话。

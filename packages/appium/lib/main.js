@@ -39,8 +39,8 @@ import {
   isServerCommandArgs,
   fetchInterfaces,
   V4_BROADCAST_IP,
-  V6_BROADCAST_IP,
   isSetupCommandArgs,
+  isBroadcastIp,
 } from './utils';
 import net from 'node:net';
 
@@ -321,7 +321,7 @@ async function init(args) {
 function logServerAddress(url) {
   const urlObj = new URL(url);
   logger.info(`Appium REST http interface listener started on ${url}`);
-  if (![V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(urlObj.hostname)) {
+  if (!isBroadcastIp(urlObj.hostname)) {
     return;
   }
 

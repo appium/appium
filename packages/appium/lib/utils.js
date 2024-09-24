@@ -40,7 +40,7 @@ export function makeNonW3cCapsError() {
  *
  * @todo May want to force color to be `false` if {@link isStdoutTTY} is `false`.
  */
-const inspect = _.flow(
+export const inspect = _.flow(
   _.partialRight(
     /** @type {(object: any, options: import('util').InspectOptions) => string} */ (dump),
     {colors: true, depth: null, compact: !isStdoutTTY}
@@ -62,7 +62,7 @@ const inspect = _.flow(
  * @param {NSCapabilities<C>} [defaultCapabilities]
  * @returns {ParsedDriverCaps<C,J>|InvalidCaps<C,J>}
  */
-function parseCapsForInnerDriver(
+export function parseCapsForInnerDriver(
   jsonwpCapabilities,
   w3cCapabilities,
   constraints = /** @type {C} */ ({}),
@@ -182,7 +182,7 @@ function parseCapsForInnerDriver(
  * @param {Capabilities<C>} caps - Desired capabilities object
  * @returns {NSCapabilities<C>}
  */
-function insertAppiumPrefixes(caps) {
+export function insertAppiumPrefixes(caps) {
   return /** @type {NSCapabilities<C>} */ (
     _.mapKeys(caps, (_, key) =>
       STANDARD_CAPS_LOWERCASE.has(key.toLowerCase()) || key.includes(':')
@@ -197,7 +197,7 @@ function insertAppiumPrefixes(caps) {
  * @param {NSCapabilities<C>} caps
  * @returns {Capabilities<C>}
  */
-function removeAppiumPrefixes(caps) {
+export function removeAppiumPrefixes(caps) {
   return /** @type {Capabilities<C>} */ (_.mapKeys(caps, (_, key) => removeAppiumPrefix(key)));
 }
 
@@ -215,7 +215,7 @@ function removeAppiumPrefix(key) {
  * @param {string} pkgName
  * @returns {string|undefined}
  */
-function getPackageVersion(pkgName) {
+export function getPackageVersion(pkgName) {
   const pkgInfo = require(`${pkgName}/package.json`) || {};
   return pkgInfo.version;
 }
@@ -227,7 +227,7 @@ function getPackageVersion(pkgName) {
  * for more details.
  * @returns {void}
  */
-function adjustNodePath() {
+export function adjustNodePath() {
   const selfRoot = node.getModuleRootSync('appium', __filename);
   if (!selfRoot || path.dirname(selfRoot).length >= selfRoot.length) {
     return;
@@ -297,7 +297,7 @@ function adjustNodePath() {
  * setting items or a dictionary containing parsed Appium setting names along with
  * their values.
  */
-function pullSettings(caps) {
+export function pullSettings(caps) {
   if (!_.isPlainObject(caps) || _.isEmpty(caps)) {
     return {};
   }
@@ -447,15 +447,15 @@ export function adler32(str, seed = null) {
 	return ((b % 65521) << 16) | (a % 65521);
 }
 
-export {
-  inspect,
-  parseCapsForInnerDriver,
-  insertAppiumPrefixes,
-  getPackageVersion,
-  pullSettings,
-  removeAppiumPrefixes,
-  adjustNodePath,
-};
+/**
+ * Checks if the provided address is a broadcast one.
+ *
+ * @param {string} address
+ * @returns {boolean}
+ */
+export function isBroadcastIp(address) {
+  return [V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(address);
+}
 
 /**
  * @typedef {import('@appium/types').StringRecord} StringRecord

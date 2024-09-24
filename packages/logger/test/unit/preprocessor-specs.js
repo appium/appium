@@ -4,6 +4,11 @@ describe('Log Internals', function () {
   /** @type {import('../../lib/secure-values-prepreocessor').SecureValuesPreprocessor} */
   let preprocessor;
 
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   beforeEach(function () {
     preprocessor = new SecureValuesPreprocessor();
   });

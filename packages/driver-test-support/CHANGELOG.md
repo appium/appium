@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.9](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.8...@appium/driver-test-support@0.6.9) (2024-09-26)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([#20605](https://github.com/appium/appium/issues/20605)) ([da7a4fd](https://github.com/appium/appium/commit/da7a4fdce8790bc59370bfe4b912c7c0c403c713))
+* **test-support:** update dependency sinon to v19 ([#20576](https://github.com/appium/appium/issues/20576)) ([6a8f26a](https://github.com/appium/appium/commit/6a8f26a9cbf01a7c9181c90bb999d332a343d94d))
+
+
+
 ## [0.6.8](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.7...@appium/driver-test-support@0.6.8) (2024-09-16)
 
 

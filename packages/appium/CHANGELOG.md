@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.11.5](https://github.com/appium/appium/compare/appium@2.11.4...appium@2.11.5) (2024-09-26)
+
+
+### Bug Fixes
+
+* **appium:** Return hostname as web socket url for BiDi if a broadcast address is assigned to the server ([#20603](https://github.com/appium/appium/issues/20603)) ([f0de55d](https://github.com/appium/appium/commit/f0de55da0da2fc0305876a948704c1f0a2a5990f))
+
+
+
 ## [2.11.4](https://github.com/appium/appium/compare/appium@2.11.3...appium@2.11.4) (2024-09-16)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.35](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.34...@appium/execute-driver-plugin@3.0.35) (2024-09-26)
+
+
+### Bug Fixes
+
+* **execute-driver-plugin:** replace vm2 with Node's built-in vm ([#20594](https://github.com/appium/appium/issues/20594)) ([5553016](https://github.com/appium/appium/commit/5553016582225de1a1166172d83e2fd2864c138d))
+
+
+
 ## [3.0.34](https://github.com/appium/appium/compare/@appium/execute-driver-plugin@3.0.33...@appium/execute-driver-plugin@3.0.34) (2024-09-16)
 
 

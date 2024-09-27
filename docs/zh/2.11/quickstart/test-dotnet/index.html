@@ -24,7 +24,7 @@
     
     
       
-        <title>Write a Test (.NET) - Appium Documentation</title>
+        <title>编写一个测试(.NET) - Appium Documentation</title>
       
     
     
@@ -153,7 +153,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Write a Test (.NET)
+              编写一个测试(.NET)
             
           </span>
         </div>
@@ -868,7 +868,7 @@
         
   
   <span class="md-ellipsis">
-    System Requirements
+    系统要求
   </span>
   
 
@@ -1039,7 +1039,7 @@
         
   
   <span class="md-ellipsis">
-    Write a Test (Ruby)
+    编写一个测试(Ruby)
   </span>
   
 
@@ -1067,7 +1067,7 @@
         
   
   <span class="md-ellipsis">
-    Write a Test (.NET)
+    编写一个测试(.NET)
   </span>
   
 
@@ -2399,21 +2399,22 @@
   
 
 
-  <h1>Write a Test (.NET)</h1>
+  <h1>编写一个测试(.NET)</h1>
 
-<p>The <a href="https://github.com/appium/dotnet-client/">Appium .NET Client</a> is
-an official Appium client in C#. This driver is an extension of the Selenium C# client. It has all the functionalities of the regular driver, but add Appium-specific methods on top of this. The driver is available on the public NuGet Gallery as <a href="https://www.nuget.org/packages/Appium.WebDriver/">Appium.WebDriver</a>.</p>
-<p>Now, we get inside the directory and create a new <a href="https://nunit.org/">NUnit</a> project. We will also add the references to the Appium.Net driver, and other dependencies.</p>
+<p><a href="https://github.com/appium/dotnet-client/">Appium.NET 客户端</a>是 C# 中的官方 Appium 客户端。
+此驱动程序是 Selenium C# 客户端的扩展。它具有常规驱动程序的所有功能，并在此基础上添加了Appium特定的方法。
+该驱动程序可在 NuGet Gallery 上以<a href="https://www.nuget.org/packages/Appium.WebDriver/">Appium.WebDriver</a>的形式提供。</p>
+<p>现在，我们进入该目录并创建一个新的<a href="https://nunit.org/">NUnit</a>项目。我们还将添加对 Appium.NET 驱动程序的引用和其他依赖项。</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>dotnet-client
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>dotnet<span class="w"> </span>new<span class="w"> </span>nunit<span class="w"> </span>--name<span class="w"> </span>appiumtest<span class="w"> </span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">cd</span><span class="w"> </span>appiumtest
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># This will install the latest 5.x version</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># 这将安装最新的5.x版本</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>Appium.WebDriver<span class="w">  </span>--prerelease
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>dotnet<span class="w"> </span>add<span class="w"> </span>package<span class="w"> </span>Newtonsoft.Json<span class="w"> </span>--version<span class="w"> </span><span class="m">13</span>.0.3
 </code></pre></div>
-<p>Once this is done, your project should have a placeholder file <code>UnitTest1.cs</code>. We will replace the code to include the OpenQA namespaces, an initialization of the driver, and the actual test.</p>
+<p>完成此操作后，您的项目应该有一个占位符文件<code>UnitTest1.cs</code>。我们将替换代码，以包含OpenQA名称空间、驱动程序的初始化和实际测试。</p>
 <div class="highlight"><span class="filename">UnitTest1.cs</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">using</span><span class="w"> </span><span class="nn">OpenQA.Selenium</span><span class="p">;</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">using</span><span class="w"> </span><span class="nn">OpenQA.Selenium.Appium</span><span class="p">;</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">using</span><span class="w"> </span><span class="nn">OpenQA.Selenium.Appium.Android</span><span class="p">;</span>
@@ -2437,7 +2438,7 @@ an official Appium client in C#. This driver is an extension of the Selenium C# 
 <a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
 <a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">        </span><span class="n">driverOptions</span><span class="p">.</span><span class="n">AddAdditionalAppiumOption</span><span class="p">(</span><span class="s">&quot;appPackage&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;com.android.settings&quot;</span><span class="p">);</span>
 <a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">        </span><span class="n">driverOptions</span><span class="p">.</span><span class="n">AddAdditionalAppiumOption</span><span class="p">(</span><span class="s">&quot;appActivity&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;.Settings&quot;</span><span class="p">);</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">        </span><span class="c1">// NoReset assumes the app com.google.android is preinstalled on the emulator</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">        </span><span class="c1">// NoReset假设模拟器上预装了com.google.android应用程序</span>
 <a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">        </span><span class="n">driverOptions</span><span class="p">.</span><span class="n">AddAdditionalAppiumOption</span><span class="p">(</span><span class="s">&quot;noReset&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">true</span><span class="p">);</span>
 <a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>
 <a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="w">        </span><span class="n">_driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">AndroidDriver</span><span class="p">(</span><span class="n">serverUri</span><span class="p">,</span><span class="w"> </span><span class="n">driverOptions</span><span class="p">,</span><span class="w"> </span><span class="n">TimeSpan</span><span class="p">.</span><span class="n">FromSeconds</span><span class="p">(</span><span class="m">180</span><span class="p">));</span>
@@ -2458,36 +2459,30 @@ an official Appium client in C#. This driver is an extension of the Selenium C# 
 <a id="__codelineno-1-42" name="__codelineno-1-42" href="#__codelineno-1-42"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-1-43" name="__codelineno-1-43" href="#__codelineno-1-43"></a><span class="p">}</span>
 </code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>It's not within the scope of this guide to give a complete run-down on the dotnet client
-library or everything that's happening here, so we'll leave the code itself unexplained in
-detail for now. You may want to read up particularly on Appium
-<a href="../../guides/caps/">Capabilities</a> in addition to familiarizing yourself with the 
-<a href="https://github.com/appium/dotnet-client/">dotnet client driver documentation</a> for a fuller explanation
-of the various API commands you see and what their purpose is.</p>
+<div class="admonition 注意">
+<p class="admonition-title">注意</p>
+<p>本指南不包括对.NET客户端库或这里发生的一切进行完整的概述，因此我们暂时不详细解释代码本身。
+除了熟悉<a href="https://github.com/appium/dotnet-client/">dotnet客户端驱动程序文档</a>外，
+您可能还想阅读<a href="../../guides/caps/">Appium功能</a>文档，以更全面地解释您看到的各种API命令及其用途。</p>
 </div>
-<p>Basically, this code is doing the following:</p>
+<p>基本上，这段代码正在执行以下操作：</p>
 <ol>
-<li>Defining a set of "Capabilities" (parameters) to send to the Appium server so Appium knows what
-kind of thing you want to automate. Some of these parameters can be overriden using environment variables.</li>
-<li>Starting an Appium session on the built-in Android settings app.</li>
-<li>Finding the "Battery" list item and clicking it.</li>
-<li>Ending the Appium session.</li>
+<li>定义一组要发送到Appium服务器的“能力”（参数），以便Appium知道您想要自动化什么。其中一些参数可以使用环境变量覆盖。</li>
+<li>在内置的Android设置应用程序上启动Appium会话。</li>
+<li>找到“电池”列表项并单击它。</li>
+<li>结束Appium会话。</li>
 </ol>
-<p>That's it! Let's give it a try. Before you run the test, make sure that you have an Appium server
-running in another terminal session, otherwise you'll get an error about not being able to connect
-to one. Then, you can execute the script:</p>
+<p>就是这样！让我们试试。在运行测试之前，请确保您在另一个终端会话中运行了 Appium 服务器，否则您将收到无法连接到该服务器的错误。然后，您可以执行脚本：</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>dotnet<span class="w"> </span><span class="nb">test</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Example output:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># 示例输出：</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Starting test execution, please wait...</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># A total of 1 test files matched the specified pattern.</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 323 ms - appiumtest.dll (net7.0)</span>
 </code></pre></div>
-<p>If all goes well, you'll see the Settings app open up and navigate to the "Battery" view in the emulator before the app closes again.</p>
-<p>Congratulations, you've started your Appium journey! Read on for some <a href="../next-steps/">next steps</a> to explore.</p>
+<p>如果一切顺利，您会看到“设置”应用程序打开，并导航到模拟器中的“电池”视图，然后应用程序关闭。</p>
+<p>恭喜，您已经开始了您的Appium之旅！请继续阅读，了解<a href="../next-steps/">下一步</a>要探索的内容。</p>
 
 
 
@@ -2508,7 +2503,7 @@ to one. Then, you can execute the script:</p>
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-25T16:48:56+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-25</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-09-25T07:18:00+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-09-25</span>
   </span>
 
     

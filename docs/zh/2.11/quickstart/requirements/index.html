@@ -24,7 +24,7 @@
     
     
       
-        <title>System Requirements - Appium Documentation</title>
+        <title>系统要求 - Appium Documentation</title>
       
     
     
@@ -121,7 +121,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#driver-requirements" class="md-skip">
+        <a href="#_1" class="md-skip">
           跳转至
         </a>
       
@@ -158,7 +158,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              System Requirements
+              系统要求
             
           </span>
         </div>
@@ -880,7 +880,7 @@
           
   
   <span class="md-ellipsis">
-    System Requirements
+    系统要求
   </span>
   
 
@@ -891,7 +891,7 @@
         
   
   <span class="md-ellipsis">
-    System Requirements
+    系统要求
   </span>
   
 
@@ -911,9 +911,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#driver-requirements" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Driver Requirements
+      驱动程序要求
     </span>
   </a>
   
@@ -1087,7 +1087,7 @@
         
   
   <span class="md-ellipsis">
-    Write a Test (Ruby)
+    编写一个测试(Ruby)
   </span>
   
 
@@ -1108,7 +1108,7 @@
         
   
   <span class="md-ellipsis">
-    Write a Test (.NET)
+    编写一个测试(.NET)
   </span>
   
 
@@ -2425,9 +2425,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#driver-requirements" class="md-nav__link">
+  <a href="#_1" class="md-nav__link">
     <span class="md-ellipsis">
-      Driver Requirements
+      驱动程序要求
     </span>
   </a>
   
@@ -2456,29 +2456,24 @@
   
 
 
-  <h1>System Requirements</h1>
+  <h1>系统要求</h1>
 
-<p>The basic requirements for the Appium server are:</p>
+<p>Appium服务器的基本要求是：</p>
 <ul>
-<li>A macOS, Linux, or Windows operating system</li>
-<li><a href="https://nodejs.org">Node.js</a> version in the <a href="https://semver.org">SemVer</a> range <code>^14.17.0 || ^16.13.0 || &gt;=18.0.0</code><ul>
-<li>LTS is recommended</li>
+<li>macOS、Linux或Windows操作系统</li>
+<li><a href="https://nodejs.org">Node.js</a> 版本在 <code>^14.17.0 || ^16.13.0 || &gt;=18.0.0</code> 范围内<ul>
+<li>推荐使用LTS版本</li>
 </ul>
 </li>
-<li><a href="https://npmjs.com"><code>npm</code></a> version <code>&gt;=8</code> (<code>npm</code> is usually bundled with Node.js, but can be upgraded
-independently)</li>
+<li><a href="https://npmjs.com"><code>npm</code></a> 版本 <code>&gt;=8</code> (<code>npm</code> 通常与Node.js捆绑在一起，但可以独立升级)</li>
 </ul>
-<p>By itself, Appium is relatively lightweight and doesn't have significant disk space or RAM
-requirements. It can even be run in resource-constrained environments like Raspberry Pi, so long as
-Node.js is available.</p>
-<h3 id="driver-requirements">Driver Requirements<a class="headerlink" href="#driver-requirements" title="Permanent link">&para;</a></h3>
-<p>Drivers for automating specific platforms will likely have other requirements. Refer to the
-documentation of the <a href="../../ecosystem/drivers/">Appium driver(s)</a> for that platform for additional
-dependencies. It is almost universally the case that Appium drivers for a given platform will
-require the developer toolchain and SDKs for that platform to be installed.</p>
-<p>In order to assist with driver requirements, each (official) driver comes with the Appium Doctor tool,
-which allows to verify if all requirements have been set up. Learn more about how to use this tool in
-the <a href="../../cli/extensions/#doctor">Command-Line Usage documentation</a>.</p>
+<p>Appium本身相对轻量级，并且没有大量的磁盘空间或RAM要求。
+只要Node.js可用，它甚至可以在Raspberry Pi等资源有限的环境中运行。</p>
+<h3 id="_1">驱动程序要求<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<p>自动化特定平台的驱动程序可能还有其他要求。有关其他依赖关系，请参阅该平台的<a href="../../ecosystem/drivers/">Appium驱动程序</a>文档。
+一般情况下，给定平台的Appium驱动程序需要安装该平台的开发人员工具链和SDK。</p>
+<p>为了协助满足驱动程序的要求，每个官方驱动程序都会配备 Appium Doctor 工具，该工具用于验证当前配置是否已满足驱动程序的所有要求。
+您可以在<a href="../../cli/extensions/#doctor">命令行使用文档</a>中了解更多关于如何使用这个工具的信息。</p>
 
 
 
@@ -2499,7 +2494,7 @@ the <a href="../../cli/extensions/#doctor">Command-Line Usage documentation</a>.
     <span class="md-icon" title="最后更新">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-07-25T16:48:56+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-07-25</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-timeago"><span class="timeago" datetime="2024-09-25T07:18:00+00:00" locale="zh"></span></span><span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-iso_date">2024-09-25</span>
   </span>
 
     

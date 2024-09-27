@@ -6,6 +6,10 @@ hide:
 title: Sponsors & Backers
 ---
 
+<style>
+  .appium-sponsor-thanks { display: none; }
+</style>
+
 Appium is an Apache-2 licensed open source project whose development is made possible entirely by
 donations of time and money by individuals and companies who benefit from our software and our
 mission. If you'd like to join this amazing group and help ensure Appium's continued development

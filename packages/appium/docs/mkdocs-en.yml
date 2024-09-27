@@ -75,3 +75,5 @@ nav:
       - Developer Reference:
           - developing/config-system.md
   - Contributing: contributing.md
+  - Sponsors:
+      - sponsors.md

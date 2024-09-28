@@ -216,7 +216,7 @@ width="300" alt="Sauce Labs" /></a>
 
 ### Other Sponsors
 
-A full list of sponsors is available at our [Sponsors page](SPONSORS.md).
+A full list of sponsors is available at our [Sponsors page](https://appium.io/docs/en/latest/sponsors/).
 
 ## License
 

@@ -41,7 +41,7 @@
     "@appium/logger": "^1.6.1",
     "@appium/schema": "^0.6.1",
     "@appium/tsconfig": "^0.3.3",
-    "@types/express": "4.17.21",
+    "@types/express": "5.0.0",
     "@types/ws": "8.5.12",
     "type-fest": "4.26.1"
   },

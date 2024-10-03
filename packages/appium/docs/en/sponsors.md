@@ -21,9 +21,6 @@ Hub](https://opencollective.com/appium).
 We are very grateful for the support of our Development Partners, who donate Appium development and
 maintenance as part of their employees' core job duties!
 
-<a href="https://www.headspin.io/solutions/appium-mobile-test-automation" target="_blank"><img
-src="../assets/images/sponsor-logo-headspin.png" width="250"/></a>
-
 ## Strategic Partners
 
 We are very grateful for the financial and marketing support of our exclusive Strategic Partners,

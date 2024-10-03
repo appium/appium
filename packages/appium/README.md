@@ -195,11 +195,6 @@ Appium is incredibly grateful to our Development and Strategic Partners for thei
 contribution of project development and leadership!
 
 <p align="center">
-  <a href="https://www.headspin.io/solutions/appium-mobile-test-automation"><img src="packages/appium/docs/overrides/assets/images/sponsor-logo-headspin.png"
-width="275" alt="HeadSpin" /></a>
-</p>
-
-<p align="center">
   <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
     <picture>
       <source srcset="packages/appium/docs/overrides/assets/images/sponsor-logo-browserstack-dark.png" media="(prefers-color-scheme: dark)"/>

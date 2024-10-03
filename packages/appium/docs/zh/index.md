@@ -23,11 +23,6 @@ title: 欢迎
   href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">点击此处</a>)
   <div class="homepageSponsors">
     <div class="homepageSponsor">
-      <a href="https://www.headspin.io/solutions/appium-mobile-test-automation">
-        <img src="assets/images/sponsor-logo-headspin.png" style="width: 200px;" />
-      </a>
-    </div>
-    <div class="homepageSponsor">
       <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
         <img src="assets/images/sponsor-logo-browserstack-dark.png#only-dark" style="width: 220px;" />
         <img src="assets/images/sponsor-logo-browserstack-light.png#only-light" style="width: 220px;" />

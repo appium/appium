@@ -249,11 +249,33 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           type: 'boolean',
           appiumCliDest: 'relaxedSecurityEnabled',
         },
+        'shutdown-timeout': {
+          default: 5000,
+          description: 'For how long the server should delay its shutdown before force-closing all open connections to it. ' +
+            'Setting its value to zero should close the server without waiting for active connections.',
+          title: 'Graceful server shutdown timeout in milliseconds',
+          type: 'integer',
+          minimum: 0,
+        },
         'session-override': {
           default: false,
           description: 'Enables session override (clobbering)',
           title: 'session-override config',
           type: 'boolean',
+        },
+        'ssl-cert-path': {
+          description:
+            'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
+          title: '.cert file path',
+          appiumCliDest: 'sslCertificatePath',
+          type: 'string',
+        },
+        'ssl-key-path': {
+          description:
+            'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
+          title: '.key file path',
+          appiumCliDest: 'sslKeyPath',
+          type: 'string',
         },
         'strict-caps': {
           default: false,
@@ -308,20 +330,6 @@ export const AppiumConfigJsonSchema = /** @type {const} */ ({
           description: 'Also send log output to this http listener',
           format: 'uri',
           title: 'webhook config',
-          type: 'string',
-        },
-        'ssl-cert-path': {
-          description:
-            'Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"',
-          title: '.cert file path',
-          appiumCliDest: 'sslCertificatePath',
-          type: 'string',
-        },
-        'ssl-key-path': {
-          description:
-            'Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"',
-          title: '.key file path',
-          appiumCliDest: 'sslKeyPath',
           type: 'string',
         },
       },

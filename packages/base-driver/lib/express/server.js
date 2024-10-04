@@ -31,7 +31,6 @@ import {DEFAULT_BASE_PATH} from '../constants';
 import {fs, timing} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
-const SERVER_CLOSE_TIMEOUT_MS = 5000;
 
 /**
  *
@@ -82,7 +81,7 @@ async function server(opts) {
     routeConfiguringFunction,
     port,
     hostname,
-    cliArgs = {},
+    cliArgs = /** @type {import('@appium/types').ServerArgs} */ ({}),
     allowCors = true,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
@@ -104,6 +103,7 @@ async function server(opts) {
         httpServer,
         reject,
         keepAliveTimeout,
+        gracefulShutdownTimeout: cliArgs.shutdownTimeout,
       });
       configureServer({
         app,
@@ -191,7 +191,7 @@ function configureServer({
  * @param {ConfigureHttpOpts} opts
  * @returns {AppiumServer}
  */
-function configureHttp({httpServer, reject, keepAliveTimeout}) {
+function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTimeout}) {
   /**
    * @type {AppiumServer}
    */
@@ -211,15 +211,17 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
     await new B((_resolve, _reject) => {
-      log.info('Closing Appium HTTP server');
       const timer = new timing.Timer().start();
       const onTimeout = setTimeout(() => {
-        log.info(
-          `Not all active connections have been closed within ` +
-          `${timer.getDuration().asMilliSeconds.toFixed(0)}ms. Exiting anyway.`
-        );
+        if (gracefulShutdownTimeout > 0) {
+          log.info(
+            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
+            `This timeout might be customized by the --shutdown-timeout command line ` +
+            `argument.`
+          );
+        }
         process.exit(process.exitCode ?? 0);
-      }, SERVER_CLOSE_TIMEOUT_MS);
+      }, gracefulShutdownTimeout);
       httpServer.once('close', () => {
         log.info(
           `Appium HTTP server has been succesfully closed after ` +
@@ -323,6 +325,9 @@ export {server, configureServer, normalizeBasePath};
  * @property {import('http').Server} httpServer - HTTP server instance
  * @property {(error?: any) => void} reject - Rejection function from `Promise` constructor
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
+ * @property {number} gracefulShutdownTimeout - For how long the server should delay its
+ * shutdown before force-closing all open connections to it. Providing zero will force-close
+ * the server without waiting for any connections.
  */
 
 /**

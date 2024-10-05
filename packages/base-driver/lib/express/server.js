@@ -211,13 +211,14 @@ function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTi
   const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
     await new B((_resolve, _reject) => {
+      log.info('Closing Appium HTTP server');
       const timer = new timing.Timer().start();
       const onTimeout = setTimeout(() => {
         if (gracefulShutdownTimeout > 0) {
           log.info(
             `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
             `This timeout might be customized by the --shutdown-timeout command line ` +
-            `argument.`
+            `argument. Closing the server anyway.`
           );
         }
         process.exit(process.exitCode ?? 0);

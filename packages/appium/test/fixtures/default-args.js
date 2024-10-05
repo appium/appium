@@ -19,6 +19,7 @@ export default {
   port: 4723,
   relaxedSecurityEnabled: false,
   sessionOverride: false,
+  shutdownTimeout: 5000,
   strictCaps: false,
   useDrivers: [],
   usePlugins: []

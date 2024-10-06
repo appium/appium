@@ -105,7 +105,7 @@
     "cpy-cli": "5.0.0",
     "eslint": "8.57.1",
     "eslint-config-prettier": "9.1.0",
-    "eslint-find-rules": "4.1.0",
+    "eslint-find-rules": "4.2.0",
     "eslint-import-resolver-typescript": "3.6.3",
     "eslint-plugin-import": "2.31.0",
     "eslint-plugin-mocha": "10.5.0",

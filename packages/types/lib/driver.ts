@@ -1095,10 +1095,10 @@ export interface ExternalDriver<
    * Send keystrokes to an element (or otherwise set its value)
    * @see {@link https://w3c.github.io/webdriver/#element-send-keys}
    *
-   * @param text - the text to send to the element
+   * @param text - the text (string) or value (string[]) to send to the element
    * @param elementId - the id of the element
    */
-  setValue?(text: string, elementId: string): Promise<void>;
+  setValue?(text: string | string[], elementId: string): Promise<void>;
 
   /**
    * Execute JavaScript (or some other kind of script) in the browser/app context

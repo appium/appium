@@ -2,41 +2,37 @@
 hide:
   - toc
 
-title: Appium-Related Tools
+title: Appium相关工具
 ---
 
-There are several Appium tools that have been created to to assist with things not directly related
-to testing, such as Appium installation, test development, and more.
+这里有几个Appium工具来帮助处理与测试没有直接关系的事情，例如Appium安装、测试开发等。
 
 ### [Appium Inspector](https://appium.github.io/appium-inspector/latest/)
 
-Appium has a graphical client which can be used to inspect application screenshots, view the
-application hierarchy, run Appium commands, record app interactions, and more. It is very useful
-for Appium test development.
+Appium有一个图形客户端，可用于检查应用程序屏幕截图、查看应用程序层次结构、运行Appium命令、记录应用程序交互等。它对Appium测试开发非常有用。
 
-Find downloads and more information on its GitHub page: [Appium Inspector](https://github.com/appium/appium-inspector)
+在其GitHub页面上查找下载和更多信息：[Appium Inspector](https://github.com/appium/appium-inspector)
 
 ### Appium Doctor
 
-Appium Doctor is a command-line tool built into Appium drivers and plugins.
-The command is expected to be used to validate whether a driver or plugin has all of its prerequisites and other environment details set up correctly
-if the driver/plugin author implemented the `doctor` command.
+Appium Doctor是一个内置于Appium驱动程序和插件中的命令行工具。如果驱动程序/插件作者实现了`doctor`命令，
+则该命令将用于验证驱动程序或插件是否正确设置了所有先决条件和其他环境详细信息。
 
-For example, `uiautomator2` driver provides the `doctor` command below.
+例如，`uiautomator2`驱动程序提供以下`doctor`命令。
 
 ```
 appium driver doctor uiautomator2
 ```
 
-It shows no result if the driver/plugin author did not implement them.
+如果驱动程序/插件作者没有实现它们，则不会显示任何结果。
 
-More information on this command can be found in the [Command-Line Usage documentation](../cli/extensions.md#doctor).
-For driver/plugin developers, please read [Building Doctor Checks](../developing/build-doctor-checks.md).
+有关此命令的更多信息，请参阅[命令行使用文档](../cli/extensions.md#doctor)。
+对于驱动程序/插件开发人员，请阅读[构建医生检查](../developing/build-doctor-checks.md)。
 
-### Other Tools
+### 其他工具
 
-These tools are not maintained by the Appium team and can be used to assist with other problems:
+这些工具不由Appium团队维护，可以用于协助解决其他问题：
 
-|Name|Description|Supported By|
+|名字|简介|维护者|
 |---|---|---|
-|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|Help set up an Appium environment for Android and iOS|`@AppiumTestDistribution`|
+|[appium-installer](https://github.com/AppiumTestDistribution/appium-installer)|为Android和iOS设置Appium环境|`@AppiumTestDistribution`|

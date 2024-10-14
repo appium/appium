@@ -2,44 +2,43 @@
 hide:
   - toc
 
-title: Ecosystem Overview
+title: 生态系统概述
 ---
 
-Appium has a wide ecosystem of related software and tools. This section of the Appium documentation
-aims to compile a listing of various officially-supported and community-supported Appium projects:
+Appium拥有广泛的相关软件和工具生态系统。文档的这一部分旨在编制各种官方支持和社区支持的Appium项目的列表：
 
 <div class="grid cards" markdown>
 
--   :material-car: __Drivers__
+-   :material-car: __驱动__
 
     ---
 
-    Link Appium to your test device
+    将Appium链接到您的测试设备
 
-    [:octicons-arrow-right-24: View all drivers](./drivers.md)
+    [:octicons-arrow-right-24: 查看所有驱动](./drivers.md)
 
--   :octicons-code-16: __Clients__
-
-    ---
-
-    Link Appium to your automation code
-
-    [:octicons-arrow-right-24: View all clients](./clients.md)
-
--   :fontawesome-solid-plug: __Plugins__
+-   :octicons-code-16: __客户端__
 
     ---
 
-    Modify and extend Appium functionality
+    将Appium链接到您的自动化代码
 
-    [:octicons-arrow-right-24: View all plugins](./plugins.md)
+    [:octicons-arrow-right-24: 查看所有客户端](./clients.md)
 
--   :material-wrench: __Tools__
+-   :fontawesome-solid-plug: __插件__
 
     ---
 
-    Interact with Appium in other ways
+    修改和扩展Appium功能
 
-    [:octicons-arrow-right-24: View all tools](./tools.md)
+    [:octicons-arrow-right-24: 查看所有插件](./plugins.md)
+
+-   :material-wrench: __工具__
+
+    ---
+
+    以其他方式与Appium交互
+
+    [:octicons-arrow-right-24: 查看所有工具](./tools.md)
 
 </div>

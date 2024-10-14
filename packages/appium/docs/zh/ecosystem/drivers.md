@@ -2,24 +2,23 @@
 hide:
   - toc
 
-title: Appium Drivers
+title: Appium驱动
 ---
 
-You can't use Appium without at least one driver! Click on the link for each driver to see the
-specific installation instructions and documentation for that driver.
+如果没有至少一个驱动程序，您就无法使用Appium！单击每个驱动程序的链接，查看该驱动程序的具体安装说明和文档。
 
-Generally, drivers can be installed using their listed installation key, with the following command:
+通常，可以使用下面列出的驱动名称，使用以下命令安装驱动程序：
 ```
-appium driver install <installation key>
+appium driver install <驱动名称>
 ```
 
-To learn more about drivers, check out the [Driver Intro](../intro/drivers.md).
+要了解有关驱动的更多信息，请查看[驱动简介](../intro/drivers.md)。
 
-### Official Drivers
+### 官方驱动
 
-These drivers are currently maintained by the Appium team:
+这些驱动程序目前由Appium团队维护：
 
-|Driver|Installation Key|Platform(s)|Mode(s)|
+|驱动|驱动名称|支持的平台|支持的形式|
 |--|--|--|--|
 |[Chromium](https://github.com/appium/appium-chromium-driver)|`chromium`|macOS, Windows, Linux|Web|
 |[Espresso](https://github.com/appium/appium-espresso-driver)|`espresso`|Android|Native|
@@ -30,11 +29,11 @@ These drivers are currently maintained by the Appium team:
 |[Windows](https://github.com/appium/appium-windows-driver)|`windows`|Windows|Native|
 |[XCUITest](https://github.com/appium/appium-xcuitest-driver)|`xcuitest`|iOS|Native, Hybrid, Web|
 
-### Other Drivers
+### 其他驱动
 
-These drivers are not maintained by the Appium team and can be used to target additional platforms:
+这些驱动程序不由Appium团队维护，可用于针对其他平台：
 
-|Driver|Installation Key|Platform(s)|Mode(s)|Supported By|
+|驱动|驱动名称|支持的平台|支持的形式|维护者|
 |--|--|--|--|--|
 |[Flutter](https://github.com/appium/appium-flutter-driver)|`--source=npm appium-flutter-driver`|iOS, Android|Native|Community|
 |[Flutter Integration](https://github.com/AppiumTestDistribution/appium-flutter-integration-driver)|`--source=npm appium-flutter-integration-driver`|iOS, Android|Native|Community / `@AppiumTestDistribution`|
@@ -45,7 +44,6 @@ These drivers are not maintained by the Appium team and can be used to target ad
 |[TizenTV](https://github.com/headspinio/appium-tizen-tv-driver)|`--source=npm appium-tizen-tv-driver`|Samsung TV|Web|HeadSpin|
 |[Youi](https://github.com/YOU-i-Labs/appium-youiengine-driver)|`--source=npm appium-youiengine-driver`|iOS, Android, macOS, Linux, tvOS|Native|Community / You.i|
 
-!!! note
+!!! 注意
 
-    If you maintain an Appium driver that you would like to be listed in the Appium docs, feel free
-    to make a PR to add it to this section with a link to the driver documentation.
+    如果您维护了一个Appium驱动程序，并希望在Appium文档中列出，请随时进行PR，将其添加到本部分，并附上驱动程序文档的链接。

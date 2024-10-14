@@ -31,7 +31,7 @@ jobs:
         useRollingCache: true
         install-command: npm ci
     - name: Install dependencies (Python)
-      run: pip install -r packages/docutils/requirements.txt
+      run: pip install -r packages/docutils/requirements.txt --break-system-packages
     - name: Publish docs
       run: |
         cd packages/appium

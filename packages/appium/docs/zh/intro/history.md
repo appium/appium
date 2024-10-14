@@ -81,8 +81,8 @@ Appium在[2013年谷歌测试自动化大会](https://www.youtube.com/watch?v=1J
 ## 通往Appium 1.0之路
 
 Appium开始显著生长和成熟。2014年5月，我们发布了Appium 1.0，这是Appium发展的一个里程碑。Appium获得了
-[各种](http://sauceio.com/index.php/2014/01/appium-selected-as-a-black-duck-open-source-rookie-of-the-year/)
-[奖项](http://sauceio.com/index.php/2014/10/appium-wins-a-bossy-award-from-infoworld/)，
+[各种](https://www.prnewswire.com/news-releases/black-duck-announces-black-duck-open-source-rookies-of-the-year-winners-242383341.html)
+[奖项](https://www.infoworld.com/article/2241247/164642-bossie-awards-2014-the-best-open-source-application-development-tools.html)，
 成为最受欢迎的开源跨平台移动自动化框架。稳定性得到改善，错误得到优先处理和修复，并添加了新的功能。
 Sauce Labs增加了捐赠给Appium开发人员的数量，但整个社区都参与了项目的指导和贡献，
 项目治理继续在公开的公共邮件列表和GitHub的问题跟踪器上进行。

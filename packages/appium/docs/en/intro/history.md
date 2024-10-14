@@ -137,8 +137,8 @@ already had well over 1,000 commits.
 Appium began to grow and mature significantly. In May 2014,
 we released Appium 1.0, which stood as a milestone in Appium's development.
 Appium was given
-[various](http://sauceio.com/index.php/2014/01/appium-selected-as-a-black-duck-open-source-rookie-of-the-year/)
-[awards](http://sauceio.com/index.php/2014/10/appium-wins-a-bossy-award-from-infoworld/)
+[various](https://www.prnewswire.com/news-releases/black-duck-announces-black-duck-open-source-rookies-of-the-year-winners-242383341.html)
+[awards](https://www.infoworld.com/article/2241247/164642-bossie-awards-2014-the-best-open-source-application-development-tools.html)
 and became the most popular open-source cross-platform mobile automation
 framework. Stability improved, bugs were prioritized and fixed, and features
 added. Sauce Labs increased the number of developers it donated to working

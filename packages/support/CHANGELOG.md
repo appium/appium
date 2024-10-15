@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.5](https://github.com/appium/appium/compare/@appium/support@5.1.4...@appium/support@5.1.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* **support:** update dependency form-data to v4.0.1 ([0e443d2](https://github.com/appium/appium/commit/0e443d27995dcbd2b99ec18d8cb6183352d8cd59))
+
+
+
 ## [5.1.4](https://github.com/appium/appium/compare/@appium/support@5.1.3...@appium/support@5.1.4) (2024-09-16)
 
 

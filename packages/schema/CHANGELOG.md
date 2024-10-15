@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.0](https://github.com/appium/appium/compare/@appium/schema@0.6.1...@appium/schema@0.7.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+
 ## [0.6.1](https://github.com/appium/appium/compare/@appium/schema@0.6.0...@appium/schema@0.6.1) (2024-06-11)
 
 

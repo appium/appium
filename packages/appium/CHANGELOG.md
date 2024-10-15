@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.0](https://github.com/appium/appium/compare/appium@2.11.5...appium@2.12.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **appium:** update dependency winston to v3.15.0 ([ab12235](https://github.com/appium/appium/commit/ab12235483262a1c5a1dd8a32b1792a4b096bfc6))
+* **docutils:** support Python 3.12+ ([#20666](https://github.com/appium/appium/issues/20666)) ([8d7cec9](https://github.com/appium/appium/commit/8d7cec96d8df60644493a7e2f735b4bb0d3783be))
+* **docutils:** update dependency yaml to v2.6.0 ([ed6c6dd](https://github.com/appium/appium/commit/ed6c6dd5441e26fc1eb58de9b78def49d930a128))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.6 ([796ca9f](https://github.com/appium/appium/commit/796ca9f98f69616b9c890325bbfb0c573a8bc765))
+
+
+
 ## [2.11.5](https://github.com/appium/appium/compare/appium@2.11.4...appium@2.11.5) (2024-09-26)
 
 

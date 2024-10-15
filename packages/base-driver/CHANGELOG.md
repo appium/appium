@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.0](https://github.com/appium/appium/compare/@appium/base-driver@9.11.5...@appium/base-driver@9.12.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **base-driver:** update dependency express to v4.21.1 ([0e52da4](https://github.com/appium/appium/commit/0e52da4b3adbd5ecde09395063255c3af7eb0400))
+* **base-driver:** update dependency path-to-regexp to v8.2.0 ([e8886ae](https://github.com/appium/appium/commit/e8886ae0d276ac4f97a1bdb88998fc30fbd936fa))
+* **driver-test-support:** update dependency @types/lodash to v4.17.10 ([a2b0ba8](https://github.com/appium/appium/commit/a2b0ba877310737f1ebf7ecda0b9aa5d7083e1f4))
+* **types:** update dependency @types/express to v5 ([#20620](https://github.com/appium/appium/issues/20620)) ([69e9abe](https://github.com/appium/appium/commit/69e9abeed3ac5a2f61d8b7f1cd4ec4bd9c054cf1))
+
+
+
 ## [9.11.5](https://github.com/appium/appium/compare/@appium/base-driver@9.11.4...@appium/base-driver@9.11.5) (2024-09-26)
 
 

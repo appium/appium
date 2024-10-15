@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.22](https://github.com/appium/appium/compare/@appium/docutils@1.0.21...@appium/docutils@1.0.22) (2024-10-15)
+
+
+### Bug Fixes
+
+* **docutils:** support Python 3.12+ ([#20666](https://github.com/appium/appium/issues/20666)) ([8d7cec9](https://github.com/appium/appium/commit/8d7cec96d8df60644493a7e2f735b4bb0d3783be))
+* **docutils:** update dependency typescript to v5.6.3 ([dd52d04](https://github.com/appium/appium/commit/dd52d04b21c37d7a4a979d00e96293dc0bf69768))
+* **docutils:** update dependency yaml to v2.6.0 ([ed6c6dd](https://github.com/appium/appium/commit/ed6c6dd5441e26fc1eb58de9b78def49d930a128))
+
+
+
 ## [1.0.21](https://github.com/appium/appium/compare/@appium/docutils@1.0.20...@appium/docutils@1.0.21) (2024-09-26)
 
 

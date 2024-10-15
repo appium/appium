@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.22.0](https://github.com/appium/appium/compare/@appium/types@0.21.3...@appium/types@0.22.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **types:** update dependency @types/express to v5 ([#20620](https://github.com/appium/appium/issues/20620)) ([69e9abe](https://github.com/appium/appium/commit/69e9abeed3ac5a2f61d8b7f1cd4ec4bd9c054cf1))
+
+
+
 ## [0.21.3](https://github.com/appium/appium/compare/@appium/types@0.21.2...@appium/types@0.21.3) (2024-09-16)
 
 

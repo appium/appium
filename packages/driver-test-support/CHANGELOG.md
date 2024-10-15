@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.10](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.9...@appium/driver-test-support@0.6.10) (2024-10-15)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.10 ([a2b0ba8](https://github.com/appium/appium/commit/a2b0ba877310737f1ebf7ecda0b9aa5d7083e1f4))
+
+
+
 ## [0.6.9](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.8...@appium/driver-test-support@0.6.9) (2024-09-26)
 
 

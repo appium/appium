@@ -54,7 +54,6 @@ contributors!
 <div class="sponsor-section">
   <a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
   <a href="https://route4me.com/" target="_blank"><img src="../assets/images/sponsor-logo-route4me.png" alt="Route Planning and Route Mapping" /></a>
-  <a href="https://testingbot.com/" target="_blank"><img src="https://images.opencollective.com/testingbot1/aea09ee/logo/64.png" alt="TestingBot" /></a>
   <a href="https://webdriver.io/" target="_blank"><img src="https://images.opencollective.com/webdriverio/bbdd6c3/logo/64.png" alt="WebdriverIO" /></a>
 </div>
 

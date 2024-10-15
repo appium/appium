@@ -8,6 +8,7 @@ title: Sponsors & Backers
 
 <style>
   .appium-sponsor-thanks { display: none; }
+  .sponsor-section img { height: 64px; padding-right: 1em; }
 </style>
 
 Appium is an Apache-2 licensed open source project whose development is made possible entirely by
@@ -50,6 +51,11 @@ contributors!
 
 ## Bronze Sponsors
 
-<a href="https://opencollective.com/appium" target="_blank"><img src="https://opencollective.com/appium/tiers/sponsors.svg?avatarHeight=60&button=false&random=1"/></a>
+<div class="sponsor-section">
+  <a href="https://magicpod.com/" target="_blank"><img src="https://images.opencollective.com/magicpod/722b7e4/avatar/64.png" alt="MagicPod" /></a>
+  <a href="https://route4me.com/" target="_blank"><img src="../assets/images/sponsor-logo-route4me.png" alt="Route Planning and Route Mapping" /></a>
+  <a href="https://testingbot.com/" target="_blank"><img src="https://images.opencollective.com/testingbot1/aea09ee/logo/64.png" alt="TestingBot" /></a>
+  <a href="https://webdriver.io/" target="_blank"><img src="https://images.opencollective.com/webdriverio/bbdd6c3/logo/64.png" alt="WebdriverIO" /></a>
+</div>
 
 [Become a Bronze Sponsor](https://opencollective.com/appium/contribute/sponsors-70690/checkout?interval=month&amount=100&contributeAs=me)

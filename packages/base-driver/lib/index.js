@@ -27,7 +27,9 @@ export {STATIC_DIR} from './express/static';
 export {server, normalizeBasePath} from './express/server';
 
 // jsonwp-proxy exports
+/** @deprecated The JWProxy export is deprecated. Please use WebDriverProxy instead */
 export {JWProxy} from './jsonwp-proxy/proxy';
+export {JWProxy as WebDriverProxy} from './jsonwp-proxy/proxy';
 
 // jsonwp-status exports
 export {getSummaryByCode, codes as statusCodes} from './jsonwp-status/status';

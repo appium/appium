@@ -2,254 +2,254 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://appium.io/docs/zh/2.12/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/resources/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/07/13/appium-conf-2024-call-for-proposals-now-open/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/06/10/announcing-browserstack-as-appiums-strategic-partner/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/06/06/announcing-headspin-as-appiums-development-partner/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/06/10/announcing-sauce-labs-as-appiums-strategic-partner/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/05/14/announcing-appiums-sponsorship-program/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/2024/03/07/hello-world/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/cli/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/cli/args/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/cli/env-vars/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/cli/extensions/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/cli/setup/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/base-driver/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/execute-driver-plugin/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/images-plugin/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/relaxed-caps-plugin/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/commands/universal-xml-plugin/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/contributing/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/contributing/config-system/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/contributing/develop/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/developing/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/developing/build-docs/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/developing/build-doctor-checks/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/developing/build-drivers/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/developing/build-plugins/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/ecosystem/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/ecosystem/clients/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/ecosystem/drivers/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/ecosystem/plugins/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/ecosystem/tools/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/branch-testing/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/caching/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/caps/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/config/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/context/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/event-timing/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/execute-methods/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/grid/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/log-filters/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/managing-exts/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/migrating-1-to-2/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/security/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/settings/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/guides/tls/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/intro/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/intro/appium/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/intro/clients/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/intro/drivers/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/intro/history/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/install/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/next-steps/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/requirements/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/test-dotnet/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/test-java/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/test-js/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/test-py/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/test-rb/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/quickstart/uiauto2-driver/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
     <url>
          <loc>https://appium.io/docs/zh/2.12/blog/archive/2024/</loc>
-         <lastmod>2024-10-15</lastmod>
+         <lastmod>2024-10-16</lastmod>
     </url>
 </urlset>

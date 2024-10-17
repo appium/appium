@@ -76,7 +76,7 @@ Our documentation system uses [MKDocs](https://www.mkdocs.org/) and therefore re
 
 ```sh
 # installing needed Python dependencies
-pip install -r packages/docutils/requirements.txt --break-system-packages
+pip install -r packages/docutils/requirements.txt
 # build the project
 npm run build
 # run dev server

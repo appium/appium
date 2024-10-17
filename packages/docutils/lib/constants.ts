@@ -150,5 +150,5 @@ export const DEFAULT_SITE_DIR = 'site';
 /**
  * pip 23.0 implements PEP 668, which may prevent overriding Python system packages
  * unless the --break-system-packages flag is passed
- */ 
+ */
 export const PIP_MIN_VERSION_NUMBER_FOR_FLAG = 23;

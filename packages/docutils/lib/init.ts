@@ -186,8 +186,8 @@ async function getPipMajorVersion(pythonPath: string): Promise<number> {
     if (code !== 0) {
       throw new DocutilsError(`Could not retrieve pip version. Reason: ${stdout}`);
     }
-    const pipVersionString = stdout.split(" ")[1];
-    const pipMajorVersionInt = parseInt(pipVersionString);
+    const pipVersionString = stdout.split(' ')[1];
+    const pipMajorVersionInt = parseInt(pipVersionString, 10);
     if (Number.isNaN(pipMajorVersionInt)) {
       throw new DocutilsError(`Could not retrieve pip version. Reason: ${stdout}`);
     }

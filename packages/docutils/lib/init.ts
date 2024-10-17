@@ -5,7 +5,13 @@
  */
 
 import * as JSON5 from 'json5';
-import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, NAME_PYTHON, REQUIREMENTS_TXT_PATH} from './constants';
+import {
+  NAME_MKDOCS_YML,
+  NAME_TSCONFIG_JSON,
+  NAME_PYTHON,
+  PIP_MIN_VERSION_NUMBER_FOR_FLAG,
+  REQUIREMENTS_TXT_PATH,
+} from './constants';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
@@ -145,6 +151,10 @@ export async function initPython({
   if (upgrade) {
     args.push('--upgrade');
   }
+  const pipMajorVersion = await getPipMajorVersion(pythonPath);
+  if (pipMajorVersion >= PIP_MIN_VERSION_NUMBER_FOR_FLAG) {
+    args.push('--break-system-packages');
+  }
   if (dryRun) {
     dryRunLog.info('Would execute command: %s %s', pythonPath, args.join(' '));
   } else {
@@ -163,6 +173,30 @@ export async function initPython({
     }
   }
   log.success('Installed Python dependencies (or dependencies already installed)');
+}
+
+/**
+ * Retrieves the pip major version number
+ */
+async function getPipMajorVersion(pythonPath: string): Promise<number> {
+  const pipVersionArgs = ['-m', 'pip', '--version'];
+  try {
+    const result = await exec(pythonPath, pipVersionArgs, {shell: true});
+    const {code, stdout} = result;
+    if (code !== 0) {
+      throw new DocutilsError(`Could not retrieve pip version. Reason: ${stdout}`);
+    }
+    const pipVersionString = stdout.split(" ")[1];
+    const pipMajorVersionInt = parseInt(pipVersionString);
+    if (Number.isNaN(pipMajorVersionInt)) {
+      throw new DocutilsError(`Could not retrieve pip version. Reason: ${stdout}`);
+    }
+    return pipMajorVersionInt;
+  } catch (err) {
+    throw new DocutilsError(
+      `Could not retrieve pip version. Reason: ${(err as Error).message}`,
+    );
+  }
 }
 
 /**

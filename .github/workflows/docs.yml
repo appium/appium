@@ -38,13 +38,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Install dependencies (Node.js)
         uses: bahmutov/npm-install@v1
         with:
           useRollingCache: true
           install-command: npm ci
       - name: Install dependencies (Python)
-        run: pip install -r packages/docutils/requirements.txt --break-system-packages
+        run: |
+          pip --version
+          pip install -r packages/docutils/requirements.txt --break-system-packages
       - name: Configure Git User
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

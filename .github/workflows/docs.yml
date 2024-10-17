@@ -35,7 +35,7 @@ on:
 jobs:
   docs:
     name: Docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # TODO: change this to latest after adding handling for PEP 668
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies (Node.js)
@@ -44,7 +44,7 @@ jobs:
           useRollingCache: true
           install-command: npm ci
       - name: Install dependencies (Python)
-        run: pip install -r packages/docutils/requirements.txt --break-system-packages
+        run: pip install -r packages/docutils/requirements.txt
       - name: Configure Git User
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

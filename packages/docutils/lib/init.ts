@@ -141,7 +141,7 @@ export async function initPython({
 }: InitPythonOptions = {}): Promise<void> {
   pythonPath = pythonPath ?? (await findPython()) ?? NAME_PYTHON;
 
-  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH, '--break-system-packages'];
+  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
   if (upgrade) {
     args.push('--upgrade');
   }

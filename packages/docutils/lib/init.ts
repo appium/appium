@@ -5,7 +5,7 @@
  */
 
 import * as JSON5 from 'json5';
-import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, NAME_PYTHON, REQUIREMENTS_TXT_PATH} from './constants';
+import {NAME_MKDOCS_YML, NAME_TSCONFIG_JSON, NAME_PYTHON, PIP_ENV_VARS, REQUIREMENTS_TXT_PATH} from './constants';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';
@@ -141,17 +141,26 @@ export async function initPython({
 }: InitPythonOptions = {}): Promise<void> {
   pythonPath = pythonPath ?? (await findPython()) ?? NAME_PYTHON;
 
-  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH, '--break-system-packages'];
+  const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
   if (upgrade) {
     args.push('--upgrade');
   }
   if (dryRun) {
-    dryRunLog.info('Would execute command: %s %s', pythonPath, args.join(' '));
+    dryRunLog.info(
+      'Would execute command: %s %s (environment variables: %s)',
+      pythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
   } else {
-    log.debug('Executing command: %s %s', pythonPath, args.join(' '));
+    log.debug('Executing command: %s %s (environment variables: %s)',
+      pythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
     log.info('Installing Python dependencies...');
     try {
-      const result = await exec(pythonPath, args, {shell: true});
+      const result = await exec(pythonPath, args, {env: PIP_ENV_VARS, shell: true});
       const {code, stdout} = result;
       if (code !== 0) {
         throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);

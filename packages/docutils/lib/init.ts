@@ -146,9 +146,18 @@ export async function initPython({
     args.push('--upgrade');
   }
   if (dryRun) {
-    dryRunLog.info('Would execute command: %s %s (environment variables: %s)', pythonPath, args.join(' '), PIP_ENV_VARS);
+    dryRunLog.info(
+      'Would execute command: %s %s (environment variables: %s)',
+      pythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
   } else {
-    log.debug('Executing command: %s %s (environment variables: %s)', pythonPath, args.join(' '), PIP_ENV_VARS);
+    log.debug('Executing command: %s %s (environment variables: %s)',
+      pythonPath,
+      args.join(' '),
+      PIP_ENV_VARS,
+    );
     log.info('Installing Python dependencies...');
     try {
       const result = await exec(pythonPath, args, {env: PIP_ENV_VARS, shell: true});

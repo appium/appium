@@ -152,4 +152,4 @@ export const DEFAULT_SITE_DIR = 'site';
  * unless the --break-system-packages flag is passed.
  * To ensure backwards compatibility, its environment variable version is used
  */
-export const PIP_BREAK_SYSTEM_PACKAGES_FLAG = 'PIP_BREAK_SYSTEM_PACKAGES=1';
+export const PIP_ENV_VARS = {PIP_BREAK_SYSTEM_PACKAGES: '1'};

@@ -9,8 +9,7 @@ import {
   NAME_MKDOCS_YML,
   NAME_TSCONFIG_JSON,
   NAME_PYTHON,
-  PIP_MIN_VERSION_FOR_FLAG,
-  PIP_VERSION_REGEXP,
+  PIP_BREAK_SYSTEM_PACKAGES_FLAG,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
 import {util} from '@appium/support';
@@ -148,22 +147,19 @@ export async function initPython({
   upgrade = false,
 }: InitPythonOptions = {}): Promise<void> {
   pythonPath = pythonPath ?? (await findPython()) ?? NAME_PYTHON;
+  const pythonPathWithFlag = [PIP_BREAK_SYSTEM_PACKAGES_FLAG, pythonPath].join(' ');
 
   const args = ['-m', 'pip', 'install', '-r', REQUIREMENTS_TXT_PATH];
   if (upgrade) {
     args.push('--upgrade');
   }
-  const pipVersion = await getPipVersion(pythonPath);
-  if (util.compareVersions(pipVersion, '>=', PIP_MIN_VERSION_FOR_FLAG)) {
-    args.push('--break-system-packages');
-  }
   if (dryRun) {
-    dryRunLog.info('Would execute command: %s %s', pythonPath, args.join(' '));
+    dryRunLog.info('Would execute command: %s %s', pythonPathWithFlag, args.join(' '));
   } else {
-    log.debug('Executing command: %s %s', pythonPath, args.join(' '));
+    log.debug('Executing command: %s %s', pythonPathWithFlag, args.join(' '));
     log.info('Installing Python dependencies...');
     try {
-      const result = await exec(pythonPath, args, {shell: true});
+      const result = await exec(pythonPathWithFlag, args, {shell: true});
       const {code, stdout} = result;
       if (code !== 0) {
         throw new DocutilsError(`Could not install Python dependencies. Reason: ${stdout}`);
@@ -175,25 +171,6 @@ export async function initPython({
     }
   }
   log.success('Installed Python dependencies (or dependencies already installed)');
-}
-
-/**
- * Retrieves the pip version number
- */
-async function getPipVersion(pythonPath: string): Promise<string> {
-  const pipVersionArgs = ['-m', 'pip', '--version'];
-  try {
-    const {stdout} = await exec(pythonPath, pipVersionArgs, {shell: true});
-    const pipVersion = stdout.match(PIP_VERSION_REGEXP);
-    if (_.isNull(pipVersion)) {
-      throw new DocutilsError(`Could not parse the pip version from result: ${stdout}`);
-    }
-    return pipVersion[0];
-  } catch (err) {
-    throw new DocutilsError(
-      `Could not retrieve pip version. Reason: ${(err as Error).message}`,
-    );
-  }
 }
 
 /**

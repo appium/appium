@@ -149,11 +149,7 @@ export const DEFAULT_SITE_DIR = 'site';
 
 /**
  * pip 23.0 implements PEP 668, which may prevent overriding Python system packages
- * unless the --break-system-packages flag is passed
+ * unless the --break-system-packages flag is passed.
+ * To ensure backwards compatibility, its environment variable version is used
  */
-export const PIP_MIN_VERSION_FOR_FLAG = '23.0';
-
-/**
- * Extracts only the version number from the output of `pip --version`
- */
-export const PIP_VERSION_REGEXP = /^pip (\d+(\d+|[.])*)/;
+export const PIP_BREAK_SYSTEM_PACKAGES_FLAG = 'PIP_BREAK_SYSTEM_PACKAGES=1';

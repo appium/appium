@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-22.04 # TODO: change this to latest after adding handling for PEP 668
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -31,7 +31,7 @@ jobs:
         useRollingCache: true
         install-command: npm ci
     - name: Install dependencies (Python)
-      run: pip install -r packages/docutils/requirements.txt
+      run: PIP_BREAK_SYSTEM_PACKAGES=1 pip install -r packages/docutils/requirements.txt
     - name: Publish docs
       run: |
         cd packages/appium

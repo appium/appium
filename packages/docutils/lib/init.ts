@@ -12,7 +12,6 @@ import {
   PIP_BREAK_SYSTEM_PACKAGES_FLAG,
   REQUIREMENTS_TXT_PATH,
 } from './constants';
-import {util} from '@appium/support';
 import YAML from 'yaml';
 import {exec} from 'teen_process';
 import {Simplify} from 'type-fest';

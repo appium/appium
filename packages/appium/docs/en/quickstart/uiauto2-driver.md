@@ -22,7 +22,7 @@ According to the driver, in addition to a working Appium server, we also need to
 ### Android SDK
 
 - The easiest way to set up the Android SDK requirements is by downloading [Android Studio](https://developer.android.com/studio).
-We need to use its SDK manager (_Settings -> Appearance & Behavior -> System Settings -> Android SDK_)
+We need to use its SDK manager (_Settings -> Languages & Frameworks -> Android SDK_)
 to download the following items:
     - Android SDK Platform (select whichever Android platform we want to automate, for example, API level 30)
     - Android SDK Platform-Tools

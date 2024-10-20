@@ -19,7 +19,7 @@ title: 安装 UiAutomator2 驱动
 ### Android SDK
 
 - 设置 Android SDK 要求的最简单方法是下载 [Android Studio](https://developer.android.com/studio)。
-我们需要使用其 SDK 管理器 (_设置 -> 外观和行为 -> 系统设置 -> Android SDK_) 来下载以下项目：
+我们需要使用其 SDK 管理器 (_设置 -> 语言和框架 -> Android SDK_) 来下载以下项目：
     - Android SDK 平台（选择我们想要自动化的任何 Android 平台，例如，API 级别 30）
     - Android SDK 平台工具
 - 如果愿意，你也可以不通过 Android Studio 下载这些项目：

@@ -34,13 +34,13 @@ nav:
       - ecosystem/clients.md
       - ecosystem/plugins.md
       - ecosystem/tools.md
-  - CLI Reference:
+  - 命令行参考:
       - cli/index.md
       - cli/args.md
       - cli/env-vars.md
       - cli/extensions.md
       - cli/setup.md
-  - Command Reference:
+  - 命令参考:
       - commands/index.md
       - commands/base-driver.md
       - commands/execute-driver-plugin.md

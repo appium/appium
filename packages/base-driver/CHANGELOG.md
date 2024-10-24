@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.1](https://github.com/appium/appium/compare/@appium/base-driver@9.12.0...@appium/base-driver@9.12.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([958fca4](https://github.com/appium/appium/commit/958fca47c8515664aac4c2f0b1051cadd43431b9))
+
+
+
 ## [9.12.0](https://github.com/appium/appium/compare/@appium/base-driver@9.11.5...@appium/base-driver@9.12.0) (2024-10-15)
 
 

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/appium/appium/compare/@appium/support@5.1.5...@appium/support@5.1.6) (2024-10-24)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([#20691](https://github.com/appium/appium/issues/20691)) ([846dd52](https://github.com/appium/appium/commit/846dd5288608d886f924d2791291475c956d53f7))
+
+
+
 ## [5.1.5](https://github.com/appium/appium/compare/@appium/support@5.1.4...@appium/support@5.1.5) (2024-10-15)
 
 

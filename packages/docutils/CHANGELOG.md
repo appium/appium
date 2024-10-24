@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.23](https://github.com/appium/appium/compare/@appium/docutils@1.0.22...@appium/docutils@1.0.23) (2024-10-24)
+
+
+### Bug Fixes
+
+* **docutils:** restore support for Python <3.12 ([#20675](https://github.com/appium/appium/issues/20675)) ([00cd1b4](https://github.com/appium/appium/commit/00cd1b4b0fcf24d0014dac780223e5866f39c9ce))
+
+
+
 ## [1.0.22](https://github.com/appium/appium/compare/@appium/docutils@1.0.21...@appium/docutils@1.0.22) (2024-10-15)
 
 

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.11](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.10...@appium/driver-test-support@0.6.11) (2024-10-24)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([958fca4](https://github.com/appium/appium/commit/958fca47c8515664aac4c2f0b1051cadd43431b9))
+* **driver-test-support:** update dependency chai to v5.1.2 ([#20693](https://github.com/appium/appium/issues/20693)) ([66ff497](https://github.com/appium/appium/commit/66ff497600aa5d0fa02d0b614193eee2150ad0fa))
+
+
+
 ## [0.6.10](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.9...@appium/driver-test-support@0.6.10) (2024-10-15)
 
 

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.1](https://github.com/appium/appium/compare/appium@2.12.0...appium@2.12.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* **docutils:** restore support for Python <3.12 ([#20675](https://github.com/appium/appium/issues/20675)) ([00cd1b4](https://github.com/appium/appium/commit/00cd1b4b0fcf24d0014dac780223e5866f39c9ce))
+* **support:** update definitelytyped ([#20691](https://github.com/appium/appium/issues/20691)) ([846dd52](https://github.com/appium/appium/commit/846dd5288608d886f924d2791291475c956d53f7))
+
+
+
 ## [2.12.0](https://github.com/appium/appium/compare/appium@2.11.5...appium@2.12.0) (2024-10-15)
 
 

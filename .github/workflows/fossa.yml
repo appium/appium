@@ -12,8 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
-    if: github.repository == 'appium/appium'
     steps:
+      - name: Ignore forks
+        run: |
+          if -z "$FOSSA_API_KEY"; then
+            echo "FOSSA_API_KEY is empty. Is the job running in a forked repository?"
+            exit 0
+          fi
       - uses: actions/checkout@v4
         with:
           ref: master

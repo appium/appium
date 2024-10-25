@@ -21,6 +21,4 @@ environment variables that the Appium server understands:
 |`APPIUM_OMIT_PEER_DEPS`|Adds `--omit=peer` to all the NPM commands run internally by Appium. Mostly an internal feature.|
 |`APPIUM_APPS_CACHE_MAX_AGE`|Allows to set the maximum age (in minutes) for [cached applications](../guides/caching.md). The default value is `60 * 24` (24 hours). Do not set it to a lower number than the duration of a single session startup.|
 |`APPIUM_APPS_CACHE_MAX_ITEMS`|Allows to set the maximum amount of [cached applications](../guides/caching.md). The default value is `1024`. Do not set it to a lower number than the amount of apps in all parallel sessions per process.|
-|`APPIUM_APPS_CACHE_IGNORE_URL_QUERY`| If the above option is enabled then the 'search' part of the app URL will be cut off from cache keys. See the corresponding
-[feature request](https://discuss.appium.io/t/regarding-app-caching-when-using-aws-s3-presigned-urls/42713)
-for more details. Disabled by default.|
+|`APPIUM_APPS_CACHE_IGNORE_URL_QUERY`| If the above option is enabled then the 'search' part of the app URL will be cut off from cache keys. See the corresponding [feature request](https://discuss.appium.io/t/regarding-app-caching-when-using-aws-s3-presigned-urls/42713) for more details. Disabled by default.|

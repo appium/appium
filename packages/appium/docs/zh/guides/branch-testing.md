@@ -14,7 +14,7 @@ environment before it is merged or published. This tutorial describes how to ach
 
 ## Installation
 
-- [Check out]((https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally)) the PR locally.
+- [Check out](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally) the PR locally.
   There is also an option (although it is less flexible, because you won't be able to easily fetch
   any changes to this PR later) to simply [download](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives) and unzip the sources
   locally. If you choose the later option then no `git` tool would be necessary.

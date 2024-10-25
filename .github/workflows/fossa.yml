@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Ignore forks
         run: |
-          if -z "$FOSSA_API_KEY"; then
+          if [ -z "$FOSSA_API_KEY" ]; then
             echo "FOSSA_API_KEY is empty. Is the job running in a forked repository?"
             exit 0
           fi

@@ -43,8 +43,8 @@ title: 欢迎
 -   查看 [__简介__](./intro/index.md) 以确保您了解关键概念
 -   通过 [__快速入门__](./quickstart/index.md) 来进行设置并运行基本的 Android 测试
 -   访问 [__生态系统__](./ecosystem/index.md) 页面，获取您可能想要使用的驱动程序、客户端和插件列表
--   参考 [__CLI Reference__](./cli/index.md) 以了解如何从命令行使用Appium
--   参考 [__Command Reference__](./commands/index.md) 以了解有关Appium和插件的命令列表
+-   参考 [__命令行参考__](./cli/index.md) 以了解如何从命令行使用Appium
+-   参考 [__命令参考__](./commands/index.md) 以了解有关Appium和插件的命令列表
 -   阅读不同的 [__指南__](./guides/migrating-1-to-2.md)，了解各种说明、提示和技巧
 -   查看各种第三方 [__资源__](./resources.md) 以探索网络上的Appium
 -   要创建自己的Appium扩展，请参阅 [__开发者__](./developing/index.md) 文档

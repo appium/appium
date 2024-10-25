@@ -25,7 +25,8 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - name: Install fossa-cli
-        run: curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
+        run: |
+          curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
       - name: Run FOSSA analysis
         run: |
           fossa analyze

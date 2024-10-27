@@ -26,4 +26,6 @@ jobs:
           if [ -n "$FOSSA_API_KEY" ]; then
             fossa analyze
             fossa test
+          else
+            echo "License checks did not run. FOSSA_API_KEY is not defined for this fork."
           fi

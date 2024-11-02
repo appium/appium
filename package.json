@@ -94,7 +94,7 @@
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
     "@types/teen_process": "2.0.4",
-    "@types/ws": "8.5.12",
+    "@types/ws": "8.5.13",
     "@types/yargs": "17.0.33",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "@typescript-eslint/parser": "7.18.0",

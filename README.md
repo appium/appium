@@ -1,5 +1,3 @@
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
-
 <p align="center">
    <a href="https://appium.io/">
       <img alt="Appium" src="https://raw.githubusercontent.com/appium/appium/master/packages/appium/docs/overrides/assets/images/appium-logo-horiz.png" width="500">
@@ -14,7 +12,6 @@
 [![NPM version](https://badge.fury.io/js/appium.svg)](https://npmjs.org/package/appium)
 [![Monthly Downloads](https://img.shields.io/npm/dm/appium.svg)](https://npmjs.org/package/appium)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Fappium%2Fappium?ref=badge_shield)
-[![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/)
 
 </div>
 
@@ -33,8 +30,7 @@
 
 Appium is an open-source automation framework that provides
 [WebDriver](https://www.w3.org/TR/webdriver/)-based automation possibilities for a wide range of
-different mobile, desktop and IoT platforms. Appium is modular and extensible, and supports multiple
-programming languages, which means there is an entire ecosystem of related software:
+different mobile, desktop and IoT platforms. Appium is modular and extensible, and supports multiple programming languages, which means there is an entire ecosystem of related software:
 * [__Drivers__](#drivers) add support for automating specific platforms
 * [__Clients__](#clients) allow writing Appium tests in your programming language of choice
 * [__Plugins__](#plugins) allow to further extend Appium functionality

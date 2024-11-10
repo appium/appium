@@ -45,6 +45,14 @@ import {
 import net from 'node:net';
 
 const {resolveAppiumHome} = env;
+/*
+ * By default Node.js shows a warning
+ * if the actual amount of listeners exceeds the maximum amount,
+ * which equals to 10 by default. It is known that multiple drivers/plugins
+ * may assign custom listeners to the server process to handle, for example,
+ * the graceful shutdown scenario.
+ */
+const MAX_SERVER_PROCESS_LISTENERS = 100;
 
 /**
  *
@@ -433,6 +441,7 @@ async function main(args) {
     throw err;
   }
 
+  process.setMaxListeners(MAX_SERVER_PROCESS_LISTENERS);
   for (const signal of ['SIGINT', 'SIGTERM']) {
     process.once(signal, async function onSignal() {
       logger.info(`Received ${signal} - shutting down`);

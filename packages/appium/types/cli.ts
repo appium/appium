@@ -20,7 +20,7 @@ export type CliCommand = CliCommandServer | CliExtensionCommand | CliCommandSetu
  * Possible subcommands of {@linkcode CliCommandSetup}.
  * The command name will be preset name to get drivers/plugins to be installed.
  */
-export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop';
+export type CliCommandSetupSubcommand = 'mobile' | 'browser' | 'desktop' | 'reset';
 
 /**
  * Possible subcommands of {@linkcode CliCommandDriver} or

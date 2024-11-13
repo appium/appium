@@ -5,7 +5,7 @@ import {
   MOBILE_DRIVERS
 } from '../constants';
 import {runExtensionCommand} from './extension';
-import { system } from '@appium/support';
+import { system, fs } from '@appium/support';
 import log from '../logger';
 
 /**
@@ -14,6 +14,7 @@ import log from '../logger';
 export const SUBCOMMAND_MOBILE = 'mobile';
 export const SUBCOMMAND_DESKTOP = 'desktop';
 export const SUBCOMMAND_BROWSER = 'browser';
+export const SUBCOMMAND_RESET = 'reset';
 
 /**
  * Pairs of preset subcommand and driver candidates.
@@ -72,12 +73,11 @@ export function determinePlatformName() {
  * Run 'setup' command to install drivers/plugins into the given appium home.
  * @template {import('appium/types').CliCommandSetup} SetupCmd
  * @param {import('appium/types').Args<SetupCmd>} preConfigArgs
- * @param {string} appiumHome
  * @param {DriverConfig} driverConfig
  * @param {PluginConfig} pluginConfig
  * @returns {Promise<void>}
  */
-export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig) {
+export async function runSetupCommand(preConfigArgs, driverConfig, pluginConfig) {
   switch (preConfigArgs.setupCommand) {
     case SUBCOMMAND_DESKTOP:
       await setupDesktopAppDrivers(driverConfig);
@@ -87,12 +87,56 @@ export async function runSetupCommand(appiumHome, preConfigArgs, driverConfig, p
       await setupBrowserDrivers(driverConfig);
       await setupDefaultPlugins(pluginConfig);
       break;
+    case SUBCOMMAND_RESET:
+      await resetAllExtensions(driverConfig, pluginConfig);
+      break;
     default:
       await setupMobileDrivers(driverConfig);
       await setupDefaultPlugins(pluginConfig);
       break;
   }
 };
+
+/**
+ * Resets all installed drivers and extensions
+ *
+ * @param {DriverConfig} driverConfig
+ * @param {PluginConfig} pluginConfig
+ * @returns {Promise<void>}
+ */
+async function resetAllExtensions(driverConfig, pluginConfig) {
+  for (const [command, config] of [
+    ['driver', driverConfig],
+    ['plugin', pluginConfig],
+  ]) {
+    for (const extensionName of _.keys(/** @type {DriverConfig|PluginConfig} */ (config).installedExtensions)) {
+      try {
+        await uninstallExtension(
+          extensionName,
+          extensionCommandArgs(/** @type {CliExtensionCommand} */ (command), extensionName, 'uninstall'),
+          /** @type {DriverConfig|PluginConfig} */ (config)
+        );
+      } catch (e) {
+        log.warn(
+          `${extensionName} ${command} cannot be uninstalled. Will delete the manifest anyway. ` +
+          `Original error: ${e.stack}`
+        );
+      }
+    }
+
+    const manifestPath = /** @type {DriverConfig|PluginConfig} */ (config).manifestPath;
+    if (!await fs.exists(manifestPath)) {
+      continue;
+    }
+
+    await fs.rimraf(manifestPath);
+    if (await fs.exists(manifestPath)) {
+      throw new Error(`${command} manifest at '${manifestPath}' cannot be deleted. Is it accessible?`);
+    } else {
+      log.info(`Successfully deleted ${command} manifest at '${manifestPath}'`);
+    }
+  }
+}
 
 /**
  * Install drivers listed in DEFAULT_DRIVERS.
@@ -149,12 +193,28 @@ async function setupDefaultPlugins(pluginConfig) {
  * @param {string} extensionName
  * @param {Args} extensionConfigArgs
  * @param {DriverConfig|PluginConfig} extensionConfig
- * @returns
+ * @returns {Promise<void>}
  */
 async function installExtension(extensionName, extensionConfigArgs, extensionConfig) {
   if (_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
     log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is already installed. ` +
       `Skipping the installation.`);
+    return;
+  }
+  await runExtensionCommand(extensionConfigArgs, extensionConfig);
+}
+
+/**
+ * Run the given extensionConfigArgs command after checking if the given extensionName was already installed.
+ * @param {string} extensionName
+ * @param {Args} extensionConfigArgs
+ * @param {DriverConfig|PluginConfig} extensionConfig
+ * @returns {Promise<void>}
+ */
+async function uninstallExtension(extensionName, extensionConfigArgs, extensionConfig) {
+  if (!_.keys(extensionConfig.installedExtensions).includes(extensionName)) {
+    log.info(`${extensionName} (${extensionConfig.installedExtensions[extensionName].version}) is not installed. ` +
+      `Skipping its uninstall.`);
     return;
   }
   await runExtensionCommand(extensionConfigArgs, extensionConfig);

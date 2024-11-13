@@ -301,7 +301,7 @@ async function init(args) {
       appiumHome,
     });
   } else if (isSetupCommandArgs(preConfigArgs)) {
-    await runSetupCommand(appiumHome, preConfigArgs, driverConfig, pluginConfig);
+    await runSetupCommand(preConfigArgs, driverConfig, pluginConfig);
     return /** @type {InitResult<Cmd>} */ ({});
   } else {
     await requireDir(appiumHome, true, appiumHomeSourceName);

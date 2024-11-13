@@ -81,7 +81,7 @@ You can also set server arguments as [Config file](./config.md) properties.
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm i -g appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
 
-Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。Appium 2.0ではそうではありません。Appium 2.0のインストール（例えば `npm i -g appium`）は単にAppiumサーバーのみをインストールし、ドライバーはインストールしません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース（Appium extension CLI）](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。しかしAppium 2.0では異なります。Appium 2.0のインストール（例えば `npm i -g appium` を実行した時）は単にAppiumサーバーのみをインストールし、ドライバーはインストールされません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース（Appium extension CLI）](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
@@ -92,7 +92,7 @@ appium driver install xcuitest@4.12.2  # installs a specific driver version
 At this point, your drivers are installed and ready. There's a lot more you can do with this CLI so be sure to check out the docs on it. If you're running in a CI environment or want to install Appium along with some drivers all in one step, you can do so using some special flags during install, for example:
 --->
 
-これにより、ドライバーはインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上であったり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することで実現可能です。
+これにより、ドライバーがインストールされ、利用可能になります。このCLIはいろいろな機能を提供しているので、CLIのドキュメントを確認してみてください。もしCI上で実行したり、いくつかのドライバーをAppiumと一緒にインストールしたい場合、以下のようなフラグを利用することが可能です。
 
 ```bash
 npm i -g appium --drivers=xcuitest,uiautomator2
@@ -102,7 +102,7 @@ npm i -g appium --drivers=xcuitest,uiautomator2
 This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
 --->
 
-これはAppiumと2つのドライバーを一つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを`npm uninstall -g appium`で削除してみてください。
+これはAppiumと2つのドライバーを、1つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを`npm uninstall -g appium`で削除してみてください。
 
 ### :bangbang: ドライバーがインストールされるパス
 
@@ -115,7 +115,7 @@ Appium 2.0 installs such dependencies in `APPIUM_HOME` environment variable. The
 So, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
 --->
 
-Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主となるAppiumサーバーと合わせてインストールされていました。
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。
 そのパスは`/path/to/appium/node_modules`です。
 例えば、手動でWebDriverAgentをビルドする`appium-webdriveragent`は、`/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`でした。
 
@@ -127,7 +127,7 @@ Appium 2.0では、このような依存関係を環境変数 `APPIUM_HOME` に�
 <!---
 In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:
 --->
-Appium 1.xでは、以下のコマンドラインフラグを使って、（例えばUiAutomator2ドライバーの一部として）Chromedriverをインストールする方法のカスタマイズが可能でした。
+Appium 1.xでは、以下のコマンドラインフラグを使って、(例えばUiAutomator2ドライバーの一部として)Chromedriverをインストールする方法のカスタマイズが可能でした。
 
 * `--chromedriver-skip-install`
 * `--chromedriver-version`
@@ -153,13 +153,13 @@ APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 <!---
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
 --->
-Appium 1.xでは、特定のドライバに特化したコマンドラインオプションは、すべて主となるAppiumサーバにホストされていました。
-そのため、例えば`--chromedriver-executable`はUiAutomator2ドライバーで使用する特定のChromedriverバージョンの場所を設定するために、Appiumで使用できるCLIパラメータでした。
+Appium 1.xでは、特定のドライバに特化したコマンドラインオプションは、すべてAppiumサーバにホストされていました。
+そのため、例えば`--chromedriver-executable`は、UiAutomator2ドライバーで使用する特定のChromedriverバージョンの場所を設定するためにAppiumで使用できるCLIパラメータでした。
 
 <!--
 With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either `driver` or `plugin`) and the name of the extension. For example, `--chromedriver-executable` becomes `--driver-uiautomator2-chromedriver-executable`.
 -->
-Appium 2.x では、すべてのドライバーとプラットフォーム固有の CLI パラメータは、それらのドライバー自体に移動しました。これらにアクセスするには、引数の前に拡張機能の種類 (`driver` または `plugin`) と拡張機能の名前を付ける必要があります。例えば、`--chromedriver-executable` は `--driver-uiautomator2-chromedriver-executable` となります。
+Appium 2.xでは、すべてのドライバーとプラットフォーム固有の CLI パラメータは、それらのドライバー自体に移動しました。これらにアクセスするには、引数の前に拡張機能の種類 (`driver` または `plugin`) と拡張機能の名前を付ける必要があります。例えば、`--chromedriver-executable` は `--driver-uiautomator2-chromedriver-executable` となります。
 
 ### :bangbang: ドライバー特有の自動化コマンド
 
@@ -177,7 +177,7 @@ main Appium server will not define the route corresponding to the command.
 例えば、`pressKeyCode`はUiAutomator2ドライバー特有のものなので、現在ではそのドライバーのみが解釈できます。
 実際には、適切なドライバーがインストールされていない場合に遭遇するエラーの種類だけが変わります。
 以前は、コマンドを実装していないドライバーを使用すると、`501 Not Yet Implemented` というエラーが表示されていました。
-現在では、コマンドを知らないドライバーがアクティブでない場合、主となるAppiumサーバーはコマンドに対応するルートを定義しないため、`404 Not Found` エラーが発生します。
+現在では、コマンドを実装していないドライバーがアクティブでない場合、Appiumサーバーはコマンドに対応するルートを定義しないため、`404 Not Found` エラーが発生します。
 
 ### :bangbang: Driver updates
 
@@ -278,9 +278,9 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 これに関連して、W3CプロトコルをサポートしていないWebDriverクライアントを使用してAppiumセッションを開始することはできなくなります(WDライブラリに関するこの趣旨のコメントは以下を参照してください)。
 
-To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, `appium:options`. You can bundle together anything that you would normally put an `appium:` prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`:
+<!-- To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, `appium:options`. You can bundle together anything that you would normally put an `appium:` prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`: -->
 
-みんなの生活を少し楽にするために、Appiumに関連する全ての機能を一つのオブジェクトケイパビリティ `appium:options` にまとめるオプションも導入しました。
+みなさんの活動を少し楽にするために、Appiumに関連する全てのCapabilitiesを一つのオブジェクトケイパビリティ `appium:options` にまとめるオプションも導入しました。通常、`appium:`プレフィックスを付けるものを、この1つのCapabilityにまとめることができます。以下は `appium:options` を使ってSafariブラウザ上でiOSセッションを開始する例（JSON）です：
 
 ```json
 {
@@ -294,9 +294,15 @@ To make everyone's lives a bit easier, we've also introduced the option of wrapp
 }
 ```
 
-(Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support by cloud providers may vary.)
+<!-- (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support by cloud providers may vary.) -->
 
-For more information on capabilities, have a look at the [Capabilities Guide](caps.md).
+(もちろん、`appium:options`のような構造化されたCapabilityや、`goog:chromeOptions`のような構造化されたCapabilityは、クライアントによって作成方法が異なります。)
+
+ 注意：`appium:options`で表示されるCapabilityは、オブジェクトのトップレベルで表示される同名のCapabilityを上書きします。(新しい `appium:options` 構文のサポートは、クラウドプロバイダによって異なる場合があります。)
+
+<!-- For more information on capabilities, have a look at the [Capabilities Guide](caps.md). -->
+
+ケイパビリティの詳細については、[Capabilities Guide](../../en/guides/caps.md)をご覧ください。
 
 ### :bangbang: _Removed Commands_
 

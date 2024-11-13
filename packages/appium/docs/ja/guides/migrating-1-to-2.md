@@ -12,6 +12,17 @@ This document is a guide for those who are using Appium 1.x and wish to migrate 
 ## Overview of Appium 2.0
 --->
 
+<!--
+!!! note
+
+  Latest Appium drivers/plugins would have update since we created this documentation
+  because we keep developing the ecosystem.
+--->
+
+!!! note
+
+  Appiumは継続的に開発されているため、このドキュメントはAppiumドライバーやプラグインに関して情報古い可能性があります。
+
 ## Appium 2.0の概要
 
 <!---
@@ -96,7 +107,7 @@ npm i -g appium --drivers=xcuitest,uiautomator2
 ```
 
 <!---
-This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error. 
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1.x npm packages (with `npm uninstall -g appium`) if you get an installation or startup error.
 --->
 
 これはAppiumと2つのドライバーを、1つのコマンドでインストールします。もしセットアップで何らかの問題が発生した場合、既存のAppium 1.xを`npm uninstall -g appium`で削除してみてください。
@@ -112,19 +123,19 @@ Appium 2.0 installs such dependencies in `APPIUM_HOME` environment variable. The
 So, the path to  `appium-webdriveragent` could be `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` after installing the XCUITest driver package.
 --->
 
-Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーは主要なAppiumサーバーと合わせてインストールされていました。
 そのパスは`/path/to/appium/node_modules`です。
-例えば、手動でWebDriverAgentをビルドする`appium-webdriveragent`は、`/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`でした。
+例えば、手動でWebDriverAgentをビルドするための`appium-webdriveragent`パッケージは、`/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`でした。
 
 Appium 2.0では、このような依存関係を環境変数 `APPIUM_HOME` にインストールします。デフォルトのパスは `~/.appium` です。
-そのため、XCUITest のドライバパッケージをインストールすると、`appium-webdriveragent` へのパスは `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` となります。
+そのため、XCUITestドライバーパッケージをインストールすると、`appium-webdriveragent` へのパスは `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` となります。
 
 ### :bangbang: Chromeドライバーのインストールフラグ
 
 <!---
 In Appium 1.x it was possible to customize the way Chromedriver was installed (as part of the UiAutomator2 driver for example), using the following command line flags:
 --->
-Appium 1.xでは、以下のコマンドラインフラグを使って、(例えばUiAutomator2ドライバーの一部として)Chromedriverをインストールする方法のカスタマイズが可能でした。
+Appium 1.xでは、以下のコマンドラインフラグを使って、(例えばUiAutomator2ドライバーの一部として)Chromedriverをインストールする方法の変更が可能でした。
 
 * `--chromedriver-skip-install`
 * `--chromedriver-version`
@@ -133,7 +144,7 @@ Appium 1.xでは、以下のコマンドラインフラグを使って、(例え
 <!---
 Because Appium 2.0 now installs drivers for you, and because these flags were implemented as NPM config flags, they will no longer work. Instead, use the following environment variables during driver installation:
 --->
-Appium 2.0ではドライバーをインストールしてくれるようになり、またこれらのフラグはnpmの設定フラグとして実装されたため、機能しません。代わりに、ドライバーのインストール時に以下の環境変数を使用してください：
+Appium 2.0では必要なドライバーだけインストールするようになり、またこれらのフラグはnpmの設定フラグとして実装されたため、これらのコマンドラインフラグは機能しません。代わりに、ドライバーのインストール時に以下の環境変数を使用してください：
 
 * `APPIUM_SKIP_CHROMEDRIVER_INSTALL`
 * `CHROMEDRIVER_VERSION`
@@ -150,13 +161,13 @@ APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 <!---
 With Appium 1.x, command-line options specific to particular drivers were all hosted on the main Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
 --->
-Appium 1.xでは、特定のドライバに特化したコマンドラインオプションは、すべてAppiumサーバにホストされていました。
+Appium 1.xでは、特定のドライバに特化したコマンドラインオプションは、すべてAppiumサーバーに中継されていました。
 そのため、例えば`--chromedriver-executable`は、UiAutomator2ドライバーで使用する特定のChromedriverバージョンの場所を設定するためにAppiumで使用できるCLIパラメータでした。
 
 <!--
 With Appium 2.x, all driver- and platform-specific CLI params have been moved to the drivers themselves. To access them, you'll now need to prepend the argument with the extension type (either `driver` or `plugin`) and the name of the extension. For example, `--chromedriver-executable` becomes `--driver-uiautomator2-chromedriver-executable`.
 -->
-Appium 2.xでは、すべてのドライバーとプラットフォーム固有の CLI パラメータは、それらのドライバー自体に移動しました。これらにアクセスするには、引数の前に拡張機能の種類 (`driver` または `plugin`) と拡張機能の名前を付ける必要があります。例えば、`--chromedriver-executable` は `--driver-uiautomator2-chromedriver-executable` となります。
+Appium 2.xでは、すべてのドライバーとプラットフォーム固有の CLI パラメータは、それらのドライバー自体が管理するかたちに移行しました。これらにアクセスするには、引数の前に拡張機能の種類 (`driver` または `plugin`) と拡張機能の名前を付ける必要があります。例えば、`--chromedriver-executable` は `--driver-uiautomator2-chromedriver-executable` となります。
 
 ### :bangbang: ドライバー特有の自動化コマンド
 
@@ -170,56 +181,56 @@ a `404 Not Found` error because if a driver that doesn't know about the command 
 main Appium server will not define the route corresponding to the command.
 --->
 
-特定のドライバーにのみ関係するコマンドの定義は、そのドライバーの実装に移されました。
+特定のドライバーにのみ関係するコマンドの定義は、そのドライバーの実装に移行しました。
 例えば、`pressKeyCode`はUiAutomator2ドライバー特有のものなので、現在ではそのドライバーのみが解釈できます。
-実際には、適切なドライバーがインストールされていない場合に遭遇するエラーの種類だけが変わります。
-以前は、コマンドを実装していないドライバーを使用すると、`501 Not Yet Implemented` というエラーが表示されていました。
-現在では、コマンドを実装していないドライバーがアクティブでない場合、Appiumサーバーはコマンドに対応するルートを定義しないため、`404 Not Found` エラーが発生します。
+実際には、適切なドライバーがインストールされていない場合に発生するエラーの種類が変わります。
+以前は、ドライバーが未実装のコマンドを実行すると `501 Not Yet Implemented` というエラーが返却されていました。
+現在では、コマンドを実装していないドライバーがアクティブでない場合、主Appiumサーバーはそのコマンドは定義されていないと処理し、`404 Not Found` エラーを返却します。
 
 ### :bangbang: Driver updates
 
-<!-- 
-In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI: 
+<!--
+In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to be rolled into a new release of Appium, and then update your Appium version. With Appium 2.x, the Appium server and the Appium drivers are versioned and released separately. This means that drivers can be on their own release cadence and that you can get driver updates as they happen, rather than waiting for a new Appium server release. The way to check for driver updates is with the CLI:
 -->
 
-以前は、iOSやAndroidのアップデートを入手するために、Appiumの新しいリリースにそれらのアップデートが組み込まれるのを待ち、Appiumのバージョンをアップデートしていました。
-Appium 2.xでは、AppiumサーバとAppiumドライバーはそれぞれでバージョン管理され、別々にリリースされます。
-つまりドライバーは独自のリリース周期で、新しいAppiumサーバーのリリースを待つのではなく、その都度アップデートすることができます。
+以前は、iOSやAndroidに関わるドライバーの更新を入手するために、Appiumの新しいリリースにそれらの更新が組み込まれるのを待ち、Appiumのバージョンを更新していました。
+Appium 2.xでは、AppiumサーバーとAppiumドライバーは各々にバージョンが管理され、別々にリリースされます。
+つまりドライバーは独自のリリース周期で、新しいAppiumサーバーのリリースを待つのではなく、その都度更新を適用することができます。
 
-ドライバーのアップデートをCLIでチェックする方法:
+ドライバーの更新をCLIでチェックする方法:
 
 ```bash
 appium driver list --updates
 ```
 
-<!-- 
+<!--
 If any updates are available, you can then run the `update` command for any given driver:
 -->
 
-アップデートがあれば、任意のドライバに対して `update` コマンドを実行することができます。
+更新が入手可能であれば、任意のドライバーに対して `update` コマンドを実行することができます。
 
 ```bash
 appium driver update xcuitest
 ```
 
-<!-- 
+<!--
 (For a complete description of the update command, check out the [Extension
 CLI](../cli/extensions.md) doc)
  -->
 
-(アップデートコマンドの詳しい説明は [Extension CLI](https://appium.io/docs/en/latest/cli/extensions/#update) を確認してください。)
+(更新コマンドの詳しい説明は [Extension CLI](https://appium.io/docs/en/latest/cli/extensions/#update) を確認してください。)
 
-<!-- 
-To update the Appium server itself, you do the same thing as in the past: `npm i -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick. 
+<!--
+To update the Appium server itself, you do the same thing as in the past: `npm i -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick.
 -->
 
-Appium サーバー自体をアップデートするには、これまでと同じように `npm i -g appium` を実行します。現在、Appiumサーバーの新しいバージョンをインストールしても、ドライバーはそのままなので、プロセス全体がより迅速になります。
+Appium サーバー自体を更新するには、これまでと同じように `npm i -g appium` を実行します。現在、Appiumサーバーの新しいバージョンをインストールしても、ドライバーはそのままなので、プロセス全体がより迅速になります。
 
-<!-- 
-If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`. 
+<!--
+If you would like to update to a specific version, not the latest, please uninstall the driver and install the desired version using the `install` subcommand instead of `update`.
 -->
 
-最新のバージョンではなく、特定のバージョンにアップデートしたい場合は、`update`の代わりに`install`サブコマンドを使ってドライバをアンインストールし、希望のバージョンをインストールしてください。
+最新のバージョンではなく、特定のバージョンに更新したい場合は、`update`の代わりに`install`サブコマンドを使ってドライバをアンインストールし、希望のバージョンをインストールしてください。
 
 ```bash
 appium driver uninstall xcuitest
@@ -228,49 +239,49 @@ appium driver install xcuitest@4.11.1
 
 ### :bangbang: プロトコルの変更
 
-<!-- 
-Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/), and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways. 
+<!--
+Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/), and it has supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard, several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP" (JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the (M)JSONWP protocols in a few small ways.
 -->
 
 AppiumのAPIは[W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/)に基づいており、何年もこのプロトコルをサポートしています。
 W3C WebDriver Protocolがウェブ標準として設計される以前は、SeleniumとAppiumの両方で他のプロトコルが使用されていました。それは、「JSONWP」(JSON Wire Protocol)と「MJSONWP」(Mobile JSON Wire Protocol)です。
 W3Cプロトコルと(M)JSONWPプロトコルはいくつか異なる点があります。
 
-<!-- 
-Up until Appium 2.0, Appium supported both protocols, so that older Selenium/Appium clients could still communicate with newer Appium servers. Moving forward, support for older protocols will be removed. 
+<!--
+Up until Appium 2.0, Appium supported both protocols, so that older Selenium/Appium clients could still communicate with newer Appium servers. Moving forward, support for older protocols will be removed.
 -->
 
 Appium 2.0までは、古いSelenium/Appiumクライアントが新しいAppiumサーバーと通信できるように、Appiumは両方のプロトコルをサポートしていました。今後、古いプロトコルのサポートは削除されます。
 
 ### :bangbang: Capabilitiesはベンダープレフィックスを使用しなければならない
 
-<!-- 
-One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities), and includes a few commonly used capabilities such as `browserName` and `platformName`. 
+<!--
+One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities), and includes a few commonly used capabilities such as `browserName` and `platformName`.
 -->
 
-古いプロトコルと新しいプロトコルの大きな違いのひとつは、Capabilitiesのフォーマットにあります。以前は "desired capabilities" と呼ばれていましたが、現在は単に "capabilities" と呼ばれ、非標準の機能にはいわゆる "vendor prefix" が要求されるようになりました。標準的な機能のリストは [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities) に記載されており、`browserName` や `platformName` などのよく使われる機能が含まれています。
+古いプロトコルと新しいプロトコルの大きな違いのひとつは、Capabilitiesのフォーマットにあります。以前は "desired capabilities" と呼ばれていましたが、現在は単に "capabilities" と呼ばれ、非標準の機能にはいわゆる "vendor prefix" が要求されるようになりました。標準として組み込まれているcapabilitiesは [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities) に記載されており、`browserName` や `platformName` などのよく使われるcapabilitiesが含まれています。
 
-<!-- 
-These standard capabilities continue to be used as-is. All other capabilities must include a "vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as `appium:`. Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include vendor prefixes (we recommend that you use `appium:` unless directed otherwise by documentation). For example: 
+<!--
+These standard capabilities continue to be used as-is. All other capabilities must include a "vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as `appium:`. Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include vendor prefixes (we recommend that you use `appium:` unless directed otherwise by documentation). For example:
 -->
 
-これらの標準機能はそのまま使用され続けます。それ以外のすべての機能は、その名前に"vendor prefix"を 含まなければなりません。"vendor prefix"は、`appium:` のように、コロンが続く文字列です。Appiumのほとんどの機能は、標準的なW3Cの機能を超えているため、"vendor prefix"を含める必要があります(ドキュメントで指示がない限り、`appium:` を使用することを推奨します)。
+これらの標準として組み込まれているcapabilitiesはそのまま使用され続けます。それ以外のすべてのcapabilitiesは、その名前に"vendor prefix"を 含まなければなりません。"vendor prefix"は、`appium:` のように、コロンが続く文字列です。Appiumのほとんどの機能は、標準的なW3Cの機能を超えているため、"vendor prefix"を含める必要があります(ドキュメントで指示がない限り、`appium:` を使用することを推奨します)。
 例えば、
 
 - `appium:app`
 - `appium:noReset`
 - `appium:deviceName`
 
-<!-- 
-This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the `appium:` prefix for you on all necessary capabilities automatically. New versions of [Appium Inspector](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem. 
+<!--
+This requirement may or may not be a breaking change for your test suites when targeting Appium 2.0. If you're using an updated Appium client (at least one maintained by the Appium team), the client will add the `appium:` prefix for you on all necessary capabilities automatically. New versions of [Appium Inspector](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium providers may also do this. So simply be aware that if you get any messages to the effect that your capabilities lack a vendor prefix, this is how you solve that problem.
 -->
 
 この要件は、Appium 2.0をターゲットにしているテストスイートにとって破壊的な変更になるかもしれませんし、ならないかもしれません。
 アップデートされたAppiumクライアント(少なくとも Appium チームによってメンテナンスされているもの)を使用している場合、クライアントは自動的にすべての必要な機能に `appium:` 接頭辞を追加します。また、新しいバージョンの[Appium Inspector](https://github.com/appium/appium-inspector)もこれを行います。クラウドベースのAppiumプロバイダもこれを行うかもしれません。
-そのため、もしあなたが使っている機能にベンダープレフィックスがない旨のメッセージが表示された場合は、この方法で問題を解決することができます。
+そのため、もしあなたが使っていcapabilitiesにベンダープレフィックスがない旨のメッセージが表示された場合は、この方法で問題を解決することができます。
 
-<!-- 
-On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library). 
+<!--
+On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).
 -->
 
 これに関連して、W3CプロトコルをサポートしていないWebDriverクライアントを使用してAppiumセッションを開始することはできなくなります(WDライブラリに関するこの趣旨のコメントは以下を参照してください)。
@@ -291,7 +302,7 @@ On a related note, it will no longer be possible to start Appium sessions using 
 }
 ```
 
-<!-- (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). 
+<!-- (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`).
 
 !!! note
 
@@ -471,7 +482,7 @@ an industry-compatible way! -->
 
 クラウドプロバイダーには、業界と互換性のある方法でユーザーのニーズをサポートするために、私たちの[クラウドプロバイダーの能力に関する推奨事項](https://appium.io/docs/en/latest/guides/caps/#special-notes-for-cloud-providers) を十分に読み、理解することをお勧めします！
 
-<!-- 
+<!--
 for japanese translator
 Links to documents not translated into Japanese refer to the English version.
  -->

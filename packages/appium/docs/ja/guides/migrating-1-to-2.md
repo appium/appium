@@ -9,7 +9,7 @@ title: Appium 1.xからAppium 2.xへ移行する
 This document is a guide for those who are using Appium 1.x and wish to migrate to Appium 2.x. It contains a list of breaking changes and how to migrate your environments or test suites to ensure compatibility with Appium 2.0.
 --->
 このドキュメントは既にAppium 1.xを利用している人がAppium 2.xに移行するための手引きです。
-破壊的変更（breaking changes）の一覧や、実行環境・テストコードをAppium 2.0互換にするための方法が含まれます。
+破壊的変更(breaking changes)の一覧や、実行環境・テストコードをAppium 2.0互換にするための方法が含まれます。
 
 <!---
 ## Overview of Appium 2.0
@@ -21,7 +21,7 @@ This document is a guide for those who are using Appium 1.x and wish to migrate 
 Appium 2.0 is the most major new release of Appium in over 5 years. The changes in Appium 2.0 are _not_ primarily related to changes in automation behaviors for specific platforms. Instead, Appium 2.0 reenvisions Appium as a _platform_ where "drivers" (code projects that introduce support for automation of a given platform) and "plugins" (code projects that allow for overriding, altering, extending, or adding behaviors to Appium) can be easily created and shared.
 --->
 
-Appium 2.0は過去5年間におけるAppiumのリリース野中で最も大きなリリースです。Appium 2.0の主要な変更は特定のプラットフォームに対する自動化された動作に関するものでは**ありません**。Appium 2.0はAppiumをドライバー（drivers）（あるプラットフォームに対する自動化を支援するためのプロジェクト）とプラグイン（plugins）（Appiumの動作を上書き、代替、拡張、もしくは追加するためのプロジェクト）という容易に実装、共有できる**仕組みを提供するプラットフォーム**として再考しています。
+Appium 2.0は過去5年間におけるAppiumのリリース野中で最も大きなリリースです。Appium 2.0の主要な変更は特定のプラットフォームに対する自動化された動作に関するものでは**ありません**。Appium 2.0はAppiumをドライバー(drivers)(あるプラットフォームに対する自動化を支援するためのプロジェクト)とプラグイン(plugins)(Appiumの動作を上書き、代替、拡張、もしくは追加するためのプロジェクト)という容易に実装、共有できる**仕組みを提供するプラットフォーム**として再考しています。
 
 <!---
 At the same time, the Appium project is taking the opportunity to remove many old and deprecated bits of functionality.
@@ -81,7 +81,7 @@ You can also set server arguments as [Config file](./config.md) properties.
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm i -g appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
 
-Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。しかしAppium 2.0では異なります。Appium 2.0のインストール（例えば `npm i -g appium` を実行した時）は単にAppiumサーバーのみをインストールし、ドライバーはインストールされません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース（Appium extension CLI）](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。しかしAppium 2.0では異なります。Appium 2.0のインストール(例えば `npm i -g appium` を実行した時)は単にAppiumサーバーのみをインストールし、ドライバーはインストールされません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース(Appium extension CLI)](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
@@ -236,7 +236,7 @@ Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webd
 -->
 
 AppiumのAPIは[W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/)に基づいており、何年もこのプロトコルをサポートしています。
-W3C WebDriver Protocolがウェブ標準として設計される以前は、SeleniumとAppiumの両方で他のプロトコルが使用されていました。それは、「JSONWP」（JSON Wire Protocol）と「MJSONWP」（Mobile JSON Wire Protocol）です。
+W3C WebDriver Protocolがウェブ標準として設計される以前は、SeleniumとAppiumの両方で他のプロトコルが使用されていました。それは、「JSONWP」(JSON Wire Protocol)と「MJSONWP」(Mobile JSON Wire Protocol)です。
 W3Cプロトコルと(M)JSONWPプロトコルはいくつか異なる点があります。
 
 <!-- 
@@ -280,7 +280,7 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 <!-- To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, `appium:options`. You can bundle together anything that you would normally put an `appium:` prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`: -->
 
-みなさんの活動を少し楽にするために、Appiumに関連する全てのCapabilitiesを一つのオブジェクトケイパビリティ `appium:options` にまとめるオプションも導入しました。通常、`appium:`プレフィックスを付けるものを、この1つのCapabilityにまとめることができます。以下は `appium:options` を使ってSafariブラウザ上でiOSセッションを開始する例（JSON）です：
+みなさんの活動を少し楽にするために、Appiumに関連する全てのCapabilitiesを一つのオブジェクトケイパビリティ `appium:options` にまとめるオプションも導入しました。通常、`appium:`プレフィックスを付けるものを、この1つのCapabilityにまとめることができます。以下は `appium:options` を使ってSafariブラウザ上でiOSセッションを開始する例(JSON)です：
 
 ```json
 {
@@ -304,102 +304,163 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 ケイパビリティの詳細については、[Capabilities Guide](../../en/guides/caps.md)をご覧ください。
 
-### :bangbang: _Removed Commands_
+### :bangbang: 削除されたコマンド
 
-In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
+<!-- In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available: -->
 
-- TODO (these commands are being identified and removed and will be updated here when complete)
+ドライバの実装に移行したコマンドに加え、旧JSON Wireプロトコルの一部であり、W3Cプロトコルの一部ではなかったコマンドは使用できなくなりました：
 
-If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost.
+<!-- - TODO (these commands are being identified and removed and will be updated here when complete) -->
 
-### :bangbang: Image analysis features moved to plugin
+- TODO(これらのコマンドは特定・削除中であり、完了次第ここに更新されます)
 
-One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin).
+<!-- If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost. -->
 
-If you use these image-related methods, to continue accessing them you will need to do two things.
+最新のAppiumやSeleniumクライアントを使用している場合、これらにアクセスすることはできないため、どのような変更もまず第一にクライアント側に現れるはずです。
+
+### :bangbang: 画像解析機能をプラグインに移行
+
+<!-- One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin). -->
+
+Appium 2.0の設計目標の1つは、非コア機能を[plugins](../ecosystem/plugins.md)と呼ばれる特別な拡張機能に移行することです。これにより、ダウンロードに余分な時間がかかったり、余分なシステム設定が必要な機能を選択できるようになります。Appiumの様々な画像関連機能(画像比較、画像による要素の検索など)は、[images](https://github.com/appium/appium/tree/master/packages/images-plugin)という公式にサポートされているプラグインに移動されました。
+
+<!-- If you use these image-related methods, to continue accessing them you will need to do two things. -->
+
+これらの画像関連メソッドを使用する場合、以下の2つのことを行う必要があります。
 
 1. Install the plugin: `appium plugin install images`
-2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=images`
+<!-- 2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=images` -->
 
-Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features.
+1. プラグインをインストールする： `appium plugin install images`.
+2. コマンドラインで指定したプラグインリストにプラグインを含めることで、プラグインを実行できる状態でAppiumサーバーを起動する。例：`appium --use-plugins=images`
 
-### :bangbang: Execute Driver Script command moved to plugin
+<!-- Image-related commands will also be removed on the client side of things, which means you will need to follow the instructions on the plugin README for installing client-side plugins to access these features. -->
 
-If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO script to have it executed completely on the server instead of command-by-command from the client), this functionality has been moved to a plugin. Here's what to do to keep using it:
+画像関連のコマンドはクライアント側でも削除されるため、これらの機能にアクセスするには、プラグインのREADMEにあるクライアント側プラグインのインストールの指示に従う必要があります。
 
-1. Install the plugin: `appium plugin install execute-driver`
-2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=execute-driver`
+### :bangbang: Execute Driver Scriptコマンドがプラグインに移動
 
-### :bangbang: External Files No Longer Supported for `--nodeconfig`, `--default-capabilities`, `--allow-insecure` and `--deny-insecure`
+<!-- If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO script to have it executed completely on the server instead of command-by-command from the client), this functionality has been moved to a plugin. Here's what to do to keep using it: -->
 
-These options can be provided as strings on the command line (a JSON string for `--nodeconfig` and a comma-separated list of strings for `--allow-insecure` and `--deny-insecure`). Arguments provided on the command line will likely need to be quoted or escaped.
+高度なExecute Driver Script機能(WebdriverIOスクリプトを送信して、クライアントからコマンドごとに実行するのではなく、サーバー上で完全に実行させる機能)はプラグインに移動しました。この機能を使い続けるには以下の方法を使用してください：
 
-The recommended method to provide these options is now via a [configuration file](#tada-configuration-files).
+<!-- 1. Install the plugin: `appium plugin install execute-driver`
+2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=execute-driver` -->
 
-In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property.  Any CSV-like files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files (respectively); both are arrays of strings.
+1. プラグインをインストールする： `appium plugin install execute-driver`.
+2. コマンドラインで指定したプラグインリストにプラグインを含めることで、プラグインを実行できる状態でAppiumサーバーを起動する。例：`appium --use-plugins=execute-driver`
 
-### :bangbang: Old drivers removed
+### :bangbang: `--nodeconfig` `--default-capabilities ` `--allow-insecure` `--deny-insecure`での外部ファイルのサポート終了
 
-The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway.
+<!-- These options can be provided as strings on the command line (a JSON string for `--nodeconfig` and a comma-separated list of strings for `--allow-insecure` and `--deny-insecure`). Arguments provided on the command line will likely need to be quoted or escaped. -->
 
+これらのオプションはコマンドラインで文字列として指定できます(`--nodeconfig`の場合はJSON文字列、`--allow-insecure`と`--deny-insecure`の場合はカンマ区切りの文字列リスト)。コマンドラインで指定する引数は、引用符で囲むかエスケープする必要があります。
 
-### :bangbang: Server can no longer be started with `--port 0`
+<!-- The recommended method to provide these options is now via a [configuration file](#tada-configuration-files). -->
 
-In Appium 1.x, it was possible to specify `--port 0` during server startup. This had the effect of
+これらのオプションを提供するために推奨される方法は、[Configuration File](#tada-configuration-files)を使うことです。
+
+<!-- In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property.  Any CSV-like files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files (respectively); both are arrays of strings. -->
+
+つまり、JSON Appium configファイルを使用している場合、単純に "nodeconfig" JSON ファイルの内容を `server.nodeconfig` プロパティの値にカット＆ペーストすることができます。 以前 `--allow-insecure` と `--deny-insecure` のために提供した CSV のようなファイルは、Appium config ファイルの `server.allow-insecure` プロパティと `server.deny-insecure` プロパティの値になります(それぞれ文字列の配列)。
+
+### :bangbang: 古いドライバーを削除
+
+<!-- The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been removed. They haven't been relevant for many years anyway. -->
+
+古いiOSとAndroid(UiAutomator 1)のドライバーと関連ツール(例えば`authorize-ios`)は削除されました。いずれにせよ、これらは何年も関連していません。
+
+### :bangbang: サーバは `--port 0` で起動することはできない
+
+<!-- In Appium 1.x, it was possible to specify `--port 0` during server startup. This had the effect of
 starting Appium on a random free port. In Appium 2.0, port values must be `1` or higher. The random
 port assignment was never an intentional feature of Appium 1.x, but a consequence of how Node's
 HTTP servers work and the fact that there was no port input validation in Appium 1.x. If you want
 to find a random free port to start Appium on, you must now take care of this on your own prior to
 starting Appium. Starting Appium on an explicit and known port is the correct practice moving
-forward.
+forward. -->
 
-### :warning: Internal packages renamed
+Appium 1.xでは、サーバー起動時に`--port 0`を指定することができました。
+これはランダムな空きポートで Appium を起動するという効果があります。Appium 2.0 では、ポートの値は `1` 以上でなければなりません。
+ランダムなポートのランダムな割り当ては、Appium 1.x の意図的な機能ではありませんでした。HTTP サーバーがどのように動作するか、そして Appium 1.xにはポート入力の検証がなかった結果です。
+Appium を起動するためにランダムな空きポートを見つけたい場合は、Appium を起動する前に自分でこの処理を行う必要があります。
+明示的な既知のポートでAppiumを起動するのが、今後の正しいやり方です。
 
-Some Appium-internal NPM packages have been renamed (for example, `appium-base-driver` is now `@appium/base-driver`). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code.
+### :warning: 内部パッケージの名称変更
 
-### :warning: "WD" JavaScript client library no longer supported
+<!-- Some Appium-internal NPM packages have been renamed (for example, `appium-base-driver` is now `@appium/base-driver`). This is not a breaking change for Appium users, only for people who have built software that directly incorporates Appium's code. -->
 
-For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend [WebdriverIO](https://webdriver.io).
+一部の Appium 内部のnpmパッケージの名前が変更されました（例えば、`appium-base-driver` は `@appium/base-driver` になりました）。これはAppiumのユーザーにとって大きな変更ではなく、Appiumのコードを直接組み込んだソフトウェアをビルドしている人にとっての変更です。
 
-### :warning: Appium Inspector split out from Appium Desktop
+### :warning: "WD "JavaScriptクライアント・ライブラリがサポート終了
 
-The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated [WD](https://github.com/admc/wd) client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app.
+<!-- For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend [WebdriverIO](https://webdriver.io). -->
 
-You can also now use the Appium Inspector without downloading anything, by visiting the [web version of Appium Inspector](https://inspector.appiumpro.com). Note that to test against local servers, you'll need to start the server with `--allow-cors` so that the browser-based version of Appium Inspector can access your Appium server to start sessions.
+何年もの間、Appiumの作者の一部は[WD](https://github.com/admc/wd)クライアントライブラリを保守していました。このライブラリは非推奨であり、W3C WebDriverプロトコルで使用するために更新されていません。そのため、このライブラリを使用している場合は、より最新のものに移行する必要があります。[WebdriverIO](https://webdriver.io)をお勧めします。
 
-## Major New Features
+### :warning: Appium InspectorがAppium Desktopから分離
 
-Apart from the breaking changes mentioned above, in this section is a list of some of the major new features you may wish to take advantage of with Appium 2.0.
+<!-- The inspecting portion of Appium Desktop has been moved to its own app, Appium Inspector: [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). It's fully compatible with Appium 2.0 servers. Simply download it and run it on its own. You no longer need the GUI Appium Desktop server to inspect apps. The Appium Desktop server will continue to be supported at its original site: [github.com/appium/appium-desktop](https://github.com/appium/appium-desktop). It will simply no longer bundle the Inspector with it. Note that Appium Desktop 1.21 and lower versions depend on the deprecated [WD](https://github.com/admc/wd) client, and are not compatible with Appium 2.0. There is currently no Appium 2.0 support for Appium Desktop planned, now that the Inspector is a standalone app. -->
 
-### Plugins
+Appium Desktopのインスペクション部分は、専用のアプリAppium Inspector [github.com/appium/appium-inspector](https://github.com/appium/appium-inspector) に移動しました。Appium 2.0サーバーと完全に互換性があります。ダウンロードして実行するだけです。アプリを検査するためにGUIのAppium Desktopサーバーはもう必要ありません。Appium Desktopサーバーは、[github.com/appium/appium-desktop](https://github.com/appium/appium-desktop)で引き続きサポートされます。単にInspectorがバンドルされなくなるだけです。Appium Desktop 1.21以下のバージョンは、非推奨の[WD](https://github.com/admc/wd)クライアントに依存しており、Appium 2.0と互換性がないことに注意してください。現在、Appium DesktopのAppium 2.0サポートは予定されていません。
+
+<!-- You can also now use the Appium Inspector without downloading anything, by visiting the [web version of Appium Inspector](https://inspector.appiumpro.com). Note that to test against local servers, you'll need to start the server with `--allow-cors` so that the browser-based version of Appium Inspector can access your Appium server to start sessions. -->
+
+また、[Web 版 Appium Inspector](https://inspector.appiumpro.com) にアクセスすることで、何もダウンロードせずに Appium Inspector を使用できるようになりました。なお、ローカルサーバーに対してテストを行う場合は、ブラウザベースのAppium InspectorがAppiumサーバーにアクセスしてセッションを開始できるように、サーバーを `--allow-cors` で起動する必要があります。
+
+## 主な新機能
+
+<!-- Apart from the breaking changes mentioned above, in this section is a list of some of the major new features you may wish to take advantage of with Appium 2.0. -->
+
+上記の変更点とは別に、このセクションではAppium 2.0の主な新機能を紹介します。
+
+### プラグイン
 
 #### :tada: _Server Plugins_
 
-Appium extension authors can now develop their own server plugins, which can intercept and modify
+<!-- Appium extension authors can now develop their own server plugins, which can intercept and modify
 any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
 more about plugins, read the new [Appium Introduction](../intro/index.md). Interested in building
-a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
+a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide. -->
 
-#### :tada: _Client Plugins_
+Appium extensionの作者は、独自のサーバー・プラグインを開発できるようになりました。
+Appium HTTPサーバー自体の動作方法を調整することもできます。
+プラグインの詳細については、新しい[Appium Introduction](../intro/index.md)をお読みください。プラグインのビルドに興味がありますか？
+プラグインを作ることに興味がありますか？ [プラグインの構築](../../en/developing/build-plugins.md) ガイドをチェックしてください。
 
-TODO
+### :tada: どこからでもドライバーとプラグインをインストール
 
-### :tada: Install drivers and plugins from anywhere
-
-You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
+<!-- You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
 about! Appium extension authors can now develop custom drivers, which can be downloaded or
-installed via Appium's [Extension CLI](../cli/extensions.md) from NPM, Git, GitHub, or even the
+installed via Appium's [Extension CLI](../cli/extensions.md) from `npm`, `git`, GitHub, or even the
 local filesystem. Interested in building a driver? Check out the [Building
-Drivers](../ecosystem/build-drivers.md) guide.
+Drivers](../developing/build-drivers.md) guide. -->
+
+もはやAppium付属のドライバーや、Appiumチームが知っているドライバーに限定されることはありません！Appiumエクステンションの作者は、カスタムドライバを開発できるようになりました。
+Appiumの[Extension CLI](../../en/cli/extensions.md)経由で、`npm`、`git`、GitHub、またはローカルのファイルシステムからダウンロードまたはインストールできます。
+ドライバのビルドに興味がありますか？ [ドライバのビルド](../../en/developing/build-drivers.md) ガイドを参照してください。
 
 ### :tada: Configuration Files
 
-Appium now supports _configuration files_ in addition to command-line arguments. In a nutshell, nearly all arguments which Appium 1.x required to be provided on the CLI are now able to be expressed via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the [Config Guide](config.md) for a full explanation.
+<!-- Appium now supports _configuration files_ in addition to command-line arguments. In a nutshell,
+nearly all arguments which Appium 1 required to be provided on the CLI are now able to be expressed
+via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the
+[Config Guide](./config.md) for a full explanation. -->
 
-## Special Notes for Cloud Providers
+Appiumは、コマンドライン引数に加え、_設定ファイル_ もサポートするようになりました。つまりAppium 1がCLIで提供することを要求していたほぼすべての引数が、設定ファイルを介して表現できるようになりました。設定ファイルは JSON, JS, YAML 形式があります。設定ファイルは [Config Guide](../../en/guides/config.md) を参照してください。
 
-The rest of this document has applied to Appium generally, but some of the architectural changes in Appium 2.0 will constitute breaking changes for Appium-related service providers, whether a cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium server is responsible for installing and making available the various Appium drivers and plugins that end users may wish to use.
+## クラウド・プロバイダーに関する特記事項
 
-We encourage cloud providers to thoroughly read and understand our [recommendation for cloud
-provider capabilities](caps.md#special-notes-for-cloud-providers) in order to support user needs in
-an industry-compatible way!
+<!-- The rest of this document has applied to Appium generally, but some of the architectural changes in
+Appium 2 will constitute breaking changes for Appium-related service providers, whether a
+cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium
+server is responsible for installing and making available the various Appium drivers and plugins
+that end users may wish to use. -->
+
+このドキュメントの残りの部分は、Appium全般に適用されているが、Appium 2のアーキテクチャ上の変更の一部は、クラウドベースのAppiumホストであれ、内部サービスであれ、Appium関連のサービスプロバイダーにとって破壊的な変更となる。結局のところ、Appiumサーバーのメンテナは、エンドユーザーが使用したいと思うであろう様々なAppiumドライバーやプラグインをインストールし、利用できるようにする責任がある。
+
+<!-- We encourage cloud providers to thoroughly read and understand our [recommendation for cloud
+provider capabilities](./caps.md#special-notes-for-cloud-providers) in order to support user needs in
+an industry-compatible way! -->
+
+クラウドプロバイダーには、業界と互換性のある方法でユーザーのニーズをサポートするために、私たちの[クラウドプロバイダーの能力に関する推奨事項](../../en/guides/caps.md#special-notes-for-cloud-providers) を十分に読み、理解することをお勧めします！

@@ -54,6 +54,8 @@ export interface Logger extends EventEmitter {
 
   addLevel(level: string, n: number, style?: StyleObject, disp?: string): void;
 
+  updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void;
+
   get asyncStorage(): AsyncLocalStorage<Record<string, any>>;
 
   // Allows for custom log levels

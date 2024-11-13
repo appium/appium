@@ -14,6 +14,15 @@ import {BASE_DESIRED_CAP_CONSTRAINTS} from '@appium/types';
 import {isW3cCaps} from '../../../lib/helpers/capabilities';
 
 describe('caps', function () {
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
+
   // Tests based on: https://www.w3.org/TR/webdriver/#dfn-validate-caps
   describe('#validateCaps', function () {
     it('returns invalid argument error if "capability" is not a JSON object (1)', function () {

@@ -2,6 +2,11 @@ import {argify} from '../../lib/util';
 import _ from 'lodash';
 
 describe('argify', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   it('should create args from params', function () {
     // deploy example
     const version = '2.0';

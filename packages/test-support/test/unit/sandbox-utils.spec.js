@@ -1,12 +1,18 @@
 import {withSandbox, verifySandbox} from '../../lib';
 
-const expect = chai.expect;
-
 let funcs = {
   abc: () => 'abc',
 };
 
 describe('sandbox-utils', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe(
     'withSandbox',
     withSandbox({mocks: {funcs}}, (S) => {

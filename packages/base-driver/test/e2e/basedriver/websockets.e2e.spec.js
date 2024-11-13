@@ -13,6 +13,11 @@ describe('Websockets (e2e)', function () {
   const WS_DATA = 'Hello';
 
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+
     driver = new FakeDriver();
     driver.sessionId = SESSION_ID;
     port = await getTestPort();
@@ -41,10 +46,9 @@ describe('Websockets (e2e)', function () {
       _.keys(await baseServer.getWebSocketHandlers()).length.should.eql(1);
       await new B((resolve, reject) => {
         const client = new WebSocket(`ws://${TEST_HOST}:${port}${endpoint}`);
-        client.once('connection', (ws, req) => {
+        client.once('upgrade', (res) => {
           try {
-            ws.should.not.be.empty;
-            req.connection.remoteAddress.should.not.be.empty;
+            res.statusCode.should.eql(101);
           } catch (e) {
             reject(e);
           }

@@ -1,6 +1,6 @@
 {
   "name": "@appium/logger",
-  "version": "1.4.2",
+  "version": "1.6.1",
   "author": "https://github.com/appium",
   "description": "A Universal Logger For The Appium Ecosystem",
   "repository": {
@@ -29,6 +29,7 @@
   "dependencies": {
     "console-control-strings": "1.1.0",
     "lodash": "4.17.21",
+    "lru-cache": "10.4.3",
     "set-blocking": "2.0.0"
   },
   "license": "ISC",

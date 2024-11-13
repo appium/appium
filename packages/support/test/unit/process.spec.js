@@ -8,6 +8,13 @@ const SubProcess = teenProcess.SubProcess;
 describe('process', function () {
   let sandbox;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
   });

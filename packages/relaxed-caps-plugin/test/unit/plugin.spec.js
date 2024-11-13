@@ -39,6 +39,12 @@ const ADJUSTED_VENDOR_CAPS = {
 
 describe('relaxed caps plugin', function () {
   let sandbox;
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    should = chai.should();
+  });
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();

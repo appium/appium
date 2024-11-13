@@ -3,10 +3,17 @@ import sinon from 'sinon';
 import {DeviceSettings, MAX_SETTINGS_SIZE} from '../../../lib/basedriver/device-settings';
 import {InvalidArgumentError} from '../../../lib/protocol/errors';
 
-const {expect} = chai;
-
 describe('DeviceSettings', function () {
   let sandbox;
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = sinon.createSandbox();
@@ -91,7 +98,7 @@ describe('DeviceSettings', function () {
           it('should not call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings({stuff: 'things'}, onSettingsUpdate);
             await deviceSettings.update({stuff: 'things'});
-            expect(onSettingsUpdate).not.to.have.been.called;
+            onSettingsUpdate.called.should.be.false;
           });
         });
 
@@ -99,11 +106,11 @@ describe('DeviceSettings', function () {
           it('should call the `_onSettingsUpdate` listener', async function () {
             const deviceSettings = new DeviceSettings({}, onSettingsUpdate);
             await deviceSettings.update({stuff: 'things'});
-            expect(onSettingsUpdate).to.have.been.calledOnceWithExactly(
+            onSettingsUpdate.calledOnceWithExactly(
               'stuff',
               'things',
               undefined
-            );
+            ).should.be.true;
           });
         });
       });

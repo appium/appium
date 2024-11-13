@@ -3,11 +3,18 @@ import NodeDetector from '../../lib/node-detector';
 import B from 'bluebird';
 import {withSandbox} from '@appium/test-support';
 
-let expect = chai.expect;
-
 describe(
   'NodeDetector',
   withSandbox({mocks: {fs, system}}, (S) => {
+    let expect;
+
+    before(async function () {
+      const chai = await import('chai');
+      chai.should();
+      expect = chai.expect;
+    });
+
+
     it('retrieveUsingSystemCall - success - where returns multiple lines ', async function () {
       S.mocks.fs.expects('which').once().returns(B.resolve('/a/b/node.exe'));
       S.mocks.fs.expects('exists').once().returns(B.resolve(true));

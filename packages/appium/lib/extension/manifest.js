@@ -8,7 +8,6 @@ import _ from 'lodash';
 import path from 'path';
 import YAML from 'yaml';
 import {CURRENT_SCHEMA_REV, DRIVER_TYPE, PLUGIN_TYPE} from '../constants';
-import log from '../logger';
 import {INSTALL_TYPE_NPM, INSTALL_TYPE_DEV} from './extension-config';
 import {packageDidChange} from './package-changed';
 import {migrate} from './manifest-migrations';
@@ -177,22 +176,6 @@ export class Manifest {
       try {
         const pkg = JSON.parse(await fs.readFile(filepath, 'utf8'));
         if (isExtension(pkg)) {
-          const extType = isDriver(pkg) ? DRIVER_TYPE : PLUGIN_TYPE;
-          /**
-           * this should only be 'unknown' if the extension's `package.json` is invalid
-           * @type {string}
-           */
-          const name = isDriver(pkg)
-            ? pkg.appium.driverName
-            : isPlugin(pkg)
-            ? pkg.appium.pluginName
-            : '(unknown)';
-          if (
-            (isDriver(pkg) && !this.hasDriver(name)) ||
-            (isPlugin(pkg) && !this.hasPlugin(name))
-          ) {
-            log.info(`Discovered installed ${extType} "${name}"`);
-          }
           const installType = devType && hasAppiumDependency ? INSTALL_TYPE_DEV : INSTALL_TYPE_NPM;
           const changed = this.addExtensionFromPackage(pkg, filepath, installType);
           didChange = didChange || changed;
@@ -403,12 +386,8 @@ export class Manifest {
       try {
         const yaml = await fs.readFile(this.#manifestPath, 'utf8');
         data = YAML.parse(yaml);
-        log.debug(
-          `Parsed manifest file at ${this.#manifestPath}: ${JSON.stringify(data, null, 2)}`
-        );
       } catch (err) {
         if (err.code === 'ENOENT') {
-          log.debug(`No manifest file found at ${this.#manifestPath}; creating`);
           data = _.cloneDeep(INITIAL_MANIFEST_DATA);
           shouldWrite = true;
         } else {
@@ -434,9 +413,6 @@ export class Manifest {
        * file will get the latest schema revision, so we can skip the migration.
        */
       if (!shouldWrite && (data.schemaRev ?? 0) < CURRENT_SCHEMA_REV) {
-        log.debug(
-          `Updating manifest schema from rev ${data.schemaRev ?? '(none)'} to ${CURRENT_SCHEMA_REV}`
-        );
         shouldWrite = await migrate(this);
       }
 
@@ -454,7 +430,6 @@ export class Manifest {
        * `APPIUM_HOME`, but we don't do that here.
        */
       if (shouldWrite || (hasAppiumDependency && (await packageDidChange(this.appiumHome)))) {
-        log.debug('Discovering newly installed extensions...');
         shouldWrite = (await this.syncWithInstalledExtensions(hasAppiumDependency)) || shouldWrite;
       }
 

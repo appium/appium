@@ -2,6 +2,15 @@ import _ from 'lodash';
 import {statusCodes, getSummaryByCode} from '../../../lib';
 
 describe('jsonwp-status', function () {
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
+
   describe('codes', function () {
     it('should export code numbers and summaries', function () {
       for (let obj of _.values(statusCodes)) {

@@ -3,6 +3,115 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.12.1](https://github.com/appium/appium/compare/@appium/base-driver@9.12.0...@appium/base-driver@9.12.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([958fca4](https://github.com/appium/appium/commit/958fca47c8515664aac4c2f0b1051cadd43431b9))
+
+
+
+## [9.12.0](https://github.com/appium/appium/compare/@appium/base-driver@9.11.5...@appium/base-driver@9.12.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **base-driver:** update dependency express to v4.21.1 ([0e52da4](https://github.com/appium/appium/commit/0e52da4b3adbd5ecde09395063255c3af7eb0400))
+* **base-driver:** update dependency path-to-regexp to v8.2.0 ([e8886ae](https://github.com/appium/appium/commit/e8886ae0d276ac4f97a1bdb88998fc30fbd936fa))
+* **driver-test-support:** update dependency @types/lodash to v4.17.10 ([a2b0ba8](https://github.com/appium/appium/commit/a2b0ba877310737f1ebf7ecda0b9aa5d7083e1f4))
+* **types:** update dependency @types/express to v5 ([#20620](https://github.com/appium/appium/issues/20620)) ([69e9abe](https://github.com/appium/appium/commit/69e9abeed3ac5a2f61d8b7f1cd4ec4bd9c054cf1))
+
+
+
+## [9.11.5](https://github.com/appium/appium/compare/@appium/base-driver@9.11.4...@appium/base-driver@9.11.5) (2024-09-26)
+
+
+### Bug Fixes
+
+* **appium:** Return hostname as web socket url for BiDi if a broadcast address is assigned to the server ([#20603](https://github.com/appium/appium/issues/20603)) ([f0de55d](https://github.com/appium/appium/commit/f0de55da0da2fc0305876a948704c1f0a2a5990f))
+* **driver-test-support:** update definitelytyped ([#20605](https://github.com/appium/appium/issues/20605)) ([da7a4fd](https://github.com/appium/appium/commit/da7a4fdce8790bc59370bfe4b912c7c0c403c713))
+
+
+
+## [9.11.4](https://github.com/appium/appium/compare/@appium/base-driver@9.11.3...@appium/base-driver@9.11.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **base-driver:** Add a server flag to check if it operates a secure protocol ([#20449](https://github.com/appium/appium/issues/20449)) ([622b245](https://github.com/appium/appium/commit/622b245ea38793280d9785a59a0416ce025862fe))
+* **base-driver:** update dependency body-parser to v1.20.3 ([056baba](https://github.com/appium/appium/commit/056baba3a0c51973d5e834283355821eced6ee17))
+* **base-driver:** update dependency express to v4.20.0 ([ef163eb](https://github.com/appium/appium/commit/ef163eb8df512e89f4e62c99b32fc979008fcfaa))
+* **base-driver:** update dependency express to v4.21.0 ([cb9fb9c](https://github.com/appium/appium/commit/cb9fb9c6fef608e29284210be27356a488f4002c))
+* **base-driver:** update dependency path-to-regexp to v8 ([#20520](https://github.com/appium/appium/issues/20520)) ([63cb664](https://github.com/appium/appium/commit/63cb664af13d7411ff325095cd0e9b6fd24363c3))
+* **base-driver:** update dependency path-to-regexp to v8.1.0 ([#20562](https://github.com/appium/appium/issues/20562)) ([1cae549](https://github.com/appium/appium/commit/1cae549a7be5138e980af6661b96cd7d6268fdb0))
+* **support:** update dependency axios to v1.7.4 ([d17d022](https://github.com/appium/appium/commit/d17d0222245ab94a78e578c0398734e65a89ba68))
+* **support:** update dependency axios to v1.7.5 ([fedabb1](https://github.com/appium/appium/commit/fedabb1fdc7af10f9e4b06ea23815c4bc7c6bf5e))
+* **support:** update dependency axios to v1.7.7 ([7fe67a2](https://github.com/appium/appium/commit/7fe67a286a15a917ce3b1b47a08e982e65bbd9e4))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
+## [9.11.3](https://github.com/appium/appium/compare/@appium/base-driver@9.11.2...@appium/base-driver@9.11.3) (2024-08-07)
+
+
+### Bug Fixes
+
+* **base-driver:** calls startNewCommandTimeout before returning NotYetImplementedError ([#20380](https://github.com/appium/appium/issues/20380)) ([6a97fe4](https://github.com/appium/appium/commit/6a97fe48aebb85424fa7e5be5de2eb5524cf0db6))
+* **base-driver:** change required to option for setWindowRect to follow w3c ([#20391](https://github.com/appium/appium/issues/20391)) ([9eb65f7](https://github.com/appium/appium/commit/9eb65f7ad4efc89bbf5af89791bb9eb81fc2248f))
+* **base-driver:** Start command timeout even if the recent command has thrown an exception ([#20379](https://github.com/appium/appium/issues/20379)) ([139dbae](https://github.com/appium/appium/commit/139dbaeef6963f79a1de38541181bae8953e00e1))
+* **base-driver:** update dependency path-to-regexp to v7.1.0 ([#20376](https://github.com/appium/appium/issues/20376)) ([6488a0a](https://github.com/appium/appium/commit/6488a0a4e1dd08f4eda6e40e33a9b31d31edda1c))
+* **driver-test-support:** update dependency @types/lodash to v4.17.7 ([#20382](https://github.com/appium/appium/issues/20382)) ([d5ef0f9](https://github.com/appium/appium/commit/d5ef0f9c8608ba545988c3016cefd0669f2400dc))
+* **logger:** update dependency lru-cache to v10.4.3 ([#20364](https://github.com/appium/appium/issues/20364)) ([8d79467](https://github.com/appium/appium/commit/8d79467da8a0733ac3e49b9152bd6905989a57ca))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
+## [9.11.2](https://github.com/appium/appium/compare/@appium/base-driver@9.11.1...@appium/base-driver@9.11.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
+## [9.11.1](https://github.com/appium/appium/compare/@appium/base-driver@9.11.0...@appium/base-driver@9.11.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update dependency @types/lodash to v4.17.6 ([82e40c1](https://github.com/appium/appium/commit/82e40c1400e23f341c45d788982ccc5905827d7c))
+* **images-plugin:** update dependency lru-cache to v10.3.0 ([#20306](https://github.com/appium/appium/issues/20306)) ([e43c7a4](https://github.com/appium/appium/commit/e43c7a4dce1f50fbd4d028cbeac5677422210b20))
+
+
+
+## [9.11.0](https://github.com/appium/appium/compare/@appium/base-driver@9.10.3...@appium/base-driver@9.11.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **base-driver:** Check if app path is relative earlier ([#20276](https://github.com/appium/appium/issues/20276)) ([2882e71](https://github.com/appium/appium/commit/2882e7163159b7918d54cc4521105a1fdf55da9a))
+* **base-driver:** update dependency path-to-regexp to v7 ([#20279](https://github.com/appium/appium/issues/20279)) ([a746eef](https://github.com/appium/appium/commit/a746eefbbb627c7f7dd9d1ce13226a88d9527129))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [9.10.3](https://github.com/appium/appium/compare/@appium/base-driver@9.10.2...@appium/base-driver@9.10.3) (2024-06-11)
 
 **Note:** Version bump only for package @appium/base-driver

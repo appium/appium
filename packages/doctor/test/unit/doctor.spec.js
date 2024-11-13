@@ -4,6 +4,13 @@ import log from '../../lib/logger';
 import B from 'bluebird';
 
 describe('doctor', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   it('register', function () {
     let doctor = new Doctor();
     doctor.checks.should.have.length(0);

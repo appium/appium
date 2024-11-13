@@ -4,7 +4,14 @@ import {FakeDriver} from '../protocol/fake-driver';
 describe('proxy', function () {
   const jwproxy = new JWProxy();
   let baseServer;
+  let should;
+
   before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    should = chai.should();
+
     baseServer = await server({
       routeConfiguringFunction: routeConfiguringFunction(new FakeDriver()),
       port: 4444,

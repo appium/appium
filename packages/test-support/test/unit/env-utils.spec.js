@@ -1,8 +1,14 @@
 import {stubEnv} from '../../lib';
 
-const expect = chai.expect;
-
 describe('env-utils', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('stubEnv', function () {
     stubEnv();
 

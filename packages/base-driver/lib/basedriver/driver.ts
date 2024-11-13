@@ -20,6 +20,7 @@ import {
 import B from 'bluebird';
 import _ from 'lodash';
 import {fixCaps, isW3cCaps} from '../helpers/capabilities';
+import {calcSignature} from '../helpers/session';
 import {DELETE_SESSION_COMMAND, determineProtocol, errors} from '../protocol';
 import {processCapabilities, validateCaps} from './capabilities';
 import {DriverCore} from './core';
@@ -97,41 +98,66 @@ export class BaseDriver<
 
     // If we don't have this command, it must not be implemented
     if (!this[cmd]) {
+      await this.startNewCommandTimeout();
       throw new errors.NotYetImplementedError();
     }
 
-    let unexpectedShutdownListener;
-    const commandExecutor = async () =>
-      await B.race([
-        this[cmd](...args),
-        new B((resolve, reject) => {
-          unexpectedShutdownListener = reject;
-          this.eventEmitter.on(ON_UNEXPECTED_SHUTDOWN_EVENT, unexpectedShutdownListener);
-        }),
-      ]).finally(() => {
-        if (unexpectedShutdownListener) {
+    const runCommandPromise = async () => {
+      let unexpectedShutdownRejecter: ((error?: any) => void) | null = null;
+      let unexpectedShutdownResolver: ((x?: unknown) => void) | null = null;
+      let wasSessionShutdownUnexpectedly = false;
+      const onUnexpectedShutdown = (e: Error) => {
+        wasSessionShutdownUnexpectedly = true;
+        unexpectedShutdownRejecter?.(e);
+      };
+      try {
+        return await B.race([
+          this[cmd](...args),
+          // This promise is needed to monitor if the session has been
+          // shut down unexpectedly while the command was running
+          new B((resolve, reject) => {
+            unexpectedShutdownResolver = resolve;
+            unexpectedShutdownRejecter = reject;
+            this.eventEmitter.once(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+          })
+        ]);
+      } finally {
+        if (unexpectedShutdownRejecter && unexpectedShutdownResolver) {
           // This is needed to prevent memory leaks
-          this.eventEmitter.removeListener(
-            ON_UNEXPECTED_SHUTDOWN_EVENT,
-            unexpectedShutdownListener,
-          );
-          unexpectedShutdownListener = null;
+          this.eventEmitter.removeListener(ON_UNEXPECTED_SHUTDOWN_EVENT, onUnexpectedShutdown);
+          unexpectedShutdownRejecter = null;
+          // @ts-ignore typescript cannot understand this
+          unexpectedShutdownResolver?.();
+          unexpectedShutdownResolver = null;
         }
-      });
-    const res = this.isCommandsQueueEnabled
-      ? await this.commandsQueueGuard.acquire(BaseDriver.name, commandExecutor)
-      : await commandExecutor();
 
-    // if we have set a new command timeout (which is the default), start a
-    // timer once we've finished executing this command. If we don't clear
-    // the timer (which is done when a new command comes in), we will trigger
-    // automatic session deletion in this.onCommandTimeout. Of course we don't
-    // want to trigger the timer when the user is shutting down the session
-    // intentionally
-    if (this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
-      // resetting existing timeout
-      await this.startNewCommandTimeout();
+        // if we have set a new command timeout (which is the default), start a
+        // timer once we've finished executing this command. If we don't clear
+        // the timer (which is done when a new command comes in), we will trigger
+        // automatic session deletion in this.onCommandTimeout. Of course we don't
+        // want to trigger the timer when the user is shutting down the session
+        // intentionally
+        if (!wasSessionShutdownUnexpectedly && this.isCommandsQueueEnabled && cmd !== DELETE_SESSION_COMMAND) {
+          // resetting existing timeout
+          await this.startNewCommandTimeout();
+        }
+      }
+    };
+
+    const synchronizationKey = BaseDriver.name;
+    // eslint-disable-next-line dot-notation
+    const commandsQueueLen: number = this.commandsQueueGuard['queues']?.[synchronizationKey]?.length ?? 0;
+    if (this.isCommandsQueueEnabled && commandsQueueLen > 0) {
+      this.log.debug(
+        `Scheduling the '${cmd}' command to the ${this.constructor.name} commands queue. ` +
+        `${util.pluralize('queue item', commandsQueueLen, true)} ${commandsQueueLen === 1 ? 'is' : 'are'} ` +
+        `already waiting for execution.`
+      );
     }
+
+    const res = this.isCommandsQueueEnabled
+      ? await this.commandsQueueGuard.acquire(synchronizationKey, runCommandPromise)
+      : await runCommandPromise();
 
     // log timing information about this command
     const endTime = Date.now();
@@ -308,6 +334,11 @@ export class BaseDriver<
     }
 
     this._log.prefix = helpers.generateDriverLogPrefix(this);
+
+    this.log.updateAsyncContext({
+      sessionId: this.sessionId,
+      sessionSignature: calcSignature(this.sessionId),
+    });
 
     this.log.info(`Session created with session id: ${this.sessionId}`);
 

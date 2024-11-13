@@ -16,8 +16,6 @@ import {
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson, runAppiumRaw} from './e2e-helpers';
 
-const {expect} = chai;
-
 const TEST_DRIVER_DIR = path.dirname(resolveFixture('test-driver/package.json'));
 
 const TEST_DRIVER_INVALID_PEERS_DIR = path.dirname(
@@ -56,6 +54,7 @@ describe('Driver CLI', function () {
    * @type {(args: string[]) => Promise<ExtRecord<DriverType>>}
    */
   let runDoctor;
+  let expect;
 
   async function resetAppiumHome() {
     await fs.rimraf(appiumHome);
@@ -63,6 +62,12 @@ describe('Driver CLI', function () {
   }
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     appiumHome = await tempDir.openDir();
     const run = runAppiumJson(appiumHome);
     runInstall = async (args) =>

@@ -9,9 +9,18 @@ import _ from 'lodash';
 const MOCHA_TIMEOUT = 10000;
 
 describe('fs', function () {
+  let chai;
+
   this.timeout(MOCHA_TIMEOUT);
 
   const existingPath = __filename;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
 
   let sandbox;
   beforeEach(function () {
@@ -175,7 +184,7 @@ describe('fs', function () {
       const err = new Error('Callback error');
       const stub = sandbox.stub().rejects(err);
       await fs.walkDir(__dirname, true, stub).should.eventually.be.rejectedWith(err);
-      stub.should.have.been.calledOnce;
+      stub.calledOnce.should.be.true;
     });
     it('should traverse non-recursively', async function () {
       const filePath = await fs.walkDir(__dirname, false, (item) =>

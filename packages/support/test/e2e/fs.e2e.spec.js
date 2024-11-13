@@ -2,6 +2,13 @@ import fs from '../../lib/fs';
 import {isWindows} from '../../lib/system';
 
 describe('isExecutable()', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('when the path does not exist', function () {
     it('should return `false`', async function () {
       await fs.isExecutable('/path/to/nowhere').should.eventually.be.false;

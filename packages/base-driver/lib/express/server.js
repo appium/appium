@@ -28,8 +28,7 @@ import {
 } from './websocket';
 import B from 'bluebird';
 import {DEFAULT_BASE_PATH} from '../constants';
-import {EventEmitter} from 'events';
-import {fs} from '@appium/support';
+import {fs, timing} from '@appium/support';
 
 const KEEP_ALIVE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -82,7 +81,7 @@ async function server(opts) {
     routeConfiguringFunction,
     port,
     hostname,
-    cliArgs = {},
+    cliArgs = /** @type {import('@appium/types').ServerArgs} */ ({}),
     allowCors = true,
     basePath = DEFAULT_BASE_PATH,
     extraMethodMap = {},
@@ -104,6 +103,7 @@ async function server(opts) {
         httpServer,
         reject,
         keepAliveTimeout,
+        gracefulShutdownTimeout: cliArgs.shutdownTimeout,
       });
       configureServer({
         app,
@@ -191,11 +191,7 @@ function configureServer({
  * @param {ConfigureHttpOpts} opts
  * @returns {AppiumServer}
  */
-function configureHttp({httpServer, reject, keepAliveTimeout}) {
-  const serverState = {
-    notifier: new EventEmitter(),
-    closed: false,
-  };
+function configureHttp({httpServer, reject, keepAliveTimeout, gracefulShutdownTimeout}) {
   /**
    * @type {AppiumServer}
    */
@@ -205,26 +201,44 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
   appiumServer.removeWebSocketHandler = removeWebSocketHandler;
   appiumServer.removeAllWebSocketHandlers = removeAllWebSocketHandlers;
   appiumServer.getWebSocketHandlers = getWebSocketHandlers;
+  appiumServer.isSecure = function isSecure() {
+    // eslint-disable-next-line dot-notation
+    return Boolean(this['_spdyState']?.secure);
+  };
 
   // http.Server.close() only stops new connections, but we need to wait until
   // all connections are closed and the `close` event is emitted
-  const close = appiumServer.close.bind(appiumServer);
+  const originalClose = appiumServer.close.bind(appiumServer);
   appiumServer.close = async () =>
-    await new B((resolve, reject) => {
-      // https://github.com/nodejs/node-v0.x-archive/issues/9066#issuecomment-124210576
-      serverState.closed = true;
-      serverState.notifier.emit('shutdown');
-      log.info('Waiting until the server is closed');
-      httpServer.on('close', () => {
-        log.info('Received server close event');
-        resolve();
+    await new B((_resolve, _reject) => {
+      log.info('Closing Appium HTTP server');
+      const timer = new timing.Timer().start();
+      const onTimeout = setTimeout(() => {
+        if (gracefulShutdownTimeout > 0) {
+          log.info(
+            `Not all active connections have been closed within ${gracefulShutdownTimeout}ms. ` +
+            `This timeout might be customized by the --shutdown-timeout command line ` +
+            `argument. Closing the server anyway.`
+          );
+        }
+        process.exit(process.exitCode ?? 0);
+      }, gracefulShutdownTimeout);
+      httpServer.once('close', () => {
+        log.info(
+          `Appium HTTP server has been succesfully closed after ` +
+          `${timer.getDuration().asMilliSeconds.toFixed(0)}ms`
+        );
+        clearTimeout(onTimeout);
+        _resolve();
       });
-      close((err) => {
-        if (err) reject(err); // eslint-disable-line curly
+      originalClose((/** @type {Error|undefined} */ err) => {
+        if (err) {
+          _reject(err);
+        }
       });
     });
 
-  appiumServer.on(
+  appiumServer.once(
     'error',
     /** @param {NodeJS.ErrnoException} err */ (err) => {
       if (err.code === 'EADDRNOTAVAIL') {
@@ -242,31 +256,7 @@ function configureHttp({httpServer, reject, keepAliveTimeout}) {
     }
   );
 
-  appiumServer.on(
-    'connection',
-    /** @param {AppiumServerSocket} socket */ (socket) => {
-      socket.setTimeout(keepAliveTimeout);
-      socket.on('error', reject);
-
-      function destroy() {
-        socket.destroy();
-      }
-      socket._openReqCount = 0;
-      socket.once('close', () => serverState.notifier.removeListener('shutdown', destroy));
-      serverState.notifier.once('shutdown', destroy);
-    }
-  );
-
-  appiumServer.on('request', function (req, res) {
-    const socket = /** @type {AppiumServerSocket} */ (req.connection || req.socket);
-    socket._openReqCount++;
-    res.on('finish', function () {
-      socket._openReqCount--;
-      if (serverState.closed && socket._openReqCount === 0) {
-        socket.destroy();
-      }
-    });
-  });
+  appiumServer.on('connection', (socket) => socket.setTimeout(keepAliveTimeout));
 
   return appiumServer;
 }
@@ -324,7 +314,6 @@ export {server, configureServer, normalizeBasePath};
 
 /**
  * @typedef {import('@appium/types').AppiumServer} AppiumServer
- * @typedef {import('@appium/types').AppiumServerSocket} AppiumServerSocket
  */
 
 /**
@@ -337,6 +326,9 @@ export {server, configureServer, normalizeBasePath};
  * @property {import('http').Server} httpServer - HTTP server instance
  * @property {(error?: any) => void} reject - Rejection function from `Promise` constructor
  * @property {number} keepAliveTimeout - Keep-alive timeout in milliseconds
+ * @property {number} gracefulShutdownTimeout - For how long the server should delay its
+ * shutdown before force-closing all open connections to it. Providing zero will force-close
+ * the server without waiting for any connections.
  */
 
 /**

@@ -42,7 +42,7 @@ property in your `package.json` and it will be automatically discovered.
 Appium will search _up_ the directory tree from the current working directory for one of these
 files. If it reaches the current user's home directory or filesystem root, it will stop looking.
 
-To specify a _custom_ location for your config file, use `appium --config-file /path/to/config/file`.
+To specify a _custom_ location for your config file, use `appium --config /path/to/config/file`.
 
 #### Configuration File Format
 

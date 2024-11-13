@@ -6,8 +6,6 @@ import {resetSchema} from '../../../lib/schema';
 import {resolveFixture, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 
-const {expect} = chai;
-
 describe('PluginConfig', function () {
   /** @type {string} */
   let yamlFixture;
@@ -31,7 +29,15 @@ describe('PluginConfig', function () {
    */
   let PluginConfig;
 
+  let expect;
+
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     yamlFixture = await fs.readFile(resolveFixture('manifest', 'v3.yaml'), 'utf8');
   });
 
@@ -337,7 +343,7 @@ describe('PluginConfig', function () {
       describe('when the extension schema has not yet been registered', function () {
         it('should resolve and load the extension schema file', function () {
           pluginConfig.readExtensionSchema(extName, extData);
-          expect(MockResolveFrom).to.have.been.calledOnce;
+          MockResolveFrom.calledOnce.should.be.true;
         });
       });
     });

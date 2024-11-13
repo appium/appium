@@ -39,12 +39,20 @@ import {
   isServerCommandArgs,
   fetchInterfaces,
   V4_BROADCAST_IP,
-  V6_BROADCAST_IP,
   isSetupCommandArgs,
+  isBroadcastIp,
 } from './utils';
 import net from 'node:net';
 
 const {resolveAppiumHome} = env;
+/*
+ * By default Node.js shows a warning
+ * if the actual amount of listeners exceeds the maximum amount,
+ * which equals to 10 by default. It is known that multiple drivers/plugins
+ * may assign custom listeners to the server process to handle, for example,
+ * the graceful shutdown scenario.
+ */
+const MAX_SERVER_PROCESS_LISTENERS = 100;
 
 /**
  *
@@ -321,7 +329,7 @@ async function init(args) {
 function logServerAddress(url) {
   const urlObj = new URL(url);
   logger.info(`Appium REST http interface listener started on ${url}`);
-  if (![V4_BROADCAST_IP, V6_BROADCAST_IP, `[${V6_BROADCAST_IP}]`].includes(urlObj.hostname)) {
+  if (!isBroadcastIp(urlObj.hostname)) {
     return;
   }
 
@@ -433,6 +441,7 @@ async function main(args) {
     throw err;
   }
 
+  process.setMaxListeners(MAX_SERVER_PROCESS_LISTENERS);
   for (const signal of ['SIGINT', 'SIGTERM']) {
     process.once(signal, async function onSignal() {
       logger.info(`Received ${signal} - shutting down`);
@@ -447,7 +456,7 @@ async function main(args) {
     });
   }
 
-  const protocol = 'secure' in server && server.secure ? 'https' : 'http';
+  const protocol = server.isSecure() ? 'https' : 'http';
   const address = net.isIPv6(parsedArgs.address) ? `[${parsedArgs.address}]` : parsedArgs.address;
   logServerAddress(
     `${protocol}://${address}:${parsedArgs.port}${normalizeBasePath(parsedArgs.basePath)}`,

@@ -5,8 +5,6 @@ import path from 'path';
 import {rewiremock} from '../helpers';
 import {initMocks} from '../mocks';
 
-const {expect} = chai;
-
 describe('env', function () {
   /** @type {typeof import('../../lib/env')} */
   let env;
@@ -25,6 +23,16 @@ describe('env', function () {
 
   /** @type {string|undefined} */
   let envAppiumHome;
+
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     let overrides;
@@ -181,10 +189,10 @@ describe('env', function () {
   describe('readPackageInDir()', function () {
     it('should delegate to `read-pkg`', async function () {
       await env.readPackageInDir('/somewhere');
-      expect(MockReadPkg).to.have.been.calledWithExactly({
+      MockReadPkg.calledWithExactly({
         cwd: '/somewhere',
         normalize: true,
-      });
+      }).should.be.true;
     });
   });
 

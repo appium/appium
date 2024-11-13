@@ -8,9 +8,7 @@
 /**
  * IPv4/IPv6 address or a hostname to listen on
  */
-export type AddressConfig = AddressConfig1 & AddressConfig2;
-export type AddressConfig1 = string;
-export type AddressConfig2 = string;
+export type AddressConfig = string;
 /**
  * Whether the Appium server should allow web browser connections from any host
  */
@@ -130,9 +128,21 @@ export type PortConfig = number;
  */
 export type RelaxedSecurityConfig = boolean;
 /**
+ * For how long the server should delay its shutdown before force-closing all open connections to it. Setting its value to zero should close the server without waiting for active connections.
+ */
+export type GracefulServerShutdownTimeoutInMilliseconds = number;
+/**
  * Enables session override (clobbering)
  */
 export type SessionOverrideConfig = boolean;
+/**
+ * Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"
+ */
+export type CertFilePath = string;
+/**
+ * Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"
+ */
+export type KeyFilePath = string;
 /**
  * Cause sessions to fail if desired caps are sent in that Appium does not recognize as valid for the selected device
  */
@@ -157,14 +167,6 @@ export type UsePluginsConfig = string[];
  * Also send log output to this http listener
  */
 export type WebhookConfig = string;
-/**
- * Full path to the .cert file if TLS is used. Must be provided together with "ssl-key-path"
- */
-export type CertFilePath = string;
-/**
- * Full path to the .key file if TLS is used. Must be provided together with "ssl-cert-path"
- */
-export type KeyFilePath = string;
 
 /**
  * A schema for Appium configuration files
@@ -206,15 +208,16 @@ export interface ServerConfig {
   plugin?: PluginConfig;
   port?: PortConfig;
   "relaxed-security"?: RelaxedSecurityConfig;
+  "shutdown-timeout"?: GracefulServerShutdownTimeoutInMilliseconds;
   "session-override"?: SessionOverrideConfig;
+  "ssl-cert-path"?: CertFilePath;
+  "ssl-key-path"?: KeyFilePath;
   "strict-caps"?: StrictCapsConfig;
   tmp?: TmpConfig;
   "trace-dir"?: TraceDirConfig;
   "use-drivers"?: UseDriversConfig;
   "use-plugins"?: UsePluginsConfig;
   webhook?: WebhookConfig;
-  "ssl-cert-path"?: CertFilePath;
-  "ssl-key-path"?: KeyFilePath;
 }
 /**
  * Set the default desired capabilities, which will be set on each session unless overridden by received capabilities. If a string, a path to a JSON file containing the capabilities, or raw JSON.

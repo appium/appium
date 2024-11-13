@@ -4,7 +4,6 @@ import {createSandbox, SinonSandbox, SinonStubbedMember} from 'sinon';
 import type fs from 'node:fs/promises';
 import {Item, Strongbox} from '../../lib';
 
-const {expect} = chai;
 type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
 };
@@ -15,6 +14,15 @@ describe('Strongbox', function () {
   const DATA_DIR = path.resolve(path.sep, 'some', 'dir');
   // note to self: looks like this is safe to do before the rewiremock.proxy call
   let BaseItem: typeof import('../../lib/base-item').BaseItem;
+  let expect: any;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import ('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -50,7 +58,7 @@ describe('Strongbox', function () {
       describe('clear()', function () {
         it('should remove the item from the filesystem', async function () {
           await item.clear();
-          expect(MockFs.unlink).to.have.been.calledWith(item.id);
+          MockFs.unlink.calledWith(item.id).should.be.true;
         });
 
         describe('if the item does not exist', function () {
@@ -92,11 +100,11 @@ describe('Strongbox', function () {
         });
 
         it('should write the new item value to the filesystem', async function () {
-          expect(MockFs.writeFile).to.have.been.calledWith(item.id, 'bar');
+          MockFs.writeFile.calledWith(item.id, 'bar').should.be.true;
         });
 
         it('should create the container', function () {
-          expect(MockFs.mkdir).to.have.been.calledWith(path.dirname(item.id), {recursive: true});
+          MockFs.mkdir.calledWith(path.dirname(item.id), {recursive: true}).should.be.true;
         });
       });
     });

@@ -10,6 +10,13 @@ describe('#zip', function () {
     ['system unzip', {useSystemUnzip: true}],
   ]);
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   optionMap.forEach((options, desc) => {
     describe(desc, function () {
       let assetsPath;

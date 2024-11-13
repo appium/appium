@@ -3,6 +3,124 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.1](https://github.com/appium/appium/compare/appium@2.12.0...appium@2.12.1) (2024-10-24)
+
+
+### Bug Fixes
+
+* **docutils:** restore support for Python <3.12 ([#20675](https://github.com/appium/appium/issues/20675)) ([00cd1b4](https://github.com/appium/appium/commit/00cd1b4b0fcf24d0014dac780223e5866f39c9ce))
+* **support:** update definitelytyped ([#20691](https://github.com/appium/appium/issues/20691)) ([846dd52](https://github.com/appium/appium/commit/846dd5288608d886f924d2791291475c956d53f7))
+
+
+
+## [2.12.0](https://github.com/appium/appium/compare/appium@2.11.5...appium@2.12.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **appium:** update dependency winston to v3.15.0 ([ab12235](https://github.com/appium/appium/commit/ab12235483262a1c5a1dd8a32b1792a4b096bfc6))
+* **docutils:** support Python 3.12+ ([#20666](https://github.com/appium/appium/issues/20666)) ([8d7cec9](https://github.com/appium/appium/commit/8d7cec96d8df60644493a7e2f735b4bb0d3783be))
+* **docutils:** update dependency yaml to v2.6.0 ([ed6c6dd](https://github.com/appium/appium/commit/ed6c6dd5441e26fc1eb58de9b78def49d930a128))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.6 ([796ca9f](https://github.com/appium/appium/commit/796ca9f98f69616b9c890325bbfb0c573a8bc765))
+
+
+
+## [2.11.5](https://github.com/appium/appium/compare/appium@2.11.4...appium@2.11.5) (2024-09-26)
+
+
+### Bug Fixes
+
+* **appium:** Return hostname as web socket url for BiDi if a broadcast address is assigned to the server ([#20603](https://github.com/appium/appium/issues/20603)) ([f0de55d](https://github.com/appium/appium/commit/f0de55da0da2fc0305876a948704c1f0a2a5990f))
+
+
+
+## [2.11.4](https://github.com/appium/appium/compare/appium@2.11.3...appium@2.11.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **appium:** Fix the condition for secure websocket ([#20497](https://github.com/appium/appium/issues/20497)) ([efdb1ce](https://github.com/appium/appium/commit/efdb1ce6ce1de5120f2f35ebe84abfa73ed5198a))
+* **appium:** update dependency @sidvind/better-ajv-errors to v3 ([#20552](https://github.com/appium/appium/issues/20552)) ([0ee7716](https://github.com/appium/appium/commit/0ee7716cf0644cfc6795f0949d8253d4c0b36597))
+* **appium:** update dependency winston to v3.14.2 ([#20465](https://github.com/appium/appium/issues/20465)) ([893fc04](https://github.com/appium/appium/commit/893fc040e16ec07c83d12c7c89180d962b0f6e68))
+* **base-driver:** Add a server flag to check if it operates a secure protocol ([#20449](https://github.com/appium/appium/issues/20449)) ([622b245](https://github.com/appium/appium/commit/622b245ea38793280d9785a59a0416ce025862fe))
+* **docutils:** update dependency yaml to v2.5.1 ([750872a](https://github.com/appium/appium/commit/750872af4756d2efcd19fe98762f82ecaa59d59a))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.3 ([4608563](https://github.com/appium/appium/commit/46085635a92c3a2b2b1b3ecf3966a174248a2829))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.5 ([dcb6de2](https://github.com/appium/appium/commit/dcb6de22eaabdcea2517cd9b7db120d681f0e38e))
+* **support:** update dependency axios to v1.7.4 ([d17d022](https://github.com/appium/appium/commit/d17d0222245ab94a78e578c0398734e65a89ba68))
+* **support:** update dependency axios to v1.7.5 ([fedabb1](https://github.com/appium/appium/commit/fedabb1fdc7af10f9e4b06ea23815c4bc7c6bf5e))
+* **support:** update dependency axios to v1.7.7 ([7fe67a2](https://github.com/appium/appium/commit/7fe67a286a15a917ce3b1b47a08e982e65bbd9e4))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
+## [2.11.3](https://github.com/appium/appium/compare/appium@2.11.2...appium@2.11.3) (2024-08-07)
+
+
+### Bug Fixes
+
+* **appium:** update dependency ajv to v8.17.1 ([7528971](https://github.com/appium/appium/commit/75289711ee344ac9a11a572f13ddb0471e2cbf79))
+* **appium:** update dependency winston to v3.13.1 ([dcfec17](https://github.com/appium/appium/commit/dcfec17d1ceab90939b5f199854ba630829e3d1f))
+* **docutils:** update dependency yaml to v2.5.0 ([0c755f5](https://github.com/appium/appium/commit/0c755f503c49e459315616e51be0c0776089b2bb))
+* **execute-driver-plugin:** update dependency webdriverio to v8.40.0 ([#20442](https://github.com/appium/appium/issues/20442)) ([b4612e0](https://github.com/appium/appium/commit/b4612e0c7a21902a3cab658fbdc05f3b48c55d0d))
+* **logger:** update dependency lru-cache to v10.4.3 ([#20364](https://github.com/appium/appium/issues/20364)) ([8d79467](https://github.com/appium/appium/commit/8d79467da8a0733ac3e49b9152bd6905989a57ca))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
+## [2.11.2](https://github.com/appium/appium/compare/appium@2.11.1...appium@2.11.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* **appium:** update dependency ws to v8.18.0 ([44e4231](https://github.com/appium/appium/commit/44e423110ad6c8bd7d846cc334fafe931fea43f9))
+* **execute-driver-plugin:** update dependency webdriverio to v8.39.1 ([c2f3a61](https://github.com/appium/appium/commit/c2f3a618e413c7f21057ba6d9002dc1fe4507e6f))
+* **support:** update dependency teen_process to v2.1.10 ([86f843b](https://github.com/appium/appium/commit/86f843b9e1fc56576d7a08bf95838a58971e98b3))
+* **support:** update dependency teen_process to v2.1.7 ([5226fa8](https://github.com/appium/appium/commit/5226fa897b90e9fec9be3e79a7d48fc7b4e0016d))
+* **support:** update dependency teen_process to v2.2.0 ([06607da](https://github.com/appium/appium/commit/06607da92e93d015747fd6d6d5bdabe1b3ac58d2))
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
+## [2.11.1](https://github.com/appium/appium/compare/appium@2.11.0...appium@2.11.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **images-plugin:** update dependency lru-cache to v10.3.0 ([#20306](https://github.com/appium/appium/issues/20306)) ([e43c7a4](https://github.com/appium/appium/commit/e43c7a4dce1f50fbd4d028cbeac5677422210b20))
+
+
+
+## [2.11.0](https://github.com/appium/appium/compare/appium@2.10.3...appium@2.11.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+* **appium:** show extension update info message for newer major versions ([#20283](https://github.com/appium/appium/issues/20283)) ([f2c8b69](https://github.com/appium/appium/commit/f2c8b696085ba862553476f23509cac0674a447c))
+* **appium:** show spinner during extension uninstall ([#20282](https://github.com/appium/appium/issues/20282)) ([f250793](https://github.com/appium/appium/commit/f25079354bfd646810813ae47244a1e2e962dbfb))
+
+
+### Bug Fixes
+
+* **appium:** update dependency ws to v8.17.1 ([d2b24da](https://github.com/appium/appium/commit/d2b24daba056373160d680ec5f017b28e9cbde1a))
+* **execute-driver-plugin:** update dependency webdriverio to v8.39.0 ([faf9623](https://github.com/appium/appium/commit/faf9623a65868a6330d062076074da7c1c3acb2a))
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [2.10.3](https://github.com/appium/appium/compare/appium@2.10.2...appium@2.10.3) (2024-06-11)
 
 **Note:** Version bump only for package appium

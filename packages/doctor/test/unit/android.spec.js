@@ -18,6 +18,14 @@ describe('android', function () {
   const apkAnalyzerFilename = system.isWindows() ? 'apkanalyzer.bat' : 'apkanalyzer';
   const gstLaunchFilename = system.isWindows() ? 'gst-launch-1.0.exe' : 'gst-launch-1.0';
   const gstInspectFilename = system.isWindows() ? 'gst-inspect-1.0.exe' : 'gst-inspect-1.0';
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe(
     'EnvVarAndPathCheck',
     withMocks({fs}, (mocks) => {

@@ -3,6 +3,96 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.23](https://github.com/appium/appium/compare/@appium/docutils@1.0.22...@appium/docutils@1.0.23) (2024-10-24)
+
+
+### Bug Fixes
+
+* **docutils:** restore support for Python <3.12 ([#20675](https://github.com/appium/appium/issues/20675)) ([00cd1b4](https://github.com/appium/appium/commit/00cd1b4b0fcf24d0014dac780223e5866f39c9ce))
+
+
+
+## [1.0.22](https://github.com/appium/appium/compare/@appium/docutils@1.0.21...@appium/docutils@1.0.22) (2024-10-15)
+
+
+### Bug Fixes
+
+* **docutils:** support Python 3.12+ ([#20666](https://github.com/appium/appium/issues/20666)) ([8d7cec9](https://github.com/appium/appium/commit/8d7cec96d8df60644493a7e2f735b4bb0d3783be))
+* **docutils:** update dependency typescript to v5.6.3 ([dd52d04](https://github.com/appium/appium/commit/dd52d04b21c37d7a4a979d00e96293dc0bf69768))
+* **docutils:** update dependency yaml to v2.6.0 ([ed6c6dd](https://github.com/appium/appium/commit/ed6c6dd5441e26fc1eb58de9b78def49d930a128))
+
+
+
+## [1.0.21](https://github.com/appium/appium/compare/@appium/docutils@1.0.20...@appium/docutils@1.0.21) (2024-09-26)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.6.2 ([#20556](https://github.com/appium/appium/issues/20556)) ([e65c1cd](https://github.com/appium/appium/commit/e65c1cdaeddfc427d76bf522aa8a3f69c18a8f8c))
+
+
+
+## [1.0.20](https://github.com/appium/appium/compare/@appium/docutils@1.0.19...@appium/docutils@1.0.20) (2024-09-16)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency diff to v6 ([#20525](https://github.com/appium/appium/issues/20525)) ([f5f0aa5](https://github.com/appium/appium/commit/f5f0aa5068ac6a02c422273e9e857152fea1675a))
+* **docutils:** update dependency diff to v7 ([#20547](https://github.com/appium/appium/issues/20547)) ([d595990](https://github.com/appium/appium/commit/d5959902bc636f399da876f42b92969f8e2873aa))
+* **docutils:** update dependency yaml to v2.5.1 ([750872a](https://github.com/appium/appium/commit/750872af4756d2efcd19fe98762f82ecaa59d59a))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
+## [1.0.19](https://github.com/appium/appium/compare/@appium/docutils@1.0.18...@appium/docutils@1.0.19) (2024-08-07)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.5.4 ([e08e7eb](https://github.com/appium/appium/commit/e08e7ebec24866611e0718f0d038e9566abd3dd6))
+* **docutils:** update dependency yaml to v2.5.0 ([0c755f5](https://github.com/appium/appium/commit/0c755f503c49e459315616e51be0c0776089b2bb))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
+## [1.0.18](https://github.com/appium/appium/compare/@appium/docutils@1.0.17...@appium/docutils@1.0.18) (2024-07-10)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.5.3 ([234ad59](https://github.com/appium/appium/commit/234ad597988be2560a63ba346dc5e4afbfb6e20d))
+* **support:** update dependency teen_process to v2.1.10 ([86f843b](https://github.com/appium/appium/commit/86f843b9e1fc56576d7a08bf95838a58971e98b3))
+* **support:** update dependency teen_process to v2.1.7 ([5226fa8](https://github.com/appium/appium/commit/5226fa897b90e9fec9be3e79a7d48fc7b4e0016d))
+* **support:** update dependency teen_process to v2.2.0 ([06607da](https://github.com/appium/appium/commit/06607da92e93d015747fd6d6d5bdabe1b3ac58d2))
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
+## [1.0.17](https://github.com/appium/appium/compare/@appium/docutils@1.0.16...@appium/docutils@1.0.17) (2024-06-28)
+
+**Note:** Version bump only for package @appium/docutils
+
+
+
+
+
+## [1.0.16](https://github.com/appium/appium/compare/@appium/docutils@1.0.15...@appium/docutils@1.0.16) (2024-06-27)
+
+
+### Bug Fixes
+
+* **docutils:** update dependency typescript to v5.5.2 ([189bce8](https://github.com/appium/appium/commit/189bce88a09c4b3146c48bedf6e8c1dcb50c3a6d))
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [1.0.15](https://github.com/appium/appium/compare/@appium/docutils@1.0.14...@appium/docutils@1.0.15) (2024-06-11)
 
 **Note:** Version bump only for package @appium/docutils

@@ -4,7 +4,6 @@ import type {Strongbox as TStrongbox, StrongboxOpts, Item, Value} from '../../li
 import {createSandbox, SinonSandbox, SinonStubbedMember} from 'sinon';
 import type fs from 'node:fs/promises';
 
-const {expect} = chai;
 type MockFs = {
   [K in keyof typeof fs]: SinonStubbedMember<(typeof fs)[K]>;
 };
@@ -15,8 +14,15 @@ describe('Strongbox', function () {
   let sandbox: SinonSandbox;
   let DEFAULT_SUFFIX: string;
   let MockFs: MockFs = {} as any;
+  let expect: any;
 
   const DATA_DIR = path.resolve('some', 'dir', 'strongbox');
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();
@@ -125,11 +131,11 @@ describe('Strongbox', function () {
             const item = await box.createItem('test');
             await item.write('boo bah');
 
-            expect(MockFs.writeFile).to.have.been.calledWith(
+            MockFs.writeFile.calledWith(
               path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
               'boo bah',
               'utf8'
-            );
+            ).should.be.true;
           });
 
           it('should update the underlying value', async function () {
@@ -168,7 +174,7 @@ describe('Strongbox', function () {
 
       it('should call clear() on each item', async function () {
         await box.clearAll();
-        expect(clear).to.have.been.calledOnce;
+        clear.calledOnce.should.be.true;
       });
 
       describe('when there is some other error', function () {
@@ -190,10 +196,10 @@ describe('Strongbox', function () {
 
       it('should write the value to disk', async function () {
         await box.createItemWithValue('test', 'value');
-        expect(MockFs.writeFile).to.have.been.calledWith(
+        MockFs.writeFile.calledWith(
           path.resolve(DATA_DIR, DEFAULT_SUFFIX, 'test'),
           'value'
-        );
+        ).should.be.true;
       });
 
       describe('when the third parameter is a valid encoding', function () {

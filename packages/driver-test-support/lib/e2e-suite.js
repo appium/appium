@@ -3,12 +3,8 @@ import {server, routeConfiguringFunction, DeviceSettings} from 'appium/driver';
 import axios from 'axios';
 import B from 'bluebird';
 import {TEST_HOST, getTestPort, createAppiumURL} from './helpers';
-import chai from 'chai';
 import sinon from 'sinon';
 import {Agent} from 'node:http';
-
-const should = chai.should();
-const {expect} = chai;
 
 /**
  * Creates some helper functions for E2E tests to manage sessions.
@@ -129,7 +125,16 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
     let getCommand;
     /** @type {SessionHelpers['postCommand']} */
     let postCommand;
+    let expect;
+    let should;
+
     before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      expect = chai.expect;
+      should = chai.should();
+
       port = port ?? (await getTestPort());
       defaultCaps = {...defaultCaps};
       d = new DriverClass({port, address});
@@ -143,9 +148,8 @@ export function driverE2ETestSuite(DriverClass, defaultCaps = {}) {
       ({startSession, getSession, endSession, newSessionURL, getCommand, postCommand} =
         createSessionHelpers(port, address));
     });
-
     after(async function () {
-      await baseServer.close();
+      await baseServer?.close();
     });
 
     describe('session handling', function () {

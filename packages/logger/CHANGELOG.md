@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/appium/appium/compare/@appium/logger@1.6.0...@appium/logger@1.6.1) (2024-08-07)
+
+
+### Bug Fixes
+
+* **logger:** update dependency lru-cache to v10.4.3 ([#20364](https://github.com/appium/appium/issues/20364)) ([8d79467](https://github.com/appium/appium/commit/8d79467da8a0733ac3e49b9152bd6905989a57ca))
+* **support:** Print an empty string if no arguments are provided to a logging function ([#20424](https://github.com/appium/appium/issues/20424)) ([885570e](https://github.com/appium/appium/commit/885570e7caec486765c1baa67131f0b3adf1daf7))
+
+
+
+## [1.6.0](https://github.com/appium/appium/compare/@appium/logger@1.5.0...@appium/logger@1.6.0) (2024-07-10)
+
+
+### Features
+
+* **logger:** Use LRUCache to manage log history ([#20325](https://github.com/appium/appium/issues/20325)) ([e7665d1](https://github.com/appium/appium/commit/e7665d1cd93e1edb6c981aae09ff9df37fe43d0a))
+
+
+
+## [1.5.0](https://github.com/appium/appium/compare/@appium/logger@1.4.2...@appium/logger@1.5.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **logger:** Print an empty message if no arguments are provided ([#20284](https://github.com/appium/appium/issues/20284)) ([87fc50c](https://github.com/appium/appium/commit/87fc50c2aff523492a353f20fa9dc7e759be06b3))
+
+
+
 ## [1.4.2](https://github.com/appium/appium/compare/@appium/logger@1.4.1...@appium/logger@1.4.2) (2024-06-11)
 
 

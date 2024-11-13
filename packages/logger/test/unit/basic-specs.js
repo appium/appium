@@ -363,7 +363,24 @@ describe('basic', async function () {
       log.log('verbose', 'test', 'log 2');
       log.log('verbose', 'test', 'log 3');
       log.log('verbose', 'test', 'log 4');
-      log.record.length.should.equal(3);
+      log.record.map(({message}) => message).should.eql([
+        'log 2',
+        'log 3',
+        'log 4',
+      ]);
+      log.maxRecordSize = 2;
+      log.log('verbose', 'test', 'log 5');
+      log.record.map(({message}) => message).should.eql([
+        'log 4',
+        'log 5',
+      ]);
+      log.maxRecordSize = 3;
+      log.log('verbose', 'test', 'log 6');
+      log.record.map(({message}) => message).should.eql([
+        'log 4',
+        'log 5',
+        'log 6',
+      ]);
     });
   });
 

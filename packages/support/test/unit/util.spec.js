@@ -9,6 +9,14 @@ const {W3C_WEB_ELEMENT_IDENTIFIER} = util;
 
 describe('util', function () {
   let sandbox;
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

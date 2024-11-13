@@ -6,6 +6,11 @@ import B from 'bluebird';
 describe(
   'prompt',
   withMocks({utils}, (mocks) => {
+    before(async function () {
+      const chai = await import('chai');
+      chai.should();
+    });
+
     it('fixit - yes', async function () {
       clear();
       mocks.utils

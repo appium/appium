@@ -1,6 +1,13 @@
 import {tempDir, fs} from '../../lib';
 
 describe('tempdir', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   afterEach(function () {
     // set the process env as undefiend
     delete process.env.APPIUM_TMP_DIR;

@@ -94,7 +94,7 @@ export class FakeApp {
     this.rawXml = this.rawXml.replace('<app ', '<AppiumAUT><app ');
     this.rawXml = this.rawXml.replace('<app>', '<AppiumAUT><app>');
     this.rawXml = this.rawXml.replace('</app>', '</app></AppiumAUT>');
-    this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml);
+    this.dom = new XMLDom.DOMParser().parseFromString(this.rawXml, XMLDom.MIME_TYPE.XML_TEXT);
     this.activeDom = this.dom;
   }
 
@@ -106,7 +106,7 @@ export class FakeApp {
   activateWebview(wv) {
     this.activeWebview = wv;
     let fragment = new XMLDom.XMLSerializer().serializeToString(wv.node);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT);
   }
 
   deactivateWebview() {
@@ -117,7 +117,7 @@ export class FakeApp {
   activateFrame(frame) {
     this.activeFrame = frame;
     let fragment = new XMLDom.XMLSerializer().serializeToString(frame);
-    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, 'application/xml');
+    this.activeDom = new XMLDom.DOMParser().parseFromString(fragment, XMLDom.MIME_TYPE.XML_TEXT);
   }
 
   deactivateFrame() {

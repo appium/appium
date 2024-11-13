@@ -23,8 +23,15 @@ function fakeDriver() {
 
 describe('server configuration', function () {
   let port;
-
   let sandbox;
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
 
   function fakeApp() {
     const app = {

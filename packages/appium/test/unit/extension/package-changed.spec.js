@@ -4,8 +4,6 @@ import {PKG_HASHFILE_RELATIVE_PATH} from '../../../lib/constants';
 import {rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 
-const {expect} = chai;
-
 describe('package-changed', function () {
   /** @type {typeof import('appium/lib/extension/package-changed').packageDidChange} */
   let packageDidChange;
@@ -18,6 +16,16 @@ describe('package-changed', function () {
 
   /** @type {import('./mocks').MockAppiumSupport} */
   let MockAppiumSupport;
+
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     ({MockPackageChanged, MockAppiumSupport, sandbox} = initMocks());
@@ -46,17 +54,17 @@ describe('package-changed', function () {
 
     it('it should attempt to create the parent dir for the hash file', async function () {
       await packageDidChange('/some/path');
-      expect(MockAppiumSupport.fs.mkdirp).to.have.been.calledWith(
+      MockAppiumSupport.fs.mkdirp.calledWith(
         path.dirname(path.join('/some/path', PKG_HASHFILE_RELATIVE_PATH))
-      );
+      ).should.be.true;
     });
 
     it('should call `package-changed` with a cwd and relative path to hash file', async function () {
       await packageDidChange('/some/path');
-      expect(MockPackageChanged.isPackageChanged).to.have.been.calledWith({
+      MockPackageChanged.isPackageChanged.calledWith({
         cwd: '/some/path',
         hashFilename: PKG_HASHFILE_RELATIVE_PATH,
-      });
+      }).should.be.true;
     });
 
     describe('when it cannot create the parent dir', function () {
@@ -85,14 +93,14 @@ describe('package-changed', function () {
 
       it('should not write the hash file', async function () {
         await packageDidChange('/some/where');
-        expect(MockPackageChanged.__writeHash).not.to.have.been.called;
+        MockPackageChanged.__writeHash.called.should.be.false;
       });
     });
 
     describe('when the package has changed per `package-changed`', function () {
       it('should write the hash file', async function () {
         await packageDidChange('/some/where');
-        expect(MockPackageChanged.__writeHash).to.have.been.calledOnce;
+        MockPackageChanged.__writeHash.calledOnce.should.be.true;
       });
 
       it('should resolve `true`', async function () {

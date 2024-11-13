@@ -10,11 +10,11 @@ import DRIVER_SCHEMA_FIXTURE from '../../fixtures/driver-schema';
 import flattenedSchemaFixture from '../../fixtures/flattened-schema';
 import {rewiremock} from '../../helpers';
 
-const {expect} = chai;
-
 describe('schema', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
+
+  let expect;
 
   /**
    * @type {import('@appium/types').Class<import('appium/lib/schema/schema').SchemaFinalizationError>}
@@ -77,6 +77,14 @@ describe('schema', function () {
    * @type {import('@appium/types').Class<import('appium/lib/schema/schema').RoachHotelMap>}
    */
   let RoachHotelMap;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

@@ -1,8 +1,16 @@
 import {npm} from '../../lib/npm';
 
-const {expect} = chai;
-
 describe('npm module', function () {
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
+
   describe('getLatestVersion()', function () {
     describe('when the package is not published to the public registry', function () {
       it('should not throw', async function () {

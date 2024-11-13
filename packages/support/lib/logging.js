@@ -35,25 +35,20 @@ export function getLogger(prefix = null) {
     unwrap: () => logger,
     levels: LEVELS,
     prefix,
-    /**
-     * Logs given arguments at the error level and returns
-     * the error object.
-     *
-     * @param  {...any} args
-     * @returns {Error}
-     */
     errorWithException (/** @type {any[]} */ ...args) {
       this.error(...args);
       // make sure we have an `Error` object. Wrap if necessary
       return _.isError(args[0]) ? args[0] : new Error(args.join('\n'));
     },
-    /**
-     * @deprecated Use {@link errorWithException} instead
-     * @param {...any} args
-     * @throws {Error}
-     */
     errorAndThrow (/** @type {any[]} */ ...args) {
       throw this.errorWithException(args);
+    },
+    updateAsyncContext(
+      /** @type {import('@appium/types').AppiumLoggerContext} */ contextInfo,
+      replace = false,
+    ) {
+      // Older Appium dependencies may not have 'updateAsyncStorage'
+      this.unwrap().updateAsyncStorage?.(contextInfo, replace);
     },
   };
   // allow access to the level of the underlying logger
@@ -72,8 +67,12 @@ export function getLogger(prefix = null) {
   for (const level of LEVELS) {
     wrappedLogger[level] = /** @param {any[]} args */ function (...args) {
       const finalPrefix = getFinalPrefix(this.prefix, isDebugTimestampLoggingEnabled);
-      // @ts-ignore This is OK
-      logger[level](finalPrefix, ...args);
+      if (args.length) {
+        // @ts-ignore This is OK
+        logger[level](finalPrefix, ...args);
+      } else {
+        logger[level](finalPrefix, '');
+      }
     };
   }
   if (!usingGlobalLog) {

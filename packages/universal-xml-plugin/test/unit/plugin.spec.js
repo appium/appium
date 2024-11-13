@@ -12,6 +12,14 @@ import {runQuery, getNodeAttrVal} from '../../lib/xpath';
 describe('UniversalXMLPlugin', function () {
   let next;
   const p = new UniversalXMLPlugin();
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('getPageSource', function () {
     const driver = new BaseDriver();
     it('should transform page source for ios', async function () {
@@ -37,7 +45,7 @@ describe('UniversalXMLPlugin', function () {
       driver.caps = {platformName: 'iOS'};
       // mock out the findElement function to just return an xml node from the fixture
       driver.findElement = (strategy, selector) => {
-        const nodes = runQuery(selector, XML_IOS.replace(/<\/?AppiumAUT>/, ''));
+        const nodes = runQuery(selector, XML_IOS.replace(/<\/?AppiumAUT>/g, ''));
         return nodes[0];
       };
       const node = await p.findElement(next, driver, 'xpath', '//TextInput[@axId="username"]');

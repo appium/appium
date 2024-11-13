@@ -2,7 +2,9 @@ import _ from 'lodash';
 import log from './logger';
 import {errors} from '../protocol';
 export {handleIdempotency} from './idempotency';
-import {pathToRegexp} from 'path-to-regexp';
+import {match} from 'path-to-regexp';
+import {util} from '@appium/support';
+import {calcSignature} from '../helpers/session';
 
 /**
  *
@@ -76,15 +78,13 @@ export function fixPythonContentType(basePath) {
  * @returns {any}
  */
 export function handleLogContext(req, res, next) {
-  const contextStorage = global._global_npmlog?.asyncStorage;
-  if (!contextStorage) {
-    return next();
-  }
+  const requestId = util.uuidV4();
 
-  const sessionIdMatch = SESSION_ID_PATTERN.exec(req.url);
-  contextStorage.enterWith(
-    sessionIdMatch ? {sessionSignature: sessionIdMatch[1].substring(0, 8)} : {}
-  );
+  const sessionId = SESSION_ID_PATTERN.exec(req.url)?.[1];
+  const sessionInfo = sessionId ? {sessionId, sessionSignature: calcSignature(sessionId)} : {};
+
+  log.updateAsyncContext({requestId, ...sessionInfo}, true);
+
   return next();
 }
 
@@ -119,7 +119,7 @@ export function handleUpgrade(webSocketsMapping) {
       currentPathname = req.url ?? '';
     }
     for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
-      if (pathToRegexp(pathname).test(currentPathname)) {
+      if (match(pathname)(currentPathname)) {
         return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
           wsServer.emit('connection', ws, req);
         });

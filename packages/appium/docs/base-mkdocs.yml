@@ -25,6 +25,8 @@ plugins:
       'reference/commands/images-plugin.md': 'commands/images-plugin.md'
       'reference/commands/relaxed-caps-plugin.md': 'commands/relaxed-caps-plugin.md'
       'reference/commands/universal-xml-plugin.md': 'commands/universal-xml-plugin.md'
+      'contributing/config-system.md': 'developing/config-system.md'
+      'contributing/develop.md': 'contributing.md'
 
 extra_css:
   - assets/stylesheets/extra.css

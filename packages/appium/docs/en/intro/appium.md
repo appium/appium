@@ -40,14 +40,14 @@ but it is certainly a good one! So let's dive in.
 ## Appium's choice of API
 
 Appium is very fortunate to have been preceded by a technology which has been a long-standing
-pioneer in the field of UI automation, namely [Selenium](https://seleniumhq.org). The goal of the
+pioneer in the field of UI automation, namely [Selenium](https://selenium.dev). The goal of the
 Selenium project has been to support UI automation of web browsers, and in this way we can think of
 it as occupying a subset of Appium's goals. Along the way, Selenium (and, after they merged,
 another project called WebDriver) developed a relatively stable API for browser automation.
 
-Over the years, Selenium worked with various web browser vendors and the [W3C](https://w3c.org)
+Over the years, Selenium worked with various web browser vendors and the [W3C](https://w3.org)
 standards group to turn its API into an official web browser standard, called the [WebDriver
-specification](https://w3c.github.io/webdriver/webdriver-spec.html). All the main browsers now
+specification](https://w3c.github.io/webdriver/). All the main browsers now
 implement automation capabilities inline with the WebDriver spec, without the Selenium team having
 to maintain any software that performs actual automation; standards for the win!
 

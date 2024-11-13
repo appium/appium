@@ -8,7 +8,7 @@
       "@appium/types": ["../types"],
       "appium/support": ["../appium/support"]
     },
-    "types": ["mocha", "chai", "sinon", "sinon-chai", "chai-as-promised"]
+    "types": ["mocha", "chai", "sinon", "chai-as-promised"]
   },
   "include": ["./lib"],
   "references": [{"path": "../types"}, {"path": "../support"}]

@@ -142,7 +142,7 @@ function createConsoleTransport(args, logLvl) {
     format: format.combine(
       formatTimestamp(args),
       isLogColorEnabled(args) ? colorizeFormat : stripColorFormat,
-      format.printf(formatLogLine(args, true))
+      formatLog(args, true),
     ),
   });
 }
@@ -166,7 +166,7 @@ function createFileTransport(args, logLvl) {
     format: format.combine(
       stripColorFormat,
       formatTimestamp(args),
-      format.printf(formatLogLine(args, false))
+      formatLog(args, false),
     ),
   });
 }
@@ -199,7 +199,7 @@ function createHttpTransport(args, logLvl) {
     level: logLvl,
     format: format.combine(
       stripColorFormat,
-      format.printf(formatLogLine(args, false))
+      formatLog(args, false),
     ),
   });
 }
@@ -288,22 +288,35 @@ function colorizePrefix(text) {
 /**
  * @param {ParsedArgs} args
  * @param {boolean} targetConsole
- * @returns {(info: import('logform').TransformableInfo) => string}
+ * @returns {import('logform').Format}
  */
-function formatLogLine(args, targetConsole) {
-  return (info) => {
-    if (['json', 'pretty_json'].includes(args.logFormat)) {
-      let infoCopy = {...info};
-      if (targetConsole && !args.logTimestamp) {
-        delete infoCopy.timestamp;
-      }
-      return JSON.stringify(infoCopy, null, args.logFormat === 'pretty_json' ? 2 : undefined);
-    }
+function formatLog(args, targetConsole) {
+  if (['json', 'pretty_json'].includes(args.logFormat)) {
+    return format.combine(
+      format((info) => {
+        const infoCopy = {...info};
+        const contextInfo = globalLog.asyncStorage.getStore() ?? {};
+
+        if (targetConsole && !args.logTimestamp) {
+          delete infoCopy.timestamp;
+        }
+
+        if (!_.isEmpty(contextInfo)) {
+          infoCopy.context = {...contextInfo};
+        }
+
+        return infoCopy;
+      })(),
+      format.json({space: args.logFormat === 'pretty_json' ? 2 : undefined}),
+    );
+  }
+
+  return format.printf((info) => {
     if (targetConsole) {
       return `${args.logTimestamp ? `${info.timestamp} - ` : ''}${info.message}`;
     }
     return `${info.timestamp} ${info.message}`;
-  };
+  });
 }
 
 /**
@@ -331,7 +344,7 @@ function formatTimestamp(args) {
  * @param {string} text
  * @returns {string}
  */
-function stripColorCodes(text) {
+export function stripColorCodes(text) {
   return text.replace(COLOR_CODE_PATTERN, '');
 }
 

@@ -167,10 +167,12 @@ export function safeWriteFile(filepath: string, content: JsonValue, overwrite = 
   });
 }
 
+type WhichFunction = (cmd: string, opts?: {nothrow: boolean}) => Promise<string|null>;
+
 /**
  * `which` with memoization
  */
-const cachedWhich = _.memoize(fs.which as typeof import('which'));
+const cachedWhich = _.memoize(fs.which as WhichFunction);
 
 /**
  * Finds `npm` executable
@@ -220,7 +222,7 @@ export const findMike = _.partial(async () => {
  * `python3` is preferred over `python`, since the latter could be Python 2.
  */
 export const findPython = _.memoize(
-  async (): Promise<string | undefined> => (await whichPython3()) ?? (await whichPython()),
+  async (): Promise<string | null> => (await whichPython3()) ?? (await whichPython()),
 );
 
 /**

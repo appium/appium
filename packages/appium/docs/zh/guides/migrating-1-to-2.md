@@ -1,198 +1,208 @@
 ---
-title: 自 Appium 1.x 迁移到 Appium 2.x
+title: Migrating to Appium 2
 ---
-本文档是针对使用 Appium 1.x 并希望迁移到 Appium 2.x 的用户的指南. 
-其包含重大更改的列表, 以及如何迁移您的环境或测试套件以确保与Appium 2.0的兼容性. 
 
-## Appium 2.0 概述
+This document is a guide for those who are using Appium 1 and wish to migrate to Appium 2. It
+contains a list of breaking changes and how to migrate your environments or test suites to ensure
+compatibility with Appium 2.
 
-Appium 2.0 是Appium近5年来最重要的新版本. 
-Appium 2.0 中的更改主要与特定平台的自动化行为更改 _无_ 关. 
-相反, Appium 2.0将Appium重新定义为一个 _平台_, 
-其可以轻松创建和共享"驱动程序" (引入对给定平台自动化的支持的代码项目) 
-和"插件" (允许覆盖, 更改, 扩展或向Appium添加行为的代码项目) . 
+## Overview of Appium 2
 
-与此同时, Appium项目正在借此机会删除许多陈旧以及作废的功能. 
+Appium 2 is the most major new release of Appium in over 5 years. The changes in Appium 2 are _not_
+primarily related to changes in automation behaviors for specific platforms. Instead, Appium 2
+reenvisions Appium as a _platform_ where "drivers" (code projects that introduce support for
+automation of a given platform) and "plugins" (code projects that allow for overriding, altering,
+extending, or adding behaviors to Appium) can be easily created and shared.
 
-借此机会介绍一些重大变更, 包括如何安装Appium、
-如何管理驱动程序和各种功能、以及协议支持等. 
-以下为详细介绍. 
+At the same time, the Appium project is taking the opportunity to remove many old and deprecated
+bits of functionality.
 
-## 重大变更
+Together these do introduce a few breaking changes to how Appium is installed, how drivers and
+various features are managed, and protocol support. These are detailed below.
 
-查看 [Appium 2.0 发行说明](https://github.com/appium/appium/releases) 以获取最全面的变更列表. 
-在此, 我们指出重大变更以及您需要为它们执行的操作. 
+## Breaking Changes
 
-### :bangbang: 在安装过程中安装驱动程序
+### :bangbang: Default server base path
 
-当您安装Appium 1.x时, 所有可用的驱动程序将与主Appium Server同时安装. 
-现在情况已不再如此. 简单地安装Appium 2.0 (例如, 通过 `npm install -g appium` ) , 
-将只安装Appium Server, 但没有驱动程序. 
-要安装驱动程序, 您必须改用新的 [Appium 扩展 CLI](../cli/extensions.md). 
-例如, 为了获取最新版本的XCUITest和UiAutomator2驱动程序, 
-您可以在安装Appium后, 运行以下命令:
+With Appium 1, the server would accept commands by default on `http://localhost:4723/wd/hub`. The
+`/wd/hub` base path was a legacy convention from the days of migrating from Selenium 1 to Selenium
+2, and is no longer relevant. As such the default base path for the server is now `/`. If you want
+to retain the old behaviour, you can set the base path via a command line argument as follows:
 
 ```
-appium driver install xcuitest
-appium driver install uiautomator2
+appium --base-path=/wd/hub
 ```
 
-至此, 您的驱动程序已安装并准备就绪. 
-您可以使用此CLI做更多的事情, 因此请务必查看其文档. 
-如果您在持续集成环境中运行, 或者想要在一步到位地安装 Appium 和一些驱动程序, 
-则可以在安装过程中使用一些特殊标志来执行此操作, 例如:
+You can also set server arguments as [Config file](./config.md) properties.
 
+### :bangbang: Installing drivers during setup
+
+When you installed Appium 1, all available drivers would be installed at the same time as the main
+Appium server. This is no longer the case. Simply installing Appium 2 (e.g., by `npm i -g appium`),
+will install the Appium server only, but no drivers. To install drivers, you must instead use the
+new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the
+XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
+
+```bash
+appium driver install uiautomator2     # installs the latest driver version
+appium driver install xcuitest@4.12.2  # installs a specific driver version
 ```
-npm install --global appium --drivers=xcuitest,uiautomator2
+
+At this point, your drivers are installed and ready. There's a lot more you can do with the Appium 2
+command line, so be sure to check out [its documentation](../cli/index.md). If you're running in a CI
+environment or want to install Appium along with some drivers all in one step, you can do so using
+some special flags during install, for example:
+
+```bash
+npm i -g appium --drivers=xcuitest,uiautomator2
 ```
 
-这将一次性为您安装Appium和两种驱动程序.
+This will install Appium and the two drivers for you in one go. Please uninstall any existing Appium 1
+`npm` packages (with `npm uninstall -g appium`) if you get an installation or startup error.
 
-### :bangbang: 驱动安装路径
+### :bangbang: Drivers installation path
 
-当您安装 Appium 1.x 时, 
-所有可用的驱动程序将与主 Appium 服务器同时安装.
-路径是 `/path/to/appium/node_modules`.
-例如, 手动构建WebDriverAgent的`appium-webdriveragent` 
-是 `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
+When you installed Appium 1, all available drivers would be installed at the same time as the main
+Appium server, at `/path/to/appium/node_modules`. For example, `appium-webdriveragent` was located
+at `/path/to/appium/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
 
-Appium 2.0 在 `APPIUM_HOME` 环境变量中安装此类依赖项.
-默认路径为 `~/.appium`.
-因此，安装 XCUITest 驱动程序包后，
-`appium-webdriveragent` 的路径可能是 `$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent` .
+Appium 2 installs such dependencies in the path defined by the `APPIUM_HOME` environment variable.
+The default path is `~/.appium`. So, `appium-webdriveragent` would now be located at
+`$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent`.
 
-### :bangbang: Chromedriver安装标志
+### :bangbang: Chromedriver installation flags
 
-在Appium 1.x中, 可以使用以下命令行标志自定义Chromedriver的安装方式
- (例如作为UiAutomator2驱动程序的一部分) :
+In Appium 1, it was possible to customize the way Chromedriver was installed (as part of the
+UiAutomator2 driver for example), using the following command line flags:
 
 * `--chromedriver-skip-install`
 * `--chromedriver-version`
 * `--chromedriver-cdnurl`
 
-由于现在通过 Appium 2.0 为您安装驱动程序, 并且这些标志是作为 NPM 配置标志实现的, 
-因此它们将不再有效. 相反地, 请在驱动程序安装过程中使用以下环境变量:
-
+Because Appium 2 now installs drivers for you, and because these flags were implemented as `npm`
+config flags, they will no longer work. Instead, use the following environment variables during
+driver installation:
 
 * `APPIUM_SKIP_CHROMEDRIVER_INSTALL`
 * `CHROMEDRIVER_VERSION`
 * `CHROMEDRIVER_CDNURL`
 
-例如:
+For example:
 
-```
+```bash
 APPIUM_SKIP_CHROMEDRIVER_INSTALL=1 appium driver install uiautomator2
 ```
 
-### :bangbang: 特定于驱动程序的命令行选项
+### :bangbang: Driver-specific command line options
 
-在 Appium 1.x 中, 针对特定驱动程序的命令行选项都托管在主 Appium 服务器上. 
-因此, 您可以与Appium一起使用诸如
-'--chromedriver-executable' 这样的CLI参数, 
-来设置特定Chromedriver版本的位置, 
-UiAutomator2同理. 
+With Appium 1, command-line options specific to particular drivers were all hosted on the main
+Appium server. So, for example, `--chromedriver-executable` was a CLI parameter you could use with
+Appium to set the location of a specific Chromedriver version for use with, say, the UiAutomator2 driver.
 
+With Appium 2, all driver- and platform-specific CLI params have been moved to the drivers themselves.
+To access the corresponding functionality, you'll need to refer to the driver/plugin documentation.
+In some cases, the extension will continue to expose CLI parameters. For example, the XCUITest driver
+used to expose a parameter `--webdriveragent-port`. Now, to access this parameter, it should be
+prefixed with `driver-xcuitest`, to differentiate it from parameters other drivers might also expose.
+To use this parameter, you thus need to start Appium with something like:
 
-在 Appium 2.x 中, 
-所有特定于驱动程序和平台的 CLI 参数都已移至驱动程序本身. 
-要访问它们, 您现在需要在参数前面附加扩展类型 ( `driver` 或 `plugin`) 以及扩展名的名称. 
-例如, `--chromedriver-executable`变为`--driver-uiautomator2-chromedriver-executable`. 
+```bash
+appium --driver-xcuitest-webdriveragent-port=5000
+```
 
+Some drivers have done away with CLI args entirely in favour of default capabilities. With the
+above-mentioned `--chromedriver-executable` parameter for example, you now need to take advantage
+of the `appium:chromedriverExecutable` capability supported by the UiAutomator2 driver. To set this
+capability from the command line, do the following:
 
-### :bangbang: 特定于驱动程序的自动化命令
+```bash
+appium --default-capabilities '{"appium:chromedriverExecutable": "/path/to/chromedriver"}'
+```
 
-仅与特定驱动程序相关的某些命令的定义已移至这些驱动程序内实现. 
-例如, `pressKeyCode` 特定作用于 UiAutomator2 驱动程序, 
-并且现在只有该驱动程序才能识别. 
-在实践中, 这里唯一的重大变更是未安装驱动程序的那种错误. 
-之前, 如果使用未实现命令的驱动程序, 则会收到 `501 Not Yet Implemented` 错误. 
-现在, 您将获得`404 Not Found`错误, 
-因为如果不知道该命令的驱动程序是否有效, 
-主 Appium Server将不会定义与命令对应的路由. 
+### :bangbang: Driver-specific automation commands
 
+The definition of certain commands that pertain only to specific drivers has been moved to those
+drivers' implementations. For example, `pressKeyCode` is specific to the UiAutomator2 driver and is
+now understood only by that driver. In practice, the only breaking change here is the kind of error
+you would encounter if the appropriate driver is not installed. Previously, you would get a `501
+Not Yet Implemented` error if using a driver that didn't implement the command. Now, you will get
+a `404 Not Found` error because if a driver that doesn't know about the command is not active, the
+main Appium server will not define the route corresponding to the command.
 
-### :bangbang: 驱动程序更新
+### :bangbang: Driver updates
 
-在过去, 要获取iOS或Android驱动程序的更新, 
-您只需等待新版本的Appium包含这些升级, 
-然后更新您的Appium版本即可. 
-在 Appium 2.x 中, Appium Server和 Appium 驱动程序是分开进行版本控制和发布的. 
-这意味着驱动程序可以按照自己的节奏进行发布, 
-并且可以在发生驱动程序更新时获得驱动程序更新, 
-而不是等待新的Appium Server发布. 
-检查驱动程序更新的方法是使用 CLI:
-
+In the past, to get updates to your iOS or Android drivers, you'd simply wait for those updates to
+be rolled into a new release of Appium, and then update your Appium version. With Appium 2, the
+Appium server and the Appium drivers are versioned and released separately. This means that drivers
+can be on their own release cadence, and you can get the latest driver version right away, rather
+than waiting for a new Appium server release. The way to check for driver updates is with the CLI:
 
 ```bash
 appium driver list --updates
 ```
 
-如果有任何更新可用, 
-则可以针对任何给定的驱动程序运行 `update` 命令:
-
+If any updates are available, you can then run the `update` command for any given driver:
 
 ```bash
 appium driver update xcuitest
 ```
 
-要更新Appium Server本身, 您需要执行与过去一致的操作: `npm install -g appium`. 
-现在, 安装新版本的Appium Server将无关于其他驱动程序, 因此整个过程将更加快速. 
+(For a complete description of the update command, check out the
+[Extension CLI](../cli/extensions.md#update) documentation)
 
+To update the Appium server itself, you do the same thing as in the past: `npm install -g appium`.
+Now, installing new versions of the Appium server will leave your drivers intact, so the whole
+process will be much more quick.
 
-### :bangbang: 协议变更
+If you would like to update to a specific driver version, not the latest, please uninstall the driver
+and install the desired version using the `install` subcommand instead of `update`.
 
-Appium的API基于[W3C WebDriver协议](https://www.w3.org/TR/webdriver/), 
-并且已经支持该协议多年. 
-在W3C WebDriver协议被设计为Web标准之前, 
-还有其他几种协议用于Selenium和Appium. 
-这些协议是 "JSONWP" (JSON Wire Protocol) 以及 "MJSONWP" (Mobile JSON Wire Protocol). 
-W3C协议与(M)JSONWP协议在某些方面略有差异. 
+```bash
+appium driver uninstall xcuitest
+appium driver install xcuitest@4.11.1
+```
 
+### :bangbang: Protocol changes
 
-在Appium 2.0之前, Appium支持这两种协议, 
-因此之前的Selenium / Appium客户端仍然可以与较新的Appium服务器进行通信. 
-长期来看, Appium将删除对遗留协议的支持. 
+Appium's API is based on the [W3C WebDriver Protocol](https://www.w3.org/TR/webdriver/), and it has
+supported this protocol for years. Before the W3C WebDriver Protocol was designed as a web standard,
+several other protocols were used for both Selenium and Appium. These protocols were the "JSONWP"
+(JSON Wire Protocol) and "MJSONWP" (Mobile JSON Wire Protocol). The W3C Protocol differs from the
+(M)JSONWP protocols in a few small ways.
 
+Up until Appium 2, Appium supported both protocols, so that older Selenium/Appium clients could
+still communicate with newer Appium servers. Appium 2 removes support for older protocols and is
+now only compatible with the W3C WebDriver Protocol.
 
-### :bangbang: _Capabilities_
+### :bangbang: Capabilities must use vendor prefix
 
-新旧协议之间的一个显着差异在于capabilities的格式. 
-以前称为"desired capabilities", 现在简称为"capabilities", 
-现在要求在任何非标准capabilities上使用所谓的"供应商前缀". 
-标准capabilities列表在 [WebDriver 协议规范](https://www.w3.org/TR/webdriver/#capabilities)中给出, 
-其中包括一些常用capabilities, 如`browserName` 以及 `platformName`. 
+One significant difference between old and new protocols is in the format of capabilities.
+Previously called "desired capabilities", and now called simply "capabilities", there is now a
+requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard
+capabilities is given in the [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities),
+and includes a few commonly used capabilities such as `browserName` and `platformName`.
 
-这些标准capabilities继续按原样使用. 
-所有其他capabilities的名称中必须包含"供应商前缀". 
-供应商前缀是后跟冒号的字符串, 例如 `appium:`. 
-Appium 的大多数capabilities都超出了标准的 W3C capabilities, 
-因此必须包含供应商前缀 (我们建议您使用 `appium:` , 除非文档另有说明) . 例如:
-
+These standard capabilities continue to be used as-is. All other capabilities must include a
+"vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as `appium:`.
+Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include
+vendor prefixes (we recommend that you use `appium:` unless directed otherwise by documentation).
+For example:
 
 - `appium:app`
 - `appium:noReset`
 - `appium:deviceName`
 
-面向 Appium 2.0 时, 
-此要求对于您的测试套件来说, 可能是也可能不是重大更改. 
-如果您使用的是更新过的Appium客户端, 
-客户端将在所有必要的功能上为您添加 `appium:` 前缀. 
-新版本的Appium Inspector工具也将这样做. 
-基于云的Appium提供商也可以这样做. 
-因此, 只需注意, 如果您收到任何提示, 
-表明您的功能缺少供应商前缀, 这便是如何您解决问题的方法. 
+This requirement may or may not be a breaking change for your test suites when targeting Appium 2.
+If you're using an updated Appium client (at least one maintained by the Appium team), the client
+will add the `appium:` prefix for you on all necessary capabilities automatically. New versions of
+[Appium Inspector](https://github.com/appium/appium-inspector) will also do this. Cloud-based Appium
+providers may also do this. So simply be aware that if you get any messages to the effect that your
+capabilities lack a vendor prefix, this is how you solve that problem.
 
-在相关的说明中, 
-将无法再使用不支持 W3C 协议的 WebDriver 客户端
-启动 Appium 会话 (有关 WD 库的针对此效果的注释, 请参阅下文) . 
-
-为了让大家更轻松一些, 
-我们还引入了将所有与 Appium 相关的capabilities
-打包到一个capabilities对象`appium:options`中的选项. 
-您可以将通常用于 `appium:` 前缀上的任何内容绑定到此capabilities中. 
-下面是一个示例 (以原始 JSON 格式) , 
-说明如何使用`appium:options`在 Safari 浏览器上启动 iOS 会话:
-
+To make everyone's lives a bit easier, we've also introduced the option of grouping up all
+Appium-related capabilities into one object capability, `appium:options`. You can bundle together
+anything that you would normally put an `appium:` prefix on into this one capability. Here's an
+example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`:
 
 ```json
 {
@@ -206,154 +216,145 @@ Appium 的大多数capabilities都超出了标准的 W3C capabilities,
 }
 ```
 
- (当然, 每个客户端都会有不同的方法来创建结构化capabilities, 
-诸如 `appium:options` 或其他你可能见过的capabilities, 如 `goog:chromeOptions`) . 
-注意:显示在 `appium:options` 中的capabilities将覆盖显示在对象顶层的同名capabilities. 
+(Of course, each client will have a different way of creating structured capabilities like
+`appium:options` or other ones that you might have seen such as `goog:chromeOptions`).
 
-有关capabilities的更多信息, 请查看[Capabilities指南](caps.md).
+!!! note
 
-### :bangbang: _删除的命令_
+    Capabilities included in the `appium:options` object will overwrite capabilities of the same
+    name that are used outside of this object. (The `appium:options` syntax support by cloud
+    providers may vary.)
 
-除了已移至驱动程序实现的命令外, 
-作为W3C协议外的旧的JSON Wire协议命令将不再可用:
+For more information on capabilities, have a look at the [Capabilities Guide](./caps.md).
 
-- TODO (这些命令正在被区分和删除, 完成后将在此处更新) 
+### :bangbang: Removed Commands
 
-如果您使用现代Appium或Selenium客户端, 
-则无论如何都不应再使用遗留命令, 
-因此任何重大变更都应首先作用于客户端方面. 
+In addition to commands which have been moved to driver implementations, commands which were a part
+of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available:
 
+- TODO (these commands are being identified and removed and will be updated here when complete)
 
-### :bangbang: 图像分析功能移至插件
+If you use a modern Appium or Selenium client, you should no longer have access to these anyway,
+so any breaking changes should appear on the client side first and foremost.
 
-Appium 2.0 的设计目标之一是
-将非核心功能迁移到名为 [plugins](../ecosystem/plugins.md)的特殊扩展中.
-这允许人们选择使用额外时间来下载或扩展系统设置的功能. 
-Appium的各种图像相关功能 (图像比较, 按图像查找元素等) 已被移动到一个名为 [images](https://github.com/appium/appium/tree/master/packages/images-plugin)的官方支持的插件中. 
+### :bangbang: Image analysis features moved to plugin
 
-如果您使用这些与图像相关的方法, 
-要继续使用它们, 您需要执行两项操作. 
+One of the design goals for Appium 2 is to migrate non-core features into special extensions called
+[plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time
+to download or extra system setup. The various image-related features of Appium (image comparison,
+finding elements by image, etc...) have been moved into an officially supported plugin called
+[images](https://github.com/appium/appium/tree/master/packages/images-plugin).
 
-1. 安装插件: `appium plugin install images`
-2. 确保您启动 Appium Server时具备访问运行插件的权限,  方法是将其包含在命令行上指定的插件列表中, 例如 `appium --use-plugins=images`
+If you use these image-related methods, to continue accessing them you will need to do two things:
 
-与图像相关的命令也将在客户端被删除, 
-这意味着您需要按照插件README上的说明安装客户端插件来使用这些功能. 
+1. Install the plugin: `appium plugin install images`
+2. Ensure you start the Appium server with access to run the plugin by including it in the list of
+   plugins designated on the command line, e.g., `appium --use-plugins=images`
 
+Image-related commands will also be removed on the client side of things, which means you will need
+to follow the instructions on the plugin README for installing client-side plugins to access these features.
 
-### :bangbang: 执行驱动程序脚本命令移至插件
+### :bangbang: Execute Driver Script command moved to plugin
 
-如果您使用高级执行驱动程序脚本功能
- (它允许您发送WebdriverIO脚本以使其完全在服务器上执行, 
-而不是从客户端逐个命令执行) , 
-则此功能已移至插件. 
-以下是继续使用它的方法:
+If you use the advanced Execute Driver Script feature (which allows you to send in a WebdriverIO
+script to have it executed completely on the server instead of command-by-command from the client),
+this functionality has been moved to a plugin. Here's what to do to keep using it:
 
+1. Install the plugin: `appium plugin install execute-driver`
+2. Ensure you start the Appium server with access to run the plugin by including it in the list of
+   plugins designated on the command line, e.g., `appium --use-plugins=execute-driver`
 
-1. 安装插件: `appium plugin install execute-driver`
-2. 确保您启动 Appium Server时具备访问运行插件的权限,  方法是将其包含在命令行上指定的插件列表中, 例如 `appium --use-plugins=execute-driver`
+### :bangbang: External Files No Longer Supported for `--nodeconfig`, `--default-capabilities`, `--allow-insecure` and `--deny-insecure`
 
-### :bangbang: 不再支持外部文件 `--nodeconfig`, `--default-capabilities`, `--allow-insecure` 以及 `--deny-insecure`
+These options can be provided as strings on the command line (a JSON string for `--nodeconfig` and
+a comma-separated list of strings for `--allow-insecure` and `--deny-insecure`). Arguments provided
+on the command line will likely need to be quoted or escaped.
 
-这些选项可以在命令行上以字符串形式提供
- ( `--nodeconfig` 的JSON字符串以及
-用于`--allow-insecure`和`--deny-insecure`的逗号分隔字符串列表) . 
-命令行上提供的参数可能需要用引号括起或转义. 
+The recommended method to provide these options is through a [configuration file](./config.md).
 
-现在, 提供这些选项的推荐方法是通过 [配置文件](#tada-configuration-files). 
+In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents
+of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property. Any CSV-like
+files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values
+of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files
+(respectively); both are arrays of strings.
 
-总之, 如果您使用的是 JSON Appium 配置文件, 
-则只需将"nodeconfig"JSON 文件的内容剪切并粘贴到 `server.nodeconfig` 属性的值中即可.  
-您之前为 `--allow-insecure` 和 `--deny-insecure` 提供的任何类似CSV的文件
-分别成为Appium配置文件中 `server.allow-insecure` 和 `server.deny-insecure` 属性的值;
-两者都是字符串数组. 
+### :bangbang: Old drivers removed
 
+The old iOS and Android (UiAutomator 1) drivers and related tools (e.g., `authorize-ios`) have been
+removed. They haven't been relevant for many years anyway.
 
-### :bangbang: 删除的旧驱动
+### :bangbang: Server can no longer be started with `--port 0`
 
-旧的iOS和Android (UiAutomator 1) 驱动程序
-和相关工具 (例如, `authorize-ios`) 已被删除. 
-无论如何, 它们已经很多年都没有关联了. 
+In Appium 1, it was possible to specify `--port 0` during server startup. This had the effect of
+starting Appium on a random free port. In Appium 2, port values must be `1` or higher. The random
+port assignment was never an intentional feature of Appium 1, but a consequence of how Node's
+HTTP servers work and the fact that there was no port input validation in Appium 1. If you want
+to find a random free port to start Appium on, you must now take care of this on your own prior to
+starting Appium. Starting Appium on an explicit and known port is the correct practice moving
+forward.
 
-### :warning: 内部包已重命名
+### :warning: Internal packages renamed
 
-一些Appium内部的NPM软件包已被重命名
- (例如,  `appium-base-driver` 现在是 `@appium/base-driver`) . 
-对于Appium用户来说, 这并非是重大变更, 
-仅仅针对那些已经构建了直接包含Appium代码的软件的人来说. 
+Some Appium-internal NPM packages have been renamed (for example, `appium-base-driver` is now
+`@appium/base-driver`). This is not a breaking change for Appium users, only for people who have
+built software that directly incorporates Appium's code.
 
-### :warning: 不再支持"WD"JavaScript 客户端库
+### :warning: `wd` JavaScript client library no longer supported
 
-多年来, Appium的一些作者一直维护着[WD](https://github.com/admc/wd) 客户端库. 
-此库已被弃用, 并且尚未更新W3C WebDriver协议. 
-因此, 如果您正在使用此库, 则需要迁移到更现代的库. 
-我们推荐 [WebdriverIO](https://webdriver.io). 
+For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client
+library. This library has been deprecated and has not been updated for use with the W3C WebDriver
+protocol. As such, if you're using this library you'll need to move to a more modern one. We
+recommend [WebdriverIO](https://webdriver.io).
 
+### :warning: Appium Desktop replaced with Appium Inspector
 
-### :warning: Appium Inspector 从 Appium Desktop 中分离出来
+The inspector functionality of Appium Desktop has been moved to its own app:
+[Appium Inspector](https://github.com/appium/appium-inspector). It is fully compatible with
+standalone Appium 2 servers, but also works with later versions of Appium 1 servers. Appium Desktop
+itself has been deprecated and is not compatible with Appium 2.
 
-Appium Desktop的Inspector部分已移至其自己的应用程序Appium Inspector:
-[github.com/appium/appium-inspector](https://github.com/appium/appium-inspector). 
-其与Appium 2.0 Server完全兼容. 
-只需下载它并自行运行即可. 
-您不再需要GUI Appium桌面服务器来检查应用程序. 
-Appium Desktop Server将继续在其原始站点
-[github.com/appium/appium-desktop](https://github.com/appium/appium-desktop) 上受支持. 
-它不再将Inspector与其捆绑在一起. 
+In addition to the app, Appium Inspector also has a browser version, accessible at
+[inspector.appiumpro.com](https://inspector.appiumpro.com). Note that in order to use the
+browser version with a local Appium server, you'll need to first start the server with the
+`--allow-cors` flag.
 
-您现在还可以通过访问[Web版本的Appium Inspector](https://inspector.appiumpro.com)
-来使用Appium Inspector而无需下载任何内容. 
-请注意, 要针对本地服务器进行测试, 您需要使用"--allow-cors"启动服务器, 
-以便基于浏览器版本的Appium Inspector可以访问您的Appium Server以启动会话. 
+## Major New Features
 
+Apart from the breaking changes mentioned above, in this section is a list of some of the major new
+features you may wish to take advantage of with Appium 2.
 
-## 主要新功能
+### Plugins
 
-除了上面提到的重大变更之外, 
-本节中还列出了您可能希望在 Appium 2.0 中利用的一些主要新功能. 
+#### :tada: Server Plugins
 
-### 插件
+Appium extension authors can now develop their own server plugins, which can intercept and modify
+any Appium command, or even adjust the way the underlying Appium HTTP server itself works. To learn
+more about plugins, read the new [Appium Introduction](../intro/index.md). Interested in building
+a plugin? Check out the [Building Plugins](../developing/build-plugins.md) guide.
 
-#### :tada: _服务器插件_
+### :tada: Install drivers and plugins from anywhere
 
-Appium 扩展作者现在可以开发自己的服务器插件, 
-可以拦截和修改任何Appium命令,
-甚至调整底层 Appium HTTP 服务器本身的工作方式.
-了解有关插件的更多信息, 
-查询新的 [Appium 介绍](../intro/index.md).
-有兴趣构建插件? 
-请查阅 [构建插件](../ecosystem/build-plugins.md) 指南.
+You're no longer limited to the drivers that come with Appium, or that the Appium team even knows
+about! Appium extension authors can now develop custom drivers, which can be downloaded or
+installed via Appium's [Extension CLI](../cli/extensions.md) from `npm`, `git`, GitHub, or even the
+local filesystem. Interested in building a driver? Check out the [Building
+Drivers](../developing/build-drivers.md) guide.
 
+### :tada: Configuration Files
 
-#### :tada: _客户端插件_
+Appium now supports _configuration files_ in addition to command-line arguments. In a nutshell,
+nearly all arguments which Appium 1 required to be provided on the CLI are now able to be expressed
+via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the
+[Config Guide](./config.md) for a full explanation.
 
-TODO
+## Special Notes for Cloud Providers
 
-### :tada: 从任何地方安装驱动程序和插件
+The rest of this document has applied to Appium generally, but some of the architectural changes in
+Appium 2 will constitute breaking changes for Appium-related service providers, whether a
+cloud-based Appium host or an internal service. At the end of the day, the maintainer of the Appium
+server is responsible for installing and making available the various Appium drivers and plugins
+that end users may wish to use.
 
-您不再局限于 Appium 附带的驱动程序，
-或者通过Appium团队知晓!
-Appium 扩展作者现在可以开发自定义驱动程序,
-可以通过Appium的[扩展 CLI](../cli/extensions.md) 
-从NPM, Git, GitHub 乃至本地的文件系统下载或安装.
-有兴趣构建驱动程序? 
-请查阅 [构建驱动](../ecosystem/build-drivers.md) 指南.
-
-### :tada: 配置文件
-
-Appium 现在除了命令行参数外, 
-还支持 _配置文件_ . 
-简而言之, Appium 1.x需要在CLI上提供的几乎所有参数现在都可以通过配置文件来表达. 
-配置文件可以是 JSON、JS 或 YAML 格式. 
-有关完整说明, 请参阅 [配置指南](config.md) . 
-
-
-## 云供应商特别说明
-
-本文档的其余部分已普遍适用于 Appium, 
-但 Appium 2.0 中的一些架构更改将构成 Appium 相关服务供应商的重大变更, 
-无论是基于云的 Appium 主机还是内部服务. 
-在一天结束时, Appium Server的维护者负责安装和提供最终用户可能希望使用的各种Appium驱动程序和插件. 
-
-我们鼓励云供应商彻底阅读并理解我们的 [针对云供应商的建议](caps.md#special-notes-for-cloud-providers), 
-以行业兼容的方式支持用户！
+We encourage cloud providers to thoroughly read and understand our [recommendation for cloud
+provider capabilities](./caps.md#special-notes-for-cloud-providers) in order to support user needs in
+an industry-compatible way!

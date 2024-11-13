@@ -1,6 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>appium/appium//renovate/default"],
-  "schedule": ["after 10pm and before 5:00am"],
+  "schedule": [
+    "after 10pm",
+    "before 5:00am"
+  ],
   "timezone": "America/Vancouver"
 }

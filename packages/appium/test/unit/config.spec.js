@@ -23,6 +23,13 @@ describe('Config', function () {
   /** @type {sinon.SinonSandbox} */
   let sandbox;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(function () {
     sandbox = createSandbox();
   });
@@ -45,7 +52,7 @@ describe('Config', function () {
       it('should log build info to console', async function () {
         const config = getBuildInfo();
         await showBuildInfo();
-        log.should.have.been.calledOnce;
+        log.calledOnce.should.be.true;
         log.firstCall.args.should.contain(JSON.stringify(config));
       });
     });
@@ -64,7 +71,7 @@ describe('Config', function () {
             {port: 1234},
             {allowCors: false}
           );
-          log.should.have.been.calledWith('Appium Configuration\n');
+          log.calledWith('Appium Configuration\n').should.be.true;
         });
 
         it('should skip empty objects', function () {
@@ -75,7 +82,7 @@ describe('Config', function () {
             {spam: 'food'},
             {}
           );
-          dir.should.have.been.calledWith({foo: 'bar', sheep: 0, ducks: false});
+          dir.calledWith({foo: 'bar', sheep: 0, ducks: false}).should.be.true;
         });
       });
 
@@ -88,7 +95,7 @@ describe('Config', function () {
             {spam: 'food'},
             {}
           );
-          log.should.have.been.calledWith('\n(no configuration file loaded)');
+          log.calledWith('\n(no configuration file loaded)').should.be.true;
         });
       });
 
@@ -96,7 +103,7 @@ describe('Config', function () {
         it('should not dump CLI args', function () {
           // @ts-expect-error
           showConfig({}, {}, {}, {});
-          log.should.have.been.calledWith('\n(no CLI parameters provided)');
+          log.calledWith('\n(no CLI parameters provided)').should.be.true;
         });
       });
     });

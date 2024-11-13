@@ -11,6 +11,14 @@ title: Welcome
     display: none;
   }
 </style>
+
+<div style="text-align:center;width:100%;background-color:#ec366d;margin-top:-3em;margin-bottom:2em;">
+  <h3 style="color:#ffffff;padding: 8px;">
+    AppiumConf 2025 is partnering with SeleniumConf<br/> <span style="font-size:0.8em;">March 26-28 in Valencia, Spain. Join us to learn and connect with the community!<span><br/>
+    <a style="color:#fcba12" href="https://seleniumconf.com/" target="_blank">Register Now</a>
+  </h3>
+</div>
+
 <div style="text-align: center">
   <img src="assets/images/appium-logo-horiz.png" style="max-width: 400px;" />
 </div>
@@ -26,11 +34,6 @@ Android TV, Samsung), and more!
   sponsorship program and contributor compensation scheme <a
   href="https://github.com/appium/appium/blob/master/GOVERNANCE.md#sponsorship">here</a>)
   <div class="homepageSponsors">
-    <div class="homepageSponsor">
-      <a href="https://www.headspin.io/solutions/appium-mobile-test-automation">
-        <img src="assets/images/sponsor-logo-headspin.png" style="width: 200px;" />
-      </a>
-    </div>
     <div class="homepageSponsor">
       <a href="https://www.browserstack.com/browserstack-appium?utm_campaigncode=701OW00000AoUTQYA3&utm_medium=partnered&utm_source=appium">
         <img src="assets/images/sponsor-logo-browserstack-dark.png#only-dark" style="width: 220px;" />
@@ -57,6 +60,6 @@ Android TV, Samsung), and more!
 -   Read the different [__Guides__](./guides/migrating-1-to-2.md) for a variety of instructions, tips and tricks
 -   Check out various third-party [__Resources__](./resources.md) to explore Appium around the web
 -   For creating your own Appium extensions, see the [__Developer__](./developing/index.md) documentation
--   For contributions to Appium itself, refer to the [__Contributing__](./contributing/index.md) page
+-   For contributions to Appium itself, refer to the [__Contributing__](./contributing.md) page
 
 </div>

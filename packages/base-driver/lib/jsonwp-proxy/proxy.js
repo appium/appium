@@ -18,7 +18,6 @@ import https from 'https';
 
 const DEFAULT_LOG = logger.getLogger('WD Proxy');
 const DEFAULT_REQUEST_TIMEOUT = 240000;
-const COMPACT_ERROR_PATTERNS = [/\bECONNREFUSED\b/, /socket hang up/];
 
 const {MJSONWP, W3C} = PROTOCOLS;
 
@@ -271,11 +270,7 @@ class JWProxy {
         }
       } else {
         proxyErrorMsg = `Could not proxy command to the remote server. Original error: ${e.message}`;
-        if (COMPACT_ERROR_PATTERNS.some((p) => p.test(e.message))) {
-          this.log.info(e.message);
-        } else {
-          this.log.info(e.stack);
-        }
+        this.log.info(e.message);
       }
       throw new errors.ProxyRequestError(proxyErrorMsg, e.response?.data, e.response?.status);
     }

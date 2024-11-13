@@ -10,6 +10,8 @@ jobs:
   fossa-check:
     name: Run FOSSA Analysis
     runs-on: ubuntu-latest
+    env:
+      FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,10 +19,13 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - name: Install fossa-cli
-        run: ./scripts/install-fossa.sh -d
+        run: |
+          curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash
       - name: Run FOSSA analysis
         run: |
-          fossa analyze
-          fossa test
-    env:
-      FOSSA_API_KEY: ${{secrets.FOSSA_API_KEY}}
+          if [ -n "$FOSSA_API_KEY" ]; then
+            fossa analyze
+            fossa test
+          else
+            echo "License checks did not run. FOSSA_API_KEY is not defined for this fork."
+          fi

@@ -15,6 +15,13 @@ function getFixture(file) {
 }
 
 describe('app download and configuration', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaisAsPromised = await import('chai-as-promised');
+    chai.use(chaisAsPromised.default);
+    chai.should();
+  });
+
   describe('configureApp', function () {
     it('should get the path for a local .app', async function () {
       let newAppPath = await configureApp(getFixture('FakeIOSApp.app'), '.app');

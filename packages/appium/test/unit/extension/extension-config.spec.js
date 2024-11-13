@@ -4,8 +4,6 @@ import {version as APPIUM_VER} from '../../../package.json';
 import {FAKE_DRIVER_DIR, PROJECT_ROOT, rewiremock} from '../../helpers';
 import {initMocks} from './mocks';
 
-const {expect} = chai;
-
 describe('ExtensionConfig', function () {
   /** @type {import('sinon').SinonSandbox} */
   let sandbox;
@@ -18,6 +16,16 @@ describe('ExtensionConfig', function () {
 
   /** @type {import('./mocks').MockAppiumSupport} */
   let MockAppiumSupport;
+
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     let overrides;
@@ -270,9 +278,9 @@ describe('ExtensionConfig', function () {
 
         it('should display a warning count of 1', async function () {
           await config._validate({foo: {}});
-          expect(MockAppiumSupport.logger.__logger.warn).to.be.calledWith(
+          MockAppiumSupport.logger.__logger.warn.calledWith(
             'Appium encountered 1 warning while validating drivers found in manifest /some/path/extensions.yaml'
-          );
+          ).should.be.true;
         });
       });
 
@@ -284,9 +292,9 @@ describe('ExtensionConfig', function () {
 
         it('should display an error count of 1', async function () {
           await config._validate({foo: {}});
-          expect(MockAppiumSupport.logger.__logger.error).to.be.calledWith(
+          MockAppiumSupport.logger.__logger.error.calledWith(
             'Appium encountered 1 error while validating drivers found in manifest /some/path/extensions.yaml'
-          );
+          ).should.be.true;
         });
       });
     });

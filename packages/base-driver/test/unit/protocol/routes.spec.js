@@ -7,6 +7,14 @@ import crypto from 'crypto';
 describe('Protocol', function () {
   // TODO test against an explicit protocol rather than a hash of a previous
   // protocol
+  let chai;
+
+  before(async function () {
+    chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
 
   describe('ensure protocol consistency', function () {
     it('should not change protocol between patch versions', function () {
@@ -52,6 +60,16 @@ describe('Protocol', function () {
 
     it('should properly lookup correct command name for endpoint without session', function () {
       const cmdName = routeToCommandName('/status', 'GET');
+      cmdName.should.equal('getStatus');
+    });
+
+    it('should properly lookup correct command name for endpoint with query params', function () {
+      const cmdName = routeToCommandName('/status?foo=1&bar=2', 'GET');
+      cmdName.should.equal('getStatus');
+    });
+
+    it('should properly lookup correct command name with custom base path', function () {
+      const cmdName = routeToCommandName('/wd/hub/status?foo=1&bar=2', 'GET', '/wd/hub');
       cmdName.should.equal('getStatus');
     });
 

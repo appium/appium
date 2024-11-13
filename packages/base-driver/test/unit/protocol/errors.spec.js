@@ -227,6 +227,11 @@ let errorsList = [
 ];
 
 describe('errors', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   for (let error of errorsList) {
     it(error.errorName + ' should have a JSONWP code or W3C code and message', function () {
       if (error.errorCode) {
@@ -247,6 +252,11 @@ describe('errors', function () {
   });
 });
 describe('errorFromMJSONWPStatusCode', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   for (let error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorCode + ' should return correct error', function () {
@@ -285,6 +295,11 @@ describe('errorFromMJSONWPStatusCode', function () {
   });
 });
 describe('errorFromW3CJsonCode', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   for (let error of errorsList) {
     if (error.errorName !== 'NotYetImplementedError') {
       it(error.errorName + ' should return correct error', function () {
@@ -307,6 +322,11 @@ describe('errorFromW3CJsonCode', function () {
   });
 });
 describe('w3c Status Codes', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   it('should match the correct error codes', function () {
     let non400Errors = [
       ['NoSuchDriverError', 404],
@@ -341,6 +361,11 @@ describe('w3c Status Codes', function () {
   });
 });
 describe('.getResponseForW3CError', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   it('should return an error, message and stacktrace for just a generic exception', function () {
     try {
       throw new Error('Some random error');
@@ -388,6 +413,11 @@ describe('.getResponseForW3CError', function () {
   });
 });
 describe('.getActualError', function () {
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   describe('MJSONWP', function () {
     it('should map a status code 7 no such element error as a NoSuchElementError', function () {
       const actualError = new errors.ProxyRequestError('Error message does not matter', {

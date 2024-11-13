@@ -4,13 +4,14 @@
 
 const path = require('path');
 const yaml = require('yaml');
-const {fs, util} = require('@appium/support');
+const {fs, util, logger} = require('@appium/support');
 const validate = require('validate.js');
 const Handlebars = require('handlebars');
 const _ = require('lodash');
 const {asyncify} = require('asyncbox');
 const url = require('url');
-const log = require('fancy-log');
+
+const log = logger.getLogger('YamlParser');
 
 validate.validators.array = function array(value, options, key, attributes) {
   if (attributes[key] && !validate.isArray(attributes[key])) {
@@ -276,7 +277,7 @@ async function generateCommands() {
   await registerSpecUrlHelper();
 
   const commands = path.resolve(YAML_DIR, 'commands/**/*.yml');
-  log('Traversing YML files', commands);
+  log.info('Traversing YML files', commands);
   await fs.rimraf(path.resolve(rootFolder, 'docs', 'en', 'commands'));
 
   // get the template from which the md files will be created
@@ -288,7 +289,7 @@ async function generateCommands() {
   let fileCount = 0;
   for (const filename of await fs.glob(commands)) {
     const relativeFilename = path.relative(YAML_DIR, filename);
-    log(`Rendering file: ${filename} ${relativeFilename}`);
+    log.info(`Rendering file: ${filename} ${relativeFilename}`);
 
     // Translate the YML specs to JSON
     const inputYML = await fs.readFile(filename, 'utf8');
@@ -309,13 +310,13 @@ async function generateCommands() {
       relativeFilename.length - ext.length
     )}.md`;
     const outfile = path.resolve(rootFolder, 'docs', 'en', markdownPath);
-    log(`    Writing to: ${outfile}`);
+    log.info(`    Writing to: ${outfile}`);
     await fs.mkdirp(path.dirname(outfile));
     await fs.writeFile(outfile, markdown, 'utf8');
 
     fileCount++;
   }
-  log(`Done writing ${fileCount} command documents`);
+  log.info(`Done writing ${fileCount} command documents`);
 }
 
 async function generateCommandIndex() {
@@ -351,7 +352,7 @@ async function generateCommandIndex() {
   );
 
   async function writeIndex(index, commands, indexPath) {
-    log(`Creating API index '${index}'`);
+    log.info(`Creating API index '${index}'`);
     const commandMarkdown = commandTemplate({
       commands,
       path: indexPath,
@@ -361,7 +362,7 @@ async function generateCommandIndex() {
 
   const apiIndex = path.resolve(rootFolder, 'docs', 'en', 'about-appium', 'api.md');
   await writeIndex(apiIndex, commands);
-  log(`Done writing main API index`);
+  log.info(`Done writing main API index`);
 
   async function writeIndividualIndexes(command) {
     if (!util.hasValue(command.commands)) {

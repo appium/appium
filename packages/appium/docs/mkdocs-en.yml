@@ -72,7 +72,7 @@ nav:
       - developing/build-plugins.md
       - developing/build-docs.md
       - developing/build-doctor-checks.md
-  - Contributing:
-      - contributing/index.md
-      - contributing/develop.md
-      - contributing/config-system.md
+      - Developer Reference:
+          - developing/config-system.md
+  - Contributing: contributing.md
+  - Sponsors: sponsors.md

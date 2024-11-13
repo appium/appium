@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.22.0](https://github.com/appium/appium/compare/@appium/types@0.21.3...@appium/types@0.22.0) (2024-10-15)
+
+
+### Features
+
+* **appium:** Make server graceful shutdown timeout configurable via command line args ([#20641](https://github.com/appium/appium/issues/20641)) ([5661888](https://github.com/appium/appium/commit/56618886ed007df3c28ce98beb4ff91bc47da2a2))
+
+
+### Bug Fixes
+
+* **types:** update dependency @types/express to v5 ([#20620](https://github.com/appium/appium/issues/20620)) ([69e9abe](https://github.com/appium/appium/commit/69e9abeed3ac5a2f61d8b7f1cd4ec4bd9c054cf1))
+
+
+
+## [0.21.3](https://github.com/appium/appium/compare/@appium/types@0.21.2...@appium/types@0.21.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* **base-driver:** Add a server flag to check if it operates a secure protocol ([#20449](https://github.com/appium/appium/issues/20449)) ([622b245](https://github.com/appium/appium/commit/622b245ea38793280d9785a59a0416ce025862fe))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
+## [0.21.2](https://github.com/appium/appium/compare/@appium/types@0.21.1...@appium/types@0.21.2) (2024-08-07)
+
+
+### Bug Fixes
+
+* **types:** commit type gen update ([#20445](https://github.com/appium/appium/issues/20445)) ([7a14f9f](https://github.com/appium/appium/commit/7a14f9f929a2d481454538842dce1d684a24de80))
+* **types:** update dependency @types/ws to v8.5.11 ([b1b7c33](https://github.com/appium/appium/commit/b1b7c33eddcd8b098cd092ecc5a47d97b983b792))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
+## [0.21.1](https://github.com/appium/appium/compare/@appium/types@0.21.0...@appium/types@0.21.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
+## [0.21.0](https://github.com/appium/appium/compare/@appium/types@0.20.3...@appium/types@0.21.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [0.20.3](https://github.com/appium/appium/compare/@appium/types@0.20.2...@appium/types@0.20.3) (2024-06-11)
 
 **Note:** Version bump only for package @appium/types

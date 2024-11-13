@@ -17,6 +17,11 @@ describe('DriverCommand', function () {
 
   let sandbox;
 
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+  });
+
   beforeEach(async function () {
     sandbox = createSandbox();
     appiumHome = await tempDir.openDir();

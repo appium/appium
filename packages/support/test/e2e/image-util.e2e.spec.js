@@ -11,6 +11,13 @@ async function getImage(name) {
 }
 
 describe('image-util', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('cropBase64Image', function () {
     let originalImageB64 = null;
 

@@ -14,6 +14,14 @@ const LOG_FILTERS_FIXTURE = resolveFixture('log-filters.json');
 
 describe('parser', function () {
   let p;
+  let should;
+
+  beforeEach(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
 
   describe('Main Parser', function () {
     beforeEach(function () {

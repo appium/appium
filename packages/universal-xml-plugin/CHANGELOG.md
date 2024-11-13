@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.24](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.23...@appium/universal-xml-plugin@1.0.24) (2024-10-15)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.4 ([#20663](https://github.com/appium/appium-plugins/issues/20663)) ([b56b180](https://github.com/appium/appium-plugins/commit/b56b180f3465d14e36b2bb8e7fa831954e0fc4c6))
+
+
+
+## [1.0.23](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.22...@appium/universal-xml-plugin@1.0.23) (2024-09-26)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.3 ([#20599](https://github.com/appium/appium-plugins/issues/20599)) ([f344504](https://github.com/appium/appium-plugins/commit/f344504f15a08eb1f92f2d742f32d3f48f494e02))
+
+
+
+## [1.0.22](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.21...@appium/universal-xml-plugin@1.0.22) (2024-09-16)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.0 ([#20513](https://github.com/appium/appium-plugins/issues/20513)) ([da3f9ff](https://github.com/appium/appium-plugins/commit/da3f9ff8812be0c25841734293bd852d3a181c36))
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.2 ([#20537](https://github.com/appium/appium-plugins/issues/20537)) ([3d674d0](https://github.com/appium/appium-plugins/commit/3d674d0085d22959fcf62a195af42ab2f9ba6d3a))
+* **universal-xml-plugin:** update dependency fast-xml-parser to v4.5.0 ([75710ab](https://github.com/appium/appium-plugins/commit/75710ab8230a80bf693944b66c84440a86d26b5e))
+
+
+
+## [1.0.21](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.20...@appium/universal-xml-plugin@1.0.21) (2024-08-07)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency fast-xml-parser to v4.4.1 ([61276f2](https://github.com/appium/appium-plugins/commit/61276f2e7c2643aa9628446afa62ff8e3d6b5f7a))
+
+
+
 ## [1.0.20](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.19...@appium/universal-xml-plugin@1.0.20) (2024-06-06)
 
 

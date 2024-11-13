@@ -36,6 +36,11 @@ export function pluginE2EHarness(opts) {
   let server;
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+
     const setupAppiumHome = async () => {
       /**
        * @type {AppiumEnv}

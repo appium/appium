@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
-// @ts-ignore This module does not provide type definitons
+// @ts-ignore This module does not provide type definitions
 import setBlocking from 'set-blocking';
-// @ts-ignore This module does not provide type definitons
+// @ts-ignore This module does not provide type definitions
 import consoleControl from 'console-control-strings';
 import * as util from 'node:util';
 import type {
@@ -17,6 +17,7 @@ import type {Writable} from 'node:stream';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import { unleakString } from './utils';
 import { SecureValuesPreprocessor } from './secure-values-preprocessor';
+import { LRUCache } from 'lru-cache';
 
 const DEFAULT_LOG_LEVELS = [
   ['silly', -Infinity, {inverse: true}, 'sill'],
@@ -30,13 +31,12 @@ const DEFAULT_LOG_LEVELS = [
   ['error', 5000, {fg: 'red', bg: 'black'}, 'ERR!'],
   ['silent', Infinity],
 ] as const;
+const DEFAULT_HISTORY_SIZE = 10000;
 
 setBlocking(true);
 
 export class Log extends EventEmitter implements Logger {
   level: LogLevel | string;
-  record: MessageObject[];
-  maxRecordSize: number;
   prefixStyle: StyleObject;
   headingStyle: StyleObject;
   heading: string;
@@ -52,13 +52,16 @@ export class Log extends EventEmitter implements Logger {
   _paused: boolean;
   _secureValuesPreprocessor: SecureValuesPreprocessor;
 
+  private _history: LRUCache<number, MessageObject>;
+  private _maxRecordSize: number;
+
   constructor() {
     super();
 
     this.level = 'info';
     this._buffer = [];
-    this.record = [];
-    this.maxRecordSize = 10000;
+    this._maxRecordSize = DEFAULT_HISTORY_SIZE;
+    this._history = new LRUCache({max: this.maxRecordSize});
     this.stream = process.stderr;
     this.heading = '';
     this.prefixStyle = {fg: 'magenta'};
@@ -77,6 +80,27 @@ export class Log extends EventEmitter implements Logger {
     this.on('error', () => {});
   }
 
+  get record(): MessageObject[] {
+    return [...this._history.rvalues()] as MessageObject[];
+  }
+
+  get maxRecordSize(): number {
+    return this._maxRecordSize;
+  }
+
+  set maxRecordSize(value: number) {
+    if (value === this._maxRecordSize) {
+      return;
+    }
+
+    this._maxRecordSize = value;
+    const newHistory = new LRUCache<number, MessageObject>({max: value});
+    for (const [key, value] of this._history.rentries() as Generator<[number, MessageObject]>) {
+      newHistory.set(key, value);
+    }
+    this._history = newHistory;
+  }
+
   private useColor(): boolean {
     // by default, decide based on tty-ness.
     return (
@@ -86,6 +110,19 @@ export class Log extends EventEmitter implements Logger {
 
   get asyncStorage(): AsyncLocalStorage<Record<string, any>> {
     return this._asyncStorage;
+  }
+
+  updateAsyncStorage(contextInfo: Record<string, any>, replace: boolean): void {
+    if (!_.isPlainObject(contextInfo)) {
+      return;
+    }
+    if (replace) {
+      this._asyncStorage.enterWith({...contextInfo});
+    } else {
+      const store = this._asyncStorage.getStore() ?? {};
+      Object.assign(store, contextInfo);
+      this._asyncStorage.enterWith(store);
+    }
   }
 
   enableColor(): void {
@@ -208,7 +245,7 @@ export class Log extends EventEmitter implements Logger {
     if (stack) {
       messageArguments.unshift(`${stack}\n`);
     }
-    const formattedMessage: string = util.format(...messageArguments);
+    const formattedMessage = util.format(...messageArguments);
 
     const m: MessageObject = {
       id: this._id++,
@@ -224,12 +261,7 @@ export class Log extends EventEmitter implements Logger {
       this.emit(m.prefix, m);
     }
 
-    this.record.push(m);
-    const mrs = this.maxRecordSize;
-    if (this.record.length > mrs) {
-      this.record.shift();
-    }
-
+    this._history.set(m.id, m);
     this.emitLog(m);
   }
 

@@ -578,7 +578,9 @@ class ExtensionCliCommand {
       return this.config.installedExtensions;
     }
     const pkgName = extRecord.pkgName;
-    await npm.uninstallPackage(this.config.appiumHome, pkgName);
+    await spinWith(this.isJsonOutput, `Uninstalling ${this.type} '${installSpec}'`, async () => {
+      await npm.uninstallPackage(this.config.appiumHome, pkgName);
+    });
     await this.config.removeExtension(installSpec);
     this.log.ok(`Successfully uninstalled ${this.type} '${installSpec}'`.green);
     return this.config.installedExtensions;
@@ -639,9 +641,16 @@ class ExtensionCliCommand {
         const updateVer = unsafe && update.unsafeUpdate ? update.unsafeUpdate : update.safeUpdate;
         await spinWith(
           this.isJsonOutput,
-          `Updating driver '${e}' from ${update.current} to ${updateVer}`,
+          `Updating ${this.type} '${e}' from ${update.current} to ${updateVer}`,
           async () => await this.updateExtension(e, updateVer)
         );
+        // if we're doing a safe update, but an unsafe update is also available, let the user know
+        if (!unsafe && update.unsafeUpdate) {
+          const newMajorUpdateMsg = `A newer major version ${update.unsafeUpdate} ` +
+            `is available for ${this.type} '${e}', which could include breaking changes. ` +
+            `If you want to apply this update, re-run with --unsafe`;
+          this.log.info(newMajorUpdateMsg.yellow);
+        }
         updates[e] = {from: update.current, to: updateVer};
       } catch (err) {
         errors[e] = err;

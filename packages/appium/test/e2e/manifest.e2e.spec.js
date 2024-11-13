@@ -10,8 +10,6 @@ import {
 import {FAKE_DRIVER_DIR, resolveFixture} from '../helpers';
 import {installLocalExtension, runAppiumJson} from './e2e-helpers';
 
-const {expect} = chai;
-
 describe('manifest handling', function () {
   /**
    * @type {string}
@@ -27,6 +25,7 @@ describe('manifest handling', function () {
    * @type {(args?: string[]) => Promise<ExtensionListData>}
    */
   let runList;
+  let expect;
 
   async function resetAppiumHome() {
     await fs.rimraf(appiumHome);
@@ -34,6 +33,12 @@ describe('manifest handling', function () {
   }
 
   before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+    expect = chai.expect;
+
     appiumHome = await tempDir.openDir();
     manifestPath = path.join(appiumHome, CACHE_DIR_RELATIVE_PATH, 'extensions.yaml');
     const run = runAppiumJson(appiumHome);

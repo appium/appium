@@ -3,8 +3,6 @@ import {createSandbox} from 'sinon';
 import _ from 'lodash';
 import BaseDriver from '../../../../lib';
 
-const expect = chai.expect;
-
 const FIRST_LOGS = ['first', 'logs'];
 const SECOND_LOGS = ['second', 'logs'];
 const SUPPORTED_LOG_TYPES = {
@@ -20,8 +18,14 @@ const SUPPORTED_LOG_TYPES = {
 
 describe('log commands -', function () {
   let sandbox;
-
   let driver;
+  let expect;
+
+  before(async function () {
+    const chai = await import('chai');
+    chai.should();
+    expect = chai.expect;
+  });
 
   beforeEach(function () {
     sandbox = createSandbox();

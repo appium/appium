@@ -8,6 +8,13 @@ import {withMocks, withSandbox, stubLog} from '@appium/test-support';
 import B from 'bluebird';
 
 describe('demo', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe(
     'DirCheck',
     withMocks({fs}, (mocks) => {

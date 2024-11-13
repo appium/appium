@@ -5,6 +5,13 @@ import {tempDir, fs} from '../../lib/index';
 describe('#net', function () {
   let tmpRoot;
 
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   beforeEach(async function () {
     tmpRoot = await tempDir.openDir();
   });

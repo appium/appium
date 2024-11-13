@@ -12,6 +12,13 @@ import B from 'bluebird';
 import {removeColors} from './helper';
 
 describe('general', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe(
     'NodeBinaryCheck',
     withMocks({NodeDetector}, (mocks) => {

@@ -25,6 +25,15 @@ class FakeExpress {
 }
 
 describe('fake plugin', function () {
+  let should;
+
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    should = chai.should();
+  });
+
   it('should exist', function () {
     should.exist(FakePlugin);
   });

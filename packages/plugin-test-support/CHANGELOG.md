@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.43](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.42...@appium/plugin-test-support@0.3.43) (2024-10-15)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.42](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.41...@appium/plugin-test-support@0.3.42) (2024-09-16)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.41](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.40...@appium/plugin-test-support@0.3.41) (2024-08-07)
+
+**Note:** Version bump only for package @appium/plugin-test-support
+
+
+
+
+
+## [0.3.40](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.39...@appium/plugin-test-support@0.3.40) (2024-07-10)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.1.10 ([86f843b](https://github.com/appium/appium/commit/86f843b9e1fc56576d7a08bf95838a58971e98b3))
+* **support:** update dependency teen_process to v2.1.7 ([5226fa8](https://github.com/appium/appium/commit/5226fa897b90e9fec9be3e79a7d48fc7b4e0016d))
+* **support:** update dependency teen_process to v2.2.0 ([06607da](https://github.com/appium/appium/commit/06607da92e93d015747fd6d6d5bdabe1b3ac58d2))
+
+
+
+## [0.3.39](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.38...@appium/plugin-test-support@0.3.39) (2024-06-27)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+
+
+
 ## [0.3.38](https://github.com/appium/appium/compare/@appium/plugin-test-support@0.3.37...@appium/plugin-test-support@0.3.38) (2024-06-11)
 
 **Note:** Version bump only for package @appium/plugin-test-support

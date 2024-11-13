@@ -3,6 +3,94 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/appium/appium/compare/@appium/support@5.1.5...@appium/support@5.1.6) (2024-10-24)
+
+
+### Bug Fixes
+
+* **support:** update definitelytyped ([#20691](https://github.com/appium/appium/issues/20691)) ([846dd52](https://github.com/appium/appium/commit/846dd5288608d886f924d2791291475c956d53f7))
+
+
+
+## [5.1.5](https://github.com/appium/appium/compare/@appium/support@5.1.4...@appium/support@5.1.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* **support:** update dependency form-data to v4.0.1 ([0e443d2](https://github.com/appium/appium/commit/0e443d27995dcbd2b99ec18d8cb6183352d8cd59))
+
+
+
+## [5.1.4](https://github.com/appium/appium/compare/@appium/support@5.1.3...@appium/support@5.1.4) (2024-09-16)
+
+
+### Bug Fixes
+
+* **support:** update dependency axios to v1.7.4 ([d17d022](https://github.com/appium/appium/commit/d17d0222245ab94a78e578c0398734e65a89ba68))
+* **support:** update dependency axios to v1.7.5 ([fedabb1](https://github.com/appium/appium/commit/fedabb1fdc7af10f9e4b06ea23815c4bc7c6bf5e))
+* **support:** update dependency axios to v1.7.7 ([7fe67a2](https://github.com/appium/appium/commit/7fe67a286a15a917ce3b1b47a08e982e65bbd9e4))
+* **types:** update dependency type-fest to v4 ([#20467](https://github.com/appium/appium/issues/20467)) ([482a1f7](https://github.com/appium/appium/commit/482a1f7bbfbf6478ee09bb1668b830ddbf13b143))
+* **types:** update dependency type-fest to v4 ([#20471](https://github.com/appium/appium/issues/20471)) ([9a66f48](https://github.com/appium/appium/commit/9a66f4800141cc86c90d58ca1103bab0066081bc))
+* **types:** update dependency type-fest to v4 ([#20548](https://github.com/appium/appium/issues/20548)) ([5b8cb76](https://github.com/appium/appium/commit/5b8cb76ea3cda75095e79c91539be73feeadf869))
+* **types:** update dependency type-fest to v4.26.0 ([#20511](https://github.com/appium/appium/issues/20511)) ([8f20c97](https://github.com/appium/appium/commit/8f20c973f4a6d3380163b6afd7f113808453a62d))
+
+
+
+## [5.1.3](https://github.com/appium/appium/compare/@appium/support@5.1.2...@appium/support@5.1.3) (2024-08-07)
+
+
+### Bug Fixes
+
+* **support:** Allow temp dir which do not have a parent folder ([#20440](https://github.com/appium/appium/issues/20440)) ([8a307a0](https://github.com/appium/appium/commit/8a307a078b48176dfd7cf7013cd5ca405fc6d870))
+* **support:** Print an empty string if no arguments are provided to a logging function ([#20424](https://github.com/appium/appium/issues/20424)) ([885570e](https://github.com/appium/appium/commit/885570e7caec486765c1baa67131f0b3adf1daf7))
+* **support:** update dependency axios to v1.7.3 ([1ca77c6](https://github.com/appium/appium/commit/1ca77c6dedbff4552aba9c97cf5406c7552d1a01))
+* **support:** update dependency glob to v10.4.5 ([#20365](https://github.com/appium/appium/issues/20365)) ([7159428](https://github.com/appium/appium/commit/715942845b8375f96dcd6c21f0273b2a386b19a3))
+* **support:** update dependency semver to v7.6.3 ([5a9ab97](https://github.com/appium/appium/commit/5a9ab9792402e31d3903fb1a3b08329a67b6a2a2))
+* **types:** update dependency type-fest to v4.22.0 ([#20387](https://github.com/appium/appium/issues/20387)) ([47405dd](https://github.com/appium/appium/commit/47405dda8a5de17c72fb721b0c043e0dd4f6b35a))
+* **types:** update dependency type-fest to v4.23.0 ([#20396](https://github.com/appium/appium/issues/20396)) ([0e8e3c7](https://github.com/appium/appium/commit/0e8e3c71441d02d22f015f08df5223909f5fbb93))
+
+
+
+## [5.1.2](https://github.com/appium/appium/compare/@appium/support@5.1.1...@appium/support@5.1.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* **support:** update dependency teen_process to v2.1.10 ([86f843b](https://github.com/appium/appium/commit/86f843b9e1fc56576d7a08bf95838a58971e98b3))
+* **support:** update dependency teen_process to v2.1.7 ([5226fa8](https://github.com/appium/appium/commit/5226fa897b90e9fec9be3e79a7d48fc7b4e0016d))
+* **support:** update dependency teen_process to v2.2.0 ([06607da](https://github.com/appium/appium/commit/06607da92e93d015747fd6d6d5bdabe1b3ac58d2))
+* **types:** update dependency type-fest to v4.21.0 ([#20335](https://github.com/appium/appium/issues/20335)) ([8894b9a](https://github.com/appium/appium/commit/8894b9adf709646108cc8d6426bbb690550609f2))
+
+
+
+## [5.1.1](https://github.com/appium/appium/compare/@appium/support@5.1.0...@appium/support@5.1.1) (2024-06-28)
+
+
+### Bug Fixes
+
+* **support:** add ? in casae it does not have updateAsyncStorage function deps ([#20304](https://github.com/appium/appium/issues/20304)) ([f3d959e](https://github.com/appium/appium/commit/f3d959ef91714bca24fc09df38a866f48a416214))
+
+
+
+## [5.1.0](https://github.com/appium/appium/compare/@appium/support@5.0.3...@appium/support@5.1.0) (2024-06-27)
+
+
+### Features
+
+* **appium:** Improve context logging ([#20250](https://github.com/appium/appium/issues/20250)) ([f675abc](https://github.com/appium/appium/commit/f675abc27b3e6beac2431cc71afb5fc2c2f70534))
+
+
+### Bug Fixes
+
+* **support:** update dependency @types/uuid to v10 ([#20280](https://github.com/appium/appium/issues/20280)) ([073447a](https://github.com/appium/appium/commit/073447ae4a69f82c284b17d122916746620d4fdf))
+* **support:** update dependency glob to v10.4.2 ([#20268](https://github.com/appium/appium/issues/20268)) ([d5e5186](https://github.com/appium/appium/commit/d5e5186cb7612b64634c98f21532f354f411bbb8))
+* **support:** update dependency teen_process to v2.1.5 ([bc388db](https://github.com/appium/appium/commit/bc388db1116f411f4b241105f5feae30418c9a27))
+* **support:** update dependency teen_process to v2.1.6 ([5412461](https://github.com/appium/appium/commit/541246184dc7521c825ec1902775e681ea6f0db3))
+* **support:** update dependency uuid to v10 ([#20236](https://github.com/appium/appium/issues/20236)) ([57bbb7f](https://github.com/appium/appium/commit/57bbb7f46db2aa0f16bce31c525286a6a94faf25))
+* **types:** update dependency type-fest to v4.20.1 ([#20255](https://github.com/appium/appium/issues/20255)) ([1984553](https://github.com/appium/appium/commit/19845531f558e2b16dfae807c768e1b9f2cab25d))
+
+
+
 ## [5.0.3](https://github.com/appium/appium/compare/@appium/support@5.0.2...@appium/support@5.0.3) (2024-06-11)
 
 **Note:** Version bump only for package @appium/support

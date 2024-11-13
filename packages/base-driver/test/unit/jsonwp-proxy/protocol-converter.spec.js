@@ -7,6 +7,13 @@ import ProtocolConverter, {
 const {MJSONWP, W3C} = PROTOCOLS;
 
 describe('Protocol Converter', function () {
+  before(async function () {
+    const chai = await import('chai');
+    const chaiAsPromised = await import('chai-as-promised');
+    chai.use(chaiAsPromised.default);
+    chai.should();
+  });
+
   describe('getTimeoutRequestObjects', function () {
     let converter;
     before(function () {

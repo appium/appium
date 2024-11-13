@@ -2,11 +2,6 @@ import _ from 'lodash';
 import B from 'bluebird';
 import {createSandbox} from 'sinon';
 
-import chai from 'chai';
-
-const should = chai.should();
-const {expect} = chai;
-
 // wrap these tests in a function so we can export the tests and re-use them
 // for actual driver implementations
 
@@ -31,6 +26,16 @@ export function driverUnitTestSuite(
     let w3cCaps;
     /** @type {import('sinon').SinonSandbox} */
     let sandbox;
+    let expect;
+    let should;
+
+    before(async function () {
+      const chai = await import('chai');
+      const chaiAsPromised = await import('chai-as-promised');
+      chai.use(chaiAsPromised.default);
+      expect = chai.expect;
+      should = chai.should();
+    });
 
     beforeEach(function () {
       sandbox = createSandbox();
@@ -45,8 +50,8 @@ export function driverUnitTestSuite(
       };
     });
     afterEach(async function () {
-      sandbox.restore();
-      await d.deleteSession();
+      sandbox?.restore();
+      await d?.deleteSession();
     });
 
     describe('static property', function () {

@@ -6,8 +6,6 @@ import moment from 'moment';
 export const LEVELS = ['silly', 'verbose', 'debug', 'info', 'http', 'warn', 'error'];
 const MAX_LOG_RECORDS_COUNT = 3000;
 const PREFIX_TIMESTAMP_FORMAT = 'HH-mm-ss:SSS';
-// export a default logger with no prefix
-export const log = getLogger();
 // mock log object is used in testing mode to silence the output
 const MOCK_LOG = {
   unwrap: () => ({
@@ -21,6 +19,8 @@ const MOCK_LOG = {
   }),
   ...(_.fromPairs(LEVELS.map((l) => [l, _.noop]))),
 };
+// export a default logger with no prefix
+export const log = getLogger();
 
 /**
  *

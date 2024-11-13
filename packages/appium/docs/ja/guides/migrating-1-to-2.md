@@ -69,7 +69,7 @@ appium --base-path=/wd/hub
 You can also set server arguments as [Config file](./config.md) properties.
 --->
 
-この設定は[Config file](./config.md)からでも可能です。
+この設定は[Config file](https://appium.io/docs/en/latest/guides/config/)からでも可能です。
 
 
 ### :bangbang: ドライバーのインストール
@@ -78,7 +78,7 @@ You can also set server arguments as [Config file](./config.md) properties.
 When you installed Appium 1.x, all available drivers would be installed at the same time as the main Appium server. This is no longer the case. Simply installing Appium 2.0 (e.g., by `npm i -g appium`), will install the Appium server only, but no drivers. To install drivers, you must instead use the new [Appium extension CLI](../cli/extensions.md). For example, to install the latest versions of the XCUITest and UiAutomator2 drivers, after installing Appium you would run the following commands:
 --->
 
-Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。しかしAppium 2.0では異なります。Appium 2.0のインストール(例えば `npm i -g appium` を実行した時)は単にAppiumサーバーのみをインストールし、ドライバーはインストールされません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース(Appium extension CLI)](../cli/extensions.md)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
+Appium 1.xをインストールしたとき、全ての入手可能なドライバーはAppiumサーバーと合わせてインストールされていました。しかしAppium 2.0では異なります。Appium 2.0のインストール(例えば `npm i -g appium` を実行した時)は単にAppiumサーバーのみをインストールし、ドライバーはインストールされません。ドライバーをインストールするためには新しい[Appium拡張コマンドラインインタフェース(Appium extension CLI)](https://appium.io/docs/en/latest/cli/extensions/)を使わなければいけません。例えば、最新のXCUITestとUiAutomator2ドライバーをインストールする場合、Appiumをインストールしたのちに次のコマンドを実行する必要があります。
 
 ```bash
 appium driver install uiautomator2     # installs the latest driver version
@@ -207,7 +207,7 @@ appium driver update xcuitest
 CLI](../cli/extensions.md) doc)
  -->
 
-(アップデートコマンドの詳しい説明は [Extension CLI](../cli/extensions.md) を確認してください。)
+(アップデートコマンドの詳しい説明は [Extension CLI](https://appium.io/docs/en/latest/cli/extensions/#update) を確認してください。)
 
 <!-- 
 To update the Appium server itself, you do the same thing as in the past: `npm i -g appium`. Now, installing new versions of the Appium server will leave your drivers intact, so the whole process will be much more quick. 
@@ -242,7 +242,7 @@ Up until Appium 2.0, Appium supported both protocols, so that older Selenium/App
 
 Appium 2.0までは、古いSelenium/Appiumクライアントが新しいAppiumサーバーと通信できるように、Appiumは両方のプロトコルをサポートしていました。今後、古いプロトコルのサポートは削除されます。
 
-### :bangbang: _Capabilities_
+### :bangbang: Capabilitiesはベンダープレフィックスを使用しなければならない
 
 <!-- 
 One significant difference between old and new protocols is in the format of capabilities. Previously called "desired capabilities", and now called simply "capabilities", there is now a requirement for a so-called "vendor prefix" on any non-standard capabilities. The list of standard capabilities is given in the [WebDriver Protocol spec](https://www.w3.org/TR/webdriver/#capabilities), and includes a few commonly used capabilities such as `browserName` and `platformName`. 
@@ -291,15 +291,24 @@ On a related note, it will no longer be possible to start Appium sessions using 
 }
 ```
 
-<!-- (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). NB: capabilities that show up in `appium:options` will overwrite capabilities of the same name that show up at the top level of the object. (The new `appium:options` syntax support by cloud providers may vary.) -->
+<!-- (Of course, each client will have a different way of creating structured capabilities like `appium:options` or other ones that you might have seen such as `goog:chromeOptions`). 
+
+!!! note
+
+    Capabilities included in the `appium:options` object will overwrite capabilities of the same
+    name that are used outside of this object. (The `appium:options` syntax support by cloud
+    providers may vary.)-->
 
 (もちろん、`appium:options`のような構造化されたCapabilityや、`goog:chromeOptions`のような構造化されたCapabilityは、クライアントによって作成方法が異なります。)
 
- 注意：`appium:options`で表示されるCapabilityは、オブジェクトのトップレベルで表示される同名のCapabilityを上書きします。(新しい `appium:options` 構文のサポートは、クラウドプロバイダによって異なる場合があります。)
+!!! note
+
+    `appium:options`で表示されるCapabilityは、オブジェクトのトップレベルで表示される同名のCapabilityを上書きします。
+    (新しい `appium:options` 構文のサポートは、クラウドプロバイダによって異なる場合があります。)
 
 <!-- For more information on capabilities, have a look at the [Capabilities Guide](caps.md). -->
 
-ケイパビリティの詳細については、[Capabilities Guide](../../en/guides/caps.md)をご覧ください。
+ケイパビリティの詳細については、[Capabilities Guide](https://appium.io/docs/en/latest/guides/caps/)をご覧ください。
 
 ### :bangbang: 削除されたコマンド
 
@@ -319,7 +328,7 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 <!-- One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin). -->
 
-Appium 2.0の設計目標の1つは、非コア機能を[plugins](../ecosystem/plugins.md)と呼ばれる特別な拡張機能に移行することです。これにより、ダウンロードに余分な時間がかかったり、余分なシステム設定が必要な機能を選択できるようになります。Appiumの様々な画像関連機能(画像比較、画像による要素の検索など)は、[images](https://github.com/appium/appium/tree/master/packages/images-plugin)という公式にサポートされているプラグインに移動されました。
+Appium 2.0の設計目標の1つは、非コア機能を[plugins](https://appium.io/docs/en/latest/ecosystem/plugins/)と呼ばれる特別な拡張機能に移行することです。これにより、ダウンロードに余分な時間がかかったり、余分なシステム設定が必要な機能を選択できるようになります。Appiumの様々な画像関連機能(画像比較、画像による要素の検索など)は、[images](https://github.com/appium/appium/tree/master/packages/images-plugin)という公式にサポートされているプラグインに移動されました。
 
 <!-- If you use these image-related methods, to continue accessing them you will need to do two things. -->
 
@@ -355,7 +364,7 @@ Appium 2.0の設計目標の1つは、非コア機能を[plugins](../ecosystem/p
 
 <!-- The recommended method to provide these options is now via a [configuration file](#tada-configuration-files). -->
 
-これらのオプションを提供するために推奨される方法は、[Configuration File](#tada-configuration-files)を使うことです。
+これらのオプションを提供するために推奨される方法は、[Configuration File](#configuration-files)を使うことです。
 
 <!-- In summary, if you are using a JSON Appium config file, you can simply cut-and-paste the contents of your "nodeconfig" JSON file into the value of the `server.nodeconfig` property.  Any CSV-like files you had previously provided for `--allow-insecure` and `--deny-insecure` become the values of the `server.allow-insecure` and `server.deny-insecure` properties in the Appium config files (respectively); both are arrays of strings. -->
 
@@ -423,7 +432,7 @@ a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
 Appium extensionの作者は、独自のサーバー・プラグインを開発できるようになりました。
 Appium HTTPサーバー自体の動作方法を調整することもできます。
 プラグインの詳細については、新しい[Appium Introduction](../intro/index.md)をお読みください。プラグインのビルドに興味がありますか？
-プラグインを作ることに興味がありますか？ [プラグインの構築](../../en/developing/build-plugins.md) ガイドをチェックしてください。
+プラグインを作ることに興味がありますか？ [プラグインの構築](https://appium.io/docs/en/latest/developing/build-plugins/) ガイドをチェックしてください。
 
 ### :tada: どこからでもドライバーとプラグインをインストール
 
@@ -434,8 +443,8 @@ local filesystem. Interested in building a driver? Check out the [Building
 Drivers](../developing/build-drivers.md) guide. -->
 
 もはやAppium付属のドライバーや、Appiumチームが知っているドライバーに限定されることはありません！Appiumエクステンションの作者は、カスタムドライバを開発できるようになりました。
-Appiumの[Extension CLI](../../en/cli/extensions.md)経由で、`npm`、`git`、GitHub、またはローカルのファイルシステムからダウンロードまたはインストールできます。
-ドライバのビルドに興味がありますか？ [ドライバのビルド](../../en/developing/build-drivers.md) ガイドを参照してください。
+Appiumの[Extension CLI](https://appium.io/docs/en/latest/cli/extensions/)経由で、`npm`、`git`、GitHub、またはローカルのファイルシステムからダウンロードまたはインストールできます。
+ドライバのビルドに興味がありますか？ [ドライバのビルド](https://appium.io/docs/en/latest/developing/build-drivers/) ガイドを参照してください。
 
 ### :tada: Configuration Files
 
@@ -444,7 +453,7 @@ nearly all arguments which Appium 1 required to be provided on the CLI are now a
 via a configuration file. Configuration files may be in JSON, JS, or YAML format. See the
 [Config Guide](./config.md) for a full explanation. -->
 
-Appiumは、コマンドライン引数に加え、_設定ファイル_ もサポートするようになりました。つまりAppium 1がCLIで提供することを要求していたほぼすべての引数が、設定ファイルを介して表現できるようになりました。設定ファイルは JSON, JS, YAML 形式があります。設定ファイルは [Config Guide](../../en/guides/config.md) を参照してください。
+Appiumは、コマンドライン引数に加え、_設定ファイル_ もサポートするようになりました。つまりAppium 1がCLIで提供することを要求していたほぼすべての引数が、設定ファイルを介して表現できるようになりました。設定ファイルは JSON, JS, YAML 形式があります。設定ファイルは [Config Guide](https://appium.io/docs/en/latest/guides/config/) を参照してください。
 
 ## クラウド・プロバイダーに関する特記事項
 
@@ -460,4 +469,9 @@ that end users may wish to use. -->
 provider capabilities](./caps.md#special-notes-for-cloud-providers) in order to support user needs in
 an industry-compatible way! -->
 
-クラウドプロバイダーには、業界と互換性のある方法でユーザーのニーズをサポートするために、私たちの[クラウドプロバイダーの能力に関する推奨事項](../../en/guides/caps.md#special-notes-for-cloud-providers) を十分に読み、理解することをお勧めします！
+クラウドプロバイダーには、業界と互換性のある方法でユーザーのニーズをサポートするために、私たちの[クラウドプロバイダーの能力に関する推奨事項](https://appium.io/docs/en/latest/guides/caps/#special-notes-for-cloud-providers) を十分に読み、理解することをお勧めします！
+
+<!-- 
+for japanese translator
+Links to documents not translated into Japanese refer to the English version.
+ -->

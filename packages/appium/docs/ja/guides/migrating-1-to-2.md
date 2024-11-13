@@ -1,6 +1,3 @@
-<!---Current latest commit hash in the original English documentation is e4dfa52 --->
-
-
 ---
 title: Appium 1.xからAppium 2.xへ移行する
 ---

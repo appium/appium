@@ -1,23 +1,19 @@
 ---
-title: Appium's Config System
+title: Appium的配置系统
 ---
 
-Appium 2 supports [configuration files](../guides/config.md). A configuration file is intended to
-have (nearly) 1:1 parity with command-line arguments. An end user can supply Appium 2 with
-a configuration file, CLI args, or both (the args have precedence over the config file).
+Appium2支持[配置文件](../guides/config.md)。配置文件是与命令行参数保持（几乎）一一对应的关系。
+用户可以为Appium2提供配置文件、命令行参数，或者两者都提供（此时命令行参数的优先级高于配置文件）。
 
-This document will be a technical overview of how the configuration system works. It is intended
-for Appium contributors, but will also explain the system's fundamental features.
+本文档将对配置系统的工作原理进行技术概述。它旨在为Appium的贡献者提供指导，但同时也会解释该系统的基础功能。
 
-## Reading a Config File
+## 读取配置文件
 
-A config file is a JSON, JavaScript, or YAML file which can be validated against a schema. By
-default, this file will be named `.appiumrc.{json,js,yaml,yml}` and should be in the root of the
-project which depends upon `appium`. Other filenames and locations are supported via the `--config
-<file>` flag. For obvious reasons, the `config` argument is disallowed within config files.
+配置文件是一个JSON、JavaScript或YAML文件，可以根据架构进行验证。
+默认情况下，此文件将被命名为`.appiumrc.{json,js,yaml,yml}`，并位于依赖`appium`的项目的根目录中。
+通过`--config <file>`标志，还支持其他文件名和位置。出于显而易见的原因，不允许在配置文件中使用`config`参数。
 
-In lieu of a separate file, configuration can be embedded in a project's `package.json` using the
-`appiumConfig` property, e.g.,:
+除了单独的文件外，配置还可以嵌入到项目的`package.json`文件中，使用`appiumConfig`属性。例如：
 
 ```json
 {
@@ -29,196 +25,160 @@ In lieu of a separate file, configuration can be embedded in a project's `packag
 }
 ```
 
-When an Appium server is started via the `appium` executable, the `init` function in `lib/main.js`
-will call into `lib/config-file.js` to load and/or search for a configuration file and in
-`package.json`.
+当通过`appium`可执行文件启动Appium服务器时，`lib/main.js`中的`init`函数将调用`lib/config-file.js`加载或搜索配置文件和`package.json`。
 
-!!! note
+!!! 注意
 
-    It is not an error if configuration isn't found!
+    如果未找到配置文件，这并不会导致错误！
 
-The [`lilconfig`](https://npm.im/lilconfig) package provides the search & load functionality; refer
-to its documentation for more information about the search paths. Additionally, Appium provides
-support for config files written in YAML via the package [`yaml`](https://npm.im/yaml).
+[`lilconfig`](https://npm.im/lilconfig)包提供了搜索和加载配置文件的功能；有关搜索路径的更多信息，请参考其文档。
+此外，Appium通过[`yaml`](https://npm.im/yaml)包支持编写YAML格式的配置文件。
 
-If a config file is found and successfully [validated](#validation), the result will be merged with
-a set of defaults and any additionall CLI arguments. CLI arguments have precedence over config
-files, and config files have precedence over defaults.
+当找到并成功[验证](#_2)配置文件后，其结果将与默认设置以及额外的命令行参数进行合并。
+在这个合并过程中，命令行参数的优先级高于配置文件，而配置文件的优先级则高于默认设置。
 
-## Validation
+## 验证
 
-The same system is used for _both_ validation of config files _and_ command-line arguments.
+该系统同时用于配置文件和命令行参数的验证。
 
-The package [`ajv`](https://npm.im/ajv) provides validation. Of course, to make `ajv` validate
-anything, it must be provided a _schema_.
+[ajv](https://npm.im/ajv)包提供了验证功能。当然，为了让`ajv`进行验证，必须为其提供一个模式。
 
-The _base_ schema is a [JSON Schema
-Draft-7](https://json-schema.org/draft/2020-12/json-schema-core.html)-compliant object exported by
-`lib/schema/appium-config-schema.js`. This schema defines configuration _native to Appium_, and
-only concerns its behavior as a _server_; it does not define configuration for any other
-functionality (e.g., the `plugin` or `driver` subcommands).
+基础模式是一个符合[JSON Schema Draft-7](https://json-schema.org/draft/2020-12/json-schema-core.html)标准的对象，
+由`lib/schema/appium-config-schema.js`文件导出。这个模式定义了Appium原生的配置，并且仅关注其作为服务器的行为；它并没有定义任何其他功能（例如插件或驱动程序子命令）的配置。
 
-!!! warning
+!!! 警告
 
-    Note that this file is the _base_ schema; this will become painfully relevant.
+    请注意，这个文件是基础模式文件；这一点在后续操作中会变得至关重要。
 
-This file is is _not_ a JSON file, because a) JSON is painful to work with for humans, b) is
-especially reviled by @jlipps, and c) `ajv` accepts objects, not JSON files.
+此文件不是JSON文件，因为（1）JSON对人类来说很难使用，（2）@jlipps特别讨厌它，（3）`ajv`接受对象，而不是JSON文件。
 
-It is more straightforward to explain how config files are validated, so we'll start there.
+解释配置文件是如何被验证的会更加直接明了，所以我们从这里开始。
 
-### Validating Config Files
+### 验证配置文件
 
-When a config file is found (`lib/config-file.js`), it will call the `validate` function exported
-from `lib/schema/schema.js` with the contents of the config file. In turn, this asks `ajv` to
-validate the data against the schema that Appium has provided it.
+当发现一个配置文件（`lib/config-file.js`），它会调用从`lib/schema/schema.js`导出的`validate`函数，并将配置文件的内容作为参数传递给该函数。
+接着，validate函数会请求`ajv`根据Appium提供的模式来验证这些数据。
 
-If the config file is invalid, errors will be generated to be displayed to the user. Finally, the
-`init` function will detect these errors, display them, and the process will exit.
+如果配置文件无效，ajv会生成错误，这些错误随后会被显示给用户。最后，`init`函数会检测到这些错误，将它们显示出来，并且整个进程会退出。
 
-I hope that made sense, because this is the easy part.
+我希望已经解释清楚了，因为这部分相对来说是比较容易理解的。
 
-### Validating CLI Arguments
+### 验证CLI参数
 
-As mentioned earlier, the same system is used for validating both config files and CLI arguments.
+正如之前提到的，相同的系统被用于验证配置文件和命令行参数。
 
-Totally not judging, but Appium uses [`argparse`](https://npm.im/argparse) for its CLI argument
-parsing. This package, and others like it, provides an API to define the arguments a command-line
-Node.js script accepts, and will ultimately return an object representation of the user-supplied
-arguments.
+这里并没有任何评判的意思，但Appium使用[`argparse`](https://npm.im/argparse)来解析命令行参数。
+这个包以及其他类似的包提供了一个API，用于定义命令行Node.js脚本接受的参数，并最终返回一个表示用户提供的参数的对象。
 
-Just as the schema defines what's allowed in a config file, it also defines what's allowed on the
-command-line.
+就像模式定义了配置文件中允许的内容一样，它也定义了命令行上允许的内容。
 
-#### Defining CLI Arguments via Schema
+#### 通过模式定义CLI参数
 
-CLI arguments must be _defined_ before their values can be validated.
+在验证命令行参数的值之前，必须先定义这些参数。
 
-A JSON schema isn't a natural fit for defining CLI args--it needs some grease to make it work--but
-it's close enough that we can do so with an adapter and some custom metadata.
+JSON模式并不是定义CLI参数的天然选择，它需要一些额外的处理才能使其适用，
+但它已经足够接近，以至于我们可以通过一个适配器和一些自定义元数据来实现这一点。
 
-In `lib/cli/parser.js`, there's a wrapper around `argparse`'s `ArgumentParser`; it's called (wait
-for it)... `ArgParser`. The wrapper exists because we're doing some custom things with `argparse`,
-but is has nothing to do with the schema directly.
+在`lib/cli/parser.js`中，有一个围绕`argparse`库的`ArgumentParser`的包装器；它被称为`ArgParser`。
+这个包装器存在是因为我们对`argparse`做了一些自定义处理，但它与模式本身没有直接关系。
 
-An `ArgParser` instance is created and its `parseArgs()` method is called with the raw CLI
-arguments. The definition of the accepted arguments comes from `lib/cli/args.js` in part--here, all
-of the arguments _not_ intended for use with the `server` subcommand are hard-coded (e.g., the
-`driver` subcommand and _its_ subcommands). `args.js` also contains a function `getServerArgs()`,
-which in turn calls into `toParserArgs` in `lib/schema/cli-args.js`. `lib/schema/cli-args.js` can
-be considered the "adapter" layer between `argparse` and the schema.
+创建一个`ArgParser`实例，并用原始的CLI参数调用了它的`parseArgs()`方法，在`lib/cli/args.js`里定义了可以接受的参数。
+在这里，所有不打算与`server`子命令一起使用的参数都是硬编码的（例如，`driver`子命令及其子命令）。
+`args.js`还包含一个`getServerArgs()`函数，该函数转而调用`lib/schema/cli-args.js`中的`toParserArgs`。
+`lib/schema/cli-args.js`可以视为`argparse`和模式之间的“适配器”层。
 
-`toParserArgs` uses the `flattenSchema` function exported by `lib/schema/schema.js`, which
-"squashes" the schema into a key/value representation. Then, `toParserArgs` iterates over each
-key/value pair and "converts" it into a suitable `ArgumentOption` object for final handoff to
-`ArgParser`.
+`toParserArgs`使用了由`lib/schema/schema.js`导出的`flattenSchema`函数，该函数将模式“压平”为键值对表示。
+然后，`toParserArgs`遍历每个键值对，并将其“转换”为适合最终传递给`ArgParser`的`ArgumentOption`对象。
 
-This adapter (`cli-args.js`) is where most of the mess is hidden; let's explore this rat's nest
-a bit further.
+这个适配器（`cli-args.js`）是隐藏大部分混乱的地方；让我们进一步探索这个错综复杂的环境。
 
-##### CLI & Schema Incongruities
+##### CLI和模式不一致
 
-The conversion algorithm (see function `subSchemaToArgDef` in `lib/schema/cli-args.js`) is mostly
-just hacks and special cases neatly packed into a function. Things that don't cleanly map from
-`argparse` to a JSON schema include, but are not limited to:
+转换算法（见`lib/schema/cli-args.js`中的`subSchemaToArgDef`函数）
+主要就是将各种技巧和特殊情况巧妙地打包到一个函数中。
+有些事情不能从`argparse`清晰地映射到JSON模式，包括但不限于：
 
-- A schema cannot natively express "store the value of `--foo=<value>` in a property called `bar`" in a schema (this corresponds to the `ArgumentOption['dest']` prop).
-- A schema cannot natively express aliases; e.g., `--verbose` can also be `-v`
-- A schema `enum` is not restricted to multiple types, but `argparse`'s equivalent `ArgumentOption['choices']` prop _is_
-- A schema does not know about `argparse`'s concept of "actions" (note that Appium is not currently using custom actions--though it did, and it could again).
-- `argparse` has no native type for `email`, `hostname`, `ipv4`, `uri` etc., and the schema does
-- Schema validation only _validates_, it does not perform translation, transformation, or coercion (mostly). `argparse` allows this.
-- Schemas allow the `null` type, for whatever reason. Ever pass `null` on the CLI?
-- `argparse` does not understand anything other than primitives; no objects, arrays, etc., and certainly not arrays of a particular type.
+- 模式不能原生的表达“将`--foo=<value>`的值存储在一个名为`bar`的属性中”（这对应于`ArgumentOption['dest']`属性）。
+- 模式不能原生的表达别名，例如`--verbose`也可以是`-v`。
+- 模式的枚举不限制于多种类型，但`argparse`中对应的`ArgumentOption['choices']`属性是限制的。
+- 模式不知道`argparse`中的"动作"概念（注意Appium目前没有使用自定义动作——尽管它曾经使用过，并且可能再次使用）。
+- `argparse`没有原生的`email`、`hostname`、`ipv4`、`uri`等类型，而模式有。
+- 模式验证只进行验证，不执行翻译、转换或强制转换（大部分情况下），`argparse`允许这样做。
+- 出于某种原因模式允许`null`类型，你曾在命令行上传递过`null`吗？
+- `argparse`除了基本类型之外，不理解其他任何内容，不理解对象、数组等，当然也不理解特定类型的数组。
+- 
+上述所有情况以及其他情况均由适配器处理。
 
-All of the above cases and others are handled by the adapter.
+!!! 警告
 
-!!! warning
+    适配器中的一些决策是通过抛硬币决定的。如果你好奇为什么某些事情会是这样，那很可能是因为它不得不这样做。
 
-    Some decisions made in the adapter were arrived at via coin toss. If you are curious about why
-    something is the way it is, it's likely that it had to do _something_.
+让我们更仔细地看看类型的处理。
 
-Let's look more closely at handling types.
+#### 通过`ajv`处理参数类型
 
-#### Argument Types via `ajv`
+虽然`argparse`允许使用者通过API定义各种参数的类型（例如，字符串、数字、布尔标志等），
+但Appium大多避免使用这些内置类型。为什么会这样呢？原因如下：
 
-While `argparse` allows consumers, via its API, to define the _type_ of various arguments (e.g.,
-a string, number, boolean flag, etc.), Appium mostly avoids these built-in types. _Why is that?_
-Well:
+1. 我们已经知道参数的类型，因为我们在模式中已经定义了它。
+2. `ajv`提供了针对模式的验证。
+3. 模式允许对类型、允许的值等进行更丰富的表达，这些是`argparse`原生无法提供的。
+4. 模式的表达能力允许提供更好的错误消息。
 
-1. We already know the type of an argument, because we've defined it in a schema.
-2. `ajv` provides validation against a schema.
-3. A schema allows for greater expression of types, allowed values, etc., than `argparse` can provide natively.
-4. The expressiveness of a schema allows for better error messaging.
+因此，适配器避开了`argparse`的内置类型（参见`ArgumentOption['type']`允许的字符串值），
+而是滥用将函数作为类型提供的能力。例外情况是布尔标志，它们没有`type`，而是有`action: 'store_true'`。
+至于为什么会这样，可能永远没人知道。
 
-To that end, the adapter eschews `argparse`'s built-in types (see allowed string values of
-`ArgumentOption['type']`) and instead abuses the ability to provide a _function_ as a `type`. The
-exception is _boolean_ flags, which do not have a `type`, but rather `action: 'store_true'`. The
-world may never know why.
+##### 类型作为函数
 
-##### Types as Functions
+当`type`是一个函数时，这个函数同时执行验证和强制转换（如果需要）。那么这些函数是什么呢？
 
-When a `type` is a function, the function performs both validation _and_ coercion (if necessary).
-So what are these functions?
+> 注意：如果属性类型是布尔值，那么`ArgumentOption`中的`type`会被省略（因此不是一个函数），
+> 但会提供了一个`action`属性，值为`store_true`。是的，这很奇怪。我不知道为什么。
 
-> Note: `type` is _omitted_ (and thus _not_ a function) from the `ArgumentOption` if the property
-> type is `boolean`, and is instead provided an `action` property of `store_true`. Yes, this is
-> weird. No, I don't know why.
+这取决于模式。但一般来说，我们会创建一个函数管道，每个函数都对应于模式中的一个关键字。
+让我们以`port`参数为例，与其询问操作系统Appium运行的用户可以绑定到哪些端口，
+不如预期这个参数是一个介于1和65535之间的整数。
+这实际上是由两个函数组成的管道，我们将它们组合在一起：
 
-Well... it depends upon the schema. But generally speaking, we create a _pipeline_ of functions,
-each corresponding to a keyword in the schema. Let's take the example of the `port` argument. In
-lieu of asking the OS which ports the `appium`-running user can bind to, this argument is expected
-to be an integer between 1 and 65535. This turns out to be two functions which we combine into
-a pipeline:
+1. 如果可能，将值转换为整数。因为`process.argv`中的每个值都是字符串，所以如果我们想要一个数字，就必须进行转换。
+2. 使用`ajv`根据端口的模式验证整数。模式允许我们通过`minimum`和`maximum`关键字定义范围。有关其工作原理的更多信息，请查阅相关文档。
 
-1. Convert the value to an integer, if possible. Because _every value in `process.argv` is a string_, we must coerce if we want a number.
-2. Use `ajv` to validate the integer against the schema for `port`. A schema lets us define a range via the `minimum` and `maximum` keywords. Read more about how this works in
+就像配置文件验证一样，如果检测到错误，Appium会友好地告诉用户，并附带一些帮助文本然后退出进程。
 
-Much like the config file validation, if errors are detected, Appium nicely tells the end-user and
-the process exits w/ some help text.
+对于其他本身就是非基本类型的参数，事情就没那么简单了。
 
-For other arguments which are naturally of non-primitive types, things are not so straightforward.
+##### 转换器
 
-##### Transformers
+还记得`argparse`无法理解数组吗？但如果表达一个值最直观的方式实际上是一个数组怎么办？
 
-Remember how `argparse` doesn't understand arrays? What if the most ergonomic way to express
-a value is, in fact, an array?
+虽然Appium可以在配置文件中接受数组，但在命令行界面上却不能。
+Appium可以接受一个逗号分隔的字符串（CSV行），或者是一个字符串文件路径，
+指向包含分隔列表的文件。无论哪种方式，当值从参数解析器中输出时，它都应该是一个数组。
 
-Well, Appium can't accept an array on the CLI, even though it can accept one in the config file.
-But Appium _can_ accept a comma-delimited string (a CSV "line"). Or a string filepath referring to
-a file which _contains_ a delimited list. Either way: by the time the value gets out of the
-argument parser, it should be an array.
+如上所述，JSON模式的原生功能无法表达这一点。然而可以定义一个自定义关键字，
+Appium可以检测并相应地处理它，这就是Appium所做的。
 
-And as mentioned above, the native facilities of a JSON schema cannot express this. However, it's
-possible to define a _custom keyword_ which Appium can then detect and handle accordingly. So
-that's what Appium does.
+在这种情况下，使用`ajv`注册了一个自定义关键字`appiumCliTransformer`。
+在编写本文时，`appiumCliTransformer`的值可以是`csv`或`json`。
+在基础模式文件`appium-config-schema.js`中，如果希望这种行为发生，
+Appium会使用`appiumCliTransformer: 'csv'`。
 
-In this case, a custom keyword `appiumCliTransformer` is registered with `ajv`. The value of
-`appiumCliTransformer` (at the time of this writing) can be `csv` or `json`. In the base schema
-file, `appium-config-schema.js`, Appium uses `appiumCliTransformer: 'csv'` if this behavior is
-desired.
+!!! 注意
 
-!!! note
+    在模式中定义的任何类型为数组的属性都会自动使用csv转换器。同样，类型为对象的属性将使用json转换器。
+    可以想象，某些情况下数组可能想要使用JSON转换器，但除此之外，
+    在类型为数组或对象的属性上使用`appiumCliTransformer`关键字并不是严格必要的。
+    
+适配器（还记得适配器吗？）创建了一个管道函数，其中包括一个特殊的“CSV转换器”，转换器在`lib/schema/cli-transwers.js`中定义，
+并将此函数作为值传递给`argparse`的`ArgumentOption`的`type`属性，在这种情况下，模式中的`type: 'array'`将被忽略。
 
-    Any property defined in the schema having type `array` will _automatically_ uses the `csv`
-    transformer. Likewise, a property having type `object` will use the `json` transformer. It's
-    conceivable that `array` may want to use the `json` transformer, but otherwise, the presence of
-    the `appiumCliTransformer` keyword on an `array`-or-`object`-typed property is not stricly
-    necessary.
+!!! 注意
 
-The adapter (remember the adapter?) creates a pipeline function including a special "CSV
-transformer" (transformers are defined in `lib/schema/cli-transformers.js`), and uses this function
-as the `type` property of the `ArgumentOption` passed into `argparse`. In this case, the `type:
-'array'` in the schema is ignored.
+    配置文件不需要执行任何复杂的值转换，因为它自然允许Appium准确定义它所期望的内容。
+    因此Appium不会对配置文件值进行后期处理。
 
-!!! note
-
-    The config file doesn't _need_ to perform any complex transformation of values, because it
-    naturally allows Appium to define exactly what it expects. So Appium does no post-processing of
-    config file values.
-
-Properties that do not need this special treatment use `ajv` directly for validation. How this
-works requires some explanation, so that's next.
+不需要这种特殊处理的属性直接使用`ajv`进行验证。这是如何工作的一些解释，所以接下来就是这样。
 
 #### Validation of Individual Arguments via `ajv`
 
@@ -226,7 +186,7 @@ When we think of a JSON schema, we tend to think, "I have this JSON file and I w
 against the schema". That's valid, and in fact Appium does just that with config files! However,
 Appium does not do this when validating arguments.
 
-!!! note
+!!! 注意
 
     During implementation, I was tempted to mash all of the arguments together into
     a config-file-like data structure and then validate it all at once. I think that would have
@@ -277,7 +237,7 @@ about this `my-schema.json`, then we can call its `getSchema(ref)` method (which
 property, but is a misnomer nonetheless) to get a validation function; `validate(value, ref)` in
 `schema.js` calls this validation function.
 
-!!! note
+!!! 注意
 
     The schema spec says a schema author can supply an explicit `$id` keyword to override this;
     it's unsupported by Appium at this time. If needed, extension authors must carefully use `$ref`
@@ -358,7 +318,7 @@ The corresponding property in a config file would be
 The naming convention described above avoids problems of one extension type having a name conflict
 with a different extension type.
 
-!!! note
+!!! 注意
 
     While an extension can provide aliases via `appiumCliAliases`, "short" flags are disallowed,
     since all arguments from extensions are prefixed with `--<extension-type>-<extension-name>-`.
@@ -412,7 +372,7 @@ extension schemas are kept separately, but the _references_ are added to the sch
 ultimately added to `ajv`. This works because an `Ajv` instance understands references _from_ any
 schema it knows about _to_ any schema it knows about.
 
-!!! note
+!!! 注意
 
     This makes it impossible to provide a complete static schema for Appium _and_ the installed
     extensions (as of Nov 5 2021). A static `.json` schema _is_ generated from the base (via a Gulp

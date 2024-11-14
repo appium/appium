@@ -265,7 +265,7 @@ One significant difference between old and new protocols is in the format of cap
 These standard capabilities continue to be used as-is. All other capabilities must include a "vendor prefix" in their name. A vendor prefix is a string followed by a colon, such as `appium:`. Most of Appium's capabilities go beyond the standard W3C capabilities and must therefore include vendor prefixes (we recommend that you use `appium:` unless directed otherwise by documentation). For example:
 -->
 
-これらの標準として組み込まれているcapabilitiesはそのまま使用され続けます。それ以外のすべてのcapabilitiesは、その名前に"vendor prefix"を 含まなければなりません。"vendor prefix"は、`appium:` のように、コロンが続く文字列です。Appiumのほとんどの機能は、標準的なW3Cの機能を超えているため、"vendor prefix"を含める必要があります(ドキュメントで指示がない限り、`appium:` を使用することを推奨します)。
+これらの標準として組み込まれているcapabilitiesはそのまま使用され続けます。それ以外のすべてのcapabilitiesは、その名前に"vendor prefix"を 含まなければなりません。"vendor prefix"は、`appium:` のように、コロンが続く文字列です。Appiumのほとんどのcapabilitiesは、標準として組み込まれているcapabilitiesではないため、"vendor prefix"を含める必要があります(ドキュメントで指示がない限り、`appium:` を使用することを推奨します)。
 例えば、
 
 - `appium:app`
@@ -277,8 +277,8 @@ This requirement may or may not be a breaking change for your test suites when t
 -->
 
 この要件は、Appium 2.0をターゲットにしているテストスイートにとって破壊的な変更になるかもしれませんし、ならないかもしれません。
-アップデートされたAppiumクライアント(少なくとも Appium チームによってメンテナンスされているもの)を使用している場合、クライアントは自動的にすべての必要な機能に `appium:` 接頭辞を追加します。また、新しいバージョンの[Appium Inspector](https://github.com/appium/appium-inspector)もこれを行います。クラウドベースのAppiumプロバイダもこれを行うかもしれません。
-そのため、もしあなたが使っていcapabilitiesにベンダープレフィックスがない旨のメッセージが表示された場合は、この方法で問題を解決することができます。
+アップデートされたAppiumクライアント(少なくとも Appium チームによってメンテナンスされているもの)を使用している場合、クライアントは自動的にすべての必要なcapabilitiesに `appium:` 接頭辞を追加します。新しいバージョンの[Appium Inspector](https://github.com/appium/appium-inspector)も同様です。クラウドベースのAppiumプロバイダもこれを行うかもしれません。
+そのため、もしあなたが使っていcapabilitiesに vendor prefix がない旨のメッセージが表示された場合は、この方法で問題を解決することができます。
 
 <!--
 On a related note, it will no longer be possible to start Appium sessions using WebDriver clients that don't support the W3C protocol (see below for a comment to this effect for the WD library).
@@ -288,7 +288,7 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 <!-- To make everyone's lives a bit easier, we've also introduced the option of wrapping up all Appium-related capabilities into one object capability, `appium:options`. You can bundle together anything that you would normally put an `appium:` prefix on into this one capability. Here's an example (in raw JSON) of how you might start an iOS session on the Safari browser using `appium:options`: -->
 
-みなさんの活動を少し楽にするために、Appiumに関連する全てのCapabilitiesを一つのオブジェクトケイパビリティ `appium:options` にまとめるオプションも導入しました。通常、`appium:`プレフィックスを付けるものを、この1つのCapabilityにまとめることができます。以下は `appium:options` を使ってSafariブラウザ上でiOSセッションを開始する例(JSON)です：
+みなさんの活動を少し楽にするために、Appiumに関連する全てのcapabilitiesを一つのオブジェクトにまとめるオプション(`appium:options`)も導入しました。通常、`appium:`接頭辞を付けるものを、この1つのcapabilityにまとめることができます。以下は `appium:options` を使ってSafariブラウザ上でiOSセッションを開始する例(JSON)です：
 
 ```json
 {
@@ -310,11 +310,11 @@ On a related note, it will no longer be possible to start Appium sessions using 
     name that are used outside of this object. (The `appium:options` syntax support by cloud
     providers may vary.)-->
 
-(もちろん、`appium:options`のような構造化されたCapabilityや、`goog:chromeOptions`のような構造化されたCapabilityは、クライアントによって作成方法が異なります。)
+(もちろん、`appium:options`のような構造化されたcapabilityや、`goog:chromeOptions`のような構造化されたcapabilityは、クライアントによって作成方法が異なります。)
 
 !!! note
 
-    `appium:options`で表示されるCapabilityは、オブジェクトのトップレベルで表示される同名のCapabilityを上書きします。
+    `appium:options`で表示されるcapabilityは、オブジェクトのトップレベルで表示される同名のcapabilityを上書きします。
     (新しい `appium:options` 構文のサポートは、クラウドプロバイダによって異なる場合があります。)
 
 <!-- For more information on capabilities, have a look at the [Capabilities Guide](caps.md). -->
@@ -325,7 +325,7 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 <!-- In addition to commands which have been moved to driver implementations, commands which were a part of the old JSON Wire Protocol and not a part of the W3C Protocol are no longer available: -->
 
-ドライバの実装に移行したコマンドに加え、旧JSON Wireプロトコルの一部であり、W3Cプロトコルの一部ではなかったコマンドは使用できなくなりました：
+ドライバの実装に移行したコマンドに加え、旧JSON Wireプロトコルの一部であり、W3Cプロトコルの一部ではないコマンドは使用できなくなりました：
 
 <!-- - TODO (these commands are being identified and removed and will be updated here when complete) -->
 
@@ -333,19 +333,19 @@ On a related note, it will no longer be possible to start Appium sessions using 
 
 <!-- If you use a modern Appium or Selenium client, you should no longer have access to these anyway, so any breaking changes should appear on the client side first and foremost. -->
 
-最新のAppiumやSeleniumクライアントを使用している場合、これらにアクセスすることはできないため、どのような変更もまず第一にクライアント側に現れるはずです。
+最新のAppiumやSeleniumクライアントを使用している場合、これらにアクセスすることはできないため、どのような破壊的変更もまずはクライアント側に現れるはずです。
 
 ### :bangbang: 画像解析機能をプラグインに移行
 
 <!-- One of the design goals for Appium 2.0 is to migrate non-core features into special extensions called [plugins](../ecosystem/plugins.md). This allows people to opt into features which require extra time to download or extra system setup. The various image-related features of Appium (image comparison, finding elements by image, etc...) have been moved into an officially supported plugin called [images](https://github.com/appium/appium/tree/master/packages/images-plugin). -->
 
-Appium 2.0の設計目標の1つは、非コア機能を[plugins](https://appium.io/docs/en/latest/ecosystem/plugins/)と呼ばれる特別な拡張機能に移行することです。これにより、ダウンロードに余分な時間がかかったり、余分なシステム設定が必要な機能を選択できるようになります。Appiumの様々な画像関連機能(画像比較、画像による要素の検索など)は、[images](https://github.com/appium/appium/tree/master/packages/images-plugin)という公式にサポートされているプラグインに移動されました。
+Appium 2.0の設計目標の1つは、非コア機能を[plugins](https://appium.io/docs/en/latest/ecosystem/plugins/)と呼ばれる特別な拡張機能に移行することです。これにより、ダウンロード時間やシステム設定が追加で必要となる機能を選択して利用できるようになります。Appiumの様々な画像関連機能(画像比較、画像による要素の検索など)は、[images](https://github.com/appium/appium/tree/master/packages/images-plugin)という公式にサポートされているプラグインに移動されました。
 
 <!-- If you use these image-related methods, to continue accessing them you will need to do two things. -->
 
 これらの画像関連メソッドを使用する場合、以下の2つのことを行う必要があります。
 
-1. Install the plugin: `appium plugin install images`
+<!-- 1. Install the plugin: `appium plugin install images` -->
 <!-- 2. Ensure you start the Appium server with access to run the plugin by including it in the list of plugins designated on the command line, e.g., `appium --use-plugins=images` -->
 
 1. プラグインをインストールする： `appium plugin install images`.
@@ -413,7 +413,7 @@ Appium を起動するためにランダムな空きポートを見つけたい�
 
 <!-- For many years, some of Appium's authors maintained the [WD](https://github.com/admc/wd) client library. This library has been deprecated and has not been updated for use with the W3C WebDriver protocol. As such, if you're using this library you'll need to move to a more modern one. We recommend [WebdriverIO](https://webdriver.io). -->
 
-何年もの間、Appiumの作者の一部は[WD](https://github.com/admc/wd)クライアントライブラリを保守していました。このライブラリは非推奨であり、W3C WebDriverプロトコルで使用するために更新されていません。そのため、このライブラリを使用している場合は、より最新のものに移行する必要があります。[WebdriverIO](https://webdriver.io)をお勧めします。
+何年もの間、Appiumの作者の一部は[WD](https://github.com/admc/wd)クライアントライブラリを保守していました。このライブラリは非推奨であり、W3C WebDriverプロトコルで使用するためには更新されていません。そのため、このライブラリを使用している場合は、より最新のものに移行する必要があります。[WebdriverIO](https://webdriver.io)をお勧めします。
 
 ### :warning: Appium InspectorがAppium Desktopから分離
 
@@ -442,7 +442,7 @@ a plugin? Check out the [Building Plugins](../ecosystem/build-plugins.md) guide.
 
 Appium extensionの作者は、独自のサーバー・プラグインを開発できるようになりました。
 Appium HTTPサーバー自体の動作方法を調整することもできます。
-プラグインの詳細については、新しい[Appium Introduction](../intro/index.md)をお読みください。プラグインのビルドに興味がありますか？
+プラグインの詳細については、新しい[Appium Introduction](../intro/index.md)をお読みください。
 プラグインを作ることに興味がありますか？ [プラグインの構築](https://appium.io/docs/en/latest/developing/build-plugins/) ガイドをチェックしてください。
 
 ### :tada: どこからでもドライバーとプラグインをインストール
@@ -474,7 +474,7 @@ cloud-based Appium host or an internal service. At the end of the day, the maint
 server is responsible for installing and making available the various Appium drivers and plugins
 that end users may wish to use. -->
 
-このドキュメントの残りの部分は、Appium全般に適用されているが、Appium 2のアーキテクチャ上の変更の一部は、クラウドベースのAppiumホストであれ、内部サービスであれ、Appium関連のサービスプロバイダーにとって破壊的な変更となる。結局のところ、Appiumサーバーのメンテナは、エンドユーザーが使用したいと思うであろう様々なAppiumドライバーやプラグインをインストールし、利用できるようにする責任がある。
+このドキュメントの残りの部分はAppium全般に適用されていますが、Appium 2のアーキテクチャ上の変更の一部はクラウドベースのAppiumホストであれ、内部サービスであれ、Appium関連のサービスプロバイダーにとって破壊的な変更となります。結局のところ、Appiumサーバーを保守する人は、エンドユーザーが使用したいと思うであろう様々なAppiumドライバーやプラグインをインストールし、利用できるようにする責任を持ちます。
 
 <!-- We encourage cloud providers to thoroughly read and understand our [recommendation for cloud
 provider capabilities](./caps.md#special-notes-for-cloud-providers) in order to support user needs in

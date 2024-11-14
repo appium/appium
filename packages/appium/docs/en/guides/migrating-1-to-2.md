@@ -6,6 +6,11 @@ This document is a guide for those who are using Appium 1 and wish to migrate to
 contains a list of breaking changes and how to migrate your environments or test suites to ensure
 compatibility with Appium 2.
 
+!!! note
+
+  Latest Appium drivers/plugins would have update since we created this documentation
+  because we keep developing the ecosystem.
+
 ## Overview of Appium 2
 
 Appium 2 is the most major new release of Appium in over 5 years. The changes in Appium 2 are _not_

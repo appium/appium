@@ -2,37 +2,31 @@
 hide:
   - toc
 
-title: Contributing to Appium
+title: 为Appium做出贡献
 ---
 
-Appium is open source, available under an Apache 2.0 license. Appium's copyright is held by the
-[OpenJS Foundation](https://openjsf.org), and Appium receives contributions from many companies
-across several software industries, regardless of their competitive status. (3rd-party drivers and
-plugins are available under the licenses provided by their authors.)
+Appium是一个开源项目，遵循Apache 2.0许可证。其版权由[OpenJS基金会](https://openjsf.org)持有，
+并且Appium接收来自多个软件行业中的公司的贡献，无论这些公司是否具有竞争关系。
+（第三方驱动程序和插件在其作者提供的许可证下可用。）
 
-As such, we welcome contributions! The project moves forward in relation to the investment of
-contributions of code, documentation, maintenance, and support from companies and volunteers.
+因此，我们欢迎所有贡献！该项目的进展依赖于来自公司和志愿者的代码、文档、维护和支持的投入。
 
-This section of Appium's documentation is for those who are interested in contributing to Appium's
-development. It contains developer overviews, guides, and notes. Use the navigation menu to find
-a specific topic. All the information in these guides assumes in-depth familiarity with Appium
-already.
+Appium文档的这一部分是为那些有兴趣为Appium开发做出贡献的人准备的。它包含了开发者概览、指南和说明。
+请使用导航菜单来查找特定主题。这些指南中的所有信息都假设您已经对Appium有了深入的了解。
 
-!!! warning
+!!! 警告
 
-    Developer information may not be kept up to date as frequently as user-facing information, or
-    it may be most relevant in its current form on the online repository, not in this published
-    version. Always be sure to check the repo or discuss with maintainers. We're always happy to
-    help new contributors get started!
+    开发者信息可能不会像面向用户的信息那样频繁更新，或者其当前形式可能在线仓库中最为相关，而非发布的版本中。
+    请务必检查仓库或与维护者讨论以确保信息的准确性。我们总是乐于帮助新贡献者入门！
 
-## Ways to Contribute
+## 贡献方式
 
-The project offers a variety of ways to contribute, e.g.:
+该项目提供了多种贡献方式，例如：
 
-- [contributing code](./develop.md)
-- improving documentation
-- creating educational content (blog posts, tutorials, videos, etc.)
-- spreading the good word about the project (e.g. via Twitter)
-- filing bugs if you discover them while using Appium
-- making feature requests if you are missing something in the project or help triaging bugs
-- supporting users in the [Appium forum](https://discuss.appium.io/)
+- [贡献代码](./develop.md)
+- 改进文档
+- 创建教育内容（博客文章、教程、视频等）
+- 传播有关该项目的好话（例如通过Twitter）
+- 如果你在使用Appium的过程中发现了漏洞，请提交它们。
+- 如果你发现项目中缺少某些功能，或者愿意协助处理漏洞，请提出请求。
+- 支持[Appium论坛](https://discuss.appium.io/)中的用户

@@ -65,7 +65,7 @@
     "teen_process": "2.2.0",
     "type-fest": "4.27.0",
     "typescript": "5.6.3",
-    "yaml": "2.6.0",
+    "yaml": "2.6.1",
     "yargs": "17.7.2",
     "yargs-parser": "21.1.1"
   },

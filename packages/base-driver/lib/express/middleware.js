@@ -120,8 +120,8 @@ export function handleUpgrade(webSocketsMapping) {
     }
     for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
       if (match(pathname)(currentPathname)) {
-        req.socket.setTimeout(0);
         req.socket.removeAllListeners('timeout');
+        req.socket.setTimeout(0);
         return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
           wsServer.emit('connection', ws, req);
         });

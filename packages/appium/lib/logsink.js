@@ -120,7 +120,7 @@ const stripColorFormat = format(function stripColor(info) {
   return {
     ...info,
     level: stripColorCodes(info.level),
-    message: stripColorCodes(info.message),
+    message: _.isString(info.message) ? stripColorCodes(info.message) : info.message,
   };
 })();
 

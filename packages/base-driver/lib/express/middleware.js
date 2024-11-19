@@ -109,7 +109,7 @@ export function defaultToJSONContentType(req, res, next) {
  */
 export function handleUpgrade(webSocketsMapping) {
   return (req, res, next) => {
-    if (!req.headers?.upgrade || _.toLower(req.headers.upgrade) !== 'websocket') {
+    if (_.toLower(req.headers.upgrade) !== 'websocket') {
       return next();
     }
     let currentPathname;
@@ -120,6 +120,8 @@ export function handleUpgrade(webSocketsMapping) {
     }
     for (const [pathname, wsServer] of _.toPairs(webSocketsMapping)) {
       if (match(pathname)(currentPathname)) {
+        req.socket.setTimeout(0);
+        req.socket.removeAllListeners('timeout');
         return wsServer.handleUpgrade(req, req.socket, Buffer.from(''), (ws) => {
           wsServer.emit('connection', ws, req);
         });
@@ -181,9 +183,17 @@ export function catch404Handler(req, res) {
 
 const SESSION_ID_PATTERN = /\/session\/([^/]+)/;
 
+/**
+ *
+ * @template {import('@appium/types').StringRecord} T
+ * @param {import('express').Request} req
+ * @param {T} body
+ * @returns {T}
+ */
 function patchWithSessionId(req, body) {
   const match = SESSION_ID_PATTERN.exec(req.url);
   if (match) {
+    // @ts-ignore This is OK
     body.sessionId = match[1];
   }
   return body;

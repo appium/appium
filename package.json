@@ -120,7 +120,7 @@
     "mjpeg-server": "0.3.1",
     "mocha": "10.8.2",
     "npm-run-all2": "6.2.6",
-    "prettier": "3.3.3",
+    "prettier": "3.4.1",
     "rewiremock": "3.14.5",
     "rimraf": "5.0.10",
     "serve-static": "1.16.2",

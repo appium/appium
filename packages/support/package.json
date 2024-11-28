@@ -85,7 +85,7 @@
     "resolve-from": "5.0.0",
     "sanitize-filename": "1.6.3",
     "semver": "7.6.3",
-    "shell-quote": "1.8.1",
+    "shell-quote": "1.8.2",
     "source-map-support": "0.5.21",
     "supports-color": "8.1.1",
     "teen_process": "2.2.0",

@@ -197,11 +197,11 @@ export class NPM {
   /**
    * Installs a package w/ `npm`
    * @param {string} cwd
-   * @param {string} pkgName
+   * @param {string} installStr - as in "npm install <installStr>"
    * @param {InstallPackageOpts} opts
    * @returns {Promise<NpmInstallReceipt>}
    */
-  async installPackage(cwd, pkgName, {pkgVer, installType} = {}) {
+  async installPackage(cwd, installStr, {pkgName, installType}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -225,7 +225,7 @@ export class NPM {
     }
 
     const cmd = installType === 'local' ? 'link' : 'install';
-    const res = await this.exec(cmd, [...installOpts, pkgVer ? `${pkgName}@${pkgVer}` : pkgName], {
+    const res = await this.exec(cmd, [...installOpts, installStr], {
       cwd,
       json: true,
       lockFile: this._getInstallLockfilePath(cwd),
@@ -287,8 +287,8 @@ export const npm = new NPM();
 /**
  * Options for {@link NPM.installPackage}
  * @typedef InstallPackageOpts
+ * @property {string} pkgName - the name of the package to install
  * @property {import('type-fest').LiteralUnion<'local', string>} [installType] - whether to install from a local path or from npm
- * @property {string} [pkgVer] - the version of the package to install
  */
 
 /**

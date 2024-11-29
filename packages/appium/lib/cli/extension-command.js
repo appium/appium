@@ -311,7 +311,7 @@ class ExtensionCliCommand {
         installType,
         pkgName: /** @type {string} */ (packageName),
       };
-      probableExtName = installSpec;
+      probableExtName = /** @type {string} */ (packageName);
     } else if (installType === INSTALL_TYPE_GIT) {
       // git urls can have '.git' at the end, but this is not necessary and would complicate the
       // way we download and name directories, so we can just remove it
@@ -321,7 +321,7 @@ class ExtensionCliCommand {
         installType,
         pkgName: /** @type {string} */ (packageName),
       };
-      probableExtName = installSpec;
+      probableExtName = /** @type {string} */ (packageName);
     } else {
       let pkgName, pkgVer;
       if (installType === INSTALL_TYPE_LOCAL) {
@@ -439,13 +439,15 @@ class ExtensionCliCommand {
    * @returns {Promise<ExtInstallReceipt<ExtType>>}
    */
   async installViaNpm({installSpec, pkgName, pkgVer, installType}) {
-    const npmSpec = `${pkgName}${pkgVer ? '@' + pkgVer : ''}`;
-    const specMsg = npmSpec === installSpec ? '' : ` using NPM install spec '${npmSpec}'`;
-    const msg = `Installing '${installSpec}'${specMsg}`;
+    const msg = `Installing '${installSpec}'`;
+
+    // the string used for installation is either <name>@<ver> in the case of a standard NPM
+    // package, or whatever the user sent in otherwise.
+    const installStr = installType === INSTALL_TYPE_NPM ? `${pkgName}${pkgVer ? `@${pkgVer}` : ''}` : installSpec;
     try {
       const {pkg, path} = await spinWith(this.isJsonOutput, msg, async () => {
-        const {pkg, installPath: path} = await npm.installPackage(this.config.appiumHome, pkgName, {
-          pkgVer,
+        const {pkg, installPath: path} = await npm.installPackage(this.config.appiumHome, installStr, {
+          pkgName,
           installType,
         });
         this.validatePackageJson(pkg, installSpec);

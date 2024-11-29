@@ -54,7 +54,7 @@
     "type-fest": "4.30.0"
   },
   "peerDependencies": {
-    "appium": "^2.0.0-beta.43",
+    "appium": "^2.0.0-beta.43 || ^3.0.0-beta.0",
     "mocha": "*"
   },
   "engines": {

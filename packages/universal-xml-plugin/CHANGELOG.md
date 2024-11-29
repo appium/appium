@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.25](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.24...@appium/universal-xml-plugin@1.0.25) (2024-11-29)
+
+
+### Bug Fixes
+
+* **universal-xml-plugin:** update dependency @xmldom/xmldom to v0.9.5 ([#20699](https://github.com/appium/appium-plugins/issues/20699)) ([7860c05](https://github.com/appium/appium-plugins/commit/7860c05285392732308e5bb6a6426b4b0fc45bc7))
+
+
+
 ## [1.0.24](https://github.com/appium/appium-plugins/compare/@appium/universal-xml-plugin@1.0.23...@appium/universal-xml-plugin@1.0.24) (2024-10-15)
 
 

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.7](https://github.com/appium/appium/compare/@appium/support@5.1.6...@appium/support@5.1.7) (2024-11-29)
+
+
+### Bug Fixes
+
+* **appium:** correctly handle git/github install types (fix [#20781](https://github.com/appium/appium/issues/20781)) ([#20788](https://github.com/appium/appium/issues/20788)) ([522f05d](https://github.com/appium/appium/commit/522f05d25ecdf65e2ae22bd7830a250346fc5752))
+* **support:** Init MOCK_LOG before creating static logger instance ([#20750](https://github.com/appium/appium/issues/20750)) ([3696ac1](https://github.com/appium/appium/commit/3696ac1d8dc7d0c01233b1c94d0cd2bca56a67f5))
+* **support:** update dependency axios to v1.7.8 ([#20778](https://github.com/appium/appium/issues/20778)) ([f9920e2](https://github.com/appium/appium/commit/f9920e2c1b02e3587e5d5fa00ac59055ab57fedd))
+* **support:** update dependency shell-quote to v1.8.2 ([#20787](https://github.com/appium/appium/issues/20787)) ([59a8442](https://github.com/appium/appium/commit/59a84424f2664007392be2f34f9c03494f10b264))
+* **support:** update dependency uuid to v11 ([#20703](https://github.com/appium/appium/issues/20703)) ([805156b](https://github.com/appium/appium/commit/805156bd8b9cb5c9265a621d8b9e9e8d2cf1d6fb))
+* **support:** update dependency uuid to v11.0.2 ([#20708](https://github.com/appium/appium/issues/20708)) ([905f84f](https://github.com/appium/appium/commit/905f84faf51471b85df36253d3f3cf0be7c20db0))
+* **support:** update dependency uuid to v11.0.3 ([#20739](https://github.com/appium/appium/issues/20739)) ([9c9fa61](https://github.com/appium/appium/commit/9c9fa612a16a5a3130e2f0a61517e753774f68aa))
+* **support:** update dependency yauzl to v3.2.0 ([#20722](https://github.com/appium/appium/issues/20722)) ([850b095](https://github.com/appium/appium/commit/850b095ac0a787cf7c8944b6a73daec38b2cd880))
+* **types:** update dependency type-fest to v4.27.0 ([#20754](https://github.com/appium/appium/issues/20754)) ([d6b4079](https://github.com/appium/appium/commit/d6b40797d387711df94c29984af91308da27f92b))
+* **types:** update dependency type-fest to v4.28.0 ([#20775](https://github.com/appium/appium/issues/20775)) ([a25d8f1](https://github.com/appium/appium/commit/a25d8f129c8baf76ab40ce3b8d053f7da77f14b3))
+* **types:** update dependency type-fest to v4.29.0 ([#20783](https://github.com/appium/appium/issues/20783)) ([b6aa5ac](https://github.com/appium/appium/commit/b6aa5ace6e54709dba54bc62a902d91851ab7ef1))
+
+
+
 ## [5.1.6](https://github.com/appium/appium/compare/@appium/support@5.1.5...@appium/support@5.1.6) (2024-10-24)
 
 

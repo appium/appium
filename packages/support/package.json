@@ -1,6 +1,6 @@
 {
   "name": "@appium/support",
-  "version": "5.1.6",
+  "version": "5.1.7",
   "description": "Support libs used across appium packages",
   "keywords": [
     "automation",
@@ -43,7 +43,7 @@
   "dependencies": {
     "@appium/logger": "^1.6.1",
     "@appium/tsconfig": "^0.3.3",
-    "@appium/types": "^0.22.0",
+    "@appium/types": "^0.22.1",
     "@colors/colors": "1.6.0",
     "@types/archiver": "6.0.3",
     "@types/base64-stream": "1.0.5",

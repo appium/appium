@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.12](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.11...@appium/driver-test-support@0.6.12) (2024-11-29)
+
+
+### Bug Fixes
+
+* **driver-test-support:** update definitelytyped ([e3bce2b](https://github.com/appium/appium/commit/e3bce2b6be0ea072ec5e8472c0e191bdfea52a06))
+* **driver-test-support:** update dependency chai-as-promised to v8.0.1 ([#20774](https://github.com/appium/appium/issues/20774)) ([8df9c63](https://github.com/appium/appium/commit/8df9c631273eb07e85678df03d6aabd8dc036ffd))
+* **support:** update dependency axios to v1.7.8 ([#20778](https://github.com/appium/appium/issues/20778)) ([f9920e2](https://github.com/appium/appium/commit/f9920e2c1b02e3587e5d5fa00ac59055ab57fedd))
+* **types:** update dependency type-fest to v4.27.0 ([#20754](https://github.com/appium/appium/issues/20754)) ([d6b4079](https://github.com/appium/appium/commit/d6b40797d387711df94c29984af91308da27f92b))
+* **types:** update dependency type-fest to v4.28.0 ([#20775](https://github.com/appium/appium/issues/20775)) ([a25d8f1](https://github.com/appium/appium/commit/a25d8f129c8baf76ab40ce3b8d053f7da77f14b3))
+* **types:** update dependency type-fest to v4.29.0 ([#20783](https://github.com/appium/appium/issues/20783)) ([b6aa5ac](https://github.com/appium/appium/commit/b6aa5ace6e54709dba54bc62a902d91851ab7ef1))
+
+
+
 ## [0.6.11](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.10...@appium/driver-test-support@0.6.11) (2024-10-24)
 
 

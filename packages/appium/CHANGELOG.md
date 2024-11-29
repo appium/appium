@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.12.2](https://github.com/appium/appium/compare/appium@2.12.1...appium@2.12.2) (2024-11-29)
+
+
+### Bug Fixes
+
+* **appium:** correctly handle git/github install types (fix [#20781](https://github.com/appium/appium/issues/20781)) ([#20788](https://github.com/appium/appium/issues/20788)) ([522f05d](https://github.com/appium/appium/commit/522f05d25ecdf65e2ae22bd7830a250346fc5752))
+* **appium:** update dependency winston to v3.16.0 ([275da08](https://github.com/appium/appium/commit/275da089e45daba030fbc53d3943e2a9929b27e4))
+* **appium:** update dependency winston to v3.17.0 ([#20736](https://github.com/appium/appium/issues/20736)) ([f91d8c8](https://github.com/appium/appium/commit/f91d8c8812b77c8739b23d4d49c15a44e19cbcbe))
+* **docutils:** update dependency yaml to v2.6.1 ([#20762](https://github.com/appium/appium/issues/20762)) ([a5389e6](https://github.com/appium/appium/commit/a5389e648af22570a55e70de71c159874362ffd9))
+* **support:** update dependency axios to v1.7.8 ([#20778](https://github.com/appium/appium/issues/20778)) ([f9920e2](https://github.com/appium/appium/commit/f9920e2c1b02e3587e5d5fa00ac59055ab57fedd))
+* **types:** update dependency type-fest to v4.27.0 ([#20754](https://github.com/appium/appium/issues/20754)) ([d6b4079](https://github.com/appium/appium/commit/d6b40797d387711df94c29984af91308da27f92b))
+* **types:** update dependency type-fest to v4.28.0 ([#20775](https://github.com/appium/appium/issues/20775)) ([a25d8f1](https://github.com/appium/appium/commit/a25d8f129c8baf76ab40ce3b8d053f7da77f14b3))
+* **types:** update dependency type-fest to v4.29.0 ([#20783](https://github.com/appium/appium/issues/20783)) ([b6aa5ac](https://github.com/appium/appium/commit/b6aa5ace6e54709dba54bc62a902d91851ab7ef1))
+
+
+
 ## [2.12.1](https://github.com/appium/appium/compare/appium@2.12.0...appium@2.12.1) (2024-10-24)
 
 

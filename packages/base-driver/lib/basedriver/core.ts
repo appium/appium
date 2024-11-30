@@ -312,7 +312,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * not
    *
    * @param name - name of feature/command
-   * @deprecated
+   * @deprecated Use {@link assertFeatureEnabled} instead
    */
   ensureFeatureEnabled(name: string) {
     this.assertFeatureEnabled(name);

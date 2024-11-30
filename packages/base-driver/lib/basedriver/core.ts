@@ -29,6 +29,8 @@ import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+const ALL_DRIVERS = '*';
+const FEATURE_NAME_SEPARATOR = ':';
 
 export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
   implements Core<C, Settings>
@@ -258,13 +260,40 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * @param name - name of feature/command
    */
   isFeatureEnabled(name: string): boolean {
+    // automationName comparison is case-insensitive,
+    // while feature name is case-sensitive
+    const currentAutomationName = _.toLower(this.opts.automationName);
+
+    const parseFullName = (fullName: string) => {
+      const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+      // TODO: This is for the backward compatibility with Appium2
+      // TODO: In Appium3 the separator will be mandatory
+      if (separatorPos < 0) {
+        return [ALL_DRIVERS, fullName];
+      }
+
+      const [automationName, featureName] = [fullName.substring(0, separatorPos), fullName.substring(separatorPos + 1)];
+      if (!automationName || !featureName) {
+        throw new Error(
+          `The full feature name must include both the driver name/wildcard and the feature ` +
+          `name split by a colon, got '${fullName}' instead`
+        );
+      }
+      return [automationName, featureName];
+    };
+    const parseFullNames = (fullNames: string[]) => fullNames
+      .map(parseFullName)
+      .map(([automationName, featureName]) => [_.toLower(automationName), featureName]);
+    const matches = ([automationName, featureName]: [string, string]) =>
+      [currentAutomationName, ALL_DRIVERS].includes(automationName) && featureName === name;
+
     // if we have explicitly denied this feature, return false immediately
-    if (this.denyInsecure && _.includes(this.denyInsecure, name)) {
+    if (!_.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
       return false;
     }
 
     // if we specifically have allowed the feature, return true
-    if (this.allowInsecure && _.includes(this.allowInsecure, name)) {
+    if (!_.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
       return true;
     }
 

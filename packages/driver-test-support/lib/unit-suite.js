@@ -614,6 +614,31 @@ export function driverUnitTestSuite(
       d.isFeatureEnabled('bar').should.be.false;
       d.isFeatureEnabled('baz').should.be.true;
     });
+
+    it('should say a feature is enabled if it is for this driver', function () {
+      d.opts.automationName = 'bar';
+      d.allowInsecure = ['bar:foo'];
+      d.isFeatureEnabled('foo').should.be.true;
+    });
+
+    it('should say a feature is enabled if it is for all drivers', function () {
+      d.opts.automationName = 'bar';
+      d.allowInsecure = ['*:foo'];
+      d.isFeatureEnabled('foo').should.be.true;
+    });
+
+    it('should say a feature is not enabled if it is not for this driver', function () {
+      d.opts.automationName = 'bar';
+      d.allowInsecure = ['baz:foo'];
+      d.isFeatureEnabled('foo').should.be.false;
+    });
+
+    it('should say a feature is not enabled if it is enabled and then disabled', function () {
+      d.opts.automationName = 'bar';
+      d.allowInsecure = ['bar:foo'];
+      d.denyInsecure = ['*:foo'];
+      d.isFeatureEnabled('foo').should.be.false;
+    });
   });
 }
 

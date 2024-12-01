@@ -22,6 +22,7 @@ import {
   isBroadcastIp,
   fetchInterfaces,
   V4_BROADCAST_IP,
+  validateFeatures,
 } from './utils';
 import {util, node, logger} from '@appium/support';
 import {getDefaultsForExtension} from './schema';
@@ -697,13 +698,13 @@ class AppiumDriver extends DriverCore {
       if (!_.isEmpty(this.args.denyInsecure)) {
         this.log.info('Explicitly preventing use of insecure features:');
         this.args.denyInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.denyInsecure = this.args.denyInsecure;
+        driverInstance.denyInsecure = validateFeatures(this.args.denyInsecure);
       }
 
       if (!_.isEmpty(this.args.allowInsecure)) {
         this.log.info('Explicitly enabling use of insecure features:');
         this.args.allowInsecure.map((a) => this.log.info(`    ${a}`));
-        driverInstance.allowInsecure = this.args.allowInsecure;
+        driverInstance.allowInsecure = validateFeatures(this.args.allowInsecure);
       }
 
       // Likewise, any driver-specific CLI args that were passed in should be assigned directly to

@@ -580,24 +580,17 @@ export function driverUnitTestSuite(
       d = new DriverClass();
     });
 
-    it('should say a feature is enabled when it is explicitly allowed', function () {
-      d.allowInsecure = ['foo', 'bar'];
-      d.isFeatureEnabled('foo').should.be.true;
-      d.isFeatureEnabled('bar').should.be.true;
-      d.isFeatureEnabled('baz').should.be.false;
-    });
-
-    it('should say a feature is not enabled if it is not enabled', function () {
-      d.allowInsecure = [];
-      d.isFeatureEnabled('foo').should.be.false;
-    });
-
-    it('should prefer denyInsecure to allowInsecure', function () {
-      d.allowInsecure = ['foo', 'bar'];
-      d.denyInsecure = ['foo'];
-      d.isFeatureEnabled('foo').should.be.false;
-      d.isFeatureEnabled('bar').should.be.true;
-      d.isFeatureEnabled('baz').should.be.false;
+    it('should throw an error if feature name is invalid', function () {
+      for (const name of [
+        'foo',
+        ':foo',
+        '*:',
+      ]) {
+        (() => {
+          d.allowInsecure = [name];
+          d.isFeatureEnabled('foo');
+        }).should.throw();
+      }
     });
 
     it('should allow global setting for insecurity', function () {
@@ -609,7 +602,7 @@ export function driverUnitTestSuite(
 
     it('global setting should be overrideable', function () {
       d.relaxedSecurityEnabled = true;
-      d.denyInsecure = ['foo', 'bar'];
+      d.denyInsecure = ['*:foo', '*:bar'];
       d.isFeatureEnabled('foo').should.be.false;
       d.isFeatureEnabled('bar').should.be.false;
       d.isFeatureEnabled('baz').should.be.true;

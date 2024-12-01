@@ -20,7 +20,11 @@ import AsyncLock from 'async-lock';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import os from 'node:os';
-import {DEFAULT_BASE_PATH, PROTOCOLS, MAX_LOG_BODY_LENGTH} from '../constants';
+import {
+  DEFAULT_BASE_PATH,
+  PROTOCOLS,
+  MAX_LOG_BODY_LENGTH,
+} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
 import helpers, {BASEDRIVER_VER} from './helpers';
@@ -29,7 +33,8 @@ import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
-const ALL_DRIVERS = '*';
+
+const ALL_DRIVERS_MATCH = '*';
 const FEATURE_NAME_SEPARATOR = ':';
 
 export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
@@ -266,26 +271,21 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
 
     const parseFullName = (fullName: string) => {
       const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
-      // TODO: This is for the backward compatibility with Appium2
-      // TODO: In Appium3 the separator will be mandatory
       if (separatorPos < 0) {
-        return [ALL_DRIVERS, fullName];
-      }
-
-      const [automationName, featureName] = [fullName.substring(0, separatorPos), fullName.substring(separatorPos + 1)];
-      if (!automationName || !featureName) {
+        // This should not happen as we preprocess cotresponding server arguments before
         throw new Error(
           `The full feature name must include both the driver name/wildcard and the feature ` +
           `name split by a colon, got '${fullName}' instead`
         );
       }
-      return [automationName, featureName];
+      return [
+        _.toLower(fullName.substring(0, separatorPos)),
+        fullName.substring(separatorPos + 1)
+      ];
     };
-    const parseFullNames = (fullNames: string[]) => fullNames
-      .map(parseFullName)
-      .map(([automationName, featureName]) => [_.toLower(automationName), featureName]);
+    const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
     const matches = ([automationName, featureName]: [string, string]) =>
-      [currentAutomationName, ALL_DRIVERS].includes(automationName) && featureName === name;
+      [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
 
     // if we have explicitly denied this feature, return false immediately
     if (!_.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {

@@ -484,9 +484,9 @@ export function validateFeatures(features) {
     ];
     if (!automationName || !featureName) {
       throw new Error(
-        `The full feature name must include both the destination automation name or the '*' wildcard ` +
-        `to apply the feature to all installed drivers, and the feature name split by a colon, ` +
-        `got '${fullName}' instead`
+        `The full feature name must include both the destination automation name or the ` +
+        `'${ALL_DRIVERS_MATCH}' wildcard to apply the feature to all installed drivers, and ` +
+        `the feature name split by a colon, got '${fullName}' instead`
       );
     }
     return fullName;

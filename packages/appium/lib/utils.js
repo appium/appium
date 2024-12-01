@@ -464,6 +464,7 @@ export function isBroadcastIp(address) {
 }
 
 /**
+ * Validates the list of allowed/denied server features
  *
  * @param {string[]} features
  * @returns {string[]}
@@ -483,8 +484,9 @@ export function validateFeatures(features) {
     ];
     if (!automationName || !featureName) {
       throw new Error(
-        `The full feature name must include both the driver name/wildcard and the feature ` +
-        `name split by a colon, got '${fullName}' instead`
+        `The full feature name must include both the destination automation name or the '*' wildcard ` +
+        `to apply the feature to all installed drivers, and the feature name split by a colon, ` +
+        `got '${fullName}' instead`
       );
     }
     return fullName;

@@ -44,6 +44,14 @@ might use. Here is an incomplete list of examples from some of Appium's official
 |`record_audio`|Allow recording of host machine audio inputs|XCUITest|
 |`execute_driver_script`| Allows to send a request which has multiple Appium commands.|Execute Driver Plugin|
 
+## Driver-scope security
+
+Since Appium server version 2.12.3 there is a possibility to prefix each feature name with the corresponding automationName where it is going to be applied. For example, if you provide the following features to allow:
+`uiautomator2:adb_shell,xcuitest:get_server_logs,*:record_audio`, then the `adb_shell` would only be allowed
+for the UiAutomator2 driver, `get_server` - for the XCUITest driver and the `record_audio` one - for
+all installed drivers. Feature names provided without explicit automation name prefix are equivalent to
+these having the `*:` prefix. The same feature naming rule applies to the list of denied features.
+
 ## Examples
 
 To turn on the `get_server_logs` feature for my Appium server, I could start it like this:

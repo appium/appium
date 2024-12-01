@@ -272,7 +272,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
     const parseFullName = (fullName: string) => {
       const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
       if (separatorPos < 0) {
-        // This should not happen as we preprocess cotresponding server arguments before
+        // This should not happen as we preprocess corresponding server arguments in advance
         throw new Error(
           `The full feature name must include both the driver name/wildcard and the feature ` +
           `name split by a colon, got '${fullName}' instead`

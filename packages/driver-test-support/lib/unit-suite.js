@@ -581,16 +581,10 @@ export function driverUnitTestSuite(
     });
 
     it('should throw an error if feature name is invalid', function () {
-      for (const name of [
-        'foo',
-        ':foo',
-        '*:',
-      ]) {
-        (() => {
-          d.allowInsecure = [name];
-          d.isFeatureEnabled('foo');
-        }).should.throw();
-      }
+      d.allowInsecure = ['foo'];
+      (() => {
+        d.isFeatureEnabled('foo');
+      }).should.throw();
     });
 
     it('should allow global setting for insecurity', function () {

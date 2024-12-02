@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.0](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.12...@appium/driver-test-support@0.7.0) (2024-12-02)
+
+
+### Features
+
+* **base-driver:** Allow to prefix feature names with automation names ([#20793](https://github.com/appium/appium/issues/20793)) ([942057d](https://github.com/appium/appium/commit/942057d26cbf51539f34b6b7ff8a3c1d07821687))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.29.1 ([#20795](https://github.com/appium/appium/issues/20795)) ([6ba31fe](https://github.com/appium/appium/commit/6ba31fe5766f69cb010a4cac81233f4c3cbcf80f))
+
+
+
 ## [0.6.12](https://github.com/appium/appium/compare/@appium/driver-test-support@0.6.11...@appium/driver-test-support@0.6.12) (2024-11-29)
 
 

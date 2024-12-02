@@ -1,6 +1,6 @@
 {
   "name": "appium",
-  "version": "2.12.2",
+  "version": "2.13.0",
   "description": "Automation for Apps.",
   "keywords": [
     "automation",
@@ -60,13 +60,13 @@
     "test:unit": "mocha \"./test/unit/**/*.spec.js\""
   },
   "dependencies": {
-    "@appium/base-driver": "^9.12.2",
-    "@appium/base-plugin": "^2.2.48",
-    "@appium/docutils": "^1.0.24",
+    "@appium/base-driver": "^9.13.0",
+    "@appium/base-plugin": "^2.2.49",
+    "@appium/docutils": "^1.0.25",
     "@appium/logger": "^1.6.1",
     "@appium/schema": "^0.7.0",
-    "@appium/support": "^5.1.7",
-    "@appium/types": "^0.22.1",
+    "@appium/support": "^5.1.8",
+    "@appium/types": "^0.22.2",
     "@sidvind/better-ajv-errors": "3.0.1",
     "@types/argparse": "2.0.17",
     "@types/bluebird": "3.5.42",

@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.8](https://github.com/appium/appium/compare/@appium/support@5.1.7...@appium/support@5.1.8) (2024-12-02)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.29.1 ([#20795](https://github.com/appium/appium/issues/20795)) ([6ba31fe](https://github.com/appium/appium/commit/6ba31fe5766f69cb010a4cac81233f4c3cbcf80f))
+
+
+
 ## [5.1.7](https://github.com/appium/appium/compare/@appium/support@5.1.6...@appium/support@5.1.7) (2024-11-29)
 
 

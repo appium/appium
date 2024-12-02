@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.25](https://github.com/appium/appium/compare/@appium/docutils@1.0.24...@appium/docutils@1.0.25) (2024-12-02)
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.29.1 ([#20795](https://github.com/appium/appium/issues/20795)) ([6ba31fe](https://github.com/appium/appium/commit/6ba31fe5766f69cb010a4cac81233f4c3cbcf80f))
+
+
+
 ## [1.0.24](https://github.com/appium/appium/compare/@appium/docutils@1.0.23...@appium/docutils@1.0.24) (2024-11-29)
 
 

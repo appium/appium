@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.0](https://github.com/appium/appium/compare/appium@2.12.2...appium@2.13.0) (2024-12-02)
+
+
+### Features
+
+* **base-driver:** Allow to prefix feature names with automation names ([#20793](https://github.com/appium/appium/issues/20793)) ([942057d](https://github.com/appium/appium/commit/942057d26cbf51539f34b6b7ff8a3c1d07821687))
+
+
+### Bug Fixes
+
+* **types:** update dependency type-fest to v4.29.1 ([#20795](https://github.com/appium/appium/issues/20795)) ([6ba31fe](https://github.com/appium/appium/commit/6ba31fe5766f69cb010a4cac81233f4c3cbcf80f))
+
+
+
 ## [2.12.2](https://github.com/appium/appium/compare/appium@2.12.1...appium@2.12.2) (2024-11-29)
 
 

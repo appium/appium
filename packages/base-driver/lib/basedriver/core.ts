@@ -20,7 +20,11 @@ import AsyncLock from 'async-lock';
 import _ from 'lodash';
 import {EventEmitter} from 'node:events';
 import os from 'node:os';
-import {DEFAULT_BASE_PATH, PROTOCOLS, MAX_LOG_BODY_LENGTH} from '../constants';
+import {
+  DEFAULT_BASE_PATH,
+  PROTOCOLS,
+  MAX_LOG_BODY_LENGTH,
+} from '../constants';
 import {errors} from '../protocol';
 import DeviceSettings from './device-settings';
 import helpers, {BASEDRIVER_VER} from './helpers';
@@ -29,6 +33,9 @@ import {BIDI_COMMANDS} from '../protocol/bidi-commands';
 const NEW_COMMAND_TIMEOUT_MS = 60 * 1000;
 
 const ON_UNEXPECTED_SHUTDOWN_EVENT = 'onUnexpectedShutdown';
+
+const ALL_DRIVERS_MATCH = '*';
+const FEATURE_NAME_SEPARATOR = ':';
 
 export class DriverCore<const C extends Constraints, Settings extends StringRecord = StringRecord>
   implements Core<C, Settings>
@@ -258,13 +265,35 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * @param name - name of feature/command
    */
   isFeatureEnabled(name: string): boolean {
+    // automationName comparison is case-insensitive,
+    // while feature name is case-sensitive
+    const currentAutomationName = _.toLower(this.opts.automationName);
+
+    const parseFullName = (fullName: string) => {
+      const separatorPos = fullName.indexOf(FEATURE_NAME_SEPARATOR);
+      if (separatorPos < 0) {
+        // This should not happen as we preprocess corresponding server arguments in advance
+        throw new Error(
+          `The full feature name must include both the driver name/wildcard and the feature ` +
+          `name split by a colon, got '${fullName}' instead`
+        );
+      }
+      return [
+        _.toLower(fullName.substring(0, separatorPos)),
+        fullName.substring(separatorPos + 1)
+      ];
+    };
+    const parseFullNames = (fullNames: string[]) => fullNames.map(parseFullName);
+    const matches = ([automationName, featureName]: [string, string]) =>
+      [currentAutomationName, ALL_DRIVERS_MATCH].includes(automationName) && featureName === name;
+
     // if we have explicitly denied this feature, return false immediately
-    if (this.denyInsecure && _.includes(this.denyInsecure, name)) {
+    if (!_.isEmpty(this.denyInsecure) && parseFullNames(this.denyInsecure).some(matches)) {
       return false;
     }
 
     // if we specifically have allowed the feature, return true
-    if (this.allowInsecure && _.includes(this.allowInsecure, name)) {
+    if (!_.isEmpty(this.allowInsecure) && parseFullNames(this.allowInsecure).some(matches)) {
       return true;
     }
 
@@ -283,7 +312,7 @@ export class DriverCore<const C extends Constraints, Settings extends StringReco
    * not
    *
    * @param name - name of feature/command
-   * @deprecated
+   * @deprecated Use {@link assertFeatureEnabled} instead
    */
   ensureFeatureEnabled(name: string) {
     this.assertFeatureEnabled(name);

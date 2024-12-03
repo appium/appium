@@ -7,12 +7,15 @@ import {
   ORIGINAL_LANGUAGE,
   performApiRequest,
   RESOURCES_ROOT,
-  RESOURCES_EXT,
+  DOCUMENTS_EXT,
+  MKDOCS_YAML,
 } from './crowdin-common.mjs';
+import {fs} from '@appium/support';
 
 const LANGUAGE_ROOT = path.resolve(RESOURCES_ROOT, ORIGINAL_LANGUAGE);
 const MAX_ITEMS_PER_PAGE = 300;
-const CONTENT_TYPE = 'text/markdown';
+const DOCUMENT_CONTENT_TYPE = 'text/markdown';
+const MKDOCS_CONTENT_TYPE = 'application/yaml';
 
 /**
  *
@@ -29,35 +32,13 @@ function toHash(str) {
  * @returns {string}
  */
 function toCrowdinPath(fullPath) {
-  return `/${path.relative(LANGUAGE_ROOT, fullPath)}`;
+  let result = `/${path.relative(LANGUAGE_ROOT, fullPath)}`;
+  if (result.includes('..')) {
+    result = `/${path.basename(fullPath)}`;
+  }
+  return result;
 }
 
-/**
- *
- * @param {string[]} matchedFiles
- * @returns {Promise<Record<string, string>>}
- */
-async function uploadDocsToStorage(matchedFiles) {
-  const resultMap = {};
-  let count = 0;
-  for (const matchedFilePath of matchedFiles) {
-    const crowdinPath = toCrowdinPath(matchedFilePath);
-    // Hashing is used to make sure we aways create the same storage for the same file path in Crowdin
-    const storageName = toHash(crowdinPath);
-    log.info(`Uploading '${crowdinPath}' to Crowdin storage (${++count} of ${matchedFiles.length})`);
-    const {data: storageData} = await performApiRequest('/storages', {
-      method: 'POST',
-      headers: {
-        'Crowdin-API-FileName': storageName,
-        'Content-Type': CONTENT_TYPE,
-      },
-      payload: createReadStream(matchedFilePath),
-      isProjectSpecific: false,
-    });
-    resultMap[matchedFilePath] = storageData.id;
-  }
-  return resultMap;
-}
 
 /**
  *
@@ -96,6 +77,19 @@ async function addFile(name, storageId, parentDirectoryId) {
 }
 
 /**
+ * @returns {Promise<Record<string, any>[]>}
+ */
+async function listFiles() {
+  const {data: filesData} = await performApiRequest('/files', {
+    method: 'GET',
+    params: {
+      limit: MAX_ITEMS_PER_PAGE,
+    }
+  });
+  return filesData.map(({data}) => data);
+}
+
+/**
  *
  * @param {number} fileId
  * @returns {Promise<void>}
@@ -122,6 +116,45 @@ async function listDirectories(parentDirectoryId) {
     },
   });
   return directoriesData.map(({data}) => data);
+}
+
+/**
+ *
+ * @param {string} name Should be properly url-encoded
+ * @param {string} fullPath
+ * @param {string} contentType Should be one of https://www.iana.org/assignments/media-types/media-types.xhtml
+ * @returns {Promise<Record<string, any>>}
+ */
+async function addStorage(name, fullPath, contentType) {
+  const {data: storageData} = await performApiRequest('/storages', {
+    method: 'POST',
+    headers: {
+      'Crowdin-API-FileName': name,
+      'Content-Type': contentType,
+    },
+    payload: createReadStream(fullPath),
+    isProjectSpecific: false,
+  });
+  return storageData;
+}
+
+/**
+ *
+ * @param {string[]} matchedFiles
+ * @returns {Promise<Record<string, string>>}
+ */
+async function uploadDocumentsToStorage(matchedFiles) {
+  const resultMap = {};
+  let count = 0;
+  for (const matchedFilePath of matchedFiles) {
+    const crowdinPath = toCrowdinPath(matchedFilePath);
+    // Hashing is used to make sure we aways create the same storage for the same file path in Crowdin
+    const storageName = toHash(crowdinPath);
+    log.info(`Uploading '${crowdinPath}' to Crowdin storage (${++count} of ${matchedFiles.length})`);
+    const storageData = await addStorage(storageName, matchedFilePath, DOCUMENT_CONTENT_TYPE);
+    resultMap[matchedFilePath] = storageData.id;
+  }
+  return resultMap;
 }
 
 /**
@@ -169,17 +202,10 @@ async function ensureDirectoryStructure(matchedFiles) {
  *
  * @param {Record<string, number>} storageMapping
  * @param {Record<string, number>} directoriesMapping
+ * @param {Record<string, number>[]} existingFilesData
  * @returns {Promise<Record<string, number>>}
  */
-async function ensureFileStructure(storageMapping, directoriesMapping) {
-  const {data: filesData} = await performApiRequest('/files', {
-    method: 'GET',
-    params: {
-      limit: MAX_ITEMS_PER_PAGE,
-    }
-  });
-  const existingFilesData = filesData.map(({data}) => data);
-  const processedFilesData = new Set();
+async function ensureFileStructure(storageMapping, directoriesMapping, existingFilesData) {
   const result = {};
   let count = 0;
   for (const [fullPath, storageId] of Object.entries(storageMapping)) {
@@ -188,7 +214,6 @@ async function ensureFileStructure(storageMapping, directoriesMapping) {
     const fileData = existingFilesData.find((data) => data.path === pathInCrowdin);
     if (fileData) {
       result[fullPath] = fileData.id;
-      processedFilesData.add(existingFilesData);
     } else {
       const parentFolderId = directoriesMapping[path.dirname(pathInCrowdin)];
       try {
@@ -201,14 +226,31 @@ async function ensureFileStructure(storageMapping, directoriesMapping) {
       }
     }
   }
-
-  const obsoleteFilesData = existingFilesData.filter((data) => !processedFilesData.has(data));
-  count = 0;
-  for (const obsoleteFileData of obsoleteFilesData) {
-    log.info(`Deleting the obsolete file '${obsoleteFileData.path}' (${++count} of ${obsoleteFilesData.length})`);
-    await deleteFile(obsoleteFileData.id);
-  }
   return result;
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+async function cleanupObsoleteDocuments() {
+  const [existingFilesData, matchedFiles] = await Promise.all([
+    listFiles(),
+    walk(LANGUAGE_ROOT, DOCUMENTS_EXT)
+  ]);
+  const matchedFilePaths = new Set(matchedFiles.map(toCrowdinPath));
+  let count = 0;
+  for (const existingFileData of existingFilesData) {
+    if (matchedFilePaths.has(existingFileData.path)
+      || !existingFileData.name.endsWith(DOCUMENTS_EXT)) {
+      continue;
+    }
+    log.info(`Deleting the obsolete document '${existingFileData.path}'`);
+    await deleteFile(existingFileData.id);
+    ++count;
+  }
+  if (count > 0) {
+    log.info(`Deleted ${count} obsolete documents`);
+  }
 }
 
 /**
@@ -230,19 +272,48 @@ async function updateFiles(filesMapping, storageMapping) {
   }
 }
 
-async function main() {
-  const matchedFiles = await walk(LANGUAGE_ROOT, RESOURCES_EXT);
+/**
+ *
+ * @returns {Promise<void>}
+ */
+async function updateDocuments() {
+  const matchedFiles = await walk(LANGUAGE_ROOT, DOCUMENTS_EXT);
   if (matchedFiles.length === 0) {
-    throw new Error(`Did not find any files matching the '*${RESOURCES_EXT}' extension in '${LANGUAGE_ROOT}'`);
+    throw new Error(`Did not find any files matching the '*${DOCUMENTS_EXT}' extension in '${LANGUAGE_ROOT}'`);
   }
   log.info(`Matched ${matchedFiles.length} files from '${LANGUAGE_ROOT}' for upload...`);
 
   const [storageMapping, directoriesMapping] = await Promise.all([
-    uploadDocsToStorage(matchedFiles),
+    uploadDocumentsToStorage(matchedFiles),
     ensureDirectoryStructure(matchedFiles),
   ]);
-  const filesMapping = await ensureFileStructure(storageMapping, directoriesMapping);
+  const existingFilesData = await listFiles();
+  const filesMapping = await ensureFileStructure(storageMapping, directoriesMapping, existingFilesData);
   await updateFiles(filesMapping, storageMapping);
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+async function updateMkDocsConfig() {
+  const configFileName = MKDOCS_YAML(ORIGINAL_LANGUAGE);
+  const matchedFilePath = path.join(RESOURCES_ROOT, configFileName);
+  if (!await fs.exists(matchedFilePath)) {
+    throw new Error(`Did not find the MkDocs config at '${matchedFilePath}'`);
+  }
+  const storageData = await addStorage(encodeURIComponent(configFileName), matchedFilePath, MKDOCS_CONTENT_TYPE);
+  const storageMapping = {[matchedFilePath]: storageData.id};
+  const existingFilesData = await listFiles();
+  const filesMapping = await ensureFileStructure(storageMapping, {}, existingFilesData);
+  await updateFiles(filesMapping, storageMapping);
+}
+
+async function main() {
+  log.info('Updating documents');
+  await updateDocuments();
+  await cleanupObsoleteDocuments();
+  log.info('Updating MkDocs config');
+  await updateMkDocsConfig();
 
   log.info('All done');
 }

@@ -14,7 +14,8 @@ if (!PROJECT_ID || !API_TOKEN) {
 }
 export const RESOURCES_ROOT = path.resolve('packages', 'appium', 'docs');
 export const ORIGINAL_LANGUAGE = 'en';
-export const RESOURCES_EXT = '.md';
+export const DOCUMENTS_EXT = '.md';
+export const MKDOCS_YAML = (langName) => `mkdocs-${langName}.yml`;
 const USER_AGENT = 'Appium CI';
 const API_ROOT = 'https://api.crowdin.com/api/v2';
 

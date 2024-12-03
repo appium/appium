@@ -7,7 +7,8 @@ import {
   ORIGINAL_LANGUAGE,
   performApiRequest,
   RESOURCES_ROOT,
-  RESOURCES_EXT,
+  DOCUMENTS_EXT,
+  MKDOCS_YAML,
 } from './crowdin-common.mjs';
 
 const BUILD_TIMEOUT_MS = 1000 * 60 * 10;
@@ -75,7 +76,7 @@ async function downloadTranslations(buildId, dstPath) {
  * @returns {Promise<void>}
  */
 async function syncTranslatedDocuments(srcDir, dstDir) {
-  const srcTranslatedDocs = await walk(srcDir, RESOURCES_EXT);
+  const srcTranslatedDocs = await walk(srcDir, DOCUMENTS_EXT);
   if (srcTranslatedDocs.length === 0) {
     return;
   }
@@ -87,6 +88,24 @@ async function syncTranslatedDocuments(srcDir, dstDir) {
     log.info(`Synchronizing '${dstPath}' (${++count} of ${srcTranslatedDocs.length})`);
     await fs.mv(srcPath, dstPath, {mkdirp: true});
   }
+}
+
+/**
+ *
+ * @param {string} srcDir
+ * @param {string} dstDir
+ * @param {string} dstLanguage
+ * @returns {Promise<void>}
+ */
+async function syncTranslatedConfig(srcDir, dstDir, dstLanguage) {
+  const configPath = path.join(srcDir, MKDOCS_YAML(ORIGINAL_LANGUAGE));
+  if (!await fs.exists(configPath)) {
+    throw new Error(`Did not find the translated MkDocs config at '${configPath}'`);
+  }
+
+  const dstPath = path.join(dstDir, MKDOCS_YAML(dstLanguage));
+  log.info(`Synchronizing '${dstPath}'`);
+  await fs.mv(configPath, dstPath);
 }
 
 async function main() {
@@ -111,9 +130,9 @@ async function main() {
           continue;
         }
 
-        const dstPath = path.resolve(RESOURCES_ROOT, dstLanguageName);
-        await syncTranslatedDocuments(currentPath, dstPath);
-        log.info(`Successfully updated resources for the '${name}' language`);
+        await syncTranslatedDocuments(currentPath, path.join(RESOURCES_ROOT, dstLanguageName));
+        await syncTranslatedConfig(currentPath, RESOURCES_ROOT, dstLanguageName);
+        log.info(`Successfully updated resources for the '${dstLanguageName}' ('${name}' in Crowdin) language`);
       }
     } finally {
       await fs.rimraf(tmpRoot);

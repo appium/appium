@@ -140,7 +140,8 @@ the list of available Crowdin languages then simply let us know by creating an
 #### Source Language Updates
 
 Changes in documents are synchronized to Crowdin automatically via the `Update Crowdin English Docs` GitHub action.
-This action is triggered automatically as soon as there are any changes under `packages/appium/docs/en/**.md`.
+This action is triggered automatically as soon as there are any changes under `packages/appium/docs/en/**.md`
+or `packages/appium/docs/mkdocs-en.yml`.
 
 #### Fetching Translated Documents
 

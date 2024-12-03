@@ -7,6 +7,7 @@ on:
     branches: [master]
     paths:
       - 'packages/appium/docs/en/**.md'
+      - 'packages/appium/docs/mkdocs-en.yml'
       - '.github/workflows/crowdin-update-docs-resources.yml' # this file
 
 jobs:

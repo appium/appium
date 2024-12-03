@@ -1,12 +1,12 @@
 # Updates Crowdin with any changes in document files in English
 
-name: Update Crowdin English Resources
+name: Update Crowdin English Docs
 
 on:
   push:
     branches: [master]
     paths:
-      - 'packages/appium/docs/en/**'
+      - 'packages/appium/docs/en/**.md'
       - '.github/workflows/crowdin-update-docs-resources.yml' # this file
 
 jobs:

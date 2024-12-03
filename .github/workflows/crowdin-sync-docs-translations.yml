@@ -1,6 +1,6 @@
 # Retrieves non-English translations from Crowdin and creates a PR with new changes
 
-name: Sync Crowdin Translations
+name: Sync Crowdin Docs Translations
 
 on:
   workflow_dispatch:

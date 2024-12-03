@@ -1,4 +1,3 @@
-import {createReadStream} from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import {
@@ -132,7 +131,7 @@ async function addStorage(name, fullPath, contentType) {
       'Crowdin-API-FileName': name,
       'Content-Type': contentType,
     },
-    payload: createReadStream(fullPath),
+    payload: fs.createReadStream(fullPath),
     isProjectSpecific: false,
   });
   return storageData;

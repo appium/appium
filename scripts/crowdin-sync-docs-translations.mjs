@@ -117,7 +117,9 @@ async function main() {
     try {
       await zip.extractAllTo(zipPath, tmpRoot);
       const srcLanguageNames = await fs.readdir(tmpRoot);
-      log.debug(`Available Crowdin languages: ${srcLanguageNames}`);
+      log.info(`Available Crowdin languages: ${srcLanguageNames}`);
+      log.info(`Supported languages map: ${JSON.stringify(CROWDIN_TO_FS_LANGUAGES_MAP)}`);
+      let count = 0;
       for (const name of srcLanguageNames) {
         const currentPath = path.join(tmpRoot, name);
         if (!(await fs.stat(currentPath)).isDirectory() || name === ORIGINAL_LANGUAGE) {
@@ -132,7 +134,10 @@ async function main() {
 
         await syncTranslatedDocuments(currentPath, path.join(RESOURCES_ROOT, dstLanguageName));
         await syncTranslatedConfig(currentPath, RESOURCES_ROOT, dstLanguageName);
-        log.info(`Successfully updated resources for the '${dstLanguageName}' ('${name}' in Crowdin) language`);
+        log.info(
+          `Successfully updated resources for the '${dstLanguageName}' ` +
+          `('${name}' in Crowdin) language (${++count} of ${Object.keys(CROWDIN_TO_FS_LANGUAGES_MAP).length})`
+        );
       }
     } finally {
       await fs.rimraf(tmpRoot);

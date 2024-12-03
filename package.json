@@ -38,6 +38,8 @@
     "clean:interactive": "git clean -d -x -i",
     "clean:force": "git clean -d -x -f",
     "clean:workspaces": "lerna run clean || true",
+    "crowdin-sync-docs-translations": "node ./scripts/crowdin-sync-docs-translations.mjs",
+    "crowdin-update-docs": "node ./scripts/crowdin-update-docs-resources.mjs",
     "dev": "run-s build:compile \"build:workspaces\" \"build:compile -- --watch\"",
     "dev:docs": "npm run -w packages/appium dev:docs",
     "docs": "npm run -w packages/appium build:docs",

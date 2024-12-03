@@ -43,7 +43,7 @@
     "docs": "npm run -w packages/appium build:docs",
     "docs:preview": "npm run -w packages/appium build:docs:preview",
     "docs:publish": "npm run -w packages/appium publish:docs",
-    "doctor": "node ./packages/doctor",
+    "doctor": "node ./scripts/doctor-stub.mjs",
     "install-docs-deps": "npm run -w packages/appium install-docs-deps",
     "lint": "eslint .",
     "lint:ci": "eslint --quiet .",

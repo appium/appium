@@ -63,9 +63,6 @@
       "path": "packages/fake-driver"
     },
     {
-      "path": "packages/doctor"
-    },
-    {
       "path": "packages/strongbox"
     },
     {

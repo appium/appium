@@ -201,17 +201,7 @@ export class NPM {
    * @param {InstallPackageOpts} opts
    * @returns {Promise<NpmInstallReceipt>}
    */
-  async installPackage(cwd, installStr, {pkgName, pkgVer, installType} = {}) {
-    let _installStr = installStr;
-    // FIXME: Please remove this '!pkgName' case after bumping major version of this support package.
-    // This is a temporary workaround for backward compatibility related to https://github.com/appium/appium/pull/20788
-    if (!pkgName) {
-      // Old appium package passes an empty 'pkgName' as part of the option. Then,
-      // we could consider it is for old argument case.
-      pkgName = installStr;
-      _installStr = pkgVer ? `${pkgName}@${pkgVer}` : pkgName;
-    }
-
+  async installPackage(cwd, installStr, {pkgName, installType}) {
     /** @type {any} */
     let dummyPkgJson;
     const dummyPkgPath = path.join(cwd, 'package.json');
@@ -235,7 +225,7 @@ export class NPM {
     }
 
     const cmd = installType === 'local' ? 'link' : 'install';
-    const res = await this.exec(cmd, [...installOpts, _installStr], {
+    const res = await this.exec(cmd, [...installOpts, installStr], {
       cwd,
       json: true,
       lockFile: this._getInstallLockfilePath(cwd),
@@ -297,10 +287,8 @@ export const npm = new NPM();
 /**
  * Options for {@link NPM.installPackage}
  * @typedef InstallPackageOpts
- * @property {string} [pkgName] - the name of the package to install. Used by appium package 2.12.2 and newer versions.
+ * @property {string} pkgName - the name of the package to install
  * @property {import('type-fest').LiteralUnion<'local', string>} [installType] - whether to install from a local path or from npm
- * @property {string} [pkgVer] - The version of the package to install.
-*                                This is used for backward compatibility for this support package v5 with appium package 2.12.1 and lower versions.
  */
 
 /**

@@ -24,8 +24,8 @@ jobs:
         run: npm run crowdin-sync-docs
         env:
           # appium-documentation
-          CROWDIN_DOCS_PROJECT_ID: 742245
-          CROWDIN_DOCS_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_DOCS_PROJECT_ID }}
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7.0.5
         with:

@@ -26,5 +26,5 @@ jobs:
         run: npm run crowdin-update-docs
         env:
           # appium-documentation
-          CROWDIN_DOCS_PROJECT_ID: 742245
-          CROWDIN_DOCS_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_DOCS_PROJECT_ID }}
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}

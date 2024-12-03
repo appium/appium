@@ -21,7 +21,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Crowdin Sync
-        run: npm run crowdin-sync-docs
+        run: npm run crowdin-sync-docs-translations
         env:
           # appium-documentation
           CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_DOCS_PROJECT_ID }}

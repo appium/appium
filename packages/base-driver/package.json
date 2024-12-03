@@ -51,7 +51,7 @@
     "@types/bluebird": "3.5.42",
     "@types/express": "5.0.0",
     "@types/lodash": "4.17.13",
-    "@types/method-override": "0.0.35",
+    "@types/method-override": "3.0.0",
     "@types/serve-favicon": "2.5.7",
     "async-lock": "1.4.1",
     "asyncbox": "3.0.0",

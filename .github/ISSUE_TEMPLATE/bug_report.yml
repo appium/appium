@@ -28,8 +28,7 @@ body:
     attributes:
       label: Appium Host Type
       description: |
-        How is your Appium server being hosted? For options other than "Command Line",
-        please add more details under "Further Information".
+        How is your Appium server being hosted? For options other than "Command Line", please add more details under "Further Information".
       options:
         - Command Line
         - Virtual Machine/Docker
@@ -48,8 +47,7 @@ body:
     attributes:
       label: Is this issue reproducible using the latest components?
       description: |
-        You can retrieve the latest server/driver/plugin version number by running `npm info <package-name> version`.
-        If you are not up to date, please try to reproduce your issue after updating all affected components.
+        You can retrieve the latest server/driver/plugin version number by running `npm info <package-name> version`. If you are not up to date, please try to reproduce your issue after updating all affected components.
       options:
       - label: I confirm the issue is still reproducible with the latest component versions
 
@@ -71,8 +69,7 @@ body:
     attributes:
       label: Appium Log
       description: |
-        Please create a [Gist](https://gist.github.com) with your _full_ Appium server log and link it here.
-        Alternatively, you can directly attach your logfile in the "Further Information" field below.
+        Please create a [Gist](https://gist.github.com) with your _full_ Appium server log and link it here. Alternatively, you can directly attach your logfile in the "Further Information" field below.
 
         :warning: _Remember to redact or remove any sensitive information!_
       placeholder: 'https://gist.github.com/...'
@@ -94,10 +91,7 @@ body:
     attributes:
       label: Minimal Reproducible Example
       description: |
-        Please provide [the smallest, complete code snippet](https://stackoverflow.com/help/minimal-reproducible-example)
-        that Appium's maintainers can run to reproduce the issue. An easy way to get started is to copy
-        [sample code](https://github.com/appium/appium/tree/master/packages/appium/sample-code) and modify it accordingly.
-        Failing this, any sort of reproduction steps are better than nothing!
+        Please provide [the smallest, complete code snippet](https://stackoverflow.com/help/minimal-reproducible-example) that Appium's maintainers can run to reproduce the issue. An easy way to get started is to copy [sample code](https://github.com/appium/appium/tree/master/packages/appium/sample-code) and modify it accordingly. Failing this, any sort of reproduction steps are better than nothing!
 
         If the result is more than a screenful of text _or_ requires multiple files, please:
 

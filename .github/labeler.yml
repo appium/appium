@@ -53,11 +53,6 @@ labels:
     matcher:
       files: ['packages/base-plugin/**']
 
-  - label: '@appium/doctor'
-    sync: true
-    matcher:
-      files: ['packages/doctor/**']
-
   - label: '@appium/docutils'
     sync: true
     matcher:

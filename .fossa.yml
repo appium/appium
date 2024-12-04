@@ -24,8 +24,6 @@ targets:
     - type: npm
       path: ./packages/base-driver
     - type: npm
-      path: ./packages/doctor
-    - type: npm
       path: ./packages/eslint-config-appium
     - type: npm
       path: ./packages/fake-driver

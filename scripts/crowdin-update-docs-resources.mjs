@@ -219,8 +219,13 @@ async function ensureFileStructure(storageMapping, directoriesMapping, existingF
         const fileId = await addFile(encodeURIComponent(path.basename(pathInCrowdin)), storageId, parentFolderId);
         result[fullPath] = fileId;
       } catch (e) {
-        log.info(`Cannot add '${pathInCrowdin}'. Skipping it`);
-        log.warn(e);
+        log.warn(`Cannot add '${pathInCrowdin}'. Skipping it`);
+        if (e.response) {
+          log.info(`Crowdin API status: ${e.response.status}`);
+          log.info(`Crowdin API error: ${JSON.stringify(e.response.data, null, 2)}`);
+        } else {
+          log.info(e);
+        }
         continue;
       }
     }

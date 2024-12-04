@@ -27,7 +27,6 @@
         "get-stream",
         "globby",
         "got",
-        "inquirer",
         "log-symbols",
         "ora",
         "p-retry",

@@ -1,0 +1,31 @@
+# Updates Crowdin with any changes in document files in English
+
+name: Update Crowdin English Docs
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'packages/appium/docs/en/**.md'
+      - 'packages/appium/docs/mkdocs-en.yml'
+      - '.github/workflows/crowdin-update-docs-resources.yml' # this file
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Crowdin Update
+        run: npm run crowdin-update-docs
+        env:
+          # appium-documentation
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_DOCS_PROJECT_ID }}
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}

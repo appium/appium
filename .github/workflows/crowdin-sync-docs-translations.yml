@@ -1,0 +1,38 @@
+# Retrieves non-English translations from Crowdin and creates a PR with new changes
+
+name: Sync Crowdin Docs Translations
+
+on:
+  workflow_dispatch:
+  # TODO: Uncomment the scheduler as soon as we have existing translations
+  # imported to Crowdin
+  # schedule:
+  #   - cron: 0 0 * * 0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Crowdin Sync
+        run: npm run crowdin-sync-docs-translations
+        env:
+          # appium-documentation
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_DOCS_PROJECT_ID }}
+          CROWDIN_TOKEN: ${{ secrets.CROWDIN_DOCS_TOKEN }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7.0.5
+        with:
+          token: ${{ github.token }}
+          commit-message: 'docs(appium): Update documentation translations'
+          title: 'docs(appium): Update documentation translations'
+          branch: crowdin-sync-${{ github.run_id }}
+          body: 'Automated Update of Documentation Translations: https://crowdin.com/project/appium-documentation'

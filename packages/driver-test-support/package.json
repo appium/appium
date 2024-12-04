@@ -43,7 +43,7 @@
   "dependencies": {
     "@appium/types": "^0.22.2",
     "@types/lodash": "4.17.13",
-    "axios": "1.7.8",
+    "axios": "1.7.9",
     "bluebird": "3.7.2",
     "chai": "5.1.2",
     "chai-as-promised": "8.0.1",

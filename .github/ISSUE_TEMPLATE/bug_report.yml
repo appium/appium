@@ -44,6 +44,15 @@ body:
       description: Refer to the [Appium Ecosystem](http://appium.io/docs/en/latest/ecosystem/) page for officially-supported components.
       placeholder: Please provide the names of any third-party components.
 
+  - type: checkboxes
+    attributes:
+      label: Is this issue reproducible using the latest components?
+      description: |
+        You can retrieve the latest server/driver/plugin version number by running `npm info <package-name> version`.
+        If you are not up to date, please try to reproduce your issue after updating all affected components.
+      options:
+      - label: I confirm the issue is still reproducible with the latest component versions
+
   - type: textarea
     attributes:
       label: Current Behavior
